@@ -4,8 +4,13 @@ import { ContentStringsStateService } from '@core/states/content-strings/content
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { Observable, of } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from '../../../content-strings';
+import {
+  ContentStringApi,
+  ContentStringCategory
+} from '@shared/model/content-strings/content-strings-api';
+import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 
 @Injectable({
   providedIn: 'root',
@@ -60,6 +65,15 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     const call = this.apiService.retrieveContentStringListByRequest({ domain, category, locale });
     return this.makeRequestWithUpdatingStateHandler<ContentStringInfo[]>(call, this.stateService).pipe(
       tap((data: ContentStringInfo[]) => this.addContentStringsToState(data))
+    );
+  }
+
+  fetchContentStringModel<T extends ContentStringModel>(category: ContentStringCategory, extras?: any): Observable<T> {
+    const contentStringInfo = ContentStringApi[category];
+    return this.fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, contentStringInfo.category).pipe(
+      take(1),
+      map(data => contentStringInfo.toModel(data, extras) as T),
+      catchError(() => of(contentStringInfo.toModel(null, extras) as T))
     );
   }
 

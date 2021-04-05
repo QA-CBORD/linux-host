@@ -41,6 +41,17 @@ export const guestDashboardDefaultStrings = {
   explore: 'Explore'
 }
 
+export const confirmDepositDefaultStrings = {
+  title: 'Refund Policy',
+  deposit_amount: 'Deposit Amount',
+  convenience_fee: 'Convenience Fee',
+  total_payment: 'Total Payment',
+  account: 'Account',
+  payment_method: 'Payment Method',
+  bill_me: 'Bill me',
+  ending_in: 'ending in'
+}
+
 export const defaultMobileCredentialCs = {
   nfc_off_dialog_accept: 'Proceed',
   nfc_off_dialog_cancel: 'Cancel',

@@ -1,4 +1,4 @@
-import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { Observable, of, zip } from 'rxjs';
 import { take, map, catchError } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
@@ -12,12 +12,7 @@ export class UserRegistrationBase {
   constructor(protected backendService: RegistrationService) {}
 
   getFormStrings(): Observable<RegistrationCsModel> {
-    const registrationString$ = this.backendService.getString$(CONTENT_STRINGS_CATEGORIES.mobileRegistration).pipe(
-      take(1),
-      map(data => ContentStringApi.registration(data)),
-      catchError(() => of(ContentStringApi.registration()))
-    );
-
+    const registrationString$ = this.backendService.getStringModel$<RegistrationCsModel>(ContentStringCategory.registration);
     const validationString$ = this.backendService.getString$(CONTENT_STRINGS_CATEGORIES.passwordValidation).pipe(
       take(1),
       map(data => buildPasswordValidators(data)),

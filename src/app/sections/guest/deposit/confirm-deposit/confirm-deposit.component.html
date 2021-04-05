@@ -1,3 +1,21 @@
-<p>
-  confirm-deposit works!
-</p>
+<st-popover-layout [popoverConfig]="popoverConfig">
+  <section class="cdp__policy-container">
+    <h5 class="cdp__policy-title">{{policyTitle$ | async}}</h5>
+    <div class="cdp__policy-body">
+      {{policyContent$ | async}}
+    </div>
+  </section>
+
+  <section class="cdp__info-container">
+    <div class="cdp__label">
+      {{donateAmount$ | async}}
+      <span class="cdp__value">{{
+        popoverConfig.message['amountValue'] | transactionUnits: popoverConfig.message['account'].accountType
+        }}</span>
+    </div>
+    <div class="cdp__label">
+      {{account$ | async}}
+      <span class="cdp__value">{{ popoverConfig.message['account'].accountDisplayName }}</span>
+    </div>
+  </section>
+</st-popover-layout>

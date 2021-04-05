@@ -31,6 +31,10 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { ConfirmDepositCsModel } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-content-string.model';
 const { Browser } = Plugins;
 
 @Component({
@@ -83,7 +87,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
     private readonly globalNav: GlobalNavService,
-    private readonly a11yService: AccessibilityService
+    private readonly a11yService: AccessibilityService,
+    private readonly contentStringFacade: ContentStringsFacadeService
   ) {}
 
   ngOnInit() {
@@ -442,10 +447,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   async confirmationDepositPopover(data: any) {
+    const contentString = await this.contentStringFacade
+      .fetchContentStringModel<ConfirmDepositCsModel>(ContentStringCategory.depositConfirm)
+      .toPromise();
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
         data,
+        contentString,
       },
       animated: false,
       backdropDismiss: false,

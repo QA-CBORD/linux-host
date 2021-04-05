@@ -25,7 +25,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { RegistrationComponent } from '../registration/components/registration/registration.component';
 import { ModalController } from '@ionic/angular';
-import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 
@@ -149,11 +149,7 @@ export class UserPassForm implements OnInit {
   async redirectToForgotPassword(): Promise<void> {
     this.loadingService.showSpinner();
     const forgotPasswordCs = await this.contentStringsFacadeService
-      .fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.forgotPassword)
-      .pipe(
-        map(data => ContentStringApi.forgotPassword(data)),
-        catchError(() => of(ContentStringApi.forgotPassword()))
-      )
+      .fetchContentStringModel(ContentStringCategory.forgotPassword)
       .toPromise();
     this.messageProxy.put(forgotPasswordCs);
     this.loadingService.closeSpinner();

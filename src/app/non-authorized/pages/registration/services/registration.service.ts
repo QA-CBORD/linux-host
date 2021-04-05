@@ -11,6 +11,8 @@ import { Institution } from '@core/model/institution/institution.model';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 
 @Injectable({
   providedIn: 'root',
@@ -65,6 +67,10 @@ export class RegistrationService {
 
   getString$(category: CONTENT_STRINGS_CATEGORIES): Observable<ContentStringInfo[]> {
     return this.contentStringFacade.fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, category);
+  }
+
+  getStringModel$<T extends ContentStringModel>(category: ContentStringCategory, extras?: any): Observable<T> {
+    return this.contentStringFacade.fetchContentStringModel<T>(category, extras);
   }
 
   institition$(): Observable<Institution> {

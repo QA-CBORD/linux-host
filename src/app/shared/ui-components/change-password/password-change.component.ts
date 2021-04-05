@@ -108,7 +108,7 @@ export class PasswordChangeComponent implements OnInit {
   }
 
   private setContentStrings() {
-    this.inputLabel = ContentStringApi.changePassword(this.contentStrings.pop());
+    this.inputLabel = ContentStringApi.changePassword.toModel(this.contentStrings.pop()) as PasswordChangeCsModel;
     this.validators = buildPasswordValidators(this.contentStrings.pop());
   }
 

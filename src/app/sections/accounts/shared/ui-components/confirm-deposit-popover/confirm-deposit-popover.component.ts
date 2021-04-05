@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
+import { ConfirmDepositCsModel } from './confirm-deposit-content-string.model';
 
 @Component({
   selector: 'confirm-deposit-popover',
@@ -9,9 +11,8 @@ import { buttons } from 'src/app/core/utils/buttons.config';
 })
 export class ConfirmDepositPopoverComponent implements OnInit {
   @Input() data: any;
-
+  @Input() contentString: ConfirmDepositCsModel;
   popoverConfig: PopoverConfig<string | number>;
-  contentString: { [key: string]: string };
 
   constructor() { }
 
