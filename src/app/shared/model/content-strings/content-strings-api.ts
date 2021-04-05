@@ -1,5 +1,6 @@
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { GuestDashboardCsModel } from '@sections/guest/model/guest-dashboard.content.strings';
+import { DepositSuccessCsModel } from '@sections/guest/deposit/model/success-page-cs.model';
+import { GuestDashboardCsModel } from '@sections/guest/dashboard/model/guest-dashboard-cs.model';
 import { PasswordChangeCsModel } from '@shared/ui-components/change-password/password-change-content-strings.model';
 import { AndroidCredentialCsModel } from '@shared/ui-components/mobile-credentials/model/android/android-credential-content-strings.model';
 import { ForgotPasswordCsModel } from 'src/app/non-authorized/pages/forgot-password/models/forgot-password-content-strings.model';
@@ -31,5 +32,9 @@ export const ContentStringApi = {
 
   guestDashboard: (content: ContentStringInfo[] = []): GuestDashboardCsModel => {
     return new GuestDashboardCsModel(NullableContent.build(content));
+  },
+
+  guestDepositConfirm: (content: ContentStringInfo[] = []): DepositSuccessCsModel =>{
+   return new DepositSuccessCsModel(NullableContent.build(content));
   }
 };

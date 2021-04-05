@@ -11,7 +11,7 @@ const routes: Route[] = [
   },
   {
     path: GUEST_ROUTES.dashboard,
-    loadChildren: './guest/guest-dashboard.module#GuestDashboardModule',
+    loadChildren: './guest/dashboard.module#GuestDashboardModule',
   },
   {
     path: GUEST_ROUTES.ordering,

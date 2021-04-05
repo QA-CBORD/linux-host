@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { GuestSetting } from './guest-settings';
+import { GuestSetting } from '../../model/guest-settings';
 
 export interface GuestDashboardSection {
   title: string;

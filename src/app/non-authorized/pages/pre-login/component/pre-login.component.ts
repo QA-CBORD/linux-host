@@ -12,9 +12,9 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { PreloginCsModel } from '../models/prelogin-content-strings.model';
-import { MessageChannel } from '@shared/model/shared-api';
 import { CommonService } from '@shared/services/common.service';
 import { Institution } from '@core/model/institution';
+import { MessageProxy } from '@shared/services/injectable-message.proxy';
 
 @Component({
   selector: 'st-pre-login',
@@ -37,10 +37,11 @@ export class PreLoginComponent implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly commonService: CommonService,
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly messageProxy: MessageProxy
   ) {}
   async ngOnInit() {
-    const preLoginCs = MessageChannel.get<PreloginCsModel>();
+    const preLoginCs = this.messageProxy.get<PreloginCsModel>();
     this.pageContent = preLoginCs;
     this.getInstitutionInfo();
   }
@@ -101,7 +102,7 @@ export class PreLoginComponent implements OnInit {
     switch (loginType) {
       case LoginState.HOSTED:
         this.authFacadeService.setIsGuestUser(isGuestUser);
-        MessageChannel.put({ navParams: { isGuestUser } });
+        this.messageProxy.put({ navParams: { isGuestUser } });
         this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
         isGuestUser && this.updateGuestSettings();
         break;

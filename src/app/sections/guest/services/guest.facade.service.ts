@@ -6,9 +6,9 @@ import { ContentStringApi } from '@shared/model/content-strings/content-strings-
 import { Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { GuestDashboardSections } from '../model/dashboard.config';
-import { GuestDashboardSection } from '../model/dashboard.item.model';
-import { GuestDashboardCsModel } from '../model/guest-dashboard.content.strings';
+import { GuestDashboardSections } from '../dashboard/model/dashboard.config';
+import { GuestDashboardSection } from '../dashboard/model/dashboard.item.model';
+import { GuestDashboardCsModel } from '../dashboard/model/guest-dashboard-cs.model';
 
 @Injectable({
   providedIn: 'root',
