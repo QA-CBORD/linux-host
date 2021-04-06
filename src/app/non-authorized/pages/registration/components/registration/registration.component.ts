@@ -5,7 +5,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import { InputValidator } from 'src/app/password-validation/models/input-validator.model';
-import { Field, formField, STATICFIELDS } from '../../models/registration-utils';
+import { Field, formField, FormFieldList, STATICFIELDS } from '../../models/registration-utils';
 import { RegistrationServiceFacade } from '../../services/registration-service-facade';
 import { RegistrationSuccessComponent } from '../registration-success/registration-success.component';
 
@@ -22,7 +22,9 @@ export class RegistrationComponent implements OnInit {
   btnText$: Observable<string>;
   passwordValidators: InputValidator[] = [];
   allFields: Field[] = [];
-
+  firstNameField: formField;
+  lastNameField: formField;
+  passwordField: formField;
   protected customLoadingOptions = { message: 'Processing... Please wait', duration: 150000 };
 
   constructor(
@@ -58,20 +60,14 @@ export class RegistrationComponent implements OnInit {
     });
     this.horizontalFields = formFieldList.horizontalAlignedFields;
     this.formFields = formFieldList.verticalAlignedFields;
+    this.initializeFields();
   }
 
-  get firstNameField(): formField {
-    const { firstName } = STATICFIELDS;
-    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == firstName.idd);
-  }
-
-  get lastNameField(): formField {
-    const { lastName } = STATICFIELDS;
-    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
-  }
-
-  get passwordField(): Field {
-    return this.formFields.find(({ name: fieldName }) => fieldName == STATICFIELDS.password);
+  initializeFields(): void {
+    const { firstName, lastName, password } = STATICFIELDS;
+    this.firstNameField = this.horizontalFields.find(({ idd: fieldName }) => fieldName == firstName.idd);
+    this.lastNameField = this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
+    this.passwordField = this.formFields.find(({ name: fieldName }) => fieldName == password);
   }
 
   get disabled(): boolean {
