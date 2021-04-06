@@ -4,19 +4,22 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { isCashlessAccount, isCreditCardAccount, isMealsAccount, parseArrayFromString } from '@core/utils/general-helpers';
+import { CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { MerchantAccountInfoList } from '@sections/ordering';
 import { CartService, MerchantService } from '@sections/ordering/services';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { Observable, Subscription } from 'rxjs';
+import { iif, Observable, Subscription } from 'rxjs';
 import { first, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, Settings } from 'src/app/app.global';
 
 export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
   toAccount = 'toAccount',
-  amountToDeposit = 'amountToDeposit'
+  amountToDeposit = 'amountToDeposit',
+ mainInput = 'mainInput'
 }
  
 const requiredSettings = [
@@ -99,10 +102,14 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   initForm() {
+
+    //const minMaxValidators = [amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime)];
+      
     this.detailsForm = this.fb.group({
       [GUEST_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.toAccount]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.amountToDeposit]: ['', Validators.required],
+      //[GUEST_FORM_CONTROL_NAMES.mainInput]: ['', Validators.required, ...minMaxValidators,  Validators.pattern(CURRENCY_REGEXP)],
     });
   }
 
@@ -110,6 +117,18 @@ export class GuestAddFundsComponent implements OnInit {
     this.defineDestAccounts(target.value);
     this.resetControls(['mainSelect', 'mainInput', 'selectedAccount']);
     document.getElementById('depositBtnText').innerHTML = 'Deposit';
+  }
+
+  formatInput(event) {
+    const { value } = event.target;
+    const index = value.indexOf('.');
+    if (!NUM_COMMA_DOT_REGEXP.test(value)) {
+     this.detailsForm.get('mainInput').setValue(value.slice(0, value.length - 1));
+    }
+
+    if (index !== -1 && value.slice(index + 1).length > 1) {
+     this.detailsForm.get('mainInput').setValue(value.slice(0, index + 2));
+    }
   }
 
   get controlsNames() {
@@ -127,60 +146,63 @@ export class GuestAddFundsComponent implements OnInit {
   get amountToDeposit(): AbstractControl {
     return this.detailsForm.get(GUEST_FORM_CONTROL_NAMES.amountToDeposit);
   }
+ 
+  get mainFormInput(): AbstractControl {
+    return this.detailsForm.get(GUEST_FORM_CONTROL_NAMES.mainInput);
+  }
 
+  get isFreeFormEnabled$(): Observable<boolean> {
+    return iif(
+      () => this.activePaymentType === PAYMENT_TYPE.BILLME,
+      this.isFreeFromDepositEnabled$,
+      this.isFreeFromDepositEnabled$
+    );
+  }
+  
+  get minMaxOfAmmounts() {
+    const minAmountbillme = this.getSettingByName(
+      this.depositSettings,
+      Settings.Setting.BILLME_AMOUNT_MIN.split('.')[2]
+    );
+    const maxAmountbillme = this.getSettingByName(
+      this.depositSettings,
+      Settings.Setting.BILLME_AMOUNT_MAX.split('.')[2]
+    );
+    const minAmountOneTime = this.getSettingByName(
+      this.depositSettings,
+      Settings.Setting.CREDITCARD_AMOUNT_MIN.split('.')[2]
+    );
+    const maxAmountOneTime = this.getSettingByName(
+      this.depositSettings,
+      Settings.Setting.CREDITCARD_AMOUNT_MAX.split('.')[2]
+    );
+
+    return {
+      minAmountbillme,
+      maxAmountbillme,
+      minAmountOneTime,
+      maxAmountOneTime,
+    };
+  }
+
+  
+
+  get isFreeFromDepositEnabled$(): Observable<boolean> {
+    return this.depositService.getUserSettings(requiredSettings).pipe(
+      map(settings => {
+        const settingInfo = this.depositService.getSettingByName(
+          settings,
+          Settings.Setting.FREEFORM_DEPOSIT_ENABLED.split('.')[2]
+        );
+
+        return settingInfo && Boolean(Number(settingInfo.value));
+      })
+    );
+  }
   private initContentStrings() {
     this.topLabel =
       'You are deposting to the account of {{ James Demo }}. If this is incorrect, go back to to Step 1 to identify the recipient';
   }
-
-  private async getAvailableAccounts(): Promise<UserAccount[]> {
-    let accInfo;
-    this.cartService.merchant$.pipe(
-      skipWhile((merchant) => { 
-        console.log('Merchant: ', merchant)
-        return !merchant
-        
-      }),
-      switchMap(({id}) => { 
-        console.log('Id: ', id)
-        return this.merchantService.getMerchantPaymentAccounts(id)})
-    ).subscribe((data) => {
-      console.log('Un nombre: ', data)  
-    }, err => console.log('Errorrr: ', err));
-    console.log('getAvailableAccounts(): ', accInfo)
-    const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
-    return mealBased ? this.filterMealBasedAccounts(accInfo.accounts) : this.extractNoneMealsAccounts(accInfo);
-  }
-
-  private filterMealBasedAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter((account: UserAccount) => isMealsAccount(account));
-  }
-
-  private extractNoneMealsAccounts({ cashlessAccepted, accounts, creditAccepted }): UserAccount[] {
-    let res = [];
-    accounts = this.filterNoneMealsAccounts(accounts);
-
-    if (cashlessAccepted) {
-      res = res.concat(this.filterCashlessAccounts(accounts));
-    }
-    if (creditAccepted) {
-      res = res.concat(this.filterCreditAccounts(accounts));
-    }
-    return res;
-  }
-
-  private filterNoneMealsAccounts(sourceAccounts): UserAccount[] {
-    return sourceAccounts.filter((sourceAccount: UserAccount) => !isMealsAccount(sourceAccount));
-  }
-
-  private filterCashlessAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter((account: UserAccount) => account.id === 'rollup' || isCashlessAccount(account));
-  }
-
-  private filterCreditAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter((account: UserAccount) => isCreditCardAccount(account));
-  }
-
 
   get isCreditCardPaymentTypesEnabled(): boolean {
     return true;

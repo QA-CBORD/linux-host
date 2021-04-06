@@ -87,7 +87,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    
     this.globalNav.hideNavBar();
     this.initForm();
     this.getAccounts();
@@ -112,6 +111,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       })
     );
   }
+
 
   get isAllowFreeFormBillMe$(): Observable<boolean> {
     return this.depositService.settings$.pipe(
@@ -183,6 +183,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return JSON.parse(billMePaymentTypesEnabled).indexOf(PAYMENT_TYPE.CREDIT) !== -1;
   }
 
+  
   get minMaxOfAmmounts() {
     const minAmountbillme = this.getSettingByName(
       this.depositSettings,
@@ -243,6 +244,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.depositForm.get('mainInput').setValue(value.slice(0, index + 2));
     }
   }
+
 
   onFormSubmit() {
     if ((this.depositForm && this.depositForm.invalid) || this.isDepositing) return;

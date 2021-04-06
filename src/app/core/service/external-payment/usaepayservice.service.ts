@@ -38,24 +38,22 @@ export class USAePayService {
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly toastService: ToastService
   ) {}
-
-  /* USAePay */
+  
   /* WKWebView is the required webview by Apple  */
 
   addUSAePayCreditCard(): Promise<USAePayResponse> {
     return new Promise<USAePayResponse>((resolve, reject) => {
       const authToken$ = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
       const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
-      forkJoin(authToken$, institutionInfo$).subscribe(
-        ([authToken, institutionInfo]) => {
+      forkJoin(authToken$, institutionInfo$).subscribe(([authToken, institutionInfo]) => {
           const browser = this.navigateToUSAePaySite(authToken, institutionInfo.shortName);
-          browser.on(browserEvent.LOADING).subscribe(browserEvent => {
-              const url = browserEvent.url;
+          browser.on(browserEvent.LOADING).subscribe(response => {
+              const url = response.url;
               if (url.includes(urlStatus.COMPLETE)) {
                 if (url.includes(urlStatus.SUCCESSFUL)) {
                   resolve(<USAePayResponse>{ success: true });
                 } else if (url.includes(urlStatus.FAILED)) {
-                  const errorMessage = new URLSearchParams(browserEvent.url).get('error');
+                  const errorMessage = new URLSearchParams(url).get('error');
                   this.onUSAePayCallBackRetrieve(`Your request failed: ${errorMessage}. Please try again.`);
                   reject();
                 }
