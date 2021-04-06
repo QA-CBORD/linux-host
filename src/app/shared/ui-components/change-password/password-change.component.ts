@@ -38,11 +38,11 @@ export class PasswordChangeComponent implements OnInit {
   ngOnInit() {
     this.initForm();
     this.initControl();
+    this.setContentStrings();
   }
 
   ionViewWillEnter() { 
     this.loadingService.showSpinner();
-    this.setContentStrings();
   }
 
   ionViewDidEnter() {
@@ -108,7 +108,7 @@ export class PasswordChangeComponent implements OnInit {
   }
 
   private setContentStrings() {
-    this.inputLabel = ContentStringApi.changePassword.toModel(this.contentStrings.pop()) as PasswordChangeCsModel;
+    this.inputLabel = <PasswordChangeCsModel>ContentStringApi.changePassword.toModel(this.contentStrings.pop());
     this.validators = buildPasswordValidators(this.contentStrings.pop());
   }
 

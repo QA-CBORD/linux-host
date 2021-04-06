@@ -7,9 +7,7 @@
  */ 
 
 export class MutableMessage {
-  private constructor() {
-    console.log('MutableMessage Initiated');
-  }
+  private constructor() {}
 
   private static instance: MutableMessage;
 
