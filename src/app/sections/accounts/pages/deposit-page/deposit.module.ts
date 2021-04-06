@@ -44,5 +44,6 @@ const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
   imports: [imports],
   providers,
   entryComponents,
+  exports: [DestinationAccountDisplayPipe]
 })
 export class DepositModule {}

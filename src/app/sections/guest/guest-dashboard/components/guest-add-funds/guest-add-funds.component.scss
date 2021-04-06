@@ -3,21 +3,7 @@
 .deposit {
   &__header {
     margin-top: 32px;
-    padding-bottom: 8px;
     border-bottom: 1px solid $color-whisper;
-  }
-
-  &__manual-amount {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 30px 0;
-    border-bottom: 1px solid $color-whisper;
-
-    &--preset-amouts {
-      padding: 0;
-    }
   }
 
   &__main-input-container {
@@ -55,6 +41,7 @@
     --padding-bottom: 0;
     --padding-top: 0;
     --padding-start: 0;
+    
 
     &::before {
       content: '$';
@@ -63,10 +50,6 @@
       left: 5px;
       bottom: 10px;
     }
-  }
-
-  &__main-select-container {
-    width: 100%;
   }
 
   &__select-wrapper {
@@ -78,26 +61,6 @@
     padding: 30px 15px;
   }
 
-  &__label-select {
-    text-transform: uppercase;
-    color: #7e7e7e;
-    position: absolute;
-    left: 16px;
-    top: 10px;
-
-    @include font-nunito-semibold(14px);
-  }
-
-  &__label-cvv {
-    position: relative;
-    height: 80px;
-    display: flex;
-    border-bottom: 1px solid $color-whisper;
-  }
-
-  &__input-cvv {
-    --padding-start: 16px;
-
     &--error {
       position: absolute;
       left: 16px;
@@ -106,12 +69,11 @@
 
       @include font-nunito-heavy(14px);
     }
-  }
   
   &__footer {
     display: flex;
     justify-content: center;
-    padding: 10px 10px 50px;
+    padding: 10px 16px 50px 12px;
     background-color: $color-white;
   }
 }

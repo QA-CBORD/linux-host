@@ -87,11 +87,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
+    
     this.globalNav.hideNavBar();
     this.initForm();
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
+    console.log("depositSettings: ", this.depositSettings)
   }
 
   ngOnDestroy() {
@@ -133,6 +134,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
+  
   get billMeAmounts$(): Observable<string[]> {
     return this.depositService.settings$.pipe(
       map(settings => {
@@ -399,6 +401,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const subscription = this.depositService.settings$
       .pipe(
         map(settings => {
+          console.log('Setting: ', settings)
           const depositTenders = this.getSettingByName(settings, Settings.Setting.DEPOSIT_TENDERS.split('.')[2]);
           const billmeMappingArr = this.getSettingByName(settings, Settings.Setting.BILLME_MAPPING.split('.')[2]);
 
@@ -421,6 +424,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             })
           )
         )
+        
       )
       .subscribe(() => {
         this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
@@ -553,7 +557,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   private getSettingByName(settings, property: string) {
     const depositSetting = this.depositService.getSettingByName(settings, property);
-
     return depositSetting.value;
   }
 }

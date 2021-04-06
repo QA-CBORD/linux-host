@@ -7,25 +7,39 @@ import { isCashlessAccount, isCreditCardAccount, isMealsAccount, parseArrayFromS
 import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { MerchantAccountInfoList } from '@sections/ordering';
-import { CartService } from '@sections/ordering/services';
+import { CartService, MerchantService } from '@sections/ordering/services';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable, Subscription } from 'rxjs';
-import { first, map, switchMap, take, tap } from 'rxjs/operators';
+import { first, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, Settings } from 'src/app/app.global';
-
 
 export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
   toAccount = 'toAccount',
   amountToDeposit = 'amountToDeposit'
 }
-
+ 
+const requiredSettings = [
+  Settings.Setting.DEPOSIT_TENDERS,
+  Settings.Setting.PAYMENT_TYPES,
+  Settings.Setting.BILLME_MAPPING,
+  Settings.Setting.FREEFORM_DEPOSIT_ENABLED,
+  Settings.Setting.PRESET_DEPOSIT_AMOUNTS_CREDITCARD,
+  Settings.Setting.BILLME_AMOUNTS,
+  Settings.Setting.BILLME_AMOUNT_MIN,
+  Settings.Setting.BILLME_AMOUNT_MAX,
+  Settings.Setting.BILLME_FREEFORM_ENABLED,
+  Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE,
+  Settings.Setting.CREDITCARD_AMOUNT_MIN,
+  Settings.Setting.CREDITCARD_AMOUNT_MAX,
+];
 @Component({
   selector: 'st-guest-add-funds',
   templateUrl: './guest-add-funds.component.html',
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class GuestAddFundsComponent implements OnInit {
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
@@ -37,11 +51,12 @@ export class GuestAddFundsComponent implements OnInit {
     isActive: true,
   };
 
+  isDepositing: boolean = false;
   detailsForm: FormGroup;
   topLabel: string;
   applePayEnabled$: Observable<boolean>;
   accountInfoList$: Observable<MerchantAccountInfoList>;
-  accounts$: Promise<UserAccount[]>;
+  accounts$: Observable<UserAccount[]>;
   depositSettings: SettingInfo[];
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
@@ -49,27 +64,32 @@ export class GuestAddFundsComponent implements OnInit {
   private activePaymentType: PAYMENT_TYPE;
   private readonly sourceSubscription: Subscription = new Subscription();
   
+  
   constructor(
     private readonly fb: FormBuilder,
     private readonly globalNav: GlobalNavService,
     private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly cartService: CartService,
-    private readonly depositService: DepositService
+    private readonly depositService: DepositService,
+    private readonly merchantService: MerchantService
   ) {}
 
   ngOnInit() {
-    this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
+    this.accounts$ = this.depositService.getUserAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
+    this.depositService.getUserSettings(requiredSettings).pipe(take(1)).subscribe((result)=>{
+      this.depositSettings = result;
+      console.log('Result: ', this.depositSettings)
+    })
+ 
     this.initForm();
-    this.getAccounts();
     this.initContentStrings();
     this.globalNav.hideNavBar();
-    console.log('Deposit settings: ', this.depositSettings)
   }
 
   ionViewWillEnter() {
-    this.accounts$ = this.getAvailableAccounts();
+    this.getAccounts();
     this.cdRef.detectChanges();
   }
 
@@ -114,9 +134,21 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   private async getAvailableAccounts(): Promise<UserAccount[]> {
-    const accInfo = await this.accountInfoList$.pipe(first()).toPromise();
+    let accInfo;
+    this.cartService.merchant$.pipe(
+      skipWhile((merchant) => { 
+        console.log('Merchant: ', merchant)
+        return !merchant
+        
+      }),
+      switchMap(({id}) => { 
+        console.log('Id: ', id)
+        return this.merchantService.getMerchantPaymentAccounts(id)})
+    ).subscribe((data) => {
+      console.log('Un nombre: ', data)  
+    }, err => console.log('Errorrr: ', err));
+    console.log('getAvailableAccounts(): ', accInfo)
     const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
-
     return mealBased ? this.filterMealBasedAccounts(accInfo.accounts) : this.extractNoneMealsAccounts(accInfo);
   }
 
@@ -149,8 +181,13 @@ export class GuestAddFundsComponent implements OnInit {
     return sourceAccounts.filter((account: UserAccount) => isCreditCardAccount(account));
   }
 
+
+  get isCreditCardPaymentTypesEnabled(): boolean {
+    return true;
+  }
+  
   private getAccounts() {
-    const subscription = this.depositService.settings$
+    const subscription = this.depositService.getUserSettings(requiredSettings)
       .pipe(
         map(settings => {
           console.log('Setting: ', settings)
@@ -180,7 +217,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   private getSettingByName(settings, property: string) {
     const depositSetting = this.depositService.getSettingByName(settings, property);
-    return depositSetting.value;
+    return depositSetting && depositSetting.value || '';
   }
 
   private defineDestAccounts(target) {

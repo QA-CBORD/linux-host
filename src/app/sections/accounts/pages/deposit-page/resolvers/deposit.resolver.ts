@@ -28,8 +28,6 @@ export class DepositResolver implements Resolve<Observable<any>> {
       Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE,
       Settings.Setting.CREDITCARD_AMOUNT_MIN,
       Settings.Setting.CREDITCARD_AMOUNT_MAX,
-
-
     ];
 
     const contentStringCall = this.depositService.initContentStringsList();
