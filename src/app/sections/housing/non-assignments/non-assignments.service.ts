@@ -5,12 +5,13 @@ import {
 } from '@angular/forms';
 
 import { Observable, of } from 'rxjs';
-import { catchError, map, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import {
   QuestionsEntries,
-  QuestionsStorageService
+  QuestionsStorageService,
+  StoredApplication
 } from '@sections/housing/questions/questions-storage.service';
 import {
   QuestionAssetTypeDetails,
@@ -18,7 +19,7 @@ import {
   QuestionBase,
   QuestionFormControl
 } from '@sections/housing/questions/types';
-import { flat, isDefined } from '@sections/housing/utils';
+import { flat, isDefined, parseJsonToArray } from '@sections/housing/utils';
 import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
 import { HousingProxyService } from '../housing-proxy.service';
@@ -28,10 +29,15 @@ import {
   AssetType,
   AssetTypeDetailValue,
   ContractRequest,
+  NonAssignmentContractRequest,
   NonAssignmentDetails
 } from './non-assignments.model';
 import { Response } from '@sections/housing/housing.model';
 import { isSuccessful } from '../utils/is-successful';
+import { PatronAddress } from '../addresses/address.model';
+import { PatronAttribute } from '../applications/applications.model';
+import { PatronAttributesService } from '../patron-attributes/patron-attributes.service';
+import { PatronAddressService } from '../addresses/address.service';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +52,9 @@ export class NonAssignmentsService {
     private _housingProxyService: HousingProxyService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
-    private _nonAssignmentsStateService: NonAssignmentsStateService
+    private _nonAssignmentsStateService: NonAssignmentsStateService,
+    private _patronAttributesService: PatronAttributesService,
+    private _patronAddressService: PatronAddressService,
   ) { }
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
@@ -60,31 +68,64 @@ export class NonAssignmentsService {
     );
   }
 
-  getSelectedAssetType(): Observable<number> {
+  getSelectedAssetType(): Observable<AssetTypeDetailValue[]> {
     return this._nonAssignmentsStateService.selectedAssetType$;
   }
 
-  submitContract(assetTypeKey: number, termKey: number): Observable<boolean> {
-    const body: ContractRequest = new ContractRequest({
-      assetKey: assetTypeKey,
-      isAsset: true,
-      isFacility: false,
-      termKey
-    });
+  submitContract(
+    nonAssignmentKey: number,
+    nonAssignment: NonAssignmentDetails,
+    assetTypeKey: number,
+    termKey: number,
+    form: any): Observable<boolean> {  
 
-    console.log('creating non assignment contract');
+    return this._questionsStorageService.updateQuestions(nonAssignmentKey, form, 3).pipe(
+      switchMap((storedApplication: StoredApplication) => {
+        const parsedJson: any[] = parseJsonToArray(nonAssignment.formJson);
+        const questions = storedApplication.questions;
 
-    return this._housingProxyService.post<Response>(this._patronNonAssignmentsUrl, body).pipe(
-      map(response => {
+        const patronAttributes: PatronAttribute[] = this._patronAttributesService.getAttributes(
+          nonAssignment.patronAttributes,
+          parsedJson,
+          questions
+        );
+        
+        const patronAddresses: PatronAddress[] = this._patronAddressService.getAddresses(
+          nonAssignment.patronAddresses,
+          parsedJson,
+          questions
+        );
+
+        const patronContract: ContractRequest = new ContractRequest({
+          assetKey: assetTypeKey,
+          isAsset: true,
+          isFacility: false,
+          termKey
+        });
+
+        const body = new NonAssignmentContractRequest({
+          nonAssignmentKey,
+          patronContract,
+          patronAttributes,
+          patronAddresses
+        });
+
+        return this._housingProxyService.post<Response>(this._patronNonAssignmentsUrl, body);
+      }),
+      map((response: Response) => {
         if (isSuccessful(response.status)) {
           return true;
         } else {
           console.log(response);
           throw new Error(response.status.message);
         }
-      }),
-      catchError(err => of(false))
-    );
+      }
+      ),
+      catchError(_ => of(false)));
+  }
+
+  next(nonAssignmentKey: number, formValue: any): Observable<any> {
+    return this._questionsStorageService.updateQuestions(nonAssignmentKey, formValue, 1)
   }
 
   private _getQuestionsPages(nonAssignmentDetails: NonAssignmentDetails): QuestionBase[][] {
