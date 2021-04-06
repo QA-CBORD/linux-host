@@ -103,8 +103,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   initForm() {
 
-    //const minMaxValidators = [amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime)];
-      
+   // const minMaxValidators = [amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime)];
     this.detailsForm = this.fb.group({
       [GUEST_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.toAccount]: ['', Validators.required],
