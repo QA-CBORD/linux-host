@@ -23,14 +23,13 @@ const routes: Route[] = [
   },
   {
     path: GUEST_ROUTES.deposit,
-    loadChildren: './guest/guest-dashboard/options/guest-deposit/guest-deposit.module#GuestDepositModule',
+    loadChildren: './guest/guest-dashboard/components/guest-add-funds/guest-add-funds.module#GuestAddFundsModule',
   },
   {
     path: GUEST_ROUTES.settings,
     loadChildren: './settings/settings.module#SettingsModule',
   },
 ];
-
 
 @NgModule({
   imports: [

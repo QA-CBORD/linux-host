@@ -11,7 +11,6 @@
     <section class="deposit__selection-block ion-padding">
       <ion-label>{{ topLabel }}</ion-label>
       <div class="deposit__select-wrapper">
-        <br />
         <st-select-floating-label
           [formControlName]="controlsNames.paymentMethod"
           [control]="paymentMethod"
@@ -43,7 +42,6 @@
             </ion-select-option>
           </ng-container>
         </st-select-floating-label>
-        <br />
         <st-select-floating-label
           [formControlName]="controlsNames.toAccount"
           [isError]="toAccount.dirty || toAccount.touched"
@@ -61,7 +59,6 @@
             </ion-select-option>
           </ng-container>
         </st-select-floating-label>
-        <br />
         <st-select-floating-label
           [formControlName]="controlsNames.amountToDeposit"
           [control]="amountToDeposit"

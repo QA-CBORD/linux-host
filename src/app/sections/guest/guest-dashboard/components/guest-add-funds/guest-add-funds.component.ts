@@ -3,16 +3,15 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { isCashlessAccount, isCreditCardAccount, isMealsAccount, parseArrayFromString } from '@core/utils/general-helpers';
-import { CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
+import { parseArrayFromString } from '@core/utils/general-helpers';
+import { NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
-import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { MerchantAccountInfoList } from '@sections/ordering';
 import { CartService, MerchantService } from '@sections/ordering/services';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { iif, Observable, Subscription } from 'rxjs';
-import { first, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
+import {  map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, Settings } from 'src/app/app.global';
 
 export enum GUEST_FORM_CONTROL_NAMES {
