@@ -1,18 +1,22 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { parseArrayFromString } from '@core/utils/general-helpers';
-import { NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
-import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
+import { ACCOUNT_TYPES, LOCAL_ROUTING, PAYMENT_SYSTEM_TYPE, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { MerchantAccountInfoList } from '@sections/ordering';
-import { CartService, MerchantService } from '@sections/ordering/services';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { iif, Observable, Subscription } from 'rxjs';
+import { from, iif, Observable, Subscription, throwError } from 'rxjs';
 import {  map, switchMap, take, tap } from 'rxjs/operators';
-import { AccountType, DisplayName, Settings } from 'src/app/app.global';
+import { AccountType, DisplayName, PATRON_NAVIGATION, Settings } from 'src/app/app.global';
 
 export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -72,9 +76,11 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly globalNav: GlobalNavService,
     private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly cartService: CartService,
     private readonly depositService: DepositService,
-    private readonly merchantService: MerchantService
+    private readonly router: Router,
+    private externalPaymentService: ExternalPaymentService,
+    private readonly loadingService: LoadingService,
+    private readonly toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -82,7 +88,6 @@ export class GuestAddFundsComponent implements OnInit {
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.depositService.getUserSettings(requiredSettings).pipe(take(1)).subscribe((result)=>{
       this.depositSettings = result;
-      console.log('Result: ', this.depositSettings)
     })
  
     this.initForm();
@@ -127,6 +132,61 @@ export class GuestAddFundsComponent implements OnInit {
     if (index !== -1 && value.slice(index + 1).length > 1) {
      this.detailsForm.get('mainInput').setValue(value.slice(0, index + 2));
     }
+  }
+
+  setFormValidators() {
+    const minMaxValidators =
+      this.activePaymentType !== PAYMENT_TYPE.CREDIT
+        ? [amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme)]
+        : [amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime)];
+
+    this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
+      const sourceAcc = this.detailsForm.get('sourceAccount').value;
+      this.detailsForm.controls['mainSelect'].clearValidators();
+      this.detailsForm.controls['mainSelect'].setErrors(null);
+      this.resolveCVVValidators(sourceAcc);
+
+      if (sourceAcc === 'newCreditCard') {
+        this.detailsForm.reset();
+        const paymentSystem = this.getSettingByName(
+          this.depositSettings,
+          Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE.split('.')[2]
+        );
+
+        if (parseInt(paymentSystem) === PAYMENT_SYSTEM_TYPE.MONETRA) {
+          this.router.navigate([PATRON_NAVIGATION.accounts, LOCAL_ROUTING.addCreditCard]);
+          return;
+        }
+
+        return from(this.externalPaymentService.addUSAePayCreditCard())
+          .pipe(
+            switchMap(({ success, errorMessage }) => {
+              if (!success) {
+                return throwError(errorMessage);
+              }
+
+              this.loadingService.showSpinner();
+              return this.depositService.getUserAccounts();
+            }),
+            take(1)
+          )
+          .subscribe(() => {}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
+      }
+
+      if (data) {
+        this.detailsForm.controls['mainInput'].setValidators([
+          Validators.required,
+          ...minMaxValidators,
+          Validators.pattern(CURRENCY_REGEXP),
+        ]);
+      } else {
+        this.detailsForm.controls['mainSelect'].setValidators([Validators.required]);
+        this.mainFormInput.clearValidators();
+        this.mainFormInput.setErrors(null);
+        this.resetControls(['mainSelect', 'mainInput']);
+      }
+      this.detailsForm.controls['mainSelect'].setValue(0);
+    });
   }
 
   get controlsNames() {
@@ -206,11 +266,21 @@ export class GuestAddFundsComponent implements OnInit {
     return true;
   }
   
+  get isCVVfieldShow(): boolean {
+    const sourceAcc = this.detailsForm.get('sourceAccount').value;
+
+    return (
+      sourceAcc &&
+      (sourceAcc !== PAYMENT_TYPE.BILLME || sourceAcc !== 'newCreditCard') &&
+      sourceAcc.accountType === ACCOUNT_TYPES.charge &&
+      sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY
+    );
+  }
+
   private getAccounts() {
     const subscription = this.depositService.getUserSettings(requiredSettings)
       .pipe(
         map(settings => {
-          console.log('Setting: ', settings)
           const depositTenders = this.getSettingByName(settings, Settings.Setting.DEPOSIT_TENDERS.split('.')[2]);
           return {
             depositTenders: parseArrayFromString(depositTenders)
@@ -257,5 +327,23 @@ export class GuestAddFundsComponent implements OnInit {
     controlNames.forEach(
       controlName => this.detailsForm.contains(controlName) && this.detailsForm.get(controlName).reset()
     );
+  }
+
+  private async onErrorRetrieve(message: string) {
+    await this.toastService.showToast({ message, duration: 5000 });
+  }
+
+  private resolveCVVValidators(sourceAcc: UserAccount | number) {
+    if (sourceAcc !== PAYMENT_TYPE.BILLME && this.isCVVfieldShow) {
+      this.detailsForm.controls['fromAccountCvv'].setValidators([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.pattern('[0-9.-]*'),
+      ]);
+      this.detailsForm.controls['fromAccountCvv'].reset();
+      return;
+    }
+    this.detailsForm.controls['fromAccountCvv'].setErrors(null);
+    this.detailsForm.controls['fromAccountCvv'].clearValidators();
   }
 }
