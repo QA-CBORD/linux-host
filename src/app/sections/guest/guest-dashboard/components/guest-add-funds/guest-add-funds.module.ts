@@ -16,6 +16,9 @@ import { OrderingApiService } from '@sections/ordering/services/ordering.api.ser
 import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { DestinationAccountDisplayModule } from '@sections/accounts/pages/deposit-page/pipes/destination-account-display.module';
 import { AccountService } from '@sections/accounts/services/accounts.service';
+import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
+import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
+import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
 
 const imports = [
   CommonModule,
@@ -33,6 +36,7 @@ const imports = [
     },
   ]),
   DepositModalModule,
+  ConfirmDepositPopoverModule,
   StButtonModule,
   AccessibleSelectModule,
   StSelectFloatingLabelModule,
@@ -42,10 +46,12 @@ const imports = [
 
 const declarations = [GuestAddFundsComponent];
 const providers = [AccountService, DepositService, MerchantService, OrderingApiService, CartService];
+const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
 
 @NgModule({
   declarations,
   imports: [imports],
   providers,
+  entryComponents
 })
 export class GuestAddFundsModule {}

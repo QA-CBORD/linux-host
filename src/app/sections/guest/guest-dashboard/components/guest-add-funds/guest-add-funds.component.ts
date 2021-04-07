@@ -1,21 +1,28 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Browser } from '@capacitor/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
+import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { ApplePayResponse } from '@core/provider/native-provider/native.provider';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { parseArrayFromString } from '@core/utils/general-helpers';
-import { CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
-import { ACCOUNT_TYPES, LOCAL_ROUTING, PAYMENT_SYSTEM_TYPE, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
+import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
+import { ModalController, PopoverController } from '@ionic/angular';
+import { ACCOUNTS_VALIDATION_ERRORS, CONTENT_STRINGS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositService } from '@sections/accounts/services/deposit.service';
+import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
+import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { MerchantAccountInfoList } from '@sections/ordering';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { from, iif, Observable, Subscription, throwError } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { from, Observable, of, Subscription, throwError } from 'rxjs';
+import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, PATRON_NAVIGATION, Settings } from 'src/app/app.global';
 
 enum GUEST_FORM_CONTROL_NAMES {
@@ -74,7 +81,9 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly router: Router,
     private externalPaymentService: ExternalPaymentService,
     private readonly loadingService: LoadingService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly modalController: ModalController,
+    private readonly popoverCtrl: PopoverController,
   ) {}
 
   ngOnInit() {
@@ -95,6 +104,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   ionViewWillEnter() {
     this.getAccounts();
+    this.setFormValidators();
     this.cdRef.detectChanges();
   }
 
@@ -110,7 +120,6 @@ export class GuestAddFundsComponent implements OnInit {
       [GUEST_FORM_CONTROL_NAMES.amountToDeposit]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.mainInput]: [''],
     });
-    //this.setFormValidators();
   }
 
   onPaymentChanged({ target }) {
@@ -133,14 +142,13 @@ export class GuestAddFundsComponent implements OnInit {
 
   setFormValidators() {
     const minMaxValidators = [
-      amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime),
+      amountRangeValidator(+this.minMaxOfAmounts.minAmountOneTime, +this.minMaxOfAmounts.maxAmountOneTime),
     ];
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
-      const sourceAcc = this.detailsForm.get('sourceAccount').value;
+      const sourceAcc = this.detailsForm.get('paymentMethod').value;
       this.detailsForm.controls['amountToDeposit'].clearValidators();
       this.detailsForm.controls['amountToDeposit'].setErrors(null);
-      this.resolveCVVValidators(sourceAcc);
 
       if (sourceAcc === 'newCreditCard') {
         this.detailsForm.reset();
@@ -148,11 +156,6 @@ export class GuestAddFundsComponent implements OnInit {
           this.depositSettings,
           Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE.split('.')[2]
         );
-
-        if (parseInt(paymentSystem) === PAYMENT_SYSTEM_TYPE.MONETRA) {
-          this.router.navigate([PATRON_NAVIGATION.accounts, LOCAL_ROUTING.addCreditCard]);
-          return;
-        }
 
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
@@ -185,6 +188,112 @@ export class GuestAddFundsComponent implements OnInit {
     });
   }
 
+  onFormSubmit() {
+    if ((this.detailsForm && this.detailsForm.invalid) || this.isDepositing) return;
+    this.isDepositing = true;
+    const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.detailsForm.value;
+    const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
+    const isApplePay: boolean = sourceAccount.accountType === AccountType.APPLEPAY;
+    const depositReviewBillMe = this.depositService.getContentValueByName(
+      CONTENT_STRINGS.billMeDepositReviewInstructions
+    );
+    const depositReviewCredit = this.depositService.getContentValueByName(
+      CONTENT_STRINGS.creditDepositReviewInstructions
+    );
+
+    let amount = mainInput || mainSelect;
+    amount = amount.toString().replace(COMMA_REGEXP, '');
+    if (isApplePay) {
+      Browser.addListener('browserFinished', (info: any) => {
+        this.isDepositing = false;
+        this.cdRef.detectChanges();
+        Browser.removeAllListeners();
+      });
+
+      this.externalPaymentService
+        .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
+          accountId: selectedAccount.id,
+          depositAmount: amount,
+        })
+        .then((result: ApplePayResponse) => {
+          if (result.success) {
+            this.finalizeDepositModal(result);
+          } else {
+            this.onErrorRetrieve(result.errorMessage);
+          }
+        })
+        .catch(async error => {
+          this.onErrorRetrieve('Something went wrong, please try again...');
+        })
+        .finally(() => {
+          this.isDepositing = false;
+        });
+    } else {
+      of(sourceAccount)
+        .pipe(
+          switchMap(
+            (sourceAcc): any => {
+              const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
+                sourceAcc.id,
+                selectedAccount.id,
+                amount
+              );
+
+              return calculateDepositFee.pipe(
+                map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
+              );
+            }
+          ),
+          take(1)
+        )
+        .subscribe(
+          info => this.confirmationDepositPopover({ ...info as {}, depositReviewBillMe, depositReviewCredit }),
+          () => {
+            this.loadingService.closeSpinner();
+            this.onErrorRetrieve('Something went wrong, please try again...');
+            this.isDepositing = false;
+          }
+        );
+    }
+  }
+  
+  async confirmationDepositPopover(data: any) {
+    const popover = await this.popoverCtrl.create({
+      component: ConfirmDepositPopoverComponent,
+      componentProps: {
+        data,
+      },
+      animated: false,
+      backdropDismiss: false,
+    });
+
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === BUTTON_TYPE.OKAY) {
+        this.loadingService.showSpinner();
+        this.depositService
+          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, null) // TODO: Check CVV Value
+          .pipe(
+            handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
+            take(1),
+            finalize(() => {
+              this.loadingService.closeSpinner();
+              this.isDepositing = false;
+            })
+          )
+          .subscribe(
+            () => this.finalizeDepositModal(data),
+            error => this.onErrorRetrieve(error || 'Your information could not be verified.')
+          );
+      }
+      if (role === BUTTON_TYPE.CANCEL) {
+        this.isDepositing = false;
+        this.cdRef.detectChanges();
+      }
+    });
+
+    return await popover.present();
+  }
+  
   get controlsNames() {
     return GUEST_FORM_CONTROL_NAMES;
   }
@@ -209,7 +318,7 @@ export class GuestAddFundsComponent implements OnInit {
     return this.isFreeFromDepositEnabled$;
   }
 
-  get minMaxOfAmmounts() {
+  get minMaxOfAmounts() {
     const minAmountOneTime = this.getSettingByName(
       this.depositSettings,
       Settings.Setting.CREDITCARD_AMOUNT_MIN.split('.')[2]
@@ -240,17 +349,6 @@ export class GuestAddFundsComponent implements OnInit {
 
   get isCreditCardPaymentTypesEnabled(): boolean {
     return true;
-  }
-
-  get isCVVfieldShow(): boolean {
-    const sourceAcc = this.detailsForm.get('sourceAccount').value;
-
-    return (
-      sourceAcc &&
-      sourceAcc !== 'newCreditCard' &&
-      sourceAcc.accountType === ACCOUNT_TYPES.charge &&
-      sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY
-    );
   }
 
   get amountsForSelect$() {
@@ -332,17 +430,19 @@ export class GuestAddFundsComponent implements OnInit {
     await this.toastService.showToast({ message, duration: 5000 });
   }
 
-  private resolveCVVValidators(sourceAcc: UserAccount | number) {
-    if (this.isCVVfieldShow) {
-      this.detailsForm.controls['fromAccountCvv'].setValidators([
-        Validators.required,
-        Validators.minLength(3),
-        Validators.pattern('[0-9.-]*'),
-      ]);
-      this.detailsForm.controls['fromAccountCvv'].reset();
-      return;
-    }
-    this.detailsForm.controls['fromAccountCvv'].setErrors(null);
-    this.detailsForm.controls['fromAccountCvv'].clearValidators();
+  private async finalizeDepositModal(data): Promise<void> {
+    const modal = await this.modalController.create({
+      component: DepositModalComponent,
+      animated: true,
+      componentProps: {
+        data,
+      },
+    });
+    modal.onDidDismiss().then(() => {
+      this.detailsForm.reset();
+      this.router.navigate([PATRON_NAVIGATION.accounts]);
+    });
+
+    await modal.present();
   }
 }

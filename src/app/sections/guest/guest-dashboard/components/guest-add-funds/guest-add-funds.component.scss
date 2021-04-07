@@ -36,7 +36,7 @@
 
     &--focus {
       color: #000;
-      border-bottom: 2px solid $color-dodger-blue !important;
+      border-bottom: 4px solid $color-dodger-blue !important;
     }
 
     &--error {
@@ -59,7 +59,7 @@
       font-size: 70%;
       position: relative;
       left: 5px;
-      bottom: 10px;
+      bottom: 0px;
     }
   }
 
@@ -76,7 +76,7 @@
     // background: url('/assets/icon/img/angle-down.svg') no-repeat 92% center !important;
     padding: 30px 15px;
 
-    @include font-nunito-heavy(16px);
+    @include font-nunito-regular(16px);
   }
 
   &__label-select {
@@ -85,28 +85,7 @@
     position: absolute;
     left: 16px;
     top: 10px;
-
     @include font-nunito-semibold(14px);
-  }
-
-  &__label-cvv {
-    position: relative;
-    height: 80px;
-    display: flex;
-    border-bottom: 1px solid $color-whisper;
-  }
-
-  &__input-cvv {
-    --padding-start: 16px;
-
-    &--error {
-      position: absolute;
-      left: 16px;
-      top: 55px;
-      color: $color-alizarin;
-
-      @include font-nunito-heavy(14px);
-    }
   }
   
   &__footer {
@@ -119,4 +98,9 @@
 
 ion-label {
   @include font-nunito-regular(16px);
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
