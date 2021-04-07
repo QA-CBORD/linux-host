@@ -13,10 +13,9 @@ import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-flo
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { CartService, MerchantService } from '@sections/ordering';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
-import { DepositModule } from '@sections/accounts/pages/deposit-page/deposit.module';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { AccountsService } from '@sections/dashboard/services';
-import { TransactionUnitsPipe } from '@shared/pipes/transaction-units/transaction-units.pipe';
+import { DestinationAccountDisplayModule } from '@sections/accounts/pages/deposit-page/pipes/destination-account-display.module';
 
 const imports = [
   CommonModule,
@@ -36,7 +35,9 @@ const imports = [
   DepositModalModule,
   StButtonModule,
   AccessibleSelectModule,
-  StSelectFloatingLabelModule
+  StSelectFloatingLabelModule,
+  DestinationAccountDisplayModule,
+  TransactionUnitsPipeModule
 ];
 
 const declarations = [GuestAddFundsComponent];
@@ -44,7 +45,7 @@ const providers = [AccountsService, DepositService, MerchantService, OrderingApi
 
 @NgModule({
   declarations,
-  providers,
   imports: [imports],
+  providers,
 })
 export class GuestAddFundsModule {}

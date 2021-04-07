@@ -35,7 +35,6 @@ const requiredSettings = [
   Settings.Setting.CREDITCARD_AMOUNT_MAX,
 ];
 
-
 @Component({
   selector: 'st-guest-add-funds',
   templateUrl: './guest-add-funds.component.html',
@@ -207,11 +206,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   get isFreeFormEnabled$(): Observable<boolean> {
-    return iif(
-      () => this.activePaymentType === PAYMENT_TYPE.BILLME,
-      this.isFreeFromDepositEnabled$,
-      this.isFreeFromDepositEnabled$
-    );
+    return this.isFreeFromDepositEnabled$;
   }
 
   get minMaxOfAmmounts() {
