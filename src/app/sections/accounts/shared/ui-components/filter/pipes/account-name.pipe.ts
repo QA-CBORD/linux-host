@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { ALL_ACCOUNTS, CONTENT_STRINGS } from '@sections/accounts/accounts.config';
 import { TransactionService } from '@sections/accounts/services/transaction.service';
 
@@ -10,7 +10,7 @@ import { TransactionService } from '@sections/accounts/services/transaction.serv
 })
 export class AccountNamePipe implements PipeTransform {
   constructor(
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly transactionsService: TransactionService
   ) {
     this.setContentStrings();

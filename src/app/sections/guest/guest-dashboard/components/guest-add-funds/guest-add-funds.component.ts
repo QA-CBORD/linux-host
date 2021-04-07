@@ -253,6 +253,23 @@ export class GuestAddFundsComponent implements OnInit {
     );
   }
 
+  get amountsForSelect$() {
+    return this.oneTimeAmounts$;
+  }
+ 
+  get oneTimeAmounts$(): Observable<string[]> {
+    return this.depositService
+    .getUserSettings(requiredSettings).pipe(
+      map(settings => {
+        const settingInfo = this.depositService.getSettingByName(
+          settings,
+          Settings.Setting.PRESET_DEPOSIT_AMOUNTS_CREDITCARD.split('.')[2]
+        );
+
+        return settingInfo ? parseArrayFromString(settingInfo.value) : [];
+      })
+    );
+  }
   private initContentStrings() {
     this.topLabel =
       'You are deposting to the account of {{ James Demo }}. If this is incorrect, go back to to Step 1 to identify the recipient';

@@ -6,7 +6,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from 'src/app/sections/accounts/shared/ui-components/filter/date-util';
 import { Settings } from 'src/app/app.global';
 import { TransactionHistory } from '@sections/dashboard/models';
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { TransactionResponse } from '@core/model/account/transaction-response.model';
 import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
@@ -34,7 +34,7 @@ export class TransactionService {
   );
 
   constructor(
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly commerceApiService: CommerceApiService,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,

@@ -1,7 +1,7 @@
 import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, zip } from 'rxjs';
-import { AccountsService } from '../services/accounts.service';
+import { AccountService } from '../services/accounts.service';
 import { ALL_ACCOUNTS, TIME_PERIOD } from '../accounts.config';
 import { UserAccount } from '@core/model/account/account.model';
 import { finalize, switchMap } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { Settings } from '../../../app.global';
 export class AccountsPageResolver
   implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
   constructor(
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly transactionService: TransactionService,
     private readonly loadingService: LoadingService,
   ) {

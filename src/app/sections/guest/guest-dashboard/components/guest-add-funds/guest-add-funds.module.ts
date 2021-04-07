@@ -14,8 +14,8 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 import { CartService, MerchantService } from '@sections/ordering';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
-import { AccountsService } from '@sections/dashboard/services';
 import { DestinationAccountDisplayModule } from '@sections/accounts/pages/deposit-page/pipes/destination-account-display.module';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 
 const imports = [
   CommonModule,
@@ -41,7 +41,7 @@ const imports = [
 ];
 
 const declarations = [GuestAddFundsComponent];
-const providers = [AccountsService, DepositService, MerchantService, OrderingApiService, CartService];
+const providers = [AccountService, DepositService, MerchantService, OrderingApiService, CartService];
 
 @NgModule({
   declarations,

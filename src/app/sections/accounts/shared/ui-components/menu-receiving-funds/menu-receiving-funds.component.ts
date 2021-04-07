@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { AccountsService } from '../../../services/accounts.service';
+import { AccountService } from '../../../services/accounts.service';
 import { PATRON_NAVIGATION, Settings } from '../../../../../app.global';
 import { MENU_LIST_ITEMS, MENU_LIST_ROUTES } from './local.config';
 import { MenuReceivingFundsListItem } from '../../../models/menu-list-item';
@@ -21,7 +21,7 @@ export class MenuReceivingFundsComponent implements OnInit {
   menuItems$: Observable<MenuReceivingFundsListItem[]>;
   contentString: { [key: string]: string };
 
-  constructor(private readonly accountsService: AccountsService,
+  constructor(private readonly accountsService: AccountService,
               private readonly router: Router) {
   }
 

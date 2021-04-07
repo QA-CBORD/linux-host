@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { DateUtilObject, getUniquePeriodName } from '../date-util';
 import { ALL_ACCOUNTS, CONTENT_STRINGS, TIME_PERIOD } from '../../../../accounts.config';
 import { UserAccount } from 'src/app/core/model/account/account.model';
-import { AccountsService } from '../../../../services/accounts.service';
+import { AccountService } from '../../../../services/accounts.service';
 import { TransactionService } from '../../../../services/transaction.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
@@ -26,7 +26,7 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly transactionsService: TransactionService,
     private readonly globalNav: GlobalNavService
   ) {}
