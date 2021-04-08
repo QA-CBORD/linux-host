@@ -98,7 +98,7 @@
               (ionBlur)="focusLine = false; onAmountChanged($event)"
               (ionInput)="onAmountChanged($event)"
               (keydown)="formatInput($event)"
-              [formControlName]="mainInput"
+              formControlName="mainInput"
             ></ion-input>
             <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']" class="deposit__main-input--error">
               The maximum amount for a deposit is {{ mainFormInput.errors['maxLength'].max | transactionUnits}}

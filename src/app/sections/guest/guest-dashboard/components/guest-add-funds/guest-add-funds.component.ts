@@ -118,13 +118,13 @@ export class GuestAddFundsComponent implements OnInit {
       [GUEST_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.toAccount]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.amountToDeposit]: ['', Validators.required],
-      [GUEST_FORM_CONTROL_NAMES.mainInput]: [''],
+      [GUEST_FORM_CONTROL_NAMES.mainInput]: ['', Validators.required],
     });
   }
 
   onPaymentChanged({ target }) {
     this.defineDestAccounts(target.value);
-    this.resetControls(['amountToDeposit', 'mainInput', 'selectedAccount']);
+    this.resetControls(['amountToDeposit', this.controlsNames.mainInput, 'selectedAccount']);
     document.getElementById('depositBtnText').innerHTML = 'Deposit';
   }
 
@@ -132,30 +132,28 @@ export class GuestAddFundsComponent implements OnInit {
     const { value } = event.target;
     const index = value.indexOf('.');
     if (!NUM_COMMA_DOT_REGEXP.test(value)) {
-      this.detailsForm.get('mainInput').setValue(value.slice(0, value.length - 1));
+      this.mainFormInput.setValue(value.slice(0, value.length - 1));
     }
 
     if (index !== -1 && value.slice(index + 1).length > 1) {
-      this.detailsForm.get('mainInput').setValue(value.slice(0, index + 2));
+      this.mainFormInput.setValue(value.slice(0, index + 2));
     }
   }
 
   setFormValidators() {
+    console.log('setFormValidators')
     const minMaxValidators = [
       amountRangeValidator(+this.minMaxOfAmounts.minAmountOneTime, +this.minMaxOfAmounts.maxAmountOneTime),
     ];
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
+      console.log('Data coming: ', data)
       const sourceAcc = this.detailsForm.get('paymentMethod').value;
       this.detailsForm.controls['amountToDeposit'].clearValidators();
       this.detailsForm.controls['amountToDeposit'].setErrors(null);
 
       if (sourceAcc === 'newCreditCard') {
         this.detailsForm.reset();
-        const paymentSystem = this.getSettingByName(
-          this.depositSettings,
-          Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE.split('.')[2]
-        );
 
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
@@ -173,7 +171,7 @@ export class GuestAddFundsComponent implements OnInit {
       }
 
       if (data) {
-        this.detailsForm.controls['mainInput'].setValidators([
+        this.detailsForm.controls[this.controlsNames.mainInput].setValidators([
           Validators.required,
           ...minMaxValidators,
           Validators.pattern(CURRENCY_REGEXP),
@@ -182,7 +180,7 @@ export class GuestAddFundsComponent implements OnInit {
         this.detailsForm.controls['amountToDeposit'].setValidators([Validators.required]);
         this.mainFormInput.clearValidators();
         this.mainFormInput.setErrors(null);
-        this.resetControls(['amountToDeposit', 'mainInput']);
+        this.resetControls(['amountToDeposit', this.controlsNames.mainInput]);
       }
       this.detailsForm.controls['amountToDeposit'].setValue(0);
     });
