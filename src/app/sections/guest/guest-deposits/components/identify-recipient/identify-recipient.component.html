@@ -1,0 +1,106 @@
+<st-header
+  [isTitleShow]="true"
+  [isToolbarShow]="true"
+  backButtonIcon="close"
+  backButtonTitle=""
+  class="shadow-header"
+></st-header>
+<ion-content class="container ion-padding-top">
+  <div class="section ion-padding">
+    <label class="ion-margin section__title">Who is this deposit for?</label>
+    <ion-list class="ion-margin-top">
+      <ion-radio-group mode="md" [(ngModel)]="selectedRecipient">
+        <ion-item lines="full">
+          <ion-label>John Doe</ion-label>
+          <ion-radio slot="start" mode="md" slot="start" value="biff"></ion-radio>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>{{ someoneElseRecipient.firstName + ' ' + someoneElseRecipient.lastNam }}</ion-label>
+          <ion-radio slot="start" mode="md" slot="start" [value]="someoneElseRecipient"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+  </div>
+  <div class="section ion-padding ion-margin-top" *ngIf="selectedRecipient === someoneElseRecipient">
+    <label class="section__title ion-margin">Who is this deposit for?</label>
+    <form [formGroup]="newRecepientForm">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <st-input-floating-label
+              class="form__control"
+              [label]="'first name'"
+              [formControlName]="newRecepientFormRef.firstName.fieldName"
+              [control]="newRecepientFormRef.firstName.control"
+              [isError]="
+                newRecepientFormRef.firstName.control.errors &&
+                (newRecepientFormRef.firstName.control.dirty || newRecepientFormRef.firstName.control.touched)
+              "
+              [stFocusNext]="lastName"
+              tabindex="0"
+            >
+            </st-input-floating-label>
+          </ion-col>
+          <ion-col>
+            <st-input-floating-label
+              #lastName
+              class="form__control"
+              [label]="'last name'"
+              [formControlName]="newRecepientFormRef.lastName.fieldName"
+              [control]="newRecepientFormRef.lastName.control"
+              [isError]="
+                newRecepientFormRef.lastName.control.errors &&
+                (newRecepientFormRef.lastName.control.dirty || newRecepientFormRef.lastName.control.touched)
+              "
+              [stFocusNext]="recipientId"
+              tabindex="0"
+            >
+            </st-input-floating-label>
+          </ion-col>
+          <ion-col size="12" class="ion-padding-vertical">
+            <st-input-floating-label
+              #recipientId
+              class="form__control"
+              [label]="'ID'"
+              [formControlName]="newRecepientFormRef.lastName.fieldName"
+              [control]="newRecepientFormRef.lastName.control"
+              [isError]="
+                newRecepientFormRef.lastName.control.errors &&
+                (newRecepientFormRef.lastName.control.dirty || newRecepientFormRef.lastName.control.touched)
+              "
+              [stFocusNext]="dob"
+              tabindex="0"
+            >
+            </st-input-floating-label>
+          </ion-col>
+          <ion-col size="6">
+            <st-input-floating-label
+              #dob
+              class="form__control"
+              [label]="'DoB'"
+              [formControlName]="newRecepientFormRef.lastName.fieldName"
+              [control]="newRecepientFormRef.lastName.control"
+              [isError]="
+                newRecepientFormRef.lastName.control.errors &&
+                (newRecepientFormRef.lastName.control.dirty || newRecepientFormRef.lastName.control.touched)
+              "
+              tabindex="0"
+            >
+            </st-input-floating-label>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </form>
+    <ion-list class="ion-margin-top ion-padding-horizontal">
+      <ion-item lines="full">
+        <ion-label>Save this person?</ion-label>
+        <ion-checkbox slot="start" mode="md" [(ngModel)]="saveNewRecipient"></ion-checkbox>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
+<ion-footer class="ion-padding footer" no-border>
+  <st-button buttonModifier="rectangle" (onClick)="continue()" tabindex="0">
+    Continue
+  </st-button>
+</ion-footer>

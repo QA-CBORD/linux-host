@@ -104,7 +104,6 @@ export namespace Settings {
     REPORT_FOUND_CARD_ENABLED = 'get.feature.enable_found_card',
     STANDARD_REGISTRATION_LINK = 'get.feature.standard_registration_link',
     ANDROID_MOBILE_CREDENTIAL_ENABLED = 'get.feature.enable_android_mobile_credentials',
-    INSTITUTION_GUEST_LOGIN_ENABLED = 'get.feature.guest_login'
   }
 }
 
@@ -176,8 +175,8 @@ export namespace User {
 
   export enum NotificationType {
     EMAIL = 1,
-    PHONE ,
-    PUSH_NOTIFICATION = 8
+    PHONE,
+    PUSH_NOTIFICATION = 8,
   }
 
   export enum Settings {
@@ -185,14 +184,15 @@ export namespace User {
     QUICK_AMOUNT = 'quick_amount',
     MOBILE_ACCESS_FAVORITES = 'mobileaccess_favorites',
     DEFAULT_ADDRESS = 'defaultaddress',
-    MOBILE_CREDENTIAL_ID = 'mobileCredentialID'
+    MOBILE_CREDENTIAL_ID = 'mobileCredentialID',
+    GUEST_DEPOSIT_RECIPIENTS = 'get.deposit.guest.recipients',
   }
 }
 
 export enum ROLES {
   guest = 'guest',
   patron = 'patron',
-  anonymous = 'anonymous'
+  anonymous = 'anonymous',
 }
 
 export enum PATRON_NAVIGATION {
@@ -214,10 +214,8 @@ export enum GUEST_NAVIGATION {
   ordering = 'guest/ordering',
   deposit = 'guest/deposit',
   settings = 'guest/settings',
-  registration = 'guest/registration'
+  registration = 'guest/registration',
 }
-
-
 
 export enum LoginType {
   FACEID = 'FACEID',
