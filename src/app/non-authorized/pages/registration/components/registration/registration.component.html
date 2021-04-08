@@ -10,13 +10,13 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content >
+<ion-content>
   <div class="container" *ngIf="registrationFormGroup">
     <form class="container__form" [formGroup]="registrationFormGroup">
       <div class="container__form__first-section" *ngIf="firstNameField && lastNameField">
-        <table class="tableClass">
-          <tr>
-            <td>
+        <ion-grid class="tableClass">
+          <ion-row>
+            <ion-col>
               <st-input-floating-label
                 [label]="firstNameField.label"
                 [formControlName]="firstNameField.name"
@@ -27,8 +27,8 @@
                 enterkeyhint="go"
                 tabindex="0"
               ></st-input-floating-label>
-            </td>
-            <td>
+            </ion-col>
+            <ion-col>
               <st-input-floating-label
                 [label]="lastNameField.label"
                 [formControlName]="lastNameField.name"
@@ -39,9 +39,9 @@
                 enterkeyhint="go"
                 tabindex="0"
               ></st-input-floating-label>
-            </td>
-          </tr>
-        </table>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </div>
       <div class="container__form__controls">
         <div

@@ -25,7 +25,9 @@ export class RegistrationComponent implements OnInit {
   btnText$: Observable<string>;
   passwordValidators: ValidationController[] = [];
   allFields: Field[] = [];
-
+  firstNameField: formField;
+  lastNameField: formField;
+  passwordField: formField;
   protected customLoadingOptions = { message: 'Processing... Please wait', duration: 150000 };
 
   constructor(
@@ -61,20 +63,14 @@ export class RegistrationComponent implements OnInit {
     });
     this.horizontalFields = formFieldList.horizontalAlignedFields;
     this.formFields = formFieldList.verticalAlignedFields;
+    this.initializeFields();
   }
 
-  get firstNameField(): formField {
-    const { firstName } = STATICFIELDS;
-    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == firstName.idd);
-  }
-
-  get lastNameField(): formField {
-    const { lastName } = STATICFIELDS;
-    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
-  }
-
-  get passwordField(): Field {
-    return this.formFields.find(({ name: fieldName }) => fieldName == STATICFIELDS.password);
+  initializeFields(): void {
+    const { firstName, lastName, password } = STATICFIELDS;
+    this.firstNameField = this.horizontalFields.find(({ idd: fieldName }) => fieldName == firstName.idd);
+    this.lastNameField = this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
+    this.passwordField = this.formFields.find(({ name: fieldName }) => fieldName == password);
   }
 
   get disabled(): boolean {
