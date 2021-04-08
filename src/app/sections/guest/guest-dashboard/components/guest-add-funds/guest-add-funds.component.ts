@@ -41,7 +41,6 @@ const requiredSettings = [
   Settings.Setting.CREDITCARD_AMOUNT_MIN,
   Settings.Setting.CREDITCARD_AMOUNT_MAX,
 ];
-
 @Component({
   selector: 'st-guest-add-funds',
   templateUrl: './guest-add-funds.component.html',
@@ -58,6 +57,10 @@ export class GuestAddFundsComponent implements OnInit {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
+
+  newCreditCard = {
+    newCreditCard: 'newCreditCard'
+  }
 
   isDepositing: boolean = false;
   detailsForm: FormGroup;
@@ -83,7 +86,7 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly modalController: ModalController,
-    private readonly popoverCtrl: PopoverController,
+    private readonly popoverCtrl: PopoverController
   ) {}
 
   ngOnInit() {
@@ -94,7 +97,7 @@ export class GuestAddFundsComponent implements OnInit {
       .pipe(take(1))
       .subscribe(result => {
         this.depositSettings = result;
-        console.log(`required settings: ${result}`)
+        console.log(`required settings: ${result}`);
       });
 
     this.initForm();
@@ -104,8 +107,11 @@ export class GuestAddFundsComponent implements OnInit {
 
   ionViewWillEnter() {
     this.getAccounts();
-    this.setFormValidators();
     this.cdRef.detectChanges();
+  }
+
+  ionViewDidEnter() {
+    this.setFormValidators();
   }
 
   ngOnDestroy() {
@@ -122,11 +128,19 @@ export class GuestAddFundsComponent implements OnInit {
     });
   }
 
-  onPaymentChanged({ target }) {
-    this.defineDestAccounts(target.value);
-    this.resetControls(['amountToDeposit', this.controlsNames.mainInput, 'selectedAccount']);
-    document.getElementById('depositBtnText').innerHTML = 'Deposit';
+  async onPaymentChanged(target) {
+    console.log('Target ', target)
+    this.defineDestAccounts(target);
+    console.log('onPaymentChanged?')
+    this.setFormValidators();
+    this.resetControls([
+      this.controlsNames.amountToDeposit,
+      this.controlsNames.mainInput,
+      this.controlsNames.toAccount,
+    ]);
+    console.log('onPaymentChanged')
   }
+
 
   formatInput(event) {
     const { value } = event.target;
@@ -141,27 +155,31 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   setFormValidators() {
-    console.log('setFormValidators')
-    const minMaxValidators = [
-      amountRangeValidator(+this.minMaxOfAmounts.minAmountOneTime, +this.minMaxOfAmounts.maxAmountOneTime),
-    ];
+    console.log('setFormValidators');
+    const minMaxValidators = [amountRangeValidator(5, 500)];
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
-      console.log('Data coming: ', data)
-      const sourceAcc = this.detailsForm.get('paymentMethod').value;
-      this.detailsForm.controls['amountToDeposit'].clearValidators();
-      this.detailsForm.controls['amountToDeposit'].setErrors(null);
+      console.log('Data coming: ', data);
+      const sourceAcc = this.paymentMethod.value;
+
+      console.log('sourceAcc: ', sourceAcc);
+
+      this.detailsForm.controls[this.controlsNames.amountToDeposit].clearValidators();
+      this.detailsForm.controls[this.controlsNames.amountToDeposit].setErrors(null);
+
+      console.log('onNewCreditCard?');
 
       if (sourceAcc === 'newCreditCard') {
-        this.detailsForm.reset();
+        console.log('Here?');
+        //this.detailsForm.reset();
 
+        console.log('onNewCreditCard');
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
             switchMap(({ success, errorMessage }) => {
               if (!success) {
                 return throwError(errorMessage);
               }
-
               this.loadingService.showSpinner();
               return this.depositService.getUserAccounts();
             }),
@@ -169,7 +187,6 @@ export class GuestAddFundsComponent implements OnInit {
           )
           .subscribe(() => {}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
       }
-
       if (data) {
         this.detailsForm.controls[this.controlsNames.mainInput].setValidators([
           Validators.required,
@@ -177,29 +194,30 @@ export class GuestAddFundsComponent implements OnInit {
           Validators.pattern(CURRENCY_REGEXP),
         ]);
       } else {
-        this.detailsForm.controls['amountToDeposit'].setValidators([Validators.required]);
+        this.detailsForm.controls[this.controlsNames.amountToDeposit].setValidators([Validators.required]);
         this.mainFormInput.clearValidators();
         this.mainFormInput.setErrors(null);
-        this.resetControls(['amountToDeposit', this.controlsNames.mainInput]);
+        this.resetControls([this.controlsNames.amountToDeposit, this.controlsNames.mainInput]);
       }
-      this.detailsForm.controls['amountToDeposit'].setValue(0);
+      this.detailsForm.controls[this.controlsNames.amountToDeposit].setValue(0);
     });
   }
 
   onFormSubmit() {
     if ((this.detailsForm && this.detailsForm.invalid) || this.isDepositing) return;
     this.isDepositing = true;
-    const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.detailsForm.value;
-    const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
-    const isApplePay: boolean = sourceAccount.accountType === AccountType.APPLEPAY;
-    const depositReviewBillMe = this.depositService.getContentValueByName(
-      CONTENT_STRINGS.billMeDepositReviewInstructions
-    );
+    const {
+      sourceAccount: paymentMethod,
+      selectedAccount: toAccount,
+      mainInput,
+      mainSelect: amountToDeposit,
+    } = this.detailsForm.value;
+    const isApplePay: boolean = paymentMethod.accountType === AccountType.APPLEPAY;
     const depositReviewCredit = this.depositService.getContentValueByName(
       CONTENT_STRINGS.creditDepositReviewInstructions
     );
 
-    let amount = mainInput || mainSelect;
+    let amount = mainInput || amountToDeposit;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {
       Browser.addListener('browserFinished', (info: any) => {
@@ -210,7 +228,7 @@ export class GuestAddFundsComponent implements OnInit {
 
       this.externalPaymentService
         .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
-          accountId: selectedAccount.id,
+          accountId: toAccount.id,
           depositAmount: amount,
         })
         .then((result: ApplePayResponse) => {
@@ -227,25 +245,25 @@ export class GuestAddFundsComponent implements OnInit {
           this.isDepositing = false;
         });
     } else {
-      of(sourceAccount)
+      of(paymentMethod)
         .pipe(
           switchMap(
-            (sourceAcc): any => {
+            (paymentMethod): any => {
               const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
-                sourceAcc.id,
-                selectedAccount.id,
+                paymentMethod.id,
+                toAccount.id,
                 amount
               );
 
               return calculateDepositFee.pipe(
-                map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
+                map(valueFee => ({ fee: valueFee, sourceAcc: paymentMethod, selectedAccount: toAccount, amount }))
               );
             }
           ),
           take(1)
         )
         .subscribe(
-          info => this.confirmationDepositPopover({ ...info as {}, depositReviewBillMe, depositReviewCredit }),
+          info => this.confirmationDepositPopover({ ...(info as {}), depositReviewCredit }),
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');
@@ -254,7 +272,7 @@ export class GuestAddFundsComponent implements OnInit {
         );
     }
   }
-  
+
   async confirmationDepositPopover(data: any) {
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
@@ -291,7 +309,7 @@ export class GuestAddFundsComponent implements OnInit {
 
     return await popover.present();
   }
-  
+
   get controlsNames() {
     return GUEST_FORM_CONTROL_NAMES;
   }
@@ -352,10 +370,9 @@ export class GuestAddFundsComponent implements OnInit {
   get amountsForSelect$() {
     return this.oneTimeAmounts$;
   }
- 
+
   get oneTimeAmounts$(): Observable<string[]> {
-    return this.depositService
-    .getUserSettings(requiredSettings).pipe(
+    return this.depositService.getUserSettings(requiredSettings).pipe(
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
@@ -402,13 +419,15 @@ export class GuestAddFundsComponent implements OnInit {
 
   private getSettingByName(settings, property: string) {
     const depositSetting = this.depositService.getSettingByName(settings, property);
-    return (depositSetting && depositSetting.value) || '';
+    return depositSetting.value;
   }
 
   private defineDestAccounts(target) {
+    console.log('defineDestAccounts: ', target)
     this.activePaymentType =
-      target instanceof Object ? PAYMENT_TYPE.CREDIT : typeof target === 'string' ? this.activePaymentType : target;
+      target instanceof Object ? PAYMENT_TYPE.CREDIT : target === 'newCreditCard' ? this.activePaymentType : target;
     this.destinationAccounts = this.creditCardDestinationAccounts;
+    console.log('activePaymentType ', this.activePaymentType)
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {
@@ -436,6 +455,7 @@ export class GuestAddFundsComponent implements OnInit {
         data,
       },
     });
+
     modal.onDidDismiss().then(() => {
       this.detailsForm.reset();
       this.router.navigate([PATRON_NAVIGATION.accounts]);

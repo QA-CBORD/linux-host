@@ -16,6 +16,7 @@
           [control]="paymentMethod"
           [isError]="paymentMethod.dirty || paymentMethod.touched"
           [interfaceOptions]="customActionSheetOptions"
+          (change)="onPaymentChanged($event)"
           class="deposit__select"
           interface="action-sheet"
           label="Payment Method"
@@ -37,7 +38,7 @@
                 {{ account | accountDisplay }}
               </ion-select-option>
             </ng-container>
-            <ion-select-option *ngIf="isCreditCardPaymentTypesEnabled" value="newCreditCard">
+            <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled">
               Add a Credit Card
             </ion-select-option>
           </ng-container>
