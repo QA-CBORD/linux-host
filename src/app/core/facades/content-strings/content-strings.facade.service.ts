@@ -2,15 +2,19 @@ import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { ContentStringsStateService } from '@core/states/content-strings/content-strings-state.service';
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
-import { Observable, of } from 'rxjs';
+import { combineLatest, iif, Observable, of, zip } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { catchError, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, combineAll, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from '../../../content-strings';
 import {
   ContentStringApi,
-  ContentStringCategory
+  ContentStringCategory,
+  ExtraContent,
 } from '@shared/model/content-strings/content-strings-api';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { PRIMARY_OUTLET } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +41,10 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     name: string
   ): Observable<ContentStringInfo | null> {
     return this.stateService.getContentString$(domain, category, name);
+  }
+
+  retrieveContentStringByConfig(config, sessionId?: string, useSessionId?: boolean): Observable<ContentStringInfo> {
+    return this.apiService.retrieveContentStringByConfig(config, sessionId, useSessionId);
   }
 
   getContentStrings$(
@@ -68,13 +76,39 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     );
   }
 
-  fetchContentStringModel<T extends ContentStringModel>(category: ContentStringCategory, extras?: any): Observable<T> {
-    const contentStringInfo = ContentStringApi[category];
-    return this.fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, contentStringInfo.category).pipe(
-      take(1),
-      map(data => contentStringInfo.toModel(data, extras) as T),
-      catchError(() => of(contentStringInfo.toModel(null, extras) as T))
+  fetchContentStringModel<T extends ContentStringModel>(
+    category: ContentStringCategory,
+    args: { data?: any; requests?: ContentStringRequest[] } = {}
+  ): Observable<T> {
+    const params = args.data;
+    const ContentStringBuilder = ContentStringApi[category];
+    const extraRequests = args.requests || [];
+    const requestList = extraRequests.map(req => this.retrieveContentStringByConfig({ ...req }).pipe(take(1)));
+
+    const contentsByCategory$ = this.fetchContentStringAfresh(
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      ContentStringBuilder.category
     );
+    const loadMultiple = requestList.length > 0;
+
+    const combined = zip(contentsByCategory$, combineLatest(requestList)).pipe(
+      map(([primary, secondary]) => {
+        const contentString = <T>ContentStringBuilder.build({
+          primary,
+          secondary,
+          params,
+        });
+        return contentString;
+      }),
+      catchError(() => of(<T>ContentStringBuilder.build({ params })))
+    );
+
+    const single = contentsByCategory$.pipe(
+      map(primary => <T>ContentStringBuilder.build({ primary, params })),
+      catchError(() => of(<T>ContentStringBuilder.build({ params })))
+    );
+
+    return iif(() => loadMultiple, combined, single);
   }
 
   fetchContentStringAfresh(

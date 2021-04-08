@@ -1,65 +1,60 @@
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
-import { Observable, of, zip } from 'rxjs';
-import { take, map, catchError } from 'rxjs/operators';
-import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
-import { buildPasswordValidators } from 'src/app/password-validation/models/input-validator.model';
+import { Observable, zip } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RegistrationService } from '../services/registration.service';
-import { rfStaticFields } from './form-controls.config';
+import { registrationFormStaticFields } from './registration-form-controls.config';
+import { PasswordValidationCsModel } from './password-validation.content.strings';
 import { RegistrationCsModel } from './registration-content-strings.model';
-import { FormFieldList, Field } from './registration-utils';
+import { FormFieldList, Field, RegistrationContentString, RegistrationData } from './registration-utils';
 
 export class UserRegistrationBase {
   constructor(protected backendService: RegistrationService) {}
 
-  getFormStrings(): Observable<RegistrationCsModel> {
-    const registrationString$ = this.backendService.getStringModel$<RegistrationCsModel>(ContentStringCategory.registration);
-    const validationString$ = this.backendService.getString$(CONTENT_STRINGS_CATEGORIES.passwordValidation).pipe(
-      take(1),
-      map(data => buildPasswordValidators(data)),
-      catchError(() => of(buildPasswordValidators()))
+  getFormStrings(): Observable<RegistrationContentString> {
+    const registrationString$ = this.backendService.getStringModel$<RegistrationCsModel>(
+      ContentStringCategory.registration
+    );
+    const passwordValidationString$ = this.backendService.getStringModel$<PasswordValidationCsModel>(
+      ContentStringCategory.passwordValidation
     );
 
-    return zip(registrationString$, validationString$).pipe(
-      map(([data, passwordValidators]) => {
-        data.passwordValidators = passwordValidators;
-        return data;
-      })
+    return zip(registrationString$, passwordValidationString$).pipe(
+      map(([registrationCs, passwordValidationCs]) => ({ registrationCs, passwordValidationCs }))
     );
   }
 
-  async getData(): Promise<{ fieldList: FormFieldList; regCsModel: RegistrationCsModel }> {
-    const regCsModel = await this.getFormStrings().toPromise();
-    const fieldList = await this.toFormFieldList(await this.formFieldsConfig(regCsModel));
-    return { fieldList, regCsModel };
+  async getData(): Promise<RegistrationData> {
+    const { passwordValidationCs, registrationCs } = await this.getFormStrings().toPromise();
+    const fieldList = await this.toFormFieldList(await this.formFieldsConfig(registrationCs));
+    return { fieldList, contentString: { passwordValidationCs, registrationCs } };
   }
 
   protected async toFormFieldList(formFields: Field[]): Promise<FormFieldList> {
-    const controls = {};
-    const horizontalAlignedFields: Field[] = [];
-    const verticalAlignedFields: Field[] = [];
-    formFields.forEach(field => {
-      if (field.alignHorizontal) {
-        horizontalAlignedFields.push(field);
-      } else {
-        verticalAlignedFields.push(field);
-      }
-      controls[field.name] = field.validators;
-    });
-
-    return {
-      horizontalAlignedFields,
-      verticalAlignedFields,
-      controls,
+    const initialState = {
+      horizontalAlignedFields: [],
+      verticalAlignedFields: [],
+      controls: {},
     };
+    return formFields.reduce<FormFieldList>(
+      (initial, elem) => ({
+        ...initial,
+        controls: { ...initial.controls, [elem.name]: elem.validators },
+        horizontalAlignedFields:
+          (elem.alignHorizontal && [...initial.horizontalAlignedFields, elem]) || initial.horizontalAlignedFields,
+        verticalAlignedFields:
+          (!elem.alignHorizontal && [...initial.verticalAlignedFields, elem]) || initial.verticalAlignedFields,
+      }),
+      initialState
+    );
   }
 
-  protected formFieldsConfig({ content }: RegistrationCsModel): Promise<Field[]> {
-    const formFields: Field[] = [];
-    Object.keys(rfStaticFields).forEach(key => {
-      const field = rfStaticFields[key].copy();
-      field.label = content[key];
-      formFields.push(field);
+  protected async formFieldsConfig(contentString: RegistrationCsModel): Promise<Field[]> {
+    const staticFieldsKeys = Object.keys(registrationFormStaticFields);
+    return staticFieldsKeys.map(key => {
+      const fieldCopy = registrationFormStaticFields[key].copy();
+      const newLabel = contentString.valueByKey(key) || fieldCopy.label;
+      fieldCopy.label = newLabel;
+      return fieldCopy;
     });
-    return Promise.resolve(formFields);
   }
 }

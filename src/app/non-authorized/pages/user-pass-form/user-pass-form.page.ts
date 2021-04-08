@@ -88,7 +88,7 @@ export class UserPassForm implements OnInit {
     this.asyncOnInit();
   }
 
-  async asyncOnInit():Promise<void>{
+  async asyncOnInit(): Promise<void> {
     await this.setLocalInstitutionInfo();
     // Announcing navigation meanwhile we find a generic way to do so.
     this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
@@ -100,13 +100,12 @@ export class UserPassForm implements OnInit {
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.signupEnabled$ = this.isSignupEnabled$();
     const data = this.messageProxy.get<any>();
-    this.navedAsGuest$ = of(data.navParams && data.navParams.asGuest);
+    this.navedAsGuest$ = of(data.navParams && data.navParams.isGuestUser);
     this.cdRef.detectChanges();
     this.initializeInstitutionInfo();
   }
 
   async initializeInstitutionInfo(): Promise<void> {
-    console.log('initializeInstitutionInfo')
     this.institutionPhoto$ = this.commonService.getInstitutionPhoto(true, this.sanitizer);
     this.nativeHeaderBg$ = this.commonService.getInstitutionBgColor();
     this.institutionName$ = this.commonService.getInstitutionName();
@@ -118,9 +117,9 @@ export class UserPassForm implements OnInit {
     this.appBrowser.create(link, '_system');
   }
 
-  async doHostedSignup({ asGuest: isGuestRegistration }): Promise<void> {
+  async doHostedSignup({ isGuestUser }): Promise<void> {
     this.loadingService.showSpinner();
-    await this.registrationFacade.registrationConfig(isGuestRegistration);
+    await this.registrationFacade.registrationConfig(isGuestUser);
     const modal = await this.modalCtrl.create({
       mode: 'ios',
       backdropDismiss: false,

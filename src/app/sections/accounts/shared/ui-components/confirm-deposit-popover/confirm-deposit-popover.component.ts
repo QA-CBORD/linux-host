@@ -1,9 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { ConfirmDepositCs, DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
-import { ConfirmDepositCsModel } from './confirm-deposit-content-string.model';
-
 @Component({
   selector: 'confirm-deposit-popover',
   templateUrl: './confirm-deposit-popover.component.html',
@@ -11,25 +9,28 @@ import { ConfirmDepositCsModel } from './confirm-deposit-content-string.model';
 })
 export class ConfirmDepositPopoverComponent implements OnInit {
   @Input() data: any;
-  @Input() contentString: ConfirmDepositCsModel;
+  @Input() contentString: ConfirmDepositCs = {} as any;
   popoverConfig: PopoverConfig<string | number>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.initPopover();
   }
 
   initPopover() {
+    const { title, lblOkButton, lblCancelButton } = this.contentString;
     this.popoverConfig = {
-      title: 'Confirm Deposit',
+      title: title,
       type: 'SUCCESS',
-      buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.OKAY, label: 'DEPOSIT' }],
+      buttons: [{ ...buttons.CANCEL, label: lblCancelButton }, { ...buttons.OKAY, label: lblOkButton }],
       message: this.data,
     };
   }
 
-  get showDepositInstructions(): boolean {
-    return (this.popoverConfig.message['billme'] ? this.data.depositReviewBillMe : this.data.depositReviewCredit);
+  get showDepositInstructions(): string {
+    return this.popoverConfig.message['billme']
+      ? this.contentString.depositReviewBillMe
+      : this.contentString.depositReviewCredit;
   }
 }

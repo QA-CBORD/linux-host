@@ -13,6 +13,7 @@ import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/con
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -69,9 +70,10 @@ export class RegistrationService {
     return this.contentStringFacade.fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, category);
   }
 
-  getStringModel$<T extends ContentStringModel>(category: ContentStringCategory, extras?: any): Observable<T> {
-    return this.contentStringFacade.fetchContentStringModel<T>(category, extras);
+  getStringModel$<T extends ContentStringModel>(category: ContentStringCategory, args: { data?: any; requests?: ContentStringRequest[] } = {}): Observable<T> {
+    return this.contentStringFacade.fetchContentStringModel<T>(category, args);
   }
+
 
   institition$(): Observable<Institution> {
     return this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));

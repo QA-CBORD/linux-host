@@ -20,7 +20,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   forgotPassword = 'forgot-password',
   changePassword = 'password-change',
   guestDashboard = 'guest-dashboard',
-  guestDepositConfirm = 'guest-deposit'
+  guestDeposit = 'guest-deposit',
+  deposit = 'deposit'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

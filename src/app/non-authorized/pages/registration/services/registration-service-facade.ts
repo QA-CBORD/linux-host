@@ -6,14 +6,14 @@ import { PreloginCsModel } from '../../pre-login/models/prelogin-content-strings
 import { GuestRegistration } from '../models/guest-registration';
 import { PatronRegistration } from '../models/patron-registration';
 import { RegistrationCsModel } from '../models/registration-content-strings.model';
-import { FormFieldList, UserRegistrationManager } from '../models/registration-utils';
+import { FormFieldList, RegistrationData, UserRegistrationManager } from '../models/registration-utils';
 import { RegistrationService } from './registration.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegistrationServiceFacade {
-  private data: { fieldList?: FormFieldList; regCsModel?: RegistrationCsModel } = {};
+  private data: RegistrationData = {} as any;
 
   private _registration: UserRegistrationManager;
   constructor(private readonly registrationService: RegistrationService) {}
@@ -30,12 +30,12 @@ export class RegistrationServiceFacade {
     return this.getPreloginContents(acuteCare).pipe(take(1));
   }
 
-  getData(): Promise<{ fieldList?: FormFieldList; regCsModel?: RegistrationCsModel }> {
+  getData(): Promise<RegistrationData> {
     return Promise.resolve(this.data);
   }
 
   private getPreloginContents(acuteCare): Observable<PreloginCsModel> {
-    return this.registrationService.getStringModel$(ContentStringCategory.preLogin, { acuteCare });
+    return this.registrationService.getStringModel$(ContentStringCategory.preLogin, { data: { acuteCare } });
   }
 
   submit(data): Observable<any> {

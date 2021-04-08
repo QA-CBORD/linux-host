@@ -25,10 +25,10 @@ export class GuestFacadeService {
     const guestLoginSettingsObs = this.authService.getGuestSettings();
     const contentStringObs = this.loadAllContentStrings();
     return zip(contentStringObs, guestLoginSettingsObs).pipe(
-      map(([csModel, guestSetting]) => {
+      map(([contentString, guestSetting]) => {
         return Object.keys(GuestDashboardSections)
           .map(itemkey => {
-            GuestDashboardSections[itemkey].title = csModel.content[itemkey];
+            GuestDashboardSections[itemkey].title = contentString.valueByKey(itemkey);
             return GuestDashboardSections[itemkey];
           })
           .filter(item => item.visibilityOn(guestSetting));
