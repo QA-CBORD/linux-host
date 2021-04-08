@@ -204,21 +204,25 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   onFormSubmit() {
+    console.log('onFormSubmit')
     if ((this.detailsForm && this.detailsForm.invalid) || this.isDepositing) return;
     this.isDepositing = true;
     const {
-      sourceAccount: paymentMethod,
-      selectedAccount: toAccount,
+      paymentMethod,
+      toAccount,
       mainInput,
-      mainSelect: amountToDeposit,
+      amountToDeposit,
     } = this.detailsForm.value;
+    console.log('detailsForm: ', this.detailsForm.value)
     const isApplePay: boolean = paymentMethod.accountType === AccountType.APPLEPAY;
-    const depositReviewCredit = this.depositService.getContentValueByName(
-      CONTENT_STRINGS.creditDepositReviewInstructions
-    );
+    console.log('isApplePay: ', isApplePay)
+    const depositReviewCredit = 'somethingllj;j;;n;kbl bgucrutdrdfytcgyiuvygivgyu'
+ 
 
     let amount = mainInput || amountToDeposit;
+    console.log('Amount?: ', amount)
     amount = amount.toString().replace(COMMA_REGEXP, '');
+    console.log('Amount: ', amount)
     if (isApplePay) {
       Browser.addListener('browserFinished', (info: any) => {
         this.isDepositing = false;
@@ -245,25 +249,33 @@ export class GuestAddFundsComponent implements OnInit {
           this.isDepositing = false;
         });
     } else {
+      console.log('Payment: ', paymentMethod)
       of(paymentMethod)
         .pipe(
           switchMap(
-            (paymentMethod): any => {
+            (sourceAcc): any => {
+              console.log('sourcAcct: ', sourceAcc)
               const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
-                paymentMethod.id,
+                sourceAcc.id,
                 toAccount.id,
                 amount
               );
 
               return calculateDepositFee.pipe(
-                map(valueFee => ({ fee: valueFee, sourceAcc: paymentMethod, selectedAccount: toAccount, amount }))
+                map(valueFee => { ({ fee: valueFee, sourceAcc: sourceAcc, selectedAccount: toAccount, amount: amountToDeposit, billme: false })
+               console.log('valueFee: ', valueFee)
+              })
               );
             }
           ),
           take(1)
         )
         .subscribe(
-          info => this.confirmationDepositPopover({ ...(info as {}), depositReviewCredit }),
+         
+          info => {
+            console.log('info: ', info)
+            this.confirmationDepositPopover({ ...(info), depositReviewCredit })
+          },
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');
@@ -287,7 +299,7 @@ export class GuestAddFundsComponent implements OnInit {
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
         this.depositService
-          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, null) // TODO: Check CVV Value
+          .deposit(data.paymentMethod.id, data.toAccount.id, data.amountToDeposit, null) // TODO: Check CVV Value
           .pipe(
             handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
             take(1),
