@@ -14,7 +14,7 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController, PopoverController } from '@ionic/angular';
-import { ACCOUNTS_VALIDATION_ERRORS, CONTENT_STRINGS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { ACCOUNTS_VALIDATION_ERRORS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
@@ -24,9 +24,7 @@ import { GUEST_ROUTES } from '@sections/section.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
-import { AccountType, DisplayName, PATRON_NAVIGATION, ROLES, Settings } from 'src/app/app.global';
-
-
+import { AccountType, DisplayName, ROLES, Settings } from 'src/app/app.global';
 
 enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -34,16 +32,6 @@ enum GUEST_FORM_CONTROL_NAMES {
   amountToDeposit = 'amountToDeposit',
   mainInput = 'mainInput',
 }
-
-const requiredSettings = [
-  Settings.Setting.DEPOSIT_TENDERS,
-  Settings.Setting.PAYMENT_TYPES,
-  Settings.Setting.FREEFORM_DEPOSIT_ENABLED,
-  Settings.Setting.PRESET_DEPOSIT_AMOUNTS_CREDITCARD,
-  Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE,
-  Settings.Setting.CREDITCARD_AMOUNT_MIN,
-  Settings.Setting.CREDITCARD_AMOUNT_MAX,
-];
 @Component({
   selector: 'st-guest-add-funds',
   templateUrl: './guest-add-funds.component.html',
@@ -95,19 +83,13 @@ export class GuestAddFundsComponent implements OnInit {
   ngOnInit() {
     this.accounts$ = this.depositService.getUserAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
-    // this.depositService
-    //   .getUserSettings(requiredSettings)
-    //   .pipe(take(1))
-    //   .subscribe(result => {
-    //     this.depositSettings = result;
-    //     console.log(`required settings: ${JSON.stringify(result)}`);
-    //   });
       this.activatedRoute.data.subscribe(
-        response => {
+       response => {
           console.log(`data settings: ${JSON.stringify( response.data.settings )}`);
           this.depositSettings = response.data.settings;
         }
       );
+
     this.initForm();
     this.initContentStrings();
     this.globalNav.hideNavBar();
@@ -369,7 +351,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   get isFreeFromDepositEnabled$(): Observable<boolean> {
-    return this.depositService.getUserSettings(requiredSettings).pipe(
+    return of(this.depositSettings).pipe(
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
@@ -390,7 +372,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   get oneTimeAmounts$(): Observable<string[]> {
-    return this.depositService.getUserSettings(requiredSettings).pipe(
+    return of(this.depositSettings).pipe(
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
@@ -407,8 +389,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   private getAccounts() {
-    const subscription = this.depositService
-      .getUserSettings(requiredSettings)
+    const subscription = of(this.depositSettings)
       .pipe(
         map(settings => {
           const depositTenders = this.getSettingByName(settings, Settings.Setting.DEPOSIT_TENDERS.split('.')[2]);
@@ -417,7 +398,7 @@ export class GuestAddFundsComponent implements OnInit {
           };
         }),
         switchMap(({ depositTenders }) =>
-          this.depositService.accounts$.pipe(
+          this.accounts$.pipe(
             tap(accounts => {
               this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
