@@ -144,7 +144,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   setFormValidators() {
     console.log('setFormValidators');
-    const minMaxValidators = [amountRangeValidator(5, 500)];
+    const minMaxValidators = [amountRangeValidator(+this.minMaxOfAmounts.minAmountOneTime, +this.minMaxOfAmounts.maxAmountOneTime)];
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
       console.log('Data coming: ', data);
