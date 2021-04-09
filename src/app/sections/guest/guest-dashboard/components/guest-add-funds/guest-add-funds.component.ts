@@ -13,18 +13,18 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
-import { IonButton, IonSelect, IonText, ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, CONTENT_STRINGS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { MerchantAccountInfoList } from '@sections/ordering';
-import { StButtonComponent } from '@shared/ui-components/st-button/st-button.component';
+import { GUEST_ROUTES } from '@sections/section.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
-import { AccountType, DisplayName, PATRON_NAVIGATION, Settings } from 'src/app/app.global';
+import { AccountType, DisplayName, PATRON_NAVIGATION, ROLES, Settings } from 'src/app/app.global';
 
 
 
@@ -294,14 +294,11 @@ export class GuestAddFundsComponent implements OnInit {
       animated: false,
       backdropDismiss: false,
     });
-      // fromAccountId: any, toAccountId: any, amount: any, fromAccountCvv: any
     popover.onDidDismiss().then(({ role }) => {
       console.log('onDidDismiss')
       if (role === BUTTON_TYPE.OKAY) {
         console.log('BUTTON_TYPE.OKAY')
         this.loadingService.showSpinner();
-
-        
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, null) // TODO: Check CVV Value
           .pipe(
@@ -474,10 +471,16 @@ export class GuestAddFundsComponent implements OnInit {
     });
 
     modal.onDidDismiss().then(() => {
+      console.log('onDidDimiss')
       this.detailsForm.reset();
-      this.router.navigate([PATRON_NAVIGATION.accounts]);
+      // this.resetControls([
+      //   this.controlsNames.amountToDeposit,
+      //   this.controlsNames.mainInput,
+      //   this.controlsNames.toAccount,
+      // ]);
+      this.router.navigate([ROLES.guest, GUEST_ROUTES.dashboard]);
+      console.log('PATRON_NAVIGATION.accounts')
     });
-
     await modal.present();
   }
 }
