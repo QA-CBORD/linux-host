@@ -17,8 +17,8 @@ import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { DestinationAccountDisplayModule } from '@sections/accounts/pages/deposit-page/pipes/destination-account-display.module';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
-import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
+import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 
 const imports = [
   CommonModule,

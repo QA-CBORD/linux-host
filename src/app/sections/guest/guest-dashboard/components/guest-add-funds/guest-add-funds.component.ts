@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Directive, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Browser } from '@capacitor/core';
@@ -13,17 +13,20 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { IonButton, IonSelect, IonText, ModalController, PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, CONTENT_STRINGS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { MerchantAccountInfoList } from '@sections/ordering';
+import { StButtonComponent } from '@shared/ui-components/st-button/st-button.component';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { from, Observable, of, Subscription, throwError } from 'rxjs';
+import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, PATRON_NAVIGATION, Settings } from 'src/app/app.global';
+
+
 
 enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -48,6 +51,9 @@ const requiredSettings = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuestAddFundsComponent implements OnInit {
+
+   depositButtonText: string = 'Deposit';
+  
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -57,10 +63,6 @@ export class GuestAddFundsComponent implements OnInit {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
-
-  newCreditCard = {
-    newCreditCard: 'newCreditCard'
-  }
 
   isDepositing: boolean = false;
   detailsForm: FormGroup;
@@ -129,18 +131,18 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async onPaymentChanged(target) {
-    console.log('Target ', target)
+    console.log('Target ', target);
     this.defineDestAccounts(target);
-    console.log('onPaymentChanged?')
+    console.log('onPaymentChanged?');
     this.setFormValidators();
     this.resetControls([
       this.controlsNames.amountToDeposit,
       this.controlsNames.mainInput,
       this.controlsNames.toAccount,
     ]);
-    console.log('onPaymentChanged')
+    console.log('onPaymentChanged');
+    this.depositButtonText = 'Deposit';
   }
-
 
   formatInput(event) {
     const { value } = event.target;
@@ -202,27 +204,27 @@ export class GuestAddFundsComponent implements OnInit {
       this.detailsForm.controls[this.controlsNames.amountToDeposit].setValue(0);
     });
   }
+   
+  onAmountChanged(event) {
+    console.log('onAmountChanged')
+    const amount: string = event.target.value;
+    this.depositButtonText = amount && amount.length ? 'Deposit $' + amount : 'Deposit';
+  }
 
   onFormSubmit() {
-    console.log('onFormSubmit')
+    console.log('onFormSubmit');
     if ((this.detailsForm && this.detailsForm.invalid) || this.isDepositing) return;
     this.isDepositing = true;
-    const {
-      paymentMethod,
-      toAccount,
-      mainInput,
-      amountToDeposit,
-    } = this.detailsForm.value;
-    console.log('detailsForm: ', this.detailsForm.value)
+    const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.detailsForm.value;
+    console.log('detailsForm: ', this.detailsForm.value);
     const isApplePay: boolean = paymentMethod.accountType === AccountType.APPLEPAY;
-    console.log('isApplePay: ', isApplePay)
-    const depositReviewCredit = 'somethingllj;j;;n;kbl bgucrutdrdfytcgyiuvygivgyu'
- 
-
+    console.log('isApplePay: ', isApplePay);
+    const depositReviewCredit = 'somethingllj;j;;n;kbl bgucrutdrdfytcgyiuvygivgyu';
+    const depositReviewBillMe = '';
     let amount = mainInput || amountToDeposit;
-    console.log('Amount?: ', amount)
+    console.log('Amount?: ', amount);
     amount = amount.toString().replace(COMMA_REGEXP, '');
-    console.log('Amount: ', amount)
+    console.log('Amount: ', amount);
     if (isApplePay) {
       Browser.addListener('browserFinished', (info: any) => {
         this.isDepositing = false;
@@ -236,7 +238,7 @@ export class GuestAddFundsComponent implements OnInit {
           depositAmount: amount,
         })
         .then((result: ApplePayResponse) => {
-          if (result.success) {
+          if (result.success) {0
             this.finalizeDepositModal(result);
           } else {
             this.onErrorRetrieve(result.errorMessage);
@@ -249,32 +251,29 @@ export class GuestAddFundsComponent implements OnInit {
           this.isDepositing = false;
         });
     } else {
-      console.log('Payment: ', paymentMethod)
-      of(paymentMethod)
+      console.log('Payment: ', paymentMethod);
+      iif(() => false, of(0), of(paymentMethod))
         .pipe(
           switchMap(
             (sourceAcc): any => {
-              console.log('sourcAcct: ', sourceAcc)
+              console.log('sourcAcct: ', sourceAcc);
               const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
                 sourceAcc.id,
                 toAccount.id,
                 amount
               );
 
-              return calculateDepositFee.pipe(
-                map(valueFee => { ({ fee: valueFee, sourceAcc: sourceAcc, selectedAccount: toAccount, amount: amountToDeposit, billme: false })
-               console.log('valueFee: ', valueFee)
-              })
+              return iif(() => false, of(0), calculateDepositFee).pipe(
+                map(valueFee => ({ fee: valueFee, sourceAcc: sourceAcc, selectedAccount: toAccount, amount: amount, billme: false }))
               );
             }
           ),
           take(1)
         )
         .subscribe(
-         
           info => {
-            console.log('info: ', info)
-            this.confirmationDepositPopover({ ...(info), depositReviewCredit })
+            console.log('info: ', info);
+            this.confirmationDepositPopover({ ...(info) as {}, depositReviewBillMe, depositReviewCredit });
           },
           () => {
             this.loadingService.closeSpinner();
@@ -286,6 +285,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async confirmationDepositPopover(data: any) {
+    console.log("This data: ", data)
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
@@ -294,16 +294,21 @@ export class GuestAddFundsComponent implements OnInit {
       animated: false,
       backdropDismiss: false,
     });
-
+      // fromAccountId: any, toAccountId: any, amount: any, fromAccountCvv: any
     popover.onDidDismiss().then(({ role }) => {
+      console.log('onDidDismiss')
       if (role === BUTTON_TYPE.OKAY) {
+        console.log('BUTTON_TYPE.OKAY')
         this.loadingService.showSpinner();
+
+        
         this.depositService
-          .deposit(data.paymentMethod.id, data.toAccount.id, data.amountToDeposit, null) // TODO: Check CVV Value
+          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, null) // TODO: Check CVV Value
           .pipe(
             handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
             take(1),
             finalize(() => {
+              console.log('finalizing?')
               this.loadingService.closeSpinner();
               this.isDepositing = false;
             })
@@ -435,11 +440,11 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   private defineDestAccounts(target) {
-    console.log('defineDestAccounts: ', target)
+    console.log('defineDestAccounts: ', target);
     this.activePaymentType =
       target instanceof Object ? PAYMENT_TYPE.CREDIT : target === 'newCreditCard' ? this.activePaymentType : target;
     this.destinationAccounts = this.creditCardDestinationAccounts;
-    console.log('activePaymentType ', this.activePaymentType)
+    console.log('activePaymentType ', this.activePaymentType);
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {

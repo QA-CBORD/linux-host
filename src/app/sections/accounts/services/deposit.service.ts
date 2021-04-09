@@ -119,6 +119,7 @@ export class DepositService {
   }
 
   deposit(fromAccountId, toAccountId, amount, fromAccountCvv): Observable<string> {
+    console.log('deposit?')
     return this.commerceApiService.deposit(fromAccountId, toAccountId, amount, fromAccountCvv);
   }
 
