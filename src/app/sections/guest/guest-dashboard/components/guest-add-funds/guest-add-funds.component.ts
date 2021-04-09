@@ -52,7 +52,7 @@ const requiredSettings = [
 })
 export class GuestAddFundsComponent implements OnInit {
 
-   depositButtonText: string = 'Deposit';
+   depositButtonText: string ;
   
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
@@ -108,12 +108,10 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.depositButtonText = 'Deposit';
     this.getAccounts();
-    this.cdRef.detectChanges();
-  }
-
-  ionViewDidEnter() {
     this.setFormValidators();
+    this.cdRef.detectChanges();
   }
 
   ngOnDestroy() {
@@ -399,7 +397,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
   private initContentStrings() {
     this.topLabel =
-      'You are deposting to the account of {{ James Demo }}. If this is incorrect, go back to to Step 1 to identify the recipient';
+      'You are deposting to the account of James Demo. If this is incorrect, go back to to Step 1 to identify the recipient.';
   }
 
   private getAccounts() {
@@ -472,13 +470,13 @@ export class GuestAddFundsComponent implements OnInit {
 
     modal.onDidDismiss().then(() => {
       console.log('onDidDimiss')
-      this.detailsForm.reset();
-      // this.resetControls([
-      //   this.controlsNames.amountToDeposit,
-      //   this.controlsNames.mainInput,
-      //   this.controlsNames.toAccount,
-      // ]);
       this.router.navigate([ROLES.guest, GUEST_ROUTES.dashboard]);
+      this.resetControls([
+        this.controlsNames.mainInput,
+        this.controlsNames.toAccount,
+        this.controlsNames.paymentMethod,
+        this.controlsNames.amountToDeposit
+      ]);
       console.log('PATRON_NAVIGATION.accounts')
     });
     await modal.present();
