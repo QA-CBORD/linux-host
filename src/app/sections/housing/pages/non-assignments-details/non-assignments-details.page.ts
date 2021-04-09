@@ -198,6 +198,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
+                      this._nonAssignmentsStateService.setSelectedAssetType([]);
                       alert.dismiss().then(() => this._housingService.handleSuccess());
                     } else {
                       alert.dismiss().then(() => {
