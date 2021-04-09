@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Directive, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
@@ -88,20 +88,26 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly modalController: ModalController,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.accounts$ = this.depositService.getUserAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
-    this.depositService
-      .getUserSettings(requiredSettings)
-      .pipe(take(1))
-      .subscribe(result => {
-        this.depositSettings = result;
-        console.log(`required settings: ${result}`);
-      });
-
+    // this.depositService
+    //   .getUserSettings(requiredSettings)
+    //   .pipe(take(1))
+    //   .subscribe(result => {
+    //     this.depositSettings = result;
+    //     console.log(`required settings: ${JSON.stringify(result)}`);
+    //   });
+      this.activatedRoute.data.subscribe(
+        response => {
+          console.log(`data settings: ${JSON.stringify( response.data.settings )}`);
+          this.depositSettings = response.data.settings;
+        }
+      );
     this.initForm();
     this.initContentStrings();
     this.globalNav.hideNavBar();
@@ -217,7 +223,7 @@ export class GuestAddFundsComponent implements OnInit {
     console.log('detailsForm: ', this.detailsForm.value);
     const isApplePay: boolean = paymentMethod.accountType === AccountType.APPLEPAY;
     console.log('isApplePay: ', isApplePay);
-    const depositReviewCredit = 'somethingllj;j;;n;kbl bgucrutdrdfytcgyiuvygivgyu';
+    const depositReviewCredit = `FiftyThree's has a 30-days refund policy: customers can buy the product, try it and if they are unsatisfied, they can return it within 30 days. FiftyThree will offer either a refund or a replacement.`;
     const depositReviewBillMe = '';
     let amount = mainInput || amountToDeposit;
     console.log('Amount?: ', amount);
@@ -477,7 +483,7 @@ export class GuestAddFundsComponent implements OnInit {
         this.controlsNames.paymentMethod,
         this.controlsNames.amountToDeposit
       ]);
-      console.log('PATRON_NAVIGATION.accounts')
+      console.log('GUEST_ROUTES.dashboard')
     });
     await modal.present();
   }
