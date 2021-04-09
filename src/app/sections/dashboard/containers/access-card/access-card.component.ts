@@ -50,7 +50,6 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.setInstitutionData();
     this.getFeaturesEnabled();
-    this.getUserData();
     this.getUserName();
   }
 

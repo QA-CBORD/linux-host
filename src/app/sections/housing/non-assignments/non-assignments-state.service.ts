@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+  AssetTypeDetailValue,
   NonAssignmentDetails,
   NonAssignmentListDetails
 } from './non-assignments.model';
@@ -11,7 +12,7 @@ import {
 export interface NonAssignmentsState {
   entities: NonAssignmentEntities;
   nonAssignmentDetails: NonAssignmentDetails;
-  selectedAssetType?: number;
+  selectedAssetType?: AssetTypeDetailValue[];
 }
 
 export interface NonAssignmentEntities {
@@ -25,7 +26,7 @@ export class NonAssignmentsStateService {
   private readonly _defaultState: NonAssignmentsState = {
     entities: {},
     nonAssignmentDetails: null,
-    selectedAssetType: 0
+    selectedAssetType: []
   };
 
   private readonly _nonAssignmentsStateSource: BehaviorSubject<NonAssignmentsState>
@@ -41,7 +42,7 @@ export class NonAssignmentsStateService {
       map(this._getNonAssignments.bind(this))
     );
 
-  readonly selectedAssetType$: Observable<number> =
+  readonly selectedAssetType$: Observable<AssetTypeDetailValue[]> =
       this._nonAssignmentsStateSource.pipe(
         map(this._getSelectedAssetType)
       );
@@ -87,17 +88,10 @@ export class NonAssignmentsStateService {
     };
   }
 
-  setSelectedAsset(assetTypeKey: number): void {
+  setSelectedAssetType(selectedAsset: AssetTypeDetailValue[]): Observable<AssetTypeDetailValue[]> {
     this.nonAssignmentsState = {
       ...this.nonAssignmentsState,
-      selectedAssetType: assetTypeKey
-    };
-  }
-
-  setSelectedAssetType(assetTypeKey: number): Observable<number> {
-    this.nonAssignmentsState = {
-      ...this.nonAssignmentsState,
-      selectedAssetType: assetTypeKey
+      selectedAssetType: selectedAsset
     };
 
     return of(this.nonAssignmentsState.selectedAssetType);
@@ -115,7 +109,7 @@ export class NonAssignmentsStateService {
     return Object.keys(entities).map((key: string) => entities[parseInt(key, 10)]);
   }
 
-  private _getSelectedAssetType(state: NonAssignmentsState): number {
+  private _getSelectedAssetType(state: NonAssignmentsState): AssetTypeDetailValue[] {
     return state.selectedAssetType;
   }
 
