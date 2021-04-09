@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { combineLatest, Observable } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
-import { Settings, User } from 'src/app/app.global';
+import { map } from 'rxjs/operators';
+import { User } from 'src/app/app.global';
+import { Recipient } from '../model/recipient.model';
 
 @Injectable()
 export class GuestDepositsService {
@@ -14,15 +12,16 @@ export class GuestDepositsService {
     private readonly institutionFacadeService: InstitutionFacadeService
   ) {}
 
-  getRecipientList(settings: User.Settings): Promise<SettingInfo> {
+  getRecipientList(): Promise<Recipient[]> {
     return this.settingsFacadeService
-      .getUserSetting(settings)
+      .getUserSetting(User.Settings.GUEST_DEPOSIT_RECIPIENTS)
+      .pipe(map(res => JSON.parse(res.value || '[]')))
       .toPromise();
   }
 
-  saveRecipientList(settings: User.Settings, value: string): Promise<boolean> {
+  saveRecipientList(recipients: Recipient[]): Promise<boolean> {
     return this.settingsFacadeService
-      .saveUserSetting(settings, value)
+      .saveUserSetting(User.Settings.GUEST_DEPOSIT_RECIPIENTS, JSON.stringify(recipients))
       .toPromise();
   }
 }

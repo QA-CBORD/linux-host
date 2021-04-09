@@ -128,4 +128,10 @@ export class InstitutionFacadeService extends ServiceStateFacade {
       take(1)
     );
   }
+
+  retrieveAnonymousDepositFields() {
+    return this.cachedInstitutionInfo$
+      .pipe(switchMap(ins => this.institutionApiService.retrieveAnonymousDepositFields(ins.id)))
+      .toPromise();
+  }
 }
