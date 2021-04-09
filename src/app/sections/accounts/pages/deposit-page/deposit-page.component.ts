@@ -422,6 +422,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 depositTenders as string[],
                 accounts
               );
+              console.log("Deposit tenders: ", depositTenders)
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
               this.cdRef.markForCheck();
             })

@@ -19,6 +19,7 @@ import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amou
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
+import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
 import { MerchantAccountInfoList } from '@sections/ordering';
 import { GUEST_ROUTES } from '@sections/section.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
@@ -40,8 +41,7 @@ enum GUEST_FORM_CONTROL_NAMES {
 })
 export class GuestAddFundsComponent implements OnInit {
 
-   depositButtonText: string ;
-  
+  depositButtonText: string ;
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -51,10 +51,9 @@ export class GuestAddFundsComponent implements OnInit {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
-
+  contentStrings: GuestAddFundsCsModel;
   isDepositing: boolean = false;
   detailsForm: FormGroup;
-  topLabel: string;
   applePayEnabled$: Observable<boolean>;
   accountInfoList$: Observable<MerchantAccountInfoList>;
   accounts$: Observable<UserAccount[]>;
@@ -85,13 +84,12 @@ export class GuestAddFundsComponent implements OnInit {
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
       this.activatedRoute.data.subscribe(
        response => {
-          console.log(`data settings: ${JSON.stringify( response.data.settings )}`);
           this.depositSettings = response.data.settings;
+          this.contentStrings = response.data.contentStrings;
         }
       );
 
     this.initForm();
-    this.initContentStrings();
     this.globalNav.hideNavBar();
   }
 
@@ -117,16 +115,13 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async onPaymentChanged(target) {
-    console.log('Target ', target);
     this.defineDestAccounts(target);
-    console.log('onPaymentChanged?');
     this.setFormValidators();
     this.resetControls([
       this.controlsNames.amountToDeposit,
       this.controlsNames.mainInput,
       this.controlsNames.toAccount,
     ]);
-    console.log('onPaymentChanged');
     this.depositButtonText = 'Deposit';
   }
 
@@ -143,25 +138,14 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   setFormValidators() {
-    console.log('setFormValidators');
     const minMaxValidators = [amountRangeValidator(+this.minMaxOfAmounts.minAmountOneTime, +this.minMaxOfAmounts.maxAmountOneTime)];
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
-      console.log('Data coming: ', data);
       const sourceAcc = this.paymentMethod.value;
-
-      console.log('sourceAcc: ', sourceAcc);
-
       this.detailsForm.controls[this.controlsNames.amountToDeposit].clearValidators();
       this.detailsForm.controls[this.controlsNames.amountToDeposit].setErrors(null);
 
-      console.log('onNewCreditCard?');
-
       if (sourceAcc === 'newCreditCard') {
-        console.log('Here?');
-        //this.detailsForm.reset();
-
-        console.log('onNewCreditCard');
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
             switchMap(({ success, errorMessage }) => {
@@ -192,25 +176,18 @@ export class GuestAddFundsComponent implements OnInit {
   }
    
   onAmountChanged(event) {
-    console.log('onAmountChanged')
     const amount: string = event.target.value;
     this.depositButtonText = amount && amount.length ? 'Deposit $' + amount : 'Deposit';
   }
 
   onFormSubmit() {
-    console.log('onFormSubmit');
     if ((this.detailsForm && this.detailsForm.invalid) || this.isDepositing) return;
     this.isDepositing = true;
     const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.detailsForm.value;
-    console.log('detailsForm: ', this.detailsForm.value);
     const isApplePay: boolean = paymentMethod.accountType === AccountType.APPLEPAY;
-    console.log('isApplePay: ', isApplePay);
-    const depositReviewCredit = `FiftyThree's has a 30-days refund policy: customers can buy the product, try it and if they are unsatisfied, they can return it within 30 days. FiftyThree will offer either a refund or a replacement.`;
-    const depositReviewBillMe = '';
+    const depositReviewCredit = this.contentStrings.content.refund_text;
     let amount = mainInput || amountToDeposit;
-    console.log('Amount?: ', amount);
     amount = amount.toString().replace(COMMA_REGEXP, '');
-    console.log('Amount: ', amount);
     if (isApplePay) {
       Browser.addListener('browserFinished', (info: any) => {
         this.isDepositing = false;
@@ -237,12 +214,10 @@ export class GuestAddFundsComponent implements OnInit {
           this.isDepositing = false;
         });
     } else {
-      console.log('Payment: ', paymentMethod);
       iif(() => false, of(0), of(paymentMethod))
         .pipe(
           switchMap(
             (sourceAcc): any => {
-              console.log('sourcAcct: ', sourceAcc);
               const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
                 sourceAcc.id,
                 toAccount.id,
@@ -258,8 +233,7 @@ export class GuestAddFundsComponent implements OnInit {
         )
         .subscribe(
           info => {
-            console.log('info: ', info);
-            this.confirmationDepositPopover({ ...(info) as {}, depositReviewBillMe, depositReviewCredit });
+            this.confirmationDepositPopover({ ...(info) as {}, depositReviewCredit });
           },
           () => {
             this.loadingService.closeSpinner();
@@ -271,7 +245,6 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async confirmationDepositPopover(data: any) {
-    console.log("This data: ", data)
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
@@ -281,9 +254,7 @@ export class GuestAddFundsComponent implements OnInit {
       backdropDismiss: false,
     });
     popover.onDidDismiss().then(({ role }) => {
-      console.log('onDidDismiss')
       if (role === BUTTON_TYPE.OKAY) {
-        console.log('BUTTON_TYPE.OKAY')
         this.loadingService.showSpinner();
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, null) // TODO: Check CVV Value
@@ -291,7 +262,6 @@ export class GuestAddFundsComponent implements OnInit {
             handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
             take(1),
             finalize(() => {
-              console.log('finalizing?')
               this.loadingService.closeSpinner();
               this.isDepositing = false;
             })
@@ -383,10 +353,6 @@ export class GuestAddFundsComponent implements OnInit {
       })
     );
   }
-  private initContentStrings() {
-    this.topLabel =
-      'You are deposting to the account of James Demo. If this is incorrect, go back to to Step 1 to identify the recipient.';
-  }
 
   private getAccounts() {
     const subscription = of(this.depositSettings)
@@ -422,11 +388,9 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   private defineDestAccounts(target) {
-    console.log('defineDestAccounts: ', target);
     this.activePaymentType =
       target instanceof Object ? PAYMENT_TYPE.CREDIT : target === 'newCreditCard' ? this.activePaymentType : target;
     this.destinationAccounts = this.creditCardDestinationAccounts;
-    console.log('activePaymentType ', this.activePaymentType);
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {
@@ -456,7 +420,6 @@ export class GuestAddFundsComponent implements OnInit {
     });
 
     modal.onDidDismiss().then(() => {
-      console.log('onDidDimiss')
       this.router.navigate([ROLES.guest, GUEST_ROUTES.dashboard]);
       this.resetControls([
         this.controlsNames.mainInput,
@@ -464,7 +427,6 @@ export class GuestAddFundsComponent implements OnInit {
         this.controlsNames.paymentMethod,
         this.controlsNames.amountToDeposit
       ]);
-      console.log('GUEST_ROUTES.dashboard')
     });
     await modal.present();
   }

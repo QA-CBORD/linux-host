@@ -41,6 +41,16 @@ export const guestDashboardDefaultStrings = {
   explore: 'Explore'
 }
 
+export const guestAddFundsDefaultStrings = {
+  title: 'Add Funds',
+  notice_label: 'You are deposting to the previously identified recipient. If this is incorrect, go back to Step 1 to identify the recipient.',
+  source_placeholder: 'Payment Method',
+  destination_placeholder: 'To Account',
+  deposit_label: 'Amount To Deposit', 
+  deposit_button: 'Deposit',
+  refund_text: 'Refund Policy'
+}
+
 export const defaultMobileCredentialCs = {
   nfc_off_dialog_accept: 'Proceed',
   nfc_off_dialog_cancel: 'Cancel',

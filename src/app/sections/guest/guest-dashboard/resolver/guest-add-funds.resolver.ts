@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
-import { forkJoin, zip } from 'rxjs';
+import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { forkJoin, of } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { tap } from 'rxjs/internal/operators/tap';
 import { map } from 'rxjs/operators';
@@ -23,7 +24,7 @@ export class GuestAddFundsResolver implements Resolve<Observable<any>> {
   constructor(private readonly depositService: DepositService, private readonly loadingService: LoadingService) {}
 
   resolve(): Observable<any> {
-    const contentStringCall = this.depositService.initContentStringsList();
+    const contentStringCall = of(ContentStringApi.guestAddFunds());
     const accountsCall = this.depositService.getUserAccounts();
     const settingsCall = this.depositService.getUserSettings(requiredSettings);
     this.loadingService.showSpinner();
@@ -31,8 +32,7 @@ export class GuestAddFundsResolver implements Resolve<Observable<any>> {
     return forkJoin(contentStringCall, settingsCall, accountsCall).pipe(
       tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()),
       map(
-        ([contentString, settings, accounts]) => ({ contentString, settings, accounts }),
-      
+        ([contentStrings, settings, accounts]) => ({ contentStrings, settings, accounts }),
       )
     );
   }
