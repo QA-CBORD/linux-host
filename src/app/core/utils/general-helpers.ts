@@ -72,11 +72,9 @@ export const handleServerError = <T>(
   serverError: ServerErrorsInfo,
   ignoreCodes?: string[]
 ): MonoTypeOperatorFunction<T> => {
-  console.log('Error message?: ')
   return (source: Observable<T>) =>
     source.pipe(
       catchError(({ message }) => {
-        console.log('Error message: ', message)
         message = message.split('|');
         if (message.length <= 1) return throwError(message[0]);
         const [code, text] = message;

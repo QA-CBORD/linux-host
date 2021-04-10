@@ -87,7 +87,7 @@ export class GuestAddFundsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.accounts$ = this.depositService.getUserAccounts();
+    this.accounts$ = this.depositService.getUserAccounts(); // CHECK: Revolve the account beforehand?
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.activatedRoute.data.subscribe(response => {
       this.depositSettings = response.data.settings;
@@ -100,7 +100,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   ionViewWillEnter() {
     this.depositButtonText = 'Deposit';
-    this.getAccounts();
+    this.getAccounts(); // CHECK: Is updating the accounts or using the old ones?
     this.setFormValidators();
     this.cdRef.detectChanges();
   }
