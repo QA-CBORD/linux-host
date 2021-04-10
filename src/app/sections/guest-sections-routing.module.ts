@@ -24,6 +24,10 @@ const routes: Route[] = [
   },
   {
     path: GUEST_ROUTES.deposit,
+    loadChildren: './guest/guest-deposits/guest-deposits.module#GuestDepositsModule',
+  },
+  {
+    path: GUEST_ROUTES.addFunds,
     loadChildren: './guest/guest-dashboard/components/guest-add-funds/guest-add-funds.module#GuestAddFundsModule',
     resolve: {
       data: GuestAddFundsResolver,
@@ -36,11 +40,7 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-  ],
+  imports: [CommonModule, RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GuestSectionsRoutingModule {
-}
+export class GuestSectionsRoutingModule {}
