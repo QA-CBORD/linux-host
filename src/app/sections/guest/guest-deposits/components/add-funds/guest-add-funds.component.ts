@@ -25,7 +25,6 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
-import { MerchantAccountInfoList } from '@sections/ordering';
 import { GUEST_ROUTES } from '@sections/section.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
@@ -64,7 +63,6 @@ export class GuestAddFundsComponent implements OnInit {
   isDepositing: boolean = false;
   detailsForm: FormGroup;
   applePayEnabled$: Observable<boolean>;
-  accountInfoList$: Observable<MerchantAccountInfoList>;
   accounts$: Observable<UserAccount[]>;
   depositSettings: SettingInfo[];
   creditCardDestinationAccounts: Array<UserAccount>;
@@ -217,7 +215,7 @@ export class GuestAddFundsComponent implements OnInit {
             this.onErrorRetrieve(result.errorMessage);
           }
         })
-        .catch(async error => {
+        .catch(async () => {
           this.onErrorRetrieve('Something went wrong, please try again...');
         })
         .finally(() => {

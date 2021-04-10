@@ -28,7 +28,7 @@
     }
   }
 
-  &__main-input {
+  &--decrease-font {
     text-align: center;
     width: 70%;
     margin: 0 auto;
@@ -73,7 +73,6 @@
   }
 
   &__select {
-    // background: url('/assets/icon/img/angle-down.svg') no-repeat 92% center !important;
     padding: 30px 15px;
 
     @include font-nunito-regular(16px);
@@ -87,7 +86,7 @@
     top: 10px;
     @include font-nunito-semibold(14px);
   }
-  
+
   &__footer {
     display: flex;
     justify-content: center;
