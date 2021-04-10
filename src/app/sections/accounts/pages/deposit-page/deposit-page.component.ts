@@ -92,7 +92,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.initForm();
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
-    console.log("depositSettings: ", this.depositSettings)
   }
 
   ngOnDestroy() {
@@ -404,7 +403,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const subscription = this.depositService.settings$
       .pipe(
         map(settings => {
-          console.log('Setting: ', settings)
           const depositTenders = this.getSettingByName(settings, Settings.Setting.DEPOSIT_TENDERS.split('.')[2]);
           const billmeMappingArr = this.getSettingByName(settings, Settings.Setting.BILLME_MAPPING.split('.')[2]);
 
@@ -422,7 +420,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 depositTenders as string[],
                 accounts
               );
-              console.log("Deposit tenders: ", depositTenders)
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
               this.cdRef.markForCheck();
             })
