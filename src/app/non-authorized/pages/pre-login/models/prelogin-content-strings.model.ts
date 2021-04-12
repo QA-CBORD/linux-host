@@ -2,8 +2,8 @@ import { ContentStringModel, NullableContent } from '@shared/model/content-strin
 import { defaultPreloginCs } from '@shared/model/content-strings/default-strings';
 
 export class PreloginCsModel extends ContentStringModel {
-  constructor(nullable: NullableContent, private args?: any) {
-    super(nullable, defaultPreloginCs);
+  constructor(nullable: NullableContent) {
+    super(nullable.getConfig(), defaultPreloginCs);
     this.configure();
   }
 
@@ -19,8 +19,9 @@ export class PreloginCsModel extends ContentStringModel {
     return this.content.pre_login_instruction;
   }
 
-  private configure(): void {
+  protected configure(): void {
     const [asStudent, asPatient] = this.continueAsNonGuest.split('|');
-    this.content.continue_as_nonguest = (this.args.acuteCare && asPatient) || asStudent;
+    const isAccuteCare = this.params && this.params.acuteCare;
+    this.content.continue_as_nonguest = (isAccuteCare && asPatient) || asStudent;
   }
 }

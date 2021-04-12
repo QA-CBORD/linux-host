@@ -11,7 +11,7 @@
   <form [formGroup]="depositForm">
     <section class="deposit__selection-block">
       <div class="deposit__select-wrapper">
-        <ion-label class="deposit__label-select">Payment Method</ion-label>
+        <ion-label class="deposit__label-select">{{ contentString.lblSelectPaymentMethod }}</ion-label>
         <ion-select
           class="deposit__select"
           cancelText="Cancel"
@@ -21,7 +21,7 @@
           formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
           (ionFocus)="openActionSheet('payment')"
-          placeholder="Please Choose"
+          placeholder="{{ contentString.selectPlaceHolderText }}"
           tabindex="0"
           [selectedText]="paymentMethod.value | accountDisplay"
           #paymentMethod
@@ -44,14 +44,14 @@
             paymentTypes.BILLME | accountDisplay
           }}</ion-select-option>
           <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled">
-            Add a Credit Card
+            {{ contentString.newCreditCardText }}
           </ion-select-option>
         </ion-select>
       </div>
 
       <div>
         <div class="deposit__label-cvv" *ngIf="isCVVfieldShow">
-          <ion-label class="deposit__label-select">Card Security Code:</ion-label>
+          <ion-label class="deposit__label-select">{{ contentString.lblCardSecurityCode }}:</ion-label>
           <ion-input
             class="deposit__input-cvv"
             inputmode="tel"
@@ -72,13 +72,13 @@
               (fromAccountCvv.dirty || fromAccountCvv.touched)
             "
           >
-            Please enter a valid card security code.
+            {{ contentString.cardSecurityCodeError }}
           </div>
         </div>
       </div>
 
       <div class="deposit__select-wrapper">
-        <ion-label class="deposit__label-select">To Account</ion-label>
+        <ion-label class="deposit__label-select">{{ contentString.lblSelectAccountForDeposit }}</ion-label>
         <ion-select
           class="deposit__select deposit__select-account"
           cancelText="Cancel"
@@ -87,7 +87,7 @@
           [interfaceOptions]="customActionSheetOptions"
           (ionFocus)="openActionSheet('account')"
           formControlName="selectedAccount"
-          placeholder="Please Choose"
+          placeholder="{{ contentString.selectPlaceHolderText }}"
           tabindex="0"
           [selectedText]="toAccount.value | destinationAccountDisplay"
           #toAccount
@@ -103,12 +103,12 @@
       >
         <div class="deposit__main-select-container" *ngIf="!(isFreeFormEnabled$ | async); else mainInput">
           <div class="deposit__select-wrapper">
-            <ion-label class="deposit__label-select">Amount to Deposit</ion-label>
+            <ion-label class="deposit__label-select">{{ contentString.lblSelectAmountForDeposit }}</ion-label>
             <ion-select
               class="deposit__select deposit__select-account"
               cancelText="Cancel"
               mode="md"
-              placeholder="Please Choose"
+              placeholder="{{ contentString.selectPlaceHolderText }}"
               tabindex="0"
               interface="action-sheet"
               [interfaceOptions]="customActionSheetOptions"
@@ -147,10 +147,10 @@
               formControlName="mainInput"
             ></ion-input>
             <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']" class="deposit__main-input--error">
-              The maximum amount for a deposit is {{ mainFormInput.errors['maxLength'].max | transactionUnits }}
+              {{ contentString.maxAmountError }} {{ mainFormInput.errors['maxLength'].max | transactionUnits }}
             </div>
             <div *ngIf="mainFormInput.errors && mainFormInput.errors['minLength']" class="deposit__main-input--error">
-              The minimum amount for a deposit is {{ mainFormInput.errors['minLength'].min | transactionUnits }}
+              {{ contentString.minAmountError }} {{ mainFormInput.errors['minLength'].min | transactionUnits }}
             </div>
             <div
               *ngIf="
@@ -160,7 +160,7 @@
               "
               class="deposit__main-input--error"
             >
-              Please enter a valid amount.
+              {{ contentString.amountPatternError }}
             </div>
           </div>
         </ng-template>
@@ -170,6 +170,6 @@
 </ion-content>
 <ion-footer class="deposit__footer" mode="ios">
   <st-button (onClick)="onFormSubmit()" tabindex="0" [isDisabled]="!depositForm.valid" [disabled]="isDepositing">
-    <div id="depositBtnText">Deposit</div>
+    <div id="depositBtnText">{{ contentString.submitButtonText }}</div>
   </st-button>
 </ion-footer>

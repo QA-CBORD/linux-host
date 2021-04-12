@@ -3,7 +3,7 @@ import { defaultForgotPasswordCs } from '@shared/model/content-strings/default-s
 
 export class ForgotPasswordCsModel extends ContentStringModel {
   constructor(nullable: NullableContent) {
-    super(nullable, defaultForgotPasswordCs);
+    super(nullable.getConfig(), defaultForgotPasswordCs);
   }
 
   get resendEmail(): string {

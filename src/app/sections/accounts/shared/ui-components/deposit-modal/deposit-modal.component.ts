@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { DepositSuccessCs } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 
 @Component({
   selector: 'st-deposit-modal',
@@ -9,6 +10,7 @@ import { ModalController } from '@ionic/angular';
 })
 export class DepositModalComponent {
   @Input() data;
+  @Input() contentString: DepositSuccessCs = {} as any;
 
   constructor(private readonly modalController: ModalController) {}
 

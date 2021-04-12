@@ -7,7 +7,10 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
-import { buildPasswordValidators, InputValidator } from 'src/app/password-validation/models/input-validator.model';
+import {
+  buildPasswordValidators,
+  ValidationController,
+} from 'src/app/password-validation/models/input-validator.model';
 import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 import { PasswordChangeCsModel } from './password-change-content-strings.model';
 
@@ -17,15 +20,14 @@ import { PasswordChangeCsModel } from './password-change-content-strings.model';
   styleUrls: ['./password-change.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class PasswordChangeComponent implements OnInit {
   @Input() contentStrings: [ContentStringInfo[]];
   changePasswordForm: FormGroup;
   isLoading = false;
-  validators: InputValidator[] = [];
+  validators: ValidationController[] = [];
   passwordControl: any = {};
   inputLabel: PasswordChangeCsModel;
-  
+
   constructor(
     private readonly modalController: ModalController,
     private readonly fb: FormBuilder,
@@ -38,11 +40,11 @@ export class PasswordChangeComponent implements OnInit {
   ngOnInit() {
     this.initForm();
     this.initControl();
+    this.setContentStrings();
   }
 
-  ionViewWillEnter() { 
+  ionViewWillEnter() {
     this.loadingService.showSpinner();
-    this.setContentStrings();
   }
 
   ionViewDidEnter() {
@@ -61,9 +63,9 @@ export class PasswordChangeComponent implements OnInit {
       .pipe(
         take(1),
         catchError(error => {
-          if(error) {
-          const NO_ERROR_CODE_SIDE = 1;
-          resultMessage = `${error.toString().split('|')[NO_ERROR_CODE_SIDE]}. Please try again.`;
+          if (error) {
+            const NO_ERROR_CODE_SIDE = 1;
+            resultMessage = `${error.toString().split('|')[NO_ERROR_CODE_SIDE]}. Please try again.`;
           } else {
             resultMessage = 'Something went wrong. Please try again.';
           }
@@ -108,8 +110,13 @@ export class PasswordChangeComponent implements OnInit {
   }
 
   private setContentStrings() {
-    this.inputLabel = ContentStringApi.changePassword(this.contentStrings.pop());
-    this.validators = buildPasswordValidators(this.contentStrings.pop());
+    this.inputLabel = <PasswordChangeCsModel>ContentStringApi.changePassword.build({
+      primary: this.contentStrings.pop(),
+    });
+    const passwordValidationCs = ContentStringApi.passwordValidation.build({
+      primary: this.contentStrings.pop(),
+    });
+    this.validators = buildPasswordValidators(passwordValidationCs);
   }
 
   private initControl() {
