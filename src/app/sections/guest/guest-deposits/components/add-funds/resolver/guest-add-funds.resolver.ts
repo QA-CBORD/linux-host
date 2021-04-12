@@ -24,15 +24,14 @@ export class GuestAddFundsResolver implements Resolve<Observable<any>> {
   constructor(private readonly depositService: DepositService, private readonly loadingService: LoadingService) {}
 
   resolve(): Observable<any> {
-    const contentStringCall = of(ContentStringApi.guestAddFunds());
     const accountsCall = this.depositService.getUserAccounts();
     const settingsCall = this.depositService.getUserSettings(requiredSettings);
     this.loadingService.showSpinner();
 
-    return forkJoin(contentStringCall, settingsCall, accountsCall).pipe(
+    return forkJoin(settingsCall, accountsCall).pipe(
       tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()),
       map(
-        ([contentStrings, settings, accounts]) => ({ contentStrings, settings, accounts }),
+        ([settings, accounts]) => ({ settings, accounts }),
       )
     );
   }
