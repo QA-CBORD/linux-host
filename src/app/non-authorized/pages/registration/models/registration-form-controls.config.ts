@@ -1,15 +1,15 @@
 import { Validators } from '@angular/forms';
-import { Cvalidators } from './password-validation';
+import { SupportedInputValidators } from './password-validation';
 import { Field, STATICFIELDS } from './registration-utils';
 
-export const rfStaticFields: { [key: string]: Field } = {
+export const registrationFormStaticFields: { [key: string]: Field } = {
   first_name: new Field({
     alignHorizontal: true,
     label: 'First Name',
     idd: STATICFIELDS.firstName.idd,
     name: STATICFIELDS.firstName.fieldName,
     type: 'text',
-    cValidator: [Cvalidators.min(1)],
+    cValidator: [SupportedInputValidators.min(1)],
     guestOnly: true,
     validators: ['', Validators.required],
   }),
@@ -19,7 +19,7 @@ export const rfStaticFields: { [key: string]: Field } = {
     idd: STATICFIELDS.lastName.idd,
     name: STATICFIELDS.lastName.fieldName,
     type: 'text',
-    cValidator: [Cvalidators.min(1)],
+    cValidator: [SupportedInputValidators.min(1)],
     guestOnly: true,
     validators: ['', Validators.required],
   }),
@@ -28,7 +28,7 @@ export const rfStaticFields: { [key: string]: Field } = {
     idd: 'email_address',
     name: STATICFIELDS.userName,
     type: 'email',
-    cValidator: [Cvalidators.email()],
+    cValidator: [SupportedInputValidators.email()],
     validators: ['', Validators.required],
   }),
   phone: new Field({
@@ -36,7 +36,7 @@ export const rfStaticFields: { [key: string]: Field } = {
     idd: 'phone_number',
     name: STATICFIELDS.phone,
     type: 'text',
-    cValidator: [Cvalidators.phoneNumber()],
+    cValidator: [SupportedInputValidators.phoneNumber()],
     validators: ['', Validators.required],
   }),
   password: new Field({

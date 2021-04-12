@@ -1,6 +1,6 @@
 import { GUEST_NAVIGATION } from 'src/app/app.global';
 import { GuestDashboardSection } from './dashboard.item.model';
-import { GuestSetting } from './guest-settings';
+import { GuestSetting } from '../../model/guest-settings';
 
 const imageBaseUrl = 'assets/icon';
 

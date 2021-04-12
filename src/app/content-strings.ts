@@ -14,12 +14,14 @@ export enum CONTENT_STRINGS_CATEGORIES {
   aboutScreen = 'about_screen',
   termsScreen = 'terms_screen',
   mobileCredential = 'mobile-credential',
-  mobileRegistration = 'mobile-registration',
-  pre_login = 'pre_login',
+  registration = 'mobile-registration',
+  preLogin = 'pre_login',
   passwordValidation = 'password-validation',
   forgotPassword = 'forgot-password',
-  passwordChange = 'password-change',
-  guestDashboard = 'guest-dashboard'
+  changePassword = 'password-change',
+  guestDashboard = 'guest-dashboard',
+  guestDeposit = 'guest-deposit',
+  deposit = 'deposit'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

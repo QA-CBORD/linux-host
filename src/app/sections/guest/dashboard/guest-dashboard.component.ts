@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageChannel } from '@shared/model/shared-api';
-import { GuestDashboardSection } from '../model/dashboard.item.model';
+import { GuestDashboardSection } from './model/dashboard.item.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
 import { Router } from '@angular/router';
+import { MessageProxy } from '@shared/services/injectable-message.proxy';
 
 @Component({
   selector: 'st-guest-dashboard',
@@ -21,11 +21,12 @@ export class GuestDashboard implements OnInit {
   constructor(
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly messageProxy: MessageProxy
   ) {}
 
   ngOnInit() {
-    this.sections = MessageChannel.get<GuestDashboardSection[]>();
+    this.sections = this.messageProxy.get<GuestDashboardSection[]>();
     this.loadInfo();
   }
 

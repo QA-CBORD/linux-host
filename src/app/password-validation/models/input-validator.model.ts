@@ -1,85 +1,73 @@
-import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import {
-  IViewableValidator,
-  CustomValidator,
-  Cvalidators,
+  InputValidator,
+  SupportedInputValidators,
+  Validation,
 } from 'src/app/non-authorized/pages/registration/models/password-validation';
 
-export class InputValidator implements IViewableValidator {
+export class ValidationController {
   private readonly criteriMetIcon = '/assets/icon/password-dot-complete.svg';
   private readonly criteriaNotMetIcon = '/assets/icon/password-dot.svg';
-  public src: string;
+  public src: string = this.criteriaNotMetIcon;
+  public label: string;
 
-  constructor(public validator: CustomValidator, public label: string) {
-    this.src = this.criteriaNotMetIcon;
+  constructor(public validation: Validation) {
+    this.label = validation.label;
   }
 
   test(value: string): boolean {
-    return this.evaluate({ test: () => this.validator.test(value) });
+    return this.evaluate({ test: () => this.validation.validator.test(value) });
   }
 
   private evaluate(predicate: { test: () => boolean }): boolean {
-    const passwordCriteriaMet = predicate.test();
-    this.src = (passwordCriteriaMet && this.criteriMetIcon) || this.criteriaNotMetIcon;
-    return passwordCriteriaMet;
+    const criteriaMet = predicate.test();
+    this.src = (criteriaMet && this.criteriMetIcon) || this.criteriaNotMetIcon;
+    return criteriaMet;
   }
 }
 
-const defaultPasswordValidators: { [key: string]: IViewableValidator } = {
+const passwordValidations: { [key: string]: Validation } = {
   at_least_one_number: {
     label: 'at least one numeric value',
-    validator: Cvalidators.minOneDigit,
+    validator: SupportedInputValidators.minOneDigit,
     supported: true,
   },
 
   at_least_one_letter: {
     label: 'at least one letter',
-    validator: Cvalidators.minOneLetter,
+    validator: SupportedInputValidators.minOneLetter,
     supported: true,
   },
 
   at_least_one_uppercase: {
     label: 'At least one upper case',
-    validator: Cvalidators.minOneUpperCase,
+    validator: SupportedInputValidators.minOneUpperCase,
   },
 
   at_least_one_lowercase: {
     label: 'At least one lower case',
-    validator: Cvalidators.minOneLowerCase,
+    validator: SupportedInputValidators.minOneLowerCase,
   },
 
   at_least_one_special_char: {
     label: 'At least one special character',
-    validator: Cvalidators.minOneSpecialChar,
+    validator: SupportedInputValidators.minOneSpecialChar,
   },
 
   required_password_length: {
     label: 'must be at least 7 characters',
-    validator: Cvalidators.min(7),
+    validator: SupportedInputValidators.min(7),
     supported: true,
   },
 };
 
-export const buildPasswordValidators = (contentStrings?: ContentStringInfo[]): InputValidator[] => {
-  const validators = [];
-  if (contentStrings && contentStrings.length) {
-    contentStrings.forEach(({ name: key, value }) => {
-      if (defaultPasswordValidators[key] && defaultPasswordValidators[key].supported) {
-        validators.push(new InputValidator(defaultPasswordValidators[key].validator, value));
-      }
+export const buildPasswordValidators = (contentStringModel?: ContentStringModel): ValidationController[] => {
+  const validations = { ...passwordValidations };
+  return Object.keys(validations)
+    .filter(key => validations[key].supported)
+    .map(key => {
+      const label = (contentStringModel && contentStringModel.valueByKey(key)) || validations[key].label;
+      const validation = { ...validations[key], label };
+      return new ValidationController(validation);
     });
-    return validators;
-  }
-
-  Object.keys(defaultPasswordValidators).forEach(key => {
-    if (defaultPasswordValidators[key].supported) {
-      const { validator, label } = defaultPasswordValidators[key];
-      validators.push(new InputValidator(validator, label));
-    }
-  });
-  return validators;
-};
-
-export const getDefaultPasswordValidators = (): CustomValidator[] => {
-  return [Cvalidators.password(), ...buildPasswordValidators().map(item => item.validator)];
 };
