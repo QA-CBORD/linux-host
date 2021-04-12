@@ -5,7 +5,7 @@
     border-bottom: 1px solid $color-whisper;
   }
 
-  &__manual-amount { //Check: Is it actually needed?
+  &__manual-amount {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -28,7 +28,7 @@
     }
   }
 
-  &--decrease-font {
+  &__main-input {
     text-align: center;
     width: 70%;
     margin: 0 auto;
@@ -36,7 +36,7 @@
 
     &--focus {
       color: #000;
-      border-bottom: 4px solid $color-dodger-blue !important;
+      border-bottom: 2px solid $color-dodger-blue !important;
     }
 
     &--error {
@@ -84,9 +84,10 @@
     position: absolute;
     left: 16px;
     top: 10px;
+
     @include font-nunito-semibold(14px);
   }
-
+  
   &__footer {
     display: flex;
     justify-content: center;

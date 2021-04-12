@@ -28,7 +28,7 @@ const routes: Route[] = [
   },
   {
     path: GUEST_ROUTES.addFunds,
-    loadChildren: './guest/guest-dashboard/components/guest-add-funds/guest-add-funds.module#GuestAddFundsModule',
+    loadChildren: './guest/guest-deposits/components/add-funds/guest-add-funds.module#GuestAddFundsModule',
     resolve: {
       data: GuestAddFundsResolver,
     },

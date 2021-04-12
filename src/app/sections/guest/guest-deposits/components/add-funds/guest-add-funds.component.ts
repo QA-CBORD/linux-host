@@ -122,11 +122,6 @@ export class GuestAddFundsComponent implements OnInit {
   async onPaymentChanged(target) {
     this.defineDestAccounts(target);
     this.setFormValidators();
-    this.resetControls([
-      this.controlsNames.amountToDeposit,
-      this.controlsNames.mainInput,
-      this.controlsNames.toAccount,
-    ]);
     this.depositButtonText = 'Deposit';
   }
 
