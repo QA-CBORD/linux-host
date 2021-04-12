@@ -42,10 +42,10 @@ export const guestDashboardDefaultStrings = {
 }
 
 export const guestAddFundsDefaultStrings = {
-  title: 'Add Funds',
-  notice_label: 'You are deposting to the previously identified recipient. If this is incorrect, go back to Step 1 to identify the recipient.',
-  source_placeholder: 'Payment Method',
-  destination_placeholder: 'To Account',
+  add_funds_title: 'Add Funds',
+  notice_text: 'You are deposting to the previously identified recipient. If this is incorrect, go back to Step 1 to identify the recipient.',
+  source_account_text: 'Payment Method',
+  destination_account_text: 'To Account',
   deposit_label: 'Amount To Deposit', 
   deposit_button: 'Deposit',
   refund_text: 'Refund Policy'

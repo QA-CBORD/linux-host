@@ -26,6 +26,7 @@ import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-com
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
 import { GUEST_ROUTES } from '@sections/section.config';
+import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
@@ -87,11 +88,11 @@ export class GuestAddFundsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.contentStrings = ContentStringApi.guestAddFunds();
     this.accounts$ = this.depositService.getUserAccounts(); // CHECK: Revolve the account beforehand?
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.activatedRoute.data.subscribe(response => {
       this.depositSettings = response.data.settings;
-      this.contentStrings = response.data.contentStrings;
     });
 
     this.initForm();
@@ -99,7 +100,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.depositButtonText = 'Deposit';
+    this.depositButtonText = this.contentStrings.depositButton;
     this.getAccounts(); // CHECK: Is updating the accounts or using the old ones?
     this.setFormValidators();
     this.cdRef.detectChanges();
@@ -122,7 +123,7 @@ export class GuestAddFundsComponent implements OnInit {
   async onPaymentChanged(target) {
     this.defineDestAccounts(target);
     this.setFormValidators();
-    this.depositButtonText = 'Deposit';
+    this.depositButtonText = this.contentStrings.depositButton;
   }
 
   formatInput(event) {
@@ -179,7 +180,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   onAmountChanged(event) {
     const amount: string = event.target.value;
-    this.depositButtonText = amount && amount.length ? 'Deposit $' + amount : 'Deposit';
+    this.depositButtonText = amount && amount.length ? 'Deposit $' + amount : this.depositButtonText;
   }
 
   onFormSubmit() {
@@ -187,7 +188,7 @@ export class GuestAddFundsComponent implements OnInit {
     this.isDepositing = true;
     const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.detailsForm.value;
     const isApplePay: boolean = paymentMethod.accountType === AccountType.APPLEPAY;
-    const depositReviewCredit = this.contentStrings.content.refund_text;
+    const depositReviewCredit = this.contentStrings.refundText;
     let amount = mainInput || amountToDeposit;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {

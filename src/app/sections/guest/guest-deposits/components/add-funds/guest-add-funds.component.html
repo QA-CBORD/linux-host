@@ -1,5 +1,5 @@
 <st-header
-  title="Add Funds"
+  [title]="contentStrings.title"
   [isTitleShow]="true"
   [backButtonIcon]="'ios-arrow-back'"
   [isBackButtonShow]="true"
@@ -9,7 +9,7 @@
 <ion-content>
   <form novalidate [formGroup]="detailsForm">
     <section class="deposit__selection-block ion-padding">
-      <ion-label>{{ contentStrings.content.notice_label }}</ion-label>
+      <ion-label>{{ contentStrings.noticeText }}</ion-label>
       <div class="deposit__select-wrapper">
         <st-select-floating-label
           [formControlName]="controlsNames.paymentMethod"
@@ -19,7 +19,7 @@
           (change)="onPaymentChanged($event)"
           class="deposit__select"
           interface="action-sheet"
-          [label]="contentStrings.content.source_placeholder"
+          [label]="contentStrings.paymentMethod"
           idd="guestPayment"
         >
           <ng-container role="options">
@@ -48,7 +48,7 @@
           [control]="toAccount"
           [interfaceOptions]="customActionSheetOptions"
           class="deposit__select deposit__select-account"
-          [label]="contentStrings.content.destination_placeholder"
+          [label]="contentStrings.toAccount"
           idd="guestAccount"
           interface="action-sheet"
         >
@@ -65,7 +65,7 @@
           [isError]="amountToDeposit.errors && (amountToDeposit.dirty || amountToDeposit.touched)"
           class="deposit__select deposit__select-account"
           *ngIf="!(isFreeFormEnabled$ | async); else mainInput"
-          [label]="contentStrings.content.deposit_label"
+          [label]="contentStrings.depositText"
           (change)="onAmountChanged($event)"
           idd="guestAmount"
           interface="action-sheet"
