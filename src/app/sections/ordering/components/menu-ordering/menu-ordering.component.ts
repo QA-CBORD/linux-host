@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '../../ordering.config';
-import { PATRON_NAVIGATION } from '../../../../app.global';
 import { OrderingService, OrderingComponentContentStrings } from '@sections/ordering/services/ordering.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 @Component({
   selector: 'st-menu-ordering',
@@ -14,10 +14,12 @@ export class MenuOrderingComponent implements OnInit {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   localRouting = LOCAL_ROUTING;
 
-  constructor(private readonly router: Router, private readonly orderingService: OrderingService) {}
+  constructor(
+    private readonly routingService: NavigationService,
+    private readonly orderingService: OrderingService) {}
 
   goToPage(pageRoute: string) {
-    this.router.navigate([PATRON_NAVIGATION.ordering, pageRoute]);
+    this.routingService.navigate([APP_ROUTES.ordering, pageRoute]);
   }
 
   ngOnInit(): void {

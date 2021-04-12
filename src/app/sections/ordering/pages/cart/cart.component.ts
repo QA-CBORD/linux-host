@@ -22,11 +22,11 @@ import {
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { PopoverController } from '@ionic/angular';
-import { AccountType, PATRON_NAVIGATION, Settings } from '../../../../app.global';
+import { AccountType, Settings } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -39,6 +39,8 @@ import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 const { Browser } = Plugins;
 
 @Component({
@@ -69,12 +71,12 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
     private readonly popoverController: PopoverController,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly router: Router,
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly routingService: NavigationService
   ) {}
 
   ionViewWillEnter() {
@@ -132,7 +134,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onOrderItemClicked({ menuItemId, id }) {
-    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.itemDetail], {
+    this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
       queryParams: { menuItemId: menuItemId, orderItemId: id, isItemExistsInCart: true },
     });
   }
@@ -156,7 +158,7 @@ export class CartComponent implements OnInit, OnDestroy {
       const paymentSystem = await this.definePaymentSystemType();
 
       if (paymentSystem === PAYMENT_SYSTEM_TYPE.MONETRA) {
-        this.router.navigate([PATRON_NAVIGATION.accounts, ACCOUNT_LOCAL_ROUTING.addCreditCard]);
+        this.routingService.navigate([APP_ROUTES.accounts, ACCOUNT_LOCAL_ROUTING.addCreditCard]);
 
         return;
       }
@@ -207,7 +209,7 @@ export class CartComponent implements OnInit, OnDestroy {
     });
 
     modal.onDidDismiss().then(async () => {
-      await this.router.navigate([PATRON_NAVIGATION.ordering]);
+      await this.routingService.navigate([APP_ROUTES.ordering]);
     });
 
     await modal.present();
@@ -241,7 +243,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
     const { orderItems } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (!orderItems.length) {
-      this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
       return;
     }
 
@@ -254,7 +256,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async navigateToFullMenu(): Promise<void> {
-    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
+    await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
       queryParams: { openTimeSlot: true },
     });
   }

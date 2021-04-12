@@ -36,7 +36,7 @@ export interface MerchantInfo {
   imageFull: string;
   hasMenu: boolean;
   serviceConsumerId: string;
-  settings: { list: MerchantSettingInfo[]; map: Map<string, MerchantSettingInfo> };
+  settings: { list: MerchantSettingInfo[]; map: Map<string, MerchantSettingInfo> | Object };
   faxNotificationActive: boolean;
   faxNotificationRequired: boolean;
   emailNotificationActive: boolean;

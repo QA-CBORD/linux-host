@@ -5,7 +5,7 @@ export class MerchantSearchOptions {
 
   constructor() {}
 
-  getSearchOptions() {
+  getSearchOptions(): MerchantSearchOption[] {
     return this.list;
   }
 
