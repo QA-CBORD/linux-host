@@ -10,7 +10,9 @@ import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class CartService {
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);

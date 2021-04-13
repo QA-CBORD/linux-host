@@ -3,15 +3,17 @@ import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant
 import { MerchantInfo } from '@sections/ordering';
 import { combineLatest, Observable, zip } from 'rxjs';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
-import { PATRON_NAVIGATION, Settings } from '../../../../app.global';
+import { Settings } from '../../../../app.global';
 import { EXPLORE_ROUTING } from '@sections/explore/explore.config';
-import { Router } from '@angular/router';
 import { finalize, map, take } from 'rxjs/operators';
 import { exploreMerchantSorting } from '@core/utils/general-helpers';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MenuMerchantFacadeService } from '@core/facades/menu-merchant/menu-merchant-facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { ExploreService } from '@sections/explore/services/explore.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 @Component({
   selector: 'st-explore-tile',
@@ -29,7 +31,8 @@ export class ExploreTileComponent implements OnInit {
     private readonly favMerchantFacadeService: FavoriteMerchantsFacadeService,
     private readonly menuMerchantFacadeService: MenuMerchantFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly router: Router
+    private readonly exploreService: ExploreService,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -37,11 +40,8 @@ export class ExploreTileComponent implements OnInit {
   }
 
   getMerchants() {
-    zip(
-      this.merchantFacadeService.fetchMerchants$(),
-      this.favMerchantFacadeService.fetchFavoritesMerchants$(),
-      this.menuMerchantFacadeService.fetchMenuMerchant$()
-    )
+    this.exploreService
+      .getInitialMerchantData$()
       .pipe(
         take(1),
         finalize(() => (this.isLoading = false))
@@ -62,7 +62,7 @@ export class ExploreTileComponent implements OnInit {
   }
 
   async onMerchantClicked(id: string) {
-    await this.router.navigate([PATRON_NAVIGATION.explore, EXPLORE_ROUTING.merchantDetails, id]);
+    await this.routingService.navigate([APP_ROUTES.explore, EXPLORE_ROUTING.merchantDetails, id]);
   }
 
   private updateMerchantFavoriteInfo(

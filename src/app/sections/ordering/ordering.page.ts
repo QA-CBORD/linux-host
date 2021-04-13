@@ -7,12 +7,13 @@ import { first, map, switchMap, take } from 'rxjs/operators';
 import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS } from './ordering.config';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 @Component({
   selector: 'st-ordering.page',
@@ -23,16 +24,15 @@ import { ModalsService } from '@core/service/modals/modals.service';
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-
   constructor(
     private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
-    private readonly router: Router,
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly orderingService: OrderingService,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -96,7 +96,7 @@ export class OrderingPage implements OnInit {
       if (data) {
         this.cartService.clearActiveOrder();
         this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
-        this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
+        this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
       }
     });
     await modal.present();

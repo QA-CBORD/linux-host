@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { Router } from '@angular/router';
 import { ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
@@ -11,11 +10,12 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { from, Subject } from 'rxjs';
-import { GUEST_ROUTES, PATRON_ROUTES } from '@sections/section.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 const { App, Device } = Plugins;
 
 enum AppStatus {
@@ -41,10 +41,10 @@ export class SessionFacadeService {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly router: Router,
     private navCtrl: NavController,
     private readonly loadingService: LoadingService,
-    private readonly contentStringFacade: ContentStringsFacadeService
+    private readonly contentStringFacade: ContentStringsFacadeService,
+    private readonly routingService: NavigationService
   ) {
     this.appStateListeners();
   }
@@ -86,7 +86,7 @@ export class SessionFacadeService {
     }
 
     if (await this.isVaultLocked()) {
-      this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { skipLocationChange: true });
+      this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { skipLocationChange: true })
     }
   }
 
@@ -114,7 +114,7 @@ export class SessionFacadeService {
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
-              this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry], routeConfig);
+              this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
               break;
             case LoginState.BIOMETRIC_LOGIN:
               this.loginUser(true);
@@ -129,10 +129,10 @@ export class SessionFacadeService {
               this.identityFacadeService.pinLoginSetup(false);
               break;
             case LoginState.HOSTED:
-              this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login], routeConfig);
+              this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
               break;
             case LoginState.EXTERNAL:
-              this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external], routeConfig);
+              this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
               break;
             case LoginState.DONE:
               this.navigate2Dashboard();
@@ -143,16 +143,14 @@ export class SessionFacadeService {
           console.log('The error => ', error);
           await this.loadingService.closeSpinner();
           (async () => {
-            await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry], routeConfig);
+            await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
           })();
         }
       );
   }
 
   private async navigate2Dashboard(): Promise<void> {
-    const isGuest = await this.authFacadeService.isGuestUser().toPromise();
-    (isGuest && this.router.navigate([ROLES.guest, GUEST_ROUTES.dashboard], { replaceUrl: true })) ||
-      this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard], { replaceUrl: true });
+      this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
 
   private loginUser(useBiometric: boolean) {
@@ -161,7 +159,7 @@ export class SessionFacadeService {
       () => {
         if (!useBiometric) {
           this.loadingService.closeSpinner();
-          this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry], { replaceUrl: true });
+          this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true })
         }
       }
     );
