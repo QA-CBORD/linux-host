@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Route, RouterModule } from '@angular/router';
 import { GUEST_ROUTES } from '@sections/section.config';
 import { GuestAddFundsResolver } from './guest/guest-deposits/components/add-funds/resolver/guest-add-funds.resolver';
-
 // create route guards for guest users...
 const routes: Route[] = [
   {

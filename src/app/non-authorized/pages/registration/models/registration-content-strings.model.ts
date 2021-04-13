@@ -1,12 +1,10 @@
 import { ContentStringModel, NullableContent } from '@shared/model/content-strings/content-string-models';
 import { defaultRegistrationCs } from '@shared/model/content-strings/default-strings';
-import { InputValidator } from 'src/app/password-validation/models/input-validator.model';
 
 export class RegistrationCsModel extends ContentStringModel {
-  passwordValidators: InputValidator[];
-
+  
   constructor(nullable: NullableContent, args?: any) {
-    super(nullable, defaultRegistrationCs);
+    super(nullable.getConfig(), defaultRegistrationCs);
   }
 
   get title(): string {

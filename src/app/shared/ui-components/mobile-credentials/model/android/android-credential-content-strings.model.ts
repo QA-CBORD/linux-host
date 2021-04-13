@@ -172,7 +172,7 @@ export class AndroidCredentialCsModel extends ContentStringModel {
   private cStatus: CredentialStatusCs;
 
   constructor(nullable: NullableContent, args?: any) {
-    super(nullable, defaultMobileCredentialCs);
+    super(nullable.getConfig(), defaultMobileCredentialCs);
     this.init();
   }
 

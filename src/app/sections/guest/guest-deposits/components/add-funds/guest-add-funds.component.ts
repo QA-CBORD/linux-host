@@ -21,12 +21,14 @@ import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
+import { ConfirmDepositCs, DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
 import { GUEST_ROUTES } from '@sections/section.config';
-import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
@@ -49,6 +51,7 @@ enum CREDITCARD_STATUS {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class GuestAddFundsComponent implements OnInit {
   depositButtonText: string;
   customActionSheetOptions: { [key: string]: string } = {
@@ -84,11 +87,13 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly modalController: ModalController,
     private readonly popoverCtrl: PopoverController,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private commonService: CommonService,
   ) {}
 
   ngOnInit() {
-    this.contentStrings = ContentStringApi.guestAddFunds();
+    this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds); // Verify content strings work
+    console.log('Content: ', this.contentStrings)
     this.accounts$ = this.depositService.getUserAccounts(); // CHECK: Revolve the account beforehand?
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.activatedRoute.data.subscribe(response => {
@@ -198,6 +203,7 @@ export class GuestAddFundsComponent implements OnInit {
         Browser.removeAllListeners();
       });
 
+
       this.externalPaymentService
         .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
           accountId: toAccount.id,
@@ -255,10 +261,15 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async confirmationDepositPopover(data: any) {
+    await this.commonService.loadContentString(ContentStringCategory.deposit).pipe(take(1)).toPromise();
+    const content =  this.commonService.getString(ContentStringCategory.deposit) as DepositCsModel;
+    const { confirmDepositCs: contentString } = content;
+    //const test = { title: "title", lblOkButton: "lblOkButton", lblCancelButton: "lblCancelButton" } as ConfirmDepositCs;
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
         data,
+        contentString,
       },
       animated: false,
       backdropDismiss: false,

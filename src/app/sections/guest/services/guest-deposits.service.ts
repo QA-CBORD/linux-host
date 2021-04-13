@@ -9,6 +9,8 @@ import { Settings, User } from 'src/app/app.global';
 
 @Injectable()
 export class GuestDepositsService {
+  private guestUserId: string;
+  private recipient: string;
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService
@@ -25,4 +27,17 @@ export class GuestDepositsService {
       .saveUserSetting(settings, value)
       .toPromise();
   }
+
+  setGuestDepositData(userId: string, recipientName: string) {
+    this.guestUserId = userId;
+    this.recipient = recipientName;
+  }
+
+  getGuestUserId(): string {
+     return this.guestUserId;
+  }
+
+  getGuestRecipientName(): string {
+    return this.recipient;
+ }
 }

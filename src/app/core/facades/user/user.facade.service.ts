@@ -244,10 +244,6 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
-  private setFCMToken(value: string) {
-    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: this.ttl });
-  }
-
   getFCMToken$(): Observable<string> {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.fcmTokenKey)
@@ -269,6 +265,10 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService.changePassword$(oldPassword, newPassword).pipe(
       take(1)
     );
+  }
+
+  private setFCMToken(value: string) {
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: this.ttl });
   }
 
   private async clearData(): Promise<void> {

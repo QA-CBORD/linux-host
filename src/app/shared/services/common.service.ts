@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { UserInfo } from '@core/model/user';
 import { getUserFullName } from '@core/utils/general-helpers';
-import { iif, of } from 'rxjs';
-import { skipWhile, map, take } from 'rxjs/operators';
+import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
+import { ContentStringCategory, ExtraContent } from '@shared/model/content-strings/content-strings-api';
+import { iif, Observable, of } from 'rxjs';
+import { skipWhile, map, take, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
+import { MessageProxy } from './injectable-message.proxy';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +26,9 @@ export class CommonService {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService
+    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly contentStringFacadeService: ContentStringsFacadeService,
+    private readonly messageProxy: MessageProxy
   ) {}
 
   async getInstitutionPhoto(useCache: boolean = true, sanitizer: DomSanitizer = null): Promise<SafeResourceUrl> {
@@ -83,6 +90,21 @@ export class CommonService {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
+  }
+
+  getString<T extends ContentStringModel>(category: ContentStringCategory): T {
+    const data = this.messageProxy.get<any>();
+    return <T>data[category] || ({} as any);
+  }
+
+  loadContentString<T extends ContentStringModel>(
+    category: ContentStringCategory,
+    args: { data?: any; requests?: ContentStringRequest[] } = {}
+  ): Observable<T> {
+    return this.contentStringFacadeService.fetchContentStringModel<T>(category, args).pipe(
+      take(1),
+      tap(data => this.messageProxy.put({ [category]: data }))
+    );
   }
 
   async getInstitutionName(): Promise<string> {

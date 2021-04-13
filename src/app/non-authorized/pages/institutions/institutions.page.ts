@@ -15,9 +15,8 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { ToastService } from '@core/service/toast/toast.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { InstitutionLookupListItem } from '@core/model/institution';
-import { MessageChannel } from '@shared/model/shared-api';
 import { CommonService } from '@shared/services/common.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { MessageProxy } from '@shared/services/injectable-message.proxy';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -44,7 +43,8 @@ export class InstitutionsPage implements OnInit {
     private readonly toastService: ToastService,
     private readonly route: Router,
     private readonly registrationServiceFacade: RegistrationServiceFacade,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
+    private readonly messageProxy: MessageProxy
   ) {}
 
   async ngOnInit() {
@@ -114,7 +114,7 @@ export class InstitutionsPage implements OnInit {
     this.authFacadeService.saveGuestSetting(institution.guestSettings);
     const preLoginCs = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
     this.loadingService.closeSpinner();
-    MessageChannel.put(preLoginCs);
+    this.messageProxy.put(preLoginCs);
     this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.pre_login]);
   }
 

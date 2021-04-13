@@ -4,7 +4,7 @@ import { defaultPasswordChangeCs } from '@shared/model/content-strings/default-s
 export class PasswordChangeCsModel extends ContentStringModel {
 
   constructor(nullable: NullableContent, args?: any) {
-    super(nullable, defaultPasswordChangeCs);
+    super(nullable.getConfig(), defaultPasswordChangeCs);
   }
 
   get currentPassword(): string {

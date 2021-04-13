@@ -113,4 +113,16 @@ export class CommerceApiService {
       map(({ response }: MessageResponse<string>) => response)
     );
   }
+
+  retrieveAccountsByUser(sessionId: string, userId: string): Observable<UserAccount[]> {
+    const params = { sessionId, userId };
+    const queryConfig = new RPCQueryConfig('retrieveAccountsByUser', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
+
+  depositForUser(sessionId: string, userId: string, fromAccountId: string, fromAccountCvv: string, toAccountId: string, amount: number, cashlessTerminalLocation: string | null): Observable<string> {
+    const params = { sessionId, userId, fromAccountId, fromAccountCvv, toAccountId, amount, cashlessTerminalLocation };
+    const queryConfig = new RPCQueryConfig('depositForUser', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
 }

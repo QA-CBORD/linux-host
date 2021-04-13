@@ -20,6 +20,7 @@ import { DepositModalComponent } from '@sections/accounts/shared/ui-components/d
 import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { GuestAddFundsResolver } from './resolver/guest-add-funds.resolver';
+import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 
 
 const imports = [
@@ -47,7 +48,7 @@ const imports = [
 ];
 
 const declarations = [GuestAddFundsComponent];
-const providers = [AccountService, DepositService, MerchantService, OrderingApiService, CartService, GuestAddFundsResolver ];
+const providers = [AccountService, DepositService, MerchantService, OrderingApiService, CartService, GuestAddFundsResolver, GuestDepositsService];
 const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
 
 @NgModule({

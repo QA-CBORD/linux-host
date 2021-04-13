@@ -29,7 +29,6 @@ export const defaultRegistrationCs = {
   reg_failed_message: 'Registration failed. Please try again later',
   success_screen_message:
     'We have sent you a verification email. Tap the link inside that to verify your email and login',
-  passwordValidators: [],
   error_code_7001: 'A confirmed cashless user already exists and can not be added again',
   error_code_9505: 'Your password contains some weird combination, try another.',
   error_code_6101: 'Cannot find a match for given user information',
@@ -38,8 +37,38 @@ export const defaultRegistrationCs = {
 export const guestDashboardDefaultStrings = {
   deposit: 'Guest deposit',
   order: 'Start an order',
-  explore: 'Explore'
-}
+  explore: 'Explore',
+};
+
+export const depositDefaultStrings = {
+  title: 'Confirm Deposit',
+  policy_title: 'Refund Policy',
+  lbl_deposit_amount: 'Deposit Amount',
+  convenience_fee: 'Convenience Fee',
+  total_payment: 'Total Payment',
+  lbl_account: 'Account',
+  bill_me_pay_method: 'Bill me',
+  cc_ending_in_text: 'ending in',
+  lbl_ok_button: 'DEPOSIT',
+  lbl_cancel_button: 'CANCEL',
+  lbl_select_payment_method: 'Payment Method',
+  new_credit_card_text: 'Add a Credit Card',
+  lbl_card_security_code: 'Card Security Code',
+  card_security_code_error_text: 'Please enter a valid card security code.',
+  lbl_select_account_for_deposit: 'To Account',
+  lbl_select_amount_for_deposit: 'Amount to Deposit',
+  max_amount_error_text: 'The maximum amount for a deposit is',
+  min_amount_error_text: 'The minimum amount for a deposit is',
+  amount_pattern_error_text: 'Please enter a valid amount.',
+  submit_button_lbl: 'Deposit',
+  choose_action_placeholder_text: 'Please Choose',
+  success_screen_title: 'Deposit',
+  subtitle_detail_text: 'This transaction was successful. You can review it to make sure everything checks out.',
+  subtitle_summary_text: 'Success!',
+  done_button_text: 'DONE',
+};
+
+export const guestDepositDefaultStirngs = depositDefaultStrings;
 
 export const guestAddFundsDefaultStrings = {
   add_funds_title: 'Add Funds',
@@ -90,6 +119,15 @@ export const defaultMobileCredentialCs = {
 };
 
 export const defaultPasswordChangeCs = {
-    current_password: 'Current password',
-    new_password: 'New password',
+  current_password: 'Current password',
+  new_password: 'New password',
+};
+
+export const defaultPasswordValidationStrings = {
+  at_least_one_letter: 'at least one letter',
+  at_least_one_lowercase: 'at least one lower case',
+  at_least_one_number: 'at least one number',
+  at_least_one_special_char: 'at least one special character',
+  required_password_length: 'at least 7 characters long',
+  at_least_one_uppercase: 'at least one upper case	',
 };

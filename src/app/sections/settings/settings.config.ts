@@ -110,7 +110,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           },
           {
             domain: CONTENT_STRINGS_DOMAINS.patronUi,
-            category: CONTENT_STRINGS_CATEGORIES.passwordChange,
+            category: CONTENT_STRINGS_CATEGORIES.changePassword,
             name: null,
           }]
         },

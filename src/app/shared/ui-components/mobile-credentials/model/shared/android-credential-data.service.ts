@@ -5,14 +5,12 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { forkJoin, Observable, of } from 'rxjs';
+import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { AndroidCredential, CredentialBundle, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
-import { NFCDialogContentString, NFCDialogContentStringName } from './credential-content-string';
 import { AndroidCredentialCsModel } from '../android/android-credential-content-strings.model';
-import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 
 const api_version = 'v1';
 const resourceUrls = {
@@ -93,10 +91,8 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
 
   private async retrieveAllContentStrings(): Promise<AndroidCredentialCsModel> {
     return await this.contentStringFacade
-      .fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.mobileCredential)
+      .fetchContentStringModel<AndroidCredentialCsModel>(ContentStringCategory.mobileCredential)
       .pipe(
-        map(data => ContentStringApi.mobileCredential(data)),
-        catchError(() => of(ContentStringApi.mobileCredential())),
         tap(data => (this.contentStrings = data))
       )
       .toPromise();

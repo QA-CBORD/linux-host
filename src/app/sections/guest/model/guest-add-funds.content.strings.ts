@@ -3,7 +3,7 @@ import { guestAddFundsDefaultStrings } from "@shared/model/content-strings/defau
 
 export class GuestAddFundsCsModel extends ContentStringModel {
     constructor(contentWrapper: NullableContent) {
-        super(contentWrapper, guestAddFundsDefaultStrings);
+        super(contentWrapper.getConfig(), guestAddFundsDefaultStrings);
     }
 
     get title() {

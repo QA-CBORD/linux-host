@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GuestDashboard } from './guest-dashboard/guest-dashboard.component';
+import { GuestDashboard } from './dashboard/guest-dashboard.component';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { StButtonModule } from '@shared/ui-components/st-button';

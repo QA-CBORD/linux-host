@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { GUEST_ROUTES } from '@sections/section.config';
 import { ROLES, User } from 'src/app/app.global';
@@ -46,7 +47,7 @@ export class IdentifyRecipientComponent implements OnInit {
     lastNam: 'else',
   };
   constructor(private readonly fb: FormBuilder,
-    private readonly guestDepositsService: GuestDepositsService,  private readonly router: Router) {
+    private readonly guestDepositsService: GuestDepositsService,  private readonly router: Router, private readonly userFacadeService: UserFacadeService) { 
     this.newRecepientForm = this.fb.group({
       [this.newRecepientFormRef.firstName.fieldName]: this.newRecepientFormRef.firstName.control,
       [this.newRecepientFormRef.lastName.fieldName]: this.newRecepientFormRef.lastName.control,
@@ -59,6 +60,9 @@ export class IdentifyRecipientComponent implements OnInit {
   }
 
   continue() {
+    const fullName =`${this.newRecepientFormRef.firstName.fieldName}  ${this.newRecepientFormRef.lastName.fieldName}`;
+    console.log('Fullname: ', fullName)
+    this.guestDepositsService.setGuestDepositData('12345', fullName);
     this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds]);
   }
 }

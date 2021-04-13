@@ -1,6 +1,7 @@
 import { AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { CustomValidator } from './password-validation';
+import { InputValidator } from './password-validation';
+import { PasswordValidationCsModel } from './password-validation.content.strings';
 import { RegistrationCsModel } from './registration-content-strings.model';
 
 export enum LookupFieldType {
@@ -25,10 +26,9 @@ export enum RegistrationApiMethods {
   retrieveRegistrationFields = 'retrieveRegistrationFields',
   register = 'register',
 }
-
-export interface UserRegistrationManager {
-  register(formData): Observable<any>;
-  getData(): Promise<{ fieldList: FormFieldList; regCsModel: RegistrationCsModel }>;
+export interface RegistrationContentString {
+  registrationCs: RegistrationCsModel;
+  passwordValidationCs: PasswordValidationCsModel;
 }
 
 export interface FormFieldList {
@@ -36,6 +36,17 @@ export interface FormFieldList {
   verticalAlignedFields: Field[];
   controls: { [key: string]: any };
 }
+export interface RegistrationData {
+  fieldList: FormFieldList;
+  contentString: RegistrationContentString;
+}
+
+export interface UserRegistrationManager {
+  register(formData): Observable<any>;
+  getData(): Promise<RegistrationData>;
+}
+
+
 
 // names of content strings for registration form
 export enum RegFormStringKeys {
@@ -49,7 +60,6 @@ export enum RegFormStringKeys {
   passwordConfirm = 'confirm_password',
 }
 
-
 /**
  * when doing a guest registration
  *
@@ -61,7 +71,7 @@ export interface formField {
   name: string;
   type: string;
   idd: string;
-  cValidator?: CustomValidator[];
+  cValidator?: InputValidator[];
   validators?: any[];
   control?: AbstractControl;
   lookupFieldId?: string;
@@ -81,7 +91,7 @@ export class Field implements formField {
   type: string;
   idd: string;
   value?: any;
-  cValidator?: CustomValidator[];
+  cValidator?: InputValidator[];
   validators?: any[];
   control?: AbstractControl;
   lookupFieldId?: string;

@@ -25,9 +25,9 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { RegistrationComponent } from '../registration/components/registration/registration.component';
 import { ModalController } from '@ionic/angular';
-import { MessageChannel } from '@shared/model/shared-api';
-import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
+import { MessageProxy } from '@shared/services/injectable-message.proxy';
 
 @Component({
   selector: 'user-pass-form',
@@ -67,7 +67,8 @@ export class UserPassForm implements OnInit {
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly accessibilityService: AccessibilityService,
     private readonly commonService: CommonService,
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly messageProxy: MessageProxy
   ) {}
 
   get username(): AbstractControl {
@@ -87,7 +88,7 @@ export class UserPassForm implements OnInit {
     this.asyncOnInit();
   }
 
-  async asyncOnInit():Promise<void>{
+  async asyncOnInit(): Promise<void> {
     await this.setLocalInstitutionInfo();
     // Announcing navigation meanwhile we find a generic way to do so.
     this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
@@ -98,8 +99,8 @@ export class UserPassForm implements OnInit {
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.signupEnabled$ = this.isSignupEnabled$();
-    const data = MessageChannel.get<any>();
-    this.navedAsGuest$ = of(data.navParams && data.navParams.asGuest);
+    const data = this.messageProxy.get<any>();
+    this.navedAsGuest$ = of(data.navParams && data.navParams.isGuestUser);
     this.cdRef.detectChanges();
     this.initializeInstitutionInfo();
   }
@@ -131,7 +132,7 @@ export class UserPassForm implements OnInit {
   }
 
   onSignup(): void {
-    const { navParams } = MessageChannel.get();
+    const { navParams } = this.messageProxy.get();
     if (navParams && this.commonService.guestLoginSupportedInEnv) {
       this.doHostedSignup(navParams);
     } else {
@@ -148,13 +149,9 @@ export class UserPassForm implements OnInit {
   async redirectToForgotPassword(): Promise<void> {
     this.loadingService.showSpinner();
     const forgotPasswordCs = await this.contentStringsFacadeService
-      .fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.forgotPassword)
-      .pipe(
-        map(data => ContentStringApi.forgotPassword(data)),
-        catchError(() => of(ContentStringApi.forgotPassword()))
-      )
+      .fetchContentStringModel(ContentStringCategory.forgotPassword)
       .toPromise();
-    MessageChannel.put(forgotPasswordCs);
+    this.messageProxy.put(forgotPasswordCs);
     this.loadingService.closeSpinner();
     this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.forgotPassword]);
   }
