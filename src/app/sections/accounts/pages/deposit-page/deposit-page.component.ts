@@ -31,6 +31,9 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { DepositCsModel } from './deposit-page.content.string';
+import { CommonService } from '@shared/services/common.service';
 const { Browser } = Plugins;
 
 @Component({
@@ -57,7 +60,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     accountDisplayName: 'Apple Pay',
     isActive: true,
   };
-
+  contentString: DepositCsModel = {} as any;
   applePayEnabled$: Observable<boolean>;
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
@@ -83,7 +86,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
     private readonly globalNav: GlobalNavService,
-    private readonly a11yService: AccessibilityService
+    private readonly a11yService: AccessibilityService,
+    private readonly commonService: CommonService
   ) {}
 
   ngOnInit() {
@@ -92,6 +96,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.initForm();
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
+    this.contentString = this.commonService.getString(ContentStringCategory.deposit);
   }
 
   ngOnDestroy() {
@@ -248,12 +253,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
     const isApplePay: boolean = sourceAccount.accountType === AccountType.APPLEPAY;
-    const depositReviewBillMe = this.depositService.getContentValueByName(
-      CONTENT_STRINGS.billMeDepositReviewInstructions
-    );
-    const depositReviewCredit = this.depositService.getContentValueByName(
-      CONTENT_STRINGS.creditDepositReviewInstructions
-    );
     const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
       selectedAccount,
       this.billmeMappingArr
@@ -304,7 +303,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           take(1)
         )
         .subscribe(
-          info => this.confirmationDepositPopover({ ...info, depositReviewBillMe, depositReviewCredit }),
+          (info: any) => this.confirmationDepositPopover({ ...info }),
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');
@@ -430,22 +429,26 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   onPaymentMethodChanged({ target }) {
     this.defineDestAccounts(target.value);
-
+    const { submitButtonText } = this.contentString;
     this.resetControls(['mainSelect', 'mainInput', 'selectedAccount']);
     this.setFormValidators();
-    document.getElementById('depositBtnText').innerHTML = 'Deposit';
+    document.getElementById('depositBtnText').innerHTML = submitButtonText;
   }
 
   onAmountChanged(event) {
     const amount: string = event.target.value;
-    document.getElementById('depositBtnText').innerHTML = amount && amount.length ? 'Deposit $' + amount : 'Deposit';
+    const { submitButtonText } = this.contentString;
+    document.getElementById('depositBtnText').innerHTML =
+      amount && amount.length ? `${submitButtonText} $` + amount : submitButtonText;
   }
 
   async confirmationDepositPopover(data: any) {
+    const { confirmDepositCs: contentString } = this.contentString;
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
         data,
+        contentString,
       },
       animated: false,
       backdropDismiss: false,
@@ -510,11 +513,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private async finalizeDepositModal(data): Promise<void> {
+    const { depositSuccessCs: contentString } = this.contentString;
     const modal = await this.modalController.create({
       component: DepositModalComponent,
       animated: true,
       componentProps: {
         data,
+        contentString,
       },
     });
     modal.onDidDismiss().then(() => {

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { ActivatedRoute } from '@angular/router';
 import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
 import { Observable, zip } from 'rxjs';
@@ -11,6 +10,8 @@ import { AlertController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -25,16 +26,16 @@ export class MenuCategoryItemsComponent implements OnInit {
   filteredMenuCategoryItems: MenuCategoryItemInfo[] = [];
   menuItems$: Observable<number>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-
+  isGuestUser: boolean;
   constructor(
-    private readonly router: Router,
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    private readonly navService: NavigationService
   ) {}
 
   ionViewWillEnter() {
@@ -60,7 +61,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   onBackBtnClicked() {
-    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
+    this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
   }
 
   onSearchClick() {
@@ -84,7 +85,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   triggerMenuItemClick(menuItemId) {
-    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.itemDetail], {
+    this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
       queryParams: { menuItemId },
     });
   }
@@ -103,7 +104,7 @@ export class MenuCategoryItemsComponent implements OnInit {
         handleServerError(ORDER_VALIDATION_ERRORS)
       )
       .toPromise()
-      .then(() => this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.cart]))
+      .then(() => this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart]))
       .catch(error => this.failedValidateOrder(error))
       .finally(() => this.loadingService.closeSpinner());
   }
