@@ -4,13 +4,14 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { Observable, throwError, zip, of } from 'rxjs';
 import { take } from 'rxjs/internal/operators/take';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { LookupFieldInfo, RegistrationApiMethods } from '../models/registration-utils';
+import { RegistrationApiMethods } from '../models/registration-utils';
 import { HttpClient } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Institution } from '@core/model/institution/institution.model';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model'
 
 @Injectable({
   providedIn: 'root',

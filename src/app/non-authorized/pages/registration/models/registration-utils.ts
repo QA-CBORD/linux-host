@@ -1,25 +1,8 @@
 import { AbstractControl } from '@angular/forms';
+import { LookupFieldType } from '@core/model/institution/institution-lookup-field.model';
 import { Observable } from 'rxjs';
 import { CustomValidator } from './password-validation';
 import { RegistrationCsModel } from './registration-content-strings.model';
-
-export enum LookupFieldType {
-  UNDEFINED = -1,
-  MEDIA_VALUE = 1,
-  DATE = 2,
-  STRING_EXACT = 3,
-  STRING_IGNORECASE = 4,
-  STRING_FUZZY = 5,
-  MMID_USID = 6,
-}
-
-export class LookupFieldInfo {
-  lookupFieldId: string;
-  displayName: string;
-  displayOrder: number;
-  type: LookupFieldType;
-  value: string;
-}
 
 export enum RegistrationApiMethods {
   retrieveRegistrationFields = 'retrieveRegistrationFields',

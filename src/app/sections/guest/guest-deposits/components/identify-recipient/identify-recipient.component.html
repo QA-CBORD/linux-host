@@ -18,11 +18,11 @@
           </ion-item>
         </ion-col>
         <ion-col size="3">
-          <ion-button fill="clear" (click)="presentRemoveConfirm(recipient)">Remove</ion-button>
+          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">Remove</ion-button>
         </ion-col>
       </ion-row>
       <ion-row class="recipient-row">
-        <ion-col size="9">
+        <ion-col>
           <ion-item lines="none">
             <ion-label>{{ recipients.length ? someoneElseRecipient.nickname : 'Add new recipient' }}</ion-label>
             <ion-radio slot="start" mode="md" slot="start" [value]="someoneElseRecipient"></ion-radio>
@@ -31,79 +31,39 @@
       </ion-row>
     </ion-radio-group>
     <ng-container *ngIf="selectedRecipient === someoneElseRecipient">
-      <form [formGroup]="newRecepientForm">
-        <ion-grid class="ion-no-padding">
-          <ion-row>
-            <ion-col size="12">
-              <st-input-floating-label
-                class="form__control"
-                [label]="'Nickname'"
-                [formControlName]="newRecepientFormRef.nickname.fieldName"
-                [control]="newRecepientFormRef.nickname.control"
-                [isError]="
-                  newRecepientFormRef.nickname.control.errors &&
-                  (newRecepientFormRef.nickname.control.dirty || newRecepientFormRef.nickname.control.touched)
-                "
-                tabindex="0"
-              >
-              </st-input-floating-label>
-            </ion-col>
-            <ion-col size="12">
-              <st-input-floating-label
-                class="form__control"
-                [label]="'first name'"
-                [formControlName]="newRecepientFormRef.firstName.fieldName"
-                [control]="newRecepientFormRef.firstName.control"
-                [isError]="
-                  newRecepientFormRef.firstName.control.errors &&
-                  (newRecepientFormRef.firstName.control.dirty || newRecepientFormRef.firstName.control.touched)
-                "
-                [stFocusNext]="lastName"
-                tabindex="0"
-              >
-              </st-input-floating-label>
-            </ion-col>
-            <ion-col size="12">
-              <st-input-floating-label
-                #lastName
-                class="form__control"
-                [label]="'last name'"
-                [formControlName]="newRecepientFormRef.lastName.fieldName"
-                [control]="newRecepientFormRef.lastName.control"
-                [isError]="
-                  newRecepientFormRef.lastName.control.errors &&
-                  (newRecepientFormRef.lastName.control.dirty || newRecepientFormRef.lastName.control.touched)
-                "
-                [stFocusNext]="recipientId"
-                tabindex="0"
-              >
-              </st-input-floating-label>
-            </ion-col>
-            <ion-col size="12">
-              <st-input-floating-label
-                #recipientId
-                class="form__control"
-                [label]="'ID'"
-                [formControlName]="newRecepientFormRef.id.fieldName"
-                [control]="newRecepientFormRef.id.control"
-                [isError]="
-                  newRecepientFormRef.id.control.errors &&
-                  (newRecepientFormRef.id.control.dirty || newRecepientFormRef.id.control.touched)
-                "
-                tabindex="0"
-              >
-              </st-input-floating-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+      <form class="new-recipient-form" [formGroup]="newRecepientForm">
+        <ng-container [formArrayName]="newRecipientFormName">
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+              <ion-col size="12" *ngFor="let recipientFormCtrl of newRecipientFields.controls; let i = index">
+                <st-input-floating-label
+                  class="form__control"
+                  [label]="newRecepientFormRef[i].fieldName"
+                  [formControl]="newRecipientFields.controls[i]"
+                  [control]="newRecipientFields.controls[i]"
+                  [isError]="
+                    newRecipientFields.controls[i].errors &&
+                    (newRecipientFields.controls[i].dirty || newRecipientFields.controls[i].touched)
+                  "
+                  tabindex="0"
+                >
+                </st-input-floating-label>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ng-container>
+        <ion-list class="ion-padding-horizontal">
+          <ion-item lines="full">
+            <ion-label>Save recipient for future deposits?</ion-label>
+            <ion-checkbox
+              class="ion-no-margin new-recipient-form__save-check"
+              slot="start"
+              mode="md"
+              [(ngModel)]="saveNewRecipient"
+            ></ion-checkbox>
+          </ion-item>
+        </ion-list>
       </form>
-
-      <ion-list class="ion-padding-horizontal">
-        <ion-item lines="full">
-          <ion-label>Save this recipient for future deposits?</ion-label>
-          <ion-checkbox slot="start" mode="md" [(ngModel)]="saveNewRecipient"></ion-checkbox>
-        </ion-item>
-      </ion-list>
     </ng-container>
   </div>
 </ion-content>

@@ -23,3 +23,8 @@ ion-footer {
 .recipient-row {
   border-bottom: 1px solid $color-white-smoke;
 }
+.new-recipient-form{
+  &__save-check {
+    margin-right: 5px;;
+  }
+}

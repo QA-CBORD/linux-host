@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { InstitutionPhotoInfo } from '@core/model/institution/institution-photo-info.model';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Institution } from '@core/model/institution/institution.model';
 import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
@@ -63,8 +63,8 @@ export class InstitutionApiService {
       .post<MessageResponse<any>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response: { institutions } }) => institutions));
   }
-  retrieveAnonymousDepositFields(institutionId: string): Observable<any> {
-    const queryConfig = new RPCQueryConfig('retrieveAnonymousDepositFields', { institutionId: institutionId });
+  retrieveAnonymousDepositFields(institutionId: string, sessionId: string): Observable<any> {
+    const queryConfig = new RPCQueryConfig('retrieveAnonymousDepositFields', { institutionId, sessionId });
     return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 }

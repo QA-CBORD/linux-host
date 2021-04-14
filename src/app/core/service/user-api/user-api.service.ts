@@ -8,6 +8,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { Settings } from '../../../app.global';
+import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 
 @Injectable({
   providedIn: 'root',
@@ -142,5 +143,18 @@ export class UserApiService {
     const params = { oldPassword, newPassword };
     const queryConfig = new RPCQueryConfig('changePassword', params, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
+  retrieveUserIdByCashlessFields(institutionId: string, sessionId: string, cashlessData: LookupFieldInfo[]) {
+    const queryConfig = new RPCQueryConfig('retrieveUserIdByCashlessFields', {
+      institutionId,
+      sessionId,
+      cashlessData:
+        cashlessData.length === 1
+          ? cashlessData[0]
+          : {
+              lookupList: cashlessData,
+            },
+    });
+    return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 }
