@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController } from '@ionic/angular';
 import { Recipient } from '@sections/guest/model/recipient.model';
@@ -12,33 +14,17 @@ import { GuestDepositsService } from '@sections/guest/services/guest-deposits.se
   styleUrls: ['./identify-recipient.component.scss'],
 })
 export class IdentifyRecipientComponent {
+  readonly newRecipientFormName = 'newRecipient';
   newRecepientForm: FormGroup;
 
-  newRecepientFormRef = {
-    firstName: {
-      fieldName: 'firstName',
-      control: new FormControl('', Validators.required),
-    },
-    lastName: {
-      fieldName: 'lastName',
-      control: new FormControl('', Validators.required),
-    },
-    id: {
-      fieldName: 'id',
-      control: new FormControl('', Validators.required),
-    },
-    nickname: {
-      fieldName: 'nickname',
-      control: new FormControl('', Validators.required),
-    },
-  };
-  saveNewRecipient: boolean;
+  newRecepientFormRef: { fieldName: string; control: FormControl; lookupField?: LookupFieldInfo }[] = [
+    { fieldName: 'Nickname', control: new FormControl('', Validators.required) },
+  ];
+  saveNewRecipient: boolean = true;
   recipients: Recipient[] = [];
   selectedRecipient: Recipient;
   someoneElseRecipient: Recipient = {
     id: '-1',
-    firstName: 'Someone',
-    lastName: 'else',
     nickname: 'Add another recipient',
   };
 
@@ -47,15 +33,17 @@ export class IdentifyRecipientComponent {
     private readonly guestDepositsService: GuestDepositsService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly alertController: AlertController,
+    private readonly userFacadeService: UserFacadeService,
     private readonly loadingService: LoadingService
   ) {
     this.newRecepientForm = this.fb.group({
-      [this.newRecepientFormRef.firstName.fieldName]: this.newRecepientFormRef.firstName.control,
-      [this.newRecepientFormRef.lastName.fieldName]: this.newRecepientFormRef.lastName.control,
-      [this.newRecepientFormRef.id.fieldName]: this.newRecepientFormRef.id.control,
-      [this.newRecepientFormRef.nickname.fieldName]: this.newRecepientFormRef.nickname.control,
+      [this.newRecipientFormName]: this.fb.array(this.newRecepientFormRef.map(f => f.control)),
     });
-    this.institutionFacadeService.retrieveAnonymousDepositFields().then();
+
+    this.institutionFacadeService
+      .retrieveAnonymousDepositFields()
+      .toPromise()
+      .then(fields => this.generateFormFields(fields, this.newRecipientFields));
     this.guestDepositsService.getRecipientList().then(rec => {
       this.recipients = rec;
       if (rec.length === 0) {
@@ -64,16 +52,30 @@ export class IdentifyRecipientComponent {
     });
   }
 
+  get newRecipientFields() {
+    return this.newRecepientForm.controls[this.newRecipientFormName] as FormArray;
+  }
   async continue() {
-    if (this.selectedRecipient === this.someoneElseRecipient && this.saveNewRecipient) {
+    if (this.selectedRecipient === this.someoneElseRecipient) {
       this.loadingService.showSpinner();
-      const saved = await this.guestDepositsService.saveRecipientList(
-        [...this.recipients, { ...this.newRecepientForm.value, id: new Date().getMilliseconds() }]
+      const newRecepient = await this.guestDepositsService.retrieveAndSaveRecipientByCashlessFields(
+        this.newRecepientFormRef[0].control.value,
+        [
+          ...this.newRecepientFormRef
+            .filter(f => f.lookupField)
+            .map(f => ({ ...f.lookupField, value: f.control.value })),
+        ],
+        [...this.recipients],
+        this.saveNewRecipient
       );
-      if (saved) {
-        this.recipients.push(this.newRecepientForm.value);
-        this.newRecepientForm.patchValue({});
-        this.selectedRecipient = this.recipients[this.recipients.length - 1];
+
+      if (newRecepient) {
+        if (this.saveNewRecipient) {
+          this.recipients.push(newRecepient);
+          this.selectedRecipient = this.recipients[this.recipients.length - 1];
+        }
+        this.saveNewRecipient = false;
+        this.resetForm(this.newRecipientFields.controls);
       }
       this.loadingService.closeSpinner();
     }
@@ -116,5 +118,24 @@ export class IdentifyRecipientComponent {
     });
 
     await alert.present();
+  }
+
+  private resetForm(controls: AbstractControl[]) {
+    controls.forEach(control => {
+      control.reset();
+      control.setValue('');
+    });
+  }
+
+  private generateFormFields(fields: LookupFieldInfo[], formArray: FormArray) {
+    for (const lookUpField of fields) {
+      const field = {
+        fieldName: lookUpField.displayName,
+        control: new FormControl('', Validators.required),
+        lookupField: lookUpField,
+      };
+      this.newRecepientFormRef.push(field);
+      formArray.push(field.control);
+    }
   }
 }

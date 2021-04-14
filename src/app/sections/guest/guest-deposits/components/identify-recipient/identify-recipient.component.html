@@ -52,18 +52,24 @@
             </ion-row>
           </ion-grid>
         </ng-container>
-        <ion-list class="ion-padding-horizontal">
-          <ion-item lines="full">
-            <ion-label>Save recipient for future deposits?</ion-label>
-            <ion-checkbox
-              class="ion-no-margin new-recipient-form__save-check"
-              slot="start"
-              mode="md"
-              [(ngModel)]="saveNewRecipient"
-            ></ion-checkbox>
-          </ion-item>
-        </ion-list>
       </form>
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col size="12">
+            <ion-list class="ion-padding-horizontal">
+              <ion-item lines="full">
+                <ion-label>Save recipient for future deposits?</ion-label>
+                <ion-checkbox
+                  class="ion-no-margin new-recipient-form__save-check"
+                  slot="start"
+                  mode="md"
+                  [(ngModel)]="saveNewRecipient"
+                ></ion-checkbox>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ng-container>
   </div>
 </ion-content>

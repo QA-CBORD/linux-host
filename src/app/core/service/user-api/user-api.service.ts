@@ -148,12 +148,9 @@ export class UserApiService {
     const queryConfig = new RPCQueryConfig('retrieveUserIdByCashlessFields', {
       institutionId,
       sessionId,
-      cashlessData:
-        cashlessData.length === 1
-          ? cashlessData[0]
-          : {
-              lookupList: cashlessData,
-            },
+      cashlessData: {
+        lookupFields: cashlessData,
+      },
     });
     return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
