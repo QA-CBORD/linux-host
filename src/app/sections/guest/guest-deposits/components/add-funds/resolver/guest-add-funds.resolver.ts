@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
+import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { forkJoin, of } from 'rxjs';
@@ -22,18 +25,21 @@ const requiredSettings = [
 
 @Injectable({ providedIn: 'root' })
 export class GuestAddFundsResolver implements Resolve<Observable<any>> {
-  constructor(private readonly depositService: DepositService, private readonly loadingService: LoadingService, private readonly commonService: CommonService) {}
+  constructor(private readonly depositService: DepositService, private readonly loadingService: LoadingService, private readonly commonService: CommonService, private readonly userFacadeService: UserFacadeService, private readonly guestDepositsService: GuestDepositsService) {}
 
-  resolve(): Observable<any> {
-    const contentStrings = this.commonService.loadContentString(ContentStringCategory.addFunds);
-    const accountsCall = this.depositService.getUserAccounts();
+  resolve(route: ActivatedRouteSnapshot): Observable<any> {
+    const recipientName  = route.queryParams.fullName;
+    const addFundsContentStrings = this.commonService.loadContentString(ContentStringCategory.addFunds);
+    const applePayEnabled = this.userFacadeService.isApplePayEnabled$();
     const settingsCall = this.depositService.getUserSettings(requiredSettings);
+    const accounts =  this.guestDepositsService.guestAccounts('b099a3a2-93df-48b2-b30a-764486ac1cfa');
     this.loadingService.showSpinner();
 
-    return forkJoin(settingsCall, accountsCall, contentStrings).pipe(
-      tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()),
+    return forkJoin(settingsCall, applePayEnabled, accounts, addFundsContentStrings).pipe(
+      tap(() => { this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()
+      }),
       map(
-        ([settings, accounts]) => ({ settings, accounts }),
+        ([settings, applePayEnabled, accounts]) => ({ settings, applePayEnabled, accounts, recipientName }),
       )
     );
   }

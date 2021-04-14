@@ -114,14 +114,14 @@ export class CommerceApiService {
     );
   }
 
-  retrieveAccountsByUser(sessionId: string, userId: string): Observable<UserAccount[]> {
-    const params = { sessionId, userId };
+  retrieveAccountsByUser(userId: string): Observable<UserAccount[]> {
+    const params = { userId };
     const queryConfig = new RPCQueryConfig('retrieveAccountsByUser', params, true, false);
-    return this.http.post<any>(this.serviceUrl, queryConfig);
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) =>  response.accounts ));
   }
 
-  depositForUser(sessionId: string, userId: string, fromAccountId: string, fromAccountCvv: string, toAccountId: string, amount: number, cashlessTerminalLocation: string | null): Observable<string> {
-    const params = { sessionId, userId, fromAccountId, fromAccountCvv, toAccountId, amount, cashlessTerminalLocation };
+  depositForUser(userId: string, fromAccountId: string, toAccountId: string, amount: number): Observable<string> {
+    const params = { userId, fromAccountId, fromAccountCvv: null, toAccountId, amount, cashlessTerminalLocation: null };
     const queryConfig = new RPCQueryConfig('depositForUser', params, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }

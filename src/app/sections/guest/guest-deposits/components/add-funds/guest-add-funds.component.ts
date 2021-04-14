@@ -74,13 +74,13 @@ export class GuestAddFundsComponent implements OnInit {
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
   destinationAccounts: Array<UserAccount>;
+  recipientName: string; 
   private activePaymentType: PAYMENT_TYPE;
   private readonly sourceSubscription: Subscription = new Subscription();
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly globalNav: GlobalNavService,
-    private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly depositService: DepositService,
     private readonly router: Router,
@@ -91,18 +91,16 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private activatedRoute: ActivatedRoute,
     private commonService: CommonService,
-    private commerceApiService: CommerceApiService,
-    private GuestDepositsService: GuestDepositsService,
+    private guestDepositsService: GuestDepositsService,
   ) {}
 
   ngOnInit() {
-    this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds); // Verify content strings work
-    console.log('Content: ', this.contentStrings)
-    //this.accounts$ = this.commerceApiService.retrieveAccountsByUser(this.GuestDepositsService.getGuestUserId(), this.GuestDepositsService.getGuestRecipientName());
-    this.accounts$ = this.depositService.getUserAccounts(); // CHECK: Revolve the account beforehand?
-    this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
+    this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds); 
     this.activatedRoute.data.subscribe(response => {
       this.depositSettings = response.data.settings;
+      this.recipientName = response.data.recipientName;
+      this.applePayEnabled$ = of(response.data.applePayEnabled);
+      this.accounts$ = of(response.data.accounts);
     });
 
     this.initForm();
@@ -111,7 +109,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   ionViewWillEnter() {
     this.depositButtonText = this.contentStrings.depositButton;
-    this.getAccounts(); // CHECK: Is updating the accounts or using the old ones?
+    this.filterAccounts(); 
     this.setFormValidators();
     this.cdRef.detectChanges();
   }
@@ -266,10 +264,8 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async confirmationDepositPopover(data: any) {
-    await this.commonService.loadContentString(ContentStringCategory.deposit).pipe(take(1)).toPromise();
-    const content =  this.commonService.getString(ContentStringCategory.deposit) as DepositCsModel;
+    const content = await this.commonService.loadContentString<DepositCsModel>(ContentStringCategory.guestDeposit).pipe(take(1)).toPromise();
     const { confirmDepositCs: contentString } = content;
-    //const test = { title: "title", lblOkButton: "lblOkButton", lblCancelButton: "lblCancelButton" } as ConfirmDepositCs;
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
@@ -282,10 +278,7 @@ export class GuestAddFundsComponent implements OnInit {
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
-
-        //this.commerceApiService.depositForUser(userId, fromAccountId, fromAccountCvv, toAccountId, amount, cashlessTerminalLocation)
-        this.depositService
-          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, null) // TODO: Check CVV Value
+        this.guestDepositsService.guestDeposit('b099a3a2-93df-48b2-b30a-764486ac1cfa', data.sourceAcc.id, data.selectedAccount.id, data.amount)
           .pipe(
             handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
             take(1),
@@ -382,7 +375,7 @@ export class GuestAddFundsComponent implements OnInit {
     );
   }
 
-  private getAccounts() {
+  private filterAccounts() {
     const subscription = of(this.depositSettings)
       .pipe(
         map(settings => {
@@ -425,7 +418,7 @@ export class GuestAddFundsComponent implements OnInit {
     this.destinationAccounts = this.creditCardDestinationAccounts;
   }
 
-  private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {
+  private filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
     return this.depositService.filterAccountsByPaymentSystem(accounts);
   }
   private filterCreditCardDestAccounts(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {

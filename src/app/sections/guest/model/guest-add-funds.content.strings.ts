@@ -15,11 +15,11 @@ export class GuestAddFundsCsModel extends ContentStringModel {
     }
     
     get paymentMethod() {
-        return this.content.destination_account_text;
+        return this.content.source_account_text;
     }
 
     get toAccount() {
-        return this.content.source_account_text;
+        return this.content.destination_account_text;
     }
 
     get depositText() {

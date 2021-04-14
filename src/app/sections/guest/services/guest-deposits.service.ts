@@ -1,22 +1,18 @@
 import { Injectable } from '@angular/core';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { combineLatest, Observable } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
-import { Settings, User } from 'src/app/app.global';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
+import { User } from 'src/app/app.global';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class GuestDepositsService {
-  private guestUserId: string;
-  private recipient: string;
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService
+    private readonly commerceApiService: CommerceApiService
   ) {}
 
   getRecipientList(settings: User.Settings): Promise<SettingInfo> {
+    CommerceApiService
     return this.settingsFacadeService
       .getUserSetting(settings)
       .toPromise();
@@ -28,16 +24,11 @@ export class GuestDepositsService {
       .toPromise();
   }
 
-  setGuestDepositData(userId: string, recipientName: string) {
-    this.guestUserId = userId;
-    this.recipient = recipientName;
+  guestAccounts(userId: string) {
+   return this.commerceApiService.retrieveAccountsByUser(userId);
   }
 
-  getGuestUserId(): string {
-     return this.guestUserId;
-  }
-
-  getGuestRecipientName(): string {
-    return this.recipient;
- }
+  guestDeposit(userId: string, fromAccountId: string, toAccountId: string, amount: number) {
+    return this.commerceApiService.depositForUser(userId, fromAccountId, toAccountId, amount);
+   }
 }

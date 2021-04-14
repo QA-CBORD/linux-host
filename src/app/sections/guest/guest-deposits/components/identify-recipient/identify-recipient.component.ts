@@ -59,9 +59,8 @@ export class IdentifyRecipientComponent implements OnInit {
   }
 
   continue() {
-    const fullName =`${this.newRecepientFormRef.firstName.fieldName}  ${this.newRecepientFormRef.lastName.fieldName}`;
-    console.log('Fullname: ', fullName)
-    this.guestDepositsService.setGuestDepositData('12345', fullName);
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds]);
+    const fullName =`${this.newRecepientFormRef.firstName.fieldName} ${this.newRecepientFormRef.lastName.fieldName}`;
+    const userId = '1234';
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds], { queryParams: { fullName, userId }});
   }
 }

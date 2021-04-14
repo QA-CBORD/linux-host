@@ -57,7 +57,7 @@ export class DepositService {
 
   filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
     return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY
+      ({ paymentSystemType: type }) => type == PAYMENT_SYSTEM_TYPE.USAEPAY
     );
   }
 
@@ -119,7 +119,6 @@ export class DepositService {
   }
 
   deposit(fromAccountId, toAccountId, amount, fromAccountCvv): Observable<string> {
-    console.log('deposit?')
     return this.commerceApiService.deposit(fromAccountId, toAccountId, amount, fromAccountCvv);
   }
 
