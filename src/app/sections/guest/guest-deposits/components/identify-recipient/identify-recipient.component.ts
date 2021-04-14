@@ -20,7 +20,7 @@ export class IdentifyRecipientComponent {
   newRecepientFormRef: { fieldName: string; control: FormControl; lookupField?: LookupFieldInfo }[] = [
     { fieldName: 'Nickname', control: new FormControl('', Validators.required) },
   ];
-  saveNewRecipient: boolean = true;
+  saveNewRecipient: boolean;
   recipients: Recipient[] = [];
   selectedRecipient: Recipient;
   someoneElseRecipient: Recipient = {
@@ -33,7 +33,6 @@ export class IdentifyRecipientComponent {
     private readonly guestDepositsService: GuestDepositsService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly alertController: AlertController,
-    private readonly userFacadeService: UserFacadeService,
     private readonly loadingService: LoadingService
   ) {
     this.newRecepientForm = this.fb.group({
@@ -90,29 +89,11 @@ export class IdentifyRecipientComponent {
           text: 'Oops, cancel',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: blah => {},
+          handler: () => undefined,
         },
         {
           text: 'Yes, remove',
-          handler: async () => {
-            this.loadingService.showSpinner();
-            const updatedList = this.recipients.filter(rec => rec.id !== recipient.id);
-            const saved = await this.guestDepositsService.saveRecipientList(updatedList);
-            if (saved) {
-              this.recipients = updatedList;
-              if (this.selectedRecipient === recipient) {
-                if (this.recipients.length) {
-                  this.selectedRecipient = this.recipients[0];
-                } else {
-                  this.selectedRecipient = this.someoneElseRecipient;
-                }
-              }
-
-              this.selectedRecipient = this.recipients[this.recipients.length - 1];
-              this.newRecepientForm.patchValue({});
-            }
-            this.loadingService.closeSpinner();
-          },
+          handler: () => this.removeRecipient(recipient),
         },
       ],
     });
@@ -137,5 +118,22 @@ export class IdentifyRecipientComponent {
       this.newRecepientFormRef.push(field);
       formArray.push(field.control);
     }
+  }
+
+  private async removeRecipient(recipient: Recipient) {
+    this.loadingService.showSpinner();
+    const updatedList = this.recipients.filter(rec => rec.id !== recipient.id);
+    const saved = await this.guestDepositsService.saveRecipientList(updatedList);
+    if (saved) {
+      this.recipients = updatedList;
+      if (this.selectedRecipient === recipient) {
+        if (this.recipients.length) {
+          this.selectedRecipient = this.recipients[0];
+        } else {
+          this.selectedRecipient = this.someoneElseRecipient;
+        }
+      }
+    }
+    this.loadingService.closeSpinner();
   }
 }
