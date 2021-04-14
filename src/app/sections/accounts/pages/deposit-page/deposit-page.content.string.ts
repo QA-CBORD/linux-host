@@ -95,14 +95,14 @@ export class DepositCsModel extends ContentStringModel {
   private confirmDeposit: ConfirmDepositCs;
   private depositSuccess: DepositSuccessCs;
 
-  constructor(contentWrapper: NullableContent) {
-    super(contentWrapper.getConfig(), depositDefaultStrings);
-    this.initialize();
+  constructor(contentWrapper: NullableContent, defaultString?: RawContentStringObject) {
+    super(contentWrapper.getConfig(), defaultString || depositDefaultStrings);
+    this.initialize(this.content);
   }
 
-  private initialize(): void {
-    this.confirmDeposit = new ConfirmDepositCs(this.content);
-    this.depositSuccess = new DepositSuccessCs(this.content);
+  protected initialize(content): void {
+    this.confirmDeposit = new ConfirmDepositCs(content);
+    this.depositSuccess = new DepositSuccessCs(content);
   }
 
   get depositSuccessCs(): DepositSuccessCs {
