@@ -16,7 +16,7 @@ import { tap, switchMap, map } from 'rxjs/operators';
 import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantSearchOptions } from '../utils';
-import { MerchantSearchOptionName, MerchantSettings } from '../ordering.config';
+import { MerchantSearchOptionName, MerchantSettings, PAYMENT_SYSTEM_TYPE } from '../ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
@@ -26,8 +26,11 @@ import { isCashlessAccount } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User } from '../../../app.global';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MerchantService {
   private menuMerchants: MerchantInfo[] = [];
   private recentOrders: OrderInfo[] = [];
@@ -43,7 +46,8 @@ export class MerchantService {
     private readonly orderingApiService: OrderingApiService,
     private readonly commerceApiService: CommerceApiService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly auth: AuthFacadeService
   ) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
@@ -135,9 +139,11 @@ export class MerchantService {
           this.orderingApiService.getSuccessfulOrdersList(id, institutionId),
           this.getMenuMerchants(),
           (orders, merchants) =>
-            orders.map(order => {
+            orders.filter(order => {
               const merchant = merchants.find(({ id }) => id === order.merchantId);
-              return merchant && { ...order, merchantName: merchant.name };
+              const merchantFound = !!merchant;
+              order.merchantName = merchantFound && merchant.name;
+              return merchantFound;
             })
         )
       ),
@@ -145,27 +151,26 @@ export class MerchantService {
     );
   }
 
-
   getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any> {
     return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType).pipe(
-      map( (response) => { 
+      map(response => {
         var { days } = response;
-        this.datemap(days); 
-        return response; 
+        this.datemap(days);
+        return response;
       })
     );
   }
 
-  private datemap(dates: any[]){
+  private datemap(dates: any[]) {
     return dates.map(date => {
       const { hourBlocks } = date;
-      date.hourBlocks  = hourBlocks.map(hourBlock => {
-         if(hourBlock.hour > 12 ){
-             hourBlock['period'] = 'PM';
-             hourBlock.hour = +hourBlock.hour - 12; 
-          } else if(hourBlock.hour < 12) { 
-           hourBlock['period'] = 'AM'; 
-         } else{
+      date.hourBlocks = hourBlocks.map(hourBlock => {
+        if (hourBlock.hour > 12) {
+          hourBlock['period'] = 'PM';
+          hourBlock.hour = +hourBlock.hour - 12;
+        } else if (hourBlock.hour < 12) {
+          hourBlock['period'] = 'AM';
+        } else {
           hourBlock['period'] = 'PM';
         }
         return hourBlock;
@@ -219,7 +224,15 @@ export class MerchantService {
   }
 
   getMerchantPaymentAccounts(merchantId: string): Observable<MerchantAccountInfoList> {
-    return this.orderingApiService.getMerchantPaymentAccounts(merchantId);
+    return this.orderingApiService.getMerchantPaymentAccounts(merchantId).pipe(
+      switchMap(data => this.auth.isGuestUser().pipe(map(isGuestUser => ({ data, isGuestUser })))),
+      map(({ data, isGuestUser }) => {
+        if (isGuestUser) {
+          data.accounts = data.accounts.filter(acc => acc.paymentSystemType == PAYMENT_SYSTEM_TYPE.USAEPAY);
+        }
+        return data;
+      })
+    );
   }
 
   isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { finalize, first, skipWhile, switchMap } from 'rxjs/operators';
+import { finalize, first, map, skipWhile, switchMap } from 'rxjs/operators';
 import { CartService, MerchantAccountInfoList, MerchantService } from '@sections/ordering';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { Settings } from '../../../app.global';
@@ -33,6 +33,10 @@ export class CartResolver implements Resolve<Observable<[SettingInfo[], Merchant
     const settingsCall = this.settingsFacadeService.getSettings(requiredSettings);
 
     return zip(settingsCall ,accountsCall).pipe(
+      map((response ) => {
+        console.log('cart resolver response ==> ', response)
+        return response;
+      }),
       finalize(() => this.loadingService.closeSpinner()),
       first()
     );

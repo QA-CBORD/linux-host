@@ -4,20 +4,19 @@ import { Injectable } from '@angular/core';
 import { Observable, of, zip } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { CoordsService } from 'src/app/core/service/coords/coords.service';
-
 import { MessageResponse, ServiceParameters } from 'src/app/core/model/service/message-response.model';
-import { MerchantSearchOptionName } from '../ordering.config';
 import { BuildingInfo, MerchantAccountInfoList, MerchantInfo, OrderInfo } from '../shared';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MerchantSearchOptions } from '@sections/ordering';
-import { GeolocationPosition } from '@capacitor/core';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 
 /** This service should be global */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class OrderingApiService {
   private readonly serviceUrlMerchant: string = '/json/merchant';
   private readonly serviceUrlOrdering: string = '/json/ordering';
@@ -27,51 +26,23 @@ export class OrderingApiService {
   constructor(
     private readonly http: HttpClient,
     private readonly userFacadeService: UserFacadeService,
-    private readonly coords: CoordsService
+    private readonly merchantFacadeService: MerchantFacadeService
   ) {}
 
   getMenuMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
-    return this.coords.getCoords().pipe(
-      switchMap((geoData: GeolocationPosition) => {
-        if (geoData && geoData.coords && geoData.coords.latitude !== null && geoData.coords.longitude !== null) {
-          searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: geoData.coords.latitude });
-          searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: geoData.coords.longitude });
-        }
-
-        const queryConfig = new RPCQueryConfig('getMenuMerchants', { searchOptions }, true, true);
-
-        return this.http
-          .post(this.serviceUrlMerchant, queryConfig)
-          .pipe(map(({ response }: MessageResponse<any>) => response.list));
-      })
-    );
+    return this.merchantFacadeService.fetchMenuMerchants(searchOptions);
   }
 
   getFavoriteMerchants(): Observable<MerchantInfo[]> {
-    const postParams: ServiceParameters = { excludeNonOrdering: false };
-    const queryConfig = new RPCQueryConfig('getFavoriteMerchants', postParams, true);
-
-    return this.http
-      .post(this.serviceUrlMerchant, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response.list));
+    return this.merchantFacadeService.fetchFavoriteMerchants();
   }
 
   addFavoriteMerchant(merchantId: string): Observable<string> {
-    const postParams: ServiceParameters = { merchantId, notes: '' };
-    const queryConfig = new RPCQueryConfig('addFavoriteMerchant', postParams, true);
-
-    return this.http
-      .post<MessageResponse<string>>(this.serviceUrlMerchant, queryConfig)
-      .pipe(map(({ response }) => response));
+    return this.merchantFacadeService.addFavoriteMerchant(merchantId);
   }
 
   removeFavoriteMerchant(merchantId: string): Observable<boolean> {
-    const postParams: ServiceParameters = { merchantId };
-    const queryConfig = new RPCQueryConfig('removeFavoriteMerchant', postParams, true);
-
-    return this.http
-      .post<MessageResponse<boolean>>(this.serviceUrlMerchant, queryConfig)
-      .pipe(map(({ response }) => response));
+    return this.merchantFacadeService.removeFavoriteMerchant(merchantId);
   }
 
   getSuccessfulOrdersList(userId: string, institutionId: string): Observable<OrderInfo[]> {
@@ -201,7 +172,7 @@ export class OrderingApiService {
 
     return this.userFacadeService.getUserData$().pipe(
       switchMap(({ id }) => {
-        const queryConfig = new RPCQueryConfig('getMerchantPaymentAccounts', { ...postParams, userId: id }, true);
+        const queryConfig = new RPCQueryConfig(methodName, { ...postParams, userId: id }, true);
 
         return this.http.post(this.serviceUrlMerchant, queryConfig);
       }),

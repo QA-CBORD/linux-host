@@ -12,6 +12,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { ApplePayResponse } from '@core/provider/native-provider/native.provider';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -21,11 +22,12 @@ import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
-import { ConfirmDepositCs, DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
+import { DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
+import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
@@ -89,11 +91,14 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private activatedRoute: ActivatedRoute,
     private commonService: CommonService,
+    private commerceApiService: CommerceApiService,
+    private GuestDepositsService: GuestDepositsService,
   ) {}
 
   ngOnInit() {
     this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds); // Verify content strings work
     console.log('Content: ', this.contentStrings)
+    //this.accounts$ = this.commerceApiService.retrieveAccountsByUser(this.GuestDepositsService.getGuestUserId(), this.GuestDepositsService.getGuestRecipientName());
     this.accounts$ = this.depositService.getUserAccounts(); // CHECK: Revolve the account beforehand?
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.activatedRoute.data.subscribe(response => {
@@ -277,6 +282,8 @@ export class GuestAddFundsComponent implements OnInit {
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
+
+        //this.commerceApiService.depositForUser(userId, fromAccountId, fromAccountCvv, toAccountId, amount, cashlessTerminalLocation)
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, null) // TODO: Check CVV Value
           .pipe(
