@@ -4,6 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
 import { Router } from '@angular/router';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
+import { GUEST_NAVIGATION } from 'src/app/app.global';
 
 @Component({
   selector: 'st-guest-dashboard',
@@ -40,7 +41,7 @@ export class GuestDashboard implements OnInit {
 
   onclick(section: GuestDashboardSection) {
     if (section.willNavigate && section.url) {
-      this.router.navigate([section.url], { replaceUrl: true });
+      this.router.navigate([section.url], { replaceUrl: section.url !== GUEST_NAVIGATION.deposit });
     } else if (section.modalConfig && section.modalConfig.component) {
       // logic to open modal here....
     }
