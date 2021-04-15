@@ -12,7 +12,6 @@ import { UserAccount } from '@core/model/account/account.model';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { ApplePayResponse } from '@core/provider/native-provider/native.provider';
-import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
