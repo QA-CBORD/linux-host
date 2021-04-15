@@ -59,8 +59,8 @@ export class IdentifyRecipientComponent implements OnInit {
   }
 
   continue() {
-    const fullName =`${this.newRecepientFormRef.firstName.fieldName} ${this.newRecepientFormRef.lastName.fieldName}`;
-    const userId = '1234';
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds], { queryParams: { fullName, userId }});
+    const recipientName =`${this.newRecepientFormRef.firstName.fieldName} ${this.newRecepientFormRef.lastName.fieldName}`;
+    const userId = 'b099a3a2-93df-48b2-b30a-764486ac1cfa';
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds], { queryParams: { recipientName, userId }});
   }
 }

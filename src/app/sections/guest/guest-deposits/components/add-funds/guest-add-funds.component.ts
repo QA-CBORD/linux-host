@@ -1,13 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/core';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -52,7 +46,6 @@ enum CREDITCARD_STATUS {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class GuestAddFundsComponent implements OnInit {
   depositButtonText: string;
   customActionSheetOptions: { [key: string]: string } = {
@@ -68,14 +61,16 @@ export class GuestAddFundsComponent implements OnInit {
   isDepositing: boolean = false;
   detailsForm: FormGroup;
   applePayEnabled$: Observable<boolean>;
-  accounts$: Observable<UserAccount[]>;
+  recipientAccounts$: Observable<UserAccount[]>;
+
   depositSettings: SettingInfo[];
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
   destinationAccounts: Array<UserAccount>;
-  recipientName: string; 
+  recipientName: string;
   private activePaymentType: PAYMENT_TYPE;
   private readonly sourceSubscription: Subscription = new Subscription();
+  guestAccounts$: Observable<UserAccount[]>;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -90,16 +85,17 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private activatedRoute: ActivatedRoute,
     private commonService: CommonService,
-    private guestDepositsService: GuestDepositsService,
+    private guestDepositsService: GuestDepositsService
   ) {}
 
   ngOnInit() {
-    this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds); 
+    this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds);
     this.activatedRoute.data.subscribe(response => {
       this.depositSettings = response.data.settings;
       this.recipientName = response.data.recipientName;
       this.applePayEnabled$ = of(response.data.applePayEnabled);
-      this.accounts$ = of(response.data.accounts);
+      this.recipientAccounts$ = of(response.data.destinationAccounts);
+      this.guestAccounts$ = of(response.data.sourceAccounts);
     });
 
     this.initForm();
@@ -108,7 +104,8 @@ export class GuestAddFundsComponent implements OnInit {
 
   ionViewWillEnter() {
     this.depositButtonText = this.contentStrings.depositButton;
-    this.filterAccounts(); 
+    this.filterDestinationAccounts();
+    this.filterSourceAccounts();
     this.setFormValidators();
     this.cdRef.detectChanges();
   }
@@ -205,7 +202,6 @@ export class GuestAddFundsComponent implements OnInit {
         Browser.removeAllListeners();
       });
 
-
       this.externalPaymentService
         .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
           accountId: toAccount.id,
@@ -263,7 +259,10 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async confirmationDepositPopover(data: any) {
-    const content = await this.commonService.loadContentString<DepositCsModel>(ContentStringCategory.guestDeposit).pipe(take(1)).toPromise();
+    const content = await this.commonService
+      .loadContentString<DepositCsModel>(ContentStringCategory.guestDeposit)
+      .pipe(take(1))
+      .toPromise();
     const { confirmDepositCs: contentString } = content;
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
@@ -277,7 +276,8 @@ export class GuestAddFundsComponent implements OnInit {
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
-        this.guestDepositsService.guestDeposit('b099a3a2-93df-48b2-b30a-764486ac1cfa', data.sourceAcc.id, data.selectedAccount.id, data.amount)
+        this.guestDepositsService
+          .guestDeposit(data.sourceAcc.id, data.selectedAccount.id, data.amount)
           .pipe(
             handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
             take(1),
@@ -374,7 +374,14 @@ export class GuestAddFundsComponent implements OnInit {
     );
   }
 
-  private filterAccounts() {
+  private filterSourceAccounts() {
+    this.guestAccounts$.pipe(
+      tap(accounts => {
+        this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
+      })
+    );
+  }
+  private filterDestinationAccounts() {
     const subscription = of(this.depositSettings)
       .pipe(
         map(settings => {
@@ -384,9 +391,8 @@ export class GuestAddFundsComponent implements OnInit {
           };
         }),
         switchMap(({ depositTenders }) =>
-          this.accounts$.pipe(
+          this.recipientAccounts$.pipe(
             tap(accounts => {
-              this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts

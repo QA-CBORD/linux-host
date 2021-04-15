@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve} from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
@@ -28,18 +27,21 @@ export class GuestAddFundsResolver implements Resolve<Observable<any>> {
   constructor(private readonly depositService: DepositService, private readonly loadingService: LoadingService, private readonly commonService: CommonService, private readonly userFacadeService: UserFacadeService, private readonly guestDepositsService: GuestDepositsService) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
-    const recipientName  = route.queryParams.fullName;
+    const recipientName  = route.queryParams.recipientName;
+    const recipientId = route.queryParams.userId;
     const addFundsContentStrings = this.commonService.loadContentString(ContentStringCategory.addFunds);
     const applePayEnabled = this.userFacadeService.isApplePayEnabled$();
     const settingsCall = this.depositService.getUserSettings(requiredSettings);
-    const accounts =  this.guestDepositsService.guestAccounts();
+    const destinationAccounts =  this.guestDepositsService.userAccounts(recipientId);
+    // const sourceAccounts =  this.guestDepositsService.guestAccounts();
+    const sourceAccounts =  this.guestDepositsService.userAccounts(recipientId);
     this.loadingService.showSpinner();
 
-    return forkJoin(settingsCall, applePayEnabled, accounts, addFundsContentStrings).pipe(
+    return forkJoin(settingsCall, applePayEnabled, destinationAccounts, sourceAccounts, addFundsContentStrings).pipe(
       tap(() => { this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()
       }),
       map(
-        ([settings, applePayEnabled, accounts]) => ({ settings, applePayEnabled, accounts, recipientName }),
+        ([settings, applePayEnabled, destinationAccounts, sourceAccounts]) => ({ settings, applePayEnabled, destinationAccounts, sourceAccounts, recipientName }),
       )
     );
   }
