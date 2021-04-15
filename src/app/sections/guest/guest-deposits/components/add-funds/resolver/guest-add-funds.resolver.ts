@@ -33,9 +33,10 @@ export class GuestAddFundsResolver implements Resolve<Observable<any>> {
     const applePayEnabled = this.userFacadeService.isApplePayEnabled$();
     const settingsCall = this.depositService.getUserSettings(requiredSettings);
     const destinationAccounts =  this.guestDepositsService.userAccounts(recipientId);
-    // const sourceAccounts =  this.guestDepositsService.guestAccounts();
+    //const sourceAccounts =  this.guestDepositsService.guestAccounts();
     const sourceAccounts =  this.guestDepositsService.userAccounts(recipientId);
     this.loadingService.showSpinner();
+    
 
     return forkJoin(settingsCall, applePayEnabled, destinationAccounts, sourceAccounts, addFundsContentStrings).pipe(
       tap(() => { this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()

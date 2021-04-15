@@ -27,7 +27,7 @@ import { CommonService } from '@shared/services/common.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
-import { AccountType, DisplayName, ROLES, Settings } from 'src/app/app.global';
+import { AccountType, ContentString, DisplayName, ROLES, Settings } from 'src/app/app.global';
 
 enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -440,12 +440,19 @@ export class GuestAddFundsComponent implements OnInit {
     await this.toastService.showToast({ message, duration: 5000 });
   }
 
+
   private async finalizeDepositModal(data): Promise<void> {
+    const content = await this.commonService
+    .loadContentString<DepositCsModel>(ContentStringCategory.guestDeposit)
+    .pipe(take(1))
+    .toPromise();
+    const { depositSuccessCs: contentString } = content;
     const modal = await this.modalController.create({
       component: DepositModalComponent,
       animated: true,
       componentProps: {
         data,
+        contentString
       },
     });
 
