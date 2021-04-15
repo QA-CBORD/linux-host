@@ -3,7 +3,7 @@ import { CartService, MerchantService, OrderDetailOptions } from '@sections/orde
 import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { GUEST_NAVIGATION, PATRON_NAVIGATION } from 'src/app/app.global';
 import {
   LOCAL_ROUTING,
   ORDER_ERROR_CODES,
@@ -23,6 +23,9 @@ import { OverlayEventDetail } from '@ionic/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 @Component({
   selector: 'st-full-menu',
@@ -38,7 +41,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router,
@@ -50,7 +52,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -97,7 +100,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   async onCategoryClicked({ id }): Promise<void> {
-    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.menuCategoryItems, id]);
+    await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.menuCategoryItems, id]);
   }
 
   async openOrderOptions(): Promise<void> {
@@ -151,7 +154,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
-    const successCb = () => this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.cart]);
+    const successCb = () => this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart]);
     const errorCB = (error: Array<string> | string) => {
       if (Array.isArray(error)) {
         const [code, message] = error;

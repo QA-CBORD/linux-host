@@ -219,7 +219,6 @@ export enum GUEST_NAVIGATION {
 }
 
 
-
 export enum LoginType {
   FACEID = 'FACEID',
   FINGERPRINT = 'FINGERPRINT',

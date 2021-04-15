@@ -22,7 +22,7 @@
     ></st-merchant-main-info>
     <div class="explore__controls">
       <st-button
-        *ngIf="merchant.isAbleToOrder"
+        *ngIf="merchant.isAbleToOrder && guestOrderEnabled"
         (onClick)="navigateToMerchant(merchant.id)"
         [isDisabled]="true"
         class="explore__start-order"

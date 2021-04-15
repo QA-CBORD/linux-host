@@ -8,8 +8,8 @@ import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 import { NotificationFacadeService } from '@core/facades/notification/notification-facade.service';
 import { NavController } from '@ionic/angular';
 import { ToastService } from '@core/service/toast/toast.service';
-import { MessageChannel } from '@shared/model/shared-api';
 import { ForgotPasswordCsModel } from './models/forgot-password-content-strings.model';
+import { MessageProxy } from '@shared/services/injectable-message.proxy';
 
 @Component({
   selector: 'st-forgot-password',
@@ -36,11 +36,12 @@ export class ForgotPasswordPage implements OnInit {
     private readonly fb: FormBuilder,
     private readonly notificationFacadeService: NotificationFacadeService,
     private readonly navController: NavController,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly messageProxy: MessageProxy
   ) {}
 
   ngOnInit() {
-    this.pageContents = MessageChannel.get<ForgotPasswordCsModel>();
+    this.pageContents = this.messageProxy.get<ForgotPasswordCsModel>();
     console.log('pageContents ==> ', this.pageContents);
     this.initForm();
     setTimeout(() => {

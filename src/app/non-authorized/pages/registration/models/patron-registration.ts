@@ -9,9 +9,9 @@ import {
 } from './registration-utils';
 import { RegistrationService } from '../services/registration.service';
 import { UserRegistrationBase } from './registration';
-import { Cvalidators } from './password-validation';
 import { RegistrationCsModel } from './registration-content-strings.model';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model'
+import { SupportedInputValidators } from './password-validation';
 
 export class PatronRegistration extends UserRegistrationBase implements UserRegistrationManager {
   private dynamicFields: LookupFieldInfo[];
@@ -57,7 +57,7 @@ export class PatronRegistration extends UserRegistrationBase implements UserRegi
         idd: (firstOrLastnameLookupField && firstOrLastnameLookupField.idd) || field.lookupFieldId,
         alignHorizontal: !!firstOrLastnameLookupField,
         type: 'text',
-        cValidator: [Cvalidators.required],
+        cValidator: [SupportedInputValidators.required],
         validators: ['', Validators.required],
       });
     });

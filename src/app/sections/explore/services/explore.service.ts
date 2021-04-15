@@ -3,14 +3,16 @@ import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.se
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
 import { MenuMerchantFacadeService } from '@core/facades/menu-merchant/menu-merchant-facade.service';
 import { combineLatest, Observable, zip } from 'rxjs';
-import { MerchantInfo } from '@sections/ordering';
+import { MerchantInfo, MerchantSearchOptions } from '@sections/ordering';
 import { map } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { Settings } from '../../../app.global';
 import { exploreMerchantSorting } from '@core/utils/general-helpers';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ExploreService {
 
   constructor(private readonly merchantFacadeService: MerchantFacadeService,
@@ -46,10 +48,11 @@ export class ExploreService {
   }
 
   getInitialMerchantData$(): Observable<[MerchantInfo[], MerchantInfo[], MerchantInfo[]]> {
+    const options = new MerchantSearchOptions();
     return zip(
-      this.merchantFacadeService.fetchMerchants$(),
+      this.merchantFacadeService.fetchMerchants$( options, true),
       this.favoriteMerchantsFacadeService.fetchFavoritesMerchants$(),
-      this.menuMerchantFacadeService.fetchMenuMerchant$(),
+      this.menuMerchantFacadeService.fetchMenuMerchant$(options, true),
     );
   }
 

@@ -3,6 +3,6 @@ import { guestDashboardDefaultStrings } from "@shared/model/content-strings/defa
 
 export class GuestDashboardCsModel extends ContentStringModel{
     constructor(contentWrapper: NullableContent){
-        super(contentWrapper, guestDashboardDefaultStrings);
+        super(contentWrapper.getConfig(), guestDashboardDefaultStrings);
     }
 }

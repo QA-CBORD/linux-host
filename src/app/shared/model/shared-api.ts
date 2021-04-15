@@ -7,9 +7,7 @@
  */ 
 
 export class MutableMessage {
-  private constructor() {
-    console.log('MessageChannel Initiated');
-  }
+  private constructor() {}
 
   private static instance: MutableMessage;
 
@@ -30,7 +28,3 @@ export class MutableMessage {
     return (this.message as T) || ({} as any);
   }
 }
-
-export const MessageChannel = MutableMessage.getInstance();
-
-window['CustomMessageChannel'] = MessageChannel;

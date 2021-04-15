@@ -20,6 +20,8 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 @Component({
   selector: 'st-item-detail',
@@ -51,6 +53,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
+    private readonly navService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -76,7 +79,7 @@ export class ItemDetailComponent implements OnInit {
   }
 
   navigateToFullMenu() {
-    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
+    this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
       queryParams: { openTimeSlot: true },
     });
   }
@@ -85,7 +88,7 @@ export class ItemDetailComponent implements OnInit {
     const {
       queryParams: { categoryId },
     } = this.routesData;
-    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId]);
+    this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId]);
   }
 
   initForm() {

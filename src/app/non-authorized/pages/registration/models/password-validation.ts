@@ -1,9 +1,10 @@
-export interface CustomValidator {
+export interface InputValidator {
   test: (value) => boolean;
 }
 
-export class Cvalidators {
-  static nullablePhone(): CustomValidator {
+export class SupportedInputValidators {
+
+  static nullablePhone(): InputValidator {
     return {
       test: value => {
         return !value || (/^[0-9]*$/.test(value) && (value.length >= 9 && value.length <= 10));
@@ -11,7 +12,7 @@ export class Cvalidators {
     };
   }
 
-  static phoneNumber(): CustomValidator {
+  static phoneNumber(): InputValidator {
     return {
       test: value => {
         return /^[0-9]*$/.test(value) && (value.length >= 10 && value.length <= 11);
@@ -19,7 +20,7 @@ export class Cvalidators {
     };
   }
 
-  static min(min: number): CustomValidator {
+  static min(min: number): InputValidator {
     return {
       test: value => {
         return value && value.length >= min;
@@ -27,19 +28,19 @@ export class Cvalidators {
     };
   }
 
-  static password(): CustomValidator {
+  static password(): InputValidator {
     return {
       test: value => value && (value.length >= 8 && value.length <= 12),
     };
   }
 
-  static email(): CustomValidator {
+  static email(): InputValidator {
     return {
       test: value => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value),
     };
   }
 
-  static max(max: number): CustomValidator {
+  static max(max: number): InputValidator {
     return {
       test: value => {
         return value && value.length <= max;
@@ -47,43 +48,43 @@ export class Cvalidators {
     };
   }
 
-  static requiredRange(min: number, max: number): CustomValidator {
+  static requiredRange(min: number, max: number): InputValidator {
     return {
       test: value => value.length >= min && value.length <= max,
     };
   }
 
-  static minOneLowerCase: CustomValidator = {
+  static minOneLowerCase: InputValidator = {
     test: value => {
       return /[a-z]/.test(value);
     },
   };
 
-  static minOneLetter: CustomValidator = {
+  static minOneLetter: InputValidator = {
     test: value => {
       return /[a-z]|[A-Z]/.test(value);
     },
   };
 
-  static minOneUpperCase: CustomValidator = {
+  static minOneUpperCase: InputValidator = {
     test: value => {
       return /[A-Z]/.test(value);
     },
   };
 
-  static minOneDigit: CustomValidator = {
+  static minOneDigit: InputValidator = {
     test: value => {
       return /\d/.test(value);
     },
   };
 
-  static required: CustomValidator = {
+  static required: InputValidator = {
     test: value => {
       return !!value;
     },
   };
 
-  static minOneSpecialChar: CustomValidator = {
+  static minOneSpecialChar: InputValidator = {
     test: value => {
       const testResult = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
       return testResult;
@@ -91,8 +92,8 @@ export class Cvalidators {
   };
 }
 
-export interface IViewableValidator {
+export interface Validation {
   label: string;
-  validator: CustomValidator;
+  validator: InputValidator;
   supported?: boolean;
 }

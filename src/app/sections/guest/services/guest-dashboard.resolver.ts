@@ -4,10 +4,9 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { Observable, zip } from 'rxjs';
 import { finalize, map, take } from 'rxjs/operators';
 import { GuestFacadeService } from './guest.facade.service';
-import { MessageChannel } from '@shared/model/shared-api';
 import { UserInfo } from '@core/model/user';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { GuestDashboardSection } from '../model/dashboard.item.model';
+import { MessageProxy } from '@shared/services/injectable-message.proxy';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +15,8 @@ export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
   constructor(
     private readonly guestFacadeService: GuestFacadeService,
     private readonly loadingService: LoadingService,
-    private readonly userFacade: UserFacadeService
+    private readonly userFacade: UserFacadeService,
+    private readonly messageProxy: MessageProxy
   ) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserInfo> {
@@ -25,7 +25,7 @@ export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
     const dashboardSectionsObs = this.guestFacadeService.configureGuestDashboard().pipe(take(1));
     return zip(user$, dashboardSectionsObs).pipe(
       map(([user, dashboardSections]) => {
-        MessageChannel.put(dashboardSections);
+        this.messageProxy.put(dashboardSections);
         return user;
       }),
       take(1),
