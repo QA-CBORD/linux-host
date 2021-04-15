@@ -4,10 +4,11 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Institution, InstitutionBuilder, InstitutionLookupListItem } from '@core/model/institution/institution.model';
 import { InstitutionApiService } from '@core/service/institution-api/institution-api.service';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { InstitutionPhotoInfo } from '@core/model/institution/institution-photo-info.model';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { AuthFacadeService } from '../auth/auth.facade.service';
+import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 
 @Injectable({
   providedIn: 'root',
@@ -128,4 +129,13 @@ export class InstitutionFacadeService extends ServiceStateFacade {
       take(1)
     );
   }
+
+  retrieveAnonymousDepositFields(): Observable<LookupFieldInfo[]> {
+    return this.authFacadeService.getAuthSessionToken$()
+      .pipe(
+        withLatestFrom(this.cachedInstitutionInfo$),
+        switchMap(([sessionId, ins]) => this.institutionApiService.retrieveAnonymousDepositFields(ins.id, sessionId)),
+        map(response => response.lookupFields));
+  }
+
 }

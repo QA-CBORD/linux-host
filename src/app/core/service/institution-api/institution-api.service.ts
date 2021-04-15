@@ -63,4 +63,8 @@ export class InstitutionApiService {
       .post<MessageResponse<any>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response: { institutions } }) => institutions));
   }
+  retrieveAnonymousDepositFields(institutionId: string, sessionId: string): Observable<any> {
+    const queryConfig = new RPCQueryConfig('retrieveAnonymousDepositFields', { institutionId, sessionId });
+    return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+  }
 }
