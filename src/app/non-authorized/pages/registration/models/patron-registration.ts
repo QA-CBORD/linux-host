@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import { take, map, switchMap } from 'rxjs/operators';
 import {
   Field,
-  LookupFieldInfo,
   LOOKUPFIELDS,
   RegistrationApiMethods,
   UserRegistrationManager,
@@ -11,6 +10,7 @@ import {
 import { RegistrationService } from '../services/registration.service';
 import { UserRegistrationBase } from './registration';
 import { RegistrationCsModel } from './registration-content-strings.model';
+import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model'
 import { SupportedInputValidators } from './password-validation';
 
 export class PatronRegistration extends UserRegistrationBase implements UserRegistrationManager {
