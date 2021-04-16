@@ -59,32 +59,33 @@ export class IdentifyRecipientComponent {
     return this.newRecepientForm.controls[this.newRecipientFormName] as FormArray;
   }
   async continue() {
-    // if (this.selectedRecipient === this.someoneElseRecipient) {
-    //   this.loadingService.showSpinner();
-    //   const newRecepient = await this.guestDepositsService.retrieveAndSaveRecipientByCashlessFields(
-    //     this.newRecepientFormRef[0].control.value,
-    //     [
-    //       ...this.newRecepientFormRef
-    //         .filter(f => f.lookupField)
-    //         .map(f => ({ ...f.lookupField, value: f.control.value })),
-    //     ],
-    //     [...this.recipients],
-    //     this.saveNewRecipient
-    //   );
+    if (this.selectedRecipient === this.someoneElseRecipient) {
+      this.loadingService.showSpinner();
+      const newRecepient = await this.guestDepositsService.retrieveAndSaveRecipientByCashlessFields(
+        this.newRecepientFormRef[0].control.value,
+        [
+          ...this.newRecepientFormRef
+            .filter(f => f.lookupField)
+            .map(f => ({ ...f.lookupField, value: f.control.value })),
+        ],
+        [...this.recipients],
+        this.saveNewRecipient
+      );
 
-    //   if (newRecepient) {
-    //     if (this.saveNewRecipient) {
-    //       this.recipients.push(newRecepient);
-    //       this.selectedRecipient = this.recipients[this.recipients.length - 1];
-    //     }
-    //     this.saveNewRecipient = false;
-    //     this.resetForm(this.newRecipientFields.controls);
-    //   }
-    //   this.loadingService.closeSpinner();
-    // }
+      if (newRecepient) {
+        if (this.saveNewRecipient) {
+          this.recipients.push(newRecepient);
+          this.selectedRecipient = this.recipients[this.recipients.length - 1];
+        }
+        this.saveNewRecipient = false;
+        this.resetForm(this.newRecipientFields.controls);
+      }
+      this.loadingService.closeSpinner();
+    }
 
     this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds], {
       queryParams: { recipientName: this.selectedRecipient.nickname, userId: this.selectedRecipient.id },
+      skipLocationChange: true,
     });
   }
 

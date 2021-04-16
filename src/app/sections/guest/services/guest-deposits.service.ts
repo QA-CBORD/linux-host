@@ -61,24 +61,32 @@ export class GuestDepositsService {
   }
 
   guestAccounts(): Observable<UserAccount[]> {
-    return this.userFacadeService.getUserData$().pipe(
+    return this.authFacadeService.isGuestUser().pipe(
+      switchMap(isGuest => {
+        if (isGuest) {
+          return this.userFacadeService.getUserData$();
+        }
+        return null;
+      }),
       switchMap(({ id: userId }) => {
-        console.log('guest id: ', userId)
         return this.userAccounts(userId);
       })
     );
   }
 
   userAccounts(userId: string): Observable<UserAccount[]> {
-    console.log('patron id: ', userId)
     return this.commerceApiService.retrieveAccountsByUser(userId).pipe(take(1));
   }
 
-  
   guestDeposit(fromAccountId: string, toAccountId: string, amount: number): Observable<string> {
-    return this.userFacadeService.getUserData$().pipe(
+    return this.authFacadeService.isGuestUser().pipe(
+      switchMap(isGuest => {
+        if (isGuest) {
+          return this.userFacadeService.getUserData$();
+        }
+        return null;
+      }),
       switchMap(({ id: userId }) => {
-        console.log('userId??? ', userId);
         return this.commerceApiService.depositForUser(userId, fromAccountId, toAccountId, amount);
       })
     );

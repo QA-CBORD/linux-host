@@ -20,7 +20,7 @@ export enum CONTENT_STRINGS_CATEGORIES {
   forgotPassword = 'forgot-password',
   changePassword = 'password-change',
   guestDashboard = 'guest-dashboard',
-  guestDeposit = 'guest_deposit',
+  guestDeposit = 'guest-deposit',
   deposit = 'deposit',
   addFunds = 'guest_add_funds'
 }

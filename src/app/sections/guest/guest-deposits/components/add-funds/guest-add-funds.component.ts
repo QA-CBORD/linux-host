@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/core';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -23,10 +25,9 @@ import { DepositModalComponent } from '@sections/accounts/shared/ui-components/d
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { GUEST_ROUTES } from '@sections/section.config';
-import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
-import { CommonService } from '@shared/services/common.service';
+import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
+import { from, iif, Observable, of,throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, ROLES, Settings } from 'src/app/app.global';
 
@@ -49,7 +50,7 @@ enum CREDITCARD_STATUS {
 })
 
 export class GuestAddFundsComponent implements OnInit {
-  depositButtonText: string;
+ 
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -60,16 +61,18 @@ export class GuestAddFundsComponent implements OnInit {
     isActive: true,
   };
 
-  contentStrings: GuestAddFundsCsModel;
+  depositButtonText: string;
+  addFundsCs: GuestAddFundsCsModel;
+  confirmationCs: ContentStringModel;
   isDepositing: boolean = false;
-  detailsForm: FormGroup;
+  guestDepositForm: FormGroup;
   applePayEnabled$: Observable<boolean>;
-  recipientAccounts$: Observable<UserAccount[]>;
-  guestAccounts$: Observable<UserAccount[]>;
   depositSettings: SettingInfo[];
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
   recipientName: string;
+  private recipientAccounts$: Observable<UserAccount[]>;
+  private guestAccounts$: Observable<UserAccount[]>;
   private activePaymentType: PAYMENT_TYPE;
 
   constructor(
@@ -84,13 +87,11 @@ export class GuestAddFundsComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly popoverCtrl: PopoverController,
     private activatedRoute: ActivatedRoute,
-    private commonService: CommonService,
     private guestDepositsService: GuestDepositsService
   ) {}
 
   ngOnInit() {
     this.globalNav.hideNavBar();
-    this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds);
     this.activatedRoute.data.subscribe(response => {
       this.setResolvedData(response);
     });
@@ -98,7 +99,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.depositButton();
+    this.depositButtonLabel();
     this.filterSourceAccounts();
     this.filterDestinationAccounts();
     this.setFormValidators();
@@ -110,7 +111,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   initForm() {
-    this.detailsForm = this.fb.group({
+    this.guestDepositForm = this.fb.group({
       [GUEST_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.toAccount]: ['', Validators.required],
       [GUEST_FORM_CONTROL_NAMES.amountToDeposit]: ['', Validators.required],
@@ -121,22 +122,24 @@ export class GuestAddFundsComponent implements OnInit {
   async onPaymentChanged(target) {
     this.defineDestAccounts(target);
     this.setFormValidators();
-    this.depositButton();
+    this.depositButtonLabel();
   }
 
   formatInput(event) {
+    const indexNotFound = -1;
+    const oneStep = 1;
     const { value } = event.target;
     const index = value.indexOf('.');
     if (!NUM_COMMA_DOT_REGEXP.test(value)) {
-      this.mainFormInput.setValue(value.slice(0, value.length - 1));
+      this.mainFormInput.setValue(value.slice(0, value.length - oneStep));
     }
-
-    if (index !== -1 && value.slice(index + 1).length > 1) {
+    if (index !== indexNotFound && value.slice(index + oneStep).length > oneStep) {
       this.mainFormInput.setValue(value.slice(0, index + 2));
     }
   }
 
   setFormValidators() {
+    this.guestDepositForm.setErrors(null);
     const minMaxValidators = [
       amountRangeValidator(+this.minMaxOfAmounts.minAmountOneTime, +this.minMaxOfAmounts.maxAmountOneTime),
     ];
@@ -179,16 +182,15 @@ export class GuestAddFundsComponent implements OnInit {
   onAmountChanged(event) {
     const amount: string = event.target.value;
     if (amount && amount.length) {
-      this.depositButton('Deposit $' + amount);
+      this.depositButtonLabel('Deposit $' + amount);
     }
   }
 
   onFormSubmit() {
     if (this.isReadyToSubmit()) return;
     this.isDepositing = true;
-    const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.detailsForm.value;
-    let amount = mainInput || amountToDeposit;
-    amount = amount.toString().replace(COMMA_REGEXP, '');
+    const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.guestDepositForm.value;
+    let amount = this.formatAmount(mainInput, amountToDeposit);
     if (this.isApplePayEnabled(paymentMethod)) {
       this.handleApplePay(toAccount, amount);
     } else {
@@ -217,7 +219,7 @@ export class GuestAddFundsComponent implements OnInit {
         )
         .subscribe(
           info => {
-            this.confirmationDepositPopover({ ...(info as {}), depositReviewCredit: this.contentStrings.refundText });
+            this.confirmationDepositPopover({ ...(info as {}), depositReviewCredit: this.addFundsCs.refundText });
           },
           () => {
             this.loadingService.closeSpinner();
@@ -229,11 +231,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   async confirmationDepositPopover(data: any) {
-    const content = await this.commonService
-      .loadContentString<DepositCsModel>(ContentStringCategory.guestDeposit)
-      .pipe(take(1))
-      .toPromise();
-    const { confirmDepositCs: contentString } = content;
+    const { confirmDepositCs: contentString } = this.confirmationCs as DepositCsModel;
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
@@ -262,19 +260,19 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   get paymentMethod(): AbstractControl {
-    return this.detailsForm.get(GUEST_FORM_CONTROL_NAMES.paymentMethod);
+    return this.guestDepositForm.get(GUEST_FORM_CONTROL_NAMES.paymentMethod);
   }
 
   get toAccount(): AbstractControl {
-    return this.detailsForm.get(GUEST_FORM_CONTROL_NAMES.toAccount);
+    return this.guestDepositForm.get(GUEST_FORM_CONTROL_NAMES.toAccount);
   }
 
   get amountToDeposit(): AbstractControl {
-    return this.detailsForm.get(GUEST_FORM_CONTROL_NAMES.amountToDeposit);
+    return this.guestDepositForm.get(GUEST_FORM_CONTROL_NAMES.amountToDeposit);
   }
 
   get mainFormInput(): AbstractControl {
-    return this.detailsForm.get(GUEST_FORM_CONTROL_NAMES.mainInput);
+    return this.guestDepositForm.get(GUEST_FORM_CONTROL_NAMES.mainInput);
   }
 
   get isFreeFormEnabled$(): Observable<boolean> {
@@ -332,11 +330,14 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   private filterSourceAccounts() {
-    this.guestAccounts$.pipe(take(1),
-      tap(accounts => {
-        this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
-      })
-    ).subscribe();
+    this.guestAccounts$
+      .pipe(
+        take(1),
+        tap(accounts => {
+          this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
+        })
+      )
+      .subscribe();
   }
 
   private filterDestinationAccounts() {
@@ -388,7 +389,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   private resetControls(controlNames: string[]) {
     controlNames.forEach(
-      controlName => this.detailsForm.contains(controlName) && this.detailsForm.get(controlName).reset()
+      controlName => this.guestDepositForm.contains(controlName) && this.guestDepositForm.get(controlName).reset()
     );
   }
 
@@ -396,37 +397,29 @@ export class GuestAddFundsComponent implements OnInit {
     await this.toastService.showToast({ message, duration: 5000 });
   }
 
-  private depositButton(buttonText?: string) {
-    if(buttonText) {
+  private depositButtonLabel(buttonText?: string) {
+    if (buttonText) {
       this.depositButtonText = buttonText;
     } else {
-      this.depositButtonText = this.contentStrings.depositButton;
+      this.depositButtonText = this.addFundsCs.depositButton;
     }
   }
 
   private async finalizeDepositModal(data): Promise<void> {
-    const content = await this.commonService
-    .loadContentString<DepositCsModel>(ContentStringCategory.guestDeposit)
-    .pipe(take(1))
-    .toPromise();
-    const { depositSuccessCs: contentString } = content;
+    const { depositSuccessCs: contentString } = this.confirmationCs as DepositCsModel;
     const modal = await this.modalController.create({
       component: DepositModalComponent,
       animated: true,
       componentProps: {
         data,
-        contentString
+        contentString,
       },
     });
 
     modal.onDidDismiss().then(() => {
       this.router.navigate([ROLES.guest, GUEST_ROUTES.dashboard]);
-      this.resetControls([
-        this.controlsNames.mainInput,
-        this.controlsNames.toAccount,
-        this.controlsNames.paymentMethod,
-        this.controlsNames.amountToDeposit,
-      ]);
+      this.guestDepositForm.reset();
+      this.guestDepositForm.markAsPristine();
     });
     await modal.present();
   }
@@ -466,7 +459,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   private isReadyToSubmit() {
-    return (this.detailsForm && this.detailsForm.invalid) || this.isDepositing;
+    return (this.guestDepositForm && this.guestDepositForm.invalid) || this.isDepositing;
   }
 
   private performDeposit(data: any) {
@@ -489,8 +482,16 @@ export class GuestAddFundsComponent implements OnInit {
   private setResolvedData(response) {
     this.depositSettings = response.data.settings;
     this.recipientName = response.data.recipientName;
+    this.addFundsCs = response.data.addFundsCs;
+    this.confirmationCs = response.data.confirmationCs;
     this.applePayEnabled$ = of(response.data.applePayEnabled);
     this.recipientAccounts$ = of(response.data.destinationAccounts);
     this.guestAccounts$ = of(response.data.sourceAccounts);
+  }
+
+  private formatAmount(mainInput: any, amountToDeposit: any) {
+    let amount = mainInput || amountToDeposit;
+    amount = amount.toString().replace(COMMA_REGEXP, '');
+    return amount;
   }
 }
