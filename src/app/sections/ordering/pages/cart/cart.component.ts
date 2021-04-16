@@ -41,6 +41,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
 const { Browser } = Plugins;
 
 @Component({
@@ -281,7 +282,7 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
 
-      Browser.addListener('browserFinished', (info: any) => {
+      Browser.addListener(browserState.FINISHED, (info: any) => {
         this.placingOrder = false;
         this.cdRef.detectChanges();
         Browser.removeAllListeners();

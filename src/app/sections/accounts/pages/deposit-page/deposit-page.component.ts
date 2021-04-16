@@ -36,6 +36,9 @@ import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
 const { Browser } = Plugins;
 
+export enum browserState {
+  FINISHED = 'browserFinished'
+}
 @Component({
   selector: 'st-deposit-page',
   templateUrl: './deposit-page.component.html',
@@ -264,7 +267,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     let amount = mainInput || mainSelect;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {
-      Browser.addListener('browserFinished', (info: any) => {
+      Browser.addListener(browserState.FINISHED, (info: any) => {
         this.isDepositing = false;
         this.cdRef.detectChanges();
         Browser.removeAllListeners();

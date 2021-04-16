@@ -15,6 +15,7 @@ import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
+import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
 import { DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
@@ -27,7 +28,7 @@ import { CommonService } from '@shared/services/common.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
-import { AccountType, ContentString, DisplayName, ROLES, Settings } from 'src/app/app.global';
+import { AccountType, DisplayName, ROLES, Settings } from 'src/app/app.global';
 
 enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -46,6 +47,7 @@ enum CREDITCARD_STATUS {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class GuestAddFundsComponent implements OnInit {
   depositButtonText: string;
   customActionSheetOptions: { [key: string]: string } = {
@@ -57,12 +59,12 @@ export class GuestAddFundsComponent implements OnInit {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
+
   contentStrings: GuestAddFundsCsModel;
   isDepositing: boolean = false;
   detailsForm: FormGroup;
   applePayEnabled$: Observable<boolean>;
   recipientAccounts$: Observable<UserAccount[]>;
-
   depositSettings: SettingInfo[];
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
@@ -89,6 +91,7 @@ export class GuestAddFundsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.globalNav.hideNavBar();
     this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds);
     this.activatedRoute.data.subscribe(response => {
       this.depositSettings = response.data.settings;
@@ -97,21 +100,18 @@ export class GuestAddFundsComponent implements OnInit {
       this.recipientAccounts$ = of(response.data.destinationAccounts);
       this.guestAccounts$ = of(response.data.sourceAccounts);
     });
-
     this.initForm();
-    this.globalNav.hideNavBar();
   }
 
   ionViewWillEnter() {
-    this.depositButtonText = this.contentStrings.depositButton;
-    this.filterDestinationAccounts();
+    this.depositButton();
     this.filterSourceAccounts();
+    this.filterDestinationAccounts();
     this.setFormValidators();
     this.cdRef.detectChanges();
   }
 
   ngOnDestroy() {
-    this.sourceSubscription.unsubscribe();
     this.globalNav.showNavBar();
   }
 
@@ -127,7 +127,7 @@ export class GuestAddFundsComponent implements OnInit {
   async onPaymentChanged(target) {
     this.defineDestAccounts(target);
     this.setFormValidators();
-    this.depositButtonText = this.contentStrings.depositButton;
+    this.depositButton();
   }
 
   formatInput(event) {
@@ -149,8 +149,8 @@ export class GuestAddFundsComponent implements OnInit {
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
       const sourceAcc = this.paymentMethod.value;
-      this.detailsForm.controls[this.controlsNames.amountToDeposit].clearValidators();
-      this.detailsForm.controls[this.controlsNames.amountToDeposit].setErrors(null);
+      this.amountToDeposit.clearValidators();
+      this.amountToDeposit.setErrors(null);
 
       if (sourceAcc === CREDITCARD_STATUS.NEW) {
         return from(this.externalPaymentService.addUSAePayCreditCard())
@@ -167,60 +167,36 @@ export class GuestAddFundsComponent implements OnInit {
           .subscribe(() => {}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
       }
       if (data) {
-        this.detailsForm.controls[this.controlsNames.mainInput].setValidators([
+        this.mainFormInput.setValidators([
           Validators.required,
           ...minMaxValidators,
           Validators.pattern(CURRENCY_REGEXP),
         ]);
       } else {
-        this.detailsForm.controls[this.controlsNames.amountToDeposit].setValidators([Validators.required]);
+        this.amountToDeposit.setValidators([Validators.required]);
         this.mainFormInput.clearValidators();
         this.mainFormInput.setErrors(null);
         this.resetControls([this.controlsNames.amountToDeposit, this.controlsNames.mainInput]);
       }
-      this.detailsForm.controls[this.controlsNames.amountToDeposit].setValue(0);
+      this.amountToDeposit.setValue(0);
     });
   }
 
   onAmountChanged(event) {
     const amount: string = event.target.value;
-    this.depositButtonText = amount && amount.length ? 'Deposit $' + amount : this.depositButtonText;
+    if (amount && amount.length) {
+      this.depositButton('Deposit $' + amount);
+    }
   }
 
   onFormSubmit() {
-    if ((this.detailsForm && this.detailsForm.invalid) || this.isDepositing) return;
+    if (this.isReadyToSubmit()) return;
     this.isDepositing = true;
     const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.detailsForm.value;
-    const isApplePay: boolean = paymentMethod.accountType === AccountType.APPLEPAY;
-    const depositReviewCredit = this.contentStrings.refundText;
     let amount = mainInput || amountToDeposit;
     amount = amount.toString().replace(COMMA_REGEXP, '');
-    if (isApplePay) {
-      Browser.addListener('browserFinished', (info: any) => {
-        this.isDepositing = false;
-        this.cdRef.detectChanges();
-        Browser.removeAllListeners();
-      });
-
-      this.externalPaymentService
-        .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
-          accountId: toAccount.id,
-          depositAmount: amount,
-        })
-        .then((result: ApplePayResponse) => {
-          if (result.success) {
-            0;
-            this.finalizeDepositModal(result);
-          } else {
-            this.onErrorRetrieve(result.errorMessage);
-          }
-        })
-        .catch(async () => {
-          this.onErrorRetrieve('Something went wrong, please try again...');
-        })
-        .finally(() => {
-          this.isDepositing = false;
-        });
+    if (this.isApplePayEnabled(paymentMethod)) {
+      this.handleApplePay(toAccount, amount);
     } else {
       iif(() => false, of(0), of(paymentMethod))
         .pipe(
@@ -247,7 +223,7 @@ export class GuestAddFundsComponent implements OnInit {
         )
         .subscribe(
           info => {
-            this.confirmationDepositPopover({ ...(info as {}), depositReviewCredit });
+            this.confirmationDepositPopover({ ...(info as {}), depositReviewCredit: this.contentStrings.refundText });
           },
           () => {
             this.loadingService.closeSpinner();
@@ -256,6 +232,41 @@ export class GuestAddFundsComponent implements OnInit {
           }
         );
     }
+  }
+
+  private handleApplePay(toAccount: any, amount: any) {
+    Browser.addListener(browserState.FINISHED, (info: any) => {
+      this.isDepositing = false;
+      this.cdRef.detectChanges();
+      Browser.removeAllListeners();
+    });
+
+    this.externalPaymentService
+      .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
+        accountId: toAccount.id,
+        depositAmount: amount,
+      })
+      .then((result: ApplePayResponse) => {
+        if (result.success) {
+          this.finalizeDepositModal(result);
+        } else {
+          this.onErrorRetrieve(result.errorMessage);
+        }
+      })
+      .catch(async () => {
+        this.onErrorRetrieve('Something went wrong, please try again...');
+      })
+      .finally(() => {
+        this.isDepositing = false;
+      });
+  }
+
+  private isApplePayEnabled(paymentMethod: any) {
+    return paymentMethod.accountType === AccountType.APPLEPAY;
+  }
+
+  private isReadyToSubmit() {
+    return (this.detailsForm && this.detailsForm.invalid) || this.isDepositing;
   }
 
   async confirmationDepositPopover(data: any) {
@@ -375,14 +386,15 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   private filterSourceAccounts() {
-    this.guestAccounts$.pipe(
+    this.guestAccounts$.pipe(take(1),
       tap(accounts => {
         this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
       })
-    );
+    ).subscribe();
   }
+
   private filterDestinationAccounts() {
-    const subscription = of(this.depositSettings)
+    of(this.depositSettings)
       .pipe(
         map(settings => {
           const depositTenders = this.getSettingByName(settings, Settings.Setting.DEPOSIT_TENDERS.split('.')[2]);
@@ -405,7 +417,6 @@ export class GuestAddFundsComponent implements OnInit {
       .subscribe(() => {
         this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
       });
-    this.sourceSubscription.add(subscription);
   }
 
   private getSettingByName(settings, property: string) {
@@ -440,6 +451,13 @@ export class GuestAddFundsComponent implements OnInit {
     await this.toastService.showToast({ message, duration: 5000 });
   }
 
+  private depositButton(buttonText?: string) {
+    if(buttonText) {
+      this.depositButtonText = buttonText;
+    } else {
+      this.depositButtonText = this.contentStrings.depositButton;
+    }
+  }
 
   private async finalizeDepositModal(data): Promise<void> {
     const content = await this.commonService
