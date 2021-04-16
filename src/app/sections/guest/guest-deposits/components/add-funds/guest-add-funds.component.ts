@@ -65,14 +65,12 @@ export class GuestAddFundsComponent implements OnInit {
   detailsForm: FormGroup;
   applePayEnabled$: Observable<boolean>;
   recipientAccounts$: Observable<UserAccount[]>;
+  guestAccounts$: Observable<UserAccount[]>;
   depositSettings: SettingInfo[];
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
-  destinationAccounts: Array<UserAccount>;
   recipientName: string;
   private activePaymentType: PAYMENT_TYPE;
-  private readonly sourceSubscription: Subscription = new Subscription();
-  guestAccounts$: Observable<UserAccount[]>;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -94,11 +92,7 @@ export class GuestAddFundsComponent implements OnInit {
     this.globalNav.hideNavBar();
     this.contentStrings = this.commonService.getString(ContentStringCategory.addFunds);
     this.activatedRoute.data.subscribe(response => {
-      this.depositSettings = response.data.settings;
-      this.recipientName = response.data.recipientName;
-      this.applePayEnabled$ = of(response.data.applePayEnabled);
-      this.recipientAccounts$ = of(response.data.destinationAccounts);
-      this.guestAccounts$ = of(response.data.sourceAccounts);
+      this.setResolvedData(response);
     });
     this.initForm();
   }
@@ -160,7 +154,7 @@ export class GuestAddFundsComponent implements OnInit {
                 return throwError(errorMessage);
               }
               this.loadingService.showSpinner();
-              return this.depositService.getUserAccounts();
+              return this.depositService.getUserAccounts(); //TODO: Change to Guest Accounts
             }),
             take(1)
           )
@@ -234,41 +228,6 @@ export class GuestAddFundsComponent implements OnInit {
     }
   }
 
-  private handleApplePay(toAccount: any, amount: any) {
-    Browser.addListener(browserState.FINISHED, (info: any) => {
-      this.isDepositing = false;
-      this.cdRef.detectChanges();
-      Browser.removeAllListeners();
-    });
-
-    this.externalPaymentService
-      .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
-        accountId: toAccount.id,
-        depositAmount: amount,
-      })
-      .then((result: ApplePayResponse) => {
-        if (result.success) {
-          this.finalizeDepositModal(result);
-        } else {
-          this.onErrorRetrieve(result.errorMessage);
-        }
-      })
-      .catch(async () => {
-        this.onErrorRetrieve('Something went wrong, please try again...');
-      })
-      .finally(() => {
-        this.isDepositing = false;
-      });
-  }
-
-  private isApplePayEnabled(paymentMethod: any) {
-    return paymentMethod.accountType === AccountType.APPLEPAY;
-  }
-
-  private isReadyToSubmit() {
-    return (this.detailsForm && this.detailsForm.invalid) || this.isDepositing;
-  }
-
   async confirmationDepositPopover(data: any) {
     const content = await this.commonService
       .loadContentString<DepositCsModel>(ContentStringCategory.guestDeposit)
@@ -287,20 +246,7 @@ export class GuestAddFundsComponent implements OnInit {
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
-        this.guestDepositsService
-          .guestDeposit(data.sourceAcc.id, data.selectedAccount.id, data.amount)
-          .pipe(
-            handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
-            take(1),
-            finalize(() => {
-              this.loadingService.closeSpinner();
-              this.isDepositing = false;
-            })
-          )
-          .subscribe(
-            () => this.finalizeDepositModal(data),
-            error => this.onErrorRetrieve(error || 'Your information could not be verified.')
-          );
+        this.performDeposit(data);
       }
       if (role === BUTTON_TYPE.CANCEL) {
         this.isDepositing = false;
@@ -431,7 +377,6 @@ export class GuestAddFundsComponent implements OnInit {
         : target === CREDITCARD_STATUS.NEW
         ? this.activePaymentType
         : target;
-    this.destinationAccounts = this.creditCardDestinationAccounts;
   }
 
   private filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
@@ -484,5 +429,68 @@ export class GuestAddFundsComponent implements OnInit {
       ]);
     });
     await modal.present();
+  }
+
+  private handleApplePay(toAccount: any, amount: any) {
+    Browser.addListener(browserState.FINISHED, (info: any) => {
+      this.isDepositing = false;
+      this.cdRef.detectChanges();
+      Browser.removeAllListeners();
+    });
+    this.payWithApplePay(toAccount, amount);
+  }
+
+  private payWithApplePay(toAccount: any, amount: any) {
+    this.externalPaymentService
+      .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
+        accountId: toAccount.id,
+        depositAmount: amount,
+      })
+      .then((result: ApplePayResponse) => {
+        if (result.success) {
+          this.finalizeDepositModal(result);
+        } else {
+          this.onErrorRetrieve(result.errorMessage);
+        }
+      })
+      .catch(async () => {
+        this.onErrorRetrieve('Something went wrong, please try again...');
+      })
+      .finally(() => {
+        this.isDepositing = false;
+      });
+  }
+
+  private isApplePayEnabled(paymentMethod: any) {
+    return paymentMethod.accountType === AccountType.APPLEPAY;
+  }
+
+  private isReadyToSubmit() {
+    return (this.detailsForm && this.detailsForm.invalid) || this.isDepositing;
+  }
+
+  private performDeposit(data: any) {
+    this.guestDepositsService
+      .guestDeposit(data.sourceAcc.id, data.selectedAccount.id, data.amount)
+      .pipe(
+        handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
+        take(1),
+        finalize(() => {
+          this.loadingService.closeSpinner();
+          this.isDepositing = false;
+        })
+      )
+      .subscribe(
+        () => this.finalizeDepositModal(data),
+        error => this.onErrorRetrieve(error || 'Your information could not be verified.')
+      );
+  }
+
+  private setResolvedData(response) {
+    this.depositSettings = response.data.settings;
+    this.recipientName = response.data.recipientName;
+    this.applePayEnabled$ = of(response.data.applePayEnabled);
+    this.recipientAccounts$ = of(response.data.destinationAccounts);
+    this.guestAccounts$ = of(response.data.sourceAccounts);
   }
 }

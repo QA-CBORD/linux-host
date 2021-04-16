@@ -53,7 +53,7 @@
           interface="action-sheet"
         >
           <ng-container role="options">
-            <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
+            <ion-select-option [value]="account" *ngFor="let account of creditCardDestinationAccounts; trackBy: trackByAccountId">
               {{ account | destinationAccountDisplay }}
             </ion-select-option>
           </ng-container>
