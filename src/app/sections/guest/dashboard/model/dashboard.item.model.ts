@@ -6,6 +6,7 @@ export interface GuestDashboardSection {
   imageUrl: string;
   visibilityOn: (settings: GuestSetting) => boolean;
   willNavigate: boolean;
+  stackNavigation?: boolean;
   url?: string;
   modalConfig?: { component: Type<any>; props?: any };
 }
