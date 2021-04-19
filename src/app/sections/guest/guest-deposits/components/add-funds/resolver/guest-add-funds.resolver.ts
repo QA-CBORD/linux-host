@@ -6,10 +6,8 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
-import { forkJoin, of } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
-import { tap } from 'rxjs/internal/operators/tap';
-import { map, take } from 'rxjs/operators';
+import { forkJoin, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 
 const requiredSettings = [
@@ -31,14 +29,11 @@ export class GuestAddFundsResolver implements Resolve<Observable<any>> {
     const confirmationCs = this.commonService.loadContentString(ContentStringCategory.guestDeposit);
     const applePayEnabled = this.userFacadeService.isApplePayEnabled$();
     const settingsCall = this.depositService.getUserSettings(requiredSettings);
-    // const destinationAccounts = this.depositService.getUserAccounts();
-    // const sourceAccounts = this.depositService.getUserAccounts();
     const recipientName  = route.queryParams.recipientName;
     const recipientId = route.queryParams.userId;
     const sourceAccounts = this.guestDepositsService.guestAccounts();
     const destinationAccounts = this.guestDepositsService.userAccounts(recipientId);
     this.loadingService.showSpinner();
-    
     
     return forkJoin(settingsCall, applePayEnabled, destinationAccounts, sourceAccounts, addFundsCs, confirmationCs).pipe(
       tap(() => { this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()

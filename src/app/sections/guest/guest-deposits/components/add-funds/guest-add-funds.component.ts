@@ -25,7 +25,7 @@ import { GuestDepositsService } from '@sections/guest/services/guest-deposits.se
 import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { from, iif, Observable, of,throwError } from 'rxjs';
+import { from, iif, Observable, of, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, ROLES, Settings } from 'src/app/app.global';
 
@@ -46,9 +46,7 @@ enum CREDITCARD_STATUS {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class GuestAddFundsComponent implements OnInit {
- 
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -129,10 +127,10 @@ export class GuestAddFundsComponent implements OnInit {
     const { value } = event.target;
     const index = value.indexOf('.');
     if (!NUM_COMMA_DOT_REGEXP.test(value)) {
-      this.mainFormInput.setValue(value.slice(0, value.length - oneStep));
+       this.mainFormInput.setValue(value.slice(0, value.length - oneStep));
     }
     if (index !== indexNotFound && value.slice(index + oneStep).length > oneStep) {
-      this.mainFormInput.setValue(value.slice(0, index + 2));
+       this.mainFormInput.setValue(value.slice(0, index + 2));
     }
   }
 
@@ -145,8 +143,6 @@ export class GuestAddFundsComponent implements OnInit {
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
       const sourceAcc = this.paymentMethod.value;
       this.amountToDeposit.clearValidators();
-      this.amountToDeposit.setErrors(null);
-
       if (sourceAcc === CREDITCARD_STATUS.NEW) {
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
@@ -155,7 +151,7 @@ export class GuestAddFundsComponent implements OnInit {
                 return throwError(errorMessage);
               }
               this.loadingService.showSpinner();
-              return this.guestDepositsService.guestAccounts(); 
+              return this.guestDepositsService.guestAccounts();
             }),
             take(1)
           )
@@ -173,14 +169,17 @@ export class GuestAddFundsComponent implements OnInit {
         this.mainFormInput.setErrors(null);
         this.resetControls([this.controlsNames.amountToDeposit, this.controlsNames.mainInput]);
       }
-      this.amountToDeposit.setValue(0);
     });
   }
 
   onAmountChanged(event) {
-    const amount: string = event.target.value;
+    const amount = event.target.value;
     if (amount && amount.length) {
-      this.depositButtonLabel('Deposit $' + amount);
+      if (!isNaN(+amount)) {
+        this.depositButtonLabel('Deposit $' + amount);
+      }
+    } else {
+      this.depositButtonLabel();
     }
   }
 

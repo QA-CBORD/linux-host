@@ -14,7 +14,7 @@
         <st-select-floating-label
           [formControlName]="controlsNames.paymentMethod"
           [control]="paymentMethod"
-          [isError]="paymentMethod.errors && paymentMethod.dirty"
+          [isError]="paymentMethod.errors && (paymentMethod.dirty || paymentMethod.touched)"
           [interfaceOptions]="customActionSheetOptions"
           (change)="onPaymentChanged($event)"
           class="deposit__select"
@@ -44,7 +44,7 @@
         </st-select-floating-label>
         <st-select-floating-label
           [formControlName]="controlsNames.toAccount"
-          [isError]="toAccount.errors && toAccount.dirty"
+          [isError]="toAccount.errors && (toAccount.dirty || toAccount.touched)"
           [control]="toAccount"
           [interfaceOptions]="customActionSheetOptions"
           class="deposit__select deposit__select-account"
