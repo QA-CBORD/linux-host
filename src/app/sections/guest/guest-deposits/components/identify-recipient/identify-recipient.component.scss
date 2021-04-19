@@ -7,24 +7,28 @@
 
 .container,
 ion-footer {
+  @include font-nunito-regular(16px);
   --background: #{$color-background-divider};
   background-color: #{$color-background-divider};
   --padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
+ion-item {
+  ion-label {
+    font-weight: 600;
+  }
+}
+
 .section {
   background: white;
   background-color: white;
-  &__title {
-    font-size: 14px;
-  }
 }
 
 .recipient-row {
   border-bottom: 1px solid $color-white-smoke;
 }
-.new-recipient-form{
+.new-recipient-form {
   &__save-check {
-    margin-right: 5px;;
+    margin-right: 5px;
   }
 }
