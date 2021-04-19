@@ -1,3 +1,4 @@
+import { identifierModuleUrl } from '@angular/compiler';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +26,7 @@ import { GuestDepositsService } from '@sections/guest/services/guest-deposits.se
 import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { from, iif, Observable, of, throwError } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, DisplayName, ROLES, Settings } from 'src/app/app.global';
 
@@ -142,7 +143,7 @@ export class GuestAddFundsComponent implements OnInit {
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
       const sourceAcc = this.paymentMethod.value;
-      this.amountToDeposit.clearValidators();
+      this.amountToDeposit.reset();
       if (sourceAcc === CREDITCARD_STATUS.NEW) {
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
@@ -163,6 +164,7 @@ export class GuestAddFundsComponent implements OnInit {
           ...minMaxValidators,
           Validators.pattern(CURRENCY_REGEXP),
         ]);
+        this.amountToDeposit.clearValidators();
       } else {
         this.amountToDeposit.setValidators([Validators.required]);
         this.mainFormInput.clearValidators();
@@ -191,7 +193,7 @@ export class GuestAddFundsComponent implements OnInit {
     if (this.isApplePayEnabled(paymentMethod)) {
       this.handleApplePay(toAccount, amount);
     } else {
-      iif(() => false, of(0), of(paymentMethod))
+     of(paymentMethod)
         .pipe(
           switchMap(
             (sourceAcc): any => {
@@ -201,7 +203,7 @@ export class GuestAddFundsComponent implements OnInit {
                 amount
               );
 
-              return iif(() => false, of(0), calculateDepositFee).pipe(
+              return calculateDepositFee.pipe(
                 map(valueFee => ({
                   fee: valueFee,
                   sourceAcc: sourceAcc,

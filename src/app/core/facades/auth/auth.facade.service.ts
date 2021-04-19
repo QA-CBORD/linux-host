@@ -51,7 +51,7 @@ export class AuthFacadeService extends ServiceStateFacade {
 
   isGuestUser(): Observable<boolean> {
     return this.storageStateService.getStateEntityByKey$<string>(this.isGuestUserKey).pipe(
-      map(data => (data && !!data.value) || false),
+      map(data => (data && !!data.value)),
       catchError(() => of(false)),
       take(1)
     );
