@@ -8,7 +8,7 @@
 ></st-header>
 <ion-content>
   <form novalidate [formGroup]="guestDepositForm">
-    <section class="deposit__selection-block ion-padding">
+    <section class="deposit__selection-block">
       <ion-label>You are depositing to the account of {{ recipientName }}. {{ addFundsCs.noticeText }}</ion-label>
       <div class="deposit__select-wrapper">
         <st-select-floating-label
@@ -78,7 +78,7 @@
         </st-select-floating-label>
         <ng-template #mainInput>
           <div class="deposit__main-input-container">
-            <ion-label>{{ addFundsCs.amountToDeposit }}</ion-label>
+            <ion-label>{{ addFundsCs.depositText }}</ion-label>
             <ion-input
               class="deposit__main-input"
               type="tel"

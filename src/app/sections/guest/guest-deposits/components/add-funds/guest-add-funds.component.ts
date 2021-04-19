@@ -2,8 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/core';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -157,7 +155,7 @@ export class GuestAddFundsComponent implements OnInit {
                 return throwError(errorMessage);
               }
               this.loadingService.showSpinner();
-              return this.depositService.getUserAccounts(); //TODO: Change to Guest Accounts
+              return this.guestDepositsService.guestAccounts(); 
             }),
             take(1)
           )
