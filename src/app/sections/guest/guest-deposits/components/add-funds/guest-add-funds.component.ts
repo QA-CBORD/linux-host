@@ -1,4 +1,3 @@
-import { identifierModuleUrl } from '@angular/compiler';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -68,6 +67,7 @@ export class GuestAddFundsComponent implements OnInit {
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
   recipientName: string;
+  subTitle: string;
   private recipientAccounts$: Observable<UserAccount[]>;
   private guestAccounts$: Observable<UserAccount[]>;
   private activePaymentType: PAYMENT_TYPE;
@@ -96,6 +96,7 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.setRecipientName();
     this.depositButtonLabel();
     this.filterSourceAccounts();
     this.filterDestinationAccounts();
@@ -402,6 +403,13 @@ export class GuestAddFundsComponent implements OnInit {
     } else {
       this.depositButtonText = this.addFundsCs.depositButton;
     }
+  }
+
+  private setRecipientName() {
+    this.subTitle = this.addFundsCs.noticeText;
+    if (this.subTitle.includes("${recipient_name}")) {
+      this.subTitle = this.subTitle.replace("${recipient_name}", this.recipientName);
+    } 
   }
 
   private async finalizeDepositModal(data): Promise<void> {
