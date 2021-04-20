@@ -24,12 +24,12 @@
         >
           <ng-container role="options">
             <ion-select-option
-              *ngIf="(isCreditCardPaymentTypesEnabled && applePayEnabled$ | async)"
+              *ngIf="(applePayEnabled$ | async)"
               [value]="applePayAccountType"
             >
               {{ applePayAccountType | accountDisplay }}
             </ion-select-option>
-            <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
+            <ng-container>
               <ion-select-option
                 [value]="account"
                 *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
@@ -37,7 +37,7 @@
                 {{ account | accountDisplay }}
               </ion-select-option>
             </ng-container>
-            <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled">
+            <ion-select-option value="newCreditCard">
               Add a Credit Card
             </ion-select-option>
           </ng-container>
@@ -96,7 +96,7 @@
               (ionFocus)="focusLine = true"
               (ionBlur)="focusLine = false; onAmountChanged($event)"
               (ionInput)="onAmountChanged($event)"
-              (keydown)="formatInput($event)"
+              (keydown)="formatAmount($event)"
               formControlName="mainInput"
             ></ion-input>
             <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']" class="deposit__main-input--error">
