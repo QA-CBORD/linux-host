@@ -122,7 +122,7 @@
   </form>
 </ion-content>
 <ion-footer class="deposit__footer" mode="ios">
-  <st-button (onClick)="onFormSubmit()" tabindex="0" [isDisabled]="!guestDepositForm.valid" [disabled]="isDepositing">
+  <st-button (onClick)="onSubmitDeposit()" tabindex="0" [isDisabled]="!guestDepositForm.valid" [disabled]="isDepositing">
     <ion-text> {{ depositButtonText }} </ion-text>
   </st-button>
 </ion-footer>

@@ -186,7 +186,7 @@ export class GuestAddFundsComponent implements OnInit {
     }
   }
 
-  onFormSubmit() {
+  onSubmitDeposit() {
     if (this.isReadyToSubmit()) return;
     this.isDepositing = true;
     const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.guestDepositForm.value;
