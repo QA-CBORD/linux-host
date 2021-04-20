@@ -21,7 +21,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   changePassword = 'password-change',
   guestDashboard = 'guest-dashboard',
   guestDeposit = 'guest-deposit',
-  deposit = 'deposit'
+  deposit = 'deposit',
+  addFunds = 'guest_add_funds'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

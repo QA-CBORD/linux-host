@@ -5,7 +5,7 @@ import { take, tap, finalize } from 'rxjs/operators';
 
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
 import { FilterMenuComponent, FilterState } from './filter-menu/filter-menu.component';
-import { AccountsService } from '../../../services/accounts.service';
+import { AccountService } from '../../../services/accounts.service';
 import { TIME_PERIOD, CONTENT_STRINGS } from '../../../accounts.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TransactionService } from '../../../services/transaction.service';
@@ -24,7 +24,7 @@ export class FilterComponent implements OnInit {
   contentString: { [key: string]: string };
 
   constructor(
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly modalController: ModalController,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,

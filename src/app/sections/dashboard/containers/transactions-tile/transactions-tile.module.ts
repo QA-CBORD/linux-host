@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { TransactionsTileComponent } from './transactions-tile.component';
 import { TransactionService } from './services/transaction.service';
 
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { TransactionActionPipeModule } from '@shared/pipes/transaction-operation/transaction-action-pipe.module';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
 
@@ -19,7 +19,7 @@ const exports = [TransactionsTileComponent];
     TransactionActionPipeModule,
     TransactionUnitsPipeModule,
   ],
-  providers: [TransactionService, AccountsService],
+  providers: [TransactionService, AccountService],
   exports,
 })
 export class TransactionsTileModule { }

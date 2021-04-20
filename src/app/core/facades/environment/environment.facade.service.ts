@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 
 export enum EnvironmentType {
   develop,
@@ -243,7 +244,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   private getURLbasedOnPlatform(): string {
-    if (Capacitor.platform === 'android') {
+    if (Capacitor.platform === PLATFORM.android) {
       return 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev';
     } else {
       return 'https://api.payments.demo.cbord.com';

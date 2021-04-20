@@ -9,6 +9,7 @@ import { InstitutionPhotoInfo } from '@core/model/institution/institution-photo-
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { AuthFacadeService } from '../auth/auth.facade.service';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
+import { GuestSetting } from '@sections/guest/model/guest-settings';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ import { LookupFieldInfo } from '@core/model/institution/institution-lookup-fiel
 export class InstitutionFacadeService extends ServiceStateFacade {
   private institutionKey = 'get_institution';
   private institutionPhotoKey = 'get_institutionPhotoKey';
-
+  private guestSettingKey = 'guestSetting';
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly institutionApiService: InstitutionApiService,
@@ -33,6 +34,29 @@ export class InstitutionFacadeService extends ServiceStateFacade {
       ),
       take(1)
     );
+  }
+
+  get guestSettings(): Promise<GuestSetting> {
+    return this.storageStateService
+      .getStateEntityByKey$<GuestSetting>(this.guestSettingKey)
+      .pipe(
+        map(data => (data && data.value) || <any>{}),
+        catchError(() => of(<any>{})),
+        take(1)
+      )
+      .toPromise();
+  }
+
+  get guestOrderEnabled(): Promise<boolean> {
+    return this.guestSettings.then(({ canOrder }) => canOrder);
+  }
+
+  saveGuestSetting(settings: GuestSetting) {
+    this.storageStateService.updateStateEntity(this.guestSettingKey, settings, { highPriorityKey: true });
+  }
+
+  removeGuestSetting() {
+    this.storageStateService.deleteStateEntityByKey(this.guestSettingKey);
   }
 
   get cachedInstitutionInfo$(): Observable<Institution | null> {
@@ -131,11 +155,10 @@ export class InstitutionFacadeService extends ServiceStateFacade {
   }
 
   retrieveAnonymousDepositFields(): Observable<LookupFieldInfo[]> {
-    return this.authFacadeService.getAuthSessionToken$()
-      .pipe(
-        withLatestFrom(this.cachedInstitutionInfo$),
-        switchMap(([sessionId, ins]) => this.institutionApiService.retrieveAnonymousDepositFields(ins.id, sessionId)),
-        map(response => response.lookupFields));
+    return this.authFacadeService.getAuthSessionToken$().pipe(
+      withLatestFrom(this.cachedInstitutionInfo$),
+      switchMap(([sessionId, ins]) => this.institutionApiService.retrieveAnonymousDepositFields(ins.id, sessionId)),
+      map(response => response.lookupFields)
+    );
   }
-
 }

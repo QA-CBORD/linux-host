@@ -6,7 +6,7 @@ import { tap, switchMap } from 'rxjs/operators';
 import { TransactionService } from '../services/transaction.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TIME_PERIOD } from '../accounts.config';
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { Observable, zip } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { UserAccount } from '@core/model/account/account.model';
@@ -18,7 +18,7 @@ export class TransactionsResolver implements Resolve<Observable<[ContentStringIn
   constructor(
     private readonly transactionService: TransactionService,
     private readonly loadingService: LoadingService,
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
   ) {
   }
 

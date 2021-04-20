@@ -70,6 +70,16 @@ export const depositDefaultStrings = {
 
 export const guestDepositDefaultStirngs = depositDefaultStrings;
 
+export const guestAddFundsDefaultStrings = {
+  add_funds_title: 'Add Funds',
+  notice_text: 'You are deposting to the account of {recipient_name}.',
+  source_account_text: 'Payment Method',
+  destination_account_text: 'To Account',
+  deposit_label: 'Amount To Deposit', 
+  deposit_button: 'Deposit',
+  refund_text: 'Refund Policy'
+}
+
 export const defaultMobileCredentialCs = {
   nfc_off_dialog_accept: 'Proceed',
   nfc_off_dialog_cancel: 'Cancel',

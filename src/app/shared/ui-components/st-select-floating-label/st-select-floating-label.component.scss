@@ -7,8 +7,6 @@
   }
 
   &__control {
-    @include chevron-down();
-
     width: 100%;
     height: 100%;
     outline: none;
@@ -17,7 +15,6 @@
     padding: 15px 10px 0;
 
     &:focus-within {
-      @include chevron-down-active();
 
       border: 2px solid $color-dodger-blue;
 
@@ -29,13 +26,11 @@
     }
 
     &--error {
-      @include chevron-down-error();
 
       border: 2px solid $color-alizarin;
 
       &:focus,
       &:focus-within {
-        @include chevron-down-error();
 
         border: 2px solid $color-alizarin;
 
@@ -77,4 +72,5 @@
 
     @include floating-label($color-dim-gray);
   }
+
 }
