@@ -15,7 +15,6 @@ const { Device } = Plugins;
 export class AuthFacadeService extends ServiceStateFacade {
   private sessionIdKey = 'get_sessionId';
   private isGuestUserKey = 'isGuestUser';
-  private guestSettingKey = 'guestSetting';
 
   private systemSessionId = null;
 
@@ -36,31 +35,14 @@ export class AuthFacadeService extends ServiceStateFacade {
       .pipe(map(data => (data ? data.value : null)));
   }
 
-  private get nonNullGuestSetting(): GuestSetting {
-    return {
-      canLogin: false,
-      canDeposit: false,
-      canOrder: false,
-      canExplore: false,
-    };
-  }
-
   setIsGuestUser(asGuest: boolean) {
     this.storageStateService.updateStateEntity(this.isGuestUserKey, asGuest, { highPriorityKey: true });
   }
 
   isGuestUser(): Observable<boolean> {
-    return this.storageStateService.getStateEntityByKey$<string>(this.isGuestUserKey).pipe(
+    return this.storageStateService.getStateEntityByKey$<boolean>(this.isGuestUserKey).pipe(
       map(data => (data && !!data.value) || false),
       catchError(() => of(false)),
-      take(1)
-    );
-  }
-
-  getGuestSettings(): Observable<GuestSetting> {
-    return this.storageStateService.getStateEntityByKey$<GuestSetting>(this.guestSettingKey).pipe(
-      map(data => (data && data.value) || this.nonNullGuestSetting),
-      catchError(() => of(this.nonNullGuestSetting)),
       take(1)
     );
   }
@@ -69,18 +51,16 @@ export class AuthFacadeService extends ServiceStateFacade {
     this.storageStateService.updateStateEntity(this.sessionIdKey, sessionId, { highPriorityKey: true });
   }
 
-  saveGuestSetting(settings: GuestSetting) {
-    this.storageStateService.updateStateEntity(this.guestSettingKey, settings, { highPriorityKey: true });
-  }
-
-  removeGuestSetting() {
-    this.storageStateService.deleteStateEntityByKey(this.guestSettingKey);
-  }
-
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
-    return this.authApiService
-      .authenticateUser(userCredentials)
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })));
+    return this.isGuestUser().pipe(
+      switchMap(isGuestUser => {
+        return this.authApiService
+          .authenticateUser(userCredentials, isGuestUser)
+          .pipe(
+            tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true }))
+          );
+      })
+    );
   }
 
   authenticatePin$(pin: string): Observable<boolean> {

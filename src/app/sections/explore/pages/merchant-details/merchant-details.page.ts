@@ -1,15 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MerchantInfo, MerchantSettingInfo } from '@sections/ordering';
+import { MerchantInfo } from '@sections/ordering';
 import { Observable } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 
@@ -35,31 +33,22 @@ export class MerchantDetailsPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly merchantIdsFacadeService: FavoriteMerchantsFacadeService,
     private readonly toastService: ToastService,
-    private readonly authFacadeService: AuthFacadeService,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private readonly changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.merchant$ = this.exploreService.getMerchantById$(this.activatedRoute.snapshot.params.id).pipe(
-      take(1),
-      switchMap(merchant => {
-        return this.authFacadeService.isGuestUser().pipe(
-          take(1),
-          map(isGuestUser => {
-            if (isGuestUser) {
-              this.guestOrderEnabled = this.checkGuestOrderEnabled(merchant);
-            }
-            return merchant;
-          })
-        );
-      })
-    );
+    this.merchant$ = this.retrieveSeletectedMerchant(this.activatedRoute.snapshot.params.id);
   }
 
-  private checkGuestOrderEnabled(merchant: MerchantInfo) {
-    const setting: MerchantSettingInfo = merchant.settings.map['merchant.payment.supported_types'];
-    const parsedValue: any[] = JSON.parse(setting.value);
-    return parsedValue.some(({ payment_system_type }) => payment_system_type == PAYMENT_SYSTEM_TYPE.USAEPAY);
+  private retrieveSeletectedMerchant(merchantId: string): Observable<MerchantInfo> {
+    return this.exploreService.getMerchantById$(merchantId).pipe(
+      take(1),
+      tap(async merchant => {
+        this.guestOrderEnabled = await this.exploreService.isGuestOrderEnabled(merchant);
+        this.changeDetector.detectChanges();
+      })
+    );
   }
 
   toggleHours() {

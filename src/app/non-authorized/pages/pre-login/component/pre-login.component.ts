@@ -5,7 +5,7 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { tap, take, switchMap, map } from 'rxjs/operators';
-import { zip } from 'rxjs';
+import { from, zip } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -78,13 +78,13 @@ export class PreLoginComponent implements OnInit {
 
   private async updateGuestSettings(): Promise<void> {
     const institutionId = this.selectedInstitution.id;
-    const getGuestSettingObs = this.authFacadeService.getGuestSettings();
+    const getGuestSettingObs = this.institutionFacadeService.guestSettings;
     const merchantEnabledObs = this.settingsFacadeService.getSetting(
       Settings.Setting.PLACES_ENABLED,
       this.sessionId,
       institutionId
     );
-    const newGuestSetting = await zip(getGuestSettingObs, merchantEnabledObs)
+    const newGuestSetting = await zip(from(getGuestSettingObs), merchantEnabledObs)
       .pipe(
         map(([guestSettings, { value }]) => {
           guestSettings.canExplore = Boolean(Number(value));
@@ -92,7 +92,7 @@ export class PreLoginComponent implements OnInit {
         })
       )
       .toPromise();
-    this.authFacadeService.saveGuestSetting(newGuestSetting);
+    this.institutionFacadeService.saveGuestSetting(newGuestSetting);
   }
 
   private async navigateToLogin(isGuestUser: boolean, loginState: LoginState) {

@@ -61,12 +61,14 @@ export class MerchantFacadeService extends ServiceStateFacade {
   }
 
   private filterMerchantList(merchantList: MerchantInfo[]): MerchantInfo[] {
-    return merchantList.filter(merchant => {
-      const key = 'merchant.payment.supported_types';
-      const setting: MerchantSettingInfo = merchant.settings.map[key];
-      const parsedValue: any[] = JSON.parse(setting.value);
-      return parsedValue.some(({ payment_system_type }) => payment_system_type == PAYMENT_SYSTEM_TYPE.USAEPAY);
-    });
+    return merchantList.filter(merchant => this.isCreditCardSupported(merchant));
+  }
+
+  isCreditCardSupported(merchant: MerchantInfo) {
+    const key = 'merchant.payment.supported_types';
+    const setting: MerchantSettingInfo = merchant.settings.map[key];
+    const parsedValue: any[] = JSON.parse(setting.value);
+    return parsedValue.some(({ payment_system_type }) => payment_system_type == PAYMENT_SYSTEM_TYPE.USAEPAY);
   }
 
   private addRequiredOption(options: MerchantSearchOptions) {
