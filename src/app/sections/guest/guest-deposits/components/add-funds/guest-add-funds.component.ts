@@ -101,7 +101,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   onPaymentChanged(target) {
     this.defineDestAccounts(target);
-    this.depositButtonLabel();
+    this.addCreditCard();
   }
 
   formatAmount(event) {
@@ -122,23 +122,9 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     ];
 
     this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
-      const sourceAcc = this.paymentMethod.value;
-      this.amountToDeposit.reset();
-      if (sourceAcc === CREDITCARD_STATUS.NEW) {
-        return from(this.externalPaymentService.addUSAePayCreditCard())
-          .pipe(
-            switchMap(({ success, errorMessage }) => {
-              if (!success) {
-                return throwError(errorMessage);
-              }
-              this.loadingService.showSpinner();
-              return this.guestDepositsService.guestAccounts();
-            }),
-            take(1)
-          )
-          .subscribe(() => {}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
-      }
+      this.addCreditCard();
       if (data) {
+        this.amountToDeposit.setErrors(null);
         this.mainFormInput.setValidators([
           Validators.required,
           ...minMaxValidators,
@@ -146,6 +132,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         ]);
         this.amountToDeposit.clearValidators();
       } else {
+        this.amountToDeposit.reset();
         this.amountToDeposit.setValidators([Validators.required]);
         this.mainFormInput.clearValidators();
         this.mainFormInput.setErrors(null);
@@ -155,12 +142,11 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   onAmountChanged(event) {
-    const amount = event.target.value;
-    if (amount && amount.length) {
+    const amount = !!event.target ? event.target.value : event;
       if (!isNaN(+amount)) {
         this.depositButtonLabel('Deposit $' + amount);
       }
-    } else {
+      else {
       this.depositButtonLabel();
     }
   }
@@ -374,5 +360,34 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     let amount = mainInput || amountToDeposit;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     return amount;
+  }
+
+  private addCreditCard() {
+    if (this.paymentMethod.value != CREDITCARD_STATUS.NEW) {
+      return;
+    }
+    from(this.externalPaymentService.addUSAePayCreditCard())
+      .pipe(
+        switchMap(({ success, errorMessage }) => {
+          if (!success) {
+            return throwError(errorMessage);
+          }
+          this.loadingService.showSpinner();
+          return this.guestDepositsService.guestAccounts();
+        }),
+        take(1)
+      )
+      .subscribe(
+        acc => {
+          this.guestAccounts$ = of(acc);
+          this.filterSourceAccounts();
+        },
+        message => this.onErrorRetrieve(message),
+        () => {
+          this.paymentMethod.reset();
+          this.paymentMethod.markAsPristine();
+          this.loadingService.closeSpinner();
+        }
+      );
   }
 }

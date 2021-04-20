@@ -14,7 +14,7 @@
         <st-select-floating-label
           [formControlName]="controlsNames.paymentMethod"
           [control]="paymentMethod"
-          [isError]="paymentMethod.errors && (paymentMethod.dirty || paymentMethod.touched)"
+          [isError]="paymentMethod.errors && paymentMethod.dirty"
           [interfaceOptions]="customActionSheetOptions"
           (change)="onPaymentChanged($event)"
           class="deposit__select"
@@ -23,10 +23,7 @@
           idd="guestPayment"
         >
           <ng-container role="options">
-            <ion-select-option
-              *ngIf="(applePayEnabled$ | async)"
-              [value]="applePayAccountType"
-            >
+            <ion-select-option *ngIf="(applePayEnabled$ | async)" [value]="applePayAccountType">
               {{ applePayAccountType | accountDisplay }}
             </ion-select-option>
             <ng-container>
@@ -44,7 +41,7 @@
         </st-select-floating-label>
         <st-select-floating-label
           [formControlName]="controlsNames.toAccount"
-          [isError]="toAccount.errors && (toAccount.dirty || toAccount.touched)"
+          [isError]="toAccount.errors && toAccount.dirty"
           [control]="toAccount"
           [interfaceOptions]="customActionSheetOptions"
           class="deposit__select deposit__select-account"
@@ -53,7 +50,10 @@
           interface="action-sheet"
         >
           <ng-container role="options">
-            <ion-select-option [value]="account" *ngFor="let account of creditCardDestinationAccounts; trackBy: trackByAccountId">
+            <ion-select-option
+              [value]="account"
+              *ngFor="let account of creditCardDestinationAccounts; trackBy: trackByAccountId"
+            >
               {{ account | destinationAccountDisplay }}
             </ion-select-option>
           </ng-container>
@@ -62,7 +62,7 @@
           [formControlName]="controlsNames.amountToDeposit"
           [control]="amountToDeposit"
           [interfaceOptions]="customActionSheetOptions"
-          [isError]="amountToDeposit.errors && (amountToDeposit.dirty || amountToDeposit.touched)"
+          [isError]="amountToDeposit.errors && amountToDeposit.dirty"
           class="deposit__select deposit__select-account"
           *ngIf="!(isFreeFormEnabled$ | async); else mainInput"
           [label]="addFundsCs.depositText"
@@ -122,7 +122,12 @@
   </form>
 </ion-content>
 <ion-footer class="deposit__footer" mode="ios">
-  <st-button (onClick)="onSubmitDeposit()" tabindex="0" [isDisabled]="!guestDepositForm.valid" [disabled]="isDepositing">
+  <st-button
+    (onClick)="onSubmitDeposit()"
+    tabindex="0"
+    [isDisabled]="!guestDepositForm.valid"
+    [disabled]="isDepositing"
+  >
     <ion-text> {{ depositButtonText }} </ion-text>
   </st-button>
 </ion-footer>
