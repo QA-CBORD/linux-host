@@ -42,7 +42,7 @@ export class AuthApiService {
    *
    * @param userCredentials User Login credentials
    */
-  authenticateUser(userCredentials: UserLogin): Observable<string> {
+  authenticateUser(userCredentials: UserLogin, isGuestUser: boolean): Observable<string> {
     const postParams = {
       systemCredentials: {
         domain: '',
@@ -57,7 +57,9 @@ export class AuthApiService {
       },
     };
 
-    const queryConfig = new RPCQueryConfig('authenticateUser', postParams);
+    const authenticatedUserMethod = (isGuestUser && 'authenticateGuestUser') || 'authenticateUser';
+
+    const queryConfig = new RPCQueryConfig(authenticatedUserMethod, postParams);
 
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
