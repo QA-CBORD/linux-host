@@ -13,6 +13,7 @@ import { Settings, User } from 'src/app/app.global';
 import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
@@ -174,7 +175,7 @@ export class UserFacadeService extends ServiceStateFacade {
         if (result.granted) {
           PushNotifications.removeAllListeners();
           PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
-            if (Capacitor.platform === 'android') {
+            if (Capacitor.platform === PLATFORM.android) {
               LocalNotifications.schedule({
                 notifications: [
                   {
@@ -244,10 +245,6 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
-  private setFCMToken(value: string) {
-    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: this.ttl });
-  }
-
   getFCMToken$(): Observable<string> {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.fcmTokenKey)
@@ -269,6 +266,10 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService.changePassword$(oldPassword, newPassword).pipe(
       take(1)
     );
+  }
+
+  private setFCMToken(value: string) {
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: this.ttl });
   }
 
   private async clearData(): Promise<void> {

@@ -1,13 +1,14 @@
-import { GuestDepositCsModel } from '@sections/guest/deposit/model/guest-deposit-cs.model';
 import { GuestDashboardCsModel } from '@sections/guest/dashboard/model/guest-dashboard-cs.model';
 import { PasswordChangeCsModel } from '@shared/ui-components/change-password/password-change-content-strings.model';
 import { AndroidCredentialCsModel } from '@shared/ui-components/mobile-credentials/model/android/android-credential-content-strings.model';
 import { ForgotPasswordCsModel } from 'src/app/non-authorized/pages/forgot-password/models/forgot-password-content-strings.model';
 import { PreloginCsModel } from 'src/app/non-authorized/pages/pre-login/models/prelogin-content-strings.model';
 import { RegistrationCsModel } from 'src/app/non-authorized/pages/registration/models/registration-content-strings.model';
-import { ContentStringBuilder, ContentStringBuilderConfig, NullableContent } from './content-string-models';
 import { CONTENT_STRINGS_CATEGORIES as CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { ContentStringBuilder, ContentStringBuilderConfig, NullableContent } from './content-string-models';
 import { DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
+import { GuestDepositCsModel } from '@sections/guest/deposit/model/guest-deposit-cs.model';
+import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
 
 
 export enum ContentStringCategory {
@@ -19,7 +20,8 @@ export enum ContentStringCategory {
   guestDashboard = 'guestDashboard',
   deposit = 'deposit',
   guestDeposit = 'guestDeposit',
-  passwordValidation = 'passwordValidation'
+  passwordValidation = 'passwordValidation',
+  addFunds = 'addFunds'
 }
 
 export interface ExtraContent{
@@ -91,6 +93,13 @@ export const ContentStringApi: ContentStringCategoryType = {
     category: CATEGORIES.guestDeposit,
     build: (config: ContentStringBuilderConfig): GuestDepositCsModel => {
       return new GuestDepositCsModel(NullableContent.build(config));
+    },
+  },
+
+  [ContentStringCategory.addFunds]: {
+    category: CATEGORIES.addFunds,
+    build: (config: ContentStringBuilderConfig): GuestAddFundsCsModel => {
+      return new GuestAddFundsCsModel(NullableContent.build(config));
     },
   },
 };

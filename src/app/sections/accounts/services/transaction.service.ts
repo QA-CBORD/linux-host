@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, zip, of } from 'rxjs';
 import { map, switchMap, tap, take } from 'rxjs/operators';
 
-import { AccountsService } from './accounts.service';
+import { AccountService } from './accounts.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 
@@ -39,7 +39,7 @@ export class TransactionService {
   );
 
   constructor(
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly commerceApiService: CommerceApiService,
     private readonly contentService: ContentStringsApiService,
     private readonly userFacadeService: UserFacadeService,

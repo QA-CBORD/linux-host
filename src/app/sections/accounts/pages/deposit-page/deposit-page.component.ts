@@ -18,7 +18,7 @@ import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
-import { PATRON_NAVIGATION, AccountType, Settings } from 'src/app/app.global';
+import { PATRON_NAVIGATION, AccountType, Settings, DisplayName } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
@@ -36,6 +36,9 @@ import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
 const { Browser } = Plugins;
 
+export enum browserState {
+  FINISHED = 'browserFinished'
+}
 @Component({
   selector: 'st-deposit-page',
   templateUrl: './deposit-page.component.html',
@@ -57,7 +60,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   isDepositing: boolean = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
-    accountDisplayName: 'Apple Pay',
+    accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
   contentString: DepositCsModel = {} as any;
@@ -117,6 +120,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
+
   get isAllowFreeFormBillMe$(): Observable<boolean> {
     return this.depositService.settings$.pipe(
       map(settings => {
@@ -138,6 +142,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
+  
   get billMeAmounts$(): Observable<string[]> {
     return this.depositService.settings$.pipe(
       map(settings => {
@@ -186,6 +191,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return JSON.parse(billMePaymentTypesEnabled).indexOf(PAYMENT_TYPE.CREDIT) !== -1;
   }
 
+  
   get minMaxOfAmmounts() {
     const minAmountbillme = this.getSettingByName(
       this.depositSettings,
@@ -247,6 +253,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     }
   }
 
+
   onFormSubmit() {
     if ((this.depositForm && this.depositForm.invalid) || this.isDepositing) return;
     this.isDepositing = true;
@@ -260,7 +267,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     let amount = mainInput || mainSelect;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {
-      Browser.addListener('browserFinished', (info: any) => {
+      Browser.addListener(browserState.FINISHED, (info: any) => {
         this.isDepositing = false;
         this.cdRef.detectChanges();
         Browser.removeAllListeners();
@@ -420,6 +427,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             })
           )
         )
+        
       )
       .subscribe(() => {
         this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
@@ -558,7 +566,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   private getSettingByName(settings, property: string) {
     const depositSetting = this.depositService.getSettingByName(settings, property);
-
     return depositSetting.value;
   }
 }

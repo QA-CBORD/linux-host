@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -7,7 +8,9 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController } from '@ionic/angular';
 import { Recipient } from '@sections/guest/model/recipient.model';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
+import { GUEST_ROUTES } from '@sections/section.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ROLES } from 'src/app/app.global';
 
 @Component({
   selector: 'st-identify-recipient',
@@ -40,6 +43,7 @@ export class IdentifyRecipientComponent {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly alertController: AlertController,
     private readonly loadingService: LoadingService,
+    private readonly router: Router,
     private readonly toastService: ToastService,
     private readonly globalNav: GlobalNavService
   ) {
@@ -101,6 +105,8 @@ export class IdentifyRecipientComponent {
           this.loadingService.closeSpinner();
         });
     }
+
+    this.navigateToAddFunds();
   }
 
   async presentRemoveConfirm(recipient: Recipient) {
@@ -158,5 +164,12 @@ export class IdentifyRecipientComponent {
       }
     }
     this.loadingService.closeSpinner();
+  }
+
+  private navigateToAddFunds() {
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds], {
+      queryParams: { recipientName: this.selectedRecipient.nickname, userId: this.selectedRecipient.id },
+      skipLocationChange: true,
+    });
   }
 }

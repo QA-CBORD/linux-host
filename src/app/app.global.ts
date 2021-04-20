@@ -108,6 +108,10 @@ export namespace Settings {
   }
 }
 
+export enum DisplayName {
+  APPLEPAY = 'Apple Pay',
+}
+
 export enum AccountType {
   MEALS = 1,
   CHARGE = 2,

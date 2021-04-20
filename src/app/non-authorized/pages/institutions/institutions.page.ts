@@ -17,6 +17,7 @@ import { RegistrationServiceFacade } from '../registration/services/registration
 import { InstitutionLookupListItem } from '@core/model/institution';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -151,7 +152,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   async setNativeEnvironment() {
-    if (Capacitor.platform === 'ios') {
+    if (Capacitor.platform === PLATFORM.ios) {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
   }
