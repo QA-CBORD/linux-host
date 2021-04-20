@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController } from '@ionic/angular';
 import { Recipient } from '@sections/guest/model/recipient.model';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-identify-recipient',
@@ -16,6 +17,7 @@ import { GuestDepositsService } from '@sections/guest/services/guest-deposits.se
 export class IdentifyRecipientComponent {
   readonly newRecipientFormName = 'newRecipient';
   newRecepientForm: FormGroup;
+  isLoading: boolean;
 
   newRecepientFormRef: { fieldName: string; control: FormControl; lookupField?: LookupFieldInfo }[] = [
     { fieldName: 'Nickname', control: new FormControl('', Validators.required) },
@@ -28,12 +30,18 @@ export class IdentifyRecipientComponent {
     nickname: 'Add another recipient',
   };
 
+  get newRecipientFields() {
+    return this.newRecepientForm.controls[this.newRecipientFormName] as FormArray;
+  }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly guestDepositsService: GuestDepositsService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly alertController: AlertController,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly toastService: ToastService,
+    private readonly globalNav: GlobalNavService
   ) {
     this.newRecepientForm = this.fb.group({
       [this.newRecipientFormName]: this.fb.array(this.newRecepientFormRef.map(f => f.control)),
@@ -51,32 +59,47 @@ export class IdentifyRecipientComponent {
     });
   }
 
-  get newRecipientFields() {
-    return this.newRecepientForm.controls[this.newRecipientFormName] as FormArray;
+  ionViewWillEnter() {
+    this.globalNav.hideNavBar();
   }
+
+  ionViewWillLeave() {
+    this.globalNav.showNavBar();
+  }
+
   async continue() {
+    const errorMessage = 'Could not add recipient. Please check the info or try again later.';
     if (this.selectedRecipient === this.someoneElseRecipient) {
       this.loadingService.showSpinner();
-      const newRecepient = await this.guestDepositsService.retrieveAndSaveRecipientByCashlessFields(
-        this.newRecepientFormRef[0].control.value,
-        [
-          ...this.newRecepientFormRef
-            .filter(f => f.lookupField)
-            .map(f => ({ ...f.lookupField, value: f.control.value })),
-        ],
-        [...this.recipients],
-        this.saveNewRecipient
-      );
 
-      if (newRecepient) {
-        if (this.saveNewRecipient) {
-          this.recipients.push(newRecepient);
-          this.selectedRecipient = this.recipients[this.recipients.length - 1];
-        }
-        this.saveNewRecipient = false;
-        this.resetForm(this.newRecipientFields.controls);
-      }
-      this.loadingService.closeSpinner();
+      this.guestDepositsService
+        .retrieveAndSaveRecipientByCashlessFields(
+          this.newRecepientFormRef[0].control.value,
+          [
+            ...this.newRecepientFormRef
+              .filter(f => f.lookupField)
+              .map(f => ({ ...f.lookupField, value: f.control.value })),
+          ],
+          [...this.recipients],
+          this.saveNewRecipient
+        )
+        .then(newRecepient => {
+          if (newRecepient) {
+            if (this.saveNewRecipient) {
+              this.recipients.push(newRecepient);
+              this.selectedRecipient = this.recipients[this.recipients.length - 1];
+            }
+            this.saveNewRecipient = false;
+            this.resetForm(this.newRecipientFields.controls);
+          } else {
+            this.toastService.showToast({ message: errorMessage });
+          }
+        })
+        .catch(() => this.toastService.showToast({ message: errorMessage }))
+        .finally(() => {
+          this.isLoading = false;
+          this.loadingService.closeSpinner();
+        });
     }
   }
 
@@ -109,7 +132,7 @@ export class IdentifyRecipientComponent {
   }
 
   private generateFormFields(fields: LookupFieldInfo[], formArray: FormArray) {
-    for (const lookUpField of fields) {
+    for (const lookUpField of fields.sort((fieldA, fieldB) => fieldA.displayOrder - fieldB.displayOrder)) {
       const field = {
         fieldName: lookUpField.displayName,
         control: new FormControl('', Validators.required),

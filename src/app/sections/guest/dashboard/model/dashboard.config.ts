@@ -9,6 +9,7 @@ export const GuestDashboardSections: { [key: string]: GuestDashboardSection } = 
     title: 'Guest Deposit',
     imageUrl: `${imageBaseUrl}/get_deposit.svg`,
     willNavigate: true,
+    stackNavigation: true,
     url: GUEST_NAVIGATION.deposit,
     visibilityOn: (setting: GuestSetting) => setting.canDeposit
   },

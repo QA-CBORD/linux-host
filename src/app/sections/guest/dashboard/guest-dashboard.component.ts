@@ -41,7 +41,7 @@ export class GuestDashboard implements OnInit {
 
   onclick(section: GuestDashboardSection) {
     if (section.willNavigate && section.url) {
-      this.router.navigate([section.url], { replaceUrl: section.url !== GUEST_NAVIGATION.deposit });
+      this.router.navigate([section.url], { replaceUrl: !section.stackNavigation });
     } else if (section.modalConfig && section.modalConfig.component) {
       // logic to open modal here....
     }
