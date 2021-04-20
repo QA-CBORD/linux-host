@@ -4,11 +4,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import {
-  buildPasswordValidators,
-  ValidationController,
-} from 'src/app/password-validation/models/input-validator.model';
-import { Field, formField, STATICFIELDS } from '../../models/registration-utils';
+import { InputValidator } from 'src/app/password-validation/models/input-validator.model';
+import { Field, formField, FormFieldList, STATICFIELDS } from '../../models/registration-utils';
 import { RegistrationServiceFacade } from '../../services/registration-service-facade';
 import { RegistrationSuccessComponent } from '../registration-success/registration-success.component';
 
@@ -23,9 +20,11 @@ export class RegistrationComponent implements OnInit {
   registrationFormGroup: FormGroup;
   title$: Observable<string>;
   btnText$: Observable<string>;
-  passwordValidators: ValidationController[] = [];
+  passwordValidators: InputValidator[] = [];
   allFields: Field[] = [];
-
+  firstNameField: formField;
+  lastNameField: formField;
+  passwordField: formField;
   protected customLoadingOptions = { message: 'Processing... Please wait', duration: 150000 };
 
   constructor(
@@ -38,10 +37,10 @@ export class RegistrationComponent implements OnInit {
 
   async ngOnInit() {
     await this.formFieldsetup();
-    const { registrationCs, passwordValidationCs } = await (await this.registrationFacade.getData()).contentString;
-    this.title$ = of(registrationCs.title);
-    this.btnText$ = of(registrationCs.submitBtnTxt);
-    this.passwordValidators = buildPasswordValidators(passwordValidationCs);
+    const { regCsModel } = await this.registrationFacade.getData();
+    this.title$ = of(regCsModel.title);
+    this.btnText$ = of(regCsModel.submitBtnTxt);
+    this.passwordValidators = regCsModel.passwordValidators;
   }
 
   private async formFieldsetup(): Promise<void> {
@@ -61,20 +60,14 @@ export class RegistrationComponent implements OnInit {
     });
     this.horizontalFields = formFieldList.horizontalAlignedFields;
     this.formFields = formFieldList.verticalAlignedFields;
+    this.initializeFields();
   }
 
-  get firstNameField(): formField {
-    const { firstName } = STATICFIELDS;
-    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == firstName.idd);
-  }
-
-  get lastNameField(): formField {
-    const { lastName } = STATICFIELDS;
-    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
-  }
-
-  get passwordField(): Field {
-    return this.formFields.find(({ name: fieldName }) => fieldName == STATICFIELDS.password);
+  initializeFields(): void {
+    const { firstName, lastName, password } = STATICFIELDS;
+    this.firstNameField = this.horizontalFields.find(({ idd: fieldName }) => fieldName == firstName.idd);
+    this.lastNameField = this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
+    this.passwordField = this.formFields.find(({ name: fieldName }) => fieldName == password);
   }
 
   get disabled(): boolean {
@@ -100,15 +93,15 @@ export class RegistrationComponent implements OnInit {
 
   private async onRegistrationSuccess(response): Promise<void> {
     this.modalCtrl.dismiss();
-    const { registrationCs: contentStrings } = await (await this.registrationFacade.getData()).contentString;
+    const { regCsModel } = await await this.registrationFacade.getData();
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       componentProps: {
         pageContent: {
-          dismissBtnText: contentStrings.dismissBtnText,
-          resendEmailBtnText: contentStrings.resendEmail,
-          title: contentStrings.successTitle,
-          message: contentStrings.successMessage,
+          dismissBtnText: regCsModel.dismissBtnText,
+          resendEmailBtnText: regCsModel.resendEmail,
+          title: regCsModel.successTitle,
+          message: regCsModel.successMessage,
         },
       },
       component: RegistrationSuccessComponent,
@@ -128,8 +121,8 @@ export class RegistrationComponent implements OnInit {
       ({ response }) => this.onRegistrationSuccess(response),
       async error => {
         const [errorCode] = error.message.split('|');
-        const { registrationCs } = await (await this.registrationFacade.getData()).contentString;
-        const message = registrationCs.fromCodeOrDefaultErrortext(errorCode);
+        const { regCsModel } = await this.registrationFacade.getData();
+        const message = regCsModel.fromCodeOrDefaultErrortext(errorCode);
         this.toastService.showToast({ message, duration: 6000 });
         this.loadingService.closeSpinner();
       }
