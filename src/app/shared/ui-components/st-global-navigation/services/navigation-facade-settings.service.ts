@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { BehaviorSubject, Observable, zip } from 'rxjs';
+import { BehaviorSubject, from, Observable, zip } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import {
   GUEST_NAVIGATION_BASE_CONFIG,
@@ -12,6 +12,7 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { GuestSetting } from '@sections/guest/model/guest-settings';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 @Injectable()
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
@@ -20,7 +21,8 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   constructor(
     private readonly storage: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly authService: AuthFacadeService
+    private readonly authService: AuthFacadeService,
+    private readonly institutionService: InstitutionFacadeService
   ) {
     super();
   }
@@ -48,10 +50,10 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   }
 
   private getAllowedSettings(): Observable<NavigationBottomBarElement[]> {
-    const GuestSettingObs = this.authService.getGuestSettings();
+    const GuestSettingObs = this.institutionService.guestSettings;
     const isGuestUserObs = this.authService.isGuestUser();
     const cachedSettingsObs = this.settingsFacadeService.getCachedSettings();
-    return zip(cachedSettingsObs, isGuestUserObs, GuestSettingObs).pipe(
+    return zip(cachedSettingsObs, isGuestUserObs, from(GuestSettingObs)).pipe(
       map(([settingInfo, guestUser, setting]) =>
         this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(({ isEnable }) => isEnable)
       )
