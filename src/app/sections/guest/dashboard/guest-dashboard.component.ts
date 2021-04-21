@@ -5,6 +5,8 @@ import { CommonService } from '@shared/services/common.service';
 import { Router } from '@angular/router';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { GUEST_NAVIGATION } from 'src/app/app.global';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-guest-dashboard',
@@ -23,10 +25,12 @@ export class GuestDashboard implements OnInit {
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
-    private readonly messageProxy: MessageProxy
+    private readonly messageProxy: MessageProxy,
+    private readonly globalNav: GlobalNavService,
   ) {}
 
   ngOnInit() {
+    this.showNavBar();
     this.sections = this.messageProxy.get<GuestDashboardSection[]>();
     this.loadInfo();
   }
@@ -37,6 +41,14 @@ export class GuestDashboard implements OnInit {
     this.userName$ = this.commonService.getUserName();
     this.institutionName$ = this.commonService.getInstitutionName();
     this.institutionColor$ = this.commonService.getInstitutionBgColor();
+  }
+
+  private showNavBar() {
+    this.globalNav.isNavBarShown$.pipe(take(1)).subscribe(shown => {
+      if (!shown) {
+        this.globalNav.hideNavBar();
+      }
+    });
   }
 
   onclick(section: GuestDashboardSection) {

@@ -38,6 +38,7 @@ enum GUEST_FORM_CONTROL_NAMES {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class GuestAddFundsComponent extends AbstractDepositManager implements OnInit {
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
@@ -70,7 +71,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
     this.activatedRoute.data.subscribe(response => {
       this.setResolvedData(response);
     });
@@ -78,6 +78,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   ionViewWillEnter() {
+    this.globalNav.hideNavBar();
     this.setRecipientName();
     this.depositButtonLabel();
     this.filterSourceAccounts();
