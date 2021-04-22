@@ -198,7 +198,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       componentProps: {
         data,
         contentString,
-        refundPolicy: this.addFundsCs.refundText
+        intructions: this.addFundsCs.refundText
       },
       animated: false,
       backdropDismiss: false,
