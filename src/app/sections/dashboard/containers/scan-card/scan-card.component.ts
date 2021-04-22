@@ -1,15 +1,14 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, skipWhile, switchMap, take, catchError, tap } from 'rxjs/operators';
-import { Observable, timer, of } from 'rxjs';
+import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import bwipjs from 'bwip-angular2';
 
 import { UserInfo } from '@core/model/user';
 import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';

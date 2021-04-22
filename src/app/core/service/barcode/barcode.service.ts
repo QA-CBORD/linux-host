@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, interval, Observable, of, throwError, zip } from 'rxjs';
 import { Settings, User } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { startWith, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, startWith, switchMap, take, tap } from 'rxjs/operators';
 import * as bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
+import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -41,8 +42,21 @@ export class BarcodeService {
     this._barcodeValue$.next(this.barcodeValue);
   }
 
+  encodePin(ping: string): Observable<string> {
+    const barcodeObservable = zip(of({ value: ping }), this.settingFacade.getSetting(Settings.Setting.SOA_KEY)).pipe(
+      take(1),
+      switchMap(response => {
+        if (!response || response.length < 2 || !response[0] || !response[1]) {
+          throwError(new GetThrowable('Unable to encode pin, required values missing'));
+        }
+        return from(this.beginBarcodeGeneration(response[0].value, response[1].value));
+      }),
+      catchError(() => throwError(new GetThrowable('Unable to encode pin, required values missing')))
+    );
+    return this.doEncoding(false, barcodeObservable);
+  }
+
   generateBarcode(withInterval: boolean = false): Observable<string> {
-    const timerObservable = interval(this.generationTimer).pipe(startWith(-1));
     const barcodeObservable = zip(
       this.settingFacade.getUserSetting(User.Settings.CASHLESS_KEY),
       this.settingFacade.getSetting(Settings.Setting.SOA_KEY)
@@ -55,12 +69,15 @@ export class BarcodeService {
       }),
       tap(value => (this._barcodeValue = value))
     );
+    return this.doEncoding(withInterval, barcodeObservable);
+  }
 
+  doEncoding(withInterval: boolean = false, barcodeObservable: Observable<string>) {
+    const timerObservable = interval(this.generationTimer).pipe(startWith(-1));
     return withInterval ? timerObservable.pipe(switchMap(v => barcodeObservable)) : barcodeObservable.pipe(take(1));
   }
 
   private async beginBarcodeGeneration(patronKey: string, institutionKey: string): Promise<string> {
-    /// init variables
     const cryptoAlgorithm: string = 'HmacSHA256';
     const returnDigits: number = 9;
     const checksum: number = this.generateDigit(patronKey);
@@ -69,7 +86,6 @@ export class BarcodeService {
     const cbordKeyBytes: Int8Array = this.hexStringToByteArray(atob(this.garble));
     const sharedKey: Int8Array = this.XorEncrypt(cbordKeyBytes, institutionKeyBytes);
     const time: BigInteger = bigInt(Date.now()).divide(bigInt(1000));
-
     /// run totp algo
     const totp: string = await this.generateTOTP(sharedKey, time, returnDigits, cryptoAlgorithm);
 
