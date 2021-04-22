@@ -6,7 +6,7 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
+import { handleServerError } from '@core/utils/general-helpers';
 import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
@@ -22,7 +22,7 @@ import { ContentStringModel } from '@shared/model/content-strings/content-string
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, Observable, of, throwError } from 'rxjs';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
-import { ROLES, Settings } from 'src/app/app.global';
+import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 
 enum GUEST_FORM_CONTROL_NAMES {
@@ -49,9 +49,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   guestDepositForm: FormGroup;
   recipientName: string;
   subTitle: string;
-
-  private recipientAccounts$: Observable<UserAccount[]>;
-  private guestAccounts$: Observable<UserAccount[]>;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -81,8 +78,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.globalNav.hideNavBar();
     this.setRecipientName();
     this.depositButtonLabel();
-    this.filterSourceAccounts();
-    this.filterDestinationAccounts();
     this.setFormValidators();
     this.cdRef.detectChanges();
   }
@@ -102,7 +97,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   onPaymentChanged(target) {
     this.defineDestAccounts(target);
-
     this.addCreditCard();
   }
 
@@ -186,7 +180,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         )
         .subscribe(
           info => {
-            this.confirmationDepositPopover({ ...(info as {}), depositReviewCredit: this.addFundsCs.refundText });
+            this.confirmationDepositPopover({ ...info as {} });
           },
           () => {
             this.loadingService.closeSpinner();
@@ -204,6 +198,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       componentProps: {
         data,
         contentString,
+        refundPolicy: this.addFundsCs.refundText
       },
       animated: false,
       backdropDismiss: false,
@@ -250,41 +245,14 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     return this.oneTimeAmounts$;
   }
 
-  filterSourceAccounts() {
-    this.guestAccounts$
-      .pipe(
-        take(1),
-        tap(accounts => {
-          this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
-        })
-      )
-      .subscribe();
+  setSourceAccounts(guestAccounts: UserAccount[]) {
+      this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(guestAccounts);
   }
 
-  filterDestinationAccounts() {
-    of(this.depositSettings)
-      .pipe(
-        map(settings => {
-          const depositTenders = this.getSettingByName(settings, Settings.Setting.DEPOSIT_TENDERS.split('.')[2]);
-          return {
-            depositTenders: parseArrayFromString(depositTenders),
-          };
-        }),
-        switchMap(({ depositTenders }) =>
-          this.recipientAccounts$.pipe(
-            tap(accounts => {
-              this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
-                depositTenders as string[],
-                accounts
-              );
-              this.cdRef.markForCheck();
-            })
-          )
-        )
-      )
-      .subscribe(() => {
-        this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
-      });
+  setDestinationAccounts(recipientAccounts: UserAccount[]) {
+    this.creditCardDestinationAccounts  = recipientAccounts;
+    this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
+    this.cdRef.markForCheck();
   }
 
   async finalizeDepositModal(data): Promise<void> {
@@ -344,7 +312,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       )
       .subscribe(
         () => this.finalizeDepositModal(data),
-        error => this.onErrorRetrieve(error || 'Your information could not be verified.')
+        error => { 
+          this.onErrorRetrieve(error || 'Your information could not be verified.') }
       );
   }
 
@@ -353,9 +322,9 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.recipientName = response.data.recipientName;
     this.addFundsCs = response.data.addFundsCs;
     this.confirmationCs = response.data.confirmationCs;
-    this.applePayEnabled$ = of(response.data.applePayEnabled);
-    this.recipientAccounts$ = of(response.data.destinationAccounts);
-    this.guestAccounts$ = of(response.data.sourceAccounts);
+    this.applePayEnabled = response.data.applePayEnabled;
+    this.setDestinationAccounts(response.data.destinationAccounts);
+    this.setSourceAccounts(response.data.sourceAccounts);
   }
 
   private formatAmountValue(mainInput: any, amountToDeposit: any) {
@@ -380,9 +349,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         take(1)
       )
       .subscribe(
-        acc => {
-          this.guestAccounts$ = of(acc);
-          this.filterSourceAccounts();
+        accounts => {
+          this.setSourceAccounts(accounts);
         },
         message => this.onErrorRetrieve(message),
         () => {

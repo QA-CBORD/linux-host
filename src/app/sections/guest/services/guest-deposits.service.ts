@@ -2,16 +2,19 @@ import { Injectable } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { UserApiService } from '@core/service/user-api/user-api.service';
 import { of } from 'rxjs';
-import { map, switchMap, withLatestFrom, take } from 'rxjs/operators';
+import { map, switchMap, withLatestFrom, take, catchError } from 'rxjs/operators';
 import { User } from 'src/app/app.global';
 import { Recipient } from '../model/recipient.model';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
+import { handleServerError } from '@core/utils/general-helpers';
+import { ACCOUNTS_VALIDATION_ERRORS } from '@sections/accounts/accounts.config';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class GuestDepositsService {
@@ -21,7 +24,8 @@ export class GuestDepositsService {
     private readonly userApiService: UserApiService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly commerceApiService: CommerceApiService
+    private readonly commerceApiService: CommerceApiService,
+    private readonly toastService: ToastService
   ) {}
 
   getRecipientList(): Promise<Recipient[]> {
@@ -66,16 +70,28 @@ export class GuestDepositsService {
         if (isGuest) {
           return this.userFacadeService.getUserData$();
         }
-        return null;
+        return throwError('The account is not login as a Guest.');
       }),
       switchMap(({ id: userId }) => {
-        return this.userAccounts(userId);
+        return this.commerceApiService.retrieveAccountsByUser(userId).pipe(take(1));
+      }),
+      handleServerError(ACCOUNTS_VALIDATION_ERRORS),
+      catchError(err => {
+        this.onErrorRetrieve(err);
+        return throwError(err);
       })
     );
   }
 
-  userAccounts(userId: string): Observable<UserAccount[]> {
-    return this.commerceApiService.retrieveAccountsByUser(userId).pipe(take(1));
+  recipientAccounts(userId: string): Observable<UserAccount[]> {
+    return this.commerceApiService.retrieveDepositAccountsByUser(userId).pipe(
+      handleServerError(ACCOUNTS_VALIDATION_ERRORS),
+      catchError(err => {
+        this.onErrorRetrieve(err);
+        return throwError(err);
+      }),
+      take(1)
+    );
   }
 
   guestDeposit(fromAccountId: string, toAccountId: string, amount: number): Observable<string> {
@@ -84,11 +100,15 @@ export class GuestDepositsService {
         if (isGuest) {
           return this.userFacadeService.getUserData$();
         }
-        return null;
+        return throwError('The account is not login as a Guest.');
       }),
       switchMap(({ id: userId }) => {
         return this.commerceApiService.depositForUser(userId, fromAccountId, toAccountId, amount);
       })
     );
+  }
+
+  private async onErrorRetrieve(message: any) {
+    await this.toastService.showToast({ message, duration: 5000 });
   }
 }
