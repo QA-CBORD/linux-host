@@ -70,7 +70,7 @@ export class GuestDepositsService {
         if (isGuest) {
           return this.userFacadeService.getUserData$();
         }
-        return throwError('The account is not login as a Guest.');
+        return throwError('You are not logged in as a Guest.');
       }),
       switchMap(({ id: userId }) => {
         return this.commerceApiService.retrieveAccountsByUser(userId).pipe(take(1));
@@ -100,7 +100,7 @@ export class GuestDepositsService {
         if (isGuest) {
           return this.userFacadeService.getUserData$();
         }
-        return throwError('The account is not login as a Guest.');
+        return throwError('You are not logged in as a Guest.');
       }),
       switchMap(({ id: userId }) => {
         return this.commerceApiService.depositForUser(userId, fromAccountId, toAccountId, amount);
