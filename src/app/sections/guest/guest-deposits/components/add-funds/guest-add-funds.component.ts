@@ -38,7 +38,6 @@ enum GUEST_FORM_CONTROL_NAMES {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class GuestAddFundsComponent extends AbstractDepositManager implements OnInit {
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
@@ -82,7 +81,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.cdRef.detectChanges();
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.globalNav.showNavBar();
   }
 
@@ -139,10 +138,9 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   onAmountChanged(event) {
     const amount = !!event.target ? event.target.value : event;
-      if (!isNaN(+amount)) {
-        this.depositButtonLabel('Deposit $' + amount);
-      }
-      else {
+    if (!isNaN(+amount)) {
+      this.depositButtonLabel('Deposit $' + amount);
+    } else {
       this.depositButtonLabel();
     }
   }
@@ -180,7 +178,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         )
         .subscribe(
           info => {
-            this.confirmationDepositPopover({ ...info as {} });
+            this.confirmationDepositPopover({ ...(info as {}) });
           },
           () => {
             this.loadingService.closeSpinner();
@@ -198,7 +196,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       componentProps: {
         data,
         contentString,
-        intructions: this.addFundsCs.refundText
+        intructions: this.addFundsCs.refundText,
       },
       animated: false,
       backdropDismiss: false,
@@ -246,11 +244,11 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   setSourceAccounts(guestAccounts: UserAccount[]) {
-      this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(guestAccounts);
+    this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(guestAccounts);
   }
 
   setDestinationAccounts(recipientAccounts: UserAccount[]) {
-    this.creditCardDestinationAccounts  = recipientAccounts;
+    this.creditCardDestinationAccounts = recipientAccounts;
     this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
     this.cdRef.markForCheck();
   }
@@ -312,8 +310,9 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       )
       .subscribe(
         () => this.finalizeDepositModal(data),
-        error => { 
-          this.onErrorRetrieve(error || 'Your information could not be verified.') }
+        error => {
+          this.onErrorRetrieve(error || 'Your information could not be verified.');
+        }
       );
   }
 
@@ -346,18 +345,20 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
           this.loadingService.showSpinner();
           return this.guestDepositsService.guestAccounts();
         }),
-        take(1)
+        take(1),
       )
       .subscribe(
         accounts => {
           this.setSourceAccounts(accounts);
         },
-        message => this.onErrorRetrieve(message),
+        message => {
+          this.onErrorRetrieve(message);
+        },
         () => {
-          this.paymentMethod.reset();
-          this.paymentMethod.markAsPristine();
           this.loadingService.closeSpinner();
         }
-      );
+      );    
+      this.paymentMethod.reset();
+      this.paymentMethod.markAsPristine();
   }
 }
