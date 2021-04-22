@@ -68,10 +68,10 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   ngOnInit() {
+    this.initForm();
     this.activatedRoute.data.subscribe(response => {
       this.setResolvedData(response);
     });
-    this.initForm();
   }
 
   ionViewWillEnter() {
@@ -82,7 +82,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.cdRef.detectChanges();
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave(){
     this.globalNav.showNavBar();
   }
 
