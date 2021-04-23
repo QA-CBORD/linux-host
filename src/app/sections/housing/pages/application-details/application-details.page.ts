@@ -33,6 +33,8 @@ import { QuestionsPage } from '../../questions/questions.model';
 export class ApplicationDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
+  @ViewChild('content') private content: any;
+  
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -134,6 +136,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _next(applicationDetails: ApplicationDetails, formValue: any): void {
+    this.content.scrollToTop();
+
     if (this.isSubmitted) {
       return this.stepper.next();
     }
