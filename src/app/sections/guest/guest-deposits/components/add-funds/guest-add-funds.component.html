@@ -23,7 +23,7 @@
           idd="guestPayment"
         >
           <ng-container role="options">
-            <ion-select-option *ngIf="(applePayEnabled$ | async)" [value]="applePayAccountType">
+            <ion-select-option *ngIf="applePayEnabled" [value]="applePayAccountType">
               {{ applePayAccountType | accountDisplay }}
             </ion-select-option>
             <ng-container>
