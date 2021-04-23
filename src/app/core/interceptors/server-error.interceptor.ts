@@ -105,3 +105,9 @@ const GENERAL_ERRORS = {
     default: 'There was an issue with the transaction',
   },
 };
+
+export class GetThrowable extends Error {
+  constructor(public message: string, public code?: string | number) {
+    super(message);
+  }
+}

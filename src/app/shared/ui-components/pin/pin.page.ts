@@ -9,6 +9,7 @@ import { finalize, take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
+import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -274,6 +275,8 @@ export class PinPage implements OnInit {
             setTimeout(() => {
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
+          } else if (error instanceof GetThrowable) {
+            this.setErrorText(error.message);
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
