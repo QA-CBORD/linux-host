@@ -38,6 +38,7 @@ enum GUEST_FORM_CONTROL_NAMES {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class GuestAddFundsComponent extends AbstractDepositManager implements OnInit {
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
@@ -48,6 +49,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   guestDepositForm: FormGroup;
   recipientName: string;
   subTitle: string;
+  hideBalance: boolean;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -71,6 +73,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.activatedRoute.data.subscribe(response => {
       this.setResolvedData(response);
     });
+    this.hideAccountBalance();
   }
 
   ionViewWillEnter() {
@@ -360,5 +363,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       );    
       this.paymentMethod.reset();
       this.paymentMethod.markAsPristine();
+  }
+  private hideAccountBalance() {
+    this.hideBalance = true;
   }
 }

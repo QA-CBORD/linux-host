@@ -54,7 +54,7 @@
               [value]="account"
               *ngFor="let account of creditCardDestinationAccounts; trackBy: trackByAccountId"
             >
-              {{ account | destinationAccountDisplay }}
+              {{ account | destinationAccountDisplay: hideBalance }}
             </ion-select-option>
           </ng-container>
         </st-select-floating-label>
