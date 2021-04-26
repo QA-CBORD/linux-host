@@ -28,7 +28,7 @@ export abstract class AbstractDepositManager {
   private activePaymentType: PAYMENT_TYPE;
   depositButtonText: string;
   isDepositing: boolean = false;
-  applePayEnabled$: Observable<boolean>;
+  applePayEnabled: boolean;
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;
   depositSettings: SettingInfo[];
@@ -49,9 +49,9 @@ export abstract class AbstractDepositManager {
 
   onSubmitDeposit() {}
 
-  filterSourceAccounts() {}
+  setSourceAccounts(guestAccounts: UserAccount[]) {}
 
-  filterDestinationAccounts() {}
+  setDestinationAccounts(recipientAccounts: UserAccount[]) {}
 
   async confirmationDepositPopover(data: any) {}
 

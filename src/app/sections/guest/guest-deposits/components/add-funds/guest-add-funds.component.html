@@ -23,7 +23,7 @@
           idd="guestPayment"
         >
           <ng-container role="options">
-            <ion-select-option *ngIf="(applePayEnabled$ | async)" [value]="applePayAccountType">
+            <ion-select-option *ngIf="applePayEnabled" [value]="applePayAccountType">
               {{ applePayAccountType | accountDisplay }}
             </ion-select-option>
             <ng-container>
@@ -54,7 +54,7 @@
               [value]="account"
               *ngFor="let account of creditCardDestinationAccounts; trackBy: trackByAccountId"
             >
-              {{ account | destinationAccountDisplay }}
+              {{ account | destinationAccountDisplay: hideAccountBalance }}
             </ion-select-option>
           </ng-container>
         </st-select-floating-label>
