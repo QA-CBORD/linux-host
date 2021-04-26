@@ -21,7 +21,7 @@ import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, Observable, of, throwError } from 'rxjs';
-import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 
@@ -49,7 +49,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   guestDepositForm: FormGroup;
   recipientName: string;
   subTitle: string;
-  hideBalance: boolean;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -73,7 +72,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.activatedRoute.data.subscribe(response => {
       this.setResolvedData(response);
     });
-    this.hideAccountBalance();
   }
 
   ionViewWillEnter() {
@@ -218,6 +216,10 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     return await popover.present();
   }
 
+  get hideAccountBalance() {
+    return true;
+   }
+
   get controlsNames() {
     return GUEST_FORM_CONTROL_NAMES;
   }
@@ -348,7 +350,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
           this.loadingService.showSpinner();
           return this.guestDepositsService.guestAccounts();
         }),
-        take(1),
+        take(1)
       )
       .subscribe(
         accounts => {
@@ -360,11 +362,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         () => {
           this.loadingService.closeSpinner();
         }
-      );    
-      this.paymentMethod.reset();
-      this.paymentMethod.markAsPristine();
-  }
-  private hideAccountBalance() {
-    this.hideBalance = true;
+      );
+    this.paymentMethod.reset();
+    this.paymentMethod.markAsPristine();
   }
 }
