@@ -38,7 +38,6 @@ enum GUEST_FORM_CONTROL_NAMES {
   styleUrls: ['./guest-add-funds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class GuestAddFundsComponent extends AbstractDepositManager implements OnInit {
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
@@ -76,7 +75,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
-    this.setRecipientName();
     this.depositButtonLabel();
     this.setFormValidators();
     this.cdRef.detectChanges();
@@ -218,7 +216,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   get hideAccountBalance() {
     return true;
-   }
+  }
 
   get controlsNames() {
     return GUEST_FORM_CONTROL_NAMES;
@@ -260,6 +258,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   async finalizeDepositModal(data): Promise<void> {
     const { depositSuccessCs: contentString } = this.confirmationCs as DepositCsModel;
+    contentString.subTitleDetail = this.replaceRecipientName(contentString.subTitleDetail);
     const modal = await this.modalController.create({
       component: DepositModalComponent,
       animated: true,
@@ -291,11 +290,11 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     }
   }
 
-  private setRecipientName() {
-    this.subTitle = this.addFundsCs.noticeText;
-    if (this.subTitle.includes('${recipient_name}')) {
-      this.subTitle = this.subTitle.replace('${recipient_name}', this.recipientName);
+  private replaceRecipientName(text: string): string {
+    if (text.includes('${recipient_name}')) {
+      return text.replace('${recipient_name}', this.recipientName);
     }
+    return text;
   }
 
   private isReadyToSubmit() {
