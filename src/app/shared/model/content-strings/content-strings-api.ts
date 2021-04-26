@@ -9,6 +9,7 @@ import { ContentStringBuilder, ContentStringBuilderConfig, NullableContent } fro
 import { DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 import { GuestDepositCsModel } from '@sections/guest/deposit/model/guest-deposit-cs.model';
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
+import { IdentifyRecipientCsModel } from '@sections/guest/guest-deposits/components/identify-recipient/identity-recipient.content.string';
 
 
 export enum ContentStringCategory {
@@ -21,7 +22,8 @@ export enum ContentStringCategory {
   deposit = 'deposit',
   guestDeposit = 'guestDeposit',
   passwordValidation = 'passwordValidation',
-  addFunds = 'addFunds'
+  addFunds = 'addFunds',
+  identifyRecipient = 'identifyRecipient'
 }
 
 export interface ExtraContent{
@@ -100,6 +102,13 @@ export const ContentStringApi: ContentStringCategoryType = {
     category: CATEGORIES.addFunds,
     build: (config: ContentStringBuilderConfig): GuestAddFundsCsModel => {
       return new GuestAddFundsCsModel(NullableContent.build(config));
+    },
+  },
+
+  [ContentStringCategory.identifyRecipient]: {
+    category: CATEGORIES.identifyRecipient,
+    build: (config: ContentStringBuilderConfig): IdentifyRecipientCsModel => {
+      return new IdentifyRecipientCsModel(NullableContent.build(config));
     },
   },
 };

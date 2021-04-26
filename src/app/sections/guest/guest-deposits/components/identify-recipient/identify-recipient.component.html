@@ -1,5 +1,5 @@
 <st-header
-  title="Identify Recipient"
+  [title]="contentString.title"
   [isTitleShow]="true"
   [isToolbarShow]="true"
   backButtonIcon="close"
@@ -8,7 +8,7 @@
 ></st-header>
 <ion-content class="container ion-padding-top">
   <div class="section ion-padding-top ion-padding-horizontal">
-    <label class="ion-margin section__title">Who is this deposit for?</label>
+    <label class="ion-margin section__title">{{ contentString.subTitle }}</label>
     <ion-radio-group mode="md" [(ngModel)]="selectedRecipient">
       <ion-row class="recipient-row" *ngFor="let recipient of recipients">
         <ion-col size="9">
@@ -18,13 +18,13 @@
           </ion-item>
         </ion-col>
         <ion-col size="3">
-          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">Remove</ion-button>
+          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">{{contentString.removeText}}</ion-button>
         </ion-col>
       </ion-row>
       <ion-row *ngIf="recipients.length <= 10" class="recipient-row ion-padding-bottom">
         <ion-col>
           <ion-item lines="none">
-            <ion-label>{{ recipients.length ? someoneElseRecipient.nickname : 'Add new recipient' }}</ion-label>
+            <ion-label>{{ recipients.length ? someoneElseRecipient.nickname : contentString.addNewRecipientText }}</ion-label>
             <ion-radio slot="start" mode="md" slot="start" [value]="someoneElseRecipient"></ion-radio>
           </ion-item>
         </ion-col>
@@ -57,7 +57,7 @@
           <ion-col size="12">
             <ion-list>
               <ion-item tabindex="0" class="ion-no-padding" lines="none">
-                <ion-label>Save this recipient for future deposits?</ion-label>
+                <ion-label>{{ contentString.shouldSaveForFuture }}</ion-label>
                 <ion-checkbox
                   class="ion-no-margin new-recipient-form__save-check"
                   slot="start"
@@ -81,6 +81,6 @@
     (onClick)="continue()"
     tabindex="0"
   >
-    Continue
+    {{ contentString.submitText }}
   </st-button>
 </ion-footer>

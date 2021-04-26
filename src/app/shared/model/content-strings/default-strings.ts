@@ -15,6 +15,21 @@ export const defaultForgotPasswordCs = {
     'A message has been sent to your email that will contain a link for you to change your password. Clicking on that link will take you to a page where you can enter in a new password',
 };
 
+export const defaultIdentifyRecipientCs = {
+  screen_title: 'Identify Recipient',
+  sub_title: 'Who is this deposit for ?',
+  remove_recipient_btn_text: 'remove',
+  add_new_recipient_text: 'Add new recipient',
+  add_other_recipient_Text: 'Add another recipient',
+  submit_btn: 'CONTINUE',
+  remove_recipient_dialog_title: 'Remove ',
+  remove_recipient_dialog_msg: 'Are you sure ?',
+  remove_recipient_dialog_cancel: 'OOPS, CANCEL',
+  remove_recipient_dialog_confirm: 'YES, REMOVE',
+  add_new_recipient_failure: 'Could not add recipient. Please check the info or try again later.',
+  save_recipient_for_future: 'Save this recipient for future deposits ?'
+}
+
 export const defaultRegistrationCs = {
   screen_title: 'Create an account',
   submit_btn_text: 'Create Account',
