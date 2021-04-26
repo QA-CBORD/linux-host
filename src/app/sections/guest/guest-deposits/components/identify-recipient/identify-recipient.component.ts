@@ -82,7 +82,7 @@ export class IdentifyRecipientComponent {
           [
             ...this.newRecepientFormRef
               .filter(f => f.lookupField)
-              .map(f => ({ ...f.lookupField, value: f.control.value })),
+              .map(f => ({ ...f.lookupField, value: ('' + f.control.value).trim() })),
           ],
           [...this.recipients],
           this.saveNewRecipient
