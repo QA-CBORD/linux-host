@@ -91,10 +91,11 @@ export class IdentifyRecipientComponent {
           if (newRecepient) {
             if (this.saveNewRecipient) {
               this.recipients.push(newRecepient);
-              this.selectedRecipient = this.recipients[this.recipients.length - 1];
+              this.selectedRecipient = newRecepient;
             }
             this.saveNewRecipient = false;
             this.resetForm(this.newRecipientFields.controls);
+            this.navigateToAddFunds(newRecepient);
           } else {
             this.toastService.showToast({ message: errorMessage });
           }
@@ -104,9 +105,9 @@ export class IdentifyRecipientComponent {
           this.isLoading = false;
           this.loadingService.closeSpinner();
         });
+    } else {
+      this.navigateToAddFunds(this.selectedRecipient);
     }
-
-    this.navigateToAddFunds();
   }
 
   async presentRemoveConfirm(recipient: Recipient) {
@@ -166,9 +167,9 @@ export class IdentifyRecipientComponent {
     this.loadingService.closeSpinner();
   }
 
-  private navigateToAddFunds() {
+  private navigateToAddFunds(recipient: Recipient) {
     this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds], {
-      queryParams: { recipientName: this.selectedRecipient.nickname, userId: this.selectedRecipient.id },
+      queryParams: { recipientName: recipient.nickname, userId: recipient.id },
       skipLocationChange: true,
     });
   }
