@@ -47,7 +47,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   confirmationCs: ContentStringModel;
   guestDepositForm: FormGroup;
   recipientName: string;
-  subTitle: string;
 
   constructor(
     private readonly fb: FormBuilder,
