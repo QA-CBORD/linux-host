@@ -45,6 +45,7 @@ import { FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
+  @ViewChild('content') private content: any;
   @ViewChild(StepperComponent) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
@@ -150,6 +151,8 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   private _next(formValue: any): void {
+    this.content.scrollToTop();
+
     if (this.isSubmitted) {
       return this.stepper.next();
     }

@@ -21,7 +21,7 @@ import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, Observable, of, throwError } from 'rxjs';
-import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 
@@ -47,7 +47,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   confirmationCs: ContentStringModel;
   guestDepositForm: FormGroup;
   recipientName: string;
-  subTitle: string;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -75,7 +74,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
-    this.setRecipientName();
     this.depositButtonLabel();
     this.setFormValidators();
     this.cdRef.detectChanges();
@@ -215,6 +213,10 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     return await popover.present();
   }
 
+  get hideAccountBalance() {
+    return true;
+  }
+
   get controlsNames() {
     return GUEST_FORM_CONTROL_NAMES;
   }
@@ -255,6 +257,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   async finalizeDepositModal(data): Promise<void> {
     const { depositSuccessCs: contentString } = this.confirmationCs as DepositCsModel;
+    contentString.subTitleDetail = this.replaceRecipientName(contentString.subTitleDetail);
     const modal = await this.modalController.create({
       component: DepositModalComponent,
       animated: true,
@@ -286,11 +289,11 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     }
   }
 
-  private setRecipientName() {
-    this.subTitle = this.addFundsCs.noticeText;
-    if (this.subTitle.includes('${recipient_name}')) {
-      this.subTitle = this.subTitle.replace('${recipient_name}', this.recipientName);
+  private replaceRecipientName(text: string): string {
+    if (text.includes('${recipient_name}')) {
+      return text.replace('${recipient_name}', this.recipientName);
     }
+    return text;
   }
 
   private isReadyToSubmit() {
@@ -345,7 +348,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
           this.loadingService.showSpinner();
           return this.guestDepositsService.guestAccounts();
         }),
-        take(1),
+        take(1)
       )
       .subscribe(
         accounts => {
@@ -357,8 +360,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         () => {
           this.loadingService.closeSpinner();
         }
-      );    
-      this.paymentMethod.reset();
-      this.paymentMethod.markAsPristine();
+      );
+    this.paymentMethod.reset();
+    this.paymentMethod.markAsPristine();
   }
 }

@@ -9,7 +9,7 @@
 <ion-content>
   <form novalidate [formGroup]="guestDepositForm">
     <section class="deposit__selection-block">
-      <ion-label>{{ subTitle }}</ion-label>
+      <ion-label>{{ replaceRecipientName(this.addFundsCs.noticeText) }}</ion-label>
       <div class="deposit__select-wrapper">
         <st-select-floating-label
           [formControlName]="controlsNames.paymentMethod"
@@ -54,7 +54,7 @@
               [value]="account"
               *ngFor="let account of creditCardDestinationAccounts; trackBy: trackByAccountId"
             >
-              {{ account | destinationAccountDisplay }}
+              {{ account | destinationAccountDisplay: hideAccountBalance }}
             </ion-select-option>
           </ng-container>
         </st-select-floating-label>
