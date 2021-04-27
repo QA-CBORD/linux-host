@@ -98,6 +98,7 @@ const GENERAL_ERRORS = {
     default: 'Invalid Service Argument Exception',
   },
   6100: {
+    depositForUser: 'There was an issue with the transaction',
     deposit: 'There was an issue with the transaction',
     default: 'Unable to retrieve mobile locations.',
   },

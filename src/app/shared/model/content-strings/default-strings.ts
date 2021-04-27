@@ -78,7 +78,7 @@ export const depositDefaultStrings = {
   submit_button_lbl: 'Deposit',
   choose_action_placeholder_text: 'Please Choose',
   success_screen_title: 'Deposit',
-  subtitle_detail_text: 'This transaction was successful. You can review it to make sure everything checks out.',
+  subtitle_detail_text: 'The transaction to ${recipient_name} was successful. You can review it to make sure everything checks out.',
   subtitle_summary_text: 'Success!',
   done_button_text: 'DONE',
 };

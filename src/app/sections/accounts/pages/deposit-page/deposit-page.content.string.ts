@@ -89,7 +89,12 @@ export class DepositSuccessCs extends DepositBase {
   get billMeText(): string {
     return this.content.bill_me_pay_method;
   }
+
+  set subTitleDetail(text: string) {
+    this.content.subtitle_detail_text = text;
+  }
 }
+
 
 export class DepositCsModel extends ContentStringModel {
   private confirmDeposit: ConfirmDepositCs;
