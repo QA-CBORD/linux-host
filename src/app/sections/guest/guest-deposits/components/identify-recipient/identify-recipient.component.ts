@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -47,6 +47,7 @@ export class IdentifyRecipientComponent implements OnInit {
     private readonly alertController: AlertController,
     private readonly loadingService: LoadingService,
     private readonly router: Router,
+    private activatedRoute: ActivatedRoute,
     private readonly toastService: ToastService,
     private readonly globalNav: GlobalNavService,
     private readonly commonService: CommonService
@@ -59,15 +60,19 @@ export class IdentifyRecipientComponent implements OnInit {
       .retrieveAnonymousDepositFields()
       .toPromise()
       .then(fields => this.generateFormFields(fields, this.newRecipientFields));
-    this.guestDepositsService.getRecipientList().then(rec => {
-      this.recipients = rec;
-      if (rec.length === 0) {
-        this.selectedRecipient = this.someoneElseRecipient;
-      }
-    });
   }
 
   ngOnInit() {
+    this.initComponentData();
+  }
+
+  initComponentData(): void {
+    this.activatedRoute.data.subscribe(({ data: { recipients }}) => {
+      this.recipients = recipients;
+      if (recipients && recipients.length === 0) {
+        this.selectedRecipient = this.someoneElseRecipient;
+      }
+    });
     this.contentString = this.commonService.getString(ContentStringCategory.identifyRecipient);
     this.someoneElseRecipient.nickname = this.contentString.addOtherRecipientText;
   }
