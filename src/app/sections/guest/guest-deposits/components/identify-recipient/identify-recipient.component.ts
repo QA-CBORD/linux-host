@@ -87,7 +87,7 @@ export class IdentifyRecipientComponent implements OnInit {
 
       this.guestDepositsService
         .retrieveAndSaveRecipientByCashlessFields(
-          this.newRecepientFormRef[0].control.value,
+          ('' + this.newRecepientFormRef[0].control.value).trim(),
           [
             ...this.newRecepientFormRef
               .filter(f => f.lookupField)
