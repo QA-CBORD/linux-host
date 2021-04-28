@@ -14,6 +14,7 @@ import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@ca
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
+import { BarcodeService } from '@core/service/barcode/barcode.service';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
@@ -31,7 +32,8 @@ export class UserFacadeService extends ServiceStateFacade {
     private readonly storageStateService: StorageStateService,
     private readonly nativeProvider: NativeProvider,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly userSettingStateService:  UserSettingsStateService
+    private readonly userSettingStateService: UserSettingsStateService,
+    private readonly pingEncoderService: BarcodeService
   ) {
     super();
   }
@@ -74,6 +76,13 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService
       .getUserAddresses()
       .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, { ttl: this.ttl })));
+  }
+
+  createUserPinTotp(pin: string): Observable<boolean> {
+    return this.pingEncoderService.encodePin(pin)
+        .pipe(
+          switchMap((encrytedPin) => this.createUserPin(encrytedPin))
+        );
   }
 
   createUserPin(pin: string): Observable<boolean> {
@@ -263,9 +272,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   changePassword$(oldPassword: string, newPassword: string): Observable<boolean> {
-    return this.userApiService.changePassword$(oldPassword, newPassword).pipe(
-      take(1)
-    );
+    return this.userApiService.changePassword$(oldPassword, newPassword).pipe(take(1));
   }
 
   private setFCMToken(value: string) {

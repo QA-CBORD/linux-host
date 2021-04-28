@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -9,19 +9,22 @@ import { AlertController } from '@ionic/angular';
 import { Recipient } from '@sections/guest/model/recipient.model';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { GUEST_ROUTES } from '@sections/section.config';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ROLES } from 'src/app/app.global';
+import { IdentifyRecipientCsModel } from './identity-recipient.content.string';
 
 @Component({
   selector: 'st-identify-recipient',
   templateUrl: './identify-recipient.component.html',
   styleUrls: ['./identify-recipient.component.scss'],
 })
-export class IdentifyRecipientComponent {
+export class IdentifyRecipientComponent implements OnInit {
   readonly newRecipientFormName = 'newRecipient';
   newRecepientForm: FormGroup;
   isLoading: boolean;
-
+  contentString: IdentifyRecipientCsModel;
   newRecepientFormRef: { fieldName: string; control: FormControl; lookupField?: LookupFieldInfo }[] = [
     { fieldName: 'Nickname', control: new FormControl('', Validators.required) },
   ];
@@ -44,8 +47,10 @@ export class IdentifyRecipientComponent {
     private readonly alertController: AlertController,
     private readonly loadingService: LoadingService,
     private readonly router: Router,
+    private activatedRoute: ActivatedRoute,
     private readonly toastService: ToastService,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly commonService: CommonService
   ) {
     this.newRecepientForm = this.fb.group({
       [this.newRecipientFormName]: this.fb.array(this.newRecepientFormRef.map(f => f.control)),
@@ -55,12 +60,21 @@ export class IdentifyRecipientComponent {
       .retrieveAnonymousDepositFields()
       .toPromise()
       .then(fields => this.generateFormFields(fields, this.newRecipientFields));
-    this.guestDepositsService.getRecipientList().then(rec => {
-      this.recipients = rec;
-      if (rec.length === 0) {
+  }
+
+  ngOnInit() {
+    this.initComponentData();
+  }
+
+  initComponentData(): void {
+    this.activatedRoute.data.subscribe(({ data: { recipients }}) => {
+      this.recipients = recipients;
+      if (recipients && recipients.length === 0) {
         this.selectedRecipient = this.someoneElseRecipient;
       }
     });
+    this.contentString = this.commonService.getString(ContentStringCategory.identifyRecipient);
+    this.someoneElseRecipient.nickname = this.contentString.addOtherRecipientText;
   }
 
   ionViewWillEnter() {
@@ -72,13 +86,13 @@ export class IdentifyRecipientComponent {
   }
 
   async continue() {
-    const errorMessage = 'Could not add recipient. Please check the info or try again later.';
+    const errorMessage = this.contentString.addNewRecipientFailureMessage;
     if (this.selectedRecipient === this.someoneElseRecipient) {
       this.loadingService.showSpinner();
 
       this.guestDepositsService
         .retrieveAndSaveRecipientByCashlessFields(
-          this.newRecepientFormRef[0].control.value,
+          ('' + this.newRecepientFormRef[0].control.value).trim(),
           [
             ...this.newRecepientFormRef
               .filter(f => f.lookupField)
@@ -111,18 +125,19 @@ export class IdentifyRecipientComponent {
   }
 
   async presentRemoveConfirm(recipient: Recipient) {
+    const { removeDialogTitle, removeDialogMessage, removeDialogCancel, removeDialogConfirm } = this.contentString;
     const alert = await this.alertController.create({
-      header: 'Remove ' + recipient.nickname,
-      message: 'Are you sure?',
+      header: `${removeDialogTitle} ${recipient.nickname}`,
+      message: removeDialogMessage,
       buttons: [
         {
-          text: 'Oops, cancel',
+          text: removeDialogCancel,
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => undefined,
         },
         {
-          text: 'Yes, remove',
+          text: removeDialogConfirm,
           handler: () => this.removeRecipient(recipient),
         },
       ],

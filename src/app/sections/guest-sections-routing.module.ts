@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Route, RouterModule } from '@angular/router';
 import { GUEST_ROUTES } from '@sections/section.config';
-import { GuestAddFundsResolver } from './guest/guest-deposits/components/add-funds/resolver/guest-add-funds.resolver';
+import { GuestAddFundsResolver } from './guest/guest-deposits/components/resolver/guest-add-funds.resolver';
+import { GuestDepositResolver } from './guest/guest-deposits/components/resolver/guest-deposit-resolver';
 // create route guards for guest users...
 const routes: Route[] = [
   {
@@ -24,6 +25,9 @@ const routes: Route[] = [
   {
     path: GUEST_ROUTES.deposit,
     loadChildren: './guest/guest-deposits/guest-deposits.module#GuestDepositsModule',
+    resolve: {
+      data: GuestDepositResolver
+    }
   },
   {
     path: GUEST_ROUTES.addFunds,

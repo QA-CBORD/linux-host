@@ -42,21 +42,20 @@ export class BarcodeService {
     this._barcodeValue$.next(this.barcodeValue);
   }
 
-  encodePin(ping: string): Observable<string> {
-    const barcodeObservable = zip(of({ value: ping }), this.settingFacade.getSetting(Settings.Setting.SOA_KEY)).pipe(
+  encodePin(pin: string): Observable<string> {
+    return this.settingFacade.getSetting(Settings.Setting.SOA_KEY).pipe(
       take(1),
-      switchMap(response => {
-        if (!response || response.length < 2 || !response[0] || !response[1]) {
-          throwError(new GetThrowable('Unable to encode pin, required values missing'));
-        }
-        return from(this.beginBarcodeGeneration(response[0].value, response[1].value));
+      switchMap(setting => {
+        if (!setting || !setting.value) 
+          throwError(new GetThrowable('Failed, required values missing'));
+        return this.beginBarcodeGeneration(pin, setting.value);
       }),
-      catchError(() => throwError(new GetThrowable('Unable to encode pin, required values missing')))
+      catchError(() => throwError(new GetThrowable('Failed, required values missing')))
     );
-    return this.doEncoding(false, barcodeObservable);
   }
 
   generateBarcode(withInterval: boolean = false): Observable<string> {
+    const timerObservable = interval(this.generationTimer).pipe(startWith(-1));
     const barcodeObservable = zip(
       this.settingFacade.getUserSetting(User.Settings.CASHLESS_KEY),
       this.settingFacade.getSetting(Settings.Setting.SOA_KEY)
@@ -69,11 +68,6 @@ export class BarcodeService {
       }),
       tap(value => (this._barcodeValue = value))
     );
-    return this.doEncoding(withInterval, barcodeObservable);
-  }
-
-  doEncoding(withInterval: boolean = false, barcodeObservable: Observable<string>) {
-    const timerObservable = interval(this.generationTimer).pipe(startWith(-1));
     return withInterval ? timerObservable.pipe(switchMap(v => barcodeObservable)) : barcodeObservable.pipe(take(1));
   }
 

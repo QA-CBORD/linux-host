@@ -128,7 +128,7 @@ export class CommerceApiService {
 
   depositForUser(userId: string, fromAccountId: string, toAccountId: string, amount: number): Observable<string> {
     const params = { userId, fromAccountId, fromAccountCvv: null, toAccountId, amount, cashlessTerminalLocation: null };
-    const queryConfig = new RPCQueryConfig('depositForUser', params, true, false);
+    const queryConfig = new RPCQueryConfig('depositForUserFromAnyAccount', params, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }
 }
