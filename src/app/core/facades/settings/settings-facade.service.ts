@@ -75,6 +75,10 @@ export class SettingsFacadeService extends ServiceStateFacade {
     );
   }
 
+  getUserSettingNoCache(setting: User.Settings): Observable<UserSettingInfo> {
+    return this.settingsApiService.getUserSetting(setting);
+  }
+
   getUserSetting(setting: User.Settings): Observable<UserSettingInfo> {
     return this.userSettingsStateService
       .getSetting(setting)

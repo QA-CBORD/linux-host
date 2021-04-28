@@ -28,11 +28,10 @@ export class GuestDepositsService {
     private readonly toastService: ToastService
   ) {}
 
-  getRecipientList(): Promise<Recipient[]> {
+  getRecipientList(): Observable<Recipient[]> {
     return this.settingsFacadeService
-      .getUserSetting(User.Settings.GUEST_DEPOSIT_RECIPIENTS)
-      .pipe(map(res => JSON.parse(res.value || '[]')))
-      .toPromise();
+      .getUserSettingNoCache(User.Settings.GUEST_DEPOSIT_RECIPIENTS)
+      .pipe(map(res => JSON.parse(res.value || '[]')));
   }
 
   saveRecipientList(recipients: Recipient[]): Promise<boolean> {
