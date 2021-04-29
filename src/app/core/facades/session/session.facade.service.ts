@@ -16,7 +16,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-const { App, Device } = Plugins;
+import { ActionSheetController } from '@ionic/angular';
+const { App, Device, BackgroundTask } = Plugins;
 
 enum AppStatus {
   BACKGROUND,
@@ -44,7 +45,8 @@ export class SessionFacadeService {
     private navCtrl: NavController,
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private readonly actionSheetController: ActionSheetController,
   ) {
     this.appStateListeners();
   }
@@ -269,5 +271,18 @@ export class SessionFacadeService {
 
   lockVault() {
     this.identityFacadeService.lockVault();
+  }
+
+  closeActionsheetOnBackground() {
+    App.addListener('appStateChange', (state) => {
+      if (!state.isActive) {
+        const taskId = BackgroundTask.beforeExit(async () => {
+          await this.actionSheetController.dismiss();
+          BackgroundTask.finish({
+            taskId
+          });
+        });
+      }
+    })
   }
 }

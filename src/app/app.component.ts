@@ -35,12 +35,10 @@ export class AppComponent implements OnInit {
     private readonly splashScreen: SplashScreen,
     private readonly statusBar: StatusBar,
     private readonly screenOrientation: ScreenOrientation,
-    private readonly popoverCtrl: PopoverController,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly router: Router,
-    private readonly cdRef: ChangeDetectorRef,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +58,7 @@ export class AppComponent implements OnInit {
     );
     this.isMenuNavBarExpanded$ = this.globalNav.isNavBarMenuExpanded$;
     this.isBackdropShown$ = this.globalNav.isBackdropShown$;
+    this.sessionFacadeService.closeActionsheetOnBackground();
   }
 
   setPatronsRouteIndicator() {
