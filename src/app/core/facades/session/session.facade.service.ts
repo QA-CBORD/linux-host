@@ -273,6 +273,7 @@ export class SessionFacadeService {
     this.identityFacadeService.lockVault();
   }
 
+  
   closeActionsheetOnBackground() {
     App.addListener('appStateChange', (state) => {
       if (!state.isActive) {
