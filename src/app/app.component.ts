@@ -1,9 +1,9 @@
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-import { Platform, PopoverController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
@@ -12,7 +12,6 @@ import { ROLES } from './app.global';
 import { Plugins } from '@capacitor/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_ROUTES } from '@sections/section.config';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 const { Keyboard } = Plugins;
@@ -35,7 +34,6 @@ export class AppComponent implements OnInit {
     private readonly splashScreen: SplashScreen,
     private readonly statusBar: StatusBar,
     private readonly screenOrientation: ScreenOrientation,
-    private readonly sessionFacadeService: SessionFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly router: Router,
     private readonly globalNav: GlobalNavService,
@@ -58,7 +56,6 @@ export class AppComponent implements OnInit {
     );
     this.isMenuNavBarExpanded$ = this.globalNav.isNavBarMenuExpanded$;
     this.isBackdropShown$ = this.globalNav.isBackdropShown$;
-    this.sessionFacadeService.closeActionsheetOnBackground();
   }
 
   setPatronsRouteIndicator() {

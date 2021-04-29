@@ -46,7 +46,7 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly actionSheetController: ActionSheetController,
+    private readonly actionSheetController: ActionSheetController
   ) {
     this.appStateListeners();
   }
@@ -58,6 +58,7 @@ export class SessionFacadeService {
       if (isActive) {
         this.appResumeLogic();
       } else {
+        this.closeActionsheets();
         this.appStatus = AppStatus.BACKGROUND;
       }
     });
@@ -88,7 +89,7 @@ export class SessionFacadeService {
     }
 
     if (await this.isVaultLocked()) {
-      this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { skipLocationChange: true })
+      this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { skipLocationChange: true });
     }
   }
 
@@ -101,7 +102,6 @@ export class SessionFacadeService {
   }
 
   doLoginChecks() {
-   
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
@@ -112,7 +112,7 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
-          console.log('doLoginChecks ==>> ', state)
+          console.log('doLoginChecks ==>> ', state);
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
@@ -152,7 +152,7 @@ export class SessionFacadeService {
   }
 
   private async navigate2Dashboard(): Promise<void> {
-      this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+    this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
 
   private loginUser(useBiometric: boolean) {
@@ -161,7 +161,7 @@ export class SessionFacadeService {
       () => {
         if (!useBiometric) {
           this.loadingService.closeSpinner();
-          this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true })
+          this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
         }
       }
     );
@@ -273,17 +273,12 @@ export class SessionFacadeService {
     this.identityFacadeService.lockVault();
   }
 
-  
-  closeActionsheetOnBackground() {
-    App.addListener('appStateChange', (state) => {
-      if (!state.isActive) {
-        const taskId = BackgroundTask.beforeExit(async () => {
-          await this.actionSheetController.dismiss();
-          BackgroundTask.finish({
-            taskId
-          });
-        });
-      }
-    })
+  private closeActionsheets() {
+    const taskId = BackgroundTask.beforeExit(async () => {
+      await this.actionSheetController.dismiss();
+      BackgroundTask.finish({
+        taskId,
+      });
+    });
   }
 }
