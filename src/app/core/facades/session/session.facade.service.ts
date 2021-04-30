@@ -23,10 +23,10 @@ enum AppStatus {
   BACKGROUND,
   FOREGROUND,
 }
-
 @Injectable({
   providedIn: 'root',
 })
+
 export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
@@ -112,7 +112,6 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
-          console.log('doLoginChecks ==>> ', state);
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
