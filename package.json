@@ -25,7 +25,7 @@
         "@capacitor/android": "^2.2.1",
         "@capacitor/core": "^2.2.1",
         "@capacitor/ios": "^2.2.1",
-        "@ionic-enterprise/identity-vault": "^4.1.0",
+        "@ionic-enterprise/identity-vault": "4.2.7",
         "@ionic-native/app-version": "^5.27.0",
         "@ionic-native/barcode-scanner": "^5.27.0",
         "@ionic-native/core": "^5.27.0",
