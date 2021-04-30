@@ -17,6 +17,7 @@ import { RegistrationServiceFacade } from '../registration/services/registration
 import { InstitutionLookupListItem } from '@core/model/institution';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -93,7 +94,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async navigate2Login({ id: institutionId }) {
-    this.authFacadeService.removeGuestSetting();
+    this.institutionFacadeService.removeGuestSetting();
     this.authFacadeService.setIsGuestUser(false);
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
@@ -111,7 +112,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async navigate2PreLogin(institution: InstitutionLookupListItem): Promise<void> {
-    this.authFacadeService.saveGuestSetting(institution.guestSettings);
+    this.institutionFacadeService.saveGuestSetting(institution.guestSettings);
     const preLoginCs = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
     this.loadingService.closeSpinner();
     this.messageProxy.put(preLoginCs);
@@ -151,7 +152,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   async setNativeEnvironment() {
-    if (Capacitor.platform === 'ios') {
+    if (Capacitor.platform === PLATFORM.ios) {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
   }

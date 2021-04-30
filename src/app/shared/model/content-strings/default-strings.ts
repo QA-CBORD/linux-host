@@ -15,6 +15,21 @@ export const defaultForgotPasswordCs = {
     'A message has been sent to your email that will contain a link for you to change your password. Clicking on that link will take you to a page where you can enter in a new password',
 };
 
+export const defaultIdentifyRecipientCs = {
+  screen_title: 'Identify Recipient',
+  sub_title: 'Who is this deposit for ?',
+  remove_recipient_btn_text: 'remove',
+  add_new_recipient_text: 'Add new recipient',
+  add_other_recipient_Text: 'Add another recipient',
+  submit_btn: 'CONTINUE',
+  remove_recipient_dialog_title: 'Remove ',
+  remove_recipient_dialog_msg: 'Are you sure ?',
+  remove_recipient_dialog_cancel: 'OOPS, CANCEL',
+  remove_recipient_dialog_confirm: 'YES, REMOVE',
+  add_new_recipient_failure: 'Could not add recipient. Please check the info or try again later.',
+  save_recipient_for_future: 'Save this recipient for future deposits ?'
+}
+
 export const defaultRegistrationCs = {
   screen_title: 'Create an account',
   submit_btn_text: 'Create Account',
@@ -63,12 +78,22 @@ export const depositDefaultStrings = {
   submit_button_lbl: 'Deposit',
   choose_action_placeholder_text: 'Please Choose',
   success_screen_title: 'Deposit',
-  subtitle_detail_text: 'This transaction was successful. You can review it to make sure everything checks out.',
+  subtitle_detail_text: 'The transaction to ${recipient_name} was successful. You can review it to make sure everything checks out.',
   subtitle_summary_text: 'Success!',
   done_button_text: 'DONE',
 };
 
 export const guestDepositDefaultStirngs = depositDefaultStrings;
+
+export const guestAddFundsDefaultStrings = {
+  add_funds_title: 'Add Funds',
+  notice_text: 'You are deposting to the account of {recipient_name}.',
+  source_account_text: 'Payment Method',
+  destination_account_text: 'To Account',
+  deposit_label: 'Amount To Deposit', 
+  deposit_button: 'Deposit',
+  refund_text: 'Refund Policy'
+}
 
 export const defaultMobileCredentialCs = {
   nfc_off_dialog_accept: 'Proceed',

@@ -1,13 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { ACCOUNT_TYPES, CONTENT_STRINGS } from '@sections/accounts/accounts.config';
 
 @Pipe({
   name: 'transactionUnits',
 })
 export class TransactionUnitsPipe implements PipeTransform {
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(private readonly accountsService: AccountService) {}
 
   transform(value: number | string, type: ACCOUNT_TYPES = ACCOUNT_TYPES.charge): string {
     if (value === null) {

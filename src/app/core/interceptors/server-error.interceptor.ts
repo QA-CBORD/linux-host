@@ -98,6 +98,7 @@ const GENERAL_ERRORS = {
     default: 'Invalid Service Argument Exception',
   },
   6100: {
+    depositForUserFromAnyAccount: 'There was an issue with the transaction',
     deposit: 'There was an issue with the transaction',
     default: 'Unable to retrieve mobile locations.',
   },
@@ -105,3 +106,9 @@ const GENERAL_ERRORS = {
     default: 'There was an issue with the transaction',
   },
 };
+
+export class GetThrowable extends Error {
+  constructor(public message: string, public code?: string | number) {
+    super(message);
+  }
+}

@@ -84,7 +84,6 @@ export class CommerceApiService {
       amount,
       cashlessTerminalLocation: null,
     };
-
     const queryConfig = new RPCQueryConfig('deposit', params, true);
 
     return this.http.post(this.serviceUrl, queryConfig).pipe(
@@ -113,5 +112,23 @@ export class CommerceApiService {
     return this.http.post(this.serviceUrl, queryConfig).pipe(
       map(({ response }: MessageResponse<string>) => response)
     );
+  }
+
+  retrieveAccountsByUser(userId: string): Observable<UserAccount[]> {
+    const params = { userId };
+    const queryConfig = new RPCQueryConfig('retrieveAccountsByUser', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) =>  response.accounts ));
+  }
+  
+  retrieveDepositAccountsByUser(userId: string): Observable<UserAccount[]> {
+    const params = { userId };
+    const queryConfig = new RPCQueryConfig('retrieveDepositAccountsByUser', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) =>  response.accounts ));
+  }
+
+  depositForUser(userId: string, fromAccountId: string, toAccountId: string, amount: number): Observable<string> {
+    const params = { userId, fromAccountId, fromAccountCvv: null, toAccountId, amount, cashlessTerminalLocation: null };
+    const queryConfig = new RPCQueryConfig('depositForUserFromAnyAccount', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
   }
 }

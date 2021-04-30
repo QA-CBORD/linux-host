@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
 import { UserAccount } from '@core/model/account/account.model';
 import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from '@sections/accounts/accounts.config';
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { TransactionService } from '@sections/accounts/services/transaction.service';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
@@ -31,7 +31,7 @@ export class AccountListComponent implements OnInit {
   constructor(
     private readonly platform: Platform,
     private readonly router: Router,
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly transactionsService: TransactionService
   ) {}
 

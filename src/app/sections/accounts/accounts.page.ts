@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AccountsService } from './services/accounts.service';
+import { AccountService } from './services/accounts.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { TransactionHistory } from './models/transaction-history.model';
 import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from './accounts.config';
@@ -26,7 +26,7 @@ export class AccountsPage implements OnInit {
   contentString: { [key: string]: string };
 
   constructor(
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly platform: Platform,
     private readonly router: Router,
     private readonly transactionsService: TransactionService,

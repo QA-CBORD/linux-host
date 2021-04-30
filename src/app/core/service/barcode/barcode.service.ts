@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, interval, Observable, of, throwError, zip } from 'rxjs';
 import { Settings, User } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { startWith, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, startWith, switchMap, take, tap } from 'rxjs/operators';
 import * as bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
+import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +42,17 @@ export class BarcodeService {
     this._barcodeValue$.next(this.barcodeValue);
   }
 
+  encodePin(pin: string): Observable<string> {
+    return this.settingFacade.getSetting(Settings.Setting.SOA_KEY).pipe(
+      take(1),
+      switchMap(({ value }) => {
+      // if this institution does not have an institutionKey, just use normal pin
+        return value && this.beginBarcodeGeneration(pin, value) || of(pin);
+      }),
+      catchError(() => throwError(new GetThrowable('Failed, required values missing')))
+    );
+  }
+
   generateBarcode(withInterval: boolean = false): Observable<string> {
     const timerObservable = interval(this.generationTimer).pipe(startWith(-1));
     const barcodeObservable = zip(
@@ -55,12 +67,10 @@ export class BarcodeService {
       }),
       tap(value => (this._barcodeValue = value))
     );
-
     return withInterval ? timerObservable.pipe(switchMap(v => barcodeObservable)) : barcodeObservable.pipe(take(1));
   }
 
   private async beginBarcodeGeneration(patronKey: string, institutionKey: string): Promise<string> {
-    /// init variables
     const cryptoAlgorithm: string = 'HmacSHA256';
     const returnDigits: number = 9;
     const checksum: number = this.generateDigit(patronKey);
@@ -69,7 +79,6 @@ export class BarcodeService {
     const cbordKeyBytes: Int8Array = this.hexStringToByteArray(atob(this.garble));
     const sharedKey: Int8Array = this.XorEncrypt(cbordKeyBytes, institutionKeyBytes);
     const time: BigInteger = bigInt(Date.now()).divide(bigInt(1000));
-
     /// run totp algo
     const totp: string = await this.generateTOTP(sharedKey, time, returnDigits, cryptoAlgorithm);
 

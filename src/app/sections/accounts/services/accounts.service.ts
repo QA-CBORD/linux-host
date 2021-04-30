@@ -12,15 +12,15 @@ import {
   ContentStringsParamsAccounts,
   GenericContentStringsParams,
 } from '../accounts.config';
-import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { isCashlessAccount } from '@core/utils/general-helpers';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
+import { MEAL_CONTENT_STRINGS } from '../pages/meal-donations/meal-donation.config';
 
 @Injectable()
-export class AccountsService {
+export class AccountService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 

@@ -51,7 +51,6 @@ const routes: Route[] = [
   },
 ];
 
-
 @NgModule({
   imports: [
     CommonModule,

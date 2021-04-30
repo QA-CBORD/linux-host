@@ -1,10 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Capacitor, Plugins } from '@capacitor/core';
+import { of } from 'rxjs/internal/observable/of';
 
 const { Accessibility } = Plugins;
 const READ_ALOUD_DELAY = 2000;
 const TAP_TIME_LAPSE = 300;
 
+export enum PLATFORM {
+  ios = 'ios',
+  android = 'android',
+  web = 'web'
+}
 @Injectable()
 export class AccessibilityService {
   constructor() {}
@@ -21,9 +27,13 @@ export class AccessibilityService {
   }
 
   get isVoiceOverEnabled$(): Promise<boolean> {
+    if (Capacitor.platform === PLATFORM.web) {
+        return of(false).toPromise();
+    }
+
     return Accessibility.isScreenReaderEnabled().then(isRunning => {
       if (isRunning.value) {
-        if (Capacitor.platform === 'ios') {
+        if (Capacitor.platform === PLATFORM.ios) {
           return true;
         }
       }

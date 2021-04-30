@@ -2,7 +2,7 @@ import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, zip } from 'rxjs';
 import { finalize, first, map, take } from 'rxjs/operators';
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
@@ -20,7 +20,7 @@ import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/me
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
   constructor(
-    private readonly accountsService: AccountsService,
+    private readonly accountsService: AccountService,
     private readonly userFacadeService: UserFacadeService,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,

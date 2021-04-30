@@ -1,9 +1,10 @@
-import { ContentStringModel, NullableContent } from '@shared/model/content-strings/content-string-models';
+import { DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
+import { NullableContent } from '@shared/model/content-strings/content-string-models';
 import { guestDepositDefaultStirngs } from '@shared/model/content-strings/default-strings';
 
-export class GuestDepositCsModel extends ContentStringModel {
+export class GuestDepositCsModel extends DepositCsModel {
   constructor(contentWrapper: NullableContent) {
-    super(contentWrapper.getConfig(), guestDepositDefaultStirngs);
+    super(contentWrapper, guestDepositDefaultStirngs);
   }
 
   get title(): string {

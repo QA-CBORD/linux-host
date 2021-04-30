@@ -1,5 +1,5 @@
 <st-header
-  title="Identify Recipient"
+  [title]="contentString.title"
   [isTitleShow]="true"
   [isToolbarShow]="true"
   backButtonIcon="close"
@@ -7,8 +7,8 @@
   class="shadow-header"
 ></st-header>
 <ion-content class="container ion-padding-top">
-  <div class="section ion-padding">
-    <label class="ion-margin section__title">Who is this deposit for?</label>
+  <div class="section ion-padding-top ion-padding-horizontal">
+    <label class="ion-margin section__title">{{ contentString.subTitle }}</label>
     <ion-radio-group mode="md" [(ngModel)]="selectedRecipient">
       <ion-row class="recipient-row" *ngFor="let recipient of recipients">
         <ion-col size="9">
@@ -18,13 +18,13 @@
           </ion-item>
         </ion-col>
         <ion-col size="3">
-          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">Remove</ion-button>
+          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">{{contentString.removeText}}</ion-button>
         </ion-col>
       </ion-row>
-      <ion-row class="recipient-row">
+      <ion-row *ngIf="recipients.length <= 10" class="recipient-row ion-padding-bottom">
         <ion-col>
           <ion-item lines="none">
-            <ion-label>{{ recipients.length ? someoneElseRecipient.nickname : 'Add new recipient' }}</ion-label>
+            <ion-label>{{ recipients.length ? someoneElseRecipient.nickname : contentString.addNewRecipientText }}</ion-label>
             <ion-radio slot="start" mode="md" slot="start" [value]="someoneElseRecipient"></ion-radio>
           </ion-item>
         </ion-col>
@@ -45,7 +45,6 @@
                     newRecipientFields.controls[i].errors &&
                     (newRecipientFields.controls[i].dirty || newRecipientFields.controls[i].touched)
                   "
-                  tabindex="0"
                 >
                 </st-input-floating-label>
               </ion-col>
@@ -53,12 +52,12 @@
           </ion-grid>
         </ng-container>
       </form>
-      <ion-grid class="ion-no-padding">
+      <ion-grid class="ion-padding-top">
         <ion-row>
           <ion-col size="12">
-            <ion-list class="ion-padding-horizontal">
-              <ion-item lines="full">
-                <ion-label>Save recipient for future deposits?</ion-label>
+            <ion-list>
+              <ion-item tabindex="0" class="ion-no-padding" lines="none">
+                <ion-label>{{ contentString.shouldSaveForFuture }}</ion-label>
                 <ion-checkbox
                   class="ion-no-margin new-recipient-form__save-check"
                   slot="start"
@@ -74,7 +73,14 @@
   </div>
 </ion-content>
 <ion-footer class="ion-padding footer" no-border>
-  <st-button buttonModifier="rectangle" (onClick)="continue()" tabindex="0">
-    Continue
+  <st-button
+    [disabled]="
+      !selectedRecipient || (selectedRecipient === someoneElseRecipient && !newRecipientFields?.valid) || isLoading
+    "
+    buttonModifier="rectangle"
+    (onClick)="continue()"
+    tabindex="0"
+  >
+    {{ contentString.submitText }}
   </st-button>
 </ion-footer>

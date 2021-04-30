@@ -89,20 +89,25 @@ export class DepositSuccessCs extends DepositBase {
   get billMeText(): string {
     return this.content.bill_me_pay_method;
   }
+
+  set subTitleDetail(text: string) {
+    this.content.subtitle_detail_text = text;
+  }
 }
+
 
 export class DepositCsModel extends ContentStringModel {
   private confirmDeposit: ConfirmDepositCs;
   private depositSuccess: DepositSuccessCs;
 
-  constructor(contentWrapper: NullableContent) {
-    super(contentWrapper.getConfig(), depositDefaultStrings);
-    this.initialize();
+  constructor(contentWrapper: NullableContent, defaultString?: RawContentStringObject) {
+    super(contentWrapper.getConfig(), defaultString || depositDefaultStrings);
+    this.initialize(this.content);
   }
 
-  private initialize(): void {
-    this.confirmDeposit = new ConfirmDepositCs(this.content);
-    this.depositSuccess = new DepositSuccessCs(this.content);
+  protected initialize(content): void {
+    this.confirmDeposit = new ConfirmDepositCs(content);
+    this.depositSuccess = new DepositSuccessCs(content);
   }
 
   get depositSuccessCs(): DepositSuccessCs {

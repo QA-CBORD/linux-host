@@ -21,7 +21,9 @@ export enum GUEST_ROUTES {
   ordering = 'ordering',
   deposit = 'deposit',
   settings = 'settings',
-  biometric = 'biometric'
+  registration = 'registration',
+  biometric = 'biometric',
+  addFunds = 'addfunds'
 }
 
 

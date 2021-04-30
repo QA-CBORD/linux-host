@@ -7,7 +7,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 
 import { PopoverComponent } from './popover/popover.component';
 import { UserAccount } from '@core/model/account/account.model';
-import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { AccountService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PATRON_NAVIGATION, User } from 'src/app/app.global';
 import { formControlErrorDecorator, validateEmail } from '@core/utils/general-helpers';
@@ -36,7 +36,7 @@ export class RequestFundsPageComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly accountService: AccountsService,
+    private readonly accountService: AccountService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly popoverCtrl: PopoverController,

@@ -1,22 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController } from '@ionic/angular';
 import { Recipient } from '@sections/guest/model/recipient.model';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
+import { GUEST_ROUTES } from '@sections/section.config';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ROLES } from 'src/app/app.global';
+import { IdentifyRecipientCsModel } from './identity-recipient.content.string';
 
 @Component({
   selector: 'st-identify-recipient',
   templateUrl: './identify-recipient.component.html',
   styleUrls: ['./identify-recipient.component.scss'],
 })
-export class IdentifyRecipientComponent {
+export class IdentifyRecipientComponent implements OnInit {
   readonly newRecipientFormName = 'newRecipient';
   newRecepientForm: FormGroup;
-
+  isLoading: boolean;
+  contentString: IdentifyRecipientCsModel;
   newRecepientFormRef: { fieldName: string; control: FormControl; lookupField?: LookupFieldInfo }[] = [
     { fieldName: 'Nickname', control: new FormControl('', Validators.required) },
   ];
@@ -28,12 +36,21 @@ export class IdentifyRecipientComponent {
     nickname: 'Add another recipient',
   };
 
+  get newRecipientFields() {
+    return this.newRecepientForm.controls[this.newRecipientFormName] as FormArray;
+  }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly guestDepositsService: GuestDepositsService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly alertController: AlertController,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly router: Router,
+    private activatedRoute: ActivatedRoute,
+    private readonly toastService: ToastService,
+    private readonly globalNav: GlobalNavService,
+    private readonly commonService: CommonService
   ) {
     this.newRecepientForm = this.fb.group({
       [this.newRecipientFormName]: this.fb.array(this.newRecepientFormRef.map(f => f.control)),
@@ -43,56 +60,84 @@ export class IdentifyRecipientComponent {
       .retrieveAnonymousDepositFields()
       .toPromise()
       .then(fields => this.generateFormFields(fields, this.newRecipientFields));
-    this.guestDepositsService.getRecipientList().then(rec => {
-      this.recipients = rec;
-      if (rec.length === 0) {
+  }
+
+  ngOnInit() {
+    this.initComponentData();
+  }
+
+  initComponentData(): void {
+    this.activatedRoute.data.subscribe(({ data: { recipients }}) => {
+      this.recipients = recipients;
+      if (recipients && recipients.length === 0) {
         this.selectedRecipient = this.someoneElseRecipient;
       }
     });
+    this.contentString = this.commonService.getString(ContentStringCategory.identifyRecipient);
+    this.someoneElseRecipient.nickname = this.contentString.addOtherRecipientText;
   }
 
-  get newRecipientFields() {
-    return this.newRecepientForm.controls[this.newRecipientFormName] as FormArray;
+  ionViewWillEnter() {
+    this.globalNav.hideNavBar();
   }
+
+  ionViewWillLeave() {
+    this.globalNav.showNavBar();
+  }
+
   async continue() {
+    const errorMessage = this.contentString.addNewRecipientFailureMessage;
     if (this.selectedRecipient === this.someoneElseRecipient) {
       this.loadingService.showSpinner();
-      const newRecepient = await this.guestDepositsService.retrieveAndSaveRecipientByCashlessFields(
-        this.newRecepientFormRef[0].control.value,
-        [
-          ...this.newRecepientFormRef
-            .filter(f => f.lookupField)
-            .map(f => ({ ...f.lookupField, value: f.control.value })),
-        ],
-        [...this.recipients],
-        this.saveNewRecipient
-      );
 
-      if (newRecepient) {
-        if (this.saveNewRecipient) {
-          this.recipients.push(newRecepient);
-          this.selectedRecipient = this.recipients[this.recipients.length - 1];
-        }
-        this.saveNewRecipient = false;
-        this.resetForm(this.newRecipientFields.controls);
-      }
-      this.loadingService.closeSpinner();
+      this.guestDepositsService
+        .retrieveAndSaveRecipientByCashlessFields(
+          ('' + this.newRecepientFormRef[0].control.value).trim(),
+          [
+            ...this.newRecepientFormRef
+              .filter(f => f.lookupField)
+              .map(f => ({ ...f.lookupField, value: ('' + f.control.value).trim() })),
+          ],
+          [...this.recipients],
+          this.saveNewRecipient
+        )
+        .then(newRecepient => {
+          if (newRecepient) {
+            if (this.saveNewRecipient) {
+              this.recipients.push(newRecepient);
+              this.selectedRecipient = newRecepient;
+            }
+            this.saveNewRecipient = false;
+            this.resetForm(this.newRecipientFields.controls);
+            this.navigateToAddFunds(newRecepient);
+          } else {
+            this.toastService.showToast({ message: errorMessage });
+          }
+        })
+        .catch(() => this.toastService.showToast({ message: errorMessage }))
+        .finally(() => {
+          this.isLoading = false;
+          this.loadingService.closeSpinner();
+        });
+    } else {
+      this.navigateToAddFunds(this.selectedRecipient);
     }
   }
 
   async presentRemoveConfirm(recipient: Recipient) {
+    const { removeDialogTitle, removeDialogMessage, removeDialogCancel, removeDialogConfirm } = this.contentString;
     const alert = await this.alertController.create({
-      header: 'Remove ' + recipient.nickname,
-      message: 'Are you sure?',
+      header: `${removeDialogTitle} ${recipient.nickname}`,
+      message: removeDialogMessage,
       buttons: [
         {
-          text: 'Oops, cancel',
+          text: removeDialogCancel,
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => undefined,
         },
         {
-          text: 'Yes, remove',
+          text: removeDialogConfirm,
           handler: () => this.removeRecipient(recipient),
         },
       ],
@@ -109,7 +154,7 @@ export class IdentifyRecipientComponent {
   }
 
   private generateFormFields(fields: LookupFieldInfo[], formArray: FormArray) {
-    for (const lookUpField of fields) {
+    for (const lookUpField of fields.sort((fieldA, fieldB) => fieldA.displayOrder - fieldB.displayOrder)) {
       const field = {
         fieldName: lookUpField.displayName,
         control: new FormControl('', Validators.required),
@@ -135,5 +180,12 @@ export class IdentifyRecipientComponent {
       }
     }
     this.loadingService.closeSpinner();
+  }
+
+  private navigateToAddFunds(recipient: Recipient) {
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.addFunds], {
+      queryParams: { recipientName: recipient.nickname, userId: recipient.id },
+      skipLocationChange: true,
+    });
   }
 }

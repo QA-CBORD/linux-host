@@ -12,7 +12,7 @@ import { ContentStringsApiService } from '@core/service/content-service/content-
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DepositService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
@@ -57,7 +57,7 @@ export class DepositService {
 
   filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
     return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY
+      ({ paymentSystemType: type }) => type == PAYMENT_SYSTEM_TYPE.USAEPAY
     );
   }
 

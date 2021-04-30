@@ -33,6 +33,8 @@ import { ContractDetails } from '../../contracts/contracts.model';
 export class ContractDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
+  @ViewChild('content') private content: any;
+
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -128,6 +130,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   private _next(): void {
+    this.content.scrollToTop();
     this.stepper.next();
   }
 

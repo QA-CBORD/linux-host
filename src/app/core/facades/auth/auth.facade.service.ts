@@ -4,9 +4,9 @@ import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { UserLogin } from '@core/model/user';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { Observable, of, iif, from } from 'rxjs';
+import { Observable, of, iif, from, forkJoin, zip } from 'rxjs';
 import { Plugins } from '@capacitor/core';
-import { GuestSetting } from '@sections/guest/model/guest-settings';
+import { BarcodeService } from '@core/service/barcode/barcode.service';
 const { Device } = Plugins;
 
 @Injectable({
@@ -15,13 +15,13 @@ const { Device } = Plugins;
 export class AuthFacadeService extends ServiceStateFacade {
   private sessionIdKey = 'get_sessionId';
   private isGuestUserKey = 'isGuestUser';
-  private guestSettingKey = 'guestSetting';
 
   private systemSessionId = null;
 
   constructor(
     private readonly authApiService: AuthApiService,
-    private readonly storageStateService: StorageStateService
+    private readonly storageStateService: StorageStateService,
+    private readonly pingEncoderService: BarcodeService
   ) {
     super();
   }
@@ -36,31 +36,14 @@ export class AuthFacadeService extends ServiceStateFacade {
       .pipe(map(data => (data ? data.value : null)));
   }
 
-  private get nonNullGuestSetting(): GuestSetting {
-    return {
-      canLogin: false,
-      canDeposit: false,
-      canOrder: false,
-      canExplore: false,
-    };
-  }
-
   setIsGuestUser(asGuest: boolean) {
     this.storageStateService.updateStateEntity(this.isGuestUserKey, asGuest, { highPriorityKey: true });
   }
 
   isGuestUser(): Observable<boolean> {
-    return this.storageStateService.getStateEntityByKey$<string>(this.isGuestUserKey).pipe(
+    return this.storageStateService.getStateEntityByKey$<boolean>(this.isGuestUserKey).pipe(
       map(data => (data && !!data.value) || false),
       catchError(() => of(false)),
-      take(1)
-    );
-  }
-
-  getGuestSettings(): Observable<GuestSetting> {
-    return this.storageStateService.getStateEntityByKey$<GuestSetting>(this.guestSettingKey).pipe(
-      map(data => (data && data.value) || this.nonNullGuestSetting),
-      catchError(() => of(this.nonNullGuestSetting)),
       take(1)
     );
   }
@@ -69,23 +52,21 @@ export class AuthFacadeService extends ServiceStateFacade {
     this.storageStateService.updateStateEntity(this.sessionIdKey, sessionId, { highPriorityKey: true });
   }
 
-  saveGuestSetting(settings: GuestSetting) {
-    this.storageStateService.updateStateEntity(this.guestSettingKey, settings, { highPriorityKey: true });
-  }
-
-  removeGuestSetting() {
-    this.storageStateService.deleteStateEntityByKey(this.guestSettingKey);
-  }
-
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
-    return this.authApiService
-      .authenticateUser(userCredentials)
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })));
+    return this.isGuestUser().pipe(
+      switchMap(isGuestUser => {
+        return this.authApiService
+          .authenticateUser(userCredentials, isGuestUser)
+          .pipe(
+            tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true }))
+          );
+      })
+    );
   }
 
-  authenticatePin$(pin: string): Observable<boolean> {
-    return from(Device.getInfo()).pipe(
-      switchMap(({ uuid }) => this.authApiService.authenticatePin(pin, uuid)),
+  authenticatePin$(rawPin: string): Observable<boolean> {
+    return zip(from(Device.getInfo()), this.pingEncoderService.encodePin(rawPin)).pipe(
+      switchMap(([{ uuid }, encodedPin]) => this.authApiService.authenticatePin(encodedPin, uuid)),
       tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })),
       map(res => !!res)
     );
