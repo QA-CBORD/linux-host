@@ -45,10 +45,9 @@ export class BarcodeService {
   encodePin(pin: string): Observable<string> {
     return this.settingFacade.getSetting(Settings.Setting.SOA_KEY).pipe(
       take(1),
-      switchMap(setting => {
-        if (!setting || !setting.value) 
-          throwError(new GetThrowable('Failed, required values missing'));
-        return this.beginBarcodeGeneration(pin, setting.value);
+      switchMap(({ value }) => {
+      // if this institution does not have an institutionKey, just use normal pin
+        return value && this.beginBarcodeGeneration(pin, value) || of(pin);
       }),
       catchError(() => throwError(new GetThrowable('Failed, required values missing')))
     );

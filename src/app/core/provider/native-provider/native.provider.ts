@@ -1,7 +1,7 @@
 import { PATRON_NAVIGATION } from './../../../app.global';
 import { Router } from '@angular/router';
 import { Injectable, NgZone } from '@angular/core';
-import { Platform, ModalController, PopoverController, ActionSheetController } from '@ionic/angular';
+import { Platform, ModalController, PopoverController, ActionSheetController, AlertController } from '@ionic/angular';
 import { Observable, Observer, from, of, throwError } from 'rxjs';
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
@@ -19,7 +19,7 @@ export enum NativeData {
   UPDATE_ROUTE = 'updateNativeWithRoute',
   ORDERS_WITH_APPLE_PAY = 'ordersApplePay',
   DEPOSITS_WITH_APPLE_PAY = 'depositsApplePay',
-  BARCODE = 'getPatronBarcode'
+  BARCODE = 'getPatronBarcode',
 }
 
 export enum AppleWalletCredentialStatus {
@@ -30,8 +30,8 @@ export enum AppleWalletCredentialStatus {
   UnlinkRequested = 6,
   DisableRequested = 7,
   ResumeRequested = 8,
-  StatusActive = 20
-};
+  StatusActive = 20,
+}
 
 export interface USAePayResponse {
   success: boolean;
@@ -41,9 +41,9 @@ export interface ApplePayResponse {
   success: boolean;
   errorMessage: string;
   accountId: string;
-  selectedAccount?: {accountDisplayName: string};
+  selectedAccount?: { accountDisplayName: string };
   amount?: string;
-  sourceAcc?:  { accountTender: string };
+  sourceAcc?: { accountTender: string };
 }
 export interface AppleWalletInfo {
   iPhoneProvisioned: boolean;
@@ -64,9 +64,10 @@ export class NativeProvider {
     private readonly platform: Platform,
     private readonly router: Router,
     private readonly zone: NgZone,
-    private readonly modalController: ModalController ,
+    private readonly modalController: ModalController,
     private readonly popoverController: PopoverController,
     private readonly actionSheetController: ActionSheetController,
+    private readonly alertCtrl: AlertController
   ) {
     window['NativeInterface'] = this;
   }
@@ -82,15 +83,15 @@ export class NativeProvider {
     return this.platform.platforms().includes('ios');
   }
 
-  isWeb(){
-    return !this.isAndroid() && !this.isIos()
-;  }
+  isWeb() {
+    return !this.isAndroid() && !this.isIos();
+  }
 
   sendAndroidData<T>(methodName: NativeData, data: T) {
     androidInterface[methodName](data);
   }
 
-  updatePreviousRoute(){
+  updatePreviousRoute() {
     this.previousRoute = this.router.url;
   }
 
@@ -113,13 +114,24 @@ export class NativeProvider {
   }
 
   onNativeBackClicked() {
-    Promise.all([this.modalController.getTop(), this.popoverController.getTop(), this.actionSheetController.getTop()])
-      .then(([modal, popover, actionSheet]) => {
-        if (modal) modal.dismiss();
-        if (popover) popover.dismiss();
-        if (actionSheet) actionSheet.dismiss();
-      })
-      .finally(() => this.zone.run(() => this.doNativeNavigation()));
+    this.dismissTopControllers().finally(() => this.zone.run(() => this.doNativeNavigation()));
+  }
+
+  async dismissTopControllers() {
+    const [modal, popover, actionSheet, alertCtrl] = await Promise.all([
+      this.modalController.getTop(),
+      this.popoverController.getTop(),
+      this.actionSheetController.getTop(),
+      this.alertCtrl.getTop()
+    ]);
+    if (modal)
+      modal.dismiss();
+    if (popover)
+      popover.dismiss();
+    if (actionSheet)
+      actionSheet.dismiss();
+    if (alertCtrl)
+      alertCtrl.dismiss();
   }
 
   private doNativeNavigation() {
@@ -128,7 +140,10 @@ export class NativeProvider {
 
     for (let n in PATRON_NAVIGATION) {
       /// if 1 page deep from dashboard, navigate back to dashboard
-      destination = url.indexOf(PATRON_NAVIGATION[n]) >= 0 && url !== `/${PATRON_NAVIGATION[n]}` ? PATRON_NAVIGATION[n] : destination;
+      destination =
+        url.indexOf(PATRON_NAVIGATION[n]) >= 0 && url !== `/${PATRON_NAVIGATION[n]}`
+          ? PATRON_NAVIGATION[n]
+          : destination;
       /// if beyond initial order page, navigate back to main order page
       destination =
         url.indexOf(`/${PATRON_NAVIGATION.ordering}/`) >= 0 &&
@@ -143,16 +158,19 @@ export class NativeProvider {
       destination = url.indexOf(`/${PATRON_NAVIGATION.accounts}/`) >= 0 ? PATRON_NAVIGATION.accounts : destination;
 
       /// if in add-card page from the deposit page, navigate back to deposit page
-      destination = (url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('add-funds') > 0) ? 'accounts/add-funds' : destination;
+      destination =
+        url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('add-funds') > 0
+          ? 'accounts/add-funds'
+          : destination;
 
       /// if in add-card page from the cart page, navigate back to cart page
-      destination = (url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('cart') > 0) ? 'ordering/cart' : destination;
-
+      destination =
+        url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('cart') > 0 ? 'ordering/cart' : destination;
     }
     this.router.navigate(['/' + destination], { skipLocationChange: true });
   }
 
-  getPatronBarcode(): Observable<string>{
+  getPatronBarcode(): Observable<string> {
     if (this.isAndroid()) {
       return of(this.getAndroidData<string>(NativeData.BARCODE));
     } else if (this.isIos()) {
@@ -186,11 +204,11 @@ export class NativeProvider {
    */
   payWithApplePay(payType: NativeData, moreParams: Object): Observable<ApplePayResponse> {
     if (this.isAndroid()) {
-      return of({ success: false, errorMessage: 'Apple Pay does not work on Android.', accountId: null});
+      return of({ success: false, errorMessage: 'Apple Pay does not work on Android.', accountId: null });
     } else if (this.isIos()) {
       return from(this.getIosData(payType, moreParams));
     } else {
-      return of({ success: false, errorMessage: 'This is not a native device', accountId: null});
+      return of({ success: false, errorMessage: 'This is not a native device', accountId: null });
     }
   }
 
