@@ -16,16 +16,17 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-const { App, Device } = Plugins;
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
+const { App, Device, BackgroundTask } = Plugins;
 
 enum AppStatus {
   BACKGROUND,
   FOREGROUND,
 }
-
 @Injectable({
   providedIn: 'root',
 })
+
 export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
@@ -44,7 +45,8 @@ export class SessionFacadeService {
     private navCtrl: NavController,
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private readonly nativeProvider: NativeProvider,
   ) {
     this.appStateListeners();
   }
@@ -56,6 +58,7 @@ export class SessionFacadeService {
       if (isActive) {
         this.appResumeLogic();
       } else {
+        this.closeActionsheets();
         this.appStatus = AppStatus.BACKGROUND;
       }
     });
@@ -86,7 +89,7 @@ export class SessionFacadeService {
     }
 
     if (await this.isVaultLocked()) {
-      this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { skipLocationChange: true })
+      this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { skipLocationChange: true });
     }
   }
 
@@ -99,7 +102,6 @@ export class SessionFacadeService {
   }
 
   doLoginChecks() {
-   
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
@@ -110,7 +112,6 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
-          console.log('doLoginChecks ==>> ', state)
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
@@ -150,7 +151,7 @@ export class SessionFacadeService {
   }
 
   private async navigate2Dashboard(): Promise<void> {
-      this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+    this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
 
   private loginUser(useBiometric: boolean) {
@@ -159,7 +160,7 @@ export class SessionFacadeService {
       () => {
         if (!useBiometric) {
           this.loadingService.closeSpinner();
-          this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true })
+          this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
         }
       }
     );
@@ -269,5 +270,14 @@ export class SessionFacadeService {
 
   lockVault() {
     this.identityFacadeService.lockVault();
+  }
+
+  private closeActionsheets() {
+    const taskId = BackgroundTask.beforeExit(async () => {
+      this.nativeProvider.dismissTopControllers();
+      BackgroundTask.finish({
+        taskId,
+      });
+    });
   }
 }
