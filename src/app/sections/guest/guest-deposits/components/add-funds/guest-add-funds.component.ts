@@ -135,7 +135,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   onAmountChanged(event) {
-    const amount = event && event.target.value || undefined;
+    const amount = (event && event.target.value) || undefined;
     if (!isNaN(+amount)) {
       this.depositButtonLabel('Deposit $' + amount);
     } else {
@@ -203,8 +203,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
         this.performDeposit(data);
-      }
-      if (role === BUTTON_TYPE.CANCEL) {
+      } else {
         this.isDepositing = false;
         this.cdRef.detectChanges();
       }
