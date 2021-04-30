@@ -16,7 +16,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { ActionSheetController } from '@ionic/angular';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 const { App, Device, BackgroundTask } = Plugins;
 
 enum AppStatus {
@@ -46,7 +46,7 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly actionSheetController: ActionSheetController
+    private readonly nativeProvider: NativeProvider,
   ) {
     this.appStateListeners();
   }
@@ -274,7 +274,7 @@ export class SessionFacadeService {
 
   private closeActionsheets() {
     const taskId = BackgroundTask.beforeExit(async () => {
-      await this.actionSheetController.dismiss();
+      this.nativeProvider.dismissTopControllers();
       BackgroundTask.finish({
         taskId,
       });
