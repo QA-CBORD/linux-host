@@ -17,9 +17,12 @@ import { ContractsService } from '@sections/housing/contracts/contracts.service'
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { ContractListStateService} from '@sections/housing/contract-list/contract-list-state.service'
 import { ContractSummary } from '@sections/housing/contract-list/contractSummary.model'
+import {CheckInOutStateService} from '@sections/housing/check-in-out/check-in-out-state.service'
+import {CheckInOut} from '@sections/housing/check-in-out/check-in-out.model'
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 import {
+  CheckInOutResponse,
   ContractListResponse,
   DefinitionsResponse,
   DetailsResponse,
@@ -65,7 +68,8 @@ export class HousingService {
     private _router: Router,
     private _contractsService: ContractsService,
     private _roomsStateService: RoomsStateService,
-    private _contractListStateService: ContractListStateService
+    private _contractListStateService: ContractListStateService,
+    private _checkInOutStateService: CheckInOutStateService
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();
   }
@@ -149,6 +153,15 @@ export class HousingService {
       catchError(() => this._handleGetContractSummariesError())
     );
   }
+  getCheckInOuts(termId: number)
+  {
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/check-in-out/patron/${termId}`;
+    return this._housingProxyService.get<CheckInOutResponse>(apiUrl).pipe(
+      map((response: any) => new CheckInOutResponse(response)),
+      tap((response: CheckInOutResponse) => this._setCheckInOutsState(response.checkInOuts)),
+      catchError(() => this._handleGetCheckInOutsError())
+    );
+  }
 
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${
@@ -207,6 +220,12 @@ export class HousingService {
 
     return of(new ContractListResponse({ contractSummaries }));
   }
+  _handleGetCheckInOutsError(): Observable<CheckInOutResponse> {
+    const checkInOuts: CheckInOut[] = [];
+    this._setCheckInOutsState(checkInOuts);
+
+    return of(new CheckInOutResponse({ checkInOuts }));
+  }
 
   _setRoomsState(roomSelects: RoomSelect[]): void {
     this._roomsStateService.setRoomSelects(roomSelects);
@@ -214,6 +233,9 @@ export class HousingService {
   _setContractSummariesState(contractSummaries: ContractSummary[]): void {
   
     this._contractListStateService.setContractSummaries(contractSummaries);
+  }
+  _setCheckInOutsState(checkInOuts: CheckInOut[]): void{
+    this._checkInOutStateService.setCheckInOuts(checkInOuts);
   }
 
   /**

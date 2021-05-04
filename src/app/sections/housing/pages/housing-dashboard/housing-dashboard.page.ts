@@ -6,7 +6,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { TermsService } from '../../terms/terms.service';
 import { HousingService } from '../../housing.service';
 
-import { ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
+import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
 @Component({
   selector: 'st-housing-dashboard',
@@ -20,6 +20,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
   isHeaderVisible: boolean = false;
   hasRoomSelections: boolean = false;
   hasContracts: boolean = false;
+  hasCheckInOuts: boolean = false;
 
   constructor(
     private _termsService: TermsService,
@@ -46,7 +47,8 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
           return merge(
             this._housingService.getDefinitions(termId),
             this._housingService.getRoomSelects(termId),
-            this._housingService.getPatronContracts(termId)
+            this._housingService.getPatronContracts(termId),
+            this._housingService.getCheckInOuts(termId)
             
           )
         })
@@ -70,6 +72,10 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
     if(response instanceof ContractListResponse){
       this.isHeaderVisible = this.isHeaderVisible || response.contractSummaries.length > 0;
       this.hasContracts = response.contractSummaries.length > 0 ? true:false;
+    }
+    if(response instanceof CheckInOutResponse){
+      this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
+      this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
     }
     this._loadingService.closeSpinner();
   }
