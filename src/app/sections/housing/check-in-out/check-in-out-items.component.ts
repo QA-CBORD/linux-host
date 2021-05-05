@@ -12,15 +12,15 @@ import { ToastService } from '@core/service/toast/toast.service';
 })
 export class CheckInOutItemsComponent implements OnInit, AfterViewInit {
   @ViewChild('container') divContainer: ElementRef;
-  @Input() contractSummaries: CheckInOut[]
+  @Input() checkInOuts: CheckInOut[]
   ngOnInit() {
   }
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
-   if(this.contractSummaries.length > 0)
+   if(this.checkInOuts.length > 0)
     this.divContainer.nativeElement.click();
  }
-  constructor(public checkInOutStateService: CheckInOut,
+  constructor(public checkInOutStateService: CheckInOutStateService,
               private _router: Router,
               private _activeRoute: ActivatedRoute,
               private _toastService: ToastService) {
