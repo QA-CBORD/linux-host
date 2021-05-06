@@ -5,8 +5,7 @@ import { FacilityDetails } from './facilities/facilities.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
 import {ContractSummary} from './contract-list/contractSummary.model'
-import {CheckInOut} from './check-in-out/check-in-out.model'
-import { CheckInOutStateService } from './check-in-out/check-in-out-state.service';
+import {CheckInOut, CheckInOutSlot} from './check-in-out/check-in-out.model'
 
 export enum FormTypes {
   APPLICATIONS = 1,
@@ -139,6 +138,24 @@ export class CheckInOutResponse implements CheckInOutResponseOptions{
   }
   this.checkInOuts = Array.isArray(options)
       ? options.map((detail: any) => new CheckInOut(detail))
+      : [];
+  }
+}
+
+export interface CheckInOutSlotsResponseOptions {
+  slots: CheckInOutSlot[];
+}
+
+export class CheckInOutSlotResponse implements CheckInOutSlotsResponseOptions {
+  slots: CheckInOutSlot[];
+
+  constructor(options: CheckInOutSlotsResponseOptions){
+    if (options == null || typeof options !== 'object') {
+      options = {} as CheckInOutSlotsResponseOptions;
+  }
+
+  this.slots = Array.isArray(options)
+      ? options.map((detail: any) => new CheckInOutSlot(detail))
       : [];
   }
 }
