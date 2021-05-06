@@ -18,11 +18,12 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { ContractListStateService} from '@sections/housing/contract-list/contract-list-state.service'
 import { ContractSummary } from '@sections/housing/contract-list/contractSummary.model'
 import {CheckInOutStateService} from '@sections/housing/check-in-out/check-in-out-state.service'
-import {CheckInOut} from '@sections/housing/check-in-out/check-in-out.model'
+import {CheckInOut, CheckInOutSlot} from '@sections/housing/check-in-out/check-in-out.model'
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 import {
   CheckInOutResponse,
+  CheckInOutSlotResponse,
   ContractListResponse,
   DefinitionsResponse,
   DetailsResponse,
@@ -155,14 +156,25 @@ export class HousingService {
   }
   getCheckInOuts(termId: number)
   {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/check-in-out/patron/${termId}`;
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
     return this._housingProxyService.get<CheckInOutResponse>(apiUrl).pipe(
       map((response: any) => new CheckInOutResponse(response)),
       tap((response: CheckInOutResponse) => this._setCheckInOutsState(response.checkInOuts)),
       catchError(() => this._handleGetCheckInOutsError())
     );
   }
-
+  getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]>
+  {
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
+    return this._housingProxyService.get<CheckInOutSlotResponse>(apiUrl).pipe(
+      map((response: any) => {
+        const checkInOutSlots = new CheckInOutSlotResponse(response);
+        console.log(checkInOutSlots);
+        return checkInOutSlots.slots;
+      }),
+      catchError((err) => { throw err })
+    );
+  }
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${
       this._baseUrl
@@ -236,6 +248,9 @@ export class HousingService {
   }
   _setCheckInOutsState(checkInOuts: CheckInOut[]): void{
     this._checkInOutStateService.setCheckInOuts(checkInOuts);
+  }
+  _setCheckInOutSlotsState(checkInOutSlots: CheckInOutSlot[]): void {
+    this._checkInOutStateService.setCheckInOutSlots(checkInOutSlots);
   }
 
   /**

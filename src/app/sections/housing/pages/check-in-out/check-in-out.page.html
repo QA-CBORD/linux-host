@@ -1,0 +1,40 @@
+<st-header
+  [title]="'Available Slots'"
+  [isTitleShow]="true"
+  [backButtonTitle]="'BACK'"
+  [backButtonIcon]="'ios-arrow-back'"
+  [isToolbarShow]="true"
+  [isSubToolbarShow]="false"
+  class="check-in-out-slots__header">
+</st-header>
+
+<ion-content
+  class="ion-padding check-in-out-slots__content"
+  #content>
+
+  <ng-container *ngIf="(checkInOutSlots$ | async) as slots else noSlotsAvailable">
+    <ion-list>
+      <ion-item *ngFor="let slot of slots">
+        <ion-label>
+          <ion-text>
+            <p>{{ slot.slotDateTime | date: 'medium' }}</p>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll
+      #infiniteScroll
+      threshold="10px"
+      (ionInfinite)="getNextSlots(slots)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ng-container>
+</ion-content>
+
+<ng-template #noSlotsAvailable>
+  <p class="check-in-out-slots__empty-block-message">There are no slots available.</p>
+</ng-template>
