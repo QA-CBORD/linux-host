@@ -4,19 +4,17 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { isMobile } from '@core/utils/platform-helper';
 import {
   AlertController,
-  Platform,
-  ToastController
+  Platform
 } from '@ionic/angular';
 import { CheckInOutStateService } from '@sections/housing/check-in-out/check-in-out-state.service';
 import {
   CheckInOutSlot,
-  CheckInOutSlot2
+  CheckInOutSpot
 } from '@sections/housing/check-in-out/check-in-out.model';
 import { CheckInOutService } from '@sections/housing/check-in-out/check-in-out.service';
 import { HousingService } from '@sections/housing/housing.service';
@@ -35,15 +33,13 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private activeAlerts: HTMLIonAlertElement[] = [];
 
-  selectedSlot$: Observable<CheckInOutSlot2>;
+  selectedSlot$: Observable<CheckInOutSpot>;
   
   constructor(
     private _platform: Platform,
     private _alertController: AlertController,
-    private _route: ActivatedRoute,
     private _checkInOutService: CheckInOutService,
     private _checkInOutStateService: CheckInOutStateService,
-    private _toasController: ToastController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
@@ -60,7 +56,6 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
     }
 
     this.selectedSlot$ = this._checkInOutStateService.getSelectedCheckInOutSlot();
-    this.selectedSlot$.subscribe(x => console.log);
   }
 
   ngOnDestroy(): void {
@@ -77,7 +72,6 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
           role: 'cancel',
           cssClass: 'button__option_cancel',
           handler: () => {
-            // this._nonAssignmentsStateService.setSelectedAssetType([]);
             this.activeAlerts = [];
             alert.dismiss();
           },
@@ -95,7 +89,7 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
-                      // this._nonAssignmentsStateService.setSelectedAssetType([]);
+                      this._checkInOutStateService.setActiveCheckInOutSlot(null);
                       alert.dismiss().then(() => this._housingService.handleSuccess());
                     } else {
                       alert.dismiss().then(() => {

@@ -45,18 +45,18 @@ export class CheckInOutSlot implements CheckInOutSlotOptions {
   }
 }
 
-export interface CheckInOutSlotOptions2 {
+export interface CheckInOutSpotOptions {
   slotDateTime: Date;
   spots: CheckInOutSlot[];
 }
 
-export class CheckInOutSlot2 implements CheckInOutSlotOptions2 {
+export class CheckInOutSpot implements CheckInOutSpotOptions {
   slotDateTime: Date;
   spots: CheckInOutSlot[];
 
-  constructor(options: CheckInOutSlotOptions2) {
+  constructor(options: CheckInOutSpotOptions) {
     if (options == null || typeof options !== 'object') {
-      options = {} as CheckInOutSlotOptions2;
+      options = {} as CheckInOutSpotOptions;
     }
 
     this.slotDateTime = new Date(options.slotDateTime);
