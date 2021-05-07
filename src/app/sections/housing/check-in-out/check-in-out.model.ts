@@ -44,3 +44,24 @@ export class CheckInOutSlot implements CheckInOutSlotOptions {
     this.slotDateTime = new Date(options.slotDateTime);
   }
 }
+
+export interface CheckInOutSlotOptions2 {
+  slotDateTime: Date;
+  spots: CheckInOutSlot[];
+}
+
+export class CheckInOutSlot2 implements CheckInOutSlotOptions2 {
+  slotDateTime: Date;
+  spots: CheckInOutSlot[];
+
+  constructor(options: CheckInOutSlotOptions2) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as CheckInOutSlotOptions2;
+    }
+
+    this.slotDateTime = new Date(options.slotDateTime);
+    if (Array.isArray(options.spots)) {
+      this.spots = options.spots.map(spot => new CheckInOutSlot(spot));
+    }
+  }
+}

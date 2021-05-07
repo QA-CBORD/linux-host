@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CheckInOutPage } from './check-in-out.page';
+import { CheckInOutSpotPage } from './check-in-out-spot.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: CheckInOutPage,
+    component: CheckInOutSpotPage,
   },
 ];
 
@@ -16,4 +16,4 @@ const exports = [RouterModule];
   imports,
   exports,
 })
-export class CheckInOutRoutingModule {}
+export class CheckInOutSpotRoutingModule {}

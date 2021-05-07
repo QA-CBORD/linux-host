@@ -38,9 +38,7 @@ export class CheckInOutItemsComponent implements OnInit, AfterViewInit {
   openCheckInOutSlots(key: any): void {
     const roomSelection: CheckInOut = this.checkInOuts.find(x => x.key === key);
     //if(hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
-    this._router.navigate(['patron/housing/check-in-out', key]).then(() => {
-      this.checkInOutStateService.setActiveCheckInOut(key);
-    });
+    this._router.navigate(['patron/housing/check-in-out', key]);
     //}
     // else {
     //   this._toastService.showToast({message: 'Your access time has not been reached yet.'});

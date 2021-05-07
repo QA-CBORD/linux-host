@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CheckInOut, CheckInOutSlot } from './check-in-out.model';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { CheckInOut, CheckInOutSlot, CheckInOutSlot2 } from './check-in-out.model';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CheckInOutStateService  {
   private checkInOuts: BehaviorSubject<CheckInOut[]> = new BehaviorSubject<CheckInOut[]>([]);
-  private checkInOutSlots: BehaviorSubject<CheckInOutSlot[]> = new BehaviorSubject<CheckInOutSlot[]>([]);
+  private checkInOutSpots: Subject<CheckInOutSlot2> = new Subject<CheckInOutSlot2>();
   private _selectedCheckInOut: CheckInOut;
-
+  private _selectedCheckInOutSlot: CheckInOutSlot2;
 
   constructor() { }
 
@@ -17,18 +17,16 @@ export class CheckInOutStateService  {
     this.checkInOuts.next(value);
   }
 
-  setCheckInOutSlots(value: CheckInOutSlot[]) {
-    this.checkInOutSlots.next(value);
-  }
-
   getSelectedCheckInOut(): CheckInOut {
     return this._selectedCheckInOut;
   }
 
-  setActiveCheckInOut(checkInOutKey: number): void {
-    console.log(`active check in out: ${checkInOutKey}`);
-    // this.checkInOuts.subscribe(arr => {
-    //   this._selectedCheckInOut = arr.find(checkInOut => checkInOut.key == checkInOutKey);
-    // });
+  setActiveCheckInOutSlot(selectedSlot: CheckInOutSlot2): void {
+    console.log('showing available spots', selectedSlot);
+    this.checkInOutSpots.next(selectedSlot);
+  }
+
+  getSelectedCheckInOutSlot(): Observable<CheckInOutSlot2> {
+    return this.checkInOutSpots;
   }
 }
