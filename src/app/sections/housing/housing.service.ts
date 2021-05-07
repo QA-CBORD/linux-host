@@ -166,12 +166,8 @@ export class HousingService {
   getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]>
   {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
-    return this._housingProxyService.get<CheckInOutSlotResponse>(apiUrl).pipe(
-      map((response: any) => {
-        const checkInOutSlots = new CheckInOutSlotResponse(response);
-        console.log(checkInOutSlots);
-        return checkInOutSlots.slots;
-      }),
+    return this._housingProxyService.get<CheckInOutSlot[]>(apiUrl).pipe(
+      map((response: any) => new CheckInOutSlotResponse(response).slots),
       catchError((err) => { throw err })
     );
   }
@@ -248,9 +244,6 @@ export class HousingService {
   }
   _setCheckInOutsState(checkInOuts: CheckInOut[]): void{
     this._checkInOutStateService.setCheckInOuts(checkInOuts);
-  }
-  _setCheckInOutSlotsState(checkInOutSlots: CheckInOutSlot[]): void {
-    this._checkInOutStateService.setCheckInOutSlots(checkInOutSlots);
   }
 
   /**

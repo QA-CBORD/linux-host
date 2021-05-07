@@ -51,6 +51,10 @@ const routes: Routes = [
         loadChildren: './pages/check-in-out/check-in-out.page.module#CheckInOutPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.checkInOutSpots}/spots`,
+        loadChildren: './pages/check-in-out-spot/check-in-out-spot.page.module#CheckInOutSpotPageModule',
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
         pathMatch: 'full',

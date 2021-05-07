@@ -1,70 +1,84 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
+import { IonInfiniteScroll } from '@ionic/angular';
+
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { isMobile } from '@core/utils/platform-helper';
-import { AlertController, IonInfiniteScroll, Platform } from '@ionic/angular';
 import { CheckInOutStateService } from '@sections/housing/check-in-out/check-in-out-state.service';
-import { CheckInOutSlot } from '@sections/housing/check-in-out/check-in-out.model';
-import { CheckInOutService } from '@sections/housing/check-in-out/check-in-out.service';
-import { CheckInOutSlotResponse } from '@sections/housing/housing.model';
+import {
+  CheckInOutSlot,
+  CheckInOutSlot2
+} from '@sections/housing/check-in-out/check-in-out.model';
 import { HousingService } from '@sections/housing/housing.service';
-import { Observable, of, Subscription, throwError } from 'rxjs';
-import { catchError, scan, take, tap } from 'rxjs/operators';
+import {
+  Observable,
+  of,
+  throwError
+} from 'rxjs';
+import {
+  catchError,
+  flatMap,
+  take,
+  tap
+} from 'rxjs/operators';
 
 @Component({
   selector: 'st-check-in-out',
   templateUrl: './check-in-out.page.html',
   styleUrls: ['./check-in-out.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckInOutPage implements OnInit {
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
   
-  private subscriptions: Subscription = new Subscription();
-  private activeAlerts: HTMLIonAlertElement[] = [];
-  
   checkInOutSlots$: Observable<CheckInOutSlot[]>;
 
+  availableSlots: CheckInOutSlot2[] = [];
+  availableSlots$: Observable<CheckInOutSlot2>;
   checkInOutKey: number;
 
   constructor(
-    private _platform: Platform,
-    private _alertController: AlertController,
     private _route: ActivatedRoute,
-    private _checkInOutService: CheckInOutService,
-    // private _toasController: ToastController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
-    private _checkInOutStateService: CheckInOutStateService
+    private _checkInOutStateService: CheckInOutStateService,
+    private _router: Router
   ) { }
 
   ngOnInit() {
-    if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(x => {
-        this.activeAlerts.forEach(alert => {
-          alert.dismiss();
-        });
-        this.activeAlerts = [];
-      });
-    }
-
     this.checkInOutKey = parseInt(this._route.snapshot.paramMap.get('checkInOutKey'), 10);
     this._initCheckInOutSlotsObservable();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   private _initCheckInOutSlotsObservable(): void {
     this._loadingService.showSpinner();
     
-    this.checkInOutSlots$ = this._housingService.getCheckInOutSlots(this.checkInOutKey)
+    this.availableSlots$ = this._housingService.getCheckInOutSlots(this.checkInOutKey)
       .pipe(
-        tap((slots: CheckInOutSlot[]) => {
+        flatMap(data => {
+          data.forEach(value => {
+            const idx = this.availableSlots.findIndex(y => y.slotDateTime.getDate() === value.slotDateTime.getDate());
+            
+            if (idx === -1) {
+              this.availableSlots.push({
+                slotDateTime: value.slotDateTime,
+                spots: data.filter(y => y.slotDateTime.getDate() === value.slotDateTime.getDate()).map(y => new CheckInOutSlot(y))
+              });
+            }
+          });
+          return this.availableSlots;
+        }),
+        tap((data) => {
           this._loadingService.closeSpinner();
-          console.log('slots: ', slots);
         }),
         catchError((error: any) => {
           this._loadingService.closeSpinner();
@@ -73,9 +87,25 @@ export class CheckInOutPage implements OnInit {
       );
   }
 
-  getNextSlots(slots) {
-    console.log('slots: ', slots);
-    of(slots)
+  showAvailableSpots(selectedSlot: CheckInOutSlot2) {
+    this._router.navigate(['patron/housing/check-in-out-spots/spots']).then(() => {
+      this._checkInOutStateService.setActiveCheckInOutSlot(selectedSlot);
+    });
+  }
+
+  showMoreSlots() {
+    // const nextSlots = this.allCheckInOutSlots.slice(this.showingSlots, this.pageSize);
+    // this.showingSlots += this.pageSize;
+    // for (const slot of nextSlots) {
+    //   this.availableSlots.push(slot);
+    // }
+
+    // console.log(this.availableSlots);
+  }
+
+  getNextSlots($event) {
+    console.log('slots: ', $event);
+    of($event)
     .pipe(take(10))
     .subscribe(
       async data => (this.infiniteScroll.disabled = !data.length),
@@ -93,5 +123,17 @@ export class CheckInOutPage implements OnInit {
     //     },
     //     async () => await this.lazy.complete()
     //   );
+
+    /*
+    setTimeout(() => {
+      console.log('loading more slots');
+      this.showMoreSlots();
+      event.target.complete();
+    }, 500);
+     */
+  }
+
+  disableScroll() {
+    // return this.showingSlots == this.allCheckInOutSlots.length;
   }
 }

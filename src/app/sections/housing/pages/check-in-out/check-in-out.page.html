@@ -12,26 +12,26 @@
   class="ion-padding check-in-out-slots__content"
   #content>
 
-  <ng-container *ngIf="(checkInOutSlots$ | async) as slots else noSlotsAvailable">
+  <ng-container *ngIf="(availableSlots$ | async) as slots else noSlotsAvailable">
     <ion-list>
-      <ion-item *ngFor="let slot of slots">
+      <ion-item *ngFor="let slot of availableSlots" button (click)="showAvailableSpots(slot)" detail>
         <ion-label>
           <ion-text>
-            <p>{{ slot.slotDateTime | date: 'medium' }}</p>
+            <p>{{ slot.slotDateTime | date: 'longDate' }}</p>
           </ion-text>
         </ion-label>
       </ion-item>
     </ion-list>
 
-    <ion-infinite-scroll
+    <!-- <ion-infinite-scroll
       #infiniteScroll
-      threshold="10px"
-      (ionInfinite)="getNextSlots(slots)">
+      threshold="100px"
+      (ionInfinite)="getNextSlots($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
-        loadingText="Loading...">
+        loadingText="Loading data...">
       </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+    </ion-infinite-scroll> -->
   </ng-container>
 </ion-content>
 
