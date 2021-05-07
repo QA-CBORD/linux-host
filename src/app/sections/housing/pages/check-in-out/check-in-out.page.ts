@@ -1,32 +1,27 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
-  ViewChild
+  OnInit
 } from '@angular/core';
 import {
   ActivatedRoute,
   Router
 } from '@angular/router';
-import { IonInfiniteScroll } from '@ionic/angular';
 
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ToastService } from '@core/service/toast/toast.service';
 import { CheckInOutStateService } from '@sections/housing/check-in-out/check-in-out-state.service';
 import {
   CheckInOutSlot,
-  CheckInOutSlot2
+  CheckInOutSpot
 } from '@sections/housing/check-in-out/check-in-out.model';
 import { HousingService } from '@sections/housing/housing.service';
 import {
   Observable,
-  of,
   throwError
 } from 'rxjs';
 import {
   catchError,
   flatMap,
-  take,
   tap
 } from 'rxjs/operators';
 
@@ -36,20 +31,17 @@ import {
   styleUrls: ['./check-in-out.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckInOutPage implements OnInit {
-  @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
-  
+export class CheckInOutPage implements OnInit {  
   checkInOutSlots$: Observable<CheckInOutSlot[]>;
 
-  availableSlots: CheckInOutSlot2[] = [];
-  availableSlots$: Observable<CheckInOutSlot2>;
+  availableSlots: CheckInOutSpot[] = [];
+  availableSlots$: Observable<CheckInOutSpot>;
   checkInOutKey: number;
 
   constructor(
     private _route: ActivatedRoute,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
-    private _toastService: ToastService,
     private _checkInOutStateService: CheckInOutStateService,
     private _router: Router
   ) { }
@@ -87,53 +79,9 @@ export class CheckInOutPage implements OnInit {
       );
   }
 
-  showAvailableSpots(selectedSlot: CheckInOutSlot2) {
+  showAvailableSpots(selectedSlot: CheckInOutSpot) {
     this._router.navigate(['patron/housing/check-in-out-spots/spots']).then(() => {
       this._checkInOutStateService.setActiveCheckInOutSlot(selectedSlot);
     });
-  }
-
-  showMoreSlots() {
-    // const nextSlots = this.allCheckInOutSlots.slice(this.showingSlots, this.pageSize);
-    // this.showingSlots += this.pageSize;
-    // for (const slot of nextSlots) {
-    //   this.availableSlots.push(slot);
-    // }
-
-    // console.log(this.availableSlots);
-  }
-
-  getNextSlots($event) {
-    console.log('slots: ', $event);
-    of($event)
-    .pipe(take(10))
-    .subscribe(
-      async data => (this.infiniteScroll.disabled = !data.length),
-      async () => {},
-      async () => await this.infiniteScroll.complete()
-    );
-    // this._checkInOutService
-    //   .getNextTransactionsByAccountId(this.currentAccountId)
-    //   .pipe(take(10))
-    //   .subscribe(
-    //     async data => (this.lazy.disabled = !data.length),
-    //     async () => {
-    //       await this.onErrorRetrieveTransactions('Something went wrong, please try again...');
-    //       await this.content.scrollByPoint(null, -100, 700);
-    //     },
-    //     async () => await this.lazy.complete()
-    //   );
-
-    /*
-    setTimeout(() => {
-      console.log('loading more slots');
-      this.showMoreSlots();
-      event.target.complete();
-    }, 500);
-     */
-  }
-
-  disableScroll() {
-    // return this.showingSlots == this.allCheckInOutSlots.length;
   }
 }
