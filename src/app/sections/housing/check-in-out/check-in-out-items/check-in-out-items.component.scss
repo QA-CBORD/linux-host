@@ -30,13 +30,9 @@
   .check-in-out-list__item-start-time, .check-in-out-list__item-end-time {
     display: block;
     color: $color-dusty-gray;
-  }
-  .check-in-out__facility-name {
-    display: block;
-    font-weight: bold;
-  }
+}
   &::before {
-    background-color: $color-light-green;
+    background-color: $color-strong-blue;
     border-radius: 0 0 2px 2px;
     width: 32px;
     height: 4px;
