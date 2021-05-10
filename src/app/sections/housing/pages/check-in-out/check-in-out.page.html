@@ -16,9 +16,7 @@
     <ion-list>
       <ion-item *ngFor="let slot of availableSlots" button (click)="showAvailableSpots(slot)" detail>
         <ion-label>
-          <ion-text>
-            <p>{{ slot.slotDateTime | date: 'longDate' }}</p>
-          </ion-text>
+          {{ slot.slotDateTime | date: 'longDate' }}
         </ion-label>
       </ion-item>
     </ion-list>

@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -11,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CheckInOut } from '../check-in-out.model';
 import { CheckInOutStateService} from '../check-in-out-state.service';
+import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
 
 @Component({
   selector: 'st-check-in-out-items',
@@ -18,7 +18,7 @@ import { CheckInOutStateService} from '../check-in-out-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./check-in-out-items.component.scss'],
 })
-export class CheckInOutItemsComponent implements OnInit, AfterViewInit {
+export class CheckInOutItemsComponent implements OnInit {
   @ViewChild('container') divContainer: ElementRef;
   @Input() checkInOuts: CheckInOut[]
   
@@ -29,19 +29,13 @@ export class CheckInOutItemsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() { }
 
-  ngAfterViewInit() {
-      //helps load ionList that doesnt load unless an event is fired
-    if(this.checkInOuts.length > 0)
-      this.divContainer.nativeElement.click();
-  }
-
   openCheckInOutSlots(key: any): void {
-    const roomSelection: CheckInOut = this.checkInOuts.find(x => x.key === key);
-    //if(hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
-    this._router.navigate(['patron/housing/check-in-out', key]);
-    //}
-    // else {
-    //   this._toastService.showToast({message: 'Your access time has not been reached yet.'});
-    // }
+    const checkInOut: CheckInOut = this.checkInOuts.find(x => x.key === key);
+    if(hasDatePassed(checkInOut.availableStartDate) && !hasDatePassed(checkInOut.availableEndDate)) {
+      this._router.navigate(['patron/housing/check-in-out', key]);
+    }
+    else {
+      this._toastService.showToast({message: 'Your access time has not been reached yet.'});
+    }
   }
 }
