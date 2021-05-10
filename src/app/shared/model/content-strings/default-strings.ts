@@ -78,16 +78,42 @@ export const depositDefaultStrings = {
   submit_button_lbl: 'Deposit',
   choose_action_placeholder_text: 'Please Choose',
   success_screen_title: 'Deposit',
+  subtitle_detail_text: 'This transaction was successful. You can review it to make sure everything checks out.',
+  subtitle_summary_text: 'Success!',
+  done_button_text: 'DONE',
+};
+
+export const guestDepositDefaultStrings = {
+  title: 'Confirm Deposit',
+  policy_title: 'Refund Policy',
+  lbl_deposit_amount: 'Deposit Amount',
+  convenience_fee: 'Convenience Fee',
+  total_payment: 'Total Payment',
+  lbl_account: 'Account',
+  bill_me_pay_method: 'Bill me',
+  cc_ending_in_text: 'ending in',
+  lbl_ok_button: 'DEPOSIT',
+  lbl_cancel_button: 'CANCEL',
+  lbl_select_payment_method: 'Payment Method',
+  new_credit_card_text: 'Add a Credit Card',
+  lbl_card_security_code: 'Card Security Code',
+  card_security_code_error_text: 'Please enter a valid card security code.',
+  lbl_select_account_for_deposit: 'To Account',
+  lbl_select_amount_for_deposit: 'Amount to Deposit',
+  max_amount_error_text: 'The maximum amount for a deposit is',
+  min_amount_error_text: 'The minimum amount for a deposit is',
+  amount_pattern_error_text: 'Please enter a valid amount.',
+  submit_button_lbl: 'Deposit',
+  choose_action_placeholder_text: 'Please Choose',
+  success_screen_title: 'Deposit',
   subtitle_detail_text: 'The transaction to ${recipient_name} was successful. You can review it to make sure everything checks out.',
   subtitle_summary_text: 'Success!',
   done_button_text: 'DONE',
 };
 
-export const guestDepositDefaultStirngs = depositDefaultStrings;
-
 export const guestAddFundsDefaultStrings = {
   add_funds_title: 'Add Funds',
-  notice_text: 'You are deposting to the account of {recipient_name}.',
+  notice_text: 'You are depositing to the account of {recipient_name}.',
   source_account_text: 'Payment Method',
   destination_account_text: 'To Account',
   deposit_label: 'Amount To Deposit', 
