@@ -1,9 +1,13 @@
+import { isDefined } from "../utils";
+
 export interface CheckInOutOptions {
   name: string;
   availableStartDate: Date;
   availableEndDate: Date;
   key: number;
   type: number;
+  selectedFacilityName?: string;
+  selectedSpotDateTime?: Date;
 }
 
 export class CheckInOut implements CheckInOutOptions {
@@ -12,6 +16,8 @@ export class CheckInOut implements CheckInOutOptions {
     availableEndDate: Date;
     key: number;
     type: number;
+    selectedFacilityName?: string;
+    selectedSpotDateTime?: Date;
   
     constructor(options: any) {
       if (options == null || typeof options !== 'object') {
@@ -23,6 +29,10 @@ export class CheckInOut implements CheckInOutOptions {
       this.availableEndDate = new Date(options.availableEndDateTime);
       this.key = Number(options.checkInOutKey);
       this.type = Number(options.checkInOutType);
+      this.selectedFacilityName = isDefined(options.selectedFacilityName) ?
+        String(options.selectedFacilityName) : null;
+      this.selectedSpotDateTime = isDefined(options.selectedSpotDateTime) ?
+        new Date(options.selectedSpotDateTime) : null;
     }
 }
 
