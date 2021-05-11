@@ -23,7 +23,6 @@ import { StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-p
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes/address-header-format-pipe';
-
 @Component({
   selector: 'st-order-options.action-sheet',
   templateUrl: './order-options.action-sheet.component.html',
@@ -74,6 +73,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.globalNav.hideNavBar();
     this.initData();
     this.initContentStrings();
+    this.cartService.resetClientOrderId();
     this.activeMerchant$ = this.merchantService.menuMerchants$.pipe(
       map(merchants => merchants.find(({ id }) => id === this.merchantId))
     );

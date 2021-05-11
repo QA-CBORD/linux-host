@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
-import { combineLatest, Observable, from } from 'rxjs';
+import { combineLatest, Observable, from, Subscription, zip, of } from 'rxjs';
 import {
   AddressModalSettings,
   DETAILS_FORM_CONTROL_NAMES,
@@ -11,7 +11,7 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { finalize, first, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
@@ -42,6 +42,9 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
+import { ConnectionService } from '@shared/services/connection-service';
+import { buttons as Buttons } from '@core/utils/buttons.config';
+import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 const { Browser } = Plugins;
 
 @Component({
@@ -62,6 +65,15 @@ export class CartComponent implements OnInit, OnDestroy {
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   placingOrder: boolean = false;
+  isProcessingOrder: boolean = false;
+  isOnline: boolean = true;
+  networkSubcription: Subscription;
+  orderSubmitErrorMessage = {
+    timeout: '',
+    connectionLost: '',
+    duplicateOrdering: '',
+    noConnection: '',
+  };
 
   constructor(
     private readonly cartService: CartService,
@@ -77,7 +89,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
     private readonly globalNav: GlobalNavService,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private readonly connectionService: ConnectionService
   ) {}
 
   ionViewWillEnter() {
@@ -87,6 +100,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.globalNav.showNavBar();
+    this.networkSubcription.unsubscribe();
   }
 
   ngOnInit() {
@@ -99,6 +113,14 @@ export class CartComponent implements OnInit, OnDestroy {
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
     this.globalNav.hideNavBar();
+    this.subscribe2NetworkChanges();
+  }
+
+  subscribe2NetworkChanges() {
+    this.networkSubcription = this.connectionService
+      .networkStatus()
+      .pipe(debounceTime(300))
+      .subscribe(isOnline => (this.isOnline = isOnline));
   }
 
   get isOrderASAP(): Observable<boolean> {
@@ -216,17 +238,21 @@ export class CartComponent implements OnInit, OnDestroy {
     await modal.present();
   }
 
-  private async onErrorModal(message: string, cb?: () => void) {
+  private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
+    let data: any = {
+      title: 'Oooops',
+      message,
+      showClose: !buttonLable,
+      buttons: buttonLable && [{ ...Buttons.OKAY, label: buttonLable }],
+    };
+
     const modal = await this.popoverController.create({
       component: StGlobalPopoverComponent,
       componentProps: {
-        data: {
-          title: 'Oooops', /// xD
-          message,
-        },
+        data,
       },
       animated: false,
-      backdropDismiss: true,
+      backdropDismiss: false,
     });
     cb && modal.onDidDismiss().then(cb);
 
@@ -306,23 +332,74 @@ export class CartComponent implements OnInit, OnDestroy {
         });
     }
 
+    if (!this.isOnline) {
+      this.onErrorModal(this.orderSubmitErrorMessage.noConnection);
+      this.loadingService.closeSpinner();
+      return;
+    }
+
     this.cartService
-      .submitOrder(accountId, this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null
-        )
+      .submitOrder(
+        accountId,
+        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
+        this.cartService.clientOrderId
+      )
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
-      .then(async order => await this.showModal(order))
+      .then(async order => {
+        this.cartService.changeClientOrderId;
+        await this.showModal(order);
+      })
       .catch(async (error: string | [string, string]) => {
         if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+          //something went wrong in the backend, order did not succeed for sure,
+          this.cartService.changeClientOrderId;
           await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
         } else if (typeof error === 'string') {
-          await this.onErrorModal('There was an issue with the transaction, you may have insufficient funds available.');
+          if (error.includes(ORDER_ERROR_CODES.CONNECTION_TIMEOUT)) {
+            // the request timed out...
+            await this.onErrorModal(this.orderSubmitErrorMessage.timeout, () => this.onPosibleDuplicateOrder(), 'OK');
+          } else if (error.includes(ORDER_ERROR_CODES.CONNECTION_LOST)) {
+            // the internet connection was interrupted
+            await this.onErrorModal(
+              this.orderSubmitErrorMessage.connectionLost,
+              () => this.onPosibleDuplicateOrder(),
+              'OK'
+            );
+          } else if (error.includes(ORDER_ERROR_CODES.DUPLICATE_ORDER)) {
+            //
+            await this.onErrorModal(
+              this.orderSubmitErrorMessage.duplicateOrdering,
+              () => this.onPosibleDuplicateOrder(),
+              'OK'
+            );
+          } else {
+            this.cartService.changeClientOrderId;
+            //something went wrong in the backend, order did not succeed for sure,
+            await this.onErrorModal('There was an issue with the transaction, please try again.');
+          }
         }
       })
       .finally(() => {
+        this.isProcessingOrder = false;
         this.loadingService.closeSpinner();
         this.placingOrder = false;
       });
+  }
+
+  private async onPosibleDuplicateOrder() {
+    if (this.isOnline) {
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.recentOrders]);
+    } else {
+      await this.onErrorModal(this.orderSubmitErrorMessage.noConnection, () => {
+        if (this.isOnline) {
+          this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.recentOrders]);
+        } else {
+          // take client back to dashboard...2 prevent duplicate order
+          this.routingService.navigate([APP_ROUTES.dashboard]);
+        }
+      });
+    }
   }
 
   private getDeliveryLocations(): Observable<any> {
@@ -434,5 +511,38 @@ export class CartComponent implements OnInit, OnDestroy {
     this.contentStrings.buttonScheduleOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonScheduleOrder
     );
+    this.loadOrderingErrorStrings();
+  }
+
+  private async loadOrderingErrorStrings(): Promise<void> {
+    const timeOutError = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.orderSubmitTimeout);
+    const connectionLostError = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.connectionLost);
+    const duplicateOrderSubmissionError = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.duplicateOrdering
+    );
+    const noConnectionError = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.noConnection);
+
+    this.orderSubmitErrorMessage = await zip(
+      timeOutError,
+      connectionLostError,
+      duplicateOrderSubmissionError,
+      noConnectionError
+    )
+      .pipe(
+        take(1),
+        map(([timeout, connectionLost, duplicateOrdering, noConnection]) => {
+           if(!timeout || !connectionLost){
+               return defaultOrderSubmitErrorMessages;
+           }
+           return {
+            timeout,
+            connectionLost,
+            duplicateOrdering,
+            noConnection,
+           }
+        }),
+        catchError(() => of(defaultOrderSubmitErrorMessages))
+      )
+      .toPromise();
   }
 }
