@@ -14,8 +14,6 @@ export class ConnectionService {
   constructor(public network: Network, public platform: Platform) {
     this.online$ = Observable.create(observer => observer.next(true)).pipe(mapTo(true));
 
-    console.log(this.platform)
-
     if (this.platform.is('capacitor')) {
         // on Device
         this.online$ = merge(
