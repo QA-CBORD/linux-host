@@ -21,21 +21,22 @@ export class StGlobalPopoverComponent implements OnInit {
   }
 
   initPopover() {
-    const { message, title, buttons } = this.data;
+    const { message, title, buttons, showClose } = this.data;
 
     this.popoverConfig = {
       ...this.popoverConfig,
       title,
       message,
-      buttons: this.resolveButtons(buttons),
+      buttons: this.resolveButtons(buttons, showClose),
     };
   }
 
-  resolveButtons(buttons = []) {
+  resolveButtons(buttons = [], showCancelBtn = true) {
+    if (buttons.length && !showCancelBtn) {
+      return buttons;
+    }
     const cancelBtn = { ...BUTTONS.CLOSE, label: 'CLOSE' };
-    return buttons.length
-      ? [cancelBtn, ...buttons]
-      : [cancelBtn];
+    return buttons.length ? [cancelBtn, ...buttons] : [cancelBtn];
   }
 
   // private setContentStrings() {

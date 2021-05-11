@@ -12,6 +12,7 @@ import { StGlobalNavigationModule } from '@shared/ui-components/st-global-naviga
 import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
+import { Network } from '@ionic-native/network/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,7 +27,7 @@ import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-st
     CommonModule,
     PinModule
   ],
-  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}, InAppBrowser],
+  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}, InAppBrowser, Network],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

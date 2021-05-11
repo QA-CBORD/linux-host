@@ -95,6 +95,13 @@ export const guestAddFundsDefaultStrings = {
   refund_text: 'Refund Policy'
 }
 
+export const defaultOrderSubmitErrorMessages = {
+  timeout: 'The server took too long to respond, however your order may have been submitted, please review your recent order history',
+  connectionLost: 'Your internet connection was interrupted, however your order may have been submitted, please review your recent order history',
+  duplicateOrdering: 'This order has already been checked out, please review your order history',
+  noConnection: 'Please check your internet connection'
+};
+
 export const defaultMobileCredentialCs = {
   nfc_off_dialog_accept: 'Proceed',
   nfc_off_dialog_cancel: 'Cancel',

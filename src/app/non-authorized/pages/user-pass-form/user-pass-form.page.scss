@@ -77,10 +77,11 @@
 
     &-password {
       text-align: right;
-
+      margin-top: 5px;
       &-forgot {
         text-decoration: none;
         color: $color-dodger-blue;
+        font-size: 14px !important;
 
         @include font-nunito-heavy(12px);
       }

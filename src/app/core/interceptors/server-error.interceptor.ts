@@ -27,23 +27,16 @@ export class ServerError implements HttpInterceptor {
             res.body.exception !== null
           ) {
             if (shouldDelegateErrorToCaller(req.body.method)) {
-              throw new Error(res.body.exception);
+                 throw new Error(res.body.exception);
             }
             this.handleServerException(res.body.exception, req.body.method);
           }
         },
-        async ({ error, message, status, statusText }: HttpErrorResponse) => {
-          // if (status >= 500) await this.presentToast('Internal server error');
+        async ({ message, status }: HttpErrorResponse) => {
           if (status === 404) await this.presentToast('Page was not found');
           return throwError(message);
         }
-      ),
-      catchError(error => {
-        if (error instanceof TimeoutError) {
-          return throwError('Timeout Exception');
-        }
-        return throwError(error);
-      })
+      )
     );
   }
 

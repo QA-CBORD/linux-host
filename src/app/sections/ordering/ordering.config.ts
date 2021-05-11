@@ -102,6 +102,10 @@ export enum ORDERING_CONTENT_STRINGS {
   noRecentOrders = 'label_no-recent-orders',
   buttonCancelOrder = 'button_cancel-order',
   buttonScheduleOrder = 'button_schedule-order',
+  orderSubmitTimeout = 'ordering_timeout',
+  connectionLost = 'ordering_connection_lost',
+  duplicateOrdering ='ordering_duplicate',
+  noConnection = 'ordering_no_connection'
 }
 
 export enum MerchantSearchOptionName {
@@ -171,6 +175,9 @@ export const ORDER_ERROR_CODES = {
   ORDER_CAPACITY: '9017',
   INSUFFICIENT_FUNDS: '6112',
   TIMEOUT: '9997',
+  DUPLICATE_ORDER: '9016', // server duplicate order attempt error code.
+  CONNECTION_LOST: '0 Unknown Error', // Client's internet connection lost.
+  CONNECTION_TIMEOUT: 'Timeout' // Client's connection timed out
 };
 
 export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {

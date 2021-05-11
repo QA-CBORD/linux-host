@@ -73,9 +73,9 @@ export const handleServerError = <T>(
   ignoreCodes?: string[]
 ): MonoTypeOperatorFunction<T> => {
   return (source: Observable<T>) =>
-    source.pipe(
-      catchError(({ message }) => {
+    source.pipe(catchError(({ message = '' }) => {
         message = message.split('|');
+
         if (message.length <= 1) return throwError(message[0]);
         const [code, text] = message;
 
@@ -86,6 +86,10 @@ export const handleServerError = <T>(
         // Temprorary solution for these codes:
         if (+code === 9002 || +code === 9005) {
           return throwError(message);
+        }
+
+        if(+code === 9016){
+          return throwError(`${code}|${text}`);
         }
 
         if (+code === 9017) {

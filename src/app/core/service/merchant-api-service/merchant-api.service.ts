@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { MerchantInfo, MerchantSearchOptions, MerchantSettingInfo } from '@sections/ordering';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { MerchantSearchOptionName, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
+import { MerchantSearchOptionName } from '@sections/ordering/ordering.config';
 import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { GeolocationPosition } from '@capacitor/core';
