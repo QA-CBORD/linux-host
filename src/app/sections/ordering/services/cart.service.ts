@@ -9,20 +9,23 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   // temporary cachedError for the cart:
   private _catchError: string | null = null;
+  private _clientOrderId: string = null;
 
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
-    private readonly api: OrderingApiService
+    private readonly api: OrderingApiService,
+    private readonly uuidGeneratorService: UuidGeneratorService
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -41,6 +44,22 @@ export class CartService {
       map(({ menu }) => menu),
       distinctUntilChanged()
     );
+  }
+
+  get clientOrderId(): string {
+    if (!this._clientOrderId) {
+      this._clientOrderId = this.uuidGeneratorService.newUUID();
+    }
+    return this._clientOrderId;
+  }
+
+  get changeClientOrderId(): string {
+    this._clientOrderId = this.uuidGeneratorService.newUUID();
+    return this._clientOrderId;
+  }
+
+  resetClientOrderId(): void {
+    this._clientOrderId = null;
   }
 
   get orderDetailsOptions$(): Observable<OrderDetailOptions> {
@@ -156,7 +175,7 @@ export class CartService {
           ...this.cart.order,
           ...address,
           type,
-          dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone): dueTime,
+          dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime,
         };
         return this.merchantService.validateOrder(this.cart.order);
       }),
@@ -164,8 +183,9 @@ export class CartService {
     );
   }
 
-  submitOrder(accId: string, cvv: string): Observable<OrderInfo> {
-    return this.api.submitOrder(this.cart.order, accId, cvv);
+  submitOrder(accId: string, cvv: string, clientOrderID: string): Observable<OrderInfo> {
+    const order = { ...this.cart.order, clientOrderID };
+    return this.api.submitOrder(order, accId, cvv);
   }
 
   updateOrderAddress(address: AddressInfo) {

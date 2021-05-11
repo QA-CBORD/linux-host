@@ -10,6 +10,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 
 @Component({
   selector: 'st-merchant-details',
@@ -34,7 +35,8 @@ export class MerchantDetailsPage implements OnInit {
     private readonly merchantIdsFacadeService: FavoriteMerchantsFacadeService,
     private readonly toastService: ToastService,
     private readonly routingService: NavigationService,
-    private readonly changeDetector: ChangeDetectorRef
+    private readonly changeDetector: ChangeDetectorRef,
+    private readonly authFacadeService: AuthFacadeService
   ) {}
 
   ngOnInit() {
@@ -45,8 +47,11 @@ export class MerchantDetailsPage implements OnInit {
     return this.exploreService.getMerchantById$(merchantId).pipe(
       take(1),
       tap(async merchant => {
-        this.guestOrderEnabled = await this.exploreService.isGuestOrderEnabled(merchant);
-        this.changeDetector.detectChanges();
+        const currentUserIsAGuest = await this.authFacadeService.isGuestUser().toPromise();
+        if (currentUserIsAGuest) {
+          this.guestOrderEnabled = await this.exploreService.isGuestOrderEnabled(merchant);
+          this.changeDetector.detectChanges();
+        }
       })
     );
   }
