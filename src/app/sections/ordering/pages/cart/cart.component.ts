@@ -530,12 +530,17 @@ export class CartComponent implements OnInit, OnDestroy {
     )
       .pipe(
         take(1),
-        map(([timeout, connectionLost, duplicateOrdering, noConnection]) => ({
-          timeout,
-          connectionLost,
-          duplicateOrdering,
-          noConnection,
-        })),
+        map(([timeout, connectionLost, duplicateOrdering, noConnection]) => {
+           if(!timeout || !connectionLost){
+               return defaultOrderSubmitErrorMessages;
+           }
+           return {
+            timeout,
+            connectionLost,
+            duplicateOrdering,
+            noConnection,
+           }
+        }),
         catchError(() => of(defaultOrderSubmitErrorMessages))
       )
       .toPromise();
