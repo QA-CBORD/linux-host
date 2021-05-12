@@ -65,8 +65,8 @@ export class AuthFacadeService extends ServiceStateFacade {
   }
 
   authenticatePin$(rawPin: string): Observable<boolean> {
-    return zip(from(Device.getInfo()), this.pingEncoderService.encodePin(rawPin)).pipe(
-      switchMap(([{ uuid }, encodedPin]) => this.authApiService.authenticatePin(encodedPin, uuid)),
+    return zip(from(Device.getInfo())).pipe(
+      switchMap(([{ uuid }]) => this.authApiService.authenticatePin(rawPin, uuid)),
       tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })),
       map(res => !!res)
     );
