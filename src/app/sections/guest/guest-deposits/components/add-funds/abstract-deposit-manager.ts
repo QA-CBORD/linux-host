@@ -120,11 +120,11 @@ export abstract class AbstractDepositManager {
   get minMaxOfAmounts() {
     const minAmountOneTime = this.getSettingByName(
       this.depositSettings,
-      Settings.Setting.CREDITCARD_AMOUNT_MIN.split('.')[2]
+      Settings.Setting.GUEST_MINIMUM.split('.')[2]
     );
     const maxAmountOneTime = this.getSettingByName(
       this.depositSettings,
-      Settings.Setting.CREDITCARD_AMOUNT_MAX.split('.')[2]
+      Settings.Setting.GUEST_MAXIMUM.split('.')[2]
     );
 
     return {
@@ -151,7 +151,7 @@ export abstract class AbstractDepositManager {
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
-          Settings.Setting.PRESET_DEPOSIT_AMOUNTS_CREDITCARD.split('.')[2]
+          Settings.Setting.GUEST_AMOUNTS.split('.')[2]
         );
         return settingInfo ? parseArrayFromString(settingInfo.value) : [];
       })
