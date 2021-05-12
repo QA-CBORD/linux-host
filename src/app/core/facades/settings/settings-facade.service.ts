@@ -36,7 +36,6 @@ export class SettingsFacadeService extends ServiceStateFacade {
     const setting = Settings.Setting.INSTITUTION_GUEST_LOGIN_ENABLED;
     const call = this.settingsApiService.getSetting(setting, sessionId, institutionId);
     return this.makeRequestWithUpdatingStateHandler<SettingInfo>(call, this.settingsStateService);
-    
   }
 
   getSettings(settings: Settings.Setting[], sessionId?: string, institutionId?: string): Observable<SettingInfo[]> {
