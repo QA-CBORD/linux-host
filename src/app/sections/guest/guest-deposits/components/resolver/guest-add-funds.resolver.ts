@@ -13,14 +13,15 @@ import { Settings } from 'src/app/app.global';
 const requiredSettings = [
   Settings.Setting.DEPOSIT_TENDERS,
   Settings.Setting.PAYMENT_TYPES,
-  Settings.Setting.FREEFORM_DEPOSIT_ENABLED,
-  Settings.Setting.PRESET_DEPOSIT_AMOUNTS_CREDITCARD,
   Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE,
-  Settings.Setting.CREDITCARD_AMOUNT_MIN,
-  Settings.Setting.CREDITCARD_AMOUNT_MAX,
+  Settings.Setting.FREEFORM_GUEST_DEPOSIT_ENABLED,
+  Settings.Setting.GUEST_AMOUNTS,
+  Settings.Setting.GUEST_MINIMUM,
+  Settings.Setting.GUEST_MAXIMUM,
 ];
 
 @Injectable({ providedIn: 'root' })
+
 export class GuestAddFundsResolver implements Resolve<Observable<any>> {
   constructor(private readonly depositService: DepositService, private readonly loadingService: LoadingService, private readonly commonService: CommonService, private readonly userFacadeService: UserFacadeService, private readonly guestDepositsService: GuestDepositsService) {}
 
