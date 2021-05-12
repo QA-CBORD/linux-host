@@ -202,6 +202,7 @@ export class NativeProvider {
   /**
    *  Apple Pay
    */
+  
   payWithApplePay(payType: NativeData, moreParams: Object): Observable<ApplePayResponse> {
     if (this.isAndroid()) {
       return of({ success: false, errorMessage: 'Apple Pay does not work on Android.', accountId: null });
