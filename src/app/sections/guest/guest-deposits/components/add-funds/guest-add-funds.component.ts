@@ -237,10 +237,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   get isFreeFormEnabled$(): Observable<boolean> {
-    (async () => {
-     const value = await this.isFreeFromDepositEnabled$.toPromise();
-     console.log('isFreeFormEnabled: ', value)
-    })()
     return this.isFreeFromDepositEnabled$;
   }
 
