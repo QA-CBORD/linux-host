@@ -13,7 +13,7 @@ import { Settings } from 'src/app/app.global';
 const requiredSettings = [
   Settings.Setting.DEPOSIT_TENDERS,
   Settings.Setting.PAYMENT_TYPES,
-  Settings.Setting.FREEFORM_DEPOSIT_ENABLED,
+  Settings.Setting.FREEFORM_GUEST_DEPOSIT_ENABLED,
   Settings.Setting.PRESET_DEPOSIT_AMOUNTS_CREDITCARD,
   Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE,
   Settings.Setting.CREDITCARD_AMOUNT_MIN,

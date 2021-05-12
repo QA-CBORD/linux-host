@@ -138,7 +138,7 @@ export abstract class AbstractDepositManager {
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
-          Settings.Setting.FREEFORM_DEPOSIT_ENABLED.split('.')[2]
+          Settings.Setting.FREEFORM_GUEST_DEPOSIT_ENABLED.split('.')[2]
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));

@@ -105,6 +105,7 @@ export namespace Settings {
     STANDARD_REGISTRATION_LINK = 'get.feature.standard_registration_link',
     ANDROID_MOBILE_CREDENTIAL_ENABLED = 'get.feature.enable_android_mobile_credentials',
     INSTITUTION_GUEST_LOGIN_ENABLED = 'get.feature.guest_login',
+    FREEFORM_GUEST_DEPOSIT_ENABLED = 'get.deposit.allow_freeform_guest_amounts'
   }
 }
 
