@@ -67,7 +67,6 @@ export namespace Settings {
     AUTO_DEPOSIT_ENABLED = 'get.feature.enable_auto_deposits',
     DEPOSIT_TENDERS = 'get.feature.deposit_tenders',
     DISPLAY_TENDERS = 'get.feature.display_tenders',
-    GUEST_DEPOSIT_ENABLED = 'get.deposit.enable_guest_deposits',
     BILLME_MAPPING = 'get.deposit.billme_mapping',
     FREEFORM_DEPOSIT_ENABLED = 'get.deposit.allow_freeform_onetime_amounts',
     BILLME_AMOUNTS = 'get.deposit.billme_amounts',
@@ -104,7 +103,12 @@ export namespace Settings {
     REPORT_FOUND_CARD_ENABLED = 'get.feature.enable_found_card',
     STANDARD_REGISTRATION_LINK = 'get.feature.standard_registration_link',
     ANDROID_MOBILE_CREDENTIAL_ENABLED = 'get.feature.enable_android_mobile_credentials',
+    GUEST_DEPOSIT_ENABLED = 'get.deposit.enable_guest_deposits',
     INSTITUTION_GUEST_LOGIN_ENABLED = 'get.feature.guest_login',
+    FREEFORM_GUEST_DEPOSIT_ENABLED = 'get.deposit.allow_freeform_guest_amounts',
+    GUEST_AMOUNTS = 'get.deposit.guest_amounts',
+    GUEST_MAXIMUM = 'get.deposit.guest_maximum',
+    GUEST_MINIMUM = 'get.deposit.guest_minimum',
   }
 }
 
