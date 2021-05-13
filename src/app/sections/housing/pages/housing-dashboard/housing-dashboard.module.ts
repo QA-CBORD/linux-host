@@ -8,7 +8,8 @@ import { HousingDashboardRoutingModule } from './housing-dashboard.routing.modul
 import { ApplicationsModule } from '../../applications/applications.module';
 import { ContractsModule } from '../../contracts/contracts.module';
 import { RoomsModule } from '../../rooms/rooms.module';
-import {ContractListModule} from '../../contract-list/contract-list.module'
+import { ContractListModule } from '../../contract-list/contract-list.module'
+import { CheckInOutModule } from '../../check-in-out/check-in-out.module'
 
 import { HousingDashboardPage } from './housing-dashboard.page';
 import { WorkOrdersComponent } from '../../work-orders/work-orders.component';
@@ -24,7 +25,8 @@ const imports = [
   HousingDashboardRoutingModule,
   RoomsModule,
   NonAssginmentsModule,
-  ContractListModule
+  ContractListModule,
+  CheckInOutModule
 ];
 const declarations = [HousingDashboardPage, WorkOrdersComponent];
 

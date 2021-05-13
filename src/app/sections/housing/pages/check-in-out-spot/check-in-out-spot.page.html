@@ -1,0 +1,30 @@
+<st-header
+  [title]="'Available Times'"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Slots'"
+  [backButtonIcon]="'ios-arrow-back'"
+  [isToolbarShow]="true"
+  [isSubToolbarShow]="false"
+  class="check-in-out-slots__header">
+</st-header>
+
+<ion-content
+  class="ion-padding check-in-out-slots__content"
+  #content>
+
+  <ng-container *ngIf="(selectedSlot$ | async) as slot else noSpotsAvailable">
+    <ion-list>
+      <ion-item *ngFor="let spot of slot.spots" button (click)="selectSpot(spot)">
+        <ion-label>
+          <ion-text>
+            <p>{{ spot.slotDateTime | date: 'mediumTime' }}</p>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+</ion-content>
+
+<ng-template #noSpotsAvailable>
+  <p class="check-in-out-slots__empty-block-message">There are no spots available.</p>
+</ng-template>
