@@ -139,8 +139,8 @@ export class CommonService {
       .toPromise();
   }
 
-  get guestLoginSupportedInEnv(): boolean {
-    const currentEnv = this.environmentFacadeService.getEnvironmentObject().environment;
-    return currentEnv == EnvironmentType.develop || currentEnv == EnvironmentType.feature1;
-  }
+  // get guestLoginSupportedInEnv(): boolean {
+  //   const currentEnv = this.environmentFacadeService.getEnvironmentObject().environment;
+  //   return currentEnv == EnvironmentType.develop || currentEnv == EnvironmentType.feature1;
+  // }
 }
