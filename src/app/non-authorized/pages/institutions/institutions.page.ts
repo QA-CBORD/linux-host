@@ -88,8 +88,7 @@ export class InstitutionsPage implements OnInit {
     await this.commonService.getInstitution(institution.id, false);
     this.commonService.getInstitutionPhoto(false, null);
     await this.commonService.getInstitutionBgColor(false);
-    const preloginSupported = this.commonService.guestLoginSupportedInEnv;
-    const shouldGo2Prelogin = institution.guestSettings.canLogin && preloginSupported;
+    const shouldGo2Prelogin = institution.guestSettings.canLogin;
     (shouldGo2Prelogin && this.navigate2PreLogin(institution)) || this.navigate2Login(institution);
   }
 
