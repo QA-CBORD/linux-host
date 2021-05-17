@@ -16,7 +16,9 @@ import {
 } from '@sections/housing/check-in-out/check-in-out.model';
 import { HousingService } from '@sections/housing/housing.service';
 import {
+  BehaviorSubject,
   Observable,
+  of,
   throwError
 } from 'rxjs';
 import {
@@ -31,12 +33,11 @@ import {
   styleUrls: ['./check-in-out.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckInOutPage implements OnInit {  
-  checkInOutSlots$: Observable<CheckInOutSlot[]>;
-
+export class CheckInOutPage implements OnInit {
   availableSlots: CheckInOutSpot[] = [];
   availableSlots$: Observable<CheckInOutSpot>;
   checkInOutKey: number;
+  stillLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(
     private _route: ActivatedRoute,
@@ -53,7 +54,7 @@ export class CheckInOutPage implements OnInit {
 
   private _initCheckInOutSlotsObservable(): void {
     this._loadingService.showSpinner();
-    
+    this.stillLoading$.next(true);
     this.availableSlots$ = this._housingService.getCheckInOutSlots(this.checkInOutKey)
       .pipe(
         flatMap(data => {
@@ -67,12 +68,15 @@ export class CheckInOutPage implements OnInit {
               });
             }
           });
+          
+          this.stillLoading$.next(false);
           return this.availableSlots;
         }),
         tap((data) => {
           this._loadingService.closeSpinner();
         }),
         catchError((error: any) => {
+          this.stillLoading$.next(false);
           this._loadingService.closeSpinner();
           return throwError(error);
         })
