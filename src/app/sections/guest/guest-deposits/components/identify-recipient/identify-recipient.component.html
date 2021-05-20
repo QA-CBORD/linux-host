@@ -18,13 +18,17 @@
           </ion-item>
         </ion-col>
         <ion-col size="3">
-          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">{{contentString.removeText}}</ion-button>
+          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">{{
+            contentString.removeText
+          }}</ion-button>
         </ion-col>
       </ion-row>
       <ion-row *ngIf="recipients.length <= 10" class="recipient-row ion-padding-bottom">
         <ion-col>
           <ion-item lines="none">
-            <ion-label>{{ recipients.length ? someoneElseRecipient.nickname : contentString.addNewRecipientText }}</ion-label>
+            <ion-label>{{
+              recipients.length ? someoneElseRecipient.nickname : contentString.addNewRecipientText
+            }}</ion-label>
             <ion-radio slot="start" mode="md" slot="start" [value]="someoneElseRecipient"></ion-radio>
           </ion-item>
         </ion-col>
@@ -35,8 +39,12 @@
         <ng-container [formArrayName]="newRecipientFormName">
           <ion-grid class="ion-no-padding">
             <ion-row>
-              <ion-col size="12" *ngFor="let recipientFormCtrl of newRecipientFields.controls; let i = index">
+              <ion-col
+                size="12"
+                *ngFor="let recipientFormCtrl of newRecipientFields.controls; let i = index; let isLast = last"
+              >
                 <st-input-floating-label
+                  #newRecipientField
                   class="form__control"
                   [label]="newRecepientFormRef[i].fieldName"
                   [formControl]="newRecipientFields.controls[i]"
@@ -45,6 +53,7 @@
                     newRecipientFields.controls[i].errors &&
                     (newRecipientFields.controls[i].dirty || newRecipientFields.controls[i].touched)
                   "
+                  [stFocusNext]="isLast ? null : getNextField(i + 1)"
                 >
                 </st-input-floating-label>
               </ion-col>
