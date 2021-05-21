@@ -1,16 +1,29 @@
 <ion-header mode="ios">
   <ion-toolbar>
-    <ion-title class="housing-title">Housing</ion-title>
+    <ion-title class="housing-title"><h1>Housing</h1></ion-title>
   </ion-toolbar>
 
   <st-terms></st-terms>
+  <ion-segment [(ngModel)]="_selectedHousingTab">
+    <ion-segment-button [value]="SelectedHousingTab.Forms">Forms</ion-segment-button>
+    <ion-segment-button [value]="SelectedHousingTab.Rooms">Rooms</ion-segment-button>
+    <ion-segment-button [value]="SelectedHousingTab.Contracts">Contracts</ion-segment-button>
+  </ion-segment>
 </ion-header>
 
-<ion-content class="ion-padding housing-content">
-  <st-applications></st-applications>
-  <st-contracts></st-contracts>
-  <st-non-assignments></st-non-assignments>
-  <st-contract-list></st-contract-list>
-  <st-check-in-out></st-check-in-out> 
-  <st-rooms></st-rooms>
+<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Forms">
+    <st-applications></st-applications>
+    <st-non-assignments></st-non-assignments>
 </ion-content>
+
+<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Rooms">
+    <st-check-in-out></st-check-in-out> 
+    <st-rooms></st-rooms>
+</ion-content>
+
+<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Contracts">
+    <st-contracts></st-contracts>
+    <st-contract-list></st-contract-list>
+</ion-content>
+
+  

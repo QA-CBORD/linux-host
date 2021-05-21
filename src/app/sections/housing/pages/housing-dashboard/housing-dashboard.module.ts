@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { TermsModule } from '../../terms/terms.module';
@@ -19,6 +19,7 @@ const imports = [
   CommonModule,
   ReactiveFormsModule,
   IonicModule,
+  FormsModule,
   TermsModule,
   ApplicationsModule,
   ContractsModule,
