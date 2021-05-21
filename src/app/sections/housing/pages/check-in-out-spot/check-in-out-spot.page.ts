@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -43,6 +44,7 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
+    private _datePipe: DatePipe
   ) { }
 
   ngOnInit() {
@@ -65,7 +67,7 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
   async selectSpot(selectedSpot: CheckInOutSlot): Promise<void> {
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: `Are you sure you want to select this time?`,
+      message: `Are you sure you want to select ${this._datePipe.transform(selectedSpot.slotDateTime, 'MMM, d, y, h:mm a')}?`,
       buttons: [
         {
           text: 'NO',
