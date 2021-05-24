@@ -12,7 +12,7 @@
   class="ion-padding check-in-out-slots__content"
   #content>
 
-  <ng-container *ngIf="(availableSlots$ | async) as slots else noSlotsAvailable">
+  <ng-container *ngIf="availableSlots$ | async; else noSlotsAvailable">
     <ion-list>
       <ion-item *ngFor="let slot of availableSlots" button (click)="showAvailableSpots(slot)" detail>
         <ion-label>
@@ -24,5 +24,5 @@
 </ion-content>
 
 <ng-template #noSlotsAvailable>
-  <p class="check-in-out-slots__empty-block-message">There are no slots available.</p>
+  <p *ngIf="!(stillLoading$ | async)" class="check-in-out-slots__empty-block-message">There are no slots available.</p>
 </ng-template>
