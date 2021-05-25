@@ -2,19 +2,26 @@
 
 :host {
   display: block;
-  border-top: 1px solid $color-light-gray;
-  border-bottom: 1px solid $color-light-gray;
+  // border-top: 1px solid $color-light-gray;
+  // border-bottom: 1px solid $color-light-gray;
 }
 
 .terms {
   --inner-padding-end: 0;
+  --background: #F1f1f1;
+  border-radius: 10px;
+  margin: 0px 16px;
 }
+
+.label-container {
+  @include chevron-down(0);
+}
+
 
 .terms-label {
   @include font-nunito-heavy(16px);
-  @include chevron-down(0);
 
-  color: rgba($color-black, 0.6);
+  color: rgba($color-black, 1);
   padding-right: 20px;
   position: relative;
 
@@ -22,6 +29,12 @@
     background-color: transparent;
     transform: translateY(-45%);
   }
+}
+
+.terms-value
+{
+  @include font-nunito-heavy(16px);
+  color: rgba($color-black, 0.6);
 }
 
 .terms-select {

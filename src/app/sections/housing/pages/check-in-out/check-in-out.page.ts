@@ -70,6 +70,7 @@ export class CheckInOutPage implements OnInit {
           });
           
           this.stillLoading$.next(false);
+          this.availableSlots = this.availableSlots.sort((a, b) => a.slotDateTime.getTime() - b.slotDateTime.getTime());
           return this.availableSlots;
         }),
         tap((data) => {
