@@ -49,20 +49,22 @@
 
     <!-- Permissions -->
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Camera -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <!-- Geolocation API -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.location.gps" />
-    <!-- Network API -->
+
+    <!-- Network API  -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- Video -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!-- NFC -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- NFC (HID) -->
     <uses-permission android:name="android.permission.NFC" />
-    
+
     <!-- Remove permissions -->
     <uses-permission
         android:name="android.permission.ACCESS_BACKGROUND_LOCATION"
