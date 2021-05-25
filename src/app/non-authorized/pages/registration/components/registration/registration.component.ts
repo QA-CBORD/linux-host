@@ -53,12 +53,17 @@ export class RegistrationComponent implements OnInit {
     this.registrationFormGroup = this.fb.group(formFieldList.controls);
     fields.forEach(field => {
       field.control = this.registrationFormGroup.get(field.name);
+
       if (field.name != STATICFIELDS.password) {
         field.control.valueChanges.subscribe(value => {
           field.touched = true;
           field.value = value;
           field.validate();
         });
+
+        if (field.name === STATICFIELDS.phone) {
+          field.type = 'tel';
+        }
       }
     });
     this.horizontalFields = formFieldList.horizontalAlignedFields;
