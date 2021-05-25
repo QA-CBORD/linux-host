@@ -49,8 +49,6 @@
 
     <!-- Permissions -->
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <!-- Camera -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -62,7 +60,8 @@
 
     <!-- Network API  -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- NFC (HID) -->
     <uses-permission android:name="android.permission.NFC" />
 
