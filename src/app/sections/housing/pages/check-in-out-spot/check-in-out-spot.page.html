@@ -1,5 +1,6 @@
 <st-header
-  [title]="'Available Times'"
+  *ngIf="(selectedSlot$ | async) as item"
+  title="{{ item.slotDateTime | date: 'longDate' }} Available Times"
   [isTitleShow]="true"
   [backButtonTitle]="'Slots'"
   [backButtonIcon]="'ios-arrow-back'"
@@ -17,7 +18,7 @@
       <ion-item *ngFor="let spot of slot.spots" button (click)="selectSpot(spot)">
         <ion-label>
           <ion-text>
-            <p>{{ spot.slotDateTime | date: 'mediumTime' }}</p>
+            <p>{{ spot.slotDateTime | date: 'shortTime' }}</p>
           </ion-text>
         </ion-label>
       </ion-item>
