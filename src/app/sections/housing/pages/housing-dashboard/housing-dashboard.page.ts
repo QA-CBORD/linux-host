@@ -8,6 +8,8 @@ import { HousingService } from '../../housing.service';
 
 import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
+export enum SelectedHousingTab { Forms, Rooms, Contracts }
+
 @Component({
   selector: 'st-housing-dashboard',
   templateUrl: './housing-dashboard.page.html',
@@ -15,6 +17,8 @@ import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HousingDashboardPage implements OnInit, OnDestroy {
+  SelectedHousingTab = SelectedHousingTab; // needed to reference enum on front-end
+  _selectedHousingTab: SelectedHousingTab = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();
 
   isHeaderVisible: boolean = false;

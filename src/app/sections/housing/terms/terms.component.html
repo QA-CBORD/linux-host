@@ -1,7 +1,7 @@
 <ng-container *ngIf="(terms$ | async) as terms">
-  <ion-item class="ion-no-padding terms" *ngIf="terms.length">
-    <ion-label class="ion-text-center">
-      <span class="terms-label">{{ label }}</span>
+  <ion-item lines="none" class="terms" *ngIf="terms.length">
+    <ion-label class="ion-margin-end label-container">
+      <span class="terms-label">Term: </span><span class="terms-value">{{ label }}</span>
     </ion-label>
 
     <ion-select
