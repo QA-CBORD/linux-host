@@ -36,7 +36,7 @@ export class GlobalNavService {
   }
 
   showNavBar(): void {
-    setTimeout(() => this._isNavBarShown$.next(true));
+    this._isNavBarShown$.next(true);
   }
 
   expandNavBarMenu() {
