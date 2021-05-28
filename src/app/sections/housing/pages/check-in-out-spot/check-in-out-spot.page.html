@@ -1,6 +1,6 @@
 <st-header
   *ngIf="(selectedSlot$ | async) as item"
-  title="{{ item.slotDateTime | date: 'longDate' }} Available Times"
+  title="{{ item.slotDateTime | date: 'longDate' }} Times"
   [isTitleShow]="true"
   [backButtonTitle]="'Slots'"
   [backButtonIcon]="'ios-arrow-back'"
