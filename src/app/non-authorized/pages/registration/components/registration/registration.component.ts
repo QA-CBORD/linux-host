@@ -71,7 +71,6 @@ export class RegistrationComponent implements OnInit {
           field.validate();
         });
         if (field.name == STATICFIELDS.phone) {
-          field.type = 'tel';
           field.control.setValidators(this.phoneErrors());
         } else if (field.name == STATICFIELDS.userName) {
           field.control.setValidators(this.emailError());

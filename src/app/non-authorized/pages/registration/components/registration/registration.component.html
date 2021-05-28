@@ -53,7 +53,7 @@
             [label]="field.label"
             [formControlName]="field.name"
             [control]="field.control"
-            [isError]="field.control?.errors && field.touched"
+            [isError]="field.hasError"
             [type]="field.type"
             [idd]="field.idd"
             enterkeyhint="go"
@@ -61,7 +61,7 @@
             aria-describedby="errorMsg"
           >
           </st-input-floating-label>
-          <div *ngIf="field.control?.errors && field.touched" id="errorMsg" aria-live="assertive" class="container__form__controls--error">
+          <div *ngIf="field.hasError" id="errorMsg" aria-live="assertive" class="container__form__controls--error">
               {{ field.control?.errors?.errorMsg }}
           </div>
         </div>

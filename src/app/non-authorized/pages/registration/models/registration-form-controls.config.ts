@@ -35,8 +35,8 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     label: 'Phone Number',
     idd: 'phone_number',
     name: STATICFIELDS.phone,
-    type: 'text',
-    cValidator: [SupportedInputValidators.phoneNumber()],
+    type: 'tel',
+    cValidator: [SupportedInputValidators.min(3), SupportedInputValidators.max(32)],
     validators: ['', Validators.required],
   }),
   password: new Field({
