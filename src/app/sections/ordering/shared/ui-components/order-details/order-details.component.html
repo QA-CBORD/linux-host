@@ -176,7 +176,7 @@
       >
       </st-input-floating-label>
       <br />
-      <div id="phoneMessage" aria-live="assertive" class="order-details--error">
+      <div *ngIf="phone.touched" id="phoneMessage" aria-live="assertive" class="order-details--error">
         {{ phone.errors?.errorMsg }}
       </div>
     </div>
