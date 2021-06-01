@@ -1,3 +1,5 @@
+import { ONE_LETTER_MIN } from "@core/utils/regexp-patterns";
+
 export interface InputValidator {
   test: (value) => boolean;
 }
@@ -62,7 +64,7 @@ export class SupportedInputValidators {
 
   static minOneLetter: InputValidator = {
     test: value => {
-      return /[a-z]|[A-Z]/.test(value);
+      return ONE_LETTER_MIN.test(value);
     },
   };
 
