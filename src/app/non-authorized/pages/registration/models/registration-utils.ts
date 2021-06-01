@@ -1,4 +1,4 @@
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { LookupFieldType } from '@core/model/institution/institution-lookup-field.model';
 import { Observable } from 'rxjs';
 import { InputValidator } from './password-validation';
@@ -63,6 +63,7 @@ export interface formField {
   hasError?: boolean;
   value?: string;
   touched?: boolean;
+  errorMessage?: ((control: AbstractControl) => ValidationErrors)[];
   validate?: () => boolean;
   copy?: () => Field;
 }
@@ -82,6 +83,7 @@ export class Field implements formField {
   guestOnly?: boolean;
   hasError?: boolean;
   touched?: boolean;
+  errorMessage?: ((control: AbstractControl) => ValidationErrors)[]
   constructor(private formField?: formField) {
     this.alignHorizontal = formField.alignHorizontal;
     this.label = formField.label;
@@ -96,6 +98,7 @@ export class Field implements formField {
     this.guestOnly = formField.guestOnly;
     this.hasError = formField.hasError;
     this.touched = formField.touched;
+    this.errorMessage = formField.errorMessage;
   }
   validate(): boolean {
     if (this.touched && this.formField.cValidator.length) {

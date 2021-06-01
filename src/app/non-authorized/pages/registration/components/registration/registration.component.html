@@ -26,7 +26,16 @@
                 [idd]="firstNameField.idd"
                 enterkeyhint="go"
                 tabindex="0"
+                [attr.aria-describedby]="firstNameField.label"
               ></st-input-floating-label>
+              <div
+                *ngIf="firstNameField.hasError"
+                [attr.id]="firstNameField.label"
+                aria-live="assertive"
+                class="container__form__controls--error"
+              >
+                {{ firstNameField.control?.errors?.errorMsg }}
+              </div>
             </ion-col>
             <ion-col>
               <st-input-floating-label
@@ -38,7 +47,16 @@
                 [idd]="lastNameField.idd"
                 enterkeyhint="go"
                 tabindex="0"
+                [attr.aria-describedby]="lastNameField.label"
               ></st-input-floating-label>
+              <div
+                *ngIf="lastNameField.hasError"
+                [attr.id]="lastNameField.label"
+                aria-live="assertive"
+                class="container__form__controls--error"
+              >
+                {{ lastNameField.control?.errors?.errorMsg }}
+              </div>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -58,11 +76,16 @@
             [idd]="field.idd"
             enterkeyhint="go"
             tabindex="0"
-            aria-describedby="errorMsg"
+            [attr.aria-describedby]="field.label"
           >
           </st-input-floating-label>
-          <div *ngIf="field.hasError" id="errorMsg" aria-live="assertive" class="container__form__controls--error">
-              {{ field.control?.errors?.errorMsg }}
+          <div
+            *ngIf="field.hasError"
+            [attr.id]="field.label"
+            aria-live="assertive"
+            class="container__form__controls--error"
+          >
+            {{ field.control?.errors?.errorMsg }}
           </div>
         </div>
       </div>

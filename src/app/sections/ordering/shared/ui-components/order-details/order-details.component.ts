@@ -363,7 +363,8 @@ export enum FORM_CONTROL_NAMES {
   tip = 'tip',
   note = 'note',
   phone = 'phone',
-  email = 'email'
+  email = 'email',
+  name = 'name',
 }
 
 export const CONTROL_ERROR = {

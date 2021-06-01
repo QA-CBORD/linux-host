@@ -62,3 +62,5 @@ export const EXPRTN_DATE_7_REGEXP = /[^\d\/]|^[\/]{0,}$/g;
 
 // Two '//'
 export const EXPRTN_DATE_8_REGEXP = /\/\//g;
+
+export const ONE_LETTER_MIN = /[a-z]|[A-Z]/;

@@ -3,9 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { formControlErrorDecorator } from '@core/utils/general-helpers';
-import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController } from '@ionic/angular';
-import { CONTROL_ERROR, FORM_CONTROL_NAMES } from '@sections/ordering';
 import { Observable, of } from 'rxjs';
 import {
   buildPasswordValidators,
@@ -15,12 +13,7 @@ import { Field, formField, STATICFIELDS } from '../../models/registration-utils'
 import { RegistrationServiceFacade } from '../../services/registration-service-facade';
 import { RegistrationSuccessComponent } from '../registration-success/registration-success.component';
 
-const EMAIL_CONTROL_ERROR = {
-  [FORM_CONTROL_NAMES.email]: {
-    validEmail: 'Enter a valid email',
-    required: 'Email is required',
-  }
-};
+const mediaType = 'Media Value';
 
 @Component({
   selector: 'st-registration',
@@ -63,17 +56,15 @@ export class RegistrationComponent implements OnInit {
     this.registrationFormGroup = this.fb.group(formFieldList.controls);
     fields.forEach(field => {
       field.control = this.registrationFormGroup.get(field.name);
-      
+      field.control.setValidators(field.errorMessage);
       if (field.name != STATICFIELDS.password) {
         field.control.valueChanges.subscribe(value => {
           field.touched = true;
           field.value = value;
           field.validate();
         });
-        if (field.name == STATICFIELDS.phone) {
-          field.control.setValidators(this.phoneErrors());
-        } else if (field.name == STATICFIELDS.userName) {
-          field.control.setValidators(this.emailError());
+        if (field.label == mediaType) {
+            this.mediaErrorMessage(field);
         }
       }
     });
@@ -147,25 +138,9 @@ export class RegistrationComponent implements OnInit {
       }
     );
   }
-
-  private emailError() {
-    return [
-      formControlErrorDecorator(
-        Validators.required,
-        EMAIL_CONTROL_ERROR[FORM_CONTROL_NAMES.email].required
-      ),
-      formControlErrorDecorator(
-        Validators.pattern(EMAIL_REGEXP),
-        EMAIL_CONTROL_ERROR[FORM_CONTROL_NAMES.email].validEmail
-      ),
-    ];
-  }
-
-  private phoneErrors() {
-    return [
-      formControlErrorDecorator(Validators.required, CONTROL_ERROR[FORM_CONTROL_NAMES.phone].required),
-      formControlErrorDecorator(Validators.minLength(3), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].min),
-      formControlErrorDecorator(Validators.maxLength(32), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
-    ];
+  
+  private mediaErrorMessage(field: Field) {
+    field.control.setValidators(formControlErrorDecorator(Validators.required,
+      'Media value is required'));
   }
 }
