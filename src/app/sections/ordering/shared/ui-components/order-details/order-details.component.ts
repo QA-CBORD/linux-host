@@ -119,7 +119,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get controlsNames() {
-    return DETAILS_FORM_CONTROL_NAMES;
+    return FORM_CONTROL_NAMES;
   }
 
   get isAddressClickable(): boolean {
@@ -164,38 +164,38 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   initForm() {
     this.detailsForm = this.fb.group({
-      [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
-      [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
-      [DETAILS_FORM_CONTROL_NAMES.note]: [''],
-      [DETAILS_FORM_CONTROL_NAMES.phone]: [''],
+      [FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
+      [FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
+      [FORM_CONTROL_NAMES.note]: [''],
+      [FORM_CONTROL_NAMES.phone]: [''],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
       const tipErrors = [
         formControlErrorDecorator(
           validateLessThanOther(this.subTotal),
-          CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal
+          CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal
         ),
-        formControlErrorDecorator(validateCurrency, CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].currency),
-        formControlErrorDecorator(validateGreaterOrEqualToZero, CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].min),
+        formControlErrorDecorator(validateCurrency, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].currency),
+        formControlErrorDecorator(validateGreaterOrEqualToZero, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].min),
       ];
 
-      this.detailsForm.addControl(DETAILS_FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
-      this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
+      this.detailsForm.addControl(FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
+      this.detailsForm.controls[FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
     }
     const phoneErrors = [
         formControlErrorDecorator(
         Validators.required,
-        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].zero
+        CONTROL_ERROR[FORM_CONTROL_NAMES.phone].required
       ),
       formControlErrorDecorator(
         Validators.minLength(3),
-        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].min
+        CONTROL_ERROR[FORM_CONTROL_NAMES.phone].min
       ),
       formControlErrorDecorator(Validators.maxLength(32), 
-      CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].max),
+      CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
     ];
-    this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
+    this.detailsForm.controls[FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
     this.subscribeOnFormChanges();
   }
 
@@ -223,19 +223,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get paymentFormControl(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.paymentMethod);
+    return this.detailsForm.get(FORM_CONTROL_NAMES.paymentMethod);
   }
 
   get tipFormControl(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.tip);
+    return this.detailsForm.get(FORM_CONTROL_NAMES.tip);
   }
 
   get cvvFormControl(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
+    return this.detailsForm.get(FORM_CONTROL_NAMES.cvv);
   }
 
   get phone(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.phone);
+    return this.detailsForm.get(FORM_CONTROL_NAMES.phone);
   }
   
   openActionSheet() {
@@ -247,7 +247,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   } 
 
   private get addressInfoFormControl(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
+    return this.detailsForm.get(FORM_CONTROL_NAMES.address);
   }
 
   private subscribeOnFormChanges() {
@@ -260,14 +260,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   private addCvvControl() {
     this.showCVVControl = true;
     this.detailsForm.addControl(
-      DETAILS_FORM_CONTROL_NAMES.cvv,
+      FORM_CONTROL_NAMES.cvv,
       this.fb.control('', [Validators.required, cvvValidationFn])
     );
   }
 
   private removeCvvControl() {
     this.showCVVControl = false;
-    this.detailsForm.removeControl(DETAILS_FORM_CONTROL_NAMES.cvv);
+    this.detailsForm.removeControl(FORM_CONTROL_NAMES.cvv);
   }
 
   async showAddressListModal(): Promise<void> {
@@ -327,13 +327,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private async updateFormErrorsByContentStrings(): Promise<void> {
-    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].currency = await this.contentStrings.formErrorTipInvalidFormat
+    CONTROL_ERROR[FORM_CONTROL_NAMES.tip].currency = await this.contentStrings.formErrorTipInvalidFormat
       .pipe(take(1))
       .toPromise();
-    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].min = await this.contentStrings.formErrorTipMinimum
+    CONTROL_ERROR[FORM_CONTROL_NAMES.tip].min = await this.contentStrings.formErrorTipMinimum
       .pipe(take(1))
       .toPromise();
-    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal = await this.contentStrings.formErrorTipSubtotal
+    CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal = await this.contentStrings.formErrorTipSubtotal
       .pipe(take(1))
       .toPromise();
   }
@@ -356,23 +356,25 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 }
 
-export enum DETAILS_FORM_CONTROL_NAMES {
+export enum FORM_CONTROL_NAMES {
   address = 'address',
   paymentMethod = 'paymentMethod',
   cvv = 'cvv',
   tip = 'tip',
   note = 'note',
   phone = 'phone',
+  email = 'email',
+  name = 'name',
 }
 
 export const CONTROL_ERROR = {
-  [DETAILS_FORM_CONTROL_NAMES.tip]: {
+  [FORM_CONTROL_NAMES.tip]: {
     min: 'Tip must be greater than zero',
     currency: 'Invalid format',
     subtotal: 'Tip must be less than the Subtotal amount',
   },
-  [DETAILS_FORM_CONTROL_NAMES.phone]: {
-    zero: 'Phone number is required',
+  [FORM_CONTROL_NAMES.phone]: {
+    required: 'Phone number is required',
     min: 'Phone number must have at least three characters',
     max: 'Phone number is too long',
   },
@@ -389,10 +391,10 @@ export interface AddressModalSettings {
 
 export interface OrderDetailsFormData {
   data: {
-    [DETAILS_FORM_CONTROL_NAMES.address]: BuildingInfo;
-    [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: UserAccount;
-    [DETAILS_FORM_CONTROL_NAMES.note]: string;
-    [DETAILS_FORM_CONTROL_NAMES.phone]: string;
+    [FORM_CONTROL_NAMES.address]: BuildingInfo;
+    [FORM_CONTROL_NAMES.paymentMethod]: UserAccount;
+    [FORM_CONTROL_NAMES.note]: string;
+    [FORM_CONTROL_NAMES.phone]: string;
   };
   valid: boolean;
 }

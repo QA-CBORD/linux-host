@@ -3,7 +3,7 @@ import { CartService, OrderDetailOptions } from '@sections/ordering/services/car
 import { combineLatest, Observable, from, Subscription, zip, of } from 'rxjs';
 import {
   AddressModalSettings,
-  DETAILS_FORM_CONTROL_NAMES,
+  FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
   OrderDetailsFormData,
@@ -163,7 +163,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onCartStateFormChanged(state) {
-    this.cartService.updateOrderAddress(state.data[DETAILS_FORM_CONTROL_NAMES.address]);
+    this.cartService.updateOrderAddress(state.data[FORM_CONTROL_NAMES.address]);
     this.cartFormState = state;
   }
 
@@ -301,9 +301,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private async submitOrder(): Promise<void> {
     await this.loadingService.showSpinner();
-    let accountId = this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id;
-    this.cartService.updateOrderNote(this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.note]);
-    this.cartService.updateOrderPhone(this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.phone]);
+    let accountId = this.cartFormState.data[FORM_CONTROL_NAMES.paymentMethod].id;
+    this.cartService.updateOrderNote(this.cartFormState.data[FORM_CONTROL_NAMES.note]);
+    this.cartService.updateOrderPhone(this.cartFormState.data[FORM_CONTROL_NAMES.phone]);
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
@@ -341,7 +341,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService
       .submitOrder(
         accountId,
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
+        this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null,
         this.cartService.clientOrderId
       )
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))

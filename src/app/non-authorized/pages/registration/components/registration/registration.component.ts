@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { formControlErrorDecorator } from '@core/utils/general-helpers';
 import { ModalController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import {
@@ -11,6 +12,8 @@ import {
 import { Field, formField, STATICFIELDS } from '../../models/registration-utils';
 import { RegistrationServiceFacade } from '../../services/registration-service-facade';
 import { RegistrationSuccessComponent } from '../registration-success/registration-success.component';
+
+const mediaType = 'Media Value';
 
 @Component({
   selector: 'st-registration',
@@ -53,16 +56,15 @@ export class RegistrationComponent implements OnInit {
     this.registrationFormGroup = this.fb.group(formFieldList.controls);
     fields.forEach(field => {
       field.control = this.registrationFormGroup.get(field.name);
-
+      field.control.setValidators(field.errorMessage);
       if (field.name != STATICFIELDS.password) {
         field.control.valueChanges.subscribe(value => {
           field.touched = true;
           field.value = value;
           field.validate();
         });
-
-        if (field.name === STATICFIELDS.phone) {
-          field.type = 'tel';
+        if (field.label == mediaType) {
+            this.mediaErrorMessage(field);
         }
       }
     });
@@ -135,5 +137,10 @@ export class RegistrationComponent implements OnInit {
         this.loadingService.closeSpinner();
       }
     );
+  }
+  
+  private mediaErrorMessage(field: Field) {
+    field.control.setValidators(formControlErrorDecorator(Validators.required,
+      'Media value is required'));
   }
 }
