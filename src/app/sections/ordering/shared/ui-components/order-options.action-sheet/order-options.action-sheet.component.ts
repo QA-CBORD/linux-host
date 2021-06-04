@@ -37,6 +37,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() settings: any;
   @Input() activeDeliveryAddressId: string;
   @Input() activeOrderType: ORDER_TYPE = null;
+  @Input() showNavBarOnDestroy: boolean = true;
   @ViewChild(StDateTimePickerComponent) child: StDateTimePickerComponent;
 
   activeMerchant$: Observable<MerchantInfo>;
@@ -80,7 +81,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.globalNav.showNavBar();
+    if(this.showNavBarOnDestroy){
+      this.globalNav.showNavBar();
+    }
   }
 
   get enumOrderTypes() {
@@ -194,6 +197,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   async onSubmit() {
+
     let date = { dueTime: this.selectedTimeStamp || this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
     const chooseAddressError = await this.contentStrings.formErrorChooseAddress.pipe(take(1)).toPromise();
 
@@ -225,7 +229,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
-        () =>
+        () => {
+          this.showNavBarOnDestroy = false;
           this.modalController.dismiss(
             {
               address: this.orderOptionsData.address,
@@ -234,7 +239,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
               isASAP: date.isASAP,
             },
             BUTTON_TYPE.CONTINUE
-          ),
+          );
+        },
         err => this.onToastDisplayed(err)
       );
   }

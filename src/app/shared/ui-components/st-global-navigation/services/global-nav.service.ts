@@ -32,7 +32,7 @@ export class GlobalNavService {
   }
 
   hideNavBar(): void {
-    setTimeout(() => this._isNavBarShown$.next(false));
+    this._isNavBarShown$.next(false);
   }
 
   showNavBar(): void {

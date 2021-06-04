@@ -99,7 +99,7 @@ export class UserPassForm implements OnInit {
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.signupEnabled$ = this.isSignupEnabled$();
-    const data = this.messageProxy.get<any>();
+    const data = this.messageProxy.get<any>() || {};
     this.navedAsGuest$ = of(data.navParams && data.navParams.isGuestUser);
     this.cdRef.detectChanges();
     this.initializeInstitutionInfo();

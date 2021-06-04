@@ -26,7 +26,7 @@ export class GuestDashboard implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.sections = this.messageProxy.get<GuestDashboardSection[]>();
+    this.sections = this.messageProxy.get<GuestDashboardSection[]>() || [];
     this.loadInfo();
   }
 

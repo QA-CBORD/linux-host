@@ -122,6 +122,7 @@ export class InstitutionsPage implements OnInit {
     this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.HOSTED:
+        this.messageProxy.put({ navParams: { isGuestUser: false } });
         this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
         break;
       case LoginState.EXTERNAL:
