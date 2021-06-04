@@ -94,7 +94,7 @@ export class CommonService {
 
   getString<T extends ContentStringModel>(category: ContentStringCategory): T {
     const data = this.messageProxy.get<any>();
-    return <T>data[category] || ({} as any);
+    return data && <T>data[category] || ({} as any);
   }
 
   loadContentString<T extends ContentStringModel>(

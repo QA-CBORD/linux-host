@@ -99,7 +99,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.globalNav.showNavBar();
     this.networkSubcription.unsubscribe();
   }
 

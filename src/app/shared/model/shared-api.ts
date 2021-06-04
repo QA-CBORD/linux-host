@@ -25,6 +25,6 @@ export class MutableMessage {
   }
 
   get<T>(): T {
-    return (this.message as T) || ({} as any);
+    return (this.message as T);
   }
 }

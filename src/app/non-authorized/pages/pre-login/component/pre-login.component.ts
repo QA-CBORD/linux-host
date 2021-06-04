@@ -41,7 +41,7 @@ export class PreLoginComponent implements OnInit {
     private readonly messageProxy: MessageProxy
   ) {}
   async ngOnInit() {
-    const preLoginCs = this.messageProxy.get<PreloginCsModel>();
+    const preLoginCs = this.messageProxy.get<PreloginCsModel>() || {} as any;
     this.pageContent = preLoginCs;
     this.getInstitutionInfo();
   }
