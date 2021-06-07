@@ -65,16 +65,14 @@ export class PinPage implements OnInit {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService
   ) {}
-  ngAfterViewInit(): void {
-    this.a11yService.readAloud(this.instructionText).then();
-  }
-
+  
   @Input() pinAction: PinAction;
   @Input() showDismiss: boolean = true;
 
   ngOnInit() {
     this.retrievePinRetrys();
     this.setInstructionText();
+    this.a11yService.readAloud(this.instructionText).then();
   }
 
   private setInstructionText(text: string = null) {
