@@ -290,8 +290,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const { openNow } = await this.activeMerchant$.pipe(take(1)).toPromise();
     if (openNow) {
       this.dateTimePicker = 'ASAP';
-    } else {
+    } else { 
       const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
+      if (this.isMerchantDateUnavailable(schedule)) {
+        return this.onMerchantDateUnavailable();
+      } 
       const firstDay = schedule.days[0].date;
       const [year, month, day] = firstDay.split('-');
       let { hour, period } = schedule.days[0].hourBlocks[0] as any;
@@ -360,6 +363,19 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.contentStrings.labelOrderOptions = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelOrderOptions
     );
+    this.contentStrings.orderingDatesUnavailable = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
+    );
+  }
+  private isMerchantDateUnavailable(schedule: Schedule) {
+    return schedule.days.length == 0;
+  }
+  
+    private async onMerchantDateUnavailable() {
+    const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
+    this.toastService.showToast({ message: noDatesMessage });
+    this.modalController.dismiss();
+    return;
   }
 }
 
