@@ -37,6 +37,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() settings: any;
   @Input() activeDeliveryAddressId: string;
   @Input() activeOrderType: ORDER_TYPE = null;
+  @Input() showNavBarOnDestroy: boolean = true;
   @ViewChild(StDateTimePickerComponent) child: StDateTimePickerComponent;
 
   activeMerchant$: Observable<MerchantInfo>;
@@ -80,7 +81,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.globalNav.showNavBar();
+    if(this.showNavBarOnDestroy){
+      this.globalNav.showNavBar();
+    }
   }
 
   get enumOrderTypes() {
@@ -194,6 +197,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   async onSubmit() {
+
     let date = { dueTime: this.selectedTimeStamp || this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
     const chooseAddressError = await this.contentStrings.formErrorChooseAddress.pipe(take(1)).toPromise();
 
@@ -225,7 +229,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
-        () =>
+        () => {
+          this.showNavBarOnDestroy = false;
           this.modalController.dismiss(
             {
               address: this.orderOptionsData.address,
@@ -234,7 +239,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
               isASAP: date.isASAP,
             },
             BUTTON_TYPE.CONTINUE
-          ),
+          );
+        },
         err => this.onToastDisplayed(err)
       );
   }
@@ -284,8 +290,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const { openNow } = await this.activeMerchant$.pipe(take(1)).toPromise();
     if (openNow) {
       this.dateTimePicker = 'ASAP';
-    } else {
+    } else { 
       const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
+      if (this.isMerchantDateUnavailable(schedule)) {
+        return this.onMerchantDateUnavailable();
+      } 
       const firstDay = schedule.days[0].date;
       const [year, month, day] = firstDay.split('-');
       let { hour, period } = schedule.days[0].hourBlocks[0] as any;
@@ -354,6 +363,19 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.contentStrings.labelOrderOptions = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelOrderOptions
     );
+    this.contentStrings.orderingDatesUnavailable = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
+    );
+  }
+  private isMerchantDateUnavailable(schedule: Schedule) {
+    return schedule.days.length == 0;
+  }
+  
+    private async onMerchantDateUnavailable() {
+    const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
+    this.toastService.showToast({ message: noDatesMessage });
+    this.modalController.dismiss();
+    return;
   }
 }
 

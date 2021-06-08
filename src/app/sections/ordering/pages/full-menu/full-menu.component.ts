@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -33,7 +33,7 @@ import { APP_ROUTES } from '@sections/section.config';
   styleUrls: ['./full-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FullMenuComponent implements OnInit, OnDestroy {
+export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
@@ -60,6 +60,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
     this.initContentStrings();
+  }
+
+  ngAfterViewInit(){
     this.globalNav.hideNavBar();
   }
 
@@ -118,6 +121,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
+        showNavBarOnDestroy: false,
         orderTypes,
         footerButtonName,
         merchantId,

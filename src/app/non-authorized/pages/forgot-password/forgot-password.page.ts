@@ -41,8 +41,7 @@ export class ForgotPasswordPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.pageContents = this.messageProxy.get<ForgotPasswordCsModel>();
-    console.log('pageContents ==> ', this.pageContents);
+    this.pageContents = this.messageProxy.get<ForgotPasswordCsModel>() || {} as any;
     this.initForm();
     setTimeout(() => {
       document.getElementById('form__description-text').focus();

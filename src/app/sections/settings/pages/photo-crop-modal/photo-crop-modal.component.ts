@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ImageCroppedEvent, Dimensions } from 'ngx-image-cropper';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 enum Default {
   HEIGHT = 170,
@@ -36,7 +37,7 @@ const ORIGIN = 0;
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
-export class PhotoCropModalComponent {
+export class PhotoCropModalComponent implements OnInit, OnDestroy {
   cropperPosition = { x1: ORIGIN, y1: ORIGIN, x2: ORIGIN, y2: ORIGIN };
   @Input() profilePhoto: boolean;
   @Input() imageBase64: string;
@@ -52,8 +53,17 @@ export class PhotoCropModalComponent {
     private readonly loadingService: LoadingService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly popoverCtrl: PopoverController,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly globalNav: GlobalNavService
   ) {}
+
+  ngOnInit() {
+    this.globalNav.hideNavBar();
+  }
+
+  ngOnDestroy() {
+    this.globalNav.showNavBar();
+  }
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
