@@ -363,13 +363,17 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.contentStrings.labelOrderOptions = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelOrderOptions
     );
+    this.contentStrings.orderingDatesUnavailable = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
+    );
   }
   private isMerchantDateUnavailable(schedule: Schedule) {
     return schedule.days.length == 0;
   }
   
-    private onMerchantDateUnavailable() {
-    this.toastService.showToast({ message: 'The merchant does not have dates available. Please contact customer service.' });
+    private async onMerchantDateUnavailable() {
+    const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
+    this.toastService.showToast({ message: noDatesMessage });
     this.modalController.dismiss();
     return;
   }
