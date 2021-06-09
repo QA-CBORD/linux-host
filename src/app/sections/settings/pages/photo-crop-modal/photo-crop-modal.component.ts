@@ -37,7 +37,7 @@ const ORIGIN = 0;
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
-export class PhotoCropModalComponent implements OnInit, OnDestroy {
+export class PhotoCropModalComponent {
   cropperPosition = { x1: ORIGIN, y1: ORIGIN, x2: ORIGIN, y2: ORIGIN };
   @Input() profilePhoto: boolean;
   @Input() imageBase64: string;
@@ -54,16 +54,8 @@ export class PhotoCropModalComponent implements OnInit, OnDestroy {
     private readonly photoUploadService: PhotoUploadService,
     private readonly popoverCtrl: PopoverController,
     private readonly toastService: ToastService,
-    private readonly globalNav: GlobalNavService
   ) {}
 
-  ngOnInit() {
-    this.globalNav.hideNavBar();
-  }
-
-  ngOnDestroy() {
-    this.globalNav.showNavBar();
-  }
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
