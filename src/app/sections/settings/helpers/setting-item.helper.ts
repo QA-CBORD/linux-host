@@ -18,7 +18,7 @@ export function getCardStatusValidation(services: SettingsServices): Observable<
   const statusValidation = this as StatusSettingValidation;
   return services.userService
     .getUserData$()
-    .pipe(map((userInfo: UserInfo) => statusValidation.validation[userInfo.cashlessMediaStatus]));
+    .pipe(map(({ cashlessMediaStatus }) => statusValidation.validation[cashlessMediaStatus]));
 }
 
 export async function setBiometricStatus(services: SettingsServices): Promise<void> {
