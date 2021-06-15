@@ -107,9 +107,8 @@ export class MerchantService {
       timeZoneName: 'short',
       day: '2-digit',
       month: 'short',
-      //year: 'numeric',
       weekday: 'short',
-      hour: '2-digit',
+      hour: 'numeric',
       minute: '2-digit',
     }).format(date);
   };

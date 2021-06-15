@@ -110,7 +110,7 @@ export class CartService {
       day: '2-digit',
       month: 'short',
       weekday: 'short',
-      hour: '2-digit',
+      hour: 'numeric',
       minute: '2-digit',
     };
 
