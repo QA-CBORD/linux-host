@@ -1,15 +1,15 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { DatePipe } from '@angular/common';
-import { MerchantOrderTypesInfo } from '@sections/ordering';
-import { extractTimeZonedString } from '@core/utils/date-helper';
+import { MerchantOrderTypesInfo } from '@sections/ordering'; 
+import { CartService } from '@sections/ordering/services';
 
 @Pipe({
   name: 'modifyPrepTime',
 })
 export class ModifyPrepTimePipe implements PipeTransform {
 
-  constructor(private readonly datePipe: DatePipe) {
+  constructor(private cartService: CartService) {
   }
 
   transform(
@@ -34,6 +34,6 @@ export class ModifyPrepTimePipe implements PipeTransform {
       }
     }
 
-    return merchantTimeZone && extractTimeZonedString(new Date(finalTime), merchantTimeZone) || this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
+    return this.cartService.extractTimeZonedString(new Date(finalTime), merchantTimeZone);
   }
 }

@@ -28,7 +28,6 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Settings, User } from '../../../app.global';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Day, Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { extractTimeZonedString } from '@core/utils/date-helper';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 @Injectable({
@@ -101,6 +100,19 @@ export class MerchantService {
       .getMenuMerchants(searchOptions)
       .pipe(tap(merchantList => (this._menuMerchants = merchantList)));
   }
+
+  extractTimeZonedString (date: Date, timeZone: string): string {
+    return Intl.DateTimeFormat('en-US', {
+      timeZone: timeZone,
+      timeZoneName: 'short',
+      day: '2-digit',
+      month: 'short',
+      //year: 'numeric',
+      weekday: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  };
 
   getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
     const searchOptions: MerchantSearchOptions = new MerchantSearchOptions();
@@ -175,7 +187,7 @@ export class MerchantService {
     schedule.days.map(day => {
       day.hourBlocks = day.hourBlocks.map(hour => {
         hour.periods = hour.timestamps.map(dateStr =>
-          extractTimeZonedString(new Date(dateStr), timeZone)
+          this.extractTimeZonedString(new Date(dateStr), timeZone)
             .split(/,/)[2]
             .trim()
         );

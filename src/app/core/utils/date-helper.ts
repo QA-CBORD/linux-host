@@ -88,16 +88,3 @@ export const sortContentStringsBySourceArray = (
 
   return res;
 };
-
-export const extractTimeZonedString = (date: Date, timeZone: string) => {
-  return Intl.DateTimeFormat('en-US', {
-    timeZone: timeZone,
-    timeZoneName: 'short',
-    day: '2-digit',
-    month: 'short',
-    //year: 'numeric',
-    weekday: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
-};

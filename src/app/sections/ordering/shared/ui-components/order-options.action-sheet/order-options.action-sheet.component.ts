@@ -74,7 +74,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
+    setTimeout(() =>this.globalNav.hideNavBar());
     this.initData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
