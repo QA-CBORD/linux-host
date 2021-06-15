@@ -153,10 +153,11 @@ export class CheckInOutSlotResponse implements CheckInOutSlotsResponseOptions {
     if (options == null || typeof options !== 'object') {
       options = {} as CheckInOutSlotsResponseOptions;
   }
-
+  
   this.slots = Array.isArray(options)
       ? options.map((detail: any) => new CheckInOutSlot(detail))
       : [];
+  this.slots.sort((a,b)=> (a.slotDateTime > b.slotDateTime) ? 1: -1);
   }
 }
 
