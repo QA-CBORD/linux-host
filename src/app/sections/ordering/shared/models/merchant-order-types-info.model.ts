@@ -9,4 +9,5 @@ export interface MerchantOrderTypesInfo {
   pickupInstructions: string;
   deliveryInstructions: string;
   dineInInstructions: string;
+  merchantTimeZone: string;
 }

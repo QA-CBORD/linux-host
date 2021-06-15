@@ -9,4 +9,6 @@
 </div>
 
 <ng-template #placeholder>{{contentStrings.labelAsap | async}}</ng-template>
-<ng-template #dateTime>{{ dateTimePicker | date: 'EE, MMM d, h:mm a' }}</ng-template>
+<ng-template #dateTime>{{ dateTimeWithTimeZone }}</ng-template>
+
+<!-- <ng-template #dateTime>{{ dateTimeWithTimeZone || dateTimePicker | date: 'EE, MMM d, h:mm a' }}</ng-template> -->

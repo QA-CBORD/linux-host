@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
@@ -10,6 +10,7 @@ import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +22,14 @@ export class CartService {
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
 
+  merchantTimeZone: string;
+
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService,
-    private readonly uuidGeneratorService: UuidGeneratorService
+    private readonly uuidGeneratorService: UuidGeneratorService,
+    private readonly institutionFacade: InstitutionFacadeService
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -101,6 +105,8 @@ export class CartService {
   async setActiveMerchant(merchant: MerchantInfo): Promise<void> {
     const prevMerchant = this.cart.merchant;
     this.cart.merchant = JSON.parse(JSON.stringify(merchant));
+ 
+    this.merchantTimeZone = merchant.timeZone || await (await this.institutionFacade.cachedInstitutionInfo$.toPromise()).timeZone;
 
     if (prevMerchant && prevMerchant.id !== merchant.id) await this.refreshCartDate();
     if (!prevMerchant) await this.setInitialEmptyOrder();

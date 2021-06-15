@@ -105,7 +105,12 @@ export class CartComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.merchant$ = this.cartService.merchant$;
-    this.orderTypes$ = this.merchantService.orderTypes$;
+    this.orderTypes$ = this.merchantService.orderTypes$.pipe(
+      map((orderType) => {
+        orderType.merchantTimeZone = this.cartService.merchantTimeZone;
+        return orderType;
+      })
+    );
     this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));

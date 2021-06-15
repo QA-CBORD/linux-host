@@ -128,7 +128,11 @@ export class RecentOrderComponent implements OnInit {
       map(orders => orders.find(({ id }) => id === orderId)),
       switchMap(({ merchantId }) =>
         this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
-      )
+      ),
+      map((merchant) => {
+        merchant.orderTypes.merchantTimeZone = merchant.timeZone;
+        return merchant;
+      })
     );
   }
 
@@ -306,6 +310,7 @@ export class RecentOrderComponent implements OnInit {
     id: merchantId,
     storeAddress,
     settings,
+    timeZone
   }: MerchantInfo): Promise<void> {
     const footerButtonName = 'continue';
     const cssClass = 'order-options-action-sheet order-options-action-sheet-p-d';
@@ -323,6 +328,7 @@ export class RecentOrderComponent implements OnInit {
         storeAddress,
         settings,
         activeOrderType: type === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
+        timeZone
       },
     });
 

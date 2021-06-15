@@ -5,7 +5,7 @@ import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
-import { formatDateByContentStrings, getDateTimeInGMT, isSameDay } from '@core/utils/date-helper';
+import { extractTimeZonedString, formatDateByContentStrings, getDateTimeInGMT, isSameDay } from '@core/utils/date-helper';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MerchantInfo } from '@sections/ordering';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -25,7 +25,7 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() dateTimePicker: Date | string;
   @Input() userData: UserInfo;
   @Output() onTimeSelected: EventEmitter<any> = new EventEmitter<any>();
-
+  dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
   private picker: HTMLIonPickerElement;
@@ -101,10 +101,10 @@ export class StDateTimePickerComponent implements OnInit {
       timeStamp = this.getCurrentLocaleTime();
     } else {
       let [hours, mins] = value.split(':');
-      let [minutes, period] = mins.split(' ');
-      timeStamp = this.getTimeStamp(date.value, hours, minutes);
-      if (period.trim() == 'PM' && hours != 12) hours = +hours + 12;
+      let [minutes] = mins.split(' ');
+      timeStamp = this.getTimeStamp(date.value, +hours, minutes);
       dateValue = new Date(year, month - 1, day, hours, minutes);
+      this.dateTimeWithTimeZone = extractTimeZonedString(dateValue, this.merchantInfo.timeZone)
     }
     this.dateTimePicker = dateValue;
     this.onTimeSelected.emit({ dateTimePicker: this.dateTimePicker, timeStamp });
@@ -132,7 +132,7 @@ export class StDateTimePickerComponent implements OnInit {
     if (!this.hasTimeStamp()) return null;
     try {
       const day = this.schedule.days.find(day => day.date == date);
-      const hour = day.hourBlocks.find(h => h.hour == hours);
+      const hour = day.hourBlocks.find(h =>h.hour > 12 && (h.hour-12) == hours || h.hour == hours);
       const index = hour.minuteBlocks.findIndex(min => min == minutes);
       return hour.timestamps.find((ts, idx) => idx == index);
     } catch (e) {
@@ -143,11 +143,9 @@ export class StDateTimePickerComponent implements OnInit {
   private preparePickerArr(i: number = 0): any[] {
     const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
-      (total, block) => [
-        ...total,
-        ...block.minuteBlocks.map(minuteBlock => {
-          return `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock} ${block['period']}`;
-        }),
+      (previous, hourBlock) => [
+        ...previous,
+        ...hourBlock.minuteBlocks.map((minuteBlock, index) => hourBlock.periods[index]),
       ],
       []
     );
