@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, map, switchMap, take } from 'rxjs/operators';
-import { iif, Observable, zip } from 'rxjs';
+import { iif, Observable, of, zip } from 'rxjs';
 
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
@@ -26,6 +26,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 @Component({
   selector: 'st-recent-order',
@@ -51,7 +52,8 @@ export class RecentOrderComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly institutionService: InstitutionFacadeService
   ) {}
 
   ngOnInit() {
@@ -128,7 +130,18 @@ export class RecentOrderComponent implements OnInit {
       map(orders => orders.find(({ id }) => id === orderId)),
       switchMap(({ merchantId }) =>
         this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
-      )
+      ),
+      switchMap(merchant => {
+        merchant.orderTypes.merchantTimeZone = merchant.timeZone;
+        if (!merchant.timeZone)
+          return this.institutionService.cachedInstitutionInfo$.pipe(
+            switchMap(({ timeZone }) => {
+              merchant.orderTypes.merchantTimeZone = timeZone;
+              return of(merchant);
+            })
+          );
+        else return of(merchant);
+      })
     );
   }
 
@@ -306,6 +319,7 @@ export class RecentOrderComponent implements OnInit {
     id: merchantId,
     storeAddress,
     settings,
+    timeZone,
   }: MerchantInfo): Promise<void> {
     const footerButtonName = 'continue';
     const cssClass = 'order-options-action-sheet order-options-action-sheet-p-d';
@@ -323,6 +337,7 @@ export class RecentOrderComponent implements OnInit {
         storeAddress,
         settings,
         activeOrderType: type === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
+        timeZone,
       },
     });
 

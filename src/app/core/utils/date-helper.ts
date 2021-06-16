@@ -35,7 +35,7 @@ export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
 export const convertGMTintoLocalTime = (dueTime, locale, timeZone): string => {
   const idxOfTimezone = dueTime.indexOf('+');
   const updatedDateFormat = `${dueTime.slice(0, idxOfTimezone)}Z`;
-  const localTimeInString: string = new Date(updatedDateFormat).toLocaleString(locale, { 
+  const localTimeInString: string = new Date(updatedDateFormat).toLocaleString(locale, {
     timeZone,
     hour12: false,
     hour: '2-digit',
@@ -43,12 +43,12 @@ export const convertGMTintoLocalTime = (dueTime, locale, timeZone): string => {
     minute: '2-digit',
     second: '2-digit',
     year: 'numeric',
-    month: '2-digit'
-   });
+    month: '2-digit',
+  });
 
   const arrOfDatetime = localTimeInString.split(',');
   const splittedTime = arrOfDatetime[0].split('/');
-  
+
   return `${splittedTime[2]}-${splittedTime[0]}-${splittedTime[1]}T${arrOfDatetime[1].trim()}.000`;
 };
 
@@ -64,20 +64,25 @@ export const isSameDay = (c, n, index = 0): boolean => {
 };
 export const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-export const formatDateByContentStrings = (date: Date,
-                                    weekContentStrings: ContentStringInfo[],
-                                    monthContentStrings: ContentStringInfo[]): string => {
+export const formatDateByContentStrings = (
+  date: Date,
+  weekContentStrings: ContentStringInfo[],
+  monthContentStrings: ContentStringInfo[]
+): string => {
   let formattedWeek = sortContentStringsBySourceArray(weekContentStrings, WEEK);
   let formattedMonth = sortContentStringsBySourceArray(monthContentStrings, MONTH);
 
   return `${formattedWeek[date.getDay()]}, ${formattedMonth[date.getMonth()]} ${date.getDate()}`;
 };
 
-export const sortContentStringsBySourceArray = (contentStrings: ContentStringInfo[], sourceArray: string[]): string[] => {
+export const sortContentStringsBySourceArray = (
+  contentStrings: ContentStringInfo[],
+  sourceArray: string[]
+): string[] => {
   let res = [];
 
   for (let i = 0; i < contentStrings.length; i++) {
-    const index = sourceArray.findIndex((elem) => elem.toLowerCase() === contentStrings[i].name.toLowerCase());
+    const index = sourceArray.findIndex(elem => elem.toLowerCase() === contentStrings[i].name.toLowerCase());
     res[index] = contentStrings[i].value;
   }
 

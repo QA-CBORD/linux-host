@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { distinctUntilChanged, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
@@ -10,6 +10,8 @@ import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +23,15 @@ export class CartService {
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
 
+  merchantTimeZone: string;
+
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService,
-    private readonly uuidGeneratorService: UuidGeneratorService
+    private readonly uuidGeneratorService: UuidGeneratorService,
+    private readonly institutionFacade: InstitutionFacadeService,
+    private readonly datePipe: DatePipe
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -96,16 +102,43 @@ export class CartService {
     this.onStateChanged();
   }
 
+  extractTimeZonedString(date: Date, timeZone: string): string {
+    if (!timeZone) 
+        timeZone = this.merchantTimeZone;
+
+    const options: any = {
+      day: '2-digit',
+      month: 'short',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
+    };
+
+    if (!timeZone) return Intl.DateTimeFormat('en-US', options).format(date);
+
+    options.timeZone = timeZone;
+    options.timeZoneName = 'short';
+
+    return Intl.DateTimeFormat('en-US', options).format(date);
+  }
+
   // --------------------------------------- SETTERS BLOCK ---------------------------------------------//
 
   async setActiveMerchant(merchant: MerchantInfo): Promise<void> {
     const prevMerchant = this.cart.merchant;
     this.cart.merchant = JSON.parse(JSON.stringify(merchant));
-
+    this.merchantTimeZone = this.cart.merchant.timeZone;
     if (prevMerchant && prevMerchant.id !== merchant.id) await this.refreshCartDate();
     if (!prevMerchant) await this.setInitialEmptyOrder();
-
     this.onStateChanged();
+    if (!this.merchantTimeZone) {
+      await this.institutionFacade.cachedInstitutionInfo$
+        .pipe(
+          take(1),
+          map(({ timeZone }) => (this.merchantTimeZone = timeZone))
+        )
+        .toPromise();
+    }
   }
 
   async setActiveMerchantsMenuByOrderOptions(
@@ -227,7 +260,7 @@ export class CartService {
       .getUserData$()
       .pipe(first())
       .toPromise();
-    const timeInGMT = dueTime instanceof Date ? await getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
+    const timeInGMT = dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
     return this.merchantService
       .getDisplayMenu(id, timeInGMT, type)
       .pipe(first())

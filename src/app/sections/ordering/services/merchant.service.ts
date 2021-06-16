@@ -10,7 +10,7 @@ import {
 } from '../shared/models';
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, zip, of } from 'rxjs';
+import { BehaviorSubject, Observable, zip, of, iif } from 'rxjs';
 import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
@@ -27,6 +27,8 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User } from '../../../app.global';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { Day, Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 @Injectable({
   providedIn: 'root',
@@ -47,7 +49,8 @@ export class MerchantService {
     private readonly commerceApiService: CommerceApiService,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly auth: AuthFacadeService
+    private readonly auth: AuthFacadeService,
+    private readonly institutionService: InstitutionFacadeService
   ) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
@@ -97,6 +100,18 @@ export class MerchantService {
       .getMenuMerchants(searchOptions)
       .pipe(tap(merchantList => (this._menuMerchants = merchantList)));
   }
+
+  extractTimeZonedString (date: Date, timeZone: string): string {
+    return Intl.DateTimeFormat('en-US', {
+      timeZone: timeZone,
+      timeZoneName: 'short',
+      day: '2-digit',
+      month: 'short',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
+    }).format(date);
+  };
 
   getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
     const searchOptions: MerchantSearchOptions = new MerchantSearchOptions();
@@ -151,33 +166,37 @@ export class MerchantService {
     );
   }
 
-  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any> {
-    return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType).pipe(
-      map(response => {
-        var { days } = response;
-        this.datemap(days);
-        return response;
+  getMerchantOrderSchedule(merchantId: string, orderType: number, merchantTimeZone: string): Observable<any> {
+    
+    const orderSchedule1$ = this.orderingApiService
+    .getMerchantOrderSchedule(merchantId, orderType)
+    .pipe(
+      map(response => this.dataTransform(response, merchantTimeZone)));
+
+    const orderSchedule2$ = this.institutionService.cachedInstitutionInfo$.pipe(
+      switchMap(({ timeZone }) => {
+        merchantTimeZone = timeZone;
+        return orderSchedule1$;
       })
     );
+    return iif(() => !!merchantTimeZone, orderSchedule1$, orderSchedule2$)
   }
 
-  private datemap(dates: any[]) {
-    return dates.map(date => {
-      const { hourBlocks } = date;
-      date.hourBlocks = hourBlocks.map(hourBlock => {
-        if (hourBlock.hour > 12) {
-          hourBlock['period'] = 'PM';
-          hourBlock.hour = +hourBlock.hour - 12;
-        } else if (hourBlock.hour < 12) {
-          hourBlock['period'] = 'AM';
-        } else {
-          hourBlock['period'] = 'PM';
-        }
-        return hourBlock;
+  private dataTransform(schedule: Schedule, timeZone: string) {
+    schedule.days.map(day => {
+      day.hourBlocks = day.hourBlocks.map(hour => {
+        hour.periods = hour.timestamps.map(dateStr =>
+          this.extractTimeZonedString(new Date(dateStr), timeZone)
+            .split(/,/)[2]
+            .trim()
+        );
+        return hour;
       });
-      return date;
+      return day;
     });
+    return schedule;
   }
+
 
   retrieveUserAddressList(): Observable<AddressInfo[]> {
     return this.userFacadeService.getUserAddresses$();

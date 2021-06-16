@@ -43,4 +43,5 @@ export interface MerchantInfo {
   onCampus: boolean;
   isFavorite?: boolean;
   isAbleToOrder?: boolean;
+  timeZone?: string;
 }

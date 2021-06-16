@@ -74,10 +74,10 @@ export class FavoriteMerchantsComponent implements OnInit {
 
   private async openOrderOptions(merchant): Promise<void> {
     await this.cartService.setActiveMerchant(merchant);
-    await this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings);
+    await this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings,merchant.timeZone);
   }
 
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings): Promise<void> {
+  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings,timeZone): Promise<void> {
     const footerButtonName = 'continue';
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
@@ -91,6 +91,7 @@ export class FavoriteMerchantsComponent implements OnInit {
         merchantId,
         storeAddress,
         settings,
+        timeZone
       },
     });
     modal.onDidDismiss().then(({ data }) => {
