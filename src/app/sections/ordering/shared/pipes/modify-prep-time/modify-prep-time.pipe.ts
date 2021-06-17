@@ -1,19 +1,20 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { DatePipe } from '@angular/common';
-import { MerchantOrderTypesInfo } from '@sections/ordering';
+import { MerchantOrderTypesInfo } from '@sections/ordering'; 
+import { CartService } from '@sections/ordering/services';
 
 @Pipe({
   name: 'modifyPrepTime',
 })
 export class ModifyPrepTimePipe implements PipeTransform {
 
-  constructor(private readonly datePipe: DatePipe) {
+  constructor(private cartService: CartService) {
   }
 
   transform(
     { dueTime, orderType, isASAP }: any = {},
-    { pickupPrepTime, deliveryPrepTime }: MerchantOrderTypesInfo,
+    { pickupPrepTime, deliveryPrepTime, merchantTimeZone }: MerchantOrderTypesInfo,
     isShowTime: boolean = true): string {
 
     if (isASAP && !isShowTime) return 'ASAP';
@@ -33,6 +34,6 @@ export class ModifyPrepTimePipe implements PipeTransform {
       }
     }
 
-    return this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
+    return this.cartService.extractTimeZonedString(new Date(finalTime), merchantTimeZone);
   }
 }

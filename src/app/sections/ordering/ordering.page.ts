@@ -70,10 +70,10 @@ export class OrderingPage implements OnInit {
 
   private openOrderOptions(merchant) {
     this.cartService.setActiveMerchant(merchant);
-    this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings);
+    this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings, merchant.timeZone);
   }
 
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
+  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings, timeZone) {
     const footerButtonName = 'continue';
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
@@ -88,6 +88,7 @@ export class OrderingPage implements OnInit {
         merchantId,
         storeAddress,
         settings,
+        timeZone
       },
     });
 
