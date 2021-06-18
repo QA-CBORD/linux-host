@@ -201,37 +201,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  getCurrentLocaleTime() {
-    
-    let schedule;
-    let prepTime;
-    const mOrderTypes = this.merchantInfo.orderTypes;
-    if(this.orderType == this.enumOrderTypes.PICKUP) {
-       schedule = this.schedulePickup;
-       prepTime = mOrderTypes.pickupPrepTime;
-    } else if(this.orderType == this.enumOrderTypes.DELIVERY) {
-      schedule = this.scheduleDelivery;
-      prepTime = mOrderTypes.deliveryPrepTime;
-    }
-
-    const appendZero = (value: number) => (value < 10 && `0${value}`) || value;
-    const hasTimeStamp = () => {
-      const timeStamps = schedule.days[0].hourBlocks[0].timestamps;
-      return timeStamps && timeStamps.length > 0;
-    };
-    if (!hasTimeStamp()) return null;
-    const minute = 60000;
-    const timeInMilliseconds = new Date().getTime();
-    const finalTime = timeInMilliseconds + prepTime * minute;
-    const curDate = new Date(finalTime);
-    const [date] = curDate.toJSON().split('T');
-    const [, , offset] = schedule.days[0].hourBlocks[0].timestamps[0].split(':');
-    const hours = appendZero(curDate.getHours());
-    const minutes = appendZero(curDate.getMinutes());
-    const dateString = `${date}T${hours}:${minutes}:${offset}`;
-    return dateString;
-  }
-
   async onSubmit() {
     let date = { dueTime: this.selectedTimeStamp || this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
     const chooseAddressError = await this.contentStrings.formErrorChooseAddress.pipe(take(1)).toPromise();
