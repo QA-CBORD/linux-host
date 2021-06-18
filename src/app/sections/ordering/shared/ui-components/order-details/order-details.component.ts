@@ -79,6 +79,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   >();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
   @ViewChild('paymentMethod') selectRef: IonSelect;
+  @Input() merchantTimeZoneDisplayingMessage: string;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};

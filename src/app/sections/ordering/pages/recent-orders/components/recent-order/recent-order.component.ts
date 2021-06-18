@@ -39,7 +39,7 @@ export class RecentOrderComponent implements OnInit {
   orderDetailsOptions$: Observable<any>;
   merchant$: Observable<MerchantInfo>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-
+  merchantTimeZoneDisplayingMessage:string;
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly merchantService: MerchantService,
@@ -140,7 +140,10 @@ export class RecentOrderComponent implements OnInit {
               return of(merchant);
             })
           );
-        else return of(merchant);
+        else {
+          this.merchantTimeZoneDisplayingMessage = "The time zone reflects the merchant's location";
+          return of(merchant)
+        };
       })
     );
   }

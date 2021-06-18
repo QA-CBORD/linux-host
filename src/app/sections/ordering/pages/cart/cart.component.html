@@ -19,6 +19,7 @@
           [orderItems]="(order$ | async).orderItems"
           [orderDetailOptions]="orderDetailOptions$ | async"
           [orderTypes]="orderTypes$ | async"
+          [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
           [accounts]="accounts$ | async"
           [applePayEnabled]="applePayEnabled$ | async"
           [mealBased]="(order$ | async).mealBased"
