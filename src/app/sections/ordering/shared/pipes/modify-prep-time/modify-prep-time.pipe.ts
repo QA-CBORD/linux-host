@@ -13,27 +13,11 @@ export class ModifyPrepTimePipe implements PipeTransform {
   }
 
   transform(
-    { dueTime, orderType, isASAP }: any = {},
-    { pickupPrepTime, deliveryPrepTime, merchantTimeZone }: MerchantOrderTypesInfo,
+    { dueTime, isASAP }: any = {},
+    {  merchantTimeZone }: MerchantOrderTypesInfo,
     isShowTime: boolean = true): string {
 
     if (isASAP && !isShowTime) return 'ASAP';
-    const minute = 60000;
-    const time = new Date(dueTime);
-    const timeInMilliseconds = time.getTime();
-    let finalTime = timeInMilliseconds;
-
-    if (isASAP) {
-      switch (orderType) {
-        case ORDER_TYPE.PICKUP:
-          finalTime = timeInMilliseconds + pickupPrepTime * minute;
-          break;
-        case ORDER_TYPE.DELIVERY:
-          finalTime = timeInMilliseconds + deliveryPrepTime * minute;
-          break;
-      }
-    }
-
-    return this.cartService.extractTimeZonedString(new Date(finalTime), merchantTimeZone);
+    return this.cartService.extractTimeZonedString(new Date(dueTime), merchantTimeZone);
   }
 }
