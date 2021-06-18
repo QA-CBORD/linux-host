@@ -3,8 +3,8 @@
     <div class="order-details">
       <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'dueTime' }}</ion-label>
 
-      <p class="order-details__value" *ngIf="timeWithoutTimezone && timeWithoutTimezone.dueTime">
-        {{ timeWithoutTimezone | modifyPrepTime: orderTypes }}
+      <p class="order-details__value" *ngIf="orderDetailOptions.dueTime">
+        {{ orderDetailOptions | modifyPrepTime: orderTypes }}
       </p>
     </div>
 

@@ -3,6 +3,7 @@
   (click)="settingTap(setting)"
   [button]="setting.type !== 'toggle'"
   tabindex="0"
+  *ngIf="settingLabel$ | async"
 >
   <img class="item__icon" src="../../../assets/icon/{{ setting.icon }}.svg" />
   <ion-label class="item__label"

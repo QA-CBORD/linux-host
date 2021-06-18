@@ -101,17 +101,22 @@ export class MerchantService {
       .pipe(tap(merchantList => (this._menuMerchants = merchantList)));
   }
 
-  extractTimeZonedString (date: Date, timeZone: string): string {
-    return Intl.DateTimeFormat('en-US', {
-      timeZone: timeZone,
-      timeZoneName: 'short',
-      day: '2-digit',
+  extractTimeZonedString(dateStr: string, timeZone: string): string {
+    const [, , , tz] = new Date(dateStr)
+      .toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'short' })
+      .split(' ');
+    const [dateTime, minutes] = dateStr.split(/:/);
+    dateStr = `${dateTime}:${minutes}`;
+    dateStr = new Date(dateStr).toLocaleString('en-US', {
+      hour12: true,
+      day: 'numeric',
       month: 'short',
       weekday: 'short',
       hour: 'numeric',
       minute: '2-digit',
-    }).format(date);
-  };
+    });
+    return `${dateStr} ${tz}`;
+  }
 
   getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
     const searchOptions: MerchantSearchOptions = new MerchantSearchOptions();
@@ -167,11 +172,9 @@ export class MerchantService {
   }
 
   getMerchantOrderSchedule(merchantId: string, orderType: number, merchantTimeZone: string): Observable<any> {
-    
     const orderSchedule1$ = this.orderingApiService
-    .getMerchantOrderSchedule(merchantId, orderType)
-    .pipe(
-      map(response => this.dataTransform(response, merchantTimeZone)));
+      .getMerchantOrderSchedule(merchantId, orderType)
+      .pipe(map(response => this.dataTransform(response, merchantTimeZone)));
 
     const orderSchedule2$ = this.institutionService.cachedInstitutionInfo$.pipe(
       switchMap(({ timeZone }) => {
@@ -179,14 +182,14 @@ export class MerchantService {
         return orderSchedule1$;
       })
     );
-    return iif(() => !!merchantTimeZone, orderSchedule1$, orderSchedule2$)
+    return iif(() => !!merchantTimeZone, orderSchedule1$, orderSchedule2$);
   }
 
   private dataTransform(schedule: Schedule, timeZone: string) {
     schedule.days.map(day => {
       day.hourBlocks = day.hourBlocks.map(hour => {
         hour.periods = hour.timestamps.map(dateStr =>
-          this.extractTimeZonedString(new Date(dateStr), timeZone)
+          this.extractTimeZonedString(dateStr, timeZone)
             .split(/,/)[2]
             .trim()
         );
@@ -196,7 +199,6 @@ export class MerchantService {
     });
     return schedule;
   }
-
 
   retrieveUserAddressList(): Observable<AddressInfo[]> {
     return this.userFacadeService.getUserAddresses$();
@@ -338,10 +340,11 @@ export class MerchantService {
     return this.orderingApiService.removeAddress(addressId);
   }
 
-  getCurrentLocaleTime(): Observable<Date> {
+  getCurrentLocaleTime(merchantTimeZone: string): Observable<Date> {
     return this.userFacadeService.getUserData$().pipe(
       map(({ timeZone, locale }) => {
         const date = new Date();
+        timeZone = merchantTimeZone || timeZone;
         const dueTime = date.toLocaleString(locale, { hour12: false, timeZone });
 
         return new Date(dueTime);

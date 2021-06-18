@@ -233,9 +233,8 @@ export class RecentOrderComponent implements OnInit {
           iif(() => type === ORDER_TYPE.DELIVERY, this.getDeliveryAddress(deliveryAddressId), this.getPickupAddress())
       )
     );
-    this.orderDetailsOptions$ = zip(address, this.order$, this.userFacadeService.getUserData$()).pipe(
-      map(([address, { type, dueTime }, { locale, timeZone }]) => {
-        //Formated timezone from +0000 to +00:00 for Safari date format
+    this.orderDetailsOptions$ = zip(address, this.order$, this.userFacadeService.getUserData$(), this.merchant$).pipe(
+      map(([address, { type, dueTime }, { locale, timeZone }, merchant]) => {
         const date = new Date(dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));
         const time = date.toLocaleString(locale, { hour12: false, timeZone });
         return {
