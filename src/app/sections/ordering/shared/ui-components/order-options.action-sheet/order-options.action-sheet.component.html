@@ -60,6 +60,7 @@
                              [data]="orderOptionsData"
                              [dateTimePicker]="dateTimePicker"
                              [merchantInfo]="activeMerchant$ | async"
+                             [dateTimeWithTimeZone]="dateTimeWithTimeZone"
                              [userData]="userData$ | async"
                              (onTimeSelected)="onDateTimeSelected($event)"
                              ></st-date-time-picker>

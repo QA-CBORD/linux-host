@@ -41,9 +41,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() showNavBarOnDestroy: boolean = true;
   @Input() timeZone: string;
   @ViewChild(StDateTimePickerComponent) child: StDateTimePickerComponent;
-
+  dateTimeWithTimeZone: string;
   activeMerchant$: Observable<MerchantInfo>;
   isOrderTypePickup: boolean;
+  merchantInfo: MerchantInfo;
   orderOptionsData: OrderOptions;
   deliveryAddresses: AddressInfo[];
   defaultDeliveryAddress: string;
@@ -74,12 +75,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    setTimeout(() =>this.globalNav.hideNavBar());
+    setTimeout(() => this.globalNav.hideNavBar());
     this.initData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
     this.activeMerchant$ = this.merchantService.menuMerchants$.pipe(
-      map(merchants => merchants.find(({ id }) => id === this.merchantId))
+      map(merchants => merchants.find(({ id }) => id === this.merchantId)),
+      tap((merchant) => this.merchantInfo = merchant)
     );
   }
 
@@ -188,7 +190,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   async callChildPicker() {
     if (this.child.isTimeDisable) {
-        this.child.openPicker();
+      this.child.openPicker();
     }
   }
 
@@ -202,7 +204,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   async onSubmit() {
     let date = { dueTime: this.selectedTimeStamp || this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
     const chooseAddressError = await this.contentStrings.formErrorChooseAddress.pipe(take(1)).toPromise();
-
+    this.cartService.orderIsAsap = date.isASAP;
     let isOutsideMerchantDeliveryArea = of(false);
     if (!this.orderOptionsData.address) {
       return this.onToastDisplayed(chooseAddressError);
@@ -214,8 +216,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
     await this.loadingService.showSpinner();
     const currentTimeOb$ = this.merchantService
-      .getCurrentLocaleTime()
-      .pipe(map(dueTime => this.selectedTimeStamp || dueTime));
+      .getCurrentLocaleTime(this.timeZone)
+      .pipe(map(dueTime => this.selectedTimeStamp));
 
     zip(isOutsideMerchantDeliveryArea, currentTimeOb$)
       .pipe(
@@ -296,11 +298,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       if (this.isMerchantDateUnavailable(schedule)) {
         return this.onMerchantDateUnavailable();
       }
-      const firstDay = schedule.days[0].date;
-      const [year, month, day] = firstDay.split('-');
-      let { hour } = schedule.days[0].hourBlocks[0] as any;
-      const minutes = schedule.days[0].hourBlocks[0].minuteBlocks[0];
-      this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
+      this.selectedTimeStamp = schedule.days[0].hourBlocks[0].timestamps[0];
+      this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(
+        new Date(this.selectedTimeStamp),
+        this.timeZone
+      );
+      this.dateTimePicker = new Date(this.selectedTimeStamp);
     }
   }
 

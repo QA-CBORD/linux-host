@@ -12,6 +12,7 @@
                     [orderTypes]="(merchant$ | async).orderTypes"
                     [deliveryFee]="(order$ | async).deliveryFee"
                     [total]="(order$ | async).total"
+                    [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
                     [orderItems]="(order$ | async).orderItems"
                     [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
                     [mealBased]="(order$ | async).mealBased"

@@ -79,6 +79,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   >();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
   @ViewChild('paymentMethod') selectRef: IonSelect;
+  @Input() merchantTimeZoneDisplayingMessage: string;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -135,7 +136,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       if (this.orderDetailOptions.dueTime instanceof Date) {
         return this.orderDetailOptions;
       }
-      return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
+       return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
     }
   }
 

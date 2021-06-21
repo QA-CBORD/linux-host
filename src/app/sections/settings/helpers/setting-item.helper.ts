@@ -1,4 +1,4 @@
-import { map, take, concatMap, reduce } from 'rxjs/operators';
+import { map, take, concatMap, reduce, switchMap } from 'rxjs/operators';
 import { UserInfo } from '@core/model/user';
 import {
   SettingsServices,
@@ -8,7 +8,7 @@ import {
   StatusSettingValidation,
 } from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { from, concat, zip, Observable } from 'rxjs';
+import { from, concat, zip, Observable, of } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
 import { PinAction } from '@shared/ui-components/pin/pin.page';
 import { ReportCardStatus } from '../models/report-card-status.config';
@@ -28,13 +28,25 @@ export async function setBiometricStatus(services: SettingsServices): Promise<vo
 
 export function setReportCardLabel(services: SettingsServices) {
   const setting: SettingItemConfig = this;
-  setting.label = services.userService
-    .getUserState$()
-    .pipe(
-      map(user =>
-        user.cashlessMediaStatus === ReportCardStatus.LOST ? setting.toggleLabel.checked : setting.toggleLabel.unchecked
-      )
-    );
+  setting.label = services.userService.getUserState$().pipe(
+    switchMap(user => {
+      const lcEnabled$ = services.settings.getSetting(Settings.Setting.REPORT_LOST_CARD_ENABLED);
+      const fcEnabled$ = services.settings.getSetting(Settings.Setting.REPORT_FOUND_CARD_ENABLED);
+      return zip(lcEnabled$, fcEnabled$).pipe(
+        map(([{ value: lsEnabled }, { value: fcEnabled }]) => {
+          let result = null;
+          if (user.cashlessMediaStatus === ReportCardStatus.LOST) {
+            if (Boolean(+fcEnabled)) {
+              result = setting.toggleLabel.checked;
+            }
+          } else if (Boolean(+lsEnabled)) {
+            result = setting.toggleLabel.unchecked;
+          }
+          return result;
+        })
+      );
+    })
+  );
 }
 
 export function toggleBiometricStatus(services: SettingsServices) {
