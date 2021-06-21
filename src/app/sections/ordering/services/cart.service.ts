@@ -103,7 +103,7 @@ export class CartService {
     this.onStateChanged();
   }
 
-  extractTimeZonedString(date: Date, timeZone: string): string {
+  extractTimeZonedString(date: Date, timeZone: string, fullDate = true): string {
     if (!timeZone) timeZone = this.merchantTimeZone;
     const options: any = {
       day: '2-digit',
@@ -116,9 +116,15 @@ export class CartService {
     if (!timeZone) return Intl.DateTimeFormat('en-US', options).format(date);
     options.timeZone = timeZone;
     options.timeZoneName = 'short';
-    const result = Intl.DateTimeFormat('en-US', options).format(date);
+    let fullDateStr = Intl.DateTimeFormat('en-US', options).format(date);
+    const tz = fullDateStr.slice(-3);
+    fullDateStr= fullDateStr.replace(tz, `(${tz})`);
+    return fullDate && fullDateStr || this.getHoursOnly(fullDateStr);
+  }
 
-    return result;
+  private getHoursOnly(fullDateStr: string): string {
+    const [, , time] = fullDateStr.split(/,/);
+    return time;
   }
 
   // --------------------------------------- SETTERS BLOCK ---------------------------------------------//

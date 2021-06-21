@@ -115,7 +115,7 @@ export class MerchantService {
       hour: 'numeric',
       minute: '2-digit',
     });
-    return `${dateStr} ${tz}`;
+    return `${dateStr} (${tz})`;
   }
 
   getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
