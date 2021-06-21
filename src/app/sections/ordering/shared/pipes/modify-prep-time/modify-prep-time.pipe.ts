@@ -14,10 +14,13 @@ export class ModifyPrepTimePipe implements PipeTransform {
 
   transform(
     { dueTime, isASAP }: any = {},
-    {  merchantTimeZone }: MerchantOrderTypesInfo,
-    isShowTime: boolean = true): string {
+    orderTypes: MerchantOrderTypesInfo,
+    isShowTime: boolean = true,
+    showFullDate: boolean = true
+    ): string {
 
     if (isASAP && !isShowTime) return 'ASAP';
-    return this.cartService.extractTimeZonedString(new Date(dueTime), merchantTimeZone);
+    
+    return this.cartService.extractTimeZonedString(new Date(dueTime), orderTypes.merchantTimeZone, showFullDate);
   }
 }
