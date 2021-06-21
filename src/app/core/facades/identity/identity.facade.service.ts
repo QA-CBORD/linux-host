@@ -163,4 +163,5 @@ export class IdentityFacadeService extends ServiceStateFacade {
   lockVault() {
     this.identityService.lockVault();
   }
+  
 }

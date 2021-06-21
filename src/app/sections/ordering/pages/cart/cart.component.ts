@@ -356,6 +356,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .toPromise()
       .then(async order => {
         this.cartService.changeClientOrderId;
+        this.cartService.orderIsAsap = false;
         await this.showModal(order);
       })
       .catch(async (error: string | [string, string]) => {
