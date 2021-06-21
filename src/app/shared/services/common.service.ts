@@ -94,7 +94,7 @@ export class CommonService {
 
   getString<T extends ContentStringModel>(category: ContentStringCategory): T {
     const data = this.messageProxy.get<any>();
-    return <T>data[category] || ({} as any);
+    return data && <T>data[category] || ({} as any);
   }
 
   loadContentString<T extends ContentStringModel>(
@@ -137,10 +137,5 @@ export class CommonService {
         take(1)
       )
       .toPromise();
-  }
-
-  get guestLoginSupportedInEnv(): boolean {
-    const currentEnv = this.environmentFacadeService.getEnvironmentObject().environment;
-    return currentEnv == EnvironmentType.develop || currentEnv == EnvironmentType.feature1;
   }
 }

@@ -10,6 +10,7 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
 import { GetThrowable } from '@core/interceptors/server-error.interceptor';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -51,28 +52,27 @@ export class PinPage implements OnInit {
   /// temporary solution before content strings added
   private readonly setPinText: string = 'Create a 4 digit PIN to use when biometrics are not available';
   private readonly setPinNoBiometricsText: string = 'Create a 4 digit PIN';
-  private readonly confirmPinText: string = 'Confirm PIN';
-  private readonly pinCreatedText: string = 'Your PIN has been created';
   private readonly pinsDoNotMatchText: string = 'PINs do not match - please try again';
   private readonly currentPinText: string = 'Enter current PIN';
   private readonly newPinText: string = 'Enter your new PIN';
   private readonly confirmNewPinText: string = 'Confirm your new PIN';
-  private readonly pinUpdatedText: string = 'Your PIN has been updated';
 
   constructor(
     private modalController: ModalController,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService
   ) {}
-
+  
   @Input() pinAction: PinAction;
   @Input() showDismiss: boolean = true;
 
   ngOnInit() {
     this.retrievePinRetrys();
     this.setInstructionText();
+    this.a11yService.readAloud(this.instructionText).then();
   }
 
   private setInstructionText(text: string = null) {
@@ -289,3 +289,4 @@ export class PinPage implements OnInit {
     return this.pinNumber.length < 4 && this.pinNumberCopy.length === 4;
   }
 }
+

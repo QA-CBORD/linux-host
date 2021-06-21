@@ -105,7 +105,8 @@ export enum ORDERING_CONTENT_STRINGS {
   orderSubmitTimeout = 'ordering_timeout',
   connectionLost = 'ordering_connection_lost',
   duplicateOrdering ='ordering_duplicate',
-  noConnection = 'ordering_no_connection'
+  noConnection = 'ordering_no_connection',
+  orderingDatesUnavailable = 'ordering_dates_unavailable'
 }
 
 export enum MerchantSearchOptionName {

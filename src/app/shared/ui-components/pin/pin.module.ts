@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { PinPage } from './pin.page';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 const routes: Routes = [
   {
@@ -20,5 +21,6 @@ const routes: Routes = [
   declarations: [PinPage],
   exports: [PinPage],
   entryComponents: [PinPage],
+  providers: [AccessibilityService]
 })
 export class PinModule {}

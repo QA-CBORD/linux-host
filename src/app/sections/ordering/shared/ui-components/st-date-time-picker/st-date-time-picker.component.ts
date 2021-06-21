@@ -10,6 +10,7 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
 import { MerchantInfo } from '@sections/ordering';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { UserInfo } from '@core/model/user/user-info.model';
+import { CartService } from '@sections/ordering/services';
 
 @Component({
   selector: 'st-date-time-picker',
@@ -25,7 +26,7 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() dateTimePicker: Date | string;
   @Input() userData: UserInfo;
   @Output() onTimeSelected: EventEmitter<any> = new EventEmitter<any>();
-
+  dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
   private picker: HTMLIonPickerElement;
@@ -37,7 +38,8 @@ export class StDateTimePickerComponent implements OnInit {
   constructor(
     private readonly pickerController: PickerController,
     private readonly orderingService: OrderingService,
-    private readonly contentStringsFacadeService: ContentStringsFacadeService
+    private readonly contentStringsFacadeService: ContentStringsFacadeService,
+    private readonly cartService: CartService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -101,10 +103,14 @@ export class StDateTimePickerComponent implements OnInit {
       timeStamp = this.getCurrentLocaleTime();
     } else {
       let [hours, mins] = value.split(':');
-      let [minutes, period] = mins.split(' ');
-      timeStamp = this.getTimeStamp(date.value, hours, minutes);
-      if (period.trim() == 'PM' && hours != 12) hours = +hours + 12;
+      let [minutes, period=''] = mins.split(' ');
+      hours = period.includes("PM") && +hours != 12 && +hours + 12 || +hours;
+      hours = period.includes("AM") && +hours == 12 ? 0 : hours;
+      timeStamp = this.getTimeStamp(date.value, +hours, minutes);
       dateValue = new Date(year, month - 1, day, hours, minutes);
+      this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(
+        dateValue, 
+        this.merchantInfo.timeZone)
     }
     this.dateTimePicker = dateValue;
     this.onTimeSelected.emit({ dateTimePicker: this.dateTimePicker, timeStamp });
@@ -143,11 +149,9 @@ export class StDateTimePickerComponent implements OnInit {
   private preparePickerArr(i: number = 0): any[] {
     const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
-      (total, block) => [
-        ...total,
-        ...block.minuteBlocks.map(minuteBlock => {
-          return `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock} ${block['period']}`;
-        }),
+      (previous, hourBlock) => [
+        ...previous,
+        ...hourBlock.minuteBlocks.map((minuteBlock, index) => hourBlock.periods[index]),
       ],
       []
     );

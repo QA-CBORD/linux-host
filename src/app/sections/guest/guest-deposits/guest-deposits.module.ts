@@ -8,6 +8,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GuestDepositsService } from '../services/guest-deposits.service';
+import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 
 @NgModule({
   declarations: [IdentifyRecipientComponent],
@@ -20,6 +21,7 @@ import { GuestDepositsService } from '../services/guest-deposits.service';
     StHeaderModule,
     StInputFloatingLabelModule,
     StButtonModule,
+    FocusNextModule
   ],
   providers: [GuestDepositsService]
 })

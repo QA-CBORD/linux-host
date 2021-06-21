@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -33,7 +33,7 @@ import { APP_ROUTES } from '@sections/section.config';
   styleUrls: ['./full-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FullMenuComponent implements OnInit, OnDestroy {
+export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
@@ -60,6 +60,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
     this.initContentStrings();
+  }
+
+  ngAfterViewInit(){
     this.globalNav.hideNavBar();
   }
 
@@ -89,7 +92,11 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   get orderDetails$() {
     return zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$).pipe(
-      map(([orderTypes, orderInfo]) => ({ orderTypes, orderInfo }))
+      map(([orderTypes, orderInfo]) => {
+        orderTypes.merchantTimeZone = this.cartService.merchantTimeZone;
+        return { orderTypes, orderInfo };
+      })
+
     );
   }
 
@@ -104,11 +111,12 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   async openOrderOptions(): Promise<void> {
-    const { orderTypes, id, storeAddress, settings } = await this.merchantInfo$.pipe(take(1)).toPromise();
-    await this.actionSheet(orderTypes, id, storeAddress, settings);
+    const { orderTypes, id, storeAddress, settings, timeZone } = await this.merchantInfo$.pipe(take(1)).toPromise();
+    orderTypes.merchantTimeZone = timeZone;
+    await this.actionSheet(orderTypes, id, storeAddress, settings, timeZone);
   }
 
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings): Promise<void> {
+  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings, timeZone): Promise<void> {
     const footerButtonName = 'set order options';
     const cssClass = `order-options-action-sheet ${
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
@@ -118,6 +126,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
+        showNavBarOnDestroy: false,
         orderTypes,
         footerButtonName,
         merchantId,
@@ -125,6 +134,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
         settings,
         activeDeliveryAddressId: orderType === ORDER_TYPE.PICKUP ? null : address.id,
         activeOrderType: orderType === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
+        timeZone
       },
     });
     modal.onDidDismiss().then(this.onDismissOrderDetails.bind(this));

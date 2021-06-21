@@ -13,6 +13,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 const { Camera } = Plugins;
 
@@ -78,13 +79,19 @@ export class PhotoUploadComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly cd: ChangeDetectorRef,
-    private readonly photoCropModalService: PhotoCropModalService
+    private readonly photoCropModalService: PhotoCropModalService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
     this.clearLocalStateData();
     this.getPhotoData();
     this.setupPhotoSubscriptions();
+    this.globalNav.hideNavBar();
+  }
+
+  ngOnDestroy() {
+    this.globalNav.showNavBar();
   }
 
   ionViewWillEnter() {

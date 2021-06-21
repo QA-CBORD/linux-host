@@ -34,6 +34,17 @@
         border-top-right-radius: 10px;
         border-top-left-radius: 10px;
       }
+
+      border-top: 1px solid $color-whisper;
+      border-bottom: 1px solid $color-whisper;
+      padding: 10px;
+      background: $color-white;
+    
+      &--error {
+        color: $color-alizarin;
+    
+        @include font-nunito-heavy(14px);
+      }
     }
 
     &__validators {

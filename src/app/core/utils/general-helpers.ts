@@ -214,7 +214,7 @@ export function getRandomColorExtendedPalette(): string {
 }
 
 export function getCashlessStatus(isLost: boolean): number {
-  return isLost ? ReportCardStatus.LOST : ReportCardStatus.NOT_LOST;
+  return isLost ? ReportCardStatus.LOST : ReportCardStatus.FOUND;
 }
 
 export function mergeMatchArrayById(sourceArray: any[], matchIds: any[]): any[] {

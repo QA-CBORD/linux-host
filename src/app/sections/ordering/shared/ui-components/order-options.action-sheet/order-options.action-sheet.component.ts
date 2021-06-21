@@ -23,6 +23,7 @@ import { StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-p
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes/address-header-format-pipe';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 @Component({
   selector: 'st-order-options.action-sheet',
   templateUrl: './order-options.action-sheet.component.html',
@@ -37,6 +38,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() settings: any;
   @Input() activeDeliveryAddressId: string;
   @Input() activeOrderType: ORDER_TYPE = null;
+  @Input() showNavBarOnDestroy: boolean = true;
+  @Input() timeZone: string;
   @ViewChild(StDateTimePickerComponent) child: StDateTimePickerComponent;
 
   activeMerchant$: Observable<MerchantInfo>;
@@ -66,11 +69,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly globalNav: GlobalNavService,
     private readonly a11yService: AccessibilityService,
-    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe
+    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe,
+    private institutionService: InstitutionFacadeService
   ) {}
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
+    setTimeout(() =>this.globalNav.hideNavBar());
     this.initData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
@@ -80,7 +84,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.globalNav.showNavBar();
+    if (this.showNavBarOnDestroy) {
+      this.globalNav.showNavBar();
+    }
   }
 
   get enumOrderTypes() {
@@ -101,8 +107,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
     this.loadingService.showSpinner();
     zip(
-      this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.PICKUP),
-      this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.DELIVERY),
+      this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.PICKUP, this.timeZone),
+      this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.DELIVERY, this.timeZone),
       this.retrieveDeliveryAddresses(this.merchantId),
       this.merchantService.retrievePickupLocations(
         this.storeAddress,
@@ -180,9 +186,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  callChildPicker() {
+  async callChildPicker() {
     if (this.child.isTimeDisable) {
-      this.child.openPicker();
+        this.child.openPicker();
     }
   }
 
@@ -207,14 +213,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     }
 
     await this.loadingService.showSpinner();
-    const currentTimeOb$ = this.merchantService.getCurrentLocaleTime()
-                        .pipe(map((dueTime) => this.selectedTimeStamp || dueTime));
+    const currentTimeOb$ = this.merchantService
+      .getCurrentLocaleTime()
+      .pipe(map(dueTime => this.selectedTimeStamp || dueTime));
 
     zip(isOutsideMerchantDeliveryArea, currentTimeOb$)
       .pipe(
-        tap(
-          ([, dueTime]) => (date = date.isASAP ? { ...date, dueTime } : { ...date })
-        ),
+        tap(([, dueTime]) => (date = date.isASAP ? { ...date, dueTime } : { ...date })),
         switchMap(([isOutside]): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
         switchMap(
           (paymentAccounts): Promise<MenuInfo | never> =>
@@ -225,7 +230,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
-        () =>
+        () => {
+          this.showNavBarOnDestroy = false;
           this.modalController.dismiss(
             {
               address: this.orderOptionsData.address,
@@ -234,7 +240,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
               isASAP: date.isASAP,
             },
             BUTTON_TYPE.CONTINUE
-          ),
+          );
+        },
         err => this.onToastDisplayed(err)
       );
   }
@@ -286,11 +293,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.dateTimePicker = 'ASAP';
     } else {
       const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
+      if (this.isMerchantDateUnavailable(schedule)) {
+        return this.onMerchantDateUnavailable();
+      }
       const firstDay = schedule.days[0].date;
       const [year, month, day] = firstDay.split('-');
-      let { hour, period } = schedule.days[0].hourBlocks[0] as any;
+      let { hour } = schedule.days[0].hourBlocks[0] as any;
       const minutes = schedule.days[0].hourBlocks[0].minuteBlocks[0];
-      hour = period.trim() == 'PM' && hour != 12 ? +hour + 12 : hour;
       this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
     }
   }
@@ -354,6 +363,19 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.contentStrings.labelOrderOptions = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelOrderOptions
     );
+    this.contentStrings.orderingDatesUnavailable = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
+    );
+  }
+  private isMerchantDateUnavailable(schedule: Schedule) {
+    return schedule.days.length == 0;
+  }
+
+  private async onMerchantDateUnavailable() {
+    const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
+    this.toastService.showToast({ message: noDatesMessage });
+    this.modalController.dismiss();
+    return;
   }
 }
 
@@ -368,6 +390,8 @@ export interface HourBlock {
   hour: number;
   minuteBlocks: number[];
   timestamps: string[];
+  periods?: string[];
+  timeZonedDate?: string;
 }
 
 export interface Day {

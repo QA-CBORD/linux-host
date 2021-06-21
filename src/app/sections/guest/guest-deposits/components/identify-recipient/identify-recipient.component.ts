@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -12,6 +12,7 @@ import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { StInputFloatingLabelComponent } from '@shared/ui-components/st-input-floating-label';
 import { ROLES } from 'src/app/app.global';
 import { IdentifyRecipientCsModel } from './identity-recipient.content.string';
 
@@ -19,8 +20,11 @@ import { IdentifyRecipientCsModel } from './identity-recipient.content.string';
   selector: 'st-identify-recipient',
   templateUrl: './identify-recipient.component.html',
   styleUrls: ['./identify-recipient.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdentifyRecipientComponent implements OnInit {
+  @ViewChildren('newRecipientField') newRecipientFieldsRef: QueryList<StInputFloatingLabelComponent>;
+
   readonly newRecipientFormName = 'newRecipient';
   newRecepientForm: FormGroup;
   isLoading: boolean;
@@ -50,6 +54,7 @@ export class IdentifyRecipientComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private readonly toastService: ToastService,
     private readonly globalNav: GlobalNavService,
+    private readonly cdRef: ChangeDetectorRef,
     private readonly commonService: CommonService
   ) {
     this.newRecepientForm = this.fb.group({
@@ -59,7 +64,8 @@ export class IdentifyRecipientComponent implements OnInit {
     this.institutionFacadeService
       .retrieveAnonymousDepositFields()
       .toPromise()
-      .then(fields => this.generateFormFields(fields, this.newRecipientFields));
+      .then(fields => this.generateFormFields(fields, this.newRecipientFields))
+      .finally(() => this.cdRef.detectChanges());
   }
 
   ngOnInit() {
@@ -67,7 +73,7 @@ export class IdentifyRecipientComponent implements OnInit {
   }
 
   initComponentData(): void {
-    this.activatedRoute.data.subscribe(({ data: { recipients }}) => {
+    this.activatedRoute.data.subscribe(({ data: { recipients } }) => {
       this.recipients = recipients;
       if (recipients && recipients.length === 0) {
         this.selectedRecipient = this.someoneElseRecipient;
@@ -83,6 +89,10 @@ export class IdentifyRecipientComponent implements OnInit {
 
   ionViewWillLeave() {
     this.globalNav.showNavBar();
+  }
+
+  getNextField(index: number) {
+    return this.newRecipientFieldsRef.toArray()[index];
   }
 
   async continue() {
@@ -118,6 +128,7 @@ export class IdentifyRecipientComponent implements OnInit {
         .finally(() => {
           this.isLoading = false;
           this.loadingService.closeSpinner();
+          this.cdRef.detectChanges();
         });
     } else {
       this.navigateToAddFunds(this.selectedRecipient);
@@ -180,6 +191,7 @@ export class IdentifyRecipientComponent implements OnInit {
       }
     }
     this.loadingService.closeSpinner();
+    this.cdRef.detectChanges();
   }
 
   private navigateToAddFunds(recipient: Recipient) {
