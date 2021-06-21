@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PickerController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { ORDERING_CONTENT_STRINGS, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
@@ -25,8 +25,9 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() merchantInfo: MerchantInfo;
   @Input() dateTimePicker: Date | string;
   @Input() userData: UserInfo;
+  @Input() orderType: number;
   @Output() onTimeSelected: EventEmitter<any> = new EventEmitter<any>();
-  dateTimeWithTimeZone: string;
+  @Input() dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
   private picker: HTMLIonPickerElement;
@@ -100,14 +101,13 @@ export class StDateTimePickerComponent implements OnInit {
     let dateValue, timeStamp;
     if (value === 'asap') {
       dateValue = 'ASAP';
-      timeStamp = this.getCurrentLocaleTime();
     } else {
       let [hours, mins] = value.split(':');
       let [minutes, period=''] = mins.split(' ');
       hours = period.includes("PM") && +hours != 12 && +hours + 12 || +hours;
       hours = period.includes("AM") && +hours == 12 ? 0 : hours;
       timeStamp = this.getTimeStamp(date.value, +hours, minutes);
-      dateValue = new Date(year, month - 1, day, hours, minutes);
+      dateValue = new Date(timeStamp);
       this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(
         dateValue, 
         this.merchantInfo.timeZone)
@@ -119,19 +119,6 @@ export class StDateTimePickerComponent implements OnInit {
   private hasTimeStamp(): boolean {
     const timeStamps = this.schedule.days[0].hourBlocks[0].timestamps;
     return timeStamps && timeStamps.length > 0;
-  }
-
-  getCurrentLocaleTime() {
-    if (!this.hasTimeStamp()) return null;
-    const appendZero = (value: number) => (value < 10 && `0${value}`) || value;
-    const curDate = new Date();
-    const [date] = curDate.toJSON().split('T');
-    const hours = appendZero(curDate.getHours());
-    const minutes = appendZero(curDate.getMinutes());
-    const sampleTimeStamp = this.schedule.days[0].hourBlocks[0].timestamps[0];
-    const [, , offset] = sampleTimeStamp.split(':');
-    const dateString = `${date}T${hours}:${minutes}:${offset}`;
-    return dateString;
   }
 
   private getTimeStamp(date, hours, minutes): string {

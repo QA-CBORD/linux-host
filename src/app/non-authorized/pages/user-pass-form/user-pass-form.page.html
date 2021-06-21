@@ -65,7 +65,7 @@
       <ng-container
         *ngVar="{ isHosted: authTypeHosted$ | async, isSignupEnabled: signupEnabled$ | async, navedAsGuest: navedAsGuest$ | async } as authValues"
       >
-        <div class="login__form-password">
+        <div *ngIf="authValues.isHosted && authValues.isSignupEnabled || authValues.navedAsGuest" class="login__form-password">
           <a class="login__form-password-forgot" (click)="redirectToForgotPassword()" tabindex="2">Forgot password?</a>
         </div>
         <div class="login__form-btns">

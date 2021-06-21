@@ -22,6 +22,7 @@ export class CartService {
   // temporary cachedError for the cart:
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
+  public orderIsAsap: boolean = false;
 
   merchantTimeZone: string;
 
@@ -102,10 +103,8 @@ export class CartService {
     this.onStateChanged();
   }
 
-  extractTimeZonedString(date: Date, timeZone: string): string {
-    if (!timeZone) 
-        timeZone = this.merchantTimeZone;
-
+  extractTimeZonedString(date: Date, timeZone: string, fullDate = true): string {
+    if (!timeZone) timeZone = this.merchantTimeZone;
     const options: any = {
       day: '2-digit',
       month: 'short',
@@ -115,11 +114,17 @@ export class CartService {
     };
 
     if (!timeZone) return Intl.DateTimeFormat('en-US', options).format(date);
-
     options.timeZone = timeZone;
     options.timeZoneName = 'short';
+    let fullDateStr = Intl.DateTimeFormat('en-US', options).format(date);
+    const tz = fullDateStr.slice(-3);
+    fullDateStr= fullDateStr.replace(tz, `(${tz})`);
+    return fullDate && fullDateStr || this.getHoursOnly(fullDateStr);
+  }
 
-    return Intl.DateTimeFormat('en-US', options).format(date);
+  private getHoursOnly(fullDateStr: string): string {
+    const [, , time] = fullDateStr.split(/,/);
+    return time;
   }
 
   // --------------------------------------- SETTERS BLOCK ---------------------------------------------//
@@ -212,11 +217,17 @@ export class CartService {
         };
         return this.merchantService.validateOrder(this.cart.order);
       }),
-      tap(updatedOrder => (this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime }))
+      tap(updatedOrder => {
+        this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
+        if (this.orderIsAsap || !this.cart.order.dueTime) {
+          this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };
+        }
+      })
     );
   }
 
   submitOrder(accId: string, cvv: string, clientOrderID: string): Observable<OrderInfo> {
+    if (this.orderIsAsap) this.cart.order.dueTime = undefined;
     const order = { ...this.cart.order, clientOrderID };
     return this.api.submitOrder(order, accId, cvv);
   }
@@ -260,7 +271,9 @@ export class CartService {
       .getUserData$()
       .pipe(first())
       .toPromise();
-    const timeInGMT = dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
+    dueTime = dueTime || new Date();
+    const timeInGMT =
+      dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, this.merchantTimeZone || timeZone) : dueTime;
     return this.merchantService
       .getDisplayMenu(id, timeInGMT, type)
       .pipe(first())

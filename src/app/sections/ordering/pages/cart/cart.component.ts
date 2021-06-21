@@ -66,6 +66,7 @@ export class CartComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   placingOrder: boolean = false;
   isProcessingOrder: boolean = false;
+  merchantTimeZoneDisplayingMessage: string;
   isOnline: boolean = true;
   networkSubcription: Subscription;
   orderSubmitErrorMessage = {
@@ -104,7 +105,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
-    this.merchant$ = this.cartService.merchant$;
+    this.merchant$ = this.cartService.merchant$.pipe(
+      tap((merchant) => 
+      this.merchantTimeZoneDisplayingMessage = merchant.timeZone && "The time zone reflects the merchant's location")
+    );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
       map((orderType) => {
         orderType.merchantTimeZone = this.cartService.merchantTimeZone;
@@ -352,6 +356,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .toPromise()
       .then(async order => {
         this.cartService.changeClientOrderId;
+        this.cartService.orderIsAsap = false;
         await this.showModal(order);
       })
       .catch(async (error: string | [string, string]) => {

@@ -6,6 +6,8 @@ import { getCashlessStatus } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
 import { ModalController } from '@ionic/angular';
+import { Settings } from 'src/app/app.global';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 
 @Component({
   selector: 'st-report-card',
@@ -29,6 +31,7 @@ export class ReportCardComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly toastService: ToastService,
     private readonly modalController: ModalController,
+    private readonly settingsFacadeService: SettingsFacadeService,
     ) {}
 
   ngOnInit() {
@@ -49,9 +52,11 @@ export class ReportCardComponent implements OnInit {
       .toPromise()
       .then(() => this.presentToast())
       .catch(() => this.onErrorRetrieve('Something went wrong, please try again...'))
-      .finally(() => {
-        this.isReporting = false;
-        this.setReportCardStatus();
+      .finally(async() => {
+       this.isReporting = false;
+        await this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES)
+        .toPromise();
+        this.modalController.dismiss();
         this.cdRef.detectChanges();
       });
   }
@@ -86,7 +91,9 @@ export class ReportCardComponent implements OnInit {
   }
 
   private async presentToast(): Promise<void> {
-    const message = `Reported successfully.`;
+    this.setReportCardStatus();
+    const reportedStatus = this.isLost ? 'lost' : 'found'
+    const message = `Reported card ${reportedStatus} successfully.`;
     await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }] });
   }
 
