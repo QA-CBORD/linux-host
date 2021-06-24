@@ -59,7 +59,7 @@ export class ContentStringsStateService extends SingleEntityStateManager<Content
   }
 
   private resolveAddingContentString(contentStrings: ContentStringInfo[], contentString: ContentStringInfo): void {
-    const index = contentStrings.findIndex(({ id }) => contentString.id === id);
+    const index = contentStrings.findIndex(({ name }) => contentString.name === name);
     if (index !== -1) {
       contentStrings[index] = contentString;
     } else {
