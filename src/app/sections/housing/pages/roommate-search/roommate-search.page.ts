@@ -2,8 +2,9 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
+import { RoommateSearchOptions } from '@sections/housing/applications/applications.model';
 import { HousingService } from '@sections/housing/housing.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'st-roommate-search',
@@ -11,7 +12,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./roommate-search.page.scss'],
 })
 export class RoommateSearchPage implements OnInit, OnDestroy {
-  searchBy: string;
+  searchOptions$: Observable<RoommateSearchOptions>;
 
   private subscriptions: Subscription = new Subscription();
 
@@ -22,15 +23,11 @@ export class RoommateSearchPage implements OnInit, OnDestroy {
     private _applicationStateService: ApplicationsStateService) { }
 
   ngOnInit() {
-    const subscription = this._applicationStateService.roommateSearchOptions
-      .subscribe(options => {
-        this.searchBy = options.searchOptions;
-      });
-    this.subscriptions.add(subscription);
+    this.searchOptions$ = this._applicationStateService.roommateSearchOptions;
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+    //this.subscriptions.unsubscribe();
   }
 
 }

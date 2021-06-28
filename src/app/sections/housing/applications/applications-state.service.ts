@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ApplicationDetails, RoommateSearchOptions } from './applications.model';
@@ -22,7 +22,7 @@ export class ApplicationsStateService {
     applicationDetails: null,
   };
 
-  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
+  private roommateSearchOptions$: Subject<RoommateSearchOptions> = new Subject<RoommateSearchOptions>(); 
 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState

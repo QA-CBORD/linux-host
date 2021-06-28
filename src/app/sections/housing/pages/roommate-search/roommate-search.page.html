@@ -8,39 +8,64 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="(searchOptions$ | async) as options">
   <div class="input__wrapper">
-    <ng-container [ngSwitch]="searchBy">
-      <div *ngSwitchCase="'id'">
+    <ng-container [ngSwitch]="options.searchOptions">
+      <div *ngSwitchCase="'byExactId'">
+        <h3>Search by exact match of ID#</h3>
         <ion-item>
           <ion-label position="floating">ID#</ion-label>
-          <ion-input></ion-input>
+          <ion-input
+            class="input__control">
+          </ion-input>
         </ion-item>
       </div>
-      <div *ngSwitchCase="'firstLast'">
+      <div *ngSwitchCase="'byPartialPreferredFirstLast'">
+        <h3>Search by preferred first and last name</h3>
         <ion-item>
           <ion-label position="floating">Preferred First Name</ion-label>
-          <ion-input></ion-input>
+          <ion-input
+            class="input__control">
+          </ion-input>
         </ion-item>
         <ion-item>
           <ion-label position="floating">Last Name</ion-label>
-          <ion-input></ion-input>
+          <ion-input
+            class="input__control">
+          </ion-input>
         </ion-item>
       </div>
       <div *ngSwitchCase="'byPartialLastFirst'"> 
+        <h3>Search by last and first name</h3>
         <ion-item>
           <ion-label position="floating">Last Name</ion-label>
-          <ion-input></ion-input>
+          <ion-input
+            class="input__control">
+          </ion-input>
         </ion-item>
         <ion-item>
           <ion-label position="floating">First Name</ion-label>
-          <ion-input></ion-input>
+          <ion-input
+            class="input__control">
+          </ion-input>
         </ion-item>
       </div>
-      <div *ngSwitchCase="'alternateId'">
+      <div *ngSwitchCase="'byExactAlternateId'">
+        <h3>Search by exact match of alternate ID#</h3>
         <ion-item>
           <ion-label position="floating">Alternate ID#</ion-label>
-          <ion-input></ion-input>
+          <ion-input
+            class="input__control">
+          </ion-input>
+        </ion-item>
+      </div>
+      <div *ngSwitchCase="'byPartialEmail'">
+        <h3>Search by university email</h3>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input
+            class="input__control">
+          </ion-input>
         </ion-item>
       </div>
     </ng-container>
