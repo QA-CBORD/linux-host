@@ -1,0 +1,55 @@
+<ion-header mode="md">
+  <ion-toolbar mode="ios" class="rooms-search__toolbar">
+    <ion-buttons slot="start">
+      <st-back-button defaultHref="/housing/dashboard"></st-back-button>
+    </ion-buttons>
+
+    <st-page-title>Roommate Request Search</st-page-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="input__wrapper">
+    <ng-container [ngSwitch]="searchBy">
+      <div *ngSwitchCase="'id'">
+        <ion-item>
+          <ion-label position="floating">ID#</ion-label>
+          <ion-input></ion-input>
+        </ion-item>
+      </div>
+      <div *ngSwitchCase="'firstLast'">
+        <ion-item>
+          <ion-label position="floating">Preferred First Name</ion-label>
+          <ion-input></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Last Name</ion-label>
+          <ion-input></ion-input>
+        </ion-item>
+      </div>
+      <div *ngSwitchCase="'byPartialLastFirst'"> 
+        <ion-item>
+          <ion-label position="floating">Last Name</ion-label>
+          <ion-input></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">First Name</ion-label>
+          <ion-input></ion-input>
+        </ion-item>
+      </div>
+      <div *ngSwitchCase="'alternateId'">
+        <ion-item>
+          <ion-label position="floating">Alternate ID#</ion-label>
+          <ion-input></ion-input>
+        </ion-item>
+      </div>
+    </ng-container>
+    <div>
+      <ion-button
+        expand="block"
+        color="primary">
+        Search
+      </ion-button>
+    </div>
+  </div>  
+</ion-content>
