@@ -10,6 +10,7 @@ export enum LOCAL_ROUTING {
   nonAssignments = 'non-assignments',
   checkInOut = 'check-in-out',
   checkInOutSpots = 'check-in-out-spots',
+  roommates = 'roommates-search',
 }
 
 export const STORAGE_KEY: string = 'housing';

@@ -55,6 +55,10 @@ const routes: Routes = [
         loadChildren: './pages/check-in-out-spot/check-in-out-spot.page.module#CheckInOutSpotPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.roommates}`,
+        loadChildren: './pages/roommate-search/roommate-search.module#RoommateSearchPageModule',
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
         pathMatch: 'full',
