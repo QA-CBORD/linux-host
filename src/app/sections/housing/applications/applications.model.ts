@@ -247,3 +247,10 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
         : [];
   }
 }
+
+export interface RoommateSearchOptions {
+  searchOptions: string;
+  showOptions: string;
+  preferences: any[];
+  prefRank: number;
+}

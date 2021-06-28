@@ -21,6 +21,7 @@ import {
   PatronPreference,
   ApplicationRequest,
   ApplicationDefinition,
+  RoommateSearchOptions,
 } from './applications.model';
 import {
   QuestionCheckboxGroup,
@@ -35,6 +36,9 @@ import { QuestionBase } from '@sections/housing/questions/types';
 import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { PatronAddress } from '../addresses/address.model';
 import { PatronAddressService } from '../addresses/address.service';
+import { QuestionActionButton, QuestionRoommatePreference } from '../questions/types/question-roommate-preference';
+import { Router } from '@angular/router';
+import { PATRON_NAVIGATION } from 'src/app/app.global';
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +56,8 @@ export class ApplicationsService {
     private _patronAddressService: PatronAddressService,
     private _applicationsStateService: ApplicationsStateService,
     private _questionsStorageService: QuestionsStorageService,
-    private _questionsService: QuestionsService
+    private _questionsService: QuestionsService,
+    private _router: Router
   ) {}
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
@@ -156,9 +161,38 @@ export class ApplicationsService {
   private _getQuestionsPages(applicationDetails: ApplicationDetails): QuestionBase[][] {
     const questions: QuestionBase[][] = this._questionsService
       .getQuestions(applicationDetails.applicationDefinition.applicationFormJson)
-      .map((question: QuestionBase) => this._questionsService.mapToAddressTypeGroup(question));
+      .map((question: QuestionBase) => {
+        const mappedQuestions = this._questionsService.mapToAddressTypeGroup(question)
+        return this._mapQuestions(mappedQuestions);
+      });
 
     return this._questionsService.splitByPages(flat(questions));
+  }
+
+  private _mapQuestions(questions: QuestionBase[]): QuestionBase[] {
+    return questions.map((question: QuestionBase) => {
+      if (!(question instanceof QuestionRoommatePreference)) {
+        return question;
+      }
+
+      const options: RoommateSearchOptions = {
+        searchOptions: question.searchOptions,
+        showOptions: question.showOptions,
+        preferences: question.values,
+        prefRank: question.prefRank
+      };
+
+      return new QuestionActionButton({
+        label: 'Search for a roommate',
+        buttonText: 'Search Roommate',
+        metadata: options,
+        action: () => { 
+          this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search`]).then(() => {
+            this._applicationsStateService.setRoommateSearchOptions(options);
+          });
+         }
+      });
+    });
   }
 
   private _getPages(

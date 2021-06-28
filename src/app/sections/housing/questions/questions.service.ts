@@ -31,6 +31,7 @@ import { QuestionsEntries } from '@sections/housing/questions/questions-storage.
 import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
 import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
 import { AddressFields, PatronAddress } from '@sections/housing/addresses/address.model';
+import { QuestionRoommatePreference } from './types/question-roommate-preference';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -219,6 +220,8 @@ export class QuestionsService {
           return new QuestionReorder(question);
         } else if ((question as QuestionChargeScheduleBase).chargeSchedule) {
           return new QuestionChargeScheduleBase(question);
+        } else if ((question as QuestionRoommatePreference).roommateSelection) {
+          return new QuestionRoommatePreference(question);
         } else if ((question as QuestionContractDetails).source) {
           if ((question as QuestionContractDetails).source === QUESTIONS_SOURCES.CONTRACT_DETAILS) {
             if ((question as QuestionContractDetails).contractId === CONTRACT_DETAIL_KEYS.DATE_SIGNED) {
