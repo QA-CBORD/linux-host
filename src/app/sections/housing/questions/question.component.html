@@ -144,5 +144,19 @@
       [isSubmitted]="isSubmitted"
       class="question__section">
     </st-asset-type-details>
+
+    <div *ngSwitchCase="'action-button'" class="question__item">
+      <h3
+        *ngIf="question.label"
+        class="form__secondary-header">
+        {{ question.label }}
+      </h3>
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="question.action()">
+        {{ question.buttonText }}
+      </ion-button>
+    </div>
   </ng-container>
 </div>

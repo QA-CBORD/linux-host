@@ -33,10 +33,7 @@ export class CartResolver implements Resolve<Observable<[SettingInfo[], Merchant
     const settingsCall = this.settingsFacadeService.getSettings(requiredSettings);
 
     return zip(settingsCall ,accountsCall).pipe(
-      map((response ) => {
-        console.log('cart resolver response ==> ', response)
-        return response;
-      }),
+      map((response ) =>  response),
       finalize(() => this.loadingService.closeSpinner()),
       first()
     );
