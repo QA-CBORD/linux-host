@@ -1,0 +1,84 @@
+<ion-content>
+  <div class="input__wrapper" *ngIf="(searchOptions$ | async) as options">
+    <form [formGroup]="searchForm" novalidate>
+      <ng-container [ngSwitch]="options.searchOptions">
+        <div *ngSwitchCase="'byExactId'">
+          <h4>Search by exact match of ID#</h4>
+          <st-input-floating-label
+            label="ID#"
+            formControlName="input1"
+            [control]="searchForm.get('input1')"
+            type="text"
+            idd="search_1">
+          </st-input-floating-label>
+        </div>
+        <div *ngSwitchCase="'byPartialPreferredFirstLast'">
+          <h4>Search by preferred first and last name</h4>
+          <st-input-floating-label
+            label="Preferred First Name"
+            formControlName="input1"
+            [control]="searchForm.get('input1')"
+            type="text"
+            idd="search_1">
+          </st-input-floating-label>
+
+          <st-input-floating-label
+            label="Last Name"
+            formControlName="input2"
+            [control]="searchForm.get('input2')"
+            type="text"
+            idd="search_2">
+          </st-input-floating-label>
+        </div>
+        <div *ngSwitchCase="'byPartialLastFirst'"> 
+          <h4>Search by last and first name</h4>
+          <st-input-floating-label
+            label="Last Name"
+            formControlName="input1"
+            [control]="searchForm.get('input1')"
+            type="text"
+            idd="search_1">
+          </st-input-floating-label>
+
+          <st-input-floating-label
+            label="First Name"
+            formControlName="input2"
+            [control]="searchForm.get('input2')"
+            type="text"
+            idd="search_2">
+          </st-input-floating-label>
+        </div>
+        <div *ngSwitchCase="'byExactAlternateId'">
+          <h4>Search by exact match of alternate ID#</h4>
+          <st-input-floating-label
+            label="Alternate ID#"
+            formControlName="input1"
+            [control]="searchForm.get('input1')"
+            type="text"
+            idd="search_1">
+          </st-input-floating-label>
+        </div>
+        <div *ngSwitchCase="'byPartialEmail'">
+          <h4>Search by university email</h4>
+          <st-input-floating-label
+            label="Email"
+            formControlName="input1"
+            [control]="searchForm.get('input1')"
+            type="text"
+            idd="search_1">
+          </st-input-floating-label>
+        </div>
+      </ng-container>
+      <div>
+        <ion-button
+          expand="block"
+          color="primary"
+          mode="ios"
+          (click)="searchRoommates()"
+          [disabled]="!searchForm.valid">
+          Search
+        </ion-button>
+      </div>
+    </form>
+  </div>  
+</ion-content>

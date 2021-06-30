@@ -31,3 +31,34 @@ export class FacilityOccupantDetails {
   }
 
 }
+
+export interface RoommateResponseOptions {
+  patronKey: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  birthDate: Date;
+  preferredName: string;
+}
+
+export class RoommateResponse implements RoommateResponseOptions {
+  patronKey: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  birthDate: Date;
+  preferredName: string;
+
+  constructor(options: RoommateResponseOptions) {
+    if(options == null || !(options instanceof Object)) {
+      options = {} as RoommateResponseOptions;
+    }
+
+    this.patronKey = Number(options.patronKey);
+    this.firstName = String(options.firstName);
+    this.middleName = String(options.middleName);
+    this.lastName = String(options.lastName);
+    this.birthDate = new Date(options.birthDate);
+    this.preferredName = String(options.preferredName);
+  }
+}

@@ -253,4 +253,5 @@ export interface RoommateSearchOptions {
   showOptions: string;
   preferences: any[];
   prefRank: number;
+  searchValue?: string;
 }
