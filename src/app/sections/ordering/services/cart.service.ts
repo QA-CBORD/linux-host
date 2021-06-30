@@ -117,7 +117,8 @@ export class CartService {
     options.timeZone = timeZone;
     options.timeZoneName = 'short';
     let fullDateStr = Intl.DateTimeFormat('en-US', options).format(date);
-    const tz = fullDateStr.slice(-3);
+    const choppedStr = fullDateStr.split(" ");
+    const tz = choppedStr[choppedStr.length - 1];
     fullDateStr= fullDateStr.replace(tz, `(${tz})`);
     return fullDate && fullDateStr || this.getHoursOnly(fullDateStr);
   }
