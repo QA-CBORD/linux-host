@@ -7,12 +7,16 @@ import { PageTitleModule } from '@sections/housing/page-title/page-title.module'
 import { BackButtonModule } from '@shared/ui-components/back-button/back-button.module';
 import { RoommateSearchPage } from './roommate-search.page';
 import { RoommateSearchRoutingModule } from './roommate-search.routing.module';
+import { SearchResultsPageModule } from './pages/search-results/search-results.module';
+import { SearchByPageModule } from './pages/search-by/search-by.module';
 
 const imports = [
   CommonModule,
   IonicModule,
   PageTitleModule,
   BackButtonModule,
+  SearchByPageModule,
+  SearchResultsPageModule,
   RoommateSearchRoutingModule
 ];
 const declarations = [RoommateSearchPage];

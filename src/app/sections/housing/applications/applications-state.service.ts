@@ -22,7 +22,7 @@ export class ApplicationsStateService {
     applicationDetails: null,
   };
 
-  private roommateSearchOptions$: Subject<RoommateSearchOptions> = new Subject<RoommateSearchOptions>(); 
+  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState

@@ -34,7 +34,7 @@ import {
 import { ApplicationDetails } from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { FacilityOccupantDetails, RoommateDetails, RoommateResponse } from '@sections/housing/roommate/roomate.model';
 import {
   NonAssignmentDetails,
   NonAssignmentListDetails
@@ -145,6 +145,7 @@ export class HousingService {
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
+
   getPatronContracts(termId: number)
   {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
@@ -154,6 +155,7 @@ export class HousingService {
       catchError(() => this._handleGetContractSummariesError())
     );
   }
+
   getCheckInOuts(termId: number)
   {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
@@ -163,6 +165,7 @@ export class HousingService {
       catchError(() => this._handleGetCheckInOutsError())
     );
   }
+
   getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]>
   {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
@@ -171,6 +174,7 @@ export class HousingService {
       catchError((err) => { throw err })
     );
   }
+
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${
       this._baseUrl
@@ -213,6 +217,18 @@ export class HousingService {
       }),
       catchError(err => {throw err})
     )
+  }
+
+  searchRoommates(searchBy:string, searchValue: string): Observable<RoommateDetails[]> {
+    const queryString: string = `?type=${searchBy}&searchValue=${searchValue}`;
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patrons/search${queryString}`;
+    return this._housingProxyService.get<Response>(apiUrl).pipe(
+      map(response => {
+        const roommates = new RoommateResponse(response);
+        return roommates.roommates;
+      }),
+      catchError(err => { throw err })
+    );
   }
 
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
@@ -318,8 +334,6 @@ export class HousingService {
     this._nonAssignmentsStateService.setNonAssignments(nonAssignments);
   }
 
-
-
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
     const applicationDefinitions: ApplicationDetails[] = [];
     const contractDetails: ContractListDetails[] = [];
@@ -336,6 +350,3 @@ export class HousingService {
     );
   }
 }
-
-
-

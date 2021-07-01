@@ -158,6 +158,12 @@ export class ApplicationsService {
     );
   }
 
+  selectRoommate(patronKey: number): Observable<Boolean> {
+    // TODO: Implement this method
+    console.log('selecting patron as roommate...', patronKey);
+    return of(true); 
+  }
+
   private _getQuestionsPages(applicationDetails: ApplicationDetails): QuestionBase[][] {
     const questions: QuestionBase[][] = this._questionsService
       .getQuestions(applicationDetails.applicationDefinition.applicationFormJson)
