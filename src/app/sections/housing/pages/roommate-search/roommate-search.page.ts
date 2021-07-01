@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'st-roommate-search',
@@ -15,5 +14,4 @@ export class RoommateSearchPage implements OnInit {
   ngOnInit() {
     this._router.navigate(['search'], {relativeTo: this._route});
   }
-
 }

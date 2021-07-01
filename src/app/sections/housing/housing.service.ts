@@ -34,7 +34,7 @@ import {
 import { ApplicationDetails } from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
-import { FacilityOccupantDetails, RoommateResponse } from '@sections/housing/roommate/roomate.model';
+import { FacilityOccupantDetails, RoommateDetails, RoommateResponse } from '@sections/housing/roommate/roomate.model';
 import {
   NonAssignmentDetails,
   NonAssignmentListDetails
@@ -219,10 +219,16 @@ export class HousingService {
     )
   }
 
-  searchRoommates(searchBy:string, searchValue: string): Observable<RoommateResponse[]> {
-    const queryString: string = `?${searchBy}=${searchValue}`;
+  searchRoommates(searchBy:string, searchValue: string): Observable<RoommateDetails[]> {
+    const queryString: string = `?type=${searchBy}&searchValue=${searchValue}`;
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patrons/search${queryString}`;
-    return this._housingProxyService.get<RoommateResponse[]>(apiUrl);
+    return this._housingProxyService.get<Response>(apiUrl).pipe(
+      map(response => {
+        const roommates = new RoommateResponse(response);
+        return roommates.roommates;
+      }),
+      catchError(err => { throw err })
+    );
   }
 
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {

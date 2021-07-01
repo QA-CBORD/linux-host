@@ -1,5 +1,10 @@
 @import 'tools';
 
+.serch-by__header {
+  font-size: 20px;
+  padding-left: 10px;
+}
+
 .input {
   &__wrapper {
     position: relative;
@@ -14,7 +19,9 @@
     //border: 1px solid $color-light-gray;
     border-radius: 8px;
     -webkit-appearance: none;
-    padding-left: 10px;     
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
   }
   
   &__transparent_btn {

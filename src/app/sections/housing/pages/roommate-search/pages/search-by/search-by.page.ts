@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RoommateSearchOptions } from '@sections/housing/applications/applications.model';
 import { Observable, Subscription } from 'rxjs';
@@ -19,12 +20,13 @@ export class SearchByPage implements OnInit, OnDestroy {
   
   constructor(
     private _router: Router,
-    private _applicationStateService: ApplicationsStateService)
+    private _applicationStateService: ApplicationsStateService,
+    private _loadingService: LoadingService)
   { }
 
   ngOnInit() {
     this.searchForm = new FormGroup({
-      input1: new FormControl(''),
+      input1: new FormControl('', [Validators.required, Validators.minLength(1)]),
       input2: new FormControl('')
     });
 
@@ -35,22 +37,21 @@ export class SearchByPage implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  searchRoommates(): void {
+  searchRoommates(options): void {
     const firstInput = this.searchForm.get('input1');
     const secondInput = this.searchForm.get('input2');
     
     let searchValue = `${firstInput.value}`;
     searchValue = secondInput !== null ? `${searchValue},${secondInput .value}` : searchValue;
 
-    this.subscriptions.add(this.searchOptions$.subscribe(data => {
-      const options: RoommateSearchOptions = {
-        ...data,
-        searchValue
-      }
+    const data: RoommateSearchOptions = {
+      ...options,
+      searchValue
+    }
 
-      this._applicationStateService.setRoommateSearchOptions(options);
-      this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search/results`]);
-    }));
+    this._applicationStateService.setRoommateSearchOptions(data);
+
+    this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search/results`]);
   }
 
 }
