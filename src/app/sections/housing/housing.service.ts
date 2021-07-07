@@ -40,6 +40,9 @@ import {
   NonAssignmentListDetails
 } from './non-assignments/non-assignments.model';
 import { NonAssignmentsStateService } from './non-assignments/non-assignments-state.service';
+import { WaitingList, WaitingListDetails } from './waiting-lists/waiting-lists.model';
+import { WaitingListsService } from './waiting-lists/waiting-lists.service';
+import { WaitingListStateService } from './waiting-lists/waiting-list-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -70,7 +73,8 @@ export class HousingService {
     private _contractsService: ContractsService,
     private _roomsStateService: RoomsStateService,
     private _contractListStateService: ContractListStateService,
-    private _checkInOutStateService: CheckInOutStateService
+    private _checkInOutStateService: CheckInOutStateService,
+    private _waitingListStateService: WaitingListStateService,
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();
   }
@@ -84,7 +88,8 @@ export class HousingService {
       tap((response: DefinitionsResponse) =>
         this._setState(response.applicationDefinitions, 
                        response.contractDetails,
-                       response.nonAssignmentDetails)),
+                       response.nonAssignmentDetails,
+                       response.waitingLists)),
       catchError(() => this._handleGetDefinitionsError())
     );
   }
@@ -219,6 +224,7 @@ export class HousingService {
     )
   }
 
+
   searchRoommates(searchBy:string, searchValue: string): Observable<RoommateDetails[]> {
     const queryString: string = `?type=${searchBy}&searchValue=${searchValue}`;
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patrons/search${queryString}`;
@@ -229,6 +235,15 @@ export class HousingService {
       }),
       catchError(err => { throw err })
     );
+  }
+  
+  getWaitList(key: number  ): Observable<WaitingListDetails> {
+    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
+    return this._housingProxyService.get<WaitingListDetails>(apiUrl).pipe(
+      map((response: any) =>{ 
+        this._waitingListStateService.setWaitingListDetails(response)
+        return new WaitingListDetails(response)}
+    ));
   }
 
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
@@ -306,21 +321,22 @@ export class HousingService {
   }
 
   private _patchDefinitionsByStore(response: DefinitionsResponse): Observable<DefinitionsResponse> {
-    const { applicationDefinitions, contractDetails, nonAssignmentDetails } = response;
+    const { applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists } = response;
 
     const patchedApplications: Observable<ApplicationDetails[]> =
       applicationDefinitions.length > 0
         ? this._applicationsService.patchApplicationsByStoredStatus(applicationDefinitions)
         : of([]);
 
-    return forkJoin(patchedApplications, of(contractDetails), of(nonAssignmentDetails)).pipe(
+    return forkJoin(patchedApplications, of(contractDetails), of(nonAssignmentDetails), of(waitingLists)).pipe(
       map(
-        ([applicationDefinitions, contractDetails, nonAssignmentDetails]:
-          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[]]) =>
+        ([applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists]:
+          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[], WaitingList[]]) =>
             new DefinitionsResponse({
               applicationDefinitions,
               contractDetails,
-              nonAssignmentDetails
+              nonAssignmentDetails,
+              waitingLists
             })
       )
     );
@@ -328,24 +344,28 @@ export class HousingService {
 
   private _setState(applications: ApplicationDetails[],
                     contracts: ContractListDetails[],
-                    nonAssignments: NonAssignmentListDetails[]): void {
+                    nonAssignments: NonAssignmentListDetails[],
+                    waitingLists: WaitingList[]): void {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
     this._nonAssignmentsStateService.setNonAssignments(nonAssignments);
+    this._waitingListStateService.setWaitingList(waitingLists);
   }
 
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
     const applicationDefinitions: ApplicationDetails[] = [];
     const contractDetails: ContractListDetails[] = [];
     const nonAssignmentDetails: NonAssignmentListDetails[] = [];
+    const waitingLists: WaitingList[] = [];
 
-    this._setState(applicationDefinitions, contractDetails, nonAssignmentDetails);
+    this._setState(applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists);
 
     return of(
       new DefinitionsResponse({
         applicationDefinitions,
         contractDetails,
         nonAssignmentDetails,
+        waitingLists
       })
     );
   }

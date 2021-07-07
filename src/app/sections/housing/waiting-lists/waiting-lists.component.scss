@@ -1,0 +1,95 @@
+@import 'tools';
+
+:host {
+  background-color: #f7f7f7;
+  display: block;
+  padding: 15px 0px;
+}
+
+.rooms__title {
+  @include font-nunito-heavy(20px);
+
+  line-height: 27px;
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+.rooms__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rooms__empty {
+  @include font-nunito-semibold(16px);
+
+  background: url('/assets/images/housing/empty-rooms.svg') no-repeat 50% 0;
+  padding-top: 215px;
+  line-height: 22px;
+  margin-bottom: 40px;
+}
+
+.roomSelect-list__item {
+  margin-bottom: 10px;
+  --border-width: 1px;
+  --border-radius: 7px;
+  --border-color: #{$color-link-water};
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 16px;
+  --padding-end: 5px;
+  --min-height: auto;
+  display: flex;
+  flex-direction: row;
+
+  .roomSelect-item-order {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .roomSelect-list__wrap {
+    margin: 0;
+  }
+
+  .roomSelect-list__item-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .roomSelect-list__item-start-time, .roomSelect-list__item-end-time {
+    display: block;
+    color: $color-dusty-gray;
+
+}
+  &::before {
+    background-color: $color-strong-blue;
+    border-radius: 0 0 2px 2px;
+    width: 32px;
+    height: 4px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    z-index: 1;
+  }
+
+}
+.roomSelect-list__item-name {
+  @include font-nunito-heavy(18px);
+}
+.rooms__search {
+  @include font-nunito-heavy(14px);
+
+  line-height: 19px;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.btn-remove-waiting-list{
+  margin: 10px 0 0 0;
+  ion-button{
+    padding: 5px 0;
+  }
+}
