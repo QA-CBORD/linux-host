@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 
 import { ActionsListComponent } from './actions-list/actions-list.component';
+import { WaitingList } from '../waiting-lists/waiting-lists.model';
 
 @Component({
   selector: 'st-actions',
@@ -14,6 +15,8 @@ export class ActionsComponent {
 
   @Input() edit: boolean;
 
+  @Input() waitingList: WaitingList;
+
   constructor(private _popoverController: PopoverController) {}
 
   handleClick(event: Event): void {
@@ -23,6 +26,7 @@ export class ActionsComponent {
         componentProps: {
           path: this.path,
           edit: this.edit,
+          waitingList: this.waitingList
         },
         cssClass: 'actions-popover',
         event,

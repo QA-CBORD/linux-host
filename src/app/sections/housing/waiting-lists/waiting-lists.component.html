@@ -1,0 +1,23 @@
+<section>
+  <ion-list *ngIf="(_waitingListStateService.waitingList$ | async) as waitingLists"
+    class="ion-no-margin bg-transparent">
+    <ion-list-header *ngIf="waitingLists?.length>0" class="ion-no-padding">
+      <h2 class="form__secondary-header">Waiting List</h2>
+    </ion-list-header>
+    <ng-container>
+      <div #container *ngFor="let waitingList of waitingLists">
+        <ion-item lines="none" class="roomSelect-list__item">
+          <div class="roomSelect-item-order">
+            <h2 class="roomSelect-list__item-name">{{waitingList.waitListName}}</h2>
+            <!-- <div class="roomSelect-list__item-info">
+              <div class="roomSelect-list__item-start-time">Added: {{'Mon Jun 07 2021 19:02:43 '}}</div>
+              <div class="roomSelect-list__item-end-time" *ngIf="true">Position: {{'3 out of 10'}}</div>
+            </div> -->
+          </div>
+          <st-actions [path]="urlEditForm+waitingList?.waitListKey" [edit]="true" [waitingList]="waitingList">
+          </st-actions>
+        </ion-item>
+      </div>
+    </ng-container>
+  </ion-list>
+</section>

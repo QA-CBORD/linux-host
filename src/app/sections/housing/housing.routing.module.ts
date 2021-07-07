@@ -55,6 +55,9 @@ const routes: Routes = [
         loadChildren: './pages/check-in-out-spot/check-in-out-spot.page.module#CheckInOutSpotPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.waitingLists}/:waitingListsKey`,
+        loadChildren: './pages/waiting-lists-details/waiting-lists-details.module#WaitingListsDetailsPageModule',
+      },{
         path: `${LOCAL_ROUTING.roommates}`,
         loadChildren: './pages/roommate-search/roommate-search.module#RoommateSearchPageModule',
       },
