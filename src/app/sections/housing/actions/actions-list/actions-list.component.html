@@ -1,19 +1,13 @@
 <ion-list mode="md">
-  <ng-container *ngIf="!waitingList?.waitListKey;else waitingListContainer">
-    <ion-item lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path]" [disabled]="!edit">
-      Edit
+  <ng-container>
+    <ion-item *ngIf="showView" lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path]" [disabled]="edit">
+      View
     </ion-item>
-    <ion-item lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path]" [disabled]="edit">
-      <ng-container>View {{waitingList.waitListKey}}</ng-container>
+    <ion-item *ngIf="showEdit" lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path]" [disabled]="!edit">
+      Edit
+    </ion-item>    
+    <ion-item *ngIf="showRemove" lines="none" mode="md" (click)="handleRemove()" [disabled]="!key">
+      Remove
     </ion-item>
   </ng-container>
-
-  <ng-template #waitingListContainer>
-    <ion-item lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path]" [disabled]="isPatronWaitingList()">
-      Edit
-    </ion-item>
-    <ion-item lines="none" mode="md" (click)="removeWaitingList()" [disabled]="!isPatronWaitingList()">
-      <ng-container>Remove</ng-container>
-    </ion-item>    
-  </ng-template>
 </ion-list>
