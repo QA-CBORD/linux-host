@@ -18,6 +18,7 @@ import { QuestionCheckboxGroup } from '../questions/types/question-checkbox-grou
 import { isDefined } from "../utils";
 import { QuestionDropdown} from '../questions/types/question-dropdown';
 import { QuestionTextbox } from '../questions/types/question-textbox';
+import { HttpParams } from "@angular/common/http";
 
 
 @Injectable({
@@ -37,7 +38,7 @@ export class WaitingListsService {
 
   removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
     let urlRemove = this.WaitingListUrl + `/patron`;
-    const queryParams: string[] = [`patronWaitingListKey=${patronWaitingListKey}`];
+    const queryParams = new HttpParams().set('patronWaitingListKey', `${patronWaitingListKey}`);
     return this._proxy.delete(urlRemove, queryParams).pipe(map((response: Response) => {
       if (isSuccessful(response.status)) {
         return true;

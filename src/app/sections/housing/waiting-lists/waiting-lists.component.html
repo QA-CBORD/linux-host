@@ -2,19 +2,30 @@
   <ion-list *ngIf="(_waitingListStateService.waitingList$ | async) as waitingLists"
     class="ion-no-margin bg-transparent">
     <ion-list-header *ngIf="waitingLists?.length>0" class="ion-no-padding">
-      <h2 class="form__secondary-header">Waiting List</h2>
+      <h2 class="form__secondary-header">Waiting Lists</h2>
     </ion-list-header>
     <ng-container>
       <div #container *ngFor="let waitingList of waitingLists">
-        <ion-item lines="none" class="roomSelect-list__item">
-          <div class="roomSelect-item-order">
-            <h2 class="roomSelect-list__item-name">{{waitingList.waitListName}}</h2>
-            <!-- <div class="roomSelect-list__item-info">
-              <div class="roomSelect-list__item-start-time">Added: {{'Mon Jun 07 2021 19:02:43 '}}</div>
-              <div class="roomSelect-list__item-end-time" *ngIf="true">Position: {{'3 out of 10'}}</div>
-            </div> -->
-          </div>
-          <st-actions [path]="urlEditForm+waitingList?.waitListKey" [edit]="true" [waitingList]="waitingList">
+        <ion-item lines="none" class="waiting-list__item">
+          <ion-label class="waiting-list__wrap">
+            <div class="waiting-list__info">
+              <h5 class="waiting-list__status">{{ getStatus(waitingList.patronWaitingListKey) }}</h5>
+              <div class="waiting-list__date" *ngIf="waitingList?.patronWaitingListKey">
+                Submitted {{ waitingList?.dateAdded | date: 'MM/dd/yyyy' }}
+              </div>
+            </div>
+        
+            <h2 class="waiting-list__title">{{ waitingList.formName }}</h2>
+          </ion-label>
+
+          <st-actions
+            [path]="urlEditForm+waitingList?.waitListKey"
+            [edit]="!waitingList?.patronWaitingListKey"
+            [showEdit]="!waitingList?.patronWaitingListKey"
+            [showView]="waitingList?.patronWaitingListKey"
+            [showRemove]="true"
+            [key]="waitingList?.patronWaitingListKey"
+            (remove)="removePatronWaitingList(waitingList)">
           </st-actions>
         </ion-item>
       </div>

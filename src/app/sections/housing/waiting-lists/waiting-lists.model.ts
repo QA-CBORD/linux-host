@@ -4,8 +4,9 @@ export interface WaitingListOptions {
   termKey: string;
   waitListKey: number;
   waitListName: string;
-  patronWaitingListKey: string;
+  patronWaitingListKey?: number;
   formName: string;
+  dateAdded?: Date;
 }
 
 
@@ -13,8 +14,9 @@ export class WaitingList implements WaitingListOptions{
   termKey: string;
   waitListKey: number;
   waitListName: string;
-  patronWaitingListKey: string;
+  patronWaitingListKey?: number;
   formName: string;
+  dateAdded?: Date;
 
   constructor(options: WaitingListOptions) {
     if (options == null || typeof options !== 'object') {
@@ -24,8 +26,9 @@ export class WaitingList implements WaitingListOptions{
     this.termKey = String(options.termKey);
     this.waitListKey = Number(options.waitListKey);
     this.waitListName = String(options.waitListName);
-    this.patronWaitingListKey = String(options.patronWaitingListKey)
+    this.patronWaitingListKey = Number(options.patronWaitingListKey)
     this.formName = String(options.formName);
+    this.dateAdded = options.dateAdded ? new Date(options.dateAdded) : null;
   }
 }
 
