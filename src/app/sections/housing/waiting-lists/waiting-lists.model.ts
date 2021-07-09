@@ -1,4 +1,5 @@
 import { PatronAttribute } from '@sections/housing/applications/applications.model';
+import { isDefined } from '../utils';
 
 export interface WaitingListOptions {
   termKey: string;
@@ -34,24 +35,63 @@ export class WaitingList implements WaitingListOptions{
 
 export interface WaitingListDetailstOptions {
   facilities: any[];
-  attributes: any[];
+  attributes: PatronAttribute[];
+  patronAttributes: PatronAttribute[];
   waitListKey: number;
   formDefinition: any;
+  patronWaitingList?: PatronWaitingList;
+}
+
+export interface PatronWaitingListOptions {
+  patronWaitingListKey: number;
+  selectedValue?: string;
+}
+
+export class PatronWaitingList implements PatronWaitingListOptions {
+  patronWaitingListKey: number;
+  selectedValue?: string;
+
+  constructor(options: PatronWaitingListOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as PatronWaitingListOptions;
+    }
+
+    if (isDefined(options.patronWaitingListKey)) {
+      this.patronWaitingListKey = Number(options.patronWaitingListKey);
+    }
+
+    if (isDefined(options.selectedValue)) {
+      this.selectedValue = String(options.selectedValue);
+    }
+  }
 }
 
 export class WaitingListDetails implements WaitingListDetailstOptions{
   facilities: any[];
   attributes: any[];
+  patronAttributes: PatronAttribute[];
   formDefinition: any;
   waitListKey: number;
+  patronWaitingList: PatronWaitingList;
+
   constructor(options: WaitingListDetailstOptions){
     if (options == null || typeof options !== 'object') {
       options = {} as WaitingListDetailstOptions;
     }
+
     this.formDefinition = options.formDefinition;
-    this.attributes = options.attributes;
+    this.attributes = Array.isArray(options.patronAttributes)
+    ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+    : [];
+    
     this.facilities = options.facilities;
     this.waitListKey = options.waitListKey;
+    this.patronAttributes = Array.isArray(options.patronAttributes)
+    ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+    : [];
+    if (isDefined(options.patronWaitingList)) {
+      this.patronWaitingList = new PatronWaitingList(options.patronWaitingList);
+    }
   }
 }
 

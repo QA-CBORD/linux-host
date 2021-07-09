@@ -11,6 +11,7 @@ export class WaitingListStateService  {
     facilities: [],
     attributes: [],
     formDefinition: {},
+    patronAttributes: [],
     waitListKey: 0
   });
   private waitingList: BehaviorSubject<WaitingList[]> = new BehaviorSubject<WaitingList[]>([]);

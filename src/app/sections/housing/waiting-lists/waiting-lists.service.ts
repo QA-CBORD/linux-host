@@ -14,12 +14,11 @@ import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
 import { FormGroup, FormControl } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
-import { QuestionCheckboxGroup } from '../questions/types/question-checkbox-group';
 import { isDefined } from "../utils";
 import { QuestionDropdown} from '../questions/types/question-dropdown';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { HttpParams } from "@angular/common/http";
-
+import { QuestionWaitingListRequest } from "../questions/types/question-waiting-list-request";
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +27,7 @@ export class WaitingListsService {
   private WaitingListUrl = `${this._environment.getHousingAPIURL()
     }/patron-applications/v.1.0/patron-waiting-lists`;
   private index = 1;
+
   constructor(
     private _proxy: HousingProxyService,
     private _environment: EnvironmentFacadeService,
@@ -78,11 +78,7 @@ export class WaitingListsService {
       questions,
       storedQuestions,
       (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
-        if (question instanceof QuestionCheckboxGroup) {
-          group[questionName] = this._questionsService.toQuestionCheckboxControl(storedValue, question);
-        } else {
-          group[questionName] = this._toFormControl(storedValue, question, waitingListsDetails);
-        }
+        group[questionName] = this._toFormControl(storedValue, question, waitingListsDetails);
       }
     );
   }
@@ -99,37 +95,89 @@ export class WaitingListsService {
   }
 
   private _toWaitingListCustomType(question: QuestionBase, waitingListDetails: WaitingListDetails): QuestionBase {
-    if (!(question.label === 'Facility Request' || question.label === 'Attribute Request')) {
+    if(!(question instanceof QuestionWaitingListRequest)) {
       return question;
     }
 
-    if (question.label === 'Facility Request' && waitingListDetails.facilities != null) {
-      const facility = waitingListDetails.facilities.map((value) => { return { label: value.name, value: value.facilityKey } })
-      return new QuestionDropdown({ name: `facility-selection-${this.index++}` ,values: facility });
-    } else {
+    let values = [];
+    if (question.facilitySelection || question.attributeSelection) {
+      if (waitingListDetails.facilities != null)  {
+        values = waitingListDetails.facilities.map((facility) => {
+          return {
+            label: facility.name,
+            value: facility.facilityKey
+          }
+        });
+      } else {
+        values = waitingListDetails.attributes.map((attribute) => {
+          return {
+            label: attribute.value,
+            value: attribute.value
+          }
+        });
+      }
+      
+    }else {
       return new QuestionTextbox({
-        name: `attribute-value-${this.index++}`,
+        name: `attribute-selection-${this.index++}`,
         type: 'text',
         label: 'Attribute value',
         subtype: 'text',
         dataType: 'String',
-
+        readonly: false,
+        required: true
       });
     }
+
+    return new QuestionDropdown({
+      label: question.label,
+      name: `${waitingListDetails.attributes != null ? 'attribute' : 'facility'}-selection-${this.index++}`,
+      values: values,
+      required: true,
+      readonly: false,
+      type: 'select',
+      dataType: 'String',
+    });
   }
 
   private _toFormControl(
     storedValue: any,
     question: QuestionFormControl,
-    waitinglistDetails: WaitingListDetails
+    waitingListDetails: WaitingListDetails
   ): FormControl {
     let value: any = storedValue;
+    let disabled: boolean = false;
 
-    if (!isDefined(value) && waitinglistDetails.attributes) {
-      value = this._questionsService.getAttributeValue(waitinglistDetails.attributes, question) || '';
+    if (!isDefined(value)) {
+      if (question.consumerKey) {
+        value = this._questionsService.getAttributeValue(waitingListDetails.patronAttributes, question) || '';
+        disabled = isDefined(question.readonly) ? question.readonly : true;
+      } else if (waitingListDetails.patronWaitingList != null) {
+        value = this._getSelectedWaitingListValue(waitingListDetails);
+        disabled = true;
+      }
     }
 
-    return new FormControl({ value, disabled: false });
+    return new FormControl({ value, disabled });
+  }
+
+  private _getSelectedWaitingListValue(waitingList: WaitingListDetails): string {
+    let value: string = '';
+    
+    if (waitingList.facilities != null) {
+      const item = waitingList.facilities
+        .find(facility => 
+            facility.facilityKey === Number(waitingList.patronWaitingList.selectedValue));
+
+      value = item ? item.name : '';
+    } else if (waitingList.attributes != null) {
+      const item = waitingList.attributes
+        .find(attribute => attribute.value === waitingList.patronWaitingList.selectedValue);
+      
+      value = item ? item.value : '';
+    }
+    
+    return value;
   }
 
   next(waitingListKey: number ,formValue: any): Observable<any> {
@@ -138,16 +186,18 @@ export class WaitingListsService {
   
   submitWaitingList(
     waitListKey: number,
-    waitingList: WaitingListDetails,
     form: any): Observable<boolean> {  
 
     return this._questionsStorageService.updateQuestions(waitListKey, form, 3).pipe(
       switchMap((storedApplication: StoredApplication) => {
         const questions = storedApplication.questions;
 
-        const attributeValue: string = questions[Object.keys(questions).find(value => value.includes('attribute-value'))] || null;
-
-        const facilityKey: number =  parseInt(questions[Object.keys(questions).find(value => value.includes('facility-selection'))]) || null;
+        const attributeValue: string = 
+          questions[Object.keys(questions)
+                      .find(value => value.includes('attribute-selection'))] || null;
+        
+                      const facilityKey: number = 
+          parseInt(questions[Object.keys(questions).find(value => value.includes('facility-selection'))]) || null;
 
         const body = new WaitingListDetailsRequest({
           waitListKey,
