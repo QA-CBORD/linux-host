@@ -49,7 +49,7 @@ export class BarcodeService {
       // if this institution does not have an institutionKey, just use normal pin
         return value && this.beginBarcodeGeneration(pin, value) || of(pin);
       }),
-      catchError(() => throwError(new GetThrowable('Failed, required values missing')))
+      catchError(() => pin)
     );
   }
 
