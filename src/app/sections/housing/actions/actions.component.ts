@@ -1,8 +1,7 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 
 import { ActionsListComponent } from './actions-list/actions-list.component';
-import { WaitingList } from '../waiting-lists/waiting-lists.model';
 
 @Component({
   selector: 'st-actions',
@@ -12,10 +11,13 @@ import { WaitingList } from '../waiting-lists/waiting-lists.model';
 })
 export class ActionsComponent {
   @Input() path: string;
-
   @Input() edit: boolean;
+  @Input() key: string = '';
+  @Input() showEdit: boolean = true;
+  @Input() showView: boolean = true;
+  @Input() showRemove: boolean = false;
 
-  @Input() waitingList: WaitingList;
+  @Output() remove = new EventEmitter();
 
   constructor(private _popoverController: PopoverController) {}
 
@@ -26,7 +28,11 @@ export class ActionsComponent {
         componentProps: {
           path: this.path,
           edit: this.edit,
-          waitingList: this.waitingList
+          key: this.key,
+          showView: this.showView,
+          showEdit: this.showEdit,
+          showRemove: this.showRemove,
+          remove: this.remove
         },
         cssClass: 'actions-popover',
         event,
