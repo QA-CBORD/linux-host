@@ -42,7 +42,7 @@ export class SearchByPage implements OnInit, OnDestroy {
     const secondInput = this.searchForm.get('input2');
     
     let searchValue = `${firstInput.value}`;
-    searchValue = secondInput !== null ? `${searchValue},${secondInput .value}` : searchValue;
+    searchValue = secondInput.value !== '' ? `${searchValue},${secondInput.value}` : searchValue;
 
     const data: RoommateSearchOptions = {
       ...options,
