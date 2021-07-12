@@ -83,7 +83,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   submit(waitingListDetails: WaitingListDetails, form: FormGroup, isLastPage: boolean): void {
     this._touch();
 
-    if (!this.isSubmitted && !form.valid) {
+    if (!this.isSubmitted && form.invalid) {
       return;
     }
 
@@ -102,7 +102,6 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this._loadingService.showSpinner();
     const subscription: Subscription = this._waitingListService.submitWaitingList(
       applicationKey,
-      applicationDetails,
       formValue
     ).subscribe({
       next: () => this._handleSuccess(),

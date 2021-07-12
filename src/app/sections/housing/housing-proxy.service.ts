@@ -62,12 +62,19 @@ export class HousingProxyService {
     );
   }
 
-  delete(apiUrl: string, body: any): Observable<Response> {
-    return this.request<Response>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
-      this._http.delete<Response>(apiUrl,{
-        params: body,
-        headers: headers.set('Content-Type', 'application/json'),
-      }),
+  delete(apiUrl: string, body?: any): Observable<Response> {
+    return this.request<Response>(apiUrl, (headers: HttpHeaders, apiUrl: string) => {
+        if (body) {
+          return this._http.delete<Response>(apiUrl, {
+            params: body,
+            headers: headers.set('Content-Type', 'application/json'),
+          });
+        }
+
+        return this._http.delete<Response>(apiUrl, {
+          headers: headers.set('Content-Type', 'application/json'),
+        });
+      }
     );
   }
 }
