@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ApplicationDetails, RoommateSearchOptions } from './applications.model';
+import {
+  ApplicationDetails,
+  RequestedRoommate,
+  RoommateSearchOptions
+} from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
@@ -22,7 +26,8 @@ export class ApplicationsStateService {
     applicationDetails: null,
   };
 
-  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
+  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({});
+  private requestedRoommates$: BehaviorSubject<RequestedRoommate[]> = new BehaviorSubject<RequestedRoommate[]>([]);
 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState
@@ -52,6 +57,10 @@ export class ApplicationsStateService {
     return this.roommateSearchOptions$;
   }
 
+  get requestedRoommates(): Observable<RequestedRoommate[]> {
+    return this.requestedRoommates$;
+  }
+
   setApplications(applications: ApplicationDetails[]): void {
     this.applicationsState = { ...this.applicationsState, entities: this._toApplicationEntities(applications) };
   }
@@ -72,6 +81,10 @@ export class ApplicationsStateService {
 
   setRoommateSearchOptions(options: RoommateSearchOptions): void {
     this.roommateSearchOptions$.next(options);
+  }
+
+  setRequestedRoommates(roommates: RequestedRoommate[]): void {
+    this.requestedRoommates$.next(roommates);
   }
 
   private _getEntities(state: ApplicationsState) {

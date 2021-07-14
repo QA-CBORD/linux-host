@@ -255,3 +255,60 @@ export interface RoommateSearchOptions {
   prefRank?: number;
   searchValue?: string;
 }
+
+export class RequestedRoommateOptions {
+  preferenceKey: number;
+  patronRoommateKey: number;
+  confirmed: boolean;
+}
+
+export class RequestedRoommate implements RequestedRoommateOptions{
+  preferenceKey: number;
+  patronRoommateKey: number;
+  confirmed: boolean;
+
+  constructor(options: RequestedRoommateOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as RequestedRoommate;
+    }
+
+    this.preferenceKey = Number(options.preferenceKey);
+    this.patronRoommateKey = Number(options.patronRoommateKey);
+    this.confirmed = Boolean(options.confirmed);
+  }
+}
+
+export interface RequestedRoommateRequestOptions {
+  requestedRoommates: RequestedRoommate[];
+  termKey: number;
+}
+
+export class RequestedRoommateRequest implements RequestedRoommateRequestOptions {
+  requestedRoommates: RequestedRoommate[];
+  termKey: number;
+
+  constructor(options: RequestedRoommateRequestOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as RequestedRoommateRequest;
+    }
+
+    this.requestedRoommates = Array.isArray(options.requestedRoommates)
+      ? options.requestedRoommates.map(requested => new RequestedRoommate(requested))
+      : [];
+    this.termKey = Number(options.termKey);
+  }
+}
+
+export class RequestedRoommateResponse {
+    requestedRoommates: RequestedRoommate[];
+
+    constructor(options: any) {
+      if (options == null || typeof options !== 'object') {
+        options = {} as RequestedRoommateResponse;
+      }
+  
+      this.requestedRoommates = Array.isArray(options)
+      ? options.map((detail: any) => new RequestedRoommate(detail))
+      : [];
+    }
+}

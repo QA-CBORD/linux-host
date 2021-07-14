@@ -94,5 +94,40 @@
         </ion-button>
       </div>
     </form>
-  </div>  
+  </div>
+  <div
+    *ngIf="(requestedRoommates$ | async) as requestedRoommates"
+    class="roommate-requested__container">
+    <h4>Requested roommates</h4>
+    <div>
+      <ion-card>
+        <ion-card-content>Student Name Student Last Name</ion-card-content>
+        <ion-footer class="status">
+          <ion-row>
+            <p class="status__text">Confirmed</p>
+          </ion-row>
+        </ion-footer>
+      </ion-card>
+    </div>
+    <div>
+      <ion-card>
+        <ion-card-content>Student Name Student Last Name</ion-card-content>
+        <ion-footer class="status">
+          <ion-row>
+            <p class="status__text">Unconfirmed</p>
+          </ion-row>
+        </ion-footer>
+      </ion-card>
+    </div>
+    <div>
+      <ion-card>
+        <ion-card-content>Student Name Student Last Name</ion-card-content>
+        <ion-footer class="status">
+          <ion-row>
+            <p class="status__text">Unconfirmed</p>
+          </ion-row>
+        </ion-footer>
+      </ion-card>
+    </div>
+  </div> 
 </ion-content>
