@@ -1,7 +1,7 @@
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, tap, switchMap, mapTo, withLatestFrom } from 'rxjs/operators';
+import { map, tap, switchMap, mapTo, withLatestFrom, first } from 'rxjs/operators';
 
 import { flat, isDefined, parseJsonToArray } from '../utils';
 
@@ -39,15 +39,16 @@ import { PatronAddressService } from '../addresses/address.service';
 import { QuestionActionButton, QuestionRoommatePreference } from '../questions/types/question-roommate-preference';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { RoommatePreferences } from './applications.model';
+import { RoommateComponent } from '../roommate/roommate.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationsService {
-  private readonly _patronApplicationsUrl: string = `${
-        this._environmentFacadeService.getEnvironmentObject().housing_aws_url
-  }/patron-applications/v.1.0/patron-applications`;
-
+  private readonly _patronApplicationsUrl: string = `${this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+    }/patron-applications/v.1.0/patron-applications`;
+  selectedRoommate: any[] = [];
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
@@ -58,7 +59,7 @@ export class ApplicationsService {
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
     private _router: Router
-  ) {}
+  ) { }
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
     return this._questionsStorageService.getQuestions(key).pipe(
@@ -158,10 +159,28 @@ export class ApplicationsService {
     );
   }
 
-  selectRoommate(patronKey: number): Observable<Boolean> {
+  selectRoommate(patronKey: number, firstName: string): Observable<Boolean> {
     // TODO: Implement this method
-    console.log('selecting patron as roommate...', patronKey);
-    return of(true); 
+
+    let isLenghtRoommate = this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.find((value) => value.patronKeyRoommate == 0)
+    if (isLenghtRoommate) {
+      let isSetRoommate = false;
+
+      this._applicationsStateService.setRoommatesPreferences(
+        this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
+          if (roommate.patronKeyRoommate == 0 && !isSetRoommate) {
+            roommate.patronKeyRoommate = patronKey;
+            roommate.firstName = firstName
+            isSetRoommate = true;
+            return roommate
+          }
+          return roommate
+        })
+      )
+      console.log('selecting patron as roommate...', patronKey);
+      return of(true);
+    }
+    return of(false);
   }
 
   private _getQuestionsPages(applicationDetails: ApplicationDetails): QuestionBase[][] {
@@ -192,11 +211,11 @@ export class ApplicationsService {
         label: 'Search for a roommate',
         buttonText: 'Search Roommate',
         metadata: options,
-        action: () => { 
+        action: () => {
           this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search`]).then(() => {
             this._applicationsStateService.setRoommateSearchOptions(options);
           });
-         }
+        }
       });
     });
   }
@@ -311,23 +330,26 @@ export class ApplicationsService {
           parsedJson,
           questions
         );
-        const patronPreferences: PatronPreference[] = applicationDetails.patronPreferences != null?
+        const patronPreferences: PatronPreference[] = applicationDetails.patronPreferences != null ?
           this._preferencesService.getPreferences(
-          applicationDetails.patronPreferences,
-          parsedJson,
-          questions
-        ): null;
+            applicationDetails.patronPreferences,
+            parsedJson,
+            questions
+          ) : null;
         const patronAddresses: PatronAddress[] = this._patronAddressService.getAddresses(
           applicationDetails.patronAddresses,
           parsedJson,
           questions
         );
 
+        const roommatePreferences: RoommatePreferences[] = this._selectedRoommates(applicationDetails.roommatePreferences)
+
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,
           patronPreferences,
-          patronAddresses
+          patronAddresses,
+          roommatePreferences
         });
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
@@ -337,6 +359,11 @@ export class ApplicationsService {
         this._questionsStorageService.removeApplication(applicationKey).pipe(mapTo(response))
       )
     );
+  }
+
+  private _selectedRoommates(roommatePreference: RoommatePreferences[]): RoommatePreferences[] {
+    console.log(roommatePreference, "roommatePreference-------")
+    return
   }
 
   private _createApplicationDetails(

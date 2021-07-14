@@ -5,7 +5,9 @@ import { map } from 'rxjs/operators';
 import {
   ApplicationDetails,
   RequestedRoommate,
-  RoommateSearchOptions
+  RoommateSearchOptions,
+  RoommatePreferences,
+  RoommatePreferencesOptions
 } from './applications.model';
 
 export interface ApplicationsState {
@@ -26,7 +28,8 @@ export class ApplicationsStateService {
     applicationDetails: null,
   };
 
-  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({});
+  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
+  private roommatePreference$: BehaviorSubject<RoommatePreferencesOptions> = new BehaviorSubject<RoommatePreferencesOptions>({}); 
   private requestedRoommates$: BehaviorSubject<RequestedRoommate[]> = new BehaviorSubject<RequestedRoommate[]>([]);
 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
@@ -60,6 +63,10 @@ export class ApplicationsStateService {
   get requestedRoommates(): Observable<RequestedRoommate[]> {
     return this.requestedRoommates$;
   }
+  
+  get roommatePreferencesSelecteds(){
+    return this.applicationsState.applicationDetails.roommatePreferences;
+  }
 
   setApplications(applications: ApplicationDetails[]): void {
     this.applicationsState = { ...this.applicationsState, entities: this._toApplicationEntities(applications) };
@@ -85,6 +92,11 @@ export class ApplicationsStateService {
 
   setRequestedRoommates(roommates: RequestedRoommate[]): void {
     this.requestedRoommates$.next(roommates);
+  }
+  
+  setRoommatesPreferences(roommates: RoommatePreferences[]) {
+    console.log('setRoommatesPreferences',roommates)
+    this.applicationsState.applicationDetails.roommatePreferences= roommates
   }
 
   private _getEntities(state: ApplicationsState) {
