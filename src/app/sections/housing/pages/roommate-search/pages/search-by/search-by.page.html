@@ -98,33 +98,13 @@
   <div
     *ngIf="(requestedRoommates$ | async) as requestedRoommates"
     class="roommate-requested__container">
-    <h4>Requested roommates</h4>
-    <div>
+    <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
+    <div *ngFor="let roommate of requestedRoommates">
       <ion-card>
-        <ion-card-content>Student Name Student Last Name</ion-card-content>
+        <ion-card-content>{{ roommate.firstName }} {{ roommate.lastName }}</ion-card-content>
         <ion-footer class="status">
           <ion-row>
-            <p class="status__text">Confirmed</p>
-          </ion-row>
-        </ion-footer>
-      </ion-card>
-    </div>
-    <div>
-      <ion-card>
-        <ion-card-content>Student Name Student Last Name</ion-card-content>
-        <ion-footer class="status">
-          <ion-row>
-            <p class="status__text">Unconfirmed</p>
-          </ion-row>
-        </ion-footer>
-      </ion-card>
-    </div>
-    <div>
-      <ion-card>
-        <ion-card-content>Student Name Student Last Name</ion-card-content>
-        <ion-footer class="status">
-          <ion-row>
-            <p class="status__text">Unconfirmed</p>
+            <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
           </ion-row>
         </ion-footer>
       </ion-card>

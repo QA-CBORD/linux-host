@@ -159,7 +159,7 @@ export class HousingService {
   getRequestedRoommates(request: RequestedRoommateRequest) {
     const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/confirmed`;
     return this._housingProxyService.post<RequestedRoommateResponse>(apiUrl, request).pipe(
-      map((response: any) => new RequestedRoommateResponse(response)),
+      map((response: any) => new RequestedRoommateResponse(response.data)),
       tap((response: RequestedRoommateResponse) => this._setRequestedRoommateState(response.requestedRoommates)),
       catchError(() => this._handleGetRequestedRoommatesError())
     );
