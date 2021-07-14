@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { isMobile } from '@core/utils/platform-helper';
@@ -33,7 +33,6 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     private _platform: Platform,
     private _alertController: AlertController,
     private _toastService: ToastService,
-    private readonly cdRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
@@ -96,11 +95,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
-                      alert.dismiss().then(() =>{ 
-                        
-                        this._loadingService.closeSpinner()
-                        this.cdRef.detectChanges()
-                      } );
+                      alert.dismiss().then(() => this._loadingService.closeSpinner() );
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();
@@ -119,10 +114,5 @@ export class SearchResultsPage implements OnInit, OnDestroy {
 
     this.activeAlerts.push(alert);
     await alert.present();
-  }
-  
-  getRoommatePreferencesSelecteds(): string {
-    return this.roommateSelecteds.map(res => res.firstName ).join(' ,')
-    // return ''
   }
 }

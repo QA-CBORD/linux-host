@@ -23,7 +23,7 @@ export class ApplicationsStateService {
   };
 
   private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
-  private roommatePreference$: BehaviorSubject<RoommatePreferencesOptions> = new BehaviorSubject<RoommatePreferencesOptions>({}); 
+  private roommatePreferences: RoommatePreferences[]; 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState
   >(this._defaultState);
@@ -53,7 +53,7 @@ export class ApplicationsStateService {
   }
 
   get roommatePreferencesSelecteds(){
-    return this.applicationsState.applicationDetails.roommatePreferences;
+    return this.roommatePreferences;
   }
 
   setApplications(applications: ApplicationDetails[]): void {
@@ -79,8 +79,7 @@ export class ApplicationsStateService {
   }
 
   setRoommatesPreferences(roommates: RoommatePreferences[]) {
-    console.log('setRoommatesPreferences',roommates)
-    this.applicationsState.applicationDetails.roommatePreferences= roommates
+    this.roommatePreferences = roommates;
   }
 
   private _getEntities(state: ApplicationsState) {
