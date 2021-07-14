@@ -9,7 +9,7 @@ import { ApplicationsService } from '@sections/housing/applications/applications
 import { HousingService } from '@sections/housing/housing.service';
 import { RoommateDetails } from '@sections/housing/roommate/roomate.model';
 import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-search-results',
@@ -50,6 +50,10 @@ export class SearchResultsPage implements OnInit, OnDestroy {
       tap(data => {
         this.roommates$ = this._housingService.searchRoommates(data.searchOptions, data.searchValue).pipe(
           tap(_ => {
+            this._loadingService.closeSpinner();
+            this.stillLoading$.next(false);
+          }),
+          finalize(() => {
             this._loadingService.closeSpinner();
             this.stillLoading$.next(false);
           })
