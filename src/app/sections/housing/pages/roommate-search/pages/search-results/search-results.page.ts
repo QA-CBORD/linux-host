@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { isMobile } from '@core/utils/platform-helper';
@@ -10,6 +10,7 @@ import { HousingService } from '@sections/housing/housing.service';
 import { RoommateDetails } from '@sections/housing/roommate/roomate.model';
 import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { RoommatePreferences } from '../../../../applications/applications.model';
 
 @Component({
   selector: 'st-search-results',
@@ -20,7 +21,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   roommateSearchOptions$: Observable<RoommateSearchOptions>;
   roommates$: Observable<RoommateDetails[]>;
   stillLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  roommateSelecteds: string;
   private activeAlerts: HTMLIonAlertElement[] = [];
   private subscriptions: Subscription = new Subscription();
 
@@ -32,6 +33,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     private _platform: Platform,
     private _alertController: AlertController,
     private _toastService: ToastService,
+    private readonly cdRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
@@ -43,7 +45,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    
+    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds.map(res => res.firstName ).join(' ,');
     this._loadingService.showSpinner();
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
@@ -90,11 +92,11 @@ export class SearchResultsPage implements OnInit, OnDestroy {
             this.activeAlerts = [];
 
             const subs =
-              this._applicationService.selectRoommate(roommate.patronKey)
+              this._applicationService.selectRoommate(roommate.patronKey,roommate.firstName)
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
-                      alert.dismiss().then(() => this._housingService.handleSuccess());
+                      alert.dismiss().then(() => this._loadingService.closeSpinner());
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();
@@ -114,5 +116,9 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     this.activeAlerts.push(alert);
     await alert.present();
   }
-
+  
+  getRoommatePreferencesSelecteds(): string {
+    // return this.roommateSelecteds.map(res => res.firstName ).join(' ,')
+    return ''
+  }
 }
