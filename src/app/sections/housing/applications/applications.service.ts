@@ -320,7 +320,6 @@ export class ApplicationsService {
   ): Observable<ResponseStatus> {
     const applicationDefinition: ApplicationDefinition = applicationDetails.applicationDefinition;
     const applicationKey: number = applicationDefinition.key;
-
     return this._questionsStorageService.updateQuestions(applicationKey, form, status).pipe(
       switchMap((storedApplication: StoredApplication) => {
         const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
@@ -342,7 +341,7 @@ export class ApplicationsService {
           questions
         );
 
-        const roommatePreferences: RoommatePreferences[] = this._selectedRoommates(applicationDetails.roommatePreferences)
+        const roommatePreferences: RoommatePreferences[] = applicationDetails.roommatePreferences;
 
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
@@ -359,11 +358,6 @@ export class ApplicationsService {
         this._questionsStorageService.removeApplication(applicationKey).pipe(mapTo(response))
       )
     );
-  }
-
-  private _selectedRoommates(roommatePreference: RoommatePreferences[]): RoommatePreferences[] {
-    console.log(roommatePreference, "roommatePreference-------")
-    return
   }
 
   private _createApplicationDetails(

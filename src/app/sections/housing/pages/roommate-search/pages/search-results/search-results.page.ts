@@ -21,7 +21,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   roommateSearchOptions$: Observable<RoommateSearchOptions>;
   roommates$: Observable<RoommateDetails[]>;
   stillLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  roommateSelecteds: string;
+  roommateSelecteds: RoommatePreferences[];
   private activeAlerts: HTMLIonAlertElement[] = [];
   private subscriptions: Subscription = new Subscription();
 
@@ -44,7 +44,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds.map(res => res.firstName ).join(' ,');
+    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds;
     this._loadingService.showSpinner();
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
@@ -99,7 +99,11 @@ export class SearchResultsPage implements OnInit, OnDestroy {
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
-                      alert.dismiss().then(() => this._loadingService.closeSpinner());
+                      alert.dismiss().then(() =>{ 
+                        
+                        this._loadingService.closeSpinner()
+                        this.cdRef.detectChanges()
+                      } );
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();
@@ -121,7 +125,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   }
   
   getRoommatePreferencesSelecteds(): string {
-    // return this.roommateSelecteds.map(res => res.firstName ).join(' ,')
-    return ''
+    return this.roommateSelecteds.map(res => res.firstName ).join(' ,')
+    // return ''
   }
 }

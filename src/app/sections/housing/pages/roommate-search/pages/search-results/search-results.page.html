@@ -6,7 +6,7 @@
     <ng-container *ngIf="(roommates$ | async) as roommates; else noRoommates">
       <div>
         <h4>Your search results returned {{ roommates.length }} patron(s)</h4>
-        <div>
+        <div >
           <h4>You add {{ getRoommatePreferencesSelecteds() }} as a roommate(s)</h4>
         </div>
       </div>
