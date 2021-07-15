@@ -99,11 +99,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
-                      alert.dismiss().then(() =>{ 
-                        
-                        this._loadingService.closeSpinner()
-                        this.cdRef.detectChanges()
-                      } );
+                      alert.dismiss().then(() => this._loadingService.closeSpinner() );
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();
@@ -122,10 +118,5 @@ export class SearchResultsPage implements OnInit, OnDestroy {
 
     this.activeAlerts.push(alert);
     await alert.present();
-  }
-  
-  getRoommatePreferencesSelecteds(): string {
-    return this.roommateSelecteds.map(res => res.firstName ).join(' ,')
-    // return ''
   }
 }

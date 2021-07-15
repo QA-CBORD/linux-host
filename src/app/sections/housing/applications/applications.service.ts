@@ -161,7 +161,6 @@ export class ApplicationsService {
 
   selectRoommate(patronKey: number, firstName: string): Observable<Boolean> {
     // TODO: Implement this method
-
     let isLenghtRoommate = this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.find((value) => value.patronKeyRoommate == 0)
     if (isLenghtRoommate) {
       let isSetRoommate = false;
@@ -177,7 +176,6 @@ export class ApplicationsService {
           return roommate
         })
       )
-      console.log('selecting patron as roommate...', patronKey);
       return of(true);
     }
     return of(false);
