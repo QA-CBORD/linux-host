@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ApplicationDetails, RoommateSearchOptions, RoommatePreferences, RoommatePreferencesOptions } from './applications.model';
+import {
+  ApplicationDetails,
+  RequestedRoommate,
+  RoommateSearchOptions,
+  RoommatePreferences,
+  RoommatePreferencesOptions
+} from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
@@ -23,6 +29,8 @@ export class ApplicationsStateService {
   };
 
   private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
+  private requestedRoommates$: BehaviorSubject<RequestedRoommate[]> = new BehaviorSubject<RequestedRoommate[]>([]);
+
   private roommatePreferences: RoommatePreferences[]; 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState
@@ -52,6 +60,10 @@ export class ApplicationsStateService {
     return this.roommateSearchOptions$;
   }
 
+  get requestedRoommates(): Observable<RequestedRoommate[]> {
+    return this.requestedRoommates$;
+  }
+  
   get roommatePreferencesSelecteds(){
     return this.roommatePreferences;
   }
@@ -78,6 +90,10 @@ export class ApplicationsStateService {
     this.roommateSearchOptions$.next(options);
   }
 
+  setRequestedRoommates(roommates: RequestedRoommate[]): void {
+    this.requestedRoommates$.next(roommates);
+  }
+  
   setRoommatesPreferences(roommates: RoommatePreferences[]) {
     this.roommatePreferences = roommates;
   }
