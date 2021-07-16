@@ -187,34 +187,30 @@ export class WaitingListsService {
   submitWaitingList(
     waitListKey: number,
     form: any): Observable<boolean> {  
+      const formQuestions = Object.entries(form);
 
-    return this._questionsStorageService.updateQuestions(waitListKey, form, 3).pipe(
-      switchMap((storedApplication: StoredApplication) => {
-        const questions = storedApplication.questions;
+      const selectedValue = formQuestions.find(([key, _]) => key.includes('attribute-selection'));
+      const selectedFacility = formQuestions.find(([key, _]) => key.includes('facility-selection'));
 
-        const attributeValue: string = 
-          questions[Object.keys(questions)
-                      .find(value => value.includes('attribute-selection'))] || null;
-        
-                      const facilityKey: number = 
-          parseInt(questions[Object.keys(questions).find(value => value.includes('facility-selection'))]) || null;
+      const attributeValue: string = selectedValue ? String(selectedValue[1]) : null;
+      const facilityKey: number = selectedFacility ? Number(selectedFacility[1]) : null;
 
-        const body = new WaitingListDetailsRequest({
-          waitListKey,
-          attributeValue,
-          facilityKey
-        });
+      const body = new WaitingListDetailsRequest({
+        waitListKey,
+        attributeValue,
+        facilityKey
+      });
 
-        return this._housingProxyService.post<Response>(this.WaitingListUrl+'/patron', body);
-      }),
-      map((response: Response) => {
-        if (isSuccessful(response.status)) {
-          return true;
-        } else {
-          throw new Error(response.status.message);
-        }
-      }
-      ),
-      catchError(_ => of(false)));
+      return this._housingProxyService.post<Response>(this.WaitingListUrl+'/patron', body).pipe(
+        map((response: Response) => {
+            if (isSuccessful(response.status)) {
+              return true;
+            } else {
+              throw new Error(response.status.message);
+            }
+          }
+        ),
+        catchError(_ => of(false))
+      );
   }
 }
