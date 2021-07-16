@@ -13,8 +13,8 @@ android {
         applicationId "com.cbord.get"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1172
-        versionName "4.8.9"
+        versionCode 1175
+        versionName "4.9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
