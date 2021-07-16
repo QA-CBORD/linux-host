@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { isMobile } from '@core/utils/platform-helper';
@@ -33,6 +33,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     private _platform: Platform,
     private _alertController: AlertController,
     private _toastService: ToastService,
+    private readonly cdRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
@@ -44,7 +45,12 @@ export class SearchResultsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds;
+    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds.map((value) => {
+      console.log("valuieee -",value)
+      if (value!=undefined){
+        return value
+      }
+    } );
     this._loadingService.showSpinner();
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
@@ -95,7 +101,10 @@ export class SearchResultsPage implements OnInit, OnDestroy {
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
-                      alert.dismiss().then(() => this._loadingService.closeSpinner() );
+                      alert.dismiss().then(() =>{ 
+                        this._loadingService.closeSpinner()
+                        this.cdRef.detectChanges()
+                      } );
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();
@@ -114,5 +123,18 @@ export class SearchResultsPage implements OnInit, OnDestroy {
 
     this.activeAlerts.push(alert);
     await alert.present();
+  }
+  
+  getRoommatePreferencesSelecteds(): string {
+    let roomates = this.roommateSelecteds.map(res => {
+      if(res.firstName != undefined ){
+        return res.firstName
+      } 
+    } )
+    console.log('roomates roomates',roomates)
+    if(roomates[0] != undefined  ) {
+      return roomates.join()
+    }
+    return ''
   }
 }

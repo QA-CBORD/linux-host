@@ -53,7 +53,7 @@ export class ApplicationsStateService {
   }
 
   get roommatePreferencesSelecteds(){
-    return this.roommatePreferences;
+    return this.applicationsState.applicationDetails.roommatePreferences;
   }
 
   setApplications(applications: ApplicationDetails[]): void {
