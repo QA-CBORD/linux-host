@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 
 @Component({
@@ -7,12 +7,22 @@ import { PopoverController } from '@ionic/angular';
 })
 export class ActionsListComponent {
   @Input() path: string;
-
   @Input() edit: boolean;
+  @Input() key: string = '';
+  @Input() showEdit: boolean = true;
+  @Input() showView: boolean = true;
+  @Input() showRemove: boolean = false;
+
+  @Output() remove = new EventEmitter<any>();
 
   constructor(private _popoverController: PopoverController) {}
 
   handleEdit(): void {
     this._popoverController.dismiss();
+  }
+
+  handleRemove(): void {
+    this._popoverController.dismiss();
+    this.remove.emit();
   }
 }

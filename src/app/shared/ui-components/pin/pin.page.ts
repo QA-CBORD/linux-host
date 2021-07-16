@@ -218,7 +218,7 @@ export class PinPage implements OnInit {
     await this.loadingService.showSpinner();
     /// set user pin in Database
     this.userFacadeService
-      .createUserPin(this.pinNumber.join(''))
+      .createUserPinTotp(this.pinNumber.join(''))
       .pipe(take(1))
       .subscribe(
         success => {
@@ -244,7 +244,7 @@ export class PinPage implements OnInit {
     this.currentLoginAttempts++;
 
     this.authFacadeService
-      .authenticatePin$(this.pinNumber.join(''))
+      .authenticatePinTotp(this.pinNumber.join(''))
       .pipe(
         finalize(() => this.loadingService.closeSpinner()),
         take(1)

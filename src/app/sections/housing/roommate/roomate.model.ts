@@ -31,3 +31,51 @@ export class FacilityOccupantDetails {
   }
 
 }
+
+export interface RoommateResponseOptions {
+  roommates: RoommateDetails[];
+}
+
+export class RoommateResponse implements RoommateResponseOptions {
+  roommates: RoommateDetails[];
+
+  constructor(options: any) {
+    if(options == null || !Array.isArray(options)) {
+      options = [] as RoommateResponseOptions[];
+    }
+    this.roommates = Array.isArray(options) 
+      ? options.map(x => new RoommateDetails(x))
+      : [];
+  }
+}
+
+export interface RoommateDetailsOptions {
+  patronKey: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  birthDate: Date;
+  preferredName: string;
+}
+
+export class RoommateDetails implements RoommateDetailsOptions {
+  patronKey: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  birthDate: Date;
+  preferredName: string;
+
+  constructor(options: RoommateDetailsOptions) {
+    if(options == null || !(options instanceof Object)) {
+      options = {} as RoommateDetailsOptions;
+    }
+
+    this.patronKey = Number(options.patronKey);
+    this.firstName = String(options.firstName);
+    this.middleName = String(options.middleName);
+    this.lastName = String(options.lastName);
+    this.birthDate = new Date(options.birthDate);
+    this.preferredName = String(options.preferredName);
+  }
+}
