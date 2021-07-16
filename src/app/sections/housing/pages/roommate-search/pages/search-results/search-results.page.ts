@@ -9,7 +9,8 @@ import { ApplicationsService } from '@sections/housing/applications/applications
 import { HousingService } from '@sections/housing/housing.service';
 import { RoommateDetails } from '@sections/housing/roommate/roomate.model';
 import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
+import { RoommatePreferences } from '../../../../applications/applications.model';
 
 @Component({
   selector: 'st-search-results',
@@ -20,7 +21,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   roommateSearchOptions$: Observable<RoommateSearchOptions>;
   roommates$: Observable<RoommateDetails[]>;
   stillLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  roommateSelecteds: RoommatePreferences[];
   private activeAlerts: HTMLIonAlertElement[] = [];
   private subscriptions: Subscription = new Subscription();
 
@@ -43,13 +44,17 @@ export class SearchResultsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    
+    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds;
     this._loadingService.showSpinner();
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
       tap(data => {
         this.roommates$ = this._housingService.searchRoommates(data.searchOptions, data.searchValue).pipe(
           tap(_ => {
+            this._loadingService.closeSpinner();
+            this.stillLoading$.next(false);
+          }),
+          finalize(() => {
             this._loadingService.closeSpinner();
             this.stillLoading$.next(false);
           })
@@ -90,11 +95,11 @@ export class SearchResultsPage implements OnInit, OnDestroy {
             this.activeAlerts = [];
 
             const subs =
-              this._applicationService.selectRoommate(roommate.patronKey)
+              this._applicationService.selectRoommate(roommate.patronKey,roommate.firstName)
                   .subscribe(status => {
                     if (status) {
                       // redirect to housing dashboard (terms page)
-                      alert.dismiss().then(() => this._housingService.handleSuccess());
+                      alert.dismiss().then(() => this._loadingService.closeSpinner() );
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();
@@ -114,5 +119,4 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     this.activeAlerts.push(alert);
     await alert.present();
   }
-
 }
