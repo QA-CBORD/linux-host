@@ -16,6 +16,7 @@ export class WaitingListStateService  {
   });
   private waitingList: BehaviorSubject<WaitingList[]> = new BehaviorSubject<WaitingList[]>([]);
   private waitingListDetails: BehaviorSubject<WaitingListDetails> = new BehaviorSubject<WaitingListDetails>(this._defaultState);
+  private formSelection: BehaviorSubject<any> = new BehaviorSubject<any>({});
 
   constructor() { }
 
@@ -27,12 +28,20 @@ export class WaitingListStateService  {
     this.waitingListDetails.next(selectedSlot);
   }
 
+  setFormSelection(value: any) {
+    this.formSelection.next(value);
+  }
+
   get waitingList$(){
     return this.waitingList;
   }
 
   get waitingListDetails$(): Observable<WaitingListDetails>{
     return this.waitingListDetails;
+  }
+
+  get formSelection$(): Observable<any> {
+    return this.formSelection;
   }
 
 }

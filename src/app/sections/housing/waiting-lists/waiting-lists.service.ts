@@ -180,14 +180,27 @@ export class WaitingListsService {
     return value;
   }
 
-  next(waitingListKey: number ,formValue: any): Observable<any> {
-    return this._questionsStorageService.updateQuestions(waitingListKey, formValue, 1)
+  next(formValue: any): Observable<any> {
+    if (Object.keys(formValue).find(value => value.includes('attribute-selection')) ||
+        Object.keys(formValue).find(value => value.includes('facility-selection'))) {
+        this._waitingListState.setFormSelection(formValue);
+    }
+    
+    return of(true);
   }
   
   submitWaitingList(
     waitListKey: number,
-    form: any): Observable<boolean> {  
-      const formQuestions = Object.entries(form);
+    form: any): Observable<boolean> {
+      let formQuestions;
+      
+      if (Object.keys(form).find(value => value.includes('attribute-selection')) ||
+          Object.keys(form).find(value => value.includes('facility-selection'))) {
+        formQuestions = Object.entries(form);
+      } else {
+        this._waitingListState.formSelection$
+          .subscribe(d => formQuestions = Object.entries(d));
+      }
 
       const selectedValue = formQuestions.find(([key, _]) => key.includes('attribute-selection'));
       const selectedFacility = formQuestions.find(([key, _]) => key.includes('facility-selection'));
