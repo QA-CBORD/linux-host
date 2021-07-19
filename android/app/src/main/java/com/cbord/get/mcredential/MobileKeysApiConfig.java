@@ -50,7 +50,7 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
             OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
                     new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this)
                     }, LOCK_SERVICE_CODE)
-                    .setAllowBackgroundScanning(true)
+                    .setAllowBackgroundScanning(false)
                     .build();
 
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
