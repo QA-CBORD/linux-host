@@ -1,0 +1,41 @@
+<st-header
+  title="Credit Card Management"
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-close'"
+  [backButtonTitle]="''"
+  [isToolbarShow]="true"
+  [isBackButtonShow]="false"
+  [isDismissButtonShow]="true"
+  (onDismiss)="close()"
+></st-header>
+<div class="devider"></div>
+<ion-content>
+  <div class="main_content">
+    <div class="saved-addresses__add-address-container">
+      <ion-item class="add-new-cc_item" lines="full" [button]="true" detail (click)="addCreditCard()">
+        <span class="saved-addresses__add-address-sign">+</span>
+        <span class="saved-addresses__add-address-text">Add new Credit Card</span>
+      </ion-item>
+    </div>
+    <ion-list>
+      <ion-item *ngFor="let account of (accountsObs | async)" button="true" class="credit-card-item" lines="full">
+        <!-- <ion-icon [attr.alt]="iconAlt" src="/assets/icon/credit-card.svg" name="credit-card.svg"></ion-icon> -->
+        <ion-label class="credit__card_item-label">
+          <div class="order-item__label-title" [ngClass]="{ 'order-item__label-title-default': isDefault }">
+            {{ account.display }}
+          </div>
+        </ion-label>
+        <ion-button class="remove-btn" mode="ios" color="danger" fill="outline" (click)="removeAccount(account)">
+          remove
+        </ion-button>
+      </ion-item>
+    </ion-list>
+
+    <div class="address-list__empty-block-wrapper" *ngIf="noCreditCardFound">
+      <div class="address-list__empty-block-message">
+        <img class="address-list__empty-block-img" src="/assets/images/addresses_empty_state.svg" alt="map locations" />
+        <p class="address-list__empty-block-text">You don't have any credit card.</p>
+      </div>
+    </div>
+  </div>
+</ion-content>
