@@ -86,7 +86,6 @@ public class HIDSDKManager  {
     public void deleteEndpoint(TransactionCompleteCallback transactionCompleteListener) {
         if(isEndpointSetup())
         {
-            stopScanning();
             mobileKeys.unregisterEndpoint(new HIDTransactionProgressObserver(transactionResult -> {
                 transactionCompleteListener.onCompleted(transactionResult);
                 if(transactionResult == TRANSACTION_SUCCESS){
@@ -157,11 +156,6 @@ public class HIDSDKManager  {
         return isEndpointSetup;
     }
 
-    private void stopScanning() {
-        OrigoReaderConnectionController controller = origoMobileKeysApi.getOrigiReaderConnectionController();
-        controller.stopScanning();
-    }
-
     /**
      * Check if app has location permission
      *
@@ -182,7 +176,6 @@ public class HIDSDKManager  {
            try{
                OrigoReaderConnectionController controller = origoMobileKeysApi.getOrigiReaderConnectionController();
                controller.enableHce();
-               controller.startScanning();
                transactionCompleteCallback.onCompleted(TRANSACTION_SUCCESS);
            }catch (Exception exception) {
                transactionCompleteCallback.onCompleted(TRANSACTION_FAILED);
