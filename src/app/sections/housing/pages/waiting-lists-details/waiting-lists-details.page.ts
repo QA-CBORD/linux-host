@@ -12,6 +12,7 @@ import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subscription, throwError, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { ToastService } from '@core/service/toast/toast.service';
 
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../../housing.service';
@@ -53,6 +54,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     private _waitingListService: WaitingListsService,
     private _router: Router,
     private _toastController: ToastController,
+    private _toastService: ToastService,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _waitingListState: WaitingListStateService
@@ -99,6 +101,29 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   }
 
   private _update(type: string, applicationKey: number, applicationDetails: WaitingListDetails, formValue: any): void {
+    if(applicationDetails.facilities)
+      {
+        const facilityKey: number = 
+          parseInt(formValue[Object.keys(formValue).find(value => value.includes('facility-selection'))]) || null;
+        
+        if(!facilityKey){
+          this._toastService.showToast({
+          message: 'You cannot get on a building waiting list without selecting a building'});
+          return null;
+        }
+      }
+      
+    if(Object.keys(formValue).find(value => value.includes('attribute-selection')))
+    {
+      const attributeValue: string = 
+          formValue[Object.keys(formValue).find(value => value.includes('attribute-selection'))] || null;
+        
+        if(!attributeValue){
+          this._toastService.showToast({
+          message: 'You must select a value'});
+          return null;
+        }
+    }
     this._loadingService.showSpinner();
     const subscription: Subscription = this._waitingListService.submitWaitingList(
       applicationKey,
@@ -140,7 +165,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
       return this.stepper.next();
     }
     const nextSubscription: Subscription = this._waitingListService
-      .next(this.waitingKey, formValue)
+      .next(formValue)
       .subscribe({
         next: () => this.stepper.next(),
       });
