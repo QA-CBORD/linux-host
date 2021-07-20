@@ -151,7 +151,7 @@ export class WaitingListsService {
     if (!isDefined(value)) {
       if (question.consumerKey) {
         value = this._questionsService.getAttributeValue(waitingListDetails.patronAttributes, question) || '';
-        disabled = isDefined(question.readonly) ? question.readonly : true;
+        disabled = true;
       } else if (waitingListDetails.patronWaitingList != null) {
         value = this._getSelectedWaitingListValue(waitingListDetails);
         disabled = true;
