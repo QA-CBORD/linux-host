@@ -31,7 +31,12 @@ import {
   Response,
   RoomSelectResponse,
 } from './housing.model';
-import { ApplicationDetails } from './applications/applications.model';
+import {
+  ApplicationDetails,
+  RequestedRoommate,
+  RequestedRoommateRequest,
+  RequestedRoommateResponse
+} from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 import { FacilityOccupantDetails, RoommateDetails, RoommateResponse } from '@sections/housing/roommate/roomate.model';
@@ -151,6 +156,15 @@ export class HousingService {
     );
   }
 
+  getRequestedRoommates(request: RequestedRoommateRequest) {
+    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/confirmed`;
+    return this._housingProxyService.post<RequestedRoommateResponse>(apiUrl, request).pipe(
+      map((response: any) => new RequestedRoommateResponse(response.data)),
+      tap((response: RequestedRoommateResponse) => this._setRequestedRoommateState(response.requestedRoommates)),
+      catchError(() => this._handleGetRequestedRoommatesError())
+    );
+  }
+
   getPatronContracts(termId: number)
   {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
@@ -253,6 +267,13 @@ export class HousingService {
     return of(new RoomSelectResponse({ roomSelects }));
   }
 
+  _handleGetRequestedRoommatesError(): Observable<RequestedRoommateResponse> {
+    const roommates: RequestedRoommate[] = [];
+    this._setRequestedRoommateState(roommates);
+
+    return of(new RequestedRoommateResponse({ requestedRoommates: roommates }));
+  }
+
   _handleGetContractSummariesError(): Observable<ContractListResponse> {
     const contractSummaries: ContractSummary[] = [];
     this._setContractSummariesState(contractSummaries);
@@ -275,6 +296,10 @@ export class HousingService {
   }
   _setCheckInOutsState(checkInOuts: CheckInOut[]): void{
     this._checkInOutStateService.setCheckInOuts(checkInOuts);
+  }
+
+  _setRequestedRoommateState(roommates: RequestedRoommate[]): void {
+    this._applicationsStateService.setRequestedRoommates(roommates);
   }
 
   /**

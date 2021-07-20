@@ -266,10 +266,75 @@ export interface RoommateSearchOptions {
   prefRank?: number;
   searchValue?: string;
 }
-export class RoommatePreferences {
+
+export class RequestedRoommateOptions {
+  firstName?: string;
+  lastName?: string;
+  preferenceKey: number;
+  patronRoommateKey: number;
+  confirmed?: boolean;
+}
+
+export class RequestedRoommate implements RequestedRoommateOptions{
+  firstName?: string;
+  lastName?: string;
+  preferenceKey: number;
+  patronRoommateKey: number;
+  confirmed?: boolean;
+
+  constructor(options: RequestedRoommateOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as RequestedRoommate;
+    }
+
+    this.firstName = String(options.firstName);
+    this.lastName = String(options.lastName);
+    this.preferenceKey = Number(options.preferenceKey);
+    this.patronRoommateKey = Number(options.patronRoommateKey);
+    this.confirmed = Boolean(options.confirmed);
+  }
+}
+
+export interface RequestedRoommateRequestOptions {
+  patronRequests: RequestedRoommate[];
+  termKey: number;
+}
+
+export class RequestedRoommateRequest implements RequestedRoommateRequestOptions {
+  patronRequests: RequestedRoommate[];
+  termKey: number;
+
+  constructor(options: RequestedRoommateRequestOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as RequestedRoommateRequest;
+    }
+
+    this.patronRequests = Array.isArray(options.patronRequests)
+      ? options.patronRequests.map(requested => new RequestedRoommate(requested))
+      : [];
+    this.termKey = Number(options.termKey);
+  }
+}
+
+export class RequestedRoommateResponse {
+    requestedRoommates: RequestedRoommate[];
+
+    constructor(options: any) {
+      if (options == null || typeof options !== 'object') {
+        options = {} as RequestedRoommateResponse;
+      }
+  
+      this.requestedRoommates = Array.isArray(options)
+      ? options.map((detail: any) => new RequestedRoommate(detail))
+      : [];
+    }
+}
+
+export class RoommatePreferences implements RoommatePreferencesOptions {
   preferenceKey: number;
   patronKeyRoommate: number;
   firstName: string;
+  lastName: string;
   rank: number;
 
   constructor(options: RoommatePreferencesOptions) {
@@ -284,6 +349,10 @@ export class RoommatePreferences {
       this.firstName = String(options.firstName);
     }
 
+    if (isDefined(options.lastName)) {
+      this.lastName = String(options.lastName);
+    }
+
     if (isDefined(options.preferenceKey)) {
       this.preferenceKey = Number(options.preferenceKey);
     }
@@ -293,5 +362,6 @@ export interface RoommatePreferencesOptions {
   preferenceKey?: number;
   patronKeyRoommate?: number;
   firstName?: string;
+  lastName?: string;
   rank?: number;
 }
