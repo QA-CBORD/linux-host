@@ -46,7 +46,6 @@ export class SearchResultsPage implements OnInit, OnDestroy {
       });
     }
     this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds.map((value) => {
-      console.log("valuieee -",value)
       if (value!=undefined){
         return value
       }
@@ -135,7 +134,6 @@ export class SearchResultsPage implements OnInit, OnDestroy {
         return res.firstName
       } 
     } )
-    console.log('roomates roomates',roomates)
     if(roomates[0] != undefined  ) {
       return roomates.join()
     }
