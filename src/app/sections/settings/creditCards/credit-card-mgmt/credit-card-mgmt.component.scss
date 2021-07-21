@@ -1,0 +1,33 @@
+
+
+.main_content {
+    
+    background-color: #f1f1f1;
+
+    .add-new-cc_item {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+    
+    .devider{
+      border: 0.5px lightgray;
+    }
+    
+    .credit-card-item {
+    
+        .remove-btn {
+           font-family: "Nunito Bold", arial, sans-serif;
+           //font-size: 15px;
+        }
+    
+        .credit__card_item-label{
+            display: flex;
+            justify-content: space-between;
+            margin-left: 5px;
+        }
+    }
+
+}
+
+
+
