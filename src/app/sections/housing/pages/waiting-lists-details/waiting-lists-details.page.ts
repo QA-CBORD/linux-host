@@ -108,7 +108,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
         
         if(!facilityKey){
           this._toastService.showToast({
-          message: 'You cannot get on a building waiting list without selecting a building'});
+          message: "Select a building to add yourself to the building's waiting list"});
           return null;
         }
       }
@@ -120,7 +120,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
         
         if(!attributeValue){
           this._toastService.showToast({
-          message: 'You must select a value'});
+          message: 'Select a value to add yourself to the waiting list'});
           return null;
         }
     }
