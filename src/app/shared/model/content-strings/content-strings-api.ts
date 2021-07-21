@@ -10,7 +10,7 @@ import { DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-pa
 import { GuestDepositCsModel } from '@sections/guest/deposit/model/guest-deposit-cs.model';
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
 import { IdentifyRecipientCsModel } from '@sections/guest/guest-deposits/components/identify-recipient/identity-recipient.content.string';
-
+import { creditCardMgmtCsModel } from '@sections/settings/creditCards/creditCardMgmtCsModel';
 
 export enum ContentStringCategory {
   forgotPassword = 'forgotPassword',
@@ -23,13 +23,14 @@ export enum ContentStringCategory {
   guestDeposit = 'guestDeposit',
   passwordValidation = 'passwordValidation',
   addFunds = 'addFunds',
-  identifyRecipient = 'identifyRecipient'
+  identifyRecipient = 'identifyRecipient',
+  creditCardMgmt = 'creditCardMgmt',
 }
 
-export interface ExtraContent{
-  domain: CONTENT_STRINGS_DOMAINS,
-  category: CATEGORIES,
-  name: string
+export interface ExtraContent {
+  domain: CONTENT_STRINGS_DOMAINS;
+  category: CATEGORIES;
+  name: string;
 }
 
 type ContentStringCategoryType = { -readonly [key in keyof typeof ContentStringCategory]: ContentStringBuilder };
@@ -107,8 +108,12 @@ export const ContentStringApi: ContentStringCategoryType = {
 
   [ContentStringCategory.identifyRecipient]: {
     category: CATEGORIES.identifyRecipient,
-    build: (config: ContentStringBuilderConfig): IdentifyRecipientCsModel => {
-      return new IdentifyRecipientCsModel(NullableContent.build(config));
-    },
+    build: (config: ContentStringBuilderConfig): IdentifyRecipientCsModel =>
+      new IdentifyRecipientCsModel(NullableContent.build(config)),
+  },
+
+  [ContentStringCategory.creditCardMgmt]: {
+    category: CATEGORIES.creditCardMgmt,
+    build: (config): creditCardMgmtCsModel => new creditCardMgmtCsModel(NullableContent.build(config)),
   },
 };
