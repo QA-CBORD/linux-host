@@ -77,7 +77,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     const selectedStep: StepComponent = this.stepper.selected;
     const formValue: any = selectedStep.stepControl.value;
 
-    this._update('save', this.waitingKey, applicationDetails, formValue);
+    this._update(this.waitingKey, applicationDetails, formValue);
 
     return false;
   }
@@ -90,9 +90,9 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     }
 
     if (!isLastPage) {
-      this._next(waitingListDetails, form.value);
+      this._next(form.value);
     } else {
-      this._update('submit', this.waitingKey, waitingListDetails, form.value);
+      this._update(this.waitingKey, waitingListDetails, form.value);
     }
   }
 
@@ -100,7 +100,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }
 
-  private _update(type: string, applicationKey: number, applicationDetails: WaitingListDetails, formValue: any): void {
+  private _update(applicationKey: number, applicationDetails: WaitingListDetails, formValue: any): void {
     if(applicationDetails.facilities)
       {
         const facilityKey: number = 
@@ -142,7 +142,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this.waitingListDetails$ = this._housingService.getWaitList(this.waitingKey).pipe(
       tap((waitingListDetails: WaitingListDetails) => {
 
-        this.isSubmitted = false
+        this.isSubmitted = waitingListDetails.patronWaitingList != null;
         this._loadingService.closeSpinner();
       }),
       catchError((error: any) => {
@@ -158,7 +158,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this.pages$ = this._waitingListService.getQuestions(this.waitingKey);
   }
 
-  private _next(waitingListDetails: WaitingListDetails, formValue: any): void {
+  private _next(formValue: any): void {
     this.content.scrollToTop();
 
     if (this.isSubmitted) {
