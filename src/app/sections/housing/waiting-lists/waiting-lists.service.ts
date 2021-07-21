@@ -151,7 +151,7 @@ export class WaitingListsService {
     if (!isDefined(value)) {
       if (question.consumerKey) {
         value = this._questionsService.getAttributeValue(waitingListDetails.patronAttributes, question) || '';
-        disabled = isDefined(question.readonly) ? question.readonly : true;
+        disabled = true;
       } else if (waitingListDetails.patronWaitingList != null) {
         value = this._getSelectedWaitingListValue(waitingListDetails);
         disabled = true;
@@ -180,41 +180,50 @@ export class WaitingListsService {
     return value;
   }
 
-  next(waitingListKey: number ,formValue: any): Observable<any> {
-    return this._questionsStorageService.updateQuestions(waitingListKey, formValue, 1)
+  next(formValue: any): Observable<any> {
+    if (Object.keys(formValue).find(value => value.includes('attribute-selection')) ||
+        Object.keys(formValue).find(value => value.includes('facility-selection'))) {
+        this._waitingListState.setFormSelection(formValue);
+    }
+    
+    return of(true);
   }
   
   submitWaitingList(
     waitListKey: number,
-    form: any): Observable<boolean> {  
-
-    return this._questionsStorageService.updateQuestions(waitListKey, form, 3).pipe(
-      switchMap((storedApplication: StoredApplication) => {
-        const questions = storedApplication.questions;
-
-        const attributeValue: string = 
-          questions[Object.keys(questions)
-                      .find(value => value.includes('attribute-selection'))] || null;
-        
-                      const facilityKey: number = 
-          parseInt(questions[Object.keys(questions).find(value => value.includes('facility-selection'))]) || null;
-
-        const body = new WaitingListDetailsRequest({
-          waitListKey,
-          attributeValue,
-          facilityKey
-        });
-
-        return this._housingProxyService.post<Response>(this.WaitingListUrl+'/patron', body);
-      }),
-      map((response: Response) => {
-        if (isSuccessful(response.status)) {
-          return true;
-        } else {
-          throw new Error(response.status.message);
-        }
+    form: any): Observable<boolean> {
+      let formQuestions;
+      
+      if (Object.keys(form).find(value => value.includes('attribute-selection')) ||
+          Object.keys(form).find(value => value.includes('facility-selection'))) {
+        formQuestions = Object.entries(form);
+      } else {
+        this._waitingListState.formSelection$
+          .subscribe(d => formQuestions = Object.entries(d));
       }
-      ),
-      catchError(_ => of(false)));
+
+      const selectedValue = formQuestions.find(([key, _]) => key.includes('attribute-selection'));
+      const selectedFacility = formQuestions.find(([key, _]) => key.includes('facility-selection'));
+
+      const attributeValue: string = selectedValue ? String(selectedValue[1]) : null;
+      const facilityKey: number = selectedFacility ? Number(selectedFacility[1]) : null;
+
+      const body = new WaitingListDetailsRequest({
+        waitListKey,
+        attributeValue,
+        facilityKey
+      });
+
+      return this._housingProxyService.post<Response>(this.WaitingListUrl+'/patron', body).pipe(
+        map((response: Response) => {
+            if (isSuccessful(response.status)) {
+              return true;
+            } else {
+              throw new Error(response.status.message);
+            }
+          }
+        ),
+        catchError(_ => of(false))
+      );
   }
 }

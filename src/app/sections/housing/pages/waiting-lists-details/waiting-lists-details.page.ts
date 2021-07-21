@@ -165,7 +165,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
       return this.stepper.next();
     }
     const nextSubscription: Subscription = this._waitingListService
-      .next(this.waitingKey, formValue)
+      .next(formValue)
       .subscribe({
         next: () => this.stepper.next(),
       });
