@@ -141,8 +141,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
 
     this.waitingListDetails$ = this._housingService.getWaitList(this.waitingKey).pipe(
       tap((waitingListDetails: WaitingListDetails) => {
-
-        this.isSubmitted = waitingListDetails.patronWaitingList != null;
+        this.isSubmitted = true;
         this._loadingService.closeSpinner();
       }),
       catchError((error: any) => {
