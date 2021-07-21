@@ -13,6 +13,7 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { ReportCardModule } from '@sections/settings/pages/report-card/report-card.module';
 import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials/mobile.credential.module';
 import { PasswordChangeModule } from '@shared/ui-components/change-password/password-change.module';
+import { CreditCardModule } from './creditCards/credit-card.module';
 
 const imports = [
   CommonModule,
@@ -25,9 +26,13 @@ const imports = [
   EditHomePageModalModule,
   ReportCardModule,
   MobileCredentialModule,
-  PasswordChangeModule
+  PasswordChangeModule,
+  CreditCardModule
 ];
-const declarations = [SettingsPage, SettingsItemComponent];
+const declarations = [
+  SettingsPage, 
+  SettingsItemComponent
+];
 const entryComponents = [];
 const providers = [SettingsFactoryService];
 @NgModule({

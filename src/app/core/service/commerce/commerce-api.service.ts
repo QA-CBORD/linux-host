@@ -26,6 +26,13 @@ export class CommerceApiService {
     );
   }
 
+  removeAccount(accInfo): Observable<any>{
+    const queryConfig = new RPCQueryConfig('deactivateAccount', {...accInfo}, true);
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(
+      map(({ response }) => response)
+    );
+  }
+
   getCashlessUserId(): Observable<string> {
     const queryConfig = new RPCQueryConfig('retrieveCashlessPatronMobileDisplayMediaValue', {}, true);
 

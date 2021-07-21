@@ -30,6 +30,11 @@ export const defaultIdentifyRecipientCs = {
   save_recipient_for_future: 'Save this recipient for future deposits ?'
 }
 
+export const defaultCreditCardMgmtCs = {
+  setting_section_title: 'Payment Methods',
+  setting_section_subtitle: 'Add or delete stored credit cards'
+}
+
 export const defaultRegistrationCs = {
   screen_title: 'Create an account',
   submit_btn_text: 'Create Account',

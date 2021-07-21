@@ -19,6 +19,7 @@ import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-credential-metadata.page';
 import { PasswordChangeComponent } from '@shared/ui-components/change-password/password-change.component';
+import { CreditCardMgmtComponent } from './creditCards/credit-card-mgmt/credit-card-mgmt.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -141,6 +142,24 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Saved Addresses',
         type: 'button',
         navigate: [SETTINGS_NAVIGATE.address],
+      },
+      {
+        id: SETTINGS_ID.creditCard,
+        icon: 'credit-card',
+        label: 'Payment Methods',
+        type: 'button',
+        setCallback: openModal,
+        validations: [
+          { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
+        ],
+        modalContent: {
+          component: CreditCardMgmtComponent,
+          contentStrings: [{
+            domain: CONTENT_STRINGS_DOMAINS.patronUi,
+            category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
+            name: null,
+          }]
+        },
       },
       {
         id: SETTINGS_ID.mcredential,
