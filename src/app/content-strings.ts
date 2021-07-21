@@ -23,7 +23,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   guestDeposit = 'guest_deposit',
   deposit = 'deposit',
   addFunds = 'guest_add_funds',
-  identifyRecipient = 'identify_recipient'
+  identifyRecipient = 'identify_recipient',
+  creditCardMgmt = 'creditCardMgmt'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

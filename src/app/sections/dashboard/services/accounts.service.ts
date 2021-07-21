@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, zip } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 
@@ -19,10 +19,14 @@ export class AccountsService {
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
-  getUserAccounts(): Observable<UserAccount[]> {
+  getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Observable<UserAccount[]> {
     return this.commerceApiService
       .getUserAccounts()
-      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts)));
+      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
+  }
+
+  removeCreditCardAccount({ id: accountId }: UserAccount): Observable<Boolean> {
+    return this.commerceApiService.removeAccount({ accountId });
   }
 
   transformStringToArray(value: string): Array<unknown> {
@@ -53,9 +57,9 @@ export class AccountsService {
     return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
   }
 
-  private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
+  private filterAccountsByPaymentSystem(accounts: UserAccount[], paymentSistems:number[]): UserAccount[] {
     return accounts.filter(
-      ({ paymentSystemType: type }) => type === PaymentSystemType.OPCS || type === PaymentSystemType.CSGOLD
+      ({ paymentSystemType: type }) => paymentSistems.includes(type)
     );
   }
 
