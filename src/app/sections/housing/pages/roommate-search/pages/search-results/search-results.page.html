@@ -15,15 +15,15 @@
         <ion-item *ngFor="let roommate of roommates" button (click)="selectRoommate(roommate)">
           <ng-container [ngSwitch]="options.showOptions">
             <ion-label *ngSwitchCase="'fullName'">
-              {{ roommate.firstName }} {{ roommate.middleName }} {{ roommate.lastName}}
+              {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}}
             </ion-label>
             
             <ion-label *ngSwitchCase="'preferredNameLast'">
-              {{ roommate.preferredName }} {{ roommate.lastName}}
+              {{ roommate.preferredName == 'null' ? '' : roommate.preferredName }} {{ roommate.lastName}}
             </ion-label>
 
             <ion-label *ngSwitchCase="'fullNameDOB'">
-              {{ roommate.firstName }} {{ roommate.middleName }} {{ roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}
+              {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}
             </ion-label>
           </ng-container>
         </ion-item>
