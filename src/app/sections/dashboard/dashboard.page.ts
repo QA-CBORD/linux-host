@@ -286,12 +286,12 @@ export class DashboardPage implements OnInit {
   private hideGlobalNavBar(hide: boolean) {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
   }
-
+  
   private locationPermissionPage() {
-    this.navigationFacade.isFirstNavigation$.pipe(take(1)).subscribe(isFirst => {
+    this.navigationFacade.isFirstNav$.pipe(take(1)).subscribe(isFirst => {
       if (isFirst) {
         alert('Screen');
-        this.navigationFacade.onFirstNavigation();
+        this.navigationFacade.onFirstNav();
       } else {
         alert('No screen');
       }
