@@ -17,7 +17,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 @Injectable()
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private readonly key: string = 'NAVIGATION_SETTINGS';
-  private readonly keyStartup: string = 'NAVIGATION_STARTUP';
+  private readonly firstNavKey: string = 'NAVIGATION_STARTUP';
   
   constructor(
     private readonly storage: StorageStateService,
@@ -46,15 +46,14 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       .toPromise();
   }
   
-  get firstNavigation$(): Observable<boolean> {
+  get isFirstNavigation$(): Observable<boolean> {
     return this.storage
-      .getStateEntityByKey$<boolean>(this.keyStartup)
-      .pipe(map(data => (!!data ? true : false)));
+      .getStateEntityByKey$<boolean>(this.firstNavKey)
+      .pipe(map(data => !data));
   }
 
-  setFirstStartup() {
-    const firstStartup = true;
-    this.storage.updateStateEntity(this.keyStartup, firstStartup, { keepOnLogout: true });
+  onFirstNavigation() {
+    this.storage.updateStateEntity(this.firstNavKey, true, { keepOnLogout: true });
   }
 
   private isConfigInStorage(): boolean {

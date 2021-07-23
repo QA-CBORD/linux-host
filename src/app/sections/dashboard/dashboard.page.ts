@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewChild,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -75,7 +68,7 @@ export class DashboardPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
-    private readonly navigationFacadeSettingsService: NavigationFacadeSettingsService
+    private readonly navigationFacade: NavigationFacadeSettingsService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -88,19 +81,6 @@ export class DashboardPage implements OnInit {
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
     this.pushNotificationRegistration();
-  }
-
-  private locationPermissionPage() {
-    this.navigationFacadeSettingsService.firstNavigation$.pipe(take(1)).subscribe(first => {
-      if (first == false) {
-        alert("Screen");
-        //this.mobileAccessTile.getLocations();
-        this.navigationFacadeSettingsService.setFirstStartup();
-      } else {
-        alert("No screen");
-        //this.mobileAccessTile.getLocations();
-      }
-    });
   }
 
   ngAfterViewInit() {
@@ -305,5 +285,16 @@ export class DashboardPage implements OnInit {
 
   private hideGlobalNavBar(hide: boolean) {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
+  }
+
+  private locationPermissionPage() {
+    this.navigationFacade.isFirstNavigation$.pipe(take(1)).subscribe(isFirst => {
+      if (isFirst) {
+        alert('Screen');
+        this.navigationFacade.onFirstNavigation();
+      } else {
+        alert('No screen');
+      }
+    });
   }
 }
