@@ -126,4 +126,7 @@ export class SearchByPage implements OnInit, OnDestroy {
     this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search/results`]);
   }
 
+  isApplicationSubmitted(){
+    return this._applicationStateService.isSubmitted(this._applicationStateService.applicationsState.applicationDetails.applicationDefinition.key);
+  }
 }

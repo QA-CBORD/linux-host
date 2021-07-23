@@ -161,8 +161,7 @@ export class ApplicationsService {
 
   selectRoommate(patronKey: number, firstName: string): Observable<Boolean> {
     // TODO: Implement this method
-    let isLenghtRoommate = this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.find((value) => value.patronKeyRoommate == 0)
-    if (isLenghtRoommate) {
+    if (this._applicationsStateService.maximumSelectedRoommates>=0) {
       let isSetRoommate = false;
 
       this._applicationsStateService.setRoommatesPreferences(
