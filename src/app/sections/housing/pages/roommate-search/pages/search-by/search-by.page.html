@@ -89,7 +89,7 @@
           color="primary"
           mode="ios"
           (click)="searchRoommates(options)"
-          [disabled]="!searchForm.valid">
+          [disabled]="!searchForm.valid || isApplicationSubmitted()">
           Search
         </ion-button>
       </div>

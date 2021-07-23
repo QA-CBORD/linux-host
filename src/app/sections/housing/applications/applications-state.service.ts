@@ -30,7 +30,7 @@ export class ApplicationsStateService {
 
   private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
   private requestedRoommates$: BehaviorSubject<RequestedRoommate[]> = new BehaviorSubject<RequestedRoommate[]>([]);
-
+  private maximunSelectedRoommates: number;
   private roommatePreferences: RoommatePreferences[]; 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState
@@ -98,6 +98,20 @@ export class ApplicationsStateService {
     this.roommatePreferences = roommates;
   }
 
+  setMaximumSelectedRoommates(maxRoommates:number){
+    this.maximunSelectedRoommates = maxRoommates;
+  }
+
+  setSubtractSelectedRoommates(){
+    if(this.maximunSelectedRoommates>0){
+      this.maximunSelectedRoommates--;
+    }
+  }
+
+  get maximumSelectedRoommates(){
+    return this.maximunSelectedRoommates;
+  }
+
   private _getEntities(state: ApplicationsState) {
     return state.entities;
   }
@@ -121,5 +135,20 @@ export class ApplicationsStateService {
 
   private _getApplicationDetails(state: ApplicationsState): ApplicationDetails {
     return state.applicationDetails;
+  }
+
+  isSubmitted(termKey) {
+    let isSubmitted;
+    this.applications$.subscribe((res)=>{
+      isSubmitted = res.find((ApplicationDetails: ApplicationDetails)=>{
+        if(ApplicationDetails.applicationDefinition.key == termKey){
+          if(ApplicationDetails.patronApplication){
+            return ApplicationDetails.patronApplication.isApplicationSubmitted
+          }
+          return false;
+        }
+      })
+    })
+    return isSubmitted;
   }
 }
