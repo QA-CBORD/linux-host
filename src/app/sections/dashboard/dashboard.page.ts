@@ -31,6 +31,7 @@ import { ExploreTileComponent } from './containers/explore-tile/explore-tile.com
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
+import { LocationPermissionPopover } from './components/location-popover/location-popover.component';
 
 const { App, Device } = Plugins;
 
@@ -291,10 +292,24 @@ export class DashboardPage implements OnInit {
     this.navigationFacade.isFirstNav$.pipe(take(1)).subscribe(isFirst => {
       if (isFirst) {
         alert('Screen');
+        this.showModal();
         this.navigationFacade.onFirstNav();
       } else {
         alert('No screen');
+        this.showModal();
       }
     });
+  }
+
+  private async showModal(): Promise<boolean> {
+    
+    const modal = await this.popoverCtrl.create({
+      component: LocationPermissionPopover,
+      animated: false,
+      backdropDismiss: false,
+    });
+    await modal.present();
+
+    return modal.onDidDismiss().then(({ role }) => role === BUTTON_TYPE.OKAY);
   }
 }
