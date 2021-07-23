@@ -12,7 +12,7 @@ import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
 import { Observable, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
-import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
@@ -37,6 +37,7 @@ import { OrderTileComponent } from './containers/order-tile/order-tile.component
 import { ExploreTileComponent } from './containers/explore-tile/explore-tile.component';
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
+import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 
 const { App, Device } = Plugins;
 
@@ -73,7 +74,8 @@ export class DashboardPage implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly appBrowser: InAppBrowser
+    private readonly appBrowser: InAppBrowser,
+    private readonly navigationFacadeSettingsService: NavigationFacadeSettingsService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -81,10 +83,24 @@ export class DashboardPage implements OnInit {
   }
 
   ngOnInit() {
+    this.locationPermissionPage();
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
     this.pushNotificationRegistration();
+  }
+
+  private locationPermissionPage() {
+    this.navigationFacadeSettingsService.firstNavigation$.pipe(take(1)).subscribe(first => {
+      if (first == false) {
+        alert("Screen");
+        //this.mobileAccessTile.getLocations();
+        this.navigationFacadeSettingsService.setFirstStartup();
+      } else {
+        alert("No screen");
+        //this.mobileAccessTile.getLocations();
+      }
+    });
   }
 
   ngAfterViewInit() {
