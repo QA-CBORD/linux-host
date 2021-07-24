@@ -5,6 +5,7 @@ import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/s
 import { LocationPermissionModal } from './location-popover.component';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 const declarations = [LocationPermissionModal];
 
@@ -12,7 +13,7 @@ const declarations = [LocationPermissionModal];
   declarations,
   exports: [LocationPermissionModal],
   imports: [CommonModule, IonicModule, StPopoverLayoutModule, StHeaderModule, StButtonModule],
+  providers: [AndroidPermissions]
 })
-
 
 export class LocationPermissionModalModule {}

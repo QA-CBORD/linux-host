@@ -299,7 +299,7 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  private async showModal(): Promise<boolean> {
+  private async showModal(): Promise<void> {
     this.hideGlobalNavBar(true);
     const modal = await this.modalController.create({
       component: LocationPermissionModal,
@@ -307,7 +307,8 @@ export class DashboardPage implements OnInit {
       backdropDismiss: false,
     });
     await modal.present();
-    this.hideGlobalNavBar(false);
-    return modal.onDidDismiss().then(({ role }) => role === BUTTON_TYPE.OKAY);
+    return modal.onDidDismiss().then(() => {
+       this.hideGlobalNavBar(false);  
+    });
   }
 }

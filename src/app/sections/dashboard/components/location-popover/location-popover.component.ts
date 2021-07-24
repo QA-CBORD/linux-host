@@ -1,25 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { PopoverConfig } from '@core/model/popover/popover.model';
-import { buttons } from '@core/utils/buttons.config';
+import { Component } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 @Component({
   selector: 'st-location-popover',
   templateUrl: './location-popover.component.html',
   styleUrls: ['./location-popover.component.scss'],
 })
-export class LocationPermissionModal implements OnInit {
-  
-  popoverConfig: PopoverConfig<string>;
+export class LocationPermissionModal {
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly androidPermissions: AndroidPermissions
+  ) {}
 
-  ngOnInit() {
-    this.initPopover();
-  }
-
-  initPopover() {
-    this.popoverConfig = {
-      title: 'Menu not available',
-      type: 'SUCCESS',
-      buttons: [{ ...buttons.NO, label: 'NO' }, { ...buttons.OKAY, label: 'YES' }],
-      message: 'Do you want to proceed with a new menu (according to selected time)?',
-    };
+  async askForLocation() {
+    await this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION, this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION]);
+    this.modalController.dismiss();
   }
 }
