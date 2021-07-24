@@ -31,7 +31,7 @@ import { ExploreTileComponent } from './containers/explore-tile/explore-tile.com
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-import { LocationPermissionPopover } from './components/location-popover/location-popover.component';
+import { LocationPermissionModal } from './components/location-popover/location-popover.component';
 
 const { App, Device } = Plugins;
 
@@ -69,7 +69,7 @@ export class DashboardPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
-    private readonly navigationFacade: NavigationFacadeSettingsService
+    private readonly navigationFacade: NavigationFacadeSettingsService,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -291,20 +291,18 @@ export class DashboardPage implements OnInit {
   private locationPermissionPage() {
     this.navigationFacade.isFirstNav$.pipe(take(1)).subscribe(isFirst => {
       if (isFirst) {
-        alert('Screen');
         this.showModal();
         this.navigationFacade.onFirstNav();
       } else {
-        alert('No screen');
         this.showModal();
       }
     });
   }
 
   private async showModal(): Promise<boolean> {
-    
-    const modal = await this.popoverCtrl.create({
-      component: LocationPermissionPopover,
+
+    const modal = await this.modalController.create({
+      component: LocationPermissionModal,
       animated: false,
       backdropDismiss: false,
     });

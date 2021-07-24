@@ -1,5 +1,19 @@
-<st-popover-layout [popoverConfig]="popoverConfig">
-  <section class="message">
-    {{ popoverConfig.message }}
-  </section>
-</st-popover-layout>
+<st-header
+  title=""
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-close'"
+  [backButtonTitle]="''"
+  [isToolbarShow]="true"
+></st-header>
+<ion-content>
+  <div>
+    <img class="no-access"src="./assets/icon/location-pin.svg" alt="Saved Address" appClickStopPropagation role="button" tabindex="0" />
+    <ion-title>Use your location</ion-title>
+    <ion-text
+      >GET can use your location to help you find nearby merchants, check in for an order pickup, and use your card.
+      Allowing background access to your device’s location lets you to take full advantage of these features and enables
+      you to add your card or payroll account to Apple Wallet or Google Pay if offered by your institution.</ion-text
+    >
+    <img class="access" src="./assets/images/location-access.svg" alt="Saved Address" appClickStopPropagation role="button" tabindex="0" />
+  </div>
+</ion-content>

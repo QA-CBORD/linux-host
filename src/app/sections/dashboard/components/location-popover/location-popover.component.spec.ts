@@ -1,22 +1,23 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationPermissionPopover } from './location-popover.component';
+import { LocationPermissionModal } from './location-popover.component';
 
 describe('LocationPopoverComponent', () => {
-  let component: LocationPermissionPopover;
-  let fixture: ComponentFixture<LocationPermissionPopover>;
+  let component: LocationPermissionModal;
+  let fixture: ComponentFixture<LocationPermissionModal>;
 
+  
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LocationPermissionPopover ],
+      declarations: [ LocationPermissionModal ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationPermissionPopover);
+    fixture = TestBed.createComponent(LocationPermissionModal);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

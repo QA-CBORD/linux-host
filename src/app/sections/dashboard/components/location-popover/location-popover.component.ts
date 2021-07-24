@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { PopoverConfig } from '@core/model/popover/popover.model';
 import { buttons } from '@core/utils/buttons.config';
-
 @Component({
   selector: 'st-location-popover',
   templateUrl: './location-popover.component.html',
   styleUrls: ['./location-popover.component.scss'],
 })
-export class LocationPermissionPopover implements OnInit {
+export class LocationPermissionModal implements OnInit {
   
   popoverConfig: PopoverConfig<string>;
 
