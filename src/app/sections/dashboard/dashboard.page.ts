@@ -300,14 +300,14 @@ export class DashboardPage implements OnInit {
   }
 
   private async showModal(): Promise<boolean> {
-
+    this.hideGlobalNavBar(true);
     const modal = await this.modalController.create({
       component: LocationPermissionModal,
       animated: false,
       backdropDismiss: false,
     });
     await modal.present();
-
+    this.hideGlobalNavBar(false);
     return modal.onDidDismiss().then(({ role }) => role === BUTTON_TYPE.OKAY);
   }
 }
