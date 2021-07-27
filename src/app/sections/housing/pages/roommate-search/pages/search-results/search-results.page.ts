@@ -104,7 +104,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
               this.activeAlerts = [];
   
               const subs =
-                this._applicationService.selectRoommate(roommate.patronKey,roommate.firstName)
+                this._applicationService.selectRoommate(roommate.patronKey,roommate.firstName, roommate.lastName)
                     .subscribe(status => {
                       if (status) {
                         alert.dismiss().then(() =>{ 
