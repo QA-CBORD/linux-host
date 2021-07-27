@@ -35,6 +35,10 @@ export const defaultCreditCardMgmtCs = {
   setting_section_subtitle: 'Add or delete stored credit cards'
 }
 
+export const checkingDefaultCs = {
+   
+}
+
 export const defaultRegistrationCs = {
   screen_title: 'Create an account',
   submit_btn_text: 'Create Account',

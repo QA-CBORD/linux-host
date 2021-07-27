@@ -11,6 +11,7 @@ import { GuestDepositCsModel } from '@sections/guest/deposit/model/guest-deposit
 import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.content.strings';
 import { IdentifyRecipientCsModel } from '@sections/guest/guest-deposits/components/identify-recipient/identity-recipient.content.string';
 import { creditCardMgmtCsModel } from '@sections/settings/creditCards/creditCardMgmtCsModel';
+import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
 
 export enum ContentStringCategory {
   forgotPassword = 'forgotPassword',
@@ -25,6 +26,7 @@ export enum ContentStringCategory {
   addFunds = 'addFunds',
   identifyRecipient = 'identifyRecipient',
   creditCardMgmt = 'creditCardMgmt',
+  checkin = 'checkin';
 }
 
 export interface ExtraContent {
@@ -115,5 +117,10 @@ export const ContentStringApi: ContentStringCategoryType = {
   [ContentStringCategory.creditCardMgmt]: {
     category: CATEGORIES.creditCardMgmt,
     build: (config): creditCardMgmtCsModel => new creditCardMgmtCsModel(NullableContent.build(config)),
+  },
+
+  [ContentStringCategory.checkin]: {
+    category: CATEGORIES.checkin,
+    build: (config): CheckingContentCsModel => new CheckingContentCsModel(NullableContent.build(config)),
   },
 };
