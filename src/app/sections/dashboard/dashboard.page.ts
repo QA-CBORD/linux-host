@@ -293,9 +293,7 @@ export class DashboardPage implements OnInit {
       if (isFirst) {
         this.showModal();
         this.navigationFacade.onFirstNav();
-      } else {
-        this.showModal();
-      }
+      } 
     });
   }
 
