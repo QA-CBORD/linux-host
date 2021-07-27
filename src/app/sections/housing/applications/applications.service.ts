@@ -164,7 +164,7 @@ export class ApplicationsService {
     // TODO: Implement this method
     if (this._applicationsStateService.maximumSelectedRoommates>=0) {
       let isSetRoommate = false;
-      let requestedRoommates =this._applicationsStateService.roommateSearchOptions.getValue();
+      let requestedRoommates =this._applicationsStateService.getRoommateSearchOptions();
       this._applicationsStateService.setRoommatesPreferences(
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
           requestedRoommates.preferences.forEach((requestedRommate)=>{
