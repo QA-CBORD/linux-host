@@ -159,7 +159,7 @@ export class ApplicationsService {
     );
   }
 
-  selectRoommate(patronKey: number, firstName: string): Observable<Boolean> {
+  selectRoommate(patronKey: number, firstName: string, lastName: string): Observable<Boolean> {
     // TODO: Implement this method
     if (this._applicationsStateService.maximumSelectedRoommates>=0) {
       let isSetRoommate = false;
@@ -168,7 +168,8 @@ export class ApplicationsService {
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
           if (roommate.patronKeyRoommate == 0 && !isSetRoommate) {
             roommate.patronKeyRoommate = patronKey;
-            roommate.firstName = firstName
+            roommate.firstName = firstName;
+            roommate.lastName = lastName;
             isSetRoommate = true;
             return roommate
           }
