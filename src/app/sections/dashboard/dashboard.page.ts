@@ -33,6 +33,7 @@ import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobil
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { LocationPermissionModal } from './components/location-popover/location-popover.component';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 const { App, Device } = Plugins;
 
@@ -70,7 +71,8 @@ export class DashboardPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
-    private readonly navigationFacade: NavigationFacadeSettingsService
+    private readonly navigationFacade: NavigationFacadeSettingsService,
+    private readonly loadingService: LoadingService,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -290,9 +292,9 @@ export class DashboardPage implements OnInit {
   }
 
   private locationPermissionPage() {
-      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(async requested => {
+      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
         if (!requested) {
-          await this.requestPermissionModal();
+           this.requestPermissionModal();
         }
       });
   }
@@ -307,7 +309,7 @@ export class DashboardPage implements OnInit {
     await modal.present();
     return modal.onDidDismiss().then(() => {
       this.hideGlobalNavBar(false);
-      this.navigationFacade.onRequestedPermissions();
+      this.loadingService.closeSpinner();
     });
   }
 }
