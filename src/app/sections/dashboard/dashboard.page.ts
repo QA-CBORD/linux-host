@@ -290,13 +290,11 @@ export class DashboardPage implements OnInit {
   }
 
   private locationPermissionPage() {
-    if (Capacitor.platform == PLATFORM.android) {
-      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
+      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(async requested => {
         if (!requested) {
-          this.requestPermissionModal();
+          await this.requestPermissionModal();
         }
       });
-    }
   }
 
   private async requestPermissionModal(): Promise<void> {
