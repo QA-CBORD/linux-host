@@ -1,39 +1,36 @@
 @import 'tools';
 
-.no-access {
-  width: 18.8px;
-  height: 24.4px;
+.location {
+  width: 25px;
+  height: 25px;
   display: flex;
-  margin: 0 auto;
+  margin: auto;
+  margin-bottom: 12.6px;
+  margin-top: 84px;
+  
+  &__title {
+    display: flex;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 27px;
+    @include font-nunito-heavy(20px);
+  }
+
+  &__text {
+    display: flex;
+    margin: 0 auto;
+    text-align: left;
+    margin: 16px 32px 0px 32px;
+    color: rgba(0, 0, 0, 0.87);
+    @include font-nunito-regular(14px);
+  }
 }
 
-ion-title {
-  display: flex;
-  margin: 12.6 auto;
-  text-align: center;
-  line-height: 27px;
-  @include font-nunito-heavy(20px);
+.location-access-img {
+  left: -28px;
 }
 
-ion-text {
-  display: flex;
-  margin: 0 auto;
-  text-align: left;
-  margin: 16px 32px 0px 32px;
-  color: rgba(0, 0, 0, 0.87);
-  @include font-nunito-regular(14px);
-}
-
-.access {
-    width: 419px;
-    left: -28px;
-}
-
-st-button {
-  display: flex;
-  right: 16px !important;
-}
-
-.reduced {
-  padding: 0px 16px 16px 16px;
+.location-access-btn {
+  padding: 0px 16px 48px 16px;
+  @include font-nunito-heavy(16px);
 }

@@ -52,8 +52,8 @@ export class CoordsService {
     /// this prevents several simultaneous requests to the device
     const timeDiff = new Date().getTime() - this.timestamp;
     if (timeDiff > this.fetchInterval) {
-      this.navigationFacade.isFirstNav$.pipe(take(1)).subscribe(isFirst => {
-        if (isFirst) {
+      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
+        if (requested) {
           this.requestLocationFromDevice();
         }
       });

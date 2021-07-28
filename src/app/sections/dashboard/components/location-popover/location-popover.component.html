@@ -1,26 +1,33 @@
-<st-header
-  title=""
-  [isTitleShow]="true"
-  [backButtonIcon]="''"
-  [backButtonTitle]="''"
-  [isToolbarShow]="true"
-></st-header>
+
 <ion-content>
   <div>
-    <img class="no-access"src="./assets/icon/location-pin.svg" alt="Saved Address" appClickStopPropagation role="button" tabindex="0" />
-    <ion-title>Use your location</ion-title>
-    <ion-text
+    <img
+      class="location"
+      src="./assets/icon/location-pin.svg"
+      alt="Location access icon"
+      role="button"
+      tabindex="0"
+    />
+    <ion-title class="location__title">Use your location</ion-title>
+    <ion-text class="location__text"
       >GET can use your location to help you find nearby merchants, check in for an order pickup, and use your card.
       Allowing background access to your device’s location lets you to take full advantage of these features and enables
       you to add your card or payroll account to Apple Wallet or Google Pay if offered by your institution.</ion-text
     >
-    <img class="access" src="./assets/images/location-access.svg" alt="Saved Address" appClickStopPropagation role="button" tabindex="0" />
+    <img
+      class="location-access-img"
+      src="./assets/images/location-access.svg"
+      alt="Location access image"
+      role="button"
+      tabindex="0"
+      width="419" height="366"
+    />
   </div>
 </ion-content>
 <ion-footer>
-  <div class="reduced">
+  <div class="location-access-btn">
     <st-button (onClick)="requestLocationPermissions()">
       Location Access
-   </st-button>
+    </st-button>
   </div>
 </ion-footer>

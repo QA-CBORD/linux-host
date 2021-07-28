@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, Platform, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
@@ -13,7 +13,7 @@ import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
-import { Plugins } from '@capacitor/core';
+import { Capacitor, Plugins } from '@capacitor/core';
 import { map, take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
@@ -32,6 +32,7 @@ import { ConversationsTileComponent } from './containers/conversations-tile/conv
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { LocationPermissionModal } from './components/location-popover/location-popover.component';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 
 const { App, Device } = Plugins;
 
@@ -69,7 +70,7 @@ export class DashboardPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
-    private readonly navigationFacade: NavigationFacadeSettingsService,
+    private readonly navigationFacade: NavigationFacadeSettingsService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -287,17 +288,18 @@ export class DashboardPage implements OnInit {
   private hideGlobalNavBar(hide: boolean) {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
   }
-  
+
   private locationPermissionPage() {
-    this.navigationFacade.isFirstNav$.pipe(take(1)).subscribe(isFirst => {
-      if (isFirst) {
-        this.showModal();
-        this.navigationFacade.onFirstNav();
-      } 
-    });
+    if (Capacitor.platform == PLATFORM.android) {
+      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
+        if (!requested) {
+          this.requestPermissionModal();
+        }
+      });
+    }
   }
 
-  private async showModal(): Promise<void> {
+  private async requestPermissionModal(): Promise<void> {
     this.hideGlobalNavBar(true);
     const modal = await this.modalController.create({
       component: LocationPermissionModal,
@@ -306,7 +308,8 @@ export class DashboardPage implements OnInit {
     });
     await modal.present();
     return modal.onDidDismiss().then(() => {
-       this.hideGlobalNavBar(false);  
+      this.hideGlobalNavBar(false);
+      this.navigationFacade.onRequestedPermissions();
     });
   }
 }

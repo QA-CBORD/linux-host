@@ -46,13 +46,13 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       .toPromise();
   }
   
-  get isFirstNav$(): Observable<boolean> {
+  get hasRequestedPermissions$(): Observable<boolean> {
     return this.storage
       .getStateEntityByKey$<boolean>(this.firstNavKey)
-      .pipe(map(data => !data));
+      .pipe(map(data => !!data));
   }
 
-  onFirstNav() {
+  onRequestedPermissions() {
     this.storage.updateStateEntity(this.firstNavKey, true, { keepOnLogout: true });
   }
 
