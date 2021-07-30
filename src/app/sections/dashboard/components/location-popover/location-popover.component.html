@@ -1,13 +1,23 @@
-<ion-content appClickStopPropagation>
-  <div>
+<st-header
+  title=""
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-close'"
+  [backButtonTitle]="''"
+  [isToolbarShow]="true"
+></st-header>
+<ion-content>
+  <div appClickStopPropagation>
     <ion-col>
-      <img class="location" src="./assets/icon/location-pin.svg" alt="Location access icon" role="button" tabindex="0" />
+      <img class="location" src="./assets/icon/location-pin.svg" alt="Location access icon" tabindex="0" />
       <ion-title class="location__title">Use your location</ion-title>
-      <ion-text class="location__text" tabindex="0"
-        >GET can use your location to help you find nearby merchants, check in for an order pickup, and use your card.
-        Allowing background access to your device’s location lets you to take full advantage of these features and enables
-        you to add your card or payroll account to Apple Wallet or Google Pay if offered by your institution.</ion-text
-      >
+      <section>
+        <ion-text class="location__text" tabindex="0"
+          >GET can use your location to help you find nearby merchants, check in for an order pickup, and use your card.
+          Allowing background access to your device’s location lets you to take full advantage of these features and
+          enables you to add your card or payroll account to Apple Wallet or Google Pay if offered by your
+          institution.</ion-text
+        >
+      </section>
       <img
         class="location-access-img"
         src="./assets/images/location-access.svg"
@@ -20,10 +30,12 @@
     </ion-col>
   </div>
 </ion-content>
-<ion-footer>
-  <div class="location-access-btn" tabindex="0">
-    <st-button (onClick)="requestLocationPermissions()">
-      Location Access
-    </st-button>
-  </div>
-</ion-footer>
+<div class="location-access-btn">
+  <st-button [fill]="'clear'" [buttonModifier]="'black'" class="location-access-btn__cancel">
+   Cancel
+  </st-button>
+  <st-button (onClick)="requestLocationPermissions()">
+    Location Access
+  </st-button>
+</div>
+

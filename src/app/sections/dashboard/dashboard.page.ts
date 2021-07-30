@@ -292,12 +292,15 @@ export class DashboardPage implements OnInit {
   }
 
   private locationPermissionPage() {
+    //if (Capacitor.platform == PLATFORM.android) {
       this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
         if (!requested) {
-           this.requestPermissionModal();
+          // this.requestPermissionModal();
         }
+        this.requestPermissionModal();
       });
-  }
+    }
+ // }
 
   private async requestPermissionModal(): Promise<void> {
     this.hideGlobalNavBar(true);

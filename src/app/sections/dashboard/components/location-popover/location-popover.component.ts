@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Plugins } from '@capacitor/core';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 const { Geolocation } = Plugins;
 @Component({
@@ -17,7 +17,8 @@ export class LocationPermissionModal {
   constructor(
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
-    private readonly navigationFacade: NavigationFacadeSettingsService
+    private readonly navigationFacade: NavigationFacadeSettingsService,
+    private readonly androidPermissions: AndroidPermissions
   ) {}
 
   private readonly WAIT_IMAGE_RENDERING = 2500;
@@ -32,11 +33,13 @@ export class LocationPermissionModal {
     }, this.WAIT_IMAGE_RENDERING);
   }
 
- async requestLocationPermissions() {
-    this.navigationFacade.onRequestedPermissions();
-    await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
-    this.loadingService.showSpinner();
+  async requestLocationPermissions() {
     await this.modalController.dismiss();
+    await this.androidPermissions.requestPermissions([
+      this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
+      this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION,
+    ]);
+    await this.loadingService.showSpinner();
+    this.navigationFacade.onRequestedPermissions();
   }
 }
-

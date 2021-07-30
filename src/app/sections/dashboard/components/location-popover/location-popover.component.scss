@@ -5,14 +5,15 @@
   height: 25px;
   display: flex;
   margin: auto;
-  margin-bottom: 12.6px;
-  margin-top: 84px;
-  
+  margin-top: 54px;
+
   &__title {
     display: flex;
-    margin: 0 auto;
-    text-align: center;
+    margin: 25px auto;
+    margin-bottom: 16px;
     line-height: 27px;
+    justify-content: center;
+    text-align: center;
     @include font-nunito-heavy(20px);
   }
 
@@ -31,6 +32,13 @@
 }
 
 .location-access-btn {
+  display: flex;
+  align-items: right;
   padding: 0px 16px 48px 16px;
   @include font-nunito-heavy(16px);
+
+  &__cancel {
+		width: 75%;
+		margin-right: 15px;
+	}
 }
