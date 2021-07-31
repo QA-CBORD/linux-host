@@ -31,9 +31,12 @@ import { ExploreTileComponent } from './containers/explore-tile/explore-tile.com
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-import { LocationPermissionModal } from './components/location-popover/location-popover.component';
+import { LocationPermissionModal } from './components/location-disclosure/location-disclosure.component';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { CommonService } from '@shared/services/common.service';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { LocationDisclosureCsModel } from './components/location-disclosure/location-disclosure-content-string.model';
 
 const { App, Device } = Plugins;
 
@@ -60,6 +63,7 @@ export class DashboardPage implements OnInit {
   explorerTile: ExploreTileComponent;
   mobileAccessTile: MobileAccessTileComponent;
   conversationTile: ConversationsTileComponent;
+  disclosureCs: any;
 
   constructor(
     private readonly modalController: ModalController,
@@ -73,13 +77,15 @@ export class DashboardPage implements OnInit {
     private readonly appBrowser: InAppBrowser,
     private readonly navigationFacade: NavigationFacadeSettingsService,
     private readonly loadingService: LoadingService,
+    private readonly commonService: CommonService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
     return TILES_ID;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.locationDisclosureCs();
     this.locationPermissionPage();
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
@@ -291,8 +297,8 @@ export class DashboardPage implements OnInit {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
   }
 
-  private locationPermissionPage() {
-    //if (Capacitor.platform == PLATFORM.android) {
+  private async locationPermissionPage() {
+    if (Capacitor.platform == PLATFORM.android) {
       this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
         if (!requested) {
           // this.requestPermissionModal();
@@ -300,7 +306,7 @@ export class DashboardPage implements OnInit {
         this.requestPermissionModal();
       });
     }
- // }
+  }
 
   private async requestPermissionModal(): Promise<void> {
     this.hideGlobalNavBar(true);
@@ -308,11 +314,16 @@ export class DashboardPage implements OnInit {
       component: LocationPermissionModal,
       animated: false,
       backdropDismiss: false,
+      componentProps: { disclosureCs: this.disclosureCs }
     });
     await modal.present();
     return modal.onDidDismiss().then(() => {
       this.hideGlobalNavBar(false);
       this.loadingService.closeSpinner();
     });
+  }
+
+   private async locationDisclosureCs() {
+    this.disclosureCs = await this.commonService.loadContentString<LocationDisclosureCsModel>(ContentStringCategory.locationDisclosure).pipe(take(1)).toPromise();
   }
 }
