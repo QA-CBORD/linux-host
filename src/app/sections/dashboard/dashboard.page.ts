@@ -13,7 +13,7 @@ import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
-import { Capacitor, Plugins } from '@capacitor/core';
+import { Plugins } from '@capacitor/core';
 import { map, take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
@@ -31,12 +31,8 @@ import { ExploreTileComponent } from './containers/explore-tile/explore-tile.com
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-import { LocationPermissionModal } from './components/location-disclosure/location-disclosure.component';
-import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CommonService } from '@shared/services/common.service';
-import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
-import { LocationDisclosureCsModel } from './components/location-disclosure/location-disclosure-content-string.model';
 
 const { App, Device } = Plugins;
 
@@ -46,6 +42,7 @@ const { App, Device } = Plugins;
   styleUrls: ['./dashboard.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class DashboardPage implements OnInit {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
   @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
@@ -75,9 +72,6 @@ export class DashboardPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
-    private readonly navigationFacade: NavigationFacadeSettingsService,
-    private readonly loadingService: LoadingService,
-    private readonly commonService: CommonService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -85,8 +79,6 @@ export class DashboardPage implements OnInit {
   }
 
   async ngOnInit() {
-    await this.locationDisclosureCs();
-    this.locationPermissionPage();
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
@@ -295,35 +287,5 @@ export class DashboardPage implements OnInit {
 
   private hideGlobalNavBar(hide: boolean) {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
-  }
-
-  private async locationPermissionPage() {
-    if (Capacitor.platform == PLATFORM.android) {
-      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
-        if (!requested) {
-          // this.requestPermissionModal();
-        }
-        this.requestPermissionModal();
-      });
-    }
-  }
-
-  private async requestPermissionModal(): Promise<void> {
-    this.hideGlobalNavBar(true);
-    const modal = await this.modalController.create({
-      component: LocationPermissionModal,
-      animated: false,
-      backdropDismiss: false,
-      componentProps: { disclosureCs: this.disclosureCs }
-    });
-    await modal.present();
-    return modal.onDidDismiss().then(() => {
-      this.hideGlobalNavBar(false);
-      this.loadingService.closeSpinner();
-    });
-  }
-
-   private async locationDisclosureCs() {
-    this.disclosureCs = await this.commonService.loadContentString<LocationDisclosureCsModel>(ContentStringCategory.locationDisclosure).pipe(take(1)).toPromise();
   }
 }
