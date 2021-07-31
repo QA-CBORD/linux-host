@@ -4,9 +4,10 @@
   [backButtonIcon]="'ios-close'"
   [backButtonTitle]="''"
   [isToolbarShow]="true"
+  (click)="close()"
 ></st-header>
 <ion-content>
-  <div appClickStopPropagation>
+  <div>
     <ion-col>
       <img class="location" src="./assets/icon/location-pin.svg" alt="Location access icon" tabindex="0" />
       <ion-title class="location__title">Use your location</ion-title>
@@ -30,12 +31,12 @@
     </ion-col>
   </div>
 </ion-content>
+
 <div class="location-access-btn">
-  <st-button [fill]="'clear'" [buttonModifier]="'black'" class="location-access-btn__cancel">
-   Cancel
+  <st-button (onClick)="close()" [fill]="'clear'" [buttonModifier]="'black'" class="location-access-btn__cancel">
+    Cancel
   </st-button>
   <st-button (onClick)="requestLocationPermissions()">
-    Location Access
+    Location Settings
   </st-button>
 </div>
-

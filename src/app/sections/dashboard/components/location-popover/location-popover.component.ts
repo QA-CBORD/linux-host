@@ -5,7 +5,6 @@ import { Plugins } from '@capacitor/core';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
-const { Geolocation } = Plugins;
 @Component({
   selector: 'st-location-popover',
   templateUrl: './location-popover.component.html',
@@ -34,12 +33,16 @@ export class LocationPermissionModal {
   }
 
   async requestLocationPermissions() {
+    await this.loadingService.showSpinner();
     await this.modalController.dismiss();
     await this.androidPermissions.requestPermissions([
       this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
       this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION,
-    ]);
-    await this.loadingService.showSpinner();
+    ]);  
     this.navigationFacade.onRequestedPermissions();
+  }
+
+    close() {
+     this.modalController.dismiss();
   }
 }
