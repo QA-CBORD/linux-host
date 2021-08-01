@@ -44,7 +44,6 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
   ) {}
 
   resolve(): Observable<SettingInfoList> {
-
     this.locationDisclosurePage();
     /// get fresh data on dashboard load
     const strings = this.loadContentStrings();
@@ -87,13 +86,12 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     ];
   }
 
-  private async locationDisclosurePage() {
+  private locationDisclosurePage() {
     if (Capacitor.platform == PLATFORM.android) {
       this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
         if (!requested) {
            this.requestPermissionModal();
         }
-       // this.requestPermissionModal();
       });
     }
   }
@@ -108,7 +106,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
       componentProps: { disclosureCs: disclosureCs },
     });
     await modal.present();
-    return modal.onDidDismiss().then(() => {
+    return await modal.onDidDismiss().then(() => {
       this.hideGlobalNavBar(false);
       this.loadingService.closeSpinner();
     });

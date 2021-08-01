@@ -35,6 +35,10 @@ export class LocationPermissionModal {
     }, this.WAIT_IMAGE_RENDERING);
   }
 
+  ionViewWillLeave() {
+    this.navigationFacade.onRequestedPermissions();
+  }
+
   async requestLocationPermissions() {
     await this.loadingService.showSpinner();
     await this.androidPermissions.requestPermissions([
@@ -42,10 +46,9 @@ export class LocationPermissionModal {
       this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION,
     ]);
     await this.modalController.dismiss();
-    this.navigationFacade.onRequestedPermissions();
   }
   
-  close() {
-    this.modalController.dismiss();
+  async close() {
+    await this.modalController.dismiss();
   }
 }

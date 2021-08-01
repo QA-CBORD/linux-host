@@ -50,10 +50,11 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     return this.storage
       .getStateEntityByKey$<boolean>(this.firstNavKey)
       .pipe(map(data => !!data));
+    
   }
 
   onRequestedPermissions() {
-    this.storage.updateStateEntity(this.firstNavKey, true, { keepOnLogout: true });
+    this.storage.updateStateEntity(this.firstNavKey, true, { highPriorityKey: true, keepOnLogout: true });
   }
 
   private isConfigInStorage(): boolean {
