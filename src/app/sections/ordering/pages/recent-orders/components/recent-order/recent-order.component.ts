@@ -118,6 +118,7 @@ export class RecentOrderComponent implements OnInit {
   }
 
   private setActiveOrder(orderId) {
+    console.log("setActiveOrder: ", orderId)
     this.order$ = this.merchantService.recentOrders$.pipe(
       first(),
       map(orders => orders.find(({ id }) => id === orderId))

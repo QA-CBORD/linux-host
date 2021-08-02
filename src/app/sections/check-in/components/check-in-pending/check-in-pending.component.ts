@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -9,8 +9,9 @@ import { CheckingContentCsModel } from '@sections/check-in/contents-strings/chec
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 import { MerchantOrderTypesInfo, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { Observable, zip } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { finalize, first, map, tap } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 
@@ -29,17 +30,18 @@ export class CheckInPendingComponent implements OnInit {
     storeAddress: AddressInfo;
     orderTypes: MerchantOrderTypesInfo;
   } = <any>{};
-
-  contentStrings: CheckingContentCsModel = {} as any;
   locationPermissionDisabled$: Observable<boolean>;
-
+  contentStrings: CheckingContentCsModel = {} as any;
+  locationDisabled: boolean;
   constructor(
     private readonly loadingService: LoadingService,
     private readonly checkInService: CheckingServiceFacade,
     private readonly modalController: ModalController,
     private readonly router: Router,
     private readonly merchantService: MerchantService,
-    private readonly userFacadeService: UserFacadeService
+    private readonly userFacadeService: UserFacadeService,
+    private readonly resolver: RecentOrdersResolver,
+    private readonly changeDetection: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -54,7 +56,10 @@ export class CheckInPendingComponent implements OnInit {
   async init() {
     const { content } = <any>this.checkInService.getContent();
     this.contentStrings = content;
-    this.locationPermissionDisabled$ = this.checkInService.locationPermissionDisabled();
+    this.locationPermissionDisabled$ = this.checkInService.locationPermissionDisabled().pipe(
+      tap(disabled => (this.locationDisabled = disabled)),
+      finalize(() => this.changeDetection.detectChanges())
+    );
   }
 
   setData() {
@@ -77,7 +82,11 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   async goToOrderDetails(): Promise<void> {
-    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+    this.resolver.resolve().then(async res => {
+      console.log('response ==>> ', res);
+      await this.modalController.dismiss();
+      this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+    });
   }
 
   onScanCodeClicked() {
@@ -85,9 +94,7 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   async onLocationCheckinClicked() {
-    const locationPermissionDisabled = await this.checkInService.locationPermissionDisabled().toPromise();
-    console.log('locationPermissionDisabled: ', locationPermissionDisabled)
-    if (locationPermissionDisabled) return;
+    if (this.locationDisabled) return;
 
     this.loadingService.showSpinner();
     await this.checkInService
