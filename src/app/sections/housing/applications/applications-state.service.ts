@@ -64,6 +64,10 @@ export class ApplicationsStateService {
     return this.requestedRoommates$;
   }
   
+  getRoommateSearchOptions(): RoommateSearchOptions {
+    return this.roommateSearchOptions$.getValue();
+  }
+
   get roommatePreferencesSelecteds(){
     return this.applicationsState.applicationDetails.roommatePreferences;
   }
