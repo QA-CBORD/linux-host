@@ -36,7 +36,20 @@ export const defaultCreditCardMgmtCs = {
 }
 
 export const checkingDefaultCs = {
-   
+  title: 'Home',
+  order_pending: 'Order Pending',
+  subtitle: 'Your order is now pending. You will receive a confirmation email shortly.',
+  instruction: 'When you arrive, tap the Location Check In or Scan Code button to complete your order.',
+  lbl_pickup_time: 'PICKUP TIME',
+  pickup_info: 'This order will not be available outside of the 30 min window.',
+  lbl_pickup_addr: 'PICKUP ADDRESS',
+  lbl_total: 'Total',
+  lbl_btn_order_detail: 'Order Details',
+  lbl_btn_scan_code: 'Scan Code',
+  lbl_btn_loc_chck_in: 'Location Check In',
+  not_checked_in_subtitle: 'Could not check in',
+  lbl_btn_back: 'Back',
+  not_checked_in_instructions: 'Get closer to the venue to use location check in or scan the QR code instead.'
 }
 
 export const defaultRegistrationCs = {
