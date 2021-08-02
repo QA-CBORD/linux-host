@@ -161,10 +161,9 @@ export class ApplicationsService {
   }
 
   selectRoommate(patronKey: number, firstName: string, lastName: string): Observable<Boolean> {
-    // TODO: Implement this method
     if (this._applicationsStateService.maximumSelectedRoommates>=0) {
       let isSetRoommate = false;
-      let requestedRoommates =this._applicationsStateService.roommateSearchOptions.getValue();
+      let requestedRoommates =this._applicationsStateService.getRoommateSearchOptions();
       this._applicationsStateService.setRoommatesPreferences(
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
           requestedRoommates.preferences.forEach((requestedRommate)=>{
@@ -382,7 +381,10 @@ export class ApplicationsService {
 
     const patronApplication: PatronApplication = new PatronApplication(options);
 
-    return new ApplicationDetails({ ...applicationDetails, patronApplication });
+    const roommatePreferences: RoommatePreferences[] = 
+      this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences;
+
+    return new ApplicationDetails({ ...applicationDetails, patronApplication, roommatePreferences });
   }
 
   private _patchApplicationByStoredStatus(applicationDetails: ApplicationDetails): Observable<ApplicationDetails> {
