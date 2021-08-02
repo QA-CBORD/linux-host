@@ -233,15 +233,6 @@ export class OrderingApiService {
     );
   }
 
-  checkInOrder(orderId: string, latitude: number, longitude: number, checkinBarcode: string): Observable<boolean> {
-    const postParams: ServiceParameters = { orderId, latitude, longitude, checkinBarcode };
-    const queryConfig = new RPCQueryConfig('checkInOrder', postParams, true);
-
-    return this.http
-      .post(this.serviceUrlOrdering, queryConfig)
-      .pipe(map(({ response }: MessageResponse<boolean>) => response));
-  }
-
   private adjustOrderIfRollUp(order: OrderInfo): OrderInfo {
     if (
       order &&

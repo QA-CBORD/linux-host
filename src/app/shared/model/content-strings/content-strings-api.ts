@@ -26,7 +26,7 @@ export enum ContentStringCategory {
   addFunds = 'addFunds',
   identifyRecipient = 'identifyRecipient',
   creditCardMgmt = 'creditCardMgmt',
-  checkin = 'checkin';
+  checkin = 'checkin'
 }
 
 export interface ExtraContent {

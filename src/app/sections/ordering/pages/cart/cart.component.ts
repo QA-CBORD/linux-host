@@ -45,6 +45,7 @@ import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page
 import { ConnectionService } from '@shared/services/connection-service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
+import { CheckInPendingComponent } from '@sections/check-in/components/check-in-pending/check-in-pending.component';
 const { Browser } = Plugins;
 
 @Component({
@@ -222,9 +223,13 @@ export class CartComponent implements OnInit, OnDestroy {
     tip,
     checkNumber,
     mealBased,
+    merchantId,
+    dueTime,
+    id,
+    checkinStatus
   }: OrderInfo) {
     const modal = await this.modalController.create({
-      component: SuccessModalComponent,
+      component: CheckInPendingComponent, //SuccessModalComponent,
       componentProps: {
         tax,
         discount,
@@ -236,8 +241,12 @@ export class CartComponent implements OnInit, OnDestroy {
         checkNumber,
         accountName,
         mealBased,
+        merchantId,
+        dueTime,
+        orderId: id
       },
     });
+
 
     modal.onDidDismiss().then(async () => {
       await this.routingService.navigate([APP_ROUTES.ordering]);
@@ -357,6 +366,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .then(async order => {
         this.cartService.changeClientOrderId;
         this.cartService.orderIsAsap = false;
+        console.log('Order Info: ', order)
         await this.showModal(order);
       })
       .catch(async (error: string | [string, string]) => {

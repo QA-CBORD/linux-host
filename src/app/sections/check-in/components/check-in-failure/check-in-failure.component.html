@@ -1,3 +1,41 @@
-<p>
-  check-in-failure works!
-</p>
+<ion-header class="pending-checkin__header" no-border>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-button color="dark" (click)="onClosed()">
+        <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title id="modal-mainTitle" tabindex="0" class="pending-checkin__title">{{ contentStrings.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="wrapper">
+    <div class="sub-title">
+      <h2>{{ contentStrings.not_checked_in_subtitle }}</h2>
+    </div>
+    <div class="instructions">
+      <p>{{ contentStrings.not_checked_in_instructions }}</p>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="pending-checkin__footer" mode="ios">
+  <div class="footer-wrapper">
+    <div class="checkin-btn">
+      <st-button (onClick)="onBack()" buttonModifier="rectangular" isDisabled="true">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.lbl_btn_back }}
+        </span>
+      </st-button>
+    </div>
+
+    <div class="checkin-btn">
+      <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.lbl_btn_scan_code }}
+        </span>
+      </st-button>
+    </div>
+  </div>
+</ion-footer>

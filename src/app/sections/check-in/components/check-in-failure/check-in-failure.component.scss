@@ -1,0 +1,14 @@
+.wrapper {
+  padding: 10px;
+}
+
+.pending-checkin__footer {
+  .footer-wrapper {
+    display: flex;
+    justify-content: space-evenly;
+
+    .checkin-btn {
+      width: 40%;
+    }
+  }
+}
