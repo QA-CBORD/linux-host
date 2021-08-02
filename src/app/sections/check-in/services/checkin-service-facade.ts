@@ -1,18 +1,23 @@
 import { Injectable } from '@angular/core';
-import { CoordsService } from '@core/service/coords/coords.service';
+import { BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { Observable, of } from 'rxjs';
-import { catchError, first, map, switchMap } from 'rxjs/operators';
 import { CheckingContentCsModel } from '../contents-strings/checkin-content-string.model';
+import { CoordsService } from '@core/service/coords/coords.service';
 import { CheckingService } from './checkin-service';
+import { catchError, first, map, switchMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CheckingServiceFacade {
+
+  private barcodeScanResult: BarcodeScanResult;
+
   constructor(
     private readonly checkingService: CheckingService,
     private readonly coordsService: CoordsService,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
+    private readonly barcode: BarcodeScanner
   ) {}
 
   /**
@@ -33,6 +38,31 @@ export class CheckingServiceFacade {
       response = await this.loadAllContentString().toPromise();
     }
     return Promise.resolve(response);
+  }
+
+  async scanBarcode(orderId: string, format: string = 'QR_CODE') {
+    const options: BarcodeScannerOptions = {
+      orientation: 'portrait',
+      preferFrontCamera: false,
+      prompt: 'Scan Code',
+      showFlipCameraButton: false,
+      showTorchButton: true,
+      torchOn: false,
+      formats: format,
+      resultDisplayDuration: 0,
+    };
+
+    try {
+      this.barcodeScanResult = await this.barcode.scan(options);
+      if (!this.barcodeScanResult.cancelled) {
+        alert(`result: ${this.barcodeScanResult.text}`);
+        this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text);
+      } else {
+        alert(`result cancelled`);
+      }
+    } catch (e) {
+      alert(`error: ${e.message}`);
+    }
   }
 
   locationPermissionDisabled(): Observable<boolean> {
@@ -58,5 +88,19 @@ export class CheckingServiceFacade {
         });
       })
     );
+  }
+
+  checkInOrderByBarcode(
+    orderId: string,
+    checkinBarcode: string,
+    latitude: number = null,
+    longitude: number = null
+  ): Observable<boolean> {
+    return this.checkingService.checkInOrder({
+      orderId,
+      latitude,
+      longitude,
+      checkinBarcode,
+    });
   }
 }

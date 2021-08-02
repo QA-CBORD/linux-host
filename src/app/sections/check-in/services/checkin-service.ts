@@ -7,15 +7,15 @@ import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CheckingService {
-    private readonly serviceUrlOrdering: string = '/json/ordering';
+  private readonly serviceUrlOrdering: string = '/json/ordering';
   public constructor(private readonly http: HttpClient) {}
 
-    checkInOrder({ orderId, latitude, longitude, checkinBarcode }): Observable<any> {
-      const postParams: ServiceParameters = { orderId, latitude, longitude, checkinBarcode };
-      const queryConfig = new RPCQueryConfig('checkInOrder', postParams, true);
+  checkInOrder({ orderId, latitude, longitude, checkinBarcode }): Observable<any> {
+    const postParams: ServiceParameters = { orderId, latitude, longitude, checkinBarcode };
+    const queryConfig = new RPCQueryConfig('checkInOrder', postParams, true);
 
-      return this.http
-        .post(this.serviceUrlOrdering, queryConfig)
-        .pipe(map(({ response }: MessageResponse<any>) => response));
-    }
+    return this.http
+      .post(this.serviceUrlOrdering, queryConfig)
+      .pipe(map(({ response }: MessageResponse<any>) => response));
+  }
 }

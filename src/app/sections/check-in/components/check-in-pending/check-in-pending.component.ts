@@ -91,7 +91,7 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   onScanCodeClicked() {
-    // open scanCode component here...
+   this.checkInService.scanBarcode(this.orderId);
   }
 
   async onLocationCheckinClicked() {
