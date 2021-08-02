@@ -225,7 +225,8 @@ export class CartComponent implements OnInit, OnDestroy {
     mealBased,
     merchantId,
     dueTime,
-    id
+    id,
+    checkinStatus
   }: OrderInfo) {
     const modal = await this.modalController.create({
       component: CheckInPendingComponent, //SuccessModalComponent,
