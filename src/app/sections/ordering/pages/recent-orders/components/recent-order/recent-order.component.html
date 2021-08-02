@@ -29,17 +29,29 @@
 </ion-content>
 
 <ng-template #complited>
-  <st-button [fill]="'clear'" [buttonModifier]="'black'" (onClick)="back()" class="ro__close-btn">{{
-    contentStrings.buttonClose | async
-  }}</st-button>
-  <st-button (onClick)="onReorderHandler()">{{ contentStrings.buttonReorder | async }}</st-button>
+  <div class="btn-wrapper">
+    <div>
+      <st-button [fill]="'clear'" [buttonModifier]="'black'" (onClick)="back()" class="ro__close-btn">{{
+        contentStrings.buttonClose | async
+      }}</st-button>
+    </div>
+    <div>
+      <st-button (onClick)="onReorderHandler()">{{ contentStrings.buttonReorder | async }}</st-button>
+    </div>
+  </div>
 </ng-template>
 
 <ng-template #pending>
-  <div class="btn-wrapper">
-    <st-button [buttonModifier]="'danger'" (onClick)="showModal()"
-      >{{ contentStrings.buttonCancelOrder | async }}
-    </st-button>
-    <st-button (onClick)="showModal()">Check In</st-button>
+  <div
+    [ngClass]="{ 'btn-wrapper': (order$ | async).checkinStatus == 2 || (order$ | async).checkinStatus == 3 }"
+  >
+    <div>
+      <st-button [buttonModifier]="'danger'" (onClick)="showModal()"
+        >{{ contentStrings.buttonCancelOrder | async }}
+      </st-button>
+    </div>
+    <div *ngIf="(order$ | async).checkinStatus == 2 || (order$ | async).checkinStatus == 3">
+      <st-button (onClick)="openChecking()">Check In</st-button>
+    </div>
   </div>
 </ng-template>

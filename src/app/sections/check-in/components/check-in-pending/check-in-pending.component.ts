@@ -54,11 +54,12 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   async init() {
-    const { content } = <any>this.checkInService.getContent();
+    this.loadingService.showSpinner();
+    const { content } = <any>await this.checkInService.getContent();
     this.contentStrings = content;
     this.locationPermissionDisabled$ = this.checkInService.locationPermissionDisabled().pipe(
       tap(disabled => (this.locationDisabled = disabled)),
-      finalize(() => this.changeDetection.detectChanges())
+      finalize(() => this.loadingService.closeSpinner())
     );
   }
 

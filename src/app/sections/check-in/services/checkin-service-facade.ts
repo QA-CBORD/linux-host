@@ -27,16 +27,20 @@ export class CheckingServiceFacade {
    * llamar desde cualquier component del flow de checking
    * @returns
    */
-  getContent(): CheckingContentCsModel {
-    return this.commonService.getString(ContentStringCategory.checkin);
+  async getContent(): Promise<CheckingContentCsModel> {
+    let response = <any>this.commonService.getString(ContentStringCategory.checkin);
+    if (!response.title) {
+      response = await this.loadAllContentString().toPromise();
+    }
+    return Promise.resolve(response);
   }
 
   locationPermissionDisabled(): Observable<boolean> {
     return this.coordsService.getCoords().pipe(
       first(),
       map(({ coords: { latitude, longitude } }) => !(latitude && longitude)),
-      catchError((err) => {
-        console.log('GOT ERROR: ', err)
+      catchError(err => {
+        console.log('GOT ERROR: ', err);
         return of(true);
       })
     );
