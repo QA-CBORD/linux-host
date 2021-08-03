@@ -107,11 +107,14 @@ export class CartComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.merchant$ = this.cartService.merchant$.pipe(
-      tap((merchant) => 
-      this.merchantTimeZoneDisplayingMessage = merchant.timeZone && "The time zone reflects the merchant's location")
+      tap(
+        merchant =>
+          (this.merchantTimeZoneDisplayingMessage =
+            merchant.timeZone && "The time zone reflects the merchant's location")
+      )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
-      map((orderType) => {
+      map(orderType => {
         orderType.merchantTimeZone = this.cartService.merchantTimeZone;
         return orderType;
       })
@@ -226,10 +229,10 @@ export class CartComponent implements OnInit, OnDestroy {
     merchantId,
     dueTime,
     id,
-    checkinStatus
+    checkinStatus,
   }: OrderInfo) {
     const modal = await this.modalController.create({
-      component: CheckInPendingComponent, //SuccessModalComponent,
+      component: ((checkinStatus == 2 || checkinStatus == 3) && CheckInPendingComponent) || SuccessModalComponent,
       componentProps: {
         tax,
         discount,
@@ -243,10 +246,9 @@ export class CartComponent implements OnInit, OnDestroy {
         mealBased,
         merchantId,
         dueTime,
-        orderId: id
+        orderId: id,
       },
     });
-
 
     modal.onDidDismiss().then(async () => {
       await this.routingService.navigate([APP_ROUTES.ordering]);
@@ -356,17 +358,13 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     this.cartService
-      .submitOrder(
-        accountId,
-        this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null,
-        this.cartService.clientOrderId
-      )
+      .submitOrder(accountId, this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null, this.cartService.clientOrderId)
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(async order => {
         this.cartService.changeClientOrderId;
         this.cartService.orderIsAsap = false;
-        console.log('Order Info: ', order)
+        console.log('Order Info: ', order);
         await this.showModal(order);
       })
       .catch(async (error: string | [string, string]) => {
@@ -550,15 +548,15 @@ export class CartComponent implements OnInit, OnDestroy {
       .pipe(
         take(1),
         map(([timeout, connectionLost, duplicateOrdering, noConnection]) => {
-           if(!timeout || !connectionLost){
-               return defaultOrderSubmitErrorMessages;
-           }
-           return {
+          if (!timeout || !connectionLost) {
+            return defaultOrderSubmitErrorMessages;
+          }
+          return {
             timeout,
             connectionLost,
             duplicateOrdering,
             noConnection,
-           }
+          };
         }),
         catchError(() => of(defaultOrderSubmitErrorMessages))
       )

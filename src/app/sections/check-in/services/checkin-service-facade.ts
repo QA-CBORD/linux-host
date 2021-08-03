@@ -32,8 +32,12 @@ export class CheckingServiceFacade {
    * llamar desde cualquier component del flow de checking
    * @returns
    */
-  getContent(): CheckingContentCsModel {
-    return this.commonService.getString(ContentStringCategory.checkin);
+  async getContent(): Promise<CheckingContentCsModel> {
+    let response = <any>this.commonService.getString(ContentStringCategory.checkin);
+    if (!response.title) {
+      response = await this.loadAllContentString().toPromise();
+    }
+    return Promise.resolve(response);
   }
 
   async scanBarcode(orderId: string, format: string = 'QR_CODE'): Promise<boolean> {
@@ -53,8 +57,8 @@ export class CheckingServiceFacade {
     try {
       this.barcodeScanResult = await this.barcode.scan(options);
       if (!this.barcodeScanResult.cancelled) {
+        
         ///alert(`result: ${this.barcodeScanResult.text}`);
-       
        // return  await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text).pipe(take(1)).toPromise();
         return true;
       } else {

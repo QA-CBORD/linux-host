@@ -20,15 +20,15 @@
   <div class="pending-checkin__colored-bg">
     <div class="padded">
       <div class="title-lbl faded">Pick up time</div>
-      <span class="text-dark">10:00 AM</span>
+      <span class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</span>
       <div class="title-lbl faded">Pickup Address</div>
       <div class="text-dark address">
         <img width="16" src="./assets/icon/location-pin.svg" alt="pin" />
-        <span>230 Summer St, Boston</span>
+        <span>{{ data.storeAddress | addressHeaderFormat }}</span>
       </div>
       <div class="section-divided">
         <span class="text-dark">Total</span>
-        <span class="text-dark">$12.40</span>
+        <span class="text-dark">${{ total }}</span>
       </div>
       <div class="btn_no-bg">
         <st-button (onClick)="goToRecentOrders()" fill="clear" buttonModifier="rectangular">

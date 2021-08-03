@@ -1,6 +1,12 @@
 .ro {
-	&__close-btn {
-		width: 75%;
-		margin-right: 15px;
-	}
+  &__close-btn {
+    width: 75%;
+    margin-right: 15px;
+  }
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin-right: 7px;
 }

@@ -27,6 +27,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { CheckInPendingComponent } from '@sections/check-in/components/check-in-pending/check-in-pending.component';
 
 @Component({
   selector: 'st-recent-order',
@@ -118,10 +119,25 @@ export class RecentOrderComponent implements OnInit {
   }
 
   private setActiveOrder(orderId) {
+    console.log("setActiveOrder: ", orderId)
     this.order$ = this.merchantService.recentOrders$.pipe(
       first(),
       map(orders => orders.find(({ id }) => id === orderId))
     );
+  }
+
+  async openChecking(){
+    const {total, merchantId, dueTime, id: orderId } = await this.order$.toPromise();
+    const modal = await this.modalController.create({
+      component: CheckInPendingComponent,
+      componentProps: {
+        total,
+        merchantId,
+        dueTime,
+        orderId
+      },
+    });
+    await modal.present();
   }
 
   private setActiveMerchant(orderId) {

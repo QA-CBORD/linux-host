@@ -1,6 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { AddressInfo } from '@core/model/address/address-info';
 import { ModalController } from '@ionic/angular';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { MerchantOrderTypesInfo } from '@sections/ordering';
+import { CheckInSuccessComponent } from '../check-in-success/check-in-success.component';
 
 @Component({
   selector: 'st-check-in-failure',
@@ -9,8 +13,17 @@ import { CheckingContentCsModel } from '@sections/check-in/contents-strings/chec
 })
 export class CheckInFailureComponent implements OnInit {
   @Input() contentStrings: CheckingContentCsModel = {} as any;
+  @Input() total: number;
+  @Input() merchantId: string;
+  @Input() dueTime: string;
+  @Input() orderId: string;
+  data: {
+    pickupTime: { dueTime: string };
+    storeAddress: AddressInfo;
+    orderTypes: MerchantOrderTypesInfo;
+  } = <any>{};
 
-  constructor(private readonly modalController: ModalController) {}
+  constructor(private readonly modalController: ModalController,  private readonly checkInService: CheckingServiceFacade) {}
 
   ngOnInit() {}
 
@@ -19,9 +32,17 @@ export class CheckInFailureComponent implements OnInit {
     await this.onClosed();
   }
 
-  onScanCode() {
+  async onScanCode() {
     // this will open scanCode component.
     console.log('onScanCode');
+      const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
+      if (barcocdeResult) {
+        const modal = await this.modalController.create({
+          component: CheckInSuccessComponent,
+          componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
+        });
+        modal.present();
+      }
   }
 
   async onClosed() {
