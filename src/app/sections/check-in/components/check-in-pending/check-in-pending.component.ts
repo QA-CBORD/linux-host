@@ -10,10 +10,12 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 import { MerchantOrderTypesInfo, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
+import { APP_ROUTES } from '@sections/section.config';
 import { Observable, zip } from 'rxjs';
 import { finalize, first, map, tap } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
+import { CheckInSuccessComponent } from '../check-in-success/check-in-success.component';
 
 @Component({
   selector: 'st-check-in-pending',
@@ -90,9 +92,17 @@ export class CheckInPendingComponent implements OnInit {
     });
   }
 
-  onScanCodeClicked() {
-   this.checkInService.scanBarcode(this.orderId);
+  async onScanCodeClicked() {
+   const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
+   if (barcocdeResult) {
+    alert('Is getting here?')
+    const modal = await this.modalController.create({
+      component:   CheckInSuccessComponent,
+    });
+    modal.present();
+   }
   }
+
 
   async onLocationCheckinClicked() {
     if (this.locationDisabled) return;
@@ -123,7 +133,7 @@ export class CheckInPendingComponent implements OnInit {
     });
 
     // modal.onDidDismiss().then(async () => {
-    //   await this.routingService.navigate([APP_ROUTES.ordering]);
+    //   await this.router.navigate([APP_ROUTES.ordering]);
     // });
 
     await modal.present();
