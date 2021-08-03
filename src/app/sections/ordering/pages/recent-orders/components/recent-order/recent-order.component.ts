@@ -28,6 +28,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { CheckInPendingComponent } from '@sections/check-in/components/check-in-pending/check-in-pending.component';
+import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 
 @Component({
   selector: 'st-recent-order',

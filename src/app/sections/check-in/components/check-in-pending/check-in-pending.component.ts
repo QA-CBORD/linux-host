@@ -10,7 +10,6 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 import { MerchantOrderTypesInfo, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { APP_ROUTES } from '@sections/section.config';
 import { Observable, zip } from 'rxjs';
 import { finalize, first, map, tap } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -27,6 +26,7 @@ export class CheckInPendingComponent implements OnInit {
   @Input() merchantId: string;
   @Input() dueTime: string;
   @Input() orderId: string;
+  @Input() checkNumber: number;
   data: {
     pickupTime: { dueTime: string };
     storeAddress: AddressInfo;
@@ -81,7 +81,7 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   async onClosed() {
-    await this.modalController.dismiss();
+    await this.modalController.dismiss();  // bad
   }
 
   async goToOrderDetails(): Promise<void> {
@@ -93,16 +93,15 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   async onScanCodeClicked() {
-   const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
-   if (barcocdeResult) {
-    alert('Is getting here?')
-    const modal = await this.modalController.create({
-      component:   CheckInSuccessComponent,
-    });
-    modal.present();
-   }
+    const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
+    if (barcocdeResult) {
+      const modal = await this.modalController.create({
+        component: CheckInSuccessComponent,
+        componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
+      });
+      modal.present();
+    }
   }
-
 
   async onLocationCheckinClicked() {
     if (this.locationDisabled) return;
@@ -111,8 +110,13 @@ export class CheckInPendingComponent implements OnInit {
     await this.checkInService
       .checkInOrder(this.orderId)
       .toPromise()
-      .then(res => {
+      .then(async res => {
         // redirect to checkin success here..
+        const modal = await this.modalController.create({
+          component: CheckInSuccessComponent,
+          componentProps:  { orderId: this.orderId, total: this.total, dueTime: this.dueTime , data: this.data},
+        });
+        modal.present();
         console.log(res);
         if (res) {
         } else {
@@ -128,14 +132,11 @@ export class CheckInPendingComponent implements OnInit {
     const modal = await this.modalController.create({
       component: CheckInFailureComponent,
       componentProps: {
-        contentStrings: this.contentStrings,
-      },
+        contentStrings: this.contentStrings, orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
     });
-
     // modal.onDidDismiss().then(async () => {
     //   await this.router.navigate([APP_ROUTES.ordering]);
     // });
-
     await modal.present();
   }
 }

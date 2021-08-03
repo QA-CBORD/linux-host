@@ -46,6 +46,7 @@ import { ConnectionService } from '@shared/services/connection-service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { CheckInPendingComponent } from '@sections/check-in/components/check-in-pending/check-in-pending.component';
+import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 const { Browser } = Plugins;
 
 @Component({
@@ -228,11 +229,11 @@ export class CartComponent implements OnInit, OnDestroy {
     mealBased,
     merchantId,
     dueTime,
-    id,
+    id: orderId,
     checkinStatus,
   }: OrderInfo) {
     const modal = await this.modalController.create({
-      component: ((checkinStatus == 2 || checkinStatus == 3) && CheckInPendingComponent) || SuccessModalComponent,
+      component: (OrderCheckinStatus.isCheckedIn(checkinStatus) && CheckInPendingComponent) || SuccessModalComponent,
       componentProps: {
         tax,
         discount,
@@ -246,7 +247,7 @@ export class CartComponent implements OnInit, OnDestroy {
         mealBased,
         merchantId,
         dueTime,
-        orderId: id,
+        orderId,
       },
     });
 

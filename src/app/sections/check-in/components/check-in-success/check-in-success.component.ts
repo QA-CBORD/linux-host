@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { ModalController } from '@ionic/angular';
+import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { APP_ROUTES } from '@sections/section.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { PATRON_NAVIGATION } from 'src/app/app.global';
 
 @Component({
   selector: 'st-check-in-success',
@@ -12,7 +15,14 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 })
 export class CheckInSuccessComponent implements OnInit {
 
-  constructor(private readonly router: Router,  private readonly nativeStartupFacadeService: NativeStartupFacadeService) { }
+  @Input() total: number;
+  @Input() merchantId: string;
+  @Input() dueTime: string;
+  @Input() orderId: string;
+  @Input() data: any;
+  
+  constructor(private readonly router: Router,  private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly resolver: RecentOrdersResolver,  private readonly modalController: ModalController) { }
 
   ngOnInit() {}
   
@@ -24,7 +34,15 @@ export class CheckInSuccessComponent implements OnInit {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
   }
 
-  goToRecentOrders() {
-    this.router.navigate([APP_ROUTES.ordering]);
+  async goToRecentOrders() {
+      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
+      await this.modalController.dismiss();
+  }
+
+  async goToOrderDetails(): Promise<void> {
+    this.resolver.resolve().then(async res => {
+      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+      await this.modalController.dismiss();
+    });
   }
 }
