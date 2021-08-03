@@ -7,22 +7,27 @@ import { IonicModule } from '@ionic/angular';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
+import { CheckInSuccessComponent } from './components/check-in-success/check-in-success.component';
 
-const declarations = [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInFailureComponent];
+const declarations = [
+  CheckInPendingComponent,
+  ScanCodeComponent,
+  CheckInFailureComponent,
+  CheckInFailureComponent,
+  CheckInSuccessComponent,
+];
 
 @NgModule({
   declarations,
   entryComponents: declarations,
-  
+
   imports: [
     CommonModule,
-   // StHeaderModule,
-   AddressHeaderFormatPipeModule,
-   ModifyPrepTimeModule,
+    // StHeaderModule,
+    AddressHeaderFormatPipeModule,
+    ModifyPrepTimeModule,
     IonicModule,
-    StButtonModule
+    StButtonModule,
   ],
 })
-export class CheckInModule {
-
-}
+export class CheckInModule {}

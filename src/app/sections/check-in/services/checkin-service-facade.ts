@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { CheckingContentCsModel } from '../contents-strings/checkin-content-string.model';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { CheckingService } from './checkin-service';
-import { catchError, first, map, switchMap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CheckingServiceFacade {
@@ -36,28 +36,34 @@ export class CheckingServiceFacade {
     return this.commonService.getString(ContentStringCategory.checkin);
   }
 
-  async scanBarcode(orderId: string, format: string = 'QR_CODE') {
+  async scanBarcode(orderId: string, format: string = 'QR_CODE'): Promise<boolean> {
+      
+
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',
       preferFrontCamera: false,
       prompt: 'Scan Code',
       showFlipCameraButton: false,
-      showTorchButton: true,
+      showTorchButton: false,
       torchOn: false,
       formats: format,
       resultDisplayDuration: 0,
     };
-
+ 
     try {
       this.barcodeScanResult = await this.barcode.scan(options);
       if (!this.barcodeScanResult.cancelled) {
-        alert(`result: ${this.barcodeScanResult.text}`);
-        this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text);
+        ///alert(`result: ${this.barcodeScanResult.text}`);
+       
+       // return  await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text).pipe(take(1)).toPromise();
+        return true;
       } else {
         alert(`result cancelled`);
+        return false;
       }
     } catch (e) {
       alert(`error: ${e.message}`);
+      return false;
     }
   }
 

@@ -9,10 +9,12 @@ import { CheckingContentCsModel } from '@sections/check-in/contents-strings/chec
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 import { MerchantOrderTypesInfo, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { APP_ROUTES } from '@sections/section.config';
 import { Observable, zip } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
+import { CheckInSuccessComponent } from '../check-in-success/check-in-success.component';
 
 @Component({
   selector: 'st-check-in-pending',
@@ -80,9 +82,17 @@ export class CheckInPendingComponent implements OnInit {
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
   }
 
-  onScanCodeClicked() {
-   this.checkInService.scanBarcode(this.orderId);
+  async onScanCodeClicked() {
+   const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
+   if (barcocdeResult) {
+    alert('Is getting here?')
+    const modal = await this.modalController.create({
+      component:   CheckInSuccessComponent,
+    });
+    modal.present();
+   }
   }
+
 
   async onLocationCheckinClicked() {
     const locationPermissionDisabled = await this.checkInService.locationPermissionDisabled().toPromise();
@@ -115,7 +125,7 @@ export class CheckInPendingComponent implements OnInit {
     });
 
     // modal.onDidDismiss().then(async () => {
-    //   await this.routingService.navigate([APP_ROUTES.ordering]);
+    //   await this.router.navigate([APP_ROUTES.ordering]);
     // });
 
     await modal.present();
