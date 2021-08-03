@@ -1,18 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewChild,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
+import { ModalController, Platform, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
 import { Observable, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
-import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
@@ -37,6 +30,9 @@ import { OrderTileComponent } from './containers/order-tile/order-tile.component
 import { ExploreTileComponent } from './containers/explore-tile/explore-tile.component';
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
+import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { CommonService } from '@shared/services/common.service';
 
 const { App, Device } = Plugins;
 
@@ -46,6 +42,7 @@ const { App, Device } = Plugins;
   styleUrls: ['./dashboard.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class DashboardPage implements OnInit {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
   @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
@@ -63,6 +60,7 @@ export class DashboardPage implements OnInit {
   explorerTile: ExploreTileComponent;
   mobileAccessTile: MobileAccessTileComponent;
   conversationTile: ConversationsTileComponent;
+  disclosureCs: any;
 
   constructor(
     private readonly modalController: ModalController,
@@ -73,14 +71,14 @@ export class DashboardPage implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly appBrowser: InAppBrowser
+    private readonly appBrowser: InAppBrowser,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
     return TILES_ID;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
