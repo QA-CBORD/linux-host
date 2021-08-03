@@ -2,10 +2,10 @@
 <ion-content
   class="ion-padding check-in-out-slots__content"
   #content>
-  <div *ngIf="(roommateSearchOptions$ | async)">
+  <div *ngIf="(roommateSearchOptions$ | async) as options">
     <ng-container *ngIf="(roommates$ | async) as roommates; else noRoommates">
       <div>
-        <h4>Your search results returned {{ roommates.length }} patron(s)</h4>
+        <h4>Your search returned {{ roommates.length }} result(s)</h4>
         <div *ngIf="getRoommatePreferencesSelecteds() != '' ">
           <h4>You added {{ getRoommatePreferencesSelecteds() }} as a roommate(s)</h4>
         </div>
@@ -13,7 +13,19 @@
     
       <ion-list>
         <ion-item *ngFor="let roommate of roommates" button (click)="selectRoommate(roommate)">
-          <ion-label>{{ roommate.firstName }} {{ roommate.lastName}}</ion-label>
+          <ng-container [ngSwitch]="options.showOptions">
+            <ion-label *ngSwitchCase="'fullName'">
+              {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}}
+            </ion-label>
+            
+            <ion-label *ngSwitchCase="'preferredNameLast'">
+              {{ roommate.preferredName == 'null' ? '' : roommate.preferredName }} {{ roommate.lastName}}
+            </ion-label>
+
+            <ion-label *ngSwitchCase="'fullNameDOB'">
+              {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}
+            </ion-label>
+          </ng-container>
         </ion-item>
       </ion-list>
     </ng-container>
@@ -22,5 +34,5 @@
 
 
 <ng-template #noRoommates>
-  <h4 *ngIf="!(stillLoading$ | async)">Your search results did not returned any patrons.</h4>
+  <h4 *ngIf="!(stillLoading$ | async)">Your search did not return results</h4>
 </ng-template>

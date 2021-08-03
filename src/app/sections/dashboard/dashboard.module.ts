@@ -29,6 +29,8 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
+import { LocationPermissionModalModule } from './components/location-disclosure/location-disclosure.module';
+import { LocationPermissionModal } from './components/location-disclosure/location-disclosure.component';
 
 const imports = [
   CommonModule,
@@ -51,6 +53,7 @@ const imports = [
   StButtonModule,
   PhoneEmailModule,
   EditHomePageModalModule,
+  LocationPermissionModalModule
 ];
 
 const declarations = [DashboardPage];
@@ -68,7 +71,7 @@ const providers = [
   imports,
   declarations,
   providers,
-  entryComponents: [PhoneEmailComponent],
+  entryComponents: [PhoneEmailComponent, LocationPermissionModal],
 })
 export class DashboardPageModule {
   constructor() {}

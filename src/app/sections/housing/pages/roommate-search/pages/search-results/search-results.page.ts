@@ -24,6 +24,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   roommateSelecteds: RoommatePreferences[];
   private activeAlerts: HTMLIonAlertElement[] = [];
   private subscriptions: Subscription = new Subscription();
+  private maximumPreferences: number;
 
   constructor(
     private _housingService: HousingService,
@@ -54,6 +55,8 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
       tap(data => {
+        this.maximumPreferences = data.preferences.filter(res => res.hasOwnProperty('selected')  ).length
+        this._applicationStateService.setMaximumSelectedRoommates(this.maximumPreferences)
         this.roommates$ = this._housingService.searchRoommates(data.searchOptions, data.searchValue).pipe(
           tap(_ => {
             this._loadingService.closeSpinner();
@@ -78,65 +81,88 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   }
 
   async selectRoommate(roommate: RoommateDetails): Promise<void> {
-    const alert = await this._alertController.create({
-      header: 'Confirm',
-      message: `Are you sure you want to select ${roommate.firstName} ${roommate.lastName} as your roommate?`,
-      buttons: [
-        {
-          text: 'NO',
-          role: 'cancel',
-          cssClass: 'button__option_cancel',
-          handler: () => {
-            this.activeAlerts = [];
-            alert.dismiss();
+    if(this.isMaximumRoommatePreferencesLength()){
+      const alert = await this._alertController.create({
+        header: 'Confirm',
+        message: `Are you sure you want to select ${roommate.firstName} ${roommate.lastName} as your roommate?`,
+        buttons: [
+          {
+            text: 'NO',
+            role: 'cancel',
+            cssClass: 'button__option_cancel',
+            handler: () => {
+              this.activeAlerts = [];
+              alert.dismiss();
+            },
           },
-        },
-        {
-          text: 'YES',
-          role: 'confirm',
-          cssClass: 'button__option_confirm',
-          handler: () => {
-            this._loadingService.showSpinner();
-            this.activeAlerts = [];
-
-            const subs =
-              this._applicationService.selectRoommate(roommate.patronKey,roommate.firstName)
-                  .subscribe(status => {
-                    if (status) {
-                      // redirect to housing dashboard (terms page)
-                      alert.dismiss().then(() =>{ 
-                        this._loadingService.closeSpinner()
-                        this.cdRef.detectChanges()
-                      } );
-                    } else {
-                      alert.dismiss().then(() => {
-                        this._loadingService.closeSpinner();
-                        this._toastService.showToast({
-                          message: 'This patron can not be selected as your roommate at the moment.',
+          {
+            text: 'YES',
+            role: 'confirm',
+            cssClass: 'button__option_confirm',
+            handler: () => {
+              this._loadingService.showSpinner();
+              this.activeAlerts = [];
+  
+              const subs =
+                this._applicationService.selectRoommate(roommate.patronKey,roommate.firstName, roommate.lastName)
+                    .subscribe(status => {
+                      if (status) {
+                        alert.dismiss().then(() =>{ 
+                          this._applicationStateService.setSubtractSelectedRoommates();
+                          this._loadingService.closeSpinner()
+                          this.cdRef.detectChanges()
+                        } );
+                      } else {
+                        alert.dismiss().then(() => {
+                          this._loadingService.closeSpinner();
+                          this._toastService.showToast({
+                            message: 'This patron can not be selected as your roommate at the moment.',
+                          });
                         });
-                      });
-                    }
-                  });
-
-            this.subscriptions.add(subs);
+                      }
+                    });
+  
+              this.subscriptions.add(subs);
+            },
           },
-        },
-      ],
-    });
-
-    this.activeAlerts.push(alert);
-    await alert.present();
+        ],
+      });
+      this.activeAlerts.push(alert);
+      await alert.present();
+    }else {
+      const alert2 = await this._alertController.create({
+        header: 'Maximum number of roommates',
+        message: `You added the maximum number of roommates`,
+        buttons: [
+          {
+            text: 'Ok',
+            role: 'cancel',
+            cssClass: 'button__option_cancel',
+            handler: () => {
+              this.activeAlerts = [];
+              alert2.dismiss();
+            },
+          }
+        ],
+      });
+      this.activeAlerts.push(alert2);
+      await alert2.present();
+    }
   }
   
   getRoommatePreferencesSelecteds(): string {
-    let roomates = this.roommateSelecteds.map(res => {
+    let roommates = this.roommateSelecteds.map(res => {
       if(res.firstName != undefined ){
         return res.firstName
       } 
     } )
-    if(roomates[0] != undefined  ) {
-      return roomates.join()
+    if(roommates[0] != undefined  ) {
+      return roommates.join()
     }
     return ''
+  }
+
+  isMaximumRoommatePreferencesLength(): boolean {
+    return this._applicationStateService.maximumSelectedRoommates>0;
   }
 }

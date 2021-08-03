@@ -1,0 +1,42 @@
+<st-header
+  title=""
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-close'"
+  [backButtonTitle]="''"
+  [isToolbarShow]="true"
+  (click)="close()"
+></st-header>
+<ion-content>
+  <div>
+    <ion-col>
+      <img class="location" src="./assets/icon/location-pin.svg" alt="Location access icon" tabindex="0" />
+
+      <ion-title class="location__title">{{ disclosureCs.title }}</ion-title>
+      <section>
+        <ion-text class="location__text" tabindex="0">{{ disclosureCs.text }}</ion-text>
+      </section>
+      <img
+        class="location-access-img"
+        src="./assets/images/location-access.svg"
+        alt="Location access image"
+        role="button"
+        tabindex="0"
+        width="419"
+        height="366"
+      />
+    </ion-col>
+  </div>
+</ion-content>
+
+<div class="location-access-btn">
+  <st-button (onClick)="close()" isDisabled="true" [buttonModifier]="'black'" class="location-access-btn__cancel">
+    <span class="ion-text-capitalize">
+      {{ disclosureCs.cancelBtn }}
+    </span>
+  </st-button>
+  <st-button (onClick)="requestLocationPermissions()">
+    <span class="ion-text-capitalize">
+      {{ disclosureCs.textBtn }}
+    </span>
+  </st-button>
+</div>
