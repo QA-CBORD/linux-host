@@ -39,8 +39,9 @@ import { PatronAddressService } from '../addresses/address.service';
 import { QuestionActionButton, QuestionRoommatePreference } from '../questions/types/question-roommate-preference';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { RoommatePreferences } from './applications.model';
+import { RoommatePreferences, RequestedRoommateResponse } from './applications.model';
 import { RoommateComponent } from '../roommate/roommate.component';
+import { getFieldValue } from '../../../non-authorized/pages/registration/models/registration-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -159,21 +160,22 @@ export class ApplicationsService {
     );
   }
 
-  selectRoommate(patronKey: number, firstName: string): Observable<Boolean> {
-    // TODO: Implement this method
-    let isLenghtRoommate = this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.find((value) => value.patronKeyRoommate == 0)
-    if (isLenghtRoommate) {
+  selectRoommate(patronKey: number, firstName: string, lastName: string): Observable<Boolean> {
+    if (this._applicationsStateService.maximumSelectedRoommates>=0) {
       let isSetRoommate = false;
-
+      let requestedRoommates =this._applicationsStateService.getRoommateSearchOptions();
       this._applicationsStateService.setRoommatesPreferences(
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
-          if (roommate.patronKeyRoommate == 0 && !isSetRoommate) {
-            roommate.patronKeyRoommate = patronKey;
-            roommate.firstName = firstName
-            isSetRoommate = true;
+          requestedRoommates.preferences.forEach((requestedRommate)=>{
+            if (roommate.patronKeyRoommate == 0 && !isSetRoommate && requestedRommate.selected && requestedRommate.value == roommate.preferenceKey) {
+              roommate.patronKeyRoommate = patronKey;
+              roommate.firstName = firstName
+              roommate.lastName = lastName;
+              isSetRoommate = true;
+              return roommate
+            }
             return roommate
-          }
-          return roommate
+          })
         })
       )
       return of(true);
@@ -379,7 +381,10 @@ export class ApplicationsService {
 
     const patronApplication: PatronApplication = new PatronApplication(options);
 
-    return new ApplicationDetails({ ...applicationDetails, patronApplication });
+    const roommatePreferences: RoommatePreferences[] = 
+      this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences;
+
+    return new ApplicationDetails({ ...applicationDetails, patronApplication, roommatePreferences });
   }
 
   private _patchApplicationByStoredStatus(applicationDetails: ApplicationDetails): Observable<ApplicationDetails> {
