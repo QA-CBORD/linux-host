@@ -5,7 +5,7 @@ export enum CheckinStatuses {
 }
 
 export const OrderCheckinStatus = {
-  isCheckedIn: (status: number): boolean => {
+  isNotCheckedIn: (status: number): boolean => {
     return (
       status == CheckinStatuses.NOT_CHECKED_IN_REMINDER_SENT ||
       status == CheckinStatuses.NOT_CHECKED_IN_NO_REMINDER_SENT

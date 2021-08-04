@@ -12,16 +12,15 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
 
 @Injectable()
-export class CartResolver implements Resolve<Observable<[SettingInfo[], MerchantAccountInfoList, CheckingContentCsModel]>> {
+export class CartResolver implements Resolve<Observable<[SettingInfo[], MerchantAccountInfoList]>> {
 
   constructor(private readonly settingsFacadeService: SettingsFacadeService,
               private readonly loadingService: LoadingService,
               private readonly merchantService: MerchantService,
-              private readonly cartService: CartService, 
-              private readonly checkinService: CheckingServiceFacade) {
+              private readonly cartService: CartService) {
   }
 
-  resolve(): Observable<[SettingInfo[], MerchantAccountInfoList,  CheckingContentCsModel]> {
+  resolve(): Observable<[SettingInfo[], MerchantAccountInfoList]> {
     this.loadingService.showSpinner();
 
     const requiredSettings = [
@@ -35,9 +34,8 @@ export class CartResolver implements Resolve<Observable<[SettingInfo[], Merchant
       switchMap(({id}) => this.merchantService.getMerchantPaymentAccounts(id))
     );
     const settingsCall = this.settingsFacadeService.getSettings(requiredSettings);
-    const checkinPageContentString$ = this.checkinService.loadAllContentString();
-
-    return zip(settingsCall ,accountsCall,  checkinPageContentString$).pipe(
+    
+    return zip(settingsCall ,accountsCall).pipe(
       map((response ) =>  response),
       finalize(() => this.loadingService.closeSpinner()),
       first()

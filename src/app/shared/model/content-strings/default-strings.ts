@@ -49,7 +49,8 @@ export const checkingDefaultCs = {
   lbl_btn_loc_chck_in: 'Location Check In',
   not_checked_in_subtitle: 'Could not check in',
   lbl_btn_back: 'Back',
-  not_checked_in_instructions: 'Get closer to the venue to use location check in or scan the QR code instead.'
+  too_early: 'You are here too early, please check in no earlier than 30 minutes before pickup time.',
+  get_closer: 'Get closer to the venue to use location check in or scan the QR code instead.'
 }
 
 export const defaultRegistrationCs = {

@@ -8,6 +8,7 @@ import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/orde
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
 
 @Component({
   selector: 'st-recent-orders',
@@ -23,7 +24,8 @@ export class RecentOrdersComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly merchantService: MerchantService,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
+    private readonly checkinProcess: CheckingProcess
   ) {}
 
   ngOnInit() {
@@ -39,6 +41,11 @@ export class RecentOrdersComponent implements OnInit {
         finalize(() => target.complete())
       )
       .subscribe();
+  }
+
+  async onNavigateToCheckin(orderInfo) {
+    console.log('clicked herer...')
+    await this.checkinProcess.start(orderInfo);
   }
 
   async onOrderPicked(order: OrderInfo): Promise<void> {

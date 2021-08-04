@@ -45,8 +45,8 @@ import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page
 import { ConnectionService } from '@shared/services/connection-service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
-import { CheckInPendingComponent } from '@sections/check-in/components/check-in-pending/check-in-pending.component';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
+import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
 const { Browser } = Plugins;
 
 @Component({
@@ -93,7 +93,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private externalPaymentService: ExternalPaymentService,
     private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService,
-    private readonly connectionService: ConnectionService
+    private readonly connectionService: ConnectionService,
+    private readonly checkinProcess: CheckingProcess
   ) {}
 
   ionViewWillEnter() {
@@ -229,11 +230,16 @@ export class CartComponent implements OnInit, OnDestroy {
     mealBased,
     merchantId,
     dueTime,
-    id: orderId,
+    id,
     checkinStatus,
   }: OrderInfo) {
+    if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
+        await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId });
+        return await this.routingService.navigate([APP_ROUTES.ordering]);
+    }
+
     const modal = await this.modalController.create({
-      component: (OrderCheckinStatus.isCheckedIn(checkinStatus) && CheckInPendingComponent) || SuccessModalComponent,
+      component: SuccessModalComponent,
       componentProps: {
         tax,
         discount,
@@ -247,7 +253,6 @@ export class CartComponent implements OnInit, OnDestroy {
         mealBased,
         merchantId,
         dueTime,
-        orderId,
       },
     });
 

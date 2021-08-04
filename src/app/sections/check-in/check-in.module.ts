@@ -8,6 +8,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { CheckInSuccessComponent } from './components/check-in-success/check-in-success.component';
+import { CheckingProcess } from './services/checking-process-builder';
 
 const declarations = [
   CheckInPendingComponent,
@@ -19,6 +20,7 @@ const declarations = [
 
 @NgModule({
   declarations,
+  providers: [CheckingProcess],
   entryComponents: declarations,
 
   imports: [
