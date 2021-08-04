@@ -53,7 +53,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     
   }
 
-  onRequestedPermissions() {
+  allowPermissionToBeRequested() {
     this.storage.updateStateEntity(this.firstNavKey, true, { highPriorityKey: true, keepOnLogout: true });
   }
 
