@@ -36,7 +36,7 @@ export class LocationPermissionModal {
   }
 
   ionViewWillLeave() {
-    this.navigationFacade.onRequestedPermissions();
+    this.navigationFacade.allowPermissionToBeRequested();
   }
 
   async requestLocationPermissions() {
