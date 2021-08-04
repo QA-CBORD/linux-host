@@ -93,6 +93,8 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
            this.requestPermissionModal();
         }
       });
+    } else if (Capacitor.platform == PLATFORM.ios)  {
+      this.navigationFacade.allowPermissionToBeRequested();
     }
   }
 
