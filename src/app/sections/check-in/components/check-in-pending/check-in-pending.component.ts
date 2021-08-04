@@ -91,7 +91,7 @@ export class CheckInPendingComponent implements OnInit {
     });
   }
 
-  async onScanCodeClicked() {
+  async onScanCode() {
     const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
     if (barcocdeResult) {
       const modal = await this.modalController.create({

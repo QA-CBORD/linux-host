@@ -57,10 +57,7 @@ export class CheckingServiceFacade {
     try {
       this.barcodeScanResult = await this.barcode.scan(options);
       if (!this.barcodeScanResult.cancelled) {
-        
-        ///alert(`result: ${this.barcodeScanResult.text}`);
-       // return  await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text).pipe(take(1)).toPromise();
-        return true;
+         return  await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text).pipe(take(1)).toPromise();
       } else {
         alert(`result cancelled`);
         return false;
