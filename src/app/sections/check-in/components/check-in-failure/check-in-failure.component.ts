@@ -18,7 +18,7 @@ export class CheckInFailureComponent implements OnInit {
   @Input() dueTime: string;
   @Input() orderId: string;
   @Input() errorMessage: string;
-  displayPlayMessage = this.contentStrings.get_closer;
+  displayPlayMessage;
 
   data: {
     pickupTime: { dueTime: string };
@@ -32,6 +32,7 @@ export class CheckInFailureComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.displayPlayMessage = this.contentStrings.get_closer;
     if (this.errorMessage && this.errorMessage.includes('early')) {
       this.displayPlayMessage = this.contentStrings.too_early;
     }
