@@ -4,6 +4,7 @@ import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, skipWhile, take } from 'rxjs/operators';
 
 import { GeolocationPosition, Plugins } from '@capacitor/core';
+import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 
 const { Geolocation } = Plugins;
 
@@ -34,7 +35,7 @@ export class CoordsService {
     },
   };
 
-  constructor() {}
+  constructor( private readonly navigationFacade: NavigationFacadeSettingsService,) {}
 
   get location$(): Observable<GeolocationPosition> {
     return this._location$.asObservable().pipe(skipWhile(value => !value));
@@ -51,7 +52,11 @@ export class CoordsService {
     /// this prevents several simultaneous requests to the device
     const timeDiff = new Date().getTime() - this.timestamp;
     if (timeDiff > this.fetchInterval) {
-      this.requestLocationFromDevice();
+      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
+        if (requested) {
+          this.requestLocationFromDevice();
+        }
+      });
     }
     return this.location$;
   }

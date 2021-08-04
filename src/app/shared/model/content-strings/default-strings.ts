@@ -200,4 +200,12 @@ export const defaultPasswordValidationStrings = {
   at_least_one_special_char: 'at least one special character',
   required_password_length: 'at least 7 characters long',
   at_least_one_uppercase: 'at least one upper case	',
+
+};
+
+export const defaultLocationDisclosureStrings = {
+  disclosure_button_cancel: 'cancel',
+  disclosure_button_text: 'location settings',
+  disclosure_text: 'GET can use your location to help you find nearby merchants, check in for an order pickup, and use your card.  Allowing background access to your deviceâs location lets you to take full advantage of these features and enables you to add your card or payroll account to Apple Wallet or Google Pay if offered by your institution.',
+  disclosure_title: 'use your location',
 };

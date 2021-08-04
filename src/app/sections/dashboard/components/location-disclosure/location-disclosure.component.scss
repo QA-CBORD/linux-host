@@ -1,0 +1,44 @@
+@import 'tools';
+
+.location {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  margin: auto;
+
+  &__title {
+    display: flex;
+    margin: 16px auto;
+    margin-bottom: 16px;
+    line-height: 27px;
+    justify-content: center;
+    text-align: center;
+    @include font-nunito-heavy(20px);
+  }
+
+  &__text {
+    display: flex;
+    margin: 0 auto;
+    text-align: left;
+    margin: 16px 32px 0px 32px;
+    color: rgba(0, 0, 0, 0.87);
+    @include font-nunito-regular(14px);
+  }
+}
+
+.location-access-img {
+  left: -28px;
+}
+
+.location-access-btn {
+  display: flex;
+  align-items: right;
+  padding: 0px 16px 16px 16px;
+  @include font-nunito-regular(16px);
+
+  &__cancel {
+		width: 30%;
+		margin-right: 15px;
+    color: rgba(241, 241, 241, 1) !important;
+	}
+}

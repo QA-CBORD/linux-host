@@ -57,7 +57,7 @@
 	<key>NSLocationUsageDescription</key>
 	<string>GET requires access to your locations to suggest nearby merchants</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>GET uses your location to find the nearest merchants</string>
+	<string>GET can use your location to help you find nearby merchants, check in for an order pickup, and use your phone as a mobile credential.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow GET to Record Audio With Video</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

@@ -12,6 +12,7 @@ import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.cont
 import { IdentifyRecipientCsModel } from '@sections/guest/guest-deposits/components/identify-recipient/identity-recipient.content.string';
 import { creditCardMgmtCsModel } from '@sections/settings/creditCards/creditCardMgmtCsModel';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
+import { LocationDisclosureCsModel } from '@sections/dashboard/components/location-disclosure/location-disclosure-content-string.model';
 
 export enum ContentStringCategory {
   forgotPassword = 'forgotPassword',
@@ -26,7 +27,8 @@ export enum ContentStringCategory {
   addFunds = 'addFunds',
   identifyRecipient = 'identifyRecipient',
   creditCardMgmt = 'creditCardMgmt',
-  checkin = 'checkin'
+  checkin = 'checkin',
+  locationDisclosure = 'locationDisclosure',
 }
 
 export interface ExtraContent {
@@ -107,7 +109,7 @@ export const ContentStringApi: ContentStringCategoryType = {
       return new GuestAddFundsCsModel(NullableContent.build(config));
     },
   },
-
+  
   [ContentStringCategory.identifyRecipient]: {
     category: CATEGORIES.identifyRecipient,
     build: (config: ContentStringBuilderConfig): IdentifyRecipientCsModel =>
@@ -123,4 +125,13 @@ export const ContentStringApi: ContentStringCategoryType = {
     category: CATEGORIES.checkin,
     build: (config): CheckingContentCsModel => new CheckingContentCsModel(NullableContent.build(config)),
   },
+  
+  [ContentStringCategory.locationDisclosure]: {
+    category: CATEGORIES.locationDisclosure,
+    build: (config: ContentStringBuilderConfig): LocationDisclosureCsModel => {
+      return new LocationDisclosureCsModel(NullableContent.build(config));
+    },
+  },
+
 };
+ 
