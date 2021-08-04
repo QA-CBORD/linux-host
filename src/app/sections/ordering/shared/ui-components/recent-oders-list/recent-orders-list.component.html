@@ -1,5 +1,6 @@
 <st-recent-orders-list-item
         (onClicked)="onOrderClicked.emit($event)"
+        (onNavigateToCheckin)="onNavLinkClicked.emit($event)"
         *ngFor="let orderInfo of orders; trackBy: trackOrdersById"
         [orderInfo]="orderInfo">
 </st-recent-orders-list-item>

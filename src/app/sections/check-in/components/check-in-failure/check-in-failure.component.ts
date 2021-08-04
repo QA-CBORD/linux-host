@@ -12,20 +12,31 @@ import { CheckInSuccessComponent } from '../check-in-success/check-in-success.co
   styleUrls: ['./check-in-failure.component.scss'],
 })
 export class CheckInFailureComponent implements OnInit {
-  @Input() contentStrings: CheckingContentCsModel = {} as any;
+  @Input() contentStrings = <any>{};
   @Input() total: number;
   @Input() merchantId: string;
   @Input() dueTime: string;
   @Input() orderId: string;
+  @Input() errorMessage: string;
+  displayPlayMessage;
+
   data: {
     pickupTime: { dueTime: string };
     storeAddress: AddressInfo;
     orderTypes: MerchantOrderTypesInfo;
   } = <any>{};
 
-  constructor(private readonly modalController: ModalController,  private readonly checkInService: CheckingServiceFacade) {}
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly checkInService: CheckingServiceFacade
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.displayPlayMessage = this.contentStrings.get_closer;
+    if (this.errorMessage && this.errorMessage.includes('early')) {
+      this.displayPlayMessage = this.contentStrings.too_early;
+    }
+  }
 
   async onBack() {
     // just close this modal.
@@ -35,14 +46,14 @@ export class CheckInFailureComponent implements OnInit {
   async onScanCode() {
     // this will open scanCode component.
     console.log('onScanCode');
-      const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
-      if (barcocdeResult) {
-        const modal = await this.modalController.create({
-          component: CheckInSuccessComponent,
-          componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
-        });
-        modal.present();
-      }
+    const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
+    if (barcocdeResult) {
+      const modal = await this.modalController.create({
+        component: CheckInSuccessComponent,
+        componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
+      });
+      modal.present();
+    }
   }
 
   async onClosed() {

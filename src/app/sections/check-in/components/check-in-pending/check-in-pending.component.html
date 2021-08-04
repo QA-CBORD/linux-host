@@ -12,6 +12,7 @@
 <ion-content>
   <div class="pending-checkin__body-wrapper">
     <img src="/assets/images/Big_Hourglass_Confetti.svg" alt="big Order Pending" class="pending-checkin__main-img" />
+    <div class="pending-checkin__sub-header">#{{ checkNumber }}</div>
     <div class="pending-checkin__sub-header">{{ contentStrings.order_pending }}</div>
     <div class="pending-checkin__body">
       <p>{{ contentStrings.subtitle }}</p>
@@ -49,7 +50,7 @@
     </st-button>
   </div>
 
-  <div class="checkin-btn" [ngClass]="{ 'btn-disabled': locationPermissionDisabled$ | async }">
+  <div class="checkin-btn" [ngClass]="{ 'btn-disabled': locationPermissionDisabled }">
     <st-button (onClick)="onLocationCheckinClicked()" buttonModifier="rectangular" isDisabled="true">
       <span class="ion-text-capitalize">
         {{ contentStrings.lbl_btn_loc_chck_in }}

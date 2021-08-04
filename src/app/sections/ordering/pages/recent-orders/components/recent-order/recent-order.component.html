@@ -42,15 +42,13 @@
 </ng-template>
 
 <ng-template #pending>
-  <div
-    [ngClass]="{ 'btn-wrapper': (order$ | async).checkinStatus == 2 || (order$ | async).checkinStatus == 3 }"
-  >
+  <div [ngClass]="{ 'btn-wrapper': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
     <div>
       <st-button [buttonModifier]="'danger'" (onClick)="showModal()"
         >{{ contentStrings.buttonCancelOrder | async }}
       </st-button>
     </div>
-    <div *ngIf="(order$ | async).checkinStatus == 2 || (order$ | async).checkinStatus == 3">
+    <div *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
       <st-button (onClick)="openChecking()">Check In</st-button>
     </div>
   </div>

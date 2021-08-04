@@ -26,14 +26,15 @@ export class CheckInPendingComponent implements OnInit {
   @Input() merchantId: string;
   @Input() dueTime: string;
   @Input() orderId: string;
+  @Input() checkNumber: number;
+  @Input() contentStrings: CheckingContentCsModel = {} as any;
+  @Input() locationPermissionDisabled: true;
   data: {
     pickupTime: { dueTime: string };
     storeAddress: AddressInfo;
     orderTypes: MerchantOrderTypesInfo;
   } = <any>{};
-  locationPermissionDisabled$: Observable<boolean>;
-  contentStrings: CheckingContentCsModel = {} as any;
-  locationDisabled: boolean;
+
   constructor(
     private readonly loadingService: LoadingService,
     private readonly checkInService: CheckingServiceFacade,
@@ -41,27 +42,15 @@ export class CheckInPendingComponent implements OnInit {
     private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly resolver: RecentOrdersResolver,
-    private readonly changeDetection: ChangeDetectorRef
+    private readonly resolver: RecentOrdersResolver
   ) {}
 
   ngOnInit() {
-    this.init();
     console.log(this.contentStrings);
     console.log(this.dueTime);
     console.log(this.merchantId);
     console.log(this.orderId);
     this.setData();
-  }
-
-  async init() {
-    this.loadingService.showSpinner();
-    const { content } = <any>await this.checkInService.getContent();
-    this.contentStrings = content;
-    this.locationPermissionDisabled$ = this.checkInService.locationPermissionDisabled().pipe(
-      tap(disabled => (this.locationDisabled = disabled)),
-      finalize(() => this.loadingService.closeSpinner())
-    );
   }
 
   setData() {
@@ -80,7 +69,7 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   async onClosed() {
-    await this.modalController.dismiss();
+    await this.modalController.dismiss(); // bad
   }
 
   async goToOrderDetails(): Promise<void> {
@@ -103,7 +92,7 @@ export class CheckInPendingComponent implements OnInit {
   }
 
   async onLocationCheckinClicked() {
-    if (this.locationDisabled) return;
+    if (this.locationPermissionDisabled) return;
 
     this.loadingService.showSpinner();
     await this.checkInService
@@ -113,7 +102,7 @@ export class CheckInPendingComponent implements OnInit {
         // redirect to checkin success here..
         const modal = await this.modalController.create({
           component: CheckInSuccessComponent,
-          componentProps:  { orderId: this.orderId, total: this.total, dueTime: this.dueTime , data: this.data},
+          componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
         });
         modal.present();
         console.log(res);
@@ -126,12 +115,21 @@ export class CheckInPendingComponent implements OnInit {
       .finally(() => this.loadingService.closeSpinner());
   }
 
-  private async onCheckInFailed(arg) {
-    console.log('arg: ', arg);
+  private async constructErrorMessage(error) {}
+
+  private async onCheckInFailed({ message: errorMessage }) {
+    console.log('errorMessage: ', errorMessage);
+
     const modal = await this.modalController.create({
       component: CheckInFailureComponent,
       componentProps: {
-        contentStrings: this.contentStrings, orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
+        errorMessage,
+        contentStrings: this.contentStrings,
+        orderId: this.orderId,
+        total: this.total,
+        dueTime: this.dueTime,
+        data: this.data,
+      },
     });
     // modal.onDidDismiss().then(async () => {
     //   await this.router.navigate([APP_ROUTES.ordering]);

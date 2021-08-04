@@ -27,8 +27,8 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { CheckInPendingComponent } from '@sections/check-in/components/check-in-pending/check-in-pending.component';
-
+import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
+import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -40,7 +40,8 @@ export class RecentOrderComponent implements OnInit {
   orderDetailsOptions$: Observable<any>;
   merchant$: Observable<MerchantInfo>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-  merchantTimeZoneDisplayingMessage:string;
+  merchantTimeZoneDisplayingMessage: string;
+  orderCheckStatus = OrderCheckinStatus;
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly merchantService: MerchantService,
@@ -54,7 +55,8 @@ export class RecentOrderComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
     private readonly globalNav: GlobalNavService,
-    private readonly institutionService: InstitutionFacadeService
+    private readonly institutionService: InstitutionFacadeService,
+    private readonly checkinProcess: CheckingProcess
   ) {}
 
   ngOnInit() {
@@ -119,25 +121,15 @@ export class RecentOrderComponent implements OnInit {
   }
 
   private setActiveOrder(orderId) {
-    console.log("setActiveOrder: ", orderId)
+    console.log('setActiveOrder: ', orderId);
     this.order$ = this.merchantService.recentOrders$.pipe(
       first(),
       map(orders => orders.find(({ id }) => id === orderId))
     );
   }
 
-  async openChecking(){
-    const {total, merchantId, dueTime, id: orderId } = await this.order$.toPromise();
-    const modal = await this.modalController.create({
-      component: CheckInPendingComponent,
-      componentProps: {
-        total,
-        merchantId,
-        dueTime,
-        orderId
-      },
-    });
-    await modal.present();
+  async openChecking() {
+    await this.checkinProcess.start(await this.order$.toPromise());
   }
 
   private setActiveMerchant(orderId) {
@@ -158,8 +150,8 @@ export class RecentOrderComponent implements OnInit {
           );
         else {
           this.merchantTimeZoneDisplayingMessage = "The time zone reflects the merchant's location";
-          return of(merchant)
-        };
+          return of(merchant);
+        }
       })
     );
   }
