@@ -143,24 +143,24 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'button',
         navigate: [SETTINGS_NAVIGATE.address],
       },
-      {
-        id: SETTINGS_ID.creditCard,
-        icon: 'credit-card',
-        label: 'Payment Methods',
-        type: 'button',
-        setCallback: openModal,
-        validations: [
-          { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
-        ],
-        modalContent: {
-          component: CreditCardMgmtComponent,
-          contentStrings: [{
-            domain: CONTENT_STRINGS_DOMAINS.patronUi,
-            category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
-            name: null,
-          }]
-        },
-      },
+      // {
+      //   id: SETTINGS_ID.creditCard,
+      //   icon: 'credit-card',
+      //   label: 'Payment Methods',
+      //   type: 'button',
+      //   setCallback: openModal,
+      //   validations: [
+      //     { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
+      //   ],
+      //   modalContent: {
+      //     component: CreditCardMgmtComponent,
+      //     contentStrings: [{
+      //       domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      //       category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
+      //       name: null,
+      //     }]
+      //   },
+      // },
       {
         id: SETTINGS_ID.mcredential,
         icon: 'mobile_credential',
