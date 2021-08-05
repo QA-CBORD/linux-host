@@ -4,8 +4,6 @@ import { NativeStartupFacadeService } from '@core/facades/native-startup/native-
 import { ModalController } from '@ionic/angular';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { APP_ROUTES } from '@sections/section.config';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
 @Component({
@@ -14,18 +12,19 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
   styleUrls: ['./check-in-success.component.scss'],
 })
 export class CheckInSuccessComponent implements OnInit {
-
   @Input() total: number;
-  @Input() merchantId: string;
-  @Input() dueTime: string;
   @Input() orderId: string;
   @Input() data: any;
-  
-  constructor(private readonly router: Router,  private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly resolver: RecentOrdersResolver,  private readonly modalController: ModalController) { }
+
+  constructor(
+    private readonly router: Router,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly resolver: RecentOrdersResolver,
+    private readonly modalController: ModalController
+  ) {}
 
   ngOnInit() {}
-  
+
   ionViewWillEnter() {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
   }
@@ -35,8 +34,8 @@ export class CheckInSuccessComponent implements OnInit {
   }
 
   async goToRecentOrders() {
-      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
-      await this.modalController.dismiss();
+    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
+    await this.modalController.dismiss();
   }
 
   async goToOrderDetails(): Promise<void> {

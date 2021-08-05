@@ -1,7 +1,7 @@
 <ion-header class="pending-checkin__header" no-border>
   <ion-toolbar mode="ios">
     <ion-buttons slot="start">
-      <ion-button color="dark" (click)="onClosed()">
+      <ion-button color="dark" (click)="goToRecentOrders()">
         <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -31,7 +31,7 @@
         <span class="text-dark">${{ total }}</span>
       </div>
       <div class="btn_no-bg">
-        <st-button (onClick)="goToRecentOrders()" fill="clear" buttonModifier="rectangular">
+        <st-button (onClick)="goToOrderDetails()" fill="clear" buttonModifier="rectangular">
           <span class="ion-text-capitalize">Order Details</span>
         </st-button>
       </div>

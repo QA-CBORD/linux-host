@@ -46,10 +46,6 @@ export class CheckInPendingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.contentStrings);
-    console.log(this.dueTime);
-    console.log(this.merchantId);
-    console.log(this.orderId);
     this.setData();
   }
 
@@ -74,21 +70,19 @@ export class CheckInPendingComponent implements OnInit {
 
   async goToOrderDetails(): Promise<void> {
     this.resolver.resolve().then(async res => {
-      console.log('response ==>> ', res);
       await this.modalController.dismiss();
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
     });
   }
 
   async onScanCode() {
-    const barcocdeResult = await this.checkInService.scanBarcode(this.orderId);
-    if (barcocdeResult) {
-      const modal = await this.modalController.create({
-        component: CheckInSuccessComponent,
-        componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
-      });
-      modal.present();
-    }
+     await this.checkInService
+      .scanBarcode(this.orderId)
+      .then(async res => {
+        await this.handleResponse(res);
+      })
+      .catch(err => this.onCheckInFailed(err))
+      .finally(() => this.loadingService.closeSpinner());
   }
 
   async onLocationCheckinClicked() {
@@ -96,23 +90,25 @@ export class CheckInPendingComponent implements OnInit {
 
     this.loadingService.showSpinner();
     await this.checkInService
-      .checkInOrder(this.orderId)
+      .checkInOrderByLocation(this.orderId)
       .toPromise()
       .then(async res => {
-        // redirect to checkin success here..
-        const modal = await this.modalController.create({
-          component: CheckInSuccessComponent,
-          componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
-        });
-        modal.present();
-        console.log(res);
-        if (res) {
-        } else {
-          this.onCheckInFailed(res);
-        }
+        await this.handleResponse(res);
       })
       .catch(err => this.onCheckInFailed(err))
       .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async showSuccessModal() {
+    const modal = await this.modalController.create({
+      component: CheckInSuccessComponent,
+      componentProps: {
+        orderId: this.orderId,
+        total: this.total,
+        data: this.data,
+      },
+    });
+    modal.present();
   }
 
   private async constructErrorMessage(error) {}
@@ -131,9 +127,14 @@ export class CheckInPendingComponent implements OnInit {
         data: this.data,
       },
     });
-    // modal.onDidDismiss().then(async () => {
-    //   await this.router.navigate([APP_ROUTES.ordering]);
-    // });
     await modal.present();
+  }
+
+  private async handleResponse(res: any) {
+    await this.showSuccessModal();
+    if (res) {
+    } else {
+      this.onCheckInFailed(res);
+    }
   }
 }

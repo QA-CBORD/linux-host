@@ -15,35 +15,28 @@ export class CheckingServiceFacade {
     private readonly barcode: BarcodeScanner
   ) {}
 
-  async scanBarcode(orderId: string, format: string = 'QR_CODE'): Promise<boolean> {
+  async scanBarcode(orderId: string, format: string = 'QR_CODE'): Promise<any> {
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',
       preferFrontCamera: false,
-      prompt: 'Scan Code',
+      prompt: '',
       showFlipCameraButton: false,
       showTorchButton: false,
+      disableSuccessBeep: true,
       torchOn: false,
       formats: format,
       resultDisplayDuration: 0,
     };
 
-    try {
-      this.barcodeScanResult = await this.barcode.scan(options);
-      if (!this.barcodeScanResult.cancelled) {
-        ///alert(`result: ${this.barcodeScanResult.text}`);
-        // return  await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text).pipe(take(1)).toPromise();
-        return true;
-      } else {
-        alert(`result cancelled`);
-        return false;
-      }
-    } catch (e) {
-      alert(`error: ${e.message}`);
-      return false;
+    this.barcodeScanResult = await this.barcode.scan(options);
+    if (!this.barcodeScanResult.cancelled) {
+      return await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text)
+        .pipe(take(1))
+        .toPromise();
     }
   }
 
-  checkInOrder(orderId: string, checkinBarcode: string = null): Observable<any> {
+  checkInOrderByLocation(orderId: string, checkinBarcode: string = null): Observable<any> {
     return this.coordsService.getCoords().pipe(
       first(),
       switchMap(({ coords: { latitude, longitude } }) => {
@@ -55,5 +48,19 @@ export class CheckingServiceFacade {
         });
       })
     );
+  }
+
+  checkInOrderByBarcode(
+    orderId: string,
+    checkinBarcode: string,
+    latitude: number = null,
+    longitude: number = null
+  ): Observable<boolean> {
+    return this.checkingService.checkInOrder({
+      orderId,
+      latitude,
+      longitude,
+      checkinBarcode,
+    });
   }
 }
