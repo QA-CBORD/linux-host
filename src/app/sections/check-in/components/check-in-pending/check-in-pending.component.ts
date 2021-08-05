@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -7,11 +7,11 @@ import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController } from '@ionic/angular';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
-import { MerchantOrderTypesInfo, MerchantService, OrderInfo } from '@sections/ordering';
+import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { Observable, zip } from 'rxjs';
-import { finalize, first, map, tap } from 'rxjs/operators';
+import { zip } from 'rxjs';
+import { first, map } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { CheckInSuccessComponent } from '../check-in-success/check-in-success.component';
@@ -74,7 +74,6 @@ export class CheckInPendingComponent implements OnInit {
 
   async goToOrderDetails(): Promise<void> {
     this.resolver.resolve().then(async res => {
-      console.log('response ==>> ', res);
       await this.modalController.dismiss();
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
     });
@@ -105,6 +104,9 @@ export class CheckInPendingComponent implements OnInit {
           componentProps: { orderId: this.orderId, total: this.total, dueTime: this.dueTime, data: this.data },
         });
         modal.present();
+        modal.onDidDismiss().then(() => {
+          this.modalController.dismiss();
+        });
         console.log(res);
         if (res) {
         } else {
@@ -114,8 +116,6 @@ export class CheckInPendingComponent implements OnInit {
       .catch(err => this.onCheckInFailed(err))
       .finally(() => this.loadingService.closeSpinner());
   }
-
-  private async constructErrorMessage(error) {}
 
   private async onCheckInFailed({ message: errorMessage }) {
     console.log('errorMessage: ', errorMessage);
@@ -131,9 +131,6 @@ export class CheckInPendingComponent implements OnInit {
         data: this.data,
       },
     });
-    // modal.onDidDismiss().then(async () => {
-    //   await this.router.navigate([APP_ROUTES.ordering]);
-    // });
     await modal.present();
   }
 }
