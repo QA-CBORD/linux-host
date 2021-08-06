@@ -28,6 +28,10 @@ export class CheckingSuccessContentCsModel extends ContentStringModel {
       return this.content.lbl_pickup_time;
     }
 
+    get orderDetailsLbl(): string {
+      return this.content.lbl_btn_order_detail;
+    }
+
     get pickUpAddressLbl(): string {
       return this.content.lbl_pickup_address;
     }
@@ -37,6 +41,6 @@ export class CheckingSuccessContentCsModel extends ContentStringModel {
     }
 
     get doneBtn(): string {
-      return this.content.lbl_total;
+      return this.content.done;
     }
 }

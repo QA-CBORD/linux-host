@@ -67,15 +67,6 @@
     }
   }
 
-  // &__payment-method-wrapper {
-  //   display: flex;
-  //   justify-content: space-between;
-  //   color: $color-charcoal;
-  //   margin-top: 16px;
-
-  //   @include font-nunito-heavy(14px);
-  // }
-
   &__footer {
     display: flex;
     padding: 10px;
@@ -90,21 +81,3 @@
 span {
   @include font-nunito-heavy(15px);
 }
-
-// .total {
-//   margin-top: 16px;
-//   background: $color-white;
-
-//   &__item {
-//     text-transform: uppercase;
-//     display: flex;
-//     justify-content: space-between;
-//     margin-bottom: 5px;
-
-//     @include font-nunito-regular(14px);
-
-//     &--bold {
-//       @include font-nunito-heavy(14px);
-//     }
-//   }
-// }

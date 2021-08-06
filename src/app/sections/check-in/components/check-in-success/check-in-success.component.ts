@@ -2,8 +2,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { ModalController } from '@ionic/angular';
+import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
+import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
 @Component({
@@ -15,15 +19,22 @@ export class CheckInSuccessComponent implements OnInit {
   @Input() total: number;
   @Input() orderId: string;
   @Input() data: any;
+  contentString: CheckingSuccessContentCsModel;
 
   constructor(
     private readonly router: Router,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly commonService: CommonService
   ) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    this.contentString = await this.commonService
+      .loadContentString<CheckingSuccessContentCsModel>(ContentStringCategory.checkinSuccess)
+      .pipe(take(1))
+      .toPromise();
+  }
 
   ionViewWillEnter() {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
