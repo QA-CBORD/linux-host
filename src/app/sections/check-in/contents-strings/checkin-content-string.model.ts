@@ -12,20 +12,20 @@ export class CheckingSuccessContentCsModel extends ContentStringModel {
       super(nullable.getConfig(), checkingSuccessCs);
     }
 
-    get headerTitle(): string {
+    get title(): string {
       return this.content.title;
-    }
-  
-    get orderTitle(): string {
-      return this.content.order_on_the_way;
     }
   
     get subtitle(): string {
       return this.content.subtitle;
     }
   
+    get instructions(): string {
+      return this.content.instructions;
+    }
+  
     get pickUpTimeLbl(): string {
-      return this.content. lbl_pickup_time;
+      return this.content.lbl_pickup_time;
     }
 
     get pickUpAddressLbl(): string {

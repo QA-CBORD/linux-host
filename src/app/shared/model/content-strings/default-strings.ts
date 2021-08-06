@@ -55,8 +55,8 @@ export const checkingDefaultCs = {
 
 export const checkingSuccessCs = {
   title: 'Home',
-  order_on_the_way: 'Your other is on the way',
-  subtitle: 'Please wait while your order is being prepared.',
+  subtitle: 'Your other is on the way',
+  instructions: 'Please wait while your order is being prepared.',
   lbl_pickup_time: 'PICKUP TIME',
   lbl_pickup_address: 'PICKUP ADDRESS',
   lbl_total: 'Total',
