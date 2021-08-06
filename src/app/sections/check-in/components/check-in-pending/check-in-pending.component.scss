@@ -20,7 +20,7 @@
   &__body-wrapper {
     display: flex;
     flex-direction: column;
-    padding: 15px;
+    padding: 15px 15px 0px 15px;
   }
 
   &__main-img {
@@ -47,13 +47,14 @@
 
     .small-content {
       font-size: 11px;
+      margin-bottom: 20px;
     }
 
-    .title-lbl {
-      margin: 18px 0px 9px 0px;
-    }
     .padded {
       padding: 0 15px;
+      .text-dark{
+        margin-top: 5px;
+      }
     }
     .faded {
       opacity: 0.6;
