@@ -25,7 +25,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   addFunds = 'guest_add_funds',
   identifyRecipient = 'identify_recipient',
   creditCardMgmt = 'creditCardMgmt',
-  checkin        = 'checkin'
+  checkin        = 'checkin',
+  locationDisclosure = 'location_disclosure_screen',
 }
 
 export enum CONTENT_STRINGS_LOCALES {
