@@ -49,7 +49,7 @@
       </st-button>
     </div>
     <div *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
-      <st-button (onClick)="openChecking()">Check In</st-button>
+      <st-button (onClick)="openChecking()">{{ contentStrings.labelBtnCheckin | async }}</st-button>
     </div>
   </div>
 </ng-template>

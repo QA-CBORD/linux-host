@@ -14,11 +14,11 @@
     *ngIf="orderCheckStatus.isNotCheckedIn(orderInfo.checkinStatus)"
   >
     <div class="clickable">
-        <st-button fill="clear" buttonModifier="rectangular">
-          <span class="ion-text-capitalize"> 
-            You still need to check in.
-          </span>
-        </st-button>
+      <st-button fill="clear" buttonModifier="rectangular">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.needCheckin | async }}
+        </span>
+      </st-button>
     </div>
   </ion-card-content>
 </ion-card>

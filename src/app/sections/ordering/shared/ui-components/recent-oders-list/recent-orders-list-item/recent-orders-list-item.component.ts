@@ -21,5 +21,6 @@ export class RecentOrdersListItemComponent implements OnInit {
 
   ngOnInit() {
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
+    this.contentStrings.needCheckin = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.needCheckin);
   }
 }
