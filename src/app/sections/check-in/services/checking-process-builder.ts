@@ -18,8 +18,7 @@ export class CheckingProcess {
     private readonly coordsService: CoordsService
   ) {}
 
-  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }): Promise<void> {
-    console.log('starting process for orderId: ', orderId);
+  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }): Promise<HTMLIonModalElement> {
     let locationPermissionDisabled = true;
     try {
       const {
@@ -29,12 +28,7 @@ export class CheckingProcess {
         .pipe(first())
         .toPromise();
       locationPermissionDisabled = !(latitude && longitude);
-      console.log('got hhere', locationPermissionDisabled);
-    } catch (error) {
-      console.log('got ERROR ', error);
-    }
-
-    console.log('Loading component');
+    } catch (error) {}
 
     this.loadingService.showSpinner();
     const { content: contentStrings } = <any>await this.getContent();
@@ -49,13 +43,13 @@ export class CheckingProcess {
         mealBased,
         total,
         merchantId,
-        location$: this.coordsService.location$
+        location$: this.coordsService.location$,
       },
     });
 
-    const promise = await modal.present();
+    await modal.present();
     this.loadingService.closeSpinner();
-    return promise
+    return modal;
   }
 
   /**

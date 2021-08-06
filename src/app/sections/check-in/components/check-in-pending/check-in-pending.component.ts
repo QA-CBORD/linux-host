@@ -10,7 +10,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { Observable, Subscribable, Subscription, zip } from 'rxjs';
+import { Observable, Subscription, zip } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
@@ -49,9 +49,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly resolver: RecentOrdersResolver
   ) {}
 
-  
- 
-
   ngOnInit() {
     this.setData();
     this.watchLocationChanges();
@@ -75,7 +72,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
           const { storeAddress, orderTypes } = merchants.find(({ id }) => id == this.merchantId);
           const date = new Date(this.dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));
           const pickupTime = date.toLocaleString(locale, { hour12: false, timeZone });
-          console.log(storeAddress, pickupTime, orderTypes);
           return { storeAddress, pickupTime: { dueTime: pickupTime }, orderTypes };
         })
       )
@@ -94,7 +90,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onScanCode() {
-     await this.checkInService
+    await this.checkInService
       .scanBarcode(this.orderId)
       .then(async res => {
         await this.handleResponse(res);
@@ -126,14 +122,13 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         data: this.data,
       },
     });
+
+    modal.onDidDismiss().then(() => this.modalController.dismiss());
     modal.present();
   }
 
-  private async constructErrorMessage(error) {}
 
   private async onCheckInFailed({ message: errorMessage }) {
-    console.log('errorMessage: ', errorMessage);
-
     const modal = await this.modalController.create({
       component: CheckInFailureComponent,
       componentProps: {
