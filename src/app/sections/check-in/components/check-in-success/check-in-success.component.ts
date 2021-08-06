@@ -19,21 +19,16 @@ export class CheckInSuccessComponent implements OnInit {
   @Input() total: number;
   @Input() orderId: string;
   @Input() data: any;
-  contentString: CheckingSuccessContentCsModel;
+  @Input() contentString: CheckingSuccessContentCsModel;
 
   constructor(
     private readonly router: Router,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
     private readonly modalController: ModalController,
-    private readonly commonService: CommonService
   ) {}
 
   async ngOnInit() {
-    this.contentString = await this.commonService
-      .loadContentString<CheckingSuccessContentCsModel>(ContentStringCategory.checkinSuccess)
-      .pipe(take(1))
-      .toPromise();
   }
 
   ionViewWillEnter() {
@@ -46,13 +41,13 @@ export class CheckInSuccessComponent implements OnInit {
 
   async goToRecentOrders() {
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
-    await this.modalController.dismiss();
+    this.modalController.dismiss();
   }
 
   async goToOrderDetails(): Promise<void> {
     this.resolver.resolve().then(async res => {
       await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-      await this.modalController.dismiss();
+      this.modalController.dismiss();
     });
   }
 }

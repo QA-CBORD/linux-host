@@ -5,13 +5,18 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController } from '@ionic/angular';
-import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
+import {
+  CheckingContentCsModel,
+  CheckingSuccessContentCsModel,
+} from '@sections/check-in/contents-strings/checkin-content-string.model';
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
 import { Observable, Subscribable, Subscription, zip } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { first, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { CheckInSuccessComponent } from '../check-in-success/check-in-success.component';
@@ -38,6 +43,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     storeAddress: AddressInfo;
     orderTypes: MerchantOrderTypesInfo;
   } = <any>{};
+  contentString: any;
 
   constructor(
     private readonly loadingService: LoadingService,
@@ -46,15 +52,14 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly resolver: RecentOrdersResolver
+    private readonly resolver: RecentOrdersResolver,
+    private readonly commonService: CommonService
   ) {}
-
-  
- 
 
   ngOnInit() {
     this.setData();
     this.watchLocationChanges();
+    this.checkinSuccessCs();  
   }
 
   watchLocationChanges() {
@@ -94,10 +99,12 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onScanCode() {
-     await this.checkInService
+    await this.checkInService
       .scanBarcode(this.orderId)
       .then(async res => {
-        await this.handleResponse(res);
+        if(res) {
+          await this.handleResponse(res);
+        }
       })
       .catch(err => this.onCheckInFailed(err))
       .finally(() => this.loadingService.closeSpinner());
@@ -124,6 +131,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         orderId: this.orderId,
         total: this.total,
         data: this.data,
+        contentString: this.contentString
       },
     });
     modal.present();
@@ -154,5 +162,14 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     } else {
       this.onCheckInFailed(res);
     }
+  }
+
+  private checkinSuccessCs() {
+    (async () => {
+      this.contentString = await this.commonService
+        .loadContentString<CheckingSuccessContentCsModel>(ContentStringCategory.checkinSuccess)
+        .pipe(take(1))
+        .toPromise();
+    })();
   }
 }
