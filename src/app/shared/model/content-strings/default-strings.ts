@@ -53,6 +53,17 @@ export const checkingDefaultCs = {
   get_closer: 'Get closer to the venue to use location check in or scan the QR code instead.'
 }
 
+export const checkingSuccessCs = {
+  title: 'Home',
+  subtitle: 'Your other is on the way',
+  instructions: 'Please wait while your order is being prepared.',
+  lbl_pickup_time: 'PICKUP TIME',
+  lbl_pickup_address: 'PICKUP ADDRESS',
+  lbl_total: 'Total',
+  lbl_btn_order_detail: 'Order Details',
+  done: 'Done'
+}
+
 export const defaultRegistrationCs = {
   screen_title: 'Create an account',
   submit_btn_text: 'Create Account',

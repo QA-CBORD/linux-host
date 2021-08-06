@@ -26,6 +26,7 @@ export enum CONTENT_STRINGS_CATEGORIES {
   identifyRecipient = 'identify_recipient',
   creditCardMgmt = 'creditCardMgmt',
   checkin        = 'checkin',
+  checkinSuccess = 'checkin_success',
   locationDisclosure = 'location_disclosure_screen',
 }
 
