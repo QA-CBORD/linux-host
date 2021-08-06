@@ -9,6 +9,7 @@ import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-form
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { CheckInSuccessComponent } from './components/check-in-success/check-in-success.component';
 import { CheckingProcess } from './services/checking-process-builder';
+import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 
 const declarations = [
   CheckInPendingComponent,
@@ -29,6 +30,7 @@ const declarations = [
     AddressHeaderFormatPipeModule,
     ModifyPrepTimeModule,
     IonicModule,
+    PriceUnitsResolverModule,
     StButtonModule,
   ],
 })

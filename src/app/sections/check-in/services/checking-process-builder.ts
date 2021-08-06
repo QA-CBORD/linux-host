@@ -18,7 +18,7 @@ export class CheckingProcess {
     private readonly coordsService: CoordsService
   ) {}
 
-  async start({ id: orderId, dueTime, checkNumber, total, merchantId }): Promise<void> {
+  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }): Promise<void> {
     console.log('starting process for orderId: ', orderId);
     let locationPermissionDisabled = true;
     try {
@@ -46,8 +46,10 @@ export class CheckingProcess {
         orderId,
         dueTime,
         checkNumber,
+        mealBased,
         total,
         merchantId,
+        location$: this.coordsService.location$
       },
     });
 

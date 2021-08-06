@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -10,7 +10,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { zip } from 'rxjs';
+import { Observable, Subscribable, Subscription, zip } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
@@ -21,14 +21,18 @@ import { CheckInSuccessComponent } from '../check-in-success/check-in-success.co
   templateUrl: './check-in-pending.component.html',
   styleUrls: ['./check-in-pending.component.scss'],
 })
-export class CheckInPendingComponent implements OnInit {
+export class CheckInPendingComponent implements OnInit, OnDestroy {
   @Input() total: number;
   @Input() merchantId: string;
   @Input() dueTime: string;
   @Input() orderId: string;
   @Input() checkNumber: number;
+  @Input() mealBased: boolean;
   @Input() contentStrings: CheckingContentCsModel = {} as any;
-  @Input() locationPermissionDisabled: true;
+  @Input() locationPermissionDisabled: boolean;
+  location$: Observable<any>; // GeolocationPosition
+  locationSubscription: Subscription;
+
   data: {
     pickupTime: { dueTime: string };
     storeAddress: AddressInfo;
@@ -45,12 +49,26 @@ export class CheckInPendingComponent implements OnInit {
     private readonly resolver: RecentOrdersResolver
   ) {}
 
+  
+ 
+
   ngOnInit() {
     console.log(this.contentStrings);
     console.log(this.dueTime);
     console.log(this.merchantId);
     console.log(this.orderId);
     this.setData();
+    this.watchLocationChanges();
+  }
+
+  watchLocationChanges() {
+    this.locationSubscription = this.location$.subscribe(
+      ({ coords: { latitude } }) => (this.locationPermissionDisabled = !latitude)
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.locationSubscription.unsubscribe();
   }
 
   setData() {
