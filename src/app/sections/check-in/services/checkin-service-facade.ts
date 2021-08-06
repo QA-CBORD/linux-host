@@ -19,7 +19,7 @@ export class CheckingServiceFacade {
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',
       preferFrontCamera: false,
-      prompt: '',
+      prompt: 'Scan Code',
       showFlipCameraButton: false,
       showTorchButton: false,
       disableSuccessBeep: true,
