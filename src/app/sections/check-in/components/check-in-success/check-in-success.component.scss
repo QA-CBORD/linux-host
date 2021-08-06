@@ -5,11 +5,15 @@
 }
 
 .pending-checkin {
+
+  &__main-img {
+    margin-bottom: -30px;
+  }
+  
   &__title {
     letter-spacing: 0;
     text-align: center;
     outline: none;
-
     @include font-nunito-heavy(20px);
   }
 

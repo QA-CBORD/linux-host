@@ -33,6 +33,8 @@ export class CheckingServiceFacade {
       return await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text)
         .pipe(take(1))
         .toPromise();
+    } else {
+      return false;
     }
   }
 
