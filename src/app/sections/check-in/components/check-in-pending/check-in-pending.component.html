@@ -5,14 +5,14 @@
         <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title id="modal-mainTitle" tabindex="0" class="pending-checkin__title">{{ contentStrings.title }}</ion-title>
+    <ion-title id="modal-mainTitle" tabindex="0" class="pending-checkin__title">Order #{{ checkNumber }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <div class="divider"></div>
 <ion-content>
   <div class="pending-checkin__body-wrapper">
     <img height="160" src="/assets/images/Big_Hourglass_Confetti.svg" alt="big Order Pending" class="pending-checkin__main-img" />
-    <div class="pending-checkin__sub-header">#{{ checkNumber }}</div>
+    <!-- <div class="pending-checkin__sub-header">#{{ checkNumber }}</div> -->
     <div class="pending-checkin__sub-header">{{ contentStrings.order_pending }}</div>
     <div class="pending-checkin__body">
       <p>{{ contentStrings.subtitle }}</p>

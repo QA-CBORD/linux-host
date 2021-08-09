@@ -129,6 +129,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       componentProps: {
         orderId: this.orderId,
         total: this.total,
+        checkNumber: this.checkNumber,
         data: this.data,
         contentString: this.contentString
       },
@@ -148,6 +149,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         orderId: this.orderId,
         total: this.total,
         dueTime: this.dueTime,
+        checkNumber: this.checkNumber, 
         data: this.data,
       },
     });

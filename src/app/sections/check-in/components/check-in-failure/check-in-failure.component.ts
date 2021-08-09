@@ -16,6 +16,7 @@ export class CheckInFailureComponent implements OnInit {
   @Input() total: number;
   @Input() merchantId: string;
   @Input() dueTime: string;
+  @Input() checkNumber: number;
   @Input() orderId: string;
   @Input() errorMessage: string;
   displayPlayMessage;

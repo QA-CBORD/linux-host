@@ -16,6 +16,7 @@ export class CheckInSuccessComponent {
   @Input() total: number;
   @Input() orderId: string;
   @Input() data: any;
+  @Input() checkNumber: number;
   @Input() contentString: CheckingSuccessContentCsModel;
 
   constructor(
