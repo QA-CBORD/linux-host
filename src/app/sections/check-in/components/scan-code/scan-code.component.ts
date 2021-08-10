@@ -1,11 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
+import { ModalController } from '@ionic/angular';
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 
 @Component({
   templateUrl: './scan-code.component.html',
   styleUrls: ['./scan-code.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class ScanCodeComponent implements OnInit {
@@ -16,11 +18,11 @@ export class ScanCodeComponent implements OnInit {
   constructor(
     private readonly barcode: BarcodeScanner,
     private readonly loadingService: LoadingService,
-    private readonly checkingServiceFacade: CheckingServiceFacade
+    private readonly checkingServiceFacade: CheckingServiceFacade,
+    private readonly modalController: ModalController
   ) {}
 
   async ngOnInit() {
-    await this.loadingService.closeSpinner();
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',
       preferFrontCamera: false,
@@ -32,12 +34,17 @@ export class ScanCodeComponent implements OnInit {
       formats: this.format,
       resultDisplayDuration: 0,
     };
-    
     this.barcodeScanResult = await this.barcode.scan(options);
+ 
     if (this.barcodeScanResult.cancelled) {
       this.checkingServiceFacade.barcodeScanResult = null;
     } else {
       this.checkingServiceFacade.barcodeScanResult = this.barcodeScanResult.text;
     }
+    this.modalController.dismiss();
+  }
+  
+  async ionViewDidEnter() {
+    await this.loadingService.closeSpinner();
   }
 }

@@ -158,6 +158,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         errorMessage,
         contentStrings: this.contentStrings,
         orderId: this.orderId,
+        checkNumber: this.checkNumber,
       },
     });
     modal.onDidDismiss().then(async ({ data }) => {
