@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
-import { ModalController } from '@ionic/angular';
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 
 @Component({
@@ -20,10 +19,8 @@ export class ScanCodeComponent implements OnInit {
     private readonly checkingServiceFacade: CheckingServiceFacade
   ) {}
 
-  ngOnInit() {}
-
-  async ionViewWillEnter() {
-    this.loadingService.closeSpinner();
+  async ngOnInit() {
+    await this.loadingService.closeSpinner();
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',
       preferFrontCamera: false,
@@ -35,7 +32,7 @@ export class ScanCodeComponent implements OnInit {
       formats: this.format,
       resultDisplayDuration: 0,
     };
-
+    
     this.barcodeScanResult = await this.barcode.scan(options);
     if (this.barcodeScanResult.cancelled) {
       this.checkingServiceFacade.barcodeScanResult = null;

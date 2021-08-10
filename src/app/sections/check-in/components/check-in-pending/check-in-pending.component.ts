@@ -27,7 +27,6 @@ import { ScanCodeComponent } from '../scan-code/scan-code.component';
   templateUrl: './check-in-pending.component.html',
   styleUrls: ['./check-in-pending.component.scss'],
 })
-
 export class CheckInPendingComponent implements OnInit, OnDestroy {
   @Input() total: number;
   @Input() merchantId: string;
@@ -92,7 +91,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     await this.modalController.dismiss(); // bad
   }
 
-  async goToOrderDetails(): Promise<void> {
+  async goToOrderDetails() {
     this.resolver.resolve().then(async () => {
       await this.modalController.dismiss();
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
@@ -101,7 +100,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   async onScanCode() {
     this.loadingService.showSpinner();
-    let modal = await this.modalController.create({
+    const modal = await this.modalController.create({
       component: ScanCodeComponent,
     });
     await modal.present();
@@ -113,10 +112,10 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         .toPromise()
         .then(async res => {
           if (res) {
-            await this.handleResponse(res);
+            await this.showSuccessModal();
           }
         })
-        .catch(err => this.onCheckInFailed(err))
+        .catch(async err => await this.onCheckInFailed(err))
         .finally(() => this.loadingService.closeSpinner());
     });
   }
@@ -129,14 +128,16 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       .checkInOrderByLocation(this.orderId)
       .toPromise()
       .then(async res => {
-        await this.handleResponse(res);
+        if (res) {
+          await this.showSuccessModal();
+        }
       })
       .catch(err => this.onCheckInFailed(err))
       .finally(() => this.loadingService.closeSpinner());
   }
 
   private async showSuccessModal() {
-    this.modalController.dismiss();
+    await this.modalController.dismiss();
     const modal = await this.modalController.create({
       component: CheckInSuccessComponent,
       componentProps: {
@@ -151,32 +152,20 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private async onCheckInFailed({ message: errorMessage }) {
-      const modal = await this.modalController.create({
-        component: CheckInFailureComponent,
-        componentProps: {
-          errorMessage,
-          contentStrings: this.contentStrings,
-          orderId: this.orderId,
-          total: this.total,
-          dueTime: this.dueTime,
-          checkNumber: this.checkNumber,
-          data: this.data,
-        },
-      });
-      modal.onDidDismiss().then(({ data }) => {
+    const modal = await this.modalController.create({
+      component: CheckInFailureComponent,
+      componentProps: {
+        errorMessage,
+        contentStrings: this.contentStrings,
+        orderId: this.orderId,
+      },
+    });
+    modal.onDidDismiss().then(async ({ data }) => {
       if (data.scancode) {
-        this.onScanCode();
+        await this.onScanCode();
       }
     });
     await modal.present();
-  }
-
-  private async handleResponse(res: any) {
-    if (res) {
-      await this.showSuccessModal();
-    } else {
-      this.onCheckInFailed(res);
-    }
   }
 
   private checkinSuccessCs() {

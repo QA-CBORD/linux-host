@@ -14,30 +14,17 @@ import { take } from 'rxjs/operators';
 })
 export class CheckInFailureComponent implements OnInit {
   @Input() contentStrings = <any>{};
-  @Input() total: number;
-  @Input() merchantId: string;
-  @Input() dueTime: string;
-  @Input() checkNumber: number;
   @Input() orderId: string;
   @Input() errorMessage: string;
   displayPlayMessage: any;
 
-  data: {
-    pickupTime: { dueTime: string };
-    storeAddress: AddressInfo;
-    orderTypes: MerchantOrderTypesInfo;
-  } = <any>{};
-
-  contentString: any;
-
-  constructor(private readonly modalController: ModalController, private readonly commonService: CommonService) {}
+  constructor(private readonly modalController: ModalController) {}
 
   ngOnInit() {
     this.displayPlayMessage = this.contentStrings.get_closer;
     if (this.errorMessage && this.errorMessage.includes('early')) {
       this.displayPlayMessage = this.contentStrings.too_early;
     }
-    this.checkinSuccessCs();
   }
 
   async onBack() {
@@ -45,15 +32,6 @@ export class CheckInFailureComponent implements OnInit {
   }
 
   async onScanCode() {
-    this.modalController.dismiss({ scancode: true });
-  }
-
-  private checkinSuccessCs() {
-    (async () => {
-      this.contentString = await this.commonService
-        .loadContentString<CheckingSuccessContentCsModel>(ContentStringCategory.checkinSuccess)
-        .pipe(take(1))
-        .toPromise();
-    })();
+    await this.modalController.dismiss({ scancode: true });
   }
 }
