@@ -38,7 +38,6 @@ export class CheckInSuccessComponent {
     await this.modalController.dismiss();
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
   }
-
   
   async goToOrderDetails() {
     this.resolver.resolve().then(async () => {
