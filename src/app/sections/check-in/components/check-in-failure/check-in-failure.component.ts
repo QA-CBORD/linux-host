@@ -22,10 +22,10 @@ export class CheckInFailureComponent implements OnInit {
   }
 
   async onBack() {
-    await this.modalController.dismiss();
+    await this.modalController.dismiss({ scancode: false });
   }
 
-  onScanCode() {
-      this.modalController.dismiss({ scancode: true });
+  async onScanCode() {
+      await this.modalController.dismiss({ scancode: true });
   }
 }

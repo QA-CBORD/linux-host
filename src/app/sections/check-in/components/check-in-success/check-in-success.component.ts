@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
@@ -24,6 +25,7 @@ export class CheckInSuccessComponent {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
     private readonly modalController: ModalController,
+    private readonly loadingService: LoadingService,
   ) {}
 
   ionViewWillEnter() {
@@ -41,8 +43,10 @@ export class CheckInSuccessComponent {
   
   async goToOrderDetails() {
     this.resolver.resolve().then(async () => {
-      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+      await this.loadingService.showSpinner();
       await this.modalController.dismiss();
+      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+      this.loadingService.closeSpinner();
     });
   }
 }
