@@ -12,7 +12,7 @@ import {
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
-import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';;
+import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { Observable, Subscription, zip } from 'rxjs';
@@ -20,6 +20,7 @@ import { first, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { CheckInSuccessComponent } from '../check-in-success/check-in-success.component';
+import { ScanCodeComponent } from '../scan-code/scan-code.component';
 
 @Component({
   selector: 'st-check-in-pending',
@@ -59,7 +60,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.setData();
     this.watchLocationChanges();
-    this.checkinSuccessCs();  
+    this.checkinSuccessCs();
   }
 
   watchLocationChanges() {
@@ -98,10 +99,19 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onScanCode() {
-    await this.checkInService
-      .scanBarcode(this.orderId)
+    this.loadingService.showSpinner();
+    let modal = await this.modalController.create({
+      component: ScanCodeComponent,
+    });
+    await modal.present();
+    await modal.onDidDismiss();
+    if (this.checkInService.barcodeScanResult == null) return;
+    this.checkInService
+      .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)
+      .pipe(take(1))
+      .toPromise()
       .then(async res => {
-        if(res) {
+        if (res) {
           await this.handleResponse(res);
         }
       })
@@ -124,6 +134,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private async showSuccessModal() {
+    this.modalController.dismiss();
     const modal = await this.modalController.create({
       component: CheckInSuccessComponent,
       componentProps: {
@@ -131,16 +142,14 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         total: this.total,
         checkNumber: this.checkNumber,
         data: this.data,
-        contentString: this.contentString
+        contentString: this.contentString,
       },
     });
-
-    modal.onDidDismiss().then(() => this.modalController.dismiss());
-    modal.present();
+    await modal.present();
   }
 
-
   private async onCheckInFailed({ message: errorMessage }) {
+    await this.modalController.dismiss();
     const modal = await this.modalController.create({
       component: CheckInFailureComponent,
       componentProps: {
@@ -149,7 +158,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         orderId: this.orderId,
         total: this.total,
         dueTime: this.dueTime,
-        checkNumber: this.checkNumber, 
+        checkNumber: this.checkNumber,
         data: this.data,
       },
     });

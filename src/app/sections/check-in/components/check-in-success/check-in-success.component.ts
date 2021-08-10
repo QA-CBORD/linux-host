@@ -35,15 +35,13 @@ export class CheckInSuccessComponent {
   }
 
   async goToRecentOrders() {
-    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
     await this.modalController.dismiss();
+    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
   }
 
   
-  async goToOrderDetails(): Promise<void> {
-    this.resolver.resolve().then(async res => {
-      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-      await this.modalController.dismiss();
-    });
+  async goToOrderDetails() {
+    await this.modalController.dismiss();
+    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
   }
 }

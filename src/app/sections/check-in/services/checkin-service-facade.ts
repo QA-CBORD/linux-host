@@ -7,36 +7,13 @@ import { catchError, first, map, switchMap, take } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CheckingServiceFacade {
-  private barcodeScanResult: BarcodeScanResult;
+   barcodeScanResult: string;
 
   constructor(
     private readonly checkingService: CheckingService,
     private readonly coordsService: CoordsService,
     private readonly barcode: BarcodeScanner
   ) {}
-
-  async scanBarcode(orderId: string, format: string = 'QR_CODE'): Promise<any> {
-    const options: BarcodeScannerOptions = {
-      orientation: 'portrait',
-      preferFrontCamera: false,
-      prompt: 'Scan Code',
-      showFlipCameraButton: false,
-      showTorchButton: false,
-      disableSuccessBeep: true,
-      torchOn: false,
-      formats: format,
-      resultDisplayDuration: 0,
-    };
-
-    this.barcodeScanResult = await this.barcode.scan(options);
-    if (!this.barcodeScanResult.cancelled) {
-      return await this.checkInOrderByBarcode(orderId, this.barcodeScanResult.text)
-        .pipe(take(1))
-        .toPromise();
-    } else {
-      return false;
-    }
-  }
 
   checkInOrderByLocation(orderId: string, checkinBarcode: string = null): Observable<any> {
     return this.coordsService.getCoords().pipe(
