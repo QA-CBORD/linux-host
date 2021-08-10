@@ -18,7 +18,10 @@ export class ScanCodeComponent implements OnInit {
   private barcodeScanResult: BarcodeScanResult;
   constructor(private readonly barcode: BarcodeScanner, private readonly loadingService: LoadingService,  private readonly modalController: ModalController, private readonly checkingServiceFacade: CheckingServiceFacade) {}
 
-  async ngOnInit() {
+  ngOnInit() {
+  }
+
+  async ionViewWillEnter() {
     this.loadingService.closeSpinner();
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',

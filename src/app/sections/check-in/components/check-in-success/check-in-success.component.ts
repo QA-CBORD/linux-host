@@ -41,7 +41,9 @@ export class CheckInSuccessComponent {
 
   
   async goToOrderDetails() {
-    await this.modalController.dismiss();
-    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+    this.resolver.resolve().then(async () => {
+      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+      await this.modalController.dismiss();
+    });
   }
 }
