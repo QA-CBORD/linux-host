@@ -22,6 +22,7 @@ export class ScanCodeComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    await this.loadingService.showSpinner();
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',
       preferFrontCamera: false,
