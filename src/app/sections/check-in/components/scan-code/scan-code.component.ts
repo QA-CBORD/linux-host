@@ -11,7 +11,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 })
 export class ScanCodeComponent implements OnInit {
   @Input() format = 'QR_CODE';
-  @Input() prompt = 'Scan Code';
+  @Input() prompt = '';
 
   private barcodeScanResult: BarcodeScanResult;
   constructor(
