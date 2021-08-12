@@ -22,11 +22,11 @@ import {
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouteConfigLoadEnd, Router } from '@angular/router';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { PopoverController } from '@ionic/angular';
-import { AccountType, Settings } from '../../../../app.global';
+import { AccountType, PATRON_NAVIGATION, Settings } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -45,6 +45,8 @@ import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page
 import { ConnectionService } from '@shared/services/connection-service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
+import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
+import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
 const { Browser } = Plugins;
 
 @Component({
@@ -91,7 +93,9 @@ export class CartComponent implements OnInit, OnDestroy {
     private externalPaymentService: ExternalPaymentService,
     private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService,
-    private readonly connectionService: ConnectionService
+    private readonly connectionService: ConnectionService,
+    private readonly router: Router,
+    private readonly checkinProcess: CheckingProcess
   ) {}
 
   ionViewWillEnter() {
@@ -106,11 +110,14 @@ export class CartComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.merchant$ = this.cartService.merchant$.pipe(
-      tap((merchant) => 
-      this.merchantTimeZoneDisplayingMessage = merchant.timeZone && "The time zone reflects the merchant's location")
+      tap(
+        merchant =>
+          (this.merchantTimeZoneDisplayingMessage =
+            merchant.timeZone && "The time zone reflects the merchant's location")
+      )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
-      map((orderType) => {
+      map(orderType => {
         orderType.merchantTimeZone = this.cartService.merchantTimeZone;
         return orderType;
       })
@@ -198,6 +205,8 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
+
+
   async onSubmit() {
     if (!this.cartFormState.valid || this.placingOrder) return;
     this.placingOrder = true;
@@ -222,7 +231,24 @@ export class CartComponent implements OnInit, OnDestroy {
     tip,
     checkNumber,
     mealBased,
+    merchantId,
+    dueTime,
+    id,
+    checkinStatus,
   }: OrderInfo) {
+    if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
+      const modal = await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased}, true);
+      modal.onDidDismiss().then(async ({ data }) => {
+        if (data && data.toOrderDetails) {
+          this.checkinProcess.navedFromCheckin = true;
+          this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, id]);
+        } else {
+          this.routingService.navigate([APP_ROUTES.ordering]);
+        }
+      });
+      return;
+    }
+
     const modal = await this.modalController.create({
       component: SuccessModalComponent,
       componentProps: {
@@ -236,6 +262,8 @@ export class CartComponent implements OnInit, OnDestroy {
         checkNumber,
         accountName,
         mealBased,
+        merchantId,
+        dueTime,
       },
     });
 
@@ -347,16 +375,13 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     this.cartService
-      .submitOrder(
-        accountId,
-        this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null,
-        this.cartService.clientOrderId
-      )
+      .submitOrder(accountId, this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null, this.cartService.clientOrderId)
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(async order => {
         this.cartService.changeClientOrderId;
         this.cartService.orderIsAsap = false;
+        console.log('Order Info: ', order);
         await this.showModal(order);
       })
       .catch(async (error: string | [string, string]) => {
@@ -540,15 +565,15 @@ export class CartComponent implements OnInit, OnDestroy {
       .pipe(
         take(1),
         map(([timeout, connectionLost, duplicateOrdering, noConnection]) => {
-           if(!timeout || !connectionLost){
-               return defaultOrderSubmitErrorMessages;
-           }
-           return {
+          if (!timeout || !connectionLost) {
+            return defaultOrderSubmitErrorMessages;
+          }
+          return {
             timeout,
             connectionLost,
             duplicateOrdering,
             noConnection,
-           }
+          };
         }),
         catchError(() => of(defaultOrderSubmitErrorMessages))
       )

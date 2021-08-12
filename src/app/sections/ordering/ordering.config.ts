@@ -71,6 +71,8 @@ export enum ORDERING_CONTENT_STRINGS {
   labelOpen = 'label_open',
   labelOptional = 'label_optional',
   labelOrder = 'label_order',
+  needCheckin= "need_checkin",
+  labelBtnCheckin="lbl_btn_checkin",
   labelOrderOptions = 'label_order-options',
   labelOrderPlacedDescription = 'label_order-placed-description',
   labelOrderPlacedTitle = 'label_order-placed-title',

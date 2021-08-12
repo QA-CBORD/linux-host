@@ -142,9 +142,12 @@ export class ApplicationsService {
           createdDateTime,
           status: updatedStatus,
         });
+        const selectedPreferences = this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences;
+
         const updatedApplicationDetails: ApplicationDetails = new ApplicationDetails({
           ...applicationDetails,
           patronApplication: updatedPatronApplication,
+          roommatePreferences: selectedPreferences
         });
 
         this._applicationsStateService.setApplication(applicationKey, updatedApplicationDetails);

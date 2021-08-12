@@ -24,6 +24,7 @@
   <h2 class="recent-orders__list-title">{{contentStrings.labelPendingOrders | async}}</h2>
   <st-recent-orders-list
     (onOrderClicked)="onOrderPicked($event)"
+    (onNavLinkClicked)="onNavigateToCheckin($event)"
     [orders]="pendingOrders$ | async"
   ></st-recent-orders-list>
 </ng-template>
