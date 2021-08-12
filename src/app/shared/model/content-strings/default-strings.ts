@@ -50,7 +50,8 @@ export const checkingDefaultCs = {
   not_checked_in_subtitle: 'Could not check in',
   lbl_btn_back: 'Back',
   too_early: 'You are here too early, please check in no earlier than 30 minutes before pickup time.',
-  get_closer: 'Get closer to the venue to use location check in or scan the QR code instead.'
+  get_closer: 'Get closer to the venue to use location check in or scan the QR code instead.',
+  invalid_scan_code: 'The code you scanned is invalid to check in your order. Please try again.',
 }
 
 export const checkingSuccessCs = {

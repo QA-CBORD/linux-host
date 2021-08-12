@@ -66,7 +66,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
     const orderId = this.activatedRoute.snapshot.params.id;
     this.setActiveOrder(orderId);
     this.setActiveMerchant(orderId);
@@ -74,7 +73,11 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.initContentStrings();
   }
 
-  ngOnDestroy() {
+  ionViewWillEnter() {
+    this.globalNav.hideNavBar();
+  }
+
+  ionViewWillLeave() {
     this.globalNav.showNavBar();
     this.checkinProcess.navedFromCheckin = false;
   }

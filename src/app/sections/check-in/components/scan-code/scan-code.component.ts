@@ -9,7 +9,6 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
   styleUrls: ['./scan-code.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class ScanCodeComponent implements OnInit {
   @Input() format = 'QR_CODE';
   @Input() prompt = 'Scan Code';
@@ -23,6 +22,7 @@ export class ScanCodeComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    await this.loadingService.showSpinner();
     const options: BarcodeScannerOptions = {
       orientation: 'portrait',
       preferFrontCamera: false,
@@ -34,16 +34,19 @@ export class ScanCodeComponent implements OnInit {
       formats: this.format,
       resultDisplayDuration: 0,
     };
-    this.barcodeScanResult = await this.barcode.scan(options);
- 
-    if (this.barcodeScanResult.cancelled) {
+    try {
+      this.barcodeScanResult = await this.barcode.scan(options);
+      if (this.barcodeScanResult.cancelled) {
+        this.checkingServiceFacade.barcodeScanResult = null;
+      } else {
+        this.checkingServiceFacade.barcodeScanResult = this.barcodeScanResult.text;
+      }
+    } catch {
       this.checkingServiceFacade.barcodeScanResult = null;
-    } else {
-      this.checkingServiceFacade.barcodeScanResult = this.barcodeScanResult.text;
     }
     this.modalController.dismiss();
   }
-  
+
   async ionViewDidEnter() {
     await this.loadingService.closeSpinner();
   }
