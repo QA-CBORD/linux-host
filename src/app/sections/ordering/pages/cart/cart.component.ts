@@ -22,11 +22,11 @@ import {
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouteConfigLoadEnd, Router } from '@angular/router';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { PopoverController } from '@ionic/angular';
-import { AccountType, Settings } from '../../../../app.global';
+import { AccountType, PATRON_NAVIGATION, Settings } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -94,6 +94,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
+    private readonly router: Router,
     private readonly checkinProcess: CheckingProcess
   ) {}
 
@@ -204,6 +205,8 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
+
+
   async onSubmit() {
     if (!this.cartFormState.valid || this.placingOrder) return;
     this.placingOrder = true;
@@ -234,8 +237,15 @@ export class CartComponent implements OnInit, OnDestroy {
     checkinStatus,
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
-      const modal = await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased });
-      modal.onDidDismiss().then(async () => await this.routingService.navigate([APP_ROUTES.ordering]));
+      const modal = await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased}, true);
+      modal.onDidDismiss().then(async ({ data }) => {
+        if (data && data.toOrderDetails) {
+          this.checkinProcess.navedFromCheckin = true;
+          this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, id]);
+        } else {
+          this.routingService.navigate([APP_ROUTES.ordering]);
+        }
+      });
       return;
     }
 

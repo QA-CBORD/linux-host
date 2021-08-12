@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, map, switchMap, take } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
-
+import { NavController } from '@ionic/angular';
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
@@ -29,13 +29,16 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/services/navigation.service';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
   styleUrls: ['./recent-order.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecentOrderComponent implements OnInit {
+export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
   orderDetailsOptions$: Observable<any>;
   merchant$: Observable<MerchantInfo>;
@@ -53,6 +56,9 @@ export class RecentOrderComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly userFacadeService: UserFacadeService,
     private readonly orderingService: OrderingService,
+    private readonly routingService: NavigationService,
+    private readonly navControler: NavController,
+    private readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
@@ -70,6 +76,7 @@ export class RecentOrderComponent implements OnInit {
 
   ngOnDestroy() {
     this.globalNav.showNavBar();
+    this.checkinProcess.navedFromCheckin = false;
   }
 
   async onReorderHandler() {
@@ -324,6 +331,15 @@ export class RecentOrderComponent implements OnInit {
     await modal.present();
   }
 
+  onClosed() {
+    if (this.checkinProcess.navedFromCheckin) {
+      this.routingService.navigate([APP_ROUTES.ordering]);
+      this.checkinProcess.navedFromCheckin = false;
+    } else {
+      this.navControler.back();
+    }
+  }
+
   private async initOrderOptionsModal({
     orderTypes,
     id: merchantId,
@@ -364,7 +380,9 @@ export class RecentOrderComponent implements OnInit {
     this.contentStrings.buttonReorder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonReorder
     );
-    this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelBtnCheckin);
+    this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelBtnCheckin
+    );
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder

@@ -44,7 +44,6 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   async onNavigateToCheckin(orderInfo) {
-    console.log('clicked herer...')
     await this.checkinProcess.start(orderInfo);
   }
 

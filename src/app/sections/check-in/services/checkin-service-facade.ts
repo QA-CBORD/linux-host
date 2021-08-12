@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
-import { Observable, of } from 'rxjs';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { Observable } from 'rxjs';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { CheckingService } from './checkin-service';
-import { catchError, first, map, switchMap, take } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CheckingServiceFacade {
