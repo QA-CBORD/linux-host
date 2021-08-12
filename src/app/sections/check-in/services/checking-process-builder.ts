@@ -1,4 +1,4 @@
-import { Injectable, Type } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
@@ -11,14 +11,15 @@ import { CheckingContentCsModel } from '../contents-strings/checkin-content-stri
 
 @Injectable()
 export class CheckingProcess {
+  navedFromCheckin:boolean;
   constructor(
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
     private readonly commonService: CommonService,
-    private readonly coordsService: CoordsService
+    private readonly coordsService: CoordsService,
   ) {}
 
-  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }): Promise<HTMLIonModalElement> {
+  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }, orderNew=false): Promise<HTMLIonModalElement> {
     let locationPermissionDisabled = true;
     try {
       const {
@@ -35,6 +36,7 @@ export class CheckingProcess {
     const modal = await this.modalController.create({
       component: CheckInPendingComponent,
       componentProps: {
+        orderNew,
         contentStrings,
         locationPermissionDisabled,
         orderId,
@@ -47,8 +49,8 @@ export class CheckingProcess {
       },
     });
 
-    await modal.present();
     this.loadingService.closeSpinner();
+    await modal.present();
     return modal;
   }
 

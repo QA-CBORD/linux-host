@@ -50,8 +50,8 @@
     </st-button>
   </div>
 
-  <div class="checkin-btn" [ngClass]="{ 'btn-disabled': locationPermissionDisabled }">
-    <st-button (onClick)="onLocationCheckinClicked()" buttonModifier="rectangular" isDisabled="true">
+  <div class="checkin-btn" >
+    <st-button [disabled]="locationPermissionDisabled" (onClick)="onLocationCheckinClicked()" buttonModifier="rectangular" isDisabled="true">
       <span class="ion-text-capitalize">
         {{ contentStrings.lbl_btn_loc_chck_in }}
       </span>

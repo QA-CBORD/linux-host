@@ -1,11 +1,28 @@
-<st-header
+<!-- <st-header
   [title]="(contentStrings.labelOrder | async) + ' #' + (order$ | async).checkNumber"
   [isTitleShow]="true"
   backButtonTitle=""
   [backButtonIcon]="'close'"
   [isToolbarShow]="true"
   class="shadow-header"
-></st-header>
+></st-header> -->
+
+<ion-header no-border>
+  <ion-toolbar mode="md">
+    <ion-buttons slot="start">
+      <ion-button color="dark" (click)="onClosed()">
+        <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title tabindex="0" class="header_title">
+      {{
+        (contentStrings.labelOrder | async) + ' #' + (order$ | async).checkNumber
+      }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
 <ion-content>
   <st-order-details
     [tax]="(order$ | async).tax"

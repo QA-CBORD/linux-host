@@ -15,6 +15,7 @@ import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -34,6 +35,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   @Input() orderId: string;
   @Input() checkNumber: number;
   @Input() mealBased: boolean;
+  @Input() orderNew: boolean;
   @Input() contentStrings: CheckingContentCsModel = {} as any;
   @Input() locationPermissionDisabled: boolean;
   location$: Observable<any>; // GeolocationPosition
@@ -92,10 +94,14 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async goToOrderDetails() {
-    this.resolver.resolve().then(async () => {
-      await this.modalController.dismiss();
+    if (this.orderNew) {
+      this.resolver.resolve().then(async () => {
+        await this.modalController.dismiss({ toOrderDetails: true });
+      });
+    } else {
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-    });
+      this.modalController.dismiss({ toOrderDetails: true });
+    }
   }
 
   async onScanCode() {
@@ -121,8 +127,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onLocationCheckinClicked() {
-    if (this.locationPermissionDisabled) return;
-
     this.loadingService.showSpinner();
     await this.checkInService
       .checkInOrderByLocation(this.orderId)
