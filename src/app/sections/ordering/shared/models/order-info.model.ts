@@ -5,6 +5,7 @@ export interface OrderInfo {
   id: string;
   merchantName?: string;
   checkNumber: number;
+  checkinStatus: number,
   posCheckNumber: string;
   posOrderId: string;
   submittedTime: Date;

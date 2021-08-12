@@ -26,7 +26,6 @@ export class CommonService {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly messageProxy: MessageProxy
   ) {}
@@ -94,7 +93,7 @@ export class CommonService {
 
   getString<T extends ContentStringModel>(category: ContentStringCategory): T {
     const data = this.messageProxy.get<any>();
-    return data && <T>data[category] || ({} as any);
+    return (data && <T>data[category]) || ({} as any);
   }
 
   loadContentString<T extends ContentStringModel>(

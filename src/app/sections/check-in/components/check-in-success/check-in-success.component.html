@@ -1,0 +1,47 @@
+<ion-header class="pending-checkin__header" no-border>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-button color="dark" (click)="goToRecentOrders()">
+        <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title id="modal-mainTitle" tabindex="0" class="pending-checkin__title">Order #{{ checkNumber }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<div class="divider"></div>
+<ion-content>
+  <div class="pending-checkin__body-wrapper">
+    <img src="/assets/images/big_check_checkin.svg" alt="big Order Pending" class="pending-checkin__main-img" />
+    <div class="pending-checkin__sub-header">{{ contentString.subtitle }} </div>
+    <div class="pending-checkin__body">
+      <p>{{ contentString.instructions }}</p>
+    </div>
+  </div>
+  <div class="pending-checkin__colored-bg">
+    <div class="padded">
+      <div class="title-lbl faded">{{ contentString.pickUpTimeLbl }}</div>
+      <span class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</span>
+      <div class="title-lbl faded">{{ contentString.pickUpAddressLbl }}</div>
+      <div class="text-dark address">
+        <img width="16" src="./assets/icon/location-pin.svg" alt="pin" />
+        <span>{{ data.storeAddress | addressHeaderFormat }}</span>
+      </div>
+      <div class="section-divided">
+        <span class="text-dark">{{ contentString.totalLbl }}</span>
+        <span class="text-dark">{{ total  | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div class="btn_no-bg">
+        <st-button (onClick)="goToOrderDetails()" fill="clear" buttonModifier="rectangular">
+          <span class="ion-text-capitalize">{{ contentString.orderDetailsLbl }}</span>
+        </st-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
+<ion-footer class="pending-checkin__footer" mode="ios">
+    <st-button (onClick)="goToRecentOrders()" buttonModifier="rectangular">
+      <span class="ion-text-capitalize">
+        {{ contentString.doneBtn }}
+      </span>
+    </st-button>
+</ion-footer>

@@ -35,6 +35,36 @@ export const defaultCreditCardMgmtCs = {
   setting_section_subtitle: 'Add or delete stored credit cards'
 }
 
+export const checkingDefaultCs = {
+  title: 'Home',
+  order_pending: 'Order Pending',
+  subtitle: 'Your order is now pending. You will receive a confirmation email shortly.',
+  instruction: 'When you arrive, tap the Location Check In or Scan Code button to complete your order.',
+  lbl_pickup_time: 'PICKUP TIME',
+  pickup_info: 'This order will not be available outside of the 30 min window.',
+  lbl_pickup_addr: 'PICKUP ADDRESS',
+  lbl_total: 'Total',
+  lbl_btn_order_detail: 'Order Details',
+  lbl_btn_scan_code: 'Scan Code',
+  lbl_btn_loc_chck_in: 'Location Check In',
+  not_checked_in_subtitle: 'Could not check in',
+  lbl_btn_back: 'Back',
+  too_early: 'You are here too early, please check in no earlier than 30 minutes before pickup time.',
+  get_closer: 'Get closer to the venue to use location check in or scan the QR code instead.',
+  invalid_scan_code: 'The code you scanned is invalid to check in your order. Please try again.',
+}
+
+export const checkingSuccessCs = {
+  title: 'Home',
+  subtitle: 'Your other is on the way',
+  instructions: 'Please wait while your order is being prepared.',
+  lbl_pickup_time: 'PICKUP TIME',
+  lbl_pickup_address: 'PICKUP ADDRESS',
+  lbl_total: 'Total',
+  lbl_btn_order_detail: 'Order Details',
+  done: 'Done'
+}
+
 export const defaultRegistrationCs = {
   screen_title: 'Create an account',
   submit_btn_text: 'Create Account',

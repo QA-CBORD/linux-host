@@ -7,6 +7,9 @@ import { CartService, MerchantAccountInfoList, MerchantService } from '@sections
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { Settings } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { CommonService } from '@shared/services/common.service';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
 
 @Injectable()
 export class CartResolver implements Resolve<Observable<[SettingInfo[], MerchantAccountInfoList]>> {
@@ -31,7 +34,7 @@ export class CartResolver implements Resolve<Observable<[SettingInfo[], Merchant
       switchMap(({id}) => this.merchantService.getMerchantPaymentAccounts(id))
     );
     const settingsCall = this.settingsFacadeService.getSettings(requiredSettings);
-
+    
     return zip(settingsCall ,accountsCall).pipe(
       map((response ) =>  response),
       finalize(() => this.loadingService.closeSpinner()),
