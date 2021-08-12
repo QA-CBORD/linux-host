@@ -60,7 +60,6 @@ export class RecentOrderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
     const orderId = this.activatedRoute.snapshot.params.id;
     this.setActiveOrder(orderId);
     this.setActiveMerchant(orderId);
@@ -68,7 +67,11 @@ export class RecentOrderComponent implements OnInit {
     this.initContentStrings();
   }
 
-  ngOnDestroy() {
+  ionViewWillEnter() {
+    this.globalNav.hideNavBar();
+  }
+
+  ionViewWillLeave() {
     this.globalNav.showNavBar();
   }
 
@@ -364,7 +367,9 @@ export class RecentOrderComponent implements OnInit {
     this.contentStrings.buttonReorder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonReorder
     );
-    this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelBtnCheckin);
+    this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelBtnCheckin
+    );
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder
