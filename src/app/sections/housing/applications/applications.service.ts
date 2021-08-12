@@ -166,7 +166,7 @@ export class ApplicationsService {
   selectRoommate(patronKey: number, firstName: string, lastName: string): Observable<Boolean> {
     if (this._applicationsStateService.maximumSelectedRoommates>=0) {
       let isSetRoommate = false;
-      let requestedRoommates =null;//this._applicationsStateService.roommateSearchOptions.getValue();
+      let requestedRoommates = this._applicationsStateService.roommateSearchOptions.getValue();
       this._applicationsStateService.setRoommatesPreferences(
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
           requestedRoommates.preferences.forEach((requestedRommate)=>{
