@@ -46,7 +46,7 @@ export class CheckInSuccessComponent {
       await this.loadingService.showSpinner();
       await this.modalController.dismiss();
       await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-      this.loadingService.closeSpinner();
+      await this.loadingService.closeSpinner();
     });
   }
 }
