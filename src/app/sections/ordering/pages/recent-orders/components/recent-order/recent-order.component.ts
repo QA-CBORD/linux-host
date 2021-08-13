@@ -76,7 +76,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.globalNav.showNavBar();
-    this.checkinProcess.navedFromCheckin = false;
+    this.checkinService.navedFromCheckin = false;
   }
 
   async onReorderHandler() {
@@ -136,7 +136,12 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async openChecking() {
-    await this.checkinProcess.start(await this.order$.toPromise());
+    const modal = await this.checkinProcess.start(await this.order$.toPromise());
+    modal.onDidDismiss().then(({ data }) => {
+      if (data && data.closed && this.checkinService.navedFromCheckin) {
+        this.routingService.navigate([APP_ROUTES.ordering]);
+      }
+    });
   }
 
   private setActiveMerchant(orderId) {
@@ -332,9 +337,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   onClosed() {
-    if (this.checkinProcess.navedFromCheckin) {
-      this.routingService.navigate([APP_ROUTES.ordering]);
-      this.checkinProcess.navedFromCheckin = false;
+    if (this.checkinService.navedFromCheckin) {
+      this.openChecking();
+      this.checkinService.navedFromCheckin = false;
     } else {
       this.navControler.back();
     }

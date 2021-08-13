@@ -8,6 +8,7 @@ import { first, switchMap } from 'rxjs/operators';
 
 export class CheckingServiceFacade {
    barcodeScanResult: string;
+   navedFromCheckin:boolean;
 
   constructor(
     private readonly checkingService: CheckingService,
