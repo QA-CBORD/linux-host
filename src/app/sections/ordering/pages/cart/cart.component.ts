@@ -205,8 +205,6 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   async onSubmit() {
     if (!this.cartFormState.valid || this.placingOrder) return;
     this.placingOrder = true;
@@ -237,12 +235,9 @@ export class CartComponent implements OnInit, OnDestroy {
     checkinStatus,
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
-      const modal = await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased}, true);
-      modal.onDidDismiss().then(async ({ data }) => {
-        if (data && data.toOrderDetails) {
-          this.checkinProcess.navedFromCheckin = true;
-          this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, id]);
-        } else {
+      const modal = await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased }, true);
+      modal.onDidDismiss().then(({ data }) => {
+        if (data && data.closed) {
           this.routingService.navigate([APP_ROUTES.ordering]);
         }
       });
