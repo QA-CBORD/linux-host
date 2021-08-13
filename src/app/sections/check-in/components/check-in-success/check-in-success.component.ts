@@ -4,6 +4,7 @@ import { NativeStartupFacadeService } from '@core/facades/native-startup/native-
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -26,6 +27,7 @@ export class CheckInSuccessComponent {
     private readonly resolver: RecentOrdersResolver,
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
+    private readonly checkInService: CheckingServiceFacade
   ) {}
 
   ionViewWillEnter() {
@@ -41,8 +43,9 @@ export class CheckInSuccessComponent {
     await this.resolver.resolve();
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
   }
-  
+
   async goToOrderDetails() {
+    this.checkInService.navedFromCheckin = true;
     this.resolver.resolve().then(async () => {
       await this.loadingService.showSpinner();
       await this.modalController.dismiss();
