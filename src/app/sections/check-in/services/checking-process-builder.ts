@@ -11,7 +11,6 @@ import { CheckingContentCsModel } from '../contents-strings/checkin-content-stri
 
 @Injectable()
 export class CheckingProcess {
-  navedFromCheckin:boolean;
   constructor(
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
