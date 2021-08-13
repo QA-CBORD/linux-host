@@ -23,7 +23,7 @@ import com.hid.origo.api.ble.OrigoReaderConnectionListener;
 import com.hid.origo.api.hce.OrigoHceConnectionCallback;
 import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
-
+ 
 public class HIDSDKManager  {
     private static final String TAG = HIDSDKManager.class.getSimpleName();
     private static final String TRANSACTION_SUCCESS = "success";
