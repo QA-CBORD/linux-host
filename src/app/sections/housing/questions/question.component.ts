@@ -1,8 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
 import { QuestionHeader } from './questions.model';
+import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 
 @Component({
   selector: 'st-question',
@@ -11,7 +12,9 @@ import { QuestionHeader } from './questions.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionComponent {
-  constructor(private _changeDetector: ChangeDetectorRef) {}
+  constructor(private _changeDetector: ChangeDetectorRef,
+    public _applicationsStateService: ApplicationsStateService,
+    ) {}
 
   @Input() question: QuestionBase;
 

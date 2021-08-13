@@ -31,7 +31,8 @@ export class ApplicationsStateService {
   private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
   private requestedRoommates$: BehaviorSubject<RequestedRoommate[]> = new BehaviorSubject<RequestedRoommate[]>([]);
   private maximunSelectedRoommates: number;
-  private roommatePreferences: RoommatePreferences[]; 
+  private roommatePreferences: RoommatePreferences[];
+  private requestedroommate: RequestedRoommate[]=[];
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState
   >(this._defaultState);
@@ -50,6 +51,14 @@ export class ApplicationsStateService {
 
   set applicationsState(value: ApplicationsState) {
     this._applicationsStateSource.next(value);
+  }
+
+  setRequestedRoommate(value: RequestedRoommate ){
+    this.requestedroommate.push(value);
+  }
+
+  getRequestedRoommate() : RequestedRoommate[]{
+    return this.requestedroommate
   }
 
   get applicationsState(): ApplicationsState {
