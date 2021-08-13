@@ -27,7 +27,7 @@ export class CheckInSuccessComponent {
     private readonly resolver: RecentOrdersResolver,
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
-    private readonly checkInService: CheckingServiceFacade,
+    private readonly checkInService: CheckingServiceFacade
   ) {}
 
   ionViewWillEnter() {
@@ -43,7 +43,7 @@ export class CheckInSuccessComponent {
     await this.resolver.resolve();
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
   }
-  
+
   async goToOrderDetails() {
     this.checkInService.navedFromCheckin = true;
     this.resolver.resolve().then(async () => {
