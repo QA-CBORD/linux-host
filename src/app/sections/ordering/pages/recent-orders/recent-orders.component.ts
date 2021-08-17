@@ -9,6 +9,9 @@ import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
+import { APP_ROUTES } from '@sections/section.config';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { Modals } from '@capacitor/core';
 
 @Component({
   selector: 'st-recent-orders',
@@ -25,7 +28,8 @@ export class RecentOrdersComponent implements OnInit {
     private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly orderingService: OrderingService,
-    private readonly checkinProcess: CheckingProcess
+    private readonly checkinProcess: CheckingProcess,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
@@ -44,7 +48,13 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   async onNavigateToCheckin(orderInfo) {
-    await this.checkinProcess.start(orderInfo);
+    this.globalNav.hideNavBar()
+    const modal = await this.checkinProcess.start(orderInfo);
+    modal.onDidDismiss().then(({ data }) => {
+        if (data && data.closed) {
+          this.globalNav.showNavBar();
+        }
+    })
   }
 
   async onOrderPicked(order: OrderInfo): Promise<void> {

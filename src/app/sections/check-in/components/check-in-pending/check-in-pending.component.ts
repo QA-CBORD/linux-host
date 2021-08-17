@@ -13,6 +13,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
+import { APP_ROUTES } from '@sections/section.config';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
@@ -90,17 +91,19 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onClosed() {
-    await this.modalController.dismiss(); // bad
+    await this.modalController.dismiss({ closed: true });
   }
 
   async goToOrderDetails() {
+    this.checkInService.navedFromCheckin = true;
     if (this.orderNew) {
       this.resolver.resolve().then(async () => {
-        await this.modalController.dismiss({ toOrderDetails: true });
+        await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
+        this.modalController.dismiss();
       });
     } else {
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-      this.modalController.dismiss({ toOrderDetails: true });
+      this.modalController.dismiss();
     }
   }
 
