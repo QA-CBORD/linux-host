@@ -158,6 +158,23 @@
         (click)="question.action()">
         {{ question.buttonText }}
       </ion-button>
+      <!-- TODO: create template to show users -->
+      <div
+      *ngIf="( _applicationsStateService.getRequestedRoommate() ) as requestedRoommates"
+      class="roommate-requested__container">
+      <div style="display: none;">{{_applicationsStateService.requestedRoommates$ | async }}</div>
+      <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
+      <div *ngFor="let roommate of requestedRoommates">
+        <ion-card >
+          <ion-card-content>{{ roommate.firstName }} {{ roommate.lastName }}</ion-card-content>
+          <ion-footer class="status">
+            <ion-row>
+              <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+            </ion-row>
+          </ion-footer>
+        </ion-card>
+      </div>
+    </div> 
     </div>
   </ng-container>
 </div>
