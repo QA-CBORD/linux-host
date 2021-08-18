@@ -95,14 +95,15 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async goToOrderDetails() {
-    this.checkInService.navedFromCheckin = true;
-    const order = (await this.merchantService.recentOrders$.toPromise()).find(({ id }) => id == this.orderId);
-    if (order) {
+    const order = (await this.merchantService.recentOrders$.pipe(take(1)).toPromise()).find(({ id }) => id == this.orderId);
+    if (!order) {
       this.resolver.resolve().then(async () => {
+        this.checkInService.navedFromCheckin = true;
         await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
         this.modalController.dismiss();
       });
     } else {
+      this.checkInService.navedFromCheckin = true;
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
       this.modalController.dismiss();
     }
