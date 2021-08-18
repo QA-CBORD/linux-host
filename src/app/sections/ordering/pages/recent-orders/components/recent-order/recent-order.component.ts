@@ -57,7 +57,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly userFacadeService: UserFacadeService,
     private readonly orderingService: OrderingService,
     private readonly routingService: NavigationService,
-    private readonly navControler: NavController,
+    // private readonly navControler: NavController,
     private readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
     private readonly globalNav: GlobalNavService,
@@ -128,7 +128,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   private setActiveOrder(orderId) {
-    console.log('setActiveOrder: ', orderId);
     this.order$ = this.merchantService.recentOrders$.pipe(
       first(),
       map(orders => orders.find(({ id }) => id === orderId))
@@ -136,10 +135,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async openChecking() {
-    const modal = await this.checkinProcess.start(await this.order$.toPromise());
+    const modal = await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
     modal.onDidDismiss().then(({ data }) => {
-      if (data && data.closed && this.checkinService.navedFromCheckin) {
-        this.routingService.navigate([APP_ROUTES.ordering]);
+      if (data && data.closed) {
+         this.routingService.navigate([APP_ROUTES.ordering]);
       }
     });
   }
@@ -336,12 +335,12 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     await modal.present();
   }
 
-  onClosed() {
+  async onClosed() {
     if (this.checkinService.navedFromCheckin) {
-      this.openChecking();
+      await this.openChecking();
       this.checkinService.navedFromCheckin = false;
     } else {
-      this.navControler.back();
+      this.back();
     }
   }
 
@@ -385,7 +384,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.buttonReorder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonReorder
     );
-    this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelBtnCheckin);
+    this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelBtnCheckin
+    );
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder
