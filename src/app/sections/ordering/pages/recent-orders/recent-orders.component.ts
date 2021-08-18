@@ -102,4 +102,8 @@ export class RecentOrdersComponent implements OnInit {
       }
     });
   }
+
+  async close() {
+    await this.router.navigate([PATRON_NAVIGATION.ordering]);
+  }
 }
