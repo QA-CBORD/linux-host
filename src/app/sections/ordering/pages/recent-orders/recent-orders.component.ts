@@ -51,7 +51,7 @@ export class RecentOrdersComponent implements OnInit {
     this.globalNav.hideNavBar()
     const modal = await this.checkinProcess.start(orderInfo);
     modal.onDidDismiss().then(({ data }) => {
-        if (data && data.closed) {
+        if (data) {
           this.globalNav.showNavBar();
         }
     })
