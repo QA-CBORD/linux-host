@@ -1,9 +1,7 @@
 import { CartService, MerchantService } from './services';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-
 import { iif, Observable } from 'rxjs';
 import { first, map, switchMap, take } from 'rxjs/operators';
-
 import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';

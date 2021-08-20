@@ -10,6 +10,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-recent-orders',
@@ -27,7 +28,8 @@ export class RecentOrdersComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly orderingService: OrderingService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly loadingService: LoadingService
   ) {}
 
   ngOnInit() {

@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, map, switchMap, take } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
-import { NavController } from '@ionic/angular';
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
@@ -29,8 +28,6 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
-import { APP_ROUTES } from '@sections/section.config';
-import { NavigationService } from '@shared/services/navigation.service';
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 @Component({
   selector: 'st-recent-order',
@@ -56,9 +53,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
     private readonly userFacadeService: UserFacadeService,
     private readonly orderingService: OrderingService,
-    private readonly routingService: NavigationService,
-    // private readonly navControler: NavController,
-    private readonly checkinService: CheckingServiceFacade,
+    public readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
@@ -66,12 +61,19 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
     const orderId = this.activatedRoute.snapshot.params.id;
     this.setActiveOrder(orderId);
     this.setActiveMerchant(orderId);
     this.setActiveAddress();
     this.initContentStrings();
+  }
+
+  ionViewWillEnter() {
+    this.globalNav.hideNavBar();
+  }
+
+  ionWillLeave() {
+    this.globalNav.showNavBar();
   }
 
   ngOnDestroy() {
@@ -123,8 +125,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       .subscribe(await this.initCancelOrderModal.bind(this));
   }
 
-  async back(): Promise<void> {
-    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
+  async back(): Promise<boolean> {
+    return this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
   }
 
   private setActiveOrder(orderId) {
@@ -134,12 +136,15 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
+
+
   async openChecking() {
     const modal = await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
-    modal.onDidDismiss().then(({ data }) => {
+    modal.onDidDismiss().then(async ({ data }) => {
       if (data && data.closed) {
-        //  this.routingService.navigate([APP_ROUTES.ordering]);
-        this.back();
+        if (await this.back()) {
+          this.checkinService.navedFromCheckin = false;
+        }
       }
     });
   }
@@ -337,7 +342,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async onClosed() {
-    if (this.checkinService.navedFromCheckin) {
+    if (await this.checkinService.navedFromCheckin) {
       await this.openChecking();
       this.checkinService.navedFromCheckin = false;
     } else {

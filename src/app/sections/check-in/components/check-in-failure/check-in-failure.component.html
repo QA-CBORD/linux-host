@@ -5,6 +5,7 @@
   [backButtonIcon]="'ios-arrow-back'"
   [isToolbarShow]="true"
   class="recent-orders__header"
+  (click)="onBack()"
 >
 </st-header>
 
@@ -30,22 +31,25 @@
   </div>
 </ion-content>
 
-<ion-footer class="pending-checkin__footer" mode="ios">
-  <div class="footer-wrapper">
-    <div class="checkin-btn">
-      <st-button (onClick)="onBack()" buttonModifier="rectangular" isDisabled="true">
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lbl_btn_back }}
-        </span>
-      </st-button>
-    </div>
+<ion-footer mode="ios">
+  <div class="pending-checkin__footer">
+    <div class="footer-wrapper">
 
-    <div class="checkin-btn" *ngIf="canScanCode">
-      <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lbl_btn_scan_code }}
-        </span>
-      </st-button>
+      <div [ngClass]="canScanCode ? 'checkin-btn-166' : 'checkin-btn'">
+        <st-button (onClick)="onBack()" buttonModifier="rectangular" isDisabled="true">
+          <span class="ion-text-capitalize">
+            {{ contentStrings.lbl_btn_back }}
+          </span>
+        </st-button>
+      </div>
+
+      <div class="checkin-btn-166" *ngIf="canScanCode">
+        <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
+          <span class="ion-text-capitalize">
+            {{ contentStrings.lbl_btn_scan_code }}
+          </span>
+        </st-button>
+      </div>
     </div>
   </div>
 </ion-footer>

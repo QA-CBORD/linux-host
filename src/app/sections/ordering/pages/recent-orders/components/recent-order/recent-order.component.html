@@ -7,7 +7,18 @@
   class="shadow-header"
 ></st-header> -->
 
-<ion-header no-border>
+<st-header
+  [title]="(contentStrings.labelOrder | async) + ' #' + (order$ | async).checkNumber"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Back'"
+  [backButtonIcon]="'ios-arrow-back'"
+  [isToolbarShow]="true"
+  class="recent-orders__header"
+  (click)="onClosed()"
+>
+</st-header>
+
+<!-- <ion-header no-border>
   <ion-toolbar mode="md">
     <ion-buttons slot="start">
       <ion-button color="dark" (click)="onClosed()">
@@ -15,12 +26,10 @@
       </ion-button>
     </ion-buttons>
     <ion-title tabindex="0" class="header_title">
-      {{
-        (contentStrings.labelOrder | async) + ' #' + (order$ | async).checkNumber
-      }}
+      {{ (contentStrings.labelOrder | async) + ' #' + (order$ | async).checkNumber }}
     </ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 
 <ion-content>
@@ -60,8 +69,10 @@
 
 <ng-template #pending>
   <div [ngClass]="{ 'btn-wrapper': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
-    <div *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
-      <st-button (onClick)="openChecking()">{{ contentStrings.labelBtnCheckin | async }}</st-button>
+    <div style="width: 166px;" *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
+      <st-button (onClick)="openChecking()" [isDisabled]="checkinService.navedFromCheckin" >{{ 
+        checkinService.navedFromCheckin ? "Back" :
+        (contentStrings.labelBtnCheckin | async) }}</st-button>
     </div>
     <div>
       <st-button [buttonModifier]="'danger'" (onClick)="showModal()"
@@ -70,3 +81,4 @@
     </div>
   </div>
 </ng-template>
+
