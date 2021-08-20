@@ -10,6 +10,7 @@ import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-pre
 import { CheckInSuccessComponent } from './components/check-in-success/check-in-success.component';
 import { CheckingProcess } from './services/checking-process-builder';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
 const declarations = [
   CheckInPendingComponent,
@@ -26,7 +27,7 @@ const declarations = [
 
   imports: [
     CommonModule,
-    // StHeaderModule,
+    StHeaderModule,
     AddressHeaderFormatPipeModule,
     ModifyPrepTimeModule,
     IonicModule,

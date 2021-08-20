@@ -13,10 +13,8 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { APP_ROUTES } from '@sections/section.config';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -39,7 +37,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   @Input() orderNew: boolean;
   @Input() contentStrings: CheckingContentCsModel = {} as any;
   @Input() locationPermissionDisabled: boolean;
-  location$: Observable<any>; // GeolocationPosition
+  @Input() location$: Observable<any>;
   locationSubscription: Subscription;
 
   data: {
@@ -57,7 +55,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly merchantService: MerchantService,
     private readonly userFacadeService: UserFacadeService,
     private readonly resolver: RecentOrdersResolver,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
   ) {}
 
   ngOnInit() {
@@ -95,7 +93,9 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async goToOrderDetails() {
-    const order = (await this.merchantService.recentOrders$.pipe(take(1)).toPromise()).find(({ id }) => id == this.orderId);
+    const order = (await this.merchantService.recentOrders$.pipe(take(1)).toPromise()).find(
+      ({ id }) => id == this.orderId
+    );
     if (!order) {
       this.resolver.resolve().then(async () => {
         this.checkInService.navedFromCheckin = true;
@@ -103,7 +103,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         this.modalController.dismiss();
       });
     } else {
-      this.checkInService.navedFromCheckin = true;
+      this.checkInService.navedFromCheckin = true;;
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
       this.modalController.dismiss();
     }

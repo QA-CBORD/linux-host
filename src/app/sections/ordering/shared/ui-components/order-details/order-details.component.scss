@@ -38,7 +38,7 @@
 .order-details {
   border-top: 1px solid $color-whisper;
   border-bottom: 1px solid $color-whisper;
-  padding: 10px;
+  padding: 10px 20px;
   background: $color-white;
 
   &--error {
@@ -100,7 +100,7 @@
 
   &__buttons {
     //display: flex;
-    padding: 10px 10px 30px;
+    padding: 10px 10px 20px;
     margin-bottom: $notch-bottom;
 
     & > * {
@@ -115,7 +115,7 @@
   &__ingredient {
     border-radius: 10px;
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.04), 0 2px 14px 0 rgba(0, 0, 0, 0.12);
-    margin: 10px auto;
+    margin: 0px auto;
     width: 95%;
   }
 

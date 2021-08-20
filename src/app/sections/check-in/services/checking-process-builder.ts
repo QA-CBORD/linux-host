@@ -48,23 +48,16 @@ export class CheckingProcess {
       },
     });
 
+    
     this.loadingService.closeSpinner();
     await modal.present();
     return modal;
   }
 
-  /**
-   * solo se llama al cargar el primer componente del flow de checking
-   * @returns
-   */
   loadAllContentString(): Observable<CheckingContentCsModel> {
     return this.commonService.loadContentString(ContentStringCategory.checkin);
   }
 
-  /**
-   * llamar desde cualquier component del flow de checking
-   * @returns
-   */
   async getContent(): Promise<CheckingContentCsModel> {
     let contentStrings = <any>this.commonService.getString(ContentStringCategory.checkin);
     if (!contentStrings.title) contentStrings = await this.loadAllContentString().toPromise();

@@ -1,4 +1,15 @@
-<ion-header class="pending-checkin__header" no-border>
+<st-header
+  title="Order #{{ checkNumber }}"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Back'"
+  [backButtonIcon]="'ios-arrow-back'"
+  [isToolbarShow]="true"
+  class="recent-orders__header"
+  (click)="onBack()"
+>
+</st-header>
+
+<!-- <ion-header class="pending-checkin__header" no-border>
   <ion-toolbar mode="ios">
     <ion-buttons slot="start">
       <ion-button color="dark" (click)="onBack()">
@@ -7,7 +18,7 @@
     </ion-buttons>
     <ion-title id="modal-mainTitle" tabindex="0" class="pending-checkin__title">Order #{{ checkNumber }}</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content>
   <div class="wrapper">
@@ -20,22 +31,25 @@
   </div>
 </ion-content>
 
-<ion-footer class="pending-checkin__footer" mode="ios">
-  <div class="footer-wrapper">
-    <div class="checkin-btn">
-      <st-button (onClick)="onBack()" buttonModifier="rectangular" isDisabled="true">
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lbl_btn_back }}
-        </span>
-      </st-button>
-    </div>
+<ion-footer mode="ios">
+  <div class="pending-checkin__footer">
+    <div class="footer-wrapper">
 
-    <div class="checkin-btn">
-      <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lbl_btn_scan_code }}
-        </span>
-      </st-button>
+      <div [ngClass]="canScanCode ? 'checkin-btn-166' : 'checkin-btn'">
+        <st-button (onClick)="onBack()" buttonModifier="rectangular" isDisabled="true">
+          <span class="ion-text-capitalize">
+            {{ contentStrings.lbl_btn_back }}
+          </span>
+        </st-button>
+      </div>
+
+      <div class="checkin-btn-166" *ngIf="canScanCode">
+        <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
+          <span class="ion-text-capitalize">
+            {{ contentStrings.lbl_btn_scan_code }}
+          </span>
+        </st-button>
+      </div>
     </div>
   </div>
 </ion-footer>

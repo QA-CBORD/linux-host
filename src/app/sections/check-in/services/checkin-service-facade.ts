@@ -1,19 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { CheckingService } from './checkin-service';
-import { first, switchMap } from 'rxjs/operators';
+import { first, skipWhile, switchMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
-
 export class CheckingServiceFacade {
-   barcodeScanResult: string;
-   navedFromCheckin:boolean;
+  barcodeScanResult: string;
+  navedFromCheckin: boolean;
 
-  constructor(
-    private readonly checkingService: CheckingService,
-    private readonly coordsService: CoordsService,
-  ) {}
+  constructor(private readonly checkingService: CheckingService, private readonly coordsService: CoordsService) {}
 
   checkInOrderByLocation(orderId: string, checkinBarcode: string = null): Observable<any> {
     return this.coordsService.getCoords().pipe(

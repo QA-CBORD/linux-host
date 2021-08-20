@@ -45,6 +45,7 @@ export class CheckInSuccessComponent {
   }
 
   async goToOrderDetails() {
+    this.checkInService.navedFromCheckin = false;
     this.resolver.resolve().then(async () => {
       await this.loadingService.showSpinner();
       await this.modalController.dismiss();
