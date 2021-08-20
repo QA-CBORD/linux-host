@@ -60,13 +60,13 @@
 
 <ng-template #pending>
   <div [ngClass]="{ 'btn-wrapper': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
+    <div *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
+      <st-button (onClick)="openChecking()">{{ contentStrings.labelBtnCheckin | async }}</st-button>
+    </div>
     <div>
       <st-button [buttonModifier]="'danger'" (onClick)="showModal()"
         >{{ contentStrings.buttonCancelOrder | async }}
       </st-button>
-    </div>
-    <div *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
-      <st-button (onClick)="openChecking()">{{ contentStrings.labelBtnCheckin | async }}</st-button>
     </div>
   </div>
 </ng-template>

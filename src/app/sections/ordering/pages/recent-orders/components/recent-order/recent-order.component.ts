@@ -138,7 +138,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     const modal = await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
     modal.onDidDismiss().then(({ data }) => {
       if (data && data.closed) {
-         this.routingService.navigate([APP_ROUTES.ordering]);
+        //  this.routingService.navigate([APP_ROUTES.ordering]);
+        this.back();
       }
     });
   }

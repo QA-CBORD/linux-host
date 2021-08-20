@@ -1,4 +1,14 @@
-<ion-header class="pending-checkin__header" no-border>
+<st-header
+  title="Order #{{ checkNumber }}"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Back'"
+  [backButtonIcon]="'ios-arrow-back'"
+  [isToolbarShow]="true"
+  class="recent-orders__header"
+>
+</st-header>
+
+<!-- <ion-header class="pending-checkin__header" no-border>
   <ion-toolbar mode="ios">
     <ion-buttons slot="start">
       <ion-button color="dark" (click)="onBack()">
@@ -7,7 +17,7 @@
     </ion-buttons>
     <ion-title id="modal-mainTitle" tabindex="0" class="pending-checkin__title">Order #{{ checkNumber }}</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content>
   <div class="wrapper">
@@ -30,7 +40,7 @@
       </st-button>
     </div>
 
-    <div class="checkin-btn">
+    <div class="checkin-btn" *ngIf="canScanCode">
       <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
         <span class="ion-text-capitalize">
           {{ contentStrings.lbl_btn_scan_code }}

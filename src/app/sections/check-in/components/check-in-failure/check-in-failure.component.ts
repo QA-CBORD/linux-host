@@ -17,6 +17,7 @@ export class CheckInFailureComponent implements OnInit {
   @Input() orderId: string;
   @Input() errorMessage: string;
   @Input() checkNumber: number;
+  canScanCode: boolean;
   displayPlayMessage: any;
 
   constructor(private readonly modalController: ModalController) {}
@@ -29,6 +30,10 @@ export class CheckInFailureComponent implements OnInit {
     await this.modalController.dismiss({ scancode: false });
   }
 
+  async back(): Promise<void> {
+    await this.modalController.dismiss({ scancode: false });
+  }
+
   async onScanCode() {
     await this.modalController.dismiss({ scancode: true });
   }
@@ -38,7 +43,8 @@ export class CheckInFailureComponent implements OnInit {
     if (this.errorMessage) {
       if (this.errorMessage.includes(CHECKIN_ERROR_CODES.OUTSIDE_OF_RANGE)) {
         this.displayPlayMessage = this.contentStrings.get_closer;
-      } else if (this.errorMessage.includes(CHECKIN_ERROR_CODES.INVALID_BARCODE)) {
+        this.canScanCode = true;
+       } else if (this.errorMessage.includes(CHECKIN_ERROR_CODES.INVALID_BARCODE)) {
         this.displayPlayMessage = this.contentStrings.invalid_scan_code;
       }
     }
