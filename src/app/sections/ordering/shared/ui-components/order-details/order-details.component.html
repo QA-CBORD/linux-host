@@ -6,8 +6,10 @@
       <p style="margin-bottom: 3px;" class="order-details__value" *ngIf="orderDetailOptions.dueTime">
         {{ orderDetailOptions | modifyPrepTime: orderTypes  }}
       </p>
-      <ion-label style="color: #6e6e6e" *ngIf="merchantTimeZoneDisplayingMessage">
-          <small>{{ merchantTimeZoneDisplayingMessage }}</small>
+
+
+      <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
+          <small>{{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}</small>
       </ion-label>
     </div>
 

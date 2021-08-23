@@ -98,7 +98,8 @@ export class CommonService {
 
   loadContentString<T extends ContentStringModel>(
     category: ContentStringCategory,
-    args: { data?: any; requests?: ContentStringRequest[] } = {}
+    args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {},
+    save:boolean = false
   ): Observable<T> {
     return this.contentStringFacadeService.fetchContentStringModel<T>(category, args).pipe(
       take(1),
