@@ -30,6 +30,7 @@ export class RecentOrdersComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly checkinProcess: CheckingProcess,
     private readonly globalNav: GlobalNavService,
+    private readonly loadingService: LoadingService,
     public readonly checkinService: CheckingServiceFacade,
   ) {}
 
@@ -112,6 +113,7 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   async close() {
+    await this.loadingService.showSpinner();
     await this.router.navigate([PATRON_NAVIGATION.ordering]);
   }
 }
