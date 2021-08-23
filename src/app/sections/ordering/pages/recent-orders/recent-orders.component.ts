@@ -29,13 +29,21 @@ export class RecentOrdersComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly checkinProcess: CheckingProcess,
     private readonly globalNav: GlobalNavService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
   ) {}
 
   ngOnInit() {
     this.showNavBar();
     this.initOrders();
     this.initContentStrings();
+  }
+
+  ionViewWillEnter() {
+    this.loadingService.showSpinner();
+  }
+
+  ionViewDidEnter() {
+    this.loadingService.closeSpinner();
   }
 
   refreshRecentOrders({ target }) {
