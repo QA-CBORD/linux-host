@@ -38,14 +38,6 @@ export class RecentOrdersComponent implements OnInit {
     this.initContentStrings();
   }
 
-  ionViewWillEnter() {
-    this.loadingService.showSpinner();
-  }
-
-  ionViewDidEnter() {
-    this.loadingService.closeSpinner();
-  }
-
   refreshRecentOrders({ target }) {
     this.merchantService
       .getRecentOrders()
@@ -114,6 +106,7 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   async close() {
+    await this.loadingService.showSpinner();
     await this.router.navigate([PATRON_NAVIGATION.ordering]);
   }
 }
