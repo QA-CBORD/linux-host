@@ -1,9 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
 import { QuestionHeader } from './questions.model';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
+import { RequestedRoommate } from '../applications/applications.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'st-question',
@@ -11,10 +13,19 @@ import { ApplicationsStateService } from '@sections/housing/applications/applica
   styleUrls: ['./question.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuestionComponent {
+export class QuestionComponent implements OnInit {
   constructor(private _changeDetector: ChangeDetectorRef,
-    public _applicationsStateService: ApplicationsStateService,
+    public _applicationsStateService: ApplicationsStateService,//TODO: delete
     ) {}
+
+
+  ngOnInit(): void {
+    this._applicationsStateService.roommateSearchOptions.subscribe(
+      data => { 
+        this.options = data; 
+      }
+    )
+  }
 
   @Input() question: QuestionBase;
 
@@ -23,6 +34,9 @@ export class QuestionComponent {
   @Input() parentGroup: FormGroup;
 
   @Input() isSubmitted: boolean;
+
+  requestedRoommates$: Observable<RequestedRoommate[]>;
+  options: any;
 
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',

@@ -39,9 +39,10 @@ import { PatronAddressService } from '../addresses/address.service';
 import { QuestionActionButton, QuestionRoommatePreference } from '../questions/types/question-roommate-preference';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { RoommatePreferences, RequestedRoommateResponse } from './applications.model';
+import { RoommatePreferences, RequestedRoommateResponse, RequestedRoommate } from './applications.model';
 import { RoommateComponent } from '../roommate/roommate.component';
 import { getFieldValue } from '../../../non-authorized/pages/registration/models/registration-utils';
+import { RoommateDetails } from '../roommate/roomate.model';
 
 @Injectable({
   providedIn: 'root',
@@ -163,7 +164,7 @@ export class ApplicationsService {
     );
   }
 
-  selectRoommate(patronKey: number, firstName: string, lastName: string): Observable<Boolean> {
+  selectRoommate(roommateParam: RoommateDetails ): Observable<Boolean> {
     if (this._applicationsStateService.maximumSelectedRoommates>=0) {
       let isSetRoommate = false;
       let requestedRoommates =this._applicationsStateService.getRoommateSearchOptions();
@@ -171,9 +172,11 @@ export class ApplicationsService {
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
           requestedRoommates.preferences.forEach((requestedRommate)=>{
             if (roommate.patronKeyRoommate == 0 && !isSetRoommate && requestedRommate.selected && requestedRommate.value == roommate.preferenceKey) {
-              roommate.patronKeyRoommate = patronKey;
-              roommate.firstName = firstName
-              roommate.lastName = lastName;
+              roommate.patronKeyRoommate = roommateParam.patronKey;
+              roommate.firstName = roommateParam.firstName;
+              roommate.lastName = roommateParam.lastName;
+              roommate.birthDate = roommateParam.birthDate;
+              roommate.middleName = roommateParam.middleName;
               isSetRoommate = true;
               return roommate
             }
