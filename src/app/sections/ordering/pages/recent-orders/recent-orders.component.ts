@@ -34,9 +34,12 @@ export class RecentOrdersComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.showNavBar();
     this.initOrders();
     this.initContentStrings();
+  }
+
+  ionViewWillEnter() {
+    this.showNavBar();
   }
 
   refreshRecentOrders({ target }) {
