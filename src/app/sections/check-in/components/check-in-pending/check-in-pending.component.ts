@@ -86,6 +86,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(data => (this.data = data));
+      this.checkInService.getContentStringByName('pickup_info').toPromise();
   }
 
   async onClosed() {

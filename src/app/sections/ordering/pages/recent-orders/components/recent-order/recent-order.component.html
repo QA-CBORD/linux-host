@@ -42,6 +42,7 @@
     [deliveryFee]="(order$ | async).deliveryFee"
     [total]="(order$ | async).total"
     [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
+    [checkinInstructionMessage]="checkinInstructionMessage | async"
     [orderItems]="(order$ | async).orderItems"
     [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
     [mealBased]="(order$ | async).mealBased"

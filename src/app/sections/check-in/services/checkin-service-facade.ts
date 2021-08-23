@@ -2,14 +2,21 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { CheckingService } from './checkin-service';
-import { first, skipWhile, switchMap } from 'rxjs/operators';
+import { first, map, skipWhile, switchMap, take } from 'rxjs/operators';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 @Injectable({ providedIn: 'root' })
 export class CheckingServiceFacade {
   barcodeScanResult: string;
   navedFromCheckin: boolean;
 
-  constructor(private readonly checkingService: CheckingService, private readonly coordsService: CoordsService) {}
+  constructor(
+    private readonly contentStringFacade: ContentStringsFacadeService,
+    private readonly checkingService: CheckingService,
+    private readonly coordsService: CoordsService
+  ) {}
 
   checkInOrderByLocation(orderId: string, checkinBarcode: string = null): Observable<any> {
     return this.coordsService.getCoords().pipe(
@@ -23,6 +30,24 @@ export class CheckingServiceFacade {
         });
       })
     );
+  }
+
+  getContentStringByName(contentStringName: string): Observable<string> {
+    console.log('contentStringName', contentStringName)
+    return this.contentStringFacade
+      . resolveContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.checkin, contentStringName)
+      .pipe(
+        map((string: ContentStringInfo) => (string ? string.value : ''))
+      )
+  }
+
+  getContentStringByName$(contentStringName: string): Observable<string> {
+    console.log('contentStringName', contentStringName)
+    return this.contentStringFacade
+      .getContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.checkin, contentStringName)
+      .pipe(
+        map((string: ContentStringInfo) => (string ? string.value : ''))
+      )
   }
 
   checkInOrderByBarcode(

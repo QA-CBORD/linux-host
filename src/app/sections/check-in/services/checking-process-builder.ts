@@ -15,10 +15,13 @@ export class CheckingProcess {
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
     private readonly commonService: CommonService,
-    private readonly coordsService: CoordsService,
+    private readonly coordsService: CoordsService
   ) {}
 
-  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }, orderNew=false): Promise<HTMLIonModalElement> {
+  async start(
+    { id: orderId, dueTime, checkNumber, total, merchantId, mealBased },
+    orderNew = false
+  ): Promise<HTMLIonModalElement> {
     let locationPermissionDisabled = true;
     try {
       const {
@@ -48,7 +51,6 @@ export class CheckingProcess {
       },
     });
 
-    
     this.loadingService.closeSpinner();
     await modal.present();
     return modal;
