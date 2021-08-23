@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first, map, switchMap, take } from 'rxjs/operators';
+import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
@@ -33,7 +33,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-servi
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
   styleUrls: ['./recent-order.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+ // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
@@ -41,6 +41,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchant$: Observable<MerchantInfo>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   merchantTimeZoneDisplayingMessage: string;
+  checkinInstructionMessage: Observable<string>;
   orderCheckStatus = OrderCheckinStatus;
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -73,7 +74,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   ionWillLeave() {
-    this.globalNav.showNavBar();
+   // this.globalNav.showNavBar();
   }
 
   ngOnDestroy() {
@@ -132,11 +133,16 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   private setActiveOrder(orderId) {
     this.order$ = this.merchantService.recentOrders$.pipe(
       first(),
-      map(orders => orders.find(({ id }) => id === orderId))
+      map(orders => orders.find(({ id }) => id === orderId)),
+      tap(({ checkinStatus }) => {
+        if (this.orderCheckStatus.isNotCheckedIn(checkinStatus)) {
+          this.checkinInstructionMessage = this.checkinService.getContentStringByName$('pickup_info');
+        } else {
+          this.checkinInstructionMessage = of(null);
+        }
+      })
     );
   }
-
-
 
   async openChecking() {
     const modal = await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
@@ -385,7 +391,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     await modal.present();
   }
 
-  private initContentStrings() {
+  private async initContentStrings() {
     this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
     this.contentStrings.buttonReorder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonReorder

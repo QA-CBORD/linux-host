@@ -11,6 +11,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
 
 @Component({
   selector: 'st-recent-orders',
@@ -29,13 +30,16 @@ export class RecentOrdersComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly checkinProcess: CheckingProcess,
     private readonly globalNav: GlobalNavService,
-    private readonly loadingService: LoadingService
+    public readonly checkinService: CheckingServiceFacade,
   ) {}
 
   ngOnInit() {
-    this.showNavBar();
     this.initOrders();
     this.initContentStrings();
+  }
+
+  ionViewWillEnter() {
+    this.showNavBar();
   }
 
   refreshRecentOrders({ target }) {
@@ -79,7 +83,8 @@ export class RecentOrdersComponent implements OnInit {
     return orders.filter((order: OrderInfo) => order.status !== ORDERING_STATUS.PENDING);
   }
 
-  private initContentStrings() {
+  private async initContentStrings() {
+    
     this.contentStrings.buttonDashboardStartOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
     );
@@ -95,6 +100,7 @@ export class RecentOrdersComponent implements OnInit {
     this.contentStrings.noRecentOrders = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.noRecentOrders
     );
+    await this.checkinService.getContentStringByName('pickup_info').toPromise();
   }
 
   private showNavBar() {
