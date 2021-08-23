@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { CheckingService } from './checkin-service';
-import { first, map, skipWhile, switchMap, take } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
@@ -33,7 +33,6 @@ export class CheckingServiceFacade {
   }
 
   getContentStringByName(contentStringName: string): Observable<string> {
-    console.log('contentStringName', contentStringName)
     return this.contentStringFacade
       . resolveContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.checkin, contentStringName)
       .pipe(
@@ -42,7 +41,6 @@ export class CheckingServiceFacade {
   }
 
   getContentStringByName$(contentStringName: string): Observable<string> {
-    console.log('contentStringName', contentStringName)
     return this.contentStringFacade
       .getContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.checkin, contentStringName)
       .pipe(
