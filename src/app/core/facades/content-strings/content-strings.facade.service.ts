@@ -78,17 +78,26 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
 
   fetchContentStringModel<T extends ContentStringModel>(
     category: ContentStringCategory,
-    args: { data?: any; requests?: ContentStringRequest[] } = {}
+    args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {}
   ): Observable<T> {
     const params = args.data;
     const ContentStringBuilder = ContentStringApi[category];
     const extraRequests = args.requests || [];
     const requestList = extraRequests.map(req => this.retrieveContentStringByConfig({ ...req }).pipe(take(1)));
+    
+    let contentsByCategory$:Observable<ContentStringInfo[]>;
+    if (args.save) {
+      contentsByCategory$ = this.resolveContentStrings$(
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        ContentStringBuilder.category
+      );
+    } else {
+      contentsByCategory$ = this.fetchContentStringAfresh(
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        ContentStringBuilder.category
+      );
+    }
 
-    const contentsByCategory$ = this.fetchContentStringAfresh(
-      CONTENT_STRINGS_DOMAINS.patronUi,
-      ContentStringBuilder.category
-    );
     const loadMultiple = requestList.length > 0;
 
     const combined = zip(contentsByCategory$, combineLatest(requestList)).pipe(

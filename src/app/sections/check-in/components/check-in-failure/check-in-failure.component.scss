@@ -1,15 +1,23 @@
 .wrapper {
-  padding: 10px;
+  padding: 20px;
+  .sub-title{
+    text-align: center;
+  }
 }
 
 .pending-checkin__footer {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
+  padding: 15px;
   .footer-wrapper {
     display: flex;
     justify-content: space-evenly;
 
     .checkin-btn {
-      width: 40%;
+      width: 100%;
+    }
+
+    .checkin-btn-166{
+      width: 166px;
     }
   }
 }

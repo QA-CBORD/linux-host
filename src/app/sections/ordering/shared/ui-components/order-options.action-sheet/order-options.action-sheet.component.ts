@@ -86,7 +86,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    console.log('ORDER_OPTIONS SHOWING NAV VAR ', this.showNavBarOnDestroy);
     if (this.showNavBarOnDestroy) {
       this.globalNav.showNavBar();
     }
