@@ -14,6 +14,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
   templateUrl: './check-in-success.component.html',
   styleUrls: ['./check-in-success.component.scss'],
 })
+
 export class CheckInSuccessComponent {
   @Input() total: number;
   @Input() orderId: string;
@@ -26,8 +27,6 @@ export class CheckInSuccessComponent {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
     private readonly modalController: ModalController,
-    private readonly loadingService: LoadingService,
-    private readonly checkInService: CheckingServiceFacade
   ) {}
 
   ionViewWillEnter() {
@@ -42,15 +41,5 @@ export class CheckInSuccessComponent {
     await this.modalController.dismiss();
     await this.resolver.resolve();
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
-  }
-
-  async goToOrderDetails() {
-    this.checkInService.navedFromCheckin = false;
-    this.resolver.resolve().then(async () => {
-      await this.loadingService.showSpinner();
-      await this.modalController.dismiss();
-      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-      await this.loadingService.closeSpinner();
-    });
   }
 }

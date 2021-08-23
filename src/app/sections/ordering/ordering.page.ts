@@ -39,6 +39,10 @@ export class OrderingPage implements OnInit {
     this.handleActiveMerchantInRoute();
   }
 
+  async ionViewDidEnter() {
+    await this.loadingService.closeSpinner();
+  }
+
   merchantClickHandler(merchantInfo: MerchantInfo) {
     if (!this.canOrderFromMerchant(merchantInfo)) {
       this.onToastDisplayed(`${merchantInfo.name} is currently closed, please try again during operating hours`);
