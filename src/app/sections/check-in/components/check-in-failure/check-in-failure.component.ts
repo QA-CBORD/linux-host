@@ -3,7 +3,8 @@ import { ModalController } from '@ionic/angular';
 
 const CHECKIN_ERROR_CODES = {
   OUTSIDE_OF_RANGE: '9018',
-  INVALID_BARCODE: '9020'
+  INVALID_BARCODE: '9020',
+  TOO_EARLY: '9019'
 };
 
 @Component({
@@ -17,6 +18,7 @@ export class CheckInFailureComponent implements OnInit {
   @Input() orderId: string;
   @Input() errorMessage: string;
   @Input() checkNumber: number;
+  canScanCode: boolean;
   displayPlayMessage: any;
 
   constructor(private readonly modalController: ModalController) {}
@@ -38,8 +40,10 @@ export class CheckInFailureComponent implements OnInit {
     if (this.errorMessage) {
       if (this.errorMessage.includes(CHECKIN_ERROR_CODES.OUTSIDE_OF_RANGE)) {
         this.displayPlayMessage = this.contentStrings.get_closer;
-      } else if (this.errorMessage.includes(CHECKIN_ERROR_CODES.INVALID_BARCODE)) {
+        this.canScanCode = true;
+       } else if (this.errorMessage.includes(CHECKIN_ERROR_CODES.INVALID_BARCODE)) {
         this.displayPlayMessage = this.contentStrings.invalid_scan_code;
+        this.canScanCode = true;
       }
     }
   }
