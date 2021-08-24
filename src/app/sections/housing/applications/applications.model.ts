@@ -273,6 +273,9 @@ export class RequestedRoommateOptions {
   preferenceKey: number;
   patronRoommateKey: number;
   confirmed?: boolean;
+  middleName?: string;
+  birthDate?: Date;
+  preferredName?: string;
 }
 
 export class RequestedRoommate implements RequestedRoommateOptions{
@@ -281,6 +284,9 @@ export class RequestedRoommate implements RequestedRoommateOptions{
   preferenceKey: number;
   patronRoommateKey: number;
   confirmed?: boolean;
+  middleName: string;
+  birthDate: Date;
+  preferredName: string;
 
   constructor(options: RequestedRoommateOptions) {
     if (options == null || typeof options !== 'object') {
@@ -292,6 +298,9 @@ export class RequestedRoommate implements RequestedRoommateOptions{
     this.preferenceKey = Number(options.preferenceKey);
     this.patronRoommateKey = Number(options.patronRoommateKey);
     this.confirmed = Boolean(options.confirmed);
+    this.middleName = String(options.middleName);
+    this.birthDate = new Date(options.birthDate);
+    this.preferredName = String(options.preferredName);
   }
 }
 
@@ -336,6 +345,9 @@ export class RoommatePreferences implements RoommatePreferencesOptions {
   firstName: string;
   lastName: string;
   rank: number;
+  middleName?: string;
+  birthDate?: Date;
+  preferredName?: string;
 
   constructor(options: RoommatePreferencesOptions) {
     if (options == null || typeof options !== 'object') {
@@ -356,6 +368,16 @@ export class RoommatePreferences implements RoommatePreferencesOptions {
     if (isDefined(options.preferenceKey)) {
       this.preferenceKey = Number(options.preferenceKey);
     }
+    if (isDefined(options.middleName)) {
+      this.middleName = String(options.middleName);
+    }
+    if (isDefined(options.birthDate)) {
+      this.birthDate = new Date(options.birthDate);
+    }
+    if (isDefined(options.preferredName)) {
+      this.preferredName = String(options.preferredName);
+    }
+
   }
 }
 export interface RoommatePreferencesOptions {
@@ -364,4 +386,7 @@ export interface RoommatePreferencesOptions {
   firstName?: string;
   lastName?: string;
   rank?: number;
+  middleName?: string;
+  birthDate?: Date;
+  preferredName?: string;
 }

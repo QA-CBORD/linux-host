@@ -45,7 +45,7 @@ export class BackButtonComponent{
       .filter(x => x.patronKeyRoommate !== 0)
       .map(x => new RequestedRoommate({
         preferenceKey: x.preferenceKey,
-        patronRoommateKey: x.patronKeyRoommate
+        patronRoommateKey: x.patronKeyRoommate 
       }));
 
     const requestBody = new RequestedRoommateRequest({
@@ -57,13 +57,15 @@ export class BackButtonComponent{
         const roommatePref = applicationDetails.roommatePreferences
           .find(f => f.patronKeyRoommate === d.patronRoommateKey
             && f.preferenceKey === d.preferenceKey);
-        
         const requestedRoommateObj = new RequestedRoommate({
           firstName: roommatePref ? roommatePref.firstName : '',
           lastName: roommatePref ? roommatePref.lastName : '',
           preferenceKey: d.preferenceKey,
           patronRoommateKey: d.patronRoommateKey,
-          confirmed: d.confirmed
+          confirmed: d.confirmed,
+          middleName: roommatePref.middleName,
+          birthDate: roommatePref.birthDate,
+          preferredName: roommatePref.preferredName
         });
         return requestedRoommateObj;
       }))).subscribe((data)=>{
