@@ -212,6 +212,7 @@ export class ApplicationsService {
         preferences: question.values,
         prefRank: question.prefRank
       };
+      this._applicationsStateService.setRoommateSearchOptions(options);
 
       return new QuestionActionButton({
         label: 'Search for a roommate',
