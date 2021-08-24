@@ -91,7 +91,7 @@ export class CoordsService {
         resp => {
           this._latestLocation = resp;
         },
-        error => {
+        () => {
           /// clear timestamp and return empty position so we can try another request
           this.emptyPositions();
         }
