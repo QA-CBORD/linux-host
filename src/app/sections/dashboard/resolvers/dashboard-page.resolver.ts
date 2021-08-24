@@ -16,15 +16,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
-import { Capacitor } from '@capacitor/core';
-import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-import { CommonService } from '@shared/services/common.service';
-import { LocationPermissionModal } from '../components/location-disclosure/location-disclosure.component';
-import { ModalController } from '@ionic/angular';
-import { LocationDisclosureCsModel } from '../components/location-disclosure/location-disclosure-content-string.model';
-import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
-import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
+import { ProminentDisclosureService } from '../services/prominent-disclosure.service';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
@@ -37,14 +29,11 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly loadingService: LoadingService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
-    private readonly navigationFacade: NavigationFacadeSettingsService,
-    private readonly commonService: CommonService,
-    private readonly modalController: ModalController,
-    private readonly nativeStartupFacadeService: NativeStartupFacadeService
+    private readonly prominentDisclosureService: ProminentDisclosureService
   ) {}
 
   resolve(): Observable<SettingInfoList> {
-    this.locationDisclosurePage();
+    this.prominentDisclosureService.openProminentDisclosure();
     /// get fresh data on dashboard load
     const strings = this.loadContentStrings();
     const user = this.userFacadeService.getUser$();
@@ -84,44 +73,5 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
         ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
       ),
     ];
-  }
-
-  private locationDisclosurePage() {
-    if (Capacitor.platform == PLATFORM.android) {
-      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
-        if (!requested) {
-           this.requestPermissionModal();
-        }
-      });
-    } else if (Capacitor.platform == PLATFORM.ios)  {
-      this.navigationFacade.allowPermissionToBeRequested();
-    }
-  }
-
-  private async requestPermissionModal(): Promise<void> {
-    const disclosureCs = await this.locationDisclosureCs();
-    this.hideGlobalNavBar(true);
-    const modal = await this.modalController.create({
-      component: LocationPermissionModal,
-      animated: false,
-      backdropDismiss: false,
-      componentProps: { disclosureCs: disclosureCs },
-    });
-    await modal.present();
-    return await modal.onDidDismiss().then(() => {
-      this.hideGlobalNavBar(false);
-      this.loadingService.closeSpinner();
-    });
-  }
-
-  private async locationDisclosureCs() {
-    return this.commonService
-      .loadContentString<LocationDisclosureCsModel>(ContentStringCategory.locationDisclosure)
-      .pipe(take(1))
-      .toPromise();
-  }
-
-  private hideGlobalNavBar(hide: boolean) {
-    this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
   }
 }

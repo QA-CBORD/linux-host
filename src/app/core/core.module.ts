@@ -15,6 +15,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
 import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials/mobile.credential.module';
 import { RegistrationModule } from '../non-authorized/pages/registration/registration.module';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 const imports = [CommonModule, BrowserModule, HttpClientModule, MobileCredentialModule, RegistrationModule];
 
@@ -29,7 +30,8 @@ const providers = [
   DatePipe,
   BarcodeScanner,
   InAppBrowser,
-  AccessCardService
+  AccessCardService,
+  AndroidPermissions
 ];
 
 @NgModule({

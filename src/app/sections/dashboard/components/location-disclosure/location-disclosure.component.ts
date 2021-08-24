@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationDisclosureCsModel } from './location-disclosure-content-string.model';
+import { LocationPermissionsService } from '@sections/dashboard/services/location-permissions.service';
 
 @Component({
   selector: 'st-location-disclosure',
@@ -11,18 +11,16 @@ import { LocationDisclosureCsModel } from './location-disclosure-content-string.
   styleUrls: ['./location-disclosure.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class LocationPermissionModal {
-
   @Input() disclosureCs: LocationDisclosureCsModel;
-  
+
   private readonly WAIT_IMAGE_RENDERING = 2500;
 
   constructor(
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
     private readonly navigationFacade: NavigationFacadeSettingsService,
-    private readonly androidPermissions: AndroidPermissions
+    private readonly androidPermissions: LocationPermissionsService,
   ) {}
 
   ionViewWillEnter() {
@@ -36,19 +34,17 @@ export class LocationPermissionModal {
   }
 
   ionViewWillLeave() {
-    this.navigationFacade.allowPermissionToBeRequested();
+    this.navigationFacade.promptPermissionsOnce();
   }
 
   async requestLocationPermissions() {
-    await this.loadingService.showSpinner();
-    await this.androidPermissions.requestPermissions([
-      this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
-      this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION,
-    ]);
+    await this.loadingService.showSpinner({ keyboardClose: false });
+    await this.androidPermissions.requestLocationPermissions();
     await this.modalController.dismiss();
   }
-  
+
   async close() {
+    this.androidPermissions.promptDismissed = true;
     await this.modalController.dismiss();
   }
 }
