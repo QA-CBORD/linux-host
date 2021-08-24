@@ -46,14 +46,13 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       .toPromise();
   }
   
-  get hasRequestedPermissions$(): Observable<boolean> {
+  get permissionsPrompted$(): Observable<boolean> {
     return this.storage
       .getStateEntityByKey$<boolean>(this.firstNavKey)
       .pipe(map(data => !!data));
-    
   }
 
-  allowPermissionToBeRequested() {
+  promptPermissionsOnce() {
     this.storage.updateStateEntity(this.firstNavKey, true, { highPriorityKey: true, keepOnLogout: true });
   }
 

@@ -88,14 +88,12 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
 
   private locationDisclosurePage() {
     if (Capacitor.platform == PLATFORM.android) {
-      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
-        if (!requested) {
+      this.navigationFacade.permissionsPrompted$.pipe(take(1)).subscribe(prompted => {
+        if (!prompted) {
            this.requestPermissionModal();
         }
       });
-    } else if (Capacitor.platform == PLATFORM.ios)  {
-      this.navigationFacade.allowPermissionToBeRequested();
-    }
+    } 
   }
 
   private async requestPermissionModal(): Promise<void> {

@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, skipWhile, take } from 'rxjs/operators';
 
-import { GeolocationPosition, Plugins } from '@capacitor/core';
-import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
+import { Capacitor, GeolocationPosition, Plugins } from '@capacitor/core';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 
 const { Geolocation } = Plugins;
 
@@ -12,6 +13,7 @@ const { Geolocation } = Plugins;
   providedIn: 'root',
 })
 export class CoordsService {
+  geolocationPermissionSkipped = false;
   private readonly fetchInterval: number = 5000;
   private timestamp: number = 0;
 
@@ -35,7 +37,7 @@ export class CoordsService {
     },
   };
 
-  constructor( private readonly navigationFacade: NavigationFacadeSettingsService,) {}
+  constructor(private readonly androidPermissions: AndroidPermissions) {}
 
   get location$(): Observable<GeolocationPosition> {
     return this._location$.asObservable().pipe(skipWhile(value => !value));
@@ -52,17 +54,30 @@ export class CoordsService {
     /// this prevents several simultaneous requests to the device
     const timeDiff = new Date().getTime() - this.timestamp;
     if (timeDiff > this.fetchInterval) {
-      this.navigationFacade.hasRequestedPermissions$.pipe(take(1)).subscribe(requested => {
-        if (requested) {
-          this.requestLocationFromDevice();
-        }
-      });
+      if (Capacitor.platform == PLATFORM.android) {
+        (async () => {
+          await this.androidPermissions
+            .checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION)
+            .then(result => {
+              if (result.hasPermission) {
+                this.requestLocationFromDevice();
+                this.geolocationPermissionSkipped = false;
+              } else if (this.geolocationPermissionSkipped) {
+                this.requestLocationFromDevice();
+              } else {
+                this.emptyPositions();
+              }
+            });
+        })();
+      } else {
+        this.requestLocationFromDevice();
+      }
     }
     return this.location$;
   }
 
-  private requestLocationFromDevice() {
-
+  private async requestLocationFromDevice() {
+    
     this.timestamp = new Date().getTime();
 
     const options = {
@@ -77,14 +92,17 @@ export class CoordsService {
       )
       .subscribe(
         resp => {
-
           this._latestLocation = resp;
         },
         error => {
           /// clear timestamp and return empty position so we can try another request
-          this.timestamp = 0;
-          this._latestLocation = this.emptyPosition;
+          this.emptyPositions();
         }
       );
+  }
+
+  private emptyPositions() {
+    this.timestamp = 0;
+    this._latestLocation = this.emptyPosition;
   }
 }

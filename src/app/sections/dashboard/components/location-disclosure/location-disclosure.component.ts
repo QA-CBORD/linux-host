@@ -4,6 +4,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationDisclosureCsModel } from './location-disclosure-content-string.model';
+import { CoordsService } from '@core/service/coords/coords.service';
 
 @Component({
   selector: 'st-location-disclosure',
@@ -11,18 +12,17 @@ import { LocationDisclosureCsModel } from './location-disclosure-content-string.
   styleUrls: ['./location-disclosure.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class LocationPermissionModal {
-
   @Input() disclosureCs: LocationDisclosureCsModel;
-  
+
   private readonly WAIT_IMAGE_RENDERING = 2500;
 
   constructor(
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
     private readonly navigationFacade: NavigationFacadeSettingsService,
-    private readonly androidPermissions: AndroidPermissions
+    private readonly androidPermissions: AndroidPermissions,
+    private readonly coordsService: CoordsService
   ) {}
 
   ionViewWillEnter() {
@@ -36,7 +36,7 @@ export class LocationPermissionModal {
   }
 
   ionViewWillLeave() {
-    this.navigationFacade.allowPermissionToBeRequested();
+    this.navigationFacade.promptPermissionsOnce();
   }
 
   async requestLocationPermissions() {
@@ -47,8 +47,9 @@ export class LocationPermissionModal {
     ]);
     await this.modalController.dismiss();
   }
-  
+
   async close() {
+    this.coordsService.geolocationPermissionSkipped = true;
     await this.modalController.dismiss();
   }
 }
