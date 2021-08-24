@@ -30,9 +30,6 @@ import { OrderTileComponent } from './containers/order-tile/order-tile.component
 import { ExploreTileComponent } from './containers/explore-tile/explore-tile.component';
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
-import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { CommonService } from '@shared/services/common.service';
 
 const { App, Device } = Plugins;
 

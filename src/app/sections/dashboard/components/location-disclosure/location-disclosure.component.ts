@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationDisclosureCsModel } from './location-disclosure-content-string.model';
-import { CoordsService } from '@core/service/coords/coords.service';
+import { LocationPermissionsService } from '@sections/dashboard/services/location-permissions.service';
 
 @Component({
   selector: 'st-location-disclosure',
@@ -21,8 +20,7 @@ export class LocationPermissionModal {
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
     private readonly navigationFacade: NavigationFacadeSettingsService,
-    private readonly androidPermissions: AndroidPermissions,
-    private readonly coordsService: CoordsService
+    private readonly androidPermissions: LocationPermissionsService,
   ) {}
 
   ionViewWillEnter() {
@@ -40,16 +38,13 @@ export class LocationPermissionModal {
   }
 
   async requestLocationPermissions() {
-    await this.loadingService.showSpinner();
-    await this.androidPermissions.requestPermissions([
-      this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
-      this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION,
-    ]);
+    await this.loadingService.showSpinner({ keyboardClose: false });
+    await this.androidPermissions.requestLocationPermissions();
     await this.modalController.dismiss();
   }
 
   async close() {
-    this.coordsService.geolocationPermissionSkipped = true;
+    this.androidPermissions.promptDismissed = true;
     await this.modalController.dismiss();
   }
 }
