@@ -47,6 +47,14 @@
         </provider>
     </application>
 
+    <!-- Android 11 requirement -->
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
     <!-- Permissions -->
 
     <!-- Camera -->
