@@ -31,6 +31,7 @@ import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { LocationPermissionModalModule } from './components/location-disclosure/location-disclosure.module';
 import { LocationPermissionModal } from './components/location-disclosure/location-disclosure.component';
+import { ProminentDisclosureService } from './services/prominent-disclosure.service';
 
 const imports = [
   CommonModule,
@@ -65,6 +66,7 @@ const providers = [
   DashboardPageResolver,
   TileConfigFacadeService,
   GlobalNavService,
+  ProminentDisclosureService
 ];
 
 @NgModule({
