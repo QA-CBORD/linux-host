@@ -105,7 +105,7 @@ export class CartService {
   }
 
   extractTimeZonedString(dateStr: string, timeZone: string, fullDate = true): string {
-    const date = new Date(dateStr.replace(TIMEZONE_REGEXP, "$1:$2"));  // Formatted timezone from +0000 to +00:00 to support Safari dates
+    const date = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2')); // Formatted timezone from +0000 to +00:00 to support Safari dates
     if (!timeZone) timeZone = this.merchantTimeZone;
     const options: any = {
       day: '2-digit',
@@ -119,10 +119,10 @@ export class CartService {
     options.timeZone = timeZone;
     options.timeZoneName = 'short';
     let fullDateStr = Intl.DateTimeFormat('en-US', options).format(date);
-    const choppedStr = fullDateStr.split(" ");
+    const choppedStr = fullDateStr.split(' ');
     const tz = choppedStr[choppedStr.length - 1];
-    fullDateStr= fullDateStr.replace(tz, `(${tz})`);
-    return fullDate && fullDateStr || this.getHoursOnly(fullDateStr);
+    fullDateStr = fullDateStr.replace(tz, `(${tz})`);
+    return (fullDate && fullDateStr) || this.getHoursOnly(fullDateStr);
   }
 
   private getHoursOnly(fullDateStr: string): string {
