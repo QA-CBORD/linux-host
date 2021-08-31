@@ -12,6 +12,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { DatePipe } from '@angular/common';
+import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Injectable({
   providedIn: 'root',
@@ -103,7 +104,8 @@ export class CartService {
     this.onStateChanged();
   }
 
-  extractTimeZonedString(date: Date, timeZone: string, fullDate = true): string {
+  extractTimeZonedString(dateStr: string, timeZone: string, fullDate = true): string {
+    const date = new Date(dateStr.replace(TIMEZONE_REGEXP, "$1:$2"));  // Formatted timezone from +0000 to +00:00 to support Safari dates
     if (!timeZone) timeZone = this.merchantTimeZone;
     const options: any = {
       day: '2-digit',
