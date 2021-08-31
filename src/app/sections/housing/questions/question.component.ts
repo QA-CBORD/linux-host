@@ -112,9 +112,9 @@ export class QuestionComponent implements OnInit {
           preferenceKey: d.preferenceKey,
           patronRoommateKey: d.patronRoommateKey,
           confirmed: d.confirmed,
-          middleName: roommatePref.middleName,
+          middleName: roommatePref ? roommatePref.middleName : '',
           birthDate: roommatePref.birthDate,
-          preferredName: roommatePref.preferredName
+          preferredName: roommatePref ? roommatePref.preferredName :''
         });
         return requestedRoommateObj;
       }))).subscribe((data)=>{
