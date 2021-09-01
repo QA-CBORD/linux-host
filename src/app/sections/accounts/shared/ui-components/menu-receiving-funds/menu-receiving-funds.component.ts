@@ -80,11 +80,13 @@ export class MenuReceivingFundsComponent implements OnInit {
         isShow: Boolean(Number(setting.value)),
       };
     }).reduce((prev, current) => {
-      let elemIndex = prev.findIndex(({ displayName }) => displayName === current.displayName);
+
+      let elemIndex =  prev.findIndex((item) => item && item.displayName === current.displayName);
       if (elemIndex !== -1) {
         prev[elemIndex] = { ...prev[elemIndex], isShow: current.isShow ? current.isShow : prev[elemIndex].isShow };
         return prev;
       }
+
       return [...prev, current];
     }, []);
   }
