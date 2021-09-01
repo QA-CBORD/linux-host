@@ -151,6 +151,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     const modal = await this.modalController.create({
       component: CheckInSuccessComponent,
       componentProps: {
+        mealBased: this.mealBased,
         orderId: this.orderId,
         total: this.total,
         checkNumber: this.checkNumber,
