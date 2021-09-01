@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, zip } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
-
+import { Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 
 import { PaymentSystemType, Settings } from 'src/app/app.global';
@@ -39,7 +38,9 @@ export class AccountsService {
     return this.settingsFacadeService.getSetting(Settings.Setting.DISPLAY_TENDERS).pipe(
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-        this.getUserAccounts().pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
+        this.getUserAccounts(
+          [PaymentSystemType.OPCS, PaymentSystemType.MONETRA, PaymentSystemType.CSGOLD, PaymentSystemType.USAEPAY]
+        ).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );
   }
