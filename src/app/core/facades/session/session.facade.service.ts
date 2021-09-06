@@ -156,7 +156,9 @@ export class SessionFacadeService {
 
   private loginUser(useBiometric: boolean) {
     this.identityFacadeService.loginUser(useBiometric).subscribe(
-      () => {},
+      () => {
+        this.navigate2Dashboard();
+      },
       () => {
         if (!useBiometric) {
           this.loadingService.closeSpinner();
