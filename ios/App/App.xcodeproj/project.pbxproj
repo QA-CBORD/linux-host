@@ -591,12 +591,12 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1184;
+				CURRENT_PROJECT_VERSION = 1189;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 4.9.8;
+				MARKETING_VERSION = 4.9.13;
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.getmobile;
 				PRODUCT_NAME = "GET&#x2009;Mobile";
