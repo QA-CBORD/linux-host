@@ -109,13 +109,14 @@ export class SettingsFactoryService {
               } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
                 checks$.push(
                   this.identityService.areBiometricsAvailable().pipe(
-                    tap(async biometricsEnabled => {
+                    switchMap(async biometricsEnabled => {
                       if (biometricsEnabled) {
                         const biometrics = await this.identityFacadeService.getAvailableBiometricHardware();
                         const biometric = configureBiometricsConfig(biometrics);
                         setting.label = biometric.name;
                         setting.icon = biometric.icon;
                       }
+                      return biometricsEnabled;
                     }),
                     take(1)
                   )
