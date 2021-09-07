@@ -17,6 +17,7 @@ import { ContentStringsFacadeService } from '../content-strings/content-strings.
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { ToastService } from '@core/service/toast/toast.service';
 const { App, Device, BackgroundTask } = Plugins;
 
 enum AppStatus {
@@ -45,7 +46,8 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
+    private readonly toastService: ToastService
   ) {
     this.appStateListeners();
   }
@@ -101,6 +103,7 @@ export class SessionFacadeService {
   }
 
   doLoginChecks() {
+    
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
@@ -111,6 +114,7 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
+          this.toastService.showToast({ message: 'state: ' + state, duration: 10000 });
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
@@ -141,6 +145,7 @@ export class SessionFacadeService {
         },
         async error => {
           console.log('The error => ', error);
+          this.toastService.showToast({ message: 'The error: ' + error.message, duration: 10000 });
           await this.loadingService.closeSpinner();
           (async () => {
             await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
@@ -156,11 +161,17 @@ export class SessionFacadeService {
   private loginUser(useBiometric: boolean) {
     this.identityFacadeService.loginUser(useBiometric).subscribe(
       () => {
+
+        this.toastService.showToast({ message: 'useBiometric: ' + useBiometric, duration: 8000 });
         if (useBiometric) {
           this.navigate2Dashboard();
+        } else {
+          // 
+
         }
       },
-      () => {
+      (err) => {
+        this.toastService.showToast({ message: 'ERRRORRRR: ' + err.message,duration: 8000 });
         if (!useBiometric) {
           this.loadingService.closeSpinner();
           this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
