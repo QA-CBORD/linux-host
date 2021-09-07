@@ -171,7 +171,7 @@ export class SessionFacadeService {
         }
       },
       (err) => {
-        this.toastService.showToast({ message: 'ERRRORRRR: ' + err.message,duration: 8000 });
+        this.toastService.showToast({ message: 'ERRRORRRR: ' + err.message, duration: 8000 });
         if (!useBiometric) {
           this.loadingService.closeSpinner();
           this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
