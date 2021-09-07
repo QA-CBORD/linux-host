@@ -26,7 +26,6 @@ enum AppStatus {
 @Injectable({
   providedIn: 'root',
 })
-
 export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
@@ -46,7 +45,7 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly nativeProvider: NativeProvider,
+    private readonly nativeProvider: NativeProvider
   ) {
     this.appStateListeners();
   }
@@ -157,7 +156,9 @@ export class SessionFacadeService {
   private loginUser(useBiometric: boolean) {
     this.identityFacadeService.loginUser(useBiometric).subscribe(
       () => {
-        this.navigate2Dashboard();
+        if (useBiometric) {
+          this.navigate2Dashboard();
+        }
       },
       () => {
         if (!useBiometric) {
