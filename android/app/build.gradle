@@ -13,8 +13,8 @@ android {
         applicationId "com.cbord.get"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1191
-        versionName "4.9.13"
+        versionCode 1194
+        versionName "4.9.16"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -48,7 +48,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
-    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.core:core-ktx:1.6.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
