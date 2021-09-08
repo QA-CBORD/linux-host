@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { from, Observable, throwError } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
 
 import { ModalController, Platform } from '@ionic/angular';
 import {
@@ -19,7 +19,7 @@ import {
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { finalize, switchMap, take } from 'rxjs/operators';
+import { catchError, finalize, switchMap, take } from 'rxjs/operators';
 import { GUEST_NAVIGATION, PATRON_NAVIGATION, ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -188,8 +188,9 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     await this.loadingService.showSpinner();
     this.getVaultData()
       .pipe(
-        switchMap(({ pin }) => this.authFacadeService.authenticatePinTotp(pin)),
+        switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)),
         take(1),
+        catchError((err) => of(err)),
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
