@@ -29,6 +29,7 @@ import { Settings, User } from '../../../app.global';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Day, Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Injectable({
   providedIn: 'root',
@@ -102,12 +103,12 @@ export class MerchantService {
   }
 
   extractTimeZonedString(dateStr: string, timeZone: string): string {
-    const [, , , tz] = new Date(dateStr)
+    const [, , , tz] = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2'))
       .toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'short' })
-      .split(' ');
+      .split(' '); // Formatted timezone from +0000 to +00:00 to support Safari dates
     const [dateTime, minutes] = dateStr.split(/:/);
     dateStr = `${dateTime}:${minutes}`;
-    dateStr = new Date(dateStr).toLocaleString('en-US', {
+    dateStr = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2')).toLocaleString('en-US', {
       hour12: true,
       day: 'numeric',
       month: 'short',
