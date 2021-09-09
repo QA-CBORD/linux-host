@@ -59,6 +59,7 @@ export class SessionFacadeService {
       if (isActive) {
         this.appResumeLogic();
       } else {
+        this.identityFacadeService.setIsLocked();
         this.closeActionsheets();
         this.appStatus = AppStatus.BACKGROUND;
       }
@@ -163,12 +164,8 @@ export class SessionFacadeService {
       () => {
 
         this.toastService.showToast({ message: 'useBiometric: ' + useBiometric, duration: 8000 });
-        if (useBiometric) {
           this.navigate2Dashboard();
-        } else {
-          // 
-
-        }
+  
       },
       (err) => {
         this.toastService.showToast({ message: 'ERRRORRRR: ' + err.message, duration: 8000 });
@@ -229,7 +226,7 @@ export class SessionFacadeService {
     const isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
-      const vaultLocked: boolean = await this.identityFacadeService.vaultLocked();
+      const vaultLocked: boolean = await this.identityFacadeService.isVaultLocked();
       const vaultLoginSet: boolean = await this.identityFacadeService.storedSession();
 
       /// pin not set but have logged in before, use normal login
