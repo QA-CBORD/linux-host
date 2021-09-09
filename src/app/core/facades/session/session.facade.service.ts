@@ -45,7 +45,7 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
   ) {
     this.appStateListeners();
   }
@@ -57,6 +57,7 @@ export class SessionFacadeService {
       if (isActive) {
         this.appResumeLogic();
       } else {
+        this.identityFacadeService.setIsLocked();
         this.closeActionsheets();
         this.appStatus = AppStatus.BACKGROUND;
       }
@@ -101,6 +102,7 @@ export class SessionFacadeService {
   }
 
   doLoginChecks() {
+    
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
@@ -140,7 +142,6 @@ export class SessionFacadeService {
           }
         },
         async error => {
-          console.log('The error => ', error);
           await this.loadingService.closeSpinner();
           (async () => {
             await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
@@ -156,11 +157,9 @@ export class SessionFacadeService {
   private loginUser(useBiometric: boolean) {
     this.identityFacadeService.loginUser(useBiometric).subscribe(
       () => {
-        if (useBiometric) {
           this.navigate2Dashboard();
-        }
       },
-      () => {
+      (err) => {
         if (!useBiometric) {
           this.loadingService.closeSpinner();
           this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
@@ -218,7 +217,7 @@ export class SessionFacadeService {
     const isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
-      const vaultLocked: boolean = await this.identityFacadeService.vaultLocked();
+      const vaultLocked: boolean = await this.identityFacadeService.isVaultLocked();
       const vaultLoginSet: boolean = await this.identityFacadeService.storedSession();
 
       /// pin not set but have logged in before, use normal login

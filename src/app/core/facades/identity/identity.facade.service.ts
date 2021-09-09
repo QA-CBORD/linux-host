@@ -25,6 +25,7 @@ export enum LoginState {
   providedIn: 'root',
 })
 export class IdentityFacadeService extends ServiceStateFacade {
+
   private ttl: number = 600000; // 10min
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
@@ -152,10 +153,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.storageStateService.updateStateEntity(this.biometricsEnabledUserPreference, value, { highPriorityKey: true });
   }
 
-  vaultLocked() {
-    return this.identityService.isVaultLocked();
-  }
-
   storedSession(): Promise<boolean> {
     return this.identityService.hasStoredSession();
   }
@@ -163,5 +160,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
   lockVault() {
     this.identityService.lockVault();
   }
-  
+
+  setIsLocked() {
+    this.identityService.setIsLocked();
+  }
 }

@@ -1,5 +1,5 @@
 # Specifies intentionally untracked files to ignore when using Git
-# http://git-scm.com/docs/gitignore
+# http://git-scm.com/docs/gitignore 
 
 *~
 *.sw[mnpcod]
@@ -37,3 +37,4 @@ dist/
 Thumbs.db
 UserInterfaceState.xcuserstate
 android/android.zip
+capacitor.config.json
