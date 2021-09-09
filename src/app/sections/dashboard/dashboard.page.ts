@@ -79,7 +79,7 @@ export class DashboardPage implements OnInit {
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
-   // this.pushNotificationRegistration();
+    this.pushNotificationRegistration();
   }
 
   ngAfterViewInit() {
