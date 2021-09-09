@@ -21,6 +21,7 @@ export class CheckInSuccessComponent {
   @Input() data: any;
   @Input() checkNumber: number;
   @Input() contentString: CheckingSuccessContentCsModel;
+  @Input() mealBased: boolean;
 
   constructor(
     private readonly router: Router,

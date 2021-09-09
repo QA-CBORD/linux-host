@@ -1,7 +1,7 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { first, map, take } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -70,12 +70,16 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     this.userName$ = this.accessCardService.getUserName();
     this.accessCardService
       .getUserPhoto()
-      .pipe(first())
-      .subscribe(photo => {
-        this.isLoadingPhoto = false;
-        this.userPhoto = photo;
-        this.changeRef.detectChanges();
-      });
+      .pipe(
+        first(),
+        catchError(() => of(null)))
+      .subscribe(
+        photo => {
+          this.isLoadingPhoto = false;
+          this.userPhoto = photo;
+          this.changeRef.detectChanges();
+        }
+      );
   }
 
   private setInstitutionData() {
@@ -110,8 +114,10 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     this.userFacadeService
       .getUser$()
       .pipe(take(1))
-      .subscribe(response => {
-        this.userInfo = JSON.stringify(response);
-      });
+      .subscribe(
+        response => {
+          this.userInfo = JSON.stringify(response);
+        }
+      );
   }
 }
