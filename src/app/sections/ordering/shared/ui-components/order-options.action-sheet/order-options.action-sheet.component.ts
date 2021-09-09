@@ -300,7 +300,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       }
       this.selectedTimeStamp = schedule.days[0].hourBlocks[0].timestamps[0];
       this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(
-        new Date(this.selectedTimeStamp),
+        this.selectedTimeStamp,
         this.timeZone
       );
       this.dateTimePicker = new Date(this.selectedTimeStamp);
