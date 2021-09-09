@@ -35,6 +35,7 @@ export class VaultSessionData implements DefaultSession {
   providedIn: 'root',
 })
 export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
+
   private temporaryPin: string = undefined;
   private wasPinLogin: boolean = false;
   private isLocked: boolean = true;
@@ -78,6 +79,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   async isVaultLocked() {
+    // const isSessionStored = await this.hasStoredSession();
     return this.isLocked && (await this.hasStoredSession());
   }
 
@@ -94,7 +96,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     this.temporaryPin = session.pin;
     return from(
       super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly).then(res => {
-        this.isLocked = false;
+        this.setIsLocked(false);
         return res;
       })
     );
@@ -242,7 +244,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   onVaultUnlocked(config: VaultConfig): void {
-    this.isLocked = false;
+   this.setIsLocked(false);
     // console.log('The vault was unlocked with config: ', config);
     if (this.wasPinLogin) {
       this.wasPinLogin = false;
@@ -255,7 +257,11 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   onVaultLocked(event: LockEvent): void {
-    this.isLocked = true;
+    this.setIsLocked();
     // console.log('The vault was locked by event: ', event);
+  }
+
+  setIsLocked(lock: boolean = true) {
+    this.isLocked = lock;
   }
 }

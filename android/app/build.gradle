@@ -13,8 +13,8 @@ android {
         applicationId "com.cbord.get"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1195
-        versionName "4.9.17"
+        versionCode 1196
+        versionName "4.9.18"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
@@ -70,6 +70,7 @@ dependencies {
 
     //  Rx dependencies
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava’s latest version for bug fixes and new features.
     implementation 'io.reactivex.rxjava2:rxjava:2.0.7'

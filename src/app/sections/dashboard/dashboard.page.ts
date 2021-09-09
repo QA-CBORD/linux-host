@@ -94,11 +94,11 @@ export class DashboardPage implements OnInit {
 
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
+    this.updateTiles();
   }
 
   ionViewDidEnter() {
     this.checkNativeStartup();
-    this.updateTiles();
   }
 
   private async checkNativeStartup() {
