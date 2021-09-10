@@ -155,6 +155,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     } else {
       /// will happen on pin login
       const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
+      console.log('role: ', role)
       switch (role) {
         case 'cancel': /// identity vault cancel role
           throw {
@@ -170,6 +171,11 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
         case PinCloseStatus.LOGIN_SUCCESS:
           this.wasPinLogin = true;
           break;
+        default: 
+           throw {
+            code: VaultErrorCodes.UserCanceledInteraction,
+            message: 'User has canceled pin login',
+          };
       }
       return Promise.resolve(data);
     }
@@ -197,8 +203,11 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       )
       .subscribe(
         next => {},
-        error => {},
+        error => {
+          console.log('error bro ****** ', error)
+        },
         () => {
+          console.log('navigated here.. ...... .... ')
           this.navigateToDashboard();
         }
       );

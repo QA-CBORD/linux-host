@@ -4,12 +4,12 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
-import { switchMap, take } from 'rxjs/operators';
+import { catchError, switchMap, take } from 'rxjs/operators';
 import { AppState, Plugins } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
-import { from, Subject } from 'rxjs';
+import { from, Subject, throwError } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -17,6 +17,7 @@ import { ContentStringsFacadeService } from '../content-strings/content-strings.
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
 const { App, Device, BackgroundTask } = Plugins;
 
 enum AppStatus {
@@ -45,7 +46,7 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly nativeProvider: NativeProvider,
+    private readonly nativeProvider: NativeProvider
   ) {
     this.appStateListeners();
   }
@@ -102,14 +103,23 @@ export class SessionFacadeService {
   }
 
   doLoginChecks() {
-    
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
         take(1),
-        switchMap(sessionId => from(this.determineFromBackgroundLoginState(sessionId)))
+        switchMap(sessionId =>
+          from(this.determineFromBackgroundLoginState(sessionId)).pipe(
+            catchError(({ message }) => {
+              console.log('message: ', message);
+              if (/Invalid session/.test(message)) {
+                return this.authFacadeService.authenticateSystem$();
+              }
+              return throwError(message);
+            })
+          )
+        )
       )
       .subscribe(
         async state => {
@@ -142,6 +152,7 @@ export class SessionFacadeService {
           }
         },
         async error => {
+          console.log('Error ==>> : ', error);
           await this.loadingService.closeSpinner();
           (async () => {
             await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
@@ -155,17 +166,31 @@ export class SessionFacadeService {
   }
 
   private loginUser(useBiometric: boolean) {
-    this.identityFacadeService.loginUser(useBiometric).subscribe(
-      () => {
+    this.identityFacadeService
+      .loginUser(useBiometric)
+      .pipe(take(1))
+      .subscribe(
+        () => {
+          console.log('GWILL NABIGATE: ');
           this.navigate2Dashboard();
-      },
-      (err) => {
-        if (!useBiometric) {
+        },
+        async ({ code, message }) => {
+          console.log('code: ', code, '   message: ', message);
+          if (VaultErrorCodes.TooManyFailedAttempts == code) {
+            // force pin entry mechanism.
+            try {
+              const data = await this.identityFacadeService.onPasscodeRequest(false);
+              if (data) {
+                return this.navigate2Dashboard();
+              }
+            } catch ({ code, message }) {
+              console.log('onPasscodeRequest::code: ', code, '   message: ', message);
+            }
+          }
           this.loadingService.closeSpinner();
-          this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
+          this.logoutUser(true);
         }
-      }
-    );
+      );
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
@@ -198,6 +223,8 @@ export class SessionFacadeService {
   }
 
   async determineFromBackgroundLoginState(sessionId: string): Promise<LoginState> {
+    console.log('determineFromBackgroundLoginState: ', sessionId);
+
     const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
       .pipe(take(1))
       .toPromise();
@@ -215,6 +242,9 @@ export class SessionFacadeService {
       return usernamePasswordLoginType;
     }
     const isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
+
+    console.log('isPinLoginEnabled: ', sessionId);
+
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
       const vaultLocked: boolean = await this.identityFacadeService.isVaultLocked();

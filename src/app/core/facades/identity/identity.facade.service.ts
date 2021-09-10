@@ -38,6 +38,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
     super();
   }
 
+  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> { 
+    return this.identityService.onPasscodeRequest(isPasscodeSetRequest);
+  }
+
   async pinLoginSetup(
     biometricEnabled: boolean,
     navigateToDashboard: boolean = true,
@@ -68,6 +72,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   loginUser(useBiometric: boolean) {
+    console.log('prompting to user: userBiometric ', useBiometric)
     if (useBiometric) {
       return this.identityService.unlockVault();
     } else {
