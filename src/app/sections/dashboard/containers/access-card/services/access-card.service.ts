@@ -9,10 +9,12 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { CommonService } from '@shared/services/common.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable()
 export class AccessCardService {
   constructor(
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly nativeProvider: NativeProvider,
@@ -44,11 +46,11 @@ export class AccessCardService {
   }
 
   getInstitutionBackgroundImage(): Observable<string> {
-    return of('/assets/images/card_background_illustration.svg');
-    // return this.userService.userData.pipe(
-    //   switchMap(({ institutionId }) => this.institutionService.getInstitutionPhoto$(institutionId)),
-    //   map(({ data, mimeType }) => `data:${mimeType};base64,${data}`)
-    // );
+    return this.institutionFacadeService.cachedInstitutionInfo$.pipe(
+      map(institution => institution.imageBannerFull),
+      skipWhile(imageBannerFull => !imageBannerFull || imageBannerFull === null),
+      map(imageBannerFull => this.environmentFacadeService.getImageURL() + imageBannerFull)
+    );
   }
 
   getInstitutionColor(): Observable<string> {
