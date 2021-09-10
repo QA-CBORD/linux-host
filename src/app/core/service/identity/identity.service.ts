@@ -204,7 +204,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       .subscribe(
         next => {},
         error => {
-          console.log('error bro ****** ', error)
         },
         () => {
           console.log('navigated here.. ...... .... ')
