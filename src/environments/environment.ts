@@ -59,7 +59,7 @@ export const testCredentials: { [key: string]: UserLogin } = {
   },
 
   odysseyPreview: {
-    userName: 'getaws1@tpsmail.dev',
+    userName: 'getaws1@test.cbord.com',
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
@@ -73,7 +73,7 @@ export const testCredentials: { [key: string]: UserLogin } = {
   },
 
   odysseyPreviewWithUSAePay: {
-    userName: 'getaws401@tpsmail.dev',
+    userName: 'getaws401@test.cbord.com',
     password: 'password1',
     domain: null,
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
