@@ -72,7 +72,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   loginUser(useBiometric: boolean) {
-    console.log('prompting to user: userBiometric ', useBiometric)
     if (useBiometric) {
       return this.identityService.unlockVault();
     } else {

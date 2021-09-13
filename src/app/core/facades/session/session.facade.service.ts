@@ -109,17 +109,17 @@ export class SessionFacadeService {
       .getAuthSessionToken$()
       .pipe(
         take(1),
-        switchMap(sessionId =>
-          from(this.determineFromBackgroundLoginState(sessionId)).pipe(
-            catchError(({ message }) => {
-              console.log('message: ', message);
-              if (/Invalid session/.test(message)) {
-                return this.authFacadeService.authenticateSystem$();
-              }
-              return throwError(message);
-            })
-          )
-        )
+        switchMap(async sessionId => {
+          try {
+            return await this.determineFromBackgroundLoginState(sessionId);
+          } catch ({ message }) {
+            if (/Invalid session/.test(message)) {
+              const newSessionId = await this.authFacadeService.authenticateSystem$().toPromise();
+              return await this.determineFromBackgroundLoginState(newSessionId);
+            }
+          }
+          return throwError(new Error('Failed to determine login state'));
+        })
       )
       .subscribe(
         async state => {
@@ -151,8 +151,7 @@ export class SessionFacadeService {
               break;
           }
         },
-        async error => {
-          console.log('Error ==>> : ', error);
+        async () => {
           await this.loadingService.closeSpinner();
           (async () => {
             await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
@@ -161,8 +160,8 @@ export class SessionFacadeService {
       );
   }
 
-  private async navigate2Dashboard(): Promise<void> {
-    this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+  private async navigate2Dashboard(): Promise<Boolean> {
+    return this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
 
   private loginUser(useBiometric: boolean) {
@@ -171,20 +170,18 @@ export class SessionFacadeService {
       .pipe(take(1))
       .subscribe(
         () => {
-          console.log('GWILL NABIGATE: ');
           this.navigate2Dashboard();
         },
-        async ({ code, message }) => {
-          console.log('code: ', code, '   message: ', message);
+        async ({ code }) => {
           if (VaultErrorCodes.TooManyFailedAttempts == code) {
             // force pin entry mechanism.
             try {
               const data = await this.identityFacadeService.onPasscodeRequest(false);
               if (data) {
-                return this.navigate2Dashboard();
+                return await this.navigate2Dashboard();
               }
-            } catch ({ code, message }) {
-              console.log('onPasscodeRequest::code: ', code, '   message: ', message);
+            } catch (error) {
+              // just let it go
             }
           }
           this.loadingService.closeSpinner();
@@ -223,8 +220,6 @@ export class SessionFacadeService {
   }
 
   async determineFromBackgroundLoginState(sessionId: string): Promise<LoginState> {
-    console.log('determineFromBackgroundLoginState: ', sessionId);
-
     const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
       .pipe(take(1))
       .toPromise();
@@ -242,9 +237,6 @@ export class SessionFacadeService {
       return usernamePasswordLoginType;
     }
     const isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
-
-    console.log('isPinLoginEnabled: ', sessionId);
-
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
       const vaultLocked: boolean = await this.identityFacadeService.isVaultLocked();

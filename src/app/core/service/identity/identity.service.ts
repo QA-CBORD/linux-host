@@ -155,7 +155,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     } else {
       /// will happen on pin login
       const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
-      console.log('role: ', role)
       switch (role) {
         case 'cancel': /// identity vault cancel role
           throw {
@@ -203,10 +202,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       )
       .subscribe(
         next => {},
-        error => {
-        },
+        error => {},
         () => {
-          console.log('navigated here.. ...... .... ')
           this.navigateToDashboard();
         }
       );
