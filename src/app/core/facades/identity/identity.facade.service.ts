@@ -38,6 +38,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
     super();
   }
 
+  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> { 
+    return this.identityService.onPasscodeRequest(isPasscodeSetRequest);
+  }
+
   async pinLoginSetup(
     biometricEnabled: boolean,
     navigateToDashboard: boolean = true,

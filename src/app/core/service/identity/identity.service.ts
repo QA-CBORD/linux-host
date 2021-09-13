@@ -170,6 +170,11 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
         case PinCloseStatus.LOGIN_SUCCESS:
           this.wasPinLogin = true;
           break;
+        default: 
+           throw {
+            code: VaultErrorCodes.UserCanceledInteraction,
+            message: 'User has canceled pin login',
+          };
       }
       return Promise.resolve(data);
     }
