@@ -8,7 +8,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ToastController, ModalController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -23,6 +23,9 @@ import { QuestionComponent } from '../../questions/question.component';
 
 import { ApplicationDetails, ApplicationStatus, PatronApplication } from '../../applications/applications.model';
 import { QuestionsPage } from '../../questions/questions.model';
+import { ApplicationsStateService } from '../../applications/applications-state.service';
+import { RequestingRoommateModalModule } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.module';
+import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
 
 @Component({
   selector: 'st-application-details',
@@ -50,13 +53,15 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   constructor(
     private _route: ActivatedRoute,
     private _applicationsService: ApplicationsService,
+    private _applicationsStateService: ApplicationsStateService,
     private _router: Router,
     private _toastController: ToastController,
     private _loadingService: LoadingService,
-    private _housingService: HousingService
+    private _housingService: HousingService,
+    private modalController: ModalController
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.applicationKey = parseInt(this._route.snapshot.paramMap.get('applicationKey'), 10);
 
     this._initApplicationDetailsObservable();
@@ -122,6 +127,9 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
         this.isSubmitted = status === ApplicationStatus.Submitted;
         this._loadingService.closeSpinner();
+        if(!this.isSubmitted || this._applicationsStateService.requestingRoommate.length > 0) {
+          this.Showmodal();
+        }
       }),
       catchError((error: any) => {
         this._loadingService.closeSpinner();
@@ -129,6 +137,15 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
         return throwError(error);
       })
     );
+  }
+
+  async Showmodal() {
+    let requestingRoommate = this._applicationsStateService.requestingRoommate;
+    const RequestingRoommateModal = await this.modalController.create({
+      component: RequestingRoommateModalComponent,
+      componentProps: { requestingRoommate },
+    });
+    await RequestingRoommateModal.present();
   }
 
   private _initPagesObservable(): void {

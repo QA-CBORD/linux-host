@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { RoommatePreferences } from './applications.model';
 
 import {
   ApplicationDetails,
   RequestedRoommate,
   RoommateSearchOptions,
-  RoommatePreferences,
+
   RoommatePreferencesOptions
 } from './applications.model';
 
@@ -81,6 +82,14 @@ export class ApplicationsStateService {
     return this.applicationsState.applicationDetails.roommatePreferences;
   }
 
+  get requestingRoommate(): RoommatePreferences[]{
+    return this.applicationsState.applicationDetails.requestingRoommates;
+  }
+
+  deleteRequestingRoommate(index:number) {
+    this.applicationsState.applicationDetails.requestingRoommates.splice(index,1)
+  }
+
   setApplications(applications: ApplicationDetails[]): void {
     this.applicationsState = { ...this.applicationsState, entities: this._toApplicationEntities(applications) };
   }
@@ -109,6 +118,10 @@ export class ApplicationsStateService {
   
   setRoommatesPreferences(roommates: RoommatePreferences[]) {
     this.roommatePreferences = roommates;
+  }
+
+  addRoommatesPreferences(addedRoommate: RoommatePreferences){
+    this.applicationsState.applicationDetails.roommatePreferences.forEach(roommatePreference => roommatePreference.preferenceKey === addedRoommate.preferenceKey ? roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate : null)
   }
 
   setMaximumSelectedRoommates(maxRoommates:number){
