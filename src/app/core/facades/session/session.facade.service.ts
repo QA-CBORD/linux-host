@@ -56,6 +56,7 @@ export class SessionFacadeService {
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
   private appStateListeners() {
     App.addListener('appStateChange', ({ isActive }: AppState) => {
+      this.identityFacadeService.onAppStateChanged(isActive);
       if (isActive) {
         this.appResumeLogic();
       } else {
