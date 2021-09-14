@@ -1,0 +1,21 @@
+@import 'tools';
+
+.back-button {
+  @include font-nunito-regular(16px);
+
+  --icon-font-size: 16px;
+  --icon-padding-end: 5px;
+}
+
+.btns-content {
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+.btn-roommate-requesting{
+  width: 95%;
+}
+
+.text-roommate-requesting {
+  width: 80%;
+}

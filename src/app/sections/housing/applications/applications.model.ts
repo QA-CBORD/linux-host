@@ -220,6 +220,7 @@ export interface ApplicationDetailsOptions {
   patronPreferences?: PatronPreference[];
   patronAddresses?: PatronAddress[];
   roommatePreferences?: RoommatePreferences[];
+  requestingRoommates?: RoommateRequesting[];
 }
 
 export class ApplicationDetails implements ApplicationDetailsOptions {
@@ -229,6 +230,7 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
   patronPreferences?: PatronPreference[];
   patronAddresses?: PatronAddress[];
   roommatePreferences?: RoommatePreferences[];
+  requestingRoommates?: RoommateRequesting[];
 
   constructor(options: ApplicationDetailsOptions) {
     if (options == null || typeof options !== 'object') {
@@ -251,6 +253,9 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
 
     if (Array.isArray(options.roommatePreferences)) {
       this.roommatePreferences = options.roommatePreferences.map((roommatePreference: any) => new RoommatePreferences(roommatePreference));
+    }
+    if (Array.isArray(options.requestingRoommates)) {
+      this.requestingRoommates = options.requestingRoommates.map((requestingRoommates: any) => new RoommateRequesting(requestingRoommates));
     }
 
     this.patronAddresses = Array.isArray(options.patronAddresses)
@@ -389,4 +394,50 @@ export interface RoommatePreferencesOptions {
   middleName?: string;
   birthDate?: Date;
   preferredName?: string;
+}
+export class RoommateRequesting implements RoommateRequestingOptions {
+  preferenceKey: number;
+  patronKeyRoommate: number;
+  firstName: string;
+  lastName: string;
+  rank: number;
+  middleName?: string;
+  birthDate?: Date;
+  preferredName?: string;
+
+  constructor(options: RoommateRequestingOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as RoommateRequestingOptions;
+    }
+
+    this.rank = Number(0);
+    this.patronKeyRoommate = Number(options.patronKey);
+
+    if (isDefined(options.firstName)) {
+      this.firstName = String(options.firstName);
+    }
+
+    if (isDefined(options.lastName)) {
+      this.lastName = String(options.lastName);
+    }
+
+    if (isDefined(options.preferenceKey)) {
+      this.preferenceKey = Number(options.preferenceKey);
+    }
+    if (isDefined(options.middleName)) {
+      this.middleName = String(options.middleName);
+    }
+    if (isDefined(options.birthDate)) {
+      this.birthDate = new Date(options.birthDate);
+    }
+  }
+}
+
+export interface RoommateRequestingOptions {
+  preferenceKey?: number;
+  patronKey?: number;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  birthDate?: Date;
 }
