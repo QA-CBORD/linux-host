@@ -47,7 +47,7 @@ export class AccessCardService {
 
   getInstitutionBackgroundImage(): Observable<string> {
     return this.institutionFacadeService.cachedInstitutionInfo$.pipe(
-      map(institution => institution.imageBannerFull),
+      map(institution => institution && institution.imageBannerFull),
       skipWhile(imageBannerFull => !imageBannerFull || imageBannerFull === null),
       map(imageBannerFull => this.environmentFacadeService.getImageURL() + imageBannerFull)
     );

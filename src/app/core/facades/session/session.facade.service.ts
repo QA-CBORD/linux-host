@@ -55,6 +55,7 @@ export class SessionFacadeService {
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
   private appStateListeners() {
     App.addListener('appStateChange', ({ isActive }: AppState) => {
+      this.identityFacadeService.onAppStateChanged(isActive);
       if (isActive) {
         this.appResumeLogic();
       } else {
@@ -160,32 +161,40 @@ export class SessionFacadeService {
       );
   }
 
-  private async navigate2Dashboard(): Promise<Boolean> {
+  private async navigate2Dashboard(): Promise<boolean> {
     return this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
 
-  private loginUser(useBiometric: boolean) {
+  private async loginUser(useBiometric: boolean) {
+    // await this.identityFacadeService.loginUser(useBiometric).toPromise();
+
     this.identityFacadeService
       .loginUser(useBiometric)
       .pipe(take(1))
       .subscribe(
         () => {
+          this.identityFacadeService.canRetryUnlock = true;
           this.navigate2Dashboard();
         },
         async ({ code }) => {
-          if (VaultErrorCodes.TooManyFailedAttempts == code) {
-            // force pin entry mechanism.
-            try {
-              const data = await this.identityFacadeService.onPasscodeRequest(false);
-              if (data) {
-                return await this.navigate2Dashboard();
-              }
-            } catch (error) {
-              // just let it go
-            }
+          let logoutUser = true;
+          if (
+            VaultErrorCodes.TooManyFailedAttempts == code &&
+            useBiometric &&
+            this.identityFacadeService.canRetryUnlock
+          ) {
+            logoutUser = !(await this.identityFacadeService
+              .onPasscodeRequest(false)
+              .then(async data => data && (await this.navigate2Dashboard()))
+              .catch(() => {})
+              .finally(() => (this.identityFacadeService.canRetryUnlock = true)));
           }
-          this.loadingService.closeSpinner();
-          this.logoutUser(true);
+
+          if (logoutUser) {
+            this.identityFacadeService.canRetryUnlock = true;
+            this.loadingService.closeSpinner();
+            this.logoutUser(true);
+          }
         }
       );
   }

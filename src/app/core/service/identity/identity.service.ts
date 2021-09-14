@@ -19,7 +19,7 @@ import {
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { catchError, finalize, switchMap, take } from 'rxjs/operators';
+import { catchError, finalize, switchMap, take, tap } from 'rxjs/operators';
 import { GUEST_NAVIGATION, PATRON_NAVIGATION, ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -35,10 +35,11 @@ export class VaultSessionData implements DefaultSession {
   providedIn: 'root',
 })
 export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
-
   private temporaryPin: string = undefined;
   private wasPinLogin: boolean = false;
   private isLocked: boolean = true;
+  canRetryUnlock: boolean = true;
+  unclockInProgress: boolean;
 
   constructor(
     private browserAuthPlugin: BrowserAuthPlugin,
@@ -104,7 +105,11 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   /// unlock the vault to make data accessible with identity controlled method
   unlockVault(): Observable<void> {
-    return from(super.unlock());
+    this.unclockInProgress = true;
+    return from(super.unlock()).pipe(
+      take(1),
+      finalize(() => (this.unclockInProgress = false))
+    );
   }
 
   /// unlock the vault to make data accessible with pin
@@ -154,6 +159,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       return Promise.resolve(this.temporaryPin);
     } else {
       /// will happen on pin login
+      this.canRetryUnlock = false;
       const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
       switch (role) {
         case 'cancel': /// identity vault cancel role
@@ -170,13 +176,20 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
         case PinCloseStatus.LOGIN_SUCCESS:
           this.wasPinLogin = true;
           break;
-        default: 
-           throw {
+        default:
+          throw {
             code: VaultErrorCodes.UserCanceledInteraction,
             message: 'User has canceled pin login',
           };
       }
       return Promise.resolve(data);
+    }
+  }
+
+  async onAppStateChanged(stateActive) {
+    if (!stateActive && this.unclockInProgress) {
+      await this.onPasscodeRequest(false);
+      this.unclockInProgress = false;
     }
   }
 
@@ -197,7 +210,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       .pipe(
         switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)),
         take(1),
-        catchError((err) => of(err)),
+        catchError(err => of(err)),
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
@@ -249,7 +262,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   onVaultUnlocked(config: VaultConfig): void {
-   this.setIsLocked(false);
+    this.setIsLocked(false);
     // console.log('The vault was unlocked with config: ', config);
     if (this.wasPinLogin) {
       this.wasPinLogin = false;
