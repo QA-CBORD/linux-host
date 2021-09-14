@@ -59,7 +59,6 @@ export class SessionFacadeService {
       if (isActive) {
         this.appResumeLogic();
       } else {
-        this.identityFacadeService.setIsLocked();
         this.closeActionsheets();
         this.appStatus = AppStatus.BACKGROUND;
       }
