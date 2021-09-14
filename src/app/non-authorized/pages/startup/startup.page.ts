@@ -27,7 +27,6 @@ export class StartupPage implements OnInit {
 
   async checkLoginFlow() {
     // Lock vault by default or after being redirected here.
-    this.identityFacadeService.setIsLocked();
     /// ensure we have correct environment and check for login
     await this.environmentFacadeService.initialization();
     this.sessionFacadeService.doLoginChecks();

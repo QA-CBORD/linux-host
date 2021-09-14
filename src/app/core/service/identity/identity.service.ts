@@ -24,6 +24,8 @@ import { GUEST_NAVIGATION, PATRON_NAVIGATION, ROLES } from '../../../app.global'
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
+import { Capacitor } from '@capacitor/core';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 
 export class VaultSessionData implements DefaultSession {
   token: string; /// unused
@@ -80,7 +82,9 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   async isVaultLocked() {
-    // const isSessionStored = await this.hasStoredSession();
+    if (Capacitor.platform == PLATFORM.ios) {
+      await this.hasStoredSession(); // Hack: for unexpected vault behavior with the pin not showing up
+    }
     return this.isLocked && (await this.hasStoredSession());
   }
 
@@ -187,9 +191,12 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   async onAppStateChanged(stateActive) {
-    if (!stateActive && this.unclockInProgress) {
-      await this.onPasscodeRequest(false);
-      this.unclockInProgress = false;
+    // do only for android platform
+    if (Capacitor.platform == PLATFORM.android) {
+      if (!stateActive && this.unclockInProgress) {
+        await this.onPasscodeRequest(false);
+        this.unclockInProgress = false;
+      }
     }
   }
 
