@@ -29,6 +29,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   private ttl: number = 600000; // 10min
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
+  
 
   constructor(
     private readonly storageStateService: StorageStateService,
@@ -40,6 +41,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> { 
     return this.identityService.onPasscodeRequest(isPasscodeSetRequest);
+  }
+
+  onAppStateChanged(stateActive){
+    this.identityService.onAppStateChanged(stateActive);
   }
 
   async pinLoginSetup(
@@ -77,6 +82,14 @@ export class IdentityFacadeService extends ServiceStateFacade {
     } else {
       return this.identityService.unlockVaultPin();
     }
+  }
+
+  get canRetryUnlock(): boolean {
+    return this.identityService.canRetryUnlock;
+  }
+
+  set canRetryUnlock(value: boolean){
+    this.identityService.canRetryUnlock = value;
   }
 
   logoutUser(): Promise<void> {
