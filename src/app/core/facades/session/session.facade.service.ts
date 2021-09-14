@@ -161,7 +161,7 @@ export class SessionFacadeService {
       );
   }
 
-  private async navigate2Dashboard(): Promise<Boolean> {
+  private async navigate2Dashboard(): Promise<boolean> {
     return this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
   private navigateToDashboard = () =>
