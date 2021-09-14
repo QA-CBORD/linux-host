@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { ROLES } from '../../../app.global';
@@ -46,7 +46,8 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
+    private readonly ngZone: NgZone
   ) {
     this.appStateListeners();
   }
@@ -55,7 +56,6 @@ export class SessionFacadeService {
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
   private appStateListeners() {
     App.addListener('appStateChange', ({ isActive }: AppState) => {
-      this.identityFacadeService.onAppStateChanged(isActive);
       if (isActive) {
         this.appResumeLogic();
       } else {
@@ -133,7 +133,7 @@ export class SessionFacadeService {
               this.loginUser(true);
               break;
             case LoginState.BIOMETRIC_SET:
-              this.navigate2Dashboard();
+              this.navigateToDashboard();
               break;
             case LoginState.PIN_LOGIN:
               this.loginUser(false);
@@ -148,7 +148,7 @@ export class SessionFacadeService {
               this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
               break;
             case LoginState.DONE:
-              this.navigate2Dashboard();
+              this.navigateToDashboard();
               break;
           }
         },
@@ -161,9 +161,11 @@ export class SessionFacadeService {
       );
   }
 
-  private async navigate2Dashboard(): Promise<boolean> {
+  private async navigate2Dashboard(): Promise<Boolean> {
     return this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
+  private navigateToDashboard = () =>
+    this.ngZone.run(async () => this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true }));
 
   private async loginUser(useBiometric: boolean) {
     // await this.identityFacadeService.loginUser(useBiometric).toPromise();
@@ -174,7 +176,7 @@ export class SessionFacadeService {
       .subscribe(
         () => {
           this.identityFacadeService.canRetryUnlock = true;
-          this.navigate2Dashboard();
+          this.navigateToDashboard();
         },
         async ({ code }) => {
           let logoutUser = true;
