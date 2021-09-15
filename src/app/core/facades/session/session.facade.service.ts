@@ -93,7 +93,7 @@ export class SessionFacadeService {
       return;
     }
 
-    if (await this.isVaultLocked()) {
+    if ((await this.isVaultLocked()) && !this.identityFacadeService.pinEntryInProgress) {
       await this.router
         .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
         .then(navigated => {
@@ -102,14 +102,6 @@ export class SessionFacadeService {
         .catch(err => {
           console.log(err);
         });
-
-      // this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { replaceUrl: true })
-      //     .then((navigated) => {
-      //       console.log('navigated: ', navigated)
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
     }
   }
 
@@ -149,7 +141,7 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
-          console.log('state: ', state)
+          console.log('state: ', state);
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
@@ -181,7 +173,7 @@ export class SessionFacadeService {
           }
         },
         async ({ message }) => {
-          console.log('message: ', message)
+          console.log('message: ', message);
           this.toastService.showToast({ message });
           await this.loadingService.closeSpinner();
           (async () => this.logoutUser(true))();
@@ -206,7 +198,7 @@ export class SessionFacadeService {
           this.navigateToDashboard();
         },
         async ({ code, message }) => {
-          console.log('Error aqui: ', code, ' : ', message)
+          console.log('Error aqui: ', code, ' : ', message);
           let logoutUser = true;
           if (
             VaultErrorCodes.TooManyFailedAttempts == code &&
@@ -321,10 +313,9 @@ export class SessionFacadeService {
 
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
-       
-       const didNavigate = await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
-       console.log('didNavigate:', didNavigate)
-       this.onLogOutObservable$.next();
+      const didNavigate = await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
+      console.log('didNavigate:', didNavigate);
+      this.onLogOutObservable$.next();
     }
     this.resetAll();
   }
