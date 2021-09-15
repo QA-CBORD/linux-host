@@ -201,7 +201,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     // do only for android platform
 
     const redoRequestPin = async () => {
-      if (!stateActive && this.unclockInProgress) {
+      if ((!stateActive && this.unclockInProgress) || (!stateActive && this.unclockPinInProgress)) {
         console.log('REDO PIN');
         await this.onPasscodeRequest(false);
         this.unclockInProgress = false;
