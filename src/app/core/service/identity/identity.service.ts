@@ -202,7 +202,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
     const redoRequestPin = async () => {
       if ((!stateActive && this.unclockInProgress) || (!stateActive && this.unclockPinInProgress)) {
-        console.log('REDO PIN');
+        // console.log('REDO PIN');
         await this.onPasscodeRequest(false);
         this.unclockInProgress = false;
         this.unclockPinInProgress = false;
