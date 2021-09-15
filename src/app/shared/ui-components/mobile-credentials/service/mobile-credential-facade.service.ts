@@ -83,19 +83,19 @@ export class MobileCredentialFacade {
 
   get uiIconUrl$(): Observable<string> {
     return of(
-      this.mobileCredentialManager.getCredential() && this.mobileCredentialManager.getCredential().getUiIconUrl()
+      this.mobileCredentialManager && this.mobileCredentialManager.getCredential() && this.mobileCredentialManager.getCredential().getUiIconUrl()
     );
   }
 
   get uiText$(): Observable<string> {
     return of(
-      this.mobileCredentialManager.getCredential() && this.mobileCredentialManager.getCredential().getStatusMsg()
+      this.mobileCredentialManager &&  this.mobileCredentialManager.getCredential() && this.mobileCredentialManager.getCredential().getStatusMsg()
     );
   }
 
   get uiImageUrl$(): Observable<string> {
     return of(
-      this.mobileCredentialManager.getCredential() && this.mobileCredentialManager.getCredential().getUiImageUrl()
+      this.mobileCredentialManager && this.mobileCredentialManager.getCredential() && this.mobileCredentialManager.getCredential().getUiImageUrl()
     );
   }
 

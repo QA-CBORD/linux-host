@@ -84,6 +84,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
     }
   }
 
+  get pinEntryInProgress():boolean{
+    return this.identityService.unclockPinInProgress;
+  }
+
   get canRetryUnlock(): boolean {
     return this.identityService.canRetryUnlock;
   }
