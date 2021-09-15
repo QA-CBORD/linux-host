@@ -211,8 +211,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
     if (Capacitor.platform == PLATFORM.android) {
       redoRequestPin();
-    } else if (this.unclockPinInProgress && Capacitor.platform == PLATFORM.ios) {
-      redoRequestPin();
     }
   }
 
