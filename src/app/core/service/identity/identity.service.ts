@@ -42,6 +42,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   private isLocked: boolean = true;
   canRetryUnlock: boolean = true;
   unclockInProgress: boolean;
+  unclockPinInProgress: boolean;
 
   constructor(
     private browserAuthPlugin: BrowserAuthPlugin,
@@ -118,7 +119,13 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   /// unlock the vault to make data accessible with pin
   unlockVaultPin(): Observable<void> {
-    return from(super.unlock(AuthMode.PasscodeOnly));
+    this.unclockPinInProgress = true;
+    return from(super.unlock(AuthMode.PasscodeOnly)).pipe(
+      take(1),
+      finalize(() => {
+        this.unclockPinInProgress = false;
+      })
+    );
   }
 
   /// unlock the vault to make data accessible with biometric and pin backup
@@ -192,11 +199,20 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   async onAppStateChanged(stateActive) {
     // do only for android platform
-    if (Capacitor.platform == PLATFORM.android) {
+
+    const redoRequestPin = async () => {
       if (!stateActive && this.unclockInProgress) {
+        console.log('REDO PIN');
         await this.onPasscodeRequest(false);
         this.unclockInProgress = false;
+        this.unclockPinInProgress = false;
       }
+    };
+
+    if (Capacitor.platform == PLATFORM.android) {
+      redoRequestPin();
+    } else if (this.unclockPinInProgress && Capacitor.platform == PLATFORM.ios) {
+      redoRequestPin();
     }
   }
 
