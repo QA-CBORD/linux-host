@@ -9,7 +9,7 @@ import { AppState, Plugins } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
-import { from, Subject, throwError } from 'rxjs';
+import { from, of, Subject, throwError } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -18,6 +18,8 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
+import { Router } from '@angular/router';
+import { ToastService } from '@core/service/toast/toast.service';
 const { App, Device, BackgroundTask } = Plugins;
 
 enum AppStatus {
@@ -36,6 +38,7 @@ export class SessionFacadeService {
 
   constructor(
     private readonly platform: Platform,
+    private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -43,11 +46,11 @@ export class SessionFacadeService {
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private navCtrl: NavController,
+    private readonly toastService: ToastService,
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly nativeProvider: NativeProvider,
-    private readonly ngZone: NgZone
+    private readonly nativeProvider: NativeProvider
   ) {
     this.appStateListeners();
   }
@@ -91,7 +94,22 @@ export class SessionFacadeService {
     }
 
     if (await this.isVaultLocked()) {
-      this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { skipLocationChange: true });
+      await this.router
+        .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
+        .then(navigated => {
+          console.log('navigated: ', navigated);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+      // this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.startup, { replaceUrl: true })
+      //     .then((navigated) => {
+      //       console.log('navigated: ', navigated)
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //     });
     }
   }
 
@@ -114,12 +132,18 @@ export class SessionFacadeService {
           try {
             return await this.determineFromBackgroundLoginState(sessionId);
           } catch ({ message }) {
-            if (/Invalid session/.test(message)) {
-              const newSessionId = await this.authFacadeService.authenticateSystem$().toPromise();
+            const newSessionId = await this.authFacadeService.authenticateSystem$().toPromise();
+            try {
               return await this.determineFromBackgroundLoginState(newSessionId);
+            } catch ({ message }) {
+              console.log('error ==>> ', message);
+              // can't determine login state // will ask user to re-enter pin
+              if (/isPingEnabled/.test(message)) {
+                return of(LoginState.PIN_LOGIN);
+              }
+              throw new Error('An Unexpected error occurred');
             }
           }
-          return throwError(new Error('Failed to determine login state'));
         })
       )
       .subscribe(
@@ -150,13 +174,14 @@ export class SessionFacadeService {
             case LoginState.DONE:
               this.navigateToDashboard();
               break;
+            default:
+              this.logoutUser(true);
           }
         },
-        async () => {
+        async ({ message }) => {
+          this.toastService.showToast({ message });
           await this.loadingService.closeSpinner();
-          (async () => {
-            await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
-          })();
+          (async () => this.logoutUser(true))();
         }
       );
   }
@@ -164,8 +189,7 @@ export class SessionFacadeService {
   private async navigate2Dashboard(): Promise<boolean> {
     return this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
-  private navigateToDashboard = () =>
-    this.ngZone.run(async () => this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true }));
+  private navigateToDashboard = () => this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
 
   private async loginUser(useBiometric: boolean) {
     // await this.identityFacadeService.loginUser(useBiometric).toPromise();
@@ -188,7 +212,9 @@ export class SessionFacadeService {
             logoutUser = !(await this.identityFacadeService
               .onPasscodeRequest(false)
               .then(async data => data && (await this.navigate2Dashboard()))
-              .catch(() => {})
+              .catch(err => {
+                console.log('err: ', err);
+              })
               .finally(() => (this.identityFacadeService.canRetryUnlock = true)));
           }
 
@@ -243,11 +269,18 @@ export class SessionFacadeService {
     const usernamePasswordLoginType: LoginState = this.identityFacadeService.isExternalLogin(institutionInfo)
       ? LoginState.EXTERNAL
       : LoginState.HOSTED;
-
     if (isWeb) {
       return usernamePasswordLoginType;
     }
-    const isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
+
+    let isPinLoginEnabled = false;
+
+    try {
+      isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
+    } catch (error) {
+      throw new Error('cannot determine isPingEnabled');
+    }
+
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
       const vaultLocked: boolean = await this.identityFacadeService.isVaultLocked();
