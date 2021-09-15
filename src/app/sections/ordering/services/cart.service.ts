@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, switchMap, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment } from '../shared/models';
@@ -105,8 +104,18 @@ export class CartService {
   }
 
   extractTimeZonedString(dateStr: string, timeZone: string, fullDate = true): string {
-    const date = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2')); // Formatted timezone from +0000 to +00:00 to support Safari dates
+    // Formatted timezone from +0000 to +00:00 to support Safari dates
     if (!timeZone) timeZone = this.merchantTimeZone;
+
+    let date = new Date(dateStr);
+    if (/Invalid Date/.test(date.toString())) {
+      try {
+        date = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2'));
+      } catch (e) {
+        date = <any>dateStr;
+      }
+    }
+
     const options: any = {
       day: '2-digit',
       month: 'short',
