@@ -122,6 +122,7 @@ export class SessionFacadeService {
   }
 
   doLoginChecks() {
+    console.log('doLoginChecks called.... ');
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
@@ -148,6 +149,7 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
+          console.log('state: ', state)
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
@@ -179,6 +181,7 @@ export class SessionFacadeService {
           }
         },
         async ({ message }) => {
+          console.log('message: ', message)
           this.toastService.showToast({ message });
           await this.loadingService.closeSpinner();
           (async () => this.logoutUser(true))();
@@ -202,7 +205,8 @@ export class SessionFacadeService {
           this.identityFacadeService.canRetryUnlock = true;
           this.navigateToDashboard();
         },
-        async ({ code }) => {
+        async ({ code, message }) => {
+          console.log('Error aqui: ', code, ' : ', message)
           let logoutUser = true;
           if (
             VaultErrorCodes.TooManyFailedAttempts == code &&
@@ -317,8 +321,10 @@ export class SessionFacadeService {
 
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
-      this.onLogOutObservable$.next();
-      await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
+       
+       const didNavigate = await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
+       console.log('didNavigate:', didNavigate)
+       this.onLogOutObservable$.next();
     }
     this.resetAll();
   }
