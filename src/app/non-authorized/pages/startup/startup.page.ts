@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 @Component({
   selector: 'st-startup',
@@ -13,6 +14,7 @@ export class StartupPage implements OnInit {
   constructor(
     private readonly elementRef: ElementRef,
     private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly identityFacadeService: IdentityFacadeService,
     private readonly sessionFacadeService: SessionFacadeService
   ) {}
 
@@ -24,6 +26,7 @@ export class StartupPage implements OnInit {
   }
 
   async checkLoginFlow() {
+    // Lock vault by default or after being redirected here.
     /// ensure we have correct environment and check for login
     await this.environmentFacadeService.initialization();
     this.sessionFacadeService.doLoginChecks();

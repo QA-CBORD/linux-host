@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { PickerController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS, ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { take } from 'rxjs/operators';
+import { take, timestamp } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
 import { formatDateByContentStrings, getDateTimeInGMT, isSameDay } from '@core/utils/date-helper';
@@ -109,7 +109,7 @@ export class StDateTimePickerComponent implements OnInit {
       timeStamp = this.getTimeStamp(date.value, +hours, minutes);
       dateValue = new Date(timeStamp);
       this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(
-        dateValue, 
+        timeStamp, 
         this.merchantInfo.timeZone)
     }
     this.dateTimePicker = dateValue;

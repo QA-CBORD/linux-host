@@ -103,20 +103,34 @@ export class MerchantService {
   }
 
   extractTimeZonedString(dateStr: string, timeZone: string): string {
-    const [, , , tz] = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2'))
-      .toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'short' })
-      .split(' '); // Formatted timezone from +0000 to +00:00 to support Safari dates
-    const [dateTime, minutes] = dateStr.split(/:/);
-    dateStr = `${dateTime}:${minutes}`;
-    dateStr = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2')).toLocaleString('en-US', {
+    let timez = null;
+    const dateConfig: any = {
       hour12: true,
       day: 'numeric',
       month: 'short',
       weekday: 'short',
       hour: 'numeric',
       minute: '2-digit',
-    });
-    return `${dateStr} (${tz})`;
+    };
+
+    const [, , , tz] = new Date(dateStr).toLocaleString('en-US', { timeZone, timeZoneName: 'short' }).split(' ');
+    timez = tz;
+
+    if (!timez) {
+      const iosDate = () => new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2'));
+      const [, , , tz] = iosDate()
+        .toLocaleString('en-US', { timeZone, timeZoneName: 'short' })
+        .split(' ');
+
+      timez = tz;
+      dateStr = Intl.DateTimeFormat('en-US', dateConfig).format(iosDate());
+      return `${dateStr} (${timez})`;
+    } else {
+      const [dateTime, minutes] = dateStr.split(/:/);
+      dateStr = `${dateTime}:${minutes}`;
+      dateStr = new Date(dateStr).toLocaleString('en-US', dateConfig);
+      return `${dateStr} (${timez})`;
+    }
   }
 
   getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
