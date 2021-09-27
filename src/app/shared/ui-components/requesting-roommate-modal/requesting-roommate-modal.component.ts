@@ -35,12 +35,13 @@ export class RequestingRoommateModalComponent{
   acceptRoommateRequest(roommate: RoommatePreferences,index:number){
     this._applicationsStateService.addRoommatesPreferences(roommate)
     this._applicationsStateService.deleteRequestingRoommate(index)
+   
+  }
+
+  denyRoommateRequest(index:number){
+    this._applicationsStateService.deleteRequestingRoommate(index)
     if(this._applicationsStateService.requestingRoommate.length == 0 ){
       this.onClickedClose();
     }
-  }
-
-  denyRoommateRequest(){
-
   }
 }

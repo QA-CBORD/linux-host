@@ -15,6 +15,7 @@ import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -56,6 +57,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly userFacadeService: UserFacadeService,
     private readonly resolver: RecentOrdersResolver,
     private readonly commonService: CommonService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
@@ -86,25 +88,33 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(data => (this.data = data));
-      this.checkInService.getContentStringByName('pickup_info').toPromise();
+    this.checkInService.getContentStringByName('pickup_info').toPromise();
   }
+
+  ionViewDidEnter() {
+    this.globalNav.hideNavBar();
+  }
+
 
   async onClosed() {
     await this.modalController.dismiss({ closed: this.orderNew });
   }
 
   async goToOrderDetails() {
+    
     const order = (await this.merchantService.recentOrders$.pipe(take(1)).toPromise()).find(
       ({ id }) => id == this.orderId
     );
     if (!order) {
+      this.loadingService.showSpinner();
       this.resolver.resolve().then(async () => {
         this.checkInService.navedFromCheckin = true;
         await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
         this.modalController.dismiss();
+        this.loadingService.closeSpinner();
       });
     } else {
-      this.checkInService.navedFromCheckin = true;;
+      this.checkInService.navedFromCheckin = true;
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
       this.modalController.dismiss();
     }
