@@ -34,18 +34,14 @@ export class CheckingServiceFacade {
 
   getContentStringByName(contentStringName: string): Observable<string> {
     return this.contentStringFacade
-      . resolveContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.checkin, contentStringName)
-      .pipe(
-        map((string: ContentStringInfo) => (string ? string.value : ''))
-      )
+      .resolveContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.checkin, contentStringName)
+      .pipe(map((string: ContentStringInfo) => (string ? string.value : '')));
   }
 
   getContentStringByName$(contentStringName: string): Observable<string> {
     return this.contentStringFacade
       .getContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.checkin, contentStringName)
-      .pipe(
-        map((string: ContentStringInfo) => (string ? string.value : ''))
-      )
+      .pipe(map((string: ContentStringInfo) => (string ? string.value : '')));
   }
 
   checkInOrderByBarcode(

@@ -11,19 +11,15 @@ import { CheckInSuccessComponent } from './components/check-in-success/check-in-
 import { CheckingProcess } from './services/checking-process-builder';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { CheckinRoutingModule } from './routing/checkin-routing.module';
+import { CheckinSuccessResolver } from './resolver/checkin-success-resolver.component';
 
-const declarations = [
-  CheckInPendingComponent,
-  ScanCodeComponent,
-  CheckInFailureComponent,
-  CheckInFailureComponent,
-  CheckInSuccessComponent,
-];
+const declarations = [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent];
 
 @NgModule({
   declarations,
-  providers: [CheckingProcess],
-  entryComponents: declarations,
+  providers: [CheckingProcess, CheckinSuccessResolver],
+  entryComponents: [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent],
 
   imports: [
     CommonModule,
@@ -33,6 +29,8 @@ const declarations = [
     IonicModule,
     PriceUnitsResolverModule,
     StButtonModule,
+    CheckinRoutingModule
   ],
+  exports: [declarations],
 })
 export class CheckInModule {}

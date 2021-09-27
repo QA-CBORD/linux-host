@@ -28,7 +28,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-facade.service';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',

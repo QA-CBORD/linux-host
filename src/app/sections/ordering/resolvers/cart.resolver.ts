@@ -8,7 +8,7 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { Settings } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { CommonService } from '@shared/services/common.service';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-facade.service';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/checkin-content-string.model';
 
 @Injectable()

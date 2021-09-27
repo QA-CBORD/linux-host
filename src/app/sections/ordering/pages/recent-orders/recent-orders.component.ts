@@ -11,7 +11,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { CheckingServiceFacade } from '@sections/check-in/services/checkin-facade.service';
 
 @Component({
   selector: 'st-recent-orders',
