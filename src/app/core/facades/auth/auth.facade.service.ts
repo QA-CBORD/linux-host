@@ -7,6 +7,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Observable, of, iif, from, forkJoin, zip } from 'rxjs';
 import { Plugins } from '@capacitor/core';
 import { BarcodeService } from '@core/service/barcode/barcode.service';
+import { UserFacadeService } from '../user/user.facade.service';
 const { Device } = Plugins;
 
 @Injectable({
@@ -21,7 +22,8 @@ export class AuthFacadeService extends ServiceStateFacade {
   constructor(
     private readonly authApiService: AuthApiService,
     private readonly storageStateService: StorageStateService,
-    private readonly pingEncoderService: BarcodeService
+    private readonly pingEncoderService: BarcodeService,
+    private readonly userFacadeService: UserFacadeService
   ) {
     super();
   }
@@ -55,20 +57,25 @@ export class AuthFacadeService extends ServiceStateFacade {
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
     return this.isGuestUser().pipe(
       switchMap(isGuestUser => {
-        return this.authApiService
-          .authenticateUser(userCredentials, isGuestUser)
-          .pipe(
-            tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true }))
-          );
+        return this.authApiService.authenticateUser(userCredentials, isGuestUser).pipe(
+          switchMap(sessionId => {
+            // retrieve user and confirm is guest or patron.
+            this.storageStateService.updateStateEntity(this.sessionIdKey, sessionId, { highPriorityKey: true });
+            return this.userFacadeService.getUser$().pipe(
+              take(1),
+              map(({ guestUser }) => {
+                this.setIsGuestUser(guestUser);
+                return sessionId;
+              })
+            );
+          })
+        );
       })
     );
   }
 
   authenticatePinTotp(pin: string): Observable<boolean> {
-    return this.pingEncoderService.encodePin(pin)
-        .pipe(
-          switchMap((encrytedPin) => this.authenticatePin$(encrytedPin))
-        );
+    return this.pingEncoderService.encodePin(pin).pipe(switchMap(encrytedPin => this.authenticatePin$(encrytedPin)));
   }
 
   authenticatePin$(rawPin: string): Observable<boolean> {
