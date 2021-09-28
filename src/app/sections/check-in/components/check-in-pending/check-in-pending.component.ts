@@ -7,7 +7,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-facade.service';
+import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
@@ -25,6 +25,7 @@ export interface orderInfo {
   orderTypes: MerchantOrderTypesInfo;
 }
 
+const renderingDelay = 1000;
 @Component({
   templateUrl: './check-in-pending.component.html',
   styleUrls: ['./check-in-pending.component.scss'],
@@ -56,7 +57,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.loadingService.showSpinner();
     this.setData();
     this.watchLocationChanges();
   }
@@ -65,8 +65,8 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
   }
 
-  ionViewDidEnter() {
-    this.loadingService.closeSpinner();
+  async ngAfterViewInit() {
+    setTimeout(async () => await this.loadingService.closeSpinner(), renderingDelay);
   }
 
   watchLocationChanges() {
@@ -131,7 +131,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onScanCode() {
+  async onScanCode() {   
     this.loadingService.showSpinner();
     const modal = await this.modalController.create({
       component: ScanCodeComponent,

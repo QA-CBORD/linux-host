@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CoordsService } from '@core/service/coords/coords.service';
-import { CheckingService } from './checkin-service';
+import { CheckingService } from './check-in-service';
 import { first, map, switchMap } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 @Injectable({ providedIn: 'root' })
+
 export class CheckingServiceFacade {
   barcodeScanResult: string;
   navedFromCheckin: boolean;

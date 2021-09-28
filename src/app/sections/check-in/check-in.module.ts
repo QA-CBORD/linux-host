@@ -8,7 +8,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { CheckInSuccessComponent } from './components/check-in-success/check-in-success.component';
-import { CheckingProcess } from './services/checking-process-builder';
+import { CheckingProcess } from './services/check-in-process-builder';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { CheckinRoutingModule } from './routing/check-in-routing.module';

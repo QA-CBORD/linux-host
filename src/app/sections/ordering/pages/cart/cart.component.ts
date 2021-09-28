@@ -46,7 +46,7 @@ import { ConnectionService } from '@shared/services/connection-service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
-import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
+import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 const { Browser } = Plugins;
 
 @Component({

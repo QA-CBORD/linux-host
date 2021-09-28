@@ -7,12 +7,11 @@ import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { MerchantService } from '@sections/ordering';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
-import { forkJoin, of, zip } from 'rxjs';
+import { forkJoin, zip } from 'rxjs';
 
 import { Observable } from 'rxjs/internal/Observable';
-import { catchError, first, map, take, tap } from 'rxjs/operators';
-import { CheckingContentCsModel } from '../contents-strings/check-in-content-string.model';
-import { CheckingServiceFacade } from '../services/checkin-facade.service';
+import { first, map, take } from 'rxjs/operators';
+import { CheckingServiceFacade } from '../services/check-in-facade.service';
 
 @Injectable()
 export class CheckinPendingResolver implements Resolve<Observable<any>> {
@@ -60,9 +59,6 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
 
     return forkJoin(checkinPending$, data$).pipe(
       take(1),
-      tap(() => {
-        this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner();
-      }),
       map(([contentStrings, data]) => ({
         contentStrings,
         data,

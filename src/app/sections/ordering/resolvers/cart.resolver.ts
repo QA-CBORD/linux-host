@@ -7,10 +7,6 @@ import { CartService, MerchantAccountInfoList, MerchantService } from '@sections
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { Settings } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { CommonService } from '@shared/services/common.service';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-facade.service';
-import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
-
 @Injectable()
 export class CartResolver implements Resolve<Observable<[SettingInfo[], MerchantAccountInfoList]>> {
 
