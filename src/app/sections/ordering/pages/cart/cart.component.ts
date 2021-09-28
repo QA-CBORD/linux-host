@@ -235,12 +235,7 @@ export class CartComponent implements OnInit, OnDestroy {
     checkinStatus,
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
-      const modal = await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased }, true);
-      modal.onDidDismiss().then(({ data }) => {
-        if (data && data.closed) {
-          this.routingService.navigate([APP_ROUTES.ordering]);
-        }
-      });
+      this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased }, true);
       return;
     }
 

@@ -145,14 +145,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async openChecking() {
-    const modal = await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
-    modal.onDidDismiss().then(async ({ data }) => {
-      if (data && data.closed) {
-        if (await this.back()) {
-          this.checkinService.navedFromCheckin = false;
-        }
-      }
-    });
+    await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
   }
 
   private setActiveMerchant(orderId) {

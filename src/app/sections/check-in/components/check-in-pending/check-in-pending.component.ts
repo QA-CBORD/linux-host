@@ -1,19 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
+import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController } from '@ionic/angular';
-import {
-  CheckingContentCsModel,
-} from '@sections/check-in/contents-strings/checkin-content-string.model';
+import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
+import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 import { CheckingServiceFacade } from '@sections/check-in/services/checkin-facade.service';
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { Observable, Subscription, zip } from 'rxjs';
-import { first, map, take } from 'rxjs/operators';
+import {  Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 
@@ -29,21 +28,20 @@ export interface orderInfo {
   templateUrl: './check-in-pending.component.html',
   styleUrls: ['./check-in-pending.component.scss'],
 })
+
 export class CheckInPendingComponent implements OnInit, OnDestroy {
+  contentStrings: CheckingContentCsModel;
+  locationPermissionDisabled: boolean;
+  locationSubscription: Subscription;
+
+  data: orderInfo;
   total: number;
   merchantId: string;
   dueTime: string;
   orderId: string;
   checkNumber: number;
-  mealBased: boolean;
+  mealBased = false;
   orderNew: boolean;
-  contentStrings: CheckingContentCsModel = {} as any;
-  locationPermissionDisabled: boolean;
-  location$: Observable<any>;
-  locationSubscription: Subscription;
-
-  data: orderInfo;
-  contentString: any;
 
   constructor(
     private readonly loadingService: LoadingService,
@@ -51,17 +49,28 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly router: Router,
     private readonly merchantService: MerchantService,
-    private readonly userFacadeService: UserFacadeService,
-    private readonly resolver: RecentOrdersResolver
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly resolver: RecentOrdersResolver,
+    private readonly coordsService: CoordsService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
   ) {}
 
   ngOnInit() {
+    this.loadingService.showSpinner();
     this.setData();
     this.watchLocationChanges();
   }
+  
+  async ionViewWillEnter() {
+    this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
+  }
 
+  ionViewDidEnter() {
+    this.loadingService.closeSpinner();
+  }
+  
   watchLocationChanges() {
-    this.locationSubscription = this.location$.subscribe(
+    this.locationSubscription = this.coordsService.location$.subscribe(
       ({ coords: { latitude } }) => (this.locationPermissionDisabled = !latitude)
     );
   }
@@ -71,22 +80,36 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   setData() {
-    zip(this.userFacadeService.getUserData$(), this.merchantService.menuMerchants$)
-      .pipe(
-        first(),
-        map(([{ locale, timeZone }, merchants]) => {
-          const { storeAddress, orderTypes } = merchants.find(({ id }) => id == this.merchantId);
-          const date = new Date(this.dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));
-          const pickupTime = date.toLocaleString(locale, { hour12: false, timeZone });
-          return { storeAddress, pickupTime: { dueTime: pickupTime }, orderTypes };
-        })
-      )
-      .subscribe(data => (this.data = data));
-    this.checkInService.getContentStringByName('pickup_info').toPromise();
+    this.activatedRoute.data.subscribe(response => {
+      const {
+        contentStrings,
+        locationPermissionDisabled,
+        mealBased,
+        orderId,
+        total,
+        checkNumber,
+        merchantId,
+        dueTime,
+        data,
+        orderNew,
+      } = response.data;
+      const { content } = contentStrings;  
+      this.data = <orderInfo>data;
+      this.contentStrings = <CheckingContentCsModel>content; 
+      this.locationPermissionDisabled = locationPermissionDisabled;
+      this.mealBased = mealBased ? null : mealBased;
+      this.orderId = orderId;
+      this.total = total;
+      this.checkNumber = checkNumber;
+      this.merchantId = merchantId;
+      this.dueTime = dueTime;
+      this.orderNew = orderNew;
+
+    });
   }
 
   async onClosed() {
-    await this.modalController.dismiss({ closed: this.orderNew });
+    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
   }
 
   async goToOrderDetails() {
@@ -97,12 +120,10 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       this.resolver.resolve().then(async () => {
         this.checkInService.navedFromCheckin = true;
         await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-        this.modalController.dismiss();
       });
     } else {
       this.checkInService.navedFromCheckin = true;
       this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
-      this.modalController.dismiss();
     }
   }
 
@@ -144,16 +165,14 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private async showSuccessModal() {
-    await this.modalController.dismiss();
-    this.router.navigate([PATRON_NAVIGATION.ordering, 'success'], {
+    await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.success], {
       queryParams: {
         mealBased: this.mealBased,
         orderId: this.orderId,
         total: this.total,
         checkNumber: this.checkNumber,
         data: JSON.stringify(this.data),
-      },
-      skipLocationChange: true,
+      }
     });
   }
 

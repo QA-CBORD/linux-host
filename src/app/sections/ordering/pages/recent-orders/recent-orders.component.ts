@@ -55,12 +55,7 @@ export class RecentOrdersComponent implements OnInit {
 
   async onNavigateToCheckin(orderInfo) {
     this.globalNav.hideNavBar();
-    const modal = await this.checkinProcess.start(orderInfo, false);
-    modal.onDidDismiss().then(({ data }) => {
-      if (data) {
-        this.globalNav.showNavBar();
-      }
-    });
+    await this.checkinProcess.start(orderInfo, false);
   }
 
   async onOrderPicked(order: OrderInfo): Promise<void> {

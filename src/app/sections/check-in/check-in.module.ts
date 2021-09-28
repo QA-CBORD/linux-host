@@ -11,14 +11,15 @@ import { CheckInSuccessComponent } from './components/check-in-success/check-in-
 import { CheckingProcess } from './services/checking-process-builder';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
-import { CheckinRoutingModule } from './routing/checkin-routing.module';
-import { CheckinSuccessResolver } from './resolver/checkin-success-resolver.component';
+import { CheckinRoutingModule } from './routing/check-in-routing.module';
+import { CheckinSuccessResolver } from './resolver/check-in-success-resolver.component';
+import { CheckinPendingResolver } from './resolver/check-in-pending.resolver';
 
 const declarations = [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent];
 
 @NgModule({
   declarations,
-  providers: [CheckingProcess, CheckinSuccessResolver],
+  providers: [CheckingProcess, CheckinSuccessResolver, CheckinPendingResolver],
   entryComponents: [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent],
 
   imports: [
