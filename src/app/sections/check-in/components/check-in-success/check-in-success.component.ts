@@ -25,8 +25,7 @@ export class CheckInSuccessComponent implements OnInit {
     private readonly router: Router,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly loadingService: LoadingService
+    private readonly activatedRoute: ActivatedRoute
   ) {}
 
 
@@ -37,10 +36,13 @@ export class CheckInSuccessComponent implements OnInit {
   ionViewWillEnter() {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
   }
-  
+
+  async ionViewWillLeave() {
+    await this.resolver.resolve();
+  }
+
   async ionViewDidLeave() {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
-    await this.resolver.resolve();
   }
 
   async goToRecentOrders() {

@@ -11,10 +11,11 @@ import { CheckingServiceFacade } from '@sections/check-in/services/checkin-facad
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
+import { ScanCodeComponent } from '../scan-code/scan-code.component';
 
 export interface orderInfo {
   pickupTime: {
@@ -28,7 +29,6 @@ export interface orderInfo {
   templateUrl: './check-in-pending.component.html',
   styleUrls: ['./check-in-pending.component.scss'],
 })
-
 export class CheckInPendingComponent implements OnInit, OnDestroy {
   contentStrings: CheckingContentCsModel;
   locationPermissionDisabled: boolean;
@@ -52,7 +52,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
-    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService
   ) {}
 
   ngOnInit() {
@@ -60,7 +60,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.setData();
     this.watchLocationChanges();
   }
-  
+
   async ionViewWillEnter() {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
   }
@@ -68,7 +68,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.loadingService.closeSpinner();
   }
-  
+
   watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe(
       ({ coords: { latitude } }) => (this.locationPermissionDisabled = !latitude)
@@ -93,9 +93,9 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         data,
         orderNew,
       } = response.data;
-      const { content } = contentStrings;  
+      const { content } = contentStrings;
       this.data = <orderInfo>data;
-      this.contentStrings = <CheckingContentCsModel>content; 
+      this.contentStrings = <CheckingContentCsModel>content;
       this.locationPermissionDisabled = locationPermissionDisabled;
       this.mealBased = mealBased ? null : mealBased;
       this.orderId = orderId;
@@ -104,12 +104,16 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       this.merchantId = merchantId;
       this.dueTime = dueTime;
       this.orderNew = orderNew;
-
     });
   }
 
   async onClosed() {
-    await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
+    const path = this.activatedRoute.snapshot.queryParams.path;
+    if (path.includes(LOCAL_ROUTING.recentOrders)) {
+      await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders]);
+    } else {
+      await this.router.navigate([PATRON_NAVIGATION.ordering]);
+    }
   }
 
   async goToOrderDetails() {
@@ -128,26 +132,25 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onScanCode() {
-    this.showSuccessModal();
-    // this.loadingService.showSpinner();
-    // const modal = await this.modalController.create({
-    //   component: ScanCodeComponent,
-    // });
-    // await modal.present();
-    // modal.onDidDismiss().then(() => {
-    //   if (this.checkInService.barcodeScanResult == null) return;
-    //   this.checkInService
-    //     .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)
-    //     .pipe(take(1))
-    //     .toPromise()
-    //     .then(async res => {
-    //       if (res) {
-    //         await this.showSuccessModal();
-    //       }
-    //     })
-    //     .catch(async err => await this.onCheckInFailed(err))
-    //     .finally(() => this.loadingService.closeSpinner());
-    // });
+    this.loadingService.showSpinner();
+    const modal = await this.modalController.create({
+      component: ScanCodeComponent,
+    });
+    await modal.present();
+    modal.onDidDismiss().then(() => {
+      if (this.checkInService.barcodeScanResult == null) return;
+      this.checkInService
+        .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)
+        .pipe(take(1))
+        .toPromise()
+        .then(async res => {
+          if (res) {
+            await this.showSuccessModal();
+          }
+        })
+        .catch(async err => await this.onCheckInFailed(err))
+        .finally(() => this.loadingService.closeSpinner());
+    });
   }
 
   async onLocationCheckinClicked() {
@@ -172,7 +175,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         total: this.total,
         checkNumber: this.checkNumber,
         data: JSON.stringify(this.data),
-      }
+      },
     });
   }
 
