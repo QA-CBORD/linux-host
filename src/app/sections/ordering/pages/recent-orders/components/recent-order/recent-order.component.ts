@@ -73,12 +73,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.globalNav.hideNavBar();
   }
 
-  ionWillLeave() {
-   // this.globalNav.showNavBar();
-  }
-
   ngOnDestroy() {
-    this.globalNav.showNavBar();
     this.checkinService.navedFromCheckin = false;
   }
 

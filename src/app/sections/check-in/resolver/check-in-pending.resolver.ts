@@ -4,13 +4,14 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { LocationPermissionsService } from '@sections/dashboard/services/location-permissions.service';
 import { MerchantService } from '@sections/ordering';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
-import { forkJoin, zip } from 'rxjs';
+import { forkJoin, from, zip } from 'rxjs';
 
 import { Observable } from 'rxjs/internal/Observable';
-import { first, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { CheckingServiceFacade } from '../services/check-in-facade.service';
 
 @Injectable()
@@ -19,27 +20,11 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
     private readonly merchantService: MerchantService,
     private readonly userFacadeService: UserFacadeService,
     private readonly checkInService: CheckingServiceFacade,
-    private readonly coordsService: CoordsService,
-    private readonly commonService: CommonService,
-    private readonly loadingService: LoadingService
+    private readonly commonService: CommonService
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
     this.checkInService.getContentStringByName('pickup_info');
-    let locationPermissionDisabled = true;
-
-    (async () => {
-      try {
-        const {
-          coords: { latitude, longitude },
-        } = await this.coordsService
-          .getCoords()
-          .pipe(first())
-          .toPromise();
-        locationPermissionDisabled = !(latitude && longitude);
-      } catch (error) {}
-    })();
-
     const checkinPending$ = this.commonService.loadContentString(ContentStringCategory.checkin);
     const dueTime = route.queryParams.dueTime;
     const merchantId = route.queryParams.merchantId;
@@ -62,7 +47,6 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
       map(([contentStrings, data]) => ({
         contentStrings,
         data,
-        locationPermissionDisabled,
         total,
         orderId,
         orderNew,

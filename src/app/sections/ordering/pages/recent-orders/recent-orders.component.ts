@@ -13,6 +13,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 
+const renderingDelay = 1000;
 @Component({
   selector: 'st-recent-orders',
   templateUrl: './recent-orders.component.html',
@@ -31,7 +32,7 @@ export class RecentOrdersComponent implements OnInit {
     private readonly checkinProcess: CheckingProcess,
     private readonly globalNav: GlobalNavService,
     private readonly loadingService: LoadingService,
-    public readonly checkinService: CheckingServiceFacade,
+    public readonly checkinService: CheckingServiceFacade
   ) {}
 
   ngOnInit() {
@@ -41,6 +42,12 @@ export class RecentOrdersComponent implements OnInit {
 
   ionViewWillEnter() {
     this.showNavBar();
+  }
+
+  async ionViewDidEnter() {
+    setTimeout(async () => {
+      await this.loadingService.closeSpinner();
+    }, renderingDelay);
   }
 
   refreshRecentOrders({ target }) {
@@ -80,7 +87,6 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   private async initContentStrings() {
-    
     this.contentStrings.buttonDashboardStartOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
     );
