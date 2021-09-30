@@ -94,11 +94,11 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
-    private readonly router: Router,
     private readonly checkinProcess: CheckingProcess
   ) {}
 
   ionViewWillEnter() {
+    this.globalNav.hideNavBar();
     this.accounts$ = this.getAvailableAccounts();
     this.cdRef.detectChanges();
   }

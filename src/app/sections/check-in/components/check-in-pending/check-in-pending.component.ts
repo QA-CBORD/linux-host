@@ -70,6 +70,10 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.routeSubscription.unsubscribe();
   }
 
+  ionViewWillLeave() {
+    this.globalNav.showNavBar();
+  }
+  
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
     this.loadingService.closeSpinner();
@@ -84,7 +88,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     } else {
       await this.router.navigate([PATRON_NAVIGATION.ordering]);
     }
-    this.globalNav.showNavBar();
   }
 
   async goToOrderDetails() {
@@ -195,8 +198,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   private watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
       this.locationPermissionDisabled = !(latitude||longitude);
-      console.log('location: ', this.locationPermissionDisabled);
-      console.log('latitude: ', latitude,longitude);
     });
   }
 }

@@ -33,7 +33,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/check-in-faca
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
   styleUrls: ['./recent-order.component.scss'],
- // changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
@@ -71,6 +71,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
+  }
+
+  ionViewWillLeave() {
+    this.globalNav.showNavBar();
   }
 
   ngOnDestroy() {
