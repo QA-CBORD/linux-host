@@ -144,7 +144,16 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async openChecking() {
+    if (await this.checkinService.navedFromCheckin) {
+      await this.navigateToCheckinPending();
+    } else {
+      await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
+    }
+  }
+
+  private async navigateToCheckinPending() {
     await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
+    this.checkinService.navedFromCheckin = false;
   }
 
   private setActiveMerchant(orderId) {
@@ -341,8 +350,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   async onClosed() {
     if (await this.checkinService.navedFromCheckin) {
-      await this.openChecking();
-      this.checkinService.navedFromCheckin = false;
+      await this.navigateToCheckinPending();
     } else {
       this.back();
     }

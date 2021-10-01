@@ -98,7 +98,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly a11yService: AccessibilityService, 
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ngOnInit() {
@@ -108,7 +108,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setAccessoryBarVisible(true);
     this.setPhoneField();
   }
- 
+
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
     this.setAccessoryBarVisible(false);
@@ -137,7 +137,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       if (this.orderDetailOptions.dueTime instanceof Date) {
         return this.orderDetailOptions;
       }
-       return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
+      return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
     }
   }
 
@@ -161,7 +161,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAccessoryBarVisible(isVisible: boolean) {
-    Keyboard.setAccessoryBarVisible({ isVisible: isVisible });
+    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch((err) => {
+      console.log('setAccessoryBarVisible: ', err);
+    });
   }
 
   initForm() {
@@ -174,10 +176,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
     if (!this.mealBased && this.isTipEnabled) {
       const tipErrors = [
-        formControlErrorDecorator(
-          validateLessThanOther(this.subTotal),
-          CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal
-        ),
+        formControlErrorDecorator(validateLessThanOther(this.subTotal), CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal),
         formControlErrorDecorator(validateCurrency, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].currency),
         formControlErrorDecorator(validateGreaterOrEqualToZero, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].min),
       ];
@@ -186,16 +185,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.detailsForm.controls[FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
     }
     const phoneErrors = [
-        formControlErrorDecorator(
-        Validators.required,
-        CONTROL_ERROR[FORM_CONTROL_NAMES.phone].required
-      ),
-      formControlErrorDecorator(
-        Validators.minLength(3),
-        CONTROL_ERROR[FORM_CONTROL_NAMES.phone].min
-      ),
-      formControlErrorDecorator(Validators.maxLength(32), 
-      CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[FORM_CONTROL_NAMES.phone].required),
+      formControlErrorDecorator(Validators.minLength(3), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].min),
+      formControlErrorDecorator(Validators.maxLength(32), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
     ];
     this.detailsForm.controls[FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
     this.subscribeOnFormChanges();
@@ -239,14 +231,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   get phone(): AbstractControl {
     return this.detailsForm.get(FORM_CONTROL_NAMES.phone);
   }
-  
+
   openActionSheet() {
-    this.a11yService.isVoiceOverClick$.then((value) => {
-      if(value) {
-        this.selectRef.open(); 
-      }   
+    this.a11yService.isVoiceOverClick$.then(value => {
+      if (value) {
+        this.selectRef.open();
+      }
     });
-  } 
+  }
 
   private get addressInfoFormControl(): AbstractControl {
     return this.detailsForm.get(FORM_CONTROL_NAMES.address);
@@ -261,10 +253,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   private addCvvControl() {
     this.showCVVControl = true;
-    this.detailsForm.addControl(
-      FORM_CONTROL_NAMES.cvv,
-      this.fb.control('', [Validators.required, cvvValidationFn])
-    );
+    this.detailsForm.addControl(FORM_CONTROL_NAMES.cvv, this.fb.control('', [Validators.required, cvvValidationFn]));
   }
 
   private removeCvvControl() {
@@ -332,9 +321,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     CONTROL_ERROR[FORM_CONTROL_NAMES.tip].currency = await this.contentStrings.formErrorTipInvalidFormat
       .pipe(take(1))
       .toPromise();
-    CONTROL_ERROR[FORM_CONTROL_NAMES.tip].min = await this.contentStrings.formErrorTipMinimum
-      .pipe(take(1))
-      .toPromise();
+    CONTROL_ERROR[FORM_CONTROL_NAMES.tip].min = await this.contentStrings.formErrorTipMinimum.pipe(take(1)).toPromise();
     CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal = await this.contentStrings.formErrorTipSubtotal
       .pipe(take(1))
       .toPromise();

@@ -197,7 +197,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   private watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
-      this.locationPermissionDisabled = !(latitude||longitude);
+      this.locationPermissionDisabled = !(latitude&&longitude);
     });
   }
 }

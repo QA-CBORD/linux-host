@@ -71,7 +71,7 @@
 <ng-template #pending>
   <div [ngClass]="{ 'btn-wrapper': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
     <div style="width: 166px;" *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
-      <st-button (onClick)="openChecking()" [isDisabled]="checkinService.navedFromCheckin" >{{ 
+      <st-button (click)="openChecking()" [isDisabled]="checkinService.navedFromCheckin" >{{ 
         checkinService.navedFromCheckin ? "Back" :
         (contentStrings.labelBtnCheckin | async) }}</st-button>
     </div>
