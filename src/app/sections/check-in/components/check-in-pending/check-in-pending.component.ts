@@ -79,6 +79,11 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.loadingService.closeSpinner();
   }
 
+  ionViewDidEnter() {
+    this.globalNav.hideNavBar();
+  }
+
+
   async onClosed() {
     await this.loadingService.showSpinner();
     const path = this.activatedRoute.snapshot.queryParams.path;
@@ -91,10 +96,12 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async goToOrderDetails() {
+    
     const order = (await this.merchantService.recentOrders$.pipe(take(1)).toPromise()).find(
       ({ id }) => id == this.orderId
     );
     if (!order) {
+      this.loadingService.showSpinner();
       this.resolver.resolve().then(async () => {
         this.checkInService.navedFromCheckin = true;
         await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, this.orderId]);
