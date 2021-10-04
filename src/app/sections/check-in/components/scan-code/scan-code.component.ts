@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import { LoadingService } from '@core/service/loading/loading.service';
 import { BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
 import { ModalController } from '@ionic/angular';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 
 @Component({
   templateUrl: './scan-code.component.html',

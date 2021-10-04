@@ -8,22 +8,19 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { CheckInSuccessComponent } from './components/check-in-success/check-in-success.component';
-import { CheckingProcess } from './services/checking-process-builder';
+import { CheckingProcess } from './services/check-in-process-builder';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { CheckinRoutingModule } from './routing/check-in-routing.module';
+import { CheckinSuccessResolver } from './resolver/check-in-success-resolver.component';
+import { CheckinPendingResolver } from './resolver/check-in-pending.resolver';
 
-const declarations = [
-  CheckInPendingComponent,
-  ScanCodeComponent,
-  CheckInFailureComponent,
-  CheckInFailureComponent,
-  CheckInSuccessComponent,
-];
+const declarations = [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent];
 
 @NgModule({
   declarations,
-  providers: [CheckingProcess],
-  entryComponents: declarations,
+  providers: [CheckingProcess, CheckinSuccessResolver, CheckinPendingResolver],
+  entryComponents: [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent],
 
   imports: [
     CommonModule,
@@ -33,6 +30,8 @@ const declarations = [
     IonicModule,
     PriceUnitsResolverModule,
     StButtonModule,
+    CheckinRoutingModule
   ],
+  exports: [declarations],
 })
 export class CheckInModule {}

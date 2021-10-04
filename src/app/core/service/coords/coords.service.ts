@@ -37,7 +37,10 @@ export class CoordsService {
     },
   };
 
-  constructor(private readonly androidPermissions: LocationPermissionsService,  private readonly loadingService: LoadingService) {}
+  constructor(
+    private readonly androidPermissions: LocationPermissionsService,
+    private readonly loadingService: LoadingService
+  ) {}
 
   get location$(): Observable<GeolocationPosition> {
     return this._location$.asObservable().pipe(skipWhile(value => !value));
@@ -83,10 +86,7 @@ export class CoordsService {
       timeout: 5,
     };
     from(Geolocation.getCurrentPosition(options))
-      .pipe(
-        take(1),
-        catchError(error => of(this.emptyPosition))
-      )
+      .pipe(take(1))
       .subscribe(
         resp => {
           this._latestLocation = resp;
@@ -96,7 +96,7 @@ export class CoordsService {
           this.emptyPositions();
         }
       );
-      await this.loadingService.closeSpinner();
+    await this.loadingService.closeSpinner();
   }
 
   private emptyPositions() {

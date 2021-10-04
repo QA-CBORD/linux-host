@@ -7,6 +7,7 @@ import { OrderingResolver } from './resolvers';
 import { LOCAL_ROUTING } from './ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { CheckInModule } from '@sections/check-in/check-in.module';
 
 const routes: Route[] = [
   {
@@ -48,6 +49,10 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.addressEdit,
     loadChildren: './pages/address-edit/address-edit.module#AddressEditPageModule',
+  },
+  {
+    path: LOCAL_ROUTING.checkin,
+    loadChildren: './../check-in/check-in.module#CheckInModule',
   },
 ];
 

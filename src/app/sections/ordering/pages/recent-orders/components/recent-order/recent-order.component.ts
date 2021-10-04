@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
@@ -27,13 +27,13 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
-import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
+import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
   styleUrls: ['./recent-order.component.scss'],
- // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
@@ -58,7 +58,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly alertController: AlertController,
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
-    private readonly checkinProcess: CheckingProcess
+    private readonly checkinProcess: CheckingProcess,
+    private readonly cdRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -71,14 +72,14 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
+    this.cdRef.detectChanges();
   }
 
-  ionWillLeave() {
-   // this.globalNav.showNavBar();
+  ionViewWillLeave() {
+    this.globalNav.showNavBar();
   }
 
   ngOnDestroy() {
-    this.globalNav.showNavBar();
     this.checkinService.navedFromCheckin = false;
   }
 
@@ -145,14 +146,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async openChecking() {
-    const modal = await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
-    modal.onDidDismiss().then(async ({ data }) => {
-      if (data && data.closed) {
-        if (await this.back()) {
-          this.checkinService.navedFromCheckin = false;
-        }
-      }
-    });
+    await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
   }
 
   private setActiveMerchant(orderId) {
