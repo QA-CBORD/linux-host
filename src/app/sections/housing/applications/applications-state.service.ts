@@ -121,7 +121,25 @@ export class ApplicationsStateService {
   }
 
   addRoommatesPreferences(addedRoommate: RoommatePreferences){
-    this.applicationsState.applicationDetails.roommatePreferences.forEach(roommatePreference => roommatePreference.preferenceKey === addedRoommate.preferenceKey ? roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate : null)
+
+    this.applicationsState.applicationDetails.roommatePreferences.forEach(roommatePreference => {
+      if(roommatePreference.patronKeyRoommate == 0 && !this.applicationsState.applicationDetails.roommatePreferences.find(roommate => roommate.patronKeyRoommate === addedRoommate.patronKeyRoommate )){
+        roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate;
+        roommatePreference.firstName = addedRoommate.firstName;
+        roommatePreference.lastName = addedRoommate.lastName ;
+        let roommateRequested = new RequestedRoommate( 
+          {'firstName':addedRoommate.firstName,
+          'lastName': addedRoommate.lastName , 
+          'preferenceKey': addedRoommate.preferenceKey ,
+          'patronRoommateKey': roommatePreference.patronKeyRoommate,
+          'middleName':roommatePreference.middleName, 
+          'birthDate': roommatePreference.birthDate, 
+          'preferredName':roommatePreference.preferredName,
+          'confirmed': true,
+        });
+        this.setRequestedRoommate(roommateRequested)
+      }
+    })
   }
 
   setMaximumSelectedRoommates(maxRoommates:number){

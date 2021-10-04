@@ -72,6 +72,8 @@ export class SearchByPage implements OnInit, OnDestroy {
 
   private _initGetRequestedRoommatesSubscription() {
     const applicationDetails = this._applicationStateService.applicationsState.applicationDetails;
+    const requestedRoommates = this._applicationStateService.getRequestedRoommate();
+
     const patronRequests = applicationDetails.roommatePreferences
       .filter(x => x.patronKeyRoommate !== 0)
       .map(x => new RequestedRoommate({
@@ -96,7 +98,12 @@ export class SearchByPage implements OnInit, OnDestroy {
           lastName: roommatePref ? roommatePref.lastName : '',
           preferenceKey: d.preferenceKey,
           patronRoommateKey: d.patronRoommateKey,
-          confirmed: d.confirmed
+          confirmed: requestedRoommates.some(roommate => {
+            if(roommate.patronRoommateKey === d.patronRoommateKey){
+              return roommate.confirmed;
+            }
+            return d.confirmed
+          })
         });
       })),
       tap(_ => {
