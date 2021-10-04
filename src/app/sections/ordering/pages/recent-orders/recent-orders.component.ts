@@ -8,11 +8,12 @@ import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/orde
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
+import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { CheckingServiceFacade } from '@sections/check-in/services/checkin-service-facade';
+import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 
+const renderingDelay = 1000;
 @Component({
   selector: 'st-recent-orders',
   templateUrl: './recent-orders.component.html',
@@ -31,7 +32,7 @@ export class RecentOrdersComponent implements OnInit {
     private readonly checkinProcess: CheckingProcess,
     private readonly globalNav: GlobalNavService,
     private readonly loadingService: LoadingService,
-    public readonly checkinService: CheckingServiceFacade,
+    public readonly checkinService: CheckingServiceFacade
   ) {}
 
   ngOnInit() {
@@ -41,6 +42,12 @@ export class RecentOrdersComponent implements OnInit {
 
   ionViewWillEnter() {
     this.showNavBar();
+  }
+
+  async ionViewDidEnter() {
+    setTimeout(async () => {
+      await this.loadingService.closeSpinner();
+    }, renderingDelay);
   }
 
   refreshRecentOrders({ target }) {
@@ -55,12 +62,7 @@ export class RecentOrdersComponent implements OnInit {
 
   async onNavigateToCheckin(orderInfo) {
     this.globalNav.hideNavBar();
-    const modal = await this.checkinProcess.start(orderInfo, false);
-    modal.onDidDismiss().then(({ data }) => {
-      if (data) {
-        this.globalNav.showNavBar();
-      }
-    });
+    await this.checkinProcess.start(orderInfo, false);
   }
 
   async onOrderPicked(order: OrderInfo): Promise<void> {
@@ -85,7 +87,6 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   private async initContentStrings() {
-    
     this.contentStrings.buttonDashboardStartOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
     );

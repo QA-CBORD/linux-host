@@ -22,7 +22,7 @@
   <div class="pending-checkin__colored-bg">
     <div class="padded">
       <div class="title-lbl faded">{{ contentStrings.lbl_pickup_time }}</div>
-      <div class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</div>
+      <span class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</span>
       <div class="small-content faded">{{ contentStrings.pickup_info }}</div>
       <div class="title-lbl faded">{{ contentStrings.lbl_pickup_addr }}</div>
       <div class="text-dark address">

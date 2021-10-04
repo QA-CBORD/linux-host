@@ -127,7 +127,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
         this.isSubmitted = status === ApplicationStatus.Submitted;
         this._loadingService.closeSpinner();
-        if(!this.isSubmitted || this._applicationsStateService.requestingRoommate.length > 0) {
+        if(!this.isSubmitted) {
           this.Showmodal();
         }
       }),

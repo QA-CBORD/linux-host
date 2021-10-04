@@ -93,3 +93,7 @@
 .btn-disabled{
   opacity: 0.4;
 }
+
+span {
+  @include font-nunito-heavy(15px);
+}
