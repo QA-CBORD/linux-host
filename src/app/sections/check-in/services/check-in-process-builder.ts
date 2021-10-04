@@ -13,20 +13,17 @@ export class CheckingProcess {
   ) {}
 
   async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }, orderNew = false) {
-    await this.loadingService.showSpinner();
-    this.ngZone.run(async () => {
-      await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.pending], {
-        queryParams: {
-          orderNew,
-          orderId,
-          dueTime,
-          checkNumber,
-          mealBased,
-          total,
-          merchantId,
-          path: this.router.url,
-        },
-      });
+    await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.pending], {
+      queryParams: {
+        orderNew,
+        orderId,
+        dueTime,
+        checkNumber,
+        mealBased,
+        total,
+        merchantId,
+        path: this.router.url,
+      },
     });
   }
 }

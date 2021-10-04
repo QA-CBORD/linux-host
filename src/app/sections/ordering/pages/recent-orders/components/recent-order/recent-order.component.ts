@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
@@ -33,7 +33,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/check-in-faca
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
   styleUrls: ['./recent-order.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
@@ -58,7 +58,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly alertController: AlertController,
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
-    private readonly checkinProcess: CheckingProcess
+    private readonly checkinProcess: CheckingProcess,
+    private readonly cdRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -71,6 +72,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
+    this.cdRef.detectChanges();
   }
 
   ionViewWillLeave() {
@@ -144,16 +146,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async openChecking() {
-    if (await this.checkinService.navedFromCheckin) {
-      await this.navigateToCheckinPending();
-    } else {
-      await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
-    }
-  }
-
-  private async navigateToCheckinPending() {
     await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
-    this.checkinService.navedFromCheckin = false;
   }
 
   private setActiveMerchant(orderId) {
@@ -350,7 +343,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   async onClosed() {
     if (await this.checkinService.navedFromCheckin) {
-      await this.navigateToCheckinPending();
+      await this.openChecking();
+      this.checkinService.navedFromCheckin = false;
     } else {
       this.back();
     }

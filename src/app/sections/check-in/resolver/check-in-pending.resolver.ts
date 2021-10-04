@@ -11,7 +11,7 @@ import { CommonService } from '@shared/services/common.service';
 import { forkJoin, from, zip } from 'rxjs';
 
 import { Observable } from 'rxjs/internal/Observable';
-import { map, take } from 'rxjs/operators';
+import { finalize, map, take } from 'rxjs/operators';
 import { CheckingServiceFacade } from '../services/check-in-facade.service';
 
 @Injectable()
@@ -20,10 +20,13 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
     private readonly merchantService: MerchantService,
     private readonly userFacadeService: UserFacadeService,
     private readonly checkInService: CheckingServiceFacade,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
+    private readonly loadingService: LoadingService,
+    public readonly checkinService: CheckingServiceFacade,
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
+    this.loadingService.showSpinner();
     this.checkInService.getContentStringByName('pickup_info');
     const checkinPending$ = this.commonService.loadContentString(ContentStringCategory.checkin);
     const dueTime = route.queryParams.dueTime;
@@ -52,7 +55,10 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
         orderNew,
         checkNumber,
         mealBased,
-      }))
+      })),
+      finalize(() => {
+        this.loadingService.closeSpinner();
+      })
     );
   }
 }

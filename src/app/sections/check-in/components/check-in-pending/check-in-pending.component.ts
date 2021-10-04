@@ -1,20 +1,17 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { AndroidPermissionResponse } from '@ionic-native/android-permissions/ngx';
 import { ModalController } from '@ionic/angular';
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
-import { LocationPermissionsService } from '@sections/dashboard/services/location-permissions.service';
 import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { from, Observable, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
@@ -28,11 +25,12 @@ export interface orderInfo {
   orderTypes: MerchantOrderTypesInfo;
 }
 
-const renderingDelay = 500;
 @Component({
   templateUrl: './check-in-pending.component.html',
   styleUrls: ['./check-in-pending.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class CheckInPendingComponent implements OnInit, OnDestroy {
   contentStrings: CheckingContentCsModel;
   locationPermissionDisabled: boolean;
@@ -57,7 +55,8 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly cdRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -77,6 +76,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
     this.loadingService.closeSpinner();
+    this.cdRef.detectChanges();
   }
 
   ionViewDidEnter() {
