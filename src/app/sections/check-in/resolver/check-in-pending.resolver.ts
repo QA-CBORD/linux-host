@@ -57,7 +57,7 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
         mealBased,
       })),
       finalize(() => {
-        this.loadingService.closeSpinner();
+        this.loadingService.closeSpinner.bind(this.loadingService);
       })
     );
   }

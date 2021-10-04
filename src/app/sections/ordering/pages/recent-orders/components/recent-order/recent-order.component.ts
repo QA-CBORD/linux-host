@@ -33,8 +33,8 @@ import { CheckingServiceFacade } from '@sections/check-in/services/check-in-faca
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
   styleUrls: ['./recent-order.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
   orderDetailsOptions$: Observable<any>;
@@ -59,7 +59,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly cdRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -72,7 +71,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
-    this.cdRef.detectChanges();
   }
 
   ionViewWillLeave() {
