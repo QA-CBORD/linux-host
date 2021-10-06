@@ -46,7 +46,7 @@ import { ConnectionService } from '@shared/services/connection-service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
-import { CheckingProcess } from '@sections/check-in/services/checking-process-builder';
+import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 const { Browser } = Plugins;
 
 @Component({
@@ -94,11 +94,11 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
-    private readonly router: Router,
     private readonly checkinProcess: CheckingProcess
   ) {}
 
   ionViewWillEnter() {
+    this.globalNav.hideNavBar();
     this.accounts$ = this.getAvailableAccounts();
     this.cdRef.detectChanges();
   }
@@ -235,14 +235,7 @@ export class CartComponent implements OnInit, OnDestroy {
     checkinStatus,
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
-      const modal = await this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased }, true);
-      modal.onDidDismiss().then(async ({ data }) => {
-        this.loadingService.showSpinner();
-        if (data && data.closed) {
-           await this.routingService.navigate([APP_ROUTES.ordering]);
-        }
-        this.loadingService.showSpinner();
-      });
+      this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased }, true);
       return;
     }
 
