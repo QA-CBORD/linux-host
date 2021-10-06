@@ -54,10 +54,10 @@ dependencies {
 
     // Origo and mobile keys SDK
     // uncomment to build app without origo sdk as a submodule
-    releaseImplementation name: 'origo-sdk-release', version: '1.7.0', ext: 'aar'
-    debugImplementation name: 'origo-sdk-debug', version: '1.7.0', ext: 'aar'
-    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '7.4.8', ext: 'aar'
-    releaseImplementation name: 'mobilekeys-android-sdk-release', version: '7.4.8', ext: 'aar'
+    releaseImplementation name: 'origo-sdk-release', version: '1.7.4', ext: 'aar'
+    debugImplementation name: 'origo-sdk-debug', version: '1.7.4', ext: 'aar'
+    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '7.5.0', ext: 'aar'
+    releaseImplementation name: 'mobilekeys-android-sdk-release', version: '7.5.0', ext: 'aar'
 
     // Origo transitive dependencies
     implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
