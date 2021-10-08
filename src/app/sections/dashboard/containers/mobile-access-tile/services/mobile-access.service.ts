@@ -25,9 +25,8 @@ export class MobileAccessService {
     protected readonly http: HttpClient,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly coords: CoordsService,
-  ) {
-  }
+    private readonly coords: CoordsService
+  ) {}
 
   get locations(): Observable<MMobileLocationInfo[]> {
     return this.locations$.asObservable();
@@ -38,13 +37,12 @@ export class MobileAccessService {
     this.locations$.next([...this.locationsInfo]);
   }
 
-
   getLocations(): Observable<MMobileLocationInfo[]> {
     return combineLatest(this.getMobileLocations(), this.getFavouritesLocations()).pipe(
       map(
         ([locations, favourites]: [MMobileLocationInfo[], string[]]) =>
-          (this._locations = this.getLocationsMultiSorted(locations, favourites)),
-      ),
+          (this._locations = this.getLocationsMultiSorted(locations, favourites))
+      )
     );
   }
 
@@ -54,31 +52,35 @@ export class MobileAccessService {
     const postParams: ServiceParameters = { filters };
     return this.coords.getCoords().pipe(
       switchMap((geoData: GeolocationPosition) => {
-          const geoParam = {
-            latitude: geoData.coords.latitude,
-            longitude: geoData.coords.longitude,
-            accuracy: geoData.coords.accuracy,
-          };
-          const queryConfig = new RPCQueryConfig('getMobileLocations', {
+        const geoParam = {
+          latitude: geoData.coords.latitude,
+          longitude: geoData.coords.longitude,
+          accuracy: geoData.coords.accuracy,
+        };
+        const queryConfig = new RPCQueryConfig(
+          'getMobileLocations',
+          {
             ...postParams,
             ...geoParam,
-          }, true);
+          },
+          true
+        );
 
-          return this.http.post<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, queryConfig);
-        },
-      ),
+        return this.http.post<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, queryConfig);
+      }),
       map(({ response, exception }) => {
         if (exception !== null) {
           throw new Error(exception);
         }
         return response;
       }),
+      catchError(() => of([]))
     );
   }
 
   getLocationById(locationId: string): Observable<MMobileLocationInfo | undefined> {
     return this.locations.pipe(
-      map((locations: MMobileLocationInfo[]) => locations.filter(location => location.locationId === locationId)[0]),
+      map((locations: MMobileLocationInfo[]) => locations.filter(location => location.locationId === locationId)[0])
     );
   }
 
@@ -88,28 +90,27 @@ export class MobileAccessService {
       catchError(() => {
         this.favourites = [];
         return of([]);
-      }),
+      })
     );
   }
 
   activateMobileLocation(
     locationId: string,
-    sourceInfo: string | null = null,
+    sourceInfo: string | null = null
   ): Observable<MActivateMobileLocationResult> {
     return this.coords.getCoords().pipe(
       map((geoData: GeolocationPosition) => this.createMobileLocationParams(locationId, geoData.coords, sourceInfo)),
       switchMap(postParams => {
-          const queryConfig = new RPCQueryConfig('activateMobileLocation', postParams, true);
+        const queryConfig = new RPCQueryConfig('activateMobileLocation', postParams, true);
 
-          return this.http.post<MessageResponse<MActivateMobileLocationResult>>(this.serviceUrl, queryConfig);
-        },
-      ),
+        return this.http.post<MessageResponse<MActivateMobileLocationResult>>(this.serviceUrl, queryConfig);
+      }),
       map(({ response, exception }: MessageResponse<MActivateMobileLocationResult>) => {
         if (exception !== null) {
           throw new Error(exception);
         }
         return response;
-      }),
+      })
     );
   }
 
@@ -166,5 +167,4 @@ export class MobileAccessService {
       sourceInfo,
     };
   }
-
 }

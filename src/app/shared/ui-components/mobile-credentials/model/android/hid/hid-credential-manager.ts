@@ -22,7 +22,7 @@ interface ExecutionParameters {
 
 @Injectable({ providedIn: 'root' })
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
-  private hidSdkError: HID_SDK_ERR = null;
+  private hidSdkErrorMessage: HID_SDK_ERR = null;
 
   constructor(
     private readonly modalCtrl: ModalController,
@@ -451,9 +451,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const params = { forceInstall, invitationCode: (this.mCredential as HIDCredential).getInvitationCode() };
     return await this.hidSdkManager()
       .setupEndpoint(params)
-      .catch(error => {
-        this.hidSdkError == error;
-        throw new Error(error);
+      .catch(({ message }) => {
+        this.hidSdkErrorMessage = message;
+        throw new Error(message);
       });
   };
 
@@ -481,15 +481,17 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       this.loadingService.closeSpinner();
     } else {
       this.loadingService.closeSpinner();
-      if (this.hidSdkError == HID_SDK_ERR.KEY_ALREADY_INSTALLED) {
+      if (this.hidSdkErrorMessage == HID_SDK_ERR.KEY_ALREADY_INSTALLED) {
         this.showCredentialAlreadyInstalledAlert();
-      } else if (this.hidSdkError == HID_SDK_ERR.INVALID_INVITATION_CODE) {
+      } else if (this.hidSdkErrorMessage == HID_SDK_ERR.INVALID_INVITATION_CODE) {
         delete this.mCredential.credentialBundle;
         this.showInstallationErrorAlert();
+      } else if (this.hidSdkErrorMessage == HID_SDK_ERR.TRANSACTION_FAILED_INVALID_KEY) {
+        this.showInstallationErrorAlert(this.hidSdkErrorMessage);
       } else {
         this.showInstallationErrorAlert();
       }
-      this.hidSdkError = null;
+      this.hidSdkErrorMessage = null;
     }
   }
 
