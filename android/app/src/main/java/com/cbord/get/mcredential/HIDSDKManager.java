@@ -28,6 +28,7 @@ public class HIDSDKManager  {
     private static final String TAG = HIDSDKManager.class.getSimpleName();
     private static final String TRANSACTION_SUCCESS = "success";
     private static final String TRANSACTION_FAILED = "failed";
+    private static final String TRANSACTION_FAILED_INVALID_KEY = "invalid key";
     private final String NO_KEY_INSTALLED = "NO_KEY_INSTALLED";
     private final String MOBILE_KEY_ALREADY_INSTALLED = "KEY_ALREADY_INSTALLED";
     private OrigoMobileKeys mobileKeys;
@@ -126,19 +127,30 @@ public class HIDSDKManager  {
 
 
     public void doHidCredentialFirstInstall(boolean forceInstall, final String invitationCode, TransactionCompleteCallback txCb){
-        if(isEndpointActive()){
-            if(forceInstall){
-                deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode));
+
+        if (invitationCode == null) {
+            txCb.onCompleted(TRANSACTION_FAILED_INVALID_KEY);
+            return;
+        }
+
+        try {
+            if(isEndpointActive()){
+                if(forceInstall){
+                    deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode));
+                } else{
+                    txCb.onCompleted(MOBILE_KEY_ALREADY_INSTALLED);
+                }
             } else{
-                txCb.onCompleted(MOBILE_KEY_ALREADY_INSTALLED);
+                if(isEndpointSetup()){
+                    deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode));
+                }
+                else {
+                    mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode);
+                }
             }
-         } else{
-            if(isEndpointSetup()){
-                deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode));
-            }
-            else {
-                mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode);
-            }
+        }catch (Exception any){
+            System.err.println("error: " + any.getMessage());
+            txCb.onCompleted(TRANSACTION_FAILED);
         }
     }
 

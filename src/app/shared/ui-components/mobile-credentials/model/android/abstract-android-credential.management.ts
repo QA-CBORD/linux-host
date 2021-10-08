@@ -56,24 +56,27 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     this.credentialStateChangeListener = credentialStateChangeSubscription;
   }
 
-  protected async createAlertDialog(header: string, msg: string, buttons: Array<any>): Promise<HTMLIonAlertElement> {
+  protected async createAlertDialog(header: string, msg: string, buttons: Array<any>, detail = null): Promise<HTMLIonAlertElement> {
+    let message = msg;
+    if (detail) message = `${msg} <br> <br> Details: ${detail}`;
+    
     return await this.alertCtrl.create({
       cssClass: 'alert-dialog',
       backdropDismiss: false,
       mode: 'ios',
-      message: msg,
+      message: message,
       buttons: buttons,
       header: header,
     });
   }
 
-  protected async showInstallationErrorAlert(): Promise<void> {
+  protected async showInstallationErrorAlert(errorDetail: string = null): Promise<void> {
     const string$ = (await this.contentStringAsync()).installErorDialogString$;
 
     const header = string$.title;
     const message = string$.mContent;
     const buttons = [{ text: string$.ok, role: 'cancel' }];
-    const alertDialog = await this.createAlertDialog(header, message, buttons);
+    const alertDialog = await this.createAlertDialog(header, message, buttons, errorDetail);
     this.loadingService.closeSpinner();
     await alertDialog.present();
   }
