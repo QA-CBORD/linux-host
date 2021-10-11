@@ -163,9 +163,8 @@
         <div
           *ngIf="( _applicationsStateService.getRequestedRoommate() ) as requestedRoommates"
           class="roommate-requested__container">
-          <div style="display: none;">{{_applicationsStateService.requestedRoommates$ | async }}</div>
           <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
-          <div *ngFor="let roommate of requestedRoommates">
+          <div *ngFor="let roommate of _applicationsStateService.requestedRoommates | async">
             <ion-card >
               <ion-list>
                   <ng-container [ngSwitch]="options.showOptions">

@@ -99,11 +99,14 @@ export class SearchByPage implements OnInit, OnDestroy {
           preferenceKey: d.preferenceKey,
           patronRoommateKey: d.patronRoommateKey,
           confirmed: requestedRoommates.some(roommate => {
-            if(roommate.patronRoommateKey === d.patronRoommateKey){
+            if(roommate.patronRoommateKey === d.patronRoommateKey && roommate.confirmed == true){
               return roommate.confirmed;
             }
             return d.confirmed
-          })
+          }),
+          middleName: d.middleName ? d.middleName : '',
+          birthDate: d.birthDate,
+          preferredName: d.preferredName ? d.preferredName :''
         });
       })),
       tap(_ => {
