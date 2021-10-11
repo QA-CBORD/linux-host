@@ -24,7 +24,6 @@ import { QuestionComponent } from '../../questions/question.component';
 import { ApplicationDetails, ApplicationStatus, PatronApplication } from '../../applications/applications.model';
 import { QuestionsPage } from '../../questions/questions.model';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
-import { RequestingRoommateModalModule } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.module';
 import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
 
 @Component({
@@ -127,7 +126,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
         this.isSubmitted = status === ApplicationStatus.Submitted;
         this._loadingService.closeSpinner();
-        if(!this.isSubmitted) {
+        if(!this.isSubmitted && this._applicationsStateService.requestingRoommate != null) {
           this.Showmodal();
         }
       }),
@@ -140,7 +139,11 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   async Showmodal() {
+    this._applicationsStateService.requestingRoommate.forEach((restingroommate,index)=>{
+      return this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.some(requested =>requested.patronKeyRoommate === restingroommate.patronKeyRoommate)? this._applicationsStateService.deleteRequestingRoommate(index) : undefined 
+    });
     let requestingRoommate = this._applicationsStateService.requestingRoommate;
+
     const RequestingRoommateModal = await this.modalController.create({
       component: RequestingRoommateModalComponent,
       componentProps: { requestingRoommate },

@@ -56,6 +56,11 @@ export class ApplicationsStateService {
 
   setRequestedRoommate(value: RequestedRoommate ){
     this.requestedroommate.push(value);
+    this.setRequestedRoommates(this.requestedroommate)
+  }
+
+  emptyRequestedRoommate(){
+    this.requestedroommate = [];
   }
 
   getRequestedRoommate() : RequestedRoommate[]{
@@ -121,7 +126,31 @@ export class ApplicationsStateService {
   }
 
   addRoommatesPreferences(addedRoommate: RoommatePreferences){
-    this.applicationsState.applicationDetails.roommatePreferences.forEach(roommatePreference => roommatePreference.preferenceKey === addedRoommate.preferenceKey ? roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate : null)
+
+    this.setRoommatesPreferences(this.applicationsState.applicationDetails.roommatePreferences.map(roommatePreference => {
+      if(roommatePreference.patronKeyRoommate == 0 && roommatePreference.patronKeyRoommate != addedRoommate.patronKeyRoommate){
+        roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate;
+        roommatePreference.firstName = addedRoommate.firstName;
+        roommatePreference.lastName = addedRoommate.lastName ;
+        
+        return roommatePreference;
+      }
+    }))
+
+    if(!this.requestedroommate.some(roommate => roommate.patronRoommateKey == addedRoommate.patronKeyRoommate  )){
+      let roommateRequested = new RequestedRoommate( 
+        {'firstName':addedRoommate.firstName,
+        'lastName': addedRoommate.lastName , 
+        'preferenceKey': addedRoommate.preferenceKey ,
+        'patronRoommateKey': addedRoommate.patronKeyRoommate,
+        'middleName':addedRoommate.middleName, 
+        'birthDate': addedRoommate.birthDate, 
+        'preferredName':addedRoommate.preferredName,
+        'confirmed': true,
+      });
+      this.setRequestedRoommate(roommateRequested);
+    }
+    
   }
 
   setMaximumSelectedRoommates(maxRoommates:number){
