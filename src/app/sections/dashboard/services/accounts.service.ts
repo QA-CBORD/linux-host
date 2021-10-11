@@ -39,7 +39,7 @@ export class AccountsService {
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
         this.getUserAccounts(
-          [PaymentSystemType.OPCS, PaymentSystemType.MONETRA, PaymentSystemType.CSGOLD, PaymentSystemType.USAEPAY]
+          [PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
         ).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );

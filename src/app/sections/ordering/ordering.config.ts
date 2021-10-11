@@ -8,7 +8,8 @@ export enum LOCAL_ROUTING {
   cart = 'cart',
   menuCategoryItems = 'menu-category-items',
   itemDetail = 'item-detail',
-  addressEdit = 'address-edit'
+  addressEdit = 'address-edit',
+  checkin = 'checkin'
 }
 
 export enum ORDERING_CONTENT_STRINGS {
