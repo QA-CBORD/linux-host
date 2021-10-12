@@ -36,7 +36,7 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <!-- HOSTS -->
-                <data android:host="dev.cbord.com" />
+                <data android:host="get.cbord.com" />
                 <data android:host="get.dev.cbord.com" />
             </intent-filter>
 
