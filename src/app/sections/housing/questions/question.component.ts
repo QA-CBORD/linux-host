@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
@@ -18,13 +18,19 @@ import { tap, catchError, map } from 'rxjs/operators';
   styleUrls: ['./question.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuestionComponent implements OnInit {
+export class QuestionComponent implements OnInit, OnDestroy {
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _termService: TermsService
     ) {}
+  
+  ngOnDestroy(): void {
+    this._applicationsStateService.setRequestedRoommates([])
+    this._applicationsStateService.setRoommatesPreferences([])
+    this._applicationsStateService.emptyRequestedRoommate()
+  }
 
 
   ngOnInit(): void {
@@ -90,6 +96,7 @@ export class QuestionComponent implements OnInit {
 
   private _initGetRequestedRoommatesSubscription() {
     const applicationDetails = this._applicationsStateService.applicationsState.applicationDetails;
+    const requestedRoommates = this._applicationsStateService.getRequestedRoommate();
     const patronRequests = applicationDetails.roommatePreferences
       .filter(x => x.patronKeyRoommate !== 0)
       .map(x => new RequestedRoommate({
@@ -106,6 +113,8 @@ export class QuestionComponent implements OnInit {
         const roommatePref = applicationDetails.roommatePreferences
           .find(f => f.patronKeyRoommate === d.patronRoommateKey
             && f.preferenceKey === d.preferenceKey);
+
+        
         const requestedRoommateObj = new RequestedRoommate({
           firstName: roommatePref ? roommatePref.firstName : '',
           lastName: roommatePref ? roommatePref.lastName : '',
@@ -116,15 +125,14 @@ export class QuestionComponent implements OnInit {
           birthDate: d.birthDate,
           preferredName: d.preferredName ? d.preferredName :''
         });
-        return requestedRoommateObj;
-      }))).subscribe((data)=>{
-        data.forEach((roommateRequest)=> {
-          const requestRommateStateService = this._applicationsStateService.getRequestedRoommate()
-          const isRequesteRommate = requestRommateStateService.find(request => request.preferenceKey === roommateRequest.preferenceKey )
-          if(!isRequesteRommate){
-            this._applicationsStateService.setRequestedRoommate(roommateRequest)
-          }
-        })
+        if(!requestedRoommates.some(requested => requested.patronRoommateKey == requestedRoommateObj.patronRoommateKey )){
+          this._applicationsStateService.setRequestedRoommate(requestedRoommateObj)
+          return requestedRoommateObj;
+        }
+
+      }))).subscribe(()=>{
+        this.requestedRoommates$ = this._applicationsStateService.requestedRoommates
       })
+      
   }
 }
