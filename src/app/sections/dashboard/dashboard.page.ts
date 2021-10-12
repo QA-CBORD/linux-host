@@ -30,6 +30,7 @@ import { OrderTileComponent } from './containers/order-tile/order-tile.component
 import { ExploreTileComponent } from './containers/explore-tile/explore-tile.component';
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
+import { Router } from '@angular/router';
 
 const { App, Device } = Plugins;
 
@@ -39,7 +40,6 @@ const { App, Device } = Plugins;
   styleUrls: ['./dashboard.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class DashboardPage implements OnInit {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
   @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
@@ -69,6 +69,7 @@ export class DashboardPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
+    private readonly router: Router
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -90,6 +91,7 @@ export class DashboardPage implements OnInit {
     this.explorerChild.forEach(child => (this.explorerTile = child));
     this.mobileAccessChild.forEach(child => (this.mobileAccessTile = child));
     this.conversationChild.forEach(child => (this.conversationTile = child));
+    this.checkOpenedFromDeepLink()
   }
 
   async ionViewWillEnter() {
@@ -284,5 +286,13 @@ export class DashboardPage implements OnInit {
 
   private hideGlobalNavBar(hide: boolean) {
     this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
+  }
+
+  private checkOpenedFromDeepLink() {
+    // Check if opened from deep link and navigate
+    const deepLinkPath = this.sessionFacadeService.deepLinkPath;
+    if (deepLinkPath && deepLinkPath.length) {
+      this.router.navigate(deepLinkPath).then(() => this.sessionFacadeService.navigatedToLinkPath());
+    }
   }
 }
