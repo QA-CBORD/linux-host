@@ -33,6 +33,8 @@ export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
+  private _deepLinkPath: string[];
+
   navigatedFromGpay: boolean = false;
   onLogOutObservable$: Subject<any> = new Subject<any>();
 
@@ -65,6 +67,12 @@ export class SessionFacadeService {
       } else {
         this.closeActionsheets();
         this.appStatus = AppStatus.BACKGROUND;
+      }
+    });
+    App.addListener('appUrlOpen', data => {
+      const url: string = data.url;
+      if (url && url.includes('cbord.com')) {
+        this._deepLinkPath = new URL(data.url).pathname.split('/').filter(s => s);
       }
     });
 
@@ -100,7 +108,7 @@ export class SessionFacadeService {
           // console.log('navigated: ', navigated);
         })
         .catch(err => {
-         // console.log(err);
+          // console.log(err);
         });
     }
   }
@@ -112,7 +120,12 @@ export class SessionFacadeService {
   set navigatedToPlugin(value: boolean) {
     this.navigateToNativePlugin = value;
   }
-
+  get deepLinkPath() {
+    return this._deepLinkPath;
+  }
+  navigatedToLinkPath() {
+    this._deepLinkPath = null;
+  }
   doLoginChecks() {
     // console.log('doLoginChecks called.... ');
     this.loadingService.showSpinner();

@@ -6,5 +6,10 @@
 	<string>development</string>
 	<key>com.apple.developer.payment-pass-provisioning</key>
 	<true/>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:get.cbord.com</string>
+		<string>applinks:get.dev.cbord.com</string>
+	</array>
 </dict>
 </plist>
