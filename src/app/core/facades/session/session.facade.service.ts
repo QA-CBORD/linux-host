@@ -73,7 +73,6 @@ export class SessionFacadeService {
       const url: string = data.url;
       if (url && url.includes('cbord.com')) {
         this._deepLinkPath = new URL(data.url).pathname.split('/').filter(s => s);
-        console.log('DeepLink', this._deepLinkPath);
       }
     });
 
