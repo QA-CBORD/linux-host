@@ -176,7 +176,13 @@ export class SessionFacadeService {
               this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
               break;
             case LoginState.EXTERNAL:
-              this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
+              // check if institution has guest login enabled and user had been logged in as guest previously.  if yes redirect to login page instead.
+              const isGuestloginEnabled = await this.authFacadeService.isGuestUser().toPromise();
+              if (isGuestloginEnabled) {
+                this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
+              } else {
+                this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
+              }
               break;
             case LoginState.DONE:
               this.navigateToDashboard();
