@@ -41,7 +41,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     if (!this.checkForMessages) {
       return of(null);
     }
-    this.checkForMessages = false;
     return from(Device.getInfo()).pipe(
       take(1),
       switchMap(deviceInfo => {
