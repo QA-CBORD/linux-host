@@ -20,6 +20,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
 import { Router } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
+import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 const { App, Device, BackgroundTask } = Plugins;
 
 enum AppStatus {
@@ -52,7 +53,8 @@ export class SessionFacadeService {
     private readonly loadingService: LoadingService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
   ) {
     this.appStateListeners();
   }
@@ -357,7 +359,7 @@ export class SessionFacadeService {
 
   private closeActionsheets() {
     const taskId = BackgroundTask.beforeExit(async () => {
-      this.nativeProvider.dismissTopControllers();
+      this.nativeProvider.dismissTopControllers(!!this.nativeStartupFacadeService.blockNavigationStartup);
       BackgroundTask.finish({
         taskId,
       });

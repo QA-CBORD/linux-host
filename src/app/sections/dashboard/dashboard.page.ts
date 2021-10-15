@@ -161,6 +161,7 @@ export class DashboardPage implements OnInit {
 
     modal.onDidDismiss().then(({ role }) => {
       this.hideGlobalNavBar(false);
+      this.nativeStartupFacadeService.unblockNavigationStartup();
       switch (role) {
         case BUTTON_TYPE.OKAY:
           onSuccessCb();
