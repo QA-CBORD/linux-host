@@ -16,7 +16,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   private blockGlobalNavigation: boolean = false;
   private digestKey = 'get_nativeStartupMessageDigest';
   private checkForMessages: boolean = false;
-  private blockNavStartup: boolean = false;
+  private blockNavStartup = false;
 
   constructor(
     private readonly nativeStartupApiService: NativeStartupApiService,
@@ -78,6 +78,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                   if (NativeStartupInfo.showOnce === 1) {
                     if (!cachedDigest || NativeStartupInfo.messageDigest != cachedDigest.value) {
                       this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest);
+                      this.resetBlockPopover(); // Show message once
                       return this.displayMessageToUser(
                         NativeStartupInfo.minSupportedVersionFailure,
                         this.blockNavStartup,
@@ -119,6 +120,11 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
       message,
       arrOfBtns,
     };
+  }
+
+  private resetBlockPopover() {
+    this.blockNavStartup = false;
+    this.checkForMessages = false;
   }
 }
 
