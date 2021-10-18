@@ -245,7 +245,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   private navigateToDashboard() {
     this.ngZone.run(async () => {
-      this.nativeStartupFacadeService.checkForStartupMessage = true;
       const isGuest = await this.authFacadeService.isGuestUser().toPromise();
       (isGuest && this.router.navigate([GUEST_NAVIGATION.dashboard], { replaceUrl: true })) ||
         this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
