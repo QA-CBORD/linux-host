@@ -29,7 +29,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     this._blockGlobalNavigation$.next(this.blockGlobalNavigation);
   }
 
-
   get blockGlobalNavigationStatus$(): Observable<boolean> {
     return this._blockGlobalNavigation$;
   }
