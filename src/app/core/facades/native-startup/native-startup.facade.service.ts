@@ -15,7 +15,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   protected readonly _blockGlobalNavigation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private blockGlobalNavigation: boolean = false;
   private digestKey = 'get_nativeStartupMessageDigest';
-  private checkForMessages: boolean = false;
   private blockNavStartup = false;
 
   constructor(
@@ -23,10 +22,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     private readonly storageStateService: StorageStateService
   ) {
     super();
-  }
-
-  set checkForStartupMessage(value: boolean) {
-    this.checkForMessages = value;
   }
 
   set blockGlobalNavigationStatus(value: boolean) {
@@ -47,9 +42,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   }
 
   fetchNativeStartupInfo(): Observable<any> {
-    if (!this.checkForMessages) {
-      return of(null);
-    }
     return from(Device.getInfo()).pipe(
       take(1),
       switchMap(deviceInfo => {
@@ -124,7 +116,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
 
   private resetBlockPopover() {
     this.blockNavStartup = false;
-    this.checkForMessages = false;
   }
 }
 

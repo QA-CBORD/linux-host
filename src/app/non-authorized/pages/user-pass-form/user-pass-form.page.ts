@@ -195,7 +195,6 @@ export class UserPassForm implements OnInit {
         await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;
       case LoginState.DONE:
-        this.nativeStartupFacadeService.checkForStartupMessage = true;
         this.navigate2Dashboard();
         break;
     }
