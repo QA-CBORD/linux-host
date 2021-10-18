@@ -117,21 +117,17 @@ export class NativeProvider {
     this.dismissTopControllers().finally(() => this.zone.run(() => this.doNativeNavigation()));
   }
 
-  async dismissTopControllers() {
+  async dismissTopControllers(keepPopover: boolean = false) {
     const [modal, popover, actionSheet, alertCtrl] = await Promise.all([
       this.modalController.getTop(),
       this.popoverController.getTop(),
       this.actionSheetController.getTop(),
-      this.alertCtrl.getTop()
+      this.alertCtrl.getTop(),
     ]);
-    if (modal)
-      modal.dismiss();
-    if (popover)
-      popover.dismiss();
-    if (actionSheet)
-      actionSheet.dismiss();
-    if (alertCtrl)
-      alertCtrl.dismiss();
+    if (modal) modal.dismiss();
+    if (actionSheet) actionSheet.dismiss();
+    if (alertCtrl) alertCtrl.dismiss();
+    if (popover && !keepPopover) popover.dismiss();
   }
 
   private doNativeNavigation() {
@@ -202,7 +198,7 @@ export class NativeProvider {
   /**
    *  Apple Pay
    */
-  
+
   payWithApplePay(payType: NativeData, moreParams: Object): Observable<ApplePayResponse> {
     if (this.isAndroid()) {
       return of({ success: false, errorMessage: 'Apple Pay does not work on Android.', accountId: null });
