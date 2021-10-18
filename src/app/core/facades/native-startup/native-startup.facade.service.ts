@@ -15,17 +15,13 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   protected readonly _blockGlobalNavigation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private blockGlobalNavigation: boolean = false;
   private digestKey = 'get_nativeStartupMessageDigest';
-  private checkForMessages: boolean = false;
+  private blockNavStartup = false;
 
   constructor(
     private readonly nativeStartupApiService: NativeStartupApiService,
     private readonly storageStateService: StorageStateService
   ) {
     super();
-  }
-
-  set checkForStartupMessage(value: boolean) {
-    this.checkForMessages = value;
   }
 
   set blockGlobalNavigationStatus(value: boolean) {
@@ -37,11 +33,15 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     return this._blockGlobalNavigation$;
   }
 
+  get blockNavigationStartup(): boolean {
+    return this.blockNavStartup;
+  }
+
+  unblockNavigationStartup() {
+    this.blockNavStartup = true;
+  }
+
   fetchNativeStartupInfo(): Observable<any> {
-    if (!this.checkForMessages) {
-      return of(null);
-    }
-    this.checkForMessages = false;
     return from(Device.getInfo()).pipe(
       take(1),
       switchMap(deviceInfo => {
@@ -55,12 +55,13 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
           map(([NativeStartupInfo, cachedDigest]) => {
+            this.blockNavStartup = NativeStartupInfo.action === 'block';
             // the service call will return null if there is no Native Startup Message
             if (NativeStartupInfo != null) {
               if (NativeStartupInfo.minSupportedVersionFailure === 1) {
                 return this.displayMessageToUser(
                   NativeStartupInfo.minSupportedVersionFailure,
-                  NativeStartupInfo.action === 'block',
+                  this.blockNavStartup,
                   NativeStartupInfo.messageTitle,
                   NativeStartupInfo.message
                 );
@@ -69,9 +70,10 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                   if (NativeStartupInfo.showOnce === 1) {
                     if (!cachedDigest || NativeStartupInfo.messageDigest != cachedDigest.value) {
                       this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest);
+                      this.resetBlockPopover(); // Show message once
                       return this.displayMessageToUser(
                         NativeStartupInfo.minSupportedVersionFailure,
-                        NativeStartupInfo.action === 'block',
+                        this.blockNavStartup,
                         NativeStartupInfo.messageTitle,
                         NativeStartupInfo.message
                       );
@@ -79,7 +81,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                   } else {
                     return this.displayMessageToUser(
                       NativeStartupInfo.minSupportedVersionFailure,
-                      NativeStartupInfo.action === 'block',
+                      this.blockNavStartup,
                       NativeStartupInfo.messageTitle,
                       NativeStartupInfo.message
                     );
@@ -110,6 +112,10 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
       message,
       arrOfBtns,
     };
+  }
+
+  private resetBlockPopover() {
+    this.blockNavStartup = false;
   }
 }
 

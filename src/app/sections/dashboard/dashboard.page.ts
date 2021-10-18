@@ -91,15 +91,12 @@ export class DashboardPage implements OnInit {
     this.explorerChild.forEach(child => (this.explorerTile = child));
     this.mobileAccessChild.forEach(child => (this.mobileAccessTile = child));
     this.conversationChild.forEach(child => (this.conversationTile = child));
-    this.checkOpenedFromDeepLink()
+    this.checkOpenedFromDeepLink();
   }
 
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
     this.updateTiles();
-  }
-
-  ionViewDidEnter() {
     this.checkNativeStartup();
   }
 
@@ -164,14 +161,13 @@ export class DashboardPage implements OnInit {
 
     modal.onDidDismiss().then(({ role }) => {
       this.hideGlobalNavBar(false);
+      this.nativeStartupFacadeService.unblockNavigationStartup();
       switch (role) {
         case BUTTON_TYPE.OKAY:
           onSuccessCb();
-          this.sessionFacadeService.lockVault();
           App.exitApp();
           break;
         case BUTTON_TYPE.CLOSE:
-          this.sessionFacadeService.lockVault();
           App.exitApp();
           break;
         case BUTTON_TYPE.CANCEL:

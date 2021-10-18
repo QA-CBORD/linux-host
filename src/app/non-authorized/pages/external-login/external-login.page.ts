@@ -164,7 +164,6 @@ export class ExternalLoginPage {
   }
 
   private async navigateToDashboard() {
-    this.nativeStartupFacadeService.checkForStartupMessage = true;
     await this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
   }
 
