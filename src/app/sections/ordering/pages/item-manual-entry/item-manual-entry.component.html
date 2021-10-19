@@ -16,5 +16,7 @@
   </div>
 </ion-content>
 <ion-footer class="ion-padding footer" no-border>
-  <st-button buttonModifier="rectangle" (onClick)="continue()" tabindex="0">Submit</st-button>
+  <st-button buttonModifier="rectangle" [disabled]="!manualEntryForm?.valid" (onClick)="continue()" tabindex="0"
+    >Submit</st-button
+  >
 </ion-footer>

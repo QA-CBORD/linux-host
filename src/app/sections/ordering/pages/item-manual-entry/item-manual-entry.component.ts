@@ -1,20 +1,32 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CartService, MenuInfo } from '@sections/ordering';
+import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/services/navigation.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './item-manual-entry.component.html',
   styleUrls: ['./item-manual-entry.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ItemManualEntryComponent implements OnInit {
+export class ItemManualEntryComponent implements OnInit, OnDestroy {
   manualEntryForm: FormGroup;
 
   constructor(
+    private readonly cartService: CartService,
     private readonly globalNav: GlobalNavService,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly navService: NavigationService,
     private readonly fb: FormBuilder
   ) {}
+
+  ngOnDestroy(): void {
+    this.globalNav.showNavBar();
+  }
 
   ngOnInit() {
     this.manualEntryForm = this.fb.group({
@@ -22,15 +34,23 @@ export class ItemManualEntryComponent implements OnInit {
     });
     this.cdRef.detectChanges();
   }
-  ionViewWillLeave() {
-    this.globalNav.showNavBar();
-  }
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
   }
 
-  continue() {}
+  continue() {
+    this.cartService
+      .getMenuItemByCode(this.code.value)
+      .pipe(
+        tap(({ menuItem: { id: menuItemId } }) =>
+          this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
+            queryParams: { menuItemId },
+          })
+        )
+      )
+      .subscribe();
+  }
 
   get controlsNames() {
     return BARCODE_CONTROL_NAMES;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { distinctUntilChanged, first, map, reduce, switchMap, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
@@ -338,6 +338,17 @@ export class CartService {
   }
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
+  getMenuItemByCode(code: string) {
+    return this.menuInfo$.pipe(
+      map(menu =>
+        menu.menuCategories
+          .map(cat => cat.menuCategoryItems.map(item => item))
+          .reduce((prev, curr) => [...prev, ...curr], [])
+          .find(item => item.id === code)
+      ),
+      take(1)
+    );
+  }
 }
 
 export interface CartState {
