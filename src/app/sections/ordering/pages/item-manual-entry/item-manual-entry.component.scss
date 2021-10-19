@@ -1,0 +1,25 @@
+@import 'tools';
+
+.notch-header {
+  height: $notch-top;
+  --background: $color-white;
+}
+
+.container,
+ion-footer {
+  @include font-nunito-regular(16px);
+  --background: #{$color-background-divider};
+  background-color: #{$color-background-divider};
+  --padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+ion-item {
+  ion-label {
+    font-weight: 600;
+  }
+}
+
+.section {
+  background: white;
+  background-color: white;
+}

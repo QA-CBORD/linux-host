@@ -1,0 +1,20 @@
+<st-header title="Manual Entry" [isTitleShow]="true" [isToolbarShow]="true" [backButtonTitle]="''"> </st-header>
+<ion-content class="container ion-padding-top">
+  <div class="section ion-padding">
+    <form [formGroup]="manualEntryForm">
+      <st-input-floating-label
+        class="form__control"
+        [control]="code"
+        label="Barcode"
+        idd="barcode"
+        [formControlName]="controlsNames.code"
+        [isError]="code.errors && (code.dirty || code.touched)"
+        tabindex="0"
+      >
+      </st-input-floating-label>
+    </form>
+  </div>
+</ion-content>
+<ion-footer class="ion-padding footer" no-border>
+  <st-button buttonModifier="rectangle" (onClick)="continue()" tabindex="0">Submit</st-button>
+</ion-footer>

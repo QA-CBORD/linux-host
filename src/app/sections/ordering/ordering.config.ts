@@ -9,7 +9,8 @@ export enum LOCAL_ROUTING {
   menuCategoryItems = 'menu-category-items',
   itemDetail = 'item-detail',
   addressEdit = 'address-edit',
-  checkin = 'checkin'
+  checkin = 'checkin',
+  itemManualEntry = 'item-manual-entry'
 }
 
 export enum ORDERING_CONTENT_STRINGS {
