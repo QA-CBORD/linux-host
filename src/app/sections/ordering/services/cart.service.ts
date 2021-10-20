@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, first, map, reduce, switchMap, take, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
@@ -340,6 +340,7 @@ export class CartService {
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
   getMenuItemByCode(code: string) {
     return this.menuInfo$.pipe(
+      filter(menu => !!menu.menuCategories),
       map(menu =>
         menu.menuCategories
           .map(cat => cat.menuCategoryItems.map(item => item))

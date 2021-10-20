@@ -1,6 +1,10 @@
-<st-header title="Manual Entry" [isTitleShow]="true" [isToolbarShow]="true" [backButtonTitle]="''"> </st-header>
+<st-header title="Manual Entry" [isTitleShow]="true" [isToolbarShow]="true" backButtonTitle=""> </st-header>
 <ion-content class="container ion-padding-top">
   <div class="section ion-padding">
+    <div class="section__instructions ion-padding ion-margin-vertical">
+      <ion-icon src="/assets/icon/info.svg"></ion-icon>
+      <ion-text class="ion-margin-start">Enter the barcode to add the item to your cart.</ion-text>
+    </div>
     <form [formGroup]="manualEntryForm">
       <st-input-floating-label
         class="form__control"

@@ -13,13 +13,16 @@ ion-footer {
   --padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
-ion-item {
-  ion-label {
-    font-weight: 600;
-  }
-}
-
 .section {
   background: white;
   background-color: white;
+  &__instructions {
+    @include font-nunito-regular(14px);
+    background-color: #{$color-background-divider};
+    border-radius: 8px;
+    display: flex;
+    ion-icon {
+        margin-top: 5px;
+    }
+  }
 }
