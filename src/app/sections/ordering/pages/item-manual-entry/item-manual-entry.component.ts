@@ -46,9 +46,7 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
   continue() {
     this.cartService.getMenuItemByCode(this.code.value).subscribe(async menuItem => {
       if (menuItem) {
-        const {
-          menuItem: { id: menuItemId },
-        } = menuItem;
+        const { id: menuItemId } = menuItem;
         this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
           queryParams: { menuItemId },
         });

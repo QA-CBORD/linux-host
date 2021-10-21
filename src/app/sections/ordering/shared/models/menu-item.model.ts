@@ -19,4 +19,5 @@ export interface MenuItemInfo {
   protein: number;
   imageReference: string;
   menuItemOptions: MenuItemOptionInfo[];
+  barcode?: string;
 }

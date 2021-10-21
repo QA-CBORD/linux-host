@@ -358,9 +358,9 @@ export class CartService {
       filter(menu => !!menu.menuCategories),
       map(menu =>
         menu.menuCategories
-          .map(cat => cat.menuCategoryItems.map(item => item))
+          .map(cat => cat.menuCategoryItems.map(item => item.menuItem))
           .reduce((prev, curr) => [...prev, ...curr], [])
-          .find(item => item.id === code)
+          .find(item => item.barcode === code)
       ),
       take(1)
     );
