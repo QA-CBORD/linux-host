@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CartService, MenuInfo } from '@sections/ordering';
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { CartService } from '@sections/ordering';
+import { LOCAL_ROUTING, ORDERING_SCAN_GO_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 
 @Component({
   templateUrl: './item-manual-entry.component.html',
@@ -21,6 +23,8 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly navService: NavigationService,
+    private readonly toastService: ToastService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly fb: FormBuilder
   ) {}
 
@@ -42,7 +46,9 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
   continue() {
     this.cartService.getMenuItemByCode(this.code.value).subscribe(async menuItem => {
       if (menuItem) {
-        const { menuItem: { id: menuItemId } } = menuItem;
+        const {
+          menuItem: { id: menuItemId },
+        } = menuItem;
         this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
           queryParams: { menuItemId },
         });
@@ -58,6 +64,14 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
 
   get code(): AbstractControl {
     return this.manualEntryForm.get(this.controlsNames.code);
+  }
+  // Content strings getters
+  get instructions$(): Observable<string> {
+    return this.contentStringsFacadeService.resolveContentStringValue$(
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.ordering,
+      ORDERING_SCAN_GO_CONTENT_STRINGS.manualEntryInstructions
+    );
   }
 }
 export enum BARCODE_CONTROL_NAMES {

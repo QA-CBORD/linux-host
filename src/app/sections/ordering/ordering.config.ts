@@ -112,7 +112,9 @@ export enum ORDERING_CONTENT_STRINGS {
   noConnection = 'ordering_no_connection',
   orderingDatesUnavailable = 'ordering_dates_unavailable'
 }
-
+export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
+  manualEntryInstructions = 'manual-entry_instructions'
+}
 export enum MerchantSearchOptionName {
   OPEN_NOW = 'open_now', /// 1/0 - omit to return all
   ACTIVE = 'active', /// 1/0 - default to 1
