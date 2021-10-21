@@ -201,6 +201,10 @@ export class CartService {
     this.onStateChanged();
   }
 
+  public async setPendingOrder(orderId: string): Promise<void> {
+    this.cart.order = await this.initEmptyOrder(orderId);
+    this.onStateChanged();
+  }
   // ----------------------------------------- UPDATERS BLOCK -----------------------------------------//
 
   addOrderItems(orderItems: Partial<OrderItem> | Partial<OrderItem>[]) {
@@ -227,7 +231,17 @@ export class CartService {
           type,
           dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime,
         };
-        return this.merchantService.validateOrder(this.cart.order);
+        if (this.cart.order.id) {
+          return this.merchantService.addItemsToOrder({
+            clientAddItemsID: this.clientOrderId,
+            orderID: this.cart.order.id,
+            itemsToAdd: this.cart.order.orderItems,
+            orderPayment: this.cart.order.orderPayment,
+            cvv: '',
+          });
+        } else {
+          return this.merchantService.validateOrder(this.cart.order);
+        }
       }),
       tap(updatedOrder => {
         this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
@@ -313,12 +327,13 @@ export class CartService {
     );
   }
 
-  private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
+  private async initEmptyOrder(id?: string): Promise<Partial<OrderInfo>> {
     return this.userFacadeService
       .getUserData$()
       .pipe(
         map(({ institutionId, id: userId }) => {
           return {
+            id,
             userId,
             orderItems: [],
             merchantId: this.cart.merchant.id,

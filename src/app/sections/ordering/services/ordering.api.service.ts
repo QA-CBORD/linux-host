@@ -12,6 +12,7 @@ import { MerchantSearchOptions } from '@sections/ordering';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
+import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
 
 /** This service should be global */
 @Injectable({
@@ -66,6 +67,15 @@ export class OrderingApiService {
   validateOrder(orderInfo: OrderInfo): Observable<OrderInfo> {
     const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo) };
     const queryConfig = new RPCQueryConfig('validateOrder', postParams, true);
+
+    return this.http
+      .post(this.serviceUrlOrdering, queryConfig)
+      .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
+  }
+
+  addItemsToOrder(orderInfo: ExistingOrderInfo): Observable<OrderInfo> {
+    const postParams: ServiceParameters = { ... this.adjustOrderIfRollUp(orderInfo) };
+    const queryConfig = new RPCQueryConfig('addItemsToOrder', postParams, true);
 
     return this.http
       .post(this.serviceUrlOrdering, queryConfig)
@@ -233,7 +243,7 @@ export class OrderingApiService {
     );
   }
 
-  private adjustOrderIfRollUp(order: OrderInfo): OrderInfo {
+  private adjustOrderIfRollUp(order: OrderInfo | ExistingOrderInfo): OrderInfo | ExistingOrderInfo {
     if (
       order &&
       order.orderPayment &&

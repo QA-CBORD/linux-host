@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first, map, switchMap, take, tap } from 'rxjs/operators';
+import { first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
@@ -29,12 +29,12 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
+import { AddressInfo } from '@core/model/address/address-info';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
   styleUrls: ['./recent-order.component.scss'],
 })
-
 export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
   orderDetailsOptions$: Observable<any>;
@@ -58,7 +58,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly alertController: AlertController,
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
-    private readonly checkinProcess: CheckingProcess,
+    private readonly checkinProcess: CheckingProcess
   ) {}
 
   ngOnInit() {
@@ -395,5 +395,30 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder
     );
+  }
+
+  onAddItems() {
+    this.merchant$
+      .pipe(
+        withLatestFrom(this.orderDetailsOptions$, this.order$),
+        take(1)
+      )
+      .subscribe(
+        async ([merchant, { dueTime, orderType, address, isASAP }, { id }]: [
+          MerchantInfo,
+          {
+            dueTime: Date;
+            orderType: ORDER_TYPE;
+            address: AddressInfo;
+            isASAP?: boolean;
+          },
+          OrderInfo
+        ]) => {
+          await this.cart.setActiveMerchant(merchant);
+          await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
+          await this.cart.setPendingOrder(id);
+          await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
+        }
+      );
   }
 }
