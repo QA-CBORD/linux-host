@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [ItemManualEntryComponent],
+  entryComponents: [ItemManualEntryComponent],
   imports: [
     CommonModule,
     FormsModule,

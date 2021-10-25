@@ -10,7 +10,6 @@ import {
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
-  MerchantSettings,
 } from '@sections/ordering/ordering.config';
 import { filter, first, map, take } from 'rxjs/operators';
 import { AlertController, PopoverController } from '@ionic/angular';
@@ -43,7 +42,6 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   constructor(
     private readonly cartService: CartService,
-    private readonly router: Router,
     private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
@@ -99,23 +97,6 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  get barcodeOptions$() {
-    return this.merchantInfo$.pipe(
-      filter(merchant => !!merchant),
-      map(merchant => {
-        const res = [];
-        const manualBarcodeEnabled: MerchantSettingInfo = merchant.settings.map[MerchantSettings.manualBarcodeEnabled];
-        if (manualBarcodeEnabled && manualBarcodeEnabled.value) {
-          res.push({
-            label: 'Enter barcode manually',
-            action: () => this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.itemManualEntry]),
-          });
-        }
-        return res;
-      })
-    );
-  }
-
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
     const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
@@ -130,6 +111,12 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
     const { orderTypes, id, storeAddress, settings, timeZone } = await this.merchantInfo$.pipe(take(1)).toPromise();
     orderTypes.merchantTimeZone = timeZone;
     await this.actionSheet(orderTypes, id, storeAddress, settings, timeZone);
+  }
+
+  navigateToItem(menuItemId: string) {
+    this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
+      queryParams: { menuItemId },
+    });
   }
 
   private async actionSheet(

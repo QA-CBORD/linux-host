@@ -9,6 +9,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable } from 'rxjs';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   templateUrl: './item-manual-entry.component.html',
@@ -22,9 +23,9 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
     private readonly cartService: CartService,
     private readonly globalNav: GlobalNavService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly navService: NavigationService,
     private readonly toastService: ToastService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
+    private readonly modalController: ModalController,
     private readonly fb: FormBuilder
   ) {}
 
@@ -47,9 +48,7 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
     this.cartService.getMenuItemByCode(this.code.value).subscribe(async menuItem => {
       if (menuItem) {
         const { id: menuItemId } = menuItem;
-        this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-          queryParams: { menuItemId },
-        });
+        this.modalController.dismiss({ menuItemId });
       } else {
         await this.toastService.showToast({ message: 'Item not found, please check the code and try again.' });
       }

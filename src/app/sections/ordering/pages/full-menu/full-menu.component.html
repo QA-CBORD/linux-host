@@ -68,18 +68,7 @@
       ></ion-icon>
     </ion-item>
   </ion-list>
-  <ion-list>
-    <ion-item lines="full" *ngFor="let option of (barcodeOptions$ | async)" (click)="option.action()">
-      <div class="full-menu__menu-item">
-        <div>{{ option.label }}</div>
-      </div>
-      <ion-icon
-        class="full-menu__menu-item-icon"
-        src="/assets/icon/angle-down-select.svg"
-        aria-label="continue"
-      ></ion-icon>
-    </ion-item>
-  </ion-list>
+  <st-menu-item-finder (itemScanned)="navigateToItem($event)"></st-menu-item-finder>
 </ion-content>
 <ion-footer mode="ios"
             class="full-menu__footer"
