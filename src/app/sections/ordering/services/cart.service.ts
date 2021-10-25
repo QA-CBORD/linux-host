@@ -33,7 +33,6 @@ export class CartService {
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
-    private readonly datePipe: DatePipe
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -173,6 +172,7 @@ export class CartService {
   }
 
   private async setInitialEmptyOrder(): Promise<void> {
+    this._pendingOrderId = null;
     await this.initEmptyOrder().then(order => (this.cart.order = order));
     this.onStateChanged();
   }
@@ -199,6 +199,7 @@ export class CartService {
     this.cart.orderDetailsOptions = null;
     this.cart.menu = null;
     this.cart.order = null;
+    this._pendingOrderId = null;
     this.onStateChanged();
   }
 
