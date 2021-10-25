@@ -137,6 +137,7 @@ export enum MerchantSettings {
   orderAheadEnabled = 'merchant.order.order_ahead_enabled',
   disableItemNotes = 'merchant.order.disable_item_notes',
   tipEnabled = 'merchant.tip.enable_tip',
+  scanBarcodeEnabled = 'merchant.menu.menu_barcode_enabled',
   manualBarcodeEnabled = 'merchant.menu.menu_add_barcodea_enabled'
 }
 

@@ -23,10 +23,31 @@ export class MenuItemFinderComponent implements OnInit {
       filter(merchant => !!merchant),
       map(merchant => {
         const res = [];
+        const scanBarcodeEnabled: MerchantSettingInfo = merchant.settings.map[MerchantSettings.scanBarcodeEnabled];
         const manualBarcodeEnabled: MerchantSettingInfo = merchant.settings.map[MerchantSettings.manualBarcodeEnabled];
-        if (manualBarcodeEnabled && manualBarcodeEnabled.value) {
+        if (scanBarcodeEnabled && JSON.parse(scanBarcodeEnabled.value)) {
+          res.push({
+            label: 'Scan Barcode or QR Code',
+            icon: 'barcode-read',
+            action: async () => {
+              const modal = await this.modalController.create({
+                component: ItemManualEntryComponent,
+              });
+
+              modal.onDidDismiss().then(({ data }: any) => {
+                if (data) {
+                  const { menuItemId } = data;
+                  this.itemScanned.next(menuItemId);
+                }
+              });
+              await modal.present();
+            },
+          });
+        }
+        if (manualBarcodeEnabled && JSON.parse(manualBarcodeEnabled.value)) {
           res.push({
             label: 'Enter barcode manually',
+            icon: 'barcode-manual',
             action: async () => {
               const modal = await this.modalController.create({
                 component: ItemManualEntryComponent,
