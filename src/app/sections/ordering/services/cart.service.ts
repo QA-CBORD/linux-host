@@ -235,12 +235,9 @@ export class CartService {
           dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime,
         };
         if (this._pendingOrderId) {
-          return this.merchantService.addItemsToOrder({
-            clientAddItemsID: this.clientOrderId,
+          return this.merchantService.validatePendingOrder({
             orderID: this._pendingOrderId,
             itemsToAdd: this.cart.order.orderItems,
-            orderPayment: this.cart.order.orderPayment,
-            cvv: '',
           });
         } else {
           return this.merchantService.validateOrder(this.cart.order);
@@ -256,6 +253,14 @@ export class CartService {
   }
 
   submitOrder(accId: string, cvv: string, clientOrderID: string): Observable<OrderInfo> {
+    if(this._pendingOrderId){
+      return this.merchantService.addItemsToOrder({
+        clientAddItemsID: clientOrderID,
+        orderID: this._pendingOrderId,
+        itemsToAdd: this.cart.order.orderItems,
+        cvv,
+      });
+    }
     if (this.orderIsAsap) this.cart.order.dueTime = undefined;
     const order = { ...this.cart.order, clientOrderID };
     return this.api.submitOrder(order, accId, cvv);

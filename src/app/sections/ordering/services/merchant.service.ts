@@ -164,6 +164,10 @@ export class MerchantService {
     return this.orderingApiService.validateOrder(order);
   }
 
+  validatePendingOrder(order: ExistingOrderInfo): Observable<OrderInfo> {
+    return this.orderingApiService.validatePendingOrder(order);
+  }
+
   addItemsToOrder(order: ExistingOrderInfo): Observable<OrderInfo> {
     return this.orderingApiService.addItemsToOrder(order);
   }

@@ -115,7 +115,7 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
 
   navigateToItem(menuItemId: string) {
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-      queryParams: { menuItemId },
+      queryParams: { menuItemId, isExistingOrder: true },
     });
   }
 

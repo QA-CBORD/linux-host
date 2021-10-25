@@ -16,7 +16,7 @@ import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
 
 /** This service should be global */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OrderingApiService {
   private readonly serviceUrlMerchant: string = '/json/merchant';
@@ -73,8 +73,17 @@ export class OrderingApiService {
       .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
   }
 
+  validatePendingOrder(orderInfo: ExistingOrderInfo): Observable<OrderInfo> {
+    const postParams: ServiceParameters = { ...orderInfo };
+    const queryConfig = new RPCQueryConfig('validateOrderAddOns', postParams, true);
+
+    return this.http
+      .post(this.serviceUrlOrdering, queryConfig)
+      .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
+  }
+
   addItemsToOrder(orderInfo: ExistingOrderInfo): Observable<OrderInfo> {
-    const postParams: ServiceParameters = { ... this.adjustOrderIfRollUp(orderInfo) };
+    const postParams: ServiceParameters = { ...orderInfo };
     const queryConfig = new RPCQueryConfig('addItemsToOrder', postParams, true);
 
     return this.http
@@ -243,7 +252,7 @@ export class OrderingApiService {
     );
   }
 
-  private adjustOrderIfRollUp(order: OrderInfo | ExistingOrderInfo): OrderInfo | ExistingOrderInfo {
+  private adjustOrderIfRollUp(order: OrderInfo): OrderInfo {
     if (
       order &&
       order.orderPayment &&

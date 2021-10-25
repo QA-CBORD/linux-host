@@ -1,0 +1,7 @@
+@import 'tools';
+
+.options-container {
+  &__option-icon {
+    @include angle-right-arrow-icon();
+  }
+}

@@ -8,15 +8,15 @@ import { MenuCategoryItemInfo } from '@sections/ordering/shared/models';
 @Injectable()
 export class ItemDetailResolver
   implements
-  Resolve<
-  Observable<{
-    menuItem: MenuCategoryItemInfo;
-    queryParams: QueryParamsModel;
-  }>
-  > {
-  constructor(private readonly cartService: CartService) { }
+    Resolve<
+      Observable<{
+        menuItem: MenuCategoryItemInfo;
+        queryParams: QueryParamsModel;
+      }>
+    > {
+  constructor(private readonly cartService: CartService) {}
   resolve({
-    queryParams: { menuItemId, orderItemId, isItemExistsInCart = false },
+    queryParams: { menuItemId, orderItemId, isItemExistsInCart = false, isExistingOrder = false },
   }: ActivatedRouteSnapshot): Observable<{
     menuItem: MenuCategoryItemInfo;
     queryParams: QueryParamsModel;
@@ -24,7 +24,8 @@ export class ItemDetailResolver
     return this.cartService.menuInfo$.pipe(
       map(({ menuCategories }) => {
         const menuItems: any[] = menuCategories.map(({ menuCategoryItems }) =>
-          menuCategoryItems.find(menuCategoryItem => menuCategoryItem.menuItem.id === menuItemId));
+          menuCategoryItems.find(menuCategoryItem => menuCategoryItem.menuItem.id === menuItemId)
+        );
 
         const menuItem = menuItems.find(item => {
           if (item) {
@@ -35,7 +36,13 @@ export class ItemDetailResolver
         if (menuItem) {
           return {
             menuItem,
-            queryParams: { categoryId: menuItem.menuCategoryId, menuItemId: menuItem.id, orderItemId, isItemExistsInCart },
+            queryParams: {
+              categoryId: menuItem.menuCategoryId,
+              menuItemId: menuItem.id,
+              orderItemId,
+              isItemExistsInCart,
+              isExistingOrder
+            },
           };
         }
       }),
@@ -46,6 +53,6 @@ export class ItemDetailResolver
 
 export interface QueryParamsModel {
   categoryId: string;
-  menuItemId: string,
-  orderItemId: string
+  menuItemId: string;
+  orderItemId: string;
 }
