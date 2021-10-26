@@ -9,7 +9,8 @@ export enum LOCAL_ROUTING {
   menuCategoryItems = 'menu-category-items',
   itemDetail = 'item-detail',
   addressEdit = 'address-edit',
-  checkin = 'checkin'
+  checkin = 'checkin',
+  itemManualEntry = 'item-manual-entry'
 }
 
 export enum ORDERING_CONTENT_STRINGS {
@@ -111,7 +112,9 @@ export enum ORDERING_CONTENT_STRINGS {
   noConnection = 'ordering_no_connection',
   orderingDatesUnavailable = 'ordering_dates_unavailable'
 }
-
+export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
+  manualEntryInstructions = 'manual-entry_instructions'
+}
 export enum MerchantSearchOptionName {
   OPEN_NOW = 'open_now', /// 1/0 - omit to return all
   ACTIVE = 'active', /// 1/0 - default to 1
@@ -134,6 +137,8 @@ export enum MerchantSettings {
   orderAheadEnabled = 'merchant.order.order_ahead_enabled',
   disableItemNotes = 'merchant.order.disable_item_notes',
   tipEnabled = 'merchant.tip.enable_tip',
+  scanBarcodeEnabled = 'merchant.menu.menu_barcode_enabled',
+  manualBarcodeEnabled = 'merchant.menu.menu_add_barcodea_enabled'
 }
 
 export enum ORDER_TYPE {

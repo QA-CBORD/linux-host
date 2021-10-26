@@ -11,6 +11,7 @@ import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/s
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { MenuItemFinderModule } from '@sections/ordering/components/menu-item-finder/menu-item-finder.module';
 
 const imports = [
   CommonModule,
@@ -19,6 +20,7 @@ const imports = [
   StHeaderModule,
   MerchantDistanceModule,
   ViewCartModule,
+  MenuItemFinderModule,
   ModifyPrepTimeModule,
   StPopoverLayoutModule,
   AddressHeaderFormatPipeModule
