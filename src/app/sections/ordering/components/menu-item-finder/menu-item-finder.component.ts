@@ -30,17 +30,7 @@ export class MenuItemFinderComponent implements OnInit {
             label: 'Scan Barcode or QR Code',
             icon: 'barcode-read',
             action: async () => {
-              const modal = await this.modalController.create({
-                component: ItemManualEntryComponent,
-              });
-
-              modal.onDidDismiss().then(({ data }: any) => {
-                if (data) {
-                  const { menuItemId } = data;
-                  this.itemScanned.next(menuItemId);
-                }
-              });
-              await modal.present();
+              // TODO: Implement scan screen on this page
             },
           });
         }
