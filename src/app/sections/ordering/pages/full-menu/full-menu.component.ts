@@ -1,9 +1,9 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
-import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '@sections/ordering/shared/models';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GUEST_NAVIGATION, PATRON_NAVIGATION } from 'src/app/app.global';
+import { PATRON_NAVIGATION } from 'src/app/app.global';
 import {
   LOCAL_ROUTING,
   ORDER_ERROR_CODES,
@@ -11,7 +11,7 @@ import {
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
-import { first, map, take } from 'rxjs/operators';
+import { filter, first, map, take } from 'rxjs/operators';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -23,7 +23,6 @@ import { OverlayEventDetail } from '@ionic/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 
@@ -43,7 +42,6 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   constructor(
     private readonly cartService: CartService,
-    private readonly router: Router,
     private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
@@ -62,7 +60,7 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initContentStrings();
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.globalNav.hideNavBar();
   }
 
@@ -96,7 +94,6 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
         orderTypes.merchantTimeZone = this.cartService.merchantTimeZone;
         return { orderTypes, orderInfo };
       })
-
     );
   }
 
@@ -116,7 +113,19 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.actionSheet(orderTypes, id, storeAddress, settings, timeZone);
   }
 
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings, timeZone): Promise<void> {
+  navigateToItem(menuItemId: string) {
+    this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
+      queryParams: { menuItemId, isExistingOrder: true },
+    });
+  }
+
+  private async actionSheet(
+    orderTypes: MerchantOrderTypesInfo,
+    merchantId,
+    storeAddress,
+    settings,
+    timeZone
+  ): Promise<void> {
     const footerButtonName = 'set order options';
     const cssClass = `order-options-action-sheet ${
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
@@ -134,7 +143,7 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
         settings,
         activeDeliveryAddressId: orderType === ORDER_TYPE.PICKUP ? null : address.id,
         activeOrderType: orderType === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
-        timeZone
+        timeZone,
       },
     });
     modal.onDidDismiss().then(this.onDismissOrderDetails.bind(this));

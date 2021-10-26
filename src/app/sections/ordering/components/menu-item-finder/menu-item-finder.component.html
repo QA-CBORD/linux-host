@@ -1,0 +1,11 @@
+<ion-list>
+  <ion-item lines="full" *ngFor="let option of (barcodeOptions$ | async)" (click)="option.action()">
+    <ion-icon src="/assets/icon/{{ option.icon }}.svg" tabindex="-1"></ion-icon>
+    <ion-label>{{ option.label }}</ion-label>
+    <ion-icon
+      class="options-container__option-icon"
+      src="/assets/icon/angle-down-select.svg"
+      aria-label="continue"
+    ></ion-icon>
+  </ion-item>
+</ion-list>
