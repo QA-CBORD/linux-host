@@ -113,7 +113,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onScanCode() {
-    this.loadingService.showSpinner();
     const modal = await this.modalController.create({
       component: ScanCodeComponent,
     });

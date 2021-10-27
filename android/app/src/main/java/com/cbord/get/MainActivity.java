@@ -6,6 +6,7 @@ import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Plugin;
 
 import java.util.ArrayList;
+import com.dutchconcepts.capacitor.barcodescanner.BarcodeScanner;
 
 public class MainActivity extends BridgeActivity {
 
@@ -16,6 +17,7 @@ public class MainActivity extends BridgeActivity {
             add(HIDPlugin.class);
             add(GooglePayPlugin.class);
             add(MobileCredentialStatusPlugin.class);
+            add(BarcodeScanner.class);
         }});
     }
 }
