@@ -11,10 +11,11 @@ import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
+import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeComponent } from '../scan-code/scan-code.component';
 
 export interface orderInfo {
@@ -30,7 +31,6 @@ export interface orderInfo {
   styleUrls: ['./check-in-pending.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class CheckInPendingComponent implements OnInit, OnDestroy {
   contentStrings: CheckingContentCsModel;
   locationPermissionDisabled: boolean;
@@ -56,7 +56,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
     private readonly globalNav: GlobalNavService,
-    private readonly cdRef: ChangeDetectorRef,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -72,7 +72,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.globalNav.showNavBar();
   }
-  
+
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
     this.loadingService.closeSpinner();
@@ -83,6 +83,31 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.globalNav.hideNavBar();
   }
 
+  async onAdd2Cart() {
+    console.log('onAdd2Cart...');
+  }
+
+  async onCheckingClicked() {
+    const modal = await this.modalController.create({
+      component: PickCheckinModeComponent,
+      cssClass: 'order-options-action-sheet',
+      componentProps: {
+        contentStrings: this.contentStrings,
+        locationPermissionDisabled: this.locationPermissionDisabled,
+      },
+    });
+
+    modal.onDidDismiss().then(({ data }) => {
+      if (data) {
+        const { handler } = data;
+        if (/onScanCode/.test(handler) || /onLocationCheckinClicked/.test(handler)) {
+          this[handler]();
+        }
+      }
+    });
+
+    await modal.present();
+  }
 
   async onClosed() {
     await this.loadingService.showSpinner();
@@ -96,7 +121,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async goToOrderDetails() {
-    
     const order = (await this.merchantService.recentOrders$.pipe(take(1)).toPromise()).find(
       ({ id }) => id == this.orderId
     );
@@ -204,7 +228,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   private watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
-      this.locationPermissionDisabled = !(latitude&&longitude);
+      this.locationPermissionDisabled = !(latitude && longitude);
     });
   }
 }

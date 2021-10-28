@@ -1,0 +1,29 @@
+<ion-content>
+  <div class="header">
+    <span>{{ contentStrings.lbl_btn_checkin_in }} </span>
+  </div>
+  <div class="content-wrapper">
+    <div class="message">
+      <span>{{ contentStrings.checkin_method_text }} </span>
+    </div>
+    <div class="btn">
+      <st-button
+        [disabled]="locationPermissionDisabled"
+        (onClick)="onLocationCheckinClicked()"
+        buttonModifier="rectangular"
+      >
+        <span class="ion-text-capitalize">
+          {{ contentStrings.lbl_btn_loc_chck_in }}
+        </span>
+      </st-button>
+    </div>
+
+    <div class="btn">
+      <st-button color="#ddca710f" (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.lbl_btn_scan_code }}
+        </span>
+      </st-button>
+    </div>
+  </div>
+</ion-content>

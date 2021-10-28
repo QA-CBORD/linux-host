@@ -11,7 +11,12 @@
 <div class="divider"></div>
 <ion-content>
   <div class="pending-checkin__body-wrapper">
-    <img height="160" src="/assets/images/Big_Hourglass_Confetti.svg" alt="big Order Pending" class="pending-checkin__main-img" />
+    <img
+      height="160"
+      src="/assets/images/Big_Hourglass_Confetti.svg"
+      alt="big Order Pending"
+      class="pending-checkin__main-img"
+    />
     <!-- <div class="pending-checkin__sub-header">#{{ checkNumber }}</div> -->
     <div class="pending-checkin__sub-header">{{ contentStrings.order_pending }}</div>
     <div class="pending-checkin__body">
@@ -41,20 +46,21 @@
     </div>
   </div>
 </ion-content>
-<ion-footer class="pending-checkin__footer" mode="ios">
-  <div class="checkin-btn">
-    <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
-      <span class="ion-text-capitalize">
-        {{ contentStrings.lbl_btn_scan_code }}
-      </span>
-    </st-button>
-  </div>
-
-  <div class="checkin-btn" >
-    <st-button [disabled]="locationPermissionDisabled" (onClick)="onLocationCheckinClicked()" buttonModifier="rectangular" isDisabled="true">
-      <span class="ion-text-capitalize">
-        {{ contentStrings.lbl_btn_loc_chck_in }}
-      </span>
-    </st-button>
+<ion-footer style="padding: 10px 10px 30px 10px;" mode="ios">
+  <div class="pending-checkin__footer">
+    <div class="checkin-btn">
+      <st-button (onClick)="onAdd2Cart()" buttonModifier="rectangular" isDisabled="true">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.lbl_btn_add2_cart }}
+        </span>
+      </st-button>
+    </div>
+    <div class="checkin-btn"style="width: 166px;"  >
+      <st-button (onClick)="onCheckingClicked()" buttonModifier="rectangular">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.lbl_btn_checkin_in }}
+        </span>
+      </st-button>
+    </div>
   </div>
 </ion-footer>

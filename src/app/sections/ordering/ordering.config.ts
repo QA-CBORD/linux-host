@@ -109,7 +109,8 @@ export enum ORDERING_CONTENT_STRINGS {
   connectionLost = 'ordering_connection_lost',
   duplicateOrdering ='ordering_duplicate',
   noConnection = 'ordering_no_connection',
-  orderingDatesUnavailable = 'ordering_dates_unavailable'
+  orderingDatesUnavailable = 'ordering_dates_unavailable',
+  lblBtnAdd2Cart = 'lbl_btn_add2_cart'
 }
 
 export enum MerchantSearchOptionName {

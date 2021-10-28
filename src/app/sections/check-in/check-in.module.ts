@@ -14,13 +14,14 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { CheckinRoutingModule } from './routing/check-in-routing.module';
 import { CheckinSuccessResolver } from './resolver/check-in-success-resolver.component';
 import { CheckinPendingResolver } from './resolver/check-in-pending.resolver';
+import { PickCheckinModeComponent } from './components/pick-checkin-mode/pick-checkin-mode.component';
 
-const declarations = [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent];
+const declarations = [CheckInPendingComponent, PickCheckinModeComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent];
 
 @NgModule({
   declarations,
-  providers: [CheckingProcess, CheckinSuccessResolver, CheckinPendingResolver],
-  entryComponents: [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent],
+  providers: [CheckingProcess,  CheckinSuccessResolver, CheckinPendingResolver],
+  entryComponents: [CheckInPendingComponent, PickCheckinModeComponent, ScanCodeComponent, CheckInFailureComponent],
 
   imports: [
     CommonModule,

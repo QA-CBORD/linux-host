@@ -43,6 +43,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
   orderCheckStatus = OrderCheckinStatus;
+  addToCardStatus = {
+   isEnabled: ()=> false
+  };
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly merchantService: MerchantService,
@@ -391,6 +394,11 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelBtnCheckin
     );
+
+    this.contentStrings.lblBtnAdd2Cart = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.lblBtnAdd2Cart
+    )
+
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder

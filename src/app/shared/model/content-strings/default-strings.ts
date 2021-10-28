@@ -52,6 +52,9 @@ export const checkingDefaultCs = {
   too_early: 'You are here too early. You cannot Check In earlier than 30 minutes before Pick Up time.',
   get_closer: 'You must be closer to the merchant to use Location Check In. Or use the Scan Code feature once you arrive at the merchant.',
   invalid_scan_code: 'The code you scanned is invalid to check in your order. Please try again.',
+  lbl_btn_checkin_in: 'Check In',
+  lbl_btn_add2_cart: 'Add To Cart',
+  checkin_method_text: 'Select your method of Check in'
 }
 
 export const checkingSuccessCs = {

@@ -31,7 +31,6 @@
   </ion-toolbar>
 </ion-header> -->
 
-
 <ion-content>
   <st-order-details
     [tax]="(order$ | async).tax"
@@ -50,12 +49,12 @@
   >
     <ng-container
       *ngIf="(order$ | async).status !== orderStatus.PENDING; else pending"
-      [ngTemplateOutlet]="complited"
+      [ngTemplateOutlet]="completed"
     ></ng-container>
   </st-order-details>
 </ion-content>
 
-<ng-template #complited>
+<ng-template #completed>
   <div class="btn-wrapper">
     <div>
       <st-button [fill]="'clear'" [buttonModifier]="'black'" (onClick)="back()" class="ro__close-btn">{{
@@ -69,17 +68,33 @@
 </ng-template>
 
 <ng-template #pending>
+  <div class="cancel-btn">
+    <st-button color="red" fill="clear" (onClick)="showModal()">
+      <span class="ion-text-capitalize cancel-btn__text">
+        {{ contentStrings.buttonCancelOrder | async }}
+      </span>
+    </st-button>
+  </div>
   <div [ngClass]="{ 'btn-wrapper': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
-    <div style="width: 166px;" *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
-      <st-button (click)="openChecking()" [isDisabled]="checkinService.navedFromCheckin" >{{ 
-        checkinService.navedFromCheckin ? "Back" :
-        (contentStrings.labelBtnCheckin | async) }}</st-button>
+    <div *ngIf="addToCardStatus.isEnabled()">
+      <st-button isDisabled="true" (onClick)="showModal()">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.lblBtnAdd2Cart | async }}
+        </span>
+      </st-button>
     </div>
-    <div>
-      <st-button [buttonModifier]="'danger'" (onClick)="showModal()"
-        >{{ contentStrings.buttonCancelOrder | async }}
+
+    <!-- <div style="width: 166px;" *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
+      <st-button (click)="openChecking()" [isDisabled]="checkinService.navedFromCheckin">{{
+        checkinService.navedFromCheckin ? 'Back' : (contentStrings.labelBtnCheckin | async)
+      }}</st-button>
+    </div> -->
+    <div style="width: 166px;" *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)">
+      <st-button (click)="openChecking()">
+        <span class="ion-text-capitalize">
+          {{ contentStrings.labelBtnCheckin | async }}
+        </span>
       </st-button>
     </div>
   </div>
 </ng-template>
-
