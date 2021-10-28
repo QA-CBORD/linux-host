@@ -21,7 +21,11 @@ export class ScanCodeComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      BarcodeScanner.prepare();
+      const status = await BarcodeScanner.checkPermission({ force: true });
+      if (status.granted) {
+        alert('permission granted');
+        BarcodeScanner.prepare();
+      }
     } catch {
       this.checkingServiceFacade.barcodeScanResult = null;
     }

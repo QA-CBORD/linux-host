@@ -297,3 +297,10 @@ article {
 .no-focus-outline:focus {
   outline: none;
 }
+
+.select-modal {
+  background: rgba(0, 0, 0, 1) !important;
+  padding: 20% 10%  !important;
+  opacity: 0.5;
+  
+}

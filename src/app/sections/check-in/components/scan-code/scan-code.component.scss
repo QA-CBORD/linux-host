@@ -1,5 +1,10 @@
 #obs {
-  opacity: 0.5;
-  color: aqua;
-  background-color: aquamarine;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}
+
+
+ion-content {
+    --ion-content-background: transparent;
 }
