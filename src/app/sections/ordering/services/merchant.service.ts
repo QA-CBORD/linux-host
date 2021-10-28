@@ -27,9 +27,10 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User } from '../../../app.global';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Day, Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -161,6 +162,14 @@ export class MerchantService {
 
   validateOrder(order: OrderInfo): Observable<OrderInfo> {
     return this.orderingApiService.validateOrder(order);
+  }
+
+  validatePendingOrder(order: ExistingOrderInfo): Observable<OrderInfo> {
+    return this.orderingApiService.validatePendingOrder(order);
+  }
+
+  addItemsToOrder(order: ExistingOrderInfo): Observable<OrderInfo> {
+    return this.orderingApiService.addItemsToOrder(order);
   }
 
   cancelOrderById(id: string): Observable<boolean> {

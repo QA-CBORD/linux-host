@@ -7,4 +7,5 @@ export interface MenuCategoryItemInfo {
   displayRank: number;             // display order (0 is top)
   visible: boolean;                 // must be visible and active to show
   active: boolean;
+  barcode?: string;
 }

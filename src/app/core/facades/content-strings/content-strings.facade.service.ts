@@ -174,7 +174,16 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
       )
     );
   }
-
+  resolveContentStringValue$(
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES,
+    name: string
+  ): Observable<string> {
+    return this.resolveContentString$(domain, category, name).pipe(
+      skipWhile(value => !value),
+      map(({ value }) => value)
+    );
+  }
   resolveContentStrings$(
     domain: CONTENT_STRINGS_DOMAINS,
     category: CONTENT_STRINGS_CATEGORIES
