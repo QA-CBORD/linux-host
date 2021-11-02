@@ -8,6 +8,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { Observable } from 'rxjs';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { ModalController } from '@ionic/angular';
+import { BARCODE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Component({
   templateUrl: './item-manual-entry.component.html',
@@ -33,7 +34,7 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.manualEntryForm = this.fb.group({
-      [this.controlsNames.code]: ['', [Validators.required]],
+      [this.controlsNames.code]: ['', [Validators.required, Validators.pattern(BARCODE_REGEXP)]],
     });
     this.cdRef.detectChanges();
   }
