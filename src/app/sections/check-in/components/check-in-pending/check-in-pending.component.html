@@ -9,7 +9,38 @@
   </ion-toolbar>
 </ion-header>
 <div class="divider"></div>
-
+<ion-content>
+  <div class="pending-checkin__body-wrapper">
+    <img height="160" src="/assets/images/Big_Hourglass_Confetti.svg" alt="big Order Pending" class="pending-checkin__main-img" />
+    <!-- <div class="pending-checkin__sub-header">#{{ checkNumber }}</div> -->
+    <div class="pending-checkin__sub-header">{{ contentStrings.order_pending }}</div>
+    <div class="pending-checkin__body">
+      <p>{{ contentStrings.subtitle }}</p>
+      <p>{{ contentStrings.instruction }}</p>
+    </div>
+  </div>
+  <div class="pending-checkin__colored-bg">
+    <div class="padded">
+      <div class="title-lbl faded">{{ contentStrings.lbl_pickup_time }}</div>
+      <span class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</span>
+      <div class="small-content faded">{{ contentStrings.pickup_info }}</div>
+      <div class="title-lbl faded">{{ contentStrings.lbl_pickup_addr }}</div>
+      <div class="text-dark address">
+        <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
+        <span>{{ data.storeAddress | addressHeaderFormat }}</span>
+      </div>
+      <div class="section-divided">
+        <span class="text-dark"> {{ contentStrings.lbl_total }} </span>
+        <span class="text-dark"> {{ total | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div class="btn_no-bg">
+        <st-button (onClick)="goToOrderDetails()" fill="clear" buttonModifier="rectangular">
+          <span class="ion-text-capitalize"> {{ contentStrings.lbl_btn_order_detail }} </span>
+        </st-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
 <ion-footer class="pending-checkin__footer" mode="ios">
   <div class="checkin-btn">
     <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">

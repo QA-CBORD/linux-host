@@ -17,6 +17,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { ScanCodeComponent } from '../scan-code/scan-code.component';
 
+
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -115,10 +116,11 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   async onScanCode() {
     const modal = await this.modalController.create({
       component: ScanCodeComponent,
-      cssClass: 'select-modal'
+      cssClass: 'select-modal',
     });
     await modal.present();
     modal.onDidDismiss().then(() => {
+      alert('onDidDismiss')
       if (this.checkInService.barcodeScanResult == null) return;
       this.checkInService
         .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)
