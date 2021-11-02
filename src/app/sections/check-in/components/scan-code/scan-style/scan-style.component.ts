@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
-  selector: 'st-scan-style',
   templateUrl: './scan-style.component.html',
   styleUrls: ['./scan-style.component.scss'],
 })
-export class ScanStyleComponent implements OnInit {
+export class ScanStyleComponent {
+  constructor(private readonly globalNav: GlobalNavService) {}
 
-  constructor() { }
-
-  ngOnInit() {}
-
+  ionViewWillEnter() {
+    this.globalNav.hideNavBar();
+  }
 }
