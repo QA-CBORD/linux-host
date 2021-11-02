@@ -1,9 +1,19 @@
-<st-header title="Manual Entry" [isTitleShow]="true" [isToolbarShow]="true" backButtonTitle=""> </st-header>
+<st-header
+  title="Manual Entry"
+  [isTitleShow]="true"
+  backButtonIcon="close"
+  [isBackButtonShow]="false"
+  [isDismissButtonShow]="true"
+  [isToolbarShow]="true"
+  backButtonTitle=""
+  (onDismiss)="close()"
+>
+</st-header>
 <ion-content class="container ion-padding-top">
   <div class="section ion-padding">
     <div class="section__instructions ion-padding ion-margin-vertical">
       <ion-icon src="/assets/icon/info.svg"></ion-icon>
-      <ion-text class="ion-margin-start">{{ instructions$ | async }}</ion-text>
+      <ion-text id='modal-mainTitle' class="ion-margin-start">{{ instructions$ | async }}</ion-text>
     </div>
     <form [formGroup]="manualEntryForm">
       <st-input-floating-label
@@ -13,6 +23,7 @@
         idd="barcode"
         [formControlName]="controlsNames.code"
         [isError]="code.errors && (code.dirty || code.touched)"
+        maxlength="13"
         tabindex="0"
       >
       </st-input-floating-label>
