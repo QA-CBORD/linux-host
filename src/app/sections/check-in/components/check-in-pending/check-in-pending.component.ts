@@ -120,7 +120,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     });
     await modal.present();
     modal.onDidDismiss().then(() => {
-      alert('onDidDismiss')
       if (this.checkInService.barcodeScanResult == null) return;
       this.checkInService
         .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)

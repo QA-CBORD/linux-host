@@ -1,1 +1,20 @@
-<div></div>
+<div class="darker">
+  <ion-button mode="ios">
+    <ion-icon icon="close"></ion-icon>
+  </ion-button>
+</div>
+<ion-content>
+  <div> 
+    Bad things
+  </div>
+</ion-content>
+<ion-footer class="darker">
+  <label class="scan__label">Position the code in the center of the screen to scan. </label>
+  <div class="scan__button">
+    <st-button (onClick)="manualEntry()" buttonModifier="rectangular" isDisabled="true">
+      <span class="ion-text-capitalize scan__span">
+        Manual Entry
+      </span>
+    </st-button>
+  </div>
+</ion-footer>

@@ -1,0 +1,34 @@
+@import 'tools';
+
+.scan {
+  &__label {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    color: rgb(255, 255, 255);
+    padding: 50px 20px;
+    @include font-nunito-heavy(15px);
+  }
+
+  &__button {
+    padding: 0 20px;
+    margin-bottom: 10px;
+  }
+
+  &__span {
+    color: rgb(0, 0, 0);
+  }
+}
+
+.darker {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 30%;
+}
+
+ion-button {
+  --background: transparent;
+}
+
+ion-content {
+  --background: rgba(0, 0, 0, 0);
+}

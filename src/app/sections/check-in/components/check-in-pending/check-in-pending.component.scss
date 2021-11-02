@@ -5,7 +5,6 @@
 }
 
 .pending-checkin {
-  opacity: 0.5;
   &__title {
     letter-spacing: 0;
     text-align: center;
@@ -53,7 +52,7 @@
 
     .padded {
       padding: 0 15px;
-      .text-dark{
+      .text-dark {
         margin-top: 5px;
       }
     }
@@ -91,7 +90,7 @@
   }
 }
 
-.btn-disabled{
+.btn-disabled {
   opacity: 0.4;
 }
 
