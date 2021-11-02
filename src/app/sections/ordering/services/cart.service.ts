@@ -361,6 +361,7 @@ export class CartService {
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
   getMenuItemByCode(code: string) {
+    code = code.trim();
     return this.menuInfo$.pipe(
       filter(menu => !!menu.menuCategories),
       map(menu =>
