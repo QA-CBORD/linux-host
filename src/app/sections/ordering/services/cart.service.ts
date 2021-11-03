@@ -361,14 +361,14 @@ export class CartService {
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
   getMenuItemByCode(code: string) {
-    code = code.trim();
+    code = code.trim().toUpperCase();
     return this.menuInfo$.pipe(
       filter(menu => !!menu.menuCategories),
       map(menu =>
         menu.menuCategories
           .map(cat => cat.menuCategoryItems.map(item => item.menuItem))
           .reduce((prev, curr) => [...prev, ...curr], [])
-          .find(item => item.barcode === code)
+          .find(item => item.barcode.toUpperCase() === code)
       ),
       take(1)
     );
