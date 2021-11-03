@@ -21,7 +21,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnitDetailsPage implements OnInit, OnDestroy {
-  private isExpanded = false;
+  public isExpanded = false;
   private subscriptions: Subscription;
   private activeAlerts: HTMLIonAlertElement[] = [];
   constructor(
