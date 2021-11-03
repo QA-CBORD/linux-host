@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CartService } from '@sections/ordering';
-import { LOCAL_ROUTING, ORDERING_SCAN_GO_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { APP_ROUTES } from '@sections/section.config';
-import { NavigationService } from '@shared/services/navigation.service';
+import { ORDERING_SCAN_GO_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable } from 'rxjs';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { ModalController } from '@ionic/angular';
+import { BARCODE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Component({
   templateUrl: './item-manual-entry.component.html',
@@ -35,7 +34,7 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.manualEntryForm = this.fb.group({
-      [this.controlsNames.code]: ['', [Validators.required]],
+      [this.controlsNames.code]: ['', [Validators.required, Validators.pattern(BARCODE_REGEXP)]],
     });
     this.cdRef.detectChanges();
   }
@@ -53,6 +52,10 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
         await this.toastService.showToast({ message: 'Item not found, please check the code and try again.' });
       }
     });
+  }
+
+  close() {
+    this.modalController.dismiss();
   }
 
   get controlsNames() {

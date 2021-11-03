@@ -34,6 +34,9 @@ export const FOUR_DIGITS_REGEXP = /(\d{4}(?!\s))/g;
 // Number | comma | dot format pattern
 export const NUM_COMMA_DOT_REGEXP = /^[0-9.,]+$/;
 
+// Barcode valid pattern
+export const BARCODE_REGEXP = /^[A-Za-z0-9-]{1,13}$/;
+
 // Mastercard tamplate pattern
 export const MASTERCARD_REGEXP = /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/;
 
