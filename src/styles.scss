@@ -298,8 +298,6 @@ article {
   outline: none;
 }
 
-.select-modal {
-  // background: rgba(0, 0, 0, 0.5) !important;
-  padding: 30% !important;
-  opacity: 0;
+.scan-modal {
+  --background: transparent;
 }

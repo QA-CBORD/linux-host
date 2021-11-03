@@ -116,7 +116,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   async onScanCode() {
     const modal = await this.modalController.create({
       component: ScanCodeComponent,
-      cssClass: 'select-modal',
+      cssClass: 'scan-modal',
     });
     await modal.present();
     modal.onDidDismiss().then(() => {

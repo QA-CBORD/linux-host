@@ -1,5 +1,39 @@
-#obs {
-  width: 100%;
-  height: 100%;
+@import 'tools';
+
+.scan {
+  &__label {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    color: $color-white;
+    padding: 50px 20px;
+    @include font-nunito-heavy(15px);
+  }
+
+  &__button {
+    padding: 0 20px;
+    margin-bottom: 10px;
+  }
+
+  &__span {
+    color: $color-black;
+  }
 }
 
+.darker {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 30%;
+}
+
+ion-button {
+  --background: transparent;
+}
+
+#test {
+  display: flex;
+  flex-direction: column;
+  background-color: bisque ;
+  justify-content: space-evenly;
+  border-color: aqua;
+  border-width: 5%;
+}
