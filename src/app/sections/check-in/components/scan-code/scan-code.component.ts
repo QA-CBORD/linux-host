@@ -13,7 +13,6 @@ const { BarcodeScanner } = Plugins;
   styleUrls: ['./scan-code.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class ScanCodeComponent {
   constructor(
     private readonly router: Router,
@@ -25,10 +24,11 @@ export class ScanCodeComponent {
   async ngOnInit() {
     try {
       BarcodeScanner.prepare();
-      await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCode]);
+      await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
       const status = await BarcodeScanner.checkPermission({ force: true });
       if (status.granted) {
         BarcodeScanner.hideBackground();
+        this.startScanning();
       }
     } catch {
       this.checkingServiceFacade.barcodeScanResult = null;
@@ -36,22 +36,23 @@ export class ScanCodeComponent {
     }
   }
 
-  async ionViewWillEnter() {
+  async ionViewWillLeave() {
+    this.goBack();
+  }
+
+  private async startScanning() {
     const result = await BarcodeScanner.startScan();
     if (result.hasContent) {
-      alert(JSON.stringify(result.content));
       this.checkingServiceFacade.barcodeScanResult = result.content;
-      
+    } else {
+      this.checkingServiceFacade.barcodeScanResult = null;
     }
   }
 
-  async ionViewWillLeave() {
-   this.goBack();
-  }
- 
   private dismiss() {
     this.modalController.dismiss();
   }
+
   private goBack() {
     this.location.back();
     BarcodeScanner.stopScan();

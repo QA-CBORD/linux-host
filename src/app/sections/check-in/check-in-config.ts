@@ -1,5 +1,5 @@
 export enum CHECKIN_ROUTES {
   success = 'success',
   pending = 'pending',
-  scanCode = 'scanCode',
+  scanCodeBackground = 'scanCode',
 }
