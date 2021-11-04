@@ -62,7 +62,7 @@ export class PhotoUploadComponent implements OnInit {
   fitCover: boolean;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
-  private localPhotoData: LocalPhotoData = {
+  public localPhotoData: LocalPhotoData = {
     govtIdRequired: false,
     profile: null,
     profilePending: null,
