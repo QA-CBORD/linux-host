@@ -21,19 +21,27 @@
 }
 
 .darker {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba($color-black, 0.5);
   height: 30%;
+}
+
+.row {
+  width: 100vw;
+  height: 40vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.left, .right {
+  background-color: rgba($color-black, 0.5);
+  display: flex;
+  width: 10%;
+}
+
+.middle {
+  width: 80%;
 }
 
 ion-button {
   --background: transparent;
-}
-
-#test {
-  display: flex;
-  flex-direction: column;
-  background-color: bisque ;
-  justify-content: space-evenly;
-  border-color: aqua;
-  border-width: 5%;
 }
