@@ -2,6 +2,7 @@
 
 .scan {
   &__label {
+    text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -44,4 +45,5 @@
 
 ion-button {
   --background: transparent;
+  --background-activated: transparent;
 }

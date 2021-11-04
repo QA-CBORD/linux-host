@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { Location } from '@angular/common';
 import { ModalController } from '@ionic/angular';
@@ -6,6 +6,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { Router } from '@angular/router';
 import { Plugins } from '@capacitor/core';
+import { ToastService } from '@core/service/toast/toast.service';
 const { BarcodeScanner } = Plugins;
 
 @Component({
@@ -13,11 +14,18 @@ const { BarcodeScanner } = Plugins;
   styleUrls: ['./scan-code.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class ScanCodeComponent {
+  @Input() formats = ['QR_CODE', 'EAN_13'];
+  @Input() title = '';
+  @Input() message = '';
+  @Input() buttonText = '';
+
   constructor(
     private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly checkingServiceFacade: CheckingServiceFacade,
+    private readonly toastService: ToastService,
     private location: Location
   ) {}
 
@@ -28,11 +36,13 @@ export class ScanCodeComponent {
       const status = await BarcodeScanner.checkPermission({ force: true });
       if (status.granted) {
         BarcodeScanner.hideBackground();
-        this.startScanning();
+        this.startScanning(this.formats);
+      } else {
+        this.toastService.showToast({ message: "Permissions were not granted."})
+        this.closeScanCode();
       }
     } catch {
-      this.checkingServiceFacade.barcodeScanResult = null;
-      this.dismiss();
+      this.closeScanCode();
     }
   }
 
@@ -40,17 +50,22 @@ export class ScanCodeComponent {
     this.goBack();
   }
 
-  private async startScanning() {
-    const result = await BarcodeScanner.startScan();
+  private closeScanCode(code: string = null) {
+    this.checkingServiceFacade.barcodeScanResult = code;
+    this.dismiss();
+  }
+
+  private async startScanning(targetFormats: string[]) {
+    const result = await BarcodeScanner.startScan({ targetFormats });
     if (result.hasContent) {
-      this.checkingServiceFacade.barcodeScanResult = result.content;
+      this.closeScanCode(result.content);
     } else {
-      this.checkingServiceFacade.barcodeScanResult = null;
+      this.closeScanCode();
     }
   }
 
-  private dismiss() {
-    this.modalController.dismiss();
+  private async dismiss() {
+    await this.modalController.dismiss();
   }
 
   private goBack() {
