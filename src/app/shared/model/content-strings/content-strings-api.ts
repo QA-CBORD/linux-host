@@ -13,6 +13,7 @@ import { IdentifyRecipientCsModel } from '@sections/guest/guest-deposits/compone
 import { creditCardMgmtCsModel } from '@sections/settings/creditCards/creditCardMgmtCsModel';
 import { LocationDisclosureCsModel } from '@sections/dashboard/components/location-disclosure/location-disclosure-content-string.model';
 import { CheckingContentCsModel, CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
+import { ScanCodeCsModel } from '@sections/check-in/components/scan-code/scan-code-content-strings.model';
 
 export enum ContentStringCategory {
   forgotPassword = 'forgotPassword',
@@ -30,6 +31,7 @@ export enum ContentStringCategory {
   checkin = 'checkin',
   checkinSuccess = 'checkinSuccess',
   locationDisclosure = 'locationDisclosure',
+  scanCode = 'scanCode'
 }
 
 export interface ExtraContent {
@@ -110,11 +112,10 @@ export const ContentStringApi: ContentStringCategoryType = {
       return new GuestAddFundsCsModel(NullableContent.build(config));
     },
   },
-  
+
   [ContentStringCategory.identifyRecipient]: {
     category: CATEGORIES.identifyRecipient,
-    build: (config: ContentStringBuilderConfig): IdentifyRecipientCsModel =>
-      new IdentifyRecipientCsModel(NullableContent.build(config)),
+    build: (config: ContentStringBuilderConfig): IdentifyRecipientCsModel => new IdentifyRecipientCsModel(NullableContent.build(config)),
   },
 
   [ContentStringCategory.creditCardMgmt]: {
@@ -131,13 +132,18 @@ export const ContentStringApi: ContentStringCategoryType = {
     category: CATEGORIES.checkinSuccess,
     build: (config): CheckingSuccessContentCsModel => new CheckingSuccessContentCsModel(NullableContent.build(config)),
   },
-  
+
   [ContentStringCategory.locationDisclosure]: {
     category: CATEGORIES.locationDisclosure,
     build: (config: ContentStringBuilderConfig): LocationDisclosureCsModel => {
       return new LocationDisclosureCsModel(NullableContent.build(config));
     },
   },
-
+  [ContentStringCategory.scanCode]: {
+    category: CATEGORIES.scanCode,
+    build: (config: ContentStringBuilderConfig): ScanCodeCsModel => {
+      return new ScanCodeCsModel(NullableContent.build(config));
+    }
+  }
 };
  

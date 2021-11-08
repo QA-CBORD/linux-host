@@ -1,23 +1,21 @@
 <div class="darker" (click)="goBack()">
-    <ion-button mode="ios">
-      <ion-icon icon="close"></ion-icon>
-    </ion-button>
-    <label class="scan__label">Barcode</label>
+  <ion-button disabled="buttonDisabled" mode="ios">
+    <ion-icon icon="close"></ion-icon>
+  </ion-button>
+  <label class="scan__label"> {{ title }}</label>
+</div>
+<div class="column">
+  <div class="left"></div>
+  <div class="middle"></div>
+  <div class="right"></div>
+</div>
+<ion-footer class="darker">
+  <label *ngIf="message" class="scan__label">{{ message }}</label>
+  <div *ngIf="buttonText" class="scan__button">
+    <st-button (onClick)="manualEntry()" buttonModifier="rectangular" isDisabled="true">
+      <span class="ion-text-capitalize scan__span">
+        {{ buttonText }}
+      </span>
+    </st-button>
   </div>
-  <div class="row">
-    <div class="left"></div>
-    <div class="middle"></div>
-    <div class="right"></div>
-  </div>
-  <ion-footer class="darker">
-    <label class="scan__label">Position the code in the center of the screen to scan. </label>
-    <div class="scan__button">
-      <st-button (onClick)="manualEntry()" buttonModifier="rectangular" isDisabled="true">
-        <span class="ion-text-capitalize scan__span">
-          Manual Entry
-        </span>
-      </st-button>
-    </div>
-  </ion-footer>
-  
-
+</ion-footer>

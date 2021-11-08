@@ -2,8 +2,8 @@
 
 .scan {
   &__label {
-    text-align: center;
     display: flex;
+    text-align: center;
     flex-direction: column;
     justify-content: space-evenly;
     color: $color-white;
@@ -26,7 +26,7 @@
   height: 30%;
 }
 
-.row {
+.column {
   width: 100vw;
   height: 40vh;
   display: flex;

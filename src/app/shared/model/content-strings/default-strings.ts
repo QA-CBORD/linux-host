@@ -222,3 +222,9 @@ export const defaultLocationDisclosureStrings = {
   disclosure_text: 'GET can use your location to help you find nearby merchants, check in for an order pickup, and use your card.  Allowing background access to your deviceâs location lets you to take full advantage of these features and enables you to add your card or payroll account to Apple Wallet or Google Pay if offered by your institution.',
   disclosure_title: 'use your location',
 };
+
+export const defaultScanCodeStrings = {
+  scan_code_title: 'Barcode',
+  scan_code_text: 'Position the code in the center of the screen to scan.',
+  scan_code_button_text: 'Manual Entry',
+};
