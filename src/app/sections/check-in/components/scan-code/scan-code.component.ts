@@ -36,28 +36,28 @@ export class ScanCodeComponent implements OnInit {
       await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
       this.nativeProvider.keepTopModal = true;
       const status = await BarcodeScanner.checkPermission({ force: false });
-      if (status.granted) {
+      if (status.granted || status.neverAsked) {
         this.startScanning(this.formats);
-      } else if (status.neverAsked) {
-        this.startScanning(this.formats);
-      }  
-       else {
+      } else {
         this.closeScanCode();
         this.toastService.showToast({ message: 'Permissions were not granted.' });
       }
+      setTimeout(() => {
+        this.nativeProvider.keepTopModal = false;
+      }, 1000);
     } catch {
       this.closeScanCode();
     }
   }
 
   ionViewWillLeave() {
-    this.goBack();
+    BarcodeScanner.stopScan();
+    BarcodeScanner.showBackground();
   }
-
+  
   private closeScanCode(code: string = null) {
-    this.nativeProvider.keepTopModal = false;
     this.checkingServiceFacade.barcodeScanResult = code;
-    this.dismiss();
+    this.goBack();
   }
 
   private async startScanning(targetFormats: string[]) {
@@ -70,14 +70,8 @@ export class ScanCodeComponent implements OnInit {
     }
   }
 
-  private async dismiss() {
-    await this.modalController.dismiss();
-  }
-
   private goBack() {
     this.location.back();
-    BarcodeScanner.stopScan();
-    BarcodeScanner.showBackground();
-    this.nativeProvider.keepTopModal = false;
+    this.modalController.dismiss();
   }
 }

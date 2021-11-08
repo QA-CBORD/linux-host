@@ -13,4 +13,8 @@ export class ScanCodeBackground {
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
   }
+
+  ionViewWillLeave() {
+    this.globalNav.showNavBar();
+  }
 }
