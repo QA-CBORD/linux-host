@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
@@ -22,6 +22,7 @@ export class CartService {
   // temporary cachedError for the cart:
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
+  private _pendingOrderId: string = null;
   public orderIsAsap: boolean = false;
 
   merchantTimeZone: string;
@@ -32,7 +33,6 @@ export class CartService {
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
-    private readonly datePipe: DatePipe
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -172,6 +172,7 @@ export class CartService {
   }
 
   private async setInitialEmptyOrder(): Promise<void> {
+    this._pendingOrderId = null;
     await this.initEmptyOrder().then(order => (this.cart.order = order));
     this.onStateChanged();
   }
@@ -198,9 +199,15 @@ export class CartService {
     this.cart.orderDetailsOptions = null;
     this.cart.menu = null;
     this.cart.order = null;
+    this._pendingOrderId = null;
     this.onStateChanged();
   }
 
+  public async setPendingOrder(orderId: string): Promise<void> {
+    this._pendingOrderId = orderId;
+    this.cart.order = await this.initEmptyOrder();
+    this.onStateChanged();
+  }
   // ----------------------------------------- UPDATERS BLOCK -----------------------------------------//
 
   addOrderItems(orderItems: Partial<OrderItem> | Partial<OrderItem>[]) {
@@ -227,7 +234,14 @@ export class CartService {
           type,
           dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime,
         };
-        return this.merchantService.validateOrder(this.cart.order);
+        if (this._pendingOrderId) {
+          return this.merchantService.validatePendingOrder({
+            orderID: this._pendingOrderId,
+            itemsToAdd: this.cart.order.orderItems,
+          });
+        } else {
+          return this.merchantService.validateOrder(this.cart.order);
+        }
       }),
       tap(updatedOrder => {
         this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
@@ -239,6 +253,14 @@ export class CartService {
   }
 
   submitOrder(accId: string, cvv: string, clientOrderID: string): Observable<OrderInfo> {
+    if(this._pendingOrderId){
+      return this.merchantService.addItemsToOrder({
+        clientAddItemsID: clientOrderID,
+        orderID: this._pendingOrderId,
+        itemsToAdd: this.cart.order.orderItems,
+        cvv,
+      });
+    }
     if (this.orderIsAsap) this.cart.order.dueTime = undefined;
     const order = { ...this.cart.order, clientOrderID };
     return this.api.submitOrder(order, accId, cvv);
@@ -338,6 +360,19 @@ export class CartService {
   }
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
+  getMenuItemByCode(code: string) {
+    code = code.trim();
+    return this.menuInfo$.pipe(
+      filter(menu => !!menu.menuCategories),
+      map(menu =>
+        menu.menuCategories
+          .map(cat => cat.menuCategoryItems.map(item => item.menuItem))
+          .reduce((prev, curr) => [...prev, ...curr], [])
+          .find(item => item.barcode === code)
+      ),
+      take(1)
+    );
+  }
 }
 
 export interface CartState {
