@@ -13,6 +13,11 @@ import { take } from 'rxjs/operators';
 const { BarcodeScanner } = Plugins;
 
 const renderingDelay = 1000;
+
+export enum Barcode {
+  QRCode = 'QR_CODE',
+  EAN_13 = 'EAN_13'
+};
 @Component({
   templateUrl: './scan-code.component.html',
   styleUrls: ['./scan-code.component.scss'],
@@ -20,7 +25,7 @@ const renderingDelay = 1000;
 })
 export class ScanCodeComponent implements OnInit {
   buttonDisabled = false;
-  @Input() formats = ['QR_CODE', 'EAN_13'];
+  @Input() formats = [Barcode.QRCode, Barcode.EAN_13];
   @Input() title = '';
   @Input() message?: string;
   @Input() buttonText?: string;

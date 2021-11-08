@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
-import { ScanCodeComponent } from '../scan-code/scan-code.component';
+import { Barcode, ScanCodeComponent } from '../scan-code/scan-code.component';
 
 export interface orderInfo {
   pickupTime: {
@@ -116,6 +116,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       cssClass: 'scan-modal',
       backdropDismiss: false,
       componentProps: {
+        formats: [Barcode.QRCode],
         title: this.scanCode.title,
       }
     });
