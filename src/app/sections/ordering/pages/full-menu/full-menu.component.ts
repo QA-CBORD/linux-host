@@ -32,7 +32,7 @@ import { APP_ROUTES } from '@sections/section.config';
   styleUrls: ['./full-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
+export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
@@ -51,7 +51,7 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly alertController: AlertController,
     private readonly activatedRoute: ActivatedRoute,
     private readonly globalNav: GlobalNavService,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
   ) {}
 
   ngOnInit() {
@@ -60,13 +60,8 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initContentStrings();
   }
 
-  ngAfterViewInit() {
-    this.globalNav.hideNavBar();
-  }
-
   ngOnDestroy() {
-    this.sourceSubscription.unsubscribe();
-    this.globalNav.showNavBar();
+    // this.sourceSubscription.unsubscribe();
   }
 
   get orderType(): Observable<string> {
@@ -98,10 +93,16 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    this.globalNav.hideNavBar();
     this.menuItems$ = this.cartService.menuItems$;
     const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
     openTimeSlot && this.openOrderOptions();
   }
+
+  ionViewWillleave() {
+    this.globalNav.showNavBar();
+  }
+
 
   async onCategoryClicked({ id }): Promise<void> {
     await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.menuCategoryItems, id]);

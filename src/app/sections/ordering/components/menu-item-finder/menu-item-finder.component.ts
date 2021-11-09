@@ -4,22 +4,30 @@ import { Barcode, ScanCodeComponent } from '@sections/check-in/components/scan-c
 import { CartService } from '@sections/ordering';
 import { MerchantSettings } from '@sections/ordering/ordering.config';
 import { ItemManualEntryComponent } from '@sections/ordering/pages/item-manual-entry/item-manual-entry.component';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { MerchantSettingInfo } from '..';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'st-menu-item-finder',
   templateUrl: './menu-item-finder.component.html',
-  styleUrls: ['./menu-item-finder.component.scss'], changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./menu-item-finder.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuItemFinderComponent implements OnInit {
   barcodeOptions$: Observable<any[]>;
   @Output() itemScanned = new EventEmitter<string>();
 
-  constructor(private readonly cartService: CartService, private readonly modalController: ModalsService) {}
+  constructor(
+    private readonly cartService: CartService,
+    private readonly modalController: ModalsService,
+    private readonly globalNav: GlobalNavService,
+    private location: Location
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.barcodeOptions$ = this.cartService.merchant$.pipe(
       filter(merchant => !!merchant),
       map(merchant => {
@@ -39,17 +47,21 @@ export class MenuItemFinderComponent implements OnInit {
                   formats: [Barcode.QRCode, Barcode.EAN_13],
                   title: 'Barcode',
                   message: 'This a text',
-                  buttonText: 'Manual Entry'
+                  buttonText: 'Manual Entry',
                 },
               });
               modal.onDidDismiss().then(({ data }: any) => {
                 if (data) {
-                  const { scanCodeResult } = data;
-                  this.itemScanned.next(scanCodeResult);
+                  this.cartService.getMenuItemByCode(data.scanCodeResult).subscribe(async menuItem => {
+                    if (menuItem) {
+                      const { id: menuItemId } = menuItem;
+                      this.itemScanned.next(menuItemId);
+                    }
+                  });
                 }
               });
               await modal.present();
-           },
+            },
           });
         }
         if (manualBarcodeEnabled && JSON.parse(manualBarcodeEnabled.value)) {
@@ -61,7 +73,7 @@ export class MenuItemFinderComponent implements OnInit {
                 component: ItemManualEntryComponent,
               });
 
-              modal.onDidDismiss().then(({ data }: any) => {
+              modal.onDidDismiss().then(async ({ data }: any) => {
                 if (data) {
                   const { menuItemId } = data;
                   this.itemScanned.next(menuItemId);
@@ -74,5 +86,9 @@ export class MenuItemFinderComponent implements OnInit {
         return res;
       })
     );
+  }
+
+  ionViewWillEnter() {
+    this.globalNav.hideNavBar();
   }
 }

@@ -15,7 +15,7 @@ import { BARCODE_REGEXP } from '@core/utils/regexp-patterns';
   styleUrls: ['./item-manual-entry.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ItemManualEntryComponent implements OnInit, OnDestroy {
+export class ItemManualEntryComponent implements OnInit {
   manualEntryForm: FormGroup;
 
   constructor(
@@ -27,10 +27,6 @@ export class ItemManualEntryComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly fb: FormBuilder
   ) {}
-
-  ngOnDestroy(): void {
-    this.globalNav.showNavBar();
-  }
 
   ngOnInit() {
     this.manualEntryForm = this.fb.group({

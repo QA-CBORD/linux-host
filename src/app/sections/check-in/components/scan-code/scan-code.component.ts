@@ -42,7 +42,6 @@ export class ScanCodeComponent implements OnInit {
       this.hardwareBackButton();
       BarcodeScanner.prepare();
       this.nativeProvider.setKeepTopModal = true;
-      await this.clearBackground();
       const status = await BarcodeScanner.checkPermission({ force: true });
       this.handleScanner(status);
       setTimeout(() => {
@@ -51,6 +50,10 @@ export class ScanCodeComponent implements OnInit {
     } catch {
       this.closeScanCode();
     }
+  }
+  
+  async ionViewWillEnter() {  
+    await this.clearBackground();
   }
 
   ionViewWillLeave() {
