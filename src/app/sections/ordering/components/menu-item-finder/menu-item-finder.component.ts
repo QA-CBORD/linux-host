@@ -33,8 +33,8 @@ export class MenuItemFinderComponent implements OnInit {
     this.commonService
       .loadContentString(ContentStringCategory.scanCode)
       .pipe(take(1))
-      .subscribe(value => {
-        this.barCodeCs = value;
+      .subscribe(ContentStrings => {
+        this.barCodeCs = ContentStrings;
       });
     this.barcodeOptions$ = this.cartService.merchant$.pipe(
       filter(merchant => !!merchant),
@@ -54,8 +54,8 @@ export class MenuItemFinderComponent implements OnInit {
                 componentProps: {
                   formats: [Barcode.QRCode, Barcode.EAN_13],
                   title: this.barCodeCs.title,
-                  message: this.barCodeCs.message,
-                  buttonText: this.barCodeCs.textBtn,
+                  prompt: this.barCodeCs.message,
+                  textBtn: this.barCodeCs.textBtn,
                 },
               });
               modal.onDidDismiss().then(async ({ data }: any) => {

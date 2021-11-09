@@ -26,7 +26,6 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
     this.loadingService.showSpinner();
     this.checkInService.getContentStringByName('pickup_info');
     const checkinPending$ = this.commonService.loadContentString(ContentStringCategory.checkin);
-    const scanCode$ = this.commonService.loadContentString(ContentStringCategory.scanCode);
     const dueTime = route.queryParams.dueTime;
     const merchantId = route.queryParams.merchantId;
     const total = route.queryParams.total;
@@ -43,17 +42,16 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
       })
     );
 
-    return forkJoin(checkinPending$, data$, scanCode$).pipe(
+    return forkJoin(checkinPending$, data$).pipe(
       take(1),
-      map(([contentStrings, data, scanCode]) => ({
+      map(([contentStrings, data]) => ({
         contentStrings,
         data,
         total,
         orderId,
         orderNew,
         checkNumber,
-        mealBased,
-        scanCode
+        mealBased
       })),
       finalize(() => {
         this.loadingService.closeSpinner.bind(this.loadingService);

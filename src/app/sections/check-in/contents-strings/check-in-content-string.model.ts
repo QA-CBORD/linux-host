@@ -5,6 +5,10 @@ export class CheckingContentCsModel extends ContentStringModel {
     constructor(nullable: NullableContent) {
         super(nullable.getConfig(), checkingDefaultCs);
       }
+
+      get prompt(): string {
+        return this.content.scan_code_prompt;
+      }
 }
 
 export class CheckingSuccessContentCsModel extends ContentStringModel {

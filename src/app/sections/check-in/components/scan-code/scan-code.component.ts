@@ -9,7 +9,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Platform } from '@ionic/angular';
 import { take } from 'rxjs/operators';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 const { BarcodeScanner } = Plugins;
 const renderingDelay = 1000;
 
@@ -26,15 +25,14 @@ export class ScanCodeComponent implements OnInit {
   buttonDisabled = false;
   @Input() formats = [Barcode.QRCode, Barcode.EAN_13];
   @Input() title? = '';
-  @Input() message?: string;
-  @Input() buttonText?: string;
+  @Input() prompt?: string;
+  @Input() textBtn?: string;
 
   constructor(
     private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly toastService: ToastService,
     private readonly nativeProvider: NativeProvider,
-    private readonly globalNav: GlobalNavService,
     private platform: Platform,
     private location: Location
   ) {}

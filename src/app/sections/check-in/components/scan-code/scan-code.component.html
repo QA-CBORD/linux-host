@@ -10,11 +10,11 @@
   <div class="right"></div>
 </div>
 <ion-footer class="darker">
-  <label *ngIf="message" class="scan__label">{{ message }}</label>
-  <div *ngIf="buttonText" class="scan__button">
+  <label *ngIf="prompt" class="scan__label">{{ prompt }}</label>
+  <div *ngIf="textBtn" class="scan__button">
     <st-button (onClick)="manualEntry()" buttonModifier="rectangular" isDisabled="true">
       <span class="ion-text-capitalize scan__span">
-        {{ buttonText }}
+        {{ textBtn }}
       </span>
     </st-button>
   </div>

@@ -44,7 +44,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   checkNumber: number;
   mealBased = false;
   orderNew: boolean;
-  scanCode: any;
 
   constructor(
     private readonly loadingService: LoadingService,
@@ -120,7 +119,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       backdropDismiss: false,
       componentProps: {
         formats: [Barcode.QRCode],
-        message: this.scanCode.message,
+        prompt: (<any>this.contentStrings).scan_code_prompt,
       },
     });
     await modal.present();
@@ -129,7 +128,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       if (scanCodeResult == null) {
         return;
       }
-      alert('scanCodeResult: ' + scanCodeResult);
       this.checkInService
         .checkInOrderByBarcode(this.orderId, scanCodeResult)
         .pipe(take(1))
@@ -198,7 +196,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         dueTime,
         data,
         orderNew,
-        scanCode,
       } = response.data;
       const { content } = contentStrings;
       this.data = <orderInfo>data;
@@ -210,7 +207,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       this.merchantId = merchantId;
       this.dueTime = dueTime;
       this.orderNew = orderNew;
-      this.scanCode = scanCode;
     });
   }
 
