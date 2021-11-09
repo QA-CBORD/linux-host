@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { Barcode, ScanCodeComponent } from '@sections/check-in/components/scan-code/scan-code.component';
 import { CartService } from '@sections/ordering';
 import { MerchantSettings } from '@sections/ordering/ordering.config';
 import { ItemManualEntryComponent } from '@sections/ordering/pages/item-manual-entry/item-manual-entry.component';
@@ -30,8 +31,25 @@ export class MenuItemFinderComponent implements OnInit {
             label: 'Scan Barcode or QR Code',
             icon: 'barcode-read',
             action: async () => {
-              // TODO: Implement scan screen on this page
-            },
+              const modal = await this.modalController.create({
+                component: ScanCodeComponent,
+                cssClass: 'scan-modal',
+                backdropDismiss: false,
+                componentProps: {
+                  formats: [Barcode.QRCode, Barcode.EAN_13],
+                  title: 'Barcode',
+                  message: 'This a text',
+                  buttonText: 'Manual Entry'
+                },
+              });
+              modal.onDidDismiss().then(({ data }: any) => {
+                if (data) {
+                  const { scanCodeResult } = data;
+                  this.itemScanned.next(scanCodeResult);
+                }
+              });
+              await modal.present();
+           },
           });
         }
         if (manualBarcodeEnabled && JSON.parse(manualBarcodeEnabled.value)) {
