@@ -55,15 +55,13 @@ export class ScanCodeComponent implements OnInit {
   }
 
   async ionViewWillEnter() {
-    await this.clearBackground()
-    this.globalNav.hideNavBar();
+    await this.clearBackground();
   }
 
   ionViewWillLeave() {
     this.location.back();
     BarcodeScanner.stopScan();
     BarcodeScanner.showBackground();
-    this.globalNav.showNavBar();
   }
 
   private closeScanCode(code: string = null) {

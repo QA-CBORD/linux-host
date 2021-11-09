@@ -62,6 +62,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
+    this.globalNav.showNavBar();
   }
 
   get orderType(): Observable<string> {
@@ -97,10 +98,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.menuItems$ = this.cartService.menuItems$;
     const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
     openTimeSlot && this.openOrderOptions();
-  }
-
-  ionViewWillLeave() {
-    this.globalNav.showNavBar();
   }
 
   async onCategoryClicked({ id }): Promise<void> {
