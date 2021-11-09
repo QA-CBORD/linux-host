@@ -4,11 +4,12 @@ import { Barcode, ScanCodeComponent } from '@sections/check-in/components/scan-c
 import { CartService } from '@sections/ordering';
 import { MerchantSettings } from '@sections/ordering/ordering.config';
 import { ItemManualEntryComponent } from '@sections/ordering/pages/item-manual-entry/item-manual-entry.component';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { MerchantSettingInfo } from '..';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'st-menu-item-finder',
@@ -18,16 +19,23 @@ import { Location } from '@angular/common';
 })
 export class MenuItemFinderComponent implements OnInit {
   barcodeOptions$: Observable<any[]>;
+  barCodeCs: any;
   @Output() itemScanned = new EventEmitter<string>();
 
   constructor(
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
+    private readonly commonService: CommonService,
     private readonly globalNav: GlobalNavService,
-    private location: Location
   ) {}
 
   async ngOnInit() {
+    this.commonService
+      .loadContentString(ContentStringCategory.scanCode)
+      .pipe(take(1))
+      .subscribe(value => {
+        this.barCodeCs = value;
+      });
     this.barcodeOptions$ = this.cartService.merchant$.pipe(
       filter(merchant => !!merchant),
       map(merchant => {
@@ -45,19 +53,21 @@ export class MenuItemFinderComponent implements OnInit {
                 backdropDismiss: false,
                 componentProps: {
                   formats: [Barcode.QRCode, Barcode.EAN_13],
-                  title: 'Barcode',
-                  message: 'This a text',
-                  buttonText: 'Manual Entry',
+                  title: this.barCodeCs.title,
+                  message: this.barCodeCs.message,
+                  buttonText: this.barCodeCs.textBtn,
                 },
               });
-              modal.onDidDismiss().then(({ data }: any) => {
-                if (data) {
+              modal.onDidDismiss().then(async ({ data }: any) => {
+                if (data.scanCodeResult) {
                   this.cartService.getMenuItemByCode(data.scanCodeResult).subscribe(async menuItem => {
                     if (menuItem) {
                       const { id: menuItemId } = menuItem;
                       this.itemScanned.next(menuItemId);
                     }
                   });
+                } else if (data.manualEntry) {
+                  await this.openManualEntry();
                 }
               });
               await modal.present();
@@ -69,17 +79,7 @@ export class MenuItemFinderComponent implements OnInit {
             label: 'Enter barcode manually',
             icon: 'barcode-manual',
             action: async () => {
-              const modal = await this.modalController.create({
-                component: ItemManualEntryComponent,
-              });
-
-              modal.onDidDismiss().then(async ({ data }: any) => {
-                if (data) {
-                  const { menuItemId } = data;
-                  this.itemScanned.next(menuItemId);
-                }
-              });
-              await modal.present();
+              await this.openManualEntry();
             },
           });
         }
@@ -88,7 +88,21 @@ export class MenuItemFinderComponent implements OnInit {
     );
   }
 
-  ionViewWillEnter() {
-    this.globalNav.hideNavBar();
+  private async openManualEntry() {
+    const modal = await this.modalController.create({
+      component: ItemManualEntryComponent,
+    });
+
+    modal.onDidDismiss().then(async ({ data }: any) => {
+      if (data) {
+        const { menuItemId } = data;
+        this.itemScanned.next(menuItemId);
+      }
+    });
+
+    modal.onWillDismiss().then(() => {
+      this.globalNav.hideNavBar();
+    });
+    await modal.present();
   }
 }

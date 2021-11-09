@@ -2,7 +2,7 @@
   <ion-button disabled="buttonDisabled" mode="ios">
     <ion-icon icon="close"></ion-icon>
   </ion-button>
-  <label class="scan__label"> {{ title }}</label>
+  <label *ngIf="title" class="scan__label"> {{ title }}</label>
 </div>
 <div class="column">
   <div class="left"></div>

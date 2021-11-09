@@ -16,7 +16,7 @@ import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { Barcode, ScanCodeComponent } from '../scan-code/scan-code.component';
-
+import { Platform } from '@ionic/angular';
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -55,13 +55,16 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
     private readonly globalNav: GlobalNavService,
+    private platform: Platform,
     private readonly cdRef: ChangeDetectorRef,
+    
     private readonly router: Router
   ) {}
 
   ngOnInit() {
     this.setData();
     this.watchLocationChanges();
+    this.hardwareBackButton();
   }
 
   ngOnDestroy() {
@@ -117,7 +120,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       backdropDismiss: false,
       componentProps: {
         formats: [Barcode.QRCode],
-        title: this.scanCode.title,
+        message: this.scanCode.message,
       },
     });
     await modal.present();
@@ -214,6 +217,12 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   private watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
       this.locationPermissionDisabled = !(latitude && longitude);
+    });
+  }
+
+  private hardwareBackButton() {
+    this.platform.backButton.pipe(take(1)).subscribe(() => {
+      this.onClosed();
     });
   }
 }

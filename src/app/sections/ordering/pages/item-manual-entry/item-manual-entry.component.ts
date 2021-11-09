@@ -39,6 +39,10 @@ export class ItemManualEntryComponent implements OnInit {
     this.globalNav.hideNavBar();
   }
 
+  ionViewWillLeave() {
+    this.globalNav.showNavBar();
+  }
+
   continue() {
     this.cartService.getMenuItemByCode(this.code.value).subscribe(async menuItem => {
       if (menuItem) {

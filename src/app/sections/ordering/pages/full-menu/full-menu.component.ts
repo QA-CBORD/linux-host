@@ -51,7 +51,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly alertController: AlertController,
     private readonly activatedRoute: ActivatedRoute,
     private readonly globalNav: GlobalNavService,
-    private readonly routingService: NavigationService,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -61,7 +61,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.sourceSubscription.unsubscribe();
+    this.sourceSubscription.unsubscribe();
   }
 
   get orderType(): Observable<string> {
@@ -99,10 +99,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     openTimeSlot && this.openOrderOptions();
   }
 
-  ionViewWillleave() {
+  ionViewWillLeave() {
     this.globalNav.showNavBar();
   }
-
 
   async onCategoryClicked({ id }): Promise<void> {
     await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.menuCategoryItems, id]);
