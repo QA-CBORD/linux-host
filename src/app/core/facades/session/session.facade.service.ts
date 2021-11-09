@@ -359,7 +359,7 @@ export class SessionFacadeService {
 
   private closeActionsheets() {
     const taskId = BackgroundTask.beforeExit(async () => {
-      this.nativeProvider.dismissTopControllers(!!this.nativeStartupFacadeService.blockNavigationStartup,  this.nativeProvider.keepTopModal);
+      this.nativeProvider.dismissTopControllers(!!this.nativeStartupFacadeService.blockNavigationStartup,  this.nativeProvider.getKeepTopModal);
       BackgroundTask.finish({
         taskId,
       });

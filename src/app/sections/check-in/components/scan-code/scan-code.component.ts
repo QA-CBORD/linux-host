@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { Location } from '@angular/common';
 import { ModalController } from '@ionic/angular';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -11,13 +10,12 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Platform } from '@ionic/angular';
 import { take } from 'rxjs/operators';
 const { BarcodeScanner } = Plugins;
-
 const renderingDelay = 1000;
 
 export enum Barcode {
   QRCode = 'QR_CODE',
-  EAN_13 = 'EAN_13'
-};
+  EAN_13 = 'EAN_13',
+}
 @Component({
   templateUrl: './scan-code.component.html',
   styleUrls: ['./scan-code.component.scss'],
@@ -33,7 +31,6 @@ export class ScanCodeComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly modalController: ModalController,
-    private readonly checkingServiceFacade: CheckingServiceFacade,
     private readonly toastService: ToastService,
     private readonly nativeProvider: NativeProvider,
     private platform: Platform,
@@ -44,12 +41,12 @@ export class ScanCodeComponent implements OnInit {
     try {
       this.hardwareBackButton();
       BarcodeScanner.prepare();
-      this.nativeProvider.keepTopModal = true;
-      await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
+      this.nativeProvider.setKeepTopModal = true;
+      await this.clearBackground();
       const status = await BarcodeScanner.checkPermission({ force: true });
       this.handleScanner(status);
       setTimeout(() => {
-        this.nativeProvider.keepTopModal = false;
+        this.nativeProvider.setKeepTopModal = false;
       }, renderingDelay);
     } catch {
       this.closeScanCode();
@@ -63,8 +60,7 @@ export class ScanCodeComponent implements OnInit {
   }
 
   private closeScanCode(code: string = null) {
-    this.checkingServiceFacade.barcodeScanResult = code;
-    this.goBack();
+    this.goBack(code);
   }
 
   private async startScanning(targetFormats: string[]) {
@@ -75,11 +71,6 @@ export class ScanCodeComponent implements OnInit {
     } else {
       this.closeScanCode();
     }
-  }
-
-  private goBack() {
-    this.buttonDisabled = true;
-    this.modalController.dismiss();
   }
 
   private handleScanner(status: any) {
@@ -93,7 +84,16 @@ export class ScanCodeComponent implements OnInit {
 
   private hardwareBackButton() {
     this.platform.backButton.pipe(take(1)).subscribe(() => {
-      this.goBack();
+      this.closeScanCode();
     });
+  }
+
+  private goBack(code: string) {
+    this.buttonDisabled = true;
+    this.modalController.dismiss({ scanCodeResult: code });
+  }
+
+  private async clearBackground() {
+    await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
   }
 }

@@ -60,7 +60,7 @@ export interface AppleWalletInfo {
 })
 export class NativeProvider {
   private previousRoute: string = '';
-  keepTopModal = false;
+  private keepTopModal = false;
   constructor(
     private readonly platform: Platform,
     private readonly router: Router,
@@ -223,6 +223,14 @@ export class NativeProvider {
         throw new Error('Error with NativeInterface');
       }
     });
+  }
+ 
+  set setKeepTopModal(value: boolean) {
+    this.keepTopModal = value;
+  }
+
+  get getKeepTopModal(): boolean {
+    return this.keepTopModal;
   }
 
   // generates a unique id, not obligator a UUID

@@ -50,13 +50,13 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly checkInService: CheckingServiceFacade,
     private readonly modalController: ModalController,
-    private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
     private readonly globalNav: GlobalNavService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
@@ -118,15 +118,17 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       componentProps: {
         formats: [Barcode.QRCode],
         title: this.scanCode.title,
-      }
+      },
     });
     await modal.present();
-    modal.onDidDismiss().then(() => {
-      if (this.checkInService.barcodeScanResult == null) {
+    modal.onDidDismiss().then(({ data }) => {
+      const { scanCodeResult } = data;
+      if (scanCodeResult == null) {
         return;
       }
+      alert('scanCodeResult: ' + scanCodeResult);
       this.checkInService
-        .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)
+        .checkInOrderByBarcode(this.orderId, scanCodeResult)
         .pipe(take(1))
         .toPromise()
         .then(async res => {
@@ -193,7 +195,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         dueTime,
         data,
         orderNew,
-        scanCode
+        scanCode,
       } = response.data;
       const { content } = contentStrings;
       this.data = <orderInfo>data;
