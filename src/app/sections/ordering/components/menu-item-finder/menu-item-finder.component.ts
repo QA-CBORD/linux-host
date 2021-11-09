@@ -54,7 +54,7 @@ export class MenuItemFinderComponent implements OnInit {
                 componentProps: {
                   formats: [Barcode.QRCode, Barcode.EAN_13],
                   title: this.barCodeCs.title,
-                  prompt: this.barCodeCs.message,
+                  prompt: this.barCodeCs.prompt,
                   textBtn: this.barCodeCs.textBtn,
                 },
               });

@@ -10,7 +10,7 @@ export class ScanCodeCsModel extends ContentStringModel {
     return this.content.scan_code_title;
   }
 
-  get message(): string {
+  get prompt(): string {
     return this.content.scan_code_text;
   }
 
