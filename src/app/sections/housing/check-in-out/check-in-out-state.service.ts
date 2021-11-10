@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class CheckInOutStateService  {
-  private checkInOuts: BehaviorSubject<CheckInOut[]> = new BehaviorSubject<CheckInOut[]>([]);
+  public checkInOuts: BehaviorSubject<CheckInOut[]> = new BehaviorSubject<CheckInOut[]>([]);
   private checkInOutSpots: Subject<CheckInOutSpot> = new Subject<CheckInOutSpot>();
   private _selectedCheckInOut: CheckInOut;
 

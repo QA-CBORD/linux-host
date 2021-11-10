@@ -11,12 +11,12 @@ import { MerchantOrderTypesInfo, MerchantService } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
-import { ScanCodeComponent } from '../scan-code/scan-code.component';
-
+import { Barcode, ScanCodeComponent } from '../scan-code/scan-code.component';
+import { Platform } from '@ionic/angular';
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -30,7 +30,6 @@ export interface orderInfo {
   styleUrls: ['./check-in-pending.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class CheckInPendingComponent implements OnInit, OnDestroy {
   contentStrings: CheckingContentCsModel;
   locationPermissionDisabled: boolean;
@@ -50,18 +49,20 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly checkInService: CheckingServiceFacade,
     private readonly modalController: ModalController,
-    private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
     private readonly globalNav: GlobalNavService,
+    private platform: Platform,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
     this.setData();
     this.watchLocationChanges();
+    this.hardwareBackButton();
   }
 
   ngOnDestroy() {
@@ -72,7 +73,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   ionViewWillLeave() {
     this.globalNav.showNavBar();
   }
-  
+
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
     this.loadingService.closeSpinner();
@@ -82,7 +83,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.globalNav.hideNavBar();
   }
-
 
   async onClosed() {
     await this.loadingService.showSpinner();
@@ -96,7 +96,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async goToOrderDetails() {
-    
     const order = (await this.merchantService.recentOrders$.pipe(take(1)).toPromise()).find(
       ({ id }) => id == this.orderId
     );
@@ -113,15 +112,23 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onScanCode() {
-    this.loadingService.showSpinner();
     const modal = await this.modalController.create({
       component: ScanCodeComponent,
+      cssClass: 'scan-modal',
+      backdropDismiss: false,
+      componentProps: {
+        formats: [Barcode.QRCode],
+        prompt: (<any>this.contentStrings).scan_code_prompt,
+      },
     });
     await modal.present();
-    modal.onDidDismiss().then(() => {
-      if (this.checkInService.barcodeScanResult == null) return;
+    modal.onDidDismiss().then(({ data }) => {
+      const { scanCodeResult } = data;
+      if (scanCodeResult == null) {
+        return;
+      }
       this.checkInService
-        .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)
+        .checkInOrderByBarcode(this.orderId, scanCodeResult)
         .pipe(take(1))
         .toPromise()
         .then(async res => {
@@ -178,33 +185,29 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   private setData() {
     this.routeSubscription = this.activatedRoute.data.subscribe(response => {
-      const {
-        contentStrings,
-        mealBased,
-        orderId,
-        total,
-        checkNumber,
-        merchantId,
-        dueTime,
-        data,
-        orderNew,
-      } = response.data;
-      const { content } = contentStrings;
-      this.data = <orderInfo>data;
+      const result = response.data;
+      const { content } = result.contentStrings;
       this.contentStrings = <CheckingContentCsModel>content;
-      this.mealBased = mealBased ? null : mealBased;
-      this.orderId = orderId;
-      this.total = total;
-      this.checkNumber = checkNumber;
-      this.merchantId = merchantId;
-      this.dueTime = dueTime;
-      this.orderNew = orderNew;
+      this.data = <orderInfo>result.data;
+      this.mealBased = result.mealBased ? null : result.mealBased;
+      this.orderId = result.orderId;
+      this.total = result.total;
+      this.checkNumber = result.checkNumber;
+      this.merchantId = result.merchantId;
+      this.dueTime = result.dueTime;
+      this.orderNew = result.orderNew;
     });
   }
 
   private watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
-      this.locationPermissionDisabled = !(latitude&&longitude);
+      this.locationPermissionDisabled = !(latitude && longitude);
+    });
+  }
+
+  private hardwareBackButton() {
+    this.platform.backButton.subscribeWithPriority(10, async () => {
+      this.onClosed();
     });
   }
 }

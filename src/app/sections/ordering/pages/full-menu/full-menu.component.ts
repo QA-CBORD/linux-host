@@ -32,7 +32,7 @@ import { APP_ROUTES } from '@sections/section.config';
   styleUrls: ['./full-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
+export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
@@ -58,10 +58,6 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
     this.initContentStrings();
-  }
-
-  ngAfterViewInit() {
-    this.globalNav.hideNavBar();
   }
 
   ngOnDestroy() {
@@ -98,6 +94,7 @@ export class FullMenuComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    this.globalNav.hideNavBar();
     this.menuItems$ = this.cartService.menuItems$;
     const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
     openTimeSlot && this.openOrderOptions();
