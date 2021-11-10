@@ -1,53 +1,102 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
+import { Location } from '@angular/common';
 import { ModalController } from '@ionic/angular';
-import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
+import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
+import { Router } from '@angular/router';
+import { Plugins } from '@capacitor/core';
+import { ToastService } from '@core/service/toast/toast.service';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { Platform } from '@ionic/angular';
+import { take } from 'rxjs/operators';
+const { BarcodeScanner } = Plugins;
+const renderingDelay = 1000;
 
+export enum Barcode {
+  QRCode = 'QR_CODE',
+}
 @Component({
   templateUrl: './scan-code.component.html',
   styleUrls: ['./scan-code.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScanCodeComponent implements OnInit {
-  @Input() format = 'QR_CODE';
-  @Input() prompt = '';
+  buttonDisabled = false;
+  @Input() formats? = [];
+  @Input() title?: string;
+  @Input() prompt?: string;
+  @Input() textBtn?: string;
 
-  private barcodeScanResult: BarcodeScanResult;
   constructor(
-    private readonly barcode: BarcodeScanner,
-    private readonly loadingService: LoadingService,
-    private readonly checkingServiceFacade: CheckingServiceFacade,
-    private readonly modalController: ModalController
+    private readonly router: Router,
+    private readonly modalController: ModalController,
+    private readonly toastService: ToastService,
+    private readonly nativeProvider: NativeProvider,
+    private platform: Platform,
+    private location: Location
   ) {}
 
   async ngOnInit() {
-    await this.loadingService.showSpinner();
-    const options: BarcodeScannerOptions = {
-      orientation: 'portrait',
-      preferFrontCamera: false,
-      prompt: this.prompt,
-      showFlipCameraButton: false,
-      showTorchButton: false,
-      disableSuccessBeep: true,
-      torchOn: false,
-      formats: this.format,
-      resultDisplayDuration: 0,
-    };
     try {
-      this.barcodeScanResult = await this.barcode.scan(options);
-      if (this.barcodeScanResult.cancelled) {
-        this.checkingServiceFacade.barcodeScanResult = null;
-      } else {
-        this.checkingServiceFacade.barcodeScanResult = this.barcodeScanResult.text;
-      }
+      await this.clearBackground();
+      BarcodeScanner.prepare();
+      this.hardwareBackButton();
+      this.nativeProvider.setKeepTopModal = true;
+      const status = await BarcodeScanner.checkPermission({ force: true });
+      this.handleScanner(status);
+      setTimeout(() => {
+        this.nativeProvider.setKeepTopModal = false;
+      }, renderingDelay);
     } catch {
-      this.checkingServiceFacade.barcodeScanResult = null;
+      this.closeScanCode();
     }
-    this.modalController.dismiss();
   }
 
-  async ionViewDidEnter() {
-    await this.loadingService.closeSpinner();
+  ionViewWillLeave() {
+    this.location.back();
+    BarcodeScanner.stopScan();
+    BarcodeScanner.showBackground();
+  }
+
+  private closeScanCode(code: string = null) {
+    this.goBack(code);
+  }
+
+  private async startScanning(targetFormats: string[]) {
+    BarcodeScanner.hideBackground();
+    const result = await BarcodeScanner.startScan({ targetFormats });
+    if (result.hasContent) {
+      this.closeScanCode(result.content);
+    } else {
+      this.closeScanCode();
+    }
+  }
+
+  private handleScanner(status: any) {
+    if (status.granted || status.neverAsked) {
+      this.startScanning(this.formats);
+    } else {
+      this.closeScanCode();
+      this.toastService.showToast({ message: 'Permissions were not granted.' });
+    }
+  }
+
+  private hardwareBackButton() {
+    this.platform.backButton.pipe(take(1)).subscribe(() => {
+      this.closeScanCode();
+    });
+  }
+
+  private async goBack(code: string) {
+    this.buttonDisabled = true;
+    await this.modalController.dismiss({ scanCodeResult: code });
+  }
+
+  private async clearBackground() {
+    await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
+  }
+
+  async manualEntry() {
+    await this.modalController.dismiss({ manualEntry: true });
   }
 }

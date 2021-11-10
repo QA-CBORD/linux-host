@@ -60,6 +60,7 @@ export interface AppleWalletInfo {
 })
 export class NativeProvider {
   private previousRoute: string = '';
+  private keepTopModal = false;
   constructor(
     private readonly platform: Platform,
     private readonly router: Router,
@@ -117,14 +118,14 @@ export class NativeProvider {
     this.dismissTopControllers().finally(() => this.zone.run(() => this.doNativeNavigation()));
   }
 
-  async dismissTopControllers(keepPopover: boolean = false) {
+  async dismissTopControllers(keepPopover: boolean = false, keepModal: boolean = false) {
     const [modal, popover, actionSheet, alertCtrl] = await Promise.all([
       this.modalController.getTop(),
       this.popoverController.getTop(),
       this.actionSheetController.getTop(),
       this.alertCtrl.getTop(),
     ]);
-    if (modal) modal.dismiss();
+    if (modal && !keepModal) modal.dismiss();
     if (actionSheet) actionSheet.dismiss();
     if (alertCtrl) alertCtrl.dismiss();
     if (popover && !keepPopover) popover.dismiss();
@@ -222,6 +223,14 @@ export class NativeProvider {
         throw new Error('Error with NativeInterface');
       }
     });
+  }
+ 
+  set setKeepTopModal(value: boolean) {
+    this.keepTopModal = value;
+  }
+
+  get getKeepTopModal(): boolean {
+    return this.keepTopModal;
   }
 
   // generates a unique id, not obligator a UUID

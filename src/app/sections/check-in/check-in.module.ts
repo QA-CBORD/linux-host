@@ -14,8 +14,9 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { CheckinRoutingModule } from './routing/check-in-routing.module';
 import { CheckinSuccessResolver } from './resolver/check-in-success-resolver.component';
 import { CheckinPendingResolver } from './resolver/check-in-pending.resolver';
+import { ScanCodeBackground } from './components/scan-code/background/scan-code-background.component';
 
-const declarations = [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent];
+const declarations = [CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent, ScanCodeBackground];
 
 @NgModule({
   declarations,
