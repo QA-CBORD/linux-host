@@ -56,7 +56,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private platform: Platform,
     private readonly cdRef: ChangeDetectorRef,
-    
     private readonly router: Router
   ) {}
 
@@ -186,27 +185,17 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   private setData() {
     this.routeSubscription = this.activatedRoute.data.subscribe(response => {
-      const {
-        contentStrings,
-        mealBased,
-        orderId,
-        total,
-        checkNumber,
-        merchantId,
-        dueTime,
-        data,
-        orderNew,
-      } = response.data;
-      const { content } = contentStrings;
-      this.data = <orderInfo>data;
+      const result = response.data;
+      const { content } = result.contentStrings;
       this.contentStrings = <CheckingContentCsModel>content;
-      this.mealBased = mealBased ? null : mealBased;
-      this.orderId = orderId;
-      this.total = total;
-      this.checkNumber = checkNumber;
-      this.merchantId = merchantId;
-      this.dueTime = dueTime;
-      this.orderNew = orderNew;
+      this.data = <orderInfo>result.data;
+      this.mealBased = result.mealBased ? null : result.mealBased;
+      this.orderId = result.orderId;
+      this.total = result.total;
+      this.checkNumber = result.checkNumber;
+      this.merchantId = result.merchantId;
+      this.dueTime = result.dueTime;
+      this.orderNew = result.orderNew;
     });
   }
 
@@ -217,7 +206,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private hardwareBackButton() {
-    this.platform.backButton.pipe(take(1)).subscribe(() => {
+    this.platform.backButton.subscribeWithPriority(10, async () => {
       this.onClosed();
     });
   }

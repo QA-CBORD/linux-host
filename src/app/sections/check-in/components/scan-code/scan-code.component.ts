@@ -24,7 +24,7 @@ export enum Barcode {
 export class ScanCodeComponent implements OnInit {
   buttonDisabled = false;
   @Input() formats = [Barcode.QRCode, Barcode.EAN_13];
-  @Input() title? = '';
+  @Input() title?: string;
   @Input() prompt?: string;
   @Input() textBtn?: string;
 
@@ -39,8 +39,9 @@ export class ScanCodeComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.hardwareBackButton();
+      await this.clearBackground();
       BarcodeScanner.prepare();
+      this.hardwareBackButton();
       this.nativeProvider.setKeepTopModal = true;
       const status = await BarcodeScanner.checkPermission({ force: true });
       this.handleScanner(status);
@@ -50,10 +51,6 @@ export class ScanCodeComponent implements OnInit {
     } catch {
       this.closeScanCode();
     }
-  }
-
-  async ionViewWillEnter() {
-    await this.clearBackground();
   }
 
   ionViewWillLeave() {
@@ -91,16 +88,16 @@ export class ScanCodeComponent implements OnInit {
     });
   }
 
-  private goBack(code: string) {
+  private async goBack(code: string) {
     this.buttonDisabled = true;
-    this.modalController.dismiss({ scanCodeResult: code });
+    await this.modalController.dismiss({ scanCodeResult: code });
   }
 
   private async clearBackground() {
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
   }
 
-  manualEntry() {
-    this.modalController.dismiss({ manualEntry: true });
+  async manualEntry() {
+    await this.modalController.dismiss({ manualEntry: true });
   }
 }

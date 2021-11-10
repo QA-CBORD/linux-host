@@ -31,7 +31,7 @@ export enum ContentStringCategory {
   checkin = 'checkin',
   checkinSuccess = 'checkinSuccess',
   locationDisclosure = 'locationDisclosure',
-  scanCode = 'scanCode'
+  scanAndGo = 'scanAndGo'
 }
 
 export interface ExtraContent {
@@ -139,8 +139,8 @@ export const ContentStringApi: ContentStringCategoryType = {
       return new LocationDisclosureCsModel(NullableContent.build(config));
     },
   },
-  [ContentStringCategory.scanCode]: {
-    category: CATEGORIES.scanCode,
+  [ContentStringCategory.scanAndGo]: {
+    category: CATEGORIES.scanAndGo,
     build: (config: ContentStringBuilderConfig): ScanCodeCsModel => {
       return new ScanCodeCsModel(NullableContent.build(config));
     }

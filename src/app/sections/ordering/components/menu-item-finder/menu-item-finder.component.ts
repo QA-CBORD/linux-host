@@ -6,7 +6,6 @@ import { MerchantSettings } from '@sections/ordering/ordering.config';
 import { ItemManualEntryComponent } from '@sections/ordering/pages/item-manual-entry/item-manual-entry.component';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { MerchantSettingInfo } from '..';
@@ -26,16 +25,10 @@ export class MenuItemFinderComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
     private readonly commonService: CommonService,
-    private readonly globalNav: GlobalNavService,
   ) {}
 
   async ngOnInit() {
-    this.commonService
-      .loadContentString(ContentStringCategory.scanCode)
-      .pipe(take(1))
-      .subscribe(ContentStrings => {
-        this.barCodeCs = ContentStrings;
-      });
+    this.scanCodeCs();
     this.barcodeOptions$ = this.cartService.merchant$.pipe(
       filter(merchant => !!merchant),
       map(merchant => {
@@ -60,12 +53,7 @@ export class MenuItemFinderComponent implements OnInit {
               });
               modal.onDidDismiss().then(async ({ data }: any) => {
                 if (data.scanCodeResult) {
-                  this.cartService.getMenuItemByCode(data.scanCodeResult).subscribe(async menuItem => {
-                    if (menuItem) {
-                      const { id: menuItemId } = menuItem;
-                      this.itemScanned.next(menuItemId);
-                    }
-                  });
+                  this.getMenuItem(data);
                 } else if (data.manualEntry) {
                   await this.openManualEntry();
                 }
@@ -88,6 +76,27 @@ export class MenuItemFinderComponent implements OnInit {
     );
   }
 
+  private getMenuItem(data: any) {
+    this.cartService
+      .getMenuItemByCode(data.scanCodeResult)
+      .pipe(take(1))
+      .subscribe(async menuItem => {
+        if (menuItem) {
+          const { id: menuItemId } = menuItem;
+          this.itemScanned.next(menuItemId);
+        }
+      });
+  }
+
+  private scanCodeCs() {
+    this.commonService
+      .loadContentString(ContentStringCategory.scanAndGo)
+      .pipe(take(1))
+      .subscribe(ContentStrings => {
+        this.barCodeCs = ContentStrings;
+      });
+  }
+
   private async openManualEntry() {
     const modal = await this.modalController.create({
       component: ItemManualEntryComponent,
@@ -100,9 +109,6 @@ export class MenuItemFinderComponent implements OnInit {
       }
     });
 
-    modal.onWillDismiss().then(() => {
-      this.globalNav.hideNavBar();
-    });
     await modal.present();
   }
 }

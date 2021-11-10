@@ -11,7 +11,7 @@ export class ScanCodeCsModel extends ContentStringModel {
   }
 
   get prompt(): string {
-    return this.content.scan_code_text;
+    return this.content.scan_code_prompt;
   }
 
   get textBtn(): string {

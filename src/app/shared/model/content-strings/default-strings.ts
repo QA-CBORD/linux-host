@@ -226,6 +226,6 @@ export const defaultLocationDisclosureStrings = {
 
 export const defaultScanCodeStrings = {
   scan_code_title: 'Barcode',
-  scan_code_text: 'Position the code in the center of the screen to scan.',
+  scan_code_prompt: 'Position the code in the center of the screen to scan.',
   scan_code_button_text: 'Manual Entry',
 };

@@ -20,7 +20,6 @@ export class ItemManualEntryComponent implements OnInit {
 
   constructor(
     private readonly cartService: CartService,
-    private readonly globalNav: GlobalNavService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly toastService: ToastService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
@@ -33,14 +32,6 @@ export class ItemManualEntryComponent implements OnInit {
       [this.controlsNames.code]: ['', [Validators.required, Validators.pattern(BARCODE_REGEXP)]],
     });
     this.cdRef.detectChanges();
-  }
-
-  ionViewWillEnter() {
-    this.globalNav.hideNavBar();
-  }
-
-  ionViewWillLeave() {
-    this.globalNav.showNavBar();
   }
 
   continue() {
