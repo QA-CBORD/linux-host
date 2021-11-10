@@ -87,6 +87,10 @@ export class ApplicationsStateService {
     return this.applicationsState.applicationDetails.roommatePreferences;
   }
 
+  deleteRoommatePreferencesSelecteds(){
+    this.applicationsState.applicationDetails.roommatePreferences = [];
+  }
+
   get requestingRoommate(): RoommatePreferences[]{
     return this.applicationsState.applicationDetails.requestingRoommates;
   }

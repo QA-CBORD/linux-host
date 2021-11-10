@@ -30,6 +30,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._applicationsStateService.setRequestedRoommates([])
     this._applicationsStateService.setRoommatesPreferences([])
     this._applicationsStateService.emptyRequestedRoommate()
+    this._applicationsStateService.deleteRoommatePreferencesSelecteds();
   }
 
 
@@ -95,44 +96,46 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initGetRequestedRoommatesSubscription() {
-    const applicationDetails = this._applicationsStateService.applicationsState.applicationDetails;
-    const requestedRoommates = this._applicationsStateService.getRequestedRoommate();
-    const patronRequests = applicationDetails.roommatePreferences
-      .filter(x => x.patronKeyRoommate !== 0)
-      .map(x => new RequestedRoommate({
-        preferenceKey: x.preferenceKey,
-        patronRoommateKey: x.patronKeyRoommate 
-      }));
+    // const applicationDetails = this._applicationsStateService.applicationsState.applicationDetails;
+    // const requestedRoommates = this._applicationsStateService.getRequestedRoommate();
+    // const patronRequests = applicationDetails.roommatePreferences
+    //   .filter(x => x.patronKeyRoommate !== 0)
+    //   .map(x => new RequestedRoommate({
+    //     preferenceKey: x.preferenceKey,
+    //     patronRoommateKey: x.patronKeyRoommate 
+    //   }));
 
-    const requestBody = new RequestedRoommateRequest({
-      termKey: this.selectedTermKey,
-      patronRequests
-    });
-    this._housingService.getRequestedRoommates(requestBody).pipe(
-      map((data: RequestedRoommateResponse) => data.requestedRoommates.map(d => {
-        const roommatePref = applicationDetails.roommatePreferences
-          .find(f => f.patronKeyRoommate === d.patronRoommateKey
-            && f.preferenceKey === d.preferenceKey);
+    // const requestBody = new RequestedRoommateRequest({
+    //   termKey: this.selectedTermKey,
+    //   patronRequests
+    // });
+    // this._housingService.getRequestedRoommates(requestBody).pipe(
+    //   map((data: RequestedRoommateResponse) => data.requestedRoommates.map(d => {
+    //     const roommatePref = applicationDetails.roommatePreferences
+    //       .find(f => f.patronKeyRoommate === d.patronRoommateKey
+    //         && f.preferenceKey === d.preferenceKey);
 
         
-        const requestedRoommateObj = new RequestedRoommate({
-          firstName: roommatePref ? roommatePref.firstName : '',
-          lastName: roommatePref ? roommatePref.lastName : '',
-          preferenceKey: d.preferenceKey,
-          patronRoommateKey: d.patronRoommateKey,
-          confirmed: d.confirmed,
-          middleName: d.middleName ? d.middleName : '',
-          birthDate: d.birthDate,
-          preferredName: d.preferredName ? d.preferredName :''
-        });
-        if(!requestedRoommates.some(requested => requested.patronRoommateKey == requestedRoommateObj.patronRoommateKey )){
-          this._applicationsStateService.setRequestedRoommate(requestedRoommateObj)
-          return requestedRoommateObj;
-        }
+    //     const requestedRoommateObj = new RequestedRoommate({
+    //       firstName: roommatePref ? roommatePref.firstName : '',
+    //       lastName: roommatePref ? roommatePref.lastName : '',
+    //       preferenceKey: d.preferenceKey,
+    //       patronRoommateKey: d.patronRoommateKey,
+    //       confirmed: d.confirmed,
+    //       middleName: d.middleName ? d.middleName : '',
+    //       birthDate: d.birthDate,
+    //       preferredName: d.preferredName ? d.preferredName :''
+    //     });
+    //     if(!requestedRoommates.some(requested => requested.patronRoommateKey == requestedRoommateObj.patronRoommateKey )){
+    //       console.log("obj--> ",requestedRoommateObj)
+    //       console.log("State",this._applicationsStateService.requestedRoommates)
+    //       this._applicationsStateService.setRequestedRoommate(requestedRoommateObj)
+    //       return requestedRoommateObj;
+    //     }
 
-      }))).subscribe(()=>{
-        this.requestedRoommates$ = this._applicationsStateService.requestedRoommates
-      })
+    //   }))).subscribe(()=>{
+    //     this.requestedRoommates$ = this._applicationsStateService.requestedRoommates
+    //   })
       
   }
 }
