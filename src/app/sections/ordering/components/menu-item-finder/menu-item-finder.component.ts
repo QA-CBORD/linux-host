@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { Barcode, ScanCodeComponent } from '@sections/check-in/components/scan-code/scan-code.component';
 import { CartService } from '@sections/ordering';
 import { MerchantSettings } from '@sections/ordering/ordering.config';
@@ -25,6 +26,7 @@ export class MenuItemFinderComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
     private readonly commonService: CommonService,
+    private readonly toastService: ToastService,
   ) {}
 
   async ngOnInit() {
@@ -45,7 +47,6 @@ export class MenuItemFinderComponent implements OnInit {
                 cssClass: 'scan-modal',
                 backdropDismiss: false,
                 componentProps: {
-                  formats: [Barcode.QRCode, Barcode.EAN_13],
                   title: this.barCodeCs.title,
                   prompt: this.barCodeCs.prompt,
                   textBtn: this.barCodeCs.textBtn,
@@ -84,6 +85,8 @@ export class MenuItemFinderComponent implements OnInit {
         if (menuItem) {
           const { id: menuItemId } = menuItem;
           this.itemScanned.next(menuItemId);
+        } else {
+          await this.toastService.showToast({ message: 'Item not found.' });
         }
       });
   }
@@ -106,9 +109,9 @@ export class MenuItemFinderComponent implements OnInit {
       if (data) {
         const { menuItemId } = data;
         this.itemScanned.next(menuItemId);
-      }
+      }  
     });
 
     await modal.present();
-  }
+  } 
 }

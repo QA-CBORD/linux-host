@@ -14,7 +14,6 @@ const renderingDelay = 1000;
 
 export enum Barcode {
   QRCode = 'QR_CODE',
-  EAN_13 = 'EAN_13',
 }
 @Component({
   templateUrl: './scan-code.component.html',
@@ -23,7 +22,7 @@ export enum Barcode {
 })
 export class ScanCodeComponent implements OnInit {
   buttonDisabled = false;
-  @Input() formats = [Barcode.QRCode, Barcode.EAN_13];
+  @Input() formats? = [];
   @Input() title?: string;
   @Input() prompt?: string;
   @Input() textBtn?: string;

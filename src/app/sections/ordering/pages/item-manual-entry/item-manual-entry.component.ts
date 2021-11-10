@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CartService } from '@sections/ordering';
 import { ORDERING_SCAN_GO_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable } from 'rxjs';
