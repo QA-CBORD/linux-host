@@ -15,10 +15,10 @@ import { ApplicationsService } from './applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { ContractListStateService} from '@sections/housing/contract-list/contract-list-state.service'
+import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service'
 import { ContractSummary } from '@sections/housing/contract-list/contractSummary.model'
-import {CheckInOutStateService} from '@sections/housing/check-in-out/check-in-out-state.service'
-import {CheckInOut, CheckInOutSlot} from '@sections/housing/check-in-out/check-in-out.model'
+import { CheckInOutStateService } from '@sections/housing/check-in-out/check-in-out-state.service'
+import { CheckInOut, CheckInOutSlot } from '@sections/housing/check-in-out/check-in-out.model'
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 import {
@@ -57,7 +57,7 @@ export class HousingService {
   private readonly _patronApplicationsUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
-  private readonly  _facilityMapper: FacilityDetailsToFacilityMapper;
+  private readonly _facilityMapper: FacilityDetailsToFacilityMapper;
   private _refreshDefinitionsSource: Subject<void> = new Subject<void>();
 
   refreshDefinitions$: Observable<number> = this._refreshDefinitionsSource
@@ -80,6 +80,7 @@ export class HousingService {
     private _contractListStateService: ContractListStateService,
     private _checkInOutStateService: CheckInOutStateService,
     private _waitingListStateService: WaitingListStateService,
+    public _housingService: HousingService,
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();
   }
@@ -91,10 +92,10 @@ export class HousingService {
       map((response: any) => new DefinitionsResponse(response)),
       switchMap((response: DefinitionsResponse) => this._patchDefinitionsByStore(response)),
       tap((response: DefinitionsResponse) =>
-        this._setState(response.applicationDefinitions, 
-                       response.contractDetails,
-                       response.nonAssignmentDetails,
-                       response.waitingLists)),
+        this._setState(response.applicationDefinitions,
+          response.contractDetails,
+          response.nonAssignmentDetails,
+          response.waitingLists)),
       catchError(() => this._handleGetDefinitionsError())
     );
   }
@@ -165,8 +166,7 @@ export class HousingService {
     );
   }
 
-  getPatronContracts(termId: number)
-  {
+  getPatronContracts(termId: number) {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
     return this._housingProxyService.get<ContractListResponse>(apiUrl).pipe(
       map((response: any) => new ContractListResponse(response)),
@@ -175,8 +175,7 @@ export class HousingService {
     );
   }
 
-  getCheckInOuts(termId: number)
-  {
+  getCheckInOuts(termId: number) {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
     return this._housingProxyService.get<CheckInOutResponse>(apiUrl).pipe(
       map((response: any) => new CheckInOutResponse(response)),
@@ -185,8 +184,7 @@ export class HousingService {
     );
   }
 
-  getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]>
-  {
+  getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]> {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
     return this._housingProxyService.get<CheckInOutSlot[]>(apiUrl).pipe(
       map((response: any) => new CheckInOutSlotResponse(response).slots),
@@ -195,19 +193,18 @@ export class HousingService {
   }
 
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
-    const apiUrl = `${
-      this._baseUrl
-    }/roomselectproxy/v.1.0/room-selects-proxy/facilities/details/${roomSelectKey}`;
+    const apiUrl = `${this._baseUrl
+      }/roomselectproxy/v.1.0/room-selects-proxy/facilities/details/${roomSelectKey}`;
     return this._housingProxyService.get<FacilityDetailsResponse>(apiUrl).pipe(
       map((response: any) => {
-        const details = new  FacilityDetailsResponse(response)
+        const details = new FacilityDetailsResponse(response)
         return this._facilityMapper.map(details.facilityDetails);
       }),
-      catchError((e) =>{ throw e})
+      catchError((e) => { throw e })
     );
   }
 
-  getOccupantDetails(roomSelectKey:number, facilityKey: number): Observable<FacilityOccupantDetails[]> {
+  getOccupantDetails(roomSelectKey: number, facilityKey: number): Observable<FacilityOccupantDetails[]> {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
     return this._housingProxyService.post<Response>(apiUrl, {
       roomSelectKey: roomSelectKey,
@@ -217,7 +214,7 @@ export class HousingService {
         const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),
-      catchError(err => {throw err})
+      catchError(err => { throw err })
     )
   }
 
@@ -234,12 +231,12 @@ export class HousingService {
       tap(occupants => {
         this._roomsStateService.setOccupantDetails(occupants);
       }),
-      catchError(err => {throw err})
+      catchError(err => { throw err })
     )
   }
 
 
-  searchRoommates(searchBy:string, searchValue: string): Observable<RoommateDetails[]> {
+  searchRoommates(searchBy: string, searchValue: string): Observable<RoommateDetails[]> {
     const queryString: string = `?type=${searchBy}&searchValue=${searchValue}`;
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patrons/search${queryString}`;
     return this._housingProxyService.get<Response>(apiUrl).pipe(
@@ -250,14 +247,15 @@ export class HousingService {
       catchError(err => { throw err })
     );
   }
-  
-  getWaitList(key: number  ): Observable<WaitingListDetails> {
+
+  getWaitList(key: number): Observable<WaitingListDetails> {
     const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
     return this._housingProxyService.get<WaitingListDetails>(apiUrl).pipe(
-      map((response: any) =>{ 
+      map((response: any) => {
         this._waitingListStateService.setWaitingListDetails(response)
-        return new WaitingListDetails(response)}
-    ));
+        return new WaitingListDetails(response)
+      }
+      ));
   }
 
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
@@ -291,10 +289,10 @@ export class HousingService {
     this._roomsStateService.setRoomSelects(roomSelects);
   }
   _setContractSummariesState(contractSummaries: ContractSummary[]): void {
-  
+
     this._contractListStateService.setContractSummaries(contractSummaries);
   }
-  _setCheckInOutsState(checkInOuts: CheckInOut[]): void{
+  _setCheckInOutsState(checkInOuts: CheckInOut[]): void {
     this._checkInOutStateService.setCheckInOuts(checkInOuts);
   }
 
@@ -357,20 +355,20 @@ export class HousingService {
       map(
         ([applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists]:
           [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[], WaitingList[]]) =>
-            new DefinitionsResponse({
-              applicationDefinitions,
-              contractDetails,
-              nonAssignmentDetails,
-              waitingLists
-            })
+          new DefinitionsResponse({
+            applicationDefinitions,
+            contractDetails,
+            nonAssignmentDetails,
+            waitingLists
+          })
       )
     );
   }
 
   private _setState(applications: ApplicationDetails[],
-                    contracts: ContractListDetails[],
-                    nonAssignments: NonAssignmentListDetails[],
-                    waitingLists: WaitingList[]): void {
+    contracts: ContractListDetails[],
+    nonAssignments: NonAssignmentListDetails[],
+    waitingLists: WaitingList[]): void {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
     this._nonAssignmentsStateService.setNonAssignments(nonAssignments);
@@ -393,5 +391,46 @@ export class HousingService {
         waitingLists
       })
     );
+  }
+
+  public getRequestedRommate(termKey: number) {
+    const applicationDetails = this._applicationsStateService.applicationsState.applicationDetails;
+    const requestedRoommates = this._applicationsStateService.getRequestedRoommate();
+    const patronRequests = applicationDetails.roommatePreferences
+      .filter(x => x.patronKeyRoommate !== 0)
+      .map(x => new RequestedRoommate({
+        preferenceKey: x.preferenceKey,
+        patronRoommateKey: x.patronKeyRoommate
+      }));
+
+    const requestBody = new RequestedRoommateRequest({
+      termKey: termKey,
+      patronRequests
+    });
+    return this.getRequestedRoommates(requestBody).pipe(
+      map((data: RequestedRoommateResponse) => {
+        data.requestedRoommates.map(d => {
+          const roommatePref = applicationDetails.roommatePreferences
+            .find(f => f.patronKeyRoommate === d.patronRoommateKey
+              && f.preferenceKey === d.preferenceKey);
+
+          const requestedRoommateObj = new RequestedRoommate({
+            firstName: roommatePref ? roommatePref.firstName : '',
+            lastName: roommatePref ? roommatePref.lastName : '',
+            preferenceKey: d.preferenceKey,
+            patronRoommateKey: d.patronRoommateKey,
+            confirmed: d.confirmed,
+            middleName: d.middleName ? d.middleName : '',
+            birthDate: d.birthDate,
+            preferredName: d.preferredName ? d.preferredName : ''
+          });
+          if (!requestedRoommates.some(requested => requested.patronRoommateKey == requestedRoommateObj.patronRoommateKey)) {
+            this._applicationsStateService.setRequestedRoommate(requestedRoommateObj)
+            return requestedRoommateObj;
+          }
+
+        })
+      }))
+
   }
 }

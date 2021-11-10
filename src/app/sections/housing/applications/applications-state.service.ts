@@ -29,11 +29,11 @@ export class ApplicationsStateService {
     applicationDetails: null,
   };
 
-  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({}); 
+  private roommateSearchOptions$: BehaviorSubject<RoommateSearchOptions> = new BehaviorSubject<RoommateSearchOptions>({});
   private requestedRoommates$: BehaviorSubject<RequestedRoommate[]> = new BehaviorSubject<RequestedRoommate[]>([]);
   private maximunSelectedRoommates: number;
   private roommatePreferences: RoommatePreferences[];
-  private requestedroommate: RequestedRoommate[]=[];
+  private requestedroommate: RequestedRoommate[] = [];
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState
   >(this._defaultState);
@@ -54,16 +54,17 @@ export class ApplicationsStateService {
     this._applicationsStateSource.next(value);
   }
 
-  setRequestedRoommate(value: RequestedRoommate ){
+  setRequestedRoommate(value: RequestedRoommate) {
+
     this.requestedroommate.push(value);
     this.setRequestedRoommates(this.requestedroommate)
   }
 
-  emptyRequestedRoommate(){
+  emptyRequestedRoommate() {
     this.requestedroommate = [];
   }
 
-  getRequestedRoommate() : RequestedRoommate[]{
+  getRequestedRoommate(): RequestedRoommate[] {
     return this.requestedroommate
   }
 
@@ -78,21 +79,25 @@ export class ApplicationsStateService {
   get requestedRoommates(): Observable<RequestedRoommate[]> {
     return this.requestedRoommates$;
   }
-  
+
   getRoommateSearchOptions(): RoommateSearchOptions {
     return this.roommateSearchOptions$.getValue();
   }
 
-  get roommatePreferencesSelecteds(){
+  get roommatePreferencesSelecteds() {
     return this.applicationsState.applicationDetails.roommatePreferences;
   }
 
-  get requestingRoommate(): RoommatePreferences[]{
+  deleteRoommatePreferencesSelecteds() {
+    this.applicationsState.applicationDetails.roommatePreferences = [];
+  }
+
+  get requestingRoommate(): RoommatePreferences[] {
     return this.applicationsState.applicationDetails.requestingRoommates;
   }
 
-  deleteRequestingRoommate(index:number) {
-    this.applicationsState.applicationDetails.requestingRoommates.splice(index,1)
+  deleteRequestingRoommate(index: number) {
+    this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
   }
 
   setApplications(applications: ApplicationDetails[]): void {
@@ -120,50 +125,49 @@ export class ApplicationsStateService {
   setRequestedRoommates(roommates: RequestedRoommate[]): void {
     this.requestedRoommates$.next(roommates);
   }
-  
+
   setRoommatesPreferences(roommates: RoommatePreferences[]) {
     this.roommatePreferences = roommates;
   }
 
-  addRoommatesPreferences(addedRoommate: RoommatePreferences){
+  addRoommatesPreferences(addedRoommate: RoommatePreferences) {
+    let roommatePreference = this.applicationsState.applicationDetails.roommatePreferences.find(roommate =>
+      roommate.preferenceKey === addedRoommate.preferenceKey &&
+      roommate.patronKeyRoommate !== addedRoommate.patronKeyRoommate)
+    if (roommatePreference) {
+      roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate;
+      roommatePreference.firstName = addedRoommate.firstName;
+      roommatePreference.lastName = addedRoommate.lastName;
+    }
 
-    this.setRoommatesPreferences(this.applicationsState.applicationDetails.roommatePreferences.map(roommatePreference => {
-      if(roommatePreference.patronKeyRoommate == 0 && roommatePreference.patronKeyRoommate != addedRoommate.patronKeyRoommate){
-        roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate;
-        roommatePreference.firstName = addedRoommate.firstName;
-        roommatePreference.lastName = addedRoommate.lastName ;
-        
-        return roommatePreference;
-      }
-    }))
-
-    if(!this.requestedroommate.some(roommate => roommate.patronRoommateKey == addedRoommate.patronKeyRoommate  )){
-      let roommateRequested = new RequestedRoommate( 
-        {'firstName':addedRoommate.firstName,
-        'lastName': addedRoommate.lastName , 
-        'preferenceKey': addedRoommate.preferenceKey ,
-        'patronRoommateKey': addedRoommate.patronKeyRoommate,
-        'middleName':addedRoommate.middleName, 
-        'birthDate': addedRoommate.birthDate, 
-        'preferredName':addedRoommate.preferredName,
-        'confirmed': true,
-      });
+    if (!this.requestedroommate.some(roommate => roommate.patronRoommateKey === addedRoommate.patronKeyRoommate)) {
+      let roommateRequested = new RequestedRoommate(
+        {
+          'firstName': addedRoommate.firstName,
+          'lastName': addedRoommate.lastName,
+          'preferenceKey': addedRoommate.preferenceKey,
+          'patronRoommateKey': addedRoommate.patronKeyRoommate,
+          'middleName': addedRoommate.middleName,
+          'birthDate': addedRoommate.birthDate,
+          'preferredName': addedRoommate.preferredName,
+          'confirmed': true,
+        });
       this.setRequestedRoommate(roommateRequested);
     }
-    
+
   }
 
-  setMaximumSelectedRoommates(maxRoommates:number){
+  setMaximumSelectedRoommates(maxRoommates: number) {
     this.maximunSelectedRoommates = maxRoommates;
   }
 
-  setSubtractSelectedRoommates(){
-    if(this.maximunSelectedRoommates>0){
+  setSubtractSelectedRoommates() {
+    if (this.maximunSelectedRoommates > 0) {
       this.maximunSelectedRoommates--;
     }
   }
 
-  get maximumSelectedRoommates(){
+  get maximumSelectedRoommates() {
     return this.maximunSelectedRoommates;
   }
 
@@ -194,10 +198,10 @@ export class ApplicationsStateService {
 
   isSubmitted(termKey) {
     let isSubmitted;
-    this.applications$.subscribe((res)=>{
-      isSubmitted = res.find((ApplicationDetails: ApplicationDetails)=>{
-        if(ApplicationDetails.applicationDefinition.key == termKey){
-          if(ApplicationDetails.patronApplication){
+    this.applications$.subscribe((res) => {
+      isSubmitted = res.find((ApplicationDetails: ApplicationDetails) => {
+        if (ApplicationDetails.applicationDefinition.key == termKey) {
+          if (ApplicationDetails.patronApplication) {
             return ApplicationDetails.patronApplication.isApplicationSubmitted
           }
           return false;

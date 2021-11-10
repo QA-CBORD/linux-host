@@ -39,9 +39,7 @@ import { PatronAddressService } from '../addresses/address.service';
 import { QuestionActionButton, QuestionRoommatePreference } from '../questions/types/question-roommate-preference';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { RoommatePreferences, RequestedRoommateResponse, RequestedRoommate } from './applications.model';
-import { RoommateComponent } from '../roommate/roommate.component';
-import { getFieldValue } from '../../../non-authorized/pages/registration/models/registration-utils';
+import { RoommatePreferences } from './applications.model';
 import { RoommateDetails } from '../roommate/roomate.model';
 
 @Injectable({
@@ -164,13 +162,13 @@ export class ApplicationsService {
     );
   }
 
-  selectRoommate(roommateParam: RoommateDetails ): Observable<Boolean> {
-    if (this._applicationsStateService.maximumSelectedRoommates>=0) {
+  selectRoommate(roommateParam: RoommateDetails): Observable<Boolean> {
+    if (this._applicationsStateService.maximumSelectedRoommates >= 0) {
       let isSetRoommate = false;
-      let requestedRoommates =this._applicationsStateService.getRoommateSearchOptions();
+      let requestedRoommates = this._applicationsStateService.getRoommateSearchOptions();
       this._applicationsStateService.setRoommatesPreferences(
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
-          requestedRoommates.preferences.forEach((requestedRommate)=>{
+          requestedRoommates.preferences.forEach((requestedRommate) => {
             if (roommate.patronKeyRoommate == 0 && !isSetRoommate && requestedRommate.selected && requestedRommate.value == roommate.preferenceKey) {
               roommate.patronKeyRoommate = roommateParam.patronKey;
               roommate.firstName = roommateParam.firstName;
@@ -388,7 +386,7 @@ export class ApplicationsService {
 
     const patronApplication: PatronApplication = new PatronApplication(options);
 
-    const roommatePreferences: RoommatePreferences[] = 
+    const roommatePreferences: RoommatePreferences[] =
       this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences;
 
     return new ApplicationDetails({ ...applicationDetails, patronApplication, roommatePreferences });
