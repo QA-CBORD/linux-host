@@ -81,6 +81,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('paymentMethod') selectRef: IonSelect;
   @Input() merchantTimeZoneDisplayingMessage: string;
   @Input() checkinInstructionMessage: string;
+  @Input() isExistingOrder: boolean;
+  @Input() orderPayment: OrderPayment[];
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -108,6 +110,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setAccessoryBarVisible(true);
     this.setPhoneField();
   }
+
+
+  async initAccountSelected(accounts: UserAccount[]){
+      const account = accounts.find(({ id }) => this.orderPayment[0].accountId == id);
+      this.detailsForm.patchValue({
+        [FORM_CONTROL_NAMES.paymentMethod]: account || '',
+      });
+  }
+
 
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
@@ -161,9 +172,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAccessoryBarVisible(isVisible: boolean) {
-    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch((err) => {
-      console.log('setAccessoryBarVisible: ', err);
-    });
+    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {});
   }
 
   initForm() {
@@ -198,7 +207,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.onOrderTipChanged.emit(value ? Number(value) : 0);
   }
 
-  onPaymentChanged({ detail: { value } }) {
+  onPaymentChanged(data) {
+    const {
+      detail: { value },
+    } = data;
     const { id, paymentSystemType } = value;
 
     if (value instanceof Object) {
@@ -206,6 +218,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       this.onOrderPaymentInfoChanged.emit(value);
       this.detailsForm.get(this.controlsNames.paymentMethod).reset();
+      this.detailsForm.setValue({ [this.controlsNames.paymentMethod]: '' });
     }
 
     if (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {

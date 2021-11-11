@@ -1,6 +1,15 @@
 <ion-content>
   <div class="header">
-    <span>{{ contentStrings.lbl_btn_checkin_in }} </span>
+    <div>{{ contentStrings.lbl_btn_checkin_in }} </div>
+    <div (click)="closeMe()">x</div>
+
+    <!-- <st-button (onClick)="closeMe()" fill="clear" buttonModifier="rectangular">
+      <ion-icon [icon]="'close'"></ion-icon>
+    </st-button> -->
+
+    <!-- <ion-button mode="ios" class="st-header__dissmiss-btn" isDisabled="true" (click)="closeMe()">
+      <ion-icon [icon]="'close'"></ion-icon>
+    </ion-button> -->
   </div>
   <div class="content-wrapper">
     <div class="message">
@@ -19,7 +28,8 @@
     </div>
 
     <div class="btn">
-      <st-button color="#ddca710f" (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
+      <!--  color="#ddca710f"  -->
+      <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
         <span class="ion-text-capitalize">
           {{ contentStrings.lbl_btn_scan_code }}
         </span>

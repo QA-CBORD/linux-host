@@ -3,8 +3,15 @@
   font-size: 20px;
   padding: 12px;
   padding-left: 18px;
-  background-color: #ddca710f;;
+  background-color: #ddca710f;
+  display: flex;
+  justify-content: space-between;
+  .x-icon{
+    font-weight: bold;
+  }
 }
+
+
 
 .content-wrapper {
   padding: 12px;

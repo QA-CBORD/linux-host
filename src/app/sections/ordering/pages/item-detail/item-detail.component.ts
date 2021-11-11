@@ -84,9 +84,12 @@ export class ItemDetailComponent implements OnInit {
     });
   }
 
+
   onClose() {
     if (this.routesData.queryParams.isExistingOrder) {
-      this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
+      this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+        queryParams: { isExistingOrder: true }
+      });
     } else {
       const {
         queryParams: { categoryId },

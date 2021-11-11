@@ -104,6 +104,7 @@
       <div class="order-details">
         <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
         <ion-select 
+          [attr.disabled]="isExistingOrder"
           aria-required="true"
           [formControlName]="controlsNames.paymentMethod"
           class="order-details__value"
@@ -152,7 +153,7 @@
         class="order-details__value"
         type="tel"
         inputmode="decimal"
-        [attr.disabled]="!paymentFormControl.value"
+        [attr.disabled]="!paymentFormControl.value || isExistingOrder"
         [maxlength]="'6'"
         [value]="tip"
         [placeholder]="mealBased ? '0' : '0.00'"

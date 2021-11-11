@@ -33,17 +33,22 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
     const merchantId = route.queryParams.merchantId;
     const total = route.queryParams.total;
     const orderId = route.queryParams.orderId;
-    const orderNew = route.queryParams.orderNew;
+    const isExistingOrder = route.queryParams.isExistingOrder;
     const checkNumber = route.queryParams.checkNumber;
     const mealBased = route.queryParams.mealBased;
+    const orderType = route.queryParams.type;
+
+    
     const data$ = zip(this.userFacadeService.getUserData$(), this.merchantService.menuMerchants$).pipe(
       map(([{ locale, timeZone }, merchants]) => {
-        const { storeAddress, orderTypes } = merchants.find(({ id }) => id == merchantId);
+        const merchant = merchants.find(({ id }) => id == merchantId);
+        const { storeAddress, orderTypes } = merchant;
         const date = new Date(dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));
         const pickupTime = date.toLocaleString(locale, { hour12: false, timeZone });
-        return { storeAddress, pickupTime: { dueTime: pickupTime }, orderTypes };
+        return { merchant, orderType, storeAddress, pickupTime: { dueTime: pickupTime }, orderTypes };
       })
     );
+
 
     return forkJoin(checkinPending$, data$).pipe(
       take(1),
@@ -52,7 +57,7 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
         data,
         total,
         orderId,
-        orderNew,
+        isExistingOrder,
         checkNumber,
         mealBased,
       })),

@@ -48,16 +48,16 @@
 </ion-content>
 <ion-footer style="padding: 10px 10px 30px 10px;" mode="ios">
   <div class="pending-checkin__footer">
-    <div class="checkin-btn">
-      <st-button (onClick)="onAdd2Cart()" buttonModifier="rectangular" isDisabled="true">
+    <div *ngIf="addToCartEnabled">
+      <st-button (onClick)="onAddItems()" buttonModifier="rectangular" isDisabled="true">
         <span class="ion-text-capitalize">
           {{ contentStrings.lbl_btn_add2_cart }}
         </span>
       </st-button>
     </div>
-    <div class="checkin-btn"style="width: 166px;"  >
+    <div [ngClass]="{'full-width': !addToCartEnabled }">
       <st-button (onClick)="onCheckingClicked()" buttonModifier="rectangular">
-        <span class="ion-text-capitalize">
+        <span class="ion-text-capitalize" style="width: 166px;"  >
           {{ contentStrings.lbl_btn_checkin_in }}
         </span>
       </st-button>
