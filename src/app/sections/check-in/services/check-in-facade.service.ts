@@ -10,7 +10,6 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
 @Injectable({ providedIn: 'root' })
 
 export class CheckingServiceFacade {
-  barcodeScanResult: string;
   navedFromCheckin: boolean;
 
   constructor(

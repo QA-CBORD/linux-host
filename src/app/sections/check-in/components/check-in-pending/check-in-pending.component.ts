@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AddressInfo } from '@core/model/address/address-info';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { AlertController, ModalController, Platform, PopoverController } from '@ionic/angular';
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
@@ -17,8 +17,7 @@ import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
-import { ScanCodeComponent } from '../scan-code/scan-code.component';
-
+import { Barcode, ScanCodeComponent } from '../scan-code/scan-code.component';
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -63,12 +62,14 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly coordsService: CoordsService,
     private readonly globalNav: GlobalNavService,
     private readonly cart: CartService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private platform: Platform
   ) {}
 
   ngOnInit() {
     this.setData();
     this.watchLocationChanges();
+    this.hardwareBackButton();
   }
 
   ngOnDestroy() {
@@ -77,7 +78,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   ionViewWillLeave() {
-   // this.globalNav.showNavBar();
+    // this.globalNav.showNavBar();
   }
 
   ionViewWillEnter() {
@@ -133,7 +134,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onClosed() {
-   // await this.loadingService.showSpinner();
+    // await this.loadingService.showSpinner();
     const path = this.activatedRoute.snapshot.queryParams.path;
     if (path.includes(LOCAL_ROUTING.recentOrders)) {
       await this.resolver.resolve();
@@ -159,15 +160,23 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onScanCode() {
-    this.loadingService.showSpinner();
     const modal = await this.modalController.create({
       component: ScanCodeComponent,
+      cssClass: 'scan-modal',
+      backdropDismiss: false,
+      componentProps: {
+        formats: [Barcode.QRCode],
+        prompt: (<any>this.contentStrings).scan_code_prompt,
+      },
     });
     await modal.present();
-    modal.onDidDismiss().then(() => {
-      if (this.checkInService.barcodeScanResult == null) return;
+    modal.onDidDismiss().then(({ data }) => {
+      const { scanCodeResult } = data;
+      if (scanCodeResult == null) {
+        return;
+      }
       this.checkInService
-        .checkInOrderByBarcode(this.orderId, this.checkInService.barcodeScanResult)
+        .checkInOrderByBarcode(this.orderId, scanCodeResult)
         .pipe(take(1))
         .toPromise()
         .then(async res => {
@@ -224,17 +233,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   private setData() {
     this.routeSubscription = this.activatedRoute.data.subscribe(response => {
-      const {
-        contentStrings,
-        mealBased,
-        orderId,
-        total,
-        checkNumber,
-        merchantId,
-        dueTime,
-        data,
-        isExistingOrder,
-      } = response.data;
+      const { contentStrings, mealBased, orderId, total, checkNumber, data, isExistingOrder } = response.data;
       const { content } = contentStrings;
       this.data = <orderInfo>data;
       this.contentStrings = <CheckingContentCsModel>content;
@@ -254,6 +253,12 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   private watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
       this.locationPermissionDisabled = !(latitude && longitude);
+    });
+  }
+
+  private hardwareBackButton() {
+    this.platform.backButton.subscribeWithPriority(10, async () => {
+      this.onClosed();
     });
   }
 }
