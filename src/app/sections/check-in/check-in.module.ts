@@ -17,7 +17,7 @@ import { CheckinPendingResolver } from './resolver/check-in-pending.resolver';
 import { PickCheckinModeComponent } from './components/pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeBackground } from './components/scan-code/background/scan-code-background.component';
 
-const declarations = [CheckInPendingComponent, CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent, ScanCodeBackground];
+const declarations = [CheckInPendingComponent, PickCheckinModeComponent, CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent, ScanCodeBackground];
 
 @NgModule({
   declarations,
