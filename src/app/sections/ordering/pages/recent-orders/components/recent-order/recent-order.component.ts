@@ -84,12 +84,12 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     }
   }
 
-  ionViewDidEnter(){
+  ionViewDidEnter() {
     this.globalNav.hideNavBar();
   }
 
   ionViewWillLeave() {
-   // this.globalNav.showNavBar();
+    // this.globalNav.showNavBar();
   }
 
   ngOnDestroy() {
@@ -151,12 +151,17 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       tap(order => {
         const { checkinStatus } = order;
         const map = new Map<string, OrderItem>();
+        let count = 0;
         order.orderItems.forEach(item => {
           const current = map.get(item.menuItemId);
           if (current) {
             current.quantity += item.quantity;
           } else {
-            map.set(item.menuItemId, item);
+            if (item.orderItemOptions && item.orderItemOptions.length) {
+              map.set(`${item.menuItemId}-${count++}`, item);
+            } else {
+              map.set(item.menuItemId, item);
+            }
           }
         });
         order.orderItems = [];
