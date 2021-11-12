@@ -17,11 +17,10 @@ export class RequestingRoommateModalComponent implements OnDestroy{
   private _subscription: Subscription = new Subscription();
 
   constructor(
-    public _applicationsStateService: ApplicationsStateService,
-    public _termService: TermsService,
+    private _applicationsStateService: ApplicationsStateService,
+    private _termService: TermsService,
     private readonly modalController: ModalController,
-    public _housingService: HousingService
-    ) {
+    private _housingService: HousingService) {
     }
 
   @Input() requestingRoommate: RoommateResponse;
@@ -34,20 +33,24 @@ export class RequestingRoommateModalComponent implements OnDestroy{
 
   async onClickedClose() {
     this._subscription.add(
-      this._termService.termId$.subscribe(termId => this._housingService.getRequestedRommate(termId).subscribe()))
+      this._termService.termId$.subscribe(termId => 
+        this._housingService.getRequestedRommate(termId).subscribe()));
+
     await this.modalController.dismiss();
   }
 
   acceptRoommateRequest(roommate: RoommatePreferences,index:number){
-    this._applicationsStateService.addRoommatesPreferences(roommate)
-    this._applicationsStateService.deleteRequestingRoommate(index)
+    this._applicationsStateService.addRoommatesPreferences(roommate);
+    this._applicationsStateService.deleteRequestingRoommate(index);
+
     if(this._applicationsStateService.requestingRoommate.length == 0 ){
       this.onClickedClose();
     }
   }
 
   denyRoommateRequest(index:number){
-    this._applicationsStateService.deleteRequestingRoommate(index)
+    this._applicationsStateService.deleteRequestingRoommate(index);
+
     if(this._applicationsStateService.requestingRoommate.length == 0 ){
       this.onClickedClose();
     }
