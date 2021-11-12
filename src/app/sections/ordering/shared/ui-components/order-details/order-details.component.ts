@@ -41,6 +41,7 @@ import { UserInfoSet } from '@sections/settings/models/setting-items-config.mode
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 
 const { Keyboard } = Plugins;
 
@@ -100,10 +101,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly a11yService: AccessibilityService
+    private readonly a11yService: AccessibilityService,
+    private readonly activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit() {
+    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder || false);
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
@@ -111,14 +114,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setPhoneField();
   }
 
-
-  async initAccountSelected(accounts: UserAccount[]){
-      const account = accounts.find(({ id }) => this.orderPayment[0].accountId == id);
-      this.detailsForm.patchValue({
-        [FORM_CONTROL_NAMES.paymentMethod]: account || '',
-      });
+  async initAccountSelected(accounts: UserAccount[]) {
+    const account = accounts.find(({ id }) => this.orderPayment[0].accountId == id);
+    this.detailsForm.patchValue({
+      [FORM_CONTROL_NAMES.paymentMethod]: account || '',
+    });
   }
-
 
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
@@ -185,10 +186,18 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
     if (!this.mealBased && this.isTipEnabled) {
       const tipErrors = [
-        formControlErrorDecorator(validateLessThanOther(this.subTotal), CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal),
         formControlErrorDecorator(validateCurrency, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].currency),
         formControlErrorDecorator(validateGreaterOrEqualToZero, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].min),
       ];
+
+      if (!this.isExistingOrder) {
+        tipErrors.push(
+          formControlErrorDecorator(
+            validateLessThanOther(this.subTotal),
+            CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal
+          )
+        );
+      }
 
       this.detailsForm.addControl(FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
       this.detailsForm.controls[FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
