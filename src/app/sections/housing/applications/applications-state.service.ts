@@ -55,7 +55,6 @@ export class ApplicationsStateService {
   }
 
   setRequestedRoommate(value: RequestedRoommate) {
-
     this.requestedroommate.push(value);
     this.setRequestedRoommates(this.requestedroommate)
   }
