@@ -77,10 +77,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.routeSubscription.unsubscribe();
   }
 
-  ionViewWillLeave() {
-    // this.globalNav.showNavBar();
-  }
-
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
     this.loadingService.closeSpinner();
@@ -104,7 +100,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       orderOptions: { dueTime: new Date(dueTime), orderType, address, isASAP },
       orderId: this.orderId,
     });
-    //  await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
     this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
       queryParams: { isExistingOrder: true },
     });
@@ -134,7 +129,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   async onClosed() {
-    // await this.loadingService.showSpinner();
     const path = this.activatedRoute.snapshot.queryParams.path;
     if (path.includes(LOCAL_ROUTING.recentOrders)) {
       await this.resolver.resolve();
@@ -242,8 +236,8 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       this.total = total;
       this.checkNumber = checkNumber;
       this.merchant = data.merchant;
-      this.merchantId = data.merchant.id; //merchantId;
-      this.dueTime = data.pickupTime.dueTime; // dueTime;
+      this.merchantId = data.merchant.id;
+      this.dueTime = data.pickupTime.dueTime;
       this.isExistingOrder = isExistingOrder;
       const res = this.merchant.settings.map[MerchantSettings.addToCartEnabled];
       this.addToCartEnabled = res.value && !!JSON.parse(res.value);

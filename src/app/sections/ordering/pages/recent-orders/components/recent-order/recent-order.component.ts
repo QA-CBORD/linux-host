@@ -88,10 +88,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.globalNav.hideNavBar();
   }
 
-  ionViewWillLeave() {
-    // this.globalNav.showNavBar();
-  }
-
   ngOnDestroy() {
     this.checkinService.navedFromCheckin = false;
   }
@@ -455,11 +451,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           },
           OrderInfo
         ]) => {
-          // await this.cart.setActiveMerchant(merchant);
-          // await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
-          // await this.cart.setPendingOrder(id);
           await this.cart.onAddItems({ merchant, orderOptions: { dueTime, orderType, address, isASAP }, orderId: id });
-          // await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
           this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
             queryParams: { isExistingOrder: true },
           });

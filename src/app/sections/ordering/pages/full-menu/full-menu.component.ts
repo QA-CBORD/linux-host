@@ -63,7 +63,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
-   // this.globalNav.showNavBar();
   }
 
   get orderType(): Observable<string> {
