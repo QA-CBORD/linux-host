@@ -55,7 +55,6 @@ export class ApplicationsStateService {
   }
 
   setRequestedRoommate(value: RequestedRoommate) {
-
     this.requestedroommate.push(value);
     this.setRequestedRoommates(this.requestedroommate)
   }
@@ -130,10 +129,16 @@ export class ApplicationsStateService {
     this.roommatePreferences = roommates;
   }
 
-  addRoommatesPreferences(addedRoommate: RoommatePreferences) {
-    let roommatePreference = this.applicationsState.applicationDetails.roommatePreferences.find(roommate =>
-      roommate.preferenceKey === addedRoommate.preferenceKey &&
-      roommate.patronKeyRoommate !== addedRoommate.patronKeyRoommate)
+  addRoommatesPreferences(addedRoommate: RoommatePreferences, isOverride: boolean = false) {
+    let roommatePreference;
+    if (isOverride) {
+      roommatePreference = this.applicationsState.applicationDetails.roommatePreferences.find(roommate =>
+        roommate.preferenceKey === addedRoommate.preferenceKey);
+    } else {
+      roommatePreference = this.applicationsState.applicationDetails.roommatePreferences.find(roommate =>
+        roommate.preferenceKey === addedRoommate.preferenceKey &&
+        roommate.patronKeyRoommate !== addedRoommate.patronKeyRoommate)
+    }
     if (roommatePreference) {
       roommatePreference.patronKeyRoommate = addedRoommate.patronKeyRoommate;
       roommatePreference.firstName = addedRoommate.firstName;
