@@ -42,4 +42,5 @@ export interface OrderInfo {
   orderItems: OrderItem[];
   orderPayment: OrderPayment[];
   orderNotifications: OrderNotification[];
+  allItems?:OrderItem[]
 }

@@ -12,12 +12,13 @@ export class CheckingProcess {
     private readonly ngZone: NgZone
   ) {}
 
-  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased }, orderNew = false) {
+  async start({ id: orderId, dueTime, checkNumber, total, merchantId, mealBased, type }, isExistingOrder = false) {
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.pending], {
       queryParams: {
-        orderNew,
+        isExistingOrder,
         orderId,
         dueTime,
+        type,
         checkNumber,
         mealBased,
         total,

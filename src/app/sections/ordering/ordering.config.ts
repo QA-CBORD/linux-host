@@ -110,7 +110,8 @@ export enum ORDERING_CONTENT_STRINGS {
   connectionLost = 'ordering_connection_lost',
   duplicateOrdering ='ordering_duplicate',
   noConnection = 'ordering_no_connection',
-  orderingDatesUnavailable = 'ordering_dates_unavailable'
+  orderingDatesUnavailable = 'ordering_dates_unavailable',
+  lblBtnAdd2Cart = 'lbl_btn_add2_cart'
 }
 export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
   manualEntryInstructions = 'manual-entry_instructions'
@@ -138,7 +139,8 @@ export enum MerchantSettings {
   disableItemNotes = 'merchant.order.disable_item_notes',
   tipEnabled = 'merchant.tip.enable_tip',
   scanBarcodeEnabled = 'merchant.menu.menu_barcode_enabled',
-  manualBarcodeEnabled = 'merchant.menu.menu_add_barcodea_enabled'
+  manualBarcodeEnabled = 'merchant.menu.menu_add_barcodea_enabled',
+  addToCartEnabled = 'merchant.menu.menu_add_items_enabled'
 }
 
 export enum ORDER_TYPE {
