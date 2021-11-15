@@ -78,15 +78,15 @@
         {{ contentStrings.labelDiscount | async
         }}<span class="total__item-sum">{{ discount | priceUnitsResolver: mealBased }}</span>
       </div>
-      <div *ngIf="!mealBased && isTipEnabled" class="total__item">
+      <div *ngIf="!mealBased && isTipEnabled && !isExistingOrder" class="total__item">
         {{ contentStrings.labelTip | async
         }}<span class="total__item-sum">{{ tip | priceUnitsResolver: mealBased }}</span>
       </div>
-      <div *ngIf="deliveryFee" class="total__item">
+      <div *ngIf="deliveryFee && !isExistingOrder" class="total__item">
         {{ contentStrings.labelDeliveryFee | async
         }}<span class="total__item-sum">{{ deliveryFee | priceUnitsResolver: mealBased }}</span>
       </div>
-      <div *ngIf="pickupFee" class="total__item">
+      <div *ngIf="pickupFee && !isExistingOrder" class="total__item">
         {{ contentStrings.labelPickupFee | async
         }}<span class="total__item-sum">{{ pickupFee | priceUnitsResolver: mealBased }}</span>
       </div>
@@ -104,6 +104,7 @@
       <div class="order-details">
         <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
         <ion-select 
+          [attr.disabled]="isExistingOrder"
           aria-required="true"
           [formControlName]="controlsNames.paymentMethod"
           class="order-details__value"
@@ -152,7 +153,7 @@
         class="order-details__value"
         type="tel"
         inputmode="decimal"
-        [attr.disabled]="!paymentFormControl.value"
+        [attr.disabled]="!paymentFormControl.value || isExistingOrder"
         [maxlength]="'6'"
         [value]="tip"
         [placeholder]="mealBased ? '0' : '0.00'"

@@ -39,6 +39,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
+  isExistingOrder: boolean;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   constructor(
     private readonly cartService: CartService,
@@ -62,7 +63,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
-    this.globalNav.showNavBar();
   }
 
   get orderType(): Observable<string> {
@@ -93,15 +93,22 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     );
   }
 
+  ionViewDidEnter(){
+    this.globalNav.hideNavBar();
+  }
+
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
     this.menuItems$ = this.cartService.menuItems$;
-    const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
+    const { openTimeSlot, isExistingOrder = false } = this.activatedRoute.snapshot.queryParams;
+    this.isExistingOrder = JSON.parse(isExistingOrder);
     openTimeSlot && this.openOrderOptions();
   }
 
   async onCategoryClicked({ id }): Promise<void> {
-    await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.menuCategoryItems, id]);
+    await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.menuCategoryItems, id], {
+      queryParams: { isExistingOrder: this.isExistingOrder },
+    });
   }
 
   async openOrderOptions(): Promise<void> {
@@ -170,7 +177,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
-    const successCb = () => this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart]);
+    const successCb = () =>
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
+        queryParams: { isExistingOrder: this.isExistingOrder },
+      });
     const errorCB = (error: Array<string> | string) => {
       if (Array.isArray(error)) {
         const [code, message] = error;

@@ -1,11 +1,11 @@
 @import 'tools';
 
 .content {
-  min-height: calc(100vh - 60px);
+  height: 100%;
   background: $color-white-smoke;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
 
   &--disabled {
     background-color: $color-white;
@@ -99,8 +99,8 @@
   }
 
   &__buttons {
-    //display: flex;
-    padding: 10px 10px 20px;
+    height: 100%;
+    padding: 10px 10px 30px 10px;
     margin-bottom: $notch-bottom;
 
     & > * {

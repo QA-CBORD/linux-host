@@ -41,6 +41,7 @@ import { UserInfoSet } from '@sections/settings/models/setting-items-config.mode
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 
 const { Keyboard } = Plugins;
 
@@ -81,6 +82,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('paymentMethod') selectRef: IonSelect;
   @Input() merchantTimeZoneDisplayingMessage: string;
   @Input() checkinInstructionMessage: string;
+  @Input() isExistingOrder: boolean;
+  @Input() orderPayment: OrderPayment[];
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -98,15 +101,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly a11yService: AccessibilityService
+    private readonly a11yService: AccessibilityService,
+    private readonly activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit() {
+    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder || false);
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
     this.setPhoneField();
+  }
+
+  async initAccountSelected(accounts: UserAccount[]) {
+    const account = accounts.find(({ id }) => this.orderPayment[0].accountId == id);
+    this.detailsForm.patchValue({
+      [FORM_CONTROL_NAMES.paymentMethod]: account || '',
+    });
   }
 
   ngOnDestroy() {
@@ -161,9 +173,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAccessoryBarVisible(isVisible: boolean) {
-    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch((err) => {
-      console.log('setAccessoryBarVisible: ', err);
-    });
+    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {});
   }
 
   initForm() {
@@ -176,10 +186,18 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
     if (!this.mealBased && this.isTipEnabled) {
       const tipErrors = [
-        formControlErrorDecorator(validateLessThanOther(this.subTotal), CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal),
         formControlErrorDecorator(validateCurrency, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].currency),
         formControlErrorDecorator(validateGreaterOrEqualToZero, CONTROL_ERROR[FORM_CONTROL_NAMES.tip].min),
       ];
+
+      if (!this.isExistingOrder) {
+        tipErrors.push(
+          formControlErrorDecorator(
+            validateLessThanOther(this.subTotal),
+            CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal
+          )
+        );
+      }
 
       this.detailsForm.addControl(FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
       this.detailsForm.controls[FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
@@ -198,7 +216,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.onOrderTipChanged.emit(value ? Number(value) : 0);
   }
 
-  onPaymentChanged({ detail: { value } }) {
+  onPaymentChanged(data) {
+    const {
+      detail: { value },
+    } = data;
     const { id, paymentSystemType } = value;
 
     if (value instanceof Object) {
@@ -206,6 +227,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       this.onOrderPaymentInfoChanged.emit(value);
       this.detailsForm.get(this.controlsNames.paymentMethod).reset();
+      this.detailsForm.setValue({ [this.controlsNames.paymentMethod]: '' });
     }
 
     if (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
