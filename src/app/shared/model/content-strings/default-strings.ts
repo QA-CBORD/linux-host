@@ -46,12 +46,15 @@ export const checkingDefaultCs = {
   lbl_total: 'Total',
   lbl_btn_order_detail: 'Order Details',
   lbl_btn_scan_code: 'Scan Code',
-  lbl_btn_loc_chck_in: 'Location Check In',
+  lbl_btn_loc_chck_in: 'Use Location',
   not_checked_in_subtitle: 'Unable to Check In',
   lbl_btn_back: 'Back',
   too_early: 'You are here too early. You cannot Check In earlier than 30 minutes before Pick Up time.',
   get_closer: 'You must be closer to the merchant to use Location Check In. Or use the Scan Code feature once you arrive at the merchant.',
   invalid_scan_code: 'The code you scanned is invalid to check in your order. Please try again.',
+  lbl_btn_checkin_in: 'Check In',
+  lbl_btn_add2_cart: 'Add To Cart',
+  checkin_method_text: "Check in either by using your location services or by scanning the QR code.",
   scan_code_prompt: 'Position the code in the center of the screen to scan.'
 }
 

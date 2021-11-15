@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { combineLatest, Observable, from, Subscription, zip, of } from 'rxjs';
 import {
@@ -6,6 +6,7 @@ import {
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
+  OrderDetailsComponent,
   OrderDetailsFormData,
   OrderInfo,
   OrderPayment,
@@ -68,6 +69,8 @@ export class CartComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   placingOrder: boolean = false;
   isProcessingOrder: boolean = false;
+  isExistingOrder: boolean;
+  @ViewChild('orderDetails') orderDetail: OrderDetailsComponent;
   merchantTimeZoneDisplayingMessage: string;
   isOnline: boolean = true;
   networkSubcription: Subscription;
@@ -99,7 +102,11 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
-    this.accounts$ = this.getAvailableAccounts();
+    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder);
+    this.accounts$ = this.getAvailableAccounts().then(accounts => {
+      if (this.isExistingOrder) this.orderDetail.initAccountSelected(accounts);
+      return accounts;
+    });
     this.cdRef.detectChanges();
   }
 
@@ -233,9 +240,10 @@ export class CartComponent implements OnInit, OnDestroy {
     dueTime,
     id,
     checkinStatus,
+    type,
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
-      this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased }, true);
+      this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased, type }, this.isExistingOrder);
       return;
     }
 

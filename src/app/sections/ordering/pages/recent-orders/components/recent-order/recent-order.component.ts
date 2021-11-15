@@ -8,6 +8,7 @@ import {
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
+  MerchantSettings,
 } from '@sections/ordering/ordering.config';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { PopoverController, AlertController } from '@ionic/angular';
@@ -30,6 +31,7 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
+import { NavigationService } from '@shared/services/navigation.service';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -43,6 +45,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
   orderCheckStatus = OrderCheckinStatus;
+  addToCartEnabled: boolean;
+
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly merchantService: MerchantService,
@@ -56,12 +60,17 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     public readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
+    private readonly routingService: NavigationService,
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess
   ) {}
 
   ngOnInit() {
+    this.initData();
+  }
+
+  initData() {
     const orderId = this.activatedRoute.snapshot.params.id;
     this.setActiveOrder(orderId);
     this.setActiveMerchant(orderId);
@@ -70,11 +79,13 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
+    if (this.checkinService.navedFromCheckin) {
+      this.initData();
+    }
   }
 
-  ionViewWillLeave() {
-    this.globalNav.showNavBar();
+  ionViewDidEnter() {
+    this.globalNav.hideNavBar();
   }
 
   ngOnDestroy() {
@@ -131,9 +142,28 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   private setActiveOrder(orderId) {
     this.order$ = this.merchantService.recentOrders$.pipe(
-      first(),
+      take(1),
       map(orders => orders.find(({ id }) => id === orderId)),
-      tap(({ checkinStatus }) => {
+      tap(order => {
+        const { checkinStatus } = order;
+        const map = new Map<string, OrderItem>();
+        let count = 0;
+        order.orderItems.forEach(item => {
+          const current = map.get(item.menuItemId);
+          if (current) {
+            current.quantity += item.quantity;
+          } else {
+            if (item.orderItemOptions && item.orderItemOptions.length) {
+              map.set(`${item.menuItemId}-${count++}`, item);
+            } else {
+              map.set(item.menuItemId, item);
+            }
+          }
+        });
+        order.orderItems = [];
+        for (let value of map.values()) {
+          order.orderItems.push(value);
+        }
         if (this.orderCheckStatus.isNotCheckedIn(checkinStatus)) {
           this.checkinInstructionMessage = this.checkinService.getContentStringByName$('pickup_info');
         } else {
@@ -144,7 +174,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async openChecking() {
-    await this.checkinProcess.start(await this.order$.toPromise(), this.checkinService.navedFromCheckin);
+    await this.checkinProcess.start(await this.order$.toPromise());
   }
 
   private setActiveMerchant(orderId) {
@@ -155,6 +185,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
       ),
       switchMap(merchant => {
+        const res = merchant.settings.map[MerchantSettings.addToCartEnabled];
+        this.addToCartEnabled = res.value && !!JSON.parse(res.value);
         merchant.orderTypes.merchantTimeZone = merchant.timeZone;
         if (!merchant.timeZone)
           return this.institutionService.cachedInstitutionInfo$.pipe(
@@ -340,7 +372,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async onClosed() {
-    if (await this.checkinService.navedFromCheckin) {
+    if (this.checkinService.navedFromCheckin) {
       await this.openChecking();
       this.checkinService.navedFromCheckin = false;
     } else {
@@ -391,6 +423,11 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.labelBtnCheckin = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelBtnCheckin
     );
+
+    this.contentStrings.lblBtnAdd2Cart = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.lblBtnAdd2Cart
+    );
+
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder
@@ -414,10 +451,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           },
           OrderInfo
         ]) => {
-          await this.cart.setActiveMerchant(merchant);
-          await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
-          await this.cart.setPendingOrder(id);
-          await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
+          await this.cart.onAddItems({ merchant, orderOptions: { dueTime, orderType, address, isASAP }, orderId: id });
+          this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
+            queryParams: { isExistingOrder: true },
+          });
         }
       );
   }

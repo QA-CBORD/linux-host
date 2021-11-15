@@ -12,7 +12,7 @@ export class RecentOrdersResolver implements Resolve<Promise<OrderInfo[]>> {
   }
 
   async resolve(): Promise<OrderInfo[]> {
-    await this.loadingService.showSpinner();
+    this.loadingService.showSpinner();
 
     return new Promise<OrderInfo[]>((resolve, reject) =>
       this.merchantService.getRecentOrders()

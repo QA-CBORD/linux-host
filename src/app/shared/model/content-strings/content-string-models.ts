@@ -34,10 +34,11 @@ export abstract class ContentStringModel {
     } else {
       const data = [...primary, ...secondary];
       this.content = reduce(data);
+      this.content = { ...defaultContents, ...this.content };
     }
   }
 
-  valueByKey(key: string): string{
+  valueByKey(key: string): string {
     return this.content[key];
   }
 }

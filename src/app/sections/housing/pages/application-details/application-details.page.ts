@@ -25,6 +25,7 @@ import { ApplicationDetails, ApplicationStatus, PatronApplication } from '../../
 import { QuestionsPage } from '../../questions/questions.model';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
 import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
+import { TermsService } from '@sections/housing/terms/terms.service';
 
 @Component({
   selector: 'st-application-details',
@@ -57,7 +58,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private _toastController: ToastController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private _termService: TermsService,
   ) {}
 
   async ngOnInit() {
@@ -125,9 +127,19 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
         const status: ApplicationStatus = patronApplication && patronApplication.status;
 
         this.isSubmitted = status === ApplicationStatus.Submitted;
-        this._loadingService.closeSpinner();
+
         if(!this.isSubmitted && this._applicationsStateService.requestingRoommate != null) {
+          this._loadingService.closeSpinner();
           this.Showmodal();
+        } else {
+          this._subscription.add(
+            this._termService.termId$
+                .subscribe(termId => 
+                  this._housingService
+                      .getRequestedRommate(termId)
+                      .subscribe(x => this._loadingService.closeSpinner())
+                )
+              );
         }
       }),
       catchError((error: any) => {

@@ -15,12 +15,16 @@ export class ItemDetailResolver
       }>
     > {
   constructor(private readonly cartService: CartService) {}
-  resolve({
-    queryParams: { menuItemId, orderItemId, isItemExistsInCart = false, isExistingOrder = false },
-  }: ActivatedRouteSnapshot): Observable<{
+  resolve(
+    snapshot: ActivatedRouteSnapshot
+  ): Observable<{
     menuItem: MenuCategoryItemInfo;
     queryParams: QueryParamsModel;
   }> {
+    const {
+      queryParams: { menuItemId, orderItemId, isItemExistsInCart=false, isExistingOrder=false },
+    } = snapshot;
+    
     return this.cartService.menuInfo$.pipe(
       map(({ menuCategories }) => {
         const menuItems: any[] = menuCategories.map(({ menuCategoryItems }) =>
@@ -41,7 +45,7 @@ export class ItemDetailResolver
               menuItemId: menuItem.id,
               orderItemId,
               isItemExistsInCart,
-              isExistingOrder
+              isExistingOrder: JSON.parse(isExistingOrder),
             },
           };
         }

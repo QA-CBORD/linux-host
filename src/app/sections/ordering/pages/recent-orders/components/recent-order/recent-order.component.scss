@@ -4,11 +4,22 @@
     margin-right: 15px;
   }
 }
-.header_title{
+.header_title {
   padding-left: 76px;
 }
+.cancel-btn {
+  min-height: 78%;
+  &__text {
+    color: #da4040;
+    font-size: 19px;
+  }
+}
+
 .btn-wrapper {
   display: flex;
   justify-content: space-around;
-  margin-right: 7px;
+}
+
+.full-width{
+  width: 100%;
 }
