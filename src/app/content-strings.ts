@@ -28,6 +28,7 @@ export enum CONTENT_STRINGS_CATEGORIES {
   checkin        = 'checkin',
   checkinSuccess = 'checkin_success',
   locationDisclosure = 'location_disclosure_screen',
+  scanAndGo = 'scan_and_go',
 }
 
 export enum CONTENT_STRINGS_LOCALES {

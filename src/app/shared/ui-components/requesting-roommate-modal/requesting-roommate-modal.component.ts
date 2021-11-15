@@ -20,8 +20,8 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   private activeAlerts: HTMLIonAlertElement[] = [];
 
   constructor(
-    public _applicationsStateService: ApplicationsStateService,
-    public _termService: TermsService,
+    private _applicationsStateService: ApplicationsStateService,
+    private _termService: TermsService,
     private readonly modalController: ModalController,
     public _housingService: HousingService,
     private _alertController: AlertController,
@@ -51,7 +51,9 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
 
   async onClickedClose() {
     this._subscription.add(
-      this._termService.termId$.subscribe(termId => this._housingService.getRequestedRommate(termId).subscribe()))
+      this._termService.termId$.subscribe(termId => 
+        this._housingService.getRequestedRommate(termId).subscribe()));
+
     await this.modalController.dismiss();
   }
 
@@ -102,7 +104,8 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   }
 
   denyRoommateRequest(index:number){
-    this._applicationsStateService.deleteRequestingRoommate(index)
+    this._applicationsStateService.deleteRequestingRoommate(index);
+
     if(this._applicationsStateService.requestingRoommate.length == 0 ){
       this.onClickedClose();
     }

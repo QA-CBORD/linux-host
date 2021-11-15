@@ -1,0 +1,49 @@
+@import 'tools';
+
+.scan {
+  &__label {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+    color: $color-white;
+    padding: 50px 20px;
+    @include font-nunito-heavy(15px);
+  }
+
+  &__button {
+    padding: 0 20px;
+    margin-bottom: 10px;
+  }
+
+  &__span {
+    color: $color-black;
+  }
+}
+
+.darker {
+  background-color: rgba($color-black, 0.5);
+  height: 30%;
+}
+
+.column {
+  width: 100vw;
+  height: 40vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.left, .right {
+  background-color: rgba($color-black, 0.5);
+  display: flex;
+  width: 10%;
+}
+
+.middle {
+  width: 80%;
+}
+
+ion-button {
+  --background: transparent;
+  --background-activated: transparent;
+}

@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
-import { LocationPermissionsService } from '@sections/dashboard/services/location-permissions.service';
 import { MerchantService } from '@sections/ordering';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
-import { forkJoin, from, zip } from 'rxjs';
-
+import { forkJoin, zip } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { finalize, map, take } from 'rxjs/operators';
 import { CheckingServiceFacade } from '../services/check-in-facade.service';
@@ -54,7 +51,7 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
         orderId,
         orderNew,
         checkNumber,
-        mealBased,
+        mealBased
       })),
       finalize(() => {
         this.loadingService.closeSpinner.bind(this.loadingService);
