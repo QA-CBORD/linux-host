@@ -50,6 +50,7 @@
         </div>
       </div>
     </ion-item>
+    <st-menu-item-finder (itemScanned)="navigateToItem($event)"></st-menu-item-finder>
   </ion-list>
   <ion-list>
     <ion-item
@@ -68,7 +69,6 @@
       ></ion-icon>
     </ion-item>
   </ion-list>
-  <st-menu-item-finder (itemScanned)="navigateToItem($event)"></st-menu-item-finder>
 </ion-content>
 <ion-footer mode="ios"
             class="full-menu__footer"
