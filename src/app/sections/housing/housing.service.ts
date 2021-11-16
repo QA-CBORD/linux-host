@@ -161,7 +161,7 @@ export class HousingService {
     const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
     return this._housingProxyService.post<RequestedRoommateResponse>(apiUrl, request).pipe(
       map((response: any) => new RequestedRoommateResponse(response.data)),
-      tap((response: RequestedRoommateResponse) => this._setRequestedRoommateState(response.requestedRoommates)),
+      // tap((response: RequestedRoommateResponse) => this._setRequestedRoommateState(response.requestedRoommates)),
       catchError(() => this._handleGetRequestedRoommatesError())
     );
   }
@@ -407,12 +407,13 @@ export class HousingService {
       termKey: termKey,
       patronRequests
     });
+    
     return this.getRequestedRoommates(requestBody).pipe(
       map((data: RequestedRoommateResponse) => {
         data.requestedRoommates.map(d => {
           const roommatePref = applicationDetails.roommatePreferences
             .find(f => f.patronKeyRoommate === d.patronRoommateKey
-              && f.preferenceKey === d.preferenceKey);
+              && f.preferenceKey === d.preferenceKey && !requestedRoommates.find(y=> y.patronRoommateKey === d.patronRoommateKey));
 
           const requestedRoommateObj = new RequestedRoommate({
             firstName: roommatePref ? roommatePref.firstName : '',
@@ -424,11 +425,9 @@ export class HousingService {
             birthDate: d.birthDate,
             preferredName: d.preferredName ? d.preferredName : ''
           });
-          if (!requestedRoommates.some(requested => requested.patronRoommateKey == requestedRoommateObj.patronRoommateKey)) {
+          if(requestedRoommateObj.firstName){
             this._applicationsStateService.setRequestedRoommate(requestedRoommateObj)
-            return requestedRoommateObj;
           }
-
         })
       }))
 

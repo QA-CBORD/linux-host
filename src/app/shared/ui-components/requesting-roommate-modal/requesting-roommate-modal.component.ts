@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RoommatePreferences } from '../../../sections/housing/applications/applications.model';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { RoommateResponse } from '../../../sections/housing/roommate/roomate.model';
 import { HousingService } from '../../../sections/housing/housing.service';
 import { TermsService } from '../../../sections/housing/terms/terms.service';
 import { Subscription } from 'rxjs';
+import { isMobile } from '@core/utils/platform-helper';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'requesting-roommate-modal',
@@ -13,15 +15,31 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./requesting-roommate-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RequestingRoommateModalComponent implements OnDestroy{
+export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   private _subscription: Subscription = new Subscription();
+  private activeAlerts: HTMLIonAlertElement[] = [];
 
   constructor(
     private _applicationsStateService: ApplicationsStateService,
     private _termService: TermsService,
     private readonly modalController: ModalController,
-    private _housingService: HousingService) {
+    public _housingService: HousingService,
+    private _alertController: AlertController,
+    private _platform: Platform,
+    private _loadingService: LoadingService
+    ) {
     }
+  
+  ngOnInit(): void {
+    if (isMobile(this._platform)) {
+      this._subscription = this._platform.pause.subscribe(x => {
+        this.activeAlerts.forEach(alert => {
+          alert.dismiss();
+        });
+        this.activeAlerts = [];
+      });
+    }
+  }
 
   @Input() requestingRoommate: RoommateResponse;
 
@@ -39,10 +57,47 @@ export class RequestingRoommateModalComponent implements OnDestroy{
     await this.modalController.dismiss();
   }
 
-  acceptRoommateRequest(roommate: RoommatePreferences,index:number){
-    this._applicationsStateService.addRoommatesPreferences(roommate);
-    this._applicationsStateService.deleteRequestingRoommate(index);
+  async acceptRoommateRequest(roommate: RoommatePreferences,index:number){
+    if (this._applicationsStateService.roommatePreferencesSelecteds.find( value => value.patronKeyRoommate !== roommate.patronKeyRoommate && value.preferenceKey === roommate.preferenceKey)){
+      const alert = await this._alertController.create({
+        header: 'Confirm Override',
+        message: `By accepting ${roommate.firstName} ${roommate.lastName} as your roommate you will override your existing selection. Are you sure you want to continue?`,
+        buttons: [
+          {
+            text: 'NO',
+            role: 'cancel',
+            cssClass: 'button__option_cancel',
+            handler: () => {
+              this.activeAlerts = [];
+              alert.dismiss();
+            },
+          },
+          {
+            text: 'YES',
+            role: 'confirm',
+            cssClass: 'button__option_confirm',
+            handler: () => {
+              // this._loadingService.showSpinner();
+              this.activeAlerts = [];
 
+              this._applicationsStateService.addRoommatesPreferences(roommate, true);
+              this._applicationsStateService.deleteRequestingRoommate(index);
+              this.checkIfLastRequest();
+            },
+          },
+        ],
+      });
+      this.activeAlerts.push(alert);
+      await alert.present();
+    } else { // todo: if it works, remove else and extract to method
+      this._applicationsStateService.addRoommatesPreferences(roommate);
+      this._applicationsStateService.deleteRequestingRoommate(index);
+
+      this.checkIfLastRequest();
+    }
+  }
+
+  private checkIfLastRequest() {
     if(this._applicationsStateService.requestingRoommate.length == 0 ){
       this.onClickedClose();
     }

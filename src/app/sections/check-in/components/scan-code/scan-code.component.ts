@@ -21,7 +21,6 @@ export enum Barcode {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScanCodeComponent implements OnInit {
-  buttonDisabled = false;
   @Input() formats? = [];
   @Input() title?: string;
   @Input() prompt?: string;
@@ -58,7 +57,7 @@ export class ScanCodeComponent implements OnInit {
     BarcodeScanner.showBackground();
   }
 
-  private closeScanCode(code: string = null) {
+  closeScanCode(code: string = null) {
     this.goBack(code);
   }
 
@@ -88,7 +87,6 @@ export class ScanCodeComponent implements OnInit {
   }
 
   private async goBack(code: string) {
-    this.buttonDisabled = true;
     await this.modalController.dismiss({ scanCodeResult: code });
   }
 
