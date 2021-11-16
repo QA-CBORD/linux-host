@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ScanCodeComponent } from './scan-code.component';
+import { PickCheckinModeComponent } from './pick-checkin-mode.component';
 
-describe('ScanCodeComponent', () => {
-  let component: ScanCodeComponent;
-  let fixture: ComponentFixture<ScanCodeComponent>;
+describe('PickCheckinModeComponent', () => {
+  let component: PickCheckinModeComponent;
+  let fixture: ComponentFixture<PickCheckinModeComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ScanCodeComponent ],
+      declarations: [ PickCheckinModeComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ScanCodeComponent);
+    fixture = TestBed.createComponent(PickCheckinModeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

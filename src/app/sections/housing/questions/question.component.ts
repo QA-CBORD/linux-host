@@ -30,13 +30,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._applicationsStateService.setRequestedRoommates([])
     this._applicationsStateService.setRoommatesPreferences([])
     this._applicationsStateService.emptyRequestedRoommate()
+    this._applicationsStateService.deleteRoommatePreferencesSelecteds();
   }
 
 
   ngOnInit(): void {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
     this._initTermsSubscription();
-    this._initGetRequestedRoommatesSubscription();
   }
 
   @Input() question: QuestionBase;
@@ -94,45 +94,4 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this._termService.termId$.subscribe(termId => this.selectedTermKey = termId));
   }
 
-  private _initGetRequestedRoommatesSubscription() {
-    const applicationDetails = this._applicationsStateService.applicationsState.applicationDetails;
-    const requestedRoommates = this._applicationsStateService.getRequestedRoommate();
-    const patronRequests = applicationDetails.roommatePreferences
-      .filter(x => x.patronKeyRoommate !== 0)
-      .map(x => new RequestedRoommate({
-        preferenceKey: x.preferenceKey,
-        patronRoommateKey: x.patronKeyRoommate 
-      }));
-
-    const requestBody = new RequestedRoommateRequest({
-      termKey: this.selectedTermKey,
-      patronRequests
-    });
-    this._housingService.getRequestedRoommates(requestBody).pipe(
-      map((data: RequestedRoommateResponse) => data.requestedRoommates.map(d => {
-        const roommatePref = applicationDetails.roommatePreferences
-          .find(f => f.patronKeyRoommate === d.patronRoommateKey
-            && f.preferenceKey === d.preferenceKey);
-
-        
-        const requestedRoommateObj = new RequestedRoommate({
-          firstName: roommatePref ? roommatePref.firstName : '',
-          lastName: roommatePref ? roommatePref.lastName : '',
-          preferenceKey: d.preferenceKey,
-          patronRoommateKey: d.patronRoommateKey,
-          confirmed: d.confirmed,
-          middleName: d.middleName ? d.middleName : '',
-          birthDate: d.birthDate,
-          preferredName: d.preferredName ? d.preferredName :''
-        });
-        if(!requestedRoommates.some(requested => requested.patronRoommateKey == requestedRoommateObj.patronRoommateKey )){
-          this._applicationsStateService.setRequestedRoommate(requestedRoommateObj)
-          return requestedRoommateObj;
-        }
-
-      }))).subscribe(()=>{
-        this.requestedRoommates$ = this._applicationsStateService.requestedRoommates
-      })
-      
-  }
 }

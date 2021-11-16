@@ -27,6 +27,8 @@ export class MenuCategoryItemsComponent implements OnInit {
   menuItems$: Observable<number>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   isGuestUser: boolean;
+  isExistingOrder:boolean;
+
   constructor(
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
@@ -38,9 +40,12 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly navService: NavigationService
   ) {}
 
+
   ionViewWillEnter() {
     this.initContentStrings();
     this.cdRef.detectChanges();
+    const { isExistingOrder = false } = this.activatedRoute.snapshot.queryParams;
+    this.isExistingOrder = JSON.parse(isExistingOrder);
   }
 
   ngOnInit() {
@@ -86,7 +91,7 @@ export class MenuCategoryItemsComponent implements OnInit {
 
   triggerMenuItemClick(menuItemId) {
     this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-      queryParams: { menuItemId },
+      queryParams: { menuItemId, isExistingOrder: this.isExistingOrder },
     });
   }
 
@@ -104,7 +109,9 @@ export class MenuCategoryItemsComponent implements OnInit {
         handleServerError(ORDER_VALIDATION_ERRORS)
       )
       .toPromise()
-      .then(() => this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart]))
+      .then(() => this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
+        queryParams: { isExistingOrder: this.isExistingOrder },
+      }))
       .catch(error => this.failedValidateOrder(error))
       .finally(() => this.loadingService.closeSpinner());
   }

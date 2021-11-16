@@ -32,7 +32,7 @@ export class CartService {
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
-    private readonly institutionFacade: InstitutionFacadeService,
+    private readonly institutionFacade: InstitutionFacadeService
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -40,6 +40,13 @@ export class CartService {
       map(({ merchant }) => merchant),
       distinctUntilChanged()
     );
+  }
+
+  async onAddItems({ merchant, orderOptions, orderId }) {
+    const { dueTime, orderType, address, isASAP } = orderOptions;
+    await this.setActiveMerchant(merchant);
+    await this.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
+    await this.setPendingOrder(orderId);
   }
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
@@ -235,10 +242,27 @@ export class CartService {
           dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime,
         };
         if (this._pendingOrderId) {
-          return this.merchantService.validatePendingOrder({
-            orderID: this._pendingOrderId,
-            itemsToAdd: this.cart.order.orderItems,
-          });
+          return this.merchantService
+            .validatePendingOrder({
+              orderID: this._pendingOrderId,
+              itemsToAdd: this.cart.order.orderItems,
+            })
+            .pipe(
+              map(order => {
+                const allItems = order.orderItems;
+                const newItems = this.cart.order.orderItems;
+                order.orderItems = [];
+                newItems.forEach(({ menuItemId, quantity }) => {
+                  const theFoundItem = allItems.find(i => i.menuItemId == menuItemId && i.quantity == quantity);
+                  if (theFoundItem) {
+                    order.orderItems.push(theFoundItem);
+                  } else {
+                    console.log('Something wrong, item: ', menuItemId, ' Not found');
+                  }
+                });
+                return order;
+              })
+            );
         } else {
           return this.merchantService.validateOrder(this.cart.order);
         }
@@ -253,7 +277,7 @@ export class CartService {
   }
 
   submitOrder(accId: string, cvv: string, clientOrderID: string): Observable<OrderInfo> {
-    if(this._pendingOrderId){
+    if (this._pendingOrderId) {
       return this.merchantService.addItemsToOrder({
         clientAddItemsID: clientOrderID,
         orderID: this._pendingOrderId,

@@ -1,0 +1,21 @@
+<div class="darker" (click)="goBack()">
+  <ion-button disabled="buttonDisabled" mode="ios">
+    <ion-icon slot="icon-only" name="close"></ion-icon>
+  </ion-button>
+  <label *ngIf="title" class="scan__label"> {{ title }}</label>
+</div>
+<div class="column">
+  <div class="left"></div>
+  <div class="middle"></div>
+  <div class="right"></div>
+</div>
+<ion-footer class="darker">
+  <label class="scan__label">{{ prompt }}</label>
+  <div *ngIf="textBtn" class="scan__button">
+    <st-button (onClick)="manualEntry()" buttonModifier="rectangular" isDisabled="true">
+      <span class="ion-text-capitalize scan__span">
+        {{ textBtn }}
+      </span>
+    </st-button>
+  </div>
+</ion-footer>

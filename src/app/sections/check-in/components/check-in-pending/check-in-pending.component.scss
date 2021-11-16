@@ -52,7 +52,7 @@
 
     .padded {
       padding: 0 15px;
-      .text-dark{
+      .text-dark {
         margin-top: 5px;
       }
     }
@@ -85,13 +85,16 @@
 
   &__footer {
     display: flex;
-    padding: 10px 10px 30px 10px;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 }
 
-.btn-disabled{
+.btn-disabled {
   opacity: 0.4;
+}
+
+.full-width{
+  width: 100%;
 }
 
 span {

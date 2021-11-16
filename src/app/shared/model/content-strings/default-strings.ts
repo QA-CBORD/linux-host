@@ -46,12 +46,16 @@ export const checkingDefaultCs = {
   lbl_total: 'Total',
   lbl_btn_order_detail: 'Order Details',
   lbl_btn_scan_code: 'Scan Code',
-  lbl_btn_loc_chck_in: 'Location Check In',
+  lbl_btn_loc_chck_in: 'Use Location',
   not_checked_in_subtitle: 'Unable to Check In',
   lbl_btn_back: 'Back',
   too_early: 'You are here too early. You cannot Check In earlier than 30 minutes before Pick Up time.',
   get_closer: 'You must be closer to the merchant to use Location Check In. Or use the Scan Code feature once you arrive at the merchant.',
   invalid_scan_code: 'The code you scanned is invalid to check in your order. Please try again.',
+  lbl_btn_checkin_in: 'Check In',
+  lbl_btn_add2_cart: 'Add To Cart',
+  checkin_method_text: "Check in either by using your location services or by scanning the QR code.",
+  scan_code_prompt: 'Position the code in the center of the screen to scan.'
 }
 
 export const checkingSuccessCs = {
@@ -221,4 +225,10 @@ export const defaultLocationDisclosureStrings = {
   disclosure_button_text: 'location settings',
   disclosure_text: 'GET can use your location to help you find nearby merchants, check in for an order pickup, and use your card.  Allowing background access to your deviceâs location lets you to take full advantage of these features and enables you to add your card or payroll account to Apple Wallet or Google Pay if offered by your institution.',
   disclosure_title: 'use your location',
+};
+
+export const defaultScanCodeStrings = {
+  scan_code_title: 'Barcode',
+  scan_code_prompt: 'Position the code in the center of the screen to scan.',
+  scan_code_button_text: 'Manual Entry',
 };
