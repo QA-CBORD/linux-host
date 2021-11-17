@@ -154,7 +154,7 @@ export class ApplicationsStateService {
           'patronRoommateKey': addedRoommate.patronKeyRoommate,
           'middleName': addedRoommate.middleName? addedRoommate.middleName: '' ,
           'birthDate': addedRoommate.birthDate,
-          'preferredName': addedRoommate.preferredName,
+          'preferredName': addedRoommate.preferredName? addedRoommate.preferredName: '' ,
           'confirmed': true,
         });
       this.setRequestedRoommate(roommateRequested);
