@@ -152,7 +152,7 @@ export class ApplicationsStateService {
           'lastName': addedRoommate.lastName,
           'preferenceKey': addedRoommate.preferenceKey,
           'patronRoommateKey': addedRoommate.patronKeyRoommate,
-          'middleName': addedRoommate.middleName,
+          'middleName': addedRoommate.middleName? addedRoommate.middleName: '' ,
           'birthDate': addedRoommate.birthDate,
           'preferredName': addedRoommate.preferredName,
           'confirmed': true,
