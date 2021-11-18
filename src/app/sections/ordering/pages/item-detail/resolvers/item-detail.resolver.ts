@@ -22,9 +22,9 @@ export class ItemDetailResolver
     queryParams: QueryParamsModel;
   }> {
     const {
-      queryParams: { menuItemId, orderItemId, isItemExistsInCart=false, isExistingOrder=false },
+      queryParams: { menuItemId, orderItemId, isItemExistsInCart = false, isScannedItem = false },
     } = snapshot;
-    
+
     return this.cartService.menuInfo$.pipe(
       map(({ menuCategories }) => {
         const menuItems: any[] = menuCategories.map(({ menuCategoryItems }) =>
@@ -45,7 +45,7 @@ export class ItemDetailResolver
               menuItemId: menuItem.id,
               orderItemId,
               isItemExistsInCart,
-              isExistingOrder: JSON.parse(isExistingOrder),
+              isScannedItem,
             },
           };
         }
