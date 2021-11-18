@@ -1,3 +1,5 @@
+@import 'tools';
+
 .ro {
   &__close-btn {
     width: 75%;
@@ -8,9 +10,9 @@
   padding-left: 76px;
 }
 .cancel-btn {
-  min-height: 78%;
+  margin-bottom: 2.5rem;
   &__text {
-    color: #da4040;
+    color: $color-indian-red;
     font-size: 19px;
   }
 }
