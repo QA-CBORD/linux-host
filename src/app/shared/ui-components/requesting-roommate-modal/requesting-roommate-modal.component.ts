@@ -58,7 +58,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   }
 
   async acceptRoommateRequest(roommate: RoommatePreferences,index:number){
-    if (this._applicationsStateService.roommatePreferencesSelecteds.find( value => value.patronKeyRoommate !== roommate.patronKeyRoommate && value.preferenceKey === roommate.preferenceKey)){
+    if (this._applicationsStateService.roommatePreferencesSelecteds.find( value => value.patronKeyRoommate !== roommate.patronKeyRoommate && value.patronKeyRoommate != 0 && value.preferenceKey === roommate.preferenceKey)){
       const alert = await this._alertController.create({
         header: 'Confirm Override',
         message: `By accepting ${roommate.firstName} ${roommate.lastName} as your roommate you will override your existing selection. Are you sure you want to continue?`,
