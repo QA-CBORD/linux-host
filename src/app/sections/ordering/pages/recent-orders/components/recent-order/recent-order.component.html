@@ -16,6 +16,7 @@
     [subTotal]="(order$ | async).subTotal"
     [pickupFee]="(order$ | async).pickupFee"
     [orderTypes]="(merchant$ | async).orderTypes"
+    [discount]="(order$ | async).discount"
     [deliveryFee]="(order$ | async).deliveryFee"
     [total]="(order$ | async).total"
     [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
@@ -53,7 +54,7 @@
       </span>
     </st-button>
   </div>
-  <div [ngClass]="{ 'btn-wrapper': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
+  <div [ngClass]="{ 'btn-checkin': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
     <div *ngIf="addToCartEnabled">
       <st-button isDisabled="true" (onClick)="onAddItems()">
         <span class="ion-text-capitalize">
