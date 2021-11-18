@@ -31,6 +31,7 @@ import { ExploreTileComponent } from './containers/explore-tile/explore-tile.com
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { Router } from '@angular/router';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 const { App, Device } = Plugins;
 
@@ -69,7 +70,8 @@ export class DashboardPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -98,6 +100,7 @@ export class DashboardPage implements OnInit {
     this.accessCard.ionViewWillEnter();
     this.updateTiles();
     this.checkNativeStartup();
+    this.globalNav.showNavBar();
   }
 
   private async checkNativeStartup() {
