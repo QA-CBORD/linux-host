@@ -86,10 +86,8 @@ export class ItemDetailComponent implements OnInit {
 
 
   onClose() {
-    if (this.routesData.queryParams.isExistingOrder) {
-      this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-        queryParams: { isExistingOrder: true }
-      });
+    if (this.routesData.queryParams.isScannedItem) {
+      this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
     } else {
       const {
         queryParams: { categoryId },
@@ -352,6 +350,6 @@ export interface RoutesData {
     menuItemId: string;
     orderItemId: string;
     isItemExistsInCart: boolean;
-    isExistingOrder: boolean;
+    isScannedItem: boolean;
   };
 }
