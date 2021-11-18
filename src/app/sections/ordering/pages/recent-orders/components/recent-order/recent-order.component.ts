@@ -185,7 +185,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
       ),
       switchMap(merchant => {
-        const res = merchant.settings.map[MerchantSettings.addToCartEnabled];
+        const res = merchant.settings.map[MerchantSettings.addToCartEnabled] || {};
         this.addToCartEnabled = res.value && !!JSON.parse(res.value);
         merchant.orderTypes.merchantTimeZone = merchant.timeZone;
         if (!merchant.timeZone)
