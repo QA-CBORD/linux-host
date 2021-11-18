@@ -119,7 +119,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   navigateToItem(menuItemId: string) {
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-      queryParams: { menuItemId, isExistingOrder: true },
+      queryParams: { menuItemId, isExistingOrder: this.cartService.isExistingOrder },
     });
   }
 

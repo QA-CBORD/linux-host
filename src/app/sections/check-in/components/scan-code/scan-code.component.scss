@@ -1,5 +1,7 @@
 @import 'tools';
-
+.notch-header {
+  padding-top: $notch-top;
+}
 .scan {
   &__label {
     display: flex;

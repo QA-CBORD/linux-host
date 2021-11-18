@@ -72,6 +72,10 @@ export class CartService {
     return this._clientOrderId;
   }
 
+  get isExistingOrder(): boolean {
+    return !!this._pendingOrderId;
+  }
+
   resetClientOrderId(): void {
     this._clientOrderId = null;
   }
@@ -385,14 +389,14 @@ export class CartService {
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
   getMenuItemByCode(code: string) {
-    code = code.trim();
+    code = code ? code.trim().toUpperCase() : '';
     return this.menuInfo$.pipe(
       filter(menu => !!menu.menuCategories),
       map(menu =>
         menu.menuCategories
           .map(cat => cat.menuCategoryItems.map(item => item.menuItem))
           .reduce((prev, curr) => [...prev, ...curr], [])
-          .find(item => item.barcode === code)
+          .find(item => item.barcode.toUpperCase() === code)
       ),
       take(1)
     );
