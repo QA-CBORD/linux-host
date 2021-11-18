@@ -72,6 +72,10 @@ export class CartService {
     return this._clientOrderId;
   }
 
+  get isExistingOrder(): boolean {
+    return !!this._pendingOrderId;
+  }
+
   resetClientOrderId(): void {
     this._clientOrderId = null;
   }
