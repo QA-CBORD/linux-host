@@ -102,7 +102,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
-    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder);
+    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder || false);
     this.accounts$ = this.getAvailableAccounts().then(accounts => {
       if (this.isExistingOrder) this.orderDetail.initAccountSelected(accounts);
       return accounts;
@@ -180,7 +180,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onOrderItemClicked({ menuItemId, id }) {
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-      queryParams: { menuItemId: menuItemId, orderItemId: id, isItemExistsInCart: true },
+      queryParams: { menuItemId: menuItemId, orderItemId: id, isItemExistsInCart: true, isExistingOrder: this.isExistingOrder },
     });
   }
 
