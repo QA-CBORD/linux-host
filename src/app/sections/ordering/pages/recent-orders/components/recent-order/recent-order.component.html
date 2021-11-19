@@ -26,12 +26,15 @@
     [mealBased]="(order$ | async).mealBased"
     [orderDetailOptions]="orderDetailsOptions$ | async"
   >
-    <ng-container
+  </st-order-details>
+</ion-content>
+
+<ion-footer>
+  <ng-container
       *ngIf="(order$ | async).status !== orderStatus.PENDING; else pending"
       [ngTemplateOutlet]="completed"
     ></ng-container>
-  </st-order-details>
-</ion-content>
+</ion-footer>
 
 <ng-template #completed>
   <div class="btn-wrapper">

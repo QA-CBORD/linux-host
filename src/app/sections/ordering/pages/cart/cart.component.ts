@@ -69,7 +69,6 @@ export class CartComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   placingOrder: boolean = false;
   isProcessingOrder: boolean = false;
-  isExistingOrder: boolean;
   @ViewChild('orderDetails') orderDetail: OrderDetailsComponent;
   merchantTimeZoneDisplayingMessage: string;
   isOnline: boolean = true;
@@ -102,7 +101,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
-    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder || false);
     this.accounts$ = this.getAvailableAccounts().then(accounts => {
       if (this.isExistingOrder) this.orderDetail.initAccountSelected(accounts);
       return accounts;
@@ -147,6 +145,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   get isOrderASAP(): Observable<boolean> {
     return this.cartService.orderDetailsOptions$.pipe(map(({ isASAP }) => isASAP));
+  }
+
+  get isExistingOrder(): boolean {
+    return this.cartService.isExistingOrder;
   }
 
   initAddressModalConfig(): Observable<AddressModalSettings> {
