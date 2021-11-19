@@ -41,7 +41,6 @@ import { UserInfoSet } from '@sections/settings/models/setting-items-config.mode
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
 
 const { Keyboard } = Plugins;
 
@@ -101,12 +100,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly a11yService: AccessibilityService,
-    private readonly activatedRoute: ActivatedRoute,
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ngOnInit() {
-    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder || false);
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
