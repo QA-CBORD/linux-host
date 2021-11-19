@@ -99,6 +99,11 @@ export class ApplicationsStateService {
     this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
   }
 
+  deleteOverrideRequestingRoommate(preferenceKey: number, patronKeyRoommate: number) {
+    let index = this.applicationsState.applicationDetails.roommatePreferences.findIndex(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)
+    this.applicationsState.applicationDetails.roommatePreferences.splice(index, 1)
+  }
+
   setApplications(applications: ApplicationDetails[]): void {
     this.applicationsState = { ...this.applicationsState, entities: this._toApplicationEntities(applications) };
   }
