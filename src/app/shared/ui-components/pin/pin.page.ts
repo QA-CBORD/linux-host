@@ -72,7 +72,7 @@ export class PinPage implements OnInit {
   ngOnInit() {
     this.retrievePinRetrys();
     this.setInstructionText();
-    this.a11yService.readAloud(this.instructionText).then();
+    this.a11yService.readAloud(this.instructionText);
   }
 
   private setInstructionText(text: string = null) {

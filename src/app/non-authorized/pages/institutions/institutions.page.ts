@@ -18,6 +18,7 @@ import { InstitutionLookupListItem } from '@core/model/institution';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
+import { Platform } from '@ionic/angular';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -45,7 +46,8 @@ export class InstitutionsPage implements OnInit {
     private readonly route: Router,
     private readonly registrationServiceFacade: RegistrationServiceFacade,
     private readonly commonService: CommonService,
-    private readonly messageProxy: MessageProxy
+    private readonly messageProxy: MessageProxy,
+    private readonly platform: Platform,
   ) {}
 
   async ngOnInit() {
@@ -152,7 +154,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   async setNativeEnvironment() {
-    if (Capacitor.platform === PLATFORM.ios) {
+    if (Capacitor.platform === PLATFORM.ios && this.platform.is('cordova')) {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
   }

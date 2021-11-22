@@ -15,6 +15,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { BarcodeService } from '@core/service/barcode/barcode.service';
+import { Platform } from '@ionic/angular';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
@@ -33,7 +34,8 @@ export class UserFacadeService extends ServiceStateFacade {
     private readonly nativeProvider: NativeProvider,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userSettingStateService: UserSettingsStateService,
-    private readonly pingEncoderService: BarcodeService
+    private readonly pingEncoderService: BarcodeService,
+    private readonly platform: Platform
   ) {
     super();
   }
@@ -169,6 +171,8 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   handlePushNotificationRegistration() {
+    if(!this.platform.is('cordova')) return;
+
     zip(this.isPushNotificationEnabled$(), this.getFCMToken$())
       .pipe(
         switchMap(([pushNotificationsEnabled, fcmToken]) => {
