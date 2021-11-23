@@ -83,6 +83,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
   @Input() orderPayment: OrderPayment[];
+  isApplePayment: boolean = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -112,10 +113,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async initAccountSelected(accounts: UserAccount[]) {
-    const account = accounts.find(({ id }) => this.orderPayment[0].accountId == id);
-    this.detailsForm.patchValue({
-      [FORM_CONTROL_NAMES.paymentMethod]: account || '',
-    });
+    const accountId = this.orderPayment[0] ? this.orderPayment[0].accountId : '';
+    this.isApplePayment = accountId.startsWith('E');
+    if (!this.isApplePayment) {
+      const account = accounts.find(({ id }) => accountId == id);
+      this.detailsForm.patchValue({
+        [FORM_CONTROL_NAMES.paymentMethod]: account || '',
+      });
+    }
   }
 
   ngOnDestroy() {
