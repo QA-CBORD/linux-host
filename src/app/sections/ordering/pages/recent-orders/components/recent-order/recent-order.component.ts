@@ -307,10 +307,25 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   private getPickupAddress(): Observable<any> {
     return this.order$.pipe(
-      switchMap(({ merchantId }) =>
-        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
-      ),
-      map(({ storeAddress }) => storeAddress)
+      take(1),
+      switchMap(({ merchantId, pickupAddressId }) => {
+        return this.merchantService.menuMerchants$.pipe(
+          map(merchants => ({ merchant: merchants.find(({ id }) => id === merchantId), pickupAddressId }))
+        );
+      }),
+      switchMap(({ merchant: { storeAddress, settings }, pickupAddressId }) => {
+        return this.merchantService
+          .retrievePickupLocations(storeAddress, settings.map[MerchantSettings.pickupLocationsEnabled])
+          .pipe(
+            take(1),
+            map(pickupLocations => {
+              const address = pickupLocations.find(
+                ({ addressInfo }) => addressInfo && addressInfo.id == pickupAddressId
+              );
+              return (address && address.addressInfo) || storeAddress;
+            })
+          );
+      })
     );
   }
 
@@ -441,7 +456,14 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe(
-        async ([merchant, { dueTime, orderType, address, isASAP }, { id }]: [
+        async ([
+          merchant,
+          { dueTime, orderType, address, isASAP },
+          {
+            id,
+            orderPayment: [orderPayment],
+          },
+        ]: [
           MerchantInfo,
           {
             dueTime: Date;
@@ -451,7 +473,12 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           },
           OrderInfo
         ]) => {
-          await this.cart.onAddItems({ merchant, orderOptions: { dueTime, orderType, address, isASAP }, orderId: id });
+          await this.cart.onAddItems({
+            merchant,
+            orderPayment,
+            orderOptions: { dueTime, orderType, address, isASAP },
+            orderId: id,
+          });
           this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
             queryParams: { isExistingOrder: true },
           });

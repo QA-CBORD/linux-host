@@ -164,12 +164,12 @@ export class MerchantService {
     return this.orderingApiService.validateOrder(order);
   }
 
-  validatePendingOrder(order: ExistingOrderInfo): Observable<OrderInfo> {
-    return this.orderingApiService.validatePendingOrder(order);
+  validatePendingOrder(order: ExistingOrderInfo, accountId: string): Observable<OrderInfo> {
+    return this.orderingApiService.validatePendingOrder(order, accountId);
   }
 
-  addItemsToOrder(order: ExistingOrderInfo): Observable<OrderInfo> {
-    return this.orderingApiService.addItemsToOrder(order);
+  addItemsToOrder(order: ExistingOrderInfo, accountId: string): Observable<OrderInfo> {
+    return this.orderingApiService.addItemsToOrder(order, accountId);
   }
 
   cancelOrderById(id: string): Observable<boolean> {
@@ -233,7 +233,7 @@ export class MerchantService {
       case null:
         return of([]);
       case 'true':
-        return this.orderingApiService.retrievePickupLocations();
+        return this.institutionService.retrievePickupLocations();
       case 'false':
         return of([storeAddress]);
     }
