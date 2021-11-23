@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Capacitor, Plugins } from '@capacitor/core';
 import { of } from 'rxjs/internal/observable/of';
+import { Platform } from '@ionic/angular';
 
 const { Accessibility } = Plugins;
 const READ_ALOUD_DELAY = 2000;
@@ -13,10 +14,12 @@ export enum PLATFORM {
 }
 @Injectable()
 export class AccessibilityService {
-  constructor() {}
+  constructor(private readonly platform: Platform) {}
   private toggle = false;
 
   readAloud(text: string) {
+    if(!this.platform.is('cordova')) return;
+
     return Accessibility.isScreenReaderEnabled().then(isRunning => {
       if (isRunning.value) {
         setTimeout(() => {

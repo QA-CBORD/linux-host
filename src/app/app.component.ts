@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     private readonly screenOrientation: ScreenOrientation,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly router: Router,
-    private readonly globalNav: GlobalNavService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit(): void {
@@ -78,11 +78,13 @@ export class AppComponent implements OnInit {
     this.splashScreen.hide();
     this.statusBar.styleDefault();
     this.statusBar.backgroundColorByHexString('#FFFFFF');
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    if (this.platform.is('cordova')) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
   }
 
   private initEventListeners() {
-    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
+    if ((this.platform.is('android') || this.platform.is('ios')) && this.platform.is('cordova')) {
       this.initMobileListeners();
     }
   }

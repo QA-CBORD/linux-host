@@ -9,7 +9,7 @@ import { HIDCredential, GoogleCredential } from '../model/android/android-creden
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 import { IOSCredentialManager } from './ios-credential-manager';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
-import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
+import { Platform } from '@ionic/angular';
 
 export enum CredentialManagerType {
   IosCredential = 'IOS_CREDENTIAL',
@@ -20,11 +20,13 @@ export enum CredentialManagerType {
   providedIn: 'root',
 })
 export class MobileCredentialManagerFactory {
-  constructor(private injector: Injector) {}
+  constructor(
+    private injector: Injector, 
+    private readonly platform: Platform) {}
 
   createCredentialManager(credentialManagerType: CredentialManagerType): Observable<MobileCredentialManager> {
     return iif(
-      () => credentialManagerType == CredentialManagerType.IosCredential,
+      () => credentialManagerType == CredentialManagerType.IosCredential && this.platform.is('cordova'),
       this.appleCredentialManager(),
       this.androidCredentialManager()
     );
