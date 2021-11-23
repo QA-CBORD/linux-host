@@ -10,7 +10,6 @@ import { OrderingApiService } from '@sections/ordering/services/ordering.api.ser
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { DatePipe } from '@angular/common';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Injectable({
@@ -42,11 +41,12 @@ export class CartService {
     );
   }
 
-  async onAddItems({ merchant, orderOptions, orderId }) {
+  async onAddItems({ merchant, orderOptions, orderId, orderPayment }) {
     const { dueTime, orderType, address, isASAP } = orderOptions;
     await this.setActiveMerchant(merchant);
     await this.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
     await this.setPendingOrder(orderId);
+    this.cart.order.orderPayment = [orderPayment];
   }
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
@@ -247,10 +247,8 @@ export class CartService {
         };
         if (this._pendingOrderId) {
           return this.merchantService
-            .validatePendingOrder({
-              orderID: this._pendingOrderId,
-              itemsToAdd: this.cart.order.orderItems,
-            })
+            .validatePendingOrder({ orderID: this._pendingOrderId, itemsToAdd: this.cart.order.orderItems }, 
+            this.cart.order.orderPayment[0].accountId)
             .pipe(
               map(order => {
                 const allItems = order.orderItems;
@@ -287,7 +285,9 @@ export class CartService {
         orderID: this._pendingOrderId,
         itemsToAdd: this.cart.order.orderItems,
         cvv,
-      });
+      },
+      accId
+      );
     }
     if (this.orderIsAsap) this.cart.order.dueTime = undefined;
     const order = { ...this.cart.order, clientOrderID };

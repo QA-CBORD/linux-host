@@ -182,7 +182,12 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onOrderItemClicked({ menuItemId, id }) {
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-      queryParams: { menuItemId: menuItemId, orderItemId: id, isItemExistsInCart: true, isExistingOrder: this.isExistingOrder },
+      queryParams: {
+        menuItemId: menuItemId,
+        orderItemId: id,
+        isItemExistsInCart: true,
+        isExistingOrder: this.isExistingOrder,
+      },
     });
   }
 
@@ -232,9 +237,10 @@ export class CartComponent implements OnInit, OnDestroy {
     discount,
     total,
     subTotal,
-    orderPayment: [{ accountName }],
+    orderPayment,
     deliveryFee,
     pickupFee,
+    pickupAddressId,
     tip,
     checkNumber,
     mealBased,
@@ -245,7 +251,10 @@ export class CartComponent implements OnInit, OnDestroy {
     type,
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
-      this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased, type }, this.isExistingOrder);
+      this.checkinProcess.start(
+        { id, pickupAddressId, orderPayment, dueTime, checkNumber, total, merchantId, mealBased, type },
+        this.isExistingOrder
+      );
       return;
     }
 
@@ -260,7 +269,7 @@ export class CartComponent implements OnInit, OnDestroy {
         pickupFee,
         tip,
         checkNumber,
-        accountName,
+        accountName: orderPayment[0].accountName,
         mealBased,
         merchantId,
         dueTime,

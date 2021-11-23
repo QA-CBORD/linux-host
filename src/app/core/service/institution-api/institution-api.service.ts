@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MessageResponse } from '@core/model/service/message-response.model';
+import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { InstitutionPhotoInfo } from '@core/model/institution/institution-photo-info.model';
 import { map } from 'rxjs/operators';
 import { Institution } from '@core/model/institution/institution.model';
@@ -23,6 +23,15 @@ export class InstitutionApiService {
     return this.http
       .post<MessageResponse<Institution>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
+  }
+
+  retrievePickupLocations(): Observable<any> {
+    const postParams: ServiceParameters = { active: true };
+    const queryConfig = new RPCQueryConfig('retrievePickupLocations', postParams, true, true);
+
+    return this.http
+      .post(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }: MessageResponse<any>) => response.list));
   }
 
   getInstitutionDataById(institutionId: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
