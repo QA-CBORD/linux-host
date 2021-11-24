@@ -69,7 +69,6 @@ export class CartComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   placingOrder: boolean = false;
   isProcessingOrder: boolean = false;
-  isExistingOrder: boolean;
   @ViewChild('orderDetails') orderDetail: OrderDetailsComponent;
   merchantTimeZoneDisplayingMessage: string;
   isOnline: boolean = true;
@@ -102,7 +101,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
-    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder);
     this.accounts$ = this.getAvailableAccounts().then(accounts => {
       if (this.isExistingOrder) this.orderDetail.initAccountSelected(accounts);
       return accounts;
@@ -149,6 +147,10 @@ export class CartComponent implements OnInit, OnDestroy {
     return this.cartService.orderDetailsOptions$.pipe(map(({ isASAP }) => isASAP));
   }
 
+  get isExistingOrder(): boolean {
+    return this.cartService.isExistingOrder;
+  }
+
   initAddressModalConfig(): Observable<AddressModalSettings> {
     this.loadingService.showSpinner();
     return combineLatest(
@@ -180,7 +182,12 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onOrderItemClicked({ menuItemId, id }) {
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-      queryParams: { menuItemId: menuItemId, orderItemId: id, isItemExistsInCart: true },
+      queryParams: {
+        menuItemId: menuItemId,
+        orderItemId: id,
+        isItemExistsInCart: true,
+        isExistingOrder: this.isExistingOrder,
+      },
     });
   }
 
@@ -230,9 +237,10 @@ export class CartComponent implements OnInit, OnDestroy {
     discount,
     total,
     subTotal,
-    orderPayment: [{ accountName }],
+    orderPayment,
     deliveryFee,
     pickupFee,
+    pickupAddressId,
     tip,
     checkNumber,
     mealBased,
@@ -243,7 +251,10 @@ export class CartComponent implements OnInit, OnDestroy {
     type,
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
-      this.checkinProcess.start({ id, dueTime, checkNumber, total, merchantId, mealBased, type }, this.isExistingOrder);
+      this.checkinProcess.start(
+        { id, pickupAddressId, orderPayment, dueTime, checkNumber, total, merchantId, mealBased, type },
+        this.isExistingOrder
+      );
       return;
     }
 
@@ -258,7 +269,7 @@ export class CartComponent implements OnInit, OnDestroy {
         pickupFee,
         tip,
         checkNumber,
-        accountName,
+        accountName: orderPayment[0].accountName,
         mealBased,
         merchantId,
         dueTime,

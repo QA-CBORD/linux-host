@@ -41,7 +41,6 @@ import { UserInfoSet } from '@sections/settings/models/setting-items-config.mode
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
 
 const { Keyboard } = Plugins;
 
@@ -84,6 +83,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
   @Input() orderPayment: OrderPayment[];
+  isApplePayment: boolean = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -101,12 +101,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly a11yService: AccessibilityService,
-    private readonly activatedRoute: ActivatedRoute,
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ngOnInit() {
-    this.isExistingOrder = JSON.parse(this.activatedRoute.snapshot.queryParams.isExistingOrder || false);
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
@@ -115,10 +113,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async initAccountSelected(accounts: UserAccount[]) {
-    const account = accounts.find(({ id }) => this.orderPayment[0].accountId == id);
-    this.detailsForm.patchValue({
-      [FORM_CONTROL_NAMES.paymentMethod]: account || '',
-    });
+    const accountId = this.orderPayment[0] ? this.orderPayment[0].accountId : '';
+    this.isApplePayment = accountId.startsWith('E');
+    if (!this.isApplePayment) {
+      const account = accounts.find(({ id }) => accountId == id);
+      this.detailsForm.patchValue({
+        [FORM_CONTROL_NAMES.paymentMethod]: account || '',
+      });
+    }
   }
 
   ngOnDestroy() {

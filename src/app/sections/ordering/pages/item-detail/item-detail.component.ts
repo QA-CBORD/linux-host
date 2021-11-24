@@ -1,7 +1,7 @@
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, take } from 'rxjs/operators';
 
@@ -15,7 +15,6 @@ import {
 import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -45,7 +44,6 @@ export class ItemDetailComponent implements OnInit {
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService,
@@ -53,15 +51,19 @@ export class ItemDetailComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
-    private readonly navService: NavigationService
+    private readonly navService: NavigationService,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.initMenuItemOptions();
-    this.menuInfo$ = this.cartService.menuInfo$;
     this.initContentStrings();
-    this.activatedRoute.data.pipe(take(1)).subscribe(({ data }) => (this.routesData = data));
-    this.calculateTotalPrice();
+    this.activatedRoute.data.subscribe(({ data }) => {
+      this.routesData = data;
+      this.initMenuItemOptions();
+      this.menuInfo$ = this.cartService.menuInfo$;
+      this.calculateTotalPrice();
+      this.cdRef.detectChanges();
+    });
   }
 
   private async initInfoModal(message: string, cb: () => void): Promise<void> {
@@ -84,12 +86,9 @@ export class ItemDetailComponent implements OnInit {
     });
   }
 
-
   onClose() {
-    if (this.routesData.queryParams.isExistingOrder) {
-      this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-        queryParams: { isExistingOrder: true }
-      });
+    if (this.routesData.queryParams.isScannedItem) {
+      this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
     } else {
       const {
         queryParams: { categoryId },
@@ -352,6 +351,6 @@ export interface RoutesData {
     menuItemId: string;
     orderItemId: string;
     isItemExistsInCart: boolean;
-    isExistingOrder: boolean;
+    isScannedItem: boolean;
   };
 }

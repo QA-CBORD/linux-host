@@ -73,8 +73,8 @@ export class OrderingApiService {
       .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
   }
 
-  validatePendingOrder(orderInfo: ExistingOrderInfo): Observable<OrderInfo> {
-    const postParams: ServiceParameters = { ...orderInfo };
+  validatePendingOrder(orderInfo: ExistingOrderInfo, accountID: string = null): Observable<OrderInfo> {
+    const postParams: ServiceParameters = { ...orderInfo, accountID };
     const queryConfig = new RPCQueryConfig('validateOrderAddOns', postParams, true);
 
     return this.http
@@ -82,8 +82,8 @@ export class OrderingApiService {
       .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
   }
 
-  addItemsToOrder(orderInfo: ExistingOrderInfo): Observable<OrderInfo> {
-    const postParams: ServiceParameters = { ...orderInfo };
+  addItemsToOrder(orderInfo: ExistingOrderInfo, accountID: string = null): Observable<OrderInfo> {
+    const postParams: ServiceParameters = { ...orderInfo, accountID };
     const queryConfig = new RPCQueryConfig('addItemsToOrder', postParams, true);
 
     return this.http

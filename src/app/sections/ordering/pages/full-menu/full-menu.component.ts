@@ -1,9 +1,8 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '@sections/ordering/shared/models';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { ActivatedRoute } from '@angular/router';
 import {
   LOCAL_ROUTING,
   ORDER_ERROR_CODES,
@@ -39,7 +38,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
-  isExistingOrder: boolean;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   constructor(
     private readonly cartService: CartService,
@@ -100,14 +98,13 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
     this.menuItems$ = this.cartService.menuItems$;
-    const { openTimeSlot, isExistingOrder = false } = this.activatedRoute.snapshot.queryParams;
-    this.isExistingOrder = JSON.parse(isExistingOrder);
+    const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
     openTimeSlot && this.openOrderOptions();
   }
 
   async onCategoryClicked({ id }): Promise<void> {
     await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.menuCategoryItems, id], {
-      queryParams: { isExistingOrder: this.isExistingOrder },
+      queryParams: { isExistingOrder: this.cartService.isExistingOrder },
     });
   }
 
@@ -117,9 +114,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     await this.actionSheet(orderTypes, id, storeAddress, settings, timeZone);
   }
 
-  navigateToItem(menuItemId: string) {
+  navigateToScannedItem(menuItemId: string) {
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
-      queryParams: { menuItemId, isExistingOrder: true },
+      queryParams: { menuItemId, isScannedItem: true },
     });
   }
 
@@ -179,7 +176,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     }
     const successCb = () =>
       this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
-        queryParams: { isExistingOrder: this.isExistingOrder },
+        queryParams: { isExistingOrder: this.cartService.isExistingOrder },
       });
     const errorCB = (error: Array<string> | string) => {
       if (Array.isArray(error)) {
