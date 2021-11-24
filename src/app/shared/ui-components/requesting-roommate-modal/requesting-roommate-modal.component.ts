@@ -41,7 +41,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
     }
   }
 
-  @Input() requestingRoommate: RoommateResponse;
+  @Input() requestingRoommate: RoommatePreferences[];
 
   @Input() text: string = 'Back';
 
@@ -92,8 +92,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
       await alert.present();
     } else { // todo: if it works, remove else and extract to method
       this._applicationsStateService.addRoommatesPreferences(roommate);
-      this._applicationsStateService.deleteRequestingRoommate(index);
-
+      this._applicationsStateService.deleteRequestingRoommate(roommate.patronKeyRoommate);
       this.checkIfLastRequest();
     }
   }

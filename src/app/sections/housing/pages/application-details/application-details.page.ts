@@ -159,6 +159,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
         return result
       }
     });
+    this._applicationsStateService.setRequestingRoommate(requestingRoommate)
 
     const RequestingRoommateModal = await this.modalController.create({
       component: RequestingRoommateModalComponent,
