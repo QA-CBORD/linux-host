@@ -11,15 +11,17 @@ android_file=android/app/build.gradle
 android_key_1=versionCode
 android_key_2=versionName
 
-regex1="versionNumber:\ *\'\d+\.\d+\.\d+\'"
+regex1="versionNumber:\ *?\'\d+\.\d+\.\d+\'"
 regex2="\d+\.\d+\.\d+"
 
-while getopts ":m:p" flag
+while getopts "p:m" flag
 do
     case "${flag}" in
         m) incMinorVersion="1";;
 
         p) incMajorVersion="1";;
+
+        *) incMajorVersion="1";;
     esac
 done
 
@@ -35,12 +37,10 @@ if [ "${incMajorVersion}" == "1" ]
 then
     part="$((${parts[0]} + 1))"
     shortVstring="${part}.${parts[1]}.${parts[2]}"
-
 elif [ "${incMinorVersion}" == "1" ]
 then
     part="$((${parts[1]} + 1))"
     shortVstring="${parts[0]}.${part}.${parts[2]}"
-
 else
     part="$((${parts[2]} + 1))"
     shortVstring="${parts[0]}.${parts[2]}.${part}"
