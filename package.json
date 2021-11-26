@@ -12,7 +12,8 @@
         "lint": "ng lint",
         "e2e": "ng e2e",
         "inc-version-minor": "./IncrementVersionNumber.sh",
-        "inc-version-patch": "./IncrementVersionNumber.sh -m"
+        "inc-version-patch": "./IncrementVersionNumber.sh -m",
+        "inc-version-major": "./IncrementVersionNumber.sh -p"
     },
     "private": true,
     "dependencies": {

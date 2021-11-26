@@ -14,11 +14,12 @@ android_key_2=versionName
 regex1="versionNumber:\ *\'\d+\.\d+\.\d+\'"
 regex2="\d+\.\d+\.\d+"
 
-# should we increment the minor version (third position)?
-while getopts m flag
+while getopts ":m:p" flag
 do
     case "${flag}" in
         m) incMinorVersion="1";;
+
+        p) incMajorVersion="1";;
     esac
 done
 
@@ -26,20 +27,26 @@ done
 vString=$(cat $env_file | grep -Eo "$regex1" | grep -Eo "$regex2")
 echo "Old Version: $vString"
 
-# increment minor version if the flag is present
+# increment major, minor, or patch version based on flag
 IFS='.' read -r -a parts <<< "$vString"
 vCodePart2=$(printf '%02d' ${parts[1]})
-if [ "${incMinorVersion}" == "1" ]
+
+if [ "${incMajorVersion}" == "1" ]
 then
-    part3="$((${parts[2]} + 1))"
-    shortVstring="${parts[0]}.${parts[1]}.${part3}"
-    vCodePart3=$(printf '%02d' ${part3})
+    part="$((${parts[0]} + 1))"
+    shortVstring="${part}.${parts[1]}.${parts[2]}"
+
+elif [ "${incMinorVersion}" == "1" ]
+then
+    part="$((${parts[1]} + 1))"
+    shortVstring="${parts[0]}.${part}.${parts[2]}"
+
 else
-    part3="$((${parts[1]} + 1))"
-    shortVstring="${parts[0]}.${part3}.${parts[2]}"
-    vCodePart3=$(printf '%02d' ${part3})
+    part="$((${parts[2]} + 1))"
+    shortVstring="${parts[0]}.${parts[2]}.${part}"
 fi
 
+vCodePart3=$(printf '%02d' ${part})
 echo "New Version: $shortVstring"
 
 # Build the version code from the padded parts
