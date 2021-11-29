@@ -43,7 +43,7 @@ then
     shortVstring="${parts[0]}.${part}.${parts[2]}"
 else
     part="$((${parts[2]} + 1))"
-    shortVstring="${parts[0]}.${parts[2]}.${part}"
+    shortVstring="${parts[0]}.${parts[1]}.${part}"
 fi
 
 vCodePart3=$(printf '%02d' ${part})
