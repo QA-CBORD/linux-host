@@ -28,6 +28,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
     private _platform: Platform,
     private _loadingService: LoadingService
     ) {
+      this.checkIfLastRequest()
     }
   
   ngOnInit(): void {
@@ -39,6 +40,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
         this.activeAlerts = [];
       });
     }
+    this.checkIfLastRequest()
   }
 
   @Input() requestingRoommate: RoommatePreferences[];
@@ -98,16 +100,13 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   }
 
   private checkIfLastRequest() {
-    if(this._applicationsStateService.requestingRoommate.length == 0 ){
+    if(this._applicationsStateService.requestingRoommate.length == 0 && this.requestingRoommate.length == 0 ){
       this.onClickedClose();
     }
   }
 
   denyRoommateRequest(index:number){
     this._applicationsStateService.deleteRequestingRoommate(index);
-
-    if(this._applicationsStateService.requestingRoommate.length == 0 ){
-      this.onClickedClose();
-    }
+    this.checkIfLastRequest();
   }
 }
