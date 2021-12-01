@@ -55,7 +55,8 @@ export const checkingDefaultCs = {
   lbl_btn_checkin_in: 'Check In',
   lbl_btn_add2_cart: 'Add To Cart',
   checkin_method_text: "Check in either by using your location services or by scanning the QR code.",
-  scan_code_prompt: 'Position the code in the center of the screen to scan.'
+  scan_code_prompt: 'Position the code in the center of the screen to scan.',
+  scan_code_title: 'Scan Barcode or QR Code'
 }
 
 export const checkingSuccessCs = {
