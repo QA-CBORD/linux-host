@@ -98,6 +98,7 @@ export class ApplicationsStateService {
   deleteRequestingRoommate(patronKeyRoommate: number) {
     let index =this.applicationsState.applicationDetails.requestingRoommates.findIndex( value => value.patronKeyRoommate === patronKeyRoommate)
     this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
+    this.requestedroommate.splice(index,1)
   }
 
   setRequestingRoommate(requestingRoommate: RoommatePreferences[]){
