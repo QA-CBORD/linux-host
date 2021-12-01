@@ -26,7 +26,7 @@ import { WaitingListDetails, WaitingListDetailsRequest } from '../waiting-lists/
   providedIn: 'root',
 })
 export class WorkOrdersService {
-  private WaitingListUrl = `${this._environment.getHousingAPIURL()
+  private workOrderListUrl = `${this._environment.getHousingAPIURL()
     }/patron-applications/v.1.0/patron-waiting-lists`;
   private index = 1;
   workOrders: WorkOrder[] = generateWorkOrders(5);
@@ -44,7 +44,7 @@ export class WorkOrdersService {
   }
 
   removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
-    let urlRemove = this.WaitingListUrl + `/patron`;
+    let urlRemove = this.workOrderListUrl + `/patron`;
     const queryParams = new HttpParams().set('patronWaitingListKey', `${patronWaitingListKey}`);
     return this._proxy.delete(urlRemove, queryParams).pipe(map((response: Response) => {
       if (isSuccessful(response.status)) {
@@ -221,7 +221,7 @@ export class WorkOrdersService {
         facilityKey
       });
 
-      return this._housingProxyService.post<Response>(this.WaitingListUrl+'/patron', body).pipe(
+      return this._housingProxyService.post<Response>(this.workOrderListUrl+'/patron', body).pipe(
         map((response: Response) => {
             if (isSuccessful(response.status)) {
               return true;

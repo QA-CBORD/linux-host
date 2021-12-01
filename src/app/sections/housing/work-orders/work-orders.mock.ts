@@ -1,6 +1,6 @@
-import { WorkOrder } from './work-orders.model';
+import { WorkOrder, WorkOrdersFormsOptions } from './work-orders.model';
 
-export function generateWorkOrder(_: any, index: number): WorkOrder {
+export function generateWorkOrder(_: any, index: number) {
   return {
     id: index,
   };

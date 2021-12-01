@@ -48,6 +48,9 @@ import { NonAssignmentsStateService } from './non-assignments/non-assignments-st
 import { WaitingList, WaitingListDetails } from './waiting-lists/waiting-lists.model';
 import { WaitingListsService } from './waiting-lists/waiting-lists.service';
 import { WaitingListStateService } from './waiting-lists/waiting-list-state.service';
+import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
+import { worker } from 'cluster';
+import { WorkOrderStateService } from './work-orders/work-order-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -81,6 +84,7 @@ export class HousingService {
     private _checkInOutStateService: CheckInOutStateService,
     private _waitingListStateService: WaitingListStateService,
     public _housingService: HousingService,
+    private _workOrderStateService: WorkOrderStateService,
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();
   }
@@ -95,7 +99,8 @@ export class HousingService {
         this._setState(response.applicationDefinitions,
           response.contractDetails,
           response.nonAssignmentDetails,
-          response.waitingLists)),
+          response.waitingLists,
+          response.workOrders)),
       catchError(() => this._handleGetDefinitionsError())
     );
   }
@@ -344,22 +349,23 @@ export class HousingService {
   }
 
   private _patchDefinitionsByStore(response: DefinitionsResponse): Observable<DefinitionsResponse> {
-    const { applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists } = response;
+    const { applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists, workOrders } = response;
 
     const patchedApplications: Observable<ApplicationDetails[]> =
       applicationDefinitions.length > 0
         ? this._applicationsService.patchApplicationsByStoredStatus(applicationDefinitions)
         : of([]);
 
-    return forkJoin(patchedApplications, of(contractDetails), of(nonAssignmentDetails), of(waitingLists)).pipe(
+    return forkJoin(patchedApplications, of(contractDetails), of(nonAssignmentDetails), of(waitingLists),of(workOrders)).pipe(
       map(
         ([applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists]:
-          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[], WaitingList[]]) =>
+          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[], WaitingList[],WorkOrder[]]) =>
           new DefinitionsResponse({
             applicationDefinitions,
             contractDetails,
             nonAssignmentDetails,
-            waitingLists
+            waitingLists,
+            workOrders
           })
       )
     );
@@ -368,11 +374,13 @@ export class HousingService {
   private _setState(applications: ApplicationDetails[],
     contracts: ContractListDetails[],
     nonAssignments: NonAssignmentListDetails[],
-    waitingLists: WaitingList[]): void {
+    waitingLists: WaitingList[],
+    workOrders: WorkOrder[]): void {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
     this._nonAssignmentsStateService.setNonAssignments(nonAssignments);
     this._waitingListStateService.setWaitingList(waitingLists);
+    this._workOrderStateService.setWorkOrderList(workOrders);
   }
 
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
@@ -380,15 +388,17 @@ export class HousingService {
     const contractDetails: ContractListDetails[] = [];
     const nonAssignmentDetails: NonAssignmentListDetails[] = [];
     const waitingLists: WaitingList[] = [];
+    const workOrders: WorkOrder[] = []
 
-    this._setState(applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists);
+    this._setState(applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists, workOrders);
 
     return of(
       new DefinitionsResponse({
         applicationDefinitions,
         contractDetails,
         nonAssignmentDetails,
-        waitingLists
+        waitingLists,
+        workOrders
       })
     );
   }

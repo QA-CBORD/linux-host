@@ -1,4 +1,5 @@
 import { isDefined } from '../utils';
+import { PatronAttribute } from '../applications/applications.model';
 export interface WorkOrdersFormsOptions {
   id: number;
   applicationDescription: string;
@@ -46,4 +47,37 @@ export class WorkOrder implements WorkOrdersFormsOptions{
     this.termId = Number(options.termId);
   }
   
+}
+
+export interface WorkOrdersDetailsOptions {
+  facilities: any[];
+  attributes: PatronAttribute[];
+  patronAttributes: PatronAttribute[];
+  waitListKey: number;
+  formDefinition: any;
+}
+
+export class WorkOrderDetails implements WorkOrdersDetailsOptions{
+  facilities: any[];
+  attributes: any[];
+  patronAttributes: PatronAttribute[];
+  formDefinition: any;
+  waitListKey: number;
+
+  constructor(options: WorkOrdersDetailsOptions){
+    if (options == null || typeof options !== 'object') {
+      options = {} as WorkOrdersDetailsOptions;
+    }
+
+    this.formDefinition = options.formDefinition;
+    this.attributes = Array.isArray(options.patronAttributes)
+    ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+    : [];
+    
+    this.facilities = options.facilities;
+    this.waitListKey = options.waitListKey;
+    this.patronAttributes = Array.isArray(options.patronAttributes)
+    ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+    : [];
+  }
 }

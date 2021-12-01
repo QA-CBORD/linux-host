@@ -7,6 +7,7 @@ import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignment
 import {ContractSummary} from './contract-list/contractSummary.model'
 import {CheckInOut, CheckInOutSlot} from './check-in-out/check-in-out.model'
 import { WaitingListDetails, WaitingList } from './waiting-lists/waiting-lists.model';
+import { WorkOrder, WorkOrderDetails } from './work-orders/work-orders.model';
 
 export enum FormTypes {
   APPLICATIONS = 1,
@@ -46,6 +47,7 @@ export interface DefinitionsResponseOptions {
   contractDetails: ContractListDetails[];
   nonAssignmentDetails: NonAssignmentListDetails[];
   waitingLists: WaitingList[];
+  workOrders: WorkOrder[];
 }
 
 export class DefinitionsResponse {
@@ -53,6 +55,7 @@ export class DefinitionsResponse {
   contractDetails: ContractListDetails[];
   nonAssignmentDetails: NonAssignmentListDetails[];
   waitingLists: WaitingList[];
+  workOrders: WorkOrder[];
 
   constructor(options: DefinitionsResponseOptions) {
     if (options == null || typeof options !== 'object') {
@@ -74,6 +77,10 @@ export class DefinitionsResponse {
     this.waitingLists = Array.isArray(options.waitingLists)
       ? options.waitingLists.map((detail: any) => new WaitingList(detail))
       : [];
+
+    this.workOrders = Array.isArray(options.workOrders)
+      ? options.workOrders.map((detail: any) => new WorkOrder(detail))
+      : [];
   }
 }
 
@@ -82,13 +89,15 @@ export interface DetailsResponseOptions {
   contractDetails: ContractDetails;
   nonAssignmentDetails: NonAssignmentDetails;
   waitingListDetails: WaitingListDetails;
+  workOrdersDetails: WorkOrderDetails;
 }
 
 export class DetailsResponse implements DetailsResponseOptions {
   applicationDetails: ApplicationDetails;
   contractDetails: ContractDetails;
   nonAssignmentDetails: NonAssignmentDetails;
-  waitingListDetails: WaitingListDetails
+  waitingListDetails: WaitingListDetails;
+  workOrdersDetails: WorkOrderDetails;
 
   constructor(options: DetailsResponseOptions) {
     if (options == null || typeof options !== 'object') {
@@ -99,6 +108,7 @@ export class DetailsResponse implements DetailsResponseOptions {
     this.contractDetails = new ContractDetails(options.contractDetails);
     this.nonAssignmentDetails = new NonAssignmentDetails(options.nonAssignmentDetails);
     this.waitingListDetails = new WaitingListDetails(options.waitingListDetails);
+    this.workOrdersDetails = new WorkOrderDetails(options.workOrdersDetails)
   }
 }
 
