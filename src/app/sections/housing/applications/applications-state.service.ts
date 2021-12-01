@@ -95,8 +95,18 @@ export class ApplicationsStateService {
     return this.applicationsState.applicationDetails.requestingRoommates;
   }
 
-  deleteRequestingRoommate(index: number) {
+  deleteRequestingRoommate(patronKeyRoommate: number) {
+    let index =this.applicationsState.applicationDetails.requestingRoommates.findIndex( value => value.patronKeyRoommate === patronKeyRoommate)
     this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
+  }
+
+  setRequestingRoommate(requestingRoommate: RoommatePreferences[]){
+    this.applicationsState.applicationDetails.requestingRoommates = requestingRoommate;
+  }
+
+  deleteOverrideRequestingRoommate(preferenceKey: number, patronKeyRoommate: number) {
+    let index = this.applicationsState.applicationDetails.roommatePreferences.findIndex(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)
+    this.applicationsState.applicationDetails.roommatePreferences.splice(index, 1)
   }
 
   setApplications(applications: ApplicationDetails[]): void {

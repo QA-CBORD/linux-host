@@ -28,6 +28,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
     private _platform: Platform,
     private _loadingService: LoadingService
     ) {
+      this.checkIfLastRequest()
     }
   
   ngOnInit(): void {
@@ -39,9 +40,10 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
         this.activeAlerts = [];
       });
     }
+    this.checkIfLastRequest()
   }
 
-  @Input() requestingRoommate: RoommateResponse;
+  @Input() requestingRoommate: RoommatePreferences[];
 
   @Input() text: string = 'Back';
 
@@ -58,7 +60,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   }
 
   async acceptRoommateRequest(roommate: RoommatePreferences,index:number){
-    if (this._applicationsStateService.roommatePreferencesSelecteds.find( value => value.patronKeyRoommate !== roommate.patronKeyRoommate && value.preferenceKey === roommate.preferenceKey)){
+    if (this._applicationsStateService.roommatePreferencesSelecteds.find( value => value.patronKeyRoommate !== roommate.patronKeyRoommate && value.patronKeyRoommate != 0 && value.preferenceKey === roommate.preferenceKey)){
       const alert = await this._alertController.create({
         header: 'Confirm Override',
         message: `By accepting ${roommate.firstName} ${roommate.lastName} as your roommate you will override your existing selection. Are you sure you want to continue?`,
@@ -81,6 +83,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
               this.activeAlerts = [];
 
               this._applicationsStateService.addRoommatesPreferences(roommate, true);
+              this._applicationsStateService.deleteOverrideRequestingRoommate(roommate.preferenceKey, roommate.patronKeyRoommate)
               this._applicationsStateService.deleteRequestingRoommate(index);
               this.checkIfLastRequest();
             },
@@ -91,23 +94,19 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
       await alert.present();
     } else { // todo: if it works, remove else and extract to method
       this._applicationsStateService.addRoommatesPreferences(roommate);
-      this._applicationsStateService.deleteRequestingRoommate(index);
-
+      this._applicationsStateService.deleteRequestingRoommate(roommate.patronKeyRoommate);
       this.checkIfLastRequest();
     }
   }
 
   private checkIfLastRequest() {
-    if(this._applicationsStateService.requestingRoommate.length == 0 ){
+    if(this._applicationsStateService.requestingRoommate.length == 0 && this.requestingRoommate.length == 0 ){
       this.onClickedClose();
     }
   }
 
   denyRoommateRequest(index:number){
     this._applicationsStateService.deleteRequestingRoommate(index);
-
-    if(this._applicationsStateService.requestingRoommate.length == 0 ){
-      this.onClickedClose();
-    }
+    this.checkIfLastRequest();
   }
 }
