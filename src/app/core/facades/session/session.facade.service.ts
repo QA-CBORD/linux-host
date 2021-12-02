@@ -67,7 +67,9 @@ export class SessionFacadeService {
       if (isActive) {
         this.appResumeLogic();
       } else {
-        this.closeActionsheets();
+        if (!this.identityFacadeService.getIsLocked()) {
+          this.closeActionsheets();
+        }
         this.appStatus = AppStatus.BACKGROUND;
       }
     });
