@@ -127,6 +127,9 @@ export class HousingService {
         if (details.nonAssignmentDetails) {
           this._nonAssignmentsStateService.setNonAssignmentDetails(details.nonAssignmentDetails);
         }
+        if (details.workOrdersDetails) {
+          this._workOrderStateService.setWorkOrderDetails(details.workOrdersDetails);
+        }
       })
     );
   }
@@ -359,7 +362,7 @@ export class HousingService {
     return forkJoin(patchedApplications, of(contractDetails), of(nonAssignmentDetails), of(waitingLists),of(workOrders)).pipe(
       map(
         ([applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists]:
-          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[], WaitingList[],WorkOrder[]]) =>
+          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[], WaitingList[],WorkOrder]) =>
           new DefinitionsResponse({
             applicationDefinitions,
             contractDetails,
@@ -375,12 +378,12 @@ export class HousingService {
     contracts: ContractListDetails[],
     nonAssignments: NonAssignmentListDetails[],
     waitingLists: WaitingList[],
-    workOrders: WorkOrder[]): void {
+    workOrders: WorkOrder): void {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
     this._nonAssignmentsStateService.setNonAssignments(nonAssignments);
     this._waitingListStateService.setWaitingList(waitingLists);
-    this._workOrderStateService.setWorkOrderList(workOrders);
+    this._workOrderStateService.setWorkOrder(workOrders);
   }
 
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
@@ -388,7 +391,12 @@ export class HousingService {
     const contractDetails: ContractListDetails[] = [];
     const nonAssignmentDetails: NonAssignmentListDetails[] = [];
     const waitingLists: WaitingList[] = [];
-    const workOrders: WorkOrder[] = []
+
+    //TODO: workORDERs
+    const workOrders: WorkOrder = new WorkOrder({
+      canSubmit: null,
+      workOrders: [],
+      });
 
     this._setState(applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists, workOrders);
 

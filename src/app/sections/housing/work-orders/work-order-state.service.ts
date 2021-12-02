@@ -1,19 +1,41 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { WorkOrder } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersList } from './work-orders.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WorkOrderStateService  {
-
-  public workOrderList: BehaviorSubject<WorkOrder[]> = new BehaviorSubject<WorkOrder[]>([]);
+  private readonly _defaultState = new WorkOrder ({
+  canSubmit: null,
+  workOrders: [],
+  });
+  private readonly _defaultStateDetails = new WorkOrderDetails ({
+    id: 0,
+    applicationDescription: "",
+    applicationFormJson: {},
+    applicationTitle: '',
+    applicationTypeId: 0,
+    applicationAvailableEndDateTime: '',
+    applicationAvailableStartDateTime: '',
+    cancellationDateTime: '',
+    expirationDateTime:'',
+    expireWhenAssigned: 0,
+    numberOfDaysToExpire: 0,
+    termId: 0,
+    });
+  public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
+  public workOrder: BehaviorSubject<WorkOrder> = new BehaviorSubject<WorkOrder>(this._defaultState);
 
   constructor() {
    
   }
 
-  setWorkOrderList(value: WorkOrder[]) {
-    this.workOrderList.next(value);
+  setWorkOrder(value: WorkOrder) {
+    this.workOrder.next(value);
+  }
+
+  setWorkOrderDetails(workOrderDetails: WorkOrderDetails){
+    this.workOrderDetails.next(workOrderDetails);
   }
 }

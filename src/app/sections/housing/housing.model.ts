@@ -47,7 +47,7 @@ export interface DefinitionsResponseOptions {
   contractDetails: ContractListDetails[];
   nonAssignmentDetails: NonAssignmentListDetails[];
   waitingLists: WaitingList[];
-  workOrders: WorkOrder[];
+  workOrders: WorkOrder;
 }
 
 export class DefinitionsResponse {
@@ -55,7 +55,7 @@ export class DefinitionsResponse {
   contractDetails: ContractListDetails[];
   nonAssignmentDetails: NonAssignmentListDetails[];
   waitingLists: WaitingList[];
-  workOrders: WorkOrder[];
+  workOrders: WorkOrder;
 
   constructor(options: DefinitionsResponseOptions) {
     if (options == null || typeof options !== 'object') {
@@ -78,9 +78,7 @@ export class DefinitionsResponse {
       ? options.waitingLists.map((detail: any) => new WaitingList(detail))
       : [];
 
-    this.workOrders = Array.isArray(options.workOrders)
-      ? options.workOrders.map((detail: any) => new WorkOrder(detail))
-      : [];
+    this.workOrders = new WorkOrder(options.workOrders)
   }
 }
 

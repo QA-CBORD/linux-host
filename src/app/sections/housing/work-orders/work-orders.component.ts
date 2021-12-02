@@ -47,4 +47,12 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
 
     return 'New';
   }
+// TODO: Create form send 0 to API
+  createButtonForm(){
+    //urlToAPI
+  }
+
+  getWorkOrder(termKey:number,workOrderKey:number){
+    //TODO: view workOrderDetails
+  }
 }

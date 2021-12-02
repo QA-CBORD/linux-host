@@ -10,12 +10,14 @@ import { NonAssignmentDetails, NonAssignmentListDetails } from '@sections/housin
 import { WaitingListDetails, WaitingList } from '../../../sections/housing/waiting-lists/waiting-lists.model';
 import { generateWaitingList } from '@sections/housing/waiting-lists/waiting-list.mocks';
 import { generateWaitingListDetails } from '../../../sections/housing/waiting-lists/waiting-list.mocks';
+import { WorkOrder } from '@sections/housing/work-orders/work-orders.model';
 
 export function generateDefinitionsResponse(): DefinitionsResponse {
   const applicationDefinitions: ApplicationDetails[] = generateApplications();
   const contractDetails: ContractListDetails[] = generateContractsList();
   const nonAssignmentDetails: NonAssignmentListDetails[] = generateNonAssignmentsList();
   const waitingLists: WaitingList[] = generateWaitingList();
+  const workOrderLists: WorkOrder[] = generateWaitingList();
 
   return new DefinitionsResponse({
     applicationDefinitions,
