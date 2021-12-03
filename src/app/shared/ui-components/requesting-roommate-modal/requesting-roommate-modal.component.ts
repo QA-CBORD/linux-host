@@ -81,10 +81,9 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
             handler: () => {
               // this._loadingService.showSpinner();
               this.activeAlerts = [];
-
-              this._applicationsStateService.addRoommatesPreferences(roommate, true);
               this._applicationsStateService.deleteOverrideRequestingRoommate(roommate.preferenceKey, roommate.patronKeyRoommate)
               this._applicationsStateService.deleteRequestingRoommate(roommate.patronKeyRoommate);
+              this._applicationsStateService.addRoommatesPreferences(roommate, true);
               this.checkIfLastRequest();
             },
           },
