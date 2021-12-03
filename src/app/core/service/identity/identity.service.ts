@@ -302,4 +302,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   setIsLocked(lock: boolean = true) {
     this.isLocked = lock;
   }
+  
+  getIsLocked() {
+    return this.isLocked;
+  }
 }

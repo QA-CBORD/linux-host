@@ -287,7 +287,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           ],
           appendStrings: [
             '<br><br>Address geocoding and reverse geocoding is &copy; OpenStreetMap contributors. <a href="http://www.openstreetmap.org/copyright">Copyright and License</a>',
-            '<br><br>Copyright © 2012- 2021 The CBORD Group, Inc.\r\n',
+            '<br><br>Copyright © 2012 - ' + new Date().getFullYear() + ' The CBORD Group, Inc.\r\n',
           ],
           component: HTMLRendererComponent,
         },
