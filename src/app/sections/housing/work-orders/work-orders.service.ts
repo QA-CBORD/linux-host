@@ -21,6 +21,7 @@ import { WorkOrder } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WaitingListStateService } from '../waiting-lists/waiting-list-state.service';
 import { WaitingListDetails, WaitingListDetailsRequest } from '../waiting-lists/waiting-lists.model';
+import { WorkOrderStateService } from './work-order-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +30,7 @@ export class WorkOrdersService {
   private workOrderListUrl = `${this._environment.getHousingAPIURL()
     }/patron-applications/v.1.0/patron-waiting-lists`;
   private index = 1;
-  workOrders: WorkOrder[] = generateWorkOrders(5);
+  workOrders: WorkOrder = generateWorkOrders(5);
 
   constructor(
     private _proxy: HousingProxyService,
@@ -37,9 +38,10 @@ export class WorkOrdersService {
     private _waitingListState: WaitingListStateService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
-    private _housingProxyService: HousingProxyService) { }
+    private _housingProxyService: HousingProxyService,
+    private _workOrderStateService: WorkOrderStateService) { }
 
-  getWorkOrders(): Observable<WorkOrder[]> {
+  getWorkOrders(): Observable<WorkOrder> {
     return of(this.workOrders);
   }
 
@@ -196,7 +198,7 @@ export class WorkOrdersService {
     return of(true);
   }
   
-  submitWaitingList(
+  submitWorkOrder(
     waitListKey: number,
     form: any): Observable<boolean> {
       let formQuestions;

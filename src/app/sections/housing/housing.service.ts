@@ -266,6 +266,17 @@ export class HousingService {
       ));
   }
 
+  getWorkOrders(key: number): Observable<WorkOrderDetails> {
+    //TODO: change url work orders
+    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
+    return this._housingProxyService.get<WorkOrderDetails>(apiUrl).pipe(
+      map((response: any) => {
+        this._workOrderStateService.setWorkOrderDetails(response)
+        return new WorkOrderDetails(response)
+      }
+      ));
+  }
+
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
     const roomSelects: RoomSelect[] = [];
     this._setRoomsState(roomSelects);
