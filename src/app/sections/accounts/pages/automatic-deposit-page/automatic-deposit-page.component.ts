@@ -527,10 +527,11 @@ export class AutomaticDepositPageComponent {
     const { lowBalanceAmount, amountToDeposit } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
     if (this.automaticDepositForm.contains(this.controlNames.lowBalanceAmount)) {
       const isLowBalanceFreeInput = await this.isLowBalanceFreeInput$.pipe(first()).toPromise();
+      const max = 10000;
       const freeFormErrors = [
         formControlErrorDecorator(Validators.required, CONTROL_ERROR[lowBalanceAmount].requiredEnter),
         formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[lowBalanceAmount].input),
-        formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[lowBalanceAmount].maximum),
+        formControlErrorDecorator(Validators.max(max), CONTROL_ERROR[lowBalanceAmount].maximum + Number(max).toFixed(2)),
         formControlErrorDecorator(Validators.min(0), CONTROL_ERROR[lowBalanceAmount].minimum),
       ];
       const selectErrors = formControlErrorDecorator(
@@ -726,7 +727,7 @@ export const CONTROL_ERROR = {
     requiredEnter: 'You must enter an amount.',
     input: '',
     minimum: 'Value can not be lower than 0',
-    maximum: 'Value can not be greater than 999 999',
+    maximum: 'Value can not be greater than $',
     requiredSelect: 'You must select a suitable amount from select',
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek]: {
