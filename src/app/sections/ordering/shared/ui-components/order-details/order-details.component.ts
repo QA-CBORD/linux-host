@@ -113,10 +113,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async initAccountSelected(accounts: UserAccount[]) {
-    const accountId = this.orderPayment[0] ? this.orderPayment[0].accountId : '';
+    const payment = this.orderPayment[0] || ({} as any);
+    let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
     if (!this.isApplePayment) {
-      const account = accounts.find(({ id }) => accountId == id);
+      let account = null;
+      if (payment.accountName == 'Rollover Account' && !accountId) {
+        accountId = 'rollup';
+      }
+
+      account = accounts.find(({ id }) => accountId == id);
       this.detailsForm.patchValue({
         [FORM_CONTROL_NAMES.paymentMethod]: account || '',
       });

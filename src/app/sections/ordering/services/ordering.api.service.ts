@@ -74,6 +74,7 @@ export class OrderingApiService {
   }
 
   validatePendingOrder(orderInfo: ExistingOrderInfo, accountID: string = null): Observable<OrderInfo> {
+    accountID = accountID == 'rollup' ? null : accountID;
     const postParams: ServiceParameters = { ...orderInfo, accountID };
     const queryConfig = new RPCQueryConfig('validateOrderAddOns', postParams, true);
 
@@ -83,6 +84,7 @@ export class OrderingApiService {
   }
 
   addItemsToOrder(orderInfo: ExistingOrderInfo, accountID: string = null): Observable<OrderInfo> {
+    accountID = accountID == 'rollup' ? null : accountID;
     const postParams: ServiceParameters = { ...orderInfo, accountID };
     const queryConfig = new RPCQueryConfig('addItemsToOrder', postParams, true);
 
