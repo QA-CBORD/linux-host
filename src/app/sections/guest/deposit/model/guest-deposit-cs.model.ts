@@ -36,6 +36,6 @@ export class GuestDepositCsModel extends DepositCsModel {
   }
 
   get billMeLabel(): string {
-    return this.content.bill_me;
+    return this.content.bill_me_pay_method;
   }
 }
