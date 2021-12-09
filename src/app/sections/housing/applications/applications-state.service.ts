@@ -96,9 +96,17 @@ export class ApplicationsStateService {
   }
 
   deleteRequestingRoommate(patronKeyRoommate: number) {
-    let index =this.applicationsState.applicationDetails.requestingRoommates.findIndex( value => value.patronKeyRoommate === patronKeyRoommate)
-    this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
-    this.requestedroommate.splice(index,1)
+    if(this.applicationsState.applicationDetails.requestingRoommates.find( value => value.patronKeyRoommate === patronKeyRoommate)){
+      let index = this.applicationsState.applicationDetails.requestingRoommates.findIndex( value => value.patronKeyRoommate === patronKeyRoommate)
+      this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
+    }
+  }
+
+  deleteLocalRequestedRoommate(preferenceKey: number, patronKeyRoommate: number){
+    if(this.requestedroommate.find( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)){
+      let index = this.requestedroommate.findIndex( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)
+      this.requestedroommate.splice(index, 1)
+    }
   }
 
   setRequestingRoommate(requestingRoommate: RoommatePreferences[]){
@@ -106,8 +114,10 @@ export class ApplicationsStateService {
   }
 
   deleteOverrideRequestingRoommate(preferenceKey: number, patronKeyRoommate: number) {
-    let index = this.applicationsState.applicationDetails.roommatePreferences.findIndex(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)
-    this.applicationsState.applicationDetails.roommatePreferences.splice(index, 1)
+    if(this.applicationsState.applicationDetails.roommatePreferences.find(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)){
+      let index = this.applicationsState.applicationDetails.roommatePreferences.findIndex(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)
+      this.applicationsState.applicationDetails.roommatePreferences.splice(index, 1)
+    }
   }
 
   setApplications(applications: ApplicationDetails[]): void {
@@ -156,7 +166,7 @@ export class ApplicationsStateService {
       roommatePreference.lastName = addedRoommate.lastName;
     }
 
-    if (!this.requestedroommate.some(roommate => roommate.patronRoommateKey === addedRoommate.patronKeyRoommate)) {
+    if (!this.requestedroommate.some(roommate => roommate.patronRoommateKey === addedRoommate.patronKeyRoommate && roommate.preferenceKey === addedRoommate.preferenceKey)) {
       let roommateRequested = new RequestedRoommate(
         {
           'firstName': addedRoommate.firstName,
