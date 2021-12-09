@@ -54,7 +54,7 @@ export class ConfirmDepositCs extends DepositBase {
   }
 
   get billMeLabel(): string {
-    return this.content.bill_me;
+    return this.content.bill_me_pay_method;
   }
 
   get depositReviewBillMe(): string {
