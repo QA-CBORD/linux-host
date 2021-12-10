@@ -9,7 +9,7 @@ export class CheckingProcess {
     private readonly router: Router
   ) {}
 
-  async start({ id: orderId, dueTime, orderPayment,  checkNumber, total, merchantId, mealBased, type, pickupAddressId }, isExistingOrder = false) {
+  async start({ id: orderId, dueTime, orderPayment,  checkNumber, total, merchantId, type, pickupAddressId }, isExistingOrder = false) {
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.pending], {
       queryParams: {
         isExistingOrder,
@@ -18,7 +18,6 @@ export class CheckingProcess {
         type,
         checkNumber,
         orderPayment: JSON.stringify(orderPayment[0]),
-        mealBased,
         pickupAddressId,
         total,
         merchantId,

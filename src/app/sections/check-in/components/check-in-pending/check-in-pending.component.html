@@ -35,7 +35,7 @@
       </div>
       <div class="section-divided">
         <span class="text-dark"> {{ contentStrings.lbl_total }} </span>
-        <span class="text-dark"> {{ total | priceUnitsResolver: mealBased }}</span>
+        <span class="text-dark"> {{ total | priceUnitsResolver:  (menuInfo$ | async).mealBased }}</span>
       </div>
       <div class="btn_no-bg">
         <st-button (onClick)="goToOrderDetails()" fill="clear" buttonModifier="rectangular">
