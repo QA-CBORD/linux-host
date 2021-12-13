@@ -185,4 +185,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
   setIsLocked() {
     this.identityService.setIsLocked();
   }
+
+  getIsLocked() {
+    return this.identityService.getIsLocked();
+  }
 }

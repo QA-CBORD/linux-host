@@ -449,7 +449,12 @@ export class HousingService {
             lastName: roommatePref ? roommatePref.lastName : '',
             preferenceKey: d.preferenceKey,
             patronRoommateKey: d.patronRoommateKey,
-            confirmed: d.confirmed,
+            confirmed: applicationDetails.roommatePreferences.some(roommate => {
+              if(roommate.patronKeyRoommate === d.patronRoommateKey && d.confirmed ){
+                return true;
+              }
+              return d.confirmed
+            }),
             middleName: d.middleName ? d.middleName : '',
             birthDate: d.birthDate,
             preferredName: d.preferredName ? d.preferredName : ''

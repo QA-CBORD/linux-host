@@ -163,6 +163,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       backdropDismiss: false,
       componentProps: {
         formats: [Barcode.QRCode],
+        title: (<any>this.contentStrings).scan_code_title,
         prompt: (<any>this.contentStrings).scan_code_prompt,
       },
     });

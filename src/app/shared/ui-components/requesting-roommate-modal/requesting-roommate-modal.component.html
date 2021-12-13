@@ -17,6 +17,7 @@
       <ion-item>
         <ion-list-header>Roommate Request</ion-list-header>
       </ion-item >
+      <div [hidden]="true">{{_applicationsStateService.requestedRoommates | async}}</div>
       <ion-list class="btns-content">
         <ion-text class="text-roommate-requesting">{{roommate.firstName}} {{roommate.lastName}} has sent you a Roommate Request. If you deny the request, {{roommate.firstName}} {{roommate.lastName}} will not be notified.</ion-text>
       </ion-list>
