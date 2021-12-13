@@ -8,6 +8,7 @@ import { Platform } from '@ionic/angular';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { HousingService } from '../housing.service';
 import { ROLES } from '../../../app.global';
+import { WorkOrderStateService } from './work-order-state.service';
 
 @Component({
   selector: 'st-work-orders',
@@ -23,6 +24,7 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
     private _platform: Platform,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
+    public _workOrderStateService: WorkOrderStateService
     ) {}
 
   workOrders: WorkOrder[];
@@ -50,6 +52,14 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
 // TODO: Create form send 0 to API
   createButtonForm(){
     //urlToAPI
+  }
+
+  // createWorkOrder(){
+    
+  // }
+  
+  createWorkOrder(termKey: number, workOrderKey: number): string {
+    return "/patron/housing/work-orders/140/0";
   }
 
   getWorkOrder(termKey:number,workOrderKey:number){

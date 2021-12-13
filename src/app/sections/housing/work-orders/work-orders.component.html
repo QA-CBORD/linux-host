@@ -1,9 +1,21 @@
 <section>
-  <ion-list *ngIf="true"
+  <ion-list *ngIf="(_workOrderStateService.workOrder$ | async) as waitingLists"
     class="ion-no-margin bg-transparent">
-    <ion-list-header  class="ion-no-padding">
-      <h2 class="form__secondary-header">WORK ORDERS</h2>
-    </ion-list-header>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-list-header  class="ion-no-padding">
+            <h2 class="form__secondary-header">WORK ORDERS</h2>
+          </ion-list-header>
+        </ion-col>
+        <ion-col>
+          <ion-list-header class="ion-no-padding">
+            <ion-button class="form__secondary-header" (click)="createWorkOrder()" [routerLink]="createWorkOrder(140,0)">+</ion-button>
+          </ion-list-header>
+        </ion-col>
+      </ion-row>
+      
+    </ion-grid>
 
     <!-- TODO: Add plus button  -->
     <ng-container>

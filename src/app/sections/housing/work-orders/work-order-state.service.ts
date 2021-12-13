@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { WorkOrder, WorkOrderDetails, WorkOrdersList } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersList, FormDefinition } from './work-orders.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +11,11 @@ export class WorkOrderStateService  {
   workOrders: [],
   });
   private readonly _defaultStateDetails = new WorkOrderDetails ({
+    workOrderKey: 0,
+    workOrders: null,
+    formDefinition: null,
+    });
+  private readonly _defaultStateFormDetails = new FormDefinition ({
     id: 0,
     applicationDescription: "",
     applicationFormJson: {},
@@ -26,7 +31,7 @@ export class WorkOrderStateService  {
     });
   public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
   public workOrder: BehaviorSubject<WorkOrder> = new BehaviorSubject<WorkOrder>(this._defaultState);
-
+  public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
   constructor() {
    
   }
@@ -37,5 +42,12 @@ export class WorkOrderStateService  {
 
   setWorkOrderDetails(workOrderDetails: WorkOrderDetails){
     this.workOrderDetails.next(workOrderDetails);
+  }
+  setWorkOrderFormDetails(workOrderFormDetails: FormDefinition){
+    this.workOrderFormDetails.next(workOrderFormDetails);
+  }
+
+  get workOrder$(){
+    return this.workOrder
   }
 }

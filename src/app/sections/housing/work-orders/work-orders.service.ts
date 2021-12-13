@@ -28,7 +28,7 @@ import { WorkOrderStateService } from './work-order-state.service';
 })
 export class WorkOrdersService {
   private workOrderListUrl = `${this._environment.getHousingAPIURL()
-    }/patron-applications/v.1.0/patron-waiting-lists`;
+    }/patron-applications/v.1.0/work-orders`;
   private index = 1;
   workOrders: WorkOrder = generateWorkOrders(5);
 

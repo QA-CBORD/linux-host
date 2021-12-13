@@ -46,8 +46,26 @@ export class WorkOrder implements WorkOrderOptions{
   }
   
 }
+export interface WorkOrderDetailsOptions {
+  workOrderKey: number,
+  workOrders: WorkOrdersList,
+  formDefinition: FormDefinitionOptions,
+}
+export class WorkOrderDetails implements WorkOrderDetailsOptions{
+  workOrderKey: number;
+  workOrders: WorkOrdersList;
+  formDefinition: FormDefinitionOptions;
+  constructor(options: WorkOrderDetailsOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as WorkOrderDetailsOptions;
+    }
+    this.workOrderKey = Number(options.workOrderKey)
+    this.workOrders = options.workOrders;
+    this.formDefinition = options.formDefinition;
+  }
 
-export interface WorkOrdersDetailsOptions {
+}
+export interface FormDefinitionOptions {
   id: number;
   applicationDescription: string;
   applicationFormJson: {};
@@ -62,7 +80,7 @@ export interface WorkOrdersDetailsOptions {
   termId: number
 }
 
-export class WorkOrderDetails implements WorkOrdersDetailsOptions{
+export class FormDefinition implements FormDefinitionOptions{
   id: number;
   applicationDescription: string;
   applicationFormJson: {};
@@ -76,9 +94,9 @@ export class WorkOrderDetails implements WorkOrdersDetailsOptions{
   numberOfDaysToExpire: number;
   termId: number
 
-  constructor(options: WorkOrdersDetailsOptions) {
+  constructor(options: FormDefinitionOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as WorkOrdersDetailsOptions;
+      options = {} as FormDefinitionOptions;
     }
     this.id = Number(options.id);
     this.applicationDescription = String(options.applicationDescription);

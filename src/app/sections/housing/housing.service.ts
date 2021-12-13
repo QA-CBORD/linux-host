@@ -266,9 +266,9 @@ export class HousingService {
       ));
   }
 
-  getWorkOrders(key: number): Observable<WorkOrderDetails> {
+  getWorkOrders(termKey: number,workOrderKey: number = 0): Observable<WorkOrderDetails> {
     //TODO: change url work orders
-    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
+    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/work-orders/${termKey}/${workOrderKey}/`;
     return this._housingProxyService.get<WorkOrderDetails>(apiUrl).pipe(
       map((response: any) => {
         this._workOrderStateService.setWorkOrderDetails(response)

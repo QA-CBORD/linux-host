@@ -1,0 +1,72 @@
+@import 'tools';
+
+.work-order-details__content {
+  --background: #{$porcelain};
+  --padding-top: 8px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.work-order-details__actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.work-order-details__title {
+  @include font-family($font-nunito-heavy);
+
+  font-size: 20px;
+  color: $color-night-rider;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.work-order-details__page-back {
+  @include font-family($font-nunito-regular);
+
+  --color: #{rgba($color-black, 0.9)};
+}
+
+.work-order-details__save {
+  @include font-family($font-nunito-heavy);
+
+  --color: #{$color-dodger-blue};
+}
+
+.work-order-details__card {
+  background-color: $color-white;
+  border-radius: 16px;
+  box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
+  padding: 16px;
+}
+
+.work-order-details__back {
+  @include font-family($font-nunito-heavy);
+
+  --color: #{$color-dodger-blue};
+
+  min-width: 80px;
+}
+
+.work-order-details__next,
+.work-order-details__submit {
+  @include font-family($font-nunito-heavy);
+
+  --border-radius: 8px;
+  width: 150px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.work-order-details__next {
+  --background-activated: #{$color-dodger-blue};
+  --border-color: #{$color-dodger-blue};
+  --border-width: 2px;
+  --color: #{$color-dodger-blue};
+}
+
+.work-order-details__submit {
+  --background: #{$color-dodger-blue};
+}

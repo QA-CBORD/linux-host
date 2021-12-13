@@ -1,67 +1,40 @@
-<ion-content
-  class="ion-padding non-assignment-details__content"
-  *ngIf="(nonAssignmentDetails$ | async) as nonAssignmentDetails"
-  #content>
-  <div class="non-assignment-details_actions">
-    <ion-button
-      class="btn non-assignment-details__btn-cancel"
-      routerLink="../../../.."
-      routerDirection="back"
-      mode="ios"
-      fill="clear">
+<ion-content class="ion-padding work-order-details__content"
+  *ngIf="(workOrderDetails$ | async) as workOrderListDetails" #content>
+  <div class="work-order-details__actions">
+    <ion-button class="btn work-order-details__page-back" [routerLink]="['../../../..']" routerDirection="back"
+      mode="ios" fill="clear">
       Cancel
     </ion-button>
   </div>
 
-  <h2 class="non-assignment-details__title">{{ nonAssignmentDetails.applicationTitle }}</h2>
+  <h2 class="work-order-details__title">{{ workOrderListDetails.formDefinition.applicationTitle }}</h2>
 
-  <div class="non-assignment-details__card">
+  <div class="work-order-details__card">
     <st-stepper class="stepper--white">
-      <st-step
-        *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstQuestion"
+      <st-step *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
         [stepControl]="page.form">
-        <form
-          [formGroup]="page.form" 
-          (ngSubmit)="submit(nonAssignmentDetails, page.form, isLastPage)">
+        <form [formGroup]="page.form" (ngSubmit)="submit(workOrderListDetails, page.form, isLastPage)">
           <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
-            <st-question
-              *ngIf="question"
-              [parentGroup]="page.form"
-              [question]="question"
-              [name]="$any(question).name"
-              [class.question--first]="isFirstQuestion"
-              [isSubmitted]="isSubmitted">
-            </st-question>
+            <st-question *ngIf="question" [parentGroup]="page.form" [question]="question" [name]="$any(question).name"
+              [class.question--first]="isFirstPage" [isSubmitted]="isSubmitted"></st-question>
           </ng-container>
 
           <st-stepper-footer>
-            <ion-button
-              *ngIf="!isFirstPage"
-              class="btn non-assignment-details__btn-back"
-              type="button"
-              fill="clear"
-              mode="ios"
-              stepperBack
-              (back)="content.scrollToTop()">
-              Back
-            </ion-button>
+            <ion-button *ngIf="!isFirstPage" class="btn work-order-details__back" type="button" fill="clear" mode="ios"
+              stepperBack (back)="content.scrollToTop()">Back</ion-button>
 
-            <ion-button
-              *ngIf="!isLastPage"
-              class="btn non-assignment-details__btn-next"
-              type="submit"
-              fill="outline"
-              mode="ios"
-              [class.stepper-footer__button-right]="isFirstPage">
+            <ion-button class="btn work-order-details__next" [class.stepper-footer__button--right]="isFirstPage"
+              mode="ios" fill="outline" type="submit" *ngIf="!isLastPage">
               Next
             </ion-button>
 
             <ion-button
               *ngIf="isLastPage"
-              class="btn non-assignment-details__submit stepper-footer__button-right"
+              class="btn work-order-details__submit"
               mode="ios"
               type="submit"
-              [disabled]="true">
+              [class.stepper-footer__button--right]="isFirstPage"
+              [disabled]="workOrderListDetails.workOrders.status">
               Submit
             </ion-button>
           </st-stepper-footer>
