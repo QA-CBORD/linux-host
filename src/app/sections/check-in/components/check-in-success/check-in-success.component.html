@@ -28,7 +28,7 @@
       </div>
       <div class="section-divided">
         <span class="text-dark">{{ contentString.totalLbl }}</span>
-        <span class="text-dark">{{ total  | priceUnitsResolver: mealBased }}</span>
+        <span class="text-dark">{{ total  | priceUnitsResolver: (menuInfo$ | async).mealBased }}</span>
       </div>
        <br/>
     </div>
@@ -38,6 +38,7 @@
     <st-button (onClick)="goToRecentOrders()" buttonModifier="rectangular">
       <span>
         {{ contentString.doneBtn }}
+      
       </span>
     </st-button>
 </ion-footer>

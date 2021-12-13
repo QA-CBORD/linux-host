@@ -252,7 +252,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }: OrderInfo) {
     if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
       this.checkinProcess.start(
-        { id, pickupAddressId, orderPayment, dueTime, checkNumber, total, merchantId, mealBased, type },
+        { id, pickupAddressId, orderPayment, dueTime, checkNumber, total, merchantId, type },
         this.isExistingOrder
       );
       return;

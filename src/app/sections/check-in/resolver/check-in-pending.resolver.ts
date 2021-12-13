@@ -33,7 +33,6 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
     const orderId = route.queryParams.orderId;
     const isExistingOrder = route.queryParams.isExistingOrder;
     const checkNumber = route.queryParams.checkNumber;
-    const mealBased = route.queryParams.mealBased;
     const orderType = route.queryParams.type;
     const orderPayment = route.queryParams.orderPayment;
     const pickupAddressId = route.queryParams.pickupAddressId;
@@ -70,7 +69,6 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
         orderPayment,
         isExistingOrder,
         checkNumber,
-        mealBased,
       })),
       finalize(() => {
         this.loadingService.closeSpinner.bind(this.loadingService);
