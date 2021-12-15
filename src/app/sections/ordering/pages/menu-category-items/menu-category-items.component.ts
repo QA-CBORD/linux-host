@@ -54,14 +54,9 @@ export class MenuCategoryItemsComponent implements OnInit {
       filter((val, index) => val !== 0 || index > 1),
       distinctUntilChanged(),
       tap(items => {
-        let message = `${items} ${items > 1 ? 'items' : 'item'} `;
-        if (this.isExistingOrder && this.cartService.checkNumber) {
-          message = message + `Added to Order #${this.cartService.checkNumber}`;
-        } else {
-          message = message + 'currently in your cart';
+        if (items) {
+          this.toastAddedItems(items);
         }
-
-        this.toastService.showToast({ message });
       })
     );
     zip(this.cartService.menuInfo$, this.activatedRoute.params)
@@ -145,5 +140,15 @@ export class MenuCategoryItemsComponent implements OnInit {
     this.contentStrings.labelFullMenu = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelFullMenu
     );
+  }
+
+  private toastAddedItems(items: number) {
+    let message = `${items} ${items > 1 ? 'items' : 'item'} `;
+    if (this.isExistingOrder && this.cartService.checkNumber) {
+      message = message + `added to Order #${this.cartService.checkNumber} cart`;
+    } else {
+      message = message + 'currently in your cart';
+    }
+    this.toastService.showToast({ message });
   }
 }
