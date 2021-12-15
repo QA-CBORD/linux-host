@@ -27,7 +27,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   menuItems$: Observable<number>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   isGuestUser: boolean;
-  isExistingOrder:boolean;
+  isExistingOrder: boolean;
 
   constructor(
     private readonly cartService: CartService,
@@ -39,7 +39,6 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly alertController: AlertController,
     private readonly navService: NavigationService
   ) {}
-
 
   ionViewWillEnter() {
     this.initContentStrings();
@@ -54,9 +53,16 @@ export class MenuCategoryItemsComponent implements OnInit {
       // If is not first emission from an empty cart
       filter((val, index) => val !== 0 || index > 1),
       distinctUntilChanged(),
-      tap(items =>
-        this.toastService.showToast({ message: `${items} ${items > 1 ? 'items' : 'item'} currently in your cart.` })
-      )
+      tap(items => {
+        let message = `${items} ${items > 1 ? 'items' : 'item'} `;
+        if (this.isExistingOrder && this.cartService.checkNumber) {
+          message = message + `Added to Order #${this.cartService.checkNumber}`;
+        } else {
+          message = message + 'currently in your cart';
+        }
+
+        this.toastService.showToast({ message });
+      })
     );
     zip(this.cartService.menuInfo$, this.activatedRoute.params)
       .pipe(take(1))
@@ -109,9 +115,11 @@ export class MenuCategoryItemsComponent implements OnInit {
         handleServerError(ORDER_VALIDATION_ERRORS)
       )
       .toPromise()
-      .then(() => this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
-        queryParams: { isExistingOrder: this.isExistingOrder },
-      }))
+      .then(() =>
+        this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
+          queryParams: { isExistingOrder: this.isExistingOrder },
+        })
+      )
       .catch(error => this.failedValidateOrder(error))
       .finally(() => this.loadingService.closeSpinner());
   }
