@@ -211,7 +211,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
     /**
      * 
-     * Commenting this out and suggesting regrestion testing on pinPage. 
+     * Commenting this out and suggesting regression testing on pinPage. 
      * Solving issue GET3478
      */
 
