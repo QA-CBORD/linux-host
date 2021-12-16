@@ -209,9 +209,15 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       }
     };
 
-    if (Capacitor.platform == PLATFORM.android) {
-      redoRequestPin();
-    }
+    /**
+     * 
+     * Commenting this out and suggesting regrestion testing on pinPage. 
+     * Solving issue GET3478
+     */
+
+    // if (Capacitor.platform == PLATFORM.android) {
+    //   redoRequestPin();
+    // }
   }
 
   async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
