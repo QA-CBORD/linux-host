@@ -351,8 +351,7 @@ export class SessionFacadeService {
   }
 
   async getIsWeb(): Promise<boolean> {
-    const { operatingSystem } = await Device.getInfo();
-    return !(operatingSystem === 'ios' || operatingSystem === 'android');
+    return !this.platform.is('cordova');
   }
 
   lockVault() {
