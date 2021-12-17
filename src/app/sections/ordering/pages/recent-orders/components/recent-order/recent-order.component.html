@@ -25,6 +25,7 @@
     [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
     [mealBased]="(order$ | async).mealBased"
     [orderDetailOptions]="orderDetailsOptions$ | async"
+    [merchantSettingsList]="(merchant$ | async).settings.list"
   >
   </st-order-details>
 </ion-content>
