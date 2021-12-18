@@ -26,6 +26,7 @@
     [mealBased]="(order$ | async).mealBased"
     [orderDetailOptions]="orderDetailsOptions$ | async"
     [merchantSettingsList]="(merchant$ | async).settings.list"
+    [pendingStatus]="(order$ | async).status === 1"
   >
   </st-order-details>
 </ion-content>
