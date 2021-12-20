@@ -146,7 +146,7 @@
       </div>
     </div>
 
-    <div class="order-details" *ngIf="!mealBased && isTipEnabled && !pendingStatus">
+    <div class="order-details" *ngIf="!mealBased && isTipEnabled && !readonly">
       <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
       <ion-input 
         aria-describedby="tipMessage"
