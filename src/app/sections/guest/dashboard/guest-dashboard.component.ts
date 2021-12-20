@@ -4,6 +4,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
 import { Router } from '@angular/router';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { GUEST_DEEP_LINKS } from 'src/app/app.global';
 
 @Component({
   selector: 'st-guest-dashboard',
@@ -23,11 +25,16 @@ export class GuestDashboard implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
     private readonly messageProxy: MessageProxy,
+    private readonly sessionFacadeService: SessionFacadeService
   ) {}
 
   ngOnInit() {
     this.sections = this.messageProxy.get<GuestDashboardSection[]>() || [];
     this.loadInfo();
+  }
+
+  ngAfterViewInit() {
+    this.checkOpenedFromDeepLink();
   }
 
   private async loadInfo(): Promise<void> {
@@ -43,6 +50,14 @@ export class GuestDashboard implements OnInit {
       this.router.navigate([section.url], { replaceUrl: !section.stackNavigation });
     } else if (section.modalConfig && section.modalConfig.component) {
       // logic to open modal here....
+    }
+  }
+
+  private checkOpenedFromDeepLink() {
+    // Check if opened from deep link and navigate
+    const deepLinkPath = this.sessionFacadeService.deepLinkPath;
+    if (deepLinkPath && deepLinkPath.length && GUEST_DEEP_LINKS.includes(deepLinkPath.join('/'))) {
+      this.router.navigate(deepLinkPath).then(() => this.sessionFacadeService.navigatedToLinkPath());
     }
   }
 }

@@ -238,3 +238,11 @@ export enum LoginType {
 export const PATRON_BACK_TEXT: { [key: string]: string } = {
   [`/${PATRON_NAVIGATION.dashboard}`]: 'Home',
 };
+
+export const GUEST_DEEP_LINKS: string[] = [
+  GUEST_NAVIGATION.dashboard,
+  GUEST_NAVIGATION.deposit,
+  GUEST_NAVIGATION.explore,
+  GUEST_NAVIGATION.ordering,
+  GUEST_NAVIGATION.settings,
+];
