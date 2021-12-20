@@ -83,7 +83,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
   @Input() orderPayment: OrderPayment[];
-  @Input() pendingStatus: boolean;
   isApplePayment: boolean = false;
 
   private readonly sourceSub = new Subscription();
