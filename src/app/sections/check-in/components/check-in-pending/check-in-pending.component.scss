@@ -100,3 +100,7 @@
 span {
   @include font-nunito-heavy(15px);
 }
+
+ion-footer {
+  padding-bottom: 10px;
+}
