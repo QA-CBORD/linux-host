@@ -4,8 +4,11 @@
   &__close-btn {
     width: 75%;
     margin-right: 15px;
+    padding: 0 5px;
+    --background: var(--$color-background-divider);
   }
 }
+
 .header_title {
   padding-left: 76px;
 }
@@ -35,5 +38,5 @@
 }
 
 ion-footer {
-  padding-bottom: 20px;
+  padding-bottom: 10px;
 }
