@@ -261,10 +261,11 @@ export class ItemDetailComponent implements OnInit {
       })
       .finally(() => {
         this.loadingService.closeSpinner();
-                this.cartService.menuItems$
+        this.cartService.menuItems$
           .pipe(
             filter((val, index) => val !== 0 || index > 1),
-            distinctUntilChanged()
+            distinctUntilChanged(),
+            take(1)
           )
           .subscribe(items => {
             if (items) {
