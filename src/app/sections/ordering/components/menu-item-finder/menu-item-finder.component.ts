@@ -41,11 +41,7 @@ export class MenuItemFinderComponent implements OnInit {
             label: 'Scan Barcode or QR Code',
             icon: 'barcode-read',
             action: async () => {
-              const modal = await this.createScanCodeModal();
-              modal.onDidDismiss().then(async ({ data }) => {
-                await this.handleReturnedData(data);
-              });
-              await modal.present();
+              await this.openScanCode();
             },
           });
         }
@@ -88,6 +84,14 @@ export class MenuItemFinderComponent implements OnInit {
     });
     await modal.present();
   }
+ 
+  private async openScanCode() {
+    const modal = await this.createScanCodeModal();
+    modal.onDidDismiss().then(async ({ data }) => {
+      await this.handleResult(data);
+    });
+    await modal.present();
+  }
 
   private async createScanCodeModal() {
     return await this.modalController.create({
@@ -102,15 +106,13 @@ export class MenuItemFinderComponent implements OnInit {
     });
   }
 
-  private async handleReturnedData(data: any) {
-    if (!data) {
-      return;
-    }
-
-    if (data.scanCodeResult) {
-      this.getMenuItem(data);
-    } else if (data.manualEntry) {
-      await this.openManualEntry();
+  private async handleResult(data: any) {
+    if (data) {
+      if (data.scanCodeResult) {
+        this.getMenuItem(data);
+      } else if (data.manualEntry) {
+        await this.openManualEntry();
+      }
     }
   }
 }
