@@ -42,7 +42,7 @@ export class MenuItemFinderComponent implements OnInit {
             icon: 'barcode-read',
             action: async () => {
               const modal = await this.createScanCodeModal();
-              modal.onDidDismiss().then(async ({ data }: any) => {
+              modal.onDidDismiss().then(async ({ data }) => {
                 await this.handleReturnedData(data);
               });
               await modal.present();
@@ -81,7 +81,7 @@ export class MenuItemFinderComponent implements OnInit {
       component: ItemManualEntryComponent,
     });
 
-    modal.onDidDismiss().then(async ({ data }: any) => {
+    modal.onDidDismiss().then(async ({ data }) => {
       if (data && data.menuItemId) {
         this.itemScanned.next(data.menuItemId);
       }
@@ -103,6 +103,10 @@ export class MenuItemFinderComponent implements OnInit {
   }
 
   private async handleReturnedData(data: any) {
+    if (!data) {
+      return;
+    }
+
     if (data.scanCodeResult) {
       this.getMenuItem(data);
     } else if (data.manualEntry) {
