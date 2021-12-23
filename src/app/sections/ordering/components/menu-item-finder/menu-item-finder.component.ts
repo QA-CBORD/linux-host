@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { Barcode, ScanCodeComponent } from '@sections/check-in/components/scan-code/scan-code.component';
+import { ScanCodeComponent } from '@sections/check-in/components/scan-code/scan-code.component';
 import { CartService } from '@sections/ordering';
 import { MerchantSettings } from '@sections/ordering/ordering.config';
 import { ItemManualEntryComponent } from '@sections/ordering/pages/item-manual-entry/item-manual-entry.component';
@@ -26,7 +26,7 @@ export class MenuItemFinderComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
     private readonly commonService: CommonService,
-    private readonly toastService: ToastService,
+    private readonly toastService: ToastService
   ) {}
 
   async ngOnInit() {
@@ -41,22 +41,9 @@ export class MenuItemFinderComponent implements OnInit {
             label: 'Scan Barcode or QR Code',
             icon: 'barcode-read',
             action: async () => {
-              const modal = await this.modalController.create({
-                component: ScanCodeComponent,
-                cssClass: 'scan-modal',
-                backdropDismiss: false,
-                componentProps: {
-                  title: this.barCodeCs.title,
-                  prompt: this.barCodeCs.prompt,
-                  textBtn: this.barCodeCs.textBtn,
-                },
-              });
+              const modal = await this.createScanCodeModal();
               modal.onDidDismiss().then(async ({ data }: any) => {
-                if (data.scanCodeResult) {
-                  this.getMenuItem(data);
-                } else if (data.manualEntry) {
-                  await this.openManualEntry();
-                }
+                await this.handleReturnedData(data);
               });
               await modal.present();
             },
@@ -72,11 +59,10 @@ export class MenuItemFinderComponent implements OnInit {
       .getMenuItemByCode(data.scanCodeResult)
       .pipe(take(1))
       .subscribe(async menuItem => {
-        if (menuItem) {
-          const { id: menuItemId } = menuItem;
-          this.itemScanned.next(menuItemId);
+        if (menuItem && menuItem.id) {
+          this.itemScanned.next(menuItem.id);
         } else {
-          await this.toastService.showToast({ message: 'Item not found.' });
+          await this.toastService.showToast({ message: 'Item not found, please check the code and try again.' });
         }
       });
   }
@@ -96,12 +82,31 @@ export class MenuItemFinderComponent implements OnInit {
     });
 
     modal.onDidDismiss().then(async ({ data }: any) => {
-      if (data) {
-        const { menuItemId } = data;
-        this.itemScanned.next(menuItemId);
-      }  
+      if (data && data.menuItemId) {
+        this.itemScanned.next(data.menuItemId);
+      }
     });
-
     await modal.present();
-  } 
+  }
+
+  private async createScanCodeModal() {
+    return await this.modalController.create({
+      component: ScanCodeComponent,
+      cssClass: 'scan-modal',
+      backdropDismiss: false,
+      componentProps: {
+        title: this.barCodeCs.title,
+        prompt: this.barCodeCs.prompt,
+        textBtn: this.barCodeCs.textBtn,
+      },
+    });
+  }
+
+  private async handleReturnedData(data: any) {
+    if (data.scanCodeResult) {
+      this.getMenuItem(data);
+    } else if (data.manualEntry) {
+      await this.openManualEntry();
+    }
+  }
 }
