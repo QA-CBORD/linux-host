@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
-import { first, take } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, take } from 'rxjs/operators';
 
 import {
   LOCAL_ROUTING,
@@ -259,7 +259,20 @@ export class ItemDetailComponent implements OnInit {
         this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })
-      .finally(() => this.loadingService.closeSpinner());
+      .finally(() => {
+        this.loadingService.closeSpinner();
+        this.cartService.menuItems$
+          .pipe(
+            filter((val, index) => val !== 0 || index > 1),
+            distinctUntilChanged(),
+            take(1)
+          )
+          .subscribe(items => {
+            if (items) {
+              this.toastAddedItems(items);
+            }
+          });
+      });
   }
 
   private async failedValidateOrder(message: string) {
@@ -325,6 +338,14 @@ export class ItemDetailComponent implements OnInit {
     this.contentStrings.labelItemNote = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelItemNote
     );
+  }
+
+  private toastAddedItems(items: number) {
+    let message = `${items} ${items > 1 ? 'items' : 'item'} in your cart.`;
+    if (this.cartService.checkNumber) {
+      message = `Added to order #${this.cartService.checkNumber} cart. ` + message;
+    }
+    this.toastService.showToast({ message });
   }
 }
 

@@ -52,12 +52,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     this.menuItems$ = this.cartService.menuItems$.pipe(
       // If is not first emission from an empty cart
       filter((val, index) => val !== 0 || index > 1),
-      distinctUntilChanged(),
-      tap(items => {
-        if (items) {
-          this.toastAddedItems(items);
-        }
-      })
+      distinctUntilChanged()
     );
     zip(this.cartService.menuInfo$, this.activatedRoute.params)
       .pipe(take(1))
@@ -140,15 +135,5 @@ export class MenuCategoryItemsComponent implements OnInit {
     this.contentStrings.labelFullMenu = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelFullMenu
     );
-  }
-
-  private toastAddedItems(items: number) {
-    let message = `${items} ${items > 1 ? 'items' : 'item'} `;
-    if (this.isExistingOrder && this.cartService.checkNumber) {
-      message = message + `added to Order #${this.cartService.checkNumber} cart`;
-    } else {
-      message = message + 'currently in your cart';
-    }
-    this.toastService.showToast({ message });
   }
 }
