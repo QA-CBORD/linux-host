@@ -29,6 +29,7 @@ import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-
   styleUrls: ['./item-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class ItemDetailComponent implements OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   itemOrderForm: FormGroup;
