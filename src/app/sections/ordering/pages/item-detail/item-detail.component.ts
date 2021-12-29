@@ -343,7 +343,7 @@ export class ItemDetailComponent implements OnInit {
   }
 
   private showAddedItemsQuantity(items: number) {
-    let message = `${items} ${items > 1 ? 'items' : 'item'} in your cart.`;
+    let message = `${items} ${items > 1 ? 'items' : 'item'} currently in your cart.`;
     if (this.cartService.isExistingOrder) {
       const currentOrder = this.cartService.currentOrderId;
       let checkNumber = this.cartService.checkNumber;
