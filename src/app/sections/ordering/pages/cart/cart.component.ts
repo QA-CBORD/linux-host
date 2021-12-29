@@ -388,9 +388,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(async order => {
-        this.cartService.changeClientOrderId;
-        this.cartService.orderIsAsap = false;
-        this.cartService.checkNumber = order.checkNumber;
+        this.setupCartInfo(order);
         await this.showModal(order);
       })
       .catch(async (error: string | [string, string]) => {
@@ -587,5 +585,12 @@ export class CartComponent implements OnInit, OnDestroy {
         catchError(() => of(defaultOrderSubmitErrorMessages))
       )
       .toPromise();
+  }
+
+  private setupCartInfo(order: OrderInfo) {
+    this.cartService.changeClientOrderId;
+    this.cartService.orderIsAsap = false;
+    this.cartService.checkNumber = order.checkNumber;
+    this.cartService.currentOrderId = order.id;
   }
 }

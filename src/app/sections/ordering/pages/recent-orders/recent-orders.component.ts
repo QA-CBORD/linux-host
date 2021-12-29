@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, finalize } from 'rxjs/operators';
 
-import { MerchantService, OrderInfo } from '@sections/ordering';
+import { CartService, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -32,7 +32,8 @@ export class RecentOrdersComponent implements OnInit {
     private readonly checkinProcess: CheckingProcess,
     private readonly globalNav: GlobalNavService,
     private readonly loadingService: LoadingService,
-    public readonly checkinService: CheckingServiceFacade
+    public readonly checkinService: CheckingServiceFacade,
+    private readonly cartService: CartService,
   ) {}
 
   ngOnInit() {
@@ -66,6 +67,7 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   async onOrderPicked(order: OrderInfo): Promise<void> {
+    this.cartService.currentOrderId = order.id;
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.recentOrders, order.id]);
   }
 
