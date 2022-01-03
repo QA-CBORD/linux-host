@@ -1,59 +1,95 @@
 import { isDefined } from '../utils';
-import { PatronAttribute } from '../applications/applications.model';
 
-export interface WorkOrdersListOptions {
-  key: number;
-  type: number;
-  description: string;
-  status: number;
-  requestedDate: string;
+
+export interface ImageDataOptions {
+  comments: string;
+  contents: string;
+  filename: string;
+  studentSubmitted: boolean;
 }
 
-export class WorkOrdersList implements WorkOrdersListOptions {
+export class ImageData implements ImageDataOptions {
+  comments: string;
+  contents: string;
+  filename: string;
+  studentSubmitted: boolean;
+  constructor(options: ImageDataOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as ImageDataOptions;
+    }
+    this.comments = String(options.comments);
+    this.contents = String(options.contents);
+    this.filename = String(options.filename);
+    this.studentSubmitted = Boolean(options.studentSubmitted);
+  }
+}
+export interface WorkOrdersDetailsListOptions {
   key: number;
   type: number;
   description: string;
   status: number;
   requestedDate: string;
-  constructor(options: WorkOrdersListOptions) {
+  attachment: ImageData;
+  facilityKey: number;
+  notificationEmail: string;
+  notificationPhone: string;
+  notify: boolean;
+}
+export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
+  attachment: ImageData;
+  facilityKey: number;
+  notificationEmail: string;
+  notificationPhone: string;
+  notify: boolean;
+  key: number;
+  type: number;
+  description: string;
+  status: number;
+  requestedDate: string;
+  constructor(options: WorkOrdersDetailsListOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as WorkOrdersListOptions;
+      options = {} as WorkOrdersDetailsListOptions;
     }
     this.key = Number(options.key);
     this.type = Number(options.type);
     this.description = String(options.description);
     this.status= Number(options.status);
     this.requestedDate = String(options.requestedDate);
+    this.attachment = options.attachment;
+    this.notificationEmail = String(options.notificationEmail);
+    this.notificationPhone = String(options.notificationPhone);
+    this.notify = Boolean(options.notify);
+    this.facilityKey = Number(options.facilityKey);
 
   }
 }
 export interface WorkOrderOptions {
   canSubmit: boolean,
-  workOrders: WorkOrdersList[],
+  workOrders: WorkOrdersDetailsList[],
 }
 
 export class WorkOrder implements WorkOrderOptions{
   canSubmit: boolean;
-  workOrders: WorkOrdersList[];
+  workOrders: WorkOrdersDetailsList[];
   constructor(options: WorkOrderOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrderOptions;
     }
     this.canSubmit = Boolean(options.canSubmit)
     this.workOrders = Array.isArray(options.workOrders)
-      ? options.workOrders.map((detail: any) => new WorkOrdersList(detail))
+      ? options.workOrders.map((detail: any) => new WorkOrdersDetailsList(detail))
       : [];
   }
   
 }
 export interface WorkOrderDetailsOptions {
   workOrderKey: number,
-  workOrders: WorkOrdersList,
+  workOrders: WorkOrdersDetailsList,
   formDefinition: FormDefinitionOptions,
 }
 export class WorkOrderDetails implements WorkOrderDetailsOptions{
   workOrderKey: number;
-  workOrders: WorkOrdersList;
+  workOrders: WorkOrdersDetailsList;
   formDefinition: FormDefinitionOptions;
   constructor(options: WorkOrderDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
@@ -68,7 +104,7 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
 export interface FormDefinitionOptions {
   id: number;
   applicationDescription: string;
-  applicationFormJson: {};
+  applicationFormJson: string;
   applicationTitle: string;
   applicationTypeId: number;
   applicationAvailableEndDateTime: string;
@@ -83,7 +119,7 @@ export interface FormDefinitionOptions {
 export class FormDefinition implements FormDefinitionOptions{
   id: number;
   applicationDescription: string;
-  applicationFormJson: {};
+  applicationFormJson: string;
   applicationTitle: string;
   applicationTypeId: number;
   applicationAvailableEndDateTime: string;
@@ -100,7 +136,7 @@ export class FormDefinition implements FormDefinitionOptions{
     }
     this.id = Number(options.id);
     this.applicationDescription = String(options.applicationDescription);
-    this.applicationFormJson = options.applicationFormJson;
+    this.applicationFormJson = String(options.applicationFormJson);
     this.applicationTitle = String(options.applicationTitle);
     this.applicationTypeId = Number(options.applicationTypeId);
     this.applicationAvailableEndDateTime = String(options.applicationAvailableEndDateTime);

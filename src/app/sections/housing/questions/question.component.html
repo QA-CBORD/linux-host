@@ -1,5 +1,12 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
+    <ng-container *ngSwitchCase="'image-upload'" class="question__section">
+      <h3 class="form__secondary-header">Upload a photo</h3>
+      <div class="container__image">
+        <div class="label"> New photo</div>
+        <div class="icon"></div>
+      </div>
+    </ng-container>
     <ng-container *ngSwitchCase="'header'">
       <div [innerHTML]="createHeader($any(question))"></div>
     </ng-container>

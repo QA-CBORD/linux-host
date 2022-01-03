@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { WorkOrder, WorkOrderDetails, WorkOrdersList, FormDefinition } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, FormDefinition } from './work-orders.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +18,7 @@ export class WorkOrderStateService  {
   private readonly _defaultStateFormDetails = new FormDefinition ({
     id: 0,
     applicationDescription: "",
-    applicationFormJson: {},
+    applicationFormJson: '',
     applicationTitle: '',
     applicationTypeId: 0,
     applicationAvailableEndDateTime: '',

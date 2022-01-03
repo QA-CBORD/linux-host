@@ -2,3 +2,17 @@ h4 {
   color: #3880ff;
   text-transform: uppercase;
 }
+
+.container-header-work-order{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  .col-work-order{
+    align-self: center;
+  }
+  .col-work-order .create-btn{
+    color:#6A6A6A;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}

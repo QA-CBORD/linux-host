@@ -49,7 +49,6 @@ import { WaitingList, WaitingListDetails } from './waiting-lists/waiting-lists.m
 import { WaitingListsService } from './waiting-lists/waiting-lists.service';
 import { WaitingListStateService } from './waiting-lists/waiting-list-state.service';
 import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
-import { worker } from 'cluster';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 
 @Injectable({

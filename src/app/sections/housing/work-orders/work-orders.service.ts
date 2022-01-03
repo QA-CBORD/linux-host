@@ -3,7 +3,7 @@ import { EnvironmentFacadeService } from "@core/facades/environment/environment.
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage } from '../questions/questions.model';
 import { QuestionsStorageService, QuestionsEntries, StoredApplication } from '../questions/questions-storage.service';
@@ -12,12 +12,8 @@ import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
 import { FormGroup, FormControl } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
-import { isDefined } from "../utils";
-import { QuestionDropdown} from '../questions/types/question-dropdown';
-import { QuestionTextbox } from '../questions/types/question-textbox';
 import { HttpParams } from "@angular/common/http";
-import { QuestionWaitingListRequest } from "../questions/types/question-waiting-list-request";
-import { WorkOrder } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WaitingListStateService } from '../waiting-lists/waiting-list-state.service';
 import { WaitingListDetails, WaitingListDetailsRequest } from '../waiting-lists/waiting-lists.model';
@@ -59,21 +55,27 @@ export class WorkOrdersService {
   }
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
-    return this._waitingListState.waitingListDetails$.pipe(
-      map((waitingListDetails: WaitingListDetails) => {
-        const pages: QuestionBase[][] = this._getQuestionsPages(waitingListDetails);
-        return this._getPages(pages, null, waitingListDetails);
+    return this._questionsStorageService.getQuestions(key).pipe(
+      withLatestFrom(this._workOrderStateService.workOrderDetails),
+      map(([storedQuestions, workOrderDetails]: [QuestionsEntries, WorkOrderDetails]) => {
+        const pages: QuestionBase[][] = this._getQuestionsPages(workOrderDetails);
+
+        // const patronApplication: PatronApplication = workOrderDetails.patronApplication;
+        // const status: ApplicationStatus = patronApplication && patronApplication.status;
+        // const isSubmitted = status === ApplicationStatus.Submitted;
+
+        return this._getPages(pages, storedQuestions, workOrderDetails);
       })
-    )
+    );
   }
 
   private _getPages(
     pages: QuestionBase[][],
     storedQuestions: QuestionsEntries,
-    waitingListsDetails: WaitingListDetails
+    workOrderDetails: WorkOrderDetails
   ): QuestionsPage[] {
     return pages.map((page: QuestionBase[]) => ({
-      form: this._toFormGroup(page, storedQuestions, waitingListsDetails),
+      form: this._toFormGroup(page, storedQuestions, workOrderDetails),
       questions: page,
     }));
   }
@@ -81,91 +83,37 @@ export class WorkOrdersService {
   private _toFormGroup(
     questions: QuestionBase[],
     storedQuestions: QuestionsEntries,
-    waitingListsDetails: WaitingListDetails
+    workOrderDetails: WorkOrderDetails
   ): FormGroup {
     return this._questionsService.toFormGroup(
       questions,
       storedQuestions,
       (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
-        group[questionName] = this._toFormControl(storedValue, question, waitingListsDetails);
+        group[questionName] = this._toFormControl(storedValue, question, workOrderDetails);
       }
     );
   }
 
-  private _getQuestionsPages(waitingListDetails: WaitingListDetails): QuestionBase[][] {
+  private _getQuestionsPages(workOrderListDetails: WorkOrderDetails): QuestionBase[][] {
     const questions: QuestionBase[][] = this._questionsService
-      .getQuestions(waitingListDetails.formDefinition.applicationFormJson)
+      .getQuestions(workOrderListDetails.formDefinition.applicationFormJson)
       .map((question: QuestionBase) => {
-        const mappedQuestion = this._toWaitingListCustomType(question, waitingListDetails)
-        return [].concat(mappedQuestion);
+        return [].concat(question);
       });
-
+    //TODO: add question upload image
+    
+    questions[7].push({'type':'image-upload','label':'Image','attribute':''})
+    console.log(questions)
     return this._questionsService.splitByPages(flat(questions));
-  }
-
-  private _toWaitingListCustomType(question: QuestionBase, waitingListDetails: WaitingListDetails): QuestionBase {
-    if(!(question instanceof QuestionWaitingListRequest)) {
-      return question;
-    }
-
-    let values = [];
-    if (question.facilitySelection || question.attributeSelection) {
-      if (waitingListDetails.facilities != null)  {
-        values = waitingListDetails.facilities.map((facility) => {
-          return {
-            label: facility.name,
-            value: facility.facilityKey
-          }
-        });
-      } else {
-        values = waitingListDetails.attributes.map((attribute) => {
-          return {
-            label: attribute.value,
-            value: attribute.value
-          }
-        });
-      }
-      
-    }else {
-      return new QuestionTextbox({
-        name: `attribute-selection-${this.index++}`,
-        type: 'text',
-        label: 'Attribute value',
-        subtype: 'text',
-        dataType: 'String',
-        readonly: false,
-        required: true
-      });
-    }
-
-    return new QuestionDropdown({
-      label: question.label,
-      name: `${waitingListDetails.attributes != null ? 'attribute' : 'facility'}-selection-${this.index++}`,
-      values: values,
-      required: true,
-      readonly: false,
-      type: 'select',
-      dataType: 'String',
-    });
   }
 
   private _toFormControl(
     storedValue: any,
     question: QuestionFormControl,
-    waitingListDetails: WaitingListDetails
+    waitingListDetails: WorkOrderDetails
   ): FormControl {
     let value: any = storedValue;
     let disabled: boolean = false;
-
-    if (!isDefined(value)) {
-      if (question.consumerKey) {
-        value = this._questionsService.getAttributeValue(waitingListDetails.patronAttributes, question) || '';
-        disabled = true;
-      } else if (waitingListDetails.patronWaitingList != null) {
-        value = this._getSelectedWaitingListValue(waitingListDetails);
-        disabled = true;
-      }
-    }
 
     return new FormControl({ value, disabled });
   }

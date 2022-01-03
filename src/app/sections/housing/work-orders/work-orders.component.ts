@@ -59,7 +59,8 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   // }
   
   createWorkOrder(termKey: number, workOrderKey: number): string {
-    return "/patron/housing/work-orders/140/0";
+    //TODO: WRITE TERMKEY, WORKORDERKEY
+    return "/patron/housing/work-orders/140/252";
   }
 
   getWorkOrder(termKey:number,workOrderKey:number){
