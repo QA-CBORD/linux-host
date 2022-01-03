@@ -151,6 +151,7 @@ async function contentStringsByCategory(
 }
 
 export async function openSiteURL(services: SettingsServices): Promise<void> {
+  const inAppBrowserTarget = '_blank'; // '_system'
   const setting: SettingItemConfig = this;
   const resource = setting.navigateExternal;
   let linkPromise: Promise<string>;
@@ -166,7 +167,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
 
     const link = await linkPromise;
     setting.callback = async function() {
-      services.appBrowser.create(link, '_system');
+      services.appBrowser.create(link, inAppBrowserTarget, {location: 'no'});
     };
   }
   if (resource.type === 'link') {
@@ -191,7 +192,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
         )
         .toPromise();
       const link = await linkPromise;
-      services.appBrowser.create(link, '_system');
+      services.appBrowser.create(link, inAppBrowserTarget, { location: 'no'});
     };
   }
 }
