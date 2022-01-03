@@ -7,13 +7,20 @@ import { AlertController, ModalController, Platform, PopoverController } from '@
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
-import { CartService, MerchantInfo, MerchantOrderTypesInfo, MerchantService, OrderPayment } from '@sections/ordering';
+import {
+  CartService,
+  MenuInfo,
+  MerchantInfo,
+  MerchantOrderTypesInfo,
+  MerchantService,
+  OrderInfo,
+  OrderPayment,
+} from '@sections/ordering';
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { NavigationService } from '@shared/services/navigation.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { first, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
@@ -43,11 +50,12 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   dueTime: string;
   orderId: string;
   checkNumber: number;
-  mealBased = false;
+  menuInfo$: Observable<MenuInfo>;
   isExistingOrder: boolean;
   merchant: MerchantInfo;
   addToCartEnabled: boolean;
-  orderPayment: OrderPayment
+  orderPayment: OrderPayment;
+  order$: Observable<OrderInfo>;
 
   constructor(
     private readonly loadingService: LoadingService,
@@ -56,7 +64,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     protected readonly alertCtrl: AlertController,
     protected readonly popoverCtrl: PopoverController,
     private readonly router: Router,
-    private readonly routingService: NavigationService,
     private readonly merchantService: MerchantService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
@@ -100,13 +107,12 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       merchant,
       orderOptions: { dueTime: new Date(dueTime), orderType, address, isASAP },
       orderId: this.orderId,
-      orderPayment: this.orderPayment
+      orderPayment: this.orderPayment,
     });
     this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
       queryParams: { isExistingOrder: true },
     });
   }
-
 
   async onCheckingClicked() {
     const modal = await this.popoverCtrl.create({
@@ -202,7 +208,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   private async showSuccessModal() {
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.success], {
       queryParams: {
-        mealBased: this.mealBased,
         orderId: this.orderId,
         total: this.total,
         checkNumber: this.checkNumber,
@@ -230,23 +235,10 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private setData() {
-
+    this.menuInfo$ = this.cart.menuInfo$;
+    this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === this.orderId)));
     this.routeSubscription = this.activatedRoute.data.subscribe(response => {
-      const { contentStrings, mealBased, orderId, total, checkNumber, data, orderPayment, isExistingOrder } = response.data;
-      const { content } = contentStrings;
-      this.data = <orderInfo>data;
-      this.contentStrings = <CheckingContentCsModel>content;
-      this.mealBased = mealBased ? null : mealBased;
-      this.orderId = orderId;
-      this.total = total;
-      this.checkNumber = checkNumber;
-      this.merchant = data.merchant;
-      this.merchantId = data.merchant.id;
-      this.dueTime = data.pickupTime.dueTime;
-      this.isExistingOrder = isExistingOrder;
-      const res = this.merchant.settings.map[MerchantSettings.addToCartEnabled];
-      this.addToCartEnabled = res.value && !!JSON.parse(res.value);
-      this.orderPayment = JSON.parse(orderPayment);
+      this.setProps(response);
     });
   }
 
@@ -260,5 +252,22 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.platform.backButton.subscribeWithPriority(10, async () => {
       this.onClosed();
     });
+  }
+
+  private setProps(response) {
+    const { contentStrings, orderId, total, checkNumber, data, orderPayment, isExistingOrder } = response.data;
+    const { content } = contentStrings;
+    this.data = <orderInfo>data;
+    this.contentStrings = <CheckingContentCsModel>content;
+    this.orderId = orderId;
+    this.total = total;
+    this.checkNumber = checkNumber;
+    this.merchant = data.merchant;
+    this.merchantId = data.merchant.id;
+    this.dueTime = data.pickupTime.dueTime;
+    this.isExistingOrder = isExistingOrder;
+    const res = this.merchant.settings.map[MerchantSettings.addToCartEnabled];
+    this.addToCartEnabled = res.value && !!JSON.parse(res.value);
+    this.orderPayment = JSON.parse(orderPayment);
   }
 }

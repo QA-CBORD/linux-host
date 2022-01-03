@@ -85,7 +85,7 @@ export class NativeProvider {
   }
 
   isWeb() {
-    return !this.isAndroid() && !this.isIos();
+    return !this.platform.is('cordova');
   }
 
   sendAndroidData<T>(methodName: NativeData, data: T) {

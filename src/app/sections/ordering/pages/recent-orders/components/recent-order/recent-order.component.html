@@ -25,28 +25,43 @@
     [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
     [mealBased]="(order$ | async).mealBased"
     [orderDetailOptions]="orderDetailsOptions$ | async"
+    [merchantSettingsList]="(merchant$ | async).settings.list"
   >
   </st-order-details>
 </ion-content>
 
 <ion-footer>
   <ng-container
-      *ngIf="(order$ | async).status !== orderStatus.PENDING; else pending"
-      [ngTemplateOutlet]="completed"
-    ></ng-container>
+    *ngIf="(order$ | async).status !== orderStatus.PENDING; else pending"
+    [ngTemplateOutlet]="completed"
+  ></ng-container>
 </ion-footer>
 
 <ng-template #completed>
-  <div class="btn-wrapper">
-    <div>
-      <st-button [fill]="'clear'" [buttonModifier]="'black'" (onClick)="back()" class="ro__close-btn">{{
-        contentStrings.buttonClose | async
-      }}</st-button>
-    </div>
-    <div>
-      <st-button (onClick)="onReorderHandler()">{{ contentStrings.buttonReorder | async }}</st-button>
-    </div>
-  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col class="ion-align-self-center" size="5">
+        <st-button
+          color="medium"
+          [expand]="'full'"
+          [fill]="'clear'"
+          [buttonModifier]="'light'"
+          (onClick)="back()"
+          class="ro__close-btn full-width"
+          ><span class="ion-text-capitalize">
+            {{ contentStrings.buttonClose | async }}
+          </span></st-button
+        >
+      </ion-col>
+      <ion-col class="ion-align-self-center" size="7">
+        <st-button (onClick)="onReorderHandler()" class="full-width">
+          <span class="ion-text-capitalize">
+            {{ contentStrings.buttonReorder | async }}
+          </span></st-button
+        >
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ng-template>
 
 <ng-template #pending>
@@ -57,23 +72,34 @@
       </span>
     </st-button>
   </div>
-  <div [ngClass]="{ 'btn-checkin': orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus) }">
-    <div *ngIf="addToCartEnabled">
-      <st-button isDisabled="true" (onClick)="onAddItems()">
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lblBtnAdd2Cart | async }}
-        </span>
-      </st-button>
-    </div>
-    <div
-      *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)"
-      [ngClass]="{ 'full-width': !addToCartEnabled }"
-    >
-      <st-button (click)="openChecking()">
-        <span class="ion-text-capitalize" style="width: 166px;">
-          {{ contentStrings.labelBtnCheckin | async }}
-        </span>
-      </st-button>
-    </div>
-  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngIf="addToCartEnabled" class="ion-align-self-center" size="5">
+        <st-button
+          color="medium"
+          [expand]="'full'"
+          [fill]="'clear'"
+          [buttonModifier]="'light'"
+          isDisabled="true"
+          (onClick)="onAddItems()"
+          class="ro__close-btn full-width"
+        >
+          <span class="ion-text-capitalize">
+            {{ contentStrings.lblBtnAdd2Cart | async }}
+          </span></st-button
+        >
+      </ion-col>
+      <ion-col
+        *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)"
+        class="ion-align-self-center"
+        [size]="addToCartEnabled ? '7' : '12'"
+      >
+        <st-button (click)="openChecking()" class="full-width"
+          ><span class="ion-text-capitalize">
+            {{ contentStrings.labelBtnCheckin | async }}
+          </span></st-button
+        >
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ng-template>

@@ -79,6 +79,18 @@
     color: $color-black;
   }
 
+  &--light {
+    --ion-color-primary: #f1f1f1;
+    --background-activated: #f1f1f1;
+    --background-color: #f1f1f1;
+    --border-radius: 8px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    color: $color-black;
+    border: 2px solid #f1f1f1;
+    --ion-color-base: none !important;
+  }
+
   &--entry-dark {
     --ion-color-primary: $color-white;
     --background-activated: #c4c4c4;
@@ -94,5 +106,9 @@
 
   &--submit-button {
     --border-radius: 8px;
+  }
+
+  &--normalcase {
+    text-transform: none;
   }
 }

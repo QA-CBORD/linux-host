@@ -35,7 +35,7 @@
       </div>
       <div class="section-divided">
         <span class="text-dark"> {{ contentStrings.lbl_total }} </span>
-        <span class="text-dark"> {{ total | priceUnitsResolver: mealBased }}</span>
+        <span class="text-dark"> {{ total | priceUnitsResolver: (menuInfo$ | async)?.mealBased || (order$ | async)?.mealBased }}</span>
       </div>
       <div class="btn_no-bg">
         <st-button (onClick)="goToOrderDetails()" fill="clear" buttonModifier="rectangular">
@@ -45,21 +45,37 @@
     </div>
   </div>
 </ion-content>
-<ion-footer style="padding: 10px 10px 30px 10px;" mode="ios">
-  <div class="pending-checkin__footer">
-    <div *ngIf="addToCartEnabled">
-      <st-button (onClick)="onAddItems()" buttonModifier="rectangular" isDisabled="true">
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lbl_btn_add2_cart }}
-        </span>
-      </st-button>
-    </div>
-    <div [ngClass]="{'full-width': !addToCartEnabled }">
-      <st-button (onClick)="onCheckingClicked()" buttonModifier="rectangular">
-        <span class="ion-text-capitalize" style="width: 166px;"  >
-          {{ contentStrings.lbl_btn_checkin_in }}
-        </span>
-      </st-button>
-    </div>
-  </div>
+<ion-footer mode="ios">
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngIf="addToCartEnabled" class="ion-align-self-center" size="5">
+        <st-button
+          color="medium"
+          [expand]="'full'"
+          [fill]="'clear'"
+          [buttonModifier]="'light'"
+          buttonModifier="rectangular"
+          isDisabled="true"
+          (onClick)="onAddItems()"
+          class="ro__close-btn full-width"
+        >
+          <span class="ion-text-capitalize">
+            {{ contentStrings.lbl_btn_add2_cart }}
+          </span>
+        </st-button>
+      </ion-col>
+      <ion-col class="ion-align-self-center" [size]="addToCartEnabled ? '7' : '12'">
+        <st-button
+          [buttonModifier]="'normalcase'"
+          (onClick)="onCheckingClicked()"
+          buttonModifier="rectangular"
+          class="full-width"
+        >
+          <span class="ion-text-capitalize">
+            {{ contentStrings.lbl_btn_checkin_in }}
+          </span>
+        </st-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-footer>
