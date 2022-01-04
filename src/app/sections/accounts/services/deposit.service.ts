@@ -4,7 +4,7 @@ import { Observable, BehaviorSubject, zip, of, combineLatest } from 'rxjs';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { map, tap, switchMap, take } from 'rxjs/operators';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
+import { ACCOUNT_TYPES, CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
@@ -63,7 +63,7 @@ export class DepositService {
 
   filterCreditCardDestAccounts(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
     return accounts.filter(
-      ({ depositAccepted, accountTender }) => depositAccepted && tendersId.includes(accountTender)
+      ({ depositAccepted, accountTender, accountType }) => depositAccepted && accountType !== ACCOUNT_TYPES.meals && tendersId.includes(accountTender)
     );
   }
 
