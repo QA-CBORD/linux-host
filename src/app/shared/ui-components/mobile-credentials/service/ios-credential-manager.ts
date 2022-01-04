@@ -111,7 +111,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
       .pipe(
         take(1),
         switchMap(sessionId => from(IOSDevice.getAppleWalletInfo({ sessionId: sessionId }))),
-        map(appleWalletInfo => {
+        map((appleWalletInfo: any) => {
           return new AppleWalletCredential(new AppleWalletCredentialState(appleWalletInfo));
         })
       )
