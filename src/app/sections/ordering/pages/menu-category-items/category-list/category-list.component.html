@@ -12,7 +12,7 @@
         <div class="category-list__menu-item-description">{{ menuItem.menuItem.description }}</div>
         <div class="category-list__menu-item-price">{{ menuItem.menuItem.price | priceUnitsResolver: mealBased }}</div>
       </div>
-      <img *ngIf="menuItem.menuItem.imageReference" class="category-list__menu-item-photo"
+      <img *ngIf="menuItem.menuItem.imageReference"  aria-hidden="true" class="category-list__menu-item-photo"
            src="{{awsImageUrl + menuItem.menuItem.imageReference}}">
     </div>
   </ion-item>
