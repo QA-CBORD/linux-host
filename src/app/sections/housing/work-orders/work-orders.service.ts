@@ -5,19 +5,21 @@ import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
-import { QuestionsPage } from '../questions/questions.model';
+import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
 import { QuestionsStorageService, QuestionsEntries, StoredApplication } from '../questions/questions-storage.service';
 import { QuestionBase } from '../questions/types/question-base';
 import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { HttpParams } from "@angular/common/http";
-import { WorkOrder, WorkOrderDetails } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, FormDefinition, ImageData } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WaitingListStateService } from '../waiting-lists/waiting-list-state.service';
 import { WaitingListDetails, WaitingListDetailsRequest } from '../waiting-lists/waiting-lists.model';
 import { WorkOrderStateService } from './work-order-state.service';
+import { parseJsonToArray } from '@sections/housing/utils';
+import { QuestionTextbox } from '../questions/types/question-textbox';
 
 @Injectable({
   providedIn: 'root',
@@ -101,86 +103,93 @@ export class WorkOrdersService {
         return [].concat(question);
       });
     //TODO: add question upload image
-    
-    questions[7].push({'type':'image-upload','label':'Image','attribute':''})
-    console.log(questions)
+    questions[6].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
     return this._questionsService.splitByPages(flat(questions));
   }
 
   private _toFormControl(
     storedValue: any,
     question: QuestionFormControl,
-    waitingListDetails: WorkOrderDetails
+    workOrderDetails: WorkOrderDetails
   ): FormControl {
     let value: any = storedValue;
     let disabled: boolean = false;
 
-    return new FormControl({ value, disabled });
-  }
+    const validators: ValidatorFn[] = [];
 
-  private _getSelectedWaitingListValue(waitingList: WaitingListDetails): string {
-    let value: string = '';
-    
-    if (waitingList.facilities != null) {
-      const item = waitingList.facilities
-        .find(facility => 
-            facility.facilityKey === Number(waitingList.patronWaitingList.selectedValue));
-
-      value = item ? item.name : '';
-    } else if (waitingList.attributes != null) {
-      const item = waitingList.attributes
-        .find(attribute => attribute.value === waitingList.patronWaitingList.selectedValue);
-      
-      value = item ? item.value : '';
+    if (question.required) {
+      validators.push(Validators.required);
     }
-    
-    return value;
+
+    if (question instanceof QuestionTextbox) {
+      this._questionsService.addDataTypeValidator(question, validators);
+    }
+
+    return new FormControl({ value, disabled }, validators);
   }
+
 
   next(formValue: any): Observable<any> {
-    if (Object.keys(formValue).find(value => value.includes('attribute-selection')) ||
-        Object.keys(formValue).find(value => value.includes('facility-selection'))) {
-        this._waitingListState.setFormSelection(formValue);
-    }
-    
     return of(true);
   }
-  
+
   submitWorkOrder(
-    waitListKey: number,
-    form: any): Observable<boolean> {
-      let formQuestions;
+    form: any,
+    formValue: any): Observable<boolean> {
+    let formQuestions;
+    const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
+
+    const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
+    let phoneNumber, description, email, location, notifyByEmail = '';
+    let type = 0;
+
+    workOrdersControls.forEach(x => {
+        const resultFormValue = formValue[x.name];
+        switch (x.workOrderFieldKey) {
+          case "CONTACT_PHONE_NUMBER":
+            phoneNumber = resultFormValue;
+            break;
+          case "DESCRIPTION":
+            description = resultFormValue;
+            break;
+          case "EMAIL":
+            email = resultFormValue;
+            break;
+          case "LOCATION":
+            location = resultFormValue;
+            break;
+          case "NOTIFY_BY_EMAIL":
+            notifyByEmail = resultFormValue;
+            break;
+          case "TYPE":
+            type = resultFormValue;
+            break;
+        }
       
-      if (Object.keys(form).find(value => value.includes('attribute-selection')) ||
-          Object.keys(form).find(value => value.includes('facility-selection'))) {
-        formQuestions = Object.entries(form);
-      } else {
-        this._waitingListState.formSelection$
-          .subscribe(d => formQuestions = Object.entries(d));
+
+    })
+
+
+    const body = new WorkOrdersDetailsList({
+      notificationPhone: phoneNumber, 
+      typeKey: type,
+      description: description,
+      notificationEmail: email,
+      // attachment: new ImageData(),
+      facilityKey:123,
+      notify: true,
+    });
+
+    return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
+      map((response: Response) => {
+        if (isSuccessful(response.status)) {
+          return true;
+        } else {
+          throw new Error(response.status.message);
+        }
       }
-
-      const selectedValue = formQuestions.find(([key, _]) => key.includes('attribute-selection'));
-      const selectedFacility = formQuestions.find(([key, _]) => key.includes('facility-selection'));
-
-      const attributeValue: string = selectedValue ? String(selectedValue[1]) : null;
-      const facilityKey: number = selectedFacility ? Number(selectedFacility[1]) : null;
-
-      const body = new WaitingListDetailsRequest({
-        waitListKey,
-        attributeValue,
-        facilityKey
-      });
-
-      return this._housingProxyService.post<Response>(this.workOrderListUrl+'/patron', body).pipe(
-        map((response: Response) => {
-            if (isSuccessful(response.status)) {
-              return true;
-            } else {
-              throw new Error(response.status.message);
-            }
-          }
-        ),
-        catchError(_ => of(false))
-      );
+      ),
+      catchError(_ => of(false))
+    );
   }
 }

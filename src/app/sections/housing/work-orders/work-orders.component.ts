@@ -9,6 +9,7 @@ import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { HousingService } from '../housing.service';
 import { ROLES } from '../../../app.global';
 import { WorkOrderStateService } from './work-order-state.service';
+import { TermsService } from '../terms/terms.service';
 
 @Component({
   selector: 'st-work-orders',
@@ -19,12 +20,14 @@ import { WorkOrderStateService } from './work-order-state.service';
 export class WorkOrdersComponent implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
   public urlEditForm: string;
+  private selectedTermKey: number = 0;
 
   constructor(private _workOrdersService: WorkOrdersService,
     private _platform: Platform,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
-    public _workOrderStateService: WorkOrderStateService
+    public _workOrderStateService: WorkOrderStateService,
+    private _termService : TermsService
     ) {}
 
   workOrders: WorkOrder[];
@@ -34,6 +37,9 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
       .getWorkOrders()
       .subscribe();
 
+      this._subscription.add(
+        this._termService.termId$
+            .subscribe(termId => this.selectedTermKey = termId));
     this._subscription.add(workOrdersSubscription);
     this.urlEditForm = `${ROLES.patron}/housing/waiting-lists/` //TODO: Url workOrders aPI
   }
@@ -53,17 +59,18 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   createButtonForm(){
     //urlToAPI
   }
-
-  // createWorkOrder(){
-    
-  // }
   
+  createWorkOrderDefault(): string {
+    return `/patron/housing/work-orders/${this.selectedTermKey}/-1`;
+  }
+
   createWorkOrder(termKey: number, workOrderKey: number): string {
     //TODO: WRITE TERMKEY, WORKORDERKEY
-    return "/patron/housing/work-orders/140/252";
+    return `/patron/housing/work-orders/${this.selectedTermKey}/${workOrderKey}`;
   }
 
   getWorkOrder(termKey:number,workOrderKey:number){
     //TODO: view workOrderDetails
+    return `/patron/housing/work-orders/${this.selectedTermKey}/252`;
   }
 }

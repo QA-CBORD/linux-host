@@ -108,7 +108,6 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
   }
 
   async submit(workOrderDetails: WorkOrderDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
-
     this._touch();
 
     if (!this.isSubmitted && form.invalid) {
@@ -193,8 +192,8 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
 
             const createContractSubscription =
               this._workOrderService.submitWorkOrder(
-                this.workOrderKey,
-                workOrderDetails)
+                workOrderDetails,
+                formValue)
                 .subscribe(status => {
                   if (status) {
                     // redirect to housing dashboard (terms page)

@@ -1,13 +1,13 @@
-<section>
-  <ion-list *ngIf="(_workOrderStateService.workOrder$ | async) as workOrderLists"
+<section *ngIf="(_workOrderStateService.workOrder$ | async) as workOrderLists">
+  <ion-list *ngIf="workOrderLists.canSubmit" 
     class="ion-no-margin bg-transparent">
-    <ion-grid>
+    <ion-grid >
       <ion-row class="container-header-work-order">
         <div class="col-work-order ion-no-padding">
             <h2 class="form__secondary-header">WORK ORDERS</h2>
         </div>
         <div class="col-work-order ion-no-padding ion-no-margin">
-            <h2 class="form__secondary-header create-btn" (click)="createWorkOrder()" [routerLink]="createWorkOrder(140,0)">+</h2>
+            <h2 class="form__secondary-header create-btn" (click)="createWorkOrder()" [routerLink]="createWorkOrderDefault()">+</h2>
         </div>
 
       </ion-row>

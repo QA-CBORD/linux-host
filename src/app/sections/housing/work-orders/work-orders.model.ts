@@ -24,37 +24,28 @@ export class ImageData implements ImageDataOptions {
   }
 }
 export interface WorkOrdersDetailsListOptions {
-  key: number;
-  type: number;
+  typeKey: number;
   description: string;
-  status: number;
-  requestedDate: string;
-  attachment: ImageData;
+  attachment?: ImageData;
   facilityKey: number;
   notificationEmail: string;
   notificationPhone: string;
   notify: boolean;
 }
 export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
-  attachment: ImageData;
+  attachment?: ImageData;
   facilityKey: number;
   notificationEmail: string;
   notificationPhone: string;
   notify: boolean;
-  key: number;
-  type: number;
+  typeKey: number;
   description: string;
-  status: number;
-  requestedDate: string;
   constructor(options: WorkOrdersDetailsListOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrdersDetailsListOptions;
     }
-    this.key = Number(options.key);
-    this.type = Number(options.type);
+    this.typeKey = Number(options.typeKey);
     this.description = String(options.description);
-    this.status= Number(options.status);
-    this.requestedDate = String(options.requestedDate);
     this.attachment = options.attachment;
     this.notificationEmail = String(options.notificationEmail);
     this.notificationPhone = String(options.notificationPhone);
