@@ -103,7 +103,6 @@ export class WorkOrdersService {
       .map((question: QuestionBase) => {
         return [].concat(question);
       });
-      debugger;
     questions[2].push(this._toWorkOrderListCustomType(workOrderDetails))
     questions[6].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
     return this._questionsService.splitByPages(flat(questions));
@@ -166,7 +165,6 @@ export class WorkOrdersService {
     const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
     let phoneNumber, description, email, location, notifyByEmail = '';
     let type = 0;
-      debugger;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
