@@ -53,7 +53,7 @@ export class StDateTimePickerComponent implements OnInit {
 
   async openPicker(): Promise<void> {
     const confirm = await this.contentStrings.buttonConfirm.pipe(take(1)).toPromise();
-    const cancel = await this.contentStrings.buttonCancel.pipe(take(1)).toPromise();
+    const back = await this.contentStrings.buttonBack.pipe(take(1)).toPromise();
     const title = await this.contentStrings.labelSelectTime.pipe(take(1)).toPromise();
     this.monthArray = await this.contentStringsFacadeService
       .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
@@ -67,10 +67,10 @@ export class StDateTimePickerComponent implements OnInit {
     const picker: HTMLIonPickerElement = await this.pickerController.create({
       columns: this.createColumns(),
       mode: 'ios',
-      cssClass: 'picker-time-picker',
+      cssClass: 'picker-time-picker order-options-action-sheet order-options-action-sheet-p-d',
       buttons: [
-        { text: cancel, role: 'cancel' },
-        { text: title, role: 'title' },
+        { text: back, role: 'cancel', cssClass: 'ios-arrow-back' },
+        { text: title, role: 'title', cssClass: 'picker-title' },
         { text: confirm, handler: this.pickerClickHandler.bind(this) },
       ],
     });
@@ -93,6 +93,11 @@ export class StDateTimePickerComponent implements OnInit {
     this.picker = picker;
     await this.updateAsapOption();
     await picker.present();
+
+    setTimeout(() => {
+      const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
+      if (pageTitle) pageTitle.focus();
+    }, TIMEOUTS.A11yFocus);
   }
 
   private pickerClickHandler(dateInfo: any) {
@@ -103,14 +108,12 @@ export class StDateTimePickerComponent implements OnInit {
       dateValue = 'ASAP';
     } else {
       let [hours, mins] = value.split(':');
-      let [minutes, period=''] = mins.split(' ');
-      hours = period.includes("PM") && +hours != 12 && +hours + 12 || +hours;
-      hours = period.includes("AM") && +hours == 12 ? 0 : hours;
+      let [minutes, period = ''] = mins.split(' ');
+      hours = (period.includes('PM') && +hours != 12 && +hours + 12) || +hours;
+      hours = period.includes('AM') && +hours == 12 ? 0 : hours;
       timeStamp = this.getTimeStamp(date.value, +hours, minutes);
       dateValue = new Date(timeStamp);
-      this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(
-        timeStamp, 
-        this.merchantInfo.timeZone)
+      this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(timeStamp, this.merchantInfo.timeZone);
     }
     this.dateTimePicker = dateValue;
     this.onTimeSelected.emit({ dateTimePicker: this.dateTimePicker, timeStamp });
@@ -220,9 +223,7 @@ export class StDateTimePickerComponent implements OnInit {
     this.contentStrings.buttonConfirm = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonConfirm
     );
-    this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.buttonCancel
-    );
+    this.contentStrings.buttonBack = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
     this.contentStrings.labelAsap = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAsap);
     this.contentStrings.labelSelectTime = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelSelectTime
@@ -250,3 +251,7 @@ interface TimeInfo {
   currentIdx: number;
   maxValue: boolean;
 }
+
+const TIMEOUTS = {
+  A11yFocus: 1000,
+};
