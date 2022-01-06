@@ -26,6 +26,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { Capacitor } from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
+import { ToastService } from '../toast/toast.service';
 
 export class VaultSessionData implements DefaultSession {
   token: string; /// unused
@@ -53,7 +54,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    private readonly toastService: ToastService
   ) {
     // TODO: hideScreenOnBackground hangs promises on permissions prompt.
     // if this is needed have to find a fix/workaround.
@@ -237,7 +239,17 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       .pipe(
         switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)),
         take(1),
-        catchError(err => of(err)),
+        catchError(err => {
+          const timeOutError = /Timeout has occurred/;
+          if (timeOutError.test(err.message)) {
+            this.logoutUser();
+            this.ngZone.run(async () => {
+              this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login], { replaceUrl: true })
+                .then(() => this.toastService.showToast({ position: 'top', message: `${err.message}`, duration: 6000 }));
+            });
+          }
+          return of(err);
+        }),
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
@@ -308,7 +320,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   setIsLocked(lock: boolean = true) {
     this.isLocked = lock;
   }
-  
+
   getIsLocked() {
     return this.isLocked;
   }
