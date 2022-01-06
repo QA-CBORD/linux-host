@@ -20,6 +20,7 @@ import { WaitingListDetails, WaitingListDetailsRequest } from '../waiting-lists/
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
+import { QuestionDropdown } from '../questions/types/question-dropdown';
 
 @Injectable({
   providedIn: 'root',
@@ -96,15 +97,35 @@ export class WorkOrdersService {
     );
   }
 
-  private _getQuestionsPages(workOrderListDetails: WorkOrderDetails): QuestionBase[][] {
+  private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
     const questions: QuestionBase[][] = this._questionsService
-      .getQuestions(workOrderListDetails.formDefinition.applicationFormJson)
+      .getQuestions(workOrderDetails.formDefinition.applicationFormJson)
       .map((question: QuestionBase) => {
         return [].concat(question);
       });
-    //TODO: add question upload image
+      debugger;
+    questions[2].push(this._toWorkOrderListCustomType(workOrderDetails))
     questions[6].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
     return this._questionsService.splitByPages(flat(questions));
+  }
+
+  private _toWorkOrderListCustomType(workOrderDetails: WorkOrderDetails){
+    let values = [];
+    values = workOrderDetails.workOrderTypes.map((v) => {
+      return {
+        label: v.name,
+        value: v.key
+      }
+    });
+    return new QuestionDropdown({
+      label: 'Type',
+      name: `work-order-type-selection`,
+      values: values,
+      required: true,
+      readonly: false,
+      type: 'select',
+      dataType: 'String',
+    });
   }
 
   private _toFormControl(
@@ -142,7 +163,7 @@ export class WorkOrdersService {
     const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
     let phoneNumber, description, email, location, notifyByEmail = '';
     let type = 0;
-
+      debugger;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
@@ -161,7 +182,7 @@ export class WorkOrdersService {
           case "NOTIFY_BY_EMAIL":
             notifyByEmail = resultFormValue;
             break;
-          case "TYPE":
+          case "work-order-type-selection":
             type = resultFormValue;
             break;
         }

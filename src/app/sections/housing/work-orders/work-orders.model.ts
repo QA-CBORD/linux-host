@@ -77,11 +77,30 @@ export interface WorkOrderDetailsOptions {
   workOrderKey: number,
   workOrders: WorkOrdersDetailsList,
   formDefinition: FormDefinitionOptions,
+  workOrderTypes: workOrderTypesOptions[]
+}
+
+export interface workOrderTypesOptions{
+  key: number,
+  name: string
+}
+
+export class workOrderTypes implements workOrderTypesOptions{
+  key: number;
+  name: string;
+  constructor(options: workOrderTypesOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as workOrderTypesOptions;
+    }
+    this.key = Number(options.key)
+    this.name = String(options.name);
+  }
 }
 export class WorkOrderDetails implements WorkOrderDetailsOptions{
   workOrderKey: number;
   workOrders: WorkOrdersDetailsList;
   formDefinition: FormDefinitionOptions;
+  workOrderTypes: workOrderTypes[];
   constructor(options: WorkOrderDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrderDetailsOptions;
@@ -89,6 +108,9 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
     this.workOrderKey = Number(options.workOrderKey)
     this.workOrders = options.workOrders;
     this.formDefinition = options.formDefinition;
+    this.workOrderTypes = Array.isArray(options.workOrderTypes)
+    ? options.workOrderTypes.map((detail: any) => new workOrderTypes(detail))
+    : [];
   }
 
 }

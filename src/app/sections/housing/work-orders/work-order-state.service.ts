@@ -14,6 +14,7 @@ export class WorkOrderStateService  {
     workOrderKey: 0,
     workOrders: null,
     formDefinition: null,
+    workOrderTypes: null,
     });
   private readonly _defaultStateFormDetails = new FormDefinition ({
     id: 0,
