@@ -98,33 +98,42 @@ export class WorkOrdersService {
   }
 
   private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-    const questions: QuestionBase[][] = this._questionsService
-      .getQuestions(workOrderDetails.formDefinition.applicationFormJson)
+    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson)
       .map((question: QuestionBase) => {
-        return [].concat(question);
+        const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
+        return [].concat(mappedQuestion);
       });
-    questions[2].push(this._toWorkOrderListCustomType(workOrderDetails))
+      debugger;
     questions[6].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
     return this._questionsService.splitByPages(flat(questions));
   }
 
-  private _toWorkOrderListCustomType(workOrderDetails: WorkOrderDetails){
+  private _toWorkOrderListCustomType(question: any, workOrderDetails: WorkOrderDetails){
     let values = [];
-    values = workOrderDetails.workOrderTypes.map((v) => {
+
+    if(question.workOrderFieldKey === 'TYPE'){
+      values = workOrderDetails.workOrderTypes.map((v) => {
+        return {
+          label: v.name,
+          value: v.key
+        }
+      });
       return {
-        label: v.name,
-        value: v.key
-      }
-    });
-    return new QuestionDropdown({
-      label: 'Type',
-      name: `work-order-type-selection`,
-      values: values,
-      required: true,
-      readonly: false,
-      type: 'select',
-      dataType: 'String',
-    });
+        label: question.label,
+        name: question.name,
+        values: values,
+        required: question.requiered,
+        source: question.source,
+        readonly: false,
+        type: 'select',
+        dataType: 'String',
+        workOrderField: true,
+        workOrderFieldKey: question.workOrderFieldKey,
+      };
+    }else {
+      return question;
+    }
+    
   }
 
   private _toFormControl(
@@ -163,7 +172,8 @@ export class WorkOrdersService {
     const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
 
     const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
-    let phoneNumber, description, email, location, notifyByEmail = '';
+    let phoneNumber, description, email, location = '';
+    let notifyByEmail;
     let type = 0;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
@@ -183,7 +193,7 @@ export class WorkOrdersService {
           case "NOTIFY_BY_EMAIL":
             notifyByEmail = resultFormValue;
             break;
-          case "work-order-type-selection":
+          case "TYPE":
             type = resultFormValue;
             break;
         }
@@ -199,7 +209,7 @@ export class WorkOrdersService {
       notificationEmail: email,
       // attachment: new ImageData(),
       facilityKey:123,
-      notify: true,
+      notify: notifyByEmail,
     });
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
