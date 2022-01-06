@@ -141,6 +141,9 @@ export class WorkOrdersService {
     if (question.required) {
       validators.push(Validators.required);
     }
+    if(question.label === 'Description'){
+      validators.push(Validators.maxLength(250))
+    }
 
     if (question instanceof QuestionTextbox) {
       this._questionsService.addDataTypeValidator(question, validators);
