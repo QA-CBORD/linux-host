@@ -103,7 +103,6 @@ export class WorkOrdersService {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
         return [].concat(mappedQuestion);
       });
-      debugger;
     questions[6].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
     return this._questionsService.splitByPages(flat(questions));
   }

@@ -1,17 +1,20 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
 import { QuestionHeader } from './questions.model';
-import { ApplicationsService } from '../applications/applications.service';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
-import { RequestedRoommateRequest, RequestedRoommate, RequestedRoommateResponse } from '../applications/applications.model';
-import { LoadingService } from '../../../core/service/loading/loading.service';
-import { HousingService } from '../housing.service';
+import { RequestedRoommate } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { Observable, throwError, Subscription } from 'rxjs';
-import { tap, catchError, map } from 'rxjs/operators';
+import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { ActionSheetController } from '@ionic/angular';
+import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
 
+import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
+import { ToastService } from '../../../core/service/toast/toast.service';
+
+const { Camera } = Plugins;
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -21,9 +24,10 @@ import { tap, catchError, map } from 'rxjs/operators';
 export class QuestionComponent implements OnInit, OnDestroy {
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
-    private _loadingService: LoadingService,
-    private _housingService: HousingService,
-    private _termService: TermsService
+    private _termService: TermsService,
+    private readonly actionSheetCtrl: ActionSheetController,
+    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly toastService: ToastService
     ) {}
   
   ngOnDestroy(): void {
@@ -46,6 +50,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() parentGroup: FormGroup;
 
   @Input() isSubmitted: boolean;
+
+  public image$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   requestedRoommates$: Observable<RequestedRoommate[]>;
   roommateSearchOptions$: any;
@@ -94,4 +100,81 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this._termService.termId$.subscribe(termId => this.selectedTermKey = termId));
   }
 
+  async presentPhotoTypeSelection() {
+    const photoSourceAS = await this.actionSheetCtrl.create({
+      keyboardClose: true,
+      backdropDismiss: true,
+      buttons: [
+        {
+          text: 'Take photo',
+          role: 'take-photo',
+          icon: '/assets/icon/camera-outline.svg',
+        },
+        {
+          text: 'Choose existing photo',
+          role: 'select-photo',
+          icon: '/assets/icon/select-photo.svg',
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+        },
+      ],
+    });
+
+    await photoSourceAS.present();
+
+    let cameraSource: CameraSource = null;
+
+    await photoSourceAS.onWillDismiss().then(result => {
+      if (result.role === 'take-photo') {
+        cameraSource = CameraSource.Camera;
+      } else if (result.role === 'select-photo') {
+        cameraSource = CameraSource.Photos;
+      }
+    });
+
+    if (!cameraSource) {
+      return;
+    }
+    this.onGetPhoto(cameraSource);
+  }
+  onGetPhoto(cameraSource: CameraSource) {
+    this.getPhoto(cameraSource)
+      .pipe(take(1))
+      .subscribe(
+        response => {
+          //IMAGEBASE64
+          this.image$.next(response.dataUrl)
+          console.log(response)
+        },
+        error => {
+          this.presentToast('There was an issue with the picture. Please, try again.');
+        },
+        () => {}
+      );
+  }
+
+    /// Camera plugin control
+    private getPhoto(cameraSource: CameraSource): Observable<CameraPhoto> {
+      // const uploadSettings = this.photoUploadService.photoUploadSettings;
+      /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
+      this.sessionFacadeService.navigatedToPlugin = true;
+      return from(
+        Camera.getPhoto({
+          quality: 100,
+          correctOrientation: true,
+          preserveAspectRatio: true,
+
+          direction: CameraDirection.Rear,
+          resultType: CameraResultType.DataUrl,
+          source: cameraSource,
+          saveToGallery: false,
+        })
+      );
+    }
+    private async presentToast(message: string) {
+      await this.toastService.showToast({ message, duration: 5000 });
+    }
 }
