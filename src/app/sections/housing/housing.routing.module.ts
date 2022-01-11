@@ -31,7 +31,7 @@ const routes: Routes = [
         loadChildren: './pages/non-assignments-details/non-assignments-details.module#NonAssignmentsDetailsModule',
       },
       {
-        path: `${LOCAL_ROUTING.workOrders}/:workOrderId`,
+        path: `${LOCAL_ROUTING.workOrders}/:termKey/:workOrderKey`,
         loadChildren: './pages/work-order-details/work-order-details.module#WorkOrderDetailsPageModule',
       },
       {

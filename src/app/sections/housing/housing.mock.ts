@@ -9,18 +9,23 @@ import { generateNonAssignmentDetails, generateNonAssignmentsList } from './non-
 import { generateWaitingList } from '@sections/housing/waiting-lists/waiting-list.mocks';
 import { WaitingListDetails, WaitingList } from './waiting-lists/waiting-lists.model';
 import { generateWaitingListDetails } from './waiting-lists/waiting-list.mocks';
+import { WorkOrder, WorkOrderDetails } from './work-orders/work-orders.model';
+import { generateWorkOrders, generateWorkOrdersDetails } from './work-orders/work-orders.mock';
+
 
 export function generateDefinitionsResponse(): DefinitionsResponse {
   const applicationDefinitions: ApplicationDetails[] = generateApplications();
   const contractDetails: ContractListDetails[] = generateContractsList();
   const nonAssignmentDetails: NonAssignmentListDetails[] = generateNonAssignmentsList();
   const waitingLists: WaitingList[] = generateWaitingList();
+  const workOrders: WorkOrder= generateWorkOrders();
 
   return new DefinitionsResponse({
     applicationDefinitions,
     contractDetails,
     nonAssignmentDetails,
-    waitingLists
+    waitingLists,
+    workOrders
   });
 }
 
@@ -29,11 +34,13 @@ export function generateDetailsResponse(key: number): DetailsResponse {
   const contractDetails: ContractDetails = generateContractDetails(key);
   const nonAssignmentDetails: NonAssignmentDetails = generateNonAssignmentDetails(key);
   const waitingListDetails: WaitingListDetails = generateWaitingListDetails(key);
+  const workOrdersDetails: WorkOrderDetails = generateWorkOrdersDetails();
 
   return new DetailsResponse({
     applicationDetails,
     contractDetails,
     nonAssignmentDetails,
-    waitingListDetails
+    waitingListDetails,
+    workOrdersDetails
   });
 }

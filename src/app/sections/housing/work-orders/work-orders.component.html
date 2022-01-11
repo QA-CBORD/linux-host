@@ -1,23 +1,45 @@
-<ion-list>
-  <ion-list-header>
-    <h4>Work Orders</h4>
+<section *ngIf="(_workOrderStateService.workOrder$ | async) as workOrderLists">
+  <ion-list *ngIf="workOrderLists.canSubmit" 
+    class="ion-no-margin bg-transparent">
+    <ion-grid >
+      <ion-row class="container-header-work-order">
+        <div class="col-work-order ion-no-padding">
+            <h2 class="form__secondary-header">WORK ORDERS</h2>
+        </div>
+        <div class="col-work-order ion-no-padding ion-no-margin">
+            <h2 class="form__secondary-header create-btn" (click)="createWorkOrder()" [routerLink]="createWorkOrderDefault()">+</h2>
+        </div>
 
-    <ion-button
-      class="button-clear"
-      style="margin: 0px; margin-top: 5px; padding: 0px; font-size: 13px; font-weight: normal"
-    >
-      <ion-label class="ion-text-capitalize">View All</ion-label>
-      <ion-icon class="float-right" slot="end" name="arrow-dropright"></ion-icon>
-    </ion-button>
-  </ion-list-header>
+      </ion-row>
+      
+    </ion-grid>
 
-  <ion-item
-    *ngFor="let workOrder of workOrders; trackBy: trackById"
-    [routerLink]="['/housing/work-orders', workOrder.id]"
-    routerDirection="forward"
-    detail
-  >
-    <ion-label>Work Order {{ workOrder.id }}</ion-label>
-    <ion-icon slot="start" name="construct"></ion-icon>
-  </ion-item>
-</ion-list>
+    <!-- TODO: Add plus button  -->
+    <ng-container>
+      <!-- <div #container *ngFor="let waitingList of waitingLists">
+        <ion-item lines="none" class="waiting-list__item">
+          <ion-label class="waiting-list__wrap">
+            <div class="waiting-list__info">
+              <h5 class="waiting-list__status">{{ getStatus(waitingList.patronWaitingListKey) }}</h5>
+              <div class="waiting-list__date" *ngIf="waitingList?.patronWaitingListKey">
+                Submitted {{ waitingList?.dateAdded | date: 'MM/dd/yyyy' }}
+              </div>
+            </div>
+        
+            <h2 class="waiting-list__title">{{ waitingList.formName }}</h2>
+          </ion-label>
+
+          <st-actions
+            [path]="urlEditForm+waitingList?.waitListKey"
+            [edit]="!waitingList?.patronWaitingListKey"
+            [showEdit]="!waitingList?.patronWaitingListKey"
+            [showView]="waitingList?.patronWaitingListKey"
+            [showRemove]="true"
+            [key]="waitingList?.patronWaitingListKey"
+            (remove)="removePatronWaitingList(waitingList)">
+          </st-actions>
+        </ion-item>
+      </div> -->
+    </ng-container>
+  </ion-list>
+</section>

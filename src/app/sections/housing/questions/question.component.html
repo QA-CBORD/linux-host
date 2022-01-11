@@ -1,5 +1,18 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
+    <ng-container *ngSwitchCase="'image-upload'" class="question__section">
+      <h3 class="form__secondary-header">Upload a photo</h3>
+      <div class="container__image">
+        <ng-container *ngIf="(image$ | async) as image; else defaultImage" witdh="95%" heigth=95% >
+          <ion-img class="image" [(src)]="image"></ion-img>
+        </ng-container>
+        <ng-template #defaultImage >
+          <div class="label"> New photo</div>
+          <div class="icon"></div>
+        </ng-template>
+      </div>
+      <ion-button color="light" class="btn__image" (click)="presentPhotoTypeSelection()">Choose image</ion-button>
+    </ng-container>
     <ng-container *ngSwitchCase="'header'">
       <div [innerHTML]="createHeader($any(question))"></div>
     </ng-container>
