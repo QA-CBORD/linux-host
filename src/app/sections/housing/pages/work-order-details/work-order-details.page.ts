@@ -39,7 +39,6 @@ import { NonAssignmentsStateService } from '@sections/housing/non-assignments/no
 import { FormGroup } from '@angular/forms';
 import { WorkOrderDetails } from '../../work-orders/work-orders.model';
 import { WorkOrdersService } from '../../work-orders/work-orders.service';
-import { WorkOrderStateService } from '../../work-orders/work-order-state.service';
 @Component({
   selector: 'st-work-order-details',
   templateUrl: './work-order-details.page.html',
@@ -47,13 +46,6 @@ import { WorkOrderStateService } from '../../work-orders/work-order-state.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkOrderDetailsPage implements OnInit, OnDestroy {
-  // constructor(private _route: ActivatedRoute) {}
-
-  // workOrderId: number;
-
-  // ngOnInit() {
-  //   this.workOrderId = parseInt(this._route.snapshot.paramMap.get('workOrderId'), 10);
-  // }
   @ViewChild('content') private content: any;
   @ViewChild(StepperComponent) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -81,12 +73,10 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
-    private _workOrderStateService: WorkOrderStateService,
     private _termsService: TermsService
   ) { }
 
   ngOnInit(): void {
-    console.log(isMobile(this._platform));
     if (isMobile(this._platform)) {
       this.subscriptions = this._platform.pause.subscribe(x => {
         this.activeAlerts.forEach(alert => {
@@ -97,7 +87,6 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     }
     this.workOrderKey = parseInt(this._route.snapshot.paramMap.get('workOrderKey'), 10);
     this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
-    console.log("work order key ",this.workOrderKey,this.termKey)
     this._initWorkOrderDetailsObservable();
     this._initPagesObservable();
     this._initTermSubscription();
@@ -131,13 +120,11 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
 
   private _initWorkOrderDetailsObservable(): void {
     this._loadingService.showSpinner();
-    //TODO: Url query details
-    const queryParams: string[] = [`formTypeKey=${FormTypes.WORK_ORDERS}`];
 
     this.workOrderDetails$ = this._housingService.getWorkOrders(this.termKey,this.workOrderKey)
       .pipe(
         tap((workOrderDetails: WorkOrderDetails) => {
-          this.isSubmitted = false; //!!nonAssignmentDetails.nonAssignmentInfo.dateTimeSigned;
+          this.isSubmitted = false; 
           this._loadingService.closeSpinner();
         }),
         catchError((error: any) => {
@@ -190,13 +177,12 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
 
-            const createContractSubscription =
+            const createWorkOrderSubscription =
               this._workOrderService.submitWorkOrder(
                 workOrderDetails,
                 formValue)
                 .subscribe(status => {
                   if (status) {
-                    // redirect to housing dashboard (terms page)
                     alert.dismiss().then(() => this._housingService.handleSuccess());
                   } else {
                     alert.dismiss().then(() => {
@@ -209,7 +195,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
                   }
                 });
 
-            this.subscriptions.add(createContractSubscription);
+            this.subscriptions.add(createWorkOrderSubscription);
           },
         },
       ],

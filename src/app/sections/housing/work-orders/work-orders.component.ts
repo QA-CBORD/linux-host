@@ -4,9 +4,6 @@ import { Subscription } from 'rxjs';
 import { WorkOrdersService } from './work-orders.service';
 
 import { WorkOrder } from './work-orders.model';
-import { Platform } from '@ionic/angular';
-import { LoadingService } from 'src/app/core/service/loading/loading.service';
-import { HousingService } from '../housing.service';
 import { ROLES } from '../../../app.global';
 import { WorkOrderStateService } from './work-order-state.service';
 import { TermsService } from '../terms/terms.service';
@@ -23,9 +20,6 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   private selectedTermKey: number = 0;
 
   constructor(private _workOrdersService: WorkOrdersService,
-    private _platform: Platform,
-    private _loadingService: LoadingService,
-    private _housingService: HousingService,
     public _workOrderStateService: WorkOrderStateService,
     private _termService : TermsService
     ) {}
@@ -55,22 +49,16 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
 
     return 'New';
   }
-// TODO: Create form send 0 to API
-  createButtonForm(){
-    //urlToAPI
-  }
   
   createWorkOrderDefault(): string {
     return `/patron/housing/work-orders/${this.selectedTermKey}/-1`;
   }
 
   createWorkOrder(termKey: number, workOrderKey: number): string {
-    //TODO: WRITE TERMKEY, WORKORDERKEY
     return `/patron/housing/work-orders/${this.selectedTermKey}/${workOrderKey}`;
   }
 
   getWorkOrder(termKey:number,workOrderKey:number){
-    //TODO: view workOrderDetails
-    return `/patron/housing/work-orders/${this.selectedTermKey}/252`;
+    return `/patron/housing/work-orders/${this.selectedTermKey}/${workOrderKey}`;
   }
 }

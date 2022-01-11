@@ -3,24 +3,22 @@ import { EnvironmentFacadeService } from "@core/facades/environment/environment.
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, withLatestFrom } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
-import { QuestionsStorageService, QuestionsEntries, StoredApplication } from '../questions/questions-storage.service';
+import { QuestionsStorageService, QuestionsEntries } from '../questions/questions-storage.service';
 import { QuestionBase } from '../questions/types/question-base';
 import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { HttpParams } from "@angular/common/http";
-import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, FormDefinition, ImageData } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WaitingListStateService } from '../waiting-lists/waiting-list-state.service';
-import { WaitingListDetails, WaitingListDetailsRequest } from '../waiting-lists/waiting-lists.model';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
-import { QuestionDropdown } from '../questions/types/question-dropdown';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +26,6 @@ import { QuestionDropdown } from '../questions/types/question-dropdown';
 export class WorkOrdersService {
   private workOrderListUrl = `${this._environment.getHousingAPIURL()
     }/patron-applications/v.1.0/work-orders`;
-  private index = 1;
   workOrders: WorkOrder = generateWorkOrders(5);
 
   constructor(
@@ -62,11 +59,6 @@ export class WorkOrdersService {
       withLatestFrom(this._workOrderStateService.workOrderDetails),
       map(([storedQuestions, workOrderDetails]: [QuestionsEntries, WorkOrderDetails]) => {
         const pages: QuestionBase[][] = this._getQuestionsPages(workOrderDetails);
-
-        // const patronApplication: PatronApplication = workOrderDetails.patronApplication;
-        // const status: ApplicationStatus = patronApplication && patronApplication.status;
-        // const isSubmitted = status === ApplicationStatus.Submitted;
-
         return this._getPages(pages, storedQuestions, workOrderDetails);
       })
     );
@@ -103,7 +95,10 @@ export class WorkOrdersService {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
         return [].concat(mappedQuestion);
       });
-    questions[6].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
+      let position = questions.length == 1? questions.length : questions.length/2;
+    if(position){
+      questions[position].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
+    }
     return this._questionsService.splitByPages(flat(questions));
   }
 
@@ -178,22 +173,22 @@ export class WorkOrdersService {
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
-          case "CONTACT_PHONE_NUMBER":
+          case WorkOrdersFields.PHONE_NUMBER:
             phoneNumber = resultFormValue;
             break;
-          case "DESCRIPTION":
+          case WorkOrdersFields.DESCRIPTION:
             description = resultFormValue;
             break;
-          case "EMAIL":
+          case WorkOrdersFields.EMAIL:
             email = resultFormValue;
             break;
-          case "LOCATION":
+          case WorkOrdersFields.LOCATION:
             location = resultFormValue;
             break;
-          case "NOTIFY_BY_EMAIL":
+          case WorkOrdersFields.NOTIFY_BY_EMAIL:
             notifyByEmail = resultFormValue;
             break;
-          case "TYPE":
+          case WorkOrdersFields.TYPE:
             type = resultFormValue;
             break;
         }

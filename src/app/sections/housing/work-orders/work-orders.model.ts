@@ -1,5 +1,13 @@
 import { isDefined } from '../utils';
 
+export enum WorkOrdersFields {
+  DESCRIPTION = "DESCRIPTION",
+  TYPE = "TYPE",
+  NOTIFY_BY_EMAIL = "NOTIFY_BY_EMAIL",
+  LOCATION= "LOCATION",
+  PHONE_NUMBER = "PHONE_NUMBER",
+  EMAIL = "EMAIL"
+}
 
 export interface ImageDataOptions {
   comments: string;
