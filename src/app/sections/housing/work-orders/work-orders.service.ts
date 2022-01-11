@@ -38,7 +38,7 @@ export class WorkOrdersService {
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
     private _housingProxyService: HousingProxyService,
-    private _workOrderStateService: WorkOrderStateService) { }
+    private _workOrderStateService: WorkOrderStateService,) { }
 
   getWorkOrders(): Observable<WorkOrder> {
     return of(this.workOrders);
@@ -174,6 +174,7 @@ export class WorkOrdersService {
     let phoneNumber, description, email, location = '';
     let notifyByEmail;
     let type = 0;
+    let image : ImageData;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
@@ -200,13 +201,13 @@ export class WorkOrdersService {
 
     })
 
-
+    this._workOrderStateService.workOrderImage$.subscribe(res=> image = res)
     const body = new WorkOrdersDetailsList({
       notificationPhone: phoneNumber, 
       typeKey: type,
       description: description,
       notificationEmail: email,
-      // attachment: new ImageData(),
+      attachment: new ImageData(image),
       facilityKey:123,
       notify: notifyByEmail,
     });

@@ -13,6 +13,8 @@ import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins }
 
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
+import { WorkOrderStateService } from '../work-orders/work-order-state.service';
+import { Response } from '../housing.model';
 
 const { Camera } = Plugins;
 @Component({
@@ -27,7 +29,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private _termService: TermsService,
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly _workOrderStateService: WorkOrderStateService,
     ) {}
   
   ngOnDestroy(): void {
@@ -68,6 +71,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     integer: 'This field should be integer',
     string: 'This field should be string',
   };
+
+  date = new Date();
 
   createHeader(question: QuestionHeader): string {
     const headerWeight: number = parseInt(question.subtype, 10);
@@ -147,7 +152,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
         response => {
           //IMAGEBASE64
           this.image$.next(response.dataUrl)
-          console.log(response)
+          this._workOrderStateService.setWorkOrderImage({
+            comments:"",contents:response.dataUrl,
+            filename:"work-order"+Date.now()+-''+'.'+response.format,
+            studentSubmitted:true
+          })
         },
         error => {
           this.presentToast('There was an issue with the picture. Please, try again.');

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, FormDefinition } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, FormDefinition, ImageData } from './work-orders.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +33,7 @@ export class WorkOrderStateService  {
   public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
   public workOrder: BehaviorSubject<WorkOrder> = new BehaviorSubject<WorkOrder>(this._defaultState);
   public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
+  public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null)
   constructor() {
    
   }
@@ -46,6 +47,12 @@ export class WorkOrderStateService  {
   }
   setWorkOrderFormDetails(workOrderFormDetails: FormDefinition){
     this.workOrderFormDetails.next(workOrderFormDetails);
+  }
+  setWorkOrderImage(imageData: ImageData){
+    this.workOrderImage.next(imageData);
+  }
+  get workOrderImage$(){
+    return this.workOrderImage;
   }
 
   get workOrder$(){
