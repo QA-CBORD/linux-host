@@ -153,7 +153,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
           //IMAGEBASE64
           this.image$.next(response.dataUrl)
           this._workOrderStateService.setWorkOrderImage({
-            comments:"",contents:response.dataUrl,
+            comments:"",
+            contents:btoa(response.dataUrl),
             filename:"work-order"+Date.now()+-''+'.'+response.format,
             studentSubmitted:true
           })

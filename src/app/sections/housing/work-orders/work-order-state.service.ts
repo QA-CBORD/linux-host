@@ -45,12 +45,15 @@ export class WorkOrderStateService  {
   setWorkOrderDetails(workOrderDetails: WorkOrderDetails){
     this.workOrderDetails.next(workOrderDetails);
   }
+
   setWorkOrderFormDetails(workOrderFormDetails: FormDefinition){
     this.workOrderFormDetails.next(workOrderFormDetails);
   }
+
   setWorkOrderImage(imageData: ImageData){
     this.workOrderImage.next(imageData);
   }
+
   get workOrderImage$(){
     return this.workOrderImage;
   }
