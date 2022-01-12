@@ -39,6 +39,10 @@ export interface WorkOrdersDetailsListOptions {
   notificationEmail: string;
   notificationPhone: string;
   notify: boolean;
+  requestedDate?: string;
+  status?: string;
+  statusKey?: number;
+  type?: string;
 }
 export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
   attachment?: ImageData;
@@ -48,6 +52,10 @@ export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
   notify: boolean;
   typeKey: number;
   description: string;
+  requestedDate?: string;
+  status?: string;
+  statusKey?: number;
+  type?: string;
   constructor(options: WorkOrdersDetailsListOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrdersDetailsListOptions;
@@ -59,7 +67,10 @@ export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
     this.notificationPhone = String(options.notificationPhone);
     this.notify = Boolean(options.notify);
     this.facilityKey = Number(options.facilityKey);
-
+    this.requestedDate = String(options.requestedDate);
+    this.status = String(options.status);
+    this.statusKey = Number(options.statusKey);
+    this.type = String(options.type);
   }
 }
 export interface WorkOrderOptions {
