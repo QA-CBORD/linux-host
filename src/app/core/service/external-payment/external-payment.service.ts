@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { take } from 'rxjs/operators';
-import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -9,19 +9,19 @@ import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-respo
 import { Plugins } from '@capacitor/core';
 import { zip } from 'rxjs';
 import { ToastService } from '@core/service/toast/toast.service';
+import { OrderInfo } from '@sections/ordering';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExternalPaymentService {
-
   constructor(
     private inAppBrowser: InAppBrowser,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly toastService: ToastService,
+    private readonly toastService: ToastService
   ) {}
 
   /* USAePay */
@@ -52,7 +52,7 @@ export class ExternalPaymentService {
   /* Apple Pay */
   /* Safari browser is required by Aople to use Apple Pay */
 
-  async payWithApplePay(handleApplePay: ApplePay, queryParams: Object): Promise<any> {
+  async payWithApplePay(handleApplePay: ApplePay, queryParams: Partial<OrderInfo> | DepositInfo): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
       const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
@@ -64,16 +64,21 @@ export class ExternalPaymentService {
           reject({ success: false, errorMessage: `The request failed: ${error}` });
         }
       );
-        this.handleApplePayResponse(resolve, reject);
+      this.handleApplePayResponse(resolve, reject);
     });
   }
 
-  private async openApplePayPage(queryParams: Object, handleApplePay: ApplePay, authToken: string, shortName: string) {
-    let fullURL = this.getApplePayURL(queryParams, handleApplePay, authToken, shortName);
-    await Browser.open({ url: `${fullURL}` });
+  private async openApplePayPage(
+    queryParams: Partial<OrderInfo> | DepositInfo,
+    handleApplePay: ApplePay,
+    authToken: string,
+    shortName: string
+  ) {
+    const url = this.buildApplePayURL(queryParams, handleApplePay, authToken, shortName);
+    await Browser.open({ url });
   }
 
-  private openUSAePayPage(authToken: string, shortName: string) {
+  private openUSAePayPage(authToken: string, shortName: string): InAppBrowserObject {
     const target = '_blank';
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/add_card_mobile.php?session_token=${authToken}`;
     const options: InAppBrowserOptions = {
@@ -84,24 +89,32 @@ export class ExternalPaymentService {
       hidenavigationbuttons: 'yes',
       toolbarcolor: '#ffffff',
     };
-    const browser = this.inAppBrowser.create(url, target, options);
-    return browser;
+    return this.inAppBrowser.create(url, target, options);
   }
 
-  private getApplePayURL(queryParams: Object, handleApplePay: ApplePay, authToken: string, shortName: string) {
-    let fullURL = '';
-    const params = JSON.parse(JSON.stringify(queryParams));
+  private buildApplePayURL(
+    queryParams: Partial<OrderInfo> | DepositInfo,
+    handleApplePay: ApplePay,
+    authToken: string,
+    shortName: string
+  ): string {
     const applePayBaseURL = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/applepay.php?`;
-    if (handleApplePay === ApplePay.ORDERS_WITH_APPLE_PAY) {
-      fullURL = `${applePayBaseURL}order_total=${params.total || ''}&session_token=${authToken ||
-        ''}&sub_total=${params.subTotal || ''}&fee=${params.useFee || ''}&tax=${params.tax ||
-        '0.00'}&discount=${params.discount || '0.00'}&pickup_fee=${params.pickupFee ||
-        ''}&delivery_fee=${params.deliveryFee || ''}&tip=${params.tip || ''}`;
-    } else if (handleApplePay === ApplePay.DEPOSITS_WITH_APPLE_PAY) {
-      fullURL = `${applePayBaseURL}amount=${params.depositAmount || ''}&select_account=${params.accountId ||
-        ''}&session_token=${authToken || ''}`;
+    switch (handleApplePay) {
+      case ApplePay.ORDERS_WITH_APPLE_PAY: {
+        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <Partial<OrderInfo>>queryParams;
+        return `${applePayBaseURL}order_total=${total || ''}&session_token=${authToken || ''}&sub_total=${subTotal ||
+          ''}&fee=${useFee || ''}&tax=${tax || '0.00'}&discount=${discount || '0.00'}&pickup_fee=${pickupFee ||
+          ''}&delivery_fee=${deliveryFee || ''}&tip=${tip || ''}&merchantId=${merchantId || ''}`;
+      }
+      case ApplePay.DEPOSITS_WITH_APPLE_PAY: {
+        const { depositAmount, accountId } = <DepositInfo>queryParams;
+        return `${applePayBaseURL}amount=${depositAmount || ''}&select_account=${accountId ||
+          ''}&session_token=${authToken || ''}`;
+      }
+      default: {
+        return '';
+      }
     }
-    return fullURL;
   }
 
   private handleUSAePayResponse(
@@ -134,7 +147,7 @@ export class ExternalPaymentService {
           const amount = new URLSearchParams(info.url).get('amount') || '';
           resolve(<ApplePayResponse>{
             success: true,
-            amount: amount, 
+            amount: amount,
             selectedAccount: { accountDisplayName: accountName },
             accountId: accountId,
             sourceAcc: { accountTender: 'Apple Pay' },
@@ -147,11 +160,15 @@ export class ExternalPaymentService {
       }
       await Browser.close().then(() => {
         applePayEvent.remove();
-      })
+      });
     });
   }
 
   private async onUSAePayCallBackRetrieve(message: string) {
     await this.toastService.showToast({ message });
   }
+}
+export interface DepositInfo {
+  depositAmount: number;
+  accountId: number;
 }
