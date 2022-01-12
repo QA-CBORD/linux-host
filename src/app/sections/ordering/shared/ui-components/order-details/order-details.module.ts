@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { OrderDetailsComponent } from '@sections/ordering';
 import { IonicModule } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TypeMessagePipe } from './pipes/type-message.pipe';
 import { StDateTimePickerModule } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.module';
 import { DeliveryAddressesModalModule } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.module';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
@@ -18,8 +17,9 @@ import { AccountDisplayPipe } from '@sections/accounts/shared/pipes/account-disp
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.module';
 
-const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe];
+const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
 
 @NgModule({
   declarations,
@@ -35,6 +35,7 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolve
     StTextareaFloatingLabelModule,
     AccessibleSelectModule,
     StInputFloatingLabelModule,
+    TypeMessageModule
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, ModalsService, AccessibilityService],

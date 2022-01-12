@@ -16,6 +16,7 @@ import { CheckinSuccessResolver } from './resolver/check-in-success-resolver.com
 import { CheckinPendingResolver } from './resolver/check-in-pending.resolver';
 import { PickCheckinModeComponent } from './components/pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeBackground } from './components/scan-code/background/scan-code-background.component';
+import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/type-message.pipe.module';
 
 const declarations = [CheckInPendingComponent, PickCheckinModeComponent, CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent, ScanCodeBackground];
 
@@ -32,7 +33,8 @@ const declarations = [CheckInPendingComponent, PickCheckinModeComponent, CheckIn
     IonicModule,
     PriceUnitsResolverModule,
     StButtonModule,
-    CheckinRoutingModule
+    CheckinRoutingModule,
+    TypeMessageModule
   ],
   exports: [declarations],
 })
