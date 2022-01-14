@@ -32,6 +32,7 @@ export class ImageData implements ImageDataOptions {
   }
 }
 export interface WorkOrdersDetailsListOptions {
+  key:number;
   typeKey: number;
   description: string;
   attachment?: ImageData;
@@ -45,6 +46,7 @@ export interface WorkOrdersDetailsListOptions {
   type?: string;
 }
 export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
+  key: number;
   attachment?: ImageData;
   facilityKey: number;
   notificationEmail: string;
@@ -60,6 +62,7 @@ export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrdersDetailsListOptions;
     }
+    this.key = Number(options.key);
     this.typeKey = Number(options.typeKey);
     this.description = String(options.description);
     this.attachment = options.attachment;
