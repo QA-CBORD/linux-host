@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { WorkOrdersService } from './work-orders.service';
 
 import { WorkOrder } from './work-orders.model';
-import { ROLES } from '../../../app.global';
 import { WorkOrderStateService } from './work-order-state.service';
 import { TermsService } from '../terms/terms.service';
 
@@ -31,11 +30,18 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
       .getWorkOrders()
       .subscribe();
 
-      this._subscription.add(
-        this._termService.termId$
-            .subscribe(termId => this.selectedTermKey = termId));
+    this._initTermsSubscription();
     this._subscription.add(workOrdersSubscription);
-    this.urlEditForm = `${ROLES.patron}/housing/waiting-lists/` //TODO: Url workOrders aPI
+  }
+
+  private _initTermsSubscription() {
+    this._subscription.add(
+      this._termService.termId$
+          .subscribe(termId => {
+            this.urlEditForm = `/patron/housing/work-orders/${termId}/`;
+            this.selectedTermKey = termId;
+          }));
+    
   }
 
   ngOnDestroy(): void {
@@ -52,13 +58,5 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   
   createWorkOrderDefault(): string {
     return `/patron/housing/work-orders/${this.selectedTermKey}/-1`;
-  }
-
-  createWorkOrder(termKey: number, workOrderKey: number): string {
-    return `/patron/housing/work-orders/${this.selectedTermKey}/${workOrderKey}`;
-  }
-
-  getWorkOrder(termKey:number,workOrderKey:number){
-    return `/patron/housing/work-orders/${this.selectedTermKey}/${workOrderKey}`;
   }
 }

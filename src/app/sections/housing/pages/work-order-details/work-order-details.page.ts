@@ -158,7 +158,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
   private async _update(workOrderKey: number, workOrderDetails: WorkOrderDetails, formValue: any): Promise<void> {
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: `Are you sure you want to submit work order?`,
+      message: `Are you sure you want to submit this work order?`,
       buttons: [
         {
           text: 'NO',

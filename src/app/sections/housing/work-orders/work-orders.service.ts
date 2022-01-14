@@ -90,15 +90,11 @@ export class WorkOrdersService {
   }
 
   private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson)
-      .map((question: QuestionBase) => {
+    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"type\": \"image-upload\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE-UPLOAD\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
+      .map((question: QuestionBase,i) => {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
         return [].concat(mappedQuestion);
       });
-      let position = questions.length == 1? questions.length : questions.length/2;
-    if(position){
-      questions[position].push({ 'type': 'image-upload', 'label': 'Image', 'attribute': '' })
-    }
     return this._questionsService.splitByPages(flat(questions));
   }
 
@@ -143,7 +139,7 @@ export class WorkOrdersService {
     if (question.required) {
       validators.push(Validators.required);
     }
-    if(question.label === 'Description'){
+    if(question.workOrderFieldKey === 'DESCRIPTION'){
       validators.push(Validators.maxLength(250))
     }
 
@@ -162,14 +158,13 @@ export class WorkOrdersService {
   submitWorkOrder(
     form: any,
     formValue: any): Observable<boolean> {
-    let formQuestions;
     const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
-
     const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
-    let phoneNumber, description, email, location = '';
-    let notifyByEmail;
-    let type = 0;
-    let image : ImageData;
+
+    let phoneNumber, description, email = '';
+    let notifyByEmail: boolean;
+    let type,location = 0;
+    let image : ImageData | null;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
@@ -186,7 +181,7 @@ export class WorkOrdersService {
             location = resultFormValue;
             break;
           case WorkOrdersFields.NOTIFY_BY_EMAIL:
-            notifyByEmail = resultFormValue;
+            notifyByEmail = resultFormValue? true: false;
             break;
           case WorkOrdersFields.TYPE:
             type = resultFormValue;
@@ -196,15 +191,19 @@ export class WorkOrdersService {
 
     })
 
-    this._workOrderStateService.workOrderImage$.subscribe(res=> image = res)
+    this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
     const body = new WorkOrdersDetailsList({
       notificationPhone: phoneNumber, 
       typeKey: type,
       description: description,
       notificationEmail: email,
-      attachment: new ImageData(image),
-      facilityKey:123,
+      attachment: image,
+      facilityKey:location,
       notify: notifyByEmail,
+      status:'',
+      statusKey:0,
+      type: '',
+      requestedDate:'',
     });
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
