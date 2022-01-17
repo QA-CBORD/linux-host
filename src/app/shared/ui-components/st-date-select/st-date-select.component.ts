@@ -29,7 +29,7 @@ export class StDateSelectComponent implements ControlValueAccessor {
 
   @Input() name: string;
 
-  @Input() idd: string = this.name;
+  @Input() idd: string;
 
   @Input() displayFormat: string = 'MMM DD, YYYY';
 
@@ -45,7 +45,9 @@ export class StDateSelectComponent implements ControlValueAccessor {
 
   isFilled: boolean;
 
-  constructor(private _changeDetector: ChangeDetectorRef) {}
+  constructor(private _changeDetector: ChangeDetectorRef) {
+    this.idd = this.name;
+  }
 
   handleChange(event: CustomEvent): void {
     const value: string = event.detail.value;
