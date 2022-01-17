@@ -19,7 +19,7 @@ import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
   styleUrls: ['./check-in-out-items.component.scss'],
 })
 export class CheckInOutItemsComponent implements OnInit {
-  @ViewChild('container', { static: false }) divContainer: ElementRef;
+  @ViewChild('container') divContainer: ElementRef;
   @Input() checkInOuts: CheckInOut[]
   
   constructor(public checkInOutStateService: CheckInOutStateService,

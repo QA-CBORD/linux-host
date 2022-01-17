@@ -11,7 +11,7 @@ import { ToastService } from '@core/service/toast/toast.service';
   styleUrls: ['./contract-list-items.component.scss'],
 })
 export class ContractListItemsComponent implements OnInit, AfterViewInit {
-  @ViewChild('container', { static: false }) divContainer: ElementRef;
+  @ViewChild('container') divContainer: ElementRef;
   @Input() contractSummaries: ContractSummary[]
 
   ngOnInit() {

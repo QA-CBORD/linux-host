@@ -75,7 +75,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   @ViewChild('paymentMethod', { static: true }) selectPayment: IonSelect;
   @ViewChild('toAccount', { static: true }) selectAccount: IonSelect;
-  @ViewChild('toDeposit', { static: false }) selectDeposit: IonSelect;
+  @ViewChild('toDeposit') selectDeposit: IonSelect;
 
   constructor(
     private readonly depositService: DepositService,

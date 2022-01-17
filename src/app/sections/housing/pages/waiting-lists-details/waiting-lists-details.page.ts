@@ -35,9 +35,9 @@ import { WaitingListStateService } from '../../waiting-lists/waiting-list-state.
 export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
-  @ViewChild('content', { static: false }) private content: any;
+  @ViewChild('content') private content: any;
   
-  @ViewChild(StepperComponent, { static: false }) stepper: StepperComponent;
+  @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 

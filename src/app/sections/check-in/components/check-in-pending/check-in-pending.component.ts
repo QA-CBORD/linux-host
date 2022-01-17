@@ -40,7 +40,7 @@ export interface orderInfo {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckInPendingComponent implements OnInit, OnDestroy {
-  contentStrings: CheckingContentCsModel;
+  contentStrings: any;
   locationPermissionDisabled: boolean;
   locationSubscription: Subscription;
   routeSubscription: Subscription;

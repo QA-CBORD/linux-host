@@ -18,7 +18,7 @@ import { ToastService } from '@core/service/toast/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountDetailsComponent implements OnInit, AfterViewInit {
-  @ViewChild('infiniteScroll', { static: false }) private readonly lazy: IonInfiniteScroll;
+  @ViewChild('infiniteScroll') private readonly lazy: IonInfiniteScroll;
   @ViewChild('content', { static: true }) private readonly content: IonContent;
   private currentAccountId: string;
   transactions$: Observable<TransactionHistory[]>;

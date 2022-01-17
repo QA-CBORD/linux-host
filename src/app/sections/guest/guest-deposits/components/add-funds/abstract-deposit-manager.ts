@@ -157,4 +157,8 @@ export abstract class AbstractDepositManager {
       })
     );
   }
+
+  trackByAccountId(i: number): string {
+    return `${i}-${Math.random()}`;
+  }
 }

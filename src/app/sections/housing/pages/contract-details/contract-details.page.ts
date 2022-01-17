@@ -33,9 +33,9 @@ import { ContractDetails } from '../../contracts/contracts.model';
 export class ContractDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
-  @ViewChild('content', { static: false }) private content: any;
+  @ViewChild('content') private content: any;
 
-  @ViewChild(StepperComponent, { static: false }) stepper: StepperComponent;
+  @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
