@@ -15,7 +15,7 @@ const routes: Route[] = [
   },
   {
     path: `${EXPLORE_ROUTING.merchantDetails}/:id`,
-    loadChildren: './pages/merchant-details/merchant-details.module#MerchantDetailsPageModule',
+    loadChildren: () => import('./pages/merchant-details/merchant-details.module').then(m => m.MerchantDetailsPageModule),
     resolve: { data: MerchantDetailsResolverService },
   },
 ];

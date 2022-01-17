@@ -12,54 +12,54 @@ const routes: Routes = [
     children: [
       {
         path: LOCAL_ROUTING.dashboard,
-        loadChildren: './pages/housing-dashboard/housing-dashboard.module#HousingDashboardPageModule',
+        loadChildren: () => import('./pages/housing-dashboard/housing-dashboard.module').then(m => m.HousingDashboardPageModule),
       },
       {
         path: `${LOCAL_ROUTING.applications}/:applicationKey`,
-        loadChildren: './pages/application-details/application-details.module#ApplicationDetailsPageModule',
+        loadChildren: () => import('./pages/application-details/application-details.module').then(m => m.ApplicationDetailsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.facilities}/:facilityId`,
-        loadChildren: './pages/facility-details/facility-details.module#FacilityDetailsPageModule',
+        loadChildren: () => import('./pages/facility-details/facility-details.module').then(m => m.FacilityDetailsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.contracts}/:contractKey/:contractElementKey`,
-        loadChildren: './pages/contract-details/contract-details.module#ContractDetailsPageModule',
+        loadChildren: () => import('./pages/contract-details/contract-details.module').then(m => m.ContractDetailsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.nonAssignments}/:nonAssignmentKey`,
-        loadChildren: './pages/non-assignments-details/non-assignments-details.module#NonAssignmentsDetailsModule',
+        loadChildren: () => import('./pages/non-assignments-details/non-assignments-details.module').then(m => m.NonAssignmentsDetailsModule),
       },
       {
         path: `${LOCAL_ROUTING.workOrders}/:termKey/:workOrderKey`,
-        loadChildren: './pages/work-order-details/work-order-details.module#WorkOrderDetailsPageModule',
+        loadChildren: () => import('./pages/work-order-details/work-order-details.module').then(m => m.WorkOrderDetailsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.units}`,
-        loadChildren: './pages/unit-details/unit-details.module#UnitDetailsPageModule',
+        loadChildren: () => import('./pages/unit-details/unit-details.module').then(m => m.UnitDetailsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.roomsSearch}/:roomSelectKey`,
-        loadChildren: './pages/rooms-search/rooms-search.module#RoomsSearchPageModule',
+        loadChildren: () => import('./pages/rooms-search/rooms-search.module').then(m => m.RoomsSearchPageModule),
       },
       {
         path: LOCAL_ROUTING.favorites,
-        loadChildren: './pages/favorites/favorites.module#FavoritesPageModule',
+        loadChildren: () => import('./pages/favorites/favorites.module').then(m => m.FavoritesPageModule),
       },
       {
         path: `${LOCAL_ROUTING.checkInOut}/:checkInOutKey`,
-        loadChildren: './pages/check-in-out/check-in-out.page.module#CheckInOutPageModule',
+        loadChildren: () => import('./pages/check-in-out/check-in-out.page.module').then(m => m.CheckInOutPageModule),
       },
       {
         path: `${LOCAL_ROUTING.checkInOutSpots}/spots`,
-        loadChildren: './pages/check-in-out-spot/check-in-out-spot.page.module#CheckInOutSpotPageModule',
+        loadChildren: () => import('./pages/check-in-out-spot/check-in-out-spot.page.module').then(m => m.CheckInOutSpotPageModule),
       },
       {
         path: `${LOCAL_ROUTING.waitingLists}/:waitingListsKey`,
-        loadChildren: './pages/waiting-lists-details/waiting-lists-details.module#WaitingListsDetailsPageModule',
+        loadChildren: () => import('./pages/waiting-lists-details/waiting-lists-details.module').then(m => m.WaitingListsDetailsPageModule),
       },{
         path: `${LOCAL_ROUTING.roommates}`,
-        loadChildren: './pages/roommate-search/roommate-search.module#RoommateSearchPageModule',
+        loadChildren: () => import('./pages/roommate-search/roommate-search.module').then(m => m.RoommateSearchPageModule),
       },
       {
         path: '',

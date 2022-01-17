@@ -40,7 +40,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() activeOrderType: ORDER_TYPE = null;
   @Input() showNavBarOnDestroy: boolean = true;
   @Input() timeZone: string;
-  @ViewChild(StDateTimePickerComponent) child: StDateTimePickerComponent;
+  @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   dateTimeWithTimeZone: string;
   activeMerchant$: Observable<MerchantInfo>;
   isOrderTypePickup: boolean;

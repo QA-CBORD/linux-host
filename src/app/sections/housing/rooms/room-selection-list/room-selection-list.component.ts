@@ -12,7 +12,7 @@ import { ToastService } from '@core/service/toast/toast.service';
   styleUrls: ['./room-selection-list.component.scss'],
 })
 export class RoomSelectionListComponent implements OnInit, AfterViewInit {
-  @ViewChild('container') divContainer: ElementRef;
+  @ViewChild('container', { static: false }) divContainer: ElementRef;
   @Input() roomSelects: RoomSelect[]
 
   ngOnInit() {

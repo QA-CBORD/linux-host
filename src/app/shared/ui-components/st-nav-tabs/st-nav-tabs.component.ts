@@ -10,7 +10,7 @@ import { PATRON_NAVIGATION } from '../../../app.global';
   styleUrls: ['./st-nav-tabs.component.scss'],
 })
 export class StNavTabsComponent  {
-  @ViewChild('tabs') tabs: IonTabs;
+  @ViewChild('tabs', { static: true }) tabs: IonTabs;
   private _tabsConfig: TabsConfig = { tabs: [] };
   @Input()
   set tabsConfig(value: TabsConfig) {

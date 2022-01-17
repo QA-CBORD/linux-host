@@ -69,7 +69,7 @@ export class CartComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   placingOrder: boolean = false;
   isProcessingOrder: boolean = false;
-  @ViewChild('orderDetails') orderDetail: OrderDetailsComponent;
+  @ViewChild('orderDetails', { static: true }) orderDetail: OrderDetailsComponent;
   merchantTimeZoneDisplayingMessage: string;
   isOnline: boolean = true;
   networkSubcription: Subscription;

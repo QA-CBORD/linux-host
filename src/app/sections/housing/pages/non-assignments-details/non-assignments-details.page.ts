@@ -45,8 +45,8 @@ import { FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
-  @ViewChild('content') private content: any;
-  @ViewChild(StepperComponent) stepper: StepperComponent;
+  @ViewChild('content', { static: false }) private content: any;
+  @ViewChild(StepperComponent, { static: false }) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
   private subscriptions: Subscription = new Subscription();

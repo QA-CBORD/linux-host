@@ -22,7 +22,7 @@ import { convertObjectToMap } from '@sections/housing/utils/convert-object-to-ma
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchFilterModalComponent implements OnInit {
-  @ViewChild(FilterSortComponent) filterSort: FilterSortComponent;
+  @ViewChild(FilterSortComponent, { static: false }) filterSort: FilterSortComponent;
 
   categories: Category[] = [];
   categoryOptionsDetails

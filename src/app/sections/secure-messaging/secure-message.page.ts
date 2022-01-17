@@ -22,8 +22,8 @@ import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
   styleUrls: ['./secure-message.page.scss'],
 })
 export class SecureMessagePage implements OnDestroy, OnInit {
-  @ViewChild('chatScroll') chatScroll: any;
-  @ViewChild('chatInput') chatInput: any;
+  @ViewChild('chatScroll', { static: false }) chatScroll: any;
+  @ViewChild('chatInput', { static: false }) chatInput: any;
 
   private readonly largeScreenPixelMin = 576;
   private readonly sourceSubscription: Subscription = new Subscription();

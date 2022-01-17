@@ -9,15 +9,15 @@ const routes: Routes = [
   },
   {
     path: ROLES.patron,
-    loadChildren: './sections/sections.module#SectionsModule',
+    loadChildren: () => import('./sections/sections.module').then(m => m.SectionsModule),
   },
   {
     path: ROLES.guest,
-    loadChildren: './sections/guest-sections.module#GuestSectionsModule',
+    loadChildren: () => import('./sections/guest-sections.module').then(m => m.GuestSectionsModule),
   },
   {
     path: ROLES.anonymous,
-    loadChildren: './non-authorized/non-authorized.module#NonAuthorizedModule',
+    loadChildren: () => import('./non-authorized/non-authorized.module').then(m => m.NonAuthorizedModule),
   },
 
   { path: '**', redirectTo: ROLES.anonymous },

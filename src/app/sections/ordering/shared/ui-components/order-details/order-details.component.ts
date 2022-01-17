@@ -78,7 +78,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     Partial<OrderPayment> | string
   >();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
-  @ViewChild('paymentMethod') selectRef: IonSelect;
+  @ViewChild('paymentMethod', { static: false }) selectRef: IonSelect;
   @Input() merchantTimeZoneDisplayingMessage: string;
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;

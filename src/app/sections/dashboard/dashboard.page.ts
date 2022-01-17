@@ -42,7 +42,7 @@ const { App, Device } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
-  @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
+  @ViewChild(AccessCardComponent, { static: true }) accessCard: AccessCardComponent;
   @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
   @ViewChildren('transactionsTile') transactionsChild: QueryList<TransactionsTileComponent>;
   @ViewChildren('rewardsTile') rewardsChild: QueryList<RewardsTileComponent>;

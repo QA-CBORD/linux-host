@@ -46,8 +46,8 @@ import { WorkOrdersService } from '../../work-orders/work-orders.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkOrderDetailsPage implements OnInit, OnDestroy {
-  @ViewChild('content') private content: any;
-  @ViewChild(StepperComponent) stepper: StepperComponent;
+  @ViewChild('content', { static: false }) private content: any;
+  @ViewChild(StepperComponent, { static: false }) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
   private subscriptions: Subscription = new Subscription();
