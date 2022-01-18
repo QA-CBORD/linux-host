@@ -64,10 +64,12 @@
   &__icon {
     height: 27px;
     width: 27px;
-    background-image: url('/assets/icon/bottom_navigation_icons.png');
+    background-repeat: no-repeat;
+    background-image: url('/assets/icon/bottom_navigation_icons.svg');
+    
 
     .global-navigation__list-item--active & {
-      background-position-y: 27px;
+      background-position-y: -27px;
     }
 
     .global-navigation__list-item--active &--close {
