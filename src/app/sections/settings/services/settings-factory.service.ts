@@ -139,7 +139,7 @@ export class SettingsFactoryService {
                 checks$.push(
                   from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
                     switchMap(login => {
-                      if (login === LoginState.HOSTED) {
+                      if (login === LoginState.HOSTED || isGuest) {
                         return of(true);
                       }
                       return of(false);
