@@ -6,6 +6,7 @@ import { WorkOrdersService } from './work-orders.service';
 import { WorkOrder } from './work-orders.model';
 import { WorkOrderStateService } from './work-order-state.service';
 import { TermsService } from '../terms/terms.service';
+import { ROLES } from 'src/app/app.global';
 
 @Component({
   selector: 'st-work-orders',
@@ -58,5 +59,9 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   
   createWorkOrderDefault(): string {
     return `/patron/housing/work-orders/${this.selectedTermKey}/-1`;
+  }
+
+  getPath(key: number): string {
+    return `${ROLES.patron}/housing/work-orders/${this.selectedTermKey}/${key}`;
   }
 }

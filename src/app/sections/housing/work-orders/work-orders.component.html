@@ -7,7 +7,7 @@
             <h2 class="form__secondary-header">WORK ORDERS</h2>
         </div>
         <div class="col-work-order ion-no-padding ion-no-margin">
-            <h2 class="form__secondary-header create-btn" (click)="createWorkOrder()" [routerLink]="createWorkOrderDefault()">+</h2>
+            <h2 class="form__secondary-header create-btn" [routerLink]="createWorkOrderDefault()">+</h2>
         </div>
 
       </ion-row>
@@ -30,7 +30,7 @@
           </ion-label>
 
           <st-actions
-            [path]="urlEditForm+workOrder?.key"
+            [path]="getPath(workOrder.key)"
             [edit]="!workOrder?.facilityKey"
             [showEdit]="!workOrder?.facilityKey"
             [showView]="workOrder?.facilityKey"

@@ -6,7 +6,8 @@ export enum WorkOrdersFields {
   NOTIFY_BY_EMAIL = "NOTIFY_BY_EMAIL",
   LOCATION= "LOCATION",
   PHONE_NUMBER = "CONTACT_PHONE_NUMBER",
-  EMAIL = "EMAIL"
+  EMAIL = "EMAIL",
+  IMAGE ="IMAGE"
 }
 
 export interface ImageDataOptions {
@@ -97,7 +98,7 @@ export class WorkOrder implements WorkOrderOptions{
 }
 export interface WorkOrderDetailsOptions {
   workOrderKey: number,
-  workOrders: WorkOrdersDetailsList,
+  workOrderDetails: WorkOrdersDetailsList,
   formDefinition: FormDefinitionOptions,
   workOrderTypes: workOrderTypesOptions[]
 }
@@ -120,7 +121,7 @@ export class workOrderTypes implements workOrderTypesOptions{
 }
 export class WorkOrderDetails implements WorkOrderDetailsOptions{
   workOrderKey: number;
-  workOrders: WorkOrdersDetailsList;
+  workOrderDetails: WorkOrdersDetailsList;
   formDefinition: FormDefinitionOptions;
   workOrderTypes: workOrderTypes[];
   constructor(options: WorkOrderDetailsOptions) {
@@ -128,7 +129,7 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
       options = {} as WorkOrderDetailsOptions;
     }
     this.workOrderKey = Number(options.workOrderKey)
-    this.workOrders = options.workOrders;
+    this.workOrderDetails = options.workOrderDetails;
     this.formDefinition = options.formDefinition;
     this.workOrderTypes = Array.isArray(options.workOrderTypes)
     ? options.workOrderTypes.map((detail: any) => new workOrderTypes(detail))

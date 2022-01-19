@@ -90,7 +90,7 @@ export class WorkOrdersService {
   }
 
   private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"type\": \"image-upload\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE-UPLOAD\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
+    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
       .map((question: QuestionBase,i) => {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
         return [].concat(mappedQuestion);
@@ -112,7 +112,7 @@ export class WorkOrdersService {
         label: question.label,
         name: question.name,
         values: values,
-        required: question.requiered,
+        required: question.required,
         source: question.source,
         readonly: false,
         type: 'select',
@@ -133,6 +133,7 @@ export class WorkOrdersService {
   ): FormControl {
     let value: any = storedValue;
     let disabled: boolean = false;
+    let image : ImageData | null;
 
     const validators: ValidatorFn[] = [];
 
@@ -146,6 +147,30 @@ export class WorkOrdersService {
     if (question instanceof QuestionTextbox) {
       this._questionsService.addDataTypeValidator(question, validators);
     }
+
+      switch (question.workOrderFieldKey) {
+        case WorkOrdersFields.PHONE_NUMBER:
+          value = workOrderDetails.workOrderDetails.notificationPhone;
+          break;
+        case WorkOrdersFields.DESCRIPTION:
+          value = workOrderDetails.workOrderDetails.description;
+          break;
+        case WorkOrdersFields.EMAIL:
+          value = workOrderDetails.workOrderDetails.notificationEmail;
+          break;
+        case WorkOrdersFields.LOCATION:
+          value = workOrderDetails.workOrderDetails.facilityKey;
+          break;
+        case WorkOrdersFields.NOTIFY_BY_EMAIL:
+          value = workOrderDetails.workOrderDetails.notify;
+          break;
+        case WorkOrdersFields.TYPE:
+          value = workOrderDetails.workOrderDetails.typeKey;
+          break;
+        case WorkOrdersFields.IMAGE:
+          this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
+          break;
+      }
 
     return new FormControl({ value, disabled }, validators);
   }
@@ -193,6 +218,7 @@ export class WorkOrdersService {
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
     const body = new WorkOrdersDetailsList({
+      key:null,
       notificationPhone: phoneNumber, 
       typeKey: type,
       description: description,
