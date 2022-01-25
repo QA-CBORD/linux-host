@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ViewChild } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -10,24 +10,29 @@ import { Plugins } from '@capacitor/core';
 import { zip } from 'rxjs';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderInfo } from '@sections/ordering';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { IonContent } from '@ionic/angular';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExternalPaymentService {
+  @ViewChild(IonContent) myContent: IonContent;
   constructor(
     private inAppBrowser: InAppBrowser,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly accessibilityService: AccessibilityService
   ) {}
 
   /* USAePay */
   /* WKWebView is the required webview by Apple  */
 
   addUSAePayCreditCard(): Promise<USAePayResponse> {
+    this.hideElementsBehindBrowser();
     return new Promise<USAePayResponse>((resolve, reject) => {
       const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
       const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
@@ -46,6 +51,8 @@ export class ExternalPaymentService {
           reject({ success: false, errorMessage: `The request failed: ${error}` });
         }
       );
+    }).finally(() => {
+      this.hideElementsBehindBrowser(false);
     });
   }
 
@@ -101,7 +108,9 @@ export class ExternalPaymentService {
     const applePayBaseURL = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/applepay.php?`;
     switch (handleApplePay) {
       case ApplePay.ORDERS_WITH_APPLE_PAY: {
-        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <Partial<OrderInfo>>queryParams;
+        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <
+          Partial<OrderInfo>
+        >queryParams;
         return `${applePayBaseURL}order_total=${total || ''}&session_token=${authToken || ''}&sub_total=${subTotal ||
           ''}&fee=${useFee || ''}&tax=${tax || '0.00'}&discount=${discount || '0.00'}&pickup_fee=${pickupFee ||
           ''}&delivery_fee=${deliveryFee || ''}&tip=${tip || ''}&merchantId=${merchantId || ''}`;
@@ -166,6 +175,18 @@ export class ExternalPaymentService {
 
   private async onUSAePayCallBackRetrieve(message: string) {
     await this.toastService.showToast({ message });
+  }
+
+  private async hideElementsBehindBrowser(hide: boolean = true) {
+    if (await this.accessibilityService.isVoiceOverEnabled$) {
+      const displayType = hide ? 'none' : 'block';
+      const header = <HTMLElement>document.querySelector('st-header');
+      if (header) header.style.display = displayType;
+      const content = document.getElementById('hide-me');
+      if (content) content.style.display = displayType;
+      const footer = document.getElementById('hide-me-2');
+      if (footer) footer.style.display = displayType;
+    }
   }
 }
 export interface DepositInfo {
