@@ -44,6 +44,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
     this._initTermsSubscription();
+    this._initGetImage();
   }
 
   @Input() question: QuestionBase;
@@ -103,6 +104,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   private _initTermsSubscription() {
     this.subscriptions.add(this._termService.termId$.subscribe(termId => this.selectedTermKey = termId));
+  }
+
+  private _initGetImage() {
+    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => res? this.image$.next(res.contents): '' ));
   }
 
   async presentPhotoTypeSelection() {

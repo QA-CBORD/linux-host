@@ -148,6 +148,7 @@ export class WorkOrdersService {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
+    if(workOrderDetails.workOrderDetails){
       switch (question.workOrderFieldKey) {
         case WorkOrdersFields.PHONE_NUMBER:
           value = workOrderDetails.workOrderDetails.notificationPhone;
@@ -168,9 +169,11 @@ export class WorkOrdersService {
           value = workOrderDetails.workOrderDetails.typeKey;
           break;
         case WorkOrdersFields.IMAGE:
-          this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
+          this._workOrderStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment)
           break;
       }
+      return new FormControl({ value, disabled:true }, validators);
+    }
 
     return new FormControl({ value, disabled }, validators);
   }
