@@ -12,9 +12,9 @@ import { ContractListModule } from '../../contract-list/contract-list.module'
 import { CheckInOutModule } from '../../check-in-out/check-in-out.module'
 
 import { HousingDashboardPage } from './housing-dashboard.page';
-import { WorkOrdersComponent } from '../../work-orders/work-orders.component';
 import { NonAssginmentsModule } from '@sections/housing/non-assignments/non-assignments.module';
 import { WaitingListsModule } from '../../waiting-lists/waiting-lists.module'
+import { WorkOrdersModule } from '@sections/housing/work-orders/work-orders.module';
 const imports = [
   CommonModule,
   ReactiveFormsModule,
@@ -28,9 +28,10 @@ const imports = [
   NonAssginmentsModule,
   ContractListModule,
   CheckInOutModule,
-  WaitingListsModule
+  WaitingListsModule,
+  WorkOrdersModule
 ];
-const declarations = [HousingDashboardPage, WorkOrdersComponent];
+const declarations = [HousingDashboardPage];
 
 @NgModule({
   imports,

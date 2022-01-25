@@ -4,9 +4,9 @@ import { Subscription } from 'rxjs';
 import { WorkOrdersService } from './work-orders.service';
 
 import { WorkOrder } from './work-orders.model';
-import { ROLES } from '../../../app.global';
 import { WorkOrderStateService } from './work-order-state.service';
 import { TermsService } from '../terms/terms.service';
+import { ROLES } from 'src/app/app.global';
 
 @Component({
   selector: 'st-work-orders',
@@ -31,11 +31,18 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
       .getWorkOrders()
       .subscribe();
 
-      this._subscription.add(
-        this._termService.termId$
-            .subscribe(termId => this.selectedTermKey = termId));
+    this._initTermsSubscription();
     this._subscription.add(workOrdersSubscription);
-    this.urlEditForm = `${ROLES.patron}/housing/waiting-lists/` //TODO: Url workOrders aPI
+  }
+
+  private _initTermsSubscription() {
+    this._subscription.add(
+      this._termService.termId$
+          .subscribe(termId => {
+            this.urlEditForm = `/patron/housing/work-orders/${termId}/`;
+            this.selectedTermKey = termId;
+          }));
+    
   }
 
   ngOnDestroy(): void {
@@ -54,11 +61,23 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
     return `/patron/housing/work-orders/${this.selectedTermKey}/-1`;
   }
 
-  createWorkOrder(termKey: number, workOrderKey: number): string {
-    return `/patron/housing/work-orders/${this.selectedTermKey}/${workOrderKey}`;
+  getPath(key: number): string {
+    return `${ROLES.patron}/housing/work-orders/${this.selectedTermKey}/${key}`;
   }
 
-  getWorkOrder(termKey:number,workOrderKey:number){
-    return `/patron/housing/work-orders/${this.selectedTermKey}/${workOrderKey}`;
+  getClass(key: number){
+    if(key === 1){
+      return 'open';
+    }else if(key === 2){
+      return 'inProcess';
+    }else if(key === 6){
+      return 'close';
+    }else if(key === 5){
+      return 'toCancel';
+    }else if(key === 90){
+      return 'cleaning';
+    }else {
+      return 'thinking';
+    }
   }
 }

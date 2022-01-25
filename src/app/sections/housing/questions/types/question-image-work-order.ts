@@ -6,8 +6,8 @@ export class QuestionImageWorkOrder extends QuestionTextbox {
   constructor(options: QuestionTextboxOptions = {}) {
     super(options);
 
-    this.type = options.type || 'image-upload';
-    this.subtype = options.subtype || 'image-upload';
-    this.name = options.name || `image-upload-${counter++}`;
+    this.type = options.type || 'IMAGE';
+    this.subtype = options.subtype || 'IMAGE';
+    this.name = options.name || `IMAGE-${counter++}`;
   }
 }

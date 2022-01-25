@@ -1,6 +1,6 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
-    <ng-container *ngSwitchCase="'image-upload'" class="question__section">
+    <ng-container *ngSwitchCase="'IMAGE'" class="question__section">
       <h3 class="form__secondary-header">Upload a photo</h3>
       <div class="container__image">
         <ng-container *ngIf="(image$ | async) as image; else defaultImage" witdh="95%" heigth=95% >

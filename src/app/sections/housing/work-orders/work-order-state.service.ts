@@ -12,7 +12,7 @@ export class WorkOrderStateService  {
   });
   private readonly _defaultStateDetails = new WorkOrderDetails ({
     workOrderKey: 0,
-    workOrders: null,
+    workOrderDetails: null,
     formDefinition: null,
     workOrderTypes: null,
     });

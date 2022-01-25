@@ -44,6 +44,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
     this._initTermsSubscription();
+    this._initGetImage();
   }
 
   @Input() question: QuestionBase;
@@ -105,6 +106,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this._termService.termId$.subscribe(termId => this.selectedTermKey = termId));
   }
 
+  private _initGetImage() {
+    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => res? this.image$.next(res.contents): '' ));
+  }
+
   async presentPhotoTypeSelection() {
     const photoSourceAS = await this.actionSheetCtrl.create({
       keyboardClose: true,
@@ -152,9 +157,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
         response => {
           //IMAGEBASE64
           this.image$.next(response.dataUrl)
+          const photoBase64 = response.dataUrl.split(',')[1];
           this._workOrderStateService.setWorkOrderImage({
             comments:"",
-            contents:btoa(response.dataUrl),
+            contents:photoBase64,
             filename:"work-order"+Date.now()+-''+'.'+response.format,
             studentSubmitted:true
           })
