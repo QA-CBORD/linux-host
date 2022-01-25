@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
-import { CartService, MenuInfo, MerchantService } from '@sections/ordering';
+import { CartService, MenuInfo, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { Observable } from 'rxjs';
@@ -24,6 +24,7 @@ export class CheckInSuccessComponent implements OnInit {
   mealBased: boolean;
   menuInfo$: Observable<MenuInfo>;
   order$: any;
+  orderDetailOptions$: Observable<OrderDetailOptions>;
 
   constructor(
     private readonly router: Router,
@@ -56,6 +57,7 @@ export class CheckInSuccessComponent implements OnInit {
   }
 
   private setData() {
+    this.orderDetailOptions$ = this.cart.orderDetailsOptions$;
     this.menuInfo$ = this.cart.menuInfo$;
     this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === this.orderId)));
     this.activatedRoute.data.subscribe(response => {

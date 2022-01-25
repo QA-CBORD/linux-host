@@ -1,4 +1,4 @@
-import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Device, DeviceInfo } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -7,8 +7,8 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { forkJoin, from, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { ActivePasses } from './credential-utils';
 import { MobileCredential } from './mobile-credential';
@@ -35,7 +35,7 @@ export class MobileCredentialDataService {
     protected apiService: APIService,
     protected readonly userFacade: UserFacadeService,
     protected contentStringFacade: ContentStringsFacadeService,
-  ) {}
+  ) { }
 
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<object> {
     return this.authFacadeService.retrieveAuthorizationBlob(deviceModel, osVersion).pipe(
@@ -116,10 +116,25 @@ export class MobileCredentialDataService {
      * this data is then used to get a credential for the patron/user.
      */
     // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
-    return this.authorizationBlob$().pipe(switchMap(authorizationBlob => this.getPasses({ authorizationBlob })));
+    return this.authorizationBlob$().pipe(
+      switchMap(authorizationBlob => this.getPasses({ authorizationBlob })),
+      tap(({ passes, credStatus }) => {
+
+        if (!passes.android_hid && !passes.android_nxp && !credStatus.android_hid && !credStatus.android_nxp) {
+          // no point in keeping auth_blob in state when mobile credential not enabled.
+          console.log('called activePasses, mobile credential not enabled. clearing auth_blob from state: ', passes, credStatus)
+          this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
+        }
+      }),
+      catchError((error) => {
+        console.log('got error from calling activePasses, clearing authblob: ', error)
+        this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
+        return throwError(error);
+      })
+    );
   }
 
-  private getPasses(requestBody: { authorizationBlob: object }): Observable<any> {
+  private getPasses(requestBody: { authorizationBlob: object }): Observable<ActivePasses> {
     /**
      * @params omniIDToken -> jwt token needed to authenticate with partner payments api on aws.
      * @params authBlob  -> authorization blob that contains ..... ???
@@ -130,7 +145,7 @@ export class MobileCredentialDataService {
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
     const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
     // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
-    return forkJoin(institutionInfo$, omniIDJwtToken$).pipe(
+    return forkJoin([institutionInfo$, omniIDJwtToken$]).pipe(
       switchMap(([{ id }, omniIDJwtToken]) => {
         const headers = new HttpHeaders({ Authorization: `Bearer ${omniIDJwtToken}` });
         // the institution id is required for this request.

@@ -79,14 +79,9 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this.dispatchStateChanges();
   }
 
-  protected async getStateFromStorage(): Promise<void> {
-    this.state = await this.getStateFromLocalStorage();
-  }
-
   protected async initState(): Promise<void> {
-    await this.getStateFromStorage()
-      .then(() => (this.isStateInitialized = true))
-      .then(() => this.setStateToStorage());
+    this.state = await this.getStateFromLocalStorage();
+    this.isStateInitialized = true;
   }
 
   protected async setStateToStorage(): Promise<void> {
@@ -115,9 +110,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   async clearStorage(): Promise<void> {
     const state = await this.getStateFromLocalStorage();
     const tempData: Array<{ key: string; data: StorageEntity }> = [];
-    Object.entries(state).forEach(([key, value]) =>
-      value.permanent ? tempData.push({ key: key, data: value }) : void 0
-    );
+    Object.entries(state).forEach(([key, value]) => value.permanent && tempData.push({ key: key, data: value }));
     await this.storage.clear();
     tempData.forEach(({ key, data }) =>
       this.updateStateEntity(key, data.value, { highPriorityKey: true, ttl: data.timeToLive, keepOnLogout: true })
