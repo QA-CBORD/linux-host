@@ -13,6 +13,7 @@ import {
   MerchantInfo,
   MerchantOrderTypesInfo,
   MerchantService,
+  OrderDetailOptions,
   OrderInfo,
   OrderPayment,
 } from '@sections/ordering';
@@ -43,6 +44,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   locationPermissionDisabled: boolean;
   locationSubscription: Subscription;
   routeSubscription: Subscription;
+  orderDetailOptions$: Observable<OrderDetailOptions>;
 
   data: orderInfo;
   total: number;
@@ -71,7 +73,8 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly cart: CartService,
     private readonly cdRef: ChangeDetectorRef,
-    private platform: Platform
+    private platform: Platform,
+    private readonly cartService: CartService,
   ) {}
 
   ngOnInit() {
@@ -235,6 +238,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private setData() {
+    this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.menuInfo$ = this.cart.menuInfo$;
     this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === this.orderId)));
     this.routeSubscription = this.activatedRoute.data.subscribe(response => {

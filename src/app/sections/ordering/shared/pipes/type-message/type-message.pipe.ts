@@ -10,7 +10,7 @@ export class TypeMessagePipe implements PipeTransform {
     const delivery = 'delivery';
     const pickUp = 'pickup';
 
-    return `${type === ORDER_TYPE.PICKUP ? pickUp : delivery} ${text}`;
+    return `${Number(type) === ORDER_TYPE.PICKUP ? pickUp : delivery} ${text}`;
   }
 
 }
