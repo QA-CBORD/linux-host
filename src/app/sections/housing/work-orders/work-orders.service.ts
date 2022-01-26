@@ -163,7 +163,7 @@ export class WorkOrdersService {
           value = workOrderDetails.workOrderDetails.facilityKey;
           break;
         case WorkOrdersFields.NOTIFY_BY_EMAIL:
-          value = workOrderDetails.workOrderDetails.notify;
+          value = workOrderDetails.workOrderDetails.notify? 'Yes' : 'No';
           break;
         case WorkOrdersFields.TYPE:
           value = workOrderDetails.workOrderDetails.typeKey;
