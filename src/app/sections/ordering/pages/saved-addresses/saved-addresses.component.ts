@@ -59,6 +59,14 @@ export class SavedAddressesComponent implements OnInit {
     this.addNewAdddressState = !this.addNewAdddressState;
   }
 
+  onPageDismissed(){
+    this.navigate(PATRON_NAVIGATION.settings);
+  }
+
+  async navigate(url: PATRON_NAVIGATION | string): Promise<void> {
+    await this.router.navigate([url]);
+  }
+
   onAddressFormChanged(event) {
     this.addNewAddressForm = event;
     this.errorState = false;
