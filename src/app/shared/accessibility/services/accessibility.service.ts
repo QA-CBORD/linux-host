@@ -65,4 +65,17 @@ export class AccessibilityService {
     }
     return true;
   }
+
+  async hideElementsByClassName(hide: boolean = true, className: string = 'browser-hidden') {
+    if (this.isVoiceOverEnabled$) {
+      const displayType = hide ? 'none' : 'block';
+      const elements = document.getElementsByClassName(className);
+      for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
+        if (element instanceof HTMLElement) {
+          element.style.display = displayType;
+        }
+      }
+    }
+  }
 }

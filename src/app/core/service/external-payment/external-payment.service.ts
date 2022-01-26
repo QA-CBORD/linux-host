@@ -38,17 +38,7 @@ export class ExternalPaymentService {
       zip(authTokenObservable, institutionInfoObservable).subscribe(
         ([authToken, institutionInfo]) => {
           const browser = this.openUSAePayPage(authToken, institutionInfo.shortName);
-          browser.on('loadstart').subscribe(event => {
-            this.hideElementsBehindBrowser();
-            this.handleUSAePayResponse(event, resolve, reject, browser);
-          });
-          browser.on('loaderror').subscribe(() => {
-            reject('Your request failed. Please try again.');
-            browser.close();
-          });
-          browser.on('exit').subscribe(() => {
-            this.hideElementsBehindBrowser(false);
-          });
+          this.browserListeners(browser, resolve, reject);
         },
         error => {
           reject({ success: false, errorMessage: `The request failed: ${error}` });
@@ -178,18 +168,18 @@ export class ExternalPaymentService {
     await this.toastService.showToast({ message });
   }
 
-  // Work-around to allow reader to navigate through the browser first
-  private async hideElementsBehindBrowser(hide: boolean = true) {
-    if (await this.accessibilityService.isVoiceOverEnabled$) {
-      const displayType = hide ? 'none' : 'block';
-      const elements = document.getElementsByClassName('browser-hidden');
-      for (let i = 0; i < elements.length; i++) {
-        const element = elements[i];
-        if (element instanceof HTMLElement) {
-          element.style.display = displayType;
-        }
-      }
-    }
+  private browserListeners(browser: InAppBrowserObject, resolve: (value: USAePayResponse | PromiseLike<USAePayResponse>) => void, reject: (reason?: any) => void) {
+    browser.on('loadstart').pipe(take(1)).subscribe(event => {
+      this.accessibilityService.hideElementsByClassName();
+      this.handleUSAePayResponse(event, resolve, reject, browser);
+    });
+    browser.on('loaderror').pipe(take(1)).subscribe(() => {
+      reject('Your request failed. Please try again.');
+      browser.close();
+    });
+    browser.on('exit').pipe(take(1)).subscribe(() => {
+      this.accessibilityService.hideElementsByClassName(false);
+    });
   }
 }
 export interface DepositInfo {
