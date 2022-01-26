@@ -21,7 +21,7 @@ import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, Observable, of, throwError } from 'rxjs';
-import { finalize, map, switchMap, take } from 'rxjs/operators';
+import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 
@@ -47,6 +47,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   confirmationCs: ContentStringModel;
   guestDepositForm: FormGroup;
   recipientName: string;
+  browserHidden: boolean;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -338,8 +339,10 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     if (this.paymentMethod.value != CREDITCARD_STATUS.NEW) {
       return;
     }
+    this.browserHidden = true;
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
+        tap(() =>  this.browserHidden = false),
         switchMap(({ success, errorMessage }) => {
           if (!success) {
             return throwError(errorMessage);

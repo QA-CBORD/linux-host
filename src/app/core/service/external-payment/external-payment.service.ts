@@ -40,15 +40,11 @@ export class ExternalPaymentService {
         ([authToken, institutionInfo]) => {
           const browser = this.openUSAePayPage(authToken, institutionInfo.shortName);
           browser.on('loadstart').subscribe(event => {
-            this.hideElementsBehindBrowser();
             this.handleUSAePayResponse(event, resolve, reject, browser);
           });
           browser.on('loaderror').subscribe(() => {
             reject('Your request failed. Please try again.');
             browser.close();
-          });
-          browser.on('exit').subscribe(() => {
-            this.hideElementsBehindBrowser(false);
           });
         },
         error => {
@@ -177,30 +173,6 @@ export class ExternalPaymentService {
 
   private async onUSAePayCallBackRetrieve(message: string) {
     await this.toastService.showToast({ message });
-  }
-
-  private async hideElementsBehindBrowser(hide: boolean = true) {
-    if (await this.accessibilityService.isVoiceOverEnabled$ || true) {
-      let nodes: NodeListOf<Element> = document.querySelectorAll('st-header');
-      for (let i = 0; nodes[i]; i++) {
-          let node = nodes[i];
-          var c = (nodes[i] as HTMLElement).style.backgroundColor = 'red';
-      }
-      // elements.forEach(element: HTMLElement => {
-       
-      // });
-      // const displayType = hide ? 'none' : 'block';
-      // const header = <HTMLElement>document.querySelector('st-header');
-     
-      // if (header) 
-      // header.hidden = hide;
-      // const content = document.querySelector('ion-content');
-      // if (content) 
-      // content.setAttribute("attr.aria-hidden", "true");
-      // const footer = document.querySelector('ion-footer');
-      // if (footer)
-      // footer.setAttribute("attr.aria-hidden", "true");
-    }
   }
 }
 export interface DepositInfo {

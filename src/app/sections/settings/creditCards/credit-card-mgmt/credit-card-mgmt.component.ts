@@ -33,6 +33,7 @@ export class CreditCardMgmtComponent implements OnInit {
   noCreditCardFound: boolean = false;
 
   addNewCreditCartState: boolean = false;
+  browserHidden: boolean;
 
   constructor(
     private readonly modalControler: ModalController,
@@ -103,8 +104,10 @@ export class CreditCardMgmtComponent implements OnInit {
   }
 
   async addCreditCard() {
+    this.browserHidden = true;
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
+        tap(() =>  this.browserHidden = false),
         switchMap(({ success, errorMessage }) => {
           if (!success) {
             return throwError(errorMessage);

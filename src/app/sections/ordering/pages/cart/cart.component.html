@@ -2,10 +2,13 @@
            [isTitleShow]="true"
            [backButtonTitle]="''"
            [backButtonIcon]="'close'"
-           [isToolbarShow]="true">
+           [isToolbarShow]="true"
+           [attr.aria-hidden]="browserHidden"
+           >
 </st-header>
 
-<ion-content>
+<ion-content
+[attr.aria-hidden]="browserHidden">
   <st-order-details
           [readonly]="false"
           [orderPayment]="(order$ | async).orderPayment"

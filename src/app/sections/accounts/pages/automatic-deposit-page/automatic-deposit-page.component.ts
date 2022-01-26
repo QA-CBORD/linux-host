@@ -63,6 +63,7 @@ export class AutomaticDepositPageComponent {
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
+  browserHidden: boolean;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -642,8 +643,10 @@ export class AutomaticDepositPageComponent {
   }
 
   private addUSAePayCreditCard() {
+    this.browserHidden = true;
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
+        tap(() =>  this.browserHidden = false),
         switchMap(({ success, errorMessage }) => {
           if (!success) {
             return throwError(errorMessage);
