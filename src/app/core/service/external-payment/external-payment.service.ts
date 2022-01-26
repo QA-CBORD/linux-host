@@ -1,4 +1,4 @@
-import { Injectable, ViewChild } from '@angular/core';
+import { ContentChildren, Injectable, ViewChild } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -12,6 +12,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { OrderInfo } from '@sections/ordering';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonContent } from '@ionic/angular';
+import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
@@ -179,14 +180,26 @@ export class ExternalPaymentService {
   }
 
   private async hideElementsBehindBrowser(hide: boolean = true) {
-    if (await this.accessibilityService.isVoiceOverEnabled$) {
-      const displayType = hide ? 'none' : 'block';
-      const header = <HTMLElement>document.querySelector('st-header');
-      if (header) header.style.display = displayType;
-      const content = document.getElementById('hide-me');
-      if (content) content.style.display = displayType;
-      const footer = document.getElementById('hide-me-2');
-      if (footer) footer.style.display = displayType;
+    if (await this.accessibilityService.isVoiceOverEnabled$ || true) {
+      let nodes: NodeListOf<Element> = document.querySelectorAll('st-header');
+      for (let i = 0; nodes[i]; i++) {
+          let node = nodes[i];
+          var c = (nodes[i] as HTMLElement).style.backgroundColor = 'red';
+      }
+      // elements.forEach(element: HTMLElement => {
+       
+      // });
+      // const displayType = hide ? 'none' : 'block';
+      // const header = <HTMLElement>document.querySelector('st-header');
+     
+      // if (header) 
+      // header.hidden = hide;
+      // const content = document.querySelector('ion-content');
+      // if (content) 
+      // content.setAttribute("attr.aria-hidden", "true");
+      // const footer = document.querySelector('ion-footer');
+      // if (footer)
+      // footer.setAttribute("attr.aria-hidden", "true");
     }
   }
 }
