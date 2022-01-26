@@ -72,7 +72,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   customActionSheetPaymentOptions: any = {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
-  browserHidden: boolean;
+
   @ViewChild('paymentMethod') selectPayment: IonSelect;
   @ViewChild('toAccount') selectAccount: IonSelect;
   @ViewChild('toDeposit') selectDeposit: IonSelect;
@@ -343,11 +343,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           this.router.navigate([PATRON_NAVIGATION.accounts, LOCAL_ROUTING.addCreditCard]);
           return;
         }
-        
-        this.browserHidden = true;
+
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
-            tap(() =>  this.browserHidden = false),
             switchMap(({ success, errorMessage }) => {
               if (!success) {
                 return throwError(errorMessage);

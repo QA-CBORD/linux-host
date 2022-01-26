@@ -1,4 +1,4 @@
-import { ContentChildren, Injectable, ViewChild } from '@angular/core';
+import { Injectable, ViewChild } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -12,7 +12,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { OrderInfo } from '@sections/ordering';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonContent } from '@ionic/angular';
-import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
@@ -40,11 +39,15 @@ export class ExternalPaymentService {
         ([authToken, institutionInfo]) => {
           const browser = this.openUSAePayPage(authToken, institutionInfo.shortName);
           browser.on('loadstart').subscribe(event => {
+            this.hideElementsBehindBrowser();
             this.handleUSAePayResponse(event, resolve, reject, browser);
           });
           browser.on('loaderror').subscribe(() => {
             reject('Your request failed. Please try again.');
             browser.close();
+          });
+          browser.on('exit').subscribe(() => {
+            this.hideElementsBehindBrowser(false);
           });
         },
         error => {
@@ -173,6 +176,20 @@ export class ExternalPaymentService {
 
   private async onUSAePayCallBackRetrieve(message: string) {
     await this.toastService.showToast({ message });
+  }
+
+  // Work-around to allow reader to navigate through the browser first
+  private async hideElementsBehindBrowser(hide: boolean = true) {
+    if (await this.accessibilityService.isVoiceOverEnabled$) {
+      const displayType = hide ? 'none' : 'block';
+      const elements = document.getElementsByClassName('browser-hidden');
+      for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
+        if (element instanceof HTMLElement) {
+          element.style.display = displayType;
+        }
+      }
+    }
   }
 }
 export interface DepositInfo {

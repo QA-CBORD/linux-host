@@ -79,7 +79,6 @@ export class CartComponent implements OnInit, OnDestroy {
     duplicateOrdering: '',
     noConnection: '',
   };
-  browserHidden: boolean;
 
   constructor(
     private readonly cartService: CartService,
@@ -500,12 +499,8 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private addUSAePayCreditCard() {
-    this.browserHidden = true;
     from(this.externalPaymentService.addUSAePayCreditCard())
-      .pipe(
-        tap(() => (this.browserHidden = false)),
-        first()
-      )
+      .pipe(first())
       .subscribe(({ success, errorMessage }) => {
         if (!success) {
           return this.onValidateErrorToast(errorMessage);
