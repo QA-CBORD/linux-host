@@ -32,7 +32,6 @@ export class ExternalPaymentService {
   /* WKWebView is the required webview by Apple  */
 
   addUSAePayCreditCard(): Promise<USAePayResponse> {
-    this.hideElementsBehindBrowser();
     return new Promise<USAePayResponse>((resolve, reject) => {
       const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
       const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
@@ -40,19 +39,21 @@ export class ExternalPaymentService {
         ([authToken, institutionInfo]) => {
           const browser = this.openUSAePayPage(authToken, institutionInfo.shortName);
           browser.on('loadstart').subscribe(event => {
+            this.hideElementsBehindBrowser();
             this.handleUSAePayResponse(event, resolve, reject, browser);
           });
           browser.on('loaderror').subscribe(() => {
             reject('Your request failed. Please try again.');
             browser.close();
           });
+          browser.on('exit').subscribe(() => {
+            this.hideElementsBehindBrowser(false);
+          });
         },
         error => {
           reject({ success: false, errorMessage: `The request failed: ${error}` });
         }
       );
-    }).finally(() => {
-      this.hideElementsBehindBrowser(false);
     });
   }
 
