@@ -18,7 +18,7 @@
     </ng-container>
 
     <p *ngSwitchCase="'paragraph'" class="question__paragraph" [innerHtml]="question.label">{{ question.label }}</p>
-
+    <ng-container *ngIf="!isWorkOrderDescription(question); else isWorkOrderTextArea">
     <st-input-floating-label
       *ngSwitchCase="'text'"
       class="question__item question__control"
@@ -35,7 +35,25 @@
         [errorMessages]="errorMessages"
       ></st-control-errors>
     </st-input-floating-label>
-
+  </ng-container>
+  <ng-template #isWorkOrderTextArea>
+    <st-textarea-floating-label
+    [control]="parentGroup.get(question['name'])"
+    [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
+    [formControlName]="question['name']"
+    class="question__item question__control"
+    [idd]="question['name']"
+    [label]="question.label"
+    title="Type your message here..."
+    rows="3"
+    [stEmptyFormControl]="parentGroup.get(question['name'])"
+  >
+    <st-control-errors
+      [control]="parentGroup.get(question['name'])"
+      [errorMessages]="errorMessages"
+    ></st-control-errors>
+  </st-textarea-floating-label>
+  </ng-template>
     <st-textarea-floating-label
       *ngSwitchCase="'textarea'"
       [control]="parentGroup.get(question['name'])"

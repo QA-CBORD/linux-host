@@ -193,4 +193,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private async presentToast(message: string) {
       await this.toastService.showToast({ message, duration: 5000 });
     }
+
+    isWorkOrderDescription(question){
+      return question.source === "WORK_ORDER" && question.workOrderFieldKey === 'DESCRIPTION';
+    }
 }
