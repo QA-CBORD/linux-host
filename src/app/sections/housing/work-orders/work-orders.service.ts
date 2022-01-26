@@ -137,7 +137,7 @@ export class WorkOrdersService {
 
     const validators: ValidatorFn[] = [];
 
-    if (question.required) {
+    if (question.required && question.workOrderFieldKey != WorkOrdersFields.TYPE) {
       validators.push(Validators.required);
     }
     if(question.workOrderFieldKey === 'DESCRIPTION'){
