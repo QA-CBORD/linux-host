@@ -1,4 +1,4 @@
-import { Injectable, ViewChild } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -11,14 +11,12 @@ import { zip } from 'rxjs';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderInfo } from '@sections/ordering';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { IonContent } from '@ionic/angular';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExternalPaymentService {
-  @ViewChild(IonContent) myContent: IonContent;
   constructor(
     private inAppBrowser: InAppBrowser,
     private readonly institutionFacadeService: InstitutionFacadeService,
