@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Capacitor, Plugins } from '@capacitor/core';
 import { of } from 'rxjs/internal/observable/of';
 import { Platform } from '@ionic/angular';
-import { element } from '@angular/core/src/render3';
 
 const { Accessibility } = Plugins;
 const READ_ALOUD_DELAY = 2000;
