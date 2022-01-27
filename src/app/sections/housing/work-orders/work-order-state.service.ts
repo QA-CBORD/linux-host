@@ -54,6 +54,10 @@ export class WorkOrderStateService  {
     this.workOrderImage.next(imageData);
   }
 
+  destroyWorkOrderImage(){
+    this.workOrderImage.next(null);
+  }
+
   get workOrderImage$(){
     return this.workOrderImage;
   }
