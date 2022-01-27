@@ -107,7 +107,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initGetImage() {
-    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => res? this.image$.next(res.contents): '' ));
+    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => { 
+      if(res!=null){
+        this.image$.next(atob(res.contents))
+      } 
+    }));
   }
 
   async presentPhotoTypeSelection() {
@@ -192,5 +196,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
     private async presentToast(message: string) {
       await this.toastService.showToast({ message, duration: 5000 });
+    }
+
+    isWorkOrderDescription(question){
+      return question.source === "WORK_ORDER" && question.workOrderFieldKey === 'DESCRIPTION';
     }
 }

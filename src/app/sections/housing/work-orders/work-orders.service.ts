@@ -90,7 +90,7 @@ export class WorkOrdersService {
   }
 
   private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
+    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
       .map((question: QuestionBase,i) => {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
         return [].concat(mappedQuestion);
@@ -137,7 +137,7 @@ export class WorkOrdersService {
 
     const validators: ValidatorFn[] = [];
 
-    if (question.required) {
+    if (question.required && question.workOrderFieldKey != WorkOrdersFields.TYPE) {
       validators.push(Validators.required);
     }
     if(question.workOrderFieldKey === 'DESCRIPTION'){
@@ -163,7 +163,7 @@ export class WorkOrdersService {
           value = workOrderDetails.workOrderDetails.facilityKey;
           break;
         case WorkOrdersFields.NOTIFY_BY_EMAIL:
-          value = workOrderDetails.workOrderDetails.notify;
+          value = workOrderDetails.workOrderDetails.notify? 'Yes' : 'No';
           break;
         case WorkOrdersFields.TYPE:
           value = workOrderDetails.workOrderDetails.typeKey;

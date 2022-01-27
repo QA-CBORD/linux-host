@@ -61,6 +61,11 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
     this.onTouched = fn;
   }
 
+  //From ControlValueAccessor interface
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
+  }
+
   onChangeHandler({ detail: { value } }: CustomEvent) {
     this.writeValue(value);
     this.onChange(value);
