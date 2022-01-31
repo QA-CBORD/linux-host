@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SingleListComponent } from './single-list.component';
 
@@ -7,7 +7,7 @@ describe('SingleListComponent', () => {
   let component: SingleListComponent;
   let fixture: ComponentFixture<SingleListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ SingleListComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

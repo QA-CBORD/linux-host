@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RecentOrdersListItemComponent } from './recent-orders-list-item.component';
 
@@ -7,7 +7,7 @@ describe('RecentOrdersListItemComponent', () => {
   let component: RecentOrdersListItemComponent;
   let fixture: ComponentFixture<RecentOrdersListItemComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ RecentOrdersListItemComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
