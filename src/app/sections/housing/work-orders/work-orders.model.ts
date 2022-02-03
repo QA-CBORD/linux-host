@@ -100,7 +100,8 @@ export interface WorkOrderDetailsOptions {
   workOrderKey: number,
   workOrderDetails: WorkOrdersDetailsList,
   formDefinition: FormDefinitionOptions,
-  workOrderTypes: workOrderTypesOptions[]
+  workOrderTypes: workOrderTypesOptions[],
+  facilityTree: FacilityTreeOptions[]
 }
 
 export interface workOrderTypesOptions{
@@ -124,6 +125,7 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
   workOrderDetails: WorkOrdersDetailsList;
   formDefinition: FormDefinitionOptions;
   workOrderTypes: workOrderTypes[];
+  facilityTree: FacilityTreeOptions[];
   constructor(options: WorkOrderDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrderDetailsOptions;
@@ -133,6 +135,9 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
     this.formDefinition = options.formDefinition;
     this.workOrderTypes = Array.isArray(options.workOrderTypes)
     ? options.workOrderTypes.map((detail: any) => new workOrderTypes(detail))
+    : [];
+    this.facilityTree = Array.isArray(options.facilityTree)
+    ? options.facilityTree.map((detail: any) => new FacilityTree(detail))
     : [];
   }
 
@@ -182,5 +187,55 @@ export class FormDefinition implements FormDefinitionOptions{
     this.expireWhenAssigned = Number(options.expireWhenAssigned);
     this.numberOfDaysToExpire = Number(options.numberOfDaysToExpire);
     this.termId = Number(options.termId);
+  }
+}
+
+export interface FacilityTreeOptions {
+  facilityTree: FacilityTreeDetails[]
+}
+export interface FacilityTreeDetailsOptions {
+  children: FacilityTreeDetailsOptions[],
+  effectiveDate: string,
+  endDate: string,
+  facilityFullName: string,
+  facilityKey: number,
+  facilityType: number,
+  parentKey: number,
+}
+export class FacilityTreeDetails implements FacilityTreeDetailsOptions{
+  children: FacilityTreeDetailsOptions[];
+  effectiveDate: string;
+  endDate: string;
+  facilityFullName: string;
+  facilityKey: number;
+  facilityType: number;
+  parentKey: number;
+  constructor(options: FacilityTreeDetailsOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as FacilityTreeDetailsOptions;
+    }
+    this.effectiveDate = String(options.effectiveDate);
+    this.endDate = String(options.endDate);
+    this.facilityFullName = options.facilityFullName;
+    this.facilityKey = Number(options.facilityKey);
+    this.facilityKey = Number(options.facilityKey);
+    this.parentKey = Number(options.parentKey);
+    this.facilityType = Number(options.facilityType);
+    this.children = Array.isArray(options.parentKey)
+    ? options.children.map((detail: any) => new FacilityTreeDetails(detail))
+    : [];
+  }
+
+}
+
+export class FacilityTree implements FacilityTreeOptions{
+  facilityTree: FacilityTreeDetails[];
+  constructor(options: FacilityTreeOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as FacilityTreeOptions;
+    }
+    this.facilityTree = Array.isArray(options.facilityTree)
+    ? options.facilityTree.map((detail: any) => new FacilityTreeDetails(detail))
+    : [];
   }
 }
