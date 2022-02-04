@@ -24,6 +24,7 @@ const { Camera } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionComponent implements OnInit, OnDestroy {
+  facilityTreeData: any;
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _termService: TermsService,
@@ -47,6 +48,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
     this._initTermsSubscription();
     this._initGetImage();
+    this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
   }
 
   @Input() question: QuestionBase;

@@ -16,6 +16,11 @@
     <ng-container *ngSwitchCase="'header'">
       <div [innerHTML]="createHeader($any(question))"></div>
     </ng-container>
+    <ng-container *ngSwitchCase="'FACILITY'">
+      <div item-content>
+        <st-hierarchy-tree [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
+      </div>
+    </ng-container>
 
     <p *ngSwitchCase="'paragraph'" class="question__paragraph" [innerHtml]="question.label">{{ question.label }}</p>
     <ng-container *ngIf="!isWorkOrderDescription(question); else isWorkOrderTextArea">
