@@ -205,9 +205,6 @@ export class WorkOrdersService {
           case WorkOrdersFields.EMAIL:
             email = resultFormValue;
             break;
-          case WorkOrdersFields.LOCATION:
-            location = resultFormValue;
-            break;
           case WorkOrdersFields.NOTIFY_BY_EMAIL:
             notifyByEmail = resultFormValue? true: false;
             break;
@@ -220,6 +217,7 @@ export class WorkOrdersService {
     })
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
+    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.facilityKey ? location = res.facilityKey: location = null)
     const body = new WorkOrdersDetailsList({
       key:null,
       notificationPhone: phoneNumber, 
