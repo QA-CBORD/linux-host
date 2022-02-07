@@ -2,6 +2,7 @@ import { TILES_ID, TILES_TITLE } from '@sections/dashboard/dashboard.config';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
 import { GUEST_NAVIGATION, PATRON_NAVIGATION } from '../../../app.global';
 import { GuestSetting } from '@sections/guest/model/guest-settings';
+import { APP_PROFILES } from '@sections/dashboard/models';
 
 export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> = [
   {
@@ -46,6 +47,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: true,
     name: TILES_TITLE.home,
     url: PATRON_NAVIGATION.dashboard,
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.mobileAccess,
@@ -53,6 +55,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.mobileAccess,
     url: PATRON_NAVIGATION.mobileAccess,
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.accounts,
@@ -60,6 +63,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: true,
     name: TILES_TITLE.accounts,
     url: PATRON_NAVIGATION.accounts,
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.order,
@@ -67,6 +71,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.order,
     url: PATRON_NAVIGATION.ordering,
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.housing,
@@ -74,6 +79,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.housing,
     url: PATRON_NAVIGATION.housing,
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.rewards,
@@ -81,6 +87,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.rewards,
     url: PATRON_NAVIGATION.rewards,
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.explore,
@@ -88,6 +95,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.explore,
     url: PATRON_NAVIGATION.explore,
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.conversations,
@@ -95,6 +103,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.conversations,
     url: PATRON_NAVIGATION.secureMessage,
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.settings,
@@ -102,5 +111,6 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: true,
     name: TILES_TITLE.settings,
     url: PATRON_NAVIGATION.settings,
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
 ];

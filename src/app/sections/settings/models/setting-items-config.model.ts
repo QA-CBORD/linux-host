@@ -13,6 +13,9 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Observable } from 'rxjs';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { APP_PROFILES } from '@sections/dashboard/models';
+import { ProfileService } from '@shared/services/app.profile.services';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -35,6 +38,8 @@ export interface SettingItemConfig {
   setToggleStatus?: (services: SettingsServices) => void;
   setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;
+  selfValidate: (args: SettingsServices) => Promise<boolean>,
+  supportProfiles?: APP_PROFILES[],
 }
 
 export interface SettingItemValidation {
@@ -87,7 +92,9 @@ export interface SettingsServices {
   institution: InstitutionFacadeService;
   environment: EnvironmentFacadeService;
   appBrowser: InAppBrowser;
-  mobileCredentialFacade: MobileCredentialFacade
+  mobileCredentialFacade: MobileCredentialFacade,
+  sessionFacadeService: SessionFacadeService,
+  profileService: ProfileService
 }
 
 export interface StatusSettingValidation {

@@ -13,6 +13,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { GuestSetting } from '@sections/guest/model/guest-settings';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { ProfileService } from '@shared/services/app.profile.services';
 
 @Injectable()
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
@@ -23,7 +24,8 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     private readonly storage: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly authService: AuthFacadeService,
-    private readonly institutionService: InstitutionFacadeService
+    private readonly institutionService: InstitutionFacadeService,
+    private readonly profileService: ProfileService
   ) {
     super();
   }
@@ -63,11 +65,12 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private getAllowedSettings(): Observable<NavigationBottomBarElement[]> {
     const GuestSettingObs = this.institutionService.guestSettings;
     const isGuestUserObs = this.authService.isGuestUser();
-    const cachedSettingsObs = this.settingsFacadeService.getCachedSettings();
+    const cachedSettingsObs = this.settingsFacadeService.getCachedSettings(); 
     return zip(cachedSettingsObs, isGuestUserObs, from(GuestSettingObs)).pipe(
-      map(([settingInfo, guestUser, setting]) =>
-        this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(({ isEnable }) => isEnable)
-      )
+      map(([settingInfo, guestUser, setting]) => {
+        const currentProfile = this.profileService.determineCurrentProfile(settingInfo);
+        return this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile))
+      })
     );
   }
 
