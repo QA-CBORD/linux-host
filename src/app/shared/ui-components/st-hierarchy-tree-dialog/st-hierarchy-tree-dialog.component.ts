@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IonSlides, LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { SlideItem, NamedIdentity, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
+import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 
 @Component({
   selector: 'st-hierarchy-tree-dialog',
@@ -17,7 +18,11 @@ export class StHierarcheTreeDialogComponent {
 
   @ViewChild(IonSlides) public slidesControl: IonSlides;
 
-  constructor(public loading: LoadingController, private params: NavParams, private viewCtrl: ModalController) {
+  constructor(public loading: LoadingController, 
+    private params: NavParams, 
+    private viewCtrl: ModalController,
+    private readonly _workOrderStateService: WorkOrderStateService,
+    ) {
     this.slides = null;
     this.selectedItemId = null;
     this.lookups = null;
@@ -175,7 +180,7 @@ export class StHierarcheTreeDialogComponent {
   public itemSelected(item: SlideItem) {
     let selectedItem: NamedIdentity = null;
     if (item) {
-      selectedItem = { id: item.id, name: item.name };
+      this._workOrderStateService.setSelectedFacilityTree(item);
     }
     this.viewCtrl.dismiss(selectedItem);
   }

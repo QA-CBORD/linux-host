@@ -1,11 +1,18 @@
-<ion-toolbar (click)="open()">
-  <ion-input [ngClass]="{ 'multi-level-select-placeholder': !selectedItem }">{{ selectedItem ? selectedItem?.name : "Please Select" }}</ion-input>
-  <ion-buttons right>
-    <button *ngIf="selectedItem" ion-button icon-only (click)="reset($event)">
-      <i class="fa fa-times" aria-hidden="true"></i>
-    </button>
-    <button ion-button icon-only>
-      <i class="fa fa-caret-down" aria-hidden="true"></i>
-    </button>
-  </ion-buttons>
-</ion-toolbar>
+<div class="input__wrapper">
+  <input
+    class="input__control"
+    #input
+    type="text"
+    [ngClass]="{ 'input__control--error': false }"
+    [disabled]="false"
+    [attr.value]="(this._workOrderStateService.getSelectedFacility$() |async)?.name"
+    [attr.aria-required]="true"
+    (click)="open()"
+  />
+  <label class="input__placeholder" >{{(this._workOrderStateService.getSelectedFacility$() |async)?.name? '' : 'Location'}}</label>
+  <ng-content *ngIf="false"></ng-content>
+  <div class="input__accesibility_error" *ngIf="false && !false">
+    <img src="/assets/icon/input-error.svg" alt="input-accessibility-error" *ngIf="false" />
+  </div>
+</div>
+

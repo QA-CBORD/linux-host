@@ -1,24 +1,24 @@
 <ion-content>
   <ion-slides [pager]="false">
     <ion-slide *ngFor="let slide of slides">
-        <ion-toolbar mode="ios">
-          <ion-buttons slot="start">
-            <button ion-button icon-only *ngIf="slide.parentSlide" (click)="slideTo(slide.parentSlide?.slideIndex)">
-              <ion-icon name="arrow-back"></ion-icon>
-            </button>
-          </ion-buttons>
-          <ion-title>{{ slide.parentSlideItem ? slide.parentSlideItem?.name : "Please Select" }}</ion-title>
-          <ion-buttons slot="end">
-            <button ion-button icon-only (click)="close()">
-              <ion-icon name="close"></ion-icon>
-            </button>
-          </ion-buttons>
-        </ion-toolbar>
+      <ion-toolbar mode="ios">
+        <ion-buttons slot="start" *ngIf="slide.parentSlide" (click)="slideTo(slide.parentSlide?.slideIndex)">
+          <ion-icon size="large" item-right name="arrow-back"></ion-icon>
+        </ion-buttons>
+        <ion-title>{{ slide.parentSlideItem ? slide.parentSlideItem?.name : "Please Select" }}</ion-title>
+        <ion-buttons slot="end">
+          <button ion-button icon-only (click)="close()">
+            <ion-icon size="large" item-right name="close"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-toolbar>
       <ion-list no-lines>
-        <ion-item class="parent-item" *ngIf="slide.parentSlide && allowParent" (click)="itemSelected(slide.parentSlideItem)">
+        <ion-item class="parent-item" *ngIf="slide.parentSlide && allowParent"
+          (click)="itemSelected(slide.parentSlideItem)">
           {{ slide.parentSlideItem?.name }}
         </ion-item>
-        <ion-item [ngClass]="{ 'selected': item.selected }" *ngFor="let item of slide.items" (click)="handleItemClick(item)">
+        <ion-item [ngClass]="{ 'selected': item.selected }" *ngFor="let item of slide.items"
+          (click)="handleItemClick(item)">
           {{ item.name }}
           <ion-icon *ngIf="item.nextSlideIndex !== null" item-right name="arrow-forward"></ion-icon>
         </ion-item>
