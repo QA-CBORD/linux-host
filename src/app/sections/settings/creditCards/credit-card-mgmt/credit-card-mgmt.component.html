@@ -7,9 +7,10 @@
   [isBackButtonShow]="false"
   [isDismissButtonShow]="true"
   (onDismiss)="close()"
+  class="browser-hidden"
 ></st-header>
-<div class="devider"></div>
-<ion-content>
+<div class="devider" aria-hidden="true"></div>
+<ion-content class="browser-hidden">
   <div class="main_content">
     <div class="saved-addresses__add-address-container">
       <ion-item class="add-new-cc_item" lines="full" [button]="true" detail (click)="addCreditCard()">

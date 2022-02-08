@@ -4,8 +4,9 @@
   [backButtonIcon]="'ios-close'"
   [backButtonTitle]="''"
   [isToolbarShow]="true"
+  class="browser-hidden"
 ></st-header>
-<ion-content class="content" *ngIf="showContent">
+<ion-content class="browser-hidden" *ngIf="showContent">
   <h1 class="content__header">Automatic Deposit Type</h1>
   <st-deposit-type-nav
     [activeType]="
@@ -240,7 +241,7 @@
   </form>
 </ion-content>
 
-<ion-footer class="deposit-form__footer" mode="ios">
+<ion-footer class="deposit-form__footer browser-hidden" mode="ios">
   <st-button
     [isDisabled]="automaticDepositForm && automaticDepositForm.invalid"
     (onClick)="onSubmit()"
