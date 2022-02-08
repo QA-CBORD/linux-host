@@ -38,6 +38,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._applicationsStateService.setRoommatesPreferences([])
     this._applicationsStateService.emptyRequestedRoommate()
     this._applicationsStateService.deleteRoommatePreferencesSelecteds();
+    this._workOrderStateService.destroyWorkOrderImage();
+    this.subscriptions.unsubscribe();
   }
 
 
@@ -108,9 +110,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   private _initGetImage() {
     this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => { 
-      if(res!=null){
-        this.image$.next(atob(res.contents))
-      } 
+      if(res!=null && res.contents != '' ){
+        let format=res.filename.split('.')[1]
+        this.image$.next(`data:image/${format};base64,${res.contents}`)
+      } else {
+        this.image$.next(null)
+      }
     }));
   }
 
@@ -162,6 +167,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           //IMAGEBASE64
           this.image$.next(response.dataUrl)
           const photoBase64 = response.dataUrl.split(',')[1];
+          this.sessionFacadeService.navigatedToPlugin = true;
           this._workOrderStateService.setWorkOrderImage({
             comments:"",
             contents:photoBase64,
