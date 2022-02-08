@@ -76,13 +76,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => this.globalNav.hideNavBar());
-    this.initData();
+    this.isOrderTypePickup = true;
+    this.dispatchingData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
-    this.activeMerchant$ = this.merchantService.menuMerchants$.pipe(
-      map(merchants => merchants.find(({ id }) => id === this.merchantId)),
-      tap((merchant) => this.merchantInfo = merchant)
-    );
   }
 
   ngOnDestroy() {
@@ -99,7 +96,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return this.userFacadeService.getUserData$();
   }
 
-  initData() {
+  dispatchingData() {
     this.orderType =
       this.activeOrderType !== null
         ? this.activeOrderType
@@ -112,10 +109,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.PICKUP, this.timeZone),
       this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.DELIVERY, this.timeZone),
       this.retrieveDeliveryAddresses(this.merchantId),
-      this.merchantService.retrievePickupLocations(
-        this.storeAddress,
-        this.settings.map[MerchantSettings.pickupLocationsEnabled]
-      ),
+      this.merchantService.fetchPickupLocations(),
       this.merchantService.retrieveBuildings(),
       this.cartService.orderDetailsOptions$
     )
@@ -150,16 +144,20 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.pickupLocations = pickupLocations;
           this.buildingsForNewAddressForm = buildingsForNewAddressForm;
           this.isTimeDisable = isTimeDisable;
-
-          this.isOrderTypePickup = this.orderType === ORDER_TYPE.PICKUP;
           this.defineOrderOptionsData(this.isOrderTypePickup);
         },
         null,
         () => this.loadingService.closeSpinner()
       );
+
+    this.activeMerchant$ = this.merchantService.menuMerchants$.pipe(
+      map(merchants => merchants.find(({ id }) => id === this.merchantId)),
+      tap(merchant => (this.merchantInfo = merchant))
+    );
   }
 
   onRadioGroupChanged({ target }) {
+    this.dispatchingData();
     this.isOrderTypePickup = target.value === 'pickup';
     this.orderType = this.isOrderTypePickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
     this.defineOrderOptionsData(this.isOrderTypePickup);
@@ -299,10 +297,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         return this.onMerchantDateUnavailable();
       }
       this.selectedTimeStamp = schedule.days[0].hourBlocks[0].timestamps[0];
-      this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(
-        this.selectedTimeStamp,
-        this.timeZone
-      );
+      this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(this.selectedTimeStamp, this.timeZone);
       this.dateTimePicker = new Date(this.selectedTimeStamp);
     }
   }

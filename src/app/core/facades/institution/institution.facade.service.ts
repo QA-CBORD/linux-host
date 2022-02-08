@@ -50,13 +50,13 @@ export class InstitutionFacadeService extends ServiceStateFacade {
 
   retrievePickupLocations(): Observable<any> {
     return this.storageStateService.getStateEntityByKey$<any>(this.inst_pickupLocations).pipe(
-      switchMap(data => (data && of(data.value)) || this.fetchPickputLocations()),
+      switchMap(data => (data && of(data.value)) || this.fetchPickupLocations()),
       catchError(() => of(<any>{})),
       take(1)
     );
   }
 
-  private fetchPickputLocations(): Observable<any> {
+  fetchPickupLocations(): Observable<any> {
     return this.institutionApiService
       .retrievePickupLocations()
       .pipe(tap(locations => this.storageStateService.updateStateEntity(this.inst_pickupLocations, locations)));
