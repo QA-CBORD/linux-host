@@ -14,7 +14,8 @@ import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins }
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
-import { Response } from '../housing.model';
+import { ContractListStateService } from '../contract-list/contract-list-state.service';
+import { FacilityTree } from '../work-orders/work-orders.model';
 
 const { Camera } = Plugins;
 @Component({
@@ -24,6 +25,9 @@ const { Camera } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionComponent implements OnInit, OnDestroy {
+  facilityTreeData: FacilityTree[];
+  facilityFullName: string;
+  currectFacility: string;
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _termService: TermsService,
@@ -31,8 +35,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastService: ToastService,
     private readonly _workOrderStateService: WorkOrderStateService,
-    ) {}
-  
+    private _contractListStateService: ContractListStateService
+  ) { }
+
   ngOnDestroy(): void {
     this._applicationsStateService.setRequestedRoommates([])
     this._applicationsStateService.setRoommatesPreferences([])
@@ -43,10 +48,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
     this._initTermsSubscription();
     this._initGetImage();
+    this._setFacility();
   }
 
   @Input() question: QuestionBase;
@@ -109,9 +115,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initGetImage() {
-    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => { 
-      if(res!=null && res.contents != '' ){
-        let format=res.filename.split('.')[1]
+    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => {
+      if (!!(res && res.contents)) {
+        let format = res.filename.split('.')[1]
         this.image$.next(`data:image/${format};base64,${res.contents}`)
       } else {
         this.image$.next(null)
@@ -169,42 +175,62 @@ export class QuestionComponent implements OnInit, OnDestroy {
           const photoBase64 = response.dataUrl.split(',')[1];
           this.sessionFacadeService.navigatedToPlugin = true;
           this._workOrderStateService.setWorkOrderImage({
-            comments:"",
-            contents:photoBase64,
-            filename:"work-order"+Date.now()+-''+'.'+response.format,
-            studentSubmitted:true
+            comments: "",
+            contents: photoBase64,
+            filename: "work-order" + Date.now() + -'' + '.' + response.format,
+            studentSubmitted: true
           })
         },
         error => {
           this.presentToast('There was an issue with the picture. Please, try again.');
         },
-        () => {}
+        () => { }
       );
   }
 
-    /// Camera plugin control
-    private getPhoto(cameraSource: CameraSource): Observable<CameraPhoto> {
-      // const uploadSettings = this.photoUploadService.photoUploadSettings;
-      /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
-      this.sessionFacadeService.navigatedToPlugin = true;
-      return from(
-        Camera.getPhoto({
-          quality: 100,
-          correctOrientation: true,
-          preserveAspectRatio: true,
+  /// Camera plugin control
+  private getPhoto(cameraSource: CameraSource): Observable<CameraPhoto> {
+    // const uploadSettings = this.photoUploadService.photoUploadSettings;
+    /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
+    this.sessionFacadeService.navigatedToPlugin = true;
+    return from(
+      Camera.getPhoto({
+        quality: 100,
+        correctOrientation: true,
+        preserveAspectRatio: true,
 
-          direction: CameraDirection.Rear,
-          resultType: CameraResultType.DataUrl,
-          source: cameraSource,
-          saveToGallery: false,
-        })
-      );
+        direction: CameraDirection.Rear,
+        resultType: CameraResultType.DataUrl,
+        source: cameraSource,
+        saveToGallery: false,
+      })
+    );
+  }
+  private async presentToast(message: string) {
+    await this.toastService.showToast({ message, duration: 5000 });
+  }
+
+  isWorkOrderDescription(question) {
+    return question.source === "WORK_ORDER" && question.workOrderFieldKey === 'DESCRIPTION';
+  }
+
+  _setFacility() {
+    this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
+    this.currectFacility = this._contractListStateService.getContractDetails()[0].fullName;
+    if (this.facilityTreeData.length == 1 && !this.isSubmitted && this.question.type == 'FACILITY') {
+      this.isSubmitted = true;
+      this.facilityFullName = this.facilityTreeData[0].facilityFullName;
+      this._workOrderStateService.setSelectedFacilityTree({
+        name: this.facilityFullName,
+        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
+      });
     }
-    private async presentToast(message: string) {
-      await this.toastService.showToast({ message, duration: 5000 });
+    if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY'){
+      this._workOrderStateService.setSelectedFacilityTree({
+        name: this.currectFacility, 
+        facilityKey:this._contractListStateService.getContractDetails()[0].facilityKey
+      });
     }
 
-    isWorkOrderDescription(question){
-      return question.source === "WORK_ORDER" && question.workOrderFieldKey === 'DESCRIPTION';
-    }
+  }
 }
