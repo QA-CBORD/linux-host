@@ -3,26 +3,26 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.util.Log;
 
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tapandpay.TapAndPayClient;
 import com.google.android.gms.tasks.Task;
+import com.getcapacitor.annotation.CapacitorPlugin;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@NativePlugin()
+@CapacitorPlugin(name = "GooglePayPlugin")
 public class GooglePayPlugin extends Plugin {
 
     private TapAndPayClient tapAndPayClient;
     private final int REQUEST_CREATE_WALLET = 4;
+    private static final String HID_SDK_TRANSACTION_RESULT = "transactionStatus";
     private final int TAP_AND_PAY_NO_ACTIVE_WALLET = 15002;
     private final String APP_RESUME_EVENT = "appResumed";
     private final String DIGITIZATION_REFERENCE_URI = "uri";
@@ -33,7 +33,7 @@ public class GooglePayPlugin extends Plugin {
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
-        call.resolve();
+        call.resolve(toJson("success"));
     }
 
     @PluginMethod()
@@ -95,5 +95,11 @@ public class GooglePayPlugin extends Plugin {
 
     private boolean isGoogleWalletInactive(ApiException error) {
         return error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET;
+    }
+
+    private JSObject toJson(Object transactionResult){
+        JSObject jsonObject = new JSObject();
+        jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
+        return jsonObject;
     }
 }
