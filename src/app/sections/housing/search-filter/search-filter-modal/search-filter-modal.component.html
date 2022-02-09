@@ -36,7 +36,7 @@
                   <ion-item
                     class="ion-no-padding form-checkbox search-filter-model__col"
                     lines="none"
-                    *ngFor="let option of filtersForm.get(item.key).controls; index as i"
+                    *ngFor="let option of filtersForm.get(item.key)['controls']; index as i"
                   >
                     <ion-checkbox
                       class="form-checkbox__control"
@@ -44,7 +44,7 @@
                       mode="md"
                       slot="start"
                       [value]=""
-                      [id]="item.key - i"
+                      [id]="getId(item.key,i)"
                     ></ion-checkbox>
                     <ion-label class="form-label">{{getLabelInfo(item.key, i)}}</ion-label>
                   </ion-item>
