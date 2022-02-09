@@ -28,13 +28,12 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { Plugins } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
-const { Browser } = Plugins;
 
 export enum browserState {
   FINISHED = 'browserFinished'
@@ -267,7 +266,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     let amount = mainInput || mainSelect;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {
-      Browser.addListener(browserState.FINISHED, (info: any) => {
+      Browser.addListener(browserState.FINISHED, () => {
         this.isDepositing = false;
         this.cdRef.detectChanges();
         Browser.removeAllListeners();

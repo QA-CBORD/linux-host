@@ -7,7 +7,6 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Observable, of } from 'rxjs';
 import {
   EndpointState,
-  GOOGLE,
   GoogleCredential,
   GooglePayCredentialBundle,
 } from '../model/android/android-credential.model';

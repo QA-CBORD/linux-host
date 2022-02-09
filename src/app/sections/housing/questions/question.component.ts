@@ -9,14 +9,10 @@ import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ActionSheetController } from '@ionic/angular';
-import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
-
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
-import { Response } from '../housing.model';
-
-const { Camera } = Plugins;
+import { CameraDirection, Photo, CameraResultType, CameraSource, Camera } from '@capacitor/camera';
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -32,7 +28,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
     private readonly _workOrderStateService: WorkOrderStateService,
     ) {}
-  
+
   ngOnDestroy(): void {
     this._applicationsStateService.setRequestedRoommates([])
     this._applicationsStateService.setRoommatesPreferences([])
@@ -167,7 +163,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
     /// Camera plugin control
-    private getPhoto(cameraSource: CameraSource): Observable<CameraPhoto> {
+    private getPhoto(cameraSource: CameraSource): Observable<Photo> {
       // const uploadSettings = this.photoUploadService.photoUploadSettings;
       /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
       this.sessionFacadeService.navigatedToPlugin = true;

@@ -6,8 +6,7 @@ import { Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { Plugins } from '@capacitor/core';
-const { Device } = Plugins;
+import { App } from '@capacitor/app';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { from, Observable } from 'rxjs';
 
@@ -51,8 +50,8 @@ export class EntryPage implements OnInit {
   }
 
   private fetchDeviceInfo(): Observable<string> {
-    return from(Device.getInfo()).pipe(
-      map(({ appVersion }) => appVersion),
+    return from(App.getInfo()).pipe(
+      map(({ build }) => build),
       take(1)
     );
   }

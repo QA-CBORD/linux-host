@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SupportedFormat } from '@capacitor-community/barcode-scanner';
 import { AddressInfo } from '@core/model/address/address-info';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -21,11 +22,11 @@ import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.con
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable, Subscription } from 'rxjs';
-import { first, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
-import { Barcode, ScanCodeComponent } from '../scan-code/scan-code.component';
+import { ScanCodeComponent } from '../scan-code/scan-code.component';
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -171,7 +172,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       cssClass: 'scan-modal',
       backdropDismiss: false,
       componentProps: {
-        formats: [Barcode.QRCode],
+        formats: [SupportedFormat.QR_CODE],
         title: (<any>this.contentStrings).scan_code_title,
         prompt: (<any>this.contentStrings).scan_code_prompt,
       },

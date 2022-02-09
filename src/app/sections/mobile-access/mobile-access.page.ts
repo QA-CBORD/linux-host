@@ -7,11 +7,9 @@ import { MMobileLocationInfo } from './model';
 import { MobileAccessService } from './service';
 import { UserInfo } from '../../core/model/user';
 import { CONTENT_STRINGS } from './mobile-acces.config';
-
-import { Plugins } from '@capacitor/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-const { Keyboard } = Plugins;
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-mobile-access',

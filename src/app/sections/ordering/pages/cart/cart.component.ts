@@ -23,11 +23,11 @@ import {
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ActivatedRoute, RouteConfigLoadEnd, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { PopoverController } from '@ionic/angular';
-import { AccountType, PATRON_NAVIGATION, Settings } from '../../../../app.global';
+import { AccountType, Settings } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -36,7 +36,6 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
-import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ModalsService } from '@core/service/modals/modals.service';
@@ -48,7 +47,7 @@ import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
-const { Browser } = Plugins;
+import  { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'st-cart',
@@ -353,7 +352,7 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
 
-      Browser.addListener(browserState.FINISHED, (info: any) => {
+      Browser.addListener(browserState.FINISHED, () => {
         this.placingOrder = false;
         this.cdRef.detectChanges();
         Browser.removeAllListeners();

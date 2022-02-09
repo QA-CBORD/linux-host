@@ -1,15 +1,14 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
-import { catchError, switchMap, take } from 'rxjs/operators';
-import { AppState, Plugins } from '@capacitor/core';
+import { switchMap, take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
-import { from, of, Subject, throwError } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -21,7 +20,9 @@ import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
 import { Router } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
-const { App, Device, BackgroundTask } = Plugins;
+import { App } from '@capacitor/app';
+import { BackgroundTask } from '@robingenz/capacitor-background-task';
+
 
 enum AppStatus {
   BACKGROUND,
@@ -62,7 +63,7 @@ export class SessionFacadeService {
   // handle app state changes
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
   private appStateListeners() {
-    App.addListener('appStateChange', ({ isActive }: AppState) => {
+    App.addListener('appStateChange', ({ isActive }) => {
       this.identityFacadeService.onAppStateChanged(isActive);
       if (isActive) {
         this.appResumeLogic();
@@ -358,8 +359,8 @@ export class SessionFacadeService {
     this.identityFacadeService.lockVault();
   }
 
-  private closeActionsheets() {
-    const taskId = BackgroundTask.beforeExit(async () => {
+  private async closeActionsheets() {
+    const taskId = await BackgroundTask.beforeExit(async () => {
       this.nativeProvider.dismissTopControllers(!!this.nativeStartupFacadeService.blockNavigationStartup,  this.nativeProvider.getKeepTopModal);
       BackgroundTask.finish({
         taskId,

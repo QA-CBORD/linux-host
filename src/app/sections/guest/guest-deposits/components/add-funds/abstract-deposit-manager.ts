@@ -1,5 +1,5 @@
 import { ChangeDetectorRef } from '@angular/core';
-import { Browser } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { UserAccount } from '@core/model/account/account.model';
 import { ApplePay, ApplePayResponse } from '@core/model/add-funds/applepay-response.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -84,7 +84,7 @@ export abstract class AbstractDepositManager {
   }
 
   handleApplePay(toAccount: any, amount: any) {
-    Browser.addListener(browserState.FINISHED, (info: any) => {
+    Browser.addListener(browserState.FINISHED, () => {
       this.isDepositing = false;
       this.cdRef.detectChanges();
       Browser.removeAllListeners();
@@ -118,14 +118,8 @@ export abstract class AbstractDepositManager {
   }
 
   get minMaxOfAmounts() {
-    const minAmountOneTime = this.getSettingByName(
-      this.depositSettings,
-      Settings.Setting.GUEST_MINIMUM.split('.')[2]
-    );
-    const maxAmountOneTime = this.getSettingByName(
-      this.depositSettings,
-      Settings.Setting.GUEST_MAXIMUM.split('.')[2]
-    );
+    const minAmountOneTime = this.getSettingByName(this.depositSettings, Settings.Setting.GUEST_MINIMUM.split('.')[2]);
+    const maxAmountOneTime = this.getSettingByName(this.depositSettings, Settings.Setting.GUEST_MAXIMUM.split('.')[2]);
 
     return {
       minAmountOneTime,

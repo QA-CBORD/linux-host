@@ -1,13 +1,13 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { take, switchMap, tap, map } from 'rxjs/operators';
+import { take, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
 import { zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Plugins, Capacitor } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
@@ -19,7 +19,9 @@ import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { Platform } from '@ionic/angular';
-const { Keyboard, IOSDevice } = Plugins;
+import { Keyboard } from '@capacitor/keyboard';
+import { registerPlugin } from '@capacitor/core';
+const  IOSDevice  = registerPlugin<any>('IOSDevice');
 
 @Component({
   selector: 'st-institutions',
