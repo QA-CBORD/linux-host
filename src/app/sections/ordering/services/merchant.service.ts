@@ -239,6 +239,10 @@ export class MerchantService {
     }
   }
 
+  fetchPickupLocations(): Observable<any> {
+      return this.institutionService.fetchPickupLocations();
+  }
+
   addFavoriteMerchant(merchantId: string): Observable<string> {
     return this.orderingApiService.addFavoriteMerchant(merchantId);
   }

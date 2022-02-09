@@ -5,9 +5,9 @@
   [backButtonTitle]="''"
   [isToolbarShow]="true"
   tabindex="0"
-  class="deposit__header"
+  class="deposit__header browser-hidden"
 ></st-header>
-<ion-content>
+<ion-content class="browser-hidden">
   <form [formGroup]="depositForm">
     <section class="deposit__selection-block">
       <div class="deposit__select-wrapper">
@@ -168,7 +168,7 @@
     </section>
   </form>
 </ion-content>
-<ion-footer class="deposit__footer" mode="ios">
+<ion-footer class="deposit__footer browser-hidden" mode="ios">
   <st-button (onClick)="onFormSubmit()" tabindex="0" [isDisabled]="!depositForm.valid" [disabled]="isDepositing">
     <div id="depositBtnText">{{ contentString.submitButtonText }}</div>
   </st-button>

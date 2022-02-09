@@ -12,7 +12,7 @@ export class WorkOrderStateService  {
   });
   private readonly _defaultStateDetails = new WorkOrderDetails ({
     workOrderKey: 0,
-    workOrders: null,
+    workOrderDetails: null,
     formDefinition: null,
     workOrderTypes: null,
     });
@@ -52,6 +52,10 @@ export class WorkOrderStateService  {
 
   setWorkOrderImage(imageData: ImageData){
     this.workOrderImage.next(imageData);
+  }
+
+  destroyWorkOrderImage(){
+    this.workOrderImage.next(null);
   }
 
   get workOrderImage$(){

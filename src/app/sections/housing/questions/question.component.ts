@@ -38,12 +38,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._applicationsStateService.setRoommatesPreferences([])
     this._applicationsStateService.emptyRequestedRoommate()
     this._applicationsStateService.deleteRoommatePreferencesSelecteds();
+    this._workOrderStateService.destroyWorkOrderImage();
+    this.subscriptions.unsubscribe();
   }
 
 
   ngOnInit(): void {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
     this._initTermsSubscription();
+    this._initGetImage();
   }
 
   @Input() question: QuestionBase;
@@ -105,6 +108,17 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this._termService.termId$.subscribe(termId => this.selectedTermKey = termId));
   }
 
+  private _initGetImage() {
+    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => { 
+      if(res!=null && res.contents != '' ){
+        let format=res.filename.split('.')[1]
+        this.image$.next(`data:image/${format};base64,${res.contents}`)
+      } else {
+        this.image$.next(null)
+      }
+    }));
+  }
+
   async presentPhotoTypeSelection() {
     const photoSourceAS = await this.actionSheetCtrl.create({
       keyboardClose: true,
@@ -152,9 +166,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
         response => {
           //IMAGEBASE64
           this.image$.next(response.dataUrl)
+          const photoBase64 = response.dataUrl.split(',')[1];
+          this.sessionFacadeService.navigatedToPlugin = true;
           this._workOrderStateService.setWorkOrderImage({
             comments:"",
-            contents:btoa(response.dataUrl),
+            contents:photoBase64,
             filename:"work-order"+Date.now()+-''+'.'+response.format,
             studentSubmitted:true
           })
@@ -186,5 +202,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
     private async presentToast(message: string) {
       await this.toastService.showToast({ message, duration: 5000 });
+    }
+
+    isWorkOrderDescription(question){
+      return question.source === "WORK_ORDER" && question.workOrderFieldKey === 'DESCRIPTION';
     }
 }

@@ -5,8 +5,9 @@ export enum WorkOrdersFields {
   TYPE = "TYPE",
   NOTIFY_BY_EMAIL = "NOTIFY_BY_EMAIL",
   LOCATION= "LOCATION",
-  PHONE_NUMBER = "PHONE_NUMBER",
-  EMAIL = "EMAIL"
+  PHONE_NUMBER = "CONTACT_PHONE_NUMBER",
+  EMAIL = "EMAIL",
+  IMAGE ="IMAGE"
 }
 
 export interface ImageDataOptions {
@@ -32,6 +33,7 @@ export class ImageData implements ImageDataOptions {
   }
 }
 export interface WorkOrdersDetailsListOptions {
+  key:number;
   typeKey: number;
   description: string;
   attachment?: ImageData;
@@ -39,8 +41,13 @@ export interface WorkOrdersDetailsListOptions {
   notificationEmail: string;
   notificationPhone: string;
   notify: boolean;
+  requestedDate?: string;
+  status?: string;
+  statusKey?: number;
+  type?: string;
 }
 export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
+  key: number;
   attachment?: ImageData;
   facilityKey: number;
   notificationEmail: string;
@@ -48,10 +55,15 @@ export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
   notify: boolean;
   typeKey: number;
   description: string;
+  requestedDate?: string;
+  status?: string;
+  statusKey?: number;
+  type?: string;
   constructor(options: WorkOrdersDetailsListOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrdersDetailsListOptions;
     }
+    this.key = Number(options.key);
     this.typeKey = Number(options.typeKey);
     this.description = String(options.description);
     this.attachment = options.attachment;
@@ -59,7 +71,10 @@ export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
     this.notificationPhone = String(options.notificationPhone);
     this.notify = Boolean(options.notify);
     this.facilityKey = Number(options.facilityKey);
-
+    this.requestedDate = String(options.requestedDate);
+    this.status = String(options.status);
+    this.statusKey = Number(options.statusKey);
+    this.type = String(options.type);
   }
 }
 export interface WorkOrderOptions {
@@ -83,7 +98,7 @@ export class WorkOrder implements WorkOrderOptions{
 }
 export interface WorkOrderDetailsOptions {
   workOrderKey: number,
-  workOrders: WorkOrdersDetailsList,
+  workOrderDetails: WorkOrdersDetailsList,
   formDefinition: FormDefinitionOptions,
   workOrderTypes: workOrderTypesOptions[]
 }
@@ -106,7 +121,7 @@ export class workOrderTypes implements workOrderTypesOptions{
 }
 export class WorkOrderDetails implements WorkOrderDetailsOptions{
   workOrderKey: number;
-  workOrders: WorkOrdersDetailsList;
+  workOrderDetails: WorkOrdersDetailsList;
   formDefinition: FormDefinitionOptions;
   workOrderTypes: workOrderTypes[];
   constructor(options: WorkOrderDetailsOptions) {
@@ -114,7 +129,7 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
       options = {} as WorkOrderDetailsOptions;
     }
     this.workOrderKey = Number(options.workOrderKey)
-    this.workOrders = options.workOrders;
+    this.workOrderDetails = options.workOrderDetails;
     this.formDefinition = options.formDefinition;
     this.workOrderTypes = Array.isArray(options.workOrderTypes)
     ? options.workOrderTypes.map((detail: any) => new workOrderTypes(detail))

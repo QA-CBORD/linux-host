@@ -133,7 +133,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
 
   private setSavedEnvironmentInfo(type: EnvironmentType) {
     this.currentEnvironment = this.getEnvironmentObjectFromType(type);
-    this.storageStateService.updateStateEntity(this.currentEnvironmentKey, type, { highPriorityKey: true });
+    this.storageStateService.updateStateEntity(this.currentEnvironmentKey, type, { highPriorityKey: true, keepOnLogout: true });
   }
 
   getPartnerServicesURL(): string {
