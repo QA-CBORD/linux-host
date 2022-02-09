@@ -98,7 +98,6 @@ const validateSettingEnabled = async function (services: SettingsServices): Prom
 
 const isSupported = async function (services: SettingsServices) {
   const currentProfile = await services.profileService.determineCurrentProfile$().pipe(take(1)).toPromise();
-  debugger
   return function (settingItem: SettingItemConfig) {
     if (!currentProfile) return true;
     if (settingItem.supportProfiles && settingItem.supportProfiles.length) {
@@ -112,7 +111,6 @@ const isSupported = async function (services: SettingsServices) {
 const isSupportedInCurrentProfile = async function (settingItem: SettingItemConfig, services: SettingsServices): Promise<boolean> {
   if (settingItem.supportProfiles && settingItem.supportProfiles.length) {
     const currentProfile = await services.profileService.determineCurrentProfile$().pipe(take(1)).toPromise();
-    debugger
     if (!currentProfile) return true;
     return settingItem.supportProfiles.includes(currentProfile);
   }
