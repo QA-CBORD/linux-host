@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { WorkOrdersComponent } from './work-orders.component'
 import { ActionsModule } from '../actions/actions.module';
+import { StHierarcheTreeModule } from '@shared/ui-components/st-hierarchy-tree/st-hierarchy-tree.module';
+import { StHierarcheTreeDialogModule } from '@shared/ui-components/st-hierarchy-tree-dialog/st-hierarchy-tree-dialog.module';
 
 const declarations = [
   WorkOrdersComponent
@@ -14,7 +16,9 @@ const declarations = [
     CommonModule,
     IonicModule,
     ActionsModule,
-    RouterModule
+    RouterModule,
+    StHierarcheTreeModule,
+    StHierarcheTreeDialogModule
   ],
   exports: declarations
 })
