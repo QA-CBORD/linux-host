@@ -125,7 +125,7 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
   workOrderDetails: WorkOrdersDetailsList;
   formDefinition: FormDefinitionOptions;
   workOrderTypes: workOrderTypes[];
-  facilityTree: FacilityTreeOptions[];
+  facilityTree: FacilityTree[];
   constructor(options: WorkOrderDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as WorkOrderDetailsOptions;
@@ -230,6 +230,7 @@ export class FacilityTreeDetails implements FacilityTreeDetailsOptions{
 
 export class FacilityTree implements FacilityTreeOptions{
   facilityTree: FacilityTreeDetails[];
+  facilityFullName?: string;
   constructor(options: FacilityTreeOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as FacilityTreeOptions;

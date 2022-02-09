@@ -4,15 +4,12 @@
     #input
     type="text"
     [ngClass]="{ 'input__control--error': false }"
-    [disabled]="false"
+    [disabled]="isDisable"
     [attr.value]="(this._workOrderStateService.getSelectedFacility$() |async)?.name"
     [attr.aria-required]="true"
     (click)="open()"
+    placeholder="Location"
   />
-  <label class="input__placeholder" >{{(this._workOrderStateService.getSelectedFacility$() |async)?.name? '' : 'Location'}}</label>
-  <ng-content *ngIf="false"></ng-content>
-  <div class="input__accesibility_error" *ngIf="false && !false">
-    <img src="/assets/icon/input-error.svg" alt="input-accessibility-error" *ngIf="false" />
-  </div>
+  <ion-icon class="facility-btn-ion-icon" item-right name="arrow-forward"></ion-icon>
 </div>
 

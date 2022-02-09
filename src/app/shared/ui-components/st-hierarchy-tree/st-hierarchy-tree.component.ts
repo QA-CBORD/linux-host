@@ -3,9 +3,9 @@ import { ModalController } from '@ionic/angular';
 import { StHierarcheTreeDialogComponent } from '../st-hierarchy-tree-dialog/st-hierarchy-tree-dialog.component';
 import { NamedIdentity, LookUpItem } from '../../../sections/housing/work-orders/work-orders.model';
 import { ViewEncapsulation } from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 import { Subscription } from 'rxjs';
+import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
 
 @Component({
   selector: 'st-hierarchy-tree',
@@ -13,15 +13,17 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./st-hierarchy-tree.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class StHierarcheTreeComponent implements OnInit, OnDestroy  {
+export class StHierarcheTreeComponent implements OnDestroy  {
   public selectedItem: NamedIdentity;
   private _subscription: Subscription = new Subscription();
   @Input() public lookups: LookUpItem[];
   @Input() public allowParent: boolean;
+  @Input() public isDisable: boolean;
 
   constructor(
     public modalCtrl: ModalController,
     public _workOrderStateService: WorkOrderStateService,
+    public _contractListStateService: ContractListStateService
     ) {
     this.selectedItem = null;
   }
@@ -31,10 +33,6 @@ export class StHierarcheTreeComponent implements OnInit, OnDestroy  {
     this._workOrderStateService.clearSelectedFacility()
   }
 
-  ngOnInit(): void {
-    this._subscription.add(
-    this._workOrderStateService.getSelectedFacility$().subscribe(res=> this.selectedItem = res? res : {facilityFullName:'Select Please'}))
-  }
 
   public async open() {
     const multiLevelSelectDialogComponent = await this.modalCtrl.create({

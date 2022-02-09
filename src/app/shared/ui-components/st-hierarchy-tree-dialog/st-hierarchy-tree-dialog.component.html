@@ -19,8 +19,10 @@
         </ion-item>
         <ion-item [ngClass]="{ 'selected': item.selected }" *ngFor="let item of slide.items"
           (click)="handleItemClick(item)">
-          {{ item.name }}
-          <ion-icon *ngIf="item.nextSlideIndex !== null" item-right name="arrow-forward"></ion-icon>
+          <div class="content_title">
+            {{ item.name }}
+          <ion-icon item-right *ngIf="item.nextSlideIndex !== null" item-right name="arrow-forward"></ion-icon>
+          </div>
         </ion-item>
       </ion-list>
     </ion-slide>

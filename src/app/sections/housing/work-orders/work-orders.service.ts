@@ -15,7 +15,6 @@ import { QuestionFormControl } from '../questions/types/question-form-control';
 import { HttpParams } from "@angular/common/http";
 import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
-import { WaitingListStateService } from '../waiting-lists/waiting-list-state.service';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
@@ -31,11 +30,11 @@ export class WorkOrdersService {
   constructor(
     private _proxy: HousingProxyService,
     private _environment: EnvironmentFacadeService,
-    private _waitingListState: WaitingListStateService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
     private _housingProxyService: HousingProxyService,
-    private _workOrderStateService: WorkOrderStateService,) { }
+    private _workOrderStateService: WorkOrderStateService,
+    ) { }
 
   getWorkOrders(): Observable<WorkOrder> {
     return of(this.workOrders);
@@ -217,7 +216,7 @@ export class WorkOrdersService {
     })
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
-    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.facilityKey ? location = res.facilityKey: location = null)
+    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id ? location = res.id: location = null)
     const body = new WorkOrdersDetailsList({
       key:null,
       notificationPhone: phoneNumber, 

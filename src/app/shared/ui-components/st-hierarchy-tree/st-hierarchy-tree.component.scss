@@ -33,10 +33,10 @@
 
     &:focus,
     &:focus-within {
-      border: 2px solid $color-dodger-blue;
+      border: 2px solid $color-dim-gray;
 
       & + .input__placeholder {
-        @include floating-label($color-dodger-blue);
+        @include floating-label($color-dim-gray);
       }
     }
 
@@ -80,17 +80,15 @@
     right: 1%;
   }
 }
+.input__wrapper{
+  display: flex;
+}
 
-:host-context(.ng-valid.ng-dirty) .input__control {
-  &:focus-within {
-    & + .input__placeholder {
-      @include floating-label($color-dodger-blue);
-    }
-  }
-
-  & + .input__placeholder {
-    z-index: 2;
-
-    @include floating-label($color-dim-gray);
-  }
+.facility-btn-ion-icon{
+  position: relative;
+  margin: auto;
+  font-size: 2em;
+  left: -33px;
+  padding: 0;
+  width: 30px;
 }
