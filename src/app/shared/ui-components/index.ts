@@ -10,3 +10,4 @@ export * from './st-select-floating-label';
 export * from './st-spinner';
 export * from './st-textarea-floating-label';
 export * from './pin';
+export * from './st-hierarchy-tree';

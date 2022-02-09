@@ -16,6 +16,8 @@ import { AssetTypeDetailsModule } from '../asset-type-details/asset-type-details
 
 import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
+import { StHierarcheTreeModule } from '@shared/ui-components/st-hierarchy-tree/st-hierarchy-tree.module';
+import { StHierarcheTreeDialogModule } from '@shared/ui-components/st-hierarchy-tree-dialog/st-hierarchy-tree-dialog.module';
 
 const imports = [
   CommonModule,
@@ -30,7 +32,9 @@ const imports = [
   FacilityPickerModule,
   ChargeSchedulesModule,
   SignContractModule,
-  AssetTypeDetailsModule
+  AssetTypeDetailsModule,
+  StHierarcheTreeModule,
+  StHierarcheTreeDialogModule
 ];
 const exports = [QuestionComponent];
 const declarations = [QuestionComponent, EmptyFormControlDirective];

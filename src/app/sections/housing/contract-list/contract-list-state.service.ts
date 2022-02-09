@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ContractSummary } from './contractSummary.model';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ContractDetails } from '../contracts/contracts.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,5 +16,9 @@ export class ContractListStateService  {
 
   setContractSummaries(value: ContractSummary[]) {
     this.contractSummaries.next(value);
+  }
+
+  getContractDetails(): ContractSummary[] {
+    return this.contractSummaries.value;
   }
 }

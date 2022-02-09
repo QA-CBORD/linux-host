@@ -26,7 +26,7 @@
               </div>
             </div>
         
-            <h2 class="work-orders-list__title">{{ workOrder.type }}</h2>
+            <h2 class="work-orders-list__title">{{ workOrder.type !=='null'? workOrder.type : 'Others' }}</h2>
           </ion-label>
 
           <st-actions
