@@ -1,4 +1,4 @@
-import { SettingsSectionConfig, SETTINGS_VALIDATIONS } from './models/setting-items-config.model';
+import { SettingItemConfig, SettingItemValidation, SettingsSectionConfig, SettingsServices, SETTINGS_VALIDATIONS, StatusSettingValidation } from './models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
 import {
   handleOpenHTMLModal,
@@ -19,7 +19,10 @@ import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-credential-metadata.page';
 import { PasswordChangeComponent } from '@shared/ui-components/change-password/password-change.component';
-import { CreditCardMgmtComponent } from './creditCards/credit-card-mgmt/credit-card-mgmt.component';
+import { map, switchMap, take } from 'rxjs/operators';
+import { LoginState } from '@core/facades/identity/identity.facade.service';
+import { configureBiometricsConfig } from '@core/utils/general-helpers';
+import { APP_PROFILES } from '@sections/dashboard/models';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -46,6 +49,75 @@ export enum SETTINGS_NAVIGATE {
   terms = 'terms-privacy',
 }
 
+
+const isGuestUser = async function (services: SettingsServices): Promise<boolean> {
+  const authService = services.authService;
+  return authService.isGuestUser().toPromise();
+}
+
+const isGuestHOF = async (services: SettingsServices, self: SettingItemConfig, inner: () => Promise<boolean>): Promise<boolean> => {
+  return isGuestUser(services).then(((async isGuest => {
+    if (isGuest && self.studentsOnly) return false;
+    return await inner();
+  })
+  ));
+}
+
+const asyncCheckEvery = async function (validations: SettingItemValidation[], services: SettingsServices): Promise<boolean[]> {
+  const checks: boolean[] = [];
+  for (const validation of validations) {
+    const statusValidation = validation.value as StatusSettingValidation;
+    checks.push(
+      await statusValidation.getStatusValidation(services).pipe(
+        switchMap(setting => services.settings.getSetting(setting as Settings.Setting).pipe(map(({ value }): boolean => parseInt(value) === 1))),
+        take(1)
+      ).toPromise()
+    );
+  }
+  return checks;
+}
+
+const asyncCheckEverySetting = async function (validations: SettingItemValidation[], services: SettingsServices) {
+  const checks: boolean[] = [];
+  for (const validation of validations) {
+    checks.push(await services.settings.getSetting(validation.value as Settings.Setting)
+      .pipe(map(({ value }): boolean => parseInt(value) === 1))
+      .toPromise());
+  }
+  console.log('checs: ', checks)
+  return checks;
+}
+
+const validateSettingEnabled = async function (services: SettingsServices): Promise<boolean> {
+  if ((await isSupported(services))(this)) {
+    return await isGuestHOF(services, this, async () => (await asyncCheckEverySetting(this.validations, services)).every(checkTrue => checkTrue))
+  }
+  return false;
+}
+
+
+const isSupported = async function (services: SettingsServices) {
+  const currentProfile = await services.profileService.determineCurrentProfile$().pipe(take(1)).toPromise();
+  return function (settingItem: SettingItemConfig) {
+    if (!currentProfile) return true;
+    if (settingItem.supportProfiles && settingItem.supportProfiles.length) {
+      return settingItem.supportProfiles.includes(currentProfile);
+    }
+    return true;
+  }
+}
+
+
+const isSupportedInCurrentProfile = async function (settingItem: SettingItemConfig, services: SettingsServices): Promise<boolean> {
+  if (settingItem.supportProfiles && settingItem.supportProfiles.length) {
+    const currentProfile = await services.profileService.determineCurrentProfile$().pipe(take(1)).toPromise();
+    if (!currentProfile) return true;
+    return settingItem.supportProfiles.includes(currentProfile);
+  }
+
+  return true;
+}
+
 export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
     label: 'Your card',
@@ -58,6 +130,8 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         studentsOnly: true,
         navigate: [SETTINGS_NAVIGATE.updatePhoto],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
+        supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest],
+        selfValidate: validateSettingEnabled
       },
       {
         id: SETTINGS_ID.lostCard,
@@ -77,6 +151,14 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
             value: { getStatusValidation: getCardStatusValidation, validation: ReportCardStatusSetting },
           },
         ],
+        supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest],
+        selfValidate: async function (services: SettingsServices) {
+          const self: SettingItemConfig = this;
+          const checks = await asyncCheckEvery(self.validations, services);
+          // if is guest user return false.
+          if (await isGuestUser(services) || !((await isSupported(services))(self))) return false;
+          return checks.every((checkTrue) => checkTrue);
+        }
       },
     ],
   },
@@ -92,6 +174,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           component: PhoneEmailComponent,
         },
+        selfValidate: async (args) => true
       },
       {
         id: SETTINGS_ID.password,
@@ -102,6 +185,11 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         validations: [
           { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
         ],
+        selfValidate: async function (services: SettingsServices) {
+          const sessionFacade = services.sessionFacadeService;
+          const loginState = await sessionFacade.determineInstitutionSelectionLoginState();
+          return loginState == LoginState.HOSTED || await isGuestUser(services)
+        },
         modalContent: {
           component: PasswordChangeComponent,
           contentStrings: [{
@@ -127,6 +215,17 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
           { type: SETTINGS_VALIDATIONS.Biometric, value: 'biometric' },
         ],
+        selfValidate: async function (services: SettingsServices) {
+          const biometricsEnabled = await services.identity.areBiometricsAvailable();
+          if (biometricsEnabled) {
+            const biometrics = await services.identity.getAvailableBiometricHardware();
+            const biometric = configureBiometricsConfig(biometrics);
+            this.label = biometric.name;
+            this.icon = biometric.icon;
+          }
+
+          return biometricsEnabled;
+        }
       },
       {
         id: SETTINGS_ID.pin,
@@ -135,6 +234,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'button',
         setCallback: handlePinAccess,
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED }],
+        selfValidate: validateSettingEnabled
       },
       {
         id: SETTINGS_ID.address,
@@ -142,6 +242,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Saved Addresses',
         type: 'button',
         navigate: [SETTINGS_NAVIGATE.address],
+        selfValidate: async (args) => true
       },
       // {
       //   id: SETTINGS_ID.creditCard,
@@ -166,11 +267,16 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'mobile_credential',
         label: 'Mobile Credential Status',
         type: 'button',
+        studentsOnly: true,
         setCallback: openModal,
         modalContent: {
           component: MobileCredentialMetadata,
         },
         validations: [{ type: SETTINGS_VALIDATIONS.MobileCredentialEnabled, value: Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED }],
+        selfValidate: async function (services: SettingsServices) {
+          const mobileCredentialFacade = services.mobileCredentialFacade;
+          return !(await isGuestUser(services)) && (await mobileCredentialFacade.showCredentialMetadata().pipe(take(1)).toPromise());
+        }
       },
     ],
   },
@@ -206,6 +312,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'change_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_CHANGE_PLAN_ENABLED }],
+        selfValidate: validateSettingEnabled
       },
       {
         id: SETTINGS_ID.mealPurchase,
@@ -216,6 +323,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'purchase_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED }],
+        selfValidate: validateSettingEnabled
       },
     ],
   },
@@ -239,6 +347,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           component: EditHomePageModalComponent,
         },
+        selfValidate: async (args) => true
       },
       // {
       //   id: SETTINGS_ID.navigate,
@@ -292,6 +401,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           component: HTMLRendererComponent,
         },
         setCallback: handleOpenHTMLModal,
+        selfValidate: async (args) => true
       },
       {
         id: SETTINGS_ID.support,
@@ -300,6 +410,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'button',
         setCallback: openSiteURL,
         navigateExternal: { type: 'email', value: Settings.Setting.SUPPORT_EMAIL },
+        selfValidate: async (args) => true
       },
       {
         id: SETTINGS_ID.terms,
@@ -317,7 +428,12 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           component: HTMLRendererComponent,
         },
         setCallback: handleOpenHTMLModal,
+        selfValidate: async (args) => true
       },
     ],
   },
 ];
+
+
+
+

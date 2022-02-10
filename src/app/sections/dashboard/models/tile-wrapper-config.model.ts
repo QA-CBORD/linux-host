@@ -1,5 +1,13 @@
 import { PATRON_NAVIGATION } from '../../../app.global';
 
+
+
+export enum APP_PROFILES {
+    patron = 'patron',
+    guest = 'guest',
+    housing = 'housing'
+  }
+
 export interface TileWrapperConfig {
     id: string;
     title: string;
@@ -9,6 +17,7 @@ export interface TileWrapperConfig {
     iconPath?: string;
     buttonConfig: ButtonConfig
     navigateBack?: PATRON_NAVIGATION | string;
+    supportProfiles?: APP_PROFILES[]
 }
 
 export interface ButtonConfig {
