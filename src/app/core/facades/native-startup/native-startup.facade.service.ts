@@ -44,16 +44,25 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   fetchNativeStartupInfo(): Observable<any> {
     return from(Device.getInfo()).pipe(
       take(1),
-      switchMap( async (deviceInfo) => {
+      switchMap(async deviceInfo => {
         if (deviceInfo.platform === 'web') {
-          return of(null);
+          return null;
         }
 
-        const appVersion = await App.getInfo();
+        let appInfo = await App.getInfo();
+        return {
+          platform: deviceInfo.platform,
+          build: appInfo.build,
+        };
+      }),
+      switchMap(deviceInfo => {
+        if (!deviceInfo) {
+          return null;
+        }
 
         return zip(
           this.nativeStartupApiService
-            .nativeStartup(deviceInfo.platform, appVersion.build)
+            .nativeStartup(deviceInfo.platform, deviceInfo.build)
             .pipe(map(response => response.response)),
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
