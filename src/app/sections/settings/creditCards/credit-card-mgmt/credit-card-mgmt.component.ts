@@ -3,9 +3,11 @@ import { UserAccount } from '@core/model/account/account.model';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { AlertController, ModalController } from '@ionic/angular';
-import { CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
+import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { AccountsService } from '@sections/dashboard/services';
+import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, Observable, of, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { PaymentSystemType } from 'src/app/app.global';
@@ -28,7 +30,7 @@ export class CreditCardMgmtComponent implements OnInit {
 
   @Input() accounts: UserAccount[] = [];
 
-  accountsObs: Observable<{ account: UserAccount; display: string }[]>;
+  accountsObs: Observable<{ account: UserAccount; display: string, iconSrc: string }[]>;
 
   noCreditCardFound: boolean = false;
 
@@ -40,10 +42,13 @@ export class CreditCardMgmtComponent implements OnInit {
     private externalPaymentService: ExternalPaymentService,
     private loadingService: LoadingService,
     private readonly toastService: ToastService,
-    protected readonly alertCtrl: AlertController
-  ) {}
+    protected readonly alertCtrl: AlertController,
+    private readonly globalNav: GlobalNavService,
+    protected readonly popoverCtrl: PopoverController,
+  ) { }
 
   ngOnInit() {
+    this.globalNav.showNavBar();
     this.accountsObs = this.retrieveAccounts();
   }
 
@@ -58,10 +63,13 @@ export class CreditCardMgmtComponent implements OnInit {
 
   private buildStr(account: UserAccount) {
     const { accountTender, lastFour } = account;
-    const display = `${CREDITCARD_TYPE[parseInt(accountTender) - 1]} ending in ${lastFour}`;
+    const creditCardTypeNumber = parseInt(accountTender) - 1;
+    const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
+    const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
     return {
       display,
       account,
+      iconSrc
     };
   }
 
@@ -69,9 +77,9 @@ export class CreditCardMgmtComponent implements OnInit {
     this.modalControler.dismiss();
   }
 
-  changeAddNewCreditCardState() {}
+  changeAddNewCreditCardState() { }
 
-  async removeAccount({ account }) {
+  async removeAccount({ account, display }) {
     const onRemoveConfirmed = async () => {
       this.alertCtrl.dismiss();
       this.loadingService.showSpinner();
@@ -89,17 +97,29 @@ export class CreditCardMgmtComponent implements OnInit {
         .toPromise();
     };
 
-    await this.createAlertDialog(
-      'Confirm',
-      'Are you sure you want to remove credit card ending in ' + account.lastFour,
-      [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Confirm',
-          handler: () => onRemoveConfirmed(),
+    const cardType = display.split(" ")[0];
+    const modal = await this.popoverCtrl.create({
+      component: ConfirmModalComponent,
+      mode: 'md',
+      backdropDismiss: false,
+      componentProps: {
+        titleString: `Remove ${cardType} ?`,
+        bodyString: 'Are you sure you want to remove credit card ending in ' + account.lastFour,
+        primaryBtnText: 'Remove Card',
+        secondaryBtnText: 'Cancel',
+        primaryBtnColor: 'danger',
+        secondaryBtnColor: 'light',
+        onClickPrimary: async (e) => {
+          await onRemoveConfirmed();
+          this.popoverCtrl.dismiss({});
         },
-      ]
-    );
+        onClickSecondary: (e) => {
+          this.popoverCtrl.dismiss({});
+        }
+      }
+    });
+
+    await modal.present();
   }
 
   async addCreditCard() {

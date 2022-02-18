@@ -1,32 +1,59 @@
 
-
-.main_content {
-    
+.ionic_content {
     background-color: #f1f1f1;
+    .main_content {
 
-    .add-new-cc_item {
-        margin-top: 25px;
-        margin-bottom: 25px;
-    }
-    
-    .devider{
-      border: 0.5px lightgray;
-    }
-    
-    .credit-card-item {
-    
-        .remove-btn {
-           font-family: "Nunito Bold", arial, sans-serif;
-           //font-size: 15px;
+
+        .cards {
+
+            .info-to-user{
+                margin: 10px 25px;
+                display: flex;
+                div:nth-child(2) {
+                    width: 80%;
+                    margin: auto;
+                    font-size: 14px;
+                    font-weight: 400;
+                    font-style: normal;
+                    line-height: 21px;
+                    font-family: 'Nunito Regular';
+                }
+            }
+        }
+       
+        .add-new-cc_item {
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .devider{
+          border: 0.5px lightgray;
+        }
+        
+        .credit-card-item {
+        
+            .remove-btn {
+               font-family: "Nunito Bold", arial, sans-serif;
+               //font-size: 15px;
+            }
+        
+            .credit__card_item-label{
+                display: flex;
+                justify-content: space-between;
+                margin-left: 5px;
+            }
         }
     
-        .credit__card_item-label{
-            display: flex;
-            justify-content: space-between;
-            margin-left: 5px;
-        }
     }
+}
+.add-new-card-btn {
+    margin: 0px 23px 30px 23px;
 
+    .st-button-card{
+        color: #166DFF;
+        border-radius: 8px;
+        height: 42px;
+     }
 }
 
 

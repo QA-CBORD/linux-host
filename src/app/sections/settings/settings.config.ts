@@ -23,6 +23,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { APP_PROFILES } from '@sections/dashboard/models';
+import { CreditCardMgmtComponent } from './creditCards/credit-card-mgmt/credit-card-mgmt.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -244,24 +245,25 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         navigate: [SETTINGS_NAVIGATE.address],
         selfValidate: async (args) => true
       },
-      // {
-      //   id: SETTINGS_ID.creditCard,
-      //   icon: 'credit-card',
-      //   label: 'Payment Methods',
-      //   type: 'button',
-      //   setCallback: openModal,
-      //   validations: [
-      //     { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
-      //   ],
-      //   modalContent: {
-      //     component: CreditCardMgmtComponent,
-      //     contentStrings: [{
-      //       domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      //       category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
-      //       name: null,
-      //     }]
-      //   },
-      // },
+      {
+        id: SETTINGS_ID.creditCard,
+        icon: 'credit-card',
+        label: 'Payment Methods',
+        type: 'button',
+        setCallback: openModal,
+        validations: [
+          { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
+        ],
+        modalContent: {
+          component: CreditCardMgmtComponent,
+          contentStrings: [{
+            domain: CONTENT_STRINGS_DOMAINS.patronUi,
+            category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
+            name: null,
+          }]
+        },
+        selfValidate: async ()=> true
+      },
       {
         id: SETTINGS_ID.mcredential,
         icon: 'mobile_credential',

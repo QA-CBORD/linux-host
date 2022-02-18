@@ -1,30 +1,9 @@
-<ion-content>
-  <div class="header">
-    <div>{{ contentStrings.lbl_btn_checkin_in }} </div>
-    <div (click)="closeMe()">x</div>
-  </div>
-  <div class="content-wrapper">
-    <div class="message">
-      <span>{{ contentStrings.checkin_method_text }} </span>
-    </div>
-    <div class="btn">
-      <st-button
-        [disabled]="locationPermissionDisabled"
-        (onClick)="onLocationCheckinClicked()"
-        buttonModifier="rectangular"
-      >
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lbl_btn_loc_chck_in }}
-        </span>
-      </st-button>
-    </div>
-
-    <div class="btn">
-      <st-button (onClick)="onScanCode()" buttonModifier="rectangular" isDisabled="true">
-        <span class="ion-text-capitalize">
-          {{ contentStrings.lbl_btn_scan_code }}
-        </span>
-      </st-button>
-    </div>
-  </div>
-</ion-content>
+<st-confirm-modal 
+[titleString]="contentStrings.lbl_btn_checkin_in"
+[bodyString]="contentStrings.checkin_method_text"
+[primaryBtnText]="contentStrings.lbl_btn_loc_chck_in"
+[secondaryBtnText]="contentStrings.lbl_btn_scan_code"
+[primaryBtnDisabled]="locationPermissionDisabled"
+(onPrimaryBtnClicked)="onLocationCheckinClicked()"
+(onSecondaryBtnClicked)="onScanCode()"
+></st-confirm-modal>
