@@ -50,6 +50,8 @@ import { WaitingListsService } from './waiting-lists/waiting-lists.service';
 import { WaitingListStateService } from './waiting-lists/waiting-list-state.service';
 import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
+import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
+import { InspectionForms } from './inspections-forms/inspections-forms.model';
 
 @Injectable({
   providedIn: 'root',
@@ -84,6 +86,7 @@ export class HousingService {
     private _waitingListStateService: WaitingListStateService,
     public _housingService: HousingService,
     private _workOrderStateService: WorkOrderStateService,
+    private _inspectionsStateService: InspectionsStateService
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();
   }
@@ -160,6 +163,18 @@ export class HousingService {
     return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
       map((response: any) => new RoomSelectResponse(response)),
       tap((response: RoomSelectResponse) => this._setRoomsState(response.roomSelects)),
+      catchError(() => this._handleGetRoomSelectsError())
+    );
+  }
+
+  getInspections(termId: number){
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/${termId}`
+    return this._housingProxyService.get<any>(apiUrl).pipe(
+      map((response: any) => {
+        this._inspectionsStateService.setInspectionList(response)
+        console.log(response) //TODO :ERASE
+      }),
+      tap((response: any) => {}),
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
@@ -316,6 +331,10 @@ export class HousingService {
 
   _setRequestedRoommateState(roommates: RequestedRoommate[]): void {
     this._applicationsStateService.setRequestedRoommates(roommates);
+  }
+
+  _setInspection(value: InspectionForms): void{
+    this._inspectionsStateService.setInspectionForms(value)
   }
 
   /**
