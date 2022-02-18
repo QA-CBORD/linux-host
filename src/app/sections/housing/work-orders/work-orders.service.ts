@@ -192,6 +192,7 @@ export class WorkOrdersService {
     let notifyByEmail: boolean;
     let type,location = 0;
     let image : ImageData | null;
+    let isImageUpload: boolean;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
@@ -223,7 +224,6 @@ export class WorkOrdersService {
       typeKey: type,
       description: description,
       notificationEmail: email,
-      attachment: image,
       facilityKey:location,
       notify: notifyByEmail,
       status:'',
@@ -235,13 +235,28 @@ export class WorkOrdersService {
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       map((response: Response) => {
         if (isSuccessful(response.status)) {
-          return true;
+          this.sendWorkOrderImage(response.data.id,image).subscribe( res => isImageUpload = res);
+          return true && isImageUpload;
         } else {
           throw new Error(response.status.message);
         }
       }
       ),
       catchError(_ => of(false))
+    );
+  }
+
+  sendWorkOrderImage(workOrderId : number, image:ImageData ): Observable<boolean> {
+    let workOrderImageURL = `${this._environment.getHousingAPIURL()}/work-orders/${workOrderId}/attachments`;
+    return this._housingProxyService.postImage<Response>(workOrderImageURL,image).pipe(
+      map((response: Response) => {
+        if (isSuccessful(response.status)) {
+          return true;
+        } else {
+          throw new Error(response.status.message);
+        }
+      }
+      )
     );
   }
 }
