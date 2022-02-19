@@ -16,7 +16,7 @@
 
     <!-- TODO: Add plus button  -->
     <ng-container>
-      <div #container *ngFor="let workOrder of workOrderLists.workOrders">
+      <div #container *ngFor="let workOrder of workOrderLists.workOrders | sort_by_date : 'requestedDate' ">
         <ion-item lines="none" class="work-orders-list__item" [ngClass]="getClass(workOrder.statusKey)" >
           <ion-label class="work-orders-list__wrap">
             <div class="work-orders-list__info">

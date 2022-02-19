@@ -6,3 +6,4 @@ export * from './transaction-operation';
 export * from './transaction-units';
 export * from './address-header-format-pipe';
 export * from './order-by-pipe';
+export * from './sort-by-date-pipe';
