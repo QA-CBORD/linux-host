@@ -17,7 +17,7 @@
           (click)="itemSelected(slide.parentSlideItem)">
           {{ slide.parentSlideItem?.name }}
         </ion-item>
-        <ion-item [ngClass]="{ 'selected': item.selected }" *ngFor="let item of slide.items"
+        <ion-item [ngClass]="{ 'selected': item.selected }" *ngFor="let item of slide.items | order_by:'name'"
           (click)="handleItemClick(item)">
           <div class="content_title">
             {{ item.name }}
