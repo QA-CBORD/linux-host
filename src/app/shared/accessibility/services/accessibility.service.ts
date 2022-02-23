@@ -30,13 +30,13 @@ export class AccessibilityService {
   }
 
   get isVoiceOverEnabled$(): Promise<boolean> {
-    if (Capacitor.platform === PLATFORM.web) {
+    if (Capacitor.getPlatform() === PLATFORM.web) {
         return of(false).toPromise();
     }
 
     return ScreenReader.isEnabled().then(isRunning => {
       if (isRunning.value) {
-        if (Capacitor.platform === PLATFORM.ios) {
+        if (Capacitor.getPlatform() === PLATFORM.ios) {
           return true;
         }
       }

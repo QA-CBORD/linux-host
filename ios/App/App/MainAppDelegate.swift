@@ -66,23 +66,20 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     
-    #if USE_PUSH
-    
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
         InstanceID.instanceID().instanceID { (result, error) in
             if let error = error {
-                NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: error)
+                NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
             } else if let result = result {
-                NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: deviceToken)            
+                NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: result.token)
             }
         }
     }
     
      func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: error)
+         NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
      }
-    
-    #endif
+
 }
 

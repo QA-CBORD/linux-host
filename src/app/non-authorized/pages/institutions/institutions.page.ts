@@ -156,7 +156,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   async setNativeEnvironment() {
-    if (Capacitor.platform === PLATFORM.ios && this.platform.is('cordova')) {
+    if (Capacitor.getPlatform() === PLATFORM.ios && this.platform.is('cordova')) {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
   }

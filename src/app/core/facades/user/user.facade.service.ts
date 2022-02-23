@@ -187,7 +187,7 @@ export class UserFacadeService extends ServiceStateFacade {
         if (result) {
           PushNotifications.removeAllListeners();
           PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-            if (Capacitor.platform === PLATFORM.android) {
+            if (Capacitor.getPlatform() === PLATFORM.android) {
               LocalNotifications.schedule({
                 notifications: [
                   {
@@ -246,7 +246,7 @@ export class UserFacadeService extends ServiceStateFacade {
       id: pNotifications.length > 0 ? pNotifications[0].id : null,
       type: User.NotificationType.PUSH_NOTIFICATION,
       value: fcmToken,
-      provider: Capacitor.platform,
+      provider: Capacitor.getPlatform(),
     };
   }
 

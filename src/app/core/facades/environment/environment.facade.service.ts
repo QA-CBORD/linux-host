@@ -244,7 +244,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   private getURLbasedOnPlatform(): string {
-    if (Capacitor.platform === PLATFORM.android) {
+    if (Capacitor.getPlatform() === PLATFORM.android) {
       return 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev';
     } else {
       return 'https://api.payments.demo.cbord.com';

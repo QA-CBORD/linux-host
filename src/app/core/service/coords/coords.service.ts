@@ -55,7 +55,7 @@ export class CoordsService {
     /// this prevents several simultaneous requests to the device
     const timeDiff = new Date().getTime() - this.timestamp;
     if (timeDiff > this.fetchInterval) {
-      if (Capacitor.platform == PLATFORM.android) {
+      if (Capacitor.getPlatform() == PLATFORM.android) {
         (async () => {
           await this.androidPermissions.checkLocationPermission().then(result => {
             if (result.hasPermission) {
