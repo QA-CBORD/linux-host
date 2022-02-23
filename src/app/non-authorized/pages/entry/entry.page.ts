@@ -55,7 +55,7 @@ export class EntryPage implements OnInit {
     if (!this.platform.is('cordova')) return;
 
     return from(App.getInfo()).pipe(
-      map(({ build }) => build),
+      map(({ version }) => version),
       take(1)
     );
   }
