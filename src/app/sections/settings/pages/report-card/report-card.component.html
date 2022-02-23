@@ -14,19 +14,11 @@
     <div class="report-card__img">
       <img src="../../../../../assets/icon/card_search.svg" />
     </div>
-    <ion-label class="report-card__label">{{ user ?  'Report ' + nextStatusText + '?' : '' }}</ion-label>
-    <p class="report-card__description">
-      <ng-container *ngIf="user">
-          {{
-            isLost
-              ? 'This will unfreeze your card.  Are you sure you want to report it as found?'
-              : 'This will freeze your card and you won’t be able to use it until you contact your card office. Are you sure you want to report it as lost?'
-          }}
-      </ng-container>
-    </p>
+    <ion-label class="report-card__label">{{ 'Report ' + nextStatusText }}</ion-label>
+    <p class="report-card__description" [innerHTML]='nextStatusDescription$ | async'></p>
   </div>
 </ion-content>
-<ion-footer  *ngIf="user" class="ion-margin-vertical ion-padding">
+<ion-footer class="ion-margin-vertical ion-padding">
   <st-button [disabled]="isReporting" buttonModifier="rectangle" (click)="toggleStatus()" tabindex="3">
     {{ isReporting ? 'Reporting card...' : 'Report card as ' + nextStatusText }}
   </st-button>

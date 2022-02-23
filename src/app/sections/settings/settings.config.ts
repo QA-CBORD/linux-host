@@ -48,6 +48,10 @@ export enum SETTINGS_NAVIGATE {
   support = 'email-support',
   terms = 'terms-privacy',
 }
+export enum LOST_CARD_CONTENT_STRINGS {
+  lost = 'report_lost',
+  found = 'report_found'
+}
 
 
 const isGuestUser = async function (services: SettingsServices): Promise<boolean> {
