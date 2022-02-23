@@ -209,7 +209,7 @@
                     </ion-card-content>
                     
                     <ion-card-content *ngSwitchCase="'preferredNameLast'">
-                      {{ roommate.preferredName == 'null' ? '' : roommate.preferredName }} {{ roommate.lastName}}
+                      {{ roommate.preferredName == 'null' || roommate.preferredName == '' ? roommate.firstName : roommate.preferredName }} {{ roommate.lastName}}
                     </ion-card-content>
         
                     <ion-card-content *ngSwitchCase="'fullNameDOB'">
