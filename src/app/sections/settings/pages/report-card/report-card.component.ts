@@ -9,7 +9,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { AsyncPipe } from '@angular/common';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { LOST_CARD_CONTENT_STRINGS } from '@sections/settings/settings.config';
+import { LOST_CARD_CONTENT_STRINGS } from '@sections/settings/sections/settings.content-strings';
 
 @Component({
   selector: 'st-report-card',
