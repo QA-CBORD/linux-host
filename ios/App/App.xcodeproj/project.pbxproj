@@ -584,7 +584,7 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.getmobile;
 				PRODUCT_NAME = "GET&#x2009;Mobile";
-				PROVISIONING_PROFILE_SPECIFIER = "GET Distribution Ad Hoc Provisioning";
+				PROVISIONING_PROFILE_SPECIFIER = "GET Distribution Provisioning";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
 				SWIFT_OBJC_BRIDGING_HEADER = "App/App-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Osize";
