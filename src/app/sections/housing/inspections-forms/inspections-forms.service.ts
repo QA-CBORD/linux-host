@@ -13,7 +13,7 @@ import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { HttpParams } from "@angular/common/http";
-import { WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './inspections-forms.model';
+import { ImageData, WorkOrdersFields } from './inspections-forms.model';
 import { generateWorkOrders } from './inspections-forms.mock';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
@@ -22,10 +22,9 @@ import { QuestionTextbox } from '../questions/types/question-textbox';
 @Injectable({
   providedIn: 'root',
 })
-export class WorkOrdersService {
-  private workOrderListUrl = `${this._environment.getHousingAPIURL()
-    }/patron-applications/v.1.0/work-orders`;
-  // workOrders: WorkOrder = generateWorkOrders(5);
+export class InspectionService {
+  private inspectiontUrl = `${this._environment.getHousingAPIURL()
+    }/roomselectproxy/v.1.0/room-inspections-proxy`;
 
   constructor(
     private _proxy: HousingProxyService,
@@ -36,9 +35,6 @@ export class WorkOrdersService {
     private _inspectionStateService: InspectionsStateService,
     ) { }
 
-  // getWorkOrders(): Observable<WorkOrder> {
-  //   return of(this.workOrders);
-  // }
 
   // removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
   //   let urlRemove = this.workOrderListUrl + `/patron`;

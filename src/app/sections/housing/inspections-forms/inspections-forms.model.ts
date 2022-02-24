@@ -32,54 +32,70 @@ export class ImageData implements ImageDataOptions {
     this.studentSubmitted = Boolean(options.studentSubmitted);
   }
 }
-export interface WorkOrdersDetailsListOptions {
-  key:number;
-  typeKey: number;
-  description: string;
-  attachment?: ImageData;
-  facilityKey: number;
-  notificationEmail: string;
-  notificationPhone: string;
-  notify: boolean;
-  requestedDate?: string;
-  status?: string;
-  statusKey?: number;
-  type?: string;
+export interface FormInspectionOptions{
+  formDefinition: FormDefinition;
+  requirements: Requirements;
 }
-export class WorkOrdersDetailsList implements WorkOrdersDetailsListOptions {
-  key: number;
-  attachment?: ImageData;
-  facilityKey: number;
-  notificationEmail: string;
-  notificationPhone: string;
-  notify: boolean;
-  typeKey: number;
-  description: string;
-  requestedDate?: string;
-  status?: string;
-  statusKey?: number;
-  type?: string;
-  constructor(options: WorkOrdersDetailsListOptions) {
+export class FormInspection implements FormInspectionOptions{
+  formDefinition: FormDefinition;
+  requirements: Requirements;
+}
+
+export interface ItemsOptions{
+  comments: string;
+  inventoryTemplateItemKey: number;
+  name: string;
+  residentConditionKey: number;
+  residentInspectionItemKey: number;
+  staffConditionKey: number;
+  staffInspectionItemKey: number;
+}
+export class Items implements ItemsOptions{
+  comments: string;
+  inventoryTemplateItemKey: number;
+  name: string;
+  residentConditionKey: number;
+  residentInspectionItemKey: number;
+  staffConditionKey: number;
+  staffInspectionItemKey: number;
+  constructor(options : ItemsOptions){
     if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as WorkOrdersDetailsListOptions;
+      options = {} as ItemsOptions;
     }
-    this.key = Number(options.key);
-    this.typeKey = Number(options.typeKey);
-    this.description = String(options.description);
-    this.attachment = options.attachment;
-    this.notificationEmail = String(options.notificationEmail);
-    this.notificationPhone = String(options.notificationPhone);
-    this.notify = Boolean(options.notify);
-    this.facilityKey = Number(options.facilityKey);
-    this.requestedDate = String(options.requestedDate);
-    this.status = String(options.status);
-    this.statusKey = Number(options.statusKey);
-    this.type = String(options.type);
+    this.comments = String(options.comments);
+    this.inventoryTemplateItemKey = Number(options.inventoryTemplateItemKey);
+    this.name = String(options.name);
+    this.residentConditionKey = Number(options.residentConditionKey);
+    this.residentInspectionItemKey = Number(options.residentInspectionItemKey);
+    this.staffConditionKey = Number(options.staffConditionKey);
+    this.staffInspectionItemKey = Number(options.staffInspectionItemKey);
+  }
+
+}
+export interface InspectionSectionsOptions{
+  items: Items[];
+  name: string;
+}
+
+export class InspectionSections implements InspectionSectionsOptions{
+  items: Items[];
+  name: string;
+  constructor(options: InspectionSectionsOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as InspectionSectionsOptions;
+    }
+    this.items = Array.isArray(options.items)? options.items.map((details:any)=> new Items(details)):[];
+    this.name = String(options.name);
+
   }
 }
-export interface InspectionFormsOptions {
-  formDefinition: FormDefinition,
-  requirements: Requirements,
+export interface InspectionOptions {
+  contractElementKey: number;
+  form: FormInspection;
+  isSubmitted: boolean;
+  residentInspectionKey: number;
+  sections: InspectionSections[]
+  staffInspectionKey: number;
 }
 export interface RequirementsOptions {
   formKey: number;
@@ -101,64 +117,27 @@ export class Requirements implements RequirementsOptions{
   }
 }
 
-export class InspectionForms implements InspectionFormsOptions{
-  formDefinition: FormDefinition;
-  requirements: Requirements;
-  constructor(options: InspectionFormsOptions) {
+export class Inspection implements InspectionOptions{
+  contractElementKey: number;
+  form: FormInspection;
+  isSubmitted: boolean;
+  residentInspectionKey: number;
+  sections: InspectionSections[];
+  staffInspectionKey: number;
+  constructor(options: InspectionOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as InspectionFormsOptions;
+      options = {} as InspectionOptions;
     }
-    this.formDefinition = options.formDefinition;
-    this.requirements = options.requirements;
+   this.contractElementKey = Number(options.contractElementKey)
+   this.form = options.form;
+   this.isSubmitted = Boolean(options.isSubmitted);
+   this.residentInspectionKey = Number(options.residentInspectionKey);
+   this.sections = Array.isArray(options.sections)
+   ? options.sections.map((details:any)=> new InspectionSections(details)): [];
+   this.staffInspectionKey = Number(options.staffInspectionKey);
   }
 }
 
-export interface WorkOrderDetailsOptions {
-  workOrderKey: number,
-  workOrderDetails: WorkOrdersDetailsList,
-  formDefinition: FormDefinitionOptions,
-  workOrderTypes: workOrderTypesOptions[],
-  facilityTree: FacilityTreeOptions[]
-}
-
-export interface workOrderTypesOptions{
-  key: number,
-  name: string
-}
-
-export class workOrderTypes implements workOrderTypesOptions{
-  key: number;
-  name: string;
-  constructor(options: workOrderTypesOptions) {
-    if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as workOrderTypesOptions;
-    }
-    this.key = Number(options.key)
-    this.name = String(options.name);
-  }
-}
-export class WorkOrderDetails implements WorkOrderDetailsOptions{
-  workOrderKey: number;
-  workOrderDetails: WorkOrdersDetailsList;
-  formDefinition: FormDefinitionOptions;
-  workOrderTypes: workOrderTypes[];
-  facilityTree: FacilityTree[];
-  constructor(options: WorkOrderDetailsOptions) {
-    if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as WorkOrderDetailsOptions;
-    }
-    this.workOrderKey = Number(options.workOrderKey)
-    this.workOrderDetails = options.workOrderDetails;
-    this.formDefinition = options.formDefinition;
-    this.workOrderTypes = Array.isArray(options.workOrderTypes)
-    ? options.workOrderTypes.map((detail: any) => new workOrderTypes(detail))
-    : [];
-    this.facilityTree = Array.isArray(options.facilityTree)
-    ? options.facilityTree.map((detail: any) => new FacilityTree(detail))
-    : [];
-  }
-
-}
 export interface FormDefinitionOptions {
   id: number;
   applicationDescription: string;
@@ -205,99 +184,4 @@ export class FormDefinition implements FormDefinitionOptions{
     this.numberOfDaysToExpire = Number(options.numberOfDaysToExpire);
     this.termId = Number(options.termId);
   }
-}
-
-export interface FacilityTreeOptions {
-  facilityTree: FacilityTreeDetails[]
-}
-export interface FacilityTreeDetailsOptions {
-  children: FacilityTreeDetailsOptions[],
-  effectiveDate: string,
-  endDate: string,
-  facilityFullName: string,
-  facilityKey: number,
-  facilityType: number,
-  parentKey: number,
-}
-export class FacilityTreeDetails implements FacilityTreeDetailsOptions{
-  children: FacilityTreeDetailsOptions[];
-  effectiveDate: string;
-  endDate: string;
-  facilityFullName: string;
-  facilityKey: number;
-  facilityType: number;
-  parentKey: number;
-  constructor(options: FacilityTreeDetailsOptions) {
-    if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as FacilityTreeDetailsOptions;
-    }
-    this.effectiveDate = String(options.effectiveDate);
-    this.endDate = String(options.endDate);
-    this.facilityFullName = options.facilityFullName;
-    this.facilityKey = Number(options.facilityKey);
-    this.facilityKey = Number(options.facilityKey);
-    this.parentKey = Number(options.parentKey);
-    this.facilityType = Number(options.facilityType);
-    this.children = Array.isArray(options.parentKey)
-    ? options.children.map((detail: any) => new FacilityTreeDetails(detail))
-    : [];
-  }
-
-}
-
-export class FacilityTree implements FacilityTreeOptions{
-  facilityTree: FacilityTreeDetails[];
-  facilityFullName?: string;
-  constructor(options: FacilityTreeOptions) {
-    if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as FacilityTreeOptions;
-    }
-    this.facilityTree = Array.isArray(options.facilityTree)
-    ? options.facilityTree.map((detail: any) => new FacilityTreeDetails(detail))
-    : [];
-  }
-}
-
-
-export class Identity {
-  public id?: number;
-  public creationTime?: string;
-  public lastModificationTime?: string;
-}
-
-export class NamedIdentity {
-  public id?: number;
-  public name?: string;
-  public facilityFullName?: string;
-  public facilityKey?: number;
-}
-
-export enum SortOrder {
-  ById = 0,
-  Alphabetical = 1
-}
-
-export interface LookUpItemRaw extends NamedIdentity, Identity {
-  parent_id?: number;
-}
-
-export interface LookUpItem extends NamedIdentity {
-  parentId?: number;
-  parentKey?: number;
-  children: LookUpItem[];
-}
-
-export interface SlideItem extends NamedIdentity {
-  parentId: number;
-  nextSlideIndex: number;
-  selected?: boolean;
-  slide: Slide;
-  lookUpItem: LookUpItem;
-}
-
-export interface Slide {
-  parentSlideItem: SlideItem;
-  parentSlide: Slide;
-  slideIndex: number;
-  items: SlideItem[];
 }

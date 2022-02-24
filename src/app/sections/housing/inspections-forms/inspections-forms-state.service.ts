@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { InspectionForms, FormDefinition} from './inspections-forms.model';
+import { Inspection, FormDefinition} from './inspections-forms.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InspectionsStateService  {
-  private readonly _defaultState = new InspectionForms ({
-  formDefinition: null,
-  requirements: null,
+  private readonly _defaultState = new Inspection ({
+  form: null,
+  contractElementKey: null,
+  sections: null,
+  staffInspectionKey: null,
+  isSubmitted: null,
+  residentInspectionKey:null,
   });
 
   private readonly _defaultStateFormDetails = new FormDefinition ({
@@ -27,7 +31,7 @@ export class InspectionsStateService  {
     });
   // public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
   public inspectionList: BehaviorSubject<any> = new BehaviorSubject<any>(this._defaultState);
-  public inspectionForm: BehaviorSubject<InspectionForms> = new BehaviorSubject<InspectionForms>(this._defaultState);
+  public inspectionForm: BehaviorSubject<Inspection> = new BehaviorSubject<Inspection>(this._defaultState);
   // public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
   public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null)
   // public selectedFacility$: BehaviorSubject<NamedIdentity> = new BehaviorSubject<NamedIdentity>(null);
@@ -35,7 +39,7 @@ export class InspectionsStateService  {
    
   }
 
-  setInspectionForms(value: InspectionForms) {
+  setInspection(value: Inspection) {
     this.inspectionForm.next(value);
   }
 
@@ -43,13 +47,10 @@ export class InspectionsStateService  {
 
   }
 
-  // setWorkOrderDetails(workOrderDetails: WorkOrderDetails){
-  //   this.workOrderDetails.next(workOrderDetails);
-  // }
+  get inspectionForm$() {
+    return this.inspectionForm;
+  }
 
-  // setWorkOrderFormDetails(workOrderFormDetails: FormDefinition){
-  //   this.workOrderFormDetails.next(workOrderFormDetails);
-  // }
 
   setWorkOrderImage(imageData: ImageData){
     this.workOrderImage.next(imageData);

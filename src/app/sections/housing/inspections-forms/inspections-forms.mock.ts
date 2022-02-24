@@ -1,4 +1,4 @@
-import { InspectionForms, WorkOrderDetails } from './inspections-forms.model';
+import { Inspection } from './inspections-forms.model';
 
 export function generateWorkOrder(_: any, index: number) {
   return {
@@ -6,10 +6,10 @@ export function generateWorkOrder(_: any, index: number) {
   };
 }
 
-export function generateWorkOrders(amount: number = 3): InspectionForms {
+export function generateWorkOrders(amount: number = 3): Inspection {
   return Array.apply(null, Array(amount)).map(generateWorkOrder);
 }
 
-export function generateWorkOrdersDetails(amount: number=3): WorkOrderDetails {
+export function generateWorkOrdersDetails(amount: number=3): Inspection {
   return Array.apply(null, Array(amount)).map(generateWorkOrder);
 }

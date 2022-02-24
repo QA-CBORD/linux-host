@@ -51,7 +51,7 @@ import { WaitingListStateService } from './waiting-lists/waiting-list-state.serv
 import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
-import { InspectionForms } from './inspections-forms/inspections-forms.model';
+import { Inspection } from './inspections-forms/inspections-forms.model';
 
 @Injectable({
   providedIn: 'root',
@@ -167,14 +167,12 @@ export class HousingService {
     );
   }
 
+  //TODO: inspection DEtails change name
   getInspections(termId: number){
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/${termId}`
-    return this._housingProxyService.get<any>(apiUrl).pipe(
-      map((response: any) => {
-        this._inspectionsStateService.setInspectionList(response)
-        console.log(response) //TODO :ERASE
-      }),
-      tap((response: any) => {}),
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}`
+    return this._housingProxyService.get<Inspection>(apiUrl).pipe(
+      map((response: any) => new Inspection(response)),
+      tap((response: Inspection) => this._setInspection(response)),
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
@@ -333,8 +331,8 @@ export class HousingService {
     this._applicationsStateService.setRequestedRoommates(roommates);
   }
 
-  _setInspection(value: InspectionForms): void{
-    this._inspectionsStateService.setInspectionForms(value)
+  _setInspection(value: Inspection): void{
+    this._inspectionsStateService.setInspection(value)
   }
 
   /**

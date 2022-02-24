@@ -81,11 +81,11 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
       this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
       this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
     }
-    if(response ){
-      //TODO: handleSuccess
-      this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
-      this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
-    }
+    // if(response ){
+    //   //TODO: handleSuccess
+    //   this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
+    //   this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
+    // }
     this._loadingService.closeSpinner();
   }
 }

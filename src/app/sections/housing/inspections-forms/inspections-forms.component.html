@@ -1,40 +1,37 @@
 <section > 
-  *ngIf="(inspectionsListSubscription | async) as InspectionList"
+  <!-- *ngIf="(inspectionsListSubscription | async) as InspectionList" -->
   <ion-list  
     class="ion-no-margin bg-transparent">
     <ion-grid >
       <ion-row class="container-header-inspection">
         <div class="col-inspection ion-no-padding">
-            <h2 class="form__secondary-header">WORK ORDERS</h2>
+            <h2 class="form__secondary-header">Inspections</h2>
         </div>
       </ion-row>
     </ion-grid>
 
     <!-- TODO: Add plus button  -->
     <ng-container>
-      <!-- <div #container *ngFor="let workOrder of inspectionsListSubscription">
+      <div #container >
         <ion-item lines="none" class="inspections-list__item" >
           <ion-label class="inspections-list__wrap">
             <div class="inspections-list__info">
-              <h5 class="inspections-list__status" [ngClass]="" >{{ workOrder.status }}</h5>
-              <div class="inspections-list__date" *ngIf="workOrder?.requestedDate">
-                Submitted {{ workOrder?.requestedDate | date: 'MM/dd/yyyy' }}
+              <!-- TODO: status inspections -->
+              <h5 class="inspections-list__status" [ngClass]="" >new {{ null }}</h5>
+              <div class="inspections-list__date" >
+                Submitted
               </div>
             </div>
         
-            <h2 class="inspections-list__title">{{ workOrder.type !=='null'? workOrder.type : 'Others' }}</h2>
+            <h2 class="inspections-list__title">ROOM TEST</h2>
           </ion-label>
 
           <st-actions
-            [path]="getPath(workOrder.key)"
-            [edit]="!workOrder?.facilityKey"
-            [showEdit]="!workOrder?.facilityKey"
-            [showView]="workOrder?.facilityKey"
-            [showRemove]="false"
-            [key]="workOrder?.facilityKey">
+            [path]="getPath(144)"
+            >
           </st-actions>
         </ion-item>
-      </div> -->
+      </div>
     </ng-container>
 
     <ng-container>

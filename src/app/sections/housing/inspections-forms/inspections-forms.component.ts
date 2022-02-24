@@ -1,9 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { WorkOrdersService } from './inspections-forms.service';
-
-import { InspectionForms } from './inspections-forms.model';
+import { Inspection } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
@@ -24,7 +22,7 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     private _termService : TermsService
     ) {}
 
-  workOrders: InspectionForms[];
+  inspections: Inspection[];
 
   ngOnInit() {
     const inspectionsListSubscription: Subscription = this._inspectionsStateService.inspectionForms$
@@ -38,7 +36,7 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     this._subscription.add(
       this._termService.termId$
           .subscribe(termId => {
-            this.urlEditForm = `/patron/housing/inspections-forms/${termId}/`;
+            this.urlEditForm = `/patron/housing/inspections/${termId}/`;
             this.selectedTermKey = termId;
           }));
     
@@ -57,7 +55,7 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   }
 
   getPath(key: number): string {
-    return `${ROLES.patron}/housing/inspections-forms/${this.selectedTermKey}/${key}`;
+    return `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${key}`;
   }
 
 }
