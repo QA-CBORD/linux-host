@@ -210,6 +210,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         ? this.getOrderItemOptionsInitialObjects(orderItem.orderItemOptions, menuItem)
         : [],
       quantity: orderItem.quantity,
+      specialInstructions: orderItem.specialInstructions
     };
   }
 
