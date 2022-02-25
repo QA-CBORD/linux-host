@@ -218,7 +218,7 @@ export class WorkOrdersService {
     })
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
-    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id ? location = res.id: location = null)
+    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null)
     const body = new WorkOrdersDetailsList({
       key:null,
       notificationPhone: phoneNumber, 
