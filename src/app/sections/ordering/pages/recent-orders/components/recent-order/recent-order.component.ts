@@ -210,6 +210,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         ? this.getOrderItemOptionsInitialObjects(orderItem.orderItemOptions, menuItem)
         : [],
       quantity: orderItem.quantity,
+      specialInstructions: orderItem.specialInstructions
     };
   }
 
@@ -238,8 +239,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   private async reorderOrder(availableItems) {
+    const order = await this.order$.pipe(take(1)).toPromise();
     await this.loadingService.showSpinner();
     this.cart.addOrderItems(availableItems);
+    this.cart.updateOrderNote(order.notes);
     await this.cart
       .validateOrder()
       .pipe(
