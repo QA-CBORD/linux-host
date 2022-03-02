@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
-import { ModalController, Platform, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';

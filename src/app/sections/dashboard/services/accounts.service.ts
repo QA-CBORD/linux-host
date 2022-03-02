@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 
@@ -18,14 +18,14 @@ export class AccountsService {
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
-  getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Observable<UserAccount[]> {
+  getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Promise<UserAccount[]> {
     return this.commerceApiService
       .getUserAccounts()
-      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
+      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults))).toPromise();
   }
 
-  removeCreditCardAccount({ id: accountId }: UserAccount): Observable<Boolean> {
-    return this.commerceApiService.removeAccount({ accountId });
+  removeCreditCardAccount({ id: accountId }: UserAccount): Promise<Boolean> {
+    return this.commerceApiService.removeAccount({ accountId }).toPromise();
   }
 
   transformStringToArray(value: string): Array<unknown> {
@@ -38,9 +38,8 @@ export class AccountsService {
     return this.settingsFacadeService.getSetting(Settings.Setting.DISPLAY_TENDERS).pipe(
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-        this.getUserAccounts(
-          [PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
-        ).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
+      from(this.getUserAccounts([PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
+        )).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );
   }
@@ -49,7 +48,7 @@ export class AccountsService {
     return this.settingsFacadeService.getSetting(Settings.Setting.DEPOSIT_TENDERS).pipe(
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-        this.getUserAccounts().pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
+        from(this.getUserAccounts()).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );
   }

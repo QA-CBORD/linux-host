@@ -8,7 +8,7 @@ import { map, take } from "rxjs/operators";
 
 
 @Injectable({ providedIn: "root" })
-export class ProfileService {
+export class ProfileServiceFacade {
 
     constructor(private readonly settingsFacadeService: SettingsFacadeService) { }
 
@@ -24,6 +24,10 @@ export class ProfileService {
     determineCurrentProfile$(): Observable<APP_PROFILES> {
         return this.settingsFacadeService.getCachedSettings()
             .pipe(take(1), map((settings) => this.determineCurrentProfile(settings)));
+    }
+
+    async housingOnlyEnabled(): Promise<boolean> {
+        return await this.determineCurrentProfile$().toPromise() == APP_PROFILES.housing;
     }
 
 }

@@ -114,18 +114,18 @@ export function handleOpenHTMLModal(services: SettingsServices) {
 }
 
 export async function openModal(services: SettingsServices) {
-  let contentStringList = null;
-  const setting: SettingItemConfig = this;
-  const contentCategories = setting.modalContent.contentStrings;
-  if (contentCategories) {
-    contentStringList = await contentStringsByCategory(services, contentCategories);
-  }
 
-  setting.callback = async function() {
+  const setting: SettingItemConfig = this;
+
+  setting.callback = async function () {
+    let componentData = {};
+    if (setting.modalContent.fetchData)
+      componentData = await setting.modalContent.fetchData(services);
+
     const settingModal = await services.modalController.create({
       backdropDismiss: false,
       component: setting.modalContent.component,
-      componentProps: { contentStrings: contentStringList },
+      componentProps: { ...componentData }
     });
     services.globalNav.hideNavBar();
     settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
@@ -133,18 +133,15 @@ export async function openModal(services: SettingsServices) {
   };
 }
 
-async function contentStringsByCategory(
-  services: SettingsServices,
-  contentStrings: DomainContentString[]
-): Promise<[ContentStringInfo[]]> {
+export async function contentStringsByCategory(services: SettingsServices, contentStrings: DomainContentString[]): Promise<[ContentStringInfo[]]> {
+
   const contentStringList: [ContentStringInfo[]] = [[]];
-  for (let content of contentStrings) {
-    if (content.name === null) {
-      const item = await services.contentString
-        .fetchContentStrings$(content.domain, content.category)
-        .pipe(take(1))
-        .toPromise();
-      contentStringList.push(item);
+  for (let { domain, category, name } of contentStrings) {
+    if (!name) {
+      contentStringList.push(
+        await services.contentString.fetchContentStrings$(domain, category).pipe(take(1)).toPromise());
+    } else {
+      contentStringList.push([await services.contentString.getContentString$(domain, category, name).toPromise()])
     }
   }
   return contentStringList;
@@ -166,19 +163,19 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
       .toPromise();
 
     const link = await linkPromise;
-    setting.callback = async function() {
-      services.appBrowser.create(link, inAppBrowserTarget, {location: 'no'});
+    setting.callback = async function () {
+      services.appBrowser.create(link, inAppBrowserTarget, { location: 'no' });
     };
   }
   if (resource.type === 'link') {
     /// TODO this will be re-written after MVP.. I'm sorry... it's nasty
-    setting.callback = async function() {
+    setting.callback = async function () {
       const target: string =
         setting.id === SETTINGS_ID.mealPlan
           ? 'change_meal_plan'
           : setting.id === SETTINGS_ID.mealPurchase
-          ? 'purchase_meal_plan'
-          : 'not used';
+            ? 'purchase_meal_plan'
+            : 'not used';
       linkPromise = zip(services.institution.cachedInstitutionInfo$, services.authService.getAuthenticationToken$())
         .pipe(
           map(([inst, token]) => {
@@ -192,7 +189,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
         )
         .toPromise();
       const link = await linkPromise;
-      services.appBrowser.create(link, inAppBrowserTarget, { location: 'no'});
+      services.appBrowser.create(link, inAppBrowserTarget, { location: 'no' });
     };
   }
 }
