@@ -19,7 +19,7 @@
             </ion-label>
             
             <ion-label *ngSwitchCase="'preferredNameLast'">
-              {{ roommate.preferredName == 'null' ? '' : roommate.preferredName }} {{ roommate.lastName}}
+              {{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName }} {{ roommate.lastName}}
             </ion-label>
 
             <ion-label *ngSwitchCase="'fullNameDOB'">

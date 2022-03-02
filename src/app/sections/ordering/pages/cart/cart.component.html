@@ -21,6 +21,7 @@
     [subTotal]="(order$ | async).subTotal"
     [pickupFee]="(order$ | async).pickupFee"
     [deliveryFee]="(order$ | async).deliveryFee"
+    [notes]="(order$ | async).notes"
     [total]="(order$ | async).total"
     [orderItems]="(order$ | async).orderItems"
     [orderDetailOptions]="orderDetailOptions$ | async"
