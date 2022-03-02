@@ -2,7 +2,7 @@
 export class EnvironmentData {
   constructor() {}
   public static version = {
-    versionNumber: '4.12.3',
+    versionNumber: '4.12.4',
   };
 }
 
