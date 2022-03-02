@@ -163,8 +163,9 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
       .toPromise();
 
     const link = await linkPromise;
-    setting.callback = async function () {
-      services.appBrowser.create(link, inAppBrowserTarget, { location: 'no' });
+    setting.callback = async function() {
+      // We need for the device to handle the mailto intent.
+      services.appBrowser.create(link, '_system');
     };
   }
   if (resource.type === 'link') {

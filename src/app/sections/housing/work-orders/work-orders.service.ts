@@ -89,8 +89,8 @@ export class WorkOrdersService {
   }
 
   private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"},{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
-      .map((question: QuestionBase,i) => {
+    const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
+      .map((question: QuestionBase) => {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
         return [].concat(mappedQuestion);
       });
@@ -119,6 +119,8 @@ export class WorkOrdersService {
         workOrderField: true,
         workOrderFieldKey: question.workOrderFieldKey,
       };
+    }else if(question.workOrderFieldKey === WorkOrdersFields.LOCATION){
+      return this.createFacilityTreeQuestion();
     }else {
       return question;
     }
@@ -216,7 +218,7 @@ export class WorkOrdersService {
     })
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
-    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id ? location = res.id: location = null)
+    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null)
     const body = new WorkOrdersDetailsList({
       key:null,
       notificationPhone: phoneNumber, 
@@ -243,5 +245,10 @@ export class WorkOrdersService {
       ),
       catchError(_ => of(false))
     );
+  }
+
+  private createFacilityTreeQuestion(){
+    let facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
+    return parseJsonToArray(facilityTreeString);
   }
 }

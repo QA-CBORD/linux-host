@@ -271,8 +271,11 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
-  reportCard$(isReportAsLost: boolean): Observable<MessageResponse<string>> {
-    return this.userApiService.reportCard$(isReportAsLost).pipe(take(1));
+  reportCard$(isReportAsLost: boolean): Observable<UserInfo> {
+    return this.userApiService.reportCard$(isReportAsLost).pipe(
+      switchMap(() => this.getUser$()),
+      take(1)
+    );
   }
 
   changePassword$(oldPassword: string, newPassword: string): Observable<boolean> {
