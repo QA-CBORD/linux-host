@@ -29,7 +29,6 @@ import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-
   styleUrls: ['./item-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class ItemDetailComponent implements OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   itemOrderForm: FormGroup;
@@ -343,28 +342,15 @@ export class ItemDetailComponent implements OnInit {
     );
   }
 
-  private showAddedItemsQuantity(items: number) {
-    let message = `${items} ${items > 1 ? 'items' : 'item'} currently in your cart.`;
-    if (this.cartService.isExistingOrder) {
-      const currentOrder = this.cartService.currentOrderId;
-      let checkNumber = this.cartService.checkNumber;
-      this.merchantService.recentOrders$
-        .pipe(
-          map(orders => {
-            return orders.filter(
-              (order: OrderInfo) => order.status === ORDERING_STATUS.PENDING && order.id === currentOrder
-            );
-          }),
-          take(1)
-        )
-        .subscribe(order => {
-          if (order) {
-            checkNumber = order[0].checkNumber;
-          }
-        });
-      message = `Added to order #${checkNumber} cart. ` + message;
-    }
-    this.toastService.showToast({ message });
+  showAddedItemsQuantity(items: number) {
+    this.cartService.orderInfo$.pipe(take(1)).subscribe(order => {
+      const itemsQuantity = `${items} ${items > 1 ? 'items' : 'item'}`;
+      
+      let message = `${itemsQuantity} currently in your cart.`;
+      message = order.checkNumber ? `${itemsQuantity} added to order #${order.checkNumber} cart. ` : message;
+
+      this.toastService.showToast({ message });
+    });
   }
 }
 
