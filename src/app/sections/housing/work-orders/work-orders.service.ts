@@ -194,6 +194,7 @@ export class WorkOrdersService {
     let notifyByEmail: boolean;
     let type,location = 0;
     let image : ImageData | null;
+    let ImageFormData: FormData;
     let isImageUpload: boolean;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
@@ -218,8 +219,9 @@ export class WorkOrdersService {
 
     })
 
-    this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
-    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null)
+    this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null);
+    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
+    this._workOrderStateService.WorkOrderImageBlob.subscribe(res => ImageFormData = res);
     const body = new WorkOrdersDetailsList({
       key:null,
       notificationPhone: phoneNumber, 
@@ -237,7 +239,7 @@ export class WorkOrdersService {
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       map((response: Response) => {
         if (isSuccessful(response.status)) {
-          this.sendWorkOrderImage(response.data.id,image).subscribe( res => isImageUpload = res);
+          this.sendWorkOrderImage(response.data,ImageFormData, image).subscribe( res => isImageUpload = res);
           return true && isImageUpload;
         } else {
           throw new Error(response.status.message);
@@ -248,9 +250,15 @@ export class WorkOrdersService {
     );
   }
 
-  sendWorkOrderImage(workOrderId : number, image:ImageData ): Observable<boolean> {
-    let workOrderImageURL = `${this._environment.getHousingAPIURL()}/work-orders/${workOrderId}/attachments`;
-    return this._housingProxyService.postImage<Response>(workOrderImageURL,image).pipe(
+  sendWorkOrderImage(workOrderId : number, imageForm: FormData, image: ImageData ): Observable<boolean> {
+    let workOrderImageURL = `${this._environment.getHousingAPIURL()}/work-orders/attachments`;
+    let body = {'workOrderKey': workOrderId,
+    'comments':image.comments,
+    'fileName':image.filename,
+    'attachmentFile':imageForm,
+    'studentSubmitted': true,
+  }
+    return this._housingProxyService.postImage<Response>(workOrderImageURL,body).pipe(
       map((response: Response) => {
         if (isSuccessful(response.status)) {
           return true;
@@ -261,7 +269,7 @@ export class WorkOrdersService {
       )
     );
   }
-  
+
   private createFacilityTreeQuestion(){
     let facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
     return parseJsonToArray(facilityTreeString);
