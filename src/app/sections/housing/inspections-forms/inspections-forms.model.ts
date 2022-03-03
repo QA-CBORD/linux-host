@@ -4,10 +4,10 @@ export enum WorkOrdersFields {
   DESCRIPTION = "DESCRIPTION",
   TYPE = "TYPE",
   NOTIFY_BY_EMAIL = "NOTIFY_BY_EMAIL",
-  LOCATION= "LOCATION",
+  LOCATION = "LOCATION",
   PHONE_NUMBER = "CONTACT_PHONE_NUMBER",
   EMAIL = "EMAIL",
-  IMAGE ="IMAGE"
+  IMAGE = "IMAGE"
 }
 
 export interface ImageDataOptions {
@@ -32,16 +32,16 @@ export class ImageData implements ImageDataOptions {
     this.studentSubmitted = Boolean(options.studentSubmitted);
   }
 }
-export interface FormInspectionOptions{
+export interface FormInspectionOptions {
   formDefinition: FormDefinition;
   requirements: Requirements;
 }
-export class FormInspection implements FormInspectionOptions{
+export class FormInspection implements FormInspectionOptions {
   formDefinition: FormDefinition;
   requirements: Requirements;
 }
 
-export interface ItemsOptions{
+export interface ItemsOptions {
   comments: string;
   inventoryTemplateItemKey: number;
   name: string;
@@ -50,7 +50,7 @@ export interface ItemsOptions{
   staffConditionKey: number;
   staffInspectionItemKey: number;
 }
-export class Items implements ItemsOptions{
+export class Items implements ItemsOptions {
   comments: string;
   inventoryTemplateItemKey: number;
   name: string;
@@ -58,7 +58,7 @@ export class Items implements ItemsOptions{
   residentInspectionItemKey: number;
   staffConditionKey: number;
   staffInspectionItemKey: number;
-  constructor(options : ItemsOptions){
+  constructor(options: ItemsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as ItemsOptions;
     }
@@ -72,19 +72,19 @@ export class Items implements ItemsOptions{
   }
 
 }
-export interface InspectionSectionsOptions{
+export interface InspectionSectionsOptions {
   items: Items[];
   name: string;
 }
 
-export class InspectionSections implements InspectionSectionsOptions{
+export class InspectionSections implements InspectionSectionsOptions {
   items: Items[];
   name: string;
   constructor(options: InspectionSectionsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as InspectionSectionsOptions;
     }
-    this.items = Array.isArray(options.items)? options.items.map((details:any)=> new Items(details)):[];
+    this.items = Array.isArray(options.items) ? options.items.map((details: any) => new Items(details)) : [];
     this.name = String(options.name);
 
   }
@@ -104,12 +104,12 @@ export interface RequirementsOptions {
   beforeTermSearchDays: number;
 }
 
-export class Requirements implements RequirementsOptions{
+export class Requirements implements RequirementsOptions {
   formKey: number;
   numberOfDaysAfterCheckIn: number;
   afterTermSearchDays: number;
   beforeTermSearchDays: number;
-  constructor(options: RequirementsOptions){
+  constructor(options: RequirementsOptions) {
     this.formKey = Number(options.formKey)
     this.numberOfDaysAfterCheckIn = Number(options.numberOfDaysAfterCheckIn)
     this.afterTermSearchDays = Number(options.afterTermSearchDays)
@@ -117,7 +117,7 @@ export class Requirements implements RequirementsOptions{
   }
 }
 
-export class Inspection implements InspectionOptions{
+export class Inspection implements InspectionOptions {
   contractElementKey: number;
   form: FormInspection;
   isSubmitted: boolean;
@@ -128,13 +128,13 @@ export class Inspection implements InspectionOptions{
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as InspectionOptions;
     }
-   this.contractElementKey = Number(options.contractElementKey)
-   this.form = options.form;
-   this.isSubmitted = Boolean(options.isSubmitted);
-   this.residentInspectionKey = Number(options.residentInspectionKey);
-   this.sections = Array.isArray(options.sections)
-   ? options.sections.map((details:any)=> new InspectionSections(details)): [];
-   this.staffInspectionKey = Number(options.staffInspectionKey);
+    this.contractElementKey = Number(options.contractElementKey)
+    this.form = options.form;
+    this.isSubmitted = Boolean(options.isSubmitted);
+    this.residentInspectionKey = Number(options.residentInspectionKey);
+    this.sections = Array.isArray(options.sections)
+      ? options.sections.map((details: any) => new InspectionSections(details)) : [];
+    this.staffInspectionKey = Number(options.staffInspectionKey);
   }
 }
 
@@ -153,7 +153,7 @@ export interface FormDefinitionOptions {
   termId: number
 }
 
-export class FormDefinition implements FormDefinitionOptions{
+export class FormDefinition implements FormDefinitionOptions {
   id: number;
   applicationDescription: string;
   applicationFormJson: string;
@@ -183,5 +183,53 @@ export class FormDefinition implements FormDefinitionOptions{
     this.expireWhenAssigned = Number(options.expireWhenAssigned);
     this.numberOfDaysToExpire = Number(options.numberOfDaysToExpire);
     this.termId = Number(options.termId);
+  }
+}
+
+
+export interface InspectionsOptions {
+  residentInspectionKey: number;
+  staffInspectionKey: number;
+  contractKey: number;
+  isSubmitted: boolean;
+  checkIn: boolean;
+  scheduleDate: string;
+  dueDate: string;
+  inspectionDate: string;
+  facilityLocation: string;
+  formTitle: string;
+  totalItems: number;
+  remainingItems: number;
+}
+
+export class Inspections implements InspectionsOptions {
+  residentInspectionKey: number;
+  staffInspectionKey: number;
+  contractKey: number;
+  isSubmitted: boolean;
+  checkIn: boolean;
+  scheduleDate: string;
+  dueDate: string;
+  inspectionDate: string;
+  facilityLocation: string;
+  formTitle: string;
+  totalItems: number;
+  remainingItems: number;
+  constructor(options: InspectionsOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as InspectionsOptions;
+    }
+    this.residentInspectionKey = Number(options.residentInspectionKey);
+    this.staffInspectionKey = Number(options.staffInspectionKey);
+    this.contractKey = Number(options.contractKey);
+    this.isSubmitted = Boolean(options.isSubmitted);
+    this.checkIn = Boolean(options.checkIn);
+    this.scheduleDate = String(options.scheduleDate);
+    this.dueDate = String(options.dueDate);
+    this.inspectionDate = String(options.inspectionDate);
+    this.facilityLocation = String(options.facilityLocation);
+    this.formTitle = String(options.formTitle);
+    this.totalItems = Number(options.totalItems);
+    this.remainingItems = Number(options.remainingItems);
   }
 }

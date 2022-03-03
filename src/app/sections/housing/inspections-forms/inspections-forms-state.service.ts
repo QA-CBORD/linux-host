@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Inspection, FormDefinition} from './inspections-forms.model';
+import { Inspection, FormDefinition, Inspections } from './inspections-forms.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,21 @@ export class InspectionsStateService  {
   staffInspectionKey: null,
   isSubmitted: null,
   residentInspectionKey:null,
+  });
+
+  private readonly _defaultInspectionsListState = new Inspections ({
+    residentInspectionKey: null,
+    staffInspectionKey: null,
+    contractKey: null,
+    isSubmitted: null,
+    checkIn: null,
+    scheduleDate: null,
+    dueDate: null,
+    inspectionDate: null,
+    facilityLocation: null,
+    formTitle: null,
+    totalItems: null,
+    remainingItems: null,
   });
 
   private readonly _defaultStateFormDetails = new FormDefinition ({
@@ -30,7 +45,7 @@ export class InspectionsStateService  {
     termId: 0,
     });
   // public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
-  public inspectionList: BehaviorSubject<any> = new BehaviorSubject<any>(this._defaultState);
+  public inspectionList: BehaviorSubject<Inspections> = new BehaviorSubject<Inspections>(this._defaultInspectionsListState);
   public inspectionForm: BehaviorSubject<Inspection> = new BehaviorSubject<Inspection>(this._defaultState);
   // public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
   public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null)
@@ -43,8 +58,8 @@ export class InspectionsStateService  {
     this.inspectionForm.next(value);
   }
 
-  setInspectionList(value: any){
-
+  setInspectionList(value: Inspections){
+    this.inspectionList.next(value);
   }
 
   get inspectionForm$() {
@@ -52,7 +67,7 @@ export class InspectionsStateService  {
   }
 
 
-  setWorkOrderImage(imageData: ImageData){
+  setInspectImage(imageData: ImageData){
     this.workOrderImage.next(imageData);
   }
 

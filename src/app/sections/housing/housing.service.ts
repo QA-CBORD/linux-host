@@ -51,7 +51,7 @@ import { WaitingListStateService } from './waiting-lists/waiting-list-state.serv
 import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
-import { Inspection } from './inspections-forms/inspections-forms.model';
+import { Inspections } from './inspections-forms/inspections-forms.model';
 
 @Injectable({
   providedIn: 'root',
@@ -169,10 +169,10 @@ export class HousingService {
 
   //TODO: inspection DEtails change name
   getInspections(termId: number){
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}`
-    return this._housingProxyService.get<Inspection>(apiUrl).pipe(
-      map((response: any) => new Inspection(response)),
-      tap((response: Inspection) => this._setInspection(response)),
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`
+    return this._housingProxyService.get<Inspections>(apiUrl).pipe(
+      map((response: any) => new Inspections(response)),
+      tap((response: Inspections) => this._setInspectionsList(response)),
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
@@ -181,7 +181,6 @@ export class HousingService {
     const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
     return this._housingProxyService.post<RequestedRoommateResponse>(apiUrl, request).pipe(
       map((response: any) => new RequestedRoommateResponse(response.data)),
-      // tap((response: RequestedRoommateResponse) => this._setRequestedRoommateState(response.requestedRoommates)),
       catchError(() => this._handleGetRequestedRoommatesError())
     );
   }
@@ -331,8 +330,8 @@ export class HousingService {
     this._applicationsStateService.setRequestedRoommates(roommates);
   }
 
-  _setInspection(value: Inspection): void{
-    this._inspectionsStateService.setInspection(value)
+  _setInspectionsList(value: Inspections): void{
+    this._inspectionsStateService.setInspectionList(value)
   }
 
   /**
