@@ -15,18 +15,13 @@ import { SessionFacadeService } from '../../../core/facades/session/session.faca
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
-import { FacilityTree, ImageData } from '../work-orders/work-orders.model';
+import { FacilityTree, ImageData, LocalFile } from '../work-orders/work-orders.model';
 import { Filesystem, FilesystemDirectory } from '@capacitor/core';
 
 const { Camera } = Plugins;
 
 const IMAGE_DIR = 'stored-images';
 
-interface LocalFile {
-  name: string;
-  path: string;
-  data: string;
-}
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -194,7 +189,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
       resultType: CameraResultType.Uri,
       source: CameraSource.Photos,
       saveToGallery: true,
-    })
+    });
+    
     if (image) {
       this.saveImage(image)
     }
@@ -205,11 +201,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const base64Data = await this.readAsBase64(photo);
 
     const fileName = new Date().getTime() + '.PNG';
-    const savedFile = await Filesystem.writeFile({
+    await Filesystem.writeFile({
       path: `${IMAGE_DIR}/${fileName}`,
       data: base64Data,
       directory: FilesystemDirectory.Data
     });
+
     let image : ImageData = {
       'comments':'',
       'filename':fileName,
@@ -307,9 +304,9 @@ async startUpload(file: LocalFile) {
   const response = await fetch(file.data);
   const blob = await response.blob();
   const formData = new FormData();
-  formData.append('file', blob, file.name);
+  formData.append('attachmentFile', blob, file.name);
   //SAve File State
-  console.log('formm--->>>>',formData)
+  console.log('formm--->>>>', formData)
   this._workOrderStateService.setWorkOrderImageBlob(formData);
 }
 

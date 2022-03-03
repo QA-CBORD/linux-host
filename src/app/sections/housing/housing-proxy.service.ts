@@ -65,7 +65,7 @@ export class HousingProxyService {
   postImage<T>(apiUrl: string, body: any): Observable<T> {
     return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
       this._http.post<T>(apiUrl, body, {
-        headers: headers.set('Content-Type', 'multipart/form-data'),
+        headers
       }),
     );
   }

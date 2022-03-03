@@ -239,7 +239,7 @@ export class WorkOrdersService {
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       map((response: Response) => {
         if (isSuccessful(response.status)) {
-          this.sendWorkOrderImage(response.data,ImageFormData, image).subscribe( res => isImageUpload = res);
+          this.sendWorkOrderImage(response.data, ImageFormData, image).subscribe( res => isImageUpload = res);
           return true && isImageUpload;
         } else {
           throw new Error(response.status.message);
@@ -250,24 +250,24 @@ export class WorkOrdersService {
     );
   }
 
-  sendWorkOrderImage(workOrderId : number, imageForm: FormData, image: ImageData ): Observable<boolean> {
-    let workOrderImageURL = `${this._environment.getHousingAPIURL()}/work-orders/attachments`;
-    let body = {'workOrderKey': workOrderId,
-    'comments':image.comments,
-    'fileName':image.filename,
-    'attachmentFile':imageForm,
-    'studentSubmitted': true,
-  }
-    return this._housingProxyService.postImage<Response>(workOrderImageURL,body).pipe(
-      map((response: Response) => {
-        if (isSuccessful(response.status)) {
-          return true;
-        } else {
-          throw new Error(response.status.message);
-        }
-      }
-      )
-    );
+  sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Observable<boolean> {
+    let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
+
+    formData.append('fileName', imageData.filename);
+    formData.append('comments', 'student submitted');
+    formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
+    formData.append('workOrderKey', `${workOrderId}`);
+    
+    return this._housingProxyService
+      .postImage<Response>(workOrderImageURL, formData)
+      .pipe(
+        map((response: Response) => {
+          if (isSuccessful(response.status)) {
+            return true;
+          } else {
+            throw new Error(response.status.message);
+          }
+        }));
   }
 
   private createFacilityTreeQuestion(){
