@@ -215,22 +215,23 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   _setFacility() {
-    this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
-    this.currectFacility = this._contractListStateService.getContractDetails()[0].fullName;
-    if (this.facilityTreeData.length == 1 && !this.isSubmitted && this.question.type == 'FACILITY') {
-      this.isSubmitted = true;
-      this.facilityFullName = this.facilityTreeData[0].facilityFullName;
-      this._workOrderStateService.setSelectedFacilityTree({
-        name: this.facilityFullName,
-        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
-      });
+    if (this._workOrderStateService.workOrderDetails.getValue().facilityTree) {
+      this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
+      this.currectFacility = this._contractListStateService.getContractDetails()[0].fullName;
+      if (this.facilityTreeData.length == 1 && !this.isSubmitted && this.question.type == 'FACILITY') {
+        this.isSubmitted = true;
+        this.facilityFullName = this.facilityTreeData[0].facilityFullName;
+        this._workOrderStateService.setSelectedFacilityTree({
+          name: this.facilityFullName,
+          facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
+        });
+      }
+      if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY') {
+        this._workOrderStateService.setSelectedFacilityTree({
+          name: this.currectFacility,
+          facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
+        });
+      }
     }
-    if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY'){
-      this._workOrderStateService.setSelectedFacilityTree({
-        name: this.currectFacility, 
-        facilityKey:this._contractListStateService.getContractDetails()[0].facilityKey
-      });
-    }
-
   }
 }
