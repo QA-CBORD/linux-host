@@ -1,37 +1,36 @@
 <section > 
-  <!-- *ngIf="(inspectionsListSubscription | async) as InspectionList" -->
-  <ion-list  
+  <ion-list  *ngIf="(_inspectionsStateService.inspectionList | async) as inspectionList"
     class="ion-no-margin bg-transparent">
     <ion-grid >
       <ion-row class="container-header-inspection">
         <div class="col-inspection ion-no-padding">
-            <h2 class="form__secondary-header">Inspections</h2>
+            <h2 class="form__secondary-header">NEEDS INSPECTION</h2>
         </div>
       </ion-row>
     </ion-grid>
 
     <!-- TODO: Add plus button  -->
-    <ng-container>
-      <div #container >
+    <ng-container >
+      <!-- <div #container *ngFor="let inspection of inspectionList" >
         <ion-item lines="none" class="inspections-list__item" >
           <ion-label class="inspections-list__wrap">
-            <div class="inspections-list__info">
+            <div class="inspections-list__info"> -->
               <!-- TODO: status inspections -->
-              <h5 class="inspections-list__status" [ngClass]="" >new {{ null }}</h5>
+              <!-- <h5 class="inspections-list__status" [ngClass]="" >new {{ null }}</h5>
               <div class="inspections-list__date" >
-                Submitted
+                {{inspection.formTitle}}
               </div>
             </div>
         
-            <h2 class="inspections-list__title">ROOM TEST</h2>
+            <h2 class="inspections-list__title">{{ inspection.remainingItems }} Rooms Left</h2>
           </ion-label>
 
           <st-actions
-            [path]="getPath(144)"
+            [path]="getPath(inspection.residentInspectionKey)"
             >
           </st-actions>
         </ion-item>
-      </div>
+      </div> -->
     </ng-container>
 
     <ng-container>

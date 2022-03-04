@@ -60,7 +60,9 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   pages$: Observable<QuestionsPage[]>;
   selectedAssetType$: Observable<AssetTypeDetailValue[]>;
 
-  inspectionKey: number;
+  residentInspectionKey: number;
+  contractElementKey: number;
+  checkIn: boolean;
   selectedAssetKey: number;
   selectedAssetName: string;
   termKey: number = 0;
@@ -88,7 +90,9 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.inspectionKey = parseInt(this._route.snapshot.paramMap.get('inspectionKey'), 10);
+    this.residentInspectionKey = parseInt(this._route.snapshot.paramMap.get('residentInspectionKey'), 10);
+    this.contractElementKey = parseInt(this._route.snapshot.paramMap.get('contractElementKey'), 10);
+    this.checkIn = this._route.snapshot.paramMap.get('checkIn')=== 'true'? true: false;
     this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
     this._initWorkOrderDetailsObservable();
     // this._initPagesObservable();
@@ -109,7 +113,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     if (!isLastPage) {
       this._next(form.value);
     } else {
-      this._update(this.inspectionKey, workOrderDetails, form.value);
+      this._update(this.termKey, workOrderDetails, form.value);
     }
   }
 

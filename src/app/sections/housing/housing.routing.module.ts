@@ -35,7 +35,7 @@ const routes: Routes = [
         loadChildren: './pages/work-order-details/work-order-details.module#WorkOrderDetailsPageModule',
       },
       {
-        path: `${LOCAL_ROUTING.inspections}/:termKey/:inspectionKey`,
+        path: `${LOCAL_ROUTING.inspections}/:termKey/:residentInspectionKey/:contractElementKey/:checkIn`,
         loadChildren: './pages/inspections-details/inspections-details.module#InspectionsDetailsPageModule',
       },
       {

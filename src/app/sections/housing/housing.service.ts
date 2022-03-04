@@ -177,6 +177,15 @@ export class HousingService {
     );
   }
 
+  getInspectionDetails(termId: number,residentInspectionKey: number, contractElementKey: number, checkIn: boolean){
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`
+    return this._housingProxyService.get<Inspections>(apiUrl).pipe(
+      map((response: any) => new Inspections(response)),
+      tap((response: Inspections) => this._setInspectionsList(response)),
+      catchError(() => this._handleGetRoomSelectsError())
+    );
+  }
+
   getRequestedRoommates(request: RequestedRoommateRequest) {
     const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
     return this._housingProxyService.post<RequestedRoommateResponse>(apiUrl, request).pipe(

@@ -17,15 +17,14 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   public urlEditForm: string;
   private selectedTermKey: number = 0;
 
-  constructor(private _inspectionsStateService: InspectionsStateService,
-    public _workOrderStateService: InspectionsStateService,
+  constructor(public _inspectionsStateService: InspectionsStateService,
     private _termService : TermsService
     ) {}
 
   inspections: Inspection[];
 
   ngOnInit() {
-    const inspectionsListSubscription: Subscription = this._inspectionsStateService.inspectionForms$
+    const inspectionsListSubscription: Subscription = this._inspectionsStateService.inspectionList$
       .subscribe();
 
     this._initTermsSubscription();
@@ -54,8 +53,8 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     return 'New';
   }
 
-  getPath(key: number): string {
-    return `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${key}`;
+  getPath(residentInspectionKey: number, contractElementKey: number, checkIn: boolean): string {
+    return `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${residentInspectionKey}/${contractElementKey}/${checkIn}`;
   }
 
 }
