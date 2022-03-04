@@ -84,6 +84,10 @@ export class WorkOrderStateService  {
   setWorkOrderImageBlob(value: FormData){
     this.workOrderImageBlob.next(value)
   }
+
+  destroyWorkOrderImageBlob(){
+    this.workOrderImageBlob.next(null);
+  }
   
   get WorkOrderImageBlob(){
     return this.workOrderImageBlob;

@@ -123,8 +123,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private _initGetImage() {
     this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => {
       if (!!(res && res.contents)) {
-        let format = res.filename.split('.')[1]
-        this.image$.next(`data:image/${format};base64,${res.contents}`)
+        this.image$.next(res.contents)
       } else {
         this.image$.next(null)
       }
@@ -250,11 +249,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
   async loadFiles() {
     this.images = [];
 
-    // const loading = await this.loadingCtrl.create({
-    //   message: 'Loading data...',
-    // });
-    // await loading.present();
-
     Filesystem.readdir({
       path: IMAGE_DIR,
       directory: FilesystemDirectory.Data,
@@ -268,9 +262,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           directory: FilesystemDirectory.Data,
         });
       }
-    ).then(_ => {
-      // loading.dismiss();
-    });
+    )
   }
 
   async loadFileData(fileNames: string[]) {
@@ -285,7 +277,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.images.push({
         name: f,
         path: filePath,
-        data: `data:image/PNG;base64,${readFile.data}`,
+        data: `${readFile.data}`,
       });
       this.startUpload(this.images[0])
     }
@@ -305,8 +297,6 @@ async startUpload(file: LocalFile) {
   const blob = await response.blob();
   const formData = new FormData();
   formData.append('attachmentFile', blob, file.name);
-  //SAve File State
-  console.log('formm--->>>>', formData)
   this._workOrderStateService.setWorkOrderImageBlob(formData);
 }
 

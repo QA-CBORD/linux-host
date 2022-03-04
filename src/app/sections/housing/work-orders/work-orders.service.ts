@@ -13,12 +13,14 @@ import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { HttpParams } from "@angular/common/http";
-import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields, LocalFile } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
+import { Filesystem, FilesystemDirectory } from '@capacitor/core';
 
+const IMAGE_DIR = 'stored-images';
 @Injectable({
   providedIn: 'root',
 })
@@ -240,7 +242,9 @@ export class WorkOrdersService {
       map((response: Response) => {
         if (isSuccessful(response.status)) {
           this.sendWorkOrderImage(response.data, ImageFormData, image).subscribe( res => isImageUpload = res);
-          return true && isImageUpload;
+          this._workOrderStateService.destroyWorkOrderImageBlob();
+          this.deleteImage(image.filename);
+          return true;
         } else {
           throw new Error(response.status.message);
         }
@@ -257,7 +261,7 @@ export class WorkOrdersService {
     formData.append('comments', 'student submitted');
     formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
     formData.append('workOrderKey', `${workOrderId}`);
-    
+
     return this._housingProxyService
       .postImage<Response>(workOrderImageURL, formData)
       .pipe(
@@ -268,6 +272,13 @@ export class WorkOrdersService {
             throw new Error(response.status.message);
           }
         }));
+  }
+
+  async deleteImage(fileName: string) {
+    await Filesystem.deleteFile({
+        directory: FilesystemDirectory.Data,
+        path: `${IMAGE_DIR}/${fileName}`
+    });
   }
 
   private createFacilityTreeQuestion(){
