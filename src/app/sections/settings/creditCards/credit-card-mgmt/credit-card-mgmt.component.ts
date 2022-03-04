@@ -7,6 +7,7 @@ import { AlertController, ModalController, PopoverController } from '@ionic/angu
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { AccountsService } from '@sections/dashboard/services';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
+import { firstValueFrom } from '@shared/utils';
 import { PaymentSystemType } from 'src/app/app.global';
 
 @Component({
@@ -20,17 +21,9 @@ export class CreditCardMgmtComponent implements OnInit {
 
   @Input() userAccounts: { account: UserAccount; display: string, iconSrc: string }[] = [];
 
-  @Input() userAccountLoadingErrorred: boolean = false;
-
   noCreditCardFound: boolean = false;
 
   addNewCreditCartState: boolean = false;
-
-  USER_ACCOUNT_RELOAD_MAX_ATTEMPTS: number = 3;
-
-  userAccountReloadCount: number = 0;
-
-  reloadAllowed: boolean = true;
 
   constructor(
     private readonly modalControler: ModalController,
@@ -46,21 +39,9 @@ export class CreditCardMgmtComponent implements OnInit {
     this.noCreditCardFound = !this.userAccounts.length;
   }
 
-  async reloadUserAccounts() {
-    if (this.userAccountReloadCount < this.USER_ACCOUNT_RELOAD_MAX_ATTEMPTS) {
-      this.userAccountReloadCount++;
-      this.retrieveAccounts().then(() => this.userAccountLoadingErrorred = false)
-      .catch(({ message }) => this.showMessage(message, 2000));
-    } else {
-       this.reloadAllowed = false;
-       this.showMessage('All allowed attempts have been exhausted, please try again later.');
-    }
-  }
-
-
   async retrieveAccounts() {
     this.loadingService.showSpinner();
-    const accounts = await this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
+    const accounts = await firstValueFrom(this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]))
       .then(accounts => accounts.map(acc => this.buildStr(acc)))
       .finally(() => this.loadingService.closeSpinner());
     this.noCreditCardFound = !accounts.length;

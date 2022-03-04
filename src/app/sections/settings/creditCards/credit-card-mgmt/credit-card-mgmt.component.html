@@ -45,13 +45,8 @@
         <img class="no-credit-card-block-img" height="400" src="/assets/images/addresses_empty_state.svg"
           alt="map locations" />
         <div class="no-credit-card-block-text">
-          <div *ngIf="!userAccountLoadingErrorred">
+          <div>
             <p>{{contentStrings.no_card_found}}</p>
-          </div>
-          <div *ngIf="userAccountLoadingErrorred">
-            <p> {{contentStrings.error_loading_cards}}
-              <a *ngIf="reloadAllowed" (click)="reloadUserAccounts()">Try again</a>
-            </p>
           </div>
         </div>
       </div>

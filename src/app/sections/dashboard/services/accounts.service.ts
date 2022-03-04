@@ -9,23 +9,21 @@ import { UserAccount } from 'src/app/core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { firstValueFrom } from '@shared/utils';
 
 @Injectable()
 export class AccountsService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
-    private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
-  getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Promise<UserAccount[]> {
-    return this.commerceApiService
-      .getUserAccounts()
-      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults))).toPromise();
+  getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Observable<UserAccount[]> {
+    return this.commerceApiService.getUserAccounts().pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
   }
 
   removeCreditCardAccount({ id: accountId }: UserAccount): Promise<Boolean> {
-    return this.commerceApiService.removeAccount({ accountId }).toPromise();
+    return firstValueFrom(this.commerceApiService.removeAccount({ accountId }));
   }
 
   transformStringToArray(value: string): Array<unknown> {
@@ -38,8 +36,8 @@ export class AccountsService {
     return this.settingsFacadeService.getSetting(Settings.Setting.DISPLAY_TENDERS).pipe(
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-      from(this.getUserAccounts([PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
-        )).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
+      this.getUserAccounts([PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
+        ).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );
   }
@@ -48,7 +46,7 @@ export class AccountsService {
     return this.settingsFacadeService.getSetting(Settings.Setting.DEPOSIT_TENDERS).pipe(
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-        from(this.getUserAccounts()).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
+        this.getUserAccounts().pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );
   }

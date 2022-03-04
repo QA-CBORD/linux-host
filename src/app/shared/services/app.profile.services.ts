@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { SettingsFacadeService } from "@core/facades/settings/settings-facade.service";
 import { SettingInfo } from "@core/model/configuration/setting-info.model";
 import { APP_PROFILES } from "@sections/dashboard/models";
+import { firstValueFrom } from "@shared/utils";
 import { Observable } from "rxjs";
 import { map, take } from "rxjs/operators";
 
@@ -27,7 +28,7 @@ export class ProfileServiceFacade {
     }
 
     async housingOnlyEnabled(): Promise<boolean> {
-        return await this.determineCurrentProfile$().toPromise() == APP_PROFILES.housing;
+        return await firstValueFrom(this.determineCurrentProfile$()) == APP_PROFILES.housing;
     }
 
 }

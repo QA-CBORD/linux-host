@@ -133,15 +133,18 @@ export async function openModal(services: SettingsServices) {
   };
 }
 
-export async function contentStringsByCategory(services: SettingsServices, contentStrings: DomainContentString[]): Promise<[ContentStringInfo[]]> {
-
+export async function contentStringsByCategory(
+  services: SettingsServices,
+  contentStrings: DomainContentString[]
+): Promise<[ContentStringInfo[]]> {
   const contentStringList: [ContentStringInfo[]] = [[]];
-  for (let { domain, category, name } of contentStrings) {
-    if (!name) {
-      contentStringList.push(
-        await services.contentString.fetchContentStrings$(domain, category).pipe(take(1)).toPromise());
-    } else {
-      contentStringList.push([await services.contentString.getContentString$(domain, category, name).toPromise()])
+  for (let content of contentStrings) {
+    if (content.name === null) {
+      const item = await services.contentString
+        .fetchContentStrings$(content.domain, content.category)
+        .pipe(take(1))
+        .toPromise();
+      contentStringList.push(item);
     }
   }
   return contentStringList;

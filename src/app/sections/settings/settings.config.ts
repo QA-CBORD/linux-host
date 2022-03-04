@@ -29,6 +29,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { reduceToObject } from '@shared/model/content-strings/content-string-utils';
 import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
+import { firstValueFrom } from '@shared/utils';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -58,7 +59,7 @@ export enum SETTINGS_NAVIGATE {
 
 const isGuestUser = async function (services: SettingsServices): Promise<boolean> {
   const authService = services.authService;
-  return authService.isGuestUser().toPromise();
+  return firstValueFrom(authService.isGuestUser());
 }
 
 const isGuestHOF = async (services: SettingsServices, self: SettingItemConfig, inner: () => Promise<boolean>): Promise<boolean> => {
@@ -73,12 +74,9 @@ const asyncCheckEvery = async function (validations: SettingItemValidation[], se
   const checks: boolean[] = [];
   for (const validation of validations) {
     const statusValidation = validation.value as StatusSettingValidation;
-    checks.push(
-      await statusValidation.getStatusValidation(services).pipe(
+    checks.push(await firstValueFrom(statusValidation.getStatusValidation(services).pipe(
         switchMap(setting => services.settings.getSetting(setting as Settings.Setting).pipe(map(({ value }): boolean => parseInt(value) === 1))),
-        take(1)
-      ).toPromise()
-    );
+        take(1))));
   }
   return checks;
 }
@@ -86,9 +84,8 @@ const asyncCheckEvery = async function (validations: SettingItemValidation[], se
 const asyncCheckEverySetting = async function (validations: SettingItemValidation[], services: SettingsServices) {
   const checks: boolean[] = [];
   for (const validation of validations) {
-    checks.push(await services.settings.getSetting(validation.value as Settings.Setting)
-      .pipe(map(({ value }): boolean => parseInt(value) === 1))
-      .toPromise());
+    checks.push(await firstValueFrom(services.settings.getSetting(validation.value as Settings.Setting)
+      .pipe(map(({ value }): boolean => parseInt(value) === 1))));
   }
   return checks;
 }
@@ -102,7 +99,7 @@ const validateSettingEnabled = async function (services: SettingsServices): Prom
 
 
 const isSupported = async function (services: SettingsServices) {
-  const currentProfile = await services.profileService.determineCurrentProfile$().pipe(take(1)).toPromise();
+  const currentProfile = await firstValueFrom(services.profileService.determineCurrentProfile$().pipe(take(1)));
   return function (settingItem: SettingItemConfig) {
     if (!currentProfile) return true;
     if (settingItem.supportProfiles && settingItem.supportProfiles.length) {
@@ -189,6 +186,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
             const contentStrings = await contentStringsByCategory(services, [{
               domain: CONTENT_STRINGS_DOMAINS.patronUi,
               category: CONTENT_STRINGS_CATEGORIES.passwordValidation,
+              name: null
             }, {
               domain: CONTENT_STRINGS_DOMAINS.patronUi,
               category: CONTENT_STRINGS_CATEGORIES.changePassword,
@@ -258,31 +256,30 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
               return { display, account, iconSrc };
             }
             let userAccounts = [];
-            let userAccountLoadingErrorred = false;
 
             const contentStringsData = await contentStringsByCategory(services, [{
               domain: CONTENT_STRINGS_DOMAINS.patronUi,
-              category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt
+              category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
+              name: null
             }]).then((data) => data.pop())
               .catch(() => []);
 
             try {
-              userAccounts = await services.accountService
-                .getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
+              userAccounts = await firstValueFrom(services.accountService
+                .getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]))
                 .then(accounts => accounts.map(acc => parseAccountData(acc)));
             } catch (ignored) {
               // fallback on empty userAccounts array
-              userAccountLoadingErrorred = true;
             } finally {
               await services.loadingService.closeSpinner();
             }
 
-            return { contentStrings: reduceToObject(contentStringsData, defaultCreditCardMgmtCs), userAccounts, userAccountLoadingErrorred };
+            return { contentStrings: reduceToObject(contentStringsData, defaultCreditCardMgmtCs), userAccounts };
           }
 
         },
         checkIsEnabled: async (services: SettingsServices) => {
-          const setting =  await services.settings.getSetting(Settings.Setting.ENABLE_CREDIT_CARD_PAYMENT).toPromise();
+          const setting =  await firstValueFrom(services.settings.getSetting(Settings.Setting.ENABLE_CREDIT_CARD_PAYMENT));
           return setting && Number(setting.value) == 1;
         }
       },
@@ -299,7 +296,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         validations: [{ type: SETTINGS_VALIDATIONS.MobileCredentialEnabled, value: Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED }],
         checkIsEnabled: async function (services: SettingsServices) {
           const mobileCredentialFacade = services.mobileCredentialFacade;
-          return !(await isGuestUser(services)) && (await mobileCredentialFacade.showCredentialMetadata().pipe(take(1)).toPromise());
+          return !(await isGuestUser(services)) && (await firstValueFrom(mobileCredentialFacade.showCredentialMetadata()));
         }
       },
     ],
