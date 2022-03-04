@@ -64,8 +64,6 @@ export class CreditCardMgmtComponent implements OnInit {
     this.modalControler.dismiss();
   }
 
-  changeAddNewCreditCardState() { }
-
   async removeAccount({ account, display }) {
     const onRemoveConfirmed = async () => {
       this.alertCtrl.dismiss();
