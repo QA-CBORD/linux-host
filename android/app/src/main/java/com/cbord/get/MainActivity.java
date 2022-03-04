@@ -6,7 +6,7 @@ import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Plugin;
 
 import java.util.ArrayList;
-import com.dutchconcepts.capacitor.barcodescanner.BarcodeScanner;
+import com.getcapacitor.community.barcodescanner.BarcodeScanner;
 
 public class MainActivity extends BridgeActivity {
 
