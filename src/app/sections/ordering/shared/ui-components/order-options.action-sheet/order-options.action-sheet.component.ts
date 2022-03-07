@@ -68,24 +68,15 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly globalNav: GlobalNavService,
     private readonly a11yService: AccessibilityService,
     private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe,
-    private institutionService: InstitutionFacadeService
   ) {}
 
   ngOnInit() {
-    setTimeout(() => this.globalNav.hideNavBar());
     this.isOrderTypePickup = true;
     this.dispatchingData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
-  }
-
-  ngOnDestroy() {
-    if (this.showNavBarOnDestroy) {
-      this.globalNav.showNavBar();
-    }
   }
 
   get enumOrderTypes() {
