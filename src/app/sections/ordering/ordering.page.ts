@@ -88,18 +88,21 @@ export class OrderingPage implements OnInit {
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
     this.merchantService.orderTypes = orderTypes;
 
-    const modal = await this.modalController.create({
-      component: OrderOptionsActionSheetComponent,
-      cssClass,
-      componentProps: {
-        orderTypes,
-        footerButtonName,
-        merchantId,
-        storeAddress,
-        settings,
-        timeZone,
+    const modal = await this.modalController.create(
+      {
+        component: OrderOptionsActionSheetComponent,
+        cssClass,
+        componentProps: {
+          orderTypes,
+          footerButtonName,
+          merchantId,
+          storeAddress,
+          settings,
+          timeZone,
+        },
       },
-    });
+      true
+    );
 
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
