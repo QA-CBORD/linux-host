@@ -45,8 +45,8 @@ export class InspectionsStateService  {
     termId: 0,
     });
   // public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
-  public inspectionList: BehaviorSubject<Inspections> = new BehaviorSubject<Inspections>(this._defaultInspectionsListState);
-  public inspectionForm: BehaviorSubject<Inspection> = new BehaviorSubject<Inspection>(this._defaultState);
+  private inspectionList: BehaviorSubject<Inspections[]> = new BehaviorSubject<Inspections[]>([]);
+  private inspectionForm: BehaviorSubject<Inspection> = new BehaviorSubject<Inspection>(this._defaultState);
   // public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
   public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null)
   // public selectedFacility$: BehaviorSubject<NamedIdentity> = new BehaviorSubject<NamedIdentity>(null);
@@ -54,15 +54,15 @@ export class InspectionsStateService  {
    
   }
 
-  setInspection(value: Inspection) {
+  setInspectionForm(value: Inspection) {
     this.inspectionForm.next(value);
   }
 
-  setInspectionList(value: Inspections){
+  setInspectionList(value: Inspections[]){
     this.inspectionList.next(value);
   }
 
-  get inspectionForm$() {
+  get inspectionForm$() : BehaviorSubject<Inspection> {
     return this.inspectionForm;
   }
 
@@ -83,10 +83,7 @@ export class InspectionsStateService  {
     return this.workOrderImage;
   }
 
-  get inspectionForms$(){
-    return this.inspectionForm;
-  }
-  get inspectionList$(){
+  get inspectionList$(): BehaviorSubject<Inspections[]>{
     return this.inspectionList;
   }
 

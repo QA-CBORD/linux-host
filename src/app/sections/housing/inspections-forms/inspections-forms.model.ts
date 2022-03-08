@@ -233,3 +233,19 @@ export class Inspections implements InspectionsOptions {
     this.remainingItems = Number(options.remainingItems);
   }
 }
+
+
+export interface InspectionsDataOptions{
+  data: Inspections[]
+}
+export class InspectionsData implements InspectionsDataOptions {
+  data : Inspections[];
+  constructor(options: InspectionsDataOptions) {
+    if (isDefined(options) || typeof options !== 'object') {
+      options = {} as InspectionsDataOptions;
+    }
+    this.data = Array.isArray(options.data)
+    ? options.data.map((detail: any) => new Inspections(detail))
+    : [];
+  }
+}

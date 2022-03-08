@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { Inspection } from './inspections-forms.model';
+import { Inspection, Inspections } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
@@ -16,6 +16,7 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
   public urlEditForm: string;
   private selectedTermKey: number = 0;
+  public inspectionList: BehaviorSubject<Inspections[]>;
 
   constructor(public _inspectionsStateService: InspectionsStateService,
     private _termService : TermsService
@@ -24,11 +25,13 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   inspections: Inspection[];
 
   ngOnInit() {
-    const inspectionsListSubscription: Subscription = this._inspectionsStateService.inspectionList$
+    this.inspectionList = this._inspectionsStateService.inspectionList$;
+    console.log("valueee-->",this._inspectionsStateService.inspectionList$.subscribe(res => console.log(res)) )
+    const inspectionsForm: Subscription = this._inspectionsStateService.inspectionForm$
       .subscribe();
 
     this._initTermsSubscription();
-    this._subscription.add(inspectionsListSubscription);
+    this._subscription.add(inspectionsForm);
   }
 
   private _initTermsSubscription() {
@@ -54,7 +57,7 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   }
 
   getPath(residentInspectionKey: number, contractElementKey: number, checkIn: boolean): string {
-    return `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${residentInspectionKey}/${contractElementKey}/${checkIn}`;
+    return residentInspectionKey? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${residentInspectionKey}/${contractElementKey}/${checkIn}`: `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${contractElementKey}/${checkIn}`;
   }
 
 }

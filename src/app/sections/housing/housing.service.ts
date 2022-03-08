@@ -51,7 +51,7 @@ import { WaitingListStateService } from './waiting-lists/waiting-list-state.serv
 import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
-import { Inspections } from './inspections-forms/inspections-forms.model';
+import { Inspections, Inspection } from './inspections-forms/inspections-forms.model';
 
 @Injectable({
   providedIn: 'root',
@@ -171,17 +171,17 @@ export class HousingService {
   getInspections(termId: number){
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`
     return this._housingProxyService.get<Inspections>(apiUrl).pipe(
-      map((response: any) => new Inspections(response)),
-      tap((response: Inspections) => this._setInspectionsList(response)),
+      map((response: any) =>  new Inspections(response)),
+      tap((response: any) => this._setInspectionsList(response)),
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
 
   getInspectionDetails(termId: number,residentInspectionKey: number, contractElementKey: number, checkIn: boolean){
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`
-    return this._housingProxyService.get<Inspections>(apiUrl).pipe(
-      map((response: any) => new Inspections(response)),
-      tap((response: Inspections) => this._setInspectionsList(response)),
+    return this._housingProxyService.get<Inspection>(apiUrl).pipe(
+      map((response: any) => new Inspection(response)),
+      tap((response: Inspection) => this._setInspection(response)),
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
@@ -339,8 +339,12 @@ export class HousingService {
     this._applicationsStateService.setRequestedRoommates(roommates);
   }
 
-  _setInspectionsList(value: Inspections): void{
-    this._inspectionsStateService.setInspectionList(value)
+  _setInspectionsList(value: Inspections[]): void{
+    this._inspectionsStateService.setInspectionList(value);
+  }
+
+  _setInspection(value: Inspection): void{
+    this._inspectionsStateService.setInspectionForm(value);
   }
 
   /**
