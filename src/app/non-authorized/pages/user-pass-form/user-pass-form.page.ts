@@ -1,5 +1,5 @@
 import { Settings, PATRON_NAVIGATION, ROLES, GUEST_NAVIGATION } from './../../../app.global';
-import { map, tap, take, catchError } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Router } from '@angular/router';
@@ -28,6 +28,7 @@ import { ModalController } from '@ionic/angular';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -68,7 +69,8 @@ export class UserPassForm implements OnInit {
     private readonly accessibilityService: AccessibilityService,
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer,
-    private readonly messageProxy: MessageProxy
+    private readonly messageProxy: MessageProxy,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   get username(): AbstractControl {
@@ -201,6 +203,7 @@ export class UserPassForm implements OnInit {
   }
 
   private async navigate2Dashboard(): Promise<void> {
+    this.globalNav.showNavBar();
     const isGuest = await this.authFacadeService.isGuestUser().toPromise();
     (isGuest && this.router.navigate([GUEST_NAVIGATION.dashboard], { replaceUrl: true })) ||
       this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
