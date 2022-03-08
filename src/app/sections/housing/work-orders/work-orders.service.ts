@@ -3,7 +3,7 @@ import { EnvironmentFacadeService } from "@core/facades/environment/environment.
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
-import { catchError, map, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, withLatestFrom, tap, switchMap } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
 import { QuestionsStorageService, QuestionsEntries } from '../questions/questions-storage.service';
@@ -188,7 +188,7 @@ export class WorkOrdersService {
 
   submitWorkOrder(
     form: any,
-    formValue: any): Observable<boolean> {
+    formValue: any): Observable<any> {
     const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
     const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
 
@@ -223,7 +223,7 @@ export class WorkOrdersService {
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null);
     this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
-    this._workOrderStateService.WorkOrderImageBlob.subscribe(res => ImageFormData = res);
+    
     const body = new WorkOrdersDetailsList({
       key:null,
       notificationPhone: phoneNumber, 
@@ -239,18 +239,17 @@ export class WorkOrdersService {
     });
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
-      map((response: Response) => {
-        if (isSuccessful(response.status)) {
-          this.sendWorkOrderImage(response.data, ImageFormData, image).subscribe( res => isImageUpload = res);
+      catchError(err=> of(false)),
+      switchMap((response: Response) => 
+        this._workOrderStateService.WorkOrderImageBlob.pipe(
+          switchMap(res => this.sendWorkOrderImage(response.data, res, image).pipe(
+            catchError(_ => of(false))
+          )))
+      ),
+      tap(()=>{
           this._workOrderStateService.destroyWorkOrderImageBlob();
           this.deleteImage(image.filename);
-          return true;
-        } else {
-          throw new Error(response.status.message);
-        }
-      }
-      ),
-      catchError(_ => of(false))
+      })
     );
   }
 

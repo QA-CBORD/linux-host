@@ -279,7 +279,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         path: filePath,
         data: `${readFile.data}`,
       });
-      this.startUpload(this.images[0])
+      this.startUpload(this.images[0],readFile.data)
     }
   }
 
@@ -292,9 +292,17 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.presentToast('File removed.');
 }
 
-async startUpload(file: LocalFile) {
-  const response = await fetch(file.data);
-  const blob = await response.blob();
+async startUpload(file: LocalFile,value: string) {
+  const imageFormat = file.name.split('.')[1]
+  const rawData = atob(value);
+  const bytes = new Array(rawData.length);
+  for (var x = 0; x < rawData.length; x++) {
+    bytes[x] = rawData.charCodeAt(x);
+  }
+  const arr = new Uint8Array(bytes);
+  const blob = new Blob([arr], {type: `image/${imageFormat}`});
+  // const response = await fetch(value);
+  // const blob = await response.blob();
   const formData = new FormData();
   formData.append('attachmentFile', blob, file.name);
   this._workOrderStateService.setWorkOrderImageBlob(formData);
