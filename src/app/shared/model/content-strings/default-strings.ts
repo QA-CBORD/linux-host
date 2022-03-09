@@ -31,8 +31,11 @@ export const defaultIdentifyRecipientCs = {
 }
 
 export const defaultCreditCardMgmtCs = {
-  setting_section_title: 'Payment Methods',
-  setting_section_subtitle: 'Add or delete stored credit cards'
+  screen_title: "Payment Methods",
+  no_card_found: "oops! It seems you don't have any credit card added.",
+  add_new_card_btn_text: "Add New Card",
+  user_info_text:"Credit card information is handled by USAePay. After adding a new card, you will be redirected back to this screen.",
+  error_loading_cards: "An error occurred while loading your credit card accounts."
 }
 
 export const checkingDefaultCs = {

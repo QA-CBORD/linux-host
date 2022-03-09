@@ -15,7 +15,9 @@ import { Observable } from 'rxjs';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { APP_PROFILES } from '@sections/dashboard/models';
-import { ProfileService } from '@shared/services/app.profile.services';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
+import { AccountsService } from '@sections/dashboard/services';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -38,7 +40,7 @@ export interface SettingItemConfig {
   setToggleStatus?: (services: SettingsServices) => void;
   setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;
-  selfValidate: (args: SettingsServices) => Promise<boolean>,
+  checkIsEnabled: (args: SettingsServices) => Promise<boolean>,
   supportProfiles?: APP_PROFILES[],
 }
 
@@ -58,16 +60,19 @@ export interface ModalContent {
   component?: any;
   biometric?: string;
   contentStrings?: DomainContentString[];
+  fetchData?: (services: SettingsServices) => Promise<{ [key: string]: any }>
 }
 export interface HTMLContentString {
   contentStrings: DomainContentString[];
   appendStrings?: string[];
   component: any;
+  fetchData?: (services: SettingsServices) => Promise<{ [key: string]: any }>
 }
+
 export interface DomainContentString {
   domain: CONTENT_STRINGS_DOMAINS;
   category: CONTENT_STRINGS_CATEGORIES;
-  name: string | null;
+  name?: string | null;
 }
 export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',
@@ -94,7 +99,9 @@ export interface SettingsServices {
   appBrowser: InAppBrowser;
   mobileCredentialFacade: MobileCredentialFacade,
   sessionFacadeService: SessionFacadeService,
-  profileService: ProfileService
+  profileService: ProfileServiceFacade,
+  accountService: AccountsService,
+  loadingService: LoadingService,
 }
 
 export interface StatusSettingValidation {
