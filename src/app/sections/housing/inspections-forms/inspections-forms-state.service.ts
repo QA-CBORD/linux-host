@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Inspection, FormDefinition, Inspections } from './inspections-forms.model';
+import { Inspection, FormDefinition, Inspections, InspectionsData } from './inspections-forms.model';
 
 @Injectable({
   providedIn: 'root',

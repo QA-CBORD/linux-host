@@ -241,11 +241,9 @@ export interface InspectionsDataOptions{
 export class InspectionsData implements InspectionsDataOptions {
   data : Inspections[];
   constructor(options: InspectionsDataOptions) {
-    if (isDefined(options) || typeof options !== 'object') {
+    if (options == null || typeof options !== 'object') {
       options = {} as InspectionsDataOptions;
     }
-    this.data = Array.isArray(options.data)
-    ? options.data.map((detail: any) => new Inspections(detail))
-    : [];
+    this.data = Array.isArray(options) ? options.map((detail: any) => new Inspections(detail)): [];
   }
 }

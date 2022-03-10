@@ -94,7 +94,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.contractElementKey = parseInt(this._route.snapshot.paramMap.get('contractElementKey'), 10);
     this.checkIn = this._route.snapshot.paramMap.get('checkIn')=== 'true'? true: false;
     this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
-    this._initWorkOrderDetailsObservable();
+    this._initInspectionDetailsObservable();
     // this._initPagesObservable();
     this._initTermSubscription();
   }
@@ -125,22 +125,22 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   //   this.pages$ = this._workOrderService.getQuestions(this.inspectionKey);
   // }
 
-  private _initWorkOrderDetailsObservable(): void {
+  private _initInspectionDetailsObservable(): void {
     this._loadingService.showSpinner();
 
-    // this.inspectionDetails$ = this._housingService.getInspections(this.termKey)
-    //   .pipe(
-    //     tap((inspectionDetails: Inspection) => {
-    //       this.isSubmitted = false; 
-    //       this._loadingService.closeSpinner();
-    //       return inspectionDetails;
-    //     }),
-    //     catchError((error: any) => {
-    //       this._loadingService.closeSpinner();
-    //       return throwError(error);
-    //     })
-    //   );
-    this.inspectionDetails$ = this._inspectionStateService.inspectionForm$;
+    this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey,this.residentInspectionKey,this.contractElementKey,this.checkIn)
+      .pipe(
+        tap((inspectionDetails: Inspection) => {
+          this.isSubmitted = false; 
+          this._loadingService.closeSpinner();
+          return inspectionDetails;
+        }),
+        catchError((error: any) => {
+          this._loadingService.closeSpinner();
+          return throwError(error);
+        })
+      );
+    // this.inspectionDetails$ = this._inspectionStateService.inspectionForm$;
   }
 
   private _initTermSubscription() {

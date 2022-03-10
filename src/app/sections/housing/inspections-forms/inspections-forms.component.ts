@@ -26,7 +26,6 @@ export class InspectionsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.inspectionList = this._inspectionsStateService.inspectionList$;
-    console.log("valueee-->",this._inspectionsStateService.inspectionList$.subscribe(res => console.log(res)) )
     const inspectionsForm: Subscription = this._inspectionsStateService.inspectionForm$
       .subscribe();
 
@@ -56,8 +55,20 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     return 'New';
   }
 
-  getPath(residentInspectionKey: number, contractElementKey: number, checkIn: boolean): string {
-    return residentInspectionKey? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${residentInspectionKey}/${contractElementKey}/${checkIn}`: `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${contractElementKey}/${checkIn}`;
+  getInspectionStatus(value: Inspections): string{
+    if( value.isSubmitted == false && value.residentInspectionKey != null ){
+      return 'INCOMPLETE'
+    } else if(value.residentInspectionKey == null && value.residentInspectionKey){
+      return 'NEW'
+    }else {
+      return 'COMPLETED'
+    }
+        
+  }
+
+  getPath(inspection: Inspections): string {
+    let url = !!inspection.residentInspectionKey? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${inspection.contractKey}/${inspection.checkIn}`: `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.checkIn}`;
+    return url;
   }
 
 }

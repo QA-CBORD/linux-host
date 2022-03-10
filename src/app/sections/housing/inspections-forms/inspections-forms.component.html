@@ -11,48 +11,26 @@
 
     <!-- TODO: Add plus button  -->
     <ng-container >
-      <!-- <div #container *ngFor="let inspection of inspectionList" >
+      <div #container *ngFor="let inspection of inspectionList" >
         <ion-item lines="none" class="inspections-list__item" >
           <ion-label class="inspections-list__wrap">
-            <div class="inspections-list__info"> -->
+            <div class="inspections-list__info">
               <!-- TODO: status inspections -->
-              <!-- <h5 class="inspections-list__status" [ngClass]="" >new {{ null }}</h5>
+              <h5 class="inspections-list__status" [ngClass]="" > {{ getInspectionStatus(inspection) }}</h5>
               <div class="inspections-list__date" >
-                {{inspection.formTitle}}
+                {{ inspection.remainingItems }} Rooms Left
               </div>
             </div>
         
-            <h2 class="inspections-list__title">{{ inspection.remainingItems }} Rooms Left</h2>
+            <h2 class="inspections-list__title">{{ inspection.formTitle }} </h2>
           </ion-label>
 
           <st-actions
-            [path]="getPath(inspection.residentInspectionKey)"
+            [path]="getPath(inspection)"
             >
           </st-actions>
         </ion-item>
-      </div> -->
-    </ng-container>
-
-    <ng-container>
-      <ion-item>
-        <ion-label>
-          <h1>Stove</h1>
-          <h5>the staff rated</h5>
-          <img [ngStyle]="{'width': '50px','height': '50px' }" />
-          <ion-segment>
-            <ion-segment-button value="1">
-              <ion-label>Good</ion-label>
-            </ion-segment-button>
-            <ion-segment-button value="2">
-              <ion-label>Fair</ion-label>
-            </ion-segment-button>
-            <ion-segment-button value="3">
-              <ion-label>Poor</ion-label>
-            </ion-segment-button>
-          </ion-segment>
-        </ion-label>
-
-      </ion-item>
+      </div>
     </ng-container>
   </ion-list>
 </section>

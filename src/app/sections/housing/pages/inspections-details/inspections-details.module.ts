@@ -9,7 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { QuestionsModule } from '@sections/housing/questions/questions.module';
 import { StepperModule } from '@sections/housing/stepper/stepper.module';
 
-const imports = [CommonModule, IonicModule, InspectionsDetailsRoutingModule,ReactiveFormsModule,QuestionsModule,StepperModule];
+const imports = [CommonModule, IonicModule, ReactiveFormsModule,InspectionsDetailsRoutingModule,QuestionsModule,StepperModule];
 const declarations = [InspectionsDetailsPage];
 
 @NgModule({
