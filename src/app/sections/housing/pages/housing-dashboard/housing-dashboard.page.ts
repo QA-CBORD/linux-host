@@ -52,8 +52,8 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
             this._housingService.getDefinitions(termId),
             this._housingService.getRoomSelects(termId),
             this._housingService.getPatronContracts(termId),
-            this._housingService.getCheckInOuts(termId)
-            
+            this._housingService.getCheckInOuts(termId),
+            this._housingService.getInspections(termId)
           )
         })
       )
@@ -81,6 +81,11 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
       this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
       this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
     }
+    // if(response ){
+    //   //TODO: handleSuccess
+    //   this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
+    //   this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
+    // }
     this._loadingService.closeSpinner();
   }
 }
