@@ -59,7 +59,7 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
       })
     );
 
-    return forkJoin(checkinPending$, data$).pipe(
+    return forkJoin([checkinPending$, data$]).pipe(
       take(1),
       map(([contentStrings, data]) => ({
         contentStrings,
