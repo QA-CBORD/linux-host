@@ -136,7 +136,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
-        showNavBarOnDestroy: false,
         orderTypes,
         footerButtonName,
         merchantId,

@@ -9,6 +9,7 @@ import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 
 @Component({
   selector: 'st-access-card',
@@ -33,6 +34,7 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   isLoadingPhoto: boolean = true;
   userInfo: string;
   mobileCredentialAvailable: boolean = false;
+  housingOnlyEnabled: boolean;
 
   constructor(
     private readonly accessCardService: AccessCardService,
@@ -40,7 +42,8 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly changeRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
-    public readonly mobileCredentialFacade: MobileCredentialFacade
+    public readonly mobileCredentialFacade: MobileCredentialFacade,
+    private readonly profileService: ProfileServiceFacade
   ) {}
 
   ngOnDestroy(): void {
@@ -51,6 +54,7 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     this.setInstitutionData();
     this.getFeaturesEnabled();
     this.getUserName();
+    this.setHousingOnlyEnabled();
   }
 
   ngAfterViewInit(): void {
@@ -119,5 +123,10 @@ export class AccessCardComponent implements OnInit, OnDestroy {
           this.userInfo = JSON.stringify(response);
         }
       );
+  }
+
+
+  private async setHousingOnlyEnabled(){
+    this.housingOnlyEnabled = await this.profileService.housingOnlyEnabled();
   }
 }

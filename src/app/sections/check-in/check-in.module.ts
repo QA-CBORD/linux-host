@@ -17,6 +17,7 @@ import { CheckinPendingResolver } from './resolver/check-in-pending.resolver';
 import { PickCheckinModeComponent } from './components/pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeBackground } from './components/scan-code/background/scan-code-background.component';
 import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/type-message.pipe.module';
+import { ConfirmModule } from '@shared/confirm-modal/confirm-modal.module';
 
 const declarations = [CheckInPendingComponent, PickCheckinModeComponent, CheckInPendingComponent, ScanCodeComponent, CheckInFailureComponent, CheckInSuccessComponent, ScanCodeBackground];
 
@@ -34,6 +35,7 @@ const declarations = [CheckInPendingComponent, PickCheckinModeComponent, CheckIn
     PriceUnitsResolverModule,
     StButtonModule,
     CheckinRoutingModule,
+    ConfirmModule,
     TypeMessageModule
   ],
   exports: [declarations],

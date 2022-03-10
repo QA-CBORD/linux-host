@@ -2,13 +2,14 @@ import { Injectable } from "@angular/core";
 import { SettingsFacadeService } from "@core/facades/settings/settings-facade.service";
 import { SettingInfo } from "@core/model/configuration/setting-info.model";
 import { APP_PROFILES } from "@sections/dashboard/models";
+import { firstValueFrom } from "@shared/utils";
 import { Observable } from "rxjs";
 import { map, take } from "rxjs/operators";
 
 
 
 @Injectable({ providedIn: "root" })
-export class ProfileService {
+export class ProfileServiceFacade {
 
     constructor(private readonly settingsFacadeService: SettingsFacadeService) { }
 
@@ -24,6 +25,10 @@ export class ProfileService {
     determineCurrentProfile$(): Observable<APP_PROFILES> {
         return this.settingsFacadeService.getCachedSettings()
             .pipe(take(1), map((settings) => this.determineCurrentProfile(settings)));
+    }
+
+    async housingOnlyEnabled(): Promise<boolean> {
+        return await firstValueFrom(this.determineCurrentProfile$()) == APP_PROFILES.housing;
     }
 
 }
