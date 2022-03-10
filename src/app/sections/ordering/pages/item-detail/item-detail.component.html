@@ -114,12 +114,11 @@
 <ion-footer class="item-footer" mode="ios">
   <div class="item-footer__counter-btns-container">
     <ion-button (click)="removeItems()" [disabled]="order.counter == 1" class="item-footer__counter-btn">
-      <ion-icon name="remove"></ion-icon>
+      <ion-icon name="remove" aria-label="Decrease Quantity"></ion-icon>
     </ion-button>
     <div>{{ order.counter }}</div>
-    <ion-button (click)="addItems()"
-                class="item-footer__counter-btn">
-      <ion-icon name="add"></ion-icon>
+    <ion-button (click)="addItems()" class="item-footer__counter-btn">
+      <ion-icon name="add" aria-label="Increase Quantity"></ion-icon>
     </ion-button>
   </div>
   <div class="item-footer__add-btn-wrapper">
