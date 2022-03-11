@@ -139,7 +139,7 @@ export class SettingsFactoryService {
                 checks$.push(
                   from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
                     switchMap(login => {
-                      if (login === LoginState.HOSTED) {
+                      if (login === LoginState.HOSTED || isGuest) {
                         return of(true);
                       }
                       return of(false);
@@ -149,6 +149,13 @@ export class SettingsFactoryService {
               }
             }
           }
+
+
+          this.settingsFacade.getCachedSettings().pipe(map((setting) => {
+            console.log("setting: ", setting)
+          }))
+         
+
           return zip(...checks$).pipe(
             map(checks => checks.every(checkTrue => checkTrue)),
             take(1)
