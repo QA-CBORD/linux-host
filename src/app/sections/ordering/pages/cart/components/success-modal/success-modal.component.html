@@ -19,25 +19,35 @@
     </div>
 
     <div class="total">
-      <div *ngIf="subTotal" class="total__item">{{ contentStrings.labelSubtotal | async }}<span
-              class="total__item-sum">{{subTotal | priceUnitsResolver : mealBased}}</span></div>
-      <div *ngIf="tax" class="total__item">{{ contentStrings.labelTax | async }}<span
-              class="total__item-sum">{{tax | priceUnitsResolver : mealBased}}</span></div>
-      <div *ngIf="discount" class="total__item">{{ contentStrings.labelDiscount | async }}<span
-              class="total__item-sum">{{discount | priceUnitsResolver : mealBased}}</span></div>
-      <div *ngIf="tip" class="total__item">{{ contentStrings.labelTip | async }}<span
-              class="total__item-sum">{{tip | priceUnitsResolver : mealBased}}</span></div>
-      <div *ngIf="deliveryFee" class="total__item">{{ contentStrings.labelDeliveryFee | async }}<span
-              class="total__item-sum">{{deliveryFee | priceUnitsResolver : mealBased}}</span></div>
-      <div *ngIf="pickupFee" class="total__item">{{ contentStrings.labelPickupFee | async }}<span
-              class="total__item-sum">{{pickupFee | priceUnitsResolver : mealBased}}</span></div>
-      <div *ngIf="total" class="total__item total__item--bold">{{ contentStrings.labelTotal | async }}<span
-              class="total__item-sum">{{total | priceUnitsResolver : mealBased}}</span>
+
+      <div *ngIf="type !== null"  class="total__item-wrapper">
+        <div class="label">{{ type | typeMessage: 'Time' | uppercase }}</div>
+        <div class="label--bold">
+          {{ dueTime | modifyPrepTime: type }}
+        </div>
+      </div>
+
+      <div *ngIf="type !== null"  class="total__item-wrapper">
+        <div class="label">{{ type | typeMessage: 'Address' | uppercase }}</div>
+        <div class="label--bold">
+          <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
+          <span>{{ address | addressHeaderFormat }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="total" class="total__item ion-margin-top">{{ contentStrings.labelTotal | async }}<span
+              class="total__item--bold">{{total | priceUnitsResolver : mealBased}}</span>
+      </div>
+      <div class="total__item">
+        {{ contentStrings.labelPaymentMethod | async }}
+        <span>{{accountName}}</span>
       </div>
     </div>
 
-    <div class="final-order__payment-method-wrapper">
-      <span>{{ contentStrings.labelPaymentMethod | async }}</span><span>{{accountName}}</span>
+    <div class="btn_no-bg">
+      <st-button (onClick)="onClosed(true)" fill="clear" buttonModifier="rectangular">
+        <span class="ion-text-capitalize">Order Details</span>
+      </st-button>
     </div>
   </div>
 </ion-content>

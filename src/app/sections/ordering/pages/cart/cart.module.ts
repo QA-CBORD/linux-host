@@ -10,6 +10,8 @@ import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/type-message.pipe.module';
+import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
+import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 
 @NgModule({
   declarations: [CartComponent, SuccessModalComponent],
@@ -21,7 +23,9 @@ import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/
     IonicModule,
     PriceUnitsResolverModule,
     StButtonModule,
-    TypeMessageModule
+    TypeMessageModule,
+    AddressHeaderFormatPipeModule,
+    ModifyPrepTimeModule
   ],
    entryComponents: [SuccessModalComponent],
    providers: [ModalsService]
