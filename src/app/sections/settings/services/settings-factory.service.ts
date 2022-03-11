@@ -149,13 +149,6 @@ export class SettingsFactoryService {
               }
             }
           }
-
-
-          this.settingsFacade.getCachedSettings().pipe(map((setting) => {
-            console.log("setting: ", setting)
-          }))
-         
-
           return zip(...checks$).pipe(
             map(checks => checks.every(checkTrue => checkTrue)),
             take(1)
