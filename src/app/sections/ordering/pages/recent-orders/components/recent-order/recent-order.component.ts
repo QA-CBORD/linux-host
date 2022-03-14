@@ -145,6 +145,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       take(1),
       map(orders => orders.find(({ id }) => id === orderId)),
       tap(order => {
+        if (!order) return of(null);
+
         const { checkinStatus } = order;
         const map = new Map<string, OrderItem>();
         let count = 0;
@@ -181,10 +183,16 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.merchant$ = this.merchantService.recentOrders$.pipe(
       first(),
       map(orders => orders.find(({ id }) => id === orderId)),
-      switchMap(({ merchantId }) =>
-        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
-      ),
       switchMap(merchant => {
+        if (!merchant) return of(null);
+        
+        return this.merchantService.menuMerchants$.pipe(
+          map(merchants => merchants.find(({ id }) => id === merchant.merchantId))
+        );
+      }),
+      switchMap(merchant => {
+        if (!merchant) return of(null);
+
         const res = merchant.settings.map[MerchantSettings.addToCartEnabled] || {};
         this.addToCartEnabled = res.value && !!JSON.parse(res.value);
         merchant.orderTypes.merchantTimeZone = merchant.timeZone;
@@ -210,7 +218,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         ? this.getOrderItemOptionsInitialObjects(orderItem.orderItemOptions, menuItem)
         : [],
       quantity: orderItem.quantity,
-      specialInstructions: orderItem.specialInstructions
+      specialInstructions: orderItem.specialInstructions,
     };
   }
 
