@@ -49,7 +49,6 @@ import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/d
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
-import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { firstValueFrom } from '@shared/utils';
 const { Browser } = Plugins;
 
@@ -100,8 +99,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly checkInService: CheckingServiceFacade,
-    private readonly resolver: RecentOrdersResolver
+    private readonly checkInService: CheckingServiceFacade
   ) {}
 
   ionViewWillEnter() {
@@ -287,10 +285,8 @@ export class CartComponent implements OnInit, OnDestroy {
 
     modal.onDidDismiss().then(async ({ data }) => {
       if (data.goToDetail) {
-        this.resolver.resolve().then(() => {
-          this.checkInService.navedFromCheckin = true;
-          this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.recentOrders, id]);
-        });
+        this.checkInService.navedFromCheckin = true;
+        this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.recentOrders, id]);
         return;
       }
 
