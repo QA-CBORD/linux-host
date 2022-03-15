@@ -166,7 +166,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
         }
       }
     })
-    if(roommates[0] != undefined  ) {
+    if(roommates[0] !== undefined  ) {
       return roommates.join()
     }
     return ''

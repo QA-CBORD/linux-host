@@ -31,6 +31,11 @@ import {
 } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
+export enum OptionsName {
+  PreferredName = 'preferredName',
+  FullName = 'fullName',
+  FullNameDOB = 'fullNameDOB'
+}
 @Component({
   selector: 'st-search-by',
   templateUrl: './search-by.page.html',
@@ -138,5 +143,9 @@ export class SearchByPage implements OnInit, OnDestroy {
 
   isApplicationSubmitted(){
     return this._applicationStateService.isSubmitted(this._applicationStateService.applicationsState.applicationDetails.applicationDefinition.key);
+  }
+
+  public get OptionsName(): typeof OptionsName {
+    return OptionsName; 
   }
 }

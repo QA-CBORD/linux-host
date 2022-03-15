@@ -35,6 +35,14 @@ const routes: Routes = [
         loadChildren: './pages/work-order-details/work-order-details.module#WorkOrderDetailsPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.inspections}/:termKey/:residentInspectionKey/:contractElementKey/:checkIn`,
+        loadChildren: './pages/inspections-details/inspections-details.module#InspectionsDetailsPageModule',
+      },
+      {
+        path: `${LOCAL_ROUTING.inspections}/:termKey/:contractElementKey/:checkIn`,
+        loadChildren: './pages/inspections-details/inspections-details.module#InspectionsDetailsPageModule',
+      },
+      {
         path: `${LOCAL_ROUTING.units}`,
         loadChildren: './pages/unit-details/unit-details.module#UnitDetailsPageModule',
       },
