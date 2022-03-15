@@ -151,11 +151,21 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   }
   
   getRoommatePreferencesSelecteds(): string {
+    let options;
+    this.roommateSearchOptions$.subscribe(res => options = res)
     let roommates = this.roommateSelecteds.map(res => {
-      if(res.firstName != undefined ){
-        return res.firstName
-      } 
-    } )
+      switch(options.showOptions){
+        case 'preferredNameLast':{
+          if(res.preferredName){
+            return res.preferredName;
+          }
+          return res.firstName;
+        }
+        default:{
+          return res.firstName
+        }
+      }
+    })
     if(roommates[0] != undefined  ) {
       return roommates.join()
     }
