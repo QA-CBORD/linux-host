@@ -3,7 +3,7 @@ import { EnvironmentFacadeService } from "@core/facades/environment/environment.
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
-import { catchError, map, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, withLatestFrom, tap, switchMap } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
 import { QuestionsStorageService, QuestionsEntries } from '../questions/questions-storage.service';
@@ -13,12 +13,14 @@ import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { HttpParams } from "@angular/common/http";
-import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields, LocalFile } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
+import { Filesystem, FilesystemDirectory } from '@capacitor/core';
 
+const IMAGE_DIR = 'stored-images';
 @Injectable({
   providedIn: 'root',
 })
@@ -186,7 +188,7 @@ export class WorkOrdersService {
 
   submitWorkOrder(
     form: any,
-    formValue: any): Observable<boolean> {
+    formValue: any): Observable<any> {
     const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
     const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
 
@@ -194,6 +196,8 @@ export class WorkOrdersService {
     let notifyByEmail: boolean;
     let type,location = 0;
     let image : ImageData | null;
+    let ImageFormData: FormData;
+    let isImageUpload: boolean;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
@@ -217,15 +221,15 @@ export class WorkOrdersService {
 
     })
 
-    this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
-    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null)
+    this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null);
+    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
+    
     const body = new WorkOrdersDetailsList({
       key:null,
       notificationPhone: phoneNumber, 
       typeKey: type,
       description: description,
       notificationEmail: email,
-      attachment: image,
       facilityKey:location,
       notify: notifyByEmail,
       status:'',
@@ -235,16 +239,45 @@ export class WorkOrdersService {
     });
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
-      map((response: Response) => {
-        if (isSuccessful(response.status)) {
-          return true;
-        } else {
-          throw new Error(response.status.message);
-        }
-      }
+      catchError(err=> of(false)),
+      switchMap((response: Response) => 
+        this._workOrderStateService.WorkOrderImageBlob.pipe(
+          switchMap(res => this.sendWorkOrderImage(response.data, res, image).pipe(
+            catchError(_ => of(false))
+          )))
       ),
-      catchError(_ => of(false))
+      tap(()=>{
+          this._workOrderStateService.destroyWorkOrderImageBlob();
+          this.deleteImage(image.filename);
+      })
     );
+  }
+
+  sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Observable<boolean> {
+    let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
+
+    formData.append('fileName', imageData.filename);
+    formData.append('comments', 'student submitted');
+    formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
+    formData.append('workOrderKey', `${workOrderId}`);
+
+    return this._housingProxyService
+      .postImage<Response>(workOrderImageURL, formData)
+      .pipe(
+        map((response: Response) => {
+          if (isSuccessful(response.status)) {
+            return true;
+          } else {
+            throw new Error(response.status.message);
+          }
+        }));
+  }
+
+  async deleteImage(fileName: string) {
+    await Filesystem.deleteFile({
+        directory: FilesystemDirectory.Data,
+        path: `${IMAGE_DIR}/${fileName}`
+    });
   }
 
   private createFacilityTreeQuestion(){

@@ -17,6 +17,12 @@ export interface ImageDataOptions {
   studentSubmitted: boolean;
 }
 
+export interface LocalFile {
+  name: string;
+  path: string;
+  data: string;
+}
+
 export class ImageData implements ImageDataOptions {
   comments: string;
   contents: string;
