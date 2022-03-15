@@ -5,11 +5,10 @@ import { IonicModule } from '@ionic/angular';
 import { InspectionsDetailsRoutingModule } from './inspections-details.routing.module';
 
 import { InspectionsDetailsPage } from './inspections-details.page';
-import { ReactiveFormsModule } from '@angular/forms';
-import { QuestionsModule } from '@sections/housing/questions/questions.module';
-import { StepperModule } from '@sections/housing/stepper/stepper.module';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
 
-const imports = [CommonModule, IonicModule, ReactiveFormsModule,InspectionsDetailsRoutingModule,QuestionsModule,StepperModule];
+const imports = [CommonModule,FormsModule , CommonModule, IonicModule, ReactiveFormsModule,InspectionsDetailsRoutingModule,StTextareaFloatingLabelModule];
 const declarations = [InspectionsDetailsPage];
 
 @NgModule({

@@ -7,6 +7,11 @@
   --padding-end: 8px;
 }
 
+st-textarea-floating-label{
+  width: 100%;
+  margin: 0 0 0.8em;
+}
+
 .inspection-details__actions {
   display: flex;
   justify-content: space-between;
@@ -40,6 +45,10 @@
   border-radius: 16px;
   box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
   padding: 16px;
+
+  .condition-inspect{
+    --background: #d7d8da;
+  }
 }
 
 .inspection-details__back {
@@ -70,3 +79,5 @@
 .inspection-details__submit {
   --background: #{$color-dodger-blue};
 }
+
+

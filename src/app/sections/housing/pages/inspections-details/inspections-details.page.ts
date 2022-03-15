@@ -25,20 +25,16 @@ import {
   tap
 } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { FormTypes } from '@sections/housing/housing.model';
 import { HousingService } from '@sections/housing/housing.service';
 import { AssetTypeDetailValue, NonAssignmentDetails } from '@sections/housing/non-assignments/non-assignments.model';
-import { NonAssignmentsService } from '@sections/housing/non-assignments/non-assignments.service';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { isMobile } from '@core/utils/platform-helper';
 import { ToastService } from '@core/service/toast/toast.service';
-import { NonAssignmentsStateService } from '@sections/housing/non-assignments/non-assignments-state.service';
 import { FormGroup } from '@angular/forms';
 import { WorkOrderDetails } from '../../work-orders/work-orders.model';
-import { WorkOrdersService } from '../../work-orders/work-orders.service';
 import { Inspection } from '../../inspections-forms/inspections-forms.model';
 import { InspectionService } from '../../inspections-forms/inspections-forms.service';
 import { InspectionsStateService } from '../../inspections-forms/inspections-forms-state.service';
@@ -68,6 +64,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   termKey: number = 0;
   isSubmitted: boolean = false;
   canSubmit: boolean = true;
+  section: string = '';
 
   constructor(
     private _platform: Platform,
