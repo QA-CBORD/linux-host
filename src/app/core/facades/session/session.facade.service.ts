@@ -23,7 +23,6 @@ import { NativeStartupFacadeService } from '../native-startup/native-startup.fac
 import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 
-
 enum AppStatus {
   BACKGROUND,
   FOREGROUND,
@@ -66,7 +65,7 @@ export class SessionFacadeService {
   private appStateListeners() {
     App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
-        this.onActiveState();    
+        this.onActiveState();
         await this.appResumeLogic();
       } else {
         if (!this.identityFacadeService.getIsLocked()) {
@@ -107,11 +106,8 @@ export class SessionFacadeService {
       this.ngZone.run(async () => {
         await this.router
           .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
-          .then(navigated => {
-            // console.log('navigated: ', navigated);
-          })
-          .catch(err => {
-          });
+          .then(navigated => {})
+          .catch(err => {});
       });
     }
   }
@@ -136,7 +132,6 @@ export class SessionFacadeService {
     this._deepLinkPath = null;
   }
   doLoginChecks() {
-    // console.log('doLoginChecks called.... ');
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
@@ -151,7 +146,6 @@ export class SessionFacadeService {
             try {
               return await this.determineFromBackgroundLoginState(newSessionId);
             } catch (message) {
-              // console.log('error ==>> ', message);
               // can't determine login state // will ask user to re-enter pin
               if (/isPingEnabled/.test(message)) {
                 return LoginState.PIN_LOGIN;
@@ -163,7 +157,6 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
-          // console.log('state: ', state);
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
@@ -225,19 +218,18 @@ export class SessionFacadeService {
           this.navigateToDashboard();
         },
         async ({ code }) => {
-          // console.log('Error here: ', code, ' : ', message);
           let logoutUser = true;
           if (
-            VaultErrorCodes.TooManyFailedAttempts == code  &&
-            useBiometric &&
-            this.identityFacadeService.canRetryUnlock ||  VaultErrorCodes.Unknown == code || VaultErrorCodes.BiometricsNotEnabled == code
+            (VaultErrorCodes.TooManyFailedAttempts == code &&
+              useBiometric &&
+              this.identityFacadeService.canRetryUnlock) ||
+            VaultErrorCodes.Unknown == code ||
+            VaultErrorCodes.BiometricsNotEnabled == code
           ) {
             logoutUser = !(await this.identityFacadeService
               .onPasscodeRequest(false)
               .then(async data => data && (await this.navigate2Dashboard()))
-              .catch(err => {
-                // console.log('err: ', err);
-              })
+              .catch(err => {})
               .finally(() => (this.identityFacadeService.canRetryUnlock = true)));
           }
 
@@ -341,7 +333,6 @@ export class SessionFacadeService {
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
       const didNavigate = await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
-      // console.log('didNavigate:', didNavigate);
       this.onLogOutObservable$.next();
     }
     this.resetAll();
@@ -365,7 +356,10 @@ export class SessionFacadeService {
 
   private async closeTopControllers() {
     const taskId = await BackgroundTask.beforeExit(async () => {
-      this.nativeProvider.dismissTopControllers(!!this.nativeStartupFacadeService.blockNavigationStartup,  this.nativeProvider.getKeepTopModal);
+      this.nativeProvider.dismissTopControllers(
+        !!this.nativeStartupFacadeService.blockNavigationStartup,
+        this.nativeProvider.getKeepTopModal
+      );
       BackgroundTask.finish({
         taskId,
       });
