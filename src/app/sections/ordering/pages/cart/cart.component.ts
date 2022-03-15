@@ -261,7 +261,7 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const address = await firstValueFrom(await this.orderDetailOptions$.pipe(take(1)));
+    const address = await firstValueFrom(await this.orderDetailOptions$);
     const modal = await this.modalController.create({
       component: SuccessModalComponent,
       componentProps: {
