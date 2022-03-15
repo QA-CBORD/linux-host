@@ -55,7 +55,7 @@
     "big-integer": "^1.6.48",
     "bwip-angular2": "^1.0.6",
     "cordova-plugin-android-permissions": "1.1.2",
-    "cordova-plugin-inappbrowser": "git+https://github.com/apache/cordova-plugin-inappbrowser.git",
+    "cordova-plugin-inappbrowser": "5.0.0",
     "cordova-plugin-ionic-webview": "^2.5.1",
     "cordova-plugin-network-information": "^2.0.2",
     "cordova-plugin-screen-orientation": "^3.0.2",

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { ROLES } from '../../../app.global';
@@ -56,6 +56,7 @@ export class SessionFacadeService {
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly ngZone: NgZone
   ) {
     this.appStateListeners();
   }
@@ -63,13 +64,13 @@ export class SessionFacadeService {
   // handle app state changes
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
   private appStateListeners() {
-    App.addListener('appStateChange', ({ isActive }) => {
-      this.identityFacadeService.onAppStateChanged(isActive);
+    App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
-        this.appResumeLogic();
+        this.onActiveState();    
+        await this.appResumeLogic();
       } else {
         if (!this.identityFacadeService.getIsLocked()) {
-          this.closeActionsheets();
+          this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
       }
@@ -83,7 +84,7 @@ export class SessionFacadeService {
 
     this.platform.ready().then(() => {
       this.platform.resume.subscribe(() => {
-        this.appResumeLogic();
+        this.onActiveState();
       });
 
       this.platform.pause.subscribe(() => {
@@ -93,10 +94,6 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    /// use app status to prevent double calling
-    if (this.appStatus === AppStatus.FOREGROUND) return;
-    this.appStatus = AppStatus.FOREGROUND;
-
     if (this.navigatedToPlugin) {
       this.navigateToNativePlugin = false;
       return;
@@ -107,15 +104,22 @@ export class SessionFacadeService {
     }
 
     if ((await this.isVaultLocked()) && !this.identityFacadeService.pinEntryInProgress) {
-      await this.router
-        .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
-        .then(navigated => {
-          // console.log('navigated: ', navigated);
-        })
-        .catch(err => {
-          // console.log(err);
-        });
+      this.ngZone.run(async () => {
+        await this.router
+          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
+          .then(navigated => {
+            // console.log('navigated: ', navigated);
+          })
+          .catch(err => {
+          });
+      });
     }
+  }
+
+  private async onActiveState() {
+    /// use app status to prevent double calling
+    if (this.appStatus === AppStatus.FOREGROUND) return;
+    this.appStatus = AppStatus.FOREGROUND;
   }
 
   get navigatedToPlugin() {
@@ -142,15 +146,15 @@ export class SessionFacadeService {
         switchMap(async sessionId => {
           try {
             return await this.determineFromBackgroundLoginState(sessionId);
-          } catch ({ message }) {
+          } catch (message) {
             const newSessionId = await this.authFacadeService.authenticateSystem$().toPromise();
             try {
               return await this.determineFromBackgroundLoginState(newSessionId);
-            } catch ({ message }) {
+            } catch (message) {
               // console.log('error ==>> ', message);
               // can't determine login state // will ask user to re-enter pin
               if (/isPingEnabled/.test(message)) {
-                return of(LoginState.PIN_LOGIN);
+                return LoginState.PIN_LOGIN;
               }
               throw new Error('An Unexpected error occurred');
             }
@@ -220,13 +224,13 @@ export class SessionFacadeService {
           this.identityFacadeService.canRetryUnlock = true;
           this.navigateToDashboard();
         },
-        async ({ code, message }) => {
+        async ({ code }) => {
           // console.log('Error here: ', code, ' : ', message);
           let logoutUser = true;
           if (
-            VaultErrorCodes.TooManyFailedAttempts == code &&
+            VaultErrorCodes.TooManyFailedAttempts == code  &&
             useBiometric &&
-            this.identityFacadeService.canRetryUnlock
+            this.identityFacadeService.canRetryUnlock ||  VaultErrorCodes.Unknown == code || VaultErrorCodes.BiometricsNotEnabled == code
           ) {
             logoutUser = !(await this.identityFacadeService
               .onPasscodeRequest(false)
@@ -359,7 +363,7 @@ export class SessionFacadeService {
     this.identityFacadeService.lockVault();
   }
 
-  private async closeActionsheets() {
+  private async closeTopControllers() {
     const taskId = await BackgroundTask.beforeExit(async () => {
       this.nativeProvider.dismissTopControllers(!!this.nativeStartupFacadeService.blockNavigationStartup,  this.nativeProvider.getKeepTopModal);
       BackgroundTask.finish({
