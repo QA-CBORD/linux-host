@@ -8,16 +8,20 @@ import { RequestedRoommate } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, Platform } from '@ionic/angular';
 import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
 
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
-import { FacilityTree } from '../work-orders/work-orders.model';
+import { FacilityTree, ImageData, LocalFile } from '../work-orders/work-orders.model';
+import { Filesystem, FilesystemDirectory } from '@capacitor/core';
 
 const { Camera } = Plugins;
+
+const IMAGE_DIR = 'stored-images';
+
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -28,6 +32,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   facilityTreeData: FacilityTree[];
   facilityFullName: string;
   currectFacility: string;
+  images: LocalFile[] = [];
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _termService: TermsService,
@@ -35,7 +40,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastService: ToastService,
     private readonly _workOrderStateService: WorkOrderStateService,
-    private _contractListStateService: ContractListStateService
+    private _contractListStateService: ContractListStateService,
+    private plt: Platform
   ) { }
 
   ngOnDestroy(): void {
@@ -117,8 +123,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private _initGetImage() {
     this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => {
       if (!!(res && res.contents)) {
-        let format = res.filename.split('.')[1]
-        this.image$.next(`data:image/${format};base64,${res.contents}`)
+        this.image$.next(res.contents)
       } else {
         this.image$.next(null)
       }
@@ -166,46 +171,143 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.onGetPhoto(cameraSource);
   }
   onGetPhoto(cameraSource: CameraSource) {
-    this.getPhoto(cameraSource)
-      .pipe(take(1))
-      .subscribe(
-        response => {
-          //IMAGEBASE64
-          this.image$.next(response.dataUrl)
-          const photoBase64 = response.dataUrl.split(',')[1];
-          this.sessionFacadeService.navigatedToPlugin = true;
-          this._workOrderStateService.setWorkOrderImage({
-            comments: "",
-            contents: photoBase64,
-            filename: "work-order" + Date.now() + -'' + '.' + response.format,
-            studentSubmitted: true
-          })
-        },
-        error => {
-          this.presentToast('There was an issue with the picture. Please, try again.');
-        },
-        () => { }
-      );
+    this.getPhoto(cameraSource);
   }
 
   /// Camera plugin control
-  private getPhoto(cameraSource: CameraSource): Observable<CameraPhoto> {
+  private async getPhoto(cameraSource: CameraSource) {
     // const uploadSettings = this.photoUploadService.photoUploadSettings;
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
     this.sessionFacadeService.navigatedToPlugin = true;
-    return from(
-      Camera.getPhoto({
-        quality: 100,
-        correctOrientation: true,
-        preserveAspectRatio: true,
+    const image = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      correctOrientation: true,
+      preserveAspectRatio: true,
+      direction: CameraDirection.Rear,
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Photos,
+      saveToGallery: true,
+    });
+    
+    if (image) {
+      this.saveImage(image)
+    }
 
-        direction: CameraDirection.Rear,
-        resultType: CameraResultType.DataUrl,
-        source: cameraSource,
-        saveToGallery: false,
-      })
-    );
   }
+
+  async saveImage(photo: CameraPhoto) {
+    const base64Data = await this.readAsBase64(photo);
+
+    const fileName = new Date().getTime() + '.PNG';
+    await Filesystem.writeFile({
+      path: `${IMAGE_DIR}/${fileName}`,
+      data: base64Data,
+      directory: FilesystemDirectory.Data
+    });
+
+    let image : ImageData = {
+      'comments':'',
+      'filename':fileName,
+      'contents':base64Data,
+      'studentSubmitted': true
+    };
+    this._workOrderStateService.setWorkOrderImage(image);
+    // Reload the file list
+    // Improve by only loading for the new image and unshifting array!
+    this.loadFiles();
+  }
+
+  // https://ionicframework.com/docs/angular/your-first-app/3-saving-photos
+  private async readAsBase64(photo: CameraPhoto) {
+    if (this.plt.is('hybrid')) {
+      const file = await Filesystem.readFile({
+        path: photo.path
+      });
+
+      return file.data;
+    }
+    else {
+      // Fetch the photo, read as a blob, then convert to base64 format
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+
+      return await this.convertBlobToBase64(blob) as string;
+    }
+  }
+
+  // Helper function
+  convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader;
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+
+  async loadFiles() {
+    this.images = [];
+
+    Filesystem.readdir({
+      path: IMAGE_DIR,
+      directory: FilesystemDirectory.Data,
+    }).then(result => {
+      this.loadFileData(result.files);
+    },
+      async (err) => {
+        // Folder does not yet exists!
+        await Filesystem.mkdir({
+          path: IMAGE_DIR,
+          directory: FilesystemDirectory.Data,
+        });
+      }
+    )
+  }
+
+  async loadFileData(fileNames: string[]) {
+    for (let f of fileNames) {
+      const filePath = `${IMAGE_DIR}/${f}`;
+ 
+      const readFile = await Filesystem.readFile({
+        path: filePath,
+        directory: FilesystemDirectory.Data,
+      });
+ 
+      this.images.push({
+        name: f,
+        path: filePath,
+        data: `${readFile.data}`,
+      });
+      this.startUpload(this.images[0],readFile.data)
+    }
+  }
+
+  async deleteImage(file: LocalFile) {
+    await Filesystem.deleteFile({
+        directory: FilesystemDirectory.Data,
+        path: file.path
+    });
+    this.loadFiles();
+    this.presentToast('File removed.');
+}
+
+async startUpload(file: LocalFile,value: string) {
+  const imageFormat = file.name.split('.')[1]
+  const rawData = atob(value);
+  const bytes = new Array(rawData.length);
+  for (var x = 0; x < rawData.length; x++) {
+    bytes[x] = rawData.charCodeAt(x);
+  }
+  const arr = new Uint8Array(bytes);
+  const blob = new Blob([arr], {type: `image/${imageFormat}`});
+  // const response = await fetch(value);
+  // const blob = await response.blob();
+  const formData = new FormData();
+  formData.append('attachmentFile', blob, file.name);
+  this._workOrderStateService.setWorkOrderImageBlob(formData);
+}
+
   private async presentToast(message: string) {
     await this.toastService.showToast({ message, duration: 5000 });
   }
@@ -215,23 +317,21 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   _setFacility() {
-    if (this._workOrderStateService.workOrderDetails.getValue().facilityTree) {
-      this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
-      this.currectFacility = this._contractListStateService.getContractDetails()[0].fullName;
-      if (this.facilityTreeData.length == 1 && !this.isSubmitted && this.question.type == 'FACILITY') {
-        this.isSubmitted = true;
-        this.facilityFullName = this.facilityTreeData[0].facilityFullName;
-        this._workOrderStateService.setSelectedFacilityTree({
-          name: this.facilityFullName,
-          facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
-        });
-      }
-      if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY') {
-        this._workOrderStateService.setSelectedFacilityTree({
-          name: this.currectFacility,
-          facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
-        });
-      }
+    this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
+    this.currectFacility = this._contractListStateService.getContractDetails()[0].fullName;
+    if (this.facilityTreeData.length == 1 && !this.isSubmitted && this.question.type == 'FACILITY') {
+      this.isSubmitted = true;
+      this.facilityFullName = this.facilityTreeData[0].facilityFullName;
+      this._workOrderStateService.setSelectedFacilityTree({
+        name: this.facilityFullName,
+        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
+      });
+    }
+    if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY') {
+      this._workOrderStateService.setSelectedFacilityTree({
+        name: this.currectFacility,
+        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
+      });
     }
   }
 }
