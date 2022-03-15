@@ -25,7 +25,9 @@ import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { ProfileService } from '@shared/services/app.profile.services';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
+import { AccountsService } from '@sections/dashboard/services';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Injectable()
 export class SettingsFactoryService {
@@ -42,7 +44,9 @@ export class SettingsFactoryService {
     appBrowser: this.appBrowser,
     mobileCredentialFacade: this.mobileCredentialFacade,
     sessionFacadeService: this.sessionFacadeService,
-    profileService: this.profileService
+    profileService: this.profileService,
+    accountService: this.accountService,
+    loadingService: this.loadingService
   };
 
   constructor(
@@ -59,7 +63,9 @@ export class SettingsFactoryService {
     private readonly modalController: ModalController,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly profileService: ProfileService
+    private readonly profileService: ProfileServiceFacade,
+    private readonly accountService: AccountsService,
+    private readonly loadingService: LoadingService
   ) {}
 
   async getSettings(): Promise<SettingsSectionConfig[]> {
@@ -94,7 +100,7 @@ export class SettingsFactoryService {
 
   
   private checkDisplayOption(setting: SettingItemConfig): Promise<boolean> {
-    return setting.selfValidate(this.services);
+    return setting.checkIsEnabled(this.services);
   }
 
   get photoUploadEnabled$(): Observable<boolean> {

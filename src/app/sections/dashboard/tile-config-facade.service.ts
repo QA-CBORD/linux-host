@@ -5,7 +5,7 @@ import { Observable, zip } from 'rxjs';
 import { APP_PROFILES, ButtonConfig, TileWrapperConfig } from '@sections/dashboard/models';
 import { first, map, switchMap, tap } from 'rxjs/operators';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { ProfileService } from '@shared/services/app.profile.services';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 
 @Injectable()
 export class TileConfigFacadeService extends ServiceStateFacade {
@@ -13,7 +13,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
 
   constructor(private readonly dashboardService: DashboardService,
               private readonly storage: StorageStateService,
-              private readonly profileService: ProfileService
+              private readonly profileService: ProfileServiceFacade
               ) {
     super();
   }

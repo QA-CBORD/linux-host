@@ -1,0 +1,36 @@
+<section > 
+  <ion-list  *ngIf="(inspectionList | async) as inspectionList"
+    class="ion-no-margin bg-transparent">
+    <ion-grid >
+      <ion-row class="container-header-inspection">
+        <div class="col-inspection ion-no-padding">
+            <h2 class="form__secondary-header">NEEDS INSPECTION</h2>
+        </div>
+      </ion-row>
+    </ion-grid>
+
+    <!-- TODO: Add plus button  -->
+    <ng-container >
+      <div #container *ngFor="let inspection of inspectionList" >
+        <ion-item lines="none" class="inspections-list__item" >
+          <ion-label class="inspections-list__wrap">
+            <div class="inspections-list__info">
+              <!-- TODO: status inspections -->
+              <h5 class="inspections-list__status" [ngClass]="" > {{ getInspectionStatus(inspection) }}</h5>
+              <div class="inspections-list__date" >
+                {{ inspection.remainingItems }} Rooms Left
+              </div>
+            </div>
+        
+            <h2 class="inspections-list__title">{{ inspection.formTitle }} </h2>
+          </ion-label>
+
+          <st-actions
+            [path]="getPath(inspection)"
+            >
+          </st-actions>
+        </ion-item>
+      </div>
+    </ng-container>
+  </ion-list>
+</section>

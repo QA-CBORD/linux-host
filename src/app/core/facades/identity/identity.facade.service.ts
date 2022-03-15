@@ -8,7 +8,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { LoadingService } from '@core/service/loading/loading.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 export enum LoginState {
   DONE,
@@ -35,6 +35,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
+    private readonly globalNav: GlobalNavService
   ) {
     super();
   }
@@ -72,6 +73,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
           .initAndUnlock({ username: undefined, token: undefined, pin: data }, biometricEnabled, navigateToDashboard)
           .pipe(take(1))
           .toPromise();
+        this.globalNav.showNavBar();
         return Promise.resolve();
     }
   }

@@ -1,5 +1,6 @@
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { CONTENT_STRINGS_CATEGORIES as CATEGORIES } from 'src/app/content-strings';
+import { reduceToObject } from './content-string-utils';
 
 export interface ContentStringBuilderConfig {
   primary?: ContentStringInfo[];
@@ -23,8 +24,9 @@ export abstract class ContentStringModel {
   }
 
   protected doSetup(config: ContentStringBuilderConfig, defaultContents: any): void {
-    const reduce = (data: ContentStringInfo[]) =>
-      data.reduce((init, { name, value }) => ({ ...init, [name]: value }), {});
+    
+    const reduce = (data: ContentStringInfo[]) => reduceToObject(data);
+
     this.params = config.params;
     const primary = config.primary || [];
     const secondary = config.secondary || [];

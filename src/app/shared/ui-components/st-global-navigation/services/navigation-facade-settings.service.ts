@@ -13,7 +13,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { GuestSetting } from '@sections/guest/model/guest-settings';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { ProfileService } from '@shared/services/app.profile.services';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 
 @Injectable()
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
@@ -25,7 +25,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly authService: AuthFacadeService,
     private readonly institutionService: InstitutionFacadeService,
-    private readonly profileService: ProfileService
+    private readonly profileService: ProfileServiceFacade
   ) {
     super();
   }

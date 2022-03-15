@@ -167,11 +167,11 @@ export class ExternalPaymentService {
   }
 
   private browserListeners(browser: InAppBrowserObject, resolve: (value: USAePayResponse | PromiseLike<USAePayResponse>) => void, reject: (reason?: any) => void) {
-    browser.on('loadstart').pipe(take(1)).subscribe(event => {
+    browser.on('loadstart').subscribe(event => {
       this.accessibilityService.hideElementsByClassName();
       this.handleUSAePayResponse(event, resolve, reject, browser);
     });
-    browser.on('loaderror').pipe(take(1)).subscribe(() => {
+    browser.on('loaderror').subscribe(() => {
       reject('Your request failed. Please try again.');
       browser.close();
     });

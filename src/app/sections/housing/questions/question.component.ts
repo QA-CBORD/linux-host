@@ -333,6 +333,5 @@ async startUpload(file: LocalFile,value: string) {
         facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
       });
     }
-
   }
 }

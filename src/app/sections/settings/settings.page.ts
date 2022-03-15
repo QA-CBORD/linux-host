@@ -8,14 +8,12 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { SettingItemConfig, SettingsSectionConfig } from './models/setting-items-config.model';
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
-import { ModalController } from '@ionic/angular';
 import { map, take, switchMap, catchError } from 'rxjs/operators';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { from, Observable, of } from 'rxjs';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserInfo } from '@core/model/user';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { ProfileService } from '@shared/services/app.profile.services';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { APP_PROFILES } from '@sections/dashboard/models';
 const { Device } = Plugins;
 
@@ -40,7 +38,7 @@ export class SettingsPage implements OnInit {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFactory: SettingsFactoryService,
     private readonly route: ActivatedRoute,
-    private readonly profileService: ProfileService
+    private readonly profileService: ProfileServiceFacade
   ) { }
 
   ngOnInit() {

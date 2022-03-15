@@ -1,0 +1,32 @@
+<ion-content>
+  <div class="header">
+    <div>{{ titleString }} </div>
+    <div (click)="closeMe()">
+      <ion-icon [attr.alt]="'icon remove'" src="assets/icon/remove_x_icon.svg" name="remove_x_icon.svg"></ion-icon>
+    </div>
+  </div>
+  <div class="content-wrapper">
+    <div class="message">
+      <span>{{ bodyString }} </span>
+    </div>
+    <div class="btn-primary">
+      <st-button [color]="primaryBtnColor" [disabled]="primaryBtnDisabled"
+        (onClick)="onClickPrimary && onClickPrimary($event) || onPrimaryBtnClicked.emit($event)"
+        buttonModifier="rectangular">
+        <span class="ion-text-capitalize">
+          {{ primaryBtnText }}
+        </span>
+      </st-button>
+    </div>
+
+    <div class="btn-secondary">
+      <st-button [color]="secondaryBtnColor" [disabled]="secondaryBtnDisabled"
+        (onClick)="onClickSecondary && onClickSecondary($event) || onSecondaryBtnClicked.emit($event)"
+        buttonModifier="rectangular" isDisabled="true">
+        <span class="ion-text-capitalize">
+          {{ secondaryBtnText }}
+        </span>
+      </st-button>
+    </div>
+  </div>
+</ion-content>
