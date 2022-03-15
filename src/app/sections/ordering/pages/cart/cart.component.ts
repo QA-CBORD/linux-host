@@ -48,6 +48,8 @@ import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
+import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
+import { firstValueFrom } from '@shared/utils';
 const { Browser } = Plugins;
 
 @Component({
@@ -96,7 +98,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
-    private readonly checkinProcess: CheckingProcess
+    private readonly checkinProcess: CheckingProcess,
+    private readonly checkInService: CheckingServiceFacade
   ) {}
 
   ionViewWillEnter() {
@@ -258,9 +261,11 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const address = await firstValueFrom(await this.orderDetailOptions$);
     const modal = await this.modalController.create({
       component: SuccessModalComponent,
       componentProps: {
+        id,
         tax,
         discount,
         total,
@@ -273,10 +278,18 @@ export class CartComponent implements OnInit, OnDestroy {
         mealBased,
         merchantId,
         dueTime,
+        type,
+        address: address.address,
       },
     });
 
-    modal.onDidDismiss().then(async () => {
+    modal.onDidDismiss().then(async ({ data }) => {
+      if (data.goToDetail) {
+        this.checkInService.navedFromCheckin = true;
+        this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.recentOrders, id]);
+        return;
+      }
+
       await this.routingService.navigate([APP_ROUTES.ordering]);
     });
 

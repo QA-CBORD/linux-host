@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
@@ -145,6 +145,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       take(1),
       map(orders => orders.find(({ id }) => id === orderId)),
       tap(order => {
+        if (!order) return of(null);
+
         const { checkinStatus } = order;
         const map = new Map<string, OrderItem>();
         let count = 0;
@@ -181,9 +183,12 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.merchant$ = this.merchantService.recentOrders$.pipe(
       first(),
       map(orders => orders.find(({ id }) => id === orderId)),
-      switchMap(({ merchantId }) =>
-        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
-      ),
+      filter(merchant => merchant !== null),
+      switchMap(merchant => {
+        return this.merchantService.menuMerchants$.pipe(
+          map(merchants => merchants.find(({ id }) => id === merchant.merchantId))
+        );
+      }),
       switchMap(merchant => {
         const res = merchant.settings.map[MerchantSettings.addToCartEnabled] || {};
         this.addToCartEnabled = res.value && !!JSON.parse(res.value);
@@ -210,7 +215,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         ? this.getOrderItemOptionsInitialObjects(orderItem.orderItemOptions, menuItem)
         : [],
       quantity: orderItem.quantity,
-      specialInstructions: orderItem.specialInstructions
+      specialInstructions: orderItem.specialInstructions,
     };
   }
 

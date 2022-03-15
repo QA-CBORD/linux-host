@@ -20,7 +20,7 @@ import {
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { first, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
@@ -247,8 +247,9 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private watchLocationChanges() {
-    this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
-      this.locationPermissionDisabled = !(latitude && longitude);
+    this.locationSubscription = this.coordsService.location$.subscribe((location) => {
+      if(!location || !location.coords) return of(null);
+      this.locationPermissionDisabled = !(location.coords.latitude && location.coords.longitude);
     });
   }
 

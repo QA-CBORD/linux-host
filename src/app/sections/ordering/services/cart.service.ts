@@ -136,6 +136,8 @@ export class CartService {
       minute: '2-digit',
     };
 
+    if(/Invalid Date/.test(String(date))) return;
+
     if (!timeZone) return Intl.DateTimeFormat('en-US', options).format(date);
     options.timeZone = timeZone;
     options.timeZoneName = 'short';
