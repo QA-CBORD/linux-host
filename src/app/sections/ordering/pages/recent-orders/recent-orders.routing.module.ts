@@ -13,6 +13,7 @@ const routes: Routes = [
   }, {
     path: ':id',
     component: RecentOrderComponent,
+    resolve: {recentOrders: RecentOrdersResolver}
   },
 ];
 

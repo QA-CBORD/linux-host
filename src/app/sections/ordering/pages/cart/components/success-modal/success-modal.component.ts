@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import { ModalController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-success-modal',
@@ -20,18 +21,23 @@ export class SuccessModalComponent implements OnInit {
   @Input() subTotal: number;
   @Input() tip: number;
   @Input() mealBased: boolean;
+  @Input() type: number;
+  @Input() dueTime: string;
+  @Input() address: AddressInfo;
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(private readonly modalController: ModalController,
-              private readonly orderingService:OrderingService) {}
+              private readonly orderingService: OrderingService) {}
 
   ngOnInit(): void {
     this.initContentStrings();
   }
 
-  async onClosed() {
-    await this.modalController.dismiss();
+  async onClosed(goToDetail: boolean = false) {
+    await this.modalController.dismiss({
+      goToDetail
+    });
   }
 
   private initContentStrings() {
@@ -47,5 +53,6 @@ export class SuccessModalComponent implements OnInit {
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.labelOrderPlacedTitle = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrderPlacedTitle);
     this.contentStrings.labelOrderPlacedDescription = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrderPlacedDescription);
+    this.contentStrings.labelPickup = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPickup);
   }
 }

@@ -21,7 +21,8 @@
   }
 
   &__main-img {
-    margin: 20px 0;
+    margin: 5px 0;
+    max-height: 150px;
   }
 
   &__sub-header {
@@ -61,11 +62,25 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
-
-    @include font-nunito-regular(14px);
+    color: $color-charcoal;
+    @include font-nunito-semibold(14px);
 
     &--bold {
       @include font-nunito-heavy(14px);
+    }
+  }
+
+  &__item-wrapper {
+    color: $color-charcoal;
+    margin-top: 20px;
+    
+    .label {
+      @include font-nunito-semibold(14px);
+
+      &--bold {
+        color: $color-charcoal;
+        @include font-nunito-heavy(14px);
+      }
     }
   }
 }
