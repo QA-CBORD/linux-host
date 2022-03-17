@@ -40,7 +40,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() activeOrderType: ORDER_TYPE = null;
   @Input() showNavBarOnDestroy: boolean = true;
   @Input() timeZone: string;
-  @ViewChild(StDateTimePickerComponent) child: StDateTimePickerComponent;
+  @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   dateTimeWithTimeZone: string;
   activeMerchant$: Observable<MerchantInfo>;
   isOrderTypePickup: boolean;
@@ -69,7 +69,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly a11yService: AccessibilityService,
-    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe,
+    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe
   ) {}
 
   ngOnInit() {
@@ -100,7 +100,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.PICKUP, this.timeZone),
       this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.DELIVERY, this.timeZone),
       this.retrieveDeliveryAddresses(this.merchantId),
-      this.merchantService.fetchPickupLocations(),
+      this.merchantService.retrievePickupLocations(
+        this.storeAddress,
+        this.settings.map[MerchantSettings.pickupLocationsEnabled]
+      ),
       this.merchantService.retrieveBuildings(),
       this.cartService.orderDetailsOptions$
     )

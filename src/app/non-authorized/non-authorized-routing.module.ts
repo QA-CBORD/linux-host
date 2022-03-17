@@ -9,31 +9,31 @@ const routes: Routes = [
   },
   {
     path: ANONYMOUS_ROUTES.startup,
-    loadChildren: './pages/startup/startup.module#StartupPageModule',
+    loadChildren: () => import('./pages/startup/startup.module').then(m => m.StartupPageModule),
   },
   {
     path: ANONYMOUS_ROUTES.entry,
-    loadChildren: './pages/entry/entry.module#EntryPageModule',
+    loadChildren: () => import('./pages/entry/entry.module').then(m => m.EntryPageModule),
   },
   {
     path: ANONYMOUS_ROUTES.institutions,
-    loadChildren: './pages/institutions/institutions.module#InstitutionsPageModule',
+    loadChildren: () => import('./pages/institutions/institutions.module').then(m => m.InstitutionsPageModule),
   },
   {
     path: ANONYMOUS_ROUTES.login,
-    loadChildren: './pages/user-pass-form/user-pass-form.module#UserPassFormPageModule',
+    loadChildren: () => import('./pages/user-pass-form/user-pass-form.module').then(m => m.UserPassFormPageModule),
   },
   {
     path: ANONYMOUS_ROUTES.pre_login,
-    loadChildren: './pages/pre-login/pre-login.module#PreLoginModule',
+    loadChildren: () => import('./pages/pre-login/pre-login.module').then(m => m.PreLoginModule),
   },
   {
     path: ANONYMOUS_ROUTES.forgotPassword,
-    loadChildren: './pages/forgot-password/forgot-password.module#ForgotPasswordPageModule',
+    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule),
   },
   {
     path: ANONYMOUS_ROUTES.external,
-    loadChildren: './pages/external-login/external-login.module#ExternalLoginPageModule',
+    loadChildren: () => import('./pages/external-login/external-login.module').then(m => m.ExternalLoginPageModule),
   },
 ];
 

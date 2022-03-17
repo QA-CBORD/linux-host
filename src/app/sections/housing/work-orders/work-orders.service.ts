@@ -18,7 +18,7 @@ import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
-import { Filesystem, FilesystemDirectory } from '@capacitor/core';
+import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
 
 const IMAGE_DIR = 'stored-images';
 @Injectable({

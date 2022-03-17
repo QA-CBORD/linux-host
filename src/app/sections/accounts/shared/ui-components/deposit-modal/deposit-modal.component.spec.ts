@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DepositModalComponent } from './deposit-modal.component';
 
@@ -7,7 +7,7 @@ describe('DepositModalComponent', () => {
   let component: DepositModalComponent;
   let fixture: ComponentFixture<DepositModalComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DepositModalComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

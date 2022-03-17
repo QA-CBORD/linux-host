@@ -6,12 +6,12 @@ import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import androidx.core.content.ContextCompat;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.annotation.CapacitorPlugin;
 
-@NativePlugin()
+@CapacitorPlugin(name = "MobileCredentialStatusPlugin")
 public class MobileCredentialStatusPlugin extends Plugin {
 
     private final String DEVICE_STATE = "deviceState";

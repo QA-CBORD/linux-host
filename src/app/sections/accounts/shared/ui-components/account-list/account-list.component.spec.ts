@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { AccountListComponent } from './account-list.component';
 
@@ -7,7 +7,7 @@ describe('AccoutListPage', () => {
   let component: AccountListComponent;
   let fixture: ComponentFixture<AccountListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AccountListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

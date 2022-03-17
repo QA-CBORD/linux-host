@@ -9,19 +9,16 @@ import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ActionSheetController, Platform } from '@ionic/angular';
-import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
-
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
 import { FacilityTree, ImageData, LocalFile } from '../work-orders/work-orders.model';
-import { Filesystem, FilesystemDirectory } from '@capacitor/core';
-
-const { Camera } = Plugins;
+import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
 
 const IMAGE_DIR = 'stored-images';
 
+import { CameraDirection, Photo, CameraResultType, CameraSource, Camera } from '@capacitor/camera';
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -45,14 +42,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnDestroy(): void {
-    this._applicationsStateService.setRequestedRoommates([])
-    this._applicationsStateService.setRoommatesPreferences([])
-    this._applicationsStateService.emptyRequestedRoommate()
+    this._applicationsStateService.setRequestedRoommates([]);
+    this._applicationsStateService.setRoommatesPreferences([]);
+    this._applicationsStateService.emptyRequestedRoommate();
     this._applicationsStateService.deleteRoommatePreferencesSelecteds();
     this._workOrderStateService.destroyWorkOrderImage();
     this.subscriptions.unsubscribe();
   }
-
 
   ngOnInit() {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
@@ -117,7 +113,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initTermsSubscription() {
-    this.subscriptions.add(this._termService.termId$.subscribe(termId => this.selectedTermKey = termId));
+    this.subscriptions.add(this._termService.termId$.subscribe(termId => (this.selectedTermKey = termId)));
   }
 
   private _initGetImage() {
@@ -198,7 +194,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   }
 
-  async saveImage(photo: CameraPhoto) {
+  async saveImage(photo: Photo) {
     const base64Data = await this.readAsBase64(photo);
 
     const fileName = new Date().getTime() + '.PNG';
@@ -222,7 +218,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   // https://ionicframework.com/docs/angular/your-first-app/3-saving-photos
-  private async readAsBase64(photo: CameraPhoto) {
+  private async readAsBase64(photo: Photo) {
     if (this.plt.is('hybrid')) {
       const file = await Filesystem.readFile({
         path: photo.path
@@ -316,7 +312,7 @@ async startUpload(file: LocalFile,value: string) {
   }
 
   isWorkOrderDescription(question) {
-    return question.source === "WORK_ORDER" && question.workOrderFieldKey === 'DESCRIPTION';
+    return question.source === 'WORK_ORDER' && question.workOrderFieldKey === 'DESCRIPTION';
   }
 
   _setFacility() {
@@ -327,7 +323,7 @@ async startUpload(file: LocalFile,value: string) {
       this.facilityFullName = this.facilityTreeData[0].facilityFullName;
       this._workOrderStateService.setSelectedFacilityTree({
         name: this.facilityFullName,
-        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
+        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey,
       });
     }
     if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY') {

@@ -6,10 +6,10 @@ import { Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { Plugins } from '@capacitor/core';
-const { Device } = Plugins;
+import { App } from '@capacitor/app';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { from, Observable } from 'rxjs';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'st-entry',
@@ -25,7 +25,8 @@ export class EntryPage implements OnInit {
     private readonly authFacadeService: AuthFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly platform: Platform
   ) {}
 
   ngOnInit() {
@@ -51,8 +52,10 @@ export class EntryPage implements OnInit {
   }
 
   private fetchDeviceInfo(): Observable<string> {
-    return from(Device.getInfo()).pipe(
-      map(({ appVersion }) => appVersion),
+    if (!this.platform.is('cordova')) return;
+
+    return from(App.getInfo()).pipe(
+      map(({ version }) => version),
       take(1)
     );
   }

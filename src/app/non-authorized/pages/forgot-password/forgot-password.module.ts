@@ -20,11 +20,11 @@ const routes: Routes = [
   },
   {
     path: FORGOT_PASSWORD_ROUTING.confirm,
-    loadChildren: './pages/confirm-account/confirm-account.module#ConfirmAccountPageModule',
+    loadChildren: () => import('./pages/confirm-account/confirm-account.module').then(m => m.ConfirmAccountPageModule),
   },
   {
     path: FORGOT_PASSWORD_ROUTING.enterCode,
-    loadChildren: './pages/enter-code/enter-code.module#EnterCodePageModule',
+    loadChildren: () => import('./pages/enter-code/enter-code.module').then(m => m.EnterCodePageModule),
   },
 ];
 

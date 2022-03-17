@@ -12,8 +12,6 @@ import { AccessCardComponent } from './containers/access-card/access-card.compon
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-
-import { Plugins } from '@capacitor/core';
 import { map, take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
@@ -32,8 +30,8 @@ import { ConversationsTileComponent } from './containers/conversations-tile/conv
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { Router } from '@angular/router';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-
-const { App, Device } = Plugins;
+import { App } from '@capacitor/app';
+import { Device } from '@capacitor/device';
 
 @Component({
   selector: 'st-dashboard',
@@ -42,7 +40,7 @@ const { App, Device } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
-  @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
+  @ViewChild(AccessCardComponent, { static: true }) accessCard: AccessCardComponent;
   @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
   @ViewChildren('transactionsTile') transactionsChild: QueryList<TransactionsTileComponent>;
   @ViewChildren('rewardsTile') rewardsChild: QueryList<RewardsTileComponent>;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Resolve } from '@angular/router/src/interfaces';
+import { Resolve } from '@angular/router';
 
 import { catchError, tap, retryWhen, take } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';

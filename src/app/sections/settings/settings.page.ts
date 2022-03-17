@@ -6,7 +6,6 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingItemConfig, SettingsSectionConfig } from './models/setting-items-config.model';
-import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { map, take, switchMap, catchError } from 'rxjs/operators';
 import { from, Observable, of } from 'rxjs';
@@ -15,7 +14,7 @@ import { UserInfo } from '@core/model/user';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { APP_PROFILES } from '@sections/dashboard/models';
-const { Device } = Plugins;
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'st-settings',
@@ -68,8 +67,8 @@ export class SettingsPage implements OnInit {
   }
 
   getAppVersion$(): Observable<string> {
-    return from(Device.getInfo()).pipe(
-      map(({ appVersion }) => appVersion),
+    return from(App.getInfo()).pipe(
+      map(({ version }) => version),
       take(1),
       catchError(() => of(''))
     );

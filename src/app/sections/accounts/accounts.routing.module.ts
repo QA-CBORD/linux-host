@@ -15,34 +15,34 @@ const routes: Route[] = [
     children: [
       {
         path: `${LOCAL_ROUTING.accountDetails}/:id`,
-        loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
+        loadChildren: () => import('./pages/account-details/account-details.module').then(m => m.AccountDetailsModule),
       },
     ],
   },
   {
     path: `${LOCAL_ROUTING.accountDetailsM}/:id`,
-    loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
+    loadChildren: () => import('./pages/account-details/account-details.module').then(m => m.AccountDetailsModule),
   },
   {
     path: LOCAL_ROUTING.addFunds,
-    loadChildren: './pages/deposit-page/deposit.module#DepositModule',
+    loadChildren: () => import('./pages/deposit-page/deposit.module').then(m => m.DepositModule),
   },
   {
     path: LOCAL_ROUTING.autoDeposit,
-    loadChildren: './pages/automatic-deposit-page/automatic-deposit.module#AutomaticDepositModule',
+    loadChildren: () => import('./pages/automatic-deposit-page/automatic-deposit.module').then(m => m.AutomaticDepositModule),
     resolve: { data: AutoDepositPageResolver },
   },
   {
     path: LOCAL_ROUTING.requestFunds,
-    loadChildren: './pages/request-funds-page/request-funds.module#RequestFundsModule',
+    loadChildren: () => import('./pages/request-funds-page/request-funds.module').then(m => m.RequestFundsModule),
   },
   {
     path: LOCAL_ROUTING.addCreditCard,
-    loadChildren: './pages/add-credit-card/add-credit-card.module#AddCreditCardModule',
+    loadChildren: () => import('./pages/add-credit-card/add-credit-card.module').then(m => m.AddCreditCardModule),
   },
   {
     path: LOCAL_ROUTING.mealDonations,
-    loadChildren: './pages/meal-donations/meal-donations.module#MealDonationsModule',
+    loadChildren: () => import('./pages/meal-donations/meal-donations.module').then(m => m.MealDonationsModule),
   },
 ];
 
