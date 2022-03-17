@@ -6,9 +6,10 @@ import { InspectionsDetailsRoutingModule } from './inspections-details.routing.m
 
 import { InspectionsDetailsPage } from './inspections-details.page';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { StepperModule } from '@sections/housing/stepper/stepper.module';
 import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
 
-const imports = [CommonModule,FormsModule , CommonModule, IonicModule, ReactiveFormsModule,InspectionsDetailsRoutingModule,StTextareaFloatingLabelModule];
+const imports = [CommonModule,FormsModule , CommonModule, IonicModule, ReactiveFormsModule,InspectionsDetailsRoutingModule,StepperModule,StTextareaFloatingLabelModule];
 const declarations = [InspectionsDetailsPage];
 
 @NgModule({

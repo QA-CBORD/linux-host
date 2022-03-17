@@ -34,6 +34,14 @@ st-textarea-floating-label{
   --color: #{rgba($color-black, 0.9)};
 }
 
+.btn-save{
+  float:right;
+}
+
+.btn-submit{
+  float:right;
+}
+
 .inspection-details__save {
   @include font-family($font-nunito-heavy);
 

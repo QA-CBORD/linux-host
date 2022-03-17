@@ -75,7 +75,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
-    private _termsService: TermsService
+    private _termsService: TermsService,
+    private _inspectionService: InspectionService
   ) { }
 
   ngOnInit(): void {
@@ -92,6 +93,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.checkIn = this._route.snapshot.paramMap.get('checkIn')=== 'true'? true: false;
     this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
     this._initInspectionDetailsObservable();
+    this.inspectionDetails$.subscribe(res => this.section = res.sections[0].name)
     // this._initPagesObservable();
     this._initTermSubscription();
   }
@@ -105,12 +107,6 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
 
     if (!this.isSubmitted && form.invalid) {
       return;
-    }
-
-    if (!isLastPage) {
-      this._next(form.value);
-    } else {
-      this._update(this.termKey, workOrderDetails, form.value);
     }
   }
 
@@ -145,26 +141,11 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.subscriptions.add(termSubs);
   }
 
-  private _next(formValue: any): void {
-    this.content.scrollToTop();
-
-    if (this.isSubmitted) {
-      return this.stepper.next();
-    }
-
-    // const nextSubscription: Subscription = this._workOrderService
-    //   .next(this.inspectionKey)
-    //   .subscribe({
-    //     next: () => this.stepper.next(),
-    //   });
-
-    // this.subscriptions.add(nextSubscription);
-  }
-
-  private async _update(inspectionKey: number, workOrderDetails: WorkOrderDetails, formValue: any): Promise<void> {
+  private async _update(inspectionData:Inspection): Promise<void> {
+    inspectionData.residentInspectionKey = null;
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: `Are you sure you want to submit this work order?`,
+      message: `Are you sure you want to save this Inspection?`,
       buttons: [
         {
           text: 'NO',
@@ -183,25 +164,23 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
 
-            // const createWorkOrderSubscription =
-            //   this._workOrderService.submitWorkOrder(
-            //     workOrderDetails,
-            //     formValue)
-            //     .subscribe(status => {
-            //       if (status) {
-            //         alert.dismiss().then(() => this._housingService.handleSuccess());
-            //       } else {
-            //         alert.dismiss().then(() => {
-            //           this._loadingService.closeSpinner();
-            //           console.log('Unable to create Work Order for selected asset type');
-            //           this._toastService.showToast({
-            //             message: 'The form could not be processed at this time. Try again later',
-            //           });
-            //         });
-            //       }
-            //     });
+            const createInspectionSubscription =
+              this._inspectionService.submitInspection(inspectionData)
+                .subscribe(status => {
+                  if (status) {
+                    alert.dismiss().then(() => this._housingService.handleSuccess());
+                  } else {
+                    alert.dismiss().then(() => {
+                      this._loadingService.closeSpinner();
+                      console.log('Unable to create Inspection');
+                      this._toastService.showToast({
+                        message: 'The form could not be processed at this time. Try again later',
+                      });
+                    });
+                  }
+                });
 
-            // this.subscriptions.add(createWorkOrderSubscription);
+            this.subscriptions.add(createInspectionSubscription);
           },
         },
       ],
@@ -210,7 +189,61 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  save(){
+  save(inspectionData:Inspection){
+    this._update(inspectionData);
+  }
 
+  async submitInspection(inspectionData:Inspection){
+    inspectionData.residentInspectionKey = null;
+    inspectionData.isSubmitted = true;
+    const alert = await this._alertController.create({
+      header: 'Confirm',
+      message: `Are you sure you want to submit this Inspection?`,
+      buttons: [
+        {
+          text: 'NO',
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            this.activeAlerts = [];
+            alert.dismiss();
+          },
+        },
+        {
+          text: 'YES',
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this._loadingService.showSpinner();
+            this.activeAlerts = [];
+
+            const createInspectionSubscription =
+              this._inspectionService.submitInspection(inspectionData)
+                .subscribe(status => {
+                  if (status) {
+                    alert.dismiss().then(() => this._housingService.handleSuccess());
+                  } else {
+                    alert.dismiss().then(() => {
+                      this._loadingService.closeSpinner();
+                      console.log('Unable to create Inspection');
+                      this._toastService.showToast({
+                        message: 'The form could not be processed at this time. Try again later',
+                      });
+                    });
+                  }
+                });
+
+            this.subscriptions.add(createInspectionSubscription);
+          },
+        },
+      ],
+    });
+    this.activeAlerts.push(alert);
+    await alert.present();
+
+  }
+
+  countItemsLeft(inspectionData:Inspection){
+    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey === null).length > 0).length
   }
 }

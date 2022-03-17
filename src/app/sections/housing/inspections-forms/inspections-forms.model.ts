@@ -62,7 +62,7 @@ export class Items implements ItemsOptions {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as ItemsOptions;
     }
-    this.comments = String(options.comments);
+    this.comments = options.comments? String(options.comments): '';
     this.inventoryTemplateItemKey = Number(options.inventoryTemplateItemKey);
     this.name = String(options.name);
     this.residentConditionKey = Number(options.residentConditionKey);
@@ -91,11 +91,12 @@ export class InspectionSections implements InspectionSectionsOptions {
 }
 export interface InspectionOptions {
   contractElementKey: number;
-  form: FormInspection;
+  formDefinition: FormDefinition;
   isSubmitted: boolean;
   residentInspectionKey: number;
   sections: InspectionSections[]
   staffInspectionKey: number;
+  termKey: number;
 }
 export interface RequirementsOptions {
   formKey: number;
@@ -119,19 +120,21 @@ export class Requirements implements RequirementsOptions {
 
 export class Inspection implements InspectionOptions {
   contractElementKey: number;
-  form: FormInspection;
+  formDefinition: FormDefinition;
   isSubmitted: boolean;
   residentInspectionKey: number;
   sections: InspectionSections[];
   staffInspectionKey: number;
+  termKey: number;
   constructor(options: InspectionOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as InspectionOptions;
     }
     this.contractElementKey = Number(options.contractElementKey)
-    this.form = options.form;
+    this.formDefinition = options.formDefinition;
     this.isSubmitted = Boolean(options.isSubmitted);
     this.residentInspectionKey = Number(options.residentInspectionKey);
+    this.termKey = Number(options.termKey)
     this.sections = Array.isArray(options.sections)
       ? options.sections.map((details: any) => new InspectionSections(details)) : [];
     this.staffInspectionKey = Number(options.staffInspectionKey);

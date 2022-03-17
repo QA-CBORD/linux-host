@@ -1,17 +1,17 @@
 <ion-content class="ion-padding inspection-details__content" *ngIf="(inspectionDetails$ | async) as inspectionDetails"
   #content>
   <div class="inspection-details__actions">
-    <ion-button class="btn inspection-details__page-back" [routerLink]="['../../../../..']" routerDirection="back"
+    <ion-button class="btn inspection-details__page-back" [routerLink]="['../../../../../..']" routerDirection="back"
       mode="ios" fill="clear">
       Cancel
+    </ion-button>
+    <ion-button class="btn inspection-details__page-back btn-save" mode="ios" fill="clear" (click)="save(inspectionDetails)">
+      Save
     </ion-button>
   </div>
 
   <h2 class="inspection-details__title">Room Inspections</h2>
-  <!-- <ion-button class="btn application-details__save" mode="ios" fill="clear" (click)="save(applicationDetails)">
-    Save
-  </ion-button> -->
-  <ion-segment [(ngModel)]="section" scrollable>
+  <ion-segment  [(ngModel)]="section" scrollable>
     <ion-segment-button [value]="room.name" *ngFor="let room of inspectionDetails.sections">
       <ion-label>{{room.name}}</ion-label>
     </ion-segment-button>
@@ -41,13 +41,27 @@
           </ion-item>
           <ion-item>
             <st-textarea-floating-label
-            [label]="'comments'"
+            [label]="'Add comments'"
+            [(ngModel)]="item.comments"
             >
             </st-textarea-floating-label>
          </ion-item>
         </ion-card>
       </ng-container>
     </ng-container>
-    <br/><br/><br/>
+    <st-stepper-footer>
+      <h2 class="inspection-details__title">Room Inspections</h2>
+      {{ countItemsLeft(inspectionDetails) }} item{{countItemsLeft(inspectionDetails)==1? '':'s'}} Left
+      <ion-button
+        class="btn btn-submit"
+        mode="ios"
+        type="submit"
+        item-right
+        (click)="submitInspection(inspectionDetails)"
+        [disabled]="true"
+      >
+        Submit
+      </ion-button>
+    </st-stepper-footer>
   </div>
 </ion-content>

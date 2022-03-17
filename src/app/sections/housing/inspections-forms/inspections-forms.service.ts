@@ -13,7 +13,7 @@ import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { HttpParams } from "@angular/common/http";
-import { ImageData, WorkOrdersFields } from './inspections-forms.model';
+import { ImageData, WorkOrdersFields, Inspection } from './inspections-forms.model';
 import { generateWorkOrders } from './inspections-forms.mock';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
@@ -178,68 +178,23 @@ export class InspectionService {
   //   return of(true);
   // }
 
-  // submitWorkOrder(
-  //   form: any,
-  //   formValue: any): Observable<boolean> {
-  //   const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
-  //   const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
+  submitInspection(inspectionData: Inspection): Observable<boolean> {
+    // const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
+    // const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
 
-  //   let phoneNumber, description, email = '';
-  //   let notifyByEmail: boolean;
-  //   let type,location = 0;
-  //   let image : ImageData | null;
-  //   workOrdersControls.forEach(x => {
-  //       const resultFormValue = formValue[x.name];
-  //       switch (x.workOrderFieldKey) {
-  //         case WorkOrdersFields.PHONE_NUMBER:
-  //           phoneNumber = resultFormValue;
-  //           break;
-  //         case WorkOrdersFields.DESCRIPTION:
-  //           description = resultFormValue;
-  //           break;
-  //         case WorkOrdersFields.EMAIL:
-  //           email = resultFormValue;
-  //           break;
-  //         case WorkOrdersFields.NOTIFY_BY_EMAIL:
-  //           notifyByEmail = resultFormValue? true: false;
-  //           break;
-  //         case WorkOrdersFields.TYPE:
-  //           type = resultFormValue;
-  //           break;
-  //       }
-      
 
-  //   })
-
-  //   this._inspectionStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null)
-  //   this._inspectionStateService.getSelectedFacility$().subscribe(res=> res && res.id ? location = res.id: location = null)
-  //   const body = new WorkOrdersDetailsList({
-  //     key:null,
-  //     notificationPhone: phoneNumber, 
-  //     typeKey: type,
-  //     description: description,
-  //     notificationEmail: email,
-  //     attachment: image,
-  //     facilityKey:location,
-  //     notify: notifyByEmail,
-  //     status:'',
-  //     statusKey:0,
-  //     type: '',
-  //     requestedDate:'',
-  //   });
-
-  //   return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
-  //     map((response: Response) => {
-  //       if (isSuccessful(response.status)) {
-  //         return true;
-  //       } else {
-  //         throw new Error(response.status.message);
-  //       }
-  //     }
-  //     ),
-  //     catchError(_ => of(false))
-  //   );
-  // }
+    return this._housingProxyService.post<Response>(this.inspectiontUrl, inspectionData).pipe(
+      map((response: Response) => {
+        if (isSuccessful(response.status)) {
+          return true;
+        } else {
+          throw new Error(response.status.message);
+        }
+      }
+      ),
+      catchError(_ => of(false))
+    );
+  }
 
 
 }
