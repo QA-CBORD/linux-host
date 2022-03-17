@@ -212,7 +212,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
       'comments':'',
       'filename':fileName,
       'contents': base64Data,
-      'studentSubmitted': true
+      'studentSubmitted': true,
+      'workOrderKey': 0,
     };
     this._workOrderStateService.setWorkOrderImage(image);
     // Reload the file list

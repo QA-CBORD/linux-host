@@ -254,20 +254,21 @@ export class WorkOrdersService {
   }
 
   sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Observable<boolean> {
-    let workOrderImageURL = `${this.workOrderListUrl}/attachments?workOrderKey=${workOrderId}`;
+    let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
     // TODO: left this code here because it'll be used later
     // formData.append('fileName', imageData.filename);
     // formData.append('comments', 'student submitted');
     // formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
     // formData.append('workOrderKey', `${workOrderId}`);
-    const attachmentFile = btoa(imageData.contents);
+    const attachmentFile = imageData.contents.replace(/^data:(.*,)?/, '')
 
     const body = new ImageData({
       filename: imageData.filename,
       comments: 'student submitted attachment',
       contents: attachmentFile,
       studentSubmitted: true,
+      workOrderKey: workOrderId,
     });
 
     return this._housingProxyService
