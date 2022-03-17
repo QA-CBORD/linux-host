@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { StepperFooterComponent } from './stepper-footer.component';
 
@@ -7,7 +7,7 @@ describe('StepperFooterComponent', () => {
   let component: StepperFooterComponent;
   let fixture: ComponentFixture<StepperFooterComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ StepperFooterComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

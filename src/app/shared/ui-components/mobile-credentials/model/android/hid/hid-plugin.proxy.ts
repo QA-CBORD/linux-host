@@ -1,7 +1,7 @@
-import { Plugins } from '@capacitor/core';
 import { Subject } from 'rxjs';
 import { EndpointStatuses } from '../../shared/credential-state';
-const { HIDPlugin } = Plugins;
+import { registerPlugin } from '@capacitor/core';
+const  HIDPlugin  = registerPlugin<any>('HIDPlugin');
 
 interface HIDSdkTransactionResponse {
   transactionStatus: string | any;

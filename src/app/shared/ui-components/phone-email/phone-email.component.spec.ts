@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PhoneEmailComponent } from './phone-email.component';
 
@@ -7,7 +7,7 @@ describe('PhoneEmailComponent', () => {
   let component: PhoneEmailComponent;
   let fixture: ComponentFixture<PhoneEmailComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PhoneEmailComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

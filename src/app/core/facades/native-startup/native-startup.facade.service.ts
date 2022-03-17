@@ -5,8 +5,8 @@ import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { NativeStartupApiService } from '@core/service/native-startup-api/native-startup-api.service';
 import { buttons } from '@core/utils/buttons.config';
-import { Plugins } from '@capacitor/core';
-const { Device } = Plugins;
+import { Device } from '@capacitor/device';
+import { App } from '@capacitor/app';
 
 @Injectable({
   providedIn: 'root',
@@ -44,13 +44,25 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   fetchNativeStartupInfo(): Observable<any> {
     return from(Device.getInfo()).pipe(
       take(1),
-      switchMap(deviceInfo => {
+      switchMap(async deviceInfo => {
         if (deviceInfo.platform === 'web') {
-          return of(null);
+          return null;
         }
+
+        let appInfo = await App.getInfo();
+        return {
+          platform: deviceInfo.platform,
+          build: appInfo.build,
+        };
+      }),
+      switchMap(deviceInfo => {
+        if (!deviceInfo) {
+          return null;
+        }
+
         return zip(
           this.nativeStartupApiService
-            .nativeStartup(deviceInfo.platform, deviceInfo.appVersion)
+            .nativeStartup(deviceInfo.platform, deviceInfo.build)
             .pipe(map(response => response.response)),
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(

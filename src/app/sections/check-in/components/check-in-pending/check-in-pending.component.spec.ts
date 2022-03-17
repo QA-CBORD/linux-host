@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CheckInPendingComponent } from './check-in-pending.component';
 
@@ -7,7 +7,7 @@ describe('CheckInPendingComponent', () => {
   let component: CheckInPendingComponent;
   let fixture: ComponentFixture<CheckInPendingComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ CheckInPendingComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

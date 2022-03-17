@@ -2,10 +2,8 @@ import { Injectable } from '@angular/core';
 import { ExtendableStateManager, StorageEntity } from '@core/classes/extendable-state-manager';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map, skipWhile } from 'rxjs/operators';
-import { Plugins } from '@capacitor/core';
+import { Storage } from '@capacitor/storage';
 import { Platform } from '@ionic/angular';
-const { Storage } = Plugins;
-
 @Injectable({
   providedIn: 'root',
 })
@@ -26,6 +24,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   initialization() {
+    Storage.migrate(); //TODO: try to use Storage.removeOld() when all users migrates to newversion.
     this.initState();
     this.initSaveStorageListeners();
   }

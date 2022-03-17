@@ -8,13 +8,10 @@ import { Platform } from '@ionic/angular';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { ROLES } from './app.global';
-
-import { Plugins } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
-
-const { Keyboard } = Plugins;
 
 @Component({
   selector: 'app-root',

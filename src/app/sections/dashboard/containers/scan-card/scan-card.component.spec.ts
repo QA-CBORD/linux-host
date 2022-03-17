@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ScanCardComponent } from './scan-card.component';
 
@@ -7,7 +7,7 @@ describe('ScanCardComponent', () => {
   let component: ScanCardComponent;
   let fixture: ComponentFixture<ScanCardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ScanCardComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

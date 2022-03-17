@@ -82,7 +82,6 @@ export class HousingService {
     private _contractListStateService: ContractListStateService,
     private _checkInOutStateService: CheckInOutStateService,
     private _waitingListStateService: WaitingListStateService,
-    public _housingService: HousingService,
     private _workOrderStateService: WorkOrderStateService,
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();

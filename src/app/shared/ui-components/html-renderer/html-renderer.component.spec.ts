@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HTMLRendererComponent } from './html-renderer.component';
 
@@ -7,7 +7,7 @@ describe('HTMLRendererComponent', () => {
   let component: HTMLRendererComponent;
   let fixture: ComponentFixture<HTMLRendererComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ HTMLRendererComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

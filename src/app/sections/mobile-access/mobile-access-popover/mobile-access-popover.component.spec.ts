@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MobileAccessPopoverComponent } from './mobile-access-popover.component';
 
@@ -7,7 +7,7 @@ describe('MobileAccessPopoverComponent', () => {
   let component: MobileAccessPopoverComponent;
   let fixture: ComponentFixture<MobileAccessPopoverComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MobileAccessPopoverComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
