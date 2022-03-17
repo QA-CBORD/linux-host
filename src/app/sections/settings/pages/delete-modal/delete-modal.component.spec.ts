@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DeleteModalComponent } from './delete-modal.component';
 
@@ -7,7 +7,7 @@ describe('DeleteModalComponent', () => {
   let component: DeleteModalComponent;
   let fixture: ComponentFixture<DeleteModalComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DeleteModalComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

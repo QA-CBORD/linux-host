@@ -64,7 +64,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initData();
@@ -458,29 +458,29 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   onAddItems() {
-    this.merchant$
+    this.orderDetailsOptions$
       .pipe(
-        withLatestFrom(this.orderDetailsOptions$, this.order$),
+        withLatestFrom(this.merchant$, this.order$),
         take(1)
       )
       .subscribe(
         async ([
-          merchant,
           { dueTime, orderType, address, isASAP },
+          merchant,
           {
             id,
             orderPayment: [orderPayment],
           },
         ]: [
-          MerchantInfo,
-          {
-            dueTime: Date;
-            orderType: ORDER_TYPE;
-            address: AddressInfo;
-            isASAP?: boolean;
-          },
-          OrderInfo
-        ]) => {
+            {
+              dueTime: Date;
+              orderType: ORDER_TYPE;
+              address: AddressInfo;
+              isASAP?: boolean;
+            },
+            MerchantInfo,
+            OrderInfo
+          ]) => {
           await this.cart.onAddItems({
             merchant,
             orderPayment,

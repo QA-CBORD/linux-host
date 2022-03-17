@@ -11,13 +11,11 @@ import { AccountService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PATRON_NAVIGATION, User } from 'src/app/app.global';
 import { formControlErrorDecorator, validateEmail } from '@core/utils/general-helpers';
-
-import { Plugins } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
-const { Keyboard } = Plugins;
 
 @Component({
   selector: 'st-request-funds-page',

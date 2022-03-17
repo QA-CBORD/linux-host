@@ -8,7 +8,7 @@ import { CheckingContentCsModel } from '@sections/check-in/contents-strings/chec
   styleUrls: ['./pick-checkin-mode.component.scss'],
 })
 export class PickCheckinModeComponent implements OnInit {
-  @Input() contentStrings: CheckingContentCsModel;
+  @Input() contentStrings: any;
   @Input() locationPermissionDisabled: boolean;
 
   constructor(protected readonly popoverCtrl: PopoverController,) {}

@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FavoriteMerchantsComponent } from './favorite-merchants.component';
 
@@ -7,7 +7,7 @@ describe('FavoriteMerchantsComponent', () => {
   let component: FavoriteMerchantsComponent;
   let fixture: ComponentFixture<FavoriteMerchantsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FavoriteMerchantsComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

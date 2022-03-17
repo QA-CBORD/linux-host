@@ -47,6 +47,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   confirmationCs: ContentStringModel;
   guestDepositForm: FormGroup;
   recipientName: string;
+  isMaxCharLength: boolean = false;
+  focusLine: boolean = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -288,7 +290,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     }
   }
 
-  private replaceRecipientName(text: string): string {
+  public replaceRecipientName(text: string): string {
     if (text.includes('${recipient_name}')) {
       return text.replace('${recipient_name}', this.recipientName);
     }

@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ConfirmUnsavedChangesPopoverComponent } from './confirm-unsaved-changes-popover.component';
 
@@ -7,7 +7,7 @@ describe('ConfirmUsavedChangesPopoverComponent', () => {
   let component: ConfirmUnsavedChangesPopoverComponent;
   let fixture: ComponentFixture<ConfirmUnsavedChangesPopoverComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ConfirmUnsavedChangesPopoverComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

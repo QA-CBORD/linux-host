@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FacilityPickerComponent } from './facility-picker.component';
 
@@ -7,7 +7,7 @@ describe('FacilityPickerComponent', () => {
   let component: FacilityPickerComponent;
   let fixture: ComponentFixture<FacilityPickerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FacilityPickerComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

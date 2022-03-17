@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { catchError, skipWhile, take } from 'rxjs/operators';
-
-import { Capacitor, GeolocationPosition, Plugins } from '@capacitor/core';
+import { skipWhile, take } from 'rxjs/operators';
+import { Capacitor} from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { LocationPermissionsService } from '@sections/dashboard/services/location-permissions.service';
 import { LoadingService } from '../loading/loading.service';
-
-const { Geolocation } = Plugins;
+import { Position, Geolocation} from '@capacitor/geolocation';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +15,7 @@ export class CoordsService {
   private readonly fetchInterval: number = 5000;
   private timestamp: number = 0;
 
-  private latestPosition: GeolocationPosition = {
+  private latestPosition: Position | any = {
     timestamp: null,
     coords: {
       accuracy: null,
@@ -25,10 +23,10 @@ export class CoordsService {
       longitude: null,
     },
   };
-  private readonly _location$: BehaviorSubject<GeolocationPosition> = new BehaviorSubject<GeolocationPosition>(
+  private readonly _location$: BehaviorSubject<Position> = new BehaviorSubject<Position>(
     undefined
   );
-  private readonly emptyPosition: GeolocationPosition = {
+  private readonly emptyPosition: Position | any = {
     timestamp: null,
     coords: {
       accuracy: null,
@@ -42,22 +40,22 @@ export class CoordsService {
     private readonly loadingService: LoadingService
   ) {}
 
-  get location$(): Observable<GeolocationPosition> {
+  get location$(): Observable<Position> {
     return this._location$.asObservable().pipe(skipWhile(value => !value));
   }
 
-  set _latestLocation(position: GeolocationPosition) {
+  set _latestLocation(position: Position) {
     this.latestPosition = { ...position };
     this._location$.next(this.latestPosition);
   }
 
   /// get device coordinates
-  getCoords(): Observable<GeolocationPosition> {
+  getCoords(): Observable<Position> {
     /// use time delay to request location from device every 5 seconds, otherwise subscribe to behavior subject
     /// this prevents several simultaneous requests to the device
     const timeDiff = new Date().getTime() - this.timestamp;
     if (timeDiff > this.fetchInterval) {
-      if (Capacitor.platform == PLATFORM.android) {
+      if (Capacitor.getPlatform() == PLATFORM.android) {
         (async () => {
           await this.androidPermissions.checkLocationPermission().then(result => {
             if (result.hasPermission) {

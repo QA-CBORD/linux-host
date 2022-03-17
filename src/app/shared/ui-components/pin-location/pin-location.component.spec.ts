@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PinLocationComponent } from './pin-location.component';
 
@@ -7,7 +7,7 @@ describe('PinLocationComponent', () => {
   let component: PinLocationComponent;
   let fixture: ComponentFixture<PinLocationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PinLocationComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -1,8 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-
-import { Plugins } from '@capacitor/core';
-
-const { Keyboard } = Plugins;
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'st-header',

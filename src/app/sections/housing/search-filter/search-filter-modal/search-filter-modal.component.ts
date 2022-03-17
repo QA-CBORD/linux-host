@@ -160,4 +160,8 @@ export class SearchFilterModalComponent implements OnInit {
   }
 
   sort(control: SortControlComponent): void {}
+
+  getId(key: string, index: number): Number {
+    return Number(key) - index;
+  }
 }

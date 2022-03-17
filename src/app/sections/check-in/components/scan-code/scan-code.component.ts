@@ -4,12 +4,11 @@ import { ModalController } from '@ionic/angular';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { Router } from '@angular/router';
-import { Plugins } from '@capacitor/core';
+import { BarcodeScanner, SupportedFormat } from '@capacitor-community/barcode-scanner';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Platform } from '@ionic/angular';
 import { take } from 'rxjs/operators';
-const { BarcodeScanner } = Plugins;
 const renderingDelay = 1000;
 
 export enum Barcode {
@@ -21,7 +20,7 @@ export enum Barcode {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScanCodeComponent implements OnInit {
-  @Input() formats? = [];
+  @Input() formats: [SupportedFormat];
   @Input() title?: string;
   @Input() prompt?: string;
   @Input() textBtn?: string;
@@ -61,9 +60,9 @@ export class ScanCodeComponent implements OnInit {
     this.goBack(code);
   }
 
-  private async startScanning(targetFormats: string[]) {
+  private async startScanning(targetedFormats: [SupportedFormat]) {
     BarcodeScanner.hideBackground();
-    const result = await BarcodeScanner.startScan({ targetFormats });
+    const result = await BarcodeScanner.startScan({ targetedFormats });
     if (result.hasContent) {
       this.closeScanCode(result.content);
     } else {

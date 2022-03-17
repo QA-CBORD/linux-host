@@ -19,7 +19,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 })
 export class AccountDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild('infiniteScroll') private readonly lazy: IonInfiniteScroll;
-  @ViewChild('content') private readonly content: IonContent;
+  @ViewChild('content', { static: true }) private readonly content: IonContent;
   private currentAccountId: string;
   transactions$: Observable<TransactionHistory[]>;
   contentString: { [key: string]: string };

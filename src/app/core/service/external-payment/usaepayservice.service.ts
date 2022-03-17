@@ -45,7 +45,7 @@ export class USAePayService {
     return new Promise<USAePayResponse>((resolve, reject) => {
       const authToken$ = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
       const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
-      forkJoin(authToken$, institutionInfo$).subscribe(([authToken, institutionInfo]) => {
+      forkJoin([authToken$, institutionInfo$]).subscribe(([authToken, institutionInfo]) => {
           const browser = this.navigateToUSAePaySite(authToken, institutionInfo.shortName);
           browser.on(browserEvent.LOADING).subscribe(response => {
               const url = response.url;

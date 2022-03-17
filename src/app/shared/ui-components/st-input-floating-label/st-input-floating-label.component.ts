@@ -39,7 +39,7 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
   @Input()
   isDisabled: boolean = false;
 
-  @ViewChild('input') inputRef: ElementRef<HTMLInputElement>;
+  @ViewChild('input', { static: true }) inputRef: ElementRef<HTMLInputElement>;
   innerValue: string | number = '';
   private onChange: (v: any) => void;
   private onTouched: () => void;

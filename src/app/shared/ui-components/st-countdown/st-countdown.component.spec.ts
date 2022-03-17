@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { StCountdownComponent } from './st-countdown.component';
 
 
@@ -7,7 +7,7 @@ describe('StCountdownPage', () => {
   let component: StCountdownComponent;
   let fixture: ComponentFixture<StCountdownComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [StCountdownComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
