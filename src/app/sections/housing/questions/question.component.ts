@@ -176,7 +176,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
     this.sessionFacadeService.navigatedToPlugin = true;
     const image = await Camera.getPhoto({
-      quality: 100,
+      quality: 50,
+      height: 500,
+      width: 500,
       allowEditing: false,
       correctOrientation: true,
       preserveAspectRatio: true,
@@ -205,8 +207,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     let image : ImageData = {
       'comments':'',
       'filename':fileName,
-      'contents':base64Data,
-      'studentSubmitted': true
+      'contents': base64Data,
+      'studentSubmitted': true,
+      'workOrderKey': 0,
     };
     this._workOrderStateService.setWorkOrderImage(image);
     // Reload the file list
