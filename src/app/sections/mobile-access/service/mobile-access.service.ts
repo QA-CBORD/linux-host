@@ -11,8 +11,7 @@ import { CoordsService } from '@core/service/coords/coords.service';
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
-import { GeolocationPosition } from '@capacitor/core';
-import { GeoLocationInfo } from '@core/model/geolocation/geoLocationInfo.model';
+import { Position } from '@capacitor/geolocation';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -79,7 +78,7 @@ export class MobileAccessService {
 
     const postParams: ServiceParameters = { filters };
     return this.coords.getCoords().pipe(
-      switchMap((geoData: GeolocationPosition) => {
+      switchMap((geoData: Position) => {
         const geoParam = {
           latitude: geoData.coords.latitude,
           longitude: geoData.coords.longitude,
@@ -165,7 +164,7 @@ export class MobileAccessService {
   ): Observable<MActivateMobileLocationResult> {
     return this.coords.getCoords().pipe(
       take(1),
-      map((geoData: GeolocationPosition) => this.createMobileLocationParams(locationId, geoData.coords, sourceInfo)),
+      map((geoData: Position) => this.createMobileLocationParams(locationId, geoData.coords, sourceInfo)),
       switchMap(postParams => {
         const queryConfig = new RPCQueryConfig('activateMobileLocation', postParams, true);
 
@@ -230,7 +229,7 @@ export class MobileAccessService {
     return Array.isArray(array) ? array : [];
   }
 
-  private createMobileLocationParams(locationId: string, geoData, sourceInfo: string): GeoLocationInfo {
+  private createMobileLocationParams(locationId: string, geoData, sourceInfo: string): Position | any {
     const latitude = !geoData.latitude ? null : geoData.latitude;
     const longitude = !geoData.longitude ? null : geoData.longitude;
     const accuracy = !geoData.accuracy ? null : geoData.accuracy;

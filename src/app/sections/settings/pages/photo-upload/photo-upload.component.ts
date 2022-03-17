@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
@@ -14,8 +13,7 @@ import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-
-const { Camera } = Plugins;
+import { CameraDirection, CameraResultType, CameraSource, Camera, Photo } from '@capacitor/camera';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -415,7 +413,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   /// Camera plugin control
-  private getPhoto(photoType: PhotoType, cameraSource: CameraSource): Observable<CameraPhoto> {
+  private getPhoto(photoType: PhotoType, cameraSource: CameraSource): Observable<Photo> {
     const uploadSettings = this.photoUploadService.photoUploadSettings;
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
     this.sessionFacadeService.navigatedToPlugin = true;

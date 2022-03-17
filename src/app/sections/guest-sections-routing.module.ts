@@ -12,33 +12,33 @@ const routes: Route[] = [
   },
   {
     path: GUEST_ROUTES.dashboard,
-    loadChildren: './guest/guest-dashboard.module#GuestDashboardModule',
+    loadChildren: () => import('./guest/guest-dashboard.module').then(m => m.GuestDashboardModule),
   },
   {
     path: GUEST_ROUTES.ordering,
-    loadChildren: './ordering/ordering.module#OrderingPageModule',
+    loadChildren: () => import('./ordering/ordering.module').then(m => m.OrderingPageModule),
   },
   {
     path: GUEST_ROUTES.explore,
-    loadChildren: './explore/explore.module#ExploreModule',
+    loadChildren: () => import('./explore/explore.module').then(m => m.ExploreModule),
   },
   {
     path: GUEST_ROUTES.deposit,
-    loadChildren: './guest/guest-deposits/guest-deposits.module#GuestDepositsModule',
+    loadChildren: () => import('./guest/guest-deposits/guest-deposits.module').then(m => m.GuestDepositsModule),
     resolve: {
       data: GuestDepositResolver
     }
   },
   {
     path: GUEST_ROUTES.addFunds,
-    loadChildren: './guest/guest-deposits/components/add-funds/guest-add-funds.module#GuestAddFundsModule',
+    loadChildren: () => import('./guest/guest-deposits/components/add-funds/guest-add-funds.module').then(m => m.GuestAddFundsModule),
     resolve: {
       data: GuestAddFundsResolver,
     },
   },
   {
     path: GUEST_ROUTES.settings,
-    loadChildren: './settings/settings.module#SettingsModule',
+    loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule),
   },
 ];
 

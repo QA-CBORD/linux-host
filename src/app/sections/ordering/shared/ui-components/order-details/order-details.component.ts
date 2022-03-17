@@ -35,14 +35,13 @@ import {
 import { AccountType, DisplayName } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
-import { Plugins } from '@capacitor/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
+import { Keyboard } from '@capacitor/keyboard';
 
-const { Keyboard } = Plugins;
 
 @Component({
   selector: 'st-order-details',

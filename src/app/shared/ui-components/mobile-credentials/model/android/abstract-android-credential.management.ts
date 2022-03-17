@@ -7,9 +7,9 @@ import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialDataService } from '../shared/mobile-credential-data.service';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
-import { Plugins } from '@capacitor/core';
+import { registerPlugin } from '@capacitor/core';
 import { AndroidCredentialCsModel, NfcDialogCs } from './android-credential-content-strings.model';
-const { MobileCredentialStatusPlugin } = Plugins;
+const  MobileCredentialStatusPlugin  = registerPlugin<any>('MobileCredentialStatusPlugin');
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
   protected defaultIsLoadingMessage = 'Processing ... Please wait';

@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { StDateSelectComponent } from './st-date-select.component';
 
@@ -7,7 +7,7 @@ describe('StDateSelectComponent', () => {
   let component: StDateSelectComponent;
   let fixture: ComponentFixture<StDateSelectComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ StDateSelectComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

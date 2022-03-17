@@ -6,13 +6,14 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
-import { Plugins } from '@capacitor/core';
+import { registerPlugin } from '@capacitor/core';
 import { zip } from 'rxjs';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderInfo } from '@sections/ordering';
-import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-const { Browser, IOSDevice } = Plugins;
+const  IOSDevice  = registerPlugin<any>('IOSDevice');
 
+import { Browser } from '@capacitor/browser';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 @Injectable({
   providedIn: 'root',
 })

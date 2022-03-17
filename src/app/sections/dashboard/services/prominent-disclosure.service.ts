@@ -22,7 +22,7 @@ export class ProminentDisclosureService {
   ) {}
 
   openProminentDisclosure() {
-    if (Capacitor.platform == PLATFORM.android) {
+    if (Capacitor.getPlatform() == PLATFORM.android) {
       this.navigationFacade.permissionsPrompted$.pipe(take(1)).subscribe(prompted => {
         if (!prompted) {
            this.requestPermissionModal();

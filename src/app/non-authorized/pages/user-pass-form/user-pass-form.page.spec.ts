@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { UserPassForm } from './user-pass-form.page';
 
 
@@ -7,7 +7,7 @@ describe('UserPassForm', () => {
   let component: UserPassForm;
   let fixture: ComponentFixture<UserPassForm>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ UserPassForm ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

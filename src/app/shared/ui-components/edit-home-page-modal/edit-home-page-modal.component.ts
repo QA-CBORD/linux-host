@@ -14,7 +14,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 })
 export class EditHomePageModalComponent implements OnInit {
   homeConfigList$: Observable<TileWrapperConfig[]>;
-  @ViewChild(IonReorderGroup) reorderGroup: IonReorderGroup;
+  @ViewChild(IonReorderGroup, { static: true }) reorderGroup: IonReorderGroup;
 
   constructor(private readonly modalController: ModalController,
               private readonly tileConfigFacadeService: TileConfigFacadeService,
