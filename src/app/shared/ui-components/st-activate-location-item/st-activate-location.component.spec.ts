@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { StActivateLocationItemComponent } from './st-activate-location-item.component';
 
@@ -7,7 +7,7 @@ describe('StActivateLocationItemComponent', () => {
   let component: StActivateLocationItemComponent;
   let fixture: ComponentFixture<StActivateLocationItemComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [StActivateLocationItemComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

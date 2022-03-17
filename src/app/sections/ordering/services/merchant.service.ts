@@ -233,7 +233,7 @@ export class MerchantService {
       case null:
         return of([]);
       case 'true':
-        return this.institutionService.retrievePickupLocations();
+        return this.orderingApiService.retrievePickupLocations();
       case 'false':
         return of([storeAddress]);
     }

@@ -1,6 +1,6 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Device, DeviceInfo } from '@capacitor/core';
+import { Device, DeviceInfo } from '@capacitor/device';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';

@@ -38,3 +38,6 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 android/android.zip
 capacitor.config.json
+
+ios/App/App/public/
+ios/DerivedData

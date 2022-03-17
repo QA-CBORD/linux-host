@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FilterSortComponent } from './filter-sort.component';
 
@@ -7,7 +7,7 @@ describe('FilterSortComponent', () => {
   let component: FilterSortComponent;
   let fixture: ComponentFixture<FilterSortComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FilterSortComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -6,8 +6,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { MActivateMobileLocationResult, MMobileLocationInfo } from '@sections/mobile-access/model';
 import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
-import { GeoLocationInfo } from '@core/model/geolocation/geoLocationInfo.model';
-import { GeolocationPosition } from '@capacitor/core';
+import { Position } from '@capacitor/geolocation';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -51,7 +50,7 @@ export class MobileAccessService {
 
     const postParams: ServiceParameters = { filters };
     return this.coords.getCoords().pipe(
-      switchMap((geoData: GeolocationPosition) => {
+      switchMap((geoData: Position) => {
         const geoParam = {
           latitude: geoData.coords.latitude,
           longitude: geoData.coords.longitude,
@@ -99,7 +98,7 @@ export class MobileAccessService {
     sourceInfo: string | null = null
   ): Observable<MActivateMobileLocationResult> {
     return this.coords.getCoords().pipe(
-      map((geoData: GeolocationPosition) => this.createMobileLocationParams(locationId, geoData.coords, sourceInfo)),
+      map((geoData: Position) => this.createMobileLocationParams(locationId, geoData.coords, sourceInfo)),
       switchMap(postParams => {
         const queryConfig = new RPCQueryConfig('activateMobileLocation', postParams, true);
 
@@ -145,7 +144,7 @@ export class MobileAccessService {
     return Array.isArray(array) ? array : [];
   }
 
-  private createMobileLocationParams(locationId: string, geoData, sourceInfo: string): GeoLocationInfo {
+  private createMobileLocationParams(locationId: string, geoData, sourceInfo: string): Position | any {
     const latitude = !geoData.latitude ? null : geoData.latitude;
     const longitude = !geoData.longitude ? null : geoData.longitude;
     const accuracy = !geoData.accuracy ? null : geoData.accuracy;

@@ -4,12 +4,11 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
-import { catchError, switchMap, take } from 'rxjs/operators';
-import { AppState, Plugins } from '@capacitor/core';
+import { switchMap, take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
-import { from, of, Subject, throwError } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -21,7 +20,8 @@ import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
 import { Router } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
-const { App, Device, BackgroundTask } = Plugins;
+import { App } from '@capacitor/app';
+import { BackgroundTask } from '@robingenz/capacitor-background-task';
 
 enum AppStatus {
   BACKGROUND,
@@ -55,6 +55,7 @@ export class SessionFacadeService {
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly ngZone: NgZone
   ) {
     this.appStateListeners();
   }
@@ -62,13 +63,13 @@ export class SessionFacadeService {
   // handle app state changes
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
   private appStateListeners() {
-    App.addListener('appStateChange', ({ isActive }: AppState) => {
-      this.identityFacadeService.onAppStateChanged(isActive);
+    App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
-        this.appResumeLogic();
+        this.onActiveState();
+        await this.appResumeLogic();
       } else {
         if (!this.identityFacadeService.getIsLocked()) {
-          this.closeActionsheets();
+          this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
       }
@@ -82,7 +83,7 @@ export class SessionFacadeService {
 
     this.platform.ready().then(() => {
       this.platform.resume.subscribe(() => {
-        this.appResumeLogic();
+        this.onActiveState();
       });
 
       this.platform.pause.subscribe(() => {
@@ -92,10 +93,6 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    /// use app status to prevent double calling
-    if (this.appStatus === AppStatus.FOREGROUND) return;
-    this.appStatus = AppStatus.FOREGROUND;
-
     if (this.navigatedToPlugin) {
       this.navigateToNativePlugin = false;
       return;
@@ -106,15 +103,19 @@ export class SessionFacadeService {
     }
 
     if ((await this.isVaultLocked()) && !this.identityFacadeService.pinEntryInProgress) {
-      await this.router
-        .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
-        .then(navigated => {
-          // console.log('navigated: ', navigated);
-        })
-        .catch(err => {
-          // console.log(err);
-        });
+      this.ngZone.run(async () => {
+        await this.router
+          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
+          .then(navigated => {})
+          .catch(err => {});
+      });
     }
+  }
+
+  private async onActiveState() {
+    /// use app status to prevent double calling
+    if (this.appStatus === AppStatus.FOREGROUND) return;
+    this.appStatus = AppStatus.FOREGROUND;
   }
 
   get navigatedToPlugin() {
@@ -131,7 +132,6 @@ export class SessionFacadeService {
     this._deepLinkPath = null;
   }
   doLoginChecks() {
-    // console.log('doLoginChecks called.... ');
     this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
@@ -141,15 +141,14 @@ export class SessionFacadeService {
         switchMap(async sessionId => {
           try {
             return await this.determineFromBackgroundLoginState(sessionId);
-          } catch ({ message }) {
+          } catch (message) {
             const newSessionId = await this.authFacadeService.authenticateSystem$().toPromise();
             try {
               return await this.determineFromBackgroundLoginState(newSessionId);
-            } catch ({ message }) {
-              // console.log('error ==>> ', message);
+            } catch (message) {
               // can't determine login state // will ask user to re-enter pin
               if (/isPingEnabled/.test(message)) {
-                return of(LoginState.PIN_LOGIN);
+                return LoginState.PIN_LOGIN;
               }
               throw new Error('An Unexpected error occurred');
             }
@@ -158,7 +157,6 @@ export class SessionFacadeService {
       )
       .subscribe(
         async state => {
-          // console.log('state: ', state);
           await this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
@@ -219,20 +217,19 @@ export class SessionFacadeService {
           this.identityFacadeService.canRetryUnlock = true;
           this.navigateToDashboard();
         },
-        async ({ code, message }) => {
-          // console.log('Error here: ', code, ' : ', message);
+        async ({ code }) => {
           let logoutUser = true;
           if (
-            VaultErrorCodes.TooManyFailedAttempts == code &&
-            useBiometric &&
-            this.identityFacadeService.canRetryUnlock
+            (VaultErrorCodes.TooManyFailedAttempts == code &&
+              useBiometric &&
+              this.identityFacadeService.canRetryUnlock) ||
+            VaultErrorCodes.Unknown == code ||
+            VaultErrorCodes.BiometricsNotEnabled == code
           ) {
             logoutUser = !(await this.identityFacadeService
               .onPasscodeRequest(false)
               .then(async data => data && (await this.navigate2Dashboard()))
-              .catch(err => {
-                // console.log('err: ', err);
-              })
+              .catch(err => {})
               .finally(() => (this.identityFacadeService.canRetryUnlock = true)));
           }
 
@@ -336,7 +333,6 @@ export class SessionFacadeService {
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
       const didNavigate = await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
-      // console.log('didNavigate:', didNavigate);
       this.onLogOutObservable$.next();
     }
     this.resetAll();
@@ -358,9 +354,12 @@ export class SessionFacadeService {
     this.identityFacadeService.lockVault();
   }
 
-  private closeActionsheets() {
-    const taskId = BackgroundTask.beforeExit(async () => {
-      this.nativeProvider.dismissTopControllers(!!this.nativeStartupFacadeService.blockNavigationStartup,  this.nativeProvider.getKeepTopModal);
+  private async closeTopControllers() {
+    const taskId = await BackgroundTask.beforeExit(async () => {
+      this.nativeProvider.dismissTopControllers(
+        !!this.nativeStartupFacadeService.blockNavigationStartup,
+        this.nativeProvider.getKeepTopModal
+      );
       BackgroundTask.finish({
         taskId,
       });

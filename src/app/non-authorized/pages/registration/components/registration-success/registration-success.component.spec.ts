@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RegistrationSuccessComponent } from './registration-success.component';
 
@@ -7,7 +7,7 @@ describe('RegistrationSuccessComponent', () => {
   let component: RegistrationSuccessComponent;
   let fixture: ComponentFixture<RegistrationSuccessComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ RegistrationSuccessComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

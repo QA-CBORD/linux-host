@@ -9,15 +9,12 @@ import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ActionSheetController } from '@ionic/angular';
-import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
-
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
 import { FacilityTree } from '../work-orders/work-orders.model';
-
-const { Camera } = Plugins;
+import { CameraDirection, Photo, CameraResultType, CameraSource, Camera } from '@capacitor/camera';
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -28,25 +25,25 @@ export class QuestionComponent implements OnInit, OnDestroy {
   facilityTreeData: FacilityTree[];
   facilityFullName: string;
   currectFacility: string;
-  constructor(private _changeDetector: ChangeDetectorRef,
-    public _applicationsStateService: ApplicationsStateService,//TODO: delete
+  constructor(
+    private _changeDetector: ChangeDetectorRef,
+    public _applicationsStateService: ApplicationsStateService, //TODO: delete
     private _termService: TermsService,
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastService: ToastService,
     private readonly _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService
-  ) { }
+  ) {}
 
   ngOnDestroy(): void {
-    this._applicationsStateService.setRequestedRoommates([])
-    this._applicationsStateService.setRoommatesPreferences([])
-    this._applicationsStateService.emptyRequestedRoommate()
+    this._applicationsStateService.setRequestedRoommates([]);
+    this._applicationsStateService.setRoommatesPreferences([]);
+    this._applicationsStateService.emptyRequestedRoommate();
     this._applicationsStateService.deleteRoommatePreferencesSelecteds();
     this._workOrderStateService.destroyWorkOrderImage();
     this.subscriptions.unsubscribe();
   }
-
 
   ngOnInit() {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
@@ -111,18 +108,20 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initTermsSubscription() {
-    this.subscriptions.add(this._termService.termId$.subscribe(termId => this.selectedTermKey = termId));
+    this.subscriptions.add(this._termService.termId$.subscribe(termId => (this.selectedTermKey = termId)));
   }
 
   private _initGetImage() {
-    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => {
-      if (!!(res && res.contents)) {
-        let format = res.filename.split('.')[1]
-        this.image$.next(`data:image/${format};base64,${res.contents}`)
-      } else {
-        this.image$.next(null)
-      }
-    }));
+    this.subscriptions.add(
+      this._workOrderStateService.workOrderImage$.subscribe(res => {
+        if (!!(res && res.contents)) {
+          let format = res.filename.split('.')[1];
+          this.image$.next(`data:image/${format};base64,${res.contents}`);
+        } else {
+          this.image$.next(null);
+        }
+      })
+    );
   }
 
   async presentPhotoTypeSelection() {
@@ -171,25 +170,25 @@ export class QuestionComponent implements OnInit, OnDestroy {
       .subscribe(
         response => {
           //IMAGEBASE64
-          this.image$.next(response.dataUrl)
+          this.image$.next(response.dataUrl);
           const photoBase64 = response.dataUrl.split(',')[1];
           this.sessionFacadeService.navigatedToPlugin = true;
           this._workOrderStateService.setWorkOrderImage({
-            comments: "",
+            comments: '',
             contents: photoBase64,
-            filename: "work-order" + Date.now() + -'' + '.' + response.format,
-            studentSubmitted: true
-          })
+            filename: 'work-order' + Date.now() + -'' + '.' + response.format,
+            studentSubmitted: true,
+          });
         },
         error => {
           this.presentToast('There was an issue with the picture. Please, try again.');
         },
-        () => { }
+        () => {}
       );
   }
 
   /// Camera plugin control
-  private getPhoto(cameraSource: CameraSource): Observable<CameraPhoto> {
+  private getPhoto(cameraSource: CameraSource): Observable<Photo> {
     // const uploadSettings = this.photoUploadService.photoUploadSettings;
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
     this.sessionFacadeService.navigatedToPlugin = true;
@@ -211,7 +210,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   isWorkOrderDescription(question) {
-    return question.source === "WORK_ORDER" && question.workOrderFieldKey === 'DESCRIPTION';
+    return question.source === 'WORK_ORDER' && question.workOrderFieldKey === 'DESCRIPTION';
   }
 
   _setFacility() {
@@ -222,15 +221,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.facilityFullName = this.facilityTreeData[0].facilityFullName;
       this._workOrderStateService.setSelectedFacilityTree({
         name: this.facilityFullName,
-        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
+        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey,
       });
     }
-    if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY'){
+    if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY') {
       this._workOrderStateService.setSelectedFacilityTree({
-        name: this.currectFacility, 
-        facilityKey:this._contractListStateService.getContractDetails()[0].facilityKey
+        name: this.currectFacility,
+        facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey,
       });
     }
-
   }
 }

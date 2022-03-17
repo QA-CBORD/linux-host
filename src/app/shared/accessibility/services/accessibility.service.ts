@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Capacitor, Plugins } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 import { of } from 'rxjs/internal/observable/of';
 import { Platform } from '@ionic/angular';
+import { ScreenReader } from '@capacitor/screen-reader';
 
-const { Accessibility } = Plugins;
 const READ_ALOUD_DELAY = 2000;
 const TAP_TIME_LAPSE = 300;
 
@@ -20,23 +20,23 @@ export class AccessibilityService {
   readAloud(text: string) {
     if(!this.platform.is('cordova')) return;
 
-    return Accessibility.isScreenReaderEnabled().then(isRunning => {
+    return ScreenReader.isEnabled().then(isRunning => {
       if (isRunning.value) {
         setTimeout(() => {
-          Accessibility.speak({ value: text });
+          ScreenReader.speak({ value: text });
         }, READ_ALOUD_DELAY);
       }
     });
   }
 
   get isVoiceOverEnabled$(): Promise<boolean> {
-    if (Capacitor.platform === PLATFORM.web) {
+    if (Capacitor.getPlatform() === PLATFORM.web) {
         return of(false).toPromise();
     }
 
-    return Accessibility.isScreenReaderEnabled().then(isRunning => {
+    return ScreenReader.isEnabled().then(isRunning => {
       if (isRunning.value) {
-        if (Capacitor.platform === PLATFORM.ios) {
+        if (Capacitor.getPlatform() === PLATFORM.ios) {
           return true;
         }
       }

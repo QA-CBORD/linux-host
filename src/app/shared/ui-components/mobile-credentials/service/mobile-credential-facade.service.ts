@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
-import { Device, Plugins } from '@capacitor/core';
+import { Device } from '@capacitor/device';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { iif, Observable, of } from 'rxjs';
@@ -15,7 +15,8 @@ import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-const { MobileCredentialStatusPlugin } = Plugins;
+import { registerPlugin } from '@capacitor/core';
+const  MobileCredentialStatusPlugin  = registerPlugin<any>('MobileCredentialStatusPlugin');
 
 @Injectable({
   providedIn: 'root',

@@ -18,7 +18,6 @@ export class InstitutionFacadeService extends ServiceStateFacade {
   private institutionKey = 'get_institution';
   private institutionPhotoKey = 'get_institutionPhotoKey';
   private guestSettingKey = 'guestSetting';
-  private inst_pickupLocations = 'pickupLocations';
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly institutionApiService: InstitutionApiService,
@@ -46,20 +45,6 @@ export class InstitutionFacadeService extends ServiceStateFacade {
         take(1)
       )
       .toPromise();
-  }
-
-  retrievePickupLocations(): Observable<any> {
-    return this.storageStateService.getStateEntityByKey$<any>(this.inst_pickupLocations).pipe(
-      switchMap(data => (data && of(data.value)) || this.fetchPickputLocations()),
-      catchError(() => of(<any>{})),
-      take(1)
-    );
-  }
-
-  private fetchPickputLocations(): Observable<any> {
-    return this.institutionApiService
-      .retrievePickupLocations()
-      .pipe(tap(locations => this.storageStateService.updateStateEntity(this.inst_pickupLocations, locations)));
   }
 
   get guestOrderEnabled(): Promise<boolean> {

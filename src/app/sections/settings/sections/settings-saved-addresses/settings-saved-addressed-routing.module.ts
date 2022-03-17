@@ -8,7 +8,7 @@ import { SETTINGS_NAVIGATE } from '@sections/settings/settings.config';
 const routes: Route[] = [
   {
     path: '',
-    loadChildren: '../../../ordering/pages/saved-addresses/saved-addresses.module#SavedAddressesModule',
+    loadChildren: () => import('../../../ordering/pages/saved-addresses/saved-addresses.module').then(m => m.SavedAddressesModule),
     resolve: {
       data: SettingsSavedAddressesResolver,
     },
@@ -16,7 +16,7 @@ const routes: Route[] = [
   },
   {
     path: ORDERING_ROUTING.addressEdit,
-    loadChildren: '../../../ordering/pages/address-edit/address-edit.module#AddressEditPageModule',
+    loadChildren: () => import('../../../ordering/pages/address-edit/address-edit.module').then(m => m.AddressEditPageModule),
   },
 ];
 

@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PickCheckinModeComponent } from './pick-checkin-mode.component';
 
@@ -7,7 +7,7 @@ describe('PickCheckinModeComponent', () => {
   let component: PickCheckinModeComponent;
   let fixture: ComponentFixture<PickCheckinModeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PickCheckinModeComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

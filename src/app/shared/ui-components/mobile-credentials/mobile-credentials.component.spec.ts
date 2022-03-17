@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MobileCredentialsComponent } from './mobile-credentials.component';
 
@@ -7,7 +7,7 @@ describe('MobileCredentialsComponent', () => {
   let component: MobileCredentialsComponent;
   let fixture: ComponentFixture<MobileCredentialsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ MobileCredentialsComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

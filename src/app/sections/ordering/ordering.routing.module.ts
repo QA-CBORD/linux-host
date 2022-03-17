@@ -18,44 +18,44 @@ const routes: Route[] = [
   },
   {
     path: LOCAL_ROUTING.recentOrders,
-    loadChildren: './pages/recent-orders/recent-orders.module#RecentOrdersModule',
+    loadChildren: () => import('./pages/recent-orders/recent-orders.module').then(m => m.RecentOrdersModule),
   },
   {
     path: LOCAL_ROUTING.savedAddresses,
-    loadChildren: './pages/saved-addresses/saved-addresses.module#SavedAddressesModule',
+    loadChildren: () => import('./pages/saved-addresses/saved-addresses.module').then(m => m.SavedAddressesModule),
     data: { relativeRoute: PATRON_NAVIGATION.ordering },
   },
   {
     path: LOCAL_ROUTING.favoriteMerchants,
-    loadChildren: './pages/favorite-merchants/favorite-merchants.module#FavoriteMerchantsModule',
+    loadChildren: () => import('./pages/favorite-merchants/favorite-merchants.module').then(m => m.FavoriteMerchantsModule),
   },
   {
     path: LOCAL_ROUTING.fullMenu,
-    loadChildren: './pages/full-menu/full-menu.module#FullMenuModule',
+    loadChildren: () => import('./pages/full-menu/full-menu.module').then(m => m.FullMenuModule),
   },
   {
     path: LOCAL_ROUTING.cart,
-    loadChildren: './pages/cart/cart.module#CartModule',
+    loadChildren: () => import('./pages/cart/cart.module').then(m => m.CartModule),
   },
   {
     path: `${LOCAL_ROUTING.menuCategoryItems}/:id`,
-    loadChildren: './pages/menu-category-items/menu-category-items.module#MenuCategoryItemsModule',
+    loadChildren: () => import('./pages/menu-category-items/menu-category-items.module').then(m => m.MenuCategoryItemsModule),
   },
   {
     path: `${LOCAL_ROUTING.itemDetail}`,
-    loadChildren: './pages/item-detail/item-detail.module#ItemDetailModule',
+    loadChildren: () => import('./pages/item-detail/item-detail.module').then(m => m.ItemDetailModule),
   },
   {
     path: LOCAL_ROUTING.addressEdit,
-    loadChildren: './pages/address-edit/address-edit.module#AddressEditPageModule',
+    loadChildren: () => import('./pages/address-edit/address-edit.module').then(m => m.AddressEditPageModule),
   },
   {
     path: LOCAL_ROUTING.checkin,
-    loadChildren: './../check-in/check-in.module#CheckInModule',
+    loadChildren: () => import('./../check-in/check-in.module').then(m => m.CheckInModule),
   },
   {
     path: LOCAL_ROUTING.itemManualEntry,
-    loadChildren: './pages/item-manual-entry/item-manual-entry.module#ItemManualEntryModule',
+    loadChildren: () => import('./pages/item-manual-entry/item-manual-entry.module').then(m => m.ItemManualEntryModule),
   },
 ];
 

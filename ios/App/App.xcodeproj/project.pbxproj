@@ -10,11 +10,11 @@
 		1E79CFDD2489D809004D0384 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E79CFDC2489D809004D0384 /* String+Ext.swift */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
-		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
+		504EC3081FED79650016851F /* MainAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* MainAppDelegate.swift */; };
 		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
-		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		738D32D827AC466B00BB95D3 /* public in Resources */ = {isa = PBXBuildFile; fileRef = 738D32D727AC466B00BB95D3 /* public */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
 		EE0FF62924D4C9A5003E2257 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FF62824D4C9A5003E2257 /* WatchSessionManager.swift */; };
 		EE2E6B1B246E398900D1AF97 /* GETPartnerServicesCredStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2E6AEC246E398900D1AF97 /* GETPartnerServicesCredStatus.m */; };
@@ -64,12 +64,12 @@
 		4DABAFBA498B9A00C8E7533F /* Pods-App.development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.development.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.development.xcconfig"; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* GET&#x2009;Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GET&#x2009;Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		504EC3071FED79650016851F /* MainAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppDelegate.swift; sourceTree = "<group>"; };
 		504EC30C1FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		504EC30E1FED79650016851F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = SOURCE_ROOT; };
+		738D32D727AC466B00BB95D3 /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		AE8334ADCB1FBFD55F47006E /* Pods-App.vendor validation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.vendor validation.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.vendor validation.xcconfig"; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
@@ -177,6 +177,7 @@
 		504EC3061FED79650016851F /* App */ = {
 			isa = PBXGroup;
 			children = (
+				738D32D727AC466B00BB95D3 /* public */,
 				EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */,
 				EE7CE761246ECE9E002EF737 /* App.entitlements */,
 				EE2E6B0B246E398900D1AF97 /* Extensions */,
@@ -185,13 +186,12 @@
 				EE2E6B02246E398900D1AF97 /* Services */,
 				EE2E6AFF246E398900D1AF97 /* Utilities */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
-				504EC3071FED79650016851F /* AppDelegate.swift */,
+				504EC3071FED79650016851F /* MainAppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
 				504EC3131FED79650016851F /* Info.plist */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
-				50B271D01FEDC1A000F3C39B /* public */,
 				EEBD6853246ACA1200193F97 /* Plugin.swift */,
 				EEBD6857246ACBFB00193F97 /* Plugin.m */,
 				EEBD6855246ACBFB00193F97 /* App-Bridging-Header.h */,
@@ -381,12 +381,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
-				50B271D11FEDC1A000F3C39B /* public in Resources */,
 				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
 				EE5251DA24BE34D1008CD822 /* GoogleService-Info.plist in Resources */,
+				738D32D827AC466B00BB95D3 /* public in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,7 +461,7 @@
 				1E79CFDD2489D809004D0384 /* String+Ext.swift in Sources */,
 				EE2E6B2C246E398900D1AF97 /* Int+Ext.swift in Sources */,
 				EE2E6B29246E398900D1AF97 /* GETSecurityServices.m in Sources */,
-				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
+				504EC3081FED79650016851F /* MainAppDelegate.swift in Sources */,
 				EE2E6B1B246E398900D1AF97 /* GETPartnerServicesCredStatus.m in Sources */,
 				EE2E6B26246E398900D1AF97 /* GETUtilities.m in Sources */,
 				EE2E6B2D246E398900D1AF97 /* UIDevice+Ext.swift in Sources */,
@@ -575,12 +575,12 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1225;
+				CURRENT_PROJECT_VERSION = 4.10.99.1;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 4.10.16;
+				MARKETING_VERSION = 4.10.99.1;
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.getmobile;
 				PRODUCT_NAME = "GET&#x2009;Mobile";

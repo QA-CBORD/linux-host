@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { NonAssignmentsListComponent } from './non-assignments-list.component';
 
@@ -7,7 +7,7 @@ describe('NonAssignmentsListComponent', () => {
   let component: NonAssignmentsListComponent;
   let fixture: ComponentFixture<NonAssignmentsListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ NonAssignmentsListComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
