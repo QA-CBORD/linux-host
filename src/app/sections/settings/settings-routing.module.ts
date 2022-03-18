@@ -11,15 +11,15 @@ const routes: Route[] = [
   },
   {
     path: LOCAL_ROUTING.photoUpload,
-    loadChildren: './pages/photo-upload/photo-upload.module#PhotoUploadModule',
+    loadChildren: () => import('./pages/photo-upload/photo-upload.module').then(m => m.PhotoUploadModule),
   },
   {
     path: SETTINGS_NAVIGATE.address,
-    loadChildren: './sections/settings-saved-addresses/settings-saved-addresses.module#SettingsSavedAddressesModule',
+    loadChildren: () => import('./sections/settings-saved-addresses/settings-saved-addresses.module').then(m => m.SettingsSavedAddressesModule),
   },
   {
     path: SETTINGS_NAVIGATE.lostCard,
-    loadChildren: './pages/report-card/report-card.module#ReportCardModule',
+    loadChildren: () => import('./pages/report-card/report-card.module').then(m => m.ReportCardModule),
   },
 ];
 

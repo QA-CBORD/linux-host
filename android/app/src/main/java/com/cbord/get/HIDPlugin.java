@@ -4,12 +4,12 @@ import android.app.Application;
 
 import com.cbord.get.mcredential.HIDSDKManager;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.annotation.CapacitorPlugin;
 
-@NativePlugin()
+@CapacitorPlugin(name = "HIDPlugin")
 public class HIDPlugin extends Plugin {
 
     private HIDSDKManager hidsdkManager;

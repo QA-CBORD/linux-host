@@ -10,13 +10,15 @@ import { map, switchMap, tap, take, catchError, finalize } from 'rxjs/operators'
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings, User } from 'src/app/app.global';
-import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { BarcodeService } from '@core/service/barcode/barcode.service';
 import { Platform } from '@ionic/angular';
-const { PushNotifications, LocalNotifications, Device } = Plugins;
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Device } from '@capacitor/device';
+import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 
 @Injectable({
   providedIn: 'root',
@@ -81,14 +83,11 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   createUserPinTotp(pin: string): Observable<boolean> {
-    return this.pingEncoderService.encodePin(pin)
-        .pipe(
-          switchMap((encrytedPin) => this.createUserPin(encrytedPin))
-        );
+    return this.pingEncoderService.encodePin(pin).pipe(switchMap(encrytedPin => this.createUserPin(encrytedPin)));
   }
 
   createUserPin(pin: string): Observable<boolean> {
-    return from(Device.getInfo()).pipe(
+    return from(Device.getId()).pipe(
       switchMap(({ uuid }) => this.userApiService.createUserPin(pin, uuid)),
       map(({ response }) => response),
       take(1)
@@ -171,24 +170,24 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   handlePushNotificationRegistration() {
-    if(!this.platform.is('cordova')) return;
+    if (!this.platform.is('cordova')) return;
 
     zip(this.isPushNotificationEnabled$(), this.getFCMToken$())
       .pipe(
         switchMap(([pushNotificationsEnabled, fcmToken]) => {
           return iif(
             () => pushNotificationsEnabled && !fcmToken,
-            from(PushNotifications.requestPermission()),
+            from(PushNotifications.requestPermissions()),
             of({ granted: false })
           );
         }),
         take(1)
       )
       .subscribe(result => {
-        if (result.granted) {
+        if (result) {
           PushNotifications.removeAllListeners();
-          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
-            if (Capacitor.platform === PLATFORM.android) {
+          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+            if (Capacitor.getPlatform() === PLATFORM.android) {
               LocalNotifications.schedule({
                 notifications: [
                   {
@@ -201,7 +200,7 @@ export class UserFacadeService extends ServiceStateFacade {
               });
             }
           });
-          PushNotifications.addListener('registration', (token: PushNotificationToken) => {
+          PushNotifications.addListener('registration', (token: Token) => {
             this.saveNotification$(token.value).subscribe();
           });
           PushNotifications.register();
@@ -247,7 +246,7 @@ export class UserFacadeService extends ServiceStateFacade {
       id: pNotifications.length > 0 ? pNotifications[0].id : null,
       type: User.NotificationType.PUSH_NOTIFICATION,
       value: fcmToken,
-      provider: Capacitor.platform,
+      provider: Capacitor.getPlatform(),
     };
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router/src/interfaces';
+import { Resolve } from '@angular/router';
 
 import { retryWhen, switchMap, finalize, take } from 'rxjs/operators';
 import { PopoverController } from '@ionic/angular';

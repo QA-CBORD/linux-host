@@ -6,18 +6,17 @@ import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Plugin;
 
 import java.util.ArrayList;
-import com.dutchconcepts.capacitor.barcodescanner.BarcodeScanner;
+import com.getcapacitor.community.barcodescanner.BarcodeScanner;
 
 public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.init(savedInstanceState, new ArrayList<Class<? extends Plugin>>() {{
-            add(HIDPlugin.class);
-            add(GooglePayPlugin.class);
-            add(MobileCredentialStatusPlugin.class);
-            add(BarcodeScanner.class);
-        }});
+
+        registerPlugin(HIDPlugin.class);
+        registerPlugin(GooglePayPlugin.class);
+        registerPlugin(MobileCredentialStatusPlugin.class);
+        registerPlugin(BarcodeScanner.class);
     }
 }

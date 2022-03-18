@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MerchantInfo, MerchantSearchOptions, MerchantSettingInfo } from '@sections/ordering';
+import { MerchantInfo, MerchantSearchOptions } from '@sections/ordering';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { MerchantSearchOptionName } from '@sections/ordering/ordering.config';
 import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { CoordsService } from '@core/service/coords/coords.service';
-import { GeolocationPosition } from '@capacitor/core';
+import { Position } from '@capacitor/geolocation';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class MerchantApiService {
 
   getMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
     return this.coords.getCoords().pipe(
-      switchMap(({ coords }: GeolocationPosition) => {
+      switchMap(({ coords }: Position) => {
         if (coords && coords.latitude !== null && coords.longitude !== null) {
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: coords.latitude });
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: coords.longitude });
@@ -36,7 +36,7 @@ export class MerchantApiService {
 
   getMenuMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
     return this.coords.getCoords().pipe(
-      switchMap((geoData: GeolocationPosition) => {
+      switchMap((geoData: Position) => {
         if (geoData && geoData.coords && geoData.coords.latitude !== null && geoData.coords.longitude !== null) {
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: geoData.coords.latitude });
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: geoData.coords.longitude });

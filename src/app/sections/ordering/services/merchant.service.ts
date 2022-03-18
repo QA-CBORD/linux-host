@@ -233,14 +233,10 @@ export class MerchantService {
       case null:
         return of([]);
       case 'true':
-        return this.institutionService.retrievePickupLocations();
+        return this.orderingApiService.retrievePickupLocations();
       case 'false':
         return of([storeAddress]);
     }
-  }
-
-  fetchPickupLocations(): Observable<any> {
-      return this.institutionService.fetchPickupLocations();
   }
 
   addFavoriteMerchant(merchantId: string): Observable<string> {

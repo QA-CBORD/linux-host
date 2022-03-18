@@ -13,7 +13,7 @@ import SafariServices
 
 @objc(Plugin)
 class Plugin: CAPPlugin {
-    override init!(bridge: CAPBridge!, pluginId: String!, pluginName: String!) {
+    override init(bridge: CAPBridgeProtocol, pluginId: String, pluginName: String) {
         super.init(bridge: bridge, pluginId: pluginId, pluginName: pluginName)
         NotificationCenter.default.addObserver(self, selector: #selector(self.notifyApplePayResponse(_:)), name: .handleApplePayResponse, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.notifyAppleWallet), name: .handleAppleWalletRefresh, object: nil)
@@ -84,9 +84,9 @@ class Plugin: CAPPlugin {
                 paymentRequestConfiguration.primaryAccountIdentifier = appleWalletReferenceID
                 paymentRequestConfiguration.localizedDescription = patronName
                 
-                if let paymentPassViewController = PKAddPaymentPassViewController(requestConfiguration: paymentRequestConfiguration, delegate: self.bridge.viewController) {
+                if let paymentPassViewController = PKAddPaymentPassViewController(requestConfiguration: paymentRequestConfiguration, delegate: self.bridge?.viewController) {
                     DispatchQueue.main.async {
-                        self.bridge.viewController.present(paymentPassViewController, animated: true, completion: nil)
+                        self.bridge?.viewController?.present(paymentPassViewController, animated: true, completion: nil)
                     }
                 }
             }

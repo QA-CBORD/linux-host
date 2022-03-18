@@ -39,7 +39,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Output() change: EventEmitter<any> = new EventEmitter<any>();
   innerValue: any = '';
 
-  @ViewChild('selector') selectRef: IonSelect;
+  @ViewChild('selector', { static: true }) selectRef: IonSelect;
   private onChange: (v: any) => void;
   private onTouched: () => void;
 

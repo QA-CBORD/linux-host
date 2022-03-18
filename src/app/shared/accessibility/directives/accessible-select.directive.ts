@@ -1,10 +1,8 @@
 import { Directive, Input, HostBinding, OnDestroy } from '@angular/core';
 import { IonSelect } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { Plugins } from '@capacitor/core';
+import { ScreenReader } from '@capacitor/screen-reader';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-
-const { Accessibility } = Plugins;
 const READ_ALOUD_DELAY = 2000;
 
 @Directive({
@@ -30,10 +28,10 @@ export class AccessibleSelectDirective implements OnDestroy {
   constructor(private readonly host: IonSelect, private sessionService: SessionFacadeService) {
     this.subs = this.host.ionChange.subscribe(() => {
       if (!this.sessionService.getIsWeb()) {
-        Accessibility.isScreenReaderEnabled().then(isRunning => {
+        ScreenReader.isEnabled().then(isRunning => {
           if (isRunning.value) {
             setTimeout(() => {
-              Accessibility.speak({ value: this.host.selectedText || this.host.value });
+              ScreenReader.speak({ value: this.host.selectedText || this.host.value });
             }, READ_ALOUD_DELAY);
           }
         });

@@ -4,11 +4,10 @@ import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { UserLogin } from '@core/model/user';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { Observable, of, iif, from, forkJoin, zip } from 'rxjs';
-import { Plugins } from '@capacitor/core';
+import { Observable, of, iif, from, zip } from 'rxjs';
+import { Device } from '@capacitor/device';
 import { BarcodeService } from '@core/service/barcode/barcode.service';
 import { UserFacadeService } from '../user/user.facade.service';
-const { Device } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -79,7 +78,7 @@ export class AuthFacadeService extends ServiceStateFacade {
   }
 
   authenticatePin$(rawPin: string): Observable<boolean> {
-    return zip(from(Device.getInfo())).pipe(
+    return zip(from(Device.getId())).pipe(
       switchMap(([{ uuid }]) => this.authApiService.authenticatePin(rawPin, uuid)),
       tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })),
       map(res => !!res)

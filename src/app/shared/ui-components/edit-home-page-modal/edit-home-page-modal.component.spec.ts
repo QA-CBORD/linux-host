@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditHomePageModalComponent } from './edit-home-page-modal.component';
 
@@ -7,7 +7,7 @@ describe('EditHomePageModalComponent', () => {
   let component: EditHomePageModalComponent;
   let fixture: ComponentFixture<EditHomePageModalComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ EditHomePageModalComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

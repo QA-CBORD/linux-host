@@ -85,7 +85,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   async isVaultLocked() {
-    if (Capacitor.platform == PLATFORM.ios) {
+    if (Capacitor.getPlatform() == PLATFORM.ios) {
       await this.hasStoredSession(); // Hack: for unexpected vault behavior with the pin not showing up
     }
     return this.isLocked && (await this.hasStoredSession());
@@ -210,16 +210,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
         this.unclockPinInProgress = false;
       }
     };
-
-    /**
-     * 
-     * Commenting this out and suggesting regression testing on pinPage. 
-     * Solving issue GET3478
-     */
-
-    // if (Capacitor.platform == PLATFORM.android) {
-    //   redoRequestPin();
-    // }
   }
 
   async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {

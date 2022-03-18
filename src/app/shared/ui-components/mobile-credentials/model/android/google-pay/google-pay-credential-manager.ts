@@ -1,5 +1,4 @@
 import { Observable, of } from 'rxjs';
-import { Plugins } from '@capacitor/core';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { AndroidCredential, GooglePayCredentialBundle } from '../android-credential.model';
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
@@ -9,7 +8,8 @@ import { AlertController, ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-const { GooglePayPlugin } = Plugins;
+import { registerPlugin } from '@capacitor/core';
+const  GooglePayPlugin  = registerPlugin<any>('GooglePayPlugin');
 
 @Injectable({ providedIn: 'root' })
 export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
