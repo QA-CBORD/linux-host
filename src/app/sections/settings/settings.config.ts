@@ -91,15 +91,15 @@ const asyncCheckEverySetting = async function (validations: SettingItemValidatio
 }
 
 const validateSettingEnabled = async function (services: SettingsServices): Promise<boolean> {
-  if ((await isSupported(services))(this)) {
+  if ((await isSupportedInCurrentProfile(services))(this)) {
     return await isGuestHOF(services, this, async () => (await asyncCheckEverySetting(this.validations, services)).every(checkTrue => checkTrue))
   }
   return false;
 }
 
 
-const isSupported = async function (services: SettingsServices) {
-  const currentProfile = await firstValueFrom(services.profileService.determineCurrentProfile$().pipe(take(1)));
+const isSupportedInCurrentProfile = async function (services: SettingsServices) {
+  const currentProfile = await firstValueFrom(services.profileService.determineCurrentProfile$());
   return function (settingItem: SettingItemConfig) {
     if (!currentProfile) return true;
     if (settingItem.supportProfiles && settingItem.supportProfiles.length) {
@@ -145,10 +145,9 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest],
         checkIsEnabled: async function (services: SettingsServices) {
           const self: SettingItemConfig = this;
-          const checks = await asyncCheckEvery(self.validations, services);
           // if is guest user return false.
-          if (await isGuestUser(services) || !((await isSupported(services))(self))) return false;
-          return checks.every((checkTrue) => checkTrue);
+          if (await isGuestUser(services) || !((await isSupportedInCurrentProfile(services))(self))) return false;
+          return (await asyncCheckEvery(self.validations, services)).every((checkTrue) => checkTrue);
         }
       },
     ],

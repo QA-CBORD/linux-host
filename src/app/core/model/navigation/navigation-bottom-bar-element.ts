@@ -8,5 +8,5 @@ export interface NavigationBottomBarElement {
   name: string;
   id: string;
   visibilityOn?: (settings: any) => boolean,
-  supportProfiles?: APP_PROFILES[]
+  supportProfiles: APP_PROFILES[]
 }
