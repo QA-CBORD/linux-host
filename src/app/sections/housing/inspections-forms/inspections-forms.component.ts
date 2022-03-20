@@ -5,6 +5,7 @@ import { Inspection, Inspections } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
+import { InspectionService } from './inspections-forms.service';
 
 @Component({
   selector: 'st-inspections-forms',
@@ -19,7 +20,8 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   public inspectionList: BehaviorSubject<Inspections[]>;
 
   constructor(public _inspectionsStateService: InspectionsStateService,
-    private _termService : TermsService
+    private _termService : TermsService,
+    private _inspectionService: InspectionService
     ) {}
 
   inspections: Inspection[];
@@ -31,7 +33,10 @@ export class InspectionsComponent implements OnInit, OnDestroy {
 
     this._initTermsSubscription();
     this._subscription.add(inspectionsForm);
+    // this._initFormDefinition()
   }
+
+
 
   private _initTermsSubscription() {
     this._subscription.add(

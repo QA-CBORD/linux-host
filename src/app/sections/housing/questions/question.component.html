@@ -4,7 +4,7 @@
       <h3 class="form__secondary-header">Upload a photo</h3>
       <div class="container__image">
         <ng-container *ngIf="(image$ | async) as image; else defaultImage" witdh="95%" heigth=95% >
-          <ion-img class="image" [(src)]="image"></ion-img>
+          <!-- <ion-img class="image" [(src)]="image"></ion-img> -->
         </ng-container>
         <ng-template #defaultImage >
           <div class="label"> New photo</div>

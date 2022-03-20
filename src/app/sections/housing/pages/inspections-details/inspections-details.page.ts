@@ -65,6 +65,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
   canSubmit: boolean = true;
   section: string = '';
+  conditions: [] = [];
 
   constructor(
     private _platform: Platform,
@@ -96,6 +97,14 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.inspectionDetails$.subscribe(res => this.section = res.sections[0].name)
     // this._initPagesObservable();
     this._initTermSubscription();
+    this.getPagesInspection();
+  }
+
+  private getPagesInspection(){
+    const result = this._inspectionService.getFormDefinitionInspection().subscribe(res => {
+      this.conditions = res.values.filter(x => x.selected)
+    })
+    this.subscriptions.add(result);
   }
 
   ngOnDestroy(): void {

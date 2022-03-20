@@ -6,14 +6,14 @@ import { Inspection, FormDefinition, Inspections, InspectionsData } from './insp
   providedIn: 'root',
 })
 export class InspectionsStateService  {
-  private readonly _defaultState = new Inspection ({
-  form: null,
-  contractElementKey: null,
-  sections: null,
-  staffInspectionKey: null,
-  isSubmitted: null,
-  residentInspectionKey:null,
-  });
+  // private readonly _defaultState = new Inspection ({
+  // formDefinition: null,
+  // contractElementKey: null,
+  // sections: null,
+  // staffInspectionKey: null,
+  // isSubmitted: null,
+  // residentInspectionKey:null,
+  // });
 
   private readonly _defaultInspectionsListState = new Inspections ({
     residentInspectionKey: null,
@@ -46,7 +46,7 @@ export class InspectionsStateService  {
     });
   // public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
   private inspectionList: BehaviorSubject<Inspections[]> = new BehaviorSubject<Inspections[]>([]);
-  private inspectionForm: BehaviorSubject<Inspection> = new BehaviorSubject<Inspection>(this._defaultState);
+  private inspectionForm: BehaviorSubject<Inspection> = new BehaviorSubject<Inspection>(null);
   // public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
   public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null)
   // public selectedFacility$: BehaviorSubject<NamedIdentity> = new BehaviorSubject<NamedIdentity>(null);
@@ -64,6 +64,10 @@ export class InspectionsStateService  {
 
   get inspectionForm$() : BehaviorSubject<Inspection> {
     return this.inspectionForm;
+  }
+
+  getInspectionDetailsForm(): Observable<Inspection>{
+    return this.inspectionForm.asObservable();
   }
 
 

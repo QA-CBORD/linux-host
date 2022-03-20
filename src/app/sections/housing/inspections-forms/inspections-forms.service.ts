@@ -36,147 +36,136 @@ export class InspectionService {
     ) { }
 
 
-  // removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
-  //   let urlRemove = this.workOrderListUrl + `/patron`;
-  //   const queryParams = new HttpParams().set('patronWaitingListKey', `${patronWaitingListKey}`);
-  //   return this._proxy.delete(urlRemove, queryParams).pipe(map((response: Response) => {
-  //     if (isSuccessful(response.status)) {
-  //       return true;
-  //     } else {
-  //       throw new Error(response.status.message);
-  //     }
-  //   }),
-  //     catchError(_ => of(false)))
-  // }
+  getFormDefinitionInspection(): Observable<any> {
+    return this._inspectionStateService.getInspectionDetailsForm().pipe(
+      map((res=>{
+        const body =JSON.parse(res.formDefinition.applicationFormJson) 
+        return body.filter(value => value.inventoryConditions)[0];
+      }))
+    )
+  
+  }
 
-  // getQuestions(key: number): Observable<QuestionsPage[]> {
-  //   return this._questionsStorageService.getQuestions(key).pipe(
-  //     withLatestFrom(this._inspectionStateService.workOrderDetails),
-  //     map(([storedQuestions, workOrderDetails]: [QuestionsEntries, WorkOrderDetails]) => {
-  //       const pages: QuestionBase[][] = this._getQuestionsPages(workOrderDetails);
-  //       return this._getPages(pages, storedQuestions, workOrderDetails);
-  //     })
-  //   );
-  // }
+  private _getPages(
+    pages: QuestionBase[][],
+    storedQuestions: QuestionsEntries,
+    inspectionDetails: Inspection
+  ): QuestionsPage[] {
+    return pages.map((page: QuestionBase[]) => ({
+      form: this._toFormGroup(page, storedQuestions, inspectionDetails),
+      questions: page,
+    }));
+  }
 
-  // private _getPages(
-  //   pages: QuestionBase[][],
-  //   storedQuestions: QuestionsEntries,
-  //   workOrderDetails: WorkOrderDetails
-  // ): QuestionsPage[] {
-  //   return pages.map((page: QuestionBase[]) => ({
-  //     form: this._toFormGroup(page, storedQuestions, workOrderDetails),
-  //     questions: page,
-  //   }));
-  // }
+  private _toFormGroup(
+    questions: QuestionBase[],
+    storedQuestions: QuestionsEntries,
+    inspectionDetails: Inspection
+  ): FormGroup {
+    return this._questionsService.toFormGroup(
+      questions,
+      storedQuestions,
+      (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
+        group[questionName] = this._toFormControl(storedValue, question, inspectionDetails);
+      }
+    );
+  }
 
-  // private _toFormGroup(
-  //   questions: QuestionBase[],
-  //   storedQuestions: QuestionsEntries,
-  //   workOrderDetails: WorkOrderDetails
-  // ): FormGroup {
-  //   return this._questionsService.toFormGroup(
-  //     questions,
-  //     storedQuestions,
-  //     (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
-  //       group[questionName] = this._toFormControl(storedValue, question, workOrderDetails);
-  //     }
-  //   );
-  // }
+  private _getQuestionsPages(inspectionDetails: Inspection): QuestionBase[][] {
+    const questions: QuestionBase[][] = parseJsonToArray(inspectionDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"},{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
+      .map((question: QuestionBase,i) => {
+        console.log('questionnsss-->',question)
+        const mappedQuestion = this._toWorkOrderListCustomType(question,inspectionDetails)
+        return [].concat(mappedQuestion);
+      });
+    return this._questionsService.splitByPages(flat(questions));
+  }
 
-  // private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-  //   const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"},{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
-  //     .map((question: QuestionBase,i) => {
-  //       const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
-  //       return [].concat(mappedQuestion);
-  //     });
-  //   return this._questionsService.splitByPages(flat(questions));
-  // }
-
-  // private _toWorkOrderListCustomType(question: any, workOrderDetails: WorkOrderDetails){
-  //   let values = [];
-
-  //   if(question.workOrderFieldKey === 'TYPE'){
-  //     values = workOrderDetails.workOrderTypes.map((v) => {
-  //       return {
-  //         label: v.name,
-  //         value: v.key
-  //       }
-  //     });
-  //     return {
-  //       label: question.label,
-  //       name: question.name,
-  //       values: values,
-  //       required: question.required,
-  //       source: question.source,
-  //       readonly: false,
-  //       type: 'select',
-  //       dataType: 'String',
-  //       workOrderField: true,
-  //       workOrderFieldKey: question.workOrderFieldKey,
-  //     };
-  //   }else {
-  //     return question;
-  //   }
+  private _toWorkOrderListCustomType(question: any, inspectionDetails: Inspection){
+    let values = [];
+    console.log(question)
+    debugger;
+    if(question.workOrderFieldKey === 'TYPE'){
+      // values = inspectionDetails..map((v) => {
+      //   return {
+      //     label: v.name,
+      //     value: v.key
+      //   }
+      // });
+      return {
+        label: question.label,
+        name: question.name,
+        values: values,
+        required: question.required,
+        source: question.source,
+        readonly: false,
+        type: 'select',
+        dataType: 'String',
+        workOrderField: true,
+        workOrderFieldKey: question.workOrderFieldKey,
+      };
+    }else {
+      return question;
+    }
     
-  // }
+  }
 
-  // private _toFormControl(
-  //   storedValue: any,
-  //   question: QuestionFormControl,
-  //   workOrderDetails: WorkOrderDetails
-  // ): FormControl {
-  //   let value: any = storedValue;
-  //   let disabled: boolean = false;
-  //   let image : ImageData | null;
+  private _toFormControl(
+    storedValue: any,
+    question: QuestionFormControl,
+    workOrderDetails: Inspection
+  ): FormControl {
+    let value: any = storedValue;
+    let disabled: boolean = false;
+    let image : ImageData | null;
 
-  //   const validators: ValidatorFn[] = [];
+    const validators: ValidatorFn[] = [];
 
-  //   if (question.required) {
-  //     validators.push(Validators.required);
-  //   }
-  //   if(question.workOrderFieldKey === 'DESCRIPTION'){
-  //     validators.push(Validators.maxLength(250))
-  //   }
+    if (question.required) {
+      validators.push(Validators.required);
+    }
+    if(question.workOrderFieldKey === 'DESCRIPTION'){
+      validators.push(Validators.maxLength(250))
+    }
 
-  //   if (question instanceof QuestionTextbox) {
-  //     this._questionsService.addDataTypeValidator(question, validators);
-  //   }
+    if (question instanceof QuestionTextbox) {
+      this._questionsService.addDataTypeValidator(question, validators);
+    }
 
-  //   if(workOrderDetails.workOrderDetails){
-  //     switch (question.workOrderFieldKey) {
-  //       case WorkOrdersFields.PHONE_NUMBER:
-  //         value = workOrderDetails.workOrderDetails.notificationPhone;
-  //         break;
-  //       case WorkOrdersFields.DESCRIPTION:
-  //         value = workOrderDetails.workOrderDetails.description;
-  //         break;
-  //       case WorkOrdersFields.EMAIL:
-  //         value = workOrderDetails.workOrderDetails.notificationEmail;
-  //         break;
-  //       case WorkOrdersFields.LOCATION:
-  //         value = workOrderDetails.workOrderDetails.facilityKey;
-  //         break;
-  //       case WorkOrdersFields.NOTIFY_BY_EMAIL:
-  //         value = workOrderDetails.workOrderDetails.notify? 'Yes' : 'No';
-  //         break;
-  //       case WorkOrdersFields.TYPE:
-  //         value = workOrderDetails.workOrderDetails.typeKey;
-  //         break;
-  //       case WorkOrdersFields.IMAGE:
-  //         this._inspectionStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment)
-  //         break;
-  //     }
-  //     return new FormControl({ value, disabled:true }, validators);
-  //   }
+    // if(workOrderDetails.workOrderDetails){
+    //   switch (question.workOrderFieldKey) {
+    //     case WorkOrdersFields.PHONE_NUMBER:
+    //       value = workOrderDetails.workOrderDetails.notificationPhone;
+    //       break;
+    //     case WorkOrdersFields.DESCRIPTION:
+    //       value = workOrderDetails.workOrderDetails.description;
+    //       break;
+    //     case WorkOrdersFields.EMAIL:
+    //       value = workOrderDetails.workOrderDetails.notificationEmail;
+    //       break;
+    //     case WorkOrdersFields.LOCATION:
+    //       value = workOrderDetails.workOrderDetails.facilityKey;
+    //       break;
+    //     case WorkOrdersFields.NOTIFY_BY_EMAIL:
+    //       value = workOrderDetails.workOrderDetails.notify? 'Yes' : 'No';
+    //       break;
+    //     case WorkOrdersFields.TYPE:
+    //       value = workOrderDetails.workOrderDetails.typeKey;
+    //       break;
+    //     case WorkOrdersFields.IMAGE:
+    //       // this._inspectionStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment)
+    //       break;
+    //   }
+    //   return new FormControl({ value, disabled:true }, validators);
+    // }
 
-  //   return new FormControl({ value, disabled }, validators);
-  // }
+    return new FormControl({ value, disabled }, validators);
+  }
 
 
-  // next(formValue: any): Observable<any> {
-  //   return of(true);
-  // }
+  next(formValue: any): Observable<any> {
+    return of(true);
+  }
 
   submitInspection(inspectionData: Inspection): Observable<boolean> {
     // const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
