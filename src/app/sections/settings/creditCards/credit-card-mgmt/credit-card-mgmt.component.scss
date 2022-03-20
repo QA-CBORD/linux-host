@@ -7,9 +7,19 @@
     .main_content {
 
         .no-credit-card-block-wrapper {
+            margin-top: 10vh;
             .no-credit-card-block-message{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 20vh;
                 .no-credit-card-block-text{
-                    margin: 15px 27px;
+                    font-family: 'Nunito';
+                    font-size: 15px;
+                    width: 155px;
+                    letter-spacing: 1px;
+                    margin-left: 22px;
+                    line-height: 22px;
                 }
             }
         }
@@ -65,8 +75,8 @@
         }
 
         .info-to-user{
-            margin: 16px 18px 0px 18px;
-            padding: 16px;
+            margin: 16px 16px 0px 16px;
+            padding: 15px;
             font-weight: 400;
             line-height: 21px;
             font-family: 'Nunito Regular';
