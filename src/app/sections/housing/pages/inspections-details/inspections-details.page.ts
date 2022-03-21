@@ -95,7 +95,6 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
     this._initInspectionDetailsObservable();
     this.inspectionDetails$.subscribe(res => this.section = res.sections[0].name)
-    // this._initPagesObservable();
     this._initTermSubscription();
     this.getPagesInspection();
   }
@@ -123,10 +122,6 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }
 
-  // private _initPagesObservable(): void {
-  //   this.pages$ = this._workOrderService.getQuestions(this.inspectionKey);
-  // }
-
   private _initInspectionDetailsObservable(): void {
     this._loadingService.showSpinner();
 
@@ -142,7 +137,6 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           return throwError(error);
         })
       );
-    // this.inspectionDetails$ = this._inspectionStateService.inspectionForm$;
   }
 
   private _initTermSubscription() {
@@ -253,6 +247,6 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   countItemsLeft(inspectionData:Inspection){
-    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey === null).length > 0).length
+    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey===0).length > 0).length
   }
 }

@@ -6,14 +6,6 @@ import { Inspection, FormDefinition, Inspections, InspectionsData } from './insp
   providedIn: 'root',
 })
 export class InspectionsStateService  {
-  // private readonly _defaultState = new Inspection ({
-  // formDefinition: null,
-  // contractElementKey: null,
-  // sections: null,
-  // staffInspectionKey: null,
-  // isSubmitted: null,
-  // residentInspectionKey:null,
-  // });
 
   private readonly _defaultInspectionsListState = new Inspections ({
     residentInspectionKey: null,
@@ -44,12 +36,9 @@ export class InspectionsStateService  {
     numberOfDaysToExpire: 0,
     termId: 0,
     });
-  // public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
   private inspectionList: BehaviorSubject<Inspections[]> = new BehaviorSubject<Inspections[]>([]);
   private inspectionForm: BehaviorSubject<Inspection> = new BehaviorSubject<Inspection>(null);
-  // public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
   public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null)
-  // public selectedFacility$: BehaviorSubject<NamedIdentity> = new BehaviorSubject<NamedIdentity>(null);
   constructor() {
    
   }
@@ -75,14 +64,6 @@ export class InspectionsStateService  {
     this.workOrderImage.next(imageData);
   }
 
-  // setSelectedFacilityTree(value: NamedIdentity) {
-  //   this.selectedFacility$.next(value);
-  // }
-
-  // destroyWorkOrderImage(){
-  //   this.workOrderImage.next(null);
-  // }
-
   get workOrderImage$(){
     return this.workOrderImage;
   }
@@ -90,12 +71,4 @@ export class InspectionsStateService  {
   get inspectionList$(): BehaviorSubject<Inspections[]>{
     return this.inspectionList;
   }
-
-  // getSelectedFacility$(){
-  //   return this.selectedFacility$;
-  // }
-
-  // clearSelectedFacility() {
-  //   this.selectedFacility$.next(null)
-  // }
 }
