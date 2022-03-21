@@ -28,7 +28,7 @@
           </ion-item>
           <ion-item>
             <ion-select [(ngModel)]="item.residentConditionKey" placeholder="select a condition" >
-              <ion-select-option *ngFor="let condition of conditions" [value]="condition.value">{{condition.label}}</ion-select-option>
+              <ion-select-option *ngFor="let condition of conditions" [value]="+condition.value">{{condition.label}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
