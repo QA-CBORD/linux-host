@@ -38,11 +38,11 @@ export class OrderingPage implements OnInit {
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
     this.initContentStrings();
-    this.handleActiveMerchantInRoute();
   }
 
   async ionViewDidEnter() {
     this.globalNav.showNavBar();
+    this.handleActiveMerchantInRoute();
     await this.loadingService.closeSpinner();
   }
 
