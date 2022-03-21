@@ -256,13 +256,23 @@ export class WorkOrdersService {
   sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Observable<boolean> {
     let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
-    formData.append('fileName', imageData.filename);
-    formData.append('comments', 'student submitted');
-    formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
-    formData.append('workOrderKey', `${workOrderId}`);
+    // TODO: left this code here because it'll be used later
+    // formData.append('fileName', imageData.filename);
+    // formData.append('comments', 'student submitted');
+    // formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
+    // formData.append('workOrderKey', `${workOrderId}`);
+    const attachmentFile = imageData.contents.replace(/^data:(.*,)?/, '')
+
+    const body = new ImageData({
+      filename: imageData.filename,
+      comments: 'student submitted attachment',
+      contents: attachmentFile,
+      studentSubmitted: true,
+      workOrderKey: workOrderId,
+    });
 
     return this._housingProxyService
-      .postImage<Response>(workOrderImageURL, formData)
+      .post<Response>(workOrderImageURL, body)
       .pipe(
         map((response: Response) => {
           if (isSuccessful(response.status)) {
