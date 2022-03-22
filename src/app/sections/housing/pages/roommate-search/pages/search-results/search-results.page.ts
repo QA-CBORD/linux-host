@@ -154,6 +154,10 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     let options;
     this.roommateSearchOptions$.subscribe(res => options = res)
     let roommates = this.roommateSelecteds.map(res => {
+      if (res.patronKeyRoommate !== 0) {
+        this._applicationStateService.setSubtractSelectedRoommates();  
+      }
+      
       switch(options.showOptions){
         case 'preferredNameLast':{
           if(res.preferredName){
