@@ -65,16 +65,17 @@ export class CreditCardMgmtComponent implements OnInit {
   }
 
   async removeAccount({ account, display }) {
+    const strings = this.contentStrings as any;
     const onRemoveConfirmed = async () => {
       this.alertCtrl.dismiss();
       this.loadingService.showSpinner();
       try {
         const isSuccess = await this.accountService.removeCreditCardAccount(account);
         this.userAccounts = await this.retrieveAccounts();
-        (isSuccess && this.showMessage('Your credit card has been removed successfully.')) ||
-          this.showMessage('We could not remove your credit card, please try again later.');
+        (isSuccess && this.showMessage(strings.remove_success_msg)) ||
+          this.showMessage(strings.remove_failure_msg);
       } catch (err) {
-        this.showMessage('We could not remove your credit card, please try again later.')
+        this.showMessage(strings.remove_failure_msg)
       } finally {
         this.loadingService.closeSpinner()
       }
@@ -106,11 +107,13 @@ export class CreditCardMgmtComponent implements OnInit {
   }
 
   async addCreditCard() {
+
     try {
+      const strings = this.contentStrings as any;
       const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
       if (success) {
         this.userAccounts = await this.retrieveAccounts();
-        this.showMessage('Your credit card has been added successfully')
+        this.showMessage(strings.added_success_msg)
       } else {
         this.showMessage(errorMessage)
       }

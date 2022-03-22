@@ -32,10 +32,13 @@ export const defaultIdentifyRecipientCs = {
 
 export const defaultCreditCardMgmtCs = {
   screen_title: "Payment Methods",
-  no_card_found: "oops! It seems you don't have any credit card added.",
+  no_card_found: "You don't have any payment methods.",
   add_new_card_btn_text: "Add New Card",
   user_info_text:"Credit card information is handled by USAePay. After adding a new card, you will be redirected back to this screen.",
-  error_loading_cards: "An error occurred while loading your credit card accounts."
+  error_loading_cards: "An error occurred while loading your credit card accounts.",
+  remove_success_msg: "Your credit card has been removed successfully.",
+  remove_failure_msg: "We could not remove your credit card, please try again later.",
+  added_success_msg: "Your credit card has been added successfully."
 }
 
 export const checkingDefaultCs = {
