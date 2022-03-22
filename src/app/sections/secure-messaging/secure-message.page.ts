@@ -1,89 +1,68 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Events, Platform, PopoverController } from '@ionic/angular';
-import { fromEvent, Subscription } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { SecureMessagingService } from './service';
-import { DataCache } from '../../core/utils/data-cache';
 import { LoadingService } from '../../core/service/loading/loading.service';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
 import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from './models';
-import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { UserInfo } from '@core/model/user';
 import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
+
+interface SecureMessageConversationItem {
+  conversation: SecureMessageConversation;
+  avatarBackgroundColor: string;
+  groupInitial: string;
+  groupName: string;
+  description: string;
+}
 
 @Component({
   selector: 'st-secure-message',
   templateUrl: './secure-message.page.html',
   styleUrls: ['./secure-message.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SecureMessagePage implements OnDestroy, OnInit {
-  @ViewChild('chatScroll') chatScroll: any;
-  @ViewChild('chatInput') chatInput: any;
-
-  private readonly largeScreenPixelMin = 576;
+export class SecureMessagePage implements OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   private messagesArray: SecureMessageInfo[] = [];
-
-  private bIsLargeScreen: boolean = false;
-  private bCreateNewConversation: boolean = false;
-  private conversationsArray: SecureMessageConversation[] = [];
   private groupsArray: SecureMessageGroupInfo[] = [];
-  private selectedConversation: SecureMessageConversation = null;
-  private newMessageText: string = '';
+
+  conversationsArray: SecureMessageConversationItem[] = [];
 
   constructor(
     private readonly platform: Platform,
-    private readonly events: Events,
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private readonly nativeProvider: NativeProvider,
     private readonly globalNav: GlobalNavService,
-    private readonly userService: UserFacadeService
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
 
-  ngOnInit() {}
+  ionViewWillEnter() {
+    this.globalNav.showNavBar();
+  }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
 
-  /**
-   * Show grid column with current conversations
-   */
-  get isConversationsColumnAppear(): boolean {
-    return this.bIsLargeScreen === true || (this.selectedConversation == null && !this.bCreateNewConversation);
-  }
-
   private initComponent() {
     /// set subscription to check screen size onAddressChanged
     /// used to adjust ui layout
-    this.bIsLargeScreen = this.platform.width() > this.largeScreenPixelMin;
-    const subscription = fromEvent(window, 'resize').subscribe(this.onWindowResizeHandler.bind(this));
-    this.sourceSubscription.add(subscription);
     this.initializePage();
-  }
-
-  private onWindowResizeHandler() {
-    // const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
-    this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
-    // if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
-    //   /// do nothing for now
-    // }
   }
 
   /**
    * Initial data gathering for messages and groups
    */
   private initializePage() {
-    this.loading.showSpinner({ message: 'Retrieving conversations...'});
+    this.loading.showSpinner({ message: 'Retrieving conversations...' });
     const subscription = this.secureMessagingService
       .getInitialData()
       .pipe(finalize(() => this.loading.closeSpinner()))
@@ -215,15 +194,18 @@ export class SecureMessagePage implements OnDestroy, OnInit {
       }
     }
 
-    this.conversationsArray = tempConversations;
+    this.conversationsArray = tempConversations.map(
+      (conversation): SecureMessageConversationItem => ({
+        avatarBackgroundColor: getRandomColorExtendedPalette(),
+        groupInitial: this.getConversationGroupInitial(conversation),
+        description: this.getConversationDescription(conversation),
+        groupName: this.getConversationGroupName(conversation),
+        conversation,
+      })
+    );
 
     this.sortConversations();
-
-    if (bIsPollingData === false && (this.conversationsArray.length && this.bIsLargeScreen)) {
-      /// select first conversation by default
-      this.conversationsArray[0].selected = true;
-      this.selectedConversation = this.conversationsArray[0];
-    }
+    this.changeDetectorRef.detectChanges();
   }
 
   trackConversationsByFn(index: number, { groupIdValue }: SecureMessageConversation): string {
@@ -233,221 +215,22 @@ export class SecureMessagePage implements OnDestroy, OnInit {
   trackMessagesByFn(index: number, { id }: SecureMessageInfo): string {
     return id;
   }
-
-  /**
-   * Helper method to scroll to bottom of chat
-   */
-  private scrollToBottom() {
-    setTimeout(() => {
-      if (this.chatScroll == null) {
-        return;
-      }
-      try {
-        const scroll = this.chatScroll._scrollContent.nativeElement;
-        scroll.scrollTop = scroll.scrollHeight - scroll.clientHeight;
-      } catch (error) {
-        /// do nothing
-      }
-    }, 100);
-  }
-
-  /**
-   * Show grid column with messages from current selected conversation
-   */
-  showSelectedConversationContentColumn(): boolean {
-    return this.selectedConversation !== null && !this.bCreateNewConversation;
-  }
-
-  /**
-   * Show grid column with groups available to start a conversation
-   */
-  showCreateNewConversationColumn(): boolean {
-    return this.bCreateNewConversation;
-  }
-
-  showToolbar() {
-    return (
-      !this.nativeProvider.isWeb() &&
-      !this.showSelectedConversationContentColumn() &&
-      !this.showCreateNewConversationColumn()
-    );
-  }
-
   /**
    * click listner for Start Conversation
    */
-  onClickStartConversation() {
-    this.bCreateNewConversation = true;
-  }
-
-  /**
-   * click listner for group in 'new conversation' column
-   */
-  onClickMakeNewConversation({ id, name, description }: SecureMessageGroupInfo) {
-    /// check if a conversation with this group already exists
-    let newConversation: SecureMessageConversation = null;
-    for (const convo of this.conversationsArray) {
-      if (convo.groupIdValue === id) {
-        newConversation = convo;
-        break;
-      }
-    }
-
-    if (newConversation === null) {
-      newConversation = {
-        institutionId: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
-        groupName: name,
-        groupIdValue: id,
-        groupDescription: description,
-        myIdValue: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
-        messages: [],
-        selected: true,
-      };
-    }
-
-    this.setSelectedConversation(newConversation);
-    this.bCreateNewConversation = false;
-  }
+  onClickStartConversation() {}
 
   /**
    * click listener to selected current conversation to display
    */
-  onClickConversation(conversation: SecureMessageConversation) {
-    this.bCreateNewConversation = false;
-    if (this.selectedConversation != null && this.selectedConversation.groupIdValue === conversation.groupIdValue) {
-      return;
-    }
-    this.setSelectedConversation(conversation);
-    this.scrollToBottom();
-  }
-
-  /**
-   * click listener to send message
-   */
-  onClickSendButton() {
-    if (this.newMessageText && this.newMessageText.trim().length) {
-      this.userService.getUserData$().subscribe(
-        userInfo => {
-          this.sendMessage(this.createNewMessageSendBody(this.newMessageText, userInfo));
-        },
-        () => {
-          const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
-          this.modalHandler(error, this.sendMessage.bind(this, ''));
-        }
-      );
-    }
-  }
-
-  /**
-   * click listener for backing out of conversation (small UI only)
-   */
-  onClickBackConversation() {
-    this.clearSelectedConversation();
-  }
-
-  /**
-   * click listener for backing out of create conversation (small UI only)
-   */
-  onClickBackNewConversation() {
-    this.bCreateNewConversation = false;
-  }
-
-  /**
-   * Create message body object for sending a new message to a group
-   * @param messageBody body of new message
-   */
-  private createNewMessageSendBody(messageBody: string, userInfo: UserInfo): SecureMessageSendBody {
-    return {
-      institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
-      sender: {
-        type: 'patron',
-        id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
-        id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
-        name: userInfo.firstName + ' ' + userInfo.lastName,
-      },
-      recipient: {
-        type: 'group',
-        id_value: this.selectedConversation.groupIdValue,
-        name: this.selectedConversation.groupName,
-      },
-      description: '',
-      body: messageBody,
-      importance: null,
-    };
-  }
-
-  /**
-   * Send message body to group
-   * @param message message body object to send for new message
-   */
-  private sendMessage(message: SecureMessageSendBody) {
-    this.newMessageText = null;
-
-    const subscription = this.secureMessagingService.sendSecureMessage(message).subscribe(
-      () => this.addMessageToLocalConversation(message),
-      () => {
-        const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
-        this.modalHandler(error, this.sendMessage.bind(this, message));
-      }
-    );
-
-    this.sourceSubscription.add(subscription);
-  }
-
-  /**
-   * Add sent message to local conversation
-   */
-  private addMessageToLocalConversation({ body, sender }: SecureMessageSendBody) {
-    const message: SecureMessageInfo = {
-      body,
-      created_date: new Date().toLocaleString(),
-      description: '',
-      id: null,
-      importance: null,
-      institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
-      read_date: null,
-      recipient: {
-        created_date: new Date().toISOString(),
-        id: '',
-        type: 'group',
-        id_field: null,
-        id_value: this.selectedConversation.groupIdValue,
-        name: this.selectedConversation.groupName,
-        aux_user_id: null,
-        version: 1,
-      },
-      replied_message_id: 'None',
-      requires_read_receipt: null,
-      sender: {
-        created_date: new Date().toISOString(),
-        id: '',
-        type: 'patron',
-        id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
-        id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
-        name: sender.name,
-        aux_user_id: null,
-        version: 1,
-      },
-      sent_date: new Date().toLocaleString(),
-      state: null,
-      ttl: null,
-      version: 1,
-    };
-
-    this.newMessageText = null;
-    this.selectedConversation.messages.push(message);
-    if (this.conversationsArray.indexOf(this.selectedConversation) < 0) {
-      this.conversationsArray.push(this.selectedConversation);
-    }
-    this.sortConversations();
-  }
+  onClickConversation(conversation: SecureMessageConversation) {}
 
   /**
    * Sort conversations for display
    */
   private sortConversations() {
     /// sort conversations by most current
-    this.conversationsArray.sort((a, b) => {
+    this.conversationsArray.sort(({ conversation: a }, { conversation: b }) => {
       if (a.messages === null) {
         return 1;
       }
@@ -478,36 +261,6 @@ export class SecureMessagePage implements OnDestroy, OnInit {
       return 0;
     });
   }
-
-  /**
-   * Heler method to set selected conversation
-   * @param conversation conversation to set as selected
-   */
-  private setSelectedConversation(conversation: SecureMessageConversation) {
-    this.selectedConversation = conversation;
-    for (const convo of this.conversationsArray) {
-      convo.selected = false;
-    }
-    this.selectedConversation.selected = true;
-  }
-
-  /**
-   * Helper method to clear selected conversation
-   */
-  private clearSelectedConversation() {
-    if (this.selectedConversation.messages === null || this.selectedConversation.messages.length === 0) {
-      for (const convo of this.conversationsArray) {
-        if (convo.groupIdValue === this.selectedConversation.groupIdValue) {
-          this.conversationsArray.splice(this.conversationsArray.indexOf(convo), 1);
-        }
-      }
-    }
-    this.selectedConversation = null;
-    for (const convo of this.conversationsArray) {
-      convo.selected = false;
-    }
-  }
-
   /**
    * UI helper method to set group initial
    * @param conversation conversation to get data for ui
@@ -636,19 +389,5 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     });
 
     return await popover.present();
-  }
-
-  checkIfOpen(): boolean {
-    this.globalNav.hideNavBar();
-    return true;
-  }
-
-  isMainPage() {
-    this.globalNav.showNavBar();
-    return true;
-  }
-
-  getAvatarBackgroundColor() {
-    return getRandomColorExtendedPalette();
   }
 }
