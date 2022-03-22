@@ -49,9 +49,9 @@ export class TileConfigFacadeService extends ServiceStateFacade {
 
 
     return this.makeRequestWithUpdatingStateHandler(configData, this.storage).pipe(
-      map(([config, settings]) => {
+      switchMap(async([config, settings]) => {
         const updatedBaseConfigs = this.dashboardService.getUpdatedTilesBaseConfig(settings);
-        const currentProfile: APP_PROFILES = this.profileService.determineCurrentProfile(settings.list); 
+        const currentProfile: APP_PROFILES = await this.profileService.determineCurrentProfile(settings.list); 
         const allowedConfigFromBE = updatedBaseConfigs.filter(({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile));
 
         return this.isValidConfig(config)

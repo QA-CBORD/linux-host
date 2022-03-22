@@ -67,8 +67,8 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     const isGuestUserObs = this.authService.isGuestUser();
     const cachedSettingsObs = this.settingsFacadeService.getCachedSettings(); 
     return zip(cachedSettingsObs, isGuestUserObs, from(GuestSettingObs)).pipe(
-      map(([settingInfo, guestUser, setting]) => {
-        const currentProfile = this.profileService.determineCurrentProfile(settingInfo);
+      switchMap(async ([settingInfo, guestUser, setting]) => {
+        const currentProfile = await this.profileService.determineCurrentProfile(settingInfo);
         return this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile))
       })
     );
