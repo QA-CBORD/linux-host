@@ -11,6 +11,8 @@ import * as Globals from '../../app.global';
 import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from './models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
+import { Router } from '@angular/router';
+import { PATRON_NAVIGATION } from '../../app.global';
 
 interface SecureMessageConversationItem {
   conversation: SecureMessageConversation;
@@ -35,7 +37,8 @@ export class SecureMessagePage implements OnDestroy {
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly router: Router
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
     this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(
@@ -91,18 +94,20 @@ export class SecureMessagePage implements OnDestroy {
     return groupIdValue;
   }
 
-  trackMessagesByFn(index: number, { id }: SecureMessageInfo): string {
-    return id;
-  }
   /**
    * click listner for Start Conversation
    */
-  onClickStartConversation() {}
+  onClickStartConversation() {
+    this.router.navigate([PATRON_NAVIGATION.secureMessage, 'conversation']);
+  }
 
   /**
    * click listener to selected current conversation to display
    */
-  onClickConversation(conversation: SecureMessageConversation) {}
+  onClickConversation(conversation: SecureMessageConversation) {
+    this.secureMessagingService.setSelectedConversation(conversation);
+    this.router.navigate([PATRON_NAVIGATION.secureMessage, 'conversation']);
+  }
 
   /**
    * UI helper method to set group initial
@@ -180,35 +185,6 @@ export class SecureMessagePage implements OnDestroy {
       isNextMessageFromGroup() &&
       isMoreThanOneMinuteBetweenMessages()
     );
-  }
-
-  /**
-   * UI Helper method to determine if the sent date should be shown
-   * (used to group messages visually)
-   * @param conversation conversation data
-   * @param messageIndex index of current message
-   * @param messageType type of message (group or patron)
-   */
-  messageShowDate({ messages }: SecureMessageConversation, messageIndex: number, messageType: string): boolean {
-    /// next message from group as well:
-    const isNextMessageFromGroup = (): boolean => {
-      //was this message sent within 1 min of the next message:
-      const isMessageSentWithinMin: boolean =
-        new Date(messages[messageIndex + 1].sent_date).getTime() -
-          new Date(messages[messageIndex].sent_date).getTime() <
-        60000;
-
-      return messages[messageIndex + 1].sender.type === messageType && isMessageSentWithinMin;
-    };
-    /// first message
-    if (messageIndex === 0) {
-      /// more than one message
-      return !(messages.length > 1 && isNextMessageFromGroup());
-    } else {
-      /// not first message
-      /// more messages
-      return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup());
-    }
   }
 
   async modalHandler(res, cb) {

@@ -35,7 +35,7 @@
           lines="none"
           detail="false"
           *ngFor="let conversationItem of conversations$ | async; trackBy: trackConversationsByFn"
-          (click)="onClickConversation(conversationItem)"
+          (click)="onClickConversation(conversationItem.conversation)"
           class="conversations-container__group"
         >
           <ion-avatar

@@ -24,7 +24,17 @@ export class SecureMessagingService {
   private messagesArray: SecureMessageInfo[] = [];
   private conversationsArraySubject: Subject<SecureMessageConversation[]> = new Subject();
   public conversationsArray$: Observable<SecureMessageConversation[]> = this.conversationsArraySubject.asObservable();
-  private groupsArray: SecureMessageGroupInfo[] = [];
+  private conversationsArray: SecureMessageConversation[] = [];
+  private _groupsArray: SecureMessageGroupInfo[] = [];
+  private _selectedConversation: SecureMessageConversation = null;
+
+  get selectedConversation() {
+    return this._selectedConversation;
+  }
+
+  get groupsArray() {
+    return this._groupsArray;
+  }
 
   constructor(private authService: AuthApiService, private secureMessagingService: SecureMessagingApiService) {}
 
@@ -40,7 +50,7 @@ export class SecureMessagingService {
         return zip(this.getSecureMessagesGroups(), this.getSecureMessages());
       }),
       tap(([smGroupArray, smMessageArray]) => {
-        this.groupsArray = smGroupArray;
+        this._groupsArray = smGroupArray;
         this.messagesArray = smMessageArray;
         this.createConversationsFromResponse();
       })
@@ -67,8 +77,8 @@ export class SecureMessagingService {
       switchMap(() => zip(this.getSecureMessagesGroups(), this.getSecureMessages())),
       tap(([smGroupArray, smMessageArray]) => {
         /// if there are new groups, update the list
-        if (this.messagesArray.length !== smGroupArray.length) {
-          this.messagesArray = smMessageArray;
+        if (this._groupsArray.length !== smGroupArray.length) {
+          this._groupsArray = smGroupArray;
         }
         /// if there are new messages, update the conversations
         if (this.messagesArray.length !== smMessageArray.length) {
@@ -94,7 +104,7 @@ export class SecureMessagingService {
 
   private sortGroups() {
     /// sort groups alphabetically
-    this.groupsArray.sort((a, b) => {
+    this._groupsArray.sort((a, b) => {
       if (a.name === null) {
         return -1;
       }
@@ -159,7 +169,7 @@ export class SecureMessagingService {
         newGroupDescription = message.description;
 
         /// try to get proper group info
-        for (const group of this.groupsArray) {
+        for (const group of this._groupsArray) {
           if (group.id === newGroupId) {
             newGroupName = group.name;
             newGroupDescription = group.description;
@@ -181,7 +191,62 @@ export class SecureMessagingService {
       }
     }
     tempConversations.sort(this.sortConversations);
-    this.conversationsArraySubject.next(tempConversations);
+    this.conversationsArray = tempConversations;
+    this.conversationsArraySubject.next(this.conversationsArray);
+  }
+
+  startConversation({ id, name, description }: SecureMessageGroupInfo) {
+    /// check if a conversation with this group already exists
+    let conversation: SecureMessageConversation = null;
+    for (const convo of this.conversationsArray) {
+      if (convo.groupIdValue === id) {
+        conversation = convo;
+        break;
+      }
+    }
+
+    if (conversation === null) {
+      conversation = {
+        institutionId: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
+        groupName: name,
+        groupIdValue: id,
+        groupDescription: description,
+        myIdValue: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
+        messages: [],
+        selected: true,
+      };
+    }
+
+    this.setSelectedConversation(conversation);
+  }
+
+  /**
+   * Heler method to set selected conversation
+   * @param conversation conversation to set as selected
+   */
+  setSelectedConversation(conversation: SecureMessageConversation) {
+    this._selectedConversation = conversation;
+    for (const convo of this.conversationsArray) {
+      convo.selected = false;
+    }
+    this._selectedConversation.selected = true;
+  }
+
+  /**
+   * Helper method to clear selected conversation
+   */
+  clearSelectedConversation() {
+    if (this._selectedConversation?.messages === null || this._selectedConversation?.messages.length === 0) {
+      for (const convo of this.conversationsArray) {
+        if (convo.groupIdValue === this._selectedConversation.groupIdValue) {
+          this.conversationsArray.splice(this.conversationsArray.indexOf(convo), 1);
+        }
+      }
+    }
+    this._selectedConversation = null;
+    for (const convo of this.conversationsArray) {
+      convo.selected = false;
+    }
   }
 
   /**
