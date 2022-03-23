@@ -3,7 +3,8 @@ import { SecureMessagingService } from './services/secure-messaging.service';
 import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { take, finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
+import { generateColorHslFromText } from '@core/utils/colors-helper';
+import { getConversationGroupInitial } from '@core/utils/conversations-helper';
 
 @Component({
   selector: 'st-conversations-tile',
@@ -16,7 +17,7 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
   private groupsArray: any;
   private readonly sourceSub: Subscription = new Subscription();
 
-  lastTwoMessagesArray: SecureMessageInfo[] = [];
+  lastTwoMessagesArray: SecureMessageConversation[] = [];
   showTextAvatar: boolean = true;
   conversationDisplayedAmount: number = 2;
   conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
@@ -35,9 +36,8 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
     this.sourceSub.unsubscribe();
   }
 
-  getConversationGroupInitial(groupName: string): string {
-    return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
-  }
+  getAvatarBackgroundColor = generateColorHslFromText;
+  getConversationGroupInitial = getConversationGroupInitial;
 
   initializePage() {
     this.secureMessagingService
@@ -74,7 +74,6 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
 
     /// create 'conversations' out of message array
     for (const message of this.messagesArray) {
-
       let bNewConversation = true;
 
       /// add to existing conversation if it exists
@@ -131,10 +130,8 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
         tempConversations.push(conversation);
       }
     }
-    this.lastTwoMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
-  }
-
-  getAvatarBackgroundColor() {
-    return getRandomColorExtendedPalette();
+    this.lastTwoMessagesArray = tempConversations
+      .map(conversation => ({ ...conversation, messages: [conversation.messages.pop()] }))
+      .slice(0, 2);
   }
 }

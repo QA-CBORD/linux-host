@@ -10,7 +10,6 @@ import {
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
 import { Platform, PopoverController } from '@ionic/angular';
 import {
   SecureMessageInfo,
@@ -22,9 +21,14 @@ import {
 import { SecureMessagePopoverComponent } from '@sections/secure-messaging/secure-message-popover';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { UserInfo } from '@core/model/user';
-import { Subscription } from 'rxjs';
 import * as Globals from '../../../../app.global';
 import { first } from 'rxjs/operators';
+import { generateColorHslFromText } from '@core/utils/colors-helper';
+import {
+  getConversationDescription,
+  getConversationGroupInitial,
+  getConversationGroupName,
+} from '@core/utils/conversations-helper';
 
 @Component({
   selector: 'st-segure-message-chat.page',
@@ -216,42 +220,10 @@ export class SegureMessageChatPageComponent implements OnDestroy {
     this.changeDetectorRef.detectChanges();
     this.scrollToBottom();
   }
-
-  /**
-   * UI helper method to set group initial
-   * @param conversation conversation to get data for ui
-   */
-  getConversationGroupInitial({ groupName }: SecureMessageConversation): string {
-    return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
-  }
-
-  /**
-   * UI helper method to set group name
-   * @param conversation conversation to get data for ui
-   */
-  getConversationGroupName({ groupName }: SecureMessageConversation): string {
-    return groupName == null ? 'Conversation' : groupName;
-  }
-
-  /**
-   * UI helper method to set description text for conversation
-   * (this gets the most recently sent message)
-   * @param conversation conversation to get data for ui
-   */
-  getConversationDescription({ messages }: SecureMessageConversation): string {
-    const lastIMessage: SecureMessageInfo = messages[messages.length - 1];
-    const frontText: string = lastIMessage.sender.type === 'patron' ? 'You: ' : '';
-
-    return frontText + lastIMessage.body;
-  }
-
-  /**
-   * UI helper method to set group initial for chat
-   * @param group group to get data for ui
-   */
-  getGroupInitial({ name }: SecureMessageGroupInfo): string {
-    return name == null || name.length < 1 ? 'U' : name[0];
-  }
+  getConversationGroupInitial = getConversationGroupInitial;
+  getConversationGroupName = getConversationGroupName;
+  getConversationDescription = getConversationDescription;
+  getAvatarBackgroundColor = generateColorHslFromText;
 
   /**
    * UI helper method to set group name
@@ -345,14 +317,5 @@ export class SegureMessageChatPageComponent implements OnDestroy {
     });
 
     return await popover.present();
-  }
-
-  checkIfOpen(): boolean {
-    this.globalNav.hideNavBar();
-    return true;
-  }
-
-  getAvatarBackgroundColor() {
-    return getRandomColorExtendedPalette();
   }
 }

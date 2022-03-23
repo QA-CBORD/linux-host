@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { distinctUntilChanged, finalize, first, map, tap } from 'rxjs/operators';
@@ -8,11 +8,16 @@ import { LoadingService } from '../../core/service/loading/loading.service';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
-import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from './models';
+import { SecureMessageConversation } from './models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../app.global';
+import {
+  getConversationDescription,
+  getConversationGroupInitial,
+  getConversationGroupName,
+} from '@core/utils/conversations-helper';
+import { generateColorHslFromText } from '@core/utils/colors-helper';
 
 interface SecureMessageConversationItem {
   conversation: SecureMessageConversation;
@@ -44,13 +49,16 @@ export class SecureMessagePage implements OnDestroy {
     this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(
       distinctUntilChanged(),
       map(conversations =>
-        conversations.map(conversation => ({
-          avatarBackgroundColor: getRandomColorExtendedPalette(),
-          groupInitial: this.getConversationGroupInitial(conversation),
-          description: this.getConversationDescription(conversation),
-          groupName: this.getConversationGroupName(conversation),
-          conversation,
-        }))
+        conversations.map(conversation => {
+          const groupName = getConversationGroupName(conversation);
+          return {
+            avatarBackgroundColor: generateColorHslFromText(groupName),
+            groupInitial: getConversationGroupInitial(groupName),
+            description: getConversationDescription(conversation),
+            groupName,
+            conversation,
+          };
+        })
       )
     );
   }
@@ -95,9 +103,9 @@ export class SecureMessagePage implements OnDestroy {
   }
 
   /**
-   * click listner for Start Conversation
+   * click listener for Start Conversation
    */
-  onClickStartConversation() {
+  startConversation() {
     this.router.navigate([PATRON_NAVIGATION.secureMessage, 'conversation']);
   }
 
@@ -106,59 +114,7 @@ export class SecureMessagePage implements OnDestroy {
    */
   onClickConversation(conversation: SecureMessageConversation) {
     this.secureMessagingService.setSelectedConversation(conversation);
-    this.router.navigate([PATRON_NAVIGATION.secureMessage, 'conversation']);
-  }
-
-  /**
-   * UI helper method to set group initial
-   * @param conversation conversation to get data for ui
-   */
-  getConversationGroupInitial({ groupName }: SecureMessageConversation): string {
-    return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
-  }
-
-  /**
-   * UI helper method to set group name
-   * @param conversation conversation to get data for ui
-   */
-  getConversationGroupName({ groupName }: SecureMessageConversation): string {
-    return groupName == null ? 'Conversation' : groupName;
-  }
-
-  /**
-   * UI helper method to set description text for conversation
-   * (this gets the most recently sent message)
-   * @param conversation conversation to get data for ui
-   */
-  getConversationDescription({ messages }: SecureMessageConversation): string {
-    const lastIMessage: SecureMessageInfo = messages[messages.length - 1];
-    const frontText: string = lastIMessage.sender.type === 'patron' ? 'You: ' : '';
-
-    return frontText + lastIMessage.body;
-  }
-
-  /**
-   * UI helper method to set group initial for chat
-   * @param group group to get data for ui
-   */
-  getGroupInitial({ name }: SecureMessageGroupInfo): string {
-    return name == null || name.length < 1 ? 'U' : name[0];
-  }
-
-  /**
-   * UI helper method to set group name
-   * @param group conversation to get data for ui
-   */
-  getGroupName({ name }: SecureMessageGroupInfo): string {
-    return name == null ? 'Name Unknown' : name;
-  }
-
-  /**
-   * UI helper method to set group description
-   * @param group group to get data for ui
-   */
-  getGroupDescription({ description }: SecureMessageGroupInfo): string {
-    return description == null ? '' : description;
+    this.startConversation();
   }
 
   /**
