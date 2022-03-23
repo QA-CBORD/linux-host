@@ -117,13 +117,21 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initGetImage() {
-    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => {
+    const getImageSub = this._workOrderStateService.workOrderImage$.subscribe(res => {
       if (!!(res && res.contents)) {
-        this.image$.next(res.contents)
+        const extension = res.filename.split('.').pop();
+        let imageContent = 
+          res.contents.startsWith('data:image') 
+            ? res.contents 
+            : `data:image/${extension};base64,${res.contents}`;
+            
+        this.image$.next(imageContent);
       } else {
-        this.image$.next(null)
+        this.image$.next(null);
       }
-    }));
+    });
+
+    this.subscriptions.add(getImageSub);
   }
 
   async presentPhotoTypeSelection() {
@@ -184,7 +192,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       preserveAspectRatio: true,
       direction: CameraDirection.Rear,
       resultType: CameraResultType.Uri,
-      source: CameraSource.Photos,
+      source: cameraSource,
       saveToGallery: true,
     });
     

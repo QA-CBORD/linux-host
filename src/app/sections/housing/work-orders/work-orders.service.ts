@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
-import { of, Observable } from "rxjs";
+import { of, Observable, forkJoin } from "rxjs";
 import { catchError, map, withLatestFrom, tap, switchMap } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
@@ -12,8 +12,7 @@ import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
-import { HttpParams } from "@angular/common/http";
-import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields, LocalFile } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
@@ -40,19 +39,6 @@ export class WorkOrdersService {
 
   getWorkOrders(): Observable<WorkOrder> {
     return of(this.workOrders);
-  }
-
-  removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
-    let urlRemove = this.workOrderListUrl + `/patron`;
-    const queryParams = new HttpParams().set('patronWaitingListKey', `${patronWaitingListKey}`);
-    return this._proxy.delete(urlRemove, queryParams).pipe(map((response: Response) => {
-      if (isSuccessful(response.status)) {
-        return true;
-      } else {
-        throw new Error(response.status.message);
-      }
-    }),
-      catchError(_ => of(false)))
   }
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
@@ -136,7 +122,6 @@ export class WorkOrdersService {
   ): FormControl {
     let value: any = storedValue;
     let disabled: boolean = false;
-    let image : ImageData | null;
 
     const validators: ValidatorFn[] = [];
 
@@ -196,8 +181,6 @@ export class WorkOrdersService {
     let notifyByEmail: boolean;
     let type,location = 0;
     let image : ImageData | null;
-    let ImageFormData: FormData;
-    let isImageUpload: boolean;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
@@ -217,8 +200,6 @@ export class WorkOrdersService {
             type = resultFormValue;
             break;
         }
-      
-
     })
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null);
@@ -238,6 +219,9 @@ export class WorkOrdersService {
       requestedDate:'',
     });
 
+    // const prom = this._housingProxyService.post<Response>(this.workOrderListUrl, body).toPromise();
+    // prom.then().catch();
+
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(err=> of(false)),
       switchMap((response: Response) => 
@@ -256,11 +240,6 @@ export class WorkOrdersService {
   sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Observable<boolean> {
     let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
-    // TODO: left this code here because it'll be used later
-    // formData.append('fileName', imageData.filename);
-    // formData.append('comments', 'student submitted');
-    // formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
-    // formData.append('workOrderKey', `${workOrderId}`);
     const attachmentFile = imageData.contents.replace(/^data:(.*,)?/, '')
 
     const body = new ImageData({
