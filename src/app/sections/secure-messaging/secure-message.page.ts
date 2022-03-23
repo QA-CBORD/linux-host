@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { distinctUntilChanged, finalize, first, map, tap } from 'rxjs/operators';
 
 import { SecureMessagingService } from './service';
 import { LoadingService } from '../../core/service/loading/loading.service';
@@ -24,24 +24,32 @@ interface SecureMessageConversationItem {
   selector: 'st-secure-message',
   templateUrl: './secure-message.page.html',
   styleUrls: ['./secure-message.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SecureMessagePage implements OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
-  private messagesArray: SecureMessageInfo[] = [];
-  private groupsArray: SecureMessageGroupInfo[] = [];
 
-  conversationsArray: SecureMessageConversationItem[] = [];
+  conversations$: Observable<SecureMessageConversationItem[]>;
 
   constructor(
     private readonly platform: Platform,
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private readonly globalNav: GlobalNavService,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly globalNav: GlobalNavService
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
+    this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(
+      distinctUntilChanged(),
+      map(conversations =>
+        conversations.map(conversation => ({
+          avatarBackgroundColor: getRandomColorExtendedPalette(),
+          groupInitial: this.getConversationGroupInitial(conversation),
+          description: this.getConversationDescription(conversation),
+          groupName: this.getConversationGroupName(conversation),
+          conversation,
+        }))
+      )
+    );
   }
 
   ionViewWillEnter() {
@@ -63,149 +71,20 @@ export class SecureMessagePage implements OnDestroy {
    */
   private initializePage() {
     this.loading.showSpinner({ message: 'Retrieving conversations...' });
-    const subscription = this.secureMessagingService
+    // Perform initialization, trigger first emission
+    // and subscribe to fetch interval
+    this.secureMessagingService
       .getInitialData()
-      .pipe(finalize(() => this.loading.closeSpinner()))
+      .pipe(
+        first(),
+        finalize(() => this.loading.closeSpinner())
+      )
       .subscribe(
-        ([smGroupArray, smMessageArray]) => {
-          this.groupsArray = smGroupArray;
-          this.messagesArray = smMessageArray;
-          this.createConversationsFromResponse(false);
-          this.pollForData();
-        },
+        () => this.sourceSubscription.add(this.secureMessagingService.pollForDataInterval().subscribe()),
         error => {
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
         }
       );
-
-    this.sourceSubscription.add(subscription);
-  }
-
-  /**
-   * Poll for updated messages and groups
-   */
-  private pollForData() {
-    const subscription = this.secureMessagingService.pollForData().subscribe(
-      ([smGroupArray, smMessageArray]) => {
-        /// if there are new groups, update the list
-        if (this.messagesArray.length !== smGroupArray.length) {
-          this.messagesArray = smMessageArray;
-        }
-        /// if there are new messages, update the conversations
-        if (this.messagesArray.length !== smMessageArray.length) {
-          this.messagesArray = smMessageArray;
-          this.createConversationsFromResponse(true);
-        }
-      },
-      error => {
-        /// only deal with connection error ?
-      }
-    );
-
-    this.sourceSubscription.add(subscription);
-  }
-
-  private sortGroups() {
-    /// sort groups alphabetically
-    this.groupsArray.sort((a, b) => {
-      if (a.name === null) {
-        return -1;
-      }
-      if (b.name === null) {
-        return 1;
-      }
-      if (a.name.toLowerCase() < b.name.toLowerCase()) {
-        return -1;
-      }
-      if (a.name.toLowerCase() > b.name.toLowerCase()) {
-        return 1;
-      }
-      return 0;
-    });
-  }
-
-  /**
-   * Handle messages and groups response and make conversations to display
-   * @param bIsPollingData Is this update from polled data
-   */
-  private createConversationsFromResponse(bIsPollingData: boolean) {
-    const tempConversations: SecureMessageConversation[] = [];
-
-    this.sortGroups();
-
-    /// create 'conversations' out of message array
-    for (const message of this.messagesArray) {
-      message.sent_date = new Date(message.sent_date).toString();
-
-      let bNewConversation = true;
-
-      /// add to existing conversation if it exists
-      for (const convo of tempConversations) {
-        if (!bNewConversation) {
-          break;
-        }
-
-        if (
-          convo.groupIdValue &&
-          convo.groupIdValue.length &&
-          (convo.groupIdValue === message.sender.id_value || convo.groupIdValue === message.recipient.id_value)
-        ) {
-          convo.messages.push(message);
-          bNewConversation = false;
-        }
-      }
-
-      /// create new conversation
-      if (bNewConversation) {
-        let newGroupName = '';
-        let newGroupId = '';
-        let newGroupDescription = '';
-
-        if (message.sender.type === 'group') {
-          newGroupName = message.sender.name;
-          newGroupId = message.sender.id_value;
-        } else {
-          newGroupName = message.recipient.name;
-          newGroupId = message.recipient.id_value;
-        }
-
-        newGroupDescription = message.description;
-
-        /// try to get proper group info
-        for (const group of this.groupsArray) {
-          if (group.id === newGroupId) {
-            newGroupName = group.name;
-            newGroupDescription = group.description;
-          }
-        }
-
-        const conversation: SecureMessageConversation = {
-          institutionId: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
-          groupName: newGroupName,
-          groupIdValue: newGroupId,
-          groupDescription: newGroupDescription,
-          myIdValue: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
-          messages: [],
-          selected: false,
-        };
-
-        conversation.messages.push(message);
-        tempConversations.push(conversation);
-      }
-    }
-
-    this.conversationsArray = tempConversations.map(
-      (conversation): SecureMessageConversationItem => ({
-        avatarBackgroundColor: getRandomColorExtendedPalette(),
-        groupInitial: this.getConversationGroupInitial(conversation),
-        description: this.getConversationDescription(conversation),
-        groupName: this.getConversationGroupName(conversation),
-        conversation,
-      })
-    );
-
-    this.sortConversations();
-    this.changeDetectorRef.detectChanges();
   }
 
   trackConversationsByFn(index: number, { groupIdValue }: SecureMessageConversation): string {
@@ -225,42 +104,6 @@ export class SecureMessagePage implements OnDestroy {
    */
   onClickConversation(conversation: SecureMessageConversation) {}
 
-  /**
-   * Sort conversations for display
-   */
-  private sortConversations() {
-    /// sort conversations by most current
-    this.conversationsArray.sort(({ conversation: a }, { conversation: b }) => {
-      if (a.messages === null) {
-        return 1;
-      }
-      if (b.messages === null) {
-        return -1;
-      }
-      if (a.messages.length === 0) {
-        return 1;
-      }
-      if (b.messages.length === 0) {
-        return -1;
-      }
-
-      if (
-        new Date(a.messages[a.messages.length - 1].sent_date).getTime() <
-        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
-      ) {
-        return 1;
-      }
-
-      if (
-        new Date(a.messages[a.messages.length - 1].sent_date).getTime() >
-        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
-      ) {
-        return -1;
-      }
-
-      return 0;
-    });
-  }
   /**
    * UI helper method to set group initial
    * @param conversation conversation to get data for ui
