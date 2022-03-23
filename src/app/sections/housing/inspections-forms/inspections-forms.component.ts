@@ -61,9 +61,9 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   }
 
   getInspectionStatus(value: Inspections): string{
-    if( value.isSubmitted == false && value.residentInspectionKey != null ){
-      return 'INCOMPLETE'
-    } else if(value.residentInspectionKey == null && value.residentInspectionKey){
+    if( value.isSubmitted == false && value.residentInspectionKey ){
+      return 'IN PROGRESS'
+    } else if(value.residentInspectionKey === null && value.isSubmitted == false){
       return 'NEW'
     }else {
       return 'COMPLETED'

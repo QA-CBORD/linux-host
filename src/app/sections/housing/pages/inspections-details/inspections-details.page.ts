@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DoCheck,
   OnDestroy,
   OnInit,
   QueryList,
@@ -94,9 +95,6 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.checkIn = this._route.snapshot.paramMap.get('checkIn')=== 'true'? true: false;
     this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
     this._initInspectionDetailsObservable();
-    this.inspectionDetails$.subscribe(res => this.section = res.sections[0].name)
-    this._initTermSubscription();
-    this.getPagesInspection();
   }
 
   private getPagesInspection(){
@@ -128,6 +126,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey,this.residentInspectionKey,this.contractElementKey,this.checkIn)
       .pipe(
         tap((inspectionDetails: Inspection) => {
+          this.getPagesInspection();
+          this.section = inspectionDetails.sections[0].name;
           this.isSubmitted = false; 
           this._loadingService.closeSpinner();
           return inspectionDetails;
@@ -139,13 +139,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
       );
   }
 
-  private _initTermSubscription() {
-    const termSubs = this._termsService.termId$.subscribe(termId => this.termKey = termId);
-    this.subscriptions.add(termSubs);
-  }
-
-  private async _update(inspectionData:Inspection): Promise<void> {
-    inspectionData.residentInspectionKey = null;
+  async save(inspectionData:Inspection): Promise<void> {
+    // inspectionData.residentInspectionKey = null;
     const alert = await this._alertController.create({
       header: 'Confirm',
       message: `Are you sure you want to save this Inspection?`,
@@ -192,12 +187,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  save(inspectionData:Inspection){
-    this._update(inspectionData);
-  }
-
   async submitInspection(inspectionData:Inspection){
-    inspectionData.residentInspectionKey = null;
     inspectionData.isSubmitted = true;
     const alert = await this._alertController.create({
       header: 'Confirm',

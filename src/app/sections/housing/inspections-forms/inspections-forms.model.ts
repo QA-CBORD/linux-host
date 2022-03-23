@@ -97,6 +97,7 @@ export interface InspectionOptions {
   sections: InspectionSections[]
   staffInspectionKey: number;
   termKey: number;
+  checkIn: boolean;
 }
 export interface RequirementsOptions {
   formKey: number;
@@ -126,6 +127,7 @@ export class Inspection implements InspectionOptions {
   sections: InspectionSections[];
   staffInspectionKey: number;
   termKey: number;
+  checkIn: boolean;
   constructor(options: InspectionOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as InspectionOptions;
@@ -138,6 +140,7 @@ export class Inspection implements InspectionOptions {
     this.sections = Array.isArray(options.sections)
       ? options.sections.map((details: any) => new InspectionSections(details)) : [];
     this.staffInspectionKey = Number(options.staffInspectionKey);
+    this.checkIn = Boolean(options.checkIn);
   }
 }
 

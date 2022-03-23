@@ -35,6 +35,20 @@ export class InspectionService {
   }
 
   submitInspection(inspectionData: Inspection): Observable<boolean> {
+    if(inspectionData.residentInspectionKey){
+      return this._housingProxyService.putInspection(this.inspectiontUrl, inspectionData).pipe(
+        map((response: Response) => {
+          if (isSuccessful(response.status)) {
+            return true;
+          } else {
+            throw new Error(response.status.message);
+          }
+        }
+        ),
+        catchError(_ => of(false))
+      );
+    }
+
     return this._housingProxyService.post<Response>(this.inspectiontUrl, inspectionData).pipe(
       map((response: Response) => {
         if (isSuccessful(response.status)) {
