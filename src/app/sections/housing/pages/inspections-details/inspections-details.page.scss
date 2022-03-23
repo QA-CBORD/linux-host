@@ -93,3 +93,28 @@ ion-segment {
 }
 
 
+.textarea {
+  &__wrapper {
+    position: relative;
+  }
+
+  &__control {
+    width: 100%;
+    outline: none;
+    border: 1px solid $color-light-gray;
+    border-radius: 8px;
+    padding: 0 0 0 10px;
+  }
+}
+
+.comments{
+  margin-bottom: 10px;
+}
+
+.staffCondition{
+  font-size: 0.7em;
+}
+
+.__color{
+  color: #{$color-dodger-blue};
+}

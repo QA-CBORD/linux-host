@@ -66,7 +66,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
   canSubmit: boolean = true;
   section: string = '';
-  conditions: [] = [];
+  conditions: any[] = [];
 
   constructor(
     private _platform: Platform,
@@ -238,5 +238,9 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
 
   countItemsLeft(inspectionData:Inspection){
     return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey===0).length > 0).length
+  }
+
+  getConditionStaff(conditionStaff: number):string{
+    return this.conditions.filter(x => x.value === conditionStaff.toString())[0].label
   }
 }
