@@ -1,30 +1,30 @@
 import { Injectable } from "@angular/core";
+import { AuthFacadeService } from "@core/facades/auth/auth.facade.service";
 import { SettingsFacadeService } from "@core/facades/settings/settings-facade.service";
 import { SettingInfo } from "@core/model/configuration/setting-info.model";
 import { APP_PROFILES } from "@sections/dashboard/models";
 import { firstValueFrom } from "@shared/utils";
 import { Observable } from "rxjs";
-import { map, take } from "rxjs/operators";
+import { switchMap, take } from "rxjs/operators";
 
 
 
 @Injectable({ providedIn: "root" })
 export class ProfileServiceFacade {
 
-    constructor(private readonly settingsFacadeService: SettingsFacadeService) { }
+    constructor(private readonly settingsFacadeService: SettingsFacadeService, 
+        private readonly authFacadeService: AuthFacadeService) { }
 
-    determineCurrentProfile(settings: SettingInfo[]): APP_PROFILES {
-        //Note: Guest profile will never be returned since a different dashboard is currently being used for guest profiles
-        const ENABLE_HOUSING_ONLY = "enable_housing_only";
-        const housingOnlySetting = settings.find(({ name }) => name == ENABLE_HOUSING_ONLY);
+    async determineCurrentProfile(settings: SettingInfo[]): Promise<APP_PROFILES> {
+        const housingOnlySetting = settings.find(({ name }) => name == "enable_housing_only");
         const housingOnlyEnabled = housingOnlySetting && !!Number(housingOnlySetting.value);
-        return housingOnlyEnabled && APP_PROFILES.housing || APP_PROFILES.patron;
+        return housingOnlyEnabled && APP_PROFILES.housing || (await firstValueFrom(this.authFacadeService.isGuestUser())) && APP_PROFILES.guest || APP_PROFILES.patron;
     }
 
 
     determineCurrentProfile$(): Observable<APP_PROFILES> {
         return this.settingsFacadeService.getCachedSettings()
-            .pipe(take(1), map((settings) => this.determineCurrentProfile(settings)));
+            .pipe(take(1), switchMap((settings) => this.determineCurrentProfile(settings)));
     }
 
     async housingOnlyEnabled(): Promise<boolean> {
