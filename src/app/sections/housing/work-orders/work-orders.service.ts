@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
-import { of, Observable, forkJoin } from "rxjs";
+import { of, Observable, defer } from "rxjs";
 import { catchError, map, withLatestFrom, tap, switchMap } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
@@ -27,6 +27,11 @@ export class WorkOrdersService {
   private workOrderListUrl = `${this._environment.getHousingAPIURL()
     }/patron-applications/v.1.0/work-orders`;
   workOrders: WorkOrder = generateWorkOrders(5);
+
+  private readonly MAX_WIDTH = 320;
+  private readonly MAX_HEIGHT = 180;
+  private readonly MIME_TYPE = "image/png";
+  private readonly QUALITY = 0.7;
 
   constructor(
     private _proxy: HousingProxyService,
@@ -219,14 +224,11 @@ export class WorkOrdersService {
       requestedDate:'',
     });
 
-    // const prom = this._housingProxyService.post<Response>(this.workOrderListUrl, body).toPromise();
-    // prom.then().catch();
-
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(err=> of(false)),
       switchMap((response: Response) => 
         this._workOrderStateService.WorkOrderImageBlob.pipe(
-          switchMap(res => this.sendWorkOrderImage(response.data, res, image).pipe(
+          switchMap(res => of(this.sendWorkOrderImage(response.data, res, image)).pipe(
             catchError(_ => of(false))
           )))
       ),
@@ -237,29 +239,82 @@ export class WorkOrdersService {
     );
   }
 
-  sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Observable<boolean> {
-    let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
+  sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
-    const attachmentFile = imageData.contents.replace(/^data:(.*,)?/, '')
+      let img = document.createElement("img");
+      img.src = imageData.contents;
+      
+      img.onload = async () => {
+        const [newWidth, newHeight] = this.calculateSize(img, this.MAX_WIDTH, this.MAX_HEIGHT);
 
-    const body = new ImageData({
-      filename: imageData.filename,
-      comments: 'student submitted attachment',
-      contents: attachmentFile,
-      studentSubmitted: true,
-      workOrderKey: workOrderId,
+        const canvas = document.createElement("canvas");
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        
+        const context = canvas.getContext("2d");
+        context.drawImage(img, 0, 0, newWidth, newHeight);
+        canvas.toBlob(
+          async (blob) => {
+            const data = await this.convertBlobToBase64(blob) as string;
+            
+            const attachmentFile = data.replace(/^data:(.*,)?/, '')
+            const body = new ImageData({
+              filename: imageData.filename,
+              comments: 'student submitted attachment',
+              contents: attachmentFile,
+              studentSubmitted: true,
+              workOrderKey: workOrderId,
+            });
+
+            this._housingProxyService
+              .post<Response>(workOrderImageURL, body)
+              .subscribe((response: Response) => {
+                  if (isSuccessful(response.status)) {
+                    resolve(true);
+                    return true;
+                  } else {
+                    throw new Error(response.status.message);
+                  }
+                });
+              
+          }, 
+          this.MIME_TYPE, 
+          this.QUALITY
+        );
+
+        resolve(true);
+      };
     });
+  }
 
-    return this._housingProxyService
-      .post<Response>(workOrderImageURL, body)
-      .pipe(
-        map((response: Response) => {
-          if (isSuccessful(response.status)) {
-            return true;
-          } else {
-            throw new Error(response.status.message);
-          }
-        }));
+  private convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader;
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+
+  private calculateSize(img: any, maxWidth: number, maxHeight: number): number[] {
+    let width = img.width;
+    let height = img.height;
+  
+    // calculate the width and height, constraining the proportions
+    if (width > height) {
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+    } else {
+      if (height > maxHeight) {
+        width = Math.round((width * maxHeight) / height);
+        height = maxHeight;
+      }
+    }
+    return [width, height];
   }
 
   async deleteImage(fileName: string) {

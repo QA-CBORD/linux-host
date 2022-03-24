@@ -124,7 +124,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           res.contents.startsWith('data:image') 
             ? res.contents 
             : `data:image/${extension};base64,${res.contents}`;
-            
+
         this.image$.next(imageContent);
       } else {
         this.image$.next(null);
@@ -184,7 +184,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
     this.sessionFacadeService.navigatedToPlugin = true;
     const image = await Camera.getPhoto({
-      quality: 50,
+      quality: 90,
       height: 500,
       width: 500,
       allowEditing: false,
@@ -212,7 +212,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       directory: FilesystemDirectory.Data
     });
 
-    let image : ImageData = {
+    const image : ImageData = {
       'comments':'',
       'filename':fileName,
       'contents': base64Data,
@@ -259,8 +259,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     Filesystem.readdir({
       path: IMAGE_DIR,
       directory: FilesystemDirectory.Data,
-    }).then(result => {
-      this.loadFileData(result.files);
+    }).then(async (result) => {
+      console.log('inside the then loadFiles')
+      await this.loadFileData(result.files);
     },
       async (err) => {
         // Folder does not yet exists!
@@ -308,8 +309,7 @@ async startUpload(file: LocalFile,value: string) {
   }
   const arr = new Uint8Array(bytes);
   const blob = new Blob([arr], {type: `image/${imageFormat}`});
-  // const response = await fetch(value);
-  // const blob = await response.blob();
+  
   const formData = new FormData();
   formData.append('attachmentFile', blob, file.name);
   this._workOrderStateService.setWorkOrderImageBlob(formData);
