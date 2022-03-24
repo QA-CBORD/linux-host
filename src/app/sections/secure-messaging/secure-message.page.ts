@@ -8,24 +8,17 @@ import { LoadingService } from '../../core/service/loading/loading.service';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
-import { SecureMessageConversation } from './models';
+import { SecureMessageConversation, SecureMessageConversationListItem } from './models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../app.global';
 import {
+  buildConversationListItemsFromConversations,
   getConversationDescription,
   getConversationGroupInitial,
   getConversationGroupName,
 } from '@core/utils/conversations-helper';
 import { generateColorHslFromText } from '@core/utils/colors-helper';
-
-interface SecureMessageConversationItem {
-  conversation: SecureMessageConversation;
-  avatarBackgroundColor: string;
-  groupInitial: string;
-  groupName: string;
-  description: string;
-}
 
 @Component({
   selector: 'st-secure-message',
@@ -35,7 +28,7 @@ interface SecureMessageConversationItem {
 export class SecureMessagePage implements OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
 
-  conversations$: Observable<SecureMessageConversationItem[]>;
+  conversations$: Observable<SecureMessageConversationListItem[]>;
 
   constructor(
     private readonly platform: Platform,
@@ -48,18 +41,7 @@ export class SecureMessagePage implements OnDestroy {
     this.platform.ready().then(this.initComponent.bind(this));
     this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(
       distinctUntilChanged(),
-      map(conversations =>
-        conversations.map(conversation => {
-          const groupName = getConversationGroupName(conversation);
-          return {
-            avatarBackgroundColor: generateColorHslFromText(groupName),
-            groupInitial: getConversationGroupInitial(groupName),
-            description: getConversationDescription(conversation),
-            groupName,
-            conversation,
-          };
-        })
-      )
+      map(buildConversationListItemsFromConversations)
     );
   }
 

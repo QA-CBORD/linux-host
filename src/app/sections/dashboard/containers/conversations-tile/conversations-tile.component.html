@@ -1,13 +1,17 @@
 <div class="conversations" [ngClass]="{ 'conversations--auto-height': !isLoading }">
   <ion-list class="conversations__sender-list" *ngIf="lastTwoMessagesArray.length && !isLoading">
-    <ng-container *ngFor="let conversation of lastTwoMessagesArray">
-      <ion-item *ngFor="let message of conversation.messages" class="conversations__sender-item" lines="none">
+    <ng-container *ngFor="let conversationItem of lastTwoMessagesArray">
+      <ion-item
+        *ngFor="let message of conversationItem.conversation.messages"
+        class="conversations__sender-item"
+        lines="none"
+      >
         <ion-avatar class="conversations__sender-avatar-wrapper">
           <div
             class="conversations__sender-avatar-text"
-            [ngStyle]="{ background: getAvatarBackgroundColor(conversation.groupName) }"
+            [ngStyle]="{ background: conversationItem.avatarBackgroundColor }"
           >
-            {{ getConversationGroupInitial(conversation.groupName) }}
+            {{ conversationItem.groupInitial }}
           </div>
         </ion-avatar>
         <div class="conversations__sender-info">
@@ -18,7 +22,7 @@
                 'conversations__sender-name--unread': !message.read_date && message.sender.type !== 'patron'
               }"
             >
-              {{ conversation.groupName }}
+              {{ conversationItem.groupName }}
             </div>
             <div class="conversations__sender-recent-time">{{ message | messageDate }}</div>
           </div>

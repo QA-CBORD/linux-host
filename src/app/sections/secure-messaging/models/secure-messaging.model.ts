@@ -82,3 +82,11 @@ export interface SecureMessagingAuthInfo {
   id_value: string;
   institution_id: string;
 }
+
+export interface SecureMessageConversationListItem {
+  conversation: SecureMessageConversation;
+  avatarBackgroundColor: string;
+  groupInitial: string;
+  groupName: string;
+  description: string;
+}

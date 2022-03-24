@@ -1,9 +1,11 @@
 import {
   SecureMessageConversation,
+  SecureMessageConversationListItem,
   SecureMessageGroupInfo,
   SecureMessageInfo,
   SecureMessagingAuthInfo,
 } from '@sections/secure-messaging/models';
+import { generateColorHslFromText } from './colors-helper';
 
 /**
  * UI helper method to set group name initals
@@ -42,7 +44,7 @@ export const buildConversationsFromMessages = (
   messages: SecureMessageInfo[],
   groups: SecureMessageGroupInfo[],
   { institution_id, id_value }: SecureMessagingAuthInfo
-) => {
+): SecureMessageConversation[] => {
   const tempConversations: SecureMessageConversation[] = [];
 
   /// create 'conversations' out of message array
@@ -141,4 +143,27 @@ const sortConversations = (a, b) => {
   }
 
   return 0;
+};
+
+const mapConversationToListItem = (conversation: SecureMessageConversation) => {
+  const groupName = getConversationGroupName(conversation);
+  return {
+    avatarBackgroundColor: generateColorHslFromText(groupName),
+    groupInitial: getConversationGroupInitial(groupName),
+    description: getConversationDescription(conversation),
+    groupName,
+    conversation,
+  };
+};
+
+export const buildConversationListItemsFromConversations = (
+  conversations: SecureMessageConversation[]
+): SecureMessageConversationListItem[] => conversations.map(mapConversationToListItem);
+
+export const buildConversationListItemsFromMessages = (
+  messages: SecureMessageInfo[],
+  groups: SecureMessageGroupInfo[],
+  secureMessagingAuthInfo: SecureMessagingAuthInfo
+): SecureMessageConversationListItem[] => {
+  return buildConversationsFromMessages(messages, groups, secureMessagingAuthInfo).map(mapConversationToListItem);
 };

@@ -1,9 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SecureMessagingService } from './services/secure-messaging.service';
-import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { take, finalize } from 'rxjs/operators';
 import { generateColorHslFromText } from '@core/utils/colors-helper';
-import { buildConversationsFromMessages, getConversationGroupInitial } from '@core/utils/conversations-helper';
+import {
+  buildConversationListItemsFromMessages,
+  buildConversationsFromMessages,
+  getConversationGroupInitial,
+} from '@core/utils/conversations-helper';
+import { SecureMessageConversationListItem } from '@sections/secure-messaging';
 
 @Component({
   selector: 'st-conversations-tile',
@@ -12,7 +16,7 @@ import { buildConversationsFromMessages, getConversationGroupInitial } from '@co
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConversationsTileComponent implements OnInit, OnDestroy {
-  lastTwoMessagesArray: SecureMessageConversation[] = [];
+  lastTwoMessagesArray: SecureMessageConversationListItem[] = [];
   conversationDisplayedAmount: number = 2;
   conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
   isLoading: boolean = true;
@@ -42,8 +46,17 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(([smGroupArray = [], smMessageArray = []]) => {
-        this.lastTwoMessagesArray = buildConversationsFromMessages(smMessageArray, smGroupArray, SecureMessagingService.GetSecureMessagesAuthInfo())
-          .map(conversation => ({ ...conversation, messages: [conversation.messages.pop()] }))
+        this.lastTwoMessagesArray = buildConversationListItemsFromMessages(
+          smMessageArray,
+          smGroupArray,
+          SecureMessagingService.GetSecureMessagesAuthInfo()
+        )
+          .map(conversationItem => {
+            const convo = { ...conversationItem };
+            // Get the last message only
+            convo.conversation.messages = [convo.conversation.messages.pop()];
+            return convo;
+          })
           .slice(0, 2);
       });
   }
