@@ -33,10 +33,7 @@ export class InspectionsComponent implements OnInit, OnDestroy {
 
     this._initTermsSubscription();
     this._subscription.add(inspectionsForm);
-    // this._initFormDefinition()
   }
-
-
 
   private _initTermsSubscription() {
     this._subscription.add(
