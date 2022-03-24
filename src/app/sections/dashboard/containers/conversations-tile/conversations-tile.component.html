@@ -2,7 +2,7 @@
   <ion-list class="conversations__sender-list" *ngIf="lastTwoMessagesArray.length && !isLoading">
     <ng-container *ngFor="let conversation of lastTwoMessagesArray">
       <ion-item *ngFor="let message of conversation.messages" class="conversations__sender-item" lines="none">
-        <ion-avatar *ngIf="showTextAvatar" class="conversations__sender-avatar-wrapper">
+        <ion-avatar class="conversations__sender-avatar-wrapper">
           <div
             class="conversations__sender-avatar-text"
             [ngStyle]="{ background: getAvatarBackgroundColor(conversation.groupName) }"

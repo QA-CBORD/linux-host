@@ -16,6 +16,7 @@ import {
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { tap } from 'rxjs/operators';
+import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 const REFRESH_TIME = 10000;
 @Injectable()
 export class SecureMessagingService {
@@ -126,72 +127,8 @@ export class SecureMessagingService {
    * @param bIsPollingData Is this update from polled data
    */
   private createConversationsFromResponse() {
-    const tempConversations: SecureMessageConversation[] = [];
-
     this.sortGroups();
-
-    /// create 'conversations' out of message array
-    for (const message of this.messagesArray) {
-      message.sent_date = new Date(message.sent_date).toString();
-
-      let bNewConversation = true;
-
-      /// add to existing conversation if it exists
-      for (const convo of tempConversations) {
-        if (!bNewConversation) {
-          break;
-        }
-
-        if (
-          convo.groupIdValue &&
-          convo.groupIdValue.length &&
-          (convo.groupIdValue === message.sender.id_value || convo.groupIdValue === message.recipient.id_value)
-        ) {
-          convo.messages.push(message);
-          bNewConversation = false;
-        }
-      }
-
-      /// create new conversation
-      if (bNewConversation) {
-        let newGroupName = '';
-        let newGroupId = '';
-        let newGroupDescription = '';
-
-        if (message.sender.type === 'group') {
-          newGroupName = message.sender.name;
-          newGroupId = message.sender.id_value;
-        } else {
-          newGroupName = message.recipient.name;
-          newGroupId = message.recipient.id_value;
-        }
-
-        newGroupDescription = message.description;
-
-        /// try to get proper group info
-        for (const group of this._groupsArray) {
-          if (group.id === newGroupId) {
-            newGroupName = group.name;
-            newGroupDescription = group.description;
-          }
-        }
-
-        const conversation: SecureMessageConversation = {
-          institutionId: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
-          groupName: newGroupName,
-          groupIdValue: newGroupId,
-          groupDescription: newGroupDescription,
-          myIdValue: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
-          messages: [],
-          selected: false,
-        };
-
-        conversation.messages.push(message);
-        tempConversations.push(conversation);
-      }
-    }
-    tempConversations.sort(this.sortConversations);
-    this.conversationsArray = tempConversations;
+    this.conversationsArray = buildConversationsFromMessages(this.messagesArray, this.groupsArray, SecureMessagingService.GetSecureMessagesAuthInfo());
     this.conversationsArraySubject.next(this.conversationsArray);
   }
 
@@ -248,38 +185,4 @@ export class SecureMessagingService {
       convo.selected = false;
     }
   }
-
-  /**
-   * Sort conversations by most current for display
-   */
-  sortConversations = (a, b) => {
-    if (a.messages === null) {
-      return 1;
-    }
-    if (b.messages === null) {
-      return -1;
-    }
-    if (a.messages.length === 0) {
-      return 1;
-    }
-    if (b.messages.length === 0) {
-      return -1;
-    }
-
-    if (
-      new Date(a.messages[a.messages.length - 1].sent_date).getTime() <
-      new Date(b.messages[b.messages.length - 1].sent_date).getTime()
-    ) {
-      return 1;
-    }
-
-    if (
-      new Date(a.messages[a.messages.length - 1].sent_date).getTime() >
-      new Date(b.messages[b.messages.length - 1].sent_date).getTime()
-    ) {
-      return -1;
-    }
-
-    return 0;
-  };
 }
