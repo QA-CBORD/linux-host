@@ -227,10 +227,7 @@ export class WorkOrdersService {
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(err=> of(false)),
       switchMap((response: Response) => 
-        this._workOrderStateService.WorkOrderImageBlob.pipe(
-          switchMap(res => of(this.sendWorkOrderImage(response.data, res, image)).pipe(
-            catchError(_ => of(false))
-          )))
+        this.sendWorkOrderImage(response.data, image)
       ),
       tap(()=>{
           this._workOrderStateService.destroyWorkOrderImageBlob();
@@ -239,7 +236,7 @@ export class WorkOrdersService {
     );
   }
 
-  sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Promise<boolean> {
+  sendWorkOrderImage(workOrderId : number, imageData: ImageData ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
