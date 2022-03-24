@@ -140,7 +140,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   async save(inspectionData:Inspection): Promise<void> {
-    // inspectionData.residentInspectionKey = null;
+    inspectionData.residentInspectionKey = null;
     const alert = await this._alertController.create({
       header: 'Confirm',
       message: `Are you sure you want to save this Inspection?`,

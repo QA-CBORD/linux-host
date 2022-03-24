@@ -24,7 +24,10 @@
           </ion-label>
 
           <st-actions
+            [showEdit]="!inspection.isSubmitted"
+            [showView]="inspection.isSubmitted"
             [path]="getPath(inspection)"
+            [edit]="!inspection.isSubmitted"
             >
           </st-actions>
         </ion-item>
