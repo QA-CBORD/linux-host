@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   SecureMessageConversation,
   SecureMessageConversationListItem,
@@ -6,7 +7,47 @@ import {
   SecureMessagingAuthInfo,
 } from '@sections/secure-messaging/models';
 import { generateColorHslFromText } from './colors-helper';
+import { checkIsYesterday } from './general-helpers';
 
+export const messageSentDateToString = (sentDate: Date, datePipe: DatePipe) => {
+  const today: Date = new Date();
+
+    /// > 1 year (Full timestamp)
+    if (today.getFullYear() > sentDate.getFullYear()) {
+      return datePipe.transform(sentDate, 'mediumDate');
+    }
+
+    const timeDiff = today.getTime() - sentDate.getTime();
+
+    /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
+    if (timeDiff > 432000000) {
+      return datePipe.transform(sentDate, 'MMM d, h:mm a');
+    }
+
+    /// > 2 days (<dayAbbv> xx:xx AM/PM)
+    if (timeDiff >= 172800000) {
+      return datePipe.transform(sentDate, 'E, h:mm a');
+    }
+
+    /// > 1 day (Yesterday at xx:xx AM/PM)
+    if (timeDiff >= 86400000 || checkIsYesterday(sentDate)) {
+      return datePipe.transform(sentDate, "'Yesterday at ' h:mm a'");
+    }
+
+    /// > 5 minutes (xx:xx AM/PM)
+    if (timeDiff > 300000) {
+      return datePipe.transform(sentDate, 'h:mm a');
+    }
+
+    /// > 1 minute (x minutes ago)
+    if (timeDiff > 60000) {
+      const minutesAgo = Math.round(timeDiff / 60000);
+      return minutesAgo.toString() + (minutesAgo === 1 ? ' minute ago' : ' minutes ago');
+    }
+
+    /// < 1 minute (Now)
+    return 'Now';
+};
 /**
  * UI helper method to set group name initals
  * @param groupName Name to get initials from

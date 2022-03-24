@@ -25,7 +25,7 @@ export interface SecureMessageGroupInfo {
   version?: number;
 }
 
-export interface SecureMessageGroupMemeberInfo {
+export interface SecureMessageGroupMemberInfo {
   id?: string;
   message_group_id: string;
   member_id: string;
