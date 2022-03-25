@@ -1,0 +1,34 @@
+<!-- Display most recent message -->
+<ion-item
+  *ngFor="let message of (conversationItem.conversation.messages | slice: -1)"
+  (click)="onConversationSelected()"
+  class="conversations__sender-item"
+  lines="none"
+>
+  <ion-avatar class="conversations__sender-avatar-wrapper">
+    <div class="conversations__sender-avatar-text" [ngStyle]="{ background: avatarBackgroundColor }">
+      {{ conversationItem.groupInitial }}
+    </div>
+  </ion-avatar>
+  <div class="conversations__sender-info">
+    <div class="conversations__sender-name-time-wrapper">
+      <div
+        class="conversations__sender-name"
+        [ngClass]="{
+          'conversations__sender-name--unread': !message.read_date && message.sender.type !== 'patron'
+        }"
+      >
+        {{ conversationItem.groupName }}
+      </div>
+      <div class="conversations__sender-recent-time">{{ message | messageDate }}</div>
+    </div>
+    <div class="conversations__sender-recent-message">
+      {{ conversationItem.description }}
+    </div>
+  </div>
+  <ng-container *ngIf="!message.read_date && message.sender.type !== 'patron'">
+    <div class="conversations__sender-message-indicator-wrapper">
+      <span class="indicator"></span>
+    </div>
+  </ng-container>
+</ion-item>

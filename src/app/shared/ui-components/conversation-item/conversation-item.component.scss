@@ -1,0 +1,136 @@
+@import 'tools';
+
+.conversations {
+  min-height: 150px;
+  transition: 1s ease-out;
+
+  &--auto-height {
+      min-height: 0;
+  }
+
+  &__sender-list {
+    margin: 0;
+    padding: 0;
+  }
+
+  &__sender-item {
+    --padding-start: 0;
+    --inner-padding-start: 0;
+    --inner-padding-end: 0;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin: 0 15px;
+
+    &:first-child {
+      border-bottom: 1px solid $color-white-smoke;
+    }
+  }
+
+  &__sender-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 15px;
+  }
+
+  &__sender-avatar-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 45px;
+    min-height: 45px;
+  }
+
+  &__sender-avatar-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    color: $color-white;
+    background: $color-harley-davidson-orange;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__sender-name-time-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  &__sender-name {
+    max-width: 170px;
+
+    @include ellipsis;
+    @include font-nunito-semibold(16px);
+
+    &--unread {
+      @include font-nunito-heavy(16px);
+    }
+  }
+
+  &__sender-recent-message {
+    width: 100%;
+    color: rgba($color-black, 0.6);
+
+    @include ellipsis;
+    @include font-nunito-regular(12px);
+  }
+
+  &__sender-recent-time {
+    color: rgba($color-black, 0.6);
+
+    @include font-nunito-regular(12px);
+  }
+
+  &__sender-message-indicator-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-left: 15px;
+  }
+
+
+  &__skeleton-conversation {
+    display: flex;
+    align-items: center;
+  }
+
+  &__skeleton-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  &__skeleton-body {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    align-items: flex-end;
+  }
+
+  &__skeleton-name {
+    height: 20px;
+    width: 40%;
+  }
+
+  &__skeleton-time {
+    width: 20%;
+    height: 12px;
+  }
+
+  &__skeleton-msg {
+    width: 100%;
+    height: 12px;
+  }
+}

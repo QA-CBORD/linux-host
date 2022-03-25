@@ -186,7 +186,7 @@ const sortConversations = (a, b) => {
   return 0;
 };
 
-const mapConversationToListItem = (conversation: SecureMessageConversation) => {
+export const mapConversationToListItem = (conversation: SecureMessageConversation): SecureMessageConversationListItem => {
   const groupName = getConversationGroupName(conversation);
   return {
     avatarBackgroundColor: generateColorHslFromText(groupName),
