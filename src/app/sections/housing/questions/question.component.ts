@@ -204,7 +204,17 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   async saveImage(photo: Photo) {
     const base64Data = await this.readAsBase64(photo);
-
+    if(this.plt.is('hybrid')){
+      try {
+        await Filesystem.mkdir({
+          path: IMAGE_DIR,
+          directory: FilesystemDirectory.Data,
+        });
+      } catch (error) {
+        console.log('Directory already exists')
+      }
+    }
+    
     const fileName = new Date().getTime() + '.PNG';
     await Filesystem.writeFile({
       path: `${IMAGE_DIR}/${fileName}`,
@@ -213,7 +223,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
 
     const image : ImageData = {
-      'comments':'',
+      'comments': '',
+      'photoUrl': this.plt.is('hybrid')? photo.webPath: base64Data,
       'filename':fileName,
       'contents': base64Data,
       'studentSubmitted': true,

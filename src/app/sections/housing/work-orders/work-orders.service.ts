@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, SecurityContext } from "@angular/core";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
@@ -18,6 +18,7 @@ import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const IMAGE_DIR = 'stored-images';
 @Injectable({
@@ -40,6 +41,7 @@ export class WorkOrdersService {
     private _questionsService: QuestionsService,
     private _housingProxyService: HousingProxyService,
     private _workOrderStateService: WorkOrderStateService,
+    private sanitizer: DomSanitizer,
     ) { }
 
   getWorkOrders(): Observable<WorkOrder> {
@@ -226,12 +228,8 @@ export class WorkOrdersService {
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(err=> of(false)),
-      switchMap((response: Response) => 
-        this.sendWorkOrderImage(response.data, image)
-      ),
-      tap(()=>{
-          this._workOrderStateService.destroyWorkOrderImageBlob();
-          this.deleteImage(image.filename);
+      switchMap((response: Response) => {
+        return this.sendWorkOrderImage(response.data, image)
       })
     );
   }
@@ -240,12 +238,13 @@ export class WorkOrdersService {
     return new Promise((resolve, reject) => {
       let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
-      let img = document.createElement("img");
-      img.src = imageData.contents;
+      let img = new Image();
       
+      img.onerror = (event) => {
+        reject('error load')
+      };
       img.onload = async () => {
         const [newWidth, newHeight] = this.calculateSize(img, this.MAX_WIDTH, this.MAX_HEIGHT);
-
         const canvas = document.createElement("canvas");
         canvas.width = newWidth;
         canvas.height = newHeight;
@@ -269,6 +268,8 @@ export class WorkOrdersService {
               .post<Response>(workOrderImageURL, body)
               .subscribe((response: Response) => {
                   if (isSuccessful(response.status)) {
+                    this._workOrderStateService.destroyWorkOrderImageBlob();
+                    this.deleteImage();
                     resolve(true);
                     return true;
                   } else {
@@ -283,6 +284,7 @@ export class WorkOrdersService {
 
         resolve(true);
       };
+      img.src = this.sanitizer.sanitize(SecurityContext.URL, imageData.photoUrl);
     });
   }
 
@@ -314,10 +316,11 @@ export class WorkOrdersService {
     return [width, height];
   }
 
-  async deleteImage(fileName: string) {
-    await Filesystem.deleteFile({
+  async deleteImage() {
+    await Filesystem.rmdir({
         directory: FilesystemDirectory.Data,
-        path: `${IMAGE_DIR}/${fileName}`
+        path: `${IMAGE_DIR}`,
+        recursive: true
     });
   }
 
