@@ -53,7 +53,7 @@ export class SecureMessagingService {
       tap(([smGroupArray, smMessageArray]) => {
         this._groupsArray = smGroupArray;
         this.messagesArray = smMessageArray;
-        this.createConversationsFromResponse();
+        this.buildConversationsFromResponseAndNotify();
       })
     );
   }
@@ -84,7 +84,7 @@ export class SecureMessagingService {
         /// if there are new messages, update the conversations
         if (this.messagesArray.length !== smMessageArray.length) {
           this.messagesArray = smMessageArray;
-          this.createConversationsFromResponse();
+          this.buildConversationsFromResponseAndNotify();
         }
       })
     );
@@ -124,11 +124,14 @@ export class SecureMessagingService {
 
   /**
    * Handle messages and groups response and make conversations to display
-   * @param bIsPollingData Is this update from polled data
    */
-  private createConversationsFromResponse() {
+  private buildConversationsFromResponseAndNotify() {
     this.sortGroups();
     this.conversationsArray = buildConversationsFromMessages(this.messagesArray, this.groupsArray, SecureMessagingService.GetSecureMessagesAuthInfo());
+    // Update current conversation if got new messages
+    if(this._selectedConversation){
+      this._selectedConversation.messages = this.conversationsArray.find(convo => convo.groupIdValue === this._selectedConversation.groupIdValue)?.messages || [];
+    }
     this.conversationsArraySubject.next(this.conversationsArray);
   }
 

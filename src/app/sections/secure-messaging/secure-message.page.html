@@ -30,31 +30,11 @@
       </ion-header>
       <!-- list with available groups -->
       <ion-list class="conversations-container__groups" scrollY="true">
-        <ion-item
-          button
-          lines="none"
-          detail="false"
-          *ngFor="let conversationItem of conversations$ | async; trackBy: trackConversationsByFn"
-          (click)="onClickConversation(conversationItem.conversation)"
-          class="conversations-container__group"
-        >
-          <ion-avatar
-            slot="start"
-            class="purple-background"
-            [ngStyle]="{ background: conversationItem.avatarBackgroundColor }"
-          >
-            <h3 class="conversations-container__avatar-text">{{conversationItem.groupInitial}}</h3>
-          </ion-avatar>
-          <ion-label>
-            <h3>{{conversationItem.groupName}}</h3>
-            <p>{{conversationItem.description}}</p>
-          </ion-label>
-          <div class="text-align-end" style="height: 65%;">
-            <p style="display: inline; font-size: 0.75em;" slot="end">
-              {{ conversationItem.conversation | conversationDate}}
-            </p>
-          </div>
-        </ion-item>
+        <st-conversation-item
+          *ngFor="let conversation of conversations$ | async; trackBy: trackConversationsByFn"
+          [conversation]="conversation"
+          (conversationSelected)="onClickConversation(conversation)"
+        ></st-conversation-item>
       </ion-list>
     </ion-col>
   </ion-row>

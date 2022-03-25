@@ -6,7 +6,6 @@ import {
   SecureMessageInfo,
   SecureMessagingAuthInfo,
 } from '@sections/secure-messaging/models';
-import { generateColorHslFromText } from './colors-helper';
 import { checkIsYesterday } from './general-helpers';
 
 export const messageSentDateToString = (sentDate: Date, datePipe: DatePipe) => {
@@ -189,22 +188,9 @@ const sortConversations = (a, b) => {
 export const mapConversationToListItem = (conversation: SecureMessageConversation): SecureMessageConversationListItem => {
   const groupName = getConversationGroupName(conversation);
   return {
-    avatarBackgroundColor: generateColorHslFromText(groupName),
     groupInitial: getConversationGroupInitial(groupName),
     description: getConversationDescription(conversation),
     groupName,
     conversation,
   };
-};
-
-export const buildConversationListItemsFromConversations = (
-  conversations: SecureMessageConversation[]
-): SecureMessageConversationListItem[] => conversations.map(mapConversationToListItem);
-
-export const buildConversationListItemsFromMessages = (
-  messages: SecureMessageInfo[],
-  groups: SecureMessageGroupInfo[],
-  secureMessagingAuthInfo: SecureMessagingAuthInfo
-): SecureMessageConversationListItem[] => {
-  return buildConversationsFromMessages(messages, groups, secureMessagingAuthInfo).map(mapConversationToListItem);
 };

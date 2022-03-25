@@ -13,8 +13,8 @@ import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { MessageDatePipeModule } from '@shared/pipes/message-date';
-import { ConversationDatePipeModule } from '@shared/pipes/conversation-date';
 import { RouterModule } from '@angular/router';
+import { ConversationItemModule } from '@shared/ui-components/conversation-item/conversation-item.module';
 
 const declarations = [SecureMessagePage, SegureMessageChatPageComponent, SecureMessagePopoverComponent];
 
@@ -30,7 +30,7 @@ const imports = [
   StPopoverLayoutModule,
   StHeaderModule,
   MessageDatePipeModule,
-  ConversationDatePipeModule
+  ConversationItemModule
 ];
 
 const entryComponents = [SecureMessagePopoverComponent];

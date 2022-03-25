@@ -1,34 +1,27 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
-import { distinctUntilChanged, finalize, first, map, tap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, first, map } from 'rxjs/operators';
 
 import { SecureMessagingService } from './service';
 import { LoadingService } from '../../core/service/loading/loading.service';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
-import { SecureMessageConversation, SecureMessageConversationListItem } from './models';
+import { SecureMessageConversation } from './models';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../app.global';
-import {
-  buildConversationListItemsFromConversations,
-  getConversationDescription,
-  getConversationGroupInitial,
-  getConversationGroupName,
-} from '@core/utils/conversations-helper';
-import { generateColorHslFromText } from '@core/utils/colors-helper';
 
 @Component({
   selector: 'st-secure-message',
   templateUrl: './secure-message.page.html',
   styleUrls: ['./secure-message.page.scss'],
 })
-export class SecureMessagePage implements OnDestroy {
+export class SecureMessagePage implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
 
-  conversations$: Observable<SecureMessageConversationListItem[]>;
+  conversations$: Observable<SecureMessageConversation[]>;
 
   constructor(
     private readonly platform: Platform,
@@ -38,11 +31,10 @@ export class SecureMessagePage implements OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly router: Router
   ) {
-    this.platform.ready().then(this.initComponent.bind(this));
-    this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(
-      distinctUntilChanged(),
-      map(buildConversationListItemsFromConversations)
-    );
+    this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(distinctUntilChanged());
+  }
+  ngOnInit(): void {
+    this.initializePage();
   }
 
   ionViewWillEnter() {
@@ -51,12 +43,6 @@ export class SecureMessagePage implements OnDestroy {
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
-  }
-
-  private initComponent() {
-    /// set subscription to check screen size onAddressChanged
-    /// used to adjust ui layout
-    this.initializePage();
   }
 
   /**
@@ -99,33 +85,7 @@ export class SecureMessagePage implements OnDestroy {
     this.startConversation();
   }
 
-  /**
-   *
-   * @param messages
-   * @param messageIndex
-   * @param messageType
-   */
-  messageShowAvatar({ messages }: SecureMessageConversation, messageIndex: number, messageType: string): boolean {
-    const isNextMessageFromGroup = (): boolean => messages[messageIndex + 1].sender.type === messageType;
-    const isMoreThanOneMinuteBetweenMessages = (): boolean =>
-      new Date(messages[messageIndex + 1].sent_date).getTime() - new Date(messages[messageIndex].sent_date).getTime() <
-      60000;
-
-    /// first message
-    if (messageIndex === 0) {
-      /// more than one message && next message from group as well
-      return !(messages.length > 1 && isNextMessageFromGroup() && isMoreThanOneMinuteBetweenMessages());
-    }
-
-    /// not last message && more messages && next message from group as well
-    return !(
-      messages.length - 1 > messageIndex + 1 &&
-      isNextMessageFromGroup() &&
-      isMoreThanOneMinuteBetweenMessages()
-    );
-  }
-
-  async modalHandler(res, cb) {
+  async modalHandler(res, callback) {
     const popover = await this.popoverCtrl.create({
       component: SecureMessagePopoverComponent,
       componentProps: {
@@ -141,7 +101,7 @@ export class SecureMessagePage implements OnDestroy {
       }
 
       if (role === BUTTON_TYPE.RETRY) {
-        cb();
+        callback();
       }
     });
 

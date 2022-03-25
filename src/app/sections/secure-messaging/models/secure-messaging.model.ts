@@ -85,7 +85,6 @@ export interface SecureMessagingAuthInfo {
 
 export interface SecureMessageConversationListItem {
   conversation: SecureMessageConversation;
-  avatarBackgroundColor: string;
   groupInitial: string;
   groupName: string;
   description: string;
