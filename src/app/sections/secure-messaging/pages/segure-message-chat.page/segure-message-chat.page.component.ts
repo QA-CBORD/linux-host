@@ -29,6 +29,7 @@ import {
   getConversationGroupInitial,
   getConversationGroupName,
 } from '@core/utils/conversations-helper';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'st-segure-message-chat.page',
@@ -36,11 +37,13 @@ import {
   styleUrls: ['./segure-message-chat.page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SegureMessageChatPageComponent implements OnDestroy {
+export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   @ViewChild('chatScroll', { read: ElementRef }) chatScroll: ElementRef;
 
   newMessageText: string = '';
+  private readonly sourceSub: Subscription = new Subscription();
 
+  // TODO: Implement from store
   get selectedConversation() {
     return this.secureMessagingService.selectedConversation;
   }
@@ -51,12 +54,21 @@ export class SegureMessageChatPageComponent implements OnDestroy {
 
   constructor(
     private readonly secureMessagingService: SecureMessagingService,
-    private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly globalNav: GlobalNavService,
     private readonly userService: UserFacadeService,
     private readonly changeDetectorRef: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    // TODO: Implement from store
+    this.sourceSub.add(
+      this.secureMessagingService.conversationsArray$.subscribe(() => {
+        this.changeDetectorRef.detectChanges();
+        this.scrollToBottom();
+      })
+    );
+  }
 
   ionViewWillEnter() {
     this.globalNav.hideNavBar();
@@ -68,6 +80,7 @@ export class SegureMessageChatPageComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.secureMessagingService.clearSelectedConversation();
+    this.sourceSub.unsubscribe();
   }
 
   trackMessagesByFn(index: number, { id }: SecureMessageInfo): string {

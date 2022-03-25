@@ -46,7 +46,7 @@
                     [ngStyle]="{ background: getAvatarBackgroundColor(getConversationGroupName(selectedConversation)) }"
                   >
                     <h3 class="conversation-container__avatar-text">
-                      {{ getConversationGroupInitial(selectedConversation) }}
+                      {{ getConversationGroupInitial(selectedConversation.groupName) }}
                     </h3>
                   </ion-avatar>
                 </ion-item>
