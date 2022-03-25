@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DoCheck,
   OnDestroy,
   OnInit,
   QueryList,
@@ -25,20 +26,16 @@ import {
   tap
 } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { FormTypes } from '@sections/housing/housing.model';
 import { HousingService } from '@sections/housing/housing.service';
 import { AssetTypeDetailValue, NonAssignmentDetails } from '@sections/housing/non-assignments/non-assignments.model';
-import { NonAssignmentsService } from '@sections/housing/non-assignments/non-assignments.service';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { isMobile } from '@core/utils/platform-helper';
 import { ToastService } from '@core/service/toast/toast.service';
-import { NonAssignmentsStateService } from '@sections/housing/non-assignments/non-assignments-state.service';
 import { FormGroup } from '@angular/forms';
 import { WorkOrderDetails } from '../../work-orders/work-orders.model';
-import { WorkOrdersService } from '../../work-orders/work-orders.service';
 import { Inspection } from '../../inspections-forms/inspections-forms.model';
 import { InspectionService } from '../../inspections-forms/inspections-forms.service';
 import { InspectionsStateService } from '../../inspections-forms/inspections-forms-state.service';
@@ -68,6 +65,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   termKey: number = 0;
   isSubmitted: boolean = false;
   canSubmit: boolean = true;
+  section: string = '';
+  conditions: any[] = [];
 
   constructor(
     private _platform: Platform,
@@ -78,7 +77,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
-    private _termsService: TermsService
+    private _termsService: TermsService,
+    private _inspectionService: InspectionService
   ) { }
 
   ngOnInit(): void {
@@ -95,8 +95,13 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.checkIn = this._route.snapshot.paramMap.get('checkIn')=== 'true'? true: false;
     this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
     this._initInspectionDetailsObservable();
-    // this._initPagesObservable();
-    this._initTermSubscription();
+  }
+
+  private getPagesInspection(){
+    const result = this._inspectionService.getFormDefinitionInspection().subscribe(res => {
+      this.conditions = res.values.filter(x => x.selected)
+    })
+    this.subscriptions.add(result);
   }
 
   ngOnDestroy(): void {
@@ -109,21 +114,11 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     if (!this.isSubmitted && form.invalid) {
       return;
     }
-
-    if (!isLastPage) {
-      this._next(form.value);
-    } else {
-      this._update(this.termKey, workOrderDetails, form.value);
-    }
   }
 
   private _touch(): void {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }
-
-  // private _initPagesObservable(): void {
-  //   this.pages$ = this._workOrderService.getQuestions(this.inspectionKey);
-  // }
 
   private _initInspectionDetailsObservable(): void {
     this._loadingService.showSpinner();
@@ -131,6 +126,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey,this.residentInspectionKey,this.contractElementKey,this.checkIn)
       .pipe(
         tap((inspectionDetails: Inspection) => {
+          this.getPagesInspection();
+          this.section = inspectionDetails.sections[0].name;
           this.isSubmitted = false; 
           this._loadingService.closeSpinner();
           return inspectionDetails;
@@ -140,34 +137,13 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           return throwError(error);
         })
       );
-    // this.inspectionDetails$ = this._inspectionStateService.inspectionForm$;
   }
 
-  private _initTermSubscription() {
-    const termSubs = this._termsService.termId$.subscribe(termId => this.termKey = termId);
-    this.subscriptions.add(termSubs);
-  }
-
-  private _next(formValue: any): void {
-    this.content.scrollToTop();
-
-    if (this.isSubmitted) {
-      return this.stepper.next();
-    }
-
-    // const nextSubscription: Subscription = this._workOrderService
-    //   .next(this.inspectionKey)
-    //   .subscribe({
-    //     next: () => this.stepper.next(),
-    //   });
-
-    // this.subscriptions.add(nextSubscription);
-  }
-
-  private async _update(inspectionKey: number, workOrderDetails: WorkOrderDetails, formValue: any): Promise<void> {
+  async save(inspectionData:Inspection): Promise<void> {
+    inspectionData.residentInspectionKey = null;
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: `Are you sure you want to submit this work order?`,
+      message: `Are you sure you want to save this Inspection?`,
       buttons: [
         {
           text: 'NO',
@@ -186,25 +162,23 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
 
-            // const createWorkOrderSubscription =
-            //   this._workOrderService.submitWorkOrder(
-            //     workOrderDetails,
-            //     formValue)
-            //     .subscribe(status => {
-            //       if (status) {
-            //         alert.dismiss().then(() => this._housingService.handleSuccess());
-            //       } else {
-            //         alert.dismiss().then(() => {
-            //           this._loadingService.closeSpinner();
-            //           console.log('Unable to create Work Order for selected asset type');
-            //           this._toastService.showToast({
-            //             message: 'The form could not be processed at this time. Try again later',
-            //           });
-            //         });
-            //       }
-            //     });
+            const createInspectionSubscription =
+              this._inspectionService.submitInspection(inspectionData)
+                .subscribe(status => {
+                  if (status) {
+                    alert.dismiss().then(() => this._housingService.handleSuccess());
+                  } else {
+                    alert.dismiss().then(() => {
+                      this._loadingService.closeSpinner();
+                      console.log('Unable to create Inspection');
+                      this._toastService.showToast({
+                        message: 'The form could not be processed at this time. Try again later',
+                      });
+                    });
+                  }
+                });
 
-            // this.subscriptions.add(createWorkOrderSubscription);
+            this.subscriptions.add(createInspectionSubscription);
           },
         },
       ],
@@ -213,7 +187,60 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  save(){
+  async submitInspection(inspectionData:Inspection){
+    inspectionData.isSubmitted = true;
+    const alert = await this._alertController.create({
+      header: 'Confirm',
+      message: `Are you sure you want to submit this Inspection?`,
+      buttons: [
+        {
+          text: 'NO',
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            this.activeAlerts = [];
+            alert.dismiss();
+          },
+        },
+        {
+          text: 'YES',
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this._loadingService.showSpinner();
+            this.activeAlerts = [];
 
+            const createInspectionSubscription =
+              this._inspectionService.submitInspection(inspectionData)
+                .subscribe(status => {
+                  if (status) {
+                    alert.dismiss().then(() => this._housingService.handleSuccess());
+                  } else {
+                    alert.dismiss().then(() => {
+                      this._loadingService.closeSpinner();
+                      console.log('Unable to create Inspection');
+                      this._toastService.showToast({
+                        message: 'The form could not be processed at this time. Try again later',
+                      });
+                    });
+                  }
+                });
+
+            this.subscriptions.add(createInspectionSubscription);
+          },
+        },
+      ],
+    });
+    this.activeAlerts.push(alert);
+    await alert.present();
+
+  }
+
+  countItemsLeft(inspectionData:Inspection){
+    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey===0).length > 0).length
+  }
+
+  getConditionStaff(conditionStaff: number):string{
+    return this.conditions.filter(x => x.value === conditionStaff.toString())[0].label
   }
 }

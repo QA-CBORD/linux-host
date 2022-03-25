@@ -5,6 +5,7 @@ import { Inspection, Inspections } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
+import { InspectionService } from './inspections-forms.service';
 
 @Component({
   selector: 'st-inspections-forms',
@@ -19,7 +20,8 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   public inspectionList: BehaviorSubject<Inspections[]>;
 
   constructor(public _inspectionsStateService: InspectionsStateService,
-    private _termService : TermsService
+    private _termService : TermsService,
+    private _inspectionService: InspectionService
     ) {}
 
   inspections: Inspection[];
@@ -56,11 +58,11 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   }
 
   getInspectionStatus(value: Inspections): string{
-    if( value.isSubmitted == false && value.residentInspectionKey != null ){
-      return 'INCOMPLETE'
-    } else if(value.residentInspectionKey == null && value.residentInspectionKey){
+    if( value.isSubmitted == false && value.residentInspectionKey ){
+      return 'IN PROGRESS'
+    } else if(value.residentInspectionKey === 0 && value.isSubmitted === false){
       return 'NEW'
-    }else {
+    }else if(value.isSubmitted) {
       return 'COMPLETED'
     }
         
