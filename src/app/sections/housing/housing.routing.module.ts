@@ -36,11 +36,11 @@ const routes: Routes = [
       },
       {
         path: `${LOCAL_ROUTING.inspections}/:termKey/:residentInspectionKey/:contractElementKey/:checkIn`,
-        loadChildren: './pages/inspections-details/inspections-details.module#InspectionsDetailsPageModule',
+        loadChildren: () => import('./pages/inspections-details/inspections-details.module').then(m => m.InspectionsDetailsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.inspections}/:termKey/:contractElementKey/:checkIn`,
-        loadChildren: './pages/inspections-details/inspections-details.module#InspectionsDetailsPageModule',
+        loadChildren: () => import('./pages/inspections-details/inspections-details.module').then(m => m.InspectionsDetailsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.units}`,
