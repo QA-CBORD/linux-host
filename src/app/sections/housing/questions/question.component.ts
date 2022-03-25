@@ -33,10 +33,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _termService: TermsService,
-    private readonly actionSheetCtrl: ActionSheetController,
-    private readonly sessionFacadeService: SessionFacadeService,
-    private readonly toastService: ToastService,
-    private readonly _workOrderStateService: WorkOrderStateService,
+    private actionSheetCtrl: ActionSheetController,
+    private sessionFacadeService: SessionFacadeService,
+    private toastService: ToastService,
+    private _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService,
     private plt: Platform
   ) { }

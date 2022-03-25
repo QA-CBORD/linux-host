@@ -12,6 +12,7 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     name: TILES_TITLE.home,
     url: GUEST_NAVIGATION.dashboard,
     visibilityOn: () => true,
+    supportProfiles: [APP_PROFILES.guest]
   },
   {
     id: TILES_ID.order, // enable_food
@@ -20,6 +21,7 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     name: TILES_TITLE.order,
     url: GUEST_NAVIGATION.ordering,
     visibilityOn: (setting: GuestSetting) => setting.canOrder,
+    supportProfiles: [APP_PROFILES.guest]
   },
   {
     id: TILES_ID.explore,
@@ -28,6 +30,7 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     name: TILES_TITLE.explore,
     url: GUEST_NAVIGATION.explore,
     visibilityOn: (setting: GuestSetting) => setting.canExplore,
+    supportProfiles: [APP_PROFILES.guest]
   },
 
   {
@@ -37,6 +40,7 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     name: TILES_TITLE.settings,
     url: GUEST_NAVIGATION.settings,
     visibilityOn: () => true,
+    supportProfiles: [APP_PROFILES.guest]
   },
 ];
 

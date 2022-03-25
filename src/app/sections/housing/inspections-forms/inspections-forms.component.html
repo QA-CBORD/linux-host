@@ -3,7 +3,7 @@
     class="ion-no-margin bg-transparent">
     <ion-grid >
       <ion-row class="container-header-inspection">
-        <div class="col-inspection ion-no-padding">
+        <div class="col-inspection ion-no-padding" *ngIf="inspectionList.length > 0" >
             <h2 class="form__secondary-header">INSPECTION</h2>
         </div>
       </ion-row>
@@ -24,7 +24,10 @@
           </ion-label>
 
           <st-actions
+            [showEdit]="!inspection.isSubmitted"
+            [showView]="inspection.isSubmitted"
             [path]="getPath(inspection)"
+            [edit]="!inspection.isSubmitted"
             >
           </st-actions>
         </ion-item>
