@@ -14,7 +14,7 @@ import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/s
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { MessageDatePipeModule } from '@shared/pipes/message-date';
 import { RouterModule } from '@angular/router';
-import { ConversationItemModule } from '@shared/ui-components/conversation-item/conversation-item.module';
+import { StConversationItemModule } from '@shared/ui-components';
 
 const declarations = [SecureMessagePage, SegureMessageChatPageComponent, SecureMessagePopoverComponent];
 
@@ -30,7 +30,7 @@ const imports = [
   StPopoverLayoutModule,
   StHeaderModule,
   MessageDatePipeModule,
-  ConversationItemModule
+  StConversationItemModule
 ];
 
 const entryComponents = [SecureMessagePopoverComponent];

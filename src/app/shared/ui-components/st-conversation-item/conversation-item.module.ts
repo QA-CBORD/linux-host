@@ -13,4 +13,4 @@ import { MessageDatePipeModule } from '@shared/pipes/message-date';
     MessageDatePipeModule
   ]
 })
-export class ConversationItemModule { }
+export class StConversationItemModule { }
