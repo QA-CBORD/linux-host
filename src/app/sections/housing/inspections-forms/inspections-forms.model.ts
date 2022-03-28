@@ -66,7 +66,7 @@ export class Items implements ItemsOptions {
     this.inventoryTemplateItemKey = Number(options.inventoryTemplateItemKey);
     this.name = String(options.name);
     this.residentConditionKey = Number(options.residentConditionKey);
-    this.residentInspectionItemKey = options.residentInspectionItemKey? Number(options.residentInspectionItemKey): null;;
+    this.residentInspectionItemKey = options.residentInspectionItemKey? Number(options.residentInspectionItemKey): null;
     this.staffConditionKey = Number(options.staffConditionKey);
     this.staffInspectionItemKey = Number(options.staffInspectionItemKey);
   }
