@@ -16,6 +16,7 @@ export interface ImageDataOptions {
   filename: string;
   studentSubmitted: boolean;
   workOrderKey: number;
+  photoUrl?: string;
 }
 
 export interface LocalFile {
@@ -30,7 +31,7 @@ export class ImageData implements ImageDataOptions {
   filename: string;
   studentSubmitted: boolean;
   workOrderKey: number;
-
+  photoUrl?: string;
   constructor(options: ImageDataOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as ImageDataOptions;
