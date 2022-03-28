@@ -117,13 +117,21 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initGetImage() {
-    this.subscriptions.add(this._workOrderStateService.workOrderImage$.subscribe(res => {
+    const getImageSub = this._workOrderStateService.workOrderImage$.subscribe(res => {
       if (!!(res && res.contents)) {
-        this.image$.next(res.contents)
+        const extension = res.filename.split('.').pop();
+        let imageContent = 
+          res.contents.startsWith('data:image') 
+            ? res.contents 
+            : `data:image/${extension};base64,${res.contents}`;
+
+        this.image$.next(imageContent);
       } else {
-        this.image$.next(null)
+        this.image$.next(null);
       }
-    }));
+    });
+
+    this.subscriptions.add(getImageSub);
   }
 
   async presentPhotoTypeSelection() {
@@ -176,7 +184,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
     this.sessionFacadeService.navigatedToPlugin = true;
     const image = await Camera.getPhoto({
-      quality: 50,
+      quality: 90,
       height: 500,
       width: 500,
       allowEditing: false,
@@ -184,7 +192,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       preserveAspectRatio: true,
       direction: CameraDirection.Rear,
       resultType: CameraResultType.Uri,
-      source: CameraSource.Photos,
+      source: cameraSource,
       saveToGallery: true,
     });
     
@@ -196,7 +204,17 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   async saveImage(photo: Photo) {
     const base64Data = await this.readAsBase64(photo);
-
+    if(this.plt.is('hybrid')){
+      try {
+        await Filesystem.mkdir({
+          path: IMAGE_DIR,
+          directory: FilesystemDirectory.Data,
+        });
+      } catch (error) {
+        console.log('Directory already exists')
+      }
+    }
+    
     const fileName = new Date().getTime() + '.PNG';
     await Filesystem.writeFile({
       path: `${IMAGE_DIR}/${fileName}`,
@@ -204,8 +222,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
       directory: FilesystemDirectory.Data
     });
 
-    let image : ImageData = {
-      'comments':'',
+    const image : ImageData = {
+      'comments': '',
+      'photoUrl': this.plt.is('hybrid')? photo.webPath: base64Data,
       'filename':fileName,
       'contents': base64Data,
       'studentSubmitted': true,
@@ -251,8 +270,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     Filesystem.readdir({
       path: IMAGE_DIR,
       directory: FilesystemDirectory.Data,
-    }).then(result => {
-      this.loadFileData(result.files);
+    }).then(async (result) => {
+      console.log('inside the then loadFiles')
+      await this.loadFileData(result.files);
     },
       async (err) => {
         // Folder does not yet exists!
@@ -300,8 +320,7 @@ async startUpload(file: LocalFile,value: string) {
   }
   const arr = new Uint8Array(bytes);
   const blob = new Blob([arr], {type: `image/${imageFormat}`});
-  // const response = await fetch(value);
-  // const blob = await response.blob();
+  
   const formData = new FormData();
   formData.append('attachmentFile', blob, file.name);
   this._workOrderStateService.setWorkOrderImageBlob(formData);
