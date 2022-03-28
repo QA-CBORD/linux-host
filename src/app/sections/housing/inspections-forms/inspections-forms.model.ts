@@ -55,7 +55,7 @@ export class Items implements ItemsOptions {
   inventoryTemplateItemKey: number;
   name: string;
   residentConditionKey: number;
-  residentInspectionItemKey: number;
+  residentInspectionItemKey: number | null;
   staffConditionKey: number;
   staffInspectionItemKey: number;
   constructor(options: ItemsOptions) {
@@ -66,7 +66,7 @@ export class Items implements ItemsOptions {
     this.inventoryTemplateItemKey = Number(options.inventoryTemplateItemKey);
     this.name = String(options.name);
     this.residentConditionKey = Number(options.residentConditionKey);
-    this.residentInspectionItemKey = Number(options.residentInspectionItemKey);
+    this.residentInspectionItemKey = options.residentInspectionItemKey? Number(options.residentInspectionItemKey): null;;
     this.staffConditionKey = Number(options.staffConditionKey);
     this.staffInspectionItemKey = Number(options.staffInspectionItemKey);
   }
@@ -123,7 +123,7 @@ export class Inspection implements InspectionOptions {
   contractElementKey: number;
   formDefinition: FormDefinition;
   isSubmitted: boolean;
-  residentInspectionKey: number;
+  residentInspectionKey: number | null;
   sections: InspectionSections[];
   staffInspectionKey: number;
   termKey: number;
@@ -135,7 +135,7 @@ export class Inspection implements InspectionOptions {
     this.contractElementKey = Number(options.contractElementKey)
     this.formDefinition = options.formDefinition;
     this.isSubmitted = Boolean(options.isSubmitted);
-    this.residentInspectionKey = Number(options.residentInspectionKey);
+    this.residentInspectionKey = options.residentInspectionKey? Number(options.residentInspectionKey): null;
     this.termKey = Number(options.termKey)
     this.sections = Array.isArray(options.sections)
       ? options.sections.map((details: any) => new InspectionSections(details)) : [];
