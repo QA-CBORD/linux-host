@@ -1,8 +1,8 @@
-import { Injectable } from "@angular/core";
+import { Injectable, SecurityContext } from "@angular/core";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
-import { of, Observable } from "rxjs";
+import { of, Observable, defer } from "rxjs";
 import { catchError, map, withLatestFrom, tap, switchMap } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
@@ -12,13 +12,13 @@ import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
-import { HttpParams } from "@angular/common/http";
-import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields, LocalFile } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const IMAGE_DIR = 'stored-images';
 @Injectable({
@@ -29,6 +29,11 @@ export class WorkOrdersService {
     }/patron-applications/v.1.0/work-orders`;
   workOrders: WorkOrder = generateWorkOrders(5);
 
+  private readonly MAX_WIDTH = 320;
+  private readonly MAX_HEIGHT = 180;
+  private readonly MIME_TYPE = "image/png";
+  private readonly QUALITY = 0.7;
+
   constructor(
     private _proxy: HousingProxyService,
     private _environment: EnvironmentFacadeService,
@@ -36,23 +41,11 @@ export class WorkOrdersService {
     private _questionsService: QuestionsService,
     private _housingProxyService: HousingProxyService,
     private _workOrderStateService: WorkOrderStateService,
+    private sanitizer: DomSanitizer,
     ) { }
 
   getWorkOrders(): Observable<WorkOrder> {
     return of(this.workOrders);
-  }
-
-  removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
-    let urlRemove = this.workOrderListUrl + `/patron`;
-    const queryParams = new HttpParams().set('patronWaitingListKey', `${patronWaitingListKey}`);
-    return this._proxy.delete(urlRemove, queryParams).pipe(map((response: Response) => {
-      if (isSuccessful(response.status)) {
-        return true;
-      } else {
-        throw new Error(response.status.message);
-      }
-    }),
-      catchError(_ => of(false)))
   }
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
@@ -136,7 +129,6 @@ export class WorkOrdersService {
   ): FormControl {
     let value: any = storedValue;
     let disabled: boolean = false;
-    let image : ImageData | null;
 
     const validators: ValidatorFn[] = [];
 
@@ -196,8 +188,6 @@ export class WorkOrdersService {
     let notifyByEmail: boolean;
     let type,location = 0;
     let image : ImageData | null;
-    let ImageFormData: FormData;
-    let isImageUpload: boolean;
     workOrdersControls.forEach(x => {
         const resultFormValue = formValue[x.name];
         switch (x.workOrderFieldKey) {
@@ -217,8 +207,6 @@ export class WorkOrdersService {
             type = resultFormValue;
             break;
         }
-      
-
     })
 
     this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null);
@@ -240,53 +228,99 @@ export class WorkOrdersService {
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(err=> of(false)),
-      switchMap((response: Response) => 
-        this._workOrderStateService.WorkOrderImageBlob.pipe(
-          switchMap(res => this.sendWorkOrderImage(response.data, res, image).pipe(
-            catchError(_ => of(false))
-          )))
-      ),
-      tap(()=>{
-          this._workOrderStateService.destroyWorkOrderImageBlob();
-          this.deleteImage(image.filename);
+      switchMap((response: Response) => {
+        return this.sendWorkOrderImage(response.data, image)
       })
     );
   }
 
-  sendWorkOrderImage(workOrderId : number, formData: FormData, imageData: ImageData ): Observable<boolean> {
-    let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
+  sendWorkOrderImage(workOrderId : number, imageData: ImageData ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
-    // TODO: left this code here because it'll be used later
-    // formData.append('fileName', imageData.filename);
-    // formData.append('comments', 'student submitted');
-    // formData.append('studentSubmitted', `${imageData.studentSubmitted}`);
-    // formData.append('workOrderKey', `${workOrderId}`);
-    const attachmentFile = imageData.contents.replace(/^data:(.*,)?/, '')
+      let img = new Image();
+      
+      img.onerror = (event) => {
+        reject('error load')
+      };
+      img.onload = async () => {
+        const [newWidth, newHeight] = this.calculateSize(img, this.MAX_WIDTH, this.MAX_HEIGHT);
+        const canvas = document.createElement("canvas");
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        
+        const context = canvas.getContext("2d");
+        context.drawImage(img, 0, 0, newWidth, newHeight);
+        canvas.toBlob(
+          async (blob) => {
+            const data = await this.convertBlobToBase64(blob) as string;
+            
+            const attachmentFile = data.replace(/^data:(.*,)?/, '')
+            const body = new ImageData({
+              filename: imageData.filename,
+              comments: 'student submitted attachment',
+              contents: attachmentFile,
+              studentSubmitted: true,
+              workOrderKey: workOrderId,
+            });
 
-    const body = new ImageData({
-      filename: imageData.filename,
-      comments: 'student submitted attachment',
-      contents: attachmentFile,
-      studentSubmitted: true,
-      workOrderKey: workOrderId,
+            this._housingProxyService
+              .post<Response>(workOrderImageURL, body)
+              .subscribe((response: Response) => {
+                  if (isSuccessful(response.status)) {
+                    this._workOrderStateService.destroyWorkOrderImageBlob();
+                    this.deleteImage();
+                    resolve(true);
+                    return true;
+                  } else {
+                    throw new Error(response.status.message);
+                  }
+                });
+              
+          }, 
+          this.MIME_TYPE, 
+          this.QUALITY
+        );
+
+        resolve(true);
+      };
+      img.src = this.sanitizer.sanitize(SecurityContext.URL, imageData.photoUrl);
     });
-
-    return this._housingProxyService
-      .post<Response>(workOrderImageURL, body)
-      .pipe(
-        map((response: Response) => {
-          if (isSuccessful(response.status)) {
-            return true;
-          } else {
-            throw new Error(response.status.message);
-          }
-        }));
   }
 
-  async deleteImage(fileName: string) {
-    await Filesystem.deleteFile({
+  private convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader;
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+
+  private calculateSize(img: any, maxWidth: number, maxHeight: number): number[] {
+    let width = img.width;
+    let height = img.height;
+  
+    // calculate the width and height, constraining the proportions
+    if (width > height) {
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+    } else {
+      if (height > maxHeight) {
+        width = Math.round((width * maxHeight) / height);
+        height = maxHeight;
+      }
+    }
+    return [width, height];
+  }
+
+  async deleteImage() {
+    await Filesystem.rmdir({
         directory: FilesystemDirectory.Data,
-        path: `${IMAGE_DIR}/${fileName}`
+        path: `${IMAGE_DIR}`,
+        recursive: true
     });
   }
 
