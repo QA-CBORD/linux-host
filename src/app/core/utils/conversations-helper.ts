@@ -76,7 +76,7 @@ export const buildConversationsFromMessages = (
       let newGroupId = '';
       let newGroupDescription = '';
 
-      if (message.sender.type === 'group') {
+      if (message.sender.type === SecureMessageTypes.GROUP) {
         newGroupName = message.sender.name;
         newGroupId = message.sender.id_value;
       } else {

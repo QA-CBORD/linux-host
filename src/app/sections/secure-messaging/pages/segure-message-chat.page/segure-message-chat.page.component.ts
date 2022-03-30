@@ -17,6 +17,7 @@ import {
   SecureMessageGroupInfo,
   SecureMessagingService,
   SecureMessageSendBody,
+  SecureMessageTypes,
 } from '@sections/secure-messaging';
 import { SecureMessagePopoverComponent } from '@sections/secure-messaging/secure-message-popover';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
@@ -154,13 +155,13 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     return {
       institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
       sender: {
-        type: 'patron',
+        type: SecureMessageTypes.PATRON,
         id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
         id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
         name: userInfo.firstName + ' ' + userInfo.lastName,
       },
       recipient: {
-        type: 'group',
+        type: SecureMessageTypes.GROUP,
         id_value: this.selectedConversation.groupIdValue,
         name: this.selectedConversation.groupName,
       },
@@ -203,7 +204,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
       recipient: {
         created_date: new Date().toISOString(),
         id: '',
-        type: 'group',
+        type: SecureMessageTypes.GROUP,
         id_field: null,
         id_value: this.selectedConversation.groupIdValue,
         name: this.selectedConversation.groupName,
