@@ -85,6 +85,10 @@ export class UserPassForm implements OnInit {
     return USERFORM_CONTROL_NAMES;
   }
 
+  ionViewWillLeave() {
+    this.loginForm.reset();
+  }
+
   ngOnInit() {
     this.initForm();
     this.asyncOnInit();
