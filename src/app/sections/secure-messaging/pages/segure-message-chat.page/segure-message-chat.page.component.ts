@@ -233,6 +233,8 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     this.changeDetectorRef.detectChanges();
     this.scrollToBottom();
   }
+
+  // TODO: Build from store
   getConversationGroupInitial = getConversationGroupInitial;
   getConversationGroupName = getConversationGroupName;
   getConversationDescription = getConversationDescription;

@@ -53,7 +53,6 @@ export interface SecureMessageConversation {
   groupDescription: string;
   myIdValue: string;
   messages: SecureMessageInfo[];
-  selected: boolean;
 }
 
 export interface SecureMessageSendBody {
@@ -88,4 +87,9 @@ export interface SecureMessageConversationListItem {
   groupInitial: string;
   groupName: string;
   description: string;
+}
+
+export enum SecureMessageTypes {
+  PATRON = 'patron',
+  GROUP = 'group',
 }

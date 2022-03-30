@@ -153,7 +153,6 @@ export class SecureMessagingService {
         groupDescription: description,
         myIdValue: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
         messages: [],
-        selected: true,
       };
     }
 
@@ -166,10 +165,6 @@ export class SecureMessagingService {
    */
   setSelectedConversation(conversation: SecureMessageConversation) {
     this._selectedConversation = conversation;
-    for (const convo of this.conversationsArray) {
-      convo.selected = false;
-    }
-    this._selectedConversation.selected = true;
   }
 
   /**
@@ -184,8 +179,5 @@ export class SecureMessagingService {
       }
     }
     this._selectedConversation = null;
-    for (const convo of this.conversationsArray) {
-      convo.selected = false;
-    }
   }
 }

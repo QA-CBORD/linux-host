@@ -4,6 +4,7 @@ import {
   SecureMessageConversationListItem,
   SecureMessageGroupInfo,
   SecureMessageInfo,
+  SecureMessageTypes,
   SecureMessagingAuthInfo,
 } from '@sections/secure-messaging/models';
 
@@ -28,7 +29,7 @@ export const getConversationGroupName = ({ groupName }: SecureMessageConversatio
  */
 export const getConversationDescription = ({ messages }: SecureMessageConversation): string => {
   const lastIMessage: SecureMessageInfo = messages[messages.length - 1];
-  const frontText: string = lastIMessage.sender.type === 'patron' ? 'You: ' : '';
+  const frontText: string = lastIMessage.sender.type === SecureMessageTypes.PATRON ? 'You: ' : '';
 
   return frontText + lastIMessage.body;
 };
@@ -100,7 +101,6 @@ export const buildConversationsFromMessages = (
         groupDescription: newGroupDescription,
         myIdValue: id_value,
         messages: [],
-        selected: false,
       };
 
       conversation.messages.push(message);
@@ -145,7 +145,9 @@ const sortConversations = (a, b) => {
   return 0;
 };
 
-export const mapConversationToListItem = (conversation: SecureMessageConversation): SecureMessageConversationListItem => {
+export const mapConversationToListItem = (
+  conversation: SecureMessageConversation
+): SecureMessageConversationListItem => {
   const groupName = getConversationGroupName(conversation);
   return {
     groupInitial: getConversationGroupInitial(groupName),
