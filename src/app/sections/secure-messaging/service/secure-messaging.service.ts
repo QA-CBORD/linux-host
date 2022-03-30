@@ -137,13 +137,7 @@ export class SecureMessagingService {
 
   startConversation({ id, name, description }: SecureMessageGroupInfo) {
     /// check if a conversation with this group already exists
-    let conversation: SecureMessageConversation = null;
-    for (const convo of this.conversationsArray) {
-      if (convo.groupIdValue === id) {
-        conversation = convo;
-        break;
-      }
-    }
+    let conversation: SecureMessageConversation = this.conversationsArray.find((convo) => convo.groupIdValue === id);
 
     if (conversation === null) {
       conversation = {
