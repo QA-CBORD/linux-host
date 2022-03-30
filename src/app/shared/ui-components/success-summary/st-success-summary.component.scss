@@ -2,14 +2,6 @@
 
 .final-order {
 
-  &__title {
-    letter-spacing: 0;
-    text-align: center;
-    outline: none;
-
-    @include font-nunito-heavy(20px);
-  }
-
   &__header {
     border-bottom: 1px solid $color-whisper;
   }
@@ -37,10 +29,6 @@
     color: $color-charcoal;
 
     @include font-nunito-regular(16px);
-  }
-
-  &__footer {
-    padding: 10px 10px 10px;
   }
 }
 
