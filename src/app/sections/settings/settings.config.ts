@@ -62,7 +62,7 @@ const isGuestUser = async function (services: SettingsServices): Promise<boolean
   return firstValueFrom(authService.isGuestUser());
 }
 
-const isGuestHOF = async (services: SettingsServices, self: SettingItemConfig, inner: () => Promise<boolean>): Promise<boolean> => {
+const determineIsGuest = async (services: SettingsServices, self: SettingItemConfig, inner: () => Promise<boolean>): Promise<boolean> => {
   return isGuestUser(services).then(((async isGuest => {
     if (isGuest && self.studentsOnly) return false;
     return await inner();
@@ -92,7 +92,7 @@ const asyncCheckEverySetting = async function (validations: SettingItemValidatio
 
 const validateSettingEnabled = async function (services: SettingsServices): Promise<boolean> {
   if ((await isSupportedInCurrentProfile(services))(this)) {
-    return await isGuestHOF(services, this, async () => (await asyncCheckEverySetting(this.validations, services)).every(checkTrue => checkTrue))
+    return await determineIsGuest(services, this, async () => (await asyncCheckEverySetting(this.validations, services)).every(checkTrue => checkTrue))
   }
   return false;
 }
