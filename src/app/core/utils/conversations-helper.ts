@@ -47,6 +47,7 @@ export const buildConversationsFromMessages = (
   { institution_id, id_value }: SecureMessagingAuthInfo
 ): SecureMessageConversation[] => {
   const tempConversations: SecureMessageConversation[] = [];
+  // TODO: Reduce method complexity. Avoid nested arrays.
 
   /// create 'conversations' out of message array
   for (const message of messages) {
