@@ -12,6 +12,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/type-message.pipe.module';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
+import { StSuccesSummaryModule } from '@shared/ui-components/success-summary/st-success-summary.module';
 
 @NgModule({
   declarations: [CartComponent, SuccessModalComponent],
@@ -25,7 +26,8 @@ import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-pre
     StButtonModule,
     TypeMessageModule,
     AddressHeaderFormatPipeModule,
-    ModifyPrepTimeModule
+    ModifyPrepTimeModule,
+    StSuccesSummaryModule
   ],
    entryComponents: [SuccessModalComponent],
    providers: [ModalsService]
