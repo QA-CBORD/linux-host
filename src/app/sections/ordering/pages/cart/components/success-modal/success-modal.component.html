@@ -5,48 +5,30 @@
         <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title id="modal-mainTitle" tabindex="0" class="final-order__title">{{ contentStrings.labelOrder | async}} #{{checkNumber}}</ion-title>
+    <ion-title id="modal-mainTitle" tabindex="0" class="final-order__title"
+      >{{ contentStrings.labelOrder | async }} #{{ checkNumber }}</ion-title
+    >
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="final-order__body-wrapper">
-    <img src="/assets/images/big_check_order.svg" alt="big check order" class="final-order__main-img"/>
-    <div class="final-order__sub-header">{{ contentStrings.labelOrderPlacedTitle | async }}</div>
-
-    <div class="final-order__body">
-      {{ contentStrings.labelOrderPlacedDescription | async }}
-    </div>
-
-    <div class="total">
-
-      <div *ngIf="type !== null"  class="total__item-wrapper">
-        <div class="label">{{ type | typeMessage: 'Time' | uppercase }}</div>
-        <div class="label--bold">
-          {{ dueTime | modifyPrepTime: type }}
-        </div>
-      </div>
-
-      <div *ngIf="type !== null"  class="total__item-wrapper">
-        <div class="label">{{ type | typeMessage: 'Address' | uppercase }}</div>
-        <div class="label--bold">
-          <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
-          <span>{{ address | addressHeaderFormat }}</span>
-        </div>
-      </div>
-
-      <div *ngIf="total" class="total__item ion-margin-top">{{ contentStrings.labelTotal | async }}<span
-              class="total__item--bold">{{total | priceUnitsResolver : mealBased}}</span>
-      </div>
-      <div class="total__item">
-        {{ contentStrings.labelPaymentMethod | async }}
-        <span>{{accountName}}</span>
-      </div>
-    </div>
-  </div>
+  <st-success-summary
+  [labelOrderPlacedTitle]="contentStrings.labelOrderPlacedTitle | async"
+  [labelOrderPlacedDescription]="contentStrings.labelOrderPlacedTitle | async"
+    [mealBased]="mealBased"
+    [orderType]="type"
+    [dueTime]="dueTime"
+    [address]="address"
+    [subTotal]="subTotal"
+    [total]="total"
+    [tip]="tip"
+    [fee]="pickupFee || deliveryFee"
+    [discount]="discount"
+    [paymentMethod]="accountName"
+  ></st-success-summary>
 </ion-content>
 <ion-footer class="final-order__footer" mode="ios">
   <st-button (onClick)="onClosed()">
-    {{contentStrings.buttonDone | async}}
+    {{ contentStrings.buttonDone | async }}
   </st-button>
 </ion-footer>
