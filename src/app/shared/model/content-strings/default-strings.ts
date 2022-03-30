@@ -73,7 +73,15 @@ export const checkingSuccessCs = {
   lbl_pickup_address: 'PICKUP ADDRESS',
   lbl_total: 'Total',
   lbl_btn_order_detail: 'Order Details',
-  done: 'Done'
+  done: 'Done',
+  labelOrder: 'Order',
+  lbl_subtotal: 'Subtotal',
+  lbl_tip: 'Tip',
+  lbl_tax: 'Tax',
+  lbl_discount: 'Discount',
+  lbl_pickupFee: 'PICK UP FEE',
+  lbl_deliveryFee: 'DELIVERY FEE'
+
 }
 
 export const defaultRegistrationCs = {
