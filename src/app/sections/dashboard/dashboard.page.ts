@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
-import { ModalController, Platform, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
@@ -32,7 +32,7 @@ import { Router } from '@angular/router';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
-import { NavigationTrackerService } from './services/navigation-history.service';
+
 @Component({
   selector: 'st-dashboard',
   templateUrl: './dashboard.page.html',
@@ -69,9 +69,7 @@ export class DashboardPage implements OnInit {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
     private readonly router: Router,
-    private readonly globalNav: GlobalNavService,
-    private readonly navigationTracker: NavigationTrackerService,
-    private readonly platform: Platform
+    private readonly globalNav: GlobalNavService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -83,7 +81,6 @@ export class DashboardPage implements OnInit {
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
     this.pushNotificationRegistration();
-    this.externalBackButton();
   }
 
   ngAfterViewInit() {
@@ -102,7 +99,6 @@ export class DashboardPage implements OnInit {
     this.updateTiles();
     this.checkNativeStartup();
     this.globalNav.showNavBar();
-    this.navigationTracker.startTrackingNavigation();
   }
 
   private async checkNativeStartup() {
@@ -295,15 +291,5 @@ export class DashboardPage implements OnInit {
     if (deepLinkPath && deepLinkPath.length) {
       this.router.navigate(deepLinkPath).then(() => this.sessionFacadeService.navigatedToLinkPath());
     }
-  }
-
-  private externalBackButton() {
-    this.platform.backButton.subscribeWithPriority(10, async () => {
-      if (!this.navigationTracker.getCurrentUrl().includes('login')) {
-        if (!this.navigationTracker.getCurrentUrl().includes('pre-login')) {
-          this.navigationTracker.trackBackNavigation();
-        }
-      }
-    });
   }
 }

@@ -23,7 +23,6 @@ import { NativeStartupFacadeService } from '../native-startup/native-startup.fac
 import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { NavigationTrackerService } from '@sections/dashboard/services/navigation-history.service';
 
 enum AppStatus {
   BACKGROUND,
@@ -58,8 +57,7 @@ export class SessionFacadeService {
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly ngZone: NgZone,
-    private readonly globalNav: GlobalNavService,
-    private readonly navigationTracker: NavigationTrackerService,
+    private readonly globalNav: GlobalNavService
   ) {
     this.appStateListeners();
   }
@@ -72,10 +70,9 @@ export class SessionFacadeService {
         this.onActiveState();
         await this.appResumeLogic();
       } else {
-        this.navigationTracker.stopTrackingNavigation();
         if (!this.identityFacadeService.getIsLocked()) {
           this.closeTopControllers();
-        }   
+        }
         this.appStatus = AppStatus.BACKGROUND;
       }
     });
@@ -352,7 +349,6 @@ export class SessionFacadeService {
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
     this.contentStringFacade.clearState();
-    this.navigationTracker.stopTrackingNavigation();
   }
 
   async getIsWeb(): Promise<boolean> {
