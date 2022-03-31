@@ -1,0 +1,203 @@
+@import 'tools';
+
+.secure-message {
+  height: 100%;
+  width: 100%;
+  background-color: #fff;
+
+  &__container {
+    height: 100%;
+  }
+
+  &__conversations {
+    padding: 0;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: rgba(0, 0, 0, 0.1);
+
+    .conversations-container {
+      &__item {
+        background-color: #fff;
+      }
+
+      &__avatar-shadow {
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 4px 0 rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0);
+      }
+
+      &__groups {
+        overflow: auto;
+        height: 84%;
+        background-color: #fff;
+      }
+
+      &__avatar-icon {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 1.4em;
+      }
+
+      &__avatar-text {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-20%, -50%);
+        color: white;
+        margin: 0;
+      }
+
+      &__group--selected {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+
+  &__conversation {
+    height: 100%;
+    padding: 0 0 15px;
+
+    .conversation-container {
+      &__avatar-text {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-20%, -50%);
+        color: white;
+        margin: 0;
+      }
+
+      &__chat {
+        top: 56px;
+        height: calc(100vh - 150px - env(safe-area-inset-bottom));
+        overflow: auto;
+      }
+
+      &__chat-avatar {
+        width: 2.5em;
+        height: 2.5em;
+        margin-bottom: 37px;
+        margin-left: 0;
+      }
+
+      &__text-area-wraper {
+        position: absolute;
+        width: 100%;
+        bottom: 1vh;
+      }
+
+      &__text-area {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 4px 0 rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0);
+        max-height: 4rem;
+
+        --padding-top: 10px;
+        --padding-bottom: 10px;
+        --padding-start: 10px !important;
+        --padding-end: 10px !important;
+      }
+
+      &__text-area-btn {
+        width: 3em;
+        height: 3em;
+        z-index: 2;
+        position: relative;
+      }
+
+      &__body-wrapper {
+        padding: 0;
+      }
+
+      &__text-bubble {
+        border-radius: 10px;
+        padding: 15px;
+        margin: 1px;
+        display: inline-block;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        max-width: 100%;
+      }
+
+      &__date-wrapper {
+        margin-bottom: 16px;
+        margin-top: 5px;
+      }
+
+      &__text-date {
+        margin: 0;
+        font-size: 0.9em;
+        color: rgba(0, 0, 0, 0.5);
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &__conversation-creation {
+    height: 86%;
+    padding: 0;
+
+    .conversation-creation-container {
+      &__groups {
+        overflow: auto;
+        height: 95%;
+        margin-left: 5%;
+        margin-bottom: 0;
+      }
+
+      &__avatar-text {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-20%, -50%);
+        color: white;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.light-grey-background {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.primary-background {
+  background-color: var(--ion-color-primary);
+}
+
+.light-blue-background {
+  background-color: rgba(0, 92, 185, 0.1);
+}
+
+.purple-background {
+  background-color: #af5cf7;
+}
+
+.item,
+.list,
+.item-content,
+.item-complex {
+  --ion-background-color: transparent !important;
+}
+
+@-moz-document url-prefix() {
+  .conversation-container__text-area {
+    --padding-bottom: 0 !important;
+  }
+}
+.btn {
+  --icon-font-size: 18px;
+  --margin-start: 10px;
+  --icon-padding-end: 5px;
+  width: 70px;
+  height: 20px;
+  display: block;
+
+  @include font-nunito-regular(16px);
+}
+.btn-wrapper {
+  width: 75px;
+  height: 20px;
+  display: block;
+}
