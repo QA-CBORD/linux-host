@@ -39,12 +39,12 @@
       </div>
 
       <div *ngIf="fee" class="total__item">
-        {{ labelFee | async }}
+        {{ orderType === 0 ? (contentStrings.labelPickupFee | async) : (contentStrings.labelDeliveryFee | async) }}
         <span class="total__item">{{ fee | priceUnitsResolver: mealBased }}</span>
       </div>
 
       <div *ngIf="tax" class="total__item">
-        {{ labelTax | async }}
+        {{ contentStrings.labelTax | async }}
         <span class="total__item">{{ tax | priceUnitsResolver: mealBased }}</span>
       </div>
 
