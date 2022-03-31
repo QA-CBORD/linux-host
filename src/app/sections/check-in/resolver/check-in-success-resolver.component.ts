@@ -21,8 +21,8 @@ export class CheckinSuccessResolver implements Resolve<Observable<any>> {
     const checkinSuccess = this.commonService.loadContentString<CheckingSuccessContentCsModel>(
       ContentStringCategory.checkinSuccess
     );
-    const orders = this.merchantService.getRecentOrders();
-    return forkJoin(checkinSuccess, orders).pipe(
+
+    return forkJoin(checkinSuccess, this.merchantService.getRecentOrders()).pipe(
       take(1),
       tap(() => {
         this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner();
