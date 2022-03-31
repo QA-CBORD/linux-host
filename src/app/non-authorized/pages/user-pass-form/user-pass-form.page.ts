@@ -88,7 +88,7 @@ export class UserPassForm implements OnInit {
   ngOnInit() {
     this.initForm();
     this.asyncOnInit();
-    this.clearFormFields();
+    this.onUserPassPaused();
   }
 
   ionViewWillLeave() {
@@ -312,7 +312,7 @@ export class UserPassForm implements OnInit {
     }
   }
 
-  private clearFormFields() {
+  private onUserPassPaused() {
     this.subscription = this.plt.pause.subscribe(() => {
       this.resetForm();
     });
