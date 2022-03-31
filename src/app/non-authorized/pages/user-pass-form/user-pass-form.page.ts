@@ -17,14 +17,13 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { AUTHENTICATION_SYSTEM_TYPE, ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { RegistrationComponent } from '../registration/components/registration/registration.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
@@ -48,6 +47,7 @@ export class UserPassForm implements OnInit {
   loginForm: FormGroup;
   signupEnabled$: Observable<boolean>;
   navedAsGuest$: Observable<boolean>;
+  subscription: Subscription;
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -59,7 +59,6 @@ export class UserPassForm implements OnInit {
     private readonly toastService: ToastService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
-    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
     private readonly modalCtrl: ModalController,
@@ -70,7 +69,8 @@ export class UserPassForm implements OnInit {
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer,
     private readonly messageProxy: MessageProxy,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly plt: Platform
   ) {}
 
   get username(): AbstractControl {
@@ -85,13 +85,18 @@ export class UserPassForm implements OnInit {
     return USERFORM_CONTROL_NAMES;
   }
 
-  ionViewWillLeave() {
-    this.loginForm.reset();
-  }
-
   ngOnInit() {
     this.initForm();
     this.asyncOnInit();
+    this.clearFormFields();
+  }
+
+  ionViewWillLeave() {
+    this.resetForm();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   async asyncOnInit(): Promise<void> {
@@ -299,6 +304,18 @@ export class UserPassForm implements OnInit {
 
   public get defaultBackUrl() {
     return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
+  }
+
+  private resetForm() {
+    if (this.loginForm.touched) {
+      this.loginForm.reset();
+    }
+  }
+
+  private clearFormFields() {
+    this.subscription = this.plt.pause.subscribe(() => {
+      this.resetForm();
+    });
   }
 }
 
