@@ -241,6 +241,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   getConditionStaff(conditionStaff: number):string{
-    return this.conditions.filter(x => x.value === conditionStaff.toString())[0].label
+    const conditionStaffValue = this.conditions.filter(x => x.value === conditionStaff.toString())[0]?.label
+    return conditionStaffValue? conditionStaffValue : 'none';
   }
 }
