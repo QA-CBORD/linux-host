@@ -87,6 +87,7 @@ export class OrderingPage implements OnInit {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
     this.merchantService.orderTypes = orderTypes;
+    this.cartService.resetCartOrderDetailsOptions();
 
     const modal = await this.modalController.create(
       {
