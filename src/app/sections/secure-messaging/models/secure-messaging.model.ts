@@ -25,7 +25,7 @@ export interface SecureMessageGroupInfo {
   version?: number;
 }
 
-export interface SecureMessageGroupMemeberInfo {
+export interface SecureMessageGroupMemberInfo {
   id?: string;
   message_group_id: string;
   member_id: string;
@@ -53,7 +53,6 @@ export interface SecureMessageConversation {
   groupDescription: string;
   myIdValue: string;
   messages: SecureMessageInfo[];
-  selected: boolean;
 }
 
 export interface SecureMessageSendBody {
@@ -81,4 +80,16 @@ export interface SecureMessagingAuthInfo {
   jwt_version: string;
   id_value: string;
   institution_id: string;
+}
+
+export interface SecureMessageConversationListItem {
+  conversation: SecureMessageConversation;
+  groupInitial: string;
+  groupName: string;
+  description: string;
+}
+
+export enum SecureMessageTypes {
+  PATRON = 'patron',
+  GROUP = 'group',
 }
