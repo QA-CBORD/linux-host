@@ -335,9 +335,11 @@ async startUpload(file: LocalFile,value: string) {
   }
 
   _setFacility() {
+    if (this.question.type !== 'FACILITY') return;
+
     this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
     this.currectFacility = this._contractListStateService.getContractDetails()[0].fullName;
-    if (this.facilityTreeData.length == 1 && !this.isSubmitted && this.question.type == 'FACILITY') {
+    if (this.facilityTreeData.length === 1 && !this.isSubmitted && this.question.type === 'FACILITY') {
       this.isSubmitted = true;
       this.facilityFullName = this.facilityTreeData[0].facilityFullName;
       this._workOrderStateService.setSelectedFacilityTree({
@@ -345,7 +347,8 @@ async startUpload(file: LocalFile,value: string) {
         facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey,
       });
     }
-    if (this.facilityTreeData.length > 1 && this.question.type == 'FACILITY') {
+
+    if (this.facilityTreeData.length > 1 && this.question.type === 'FACILITY') {
       this._workOrderStateService.setSelectedFacilityTree({
         name: this.currectFacility,
         facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
