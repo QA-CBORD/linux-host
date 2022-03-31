@@ -22,7 +22,7 @@ export class CheckinSuccessResolver implements Resolve<Observable<any>> {
       ContentStringCategory.checkinSuccess
     );
 
-    return forkJoin(checkinSuccess, this.merchantService.getRecentOrders()).pipe(
+    return forkJoin([checkinSuccess, this.merchantService.getRecentOrders()]).pipe(
       take(1),
       tap(() => {
         this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner();
