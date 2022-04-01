@@ -231,7 +231,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       },
     });
     modal.onDidDismiss().then(async ({ data }) => {
-      if (data.scancode) {
+      if (data?.scancode) {
         await this.onScanCode();
       }
     });

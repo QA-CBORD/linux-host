@@ -3,6 +3,7 @@ import { Route, RouterModule } from '@angular/router';
 import { DashboardPage } from './dashboard.page';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
 import { DASHBOARD_NAVIGATE } from './dashboard.config';
+import { SwipeBackGuard } from '@sections/dashboard/resolvers/swipe-back.guard';
 
 const routes: Route[] = [
   {
@@ -10,7 +11,8 @@ const routes: Route[] = [
     component: DashboardPage,
     resolve: {
       data: DashboardPageResolver,
-    }
+    },
+    canDeactivate: [SwipeBackGuard]
   },
   {
     path: DASHBOARD_NAVIGATE.scanCard,

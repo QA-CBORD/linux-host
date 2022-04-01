@@ -1,0 +1,82 @@
+@import 'tools';
+
+.final-order {
+
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__body-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+  }
+
+  &__main-img {
+    margin: 5px 0;
+    max-height: 150px;
+  }
+
+  &__sub-header {
+    color: $color-charcoal;
+    text-align: center;
+    margin-bottom: 10px;
+
+    @include font-nunito-heavy(24px);
+  }
+
+  &__body {
+    color: $color-charcoal;
+
+    @include font-nunito-regular(16px);
+  }
+}
+
+.total {
+  margin-top: 10px;
+  background: $color-white;
+
+  &__summary {
+    margin-top: 20px;
+  }
+
+  &__item {
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    color: $color-charcoal;
+    @include font-nunito-regular(14px);
+    margin-bottom: 3px;
+
+    &--bold {
+      @include font-nunito-semibold(14px);
+    }
+
+    &--bold16px {
+      @include font-nunito-semibold(16px);
+    }
+
+    &--capitalize {
+      text-transform: capitalize;
+    }
+
+    &--grid {
+      display: grid;
+      margin-bottom: 3px;
+    }
+  }
+
+  &__item-wrapper {
+    color: $color-charcoal;
+    margin-top: 20px;
+    
+    .label {
+      @include font-nunito-regular(14px);
+
+      &--bold {
+        color: $color-charcoal;
+        @include font-nunito-semibold(16px);
+      }
+    }
+  }
+}
