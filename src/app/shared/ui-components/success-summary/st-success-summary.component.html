@@ -39,7 +39,7 @@
       </div>
 
       <div *ngIf="fee" class="total__item">
-        {{ orderType === 0 ? (contentStrings.labelPickupFee | async) : (contentStrings.labelDeliveryFee | async) }}
+        {{ orderType.pickup  ? (contentStrings.labelPickupFee | async) : (contentStrings.labelDeliveryFee | async) }}
         <span class="total__item">{{ fee | priceUnitsResolver: mealBased }}</span>
       </div>
 
@@ -55,7 +55,7 @@
 
       <div class="total__item ion-margin-top" [class.total__item--grid]="paymentMethod.length > 20">
         <span class="total__item--capitalize">{{ contentStrings.labelPaymentMethod | async }}</span>
-        <span>{{ paymentMethod }}</span>
+        <span class="total__item--capitalize">{{ paymentMethod }}</span>
       </div>
     </div>
   </div>

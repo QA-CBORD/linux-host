@@ -261,6 +261,8 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     const address = await firstValueFrom(await this.orderDetailOptions$);
+    const orderTypes = await firstValueFrom(this.orderTypes$);
+
     const modal = await this.modalController.create({
       component: SuccessModalComponent,
       componentProps: {
@@ -279,6 +281,7 @@ export class CartComponent implements OnInit, OnDestroy {
         dueTime,
         type,
         address: address.address,
+        orderType: orderTypes
       },
     });
 
