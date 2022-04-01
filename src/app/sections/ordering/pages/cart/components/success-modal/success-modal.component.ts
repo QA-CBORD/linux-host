@@ -25,6 +25,7 @@ export class SuccessModalComponent implements OnInit {
   @Input() orderType: MerchantOrderTypesInfo;
   @Input() dueTime: string;
   @Input() address: AddressInfo;
+  @Input() type: number;
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
