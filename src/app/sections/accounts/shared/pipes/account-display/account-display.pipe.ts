@@ -10,10 +10,10 @@ import { PaymentType } from 'src/app/app.global';
 export class AccountDisplayPipe implements PipeTransform {
   constructor(private readonly creditCardTypePipe: CreditCardTypePipe) {}
 
-  transform(acc: UserAccount | PaymentType): string {
+  transform(acc: number | UserAccount | Partial<UserAccount> | PaymentType): string {
     if (!acc) return '';
 
-    if(acc === PaymentType.BILLME) return 'Bill me';
+    if (acc === PaymentType.BILLME) return 'Bill me';
 
     const account = acc as UserAccount;
     if (isAppleAccount(account)) {
