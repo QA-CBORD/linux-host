@@ -13,13 +13,13 @@
 
 <ion-content>
   <st-success-summary
-    *ngIf="order$ | async as order"
+    *ngIf="(order$ | async) as order"
     [mealBased]="order.mealBased"
     [labelOrderPlacedTitle]="contentStrings.subtitle"
     [labelOrderPlacedDescription]="contentStrings.instructions"
-    [orderType]="order.type"
+    [orderType]="data.orderTypes"
     [dueTime]="order.dueTime"
-    [address]="order.deliveryAddress || order.pickupAddressId"
+    [address]="data.storeAddress"
     [subTotal]="order.subTotal"
     [total]="order.total"
     [tip]="order.tip"
@@ -31,6 +31,6 @@
 </ion-content>
 <ion-footer class="final-order__footer" mode="ios">
   <st-button (onClick)="goToRecentOrders()">
-    {{ contentStrings.doneBtn  }}
+    {{ contentStrings.doneBtn }}
   </st-button>
 </ion-footer>
