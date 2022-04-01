@@ -282,14 +282,8 @@ export class CartComponent implements OnInit, OnDestroy {
       },
     });
 
-    modal.onDidDismiss().then(async ({ data }) => {
-      if (data.goToDetail) {
-        this.checkInService.navedFromCheckin = true;
-        this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.recentOrders, id]);
-        return;
-      }
-
-      await this.routingService.navigate([APP_ROUTES.ordering]);
+    modal.onDidDismiss().then(() => {
+      this.routingService.navigate([APP_ROUTES.ordering]);
     });
 
     await modal.present();
