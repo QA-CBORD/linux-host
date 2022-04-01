@@ -89,8 +89,8 @@ export class CreditCardMgmtComponent implements OnInit {
       componentProps: {
         titleString: `Remove ${cardType}?`,
         bodyString: `Are you sure you want to remove credit card ending in ${account.lastFour}?`,
-        primaryBtnText: 'Remove Card',
-        secondaryBtnText: 'Cancel',
+        primaryBtnText: strings.remove_card_btn,
+        secondaryBtnText: strings.cancel_remove_card_btn,
         primaryBtnColor: 'danger',
         secondaryBtnColor: 'light',
         onClickPrimary: async (e) => {
