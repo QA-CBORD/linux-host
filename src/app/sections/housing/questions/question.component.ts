@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, O
 import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
-import { QuestionHeader } from './questions.model';
+import { QuestionHeader, QUESTIONS_TYPES } from './questions.model';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RequestedRoommate } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
@@ -335,11 +335,11 @@ async startUpload(file: LocalFile,value: string) {
   }
 
   _setFacility() {
-    if (this.question.type !== 'FACILITY') return;
+    if (this.question.type !== QUESTIONS_TYPES.FACILITY) return;
 
     this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
     this.currectFacility = this._contractListStateService.getContractDetails()[0].fullName;
-    if (this.facilityTreeData.length === 1 && !this.isSubmitted && this.question.type === 'FACILITY') {
+    if (this.facilityTreeData.length === 1 && !this.isSubmitted && this.question.type === QUESTIONS_TYPES.FACILITY) {
       this.isSubmitted = true;
       this.facilityFullName = this.facilityTreeData[0].facilityFullName;
       this._workOrderStateService.setSelectedFacilityTree({
@@ -348,7 +348,7 @@ async startUpload(file: LocalFile,value: string) {
       });
     }
 
-    if (this.facilityTreeData.length > 1 && this.question.type === 'FACILITY') {
+    if (this.facilityTreeData.length > 1 && this.question.type === QUESTIONS_TYPES.FACILITY) {
       this._workOrderStateService.setSelectedFacilityTree({
         name: this.currectFacility,
         facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
