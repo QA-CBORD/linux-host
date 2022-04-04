@@ -38,7 +38,9 @@ export const defaultCreditCardMgmtCs = {
   error_loading_cards: "An error occurred while loading your credit card accounts.",
   remove_success_msg: "Your credit card has been removed successfully.",
   remove_failure_msg: "We could not remove your credit card, please try again later.",
-  added_success_msg: "Your credit card has been added successfully."
+  added_success_msg: "Your credit card has been added successfully.",
+  remove_card_btn: 'Remove Card',
+  cancel_remove_card_btn: 'Cancel'
 }
 
 export const checkingDefaultCs = {
