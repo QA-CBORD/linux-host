@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable, of, zip } from 'rxjs';
-import { map, observeOn, subscribeOn, switchMap, take, timeout } from 'rxjs/operators';
+import { from, Observable, of, zip } from 'rxjs';
+import { first, map, observeOn, subscribeOn, switchMap, take, timeout } from 'rxjs/operators';
 import { queue } from 'rxjs/internal/scheduler/queue';
 import { async } from 'rxjs/internal/scheduler/async';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
@@ -39,12 +39,22 @@ export class BaseInterceptor implements HttpInterceptor {
     }
     const rpcConfig: RPCQueryConfig = req.body;
     const timeOut = rpcConfig.timeOut ? rpcConfig.timeOut : this.TIMEOUT_MS;
-    const url = this.environmentFacadeService.getServicesURL().concat(req.url);
-    const clone = req.clone({ url, body: rpcConfig.requestBody, headers: this.baseHeaders });
-    const request =
-      rpcConfig.useSessionId || rpcConfig.useInstitutionId
-        ? this.updatedRequest(next, rpcConfig, clone)
-        : next.handle(clone);
+
+    const request = this.institutionFacadeService.cachedInstitutionInfo$.pipe(
+      take(1),
+      switchMap(inst => {
+        let url = this.environmentFacadeService.getServicesURL();
+        if (inst && inst.servicesUrl) {
+          url = inst.servicesUrl;
+        }
+        url = url.concat(req.url);
+        const clone = req.clone({ url, body: rpcConfig.requestBody, headers: this.baseHeaders });
+
+        return rpcConfig.useSessionId || rpcConfig.useInstitutionId
+          ? this.updatedRequest(next, rpcConfig, clone)
+          : next.handle(clone);
+      })
+    );
     return request.pipe(timeout(timeOut));
   }
 

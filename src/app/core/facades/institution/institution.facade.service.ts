@@ -161,4 +161,8 @@ export class InstitutionFacadeService extends ServiceStateFacade {
       map(response => response.lookupFields)
     );
   }
+
+  clearInstitution() {
+    return this.storageStateService.deleteStateEntityByKey(this.institutionKey);
+  }
 }

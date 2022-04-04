@@ -16,6 +16,7 @@ export interface Institution {
   payWithGETOnly: boolean;
   type: number;
   imageBannerFull: string;
+  servicesUrl: string;
 }
 
 export class InstitutionLookupListItem {
