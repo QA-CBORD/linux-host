@@ -30,6 +30,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
   facilityFullName: string;
   currectFacility: string;
   images: LocalFile[] = [];
+  workOrderFields: any = {
+    notify : 'Would like to receive updates.',
+    phone : 'Enter the number we may use to contact you.',
+    email : 'Enter the email we may use to contact you.',
+    description : 'Describe what needs to be repaired.',
+  }
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _termService: TermsService,
@@ -332,6 +338,17 @@ async startUpload(file: LocalFile,value: string) {
 
   isWorkOrderDescription(question) {
     return question.source === 'WORK_ORDER' && question.workOrderFieldKey === 'DESCRIPTION';
+  }
+
+  inputWorkOrderType(question){
+    if(question.workOrderFieldKey === 'CONTACT_PHONE_NUMBER'){
+      return this.workOrderFields.phone;
+    }
+    return this.workOrderFields.email;
+  }
+
+  isWorkOrder(question){
+    return question.source === 'WORK_ORDER';
   }
 
   _setFacility() {

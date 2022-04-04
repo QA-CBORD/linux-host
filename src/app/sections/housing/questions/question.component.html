@@ -29,7 +29,7 @@
       class="question__item question__control"
       type="text"
       [control]="parentGroup.get(question['name'])"
-      [label]="question.label"
+      [label]="isWorkOrder(question)? inputWorkOrderType(question) : question.label"
       [idd]="question['name']"
       [formControlName]="question['name']"
       [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
@@ -162,7 +162,7 @@
     </ng-container>
 
     <div *ngSwitchCase="'radio-group'" class="question__section">
-      <h3 class="form__secondary-header">{{ question.label }}</h3>
+      <h3 class="form__secondary-header">{{ isWorkOrder(question)? workOrderFields.notify : question.label  }}</h3>
 
       <st-control-errors
         class="control-hint--no-indent"

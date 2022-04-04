@@ -19,7 +19,7 @@ export class StHierarcheTreeComponent implements OnDestroy  {
   @Input() public lookups: LookUpItem[];
   @Input() public allowParent: boolean;
   @Input() public isDisable: boolean;
-
+  label = 'Select the location where the repair is needed.';
   constructor(
     public modalCtrl: ModalController,
     public _workOrderStateService: WorkOrderStateService,
