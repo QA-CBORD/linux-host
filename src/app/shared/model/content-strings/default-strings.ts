@@ -39,17 +39,20 @@ export const defaultCreditCardMgmtCs: {
   remove_success_msg: string;
   remove_failure_msg: string;
   added_success_msg: string;
+  remove_card_btn: string;
+  cancel_remove_card_btn: string;
 } = {
   screen_title: 'Payment Methods',
   no_card_found: "You don't have any payment methods.",
-  add_new_card_btn_text: 'Add New Card',
-  user_info_text:
-    'Credit card information is handled by USAePay. After adding a new card, you will be redirected back to this screen.',
-  error_loading_cards: 'An error occurred while loading your credit card accounts.',
-  remove_success_msg: 'Your credit card has been removed successfully.',
-  remove_failure_msg: 'We could not remove your credit card, please try again later.',
-  added_success_msg: 'Your credit card has been added successfully.',
-};
+  add_new_card_btn_text: "Add New Card",
+  user_info_text:"Credit card information is handled by USAePay. After adding a new card, you will be redirected back to this screen.",
+  error_loading_cards: "An error occurred while loading your credit card accounts.",
+  remove_success_msg: "Your credit card has been removed successfully.",
+  remove_failure_msg: "We could not remove your credit card, please try again later.",
+  added_success_msg: "Your credit card has been added successfully.",
+  remove_card_btn: 'Remove Card',
+  cancel_remove_card_btn: 'Cancel'
+}
 
 export const checkingDefaultCs = {
   title: 'Home',
