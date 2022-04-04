@@ -13,7 +13,7 @@ import { SessionFacadeService } from '../../../core/facades/session/session.faca
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
-import { FacilityTree, ImageData, LocalFile } from '../work-orders/work-orders.model';
+import { FacilityTree, ImageData, LocalFile, WorkOrdersFields } from '../work-orders/work-orders.model';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
 
 const IMAGE_DIR = 'stored-images';
@@ -30,12 +30,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
   facilityFullName: string;
   currectFacility: string;
   images: LocalFile[] = [];
-  workOrderFields: any = {
+  workOrderFieldsText: any = {
     notify : 'Would like to receive updates.',
     phone : 'Enter the number we may use to contact you.',
     email : 'Enter the email we may use to contact you.',
     description : 'Describe what needs to be repaired.',
-  }
+    location: 'Select the location where the repair is needed.',
+  };
+
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _termService: TermsService,
@@ -340,15 +342,24 @@ async startUpload(file: LocalFile,value: string) {
     return question.source === 'WORK_ORDER' && question.workOrderFieldKey === 'DESCRIPTION';
   }
 
-  inputWorkOrderType(question){
-    if(question.workOrderFieldKey === 'CONTACT_PHONE_NUMBER'){
-      return this.workOrderFields.phone;
+  getLabel(question){
+    if(question.source === 'WORK_ORDER'){
+      if(question.workOrderFieldKey === WorkOrdersFields.FACILITY){
+        return this.workOrderFieldsText.location;
+      }
+      if(question.workOrderFieldKey === WorkOrdersFields.NOTIFY_BY_EMAIL){
+        return this.workOrderFieldsText.notify;
+      }
+      else if(question.workOrderFieldKey === WorkOrdersFields.DESCRIPTION){
+        return this.workOrderFieldsText.description;
+      }
+      else if(question.workOrderFieldKey === WorkOrdersFields.PHONE_NUMBER){
+        return this.workOrderFieldsText.phone;
+      }
+      return this.workOrderFieldsText.email;
     }
-    return this.workOrderFields.email;
-  }
-
-  isWorkOrder(question){
-    return question.source === 'WORK_ORDER';
+    return question.label
+    
   }
 
   _setFacility() {

@@ -30,7 +30,7 @@
     border-radius: 8px;
     -webkit-appearance: none;
 
-    &:enabled,
+    &:focus,
     &:focus-within {
       border: 2px solid $color-dim-gray;
 
@@ -94,5 +94,5 @@
 
 .input-select-facility{
   margin: 1em 0 1em;
-  padding: 0.7em;
+  padding: 0.7em 0;
 }
