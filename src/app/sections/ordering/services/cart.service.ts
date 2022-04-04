@@ -185,9 +185,6 @@ export class CartService {
     this.onStateChanged();
   }
 
-  resetCartOrderDetailsOptions() {
-    this.cart.orderDetailsOptions = null;  
-  }
 
   private async setInitialEmptyOrder(): Promise<void> {
     this._pendingOrderId = null;
