@@ -8,6 +8,7 @@
     "start": "ionic serve",
     "start-ip": "ionic serve --address 10.28.160.60",
     "build": "ng build",
+    "build-prod": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
