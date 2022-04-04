@@ -8,14 +8,14 @@
 
   <div class="total">
     <div *ngIf="orderType !== null" class="total__item-wrapper">
-      <div class="label">{{ orderType | typeMessage: 'Time' | uppercase }}</div>
+      <div class="label">{{ type | typeMessage: 'Time' | uppercase }}</div>
       <div class="label--bold">
         {{ dueTime | modifyPrepTime: orderType }}
       </div>
     </div>
 
     <div *ngIf="orderType !== null" class="total__item-wrapper">
-      <div class="label">{{ orderType | typeMessage: 'Address' | uppercase }}</div>
+      <div class="label">{{ type | typeMessage: 'Address' | uppercase }}</div>
       <div class="label--bold">
         <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
         <span>{{ address | addressHeaderFormat }}</span>
@@ -39,7 +39,7 @@
       </div>
 
       <div *ngIf="fee" class="total__item">
-        {{ orderType.pickup  ? (contentStrings.labelPickupFee | async) : (contentStrings.labelDeliveryFee | async) }}
+        {{ type === 0  ? (contentStrings.labelPickupFee | async) : (contentStrings.labelDeliveryFee | async) }}
         <span class="total__item">{{ fee | priceUnitsResolver: mealBased }}</span>
       </div>
 
