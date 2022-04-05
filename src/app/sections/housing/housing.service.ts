@@ -357,9 +357,7 @@ export class HousingService {
   }
 
   _setInspection(value: Inspection): void{
-    console.log('current-->',this._inspectionsStateService.inspectionForm$)
     this._inspectionsStateService.setInspectionForm(value);
-    console.log('llast-->',this._inspectionsStateService.inspectionForm$,value)
   }
 
   /**
