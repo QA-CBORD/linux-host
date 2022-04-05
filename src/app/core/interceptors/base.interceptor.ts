@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { from, Observable, of, zip } from 'rxjs';
-import { first, map, observeOn, subscribeOn, switchMap, take, timeout } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { map, observeOn, subscribeOn, switchMap, take, timeout } from 'rxjs/operators';
 import { queue } from 'rxjs/internal/scheduler/queue';
 import { async } from 'rxjs/internal/scheduler/async';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { ServicesURLProviderService } from '@core/service/service-url/services-urlprovider.service';
 
 @Injectable()
 export class BaseInterceptor implements HttpInterceptor {
@@ -16,7 +16,7 @@ export class BaseInterceptor implements HttpInterceptor {
   constructor(
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService
+    private readonly servicesURLProviderService: ServicesURLProviderService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -43,7 +43,7 @@ export class BaseInterceptor implements HttpInterceptor {
     const request = this.institutionFacadeService.cachedInstitutionInfo$.pipe(
       take(1),
       switchMap(inst => {
-        let url = this.environmentFacadeService.getServicesURL();
+        let url = this.servicesURLProviderService.servicesURL;
         if (inst && inst.servicesUrl) {
           url = inst.servicesUrl;
         }
