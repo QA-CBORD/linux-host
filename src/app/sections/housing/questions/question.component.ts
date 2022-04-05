@@ -1,13 +1,13 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 
-import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
+import { QuestionBaseOptionValue } from './types/question-base';
+import { QuestionActionButton } from './types/question-roommate-preference';
 import { QuestionHeader, QUESTIONS_TYPES } from './questions.model';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RequestedRoommate } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
-import { take } from 'rxjs/operators';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
@@ -65,7 +65,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._setFacility();
   }
 
-  @Input() question: QuestionBase;
+  @Input() question: QuestionActionButton;
 
   @Input() name: string;
 
