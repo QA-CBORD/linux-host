@@ -162,7 +162,7 @@ export class InstitutionFacadeService extends ServiceStateFacade {
     );
   }
 
-  clearInstitution() {
+  clearCurrentInstitution() {
     return this.storageStateService.deleteStateEntityByKey(this.institutionKey);
   }
 }

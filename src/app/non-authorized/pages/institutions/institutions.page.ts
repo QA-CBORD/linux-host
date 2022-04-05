@@ -49,12 +49,19 @@ export class InstitutionsPage implements OnInit {
     private readonly registrationServiceFacade: RegistrationServiceFacade,
     private readonly commonService: CommonService,
     private readonly messageProxy: MessageProxy,
-    private readonly platform: Platform,
+    private readonly platform: Platform
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
+    // Clearing any trace of previous selected institution.
+    // We are preventing from any serviceURL to override the actual environment.
+    this.institutionFacadeService.clearCurrentInstitution();
     this.getInstitutions();
     this.setNativeEnvironment();
+  }
+
+  ionViewWillEnter() {
+    this.institutionFacadeService.clearCurrentInstitution();
   }
 
   onEnterKeyClicked() {
