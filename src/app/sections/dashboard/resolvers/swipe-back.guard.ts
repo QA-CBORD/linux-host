@@ -13,7 +13,6 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 
 @Injectable({ providedIn: 'root' })
 export class SwipeBackGuard implements CanDeactivate<DashboardPage> {
-  canLeave: boolean;
   urlDestination: string;
 
   constructor(private router: Router) {
@@ -30,15 +29,13 @@ export class SwipeBackGuard implements CanDeactivate<DashboardPage> {
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot
   ): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    this.canLeave = true;
-    if (this.urlDestination) {
-      if (
-        this.urlDestination.includes(ANONYMOUS_ROUTES.pre_login) ||
-        this.urlDestination.includes(ANONYMOUS_ROUTES.login)
-      ) {
-        this.canLeave = false;
-      }
+    if (
+      !this.urlDestination ||
+      this.urlDestination.includes(ANONYMOUS_ROUTES.pre_login) ||
+      this.urlDestination.includes(ANONYMOUS_ROUTES.login)
+    ) {
+      return false;
     }
-    return this.canLeave;
+    return true;
   }
 }
