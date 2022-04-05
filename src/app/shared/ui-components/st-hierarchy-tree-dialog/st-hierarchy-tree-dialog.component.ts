@@ -15,6 +15,7 @@ export class StHierarcheTreeDialogComponent {
   public selectedItemId: number;
   public lookups: LookUpItem[];
   public allowParent: boolean;
+  public slidesConfig = {autoHeight: true};
 
   @ViewChild(IonSlides) public slidesControl: IonSlides;
 
