@@ -171,7 +171,7 @@ export class HousingService {
     return this._housingProxyService.get<InspectionsData>(apiUrl).pipe(
       map((response: any) => new InspectionsData(response)),
       tap((response: InspectionsData) => this._setInspectionsList(response.data)),
-      catchError(() => this._handleInspectionSelectedError())
+      catchError(() => this._handleInspectionListSelectedError())
     );
   }
 
@@ -310,6 +310,13 @@ export class HousingService {
     return of(new Inspection(null));
   }
 
+  _handleInspectionListSelectedError(): Observable<Inspections> {
+    const inspection: Inspections[] = [];
+    this._setInspectionsList(inspection)
+
+    return of(new Inspections(null));
+  }
+
   _handleGetRequestedRoommatesError(): Observable<RequestedRoommateResponse> {
     const roommates: RequestedRoommate[] = [];
     this._setRequestedRoommateState(roommates);
@@ -350,7 +357,9 @@ export class HousingService {
   }
 
   _setInspection(value: Inspection): void{
+    console.log('current-->',this._inspectionsStateService.inspectionForm$)
     this._inspectionsStateService.setInspectionForm(value);
+    console.log('llast-->',this._inspectionsStateService.inspectionForm$,value)
   }
 
   /**
