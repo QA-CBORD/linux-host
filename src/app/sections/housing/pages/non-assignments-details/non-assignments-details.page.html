@@ -18,7 +18,7 @@
   <div class="non-assignment-details__card">
     <st-stepper class="stepper--white">
       <st-step
-        *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstQuestion"
+        *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
         [stepControl]="page.form">
         <form
           [formGroup]="page.form" 

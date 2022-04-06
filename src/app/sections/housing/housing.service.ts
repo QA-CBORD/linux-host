@@ -166,13 +166,12 @@ export class HousingService {
     );
   }
 
-  //TODO: inspection DEtails change name
   getInspections(termId: number){
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`
     return this._housingProxyService.get<InspectionsData>(apiUrl).pipe(
       map((response: any) => new InspectionsData(response)),
       tap((response: InspectionsData) => this._setInspectionsList(response.data)),
-      catchError(() => this._handleGetRoomSelectsError())
+      catchError(() => this._handleInspectionListSelectedError())
     );
   }
 
@@ -309,6 +308,13 @@ export class HousingService {
     this._setInspection(inspection);
 
     return of(new Inspection(null));
+  }
+
+  _handleInspectionListSelectedError(): Observable<Inspections> {
+    const inspection: Inspections[] = [];
+    this._setInspectionsList(inspection)
+
+    return of(new Inspections(null));
   }
 
   _handleGetRequestedRoommatesError(): Observable<RequestedRoommateResponse> {

@@ -61,7 +61,6 @@
     position: absolute;
     top: 0;
     left: 0;
-    padding: 15px 0 0 13px;
     transition: all 200ms;
     opacity: 0.6;
     z-index: 2;
@@ -95,4 +94,5 @@
 
 .input-select-facility{
   margin: 1em 0 1em;
+  padding: 0.7em 0;
 }

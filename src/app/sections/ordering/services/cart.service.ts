@@ -185,6 +185,7 @@ export class CartService {
     this.onStateChanged();
   }
 
+
   private async setInitialEmptyOrder(): Promise<void> {
     this._pendingOrderId = null;
     await this.initEmptyOrder().then(order => (this.cart.order = order));
