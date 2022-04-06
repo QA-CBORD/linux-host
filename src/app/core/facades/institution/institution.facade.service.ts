@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { Institution, InstitutionBuilder, InstitutionLookupListItem } from '@core/model/institution/institution.model';
+import { Institution, InstitutionLookupListItem } from '@core/model/institution/institution.model';
 import { InstitutionApiService } from '@core/service/institution-api/institution-api.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
@@ -131,17 +131,18 @@ export class InstitutionFacadeService extends ServiceStateFacade {
 
   retrieveLookupList$(systemSessionId): Observable<InstitutionLookupListItem[]> {
     return this.institutionApiService.retrieveLookupList(systemSessionId).pipe(
-      map(institutionList =>
-        institutionList.map(item =>
-          new InstitutionBuilder()
-            .id(item.id)
-            .name(item.name)
-            .shortName(item.shortName)
-            .type(item.type)
-            .guestDeposit(item.guestDeposit)
-            .guestLogin(item.guestLogin)
-            .guestLoginNotRequired(item.guestLoginNotRequired)
-            .build()
+      map((institutions: InstitutionLookupListItem[]) =>
+        institutions.map(
+          (institution: InstitutionLookupListItem): InstitutionLookupListItem => ({
+            ...institution,
+            acuteCare: institution.type === 1,
+            guestSettings: {
+              canLogin: Boolean(Number(institution.guestLogin || 0)),
+              canDeposit: Boolean(Number(institution.guestDeposit || 0)),
+              canOrder: Boolean(Number(institution.guestLoginNotRequired || 0)),
+              canExplore: false,
+            },
+          })
         )
       )
     );
