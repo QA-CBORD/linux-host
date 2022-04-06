@@ -117,6 +117,14 @@ export class InstitutionFacadeService extends ServiceStateFacade {
       );
   }
 
+  getInstitutionDataByShortName$(institutionShortName: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
+    return this.institutionApiService
+      .getInstitutionDataByShortName(institutionShortName, sessionId, useSessionId)
+      .pipe(
+        tap(res => this.storageStateService.updateStateEntity(this.institutionKey, res, { highPriorityKey: true }))
+      );
+  }
+
   getInstitutionPhotoById$(
     institutionId: string,
     sessionId?: string,

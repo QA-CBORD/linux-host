@@ -1,10 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { take, switchMap, tap } from 'rxjs/operators';
+import { take, switchMap, tap, first, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { zip } from 'rxjs';
+import { iif, Observable, of, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Capacitor } from '@capacitor/core';
@@ -21,7 +21,8 @@ import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { Platform } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { registerPlugin } from '@capacitor/core';
-const  IOSDevice  = registerPlugin<any>('IOSDevice');
+import { ServicesURLProviderService } from '@core/service/service-url/services-urlprovider.service';
+const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Component({
   selector: 'st-institutions',
@@ -47,20 +48,19 @@ export class InstitutionsPage implements OnInit {
     private readonly toastService: ToastService,
     private readonly route: Router,
     private readonly registrationServiceFacade: RegistrationServiceFacade,
+    private readonly servicesURLProviderService: ServicesURLProviderService,
     private readonly commonService: CommonService,
     private readonly messageProxy: MessageProxy,
     private readonly platform: Platform
   ) {}
 
   ngOnInit() {
-    // Clearing any trace of previous selected institution.
-    // We are preventing from any serviceURL to override the actual environment.
-    this.institutionFacadeService.clearCurrentInstitution();
     this.getInstitutions();
     this.setNativeEnvironment();
   }
 
   ionViewWillEnter() {
+    // Clearing any trace of previous selected institution.
     this.institutionFacadeService.clearCurrentInstitution();
   }
 
@@ -93,8 +93,11 @@ export class InstitutionsPage implements OnInit {
       );
   }
 
-  async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
+  async onInstitutionSelected(selectedInstitution: InstitutionLookupListItem): Promise<void> {
     this.loadingService.showSpinner({ duration: 5000 });
+    // Cloning object for manipulation
+    const institution = JSON.parse(JSON.stringify(selectedInstitution));
+    institution.id = await this.servicesURLProviderService.checkAndReturnInstitutionOverride(institution);
     this.settingsFacadeService.cleanCache();
     await this.commonService.getInstitution(institution.id, false);
     this.commonService.getInstitutionPhoto(false, null);

@@ -39,22 +39,12 @@ export class BaseInterceptor implements HttpInterceptor {
     }
     const rpcConfig: RPCQueryConfig = req.body;
     const timeOut = rpcConfig.timeOut ? rpcConfig.timeOut : this.TIMEOUT_MS;
-
-    const request = this.institutionFacadeService.cachedInstitutionInfo$.pipe(
-      take(1),
-      switchMap(inst => {
-        let url = this.servicesURLProviderService.servicesURL;
-        if (inst && inst.servicesUrl) {
-          url = inst.servicesUrl;
-        }
-        url = url.concat(req.url);
-        const clone = req.clone({ url, body: rpcConfig.requestBody, headers: this.baseHeaders });
-
-        return rpcConfig.useSessionId || rpcConfig.useInstitutionId
-          ? this.updatedRequest(next, rpcConfig, clone)
-          : next.handle(clone);
-      })
-    );
+    const url = this.servicesURLProviderService.servicesURL.concat(req.url);
+    const clone = req.clone({ url, body: rpcConfig.requestBody, headers: this.baseHeaders });
+    const request =
+      rpcConfig.useSessionId || rpcConfig.useInstitutionId
+        ? this.updatedRequest(next, rpcConfig, clone)
+        : next.handle(clone);
     return request.pipe(timeout(timeOut));
   }
 
