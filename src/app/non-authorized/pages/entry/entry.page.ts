@@ -10,6 +10,7 @@ import { App } from '@capacitor/app';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { from, Observable } from 'rxjs';
 import { Platform } from '@ionic/angular';
+import { ServicesURLProviderService } from '@core/service/service-url/services-urlprovider.service';
 
 @Component({
   selector: 'st-entry',
@@ -26,6 +27,7 @@ export class EntryPage implements OnInit {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly loadingService: LoadingService,
+    private readonly servicesURLProviderService: ServicesURLProviderService,
     private readonly platform: Platform
   ) {}
 
@@ -43,7 +45,8 @@ export class EntryPage implements OnInit {
     if (logoutUser) {
       await this.sessionFacadeService.logoutUser(false);
     }
-
+    // Reset services url to current environment after logout and before any other service call
+    await this.servicesURLProviderService.resetServicesURL();
     await this.authFacadeService
       .authenticateSystem$()
       .pipe(take(1))
