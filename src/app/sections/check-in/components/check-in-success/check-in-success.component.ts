@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
-import { MerchantOrderTypesInfo, MerchantService, OrderInfo } from '@sections/ordering';
+import { MerchantService, OrderDetailOptions, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { Observable } from 'rxjs';
@@ -20,6 +20,7 @@ export class CheckInSuccessComponent implements OnInit {
   checkNumber: string;
   contentStrings: CheckingSuccessContentCsModel;
   data: any;
+  orderDetailOptions: OrderDetailOptions;
 
   constructor(
     private readonly router: Router,
@@ -56,10 +57,11 @@ export class CheckInSuccessComponent implements OnInit {
 
   private setData() {
     this.activatedRoute.queryParams.subscribe(response => {
-      const { checkNumber, orderId, data } = response;
+      const { checkNumber, orderId, data, orderDetailOptions } = response;
       this.checkNumber = checkNumber;
       this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === orderId)));
       this.data = JSON.parse(data);
+      this.orderDetailOptions =  JSON.parse(orderDetailOptions);
     });
   }
 }
