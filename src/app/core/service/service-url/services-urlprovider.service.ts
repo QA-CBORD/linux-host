@@ -2,10 +2,8 @@ import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { InstitutionLookupListItem } from '@core/model/institution';
-import { firstValueFrom } from '@shared/utils';
 import { Observable, iif, of } from 'rxjs';
-import { switchMap, map, first } from 'rxjs/operators';
+import { switchMap, map, first, skipWhile } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -18,10 +16,24 @@ export class ServicesURLProviderService {
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService
   ) {
-    this._servicesURL = this.environmentFacadeService.getServicesURL();
+    // Check for institution override on load
+    this.institutionFacadeService.cachedInstitutionInfo$
+      .pipe(
+        first(),
+        switchMap(institution => this.checkAndReturnInstitutionOverride(institution))
+      )
+      .subscribe();
+    // Listen for environment change and reset serviceURL
+    this.environmentFacadeService.savedEnvironmentType$
+      .pipe(skipWhile(() => !this._servicesURL))
+      .subscribe(() => {
+        this.setServicesURL();
+      });
   }
 
-  private setServicesURL(url: string) {
+  private setServicesURL(url: string = null) {
+    if (this._servicesURL === url) return;
+
     if (url) {
       this._servicesURL = url;
     } else {
@@ -33,7 +45,16 @@ export class ServicesURLProviderService {
     return this._servicesURL;
   }
 
-  async checkAndReturnInstitutionOverride(institution: InstitutionLookupListItem): Promise<string> {
+  checkAndReturnInstitutionOverride(institution: {
+    id: string;
+    servicesUrl: string;
+    shortName: string;
+  }): Observable<string> {
+    if (!institution) {
+      this.setServicesURL();
+      return;
+    }
+
     const shouldOverride = institution.servicesUrl !== this._servicesURL;
     this.setServicesURL(institution.servicesUrl);
     let institutionId$: Observable<{ id: string }>;
@@ -43,9 +64,10 @@ export class ServicesURLProviderService {
       institutionId$ = this.authFacadeService
         .authenticateSystem$()
         .pipe(
+          switchMap(() => this.authFacadeService.getAuthSessionToken$()),
           switchMap(sessionId =>
             iif(
-              () => !!institution.servicesUrl,
+              () => !institution.servicesUrl,
               of(institution),
               this.institutionFacadeService.getInstitutionDataByShortName$(institution.shortName, sessionId)
             )
@@ -64,11 +86,9 @@ export class ServicesURLProviderService {
       institutionId$ = of(institution);
     }
 
-    return firstValueFrom(
-      institutionId$.pipe(
-        first(),
-        map(institution => institution.id)
-      )
+    return institutionId$.pipe(
+      first(),
+      map(institution => institution.id)
     );
   }
 }

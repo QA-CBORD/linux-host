@@ -48,8 +48,8 @@ export class InstitutionApiService {
       .pipe(map(({ response }) => response));
   }
 
-  getInstitutionDataByShortName(institutionShortName: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
-    let params = { institutionShortName } as { institutionShortName: string; sessionId?: string };
+  getInstitutionDataByShortName(shortName: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
+    let params = { shortName } as { shortName: string; sessionId?: string };
     const useSession = useSessionId === false ? useSessionId : true;
 
     if (sessionId) {

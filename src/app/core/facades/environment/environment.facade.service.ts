@@ -116,7 +116,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   private getSavedEnvironmentInfo$(): Observable<EnvironmentInfo> {
     return this.currentEnvironment !== null
       ? of(this.currentEnvironment)
-      : this.storageStateService.getStateEntityByKey$<EnvironmentType>(this.currentEnvironmentKey).pipe(
+      : this.savedEnvironmentType$.pipe(
           switchMap(data => {
             /// if no current environment is saved, default to production
             if (data === null) {
@@ -133,7 +133,14 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
 
   private setSavedEnvironmentInfo(type: EnvironmentType) {
     this.currentEnvironment = this.getEnvironmentObjectFromType(type);
-    this.storageStateService.updateStateEntity(this.currentEnvironmentKey, type, { highPriorityKey: true, keepOnLogout: true });
+    this.storageStateService.updateStateEntity(this.currentEnvironmentKey, type, {
+      highPriorityKey: true,
+      keepOnLogout: true,
+    });
+  }
+
+  get savedEnvironmentType$() {
+    return this.storageStateService.getStateEntityByKey$<EnvironmentType>(this.currentEnvironmentKey);
   }
 
   getPartnerServicesURL(): string {

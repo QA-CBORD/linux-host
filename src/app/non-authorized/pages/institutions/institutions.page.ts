@@ -22,6 +22,7 @@ import { Platform } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { registerPlugin } from '@capacitor/core';
 import { ServicesURLProviderService } from '@core/service/service-url/services-urlprovider.service';
+import { firstValueFrom } from '@shared/utils';
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Component({
@@ -31,7 +32,6 @@ const IOSDevice = registerPlugin<any>('IOSDevice');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstitutionsPage implements OnInit {
-  private sessionId: string = null;
   searchString: string = '';
   isLoading: boolean = true;
   institutions: InstitutionLookupListItem[];
@@ -76,7 +76,6 @@ export class InstitutionsPage implements OnInit {
     this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
-        tap(sessionId => (this.sessionId = sessionId)),
         switchMap(sessionId => this.institutionFacadeService.retrieveLookupList$(sessionId)),
         take(1)
       )
@@ -94,14 +93,17 @@ export class InstitutionsPage implements OnInit {
   }
 
   async onInstitutionSelected(selectedInstitution: InstitutionLookupListItem): Promise<void> {
-    this.loadingService.showSpinner({ duration: 5000 });
+    this.loadingService.showSpinner();
     // Cloning object for manipulation
     const institution = JSON.parse(JSON.stringify(selectedInstitution));
-    institution.id = await this.servicesURLProviderService.checkAndReturnInstitutionOverride(institution);
+    institution.id = await firstValueFrom(
+      this.servicesURLProviderService.checkAndReturnInstitutionOverride(institution)
+    );
     this.settingsFacadeService.cleanCache();
     await this.commonService.getInstitution(institution.id, false);
     this.commonService.getInstitutionPhoto(false, null);
     await this.commonService.getInstitutionBgColor(false);
+    this.loadingService.closeSpinner();
     const shouldGo2Prelogin = institution.guestSettings.canLogin;
     (shouldGo2Prelogin && this.navigate2PreLogin(institution)) || this.navigate2Login(institution);
   }
@@ -109,10 +111,11 @@ export class InstitutionsPage implements OnInit {
   private async navigate2Login({ id: institutionId }) {
     this.institutionFacadeService.removeGuestSetting();
     this.authFacadeService.setIsGuestUser(false);
+    const sessionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
     await zip(
-      this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
-      this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], this.sessionId, institutionId),
-      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId)
+      this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, sessionId, institutionId),
+      this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], sessionId, institutionId),
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, sessionId, institutionId)
     )
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
