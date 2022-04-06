@@ -16,10 +16,19 @@ import { PaymentSystemType } from 'src/app/app.global';
   styleUrls: ['./credit-card-mgmt.component.scss'],
 })
 export class CreditCardMgmtComponent implements OnInit {
+  
+  @Input() contentStrings: {
+    screen_title: string;
+    no_card_found: string;
+    add_new_card_btn_text: string;
+    user_info_text: string;
+    error_loading_cards: string;
+    remove_success_msg: string;
+    remove_failure_msg: string;
+    added_success_msg: string;
+  };
 
-  @Input() contentStrings = {};
-
-  @Input() userAccounts: { account: UserAccount; display: string, iconSrc: string }[] = [];
+  @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
 
   noCreditCardFound: boolean = false;
 
@@ -32,8 +41,8 @@ export class CreditCardMgmtComponent implements OnInit {
     private loadingService: LoadingService,
     private readonly toastService: ToastService,
     protected readonly alertCtrl: AlertController,
-    protected readonly popoverCtrl: PopoverController,
-  ) { }
+    protected readonly popoverCtrl: PopoverController
+  ) {}
 
   ngOnInit() {
     this.noCreditCardFound = !this.userAccounts.length;
@@ -41,7 +50,9 @@ export class CreditCardMgmtComponent implements OnInit {
 
   async retrieveAccounts() {
     this.loadingService.showSpinner();
-    const accounts = await firstValueFrom(this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]))
+    const accounts = await firstValueFrom(
+      this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
+    )
       .then(accounts => accounts.map(acc => this.buildStr(acc)))
       .finally(() => this.loadingService.closeSpinner());
     this.noCreditCardFound = !accounts.length;
@@ -56,7 +67,7 @@ export class CreditCardMgmtComponent implements OnInit {
     return {
       display,
       account,
-      iconSrc
+      iconSrc,
     };
   }
 
@@ -72,53 +83,51 @@ export class CreditCardMgmtComponent implements OnInit {
       try {
         const isSuccess = await this.accountService.removeCreditCardAccount(account);
         this.userAccounts = await this.retrieveAccounts();
-        (isSuccess && this.showMessage(strings.remove_success_msg)) ||
-          this.showMessage(strings.remove_failure_msg);
+        (isSuccess && this.showMessage(strings.remove_success_msg)) || this.showMessage(strings.remove_failure_msg);
       } catch (err) {
-        this.showMessage(strings.remove_failure_msg)
+        this.showMessage(strings.remove_failure_msg);
       } finally {
-        this.loadingService.closeSpinner()
+        this.loadingService.closeSpinner();
       }
     };
 
-    const cardType = display.split(" ")[0];
+    const cardType = display.split(' ')[0];
     const modal = await this.popoverCtrl.create({
       component: ConfirmModalComponent,
       mode: 'md',
       backdropDismiss: false,
       componentProps: {
         titleString: `Remove ${cardType}?`,
-        bodyString: `Are you sure you want to remove credit card ending in ${account.lastFour}?`,
-        primaryBtnText: 'Remove Card',
-        secondaryBtnText: 'Cancel',
+        bodyString: `Are you sure you want to remove your ${display}?`,
+        primaryBtnText: strings.remove_card_btn,
+        secondaryBtnText: strings.cancel_remove_card_btn,
         primaryBtnColor: 'danger',
         secondaryBtnColor: 'light',
-        onClickPrimary: async (e) => {
+        onClickPrimary: async e => {
           await onRemoveConfirmed();
           this.popoverCtrl.dismiss({});
         },
-        onClickSecondary: (e) => {
+        onClickSecondary: e => {
           this.popoverCtrl.dismiss({});
-        }
-      }
+        },
+      },
     });
 
     await modal.present();
   }
 
   async addCreditCard() {
-
     try {
       const strings = this.contentStrings as any;
       const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
       if (success) {
         this.userAccounts = await this.retrieveAccounts();
-        this.showMessage(strings.added_success_msg)
+        this.showMessage(strings.added_success_msg);
       } else {
-        this.showMessage(errorMessage)
+        this.showMessage(errorMessage);
       }
     } finally {
-      this.loadingService.closeSpinner()
+      this.loadingService.closeSpinner();
     }
   }
 

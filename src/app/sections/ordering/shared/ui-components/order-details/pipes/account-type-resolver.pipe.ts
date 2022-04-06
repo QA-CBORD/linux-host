@@ -12,7 +12,7 @@ export class AccountTypeResolverPipe implements PipeTransform {
     private readonly accountDisplayPipe: AccountDisplayPipe
   ) {}
 
-  transform(acc: UserAccount, mealBased: boolean): string {
+  transform(acc: Partial<UserAccount> | UserAccount, mealBased?: boolean): string {
     if (!acc) return '';
     let result = this.accountDisplayPipe.transform(acc);
     if (!result) {

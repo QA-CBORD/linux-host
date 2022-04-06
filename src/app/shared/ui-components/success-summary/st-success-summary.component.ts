@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AddressInfo } from '@core/model/address/address-info';
+import { MerchantOrderTypesInfo } from '@sections/ordering';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
@@ -13,7 +14,7 @@ export class StSuccesSummaryComponent {
   @Input() labelOrderPlacedTitle: string;
   @Input() labelOrderPlacedDescription: string;
   @Input() mealBased: boolean;
-  @Input() orderType: number;
+  @Input() orderType: MerchantOrderTypesInfo;
   @Input() dueTime: string;
   @Input() address: AddressInfo;
   @Input() subTotal: number;
@@ -25,6 +26,7 @@ export class StSuccesSummaryComponent {
   @Input() labelTax: string;
   @Input() discount: number;
   @Input() paymentMethod: string;
+  @Input() type: number;
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 

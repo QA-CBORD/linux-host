@@ -7,7 +7,8 @@ export enum WorkOrdersFields {
   LOCATION= "LOCATION",
   PHONE_NUMBER = "CONTACT_PHONE_NUMBER",
   EMAIL = "EMAIL",
-  IMAGE ="IMAGE"
+  IMAGE ="IMAGE",
+  FACILITY = "FACILITY",
 }
 
 export interface ImageDataOptions {

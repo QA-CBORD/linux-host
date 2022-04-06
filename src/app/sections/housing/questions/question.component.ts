@@ -7,13 +7,12 @@ import { ApplicationsStateService } from '@sections/housing/applications/applica
 import { RequestedRoommate } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
-import { take } from 'rxjs/operators';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { SessionFacadeService } from '../../../core/facades/session/session.facade.service';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
-import { FacilityTree, ImageData, LocalFile } from '../work-orders/work-orders.model';
+import { FacilityTree, ImageData, LocalFile, WorkOrdersFields } from '../work-orders/work-orders.model';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
 
 const IMAGE_DIR = 'stored-images';
@@ -30,6 +29,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
   facilityFullName: string;
   currectFacility: string;
   images: LocalFile[] = [];
+  workOrderFieldsText: any = {
+    notify : 'Would like to receive updates.',
+    phone : 'Enter the number we may use to contact you.',
+    email : 'Enter the email we may use to contact you.',
+    description : 'Describe what needs to be repaired.',
+    location: 'Select the location where the repair is needed.',
+  };
+
   constructor(private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService,//TODO: delete
     private _termService: TermsService,
@@ -332,6 +339,26 @@ async startUpload(file: LocalFile,value: string) {
 
   isWorkOrderDescription(question) {
     return question.source === 'WORK_ORDER' && question.workOrderFieldKey === 'DESCRIPTION';
+  }
+
+  getLabel(question){
+    if(question.source === 'WORK_ORDER'){
+      if(question.workOrderFieldKey === WorkOrdersFields.FACILITY){
+        return this.workOrderFieldsText.location;
+      }
+      if(question.workOrderFieldKey === WorkOrdersFields.NOTIFY_BY_EMAIL){
+        return this.workOrderFieldsText.notify;
+      }
+      else if(question.workOrderFieldKey === WorkOrdersFields.DESCRIPTION){
+        return this.workOrderFieldsText.description;
+      }
+      else if(question.workOrderFieldKey === WorkOrdersFields.PHONE_NUMBER){
+        return this.workOrderFieldsText.phone;
+      }
+      return this.workOrderFieldsText.email;
+    }
+    return question.label
+    
   }
 
   _setFacility() {
