@@ -8,7 +8,7 @@ definitions:
           - gradle
           - sonar
         script:
-          - bash android/gradlew sonarqube
+          - bash ./android/gradlew sonarqube
           - pipe: sonarsource/sonarqube-scan:1.0.0
             variables:
               SONAR_HOST_URL: ${SONAR_HOST_URL} # Get the value from the repository/workspace variable.
