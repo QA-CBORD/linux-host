@@ -7,10 +7,10 @@
   </div>
 
   <div class="total">
-    <div *ngIf="orderType !== null" class="total__item-wrapper">
+    <div *ngIf="orderDetailOptions !== null" class="total__item-wrapper">
       <div class="label">{{ type | typeMessage: 'Time' | uppercase }}</div>
       <div class="label--bold">
-        {{ dueTime | modifyPrepTime: orderType }}
+        {{ orderDetailOptions | modifyPrepTime: orderType }}
       </div>
     </div>
 

@@ -21,6 +21,7 @@ import {
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { firstValueFrom } from '@shared/utils';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -210,12 +211,15 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private async showSuccessModal() {
+    const orderDetailOptions = firstValueFrom(this.orderDetailOptions$);
+
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.success], {
       queryParams: {
         orderId: this.orderId,
         total: this.total,
         checkNumber: this.checkNumber,
         data: JSON.stringify(this.data),
+        orderDetailOptions: JSON.stringify(orderDetailOptions)
       },
     });
   }

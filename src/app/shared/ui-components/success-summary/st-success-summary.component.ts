@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AddressInfo } from '@core/model/address/address-info';
-import { MerchantOrderTypesInfo } from '@sections/ordering';
+import { MerchantOrderTypesInfo, OrderDetailOptions } from '@sections/ordering';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
@@ -15,7 +15,7 @@ export class StSuccesSummaryComponent {
   @Input() labelOrderPlacedDescription: string;
   @Input() mealBased: boolean;
   @Input() orderType: MerchantOrderTypesInfo;
-  @Input() dueTime: string;
+  @Input() orderDetailOptions: OrderDetailOptions;
   @Input() address: AddressInfo;
   @Input() subTotal: number;
   @Input() total: number;

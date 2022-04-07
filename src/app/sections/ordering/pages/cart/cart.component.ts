@@ -260,7 +260,7 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const address = await firstValueFrom(await this.orderDetailOptions$);
+    const orderDetailOptions = await firstValueFrom(await this.orderDetailOptions$);
     const orderTypes = await firstValueFrom(this.orderTypes$);
 
     const modal = await this.modalController.create({
@@ -280,8 +280,8 @@ export class CartComponent implements OnInit, OnDestroy {
         merchantId,
         dueTime,
         type,
-        address: address.address,
-        orderType: orderTypes
+        orderType: orderTypes,
+        orderDetailOptions
       },
     });
 
