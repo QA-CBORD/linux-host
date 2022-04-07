@@ -71,10 +71,6 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  ionViewWillEnter() {
-    this.globalNav.hideNavBar();
-  }
-
   ionViewDidEnter() {
     this.scrollToBottom();
   }

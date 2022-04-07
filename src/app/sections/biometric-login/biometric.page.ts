@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-biometric',
@@ -13,8 +12,7 @@ export class BiometricPage implements OnInit {
   biometricConfig: { type: string; name: string } = null;
   constructor(
     private readonly identityFacadeService: IdentityFacadeService, 
-    private readonly router: Router,
-    private readonly globalNav: GlobalNavService) {}
+    private readonly router: Router) {}
 
   ngOnInit() {
     this.biometricConfig = this.router.getCurrentNavigation().extras.state.biometricConfig;
@@ -35,7 +33,6 @@ export class BiometricPage implements OnInit {
       // Displaying loading spinner while waiting for login response
       this.loading = true;
       this.loading = !!(await this.identityFacadeService.pinLoginSetup(isBiometric));
-      this.globalNav.showNavBar();
     } catch (e) {
       this.loading = false;
     }

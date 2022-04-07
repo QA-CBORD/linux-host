@@ -18,12 +18,10 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserInfo } from '@core/model/user/user-info.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-picker.component';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes/address-header-format-pipe';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 @Component({
   selector: 'st-order-options.action-sheet',
   templateUrl: './order-options.action-sheet.component.html',
@@ -225,7 +223,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       )
       .subscribe(
         () => {
-          this.showNavBarOnDestroy = false;
           this.modalController.dismiss(
             {
               address: this.orderOptionsData.address,

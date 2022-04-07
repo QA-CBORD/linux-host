@@ -73,7 +73,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
           .initAndUnlock({ username: undefined, token: undefined, pin: data }, biometricEnabled, navigateToDashboard)
           .pipe(take(1))
           .toPromise();
-        this.globalNav.showNavBar();
         return Promise.resolve();
     }
   }

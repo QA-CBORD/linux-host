@@ -1,0 +1,5 @@
+@import "tools";
+
+.navigation-bottom-offset {
+  margin-bottom: calc(#{$notch-bottom} + #{$bottom-navigation-bar-height});
+}

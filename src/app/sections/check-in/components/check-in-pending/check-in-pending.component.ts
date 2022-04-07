@@ -20,7 +20,6 @@ import {
 } from '@sections/ordering';
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { firstValueFrom } from '@shared/utils';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
@@ -72,7 +71,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
-    private readonly globalNav: GlobalNavService,
     private readonly cart: CartService,
     private readonly cdRef: ChangeDetectorRef,
     private platform: Platform,
@@ -91,13 +89,8 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
     this.loadingService.closeSpinner();
     this.cdRef.detectChanges();
-  }
-
-  ionViewDidEnter() {
-    this.globalNav.hideNavBar();
   }
 
   async onAddItems() {

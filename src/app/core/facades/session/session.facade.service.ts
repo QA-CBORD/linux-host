@@ -22,7 +22,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 enum AppStatus {
   BACKGROUND,
@@ -56,8 +55,7 @@ export class SessionFacadeService {
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly ngZone: NgZone,
-    private readonly globalNav: GlobalNavService
+    private readonly ngZone: NgZone
   ) {
     this.appStateListeners();
   }
@@ -207,7 +205,6 @@ export class SessionFacadeService {
     return this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   }
   private navigateToDashboard = () => {
-    this.globalNav.showNavBar();
     this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
   };
 
