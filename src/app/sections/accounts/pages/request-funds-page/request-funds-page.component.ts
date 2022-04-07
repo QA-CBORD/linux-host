@@ -14,7 +14,6 @@ import { formControlErrorDecorator, validateEmail } from '@core/utils/general-he
 import { Keyboard } from '@capacitor/keyboard';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
@@ -40,8 +39,7 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly nav: Router,
-    private readonly globalNav: GlobalNavService
+    private readonly nav: Router
   ) {}
 
   get email(): AbstractControl {
@@ -65,15 +63,10 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
     this.accounts$ = this.accountService
       .getAccountsFilteredByDepositTenders()
       .pipe(map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted)));
     this.initForm();
-  }
-
-  ngOnDestroy(): void {
-    this.globalNav.showNavBar();
   }
 
   accountTrack(n: number, { id }: UserAccount): string {

@@ -23,7 +23,6 @@ import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -31,7 +30,6 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
-import { NavigationService } from '@shared/services/navigation.service';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -60,8 +58,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     public readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
-    private readonly routingService: NavigationService,
-    private readonly globalNav: GlobalNavService,
+
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess
   ) { }
@@ -82,10 +79,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     if (this.checkinService.navedFromCheckin) {
       this.initData();
     }
-  }
-
-  ionViewDidEnter() {
-    this.globalNav.hideNavBar();
   }
 
   ngOnDestroy() {
@@ -431,7 +424,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     });
 
     modal.onDidDismiss().then(({ data, role }) => {
-      this.globalNav.hideNavBar();
       role === BUTTON_TYPE.CONTINUE && this.initOrder(data);
     });
 

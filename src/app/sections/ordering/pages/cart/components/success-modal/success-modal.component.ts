@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
-import { MerchantOrderTypesInfo } from '@sections/ordering';
+import { MerchantOrderTypesInfo, OrderDetailOptions } from '@sections/ordering';
 
 @Component({
   selector: 'st-success-modal',
@@ -24,9 +24,9 @@ export class SuccessModalComponent implements OnInit {
   @Input() mealBased: boolean;
   @Input() orderType: MerchantOrderTypesInfo;
   @Input() dueTime: string;
-  @Input() address: AddressInfo;
   @Input() type: number;
-
+  @Input() orderDetailOptions: OrderDetailOptions;
+ 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(private readonly modalController: ModalController, private readonly orderingService: OrderingService) {}

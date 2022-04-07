@@ -102,7 +102,6 @@ export class CartComponent implements OnInit, OnDestroy {
   ) {}
 
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
     this.accounts$ = this.getAvailableAccounts().then(accounts => {
       if (this.isExistingOrder) this.orderDetail.initAccountSelected(accounts);
       return accounts;
@@ -134,7 +133,6 @@ export class CartComponent implements OnInit, OnDestroy {
     this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
-    this.globalNav.hideNavBar();
     this.subscribe2NetworkChanges();
   }
 
@@ -260,7 +258,7 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const address = await firstValueFrom(await this.orderDetailOptions$);
+    const orderDetailOptions = await firstValueFrom(await this.orderDetailOptions$);
     const orderTypes = await firstValueFrom(this.orderTypes$);
 
     const modal = await this.modalController.create({
@@ -280,8 +278,8 @@ export class CartComponent implements OnInit, OnDestroy {
         merchantId,
         dueTime,
         type,
-        address: address.address,
-        orderType: orderTypes
+        orderType: orderTypes,
+        orderDetailOptions
       },
     });
 

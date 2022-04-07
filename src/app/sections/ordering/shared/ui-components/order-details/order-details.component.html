@@ -4,7 +4,7 @@
       <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'dueTime' }}</ion-label>
 
       <p style="margin-bottom: 3px;" class="order-details__value" *ngIf="orderDetailOptions.dueTime">
-        {{ orderDetailOptions.dueTime | modifyPrepTime: orderTypes  }}
+        {{ orderDetailOptions | modifyPrepTime: orderTypes  }}
       </p>
 
 

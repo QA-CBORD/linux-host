@@ -10,7 +10,6 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User, PATRON_NAVIGATION } from '../../../../app.global';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -34,7 +33,6 @@ export class SavedAddressesComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly globalNav: GlobalNavService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
 
@@ -42,12 +40,7 @@ export class SavedAddressesComponent implements OnInit {
 
   ngOnInit() {
     this.initContentStrings();
-    this.globalNav.hideNavBar();
     this.initRelativeRoute();
-  }
-
-  ngOnDestroy() {
-    this.globalNav.showNavBar();
   }
 
   ionViewWillEnter() {

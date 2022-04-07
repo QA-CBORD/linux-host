@@ -1,5 +1,4 @@
 import { map, take, concatMap, reduce, switchMap } from 'rxjs/operators';
-import { UserInfo } from '@core/model/user';
 import {
   SettingsServices,
   SettingItemConfig,
@@ -62,13 +61,11 @@ export function handlePinAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = async function() {
     const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
-    services.globalNav.hideNavBar();
     return services.identity
       .pinLoginSetup(biometricsEnabled, false, {
         showDismiss: true,
         pinAction: biometricsEnabled ? PinAction.CHANGE_PIN_BIOMETRIC : PinAction.CHANGE_PIN_ONLY,
-      })
-      .finally(() => services.globalNav.showNavBar());
+      });
   };
 }
 
@@ -99,7 +96,6 @@ export function handleOpenHTMLModal(services: SettingsServices) {
       htmlContent,
       title: setting.label,
       onClose: () => {
-        services.globalNav.showNavBar();
         services.modalController.dismiss();
       },
     };
@@ -108,27 +104,22 @@ export function handleOpenHTMLModal(services: SettingsServices) {
       component: setting.modalContent.component,
       componentProps,
     });
-    services.globalNav.hideNavBar();
     return settingModal.present();
   };
 }
 
 export async function openModal(services: SettingsServices) {
-
   const setting: SettingItemConfig = this;
 
-  setting.callback = async function () {
+  setting.callback = async function() {
     let componentData = {};
-    if (setting.modalContent.fetchData)
-      componentData = await setting.modalContent.fetchData(services);
+    if (setting.modalContent.fetchData) componentData = await setting.modalContent.fetchData(services);
 
     const settingModal = await services.modalController.create({
       backdropDismiss: false,
       component: setting.modalContent.component,
-      componentProps: { ...componentData }
+      componentProps: { ...componentData },
     });
-    services.globalNav.hideNavBar();
-    settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
     return settingModal.present();
   };
 }
@@ -173,13 +164,13 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
   }
   if (resource.type === 'link') {
     /// TODO this will be re-written after MVP.. I'm sorry... it's nasty
-    setting.callback = async function () {
+    setting.callback = async function() {
       const target: string =
         setting.id === SETTINGS_ID.mealPlan
           ? 'change_meal_plan'
           : setting.id === SETTINGS_ID.mealPurchase
-            ? 'purchase_meal_plan'
-            : 'not used';
+          ? 'purchase_meal_plan'
+          : 'not used';
       linkPromise = zip(services.institution.cachedInstitutionInfo$, services.authService.getAuthenticationToken$())
         .pipe(
           map(([inst, token]) => {

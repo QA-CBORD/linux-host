@@ -3,7 +3,7 @@ import { BehaviorSubject, from, interval, Observable, of, throwError, zip } from
 import { Settings, User } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { catchError, startWith, switchMap, take, tap } from 'rxjs/operators';
-import * as bigInt from 'big-integer';
+import bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
 import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 

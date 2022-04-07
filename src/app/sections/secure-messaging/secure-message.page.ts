@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Platform, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
-import { distinctUntilChanged, finalize, first, map } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, first } from 'rxjs/operators';
 
 import { SecureMessagingService } from './service';
 import { LoadingService } from '../../core/service/loading/loading.service';
@@ -9,7 +9,6 @@ import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
 import { SecureMessageConversation } from './models';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../app.global';
 
@@ -24,21 +23,15 @@ export class SecureMessagePage implements OnInit, OnDestroy {
   conversations$: Observable<SecureMessageConversation[]>;
 
   constructor(
-    private readonly platform: Platform,
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private readonly globalNav: GlobalNavService,
     private readonly router: Router
   ) {
     this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(distinctUntilChanged());
   }
   ngOnInit(): void {
     this.initializePage();
-  }
-
-  ionViewWillEnter() {
-    this.globalNav.showNavBar();
   }
 
   ngOnDestroy() {

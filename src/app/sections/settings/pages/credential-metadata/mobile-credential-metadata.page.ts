@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
-import { TermsContent } from '@shared/ui-components/mobile-credentials/model/android/android-credential-content-strings.model';
 import { HIDCredentialManager } from '@shared/ui-components/mobile-credentials/model/android/hid/hid-credential-manager';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-mc-metadata',
@@ -19,14 +17,12 @@ export class MobileCredentialMetadata implements OnInit {
   constructor(
     public readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly modalCtrl: ModalController,
-    protected readonly loadingService: LoadingService,
-    private globalNav: GlobalNavService
+    protected readonly loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
     (async () => {
       this.deviceState = await this.mobileCredentialFacade.deviceState$;
-      this.globalNav.hideNavBar();
       this.isHid = this.mobileCredentialFacade.credentialController instanceof HIDCredentialManager;
     })();
   }

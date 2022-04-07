@@ -13,7 +13,7 @@ export class ModalsService {
     modal.addEventListener('ionModalWillPresent', () => {
       this.globalNav.notifyBackdropShown();
       if (handleNavBarState) {
-        this.globalNav.hideNavBar();
+         this.globalNav.hideNavBar();
       }
     });
     modal.addEventListener('ionModalDidPresent', () => {
@@ -24,7 +24,7 @@ export class ModalsService {
     });
     modal.onWillDismiss().then(() => {
       if (handleNavBarState) {
-        this.globalNav.showNavBar();
+         this.globalNav.showNavBar();
       }
     });
 
