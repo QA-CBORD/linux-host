@@ -60,8 +60,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    // Clearing any trace of previous selected institution.
-    this.institutionFacadeService.clearCurrentInstitution();
+    this.performInstitutionCleanUp();
   }
 
   onEnterKeyClicked() {
@@ -73,6 +72,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   async getInstitutions() {
+    this.performInstitutionCleanUp();
     this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
@@ -172,5 +172,12 @@ export class InstitutionsPage implements OnInit {
     if (Capacitor.getPlatform() === PLATFORM.ios && this.platform.is('cordova')) {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
+  }
+
+  async performInstitutionCleanUp() {
+    // Clearing any trace of previous selected institution.
+    await this.institutionFacadeService.clearCurrentInstitution();
+    // Reseting service url in case of coming back from a selected institution with override
+    await this.servicesURLProviderService.resetServicesURLAndCreateSession();
   }
 }

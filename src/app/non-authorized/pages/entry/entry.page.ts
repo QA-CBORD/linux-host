@@ -46,11 +46,7 @@ export class EntryPage implements OnInit {
       await this.sessionFacadeService.logoutUser(false);
     }
     // Reset services url to current environment after logout and before any other service call
-    await this.servicesURLProviderService.resetServicesURL();
-    await this.authFacadeService
-      .authenticateSystem$()
-      .pipe(take(1))
-      .toPromise();
+    await this.servicesURLProviderService.resetServicesURLAndCreateSession(true);
     this.loadingService.closeSpinner();
   }
 

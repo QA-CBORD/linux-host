@@ -4,6 +4,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { firstValueFrom } from '@shared/utils';
 import { Observable, iif, of } from 'rxjs';
 import { switchMap, map, first, skip } from 'rxjs/operators';
 
@@ -13,7 +14,7 @@ import { switchMap, map, first, skip } from 'rxjs/operators';
 export class ServicesURLProviderService extends ServiceStateFacade {
   private _servicesURL: string;
   private _servicesURLStateKey = 'servicesURLState_Key';
-
+  private _isOverriding: boolean;
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly authFacadeService: AuthFacadeService,
@@ -21,10 +22,6 @@ export class ServicesURLProviderService extends ServiceStateFacade {
     private readonly institutionFacadeService: InstitutionFacadeService
   ) {
     super();
-    // Listen for environment change and reset serviceURL
-    this.environmentFacadeService.savedEnvironmentType$.pipe(skip(1)).subscribe(() => {
-      this.setServicesURL();
-    });
   }
 
   get servicesURL$() {
@@ -47,6 +44,8 @@ export class ServicesURLProviderService extends ServiceStateFacade {
     } else {
       this._servicesURL = this.environmentFacadeService.getServicesURL();
     }
+
+    this._isOverriding = this._servicesURL !== this.environmentFacadeService.getServicesURL();
   }
 
   get servicesURL() {
@@ -104,8 +103,15 @@ export class ServicesURLProviderService extends ServiceStateFacade {
     );
   }
 
-  resetServicesURL() {
+  resetServicesURLAndCreateSession(createSession = false): Promise<(string | void)[]> {
+    const isOverriding = this._isOverriding;
     this.setServicesURL();
-    return this.storageStateService.deleteStateEntityByKey(this._servicesURLStateKey);
+    const actionPromises: Promise<string | void>[] = [
+      this.storageStateService.deleteStateEntityByKey(this._servicesURLStateKey),
+    ];
+    if (createSession || isOverriding) {
+    actionPromises.push(firstValueFrom(this.authFacadeService.authenticateSystem$().pipe(first())));
+    }
+    return Promise.all(actionPromises);
   }
 }
