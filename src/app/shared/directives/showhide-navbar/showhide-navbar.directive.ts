@@ -24,7 +24,10 @@ export class ShowHideNavbarDirective {
     'recent-orders',
     'accounts',
     'ordering',
-    'settings'
+    'settings',
+    'securemessaging',
+    'housing',
+    'explore'
   ];
 
   constructor(
