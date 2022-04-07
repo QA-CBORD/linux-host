@@ -1,14 +1,14 @@
-image: maven:3.3.9
+image: maven:3-openjdk-8
 
 definitions:
   steps:
     - step: &build-step
         name: SonarQube analysis
         caches:
-          - maven
+          - gradle
           - sonar
         script:
-          - mvn verify sonar:sonar -Dsonar.projectKey=gcs-patron-frontend
+          - bash android/gradlew sonarqube
           - pipe: sonarsource/sonarqube-scan:1.0.0
             variables:
               SONAR_HOST_URL: ${SONAR_HOST_URL} # Get the value from the repository/workspace variable.
