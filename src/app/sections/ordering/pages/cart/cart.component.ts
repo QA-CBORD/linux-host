@@ -46,6 +46,8 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { Browser } from '@capacitor/browser';
 import { firstValueFrom } from '@shared/utils';
+import { NonCheckingService } from './services/non-checking.service';
+import { CART_ROUTES } from './cart-config';
 
 @Component({
   selector: 'st-cart',
@@ -91,7 +93,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private externalPaymentService: ExternalPaymentService,
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
-    private readonly checkinProcess: CheckingProcess
+    private readonly checkinProcess: CheckingProcess,
+    private readonly nonCheckingService: NonCheckingService
   ) {}
 
   ionViewWillEnter() {
@@ -254,27 +257,23 @@ export class CartComponent implements OnInit, OnDestroy {
     const orderDetailOptions = await firstValueFrom(await this.orderDetailOptions$);
     const orderTypes = await firstValueFrom(this.orderTypes$);
 
-    // const modal = await this.modalController.create({
-    //   component: SuccessModalComponent,
-    //   componentProps: {
-    //     id,
-    //     tax,
-    //     discount,
-    //     total,
-    //     subTotal,
-    //     deliveryFee,
-    //     pickupFee,
-    //     tip,
-    //     checkNumber,
-    //     accountName: orderPayment[0].accountName,
-    //     mealBased,
-    //     merchantId,
-    //     dueTime,
-    //     type,
-    //     orderType: orderTypes,
-    //     orderDetailOptions,
-    //   },
-    // });
+    this.nonCheckingService.setSummary({
+      tax,
+      discount,
+      total,
+      subTotal,
+      deliveryFee,
+      pickupFee,
+      tip,
+      checkNumber,
+      accountName: orderPayment[0].accountName,
+      mealBased,
+      dueTime,
+      type,
+      orderType: orderTypes,
+      orderDetailOptions,
+    });
+    this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart, CART_ROUTES.success]);
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
