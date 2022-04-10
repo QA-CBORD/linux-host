@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { MerchantOrderTypesInfo, OrderDetailOptions } from '@sections/ordering';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { NonCheckingSummary } from '../../models/success-summary.model';
+import { NonCheckingService } from '../../services/non-checking.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'st-non-checking-success',
@@ -12,28 +14,18 @@ import { APP_ROUTES } from '@sections/section.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NonCheckingSuccessComponent implements OnInit {
-  @Input() tax: number;
-  @Input() discount: number;
-  @Input() checkNumber: number;
-  @Input() total: number;
-  @Input() accountName: string;
-  @Input() deliveryFee: number;
-  @Input() pickupFee: number;
-  @Input() subTotal: number;
-  @Input() tip: number;
-  @Input() mealBased: boolean;
-  @Input() orderType: MerchantOrderTypesInfo;
-  @Input() dueTime: string;
-  @Input() type: number;
-  @Input() orderDetailOptions: OrderDetailOptions;
- 
+  summary$: Observable<NonCheckingSummary>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly routingService: NavigationService,
-    private readonly orderingService: OrderingService) {}
+    private readonly orderingService: OrderingService,
+    private readonly nonCheckingService: NonCheckingService
+  ) {
+    this.summary$ = this.nonCheckingService.summary$;
+  }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.initContentStrings();
   }
 
