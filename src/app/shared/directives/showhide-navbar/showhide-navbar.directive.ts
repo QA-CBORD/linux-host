@@ -46,10 +46,7 @@ export class ShowHideNavbarDirective {
   }
 
   private showHideTabs(e: NavigationEnd) {
-    const urlNotAllowed = e.url.split('/').some(url => this.notAllowedRoutes.some((route) => {
-      debugger;
-      return url && url.includes(route);
-    }));
+    const urlNotAllowed = e.url.split('/').some(url => this.notAllowedRoutes.some((route) => url && url.includes(route)));
     const urlWithParametersNotAllowed = this.notAllowedRoutesWithParameters.some((parameter) => {
       return e.url.split(parameter)[1] ? true : false;
     }); 
