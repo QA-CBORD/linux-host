@@ -204,7 +204,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private async showSuccessModal() {
-    const orderDetailOptions = firstValueFrom(this.orderDetailOptions$);
+    const orderDetailOptions = await firstValueFrom(this.orderDetailOptions$);
 
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.success], {
       queryParams: {
