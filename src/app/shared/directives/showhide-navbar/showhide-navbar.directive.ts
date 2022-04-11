@@ -16,7 +16,10 @@ export class ShowHideNavbarDirective {
     'full-menu',
     'menu-category-items',
     'item-detail',
-    'cart'
+    'cart',
+    'deposit',
+    'addfunds',
+    'scanCode'
   ];
 
   /**
@@ -29,7 +32,8 @@ export class ShowHideNavbarDirective {
     'settings',
     'securemessaging',
     'housing',
-    'explore'
+    'explore',
+    'addfunds'
   ];
 
   constructor(
@@ -42,8 +46,13 @@ export class ShowHideNavbarDirective {
   }
 
   private showHideTabs(e: NavigationEnd) {
-    const urlNotAllowed = e.url.split('/').some(url => this.notAllowedRoutes.some((route) => url && url.includes(route)));
-    const urlWithParametersNotAllowed = this.notAllowedRoutesWithParameters.some((parameter) => e.url.split(parameter)[1] ? true : false); 
+    const urlNotAllowed = e.url.split('/').some(url => this.notAllowedRoutes.some((route) => {
+      debugger;
+      return url && url.includes(route);
+    }));
+    const urlWithParametersNotAllowed = this.notAllowedRoutesWithParameters.some((parameter) => {
+      return e.url.split(parameter)[1] ? true : false;
+    }); 
     
     urlNotAllowed || urlWithParametersNotAllowed ? this.hideTabs() : this.showTabs();
   }
