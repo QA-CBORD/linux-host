@@ -5,7 +5,7 @@ import { CartRoutingModule } from '@sections/ordering/pages/cart/cart.routing.mo
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { IonicModule } from '@ionic/angular';
-import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal/success-modal.component';
+import { NonCheckingSuccessComponent } from '@sections/ordering/pages/cart/components/non-checking-success/non-checking-success.component';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { ModalsService } from '@core/service/modals/modals.service';
@@ -15,7 +15,7 @@ import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-pre
 import { StSuccesSummaryModule } from '@shared/ui-components/success-summary/st-success-summary.module';
 
 @NgModule({
-  declarations: [CartComponent, SuccessModalComponent],
+  declarations: [CartComponent, NonCheckingSuccessComponent],
   imports: [
     CommonModule,
     CartRoutingModule,
@@ -29,7 +29,6 @@ import { StSuccesSummaryModule } from '@shared/ui-components/success-summary/st-
     ModifyPrepTimeModule,
     StSuccesSummaryModule
   ],
-   entryComponents: [SuccessModalComponent],
    providers: [ModalsService]
 })
 export class CartModule { }
