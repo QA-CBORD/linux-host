@@ -16,7 +16,10 @@ export class ShowHideNavbarDirective {
     'full-menu',
     'menu-category-items',
     'item-detail',
-    'cart'
+    'cart',
+    'deposit',
+    'addfunds',
+    'scanCode'
   ];
 
   /**
