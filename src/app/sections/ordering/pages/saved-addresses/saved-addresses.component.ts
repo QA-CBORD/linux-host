@@ -11,7 +11,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User, PATRON_NAVIGATION } from '../../../../app.global';
 import { Router, ActivatedRoute } from '@angular/router';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'st-saved-addresses',
   templateUrl: './saved-addresses.component.html',
@@ -35,6 +35,7 @@ export class SavedAddressesComponent implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private location: Location
 
   ) {}
 
@@ -52,8 +53,8 @@ export class SavedAddressesComponent implements OnInit {
     this.addNewAdddressState = !this.addNewAdddressState;
   }
 
-  onPageDismissed(){
-    this.navigate(PATRON_NAVIGATION.settings);
+  onPageDismissed() {
+    this.location.back();
   }
 
   async navigate(url: PATRON_NAVIGATION | string): Promise<void> {
