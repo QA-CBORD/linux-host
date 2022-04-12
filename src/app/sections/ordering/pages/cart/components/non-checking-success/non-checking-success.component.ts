@@ -25,11 +25,11 @@ export class NonCheckingSuccessComponent implements OnInit {
     this.summary$ = this.nonCheckingService.summary$;
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.initContentStrings();
   }
 
-  async onClosed() {
+  onClosed() {
     this.routingService.navigate([APP_ROUTES.ordering]);
   }
 
