@@ -9,6 +9,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:get.cbord.com</string>
+		<string>applinks:get.ca.cbord.com</string>
 		<string>applinks:get.dev.cbord.com</string>
 	</array>
 </dict>
