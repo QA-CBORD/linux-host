@@ -7,7 +7,7 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { ServicesURLProviderService } from '@core/service/service-url/services-urlprovider.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable()
 export class BaseInterceptor implements HttpInterceptor {
@@ -16,7 +16,7 @@ export class BaseInterceptor implements HttpInterceptor {
   constructor(
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly servicesURLProviderService: ServicesURLProviderService
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -39,9 +39,9 @@ export class BaseInterceptor implements HttpInterceptor {
     }
     const rpcConfig: RPCQueryConfig = req.body;
     const timeOut = rpcConfig.timeOut ? rpcConfig.timeOut : this.TIMEOUT_MS;
-    return this.servicesURLProviderService.servicesURL$.pipe(
+    return this.environmentFacadeService.getSavedEnvironmentInfo$().pipe(
       first(),
-      switchMap(servicesURL => {
+      switchMap(({ services_url: servicesURL }) => {
         const url = servicesURL.concat(req.url);
         const clone = req.clone({ url, body: rpcConfig.requestBody, headers: this.baseHeaders });
         const request =
