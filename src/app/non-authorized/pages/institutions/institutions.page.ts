@@ -4,7 +4,7 @@ import { take, switchMap, tap, first, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { iif, Observable, of, zip } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Capacitor } from '@capacitor/core';
@@ -14,14 +14,13 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
-import { InstitutionLookupListItem } from '@core/model/institution';
+import { Institution, InstitutionLookupListItem } from '@core/model/institution';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { Platform } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { registerPlugin } from '@capacitor/core';
-import { ServicesURLProviderService } from '@core/service/service-url/services-urlprovider.service';
 import { firstValueFrom } from '@shared/utils';
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
@@ -48,7 +47,6 @@ export class InstitutionsPage implements OnInit {
     private readonly toastService: ToastService,
     private readonly route: Router,
     private readonly registrationServiceFacade: RegistrationServiceFacade,
-    private readonly servicesURLProviderService: ServicesURLProviderService,
     private readonly commonService: CommonService,
     private readonly messageProxy: MessageProxy,
     private readonly platform: Platform
@@ -95,10 +93,8 @@ export class InstitutionsPage implements OnInit {
   async onInstitutionSelected(selectedInstitution: InstitutionLookupListItem): Promise<void> {
     this.loadingService.showSpinner();
     // Cloning object for manipulation
-    const institution = JSON.parse(JSON.stringify(selectedInstitution));
-    institution.id = await firstValueFrom(
-      this.servicesURLProviderService.checkAndReturnInstitutionOverride(institution)
-    );
+    const institution = JSON.parse(JSON.stringify(selectedInstitution)) as InstitutionLookupListItem;
+    institution.id = await firstValueFrom(this.checkForInstitutionEnvironmentAndOverride(institution));
     this.settingsFacadeService.cleanCache();
     await this.commonService.getInstitution(institution.id, false);
     this.commonService.getInstitutionPhoto(false, null);
@@ -178,6 +174,29 @@ export class InstitutionsPage implements OnInit {
     // Clearing any trace of previous selected institution.
     await this.institutionFacadeService.clearCurrentInstitution();
     // Reseting service url in case of coming back from a selected institution with override
-    await this.servicesURLProviderService.resetServicesURLAndCreateSession();
+    await this.environmentFacadeService.resetEnvironmentAndCreateSession();
+  }
+
+  checkForInstitutionEnvironmentAndOverride(selectedInstitution: InstitutionLookupListItem) {
+    let institution$: Observable<Partial<Institution>>;
+
+    if (selectedInstitution.environmentName) {
+      this.environmentFacadeService.overrideEnvironment(selectedInstitution.environmentName);
+      institution$ = this.authFacadeService
+        .authenticateSystem$()
+        .pipe(
+          switchMap(sessionId =>
+            this.institutionFacadeService.getInstitutionDataByShortName$(selectedInstitution.shortName, sessionId)
+          )
+        );
+    } else {
+      this.environmentFacadeService.resetEnvironmentAndCreateSession();
+      institution$ = of(selectedInstitution);
+    }
+
+    return institution$.pipe(
+      map(inst => inst.id),
+      first()
+    );
   }
 }
