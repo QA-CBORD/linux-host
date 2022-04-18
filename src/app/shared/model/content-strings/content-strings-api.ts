@@ -14,6 +14,7 @@ import { creditCardMgmtCsModel } from '@sections/settings/creditCards/creditCard
 import { LocationDisclosureCsModel } from '@sections/dashboard/components/location-disclosure/location-disclosure-content-string.model';
 import { CheckingContentCsModel, CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 import { ScanCodeCsModel } from '@sections/check-in/components/scan-code/scan-code-content-strings.model';
+import { ConnectivityScreenCsModel } from '@shared/no-connectivity-screen/model/no-connectivity.cs.model';
 
 export enum ContentStringCategory {
   forgotPassword = 'forgotPassword',
@@ -31,7 +32,8 @@ export enum ContentStringCategory {
   checkin = 'checkin',
   checkinSuccess = 'checkinSuccess',
   locationDisclosure = 'locationDisclosure',
-  scanAndGo = 'scanAndGo'
+  scanAndGo = 'scanAndGo',
+  noConnectivity = 'noConnectivity'
 }
 
 export interface ExtraContent {
@@ -143,6 +145,12 @@ export const ContentStringApi: ContentStringCategoryType = {
     category: CATEGORIES.scanAndGo,
     build: (config: ContentStringBuilderConfig): ScanCodeCsModel => {
       return new ScanCodeCsModel(NullableContent.build(config));
+    }
+  },
+  [ContentStringCategory.noConnectivity]: {
+    category: CATEGORIES.noConnectivity,
+    build: (config: ContentStringBuilderConfig): ConnectivityScreenCsModel => {
+      return new ConnectivityScreenCsModel(NullableContent.build(config));
     }
   }
 };

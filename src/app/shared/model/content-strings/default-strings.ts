@@ -122,6 +122,14 @@ export const guestDashboardDefaultStrings = {
   explore: 'Explore',
 };
 
+export const noConnectivityScreentDefaultStrings = {
+  title: 'No connection',
+  description: 'Make sure your Wi-Fi or mobile data is turned on, then try again.',
+  scan_card_desc: 'You may still scan your card when you are offline.',
+  scan_card_btn: 'Scan Card',
+  try_again_btn: 'Try Again'
+};
+
 export const depositDefaultStrings = {
   title: 'Confirm Deposit',
   policy_title: 'Refund Policy',

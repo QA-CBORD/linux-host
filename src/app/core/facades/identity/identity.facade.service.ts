@@ -9,6 +9,7 @@ import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { RetryHandler } from '@shared/no-connectivity-screen/model/retry-handler';
 
 export enum LoginState {
   DONE,
@@ -29,23 +30,18 @@ export class IdentityFacadeService extends ServiceStateFacade {
   private ttl: number = 600000; // 10min
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
-  
+
 
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
-    private readonly globalNav: GlobalNavService
   ) {
     super();
   }
 
-  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> { 
-    return this.identityService.onPasscodeRequest(isPasscodeSetRequest);
-  }
-
-  onAppStateChanged(stateActive){
-    this.identityService.onAppStateChanged(stateActive);
+  async tryPinLogin(): Promise<string> {
+    return await this.identityService.tryPinLogin();
   }
 
   async pinLoginSetup(
@@ -85,16 +81,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
     }
   }
 
-  get pinEntryInProgress():boolean{
+  get pinEntryInProgress(): boolean {
     return this.identityService.unclockPinInProgress;
-  }
-
-  get canRetryUnlock(): boolean {
-    return this.identityService.canRetryUnlock;
-  }
-
-  set canRetryUnlock(value: boolean){
-    this.identityService.canRetryUnlock = value;
   }
 
   logoutUser(): Promise<void> {
@@ -132,6 +120,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .areBiometricsAvailable()
       .pipe(take(1))
       .toPromise();
+  }
+
+  async showNoConnectivityScreen(retryHandler: RetryHandler) {
+    return this.identityService.showNoConnectivityModal(retryHandler);
   }
 
   async getAvailableBiometricHardware(): Promise<string[]> {

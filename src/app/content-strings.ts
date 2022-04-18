@@ -30,6 +30,7 @@ export enum CONTENT_STRINGS_CATEGORIES {
   locationDisclosure = 'location_disclosure_screen',
   scanAndGo = 'scan_and_go',
   lostCardScreen = 'lost_card_screen',
+  noConnectivity = 'noConnectivity'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

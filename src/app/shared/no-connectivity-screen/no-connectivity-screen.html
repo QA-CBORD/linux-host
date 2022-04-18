@@ -1,0 +1,40 @@
+<st-header [title]="''" [isTitleShow]="false"[isToolbarShow]="false">
+</st-header>
+
+<ion-content class="ionic-content">
+  <div class="wifi-image-icon">
+    <img height="auto" src="/assets/images/wifi-img.svg" alt="wifi image" />
+  </div>
+
+  <div class="description-text">
+    {{strings.description}}
+  </div>
+
+  <div class="scan-card-text">
+    {{strings.scan_card_desc}}
+  </div>
+
+  <div class="big-image">
+    <img height="auto" src="/assets/images/Search_Connection_Undraw.svg" alt="wifi image" />
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <div class="ionic-footer">
+    <div>
+      <st-button class="st-button-card" buttonModifier="rectangle" (onClick)="scanCard()" tabindex="0">
+        <span class="ion-text-capitalize">
+          {{strings.scan_card_btn}}
+        </span>
+      </st-button>
+    </div>
+    <div>
+      <st-button class="st-button-card" buttonModifier="rectangle" (onClick)="retryOperations()" tabindex="0">
+        <span class="ion-text-capitalize">
+          {{strings.try_again_btn}}
+        </span>
+      </st-button>
+    </div>
+  </div>
+</ion-footer>
