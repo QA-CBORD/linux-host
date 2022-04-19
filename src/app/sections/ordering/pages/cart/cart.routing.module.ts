@@ -2,23 +2,31 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CartComponent } from '@sections/ordering/pages/cart/cart.component';
 import { CartResolver } from '@sections/ordering/resolvers/cart.resolver';
+import { CART_ROUTES } from './cart-config';
+import { NonCheckingSuccessComponent } from './components/non-checking-success/non-checking-success.component';
 
 const routes: Routes = [
   {
     path: '',
+    redirectTo: CART_ROUTES.cart,
+    pathMatch: 'full',
+  },
+  {
+    path: CART_ROUTES.cart,
     component: CartComponent,
     resolve: {
-      data: CartResolver
-    }
-  }
+      data: CartResolver,
+    },
+  },
+  {
+    path: CART_ROUTES.success,
+    component: NonCheckingSuccessComponent,
+  },
 ];
 
 const imports = [RouterModule.forChild(routes)];
-const exports = [RouterModule];
-
 
 @NgModule({
-  imports,
-  exports
+  imports
 })
-export class CartRoutingModule { }
+export class CartRoutingModule {}
