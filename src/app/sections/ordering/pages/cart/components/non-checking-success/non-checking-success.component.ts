@@ -1,42 +1,36 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { AddressInfo } from '@core/model/address/address-info';
-import { MerchantOrderTypesInfo, OrderDetailOptions } from '@sections/ordering';
+import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
+import { NonCheckingSummary } from '../../models/success-summary.model';
+import { NonCheckingService } from '../../services/non-checking.service';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'st-success-modal',
-  templateUrl: './success-modal.component.html',
-  styleUrls: ['./success-modal.component.scss'],
+  selector: 'st-non-checking-success',
+  templateUrl: './non-checking-success.component.html',
+  styleUrls: ['./non-checking-success.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SuccessModalComponent implements OnInit {
-  @Input() tax: number;
-  @Input() discount: number;
-  @Input() checkNumber: number;
-  @Input() total: number;
-  @Input() accountName: string;
-  @Input() deliveryFee: number;
-  @Input() pickupFee: number;
-  @Input() subTotal: number;
-  @Input() tip: number;
-  @Input() mealBased: boolean;
-  @Input() orderType: MerchantOrderTypesInfo;
-  @Input() dueTime: string;
-  @Input() type: number;
-  @Input() orderDetailOptions: OrderDetailOptions;
- 
+export class NonCheckingSuccessComponent implements OnInit {
+  summary$: Observable<NonCheckingSummary>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
-  constructor(private readonly modalController: ModalController, private readonly orderingService: OrderingService) {}
+  constructor(
+    private readonly routingService: NavigationService,
+    private readonly orderingService: OrderingService,
+    private readonly nonCheckingService: NonCheckingService
+  ) {
+    this.summary$ = this.nonCheckingService.summary$;
+  }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.initContentStrings();
   }
 
-  async onClosed() {
-    await this.modalController.dismiss();
+  onClosed() {
+    this.routingService.navigate([APP_ROUTES.ordering]);
   }
 
   private initContentStrings() {

@@ -10,10 +10,16 @@ export class ShowHideNavbarDirective {
 
   /**
    * @description User this array to hide specifics routes 
-   * Ex: Adding order/menu-item only hide the specified route
+   * Ex: Adding order/menu-item only hide the specified route when name matches with the url
   */
   private notAllowedRoutes: string[] = [
-    
+    'full-menu',
+    'menu-category-items',
+    'item-detail',
+    'cart',
+    'deposit',
+    'addfunds',
+    'scanCode'
   ];
 
   /**
@@ -23,8 +29,10 @@ export class ShowHideNavbarDirective {
   private notAllowedRoutesWithParameters: string[] = [
     'recent-orders',
     'accounts',
-    'ordering',
-    'settings'
+    'settings',
+    'securemessaging',
+    'housing',
+    'explore'
   ];
 
   constructor(

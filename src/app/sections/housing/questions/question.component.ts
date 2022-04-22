@@ -30,9 +30,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
   currectFacility: string;
   images: LocalFile[] = [];
   workOrderFieldsText: any = {
-    notify : 'Would like to receive updates.',
-    phone : 'Enter the number we may use to contact you.',
-    email : 'Enter the email we may use to contact you.',
+    notify : 'Would you like to receive updates?',
+    phone : 'Enter your phone number.',
+    email : 'Enter your email.',
     description : 'Describe what needs to be repaired.',
     location: 'Select the location where the repair is needed.',
   };

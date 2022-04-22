@@ -1,10 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { take, switchMap, tap } from 'rxjs/operators';
+import { take, switchMap, tap, first, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { zip } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Capacitor } from '@capacitor/core';
@@ -14,14 +14,15 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
-import { InstitutionLookupListItem } from '@core/model/institution';
+import { Institution, InstitutionLookupListItem } from '@core/model/institution';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { Platform } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { registerPlugin } from '@capacitor/core';
-const  IOSDevice  = registerPlugin<any>('IOSDevice');
+import { firstValueFrom } from '@shared/utils';
+const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Component({
   selector: 'st-institutions',
@@ -30,7 +31,6 @@ const  IOSDevice  = registerPlugin<any>('IOSDevice');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstitutionsPage implements OnInit {
-  private sessionId: string = null;
   searchString: string = '';
   isLoading: boolean = true;
   institutions: InstitutionLookupListItem[];
@@ -49,12 +49,16 @@ export class InstitutionsPage implements OnInit {
     private readonly registrationServiceFacade: RegistrationServiceFacade,
     private readonly commonService: CommonService,
     private readonly messageProxy: MessageProxy,
-    private readonly platform: Platform,
+    private readonly platform: Platform
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.getInstitutions();
     this.setNativeEnvironment();
+  }
+
+  ionViewWillEnter() {
+    this.performInstitutionCleanUp();
   }
 
   onEnterKeyClicked() {
@@ -66,10 +70,10 @@ export class InstitutionsPage implements OnInit {
   }
 
   async getInstitutions() {
+    this.performInstitutionCleanUp();
     this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
-        tap(sessionId => (this.sessionId = sessionId)),
         switchMap(sessionId => this.institutionFacadeService.retrieveLookupList$(sessionId)),
         take(1)
       )
@@ -86,12 +90,16 @@ export class InstitutionsPage implements OnInit {
       );
   }
 
-  async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
-    this.loadingService.showSpinner({ duration: 5000 });
+  async onInstitutionSelected(selectedInstitution: InstitutionLookupListItem): Promise<void> {
+    this.loadingService.showSpinner();
+    // Cloning object for manipulation
+    const institution = JSON.parse(JSON.stringify(selectedInstitution)) as InstitutionLookupListItem;
+    institution.id = await firstValueFrom(this.checkForInstitutionEnvironmentAndOverride(institution));
     this.settingsFacadeService.cleanCache();
     await this.commonService.getInstitution(institution.id, false);
     this.commonService.getInstitutionPhoto(false, null);
     await this.commonService.getInstitutionBgColor(false);
+    this.loadingService.closeSpinner();
     const shouldGo2Prelogin = institution.guestSettings.canLogin;
     (shouldGo2Prelogin && this.navigate2PreLogin(institution)) || this.navigate2Login(institution);
   }
@@ -99,10 +107,11 @@ export class InstitutionsPage implements OnInit {
   private async navigate2Login({ id: institutionId }) {
     this.institutionFacadeService.removeGuestSetting();
     this.authFacadeService.setIsGuestUser(false);
+    const sessionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
     await zip(
-      this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
-      this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], this.sessionId, institutionId),
-      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId)
+      this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, sessionId, institutionId),
+      this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], sessionId, institutionId),
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, sessionId, institutionId)
     )
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
@@ -159,5 +168,35 @@ export class InstitutionsPage implements OnInit {
     if (Capacitor.getPlatform() === PLATFORM.ios && this.platform.is('cordova')) {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
+  }
+
+  async performInstitutionCleanUp() {
+    // Clearing any trace of previous selected institution.
+    await this.institutionFacadeService.clearCurrentInstitution();
+    // Reseting service url in case of coming back from a selected institution with override
+    await this.environmentFacadeService.resetEnvironmentAndCreateSession();
+  }
+
+  checkForInstitutionEnvironmentAndOverride(selectedInstitution: InstitutionLookupListItem) {
+    let institution$: Observable<Partial<Institution>>;
+
+    if (selectedInstitution.environmentName) {
+      this.environmentFacadeService.overrideEnvironment(selectedInstitution.environmentName);
+      institution$ = this.authFacadeService
+        .authenticateSystem$()
+        .pipe(
+          switchMap(sessionId =>
+            this.institutionFacadeService.getInstitutionDataByShortName$(selectedInstitution.shortName, sessionId)
+          )
+        );
+    } else {
+      this.environmentFacadeService.resetEnvironmentAndCreateSession();
+      institution$ = of(selectedInstitution);
+    }
+
+    return institution$.pipe(
+      map(inst => inst.id),
+      first()
+    );
   }
 }

@@ -43,14 +43,14 @@ const routes: Route[] = [
         loadChildren: () => import('./explore/explore.module').then(m => m.ExploreModule),
       },
       {
-        path: PATRON_ROUTES.biometric,
-        loadChildren: () => import('./biometric-login/biometric.module').then(m => m.BiometricModule),
-      },
-      {
         path: PATRON_ROUTES.settings,
         loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule),
       },
     ]
+  },
+  {
+    path: PATRON_ROUTES.biometric,
+    loadChildren: () => import('./biometric-login/biometric.module').then(m => m.BiometricModule),
   }
 ];
 

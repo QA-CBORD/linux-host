@@ -2,32 +2,31 @@
 //  Plugin.swift
 //  App
 //
-//  Modified by Alan Nunez on 5/12/20.
-//  Copyright © 2021 CBORD. All rights reserved.
+//  Modified by Alan Nunez on 4/21/22.
+//  Copyright © 2022 CBORD. All rights reserved.
 
 import Foundation
-import UIKit
 import Capacitor
 import PassKit
 import SafariServices
 
 @objc(Plugin)
 class Plugin: CAPPlugin {
-    override init(bridge: CAPBridgeProtocol, pluginId: String, pluginName: String) {
-        super.init(bridge: bridge, pluginId: pluginId, pluginName: pluginName)
+
+    override public func load() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.notifyApplePayResponse(_:)), name: .handleApplePayResponse, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.notifyAppleWallet), name: .handleAppleWalletRefresh, object: nil)
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
         UserDefaults.standard.set(false, forKey: "custom_setting")
     }
-
+    
     @objc public func getAppleWalletInfo(_ call: CAPPluginCall) {
         DispatchQueue.global(qos: .background).async  {
             WatchSessionManager.sharedManager.startSession()
-            guard let sessionIdStr = call.options["sessionId"] as? String else {
+            guard let sessionIdStr = call.getString("sessionId") else {
                 return
             }
             let sessionId = sessionIdStr.replacingOccurrences(of: "\"", with: "")
@@ -68,7 +67,7 @@ class Plugin: CAPPlugin {
     }
     
     @objc func addToAppleWallet(_ call: CAPPluginCall) {
-        let json = call.options["user"] as? String
+        let json = call.getString("user")
         guard let jsonData = json?.data(using: .utf8) else {
             return
         }
@@ -95,14 +94,33 @@ class Plugin: CAPPlugin {
     /// This function synchronizes the URLs from the Ionic side.
     @objc func setEnvironment(_ call: CAPPluginCall) {
         DispatchQueue.global(qos: .background).async  {
-            guard let environmentURL = call.options["env"] as? [String: Any], let partnerURL = environmentURL["partner_services_url"],
-                let fullPath = environmentURL["services_url"] as? String, let index = fullPath.endIndex(of: "com") else {
-                    return
+            guard let environmentURL = call.getObject("env"), let partnerURL = environmentURL["partner_services_url"],
+                  let fullPath = environmentURL["services_url"] as? String, let index = fullPath.endIndex(of: "com") else {
+                return
             }
+            print("url \(fullPath)")
             let serviceURL = String(fullPath[..<index])
             UserDefaults.standard.set(true, forKey: "custom_setting")
             UserDefaults.standard.set(serviceURL, forKey: "host_url")
             UserDefaults.standard.set(partnerURL, forKey: "partner_url")
+        }
+        call.resolve();
+    }
+    
+    @objc func checkIsConnectedToNetwork(_ call: CAPPluginCall) {
+        let pingUrl = "https://google.com"
+        if let url = URL(string: pingUrl) {
+            var request = URLRequest(url: url)
+            request.httpMethod = "HEAD"
+            URLSession(configuration: .default).dataTask(with: request) { (_, response, error) -> Void in
+                var connectionState = true
+                if error != nil || (response as? HTTPURLResponse)?.statusCode != 200 {
+                    connectionState = false
+                }
+                call.resolve([
+                    "connected": connectionState,
+                ])
+            }.resume()
         }
     }
 }
