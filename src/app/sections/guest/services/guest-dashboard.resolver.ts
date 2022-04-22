@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { Observable, of, zip } from 'rxjs';
-import { catchError, finalize, map, take } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { finalize, map, take } from 'rxjs/operators';
 import { GuestFacadeService } from './guest.facade.service';
 import { UserInfo } from '@core/model/user';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -29,11 +29,6 @@ export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
       map(([user, dashboardSections]) => {
         this.messageProxy.put(dashboardSections);
         return user;
-      }),
-      catchError((err) => {
-        this.messageProxy.put([]);
-        console.log('Dashboard.resolver ', err);
-        return of({} as any);
       }),
       finalize(() => this.loadingService.closeSpinner())
     );

@@ -33,7 +33,7 @@ export enum ContentStringCategory {
   checkinSuccess = 'checkinSuccess',
   locationDisclosure = 'locationDisclosure',
   scanAndGo = 'scanAndGo',
-  noConnectivity = 'noConnectivity'
+  noConnectivity = 'noConnectivity',
 }
 
 export interface ExtraContent {

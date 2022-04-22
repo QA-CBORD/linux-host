@@ -18,6 +18,7 @@ export enum PinCloseStatus {
   CANCELED = 'cancelled',
   ERROR = 'error',
   MAX_FAILURE = 'max_failure',
+  DEVICE_MARK_LOST = 'device_marked_lost'
 }
 
 export enum PinAction {
@@ -64,8 +65,8 @@ export class PinPage implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService
-  ) {}
-  
+  ) { }
+
   @Input() pinAction: PinAction;
   @Input() showDismiss: boolean = true;
 
@@ -176,7 +177,7 @@ export class PinPage implements OnInit {
     }
   }
 
-  enter() {}
+  enter() { }
 
   delete() {
     this.removeNumber();
@@ -275,6 +276,8 @@ export class PinPage implements OnInit {
             setTimeout(() => {
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
+          } else if (/9510|Device marked as lost/.test(error.message)) {
+            this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
           } else if (error instanceof GetThrowable) {
             this.setErrorText(error.message);
           } else {

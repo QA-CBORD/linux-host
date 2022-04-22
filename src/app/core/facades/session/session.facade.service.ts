@@ -4,7 +4,7 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
-import { switchMap, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
@@ -14,17 +14,15 @@ import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { NavigationService } from '@shared/services/navigation.service';
-import { APP_ROUTES } from '@sections/section.config';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
 import { Router } from '@angular/router';
-import { ToastService } from '@core/service/toast/toast.service';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
-import { ConnectivityServiceFacade } from '@shared/no-connectivity-screen/connectivity.service';
 import { firstValueFrom } from '@shared/utils';
-import { ConnectionService } from '@shared/services/connection-service';
+import { ConnectivityService } from '@shared/services/connectivity.service';
+import { APP_ROUTES } from '@sections/section.config';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 enum AppStatus {
   BACKGROUND,
@@ -49,17 +47,13 @@ export class SessionFacadeService {
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly merchantFacadeService: MerchantFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService,
     private navCtrl: NavController,
-    private readonly toastService: ToastService,
     private readonly loadingService: LoadingService,
-    private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly ngZone: NgZone,    
-    private readonly connectionService: ConnectionService,
+    private readonly ngZone: NgZone,
+    private readonly connectivityService: ConnectivityService
   ) {
     this.appStateListeners();
   }
@@ -76,6 +70,7 @@ export class SessionFacadeService {
           this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
+        this.connectivityService.isOpened().then((opened) => opened && this.lockVault());
       }
     });
     App.addListener('appUrlOpen', data => {
@@ -97,21 +92,22 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    console.log('appResumeLogic navigatedToPlugin', this.navigatedToPlugin)
     if (this.navigatedToPlugin) {
-      this.navigateToNativePlugin = false;
+      this.navigatedToPlugin = false;
       return;
     }
-    console.log('appResumeLogic navigatedFromGpay', this.navigatedFromGpay)
-    if (this.navigatedFromGpay) {
+    if (this.navigatedFromGpay || this.identityFacadeService.userIsAuthenticating()) {
       return;
     }
 
-    const shouldShowStartup = (await this.isVaultLocked()) && !this.identityFacadeService.pinEntryInProgress;
-    if (shouldShowStartup) {
+
+    const appLocked = await this.isVaultLocked();
+    const currentRouteIsStartupPage = this.router.url.includes("startup");
+    if (currentRouteIsStartupPage && appLocked) {
+      this.doLoginChecks();
+    } else if (appLocked) {
       this.ngZone.run(async () => {
-        await this.router
-          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
+        await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
           .then(navigated => {
             if (!navigated) {
               this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true });
@@ -147,47 +143,45 @@ export class SessionFacadeService {
     await this.handleLoginState(appLoginState);
   }
 
-  async handleServerError(message: string) {
-
-    const serverTimedOut = /timeout/.test(message.toLowerCase());
-    
-    if (serverTimedOut) {
-
-    }
-
-
-
-
+  async onScanCode(): Promise<void> {
+    return this.lockVault();
   }
 
-  async retrieveSystemSessionToken(): Promise<any> {
-    await firstValueFrom(this.authFacadeService.getAuthSessionToken$())
-      .then(this.determineAppLoginState)
-      .catch(async ({ message }) => {
-        if (/timeout/.test(message.toLowerCase()) && (await this.connectionService.deviceOffline())) {
-        await this.identityFacadeService.showNoConnectivityScreen({
-          onRetry: this.retrieveSystemSessionToken
-        });
-       } else {
-         this.handlServerError(message);
-         // what do we do if we get a backend error here, 
-         // it will certainly show blue screen of death. so we need to define what do to.
-       }
-      });
+  async onRetry(): Promise<boolean> {
+    await this.loadingService.showSpinner();
+    let systemSesssionId;
+    try {
+      systemSesssionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
+    } catch ({ message }) {
+      return false;
+    }
+    this.determineAppLoginState(systemSesssionId);
+    return true;
+  }
+
+  async retrieveSystemSessionToken(): Promise<boolean> {
+    await this.loadingService.showSpinner();
+    let systemSesssionId;
+    try {
+      systemSesssionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
+    } catch ({ message }) {
+      this.connectivityService.handleConnectionError(this);
+      return false;
+    }
+    await this.connectivityService.closeIfOpened();
+    this.determineAppLoginState(systemSesssionId);
+    return true;
   }
 
 
   async doLoginChecks() {
-    console.log('doLoginChecks')
-    this.loadingService.showSpinner();
     await this.retrieveSystemSessionToken();
-    this.loadingService.showSpinner();
   }
 
 
   async handleLoginState(state: LoginState): Promise<void> {
-    console.log('state ==>> ', state);
     const routeConfig = { replaceUrl: true };
+    console.log("state: ", state);
     switch (state) {
       case LoginState.SELECT_INSTITUTION:
         await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
@@ -224,31 +218,18 @@ export class SessionFacadeService {
     }
   }
 
-  async onRetry(): Promise<boolean> {
-
-    await this.doLoginChecks();
-
-    return true;
-  }
 
   private navigateToDashboard = async () => {
-    console.log('sessationFacade.navigateToDashbaord')
-    return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+    return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true })
+      .catch(() => false);
   };
 
   private async loginUser(useBiometric: boolean) {
-    const canRetryUnlockWithPin = useBiometric;
     this.loadingService.closeSpinner();
-    this.identityFacadeService
-      .loginUser(useBiometric)
-      .pipe(take(1))
-      .subscribe({
-        error: async ({ code }) => {
-          if ((VaultErrorCodes.TooManyFailedAttempts == code && canRetryUnlockWithPin)) {
-            this.identityFacadeService.tryPinLogin().catch(async () => await this.logoutUser(true));
-          }
-        }
-      });
+    await this.identityFacadeService
+      .loginUser(useBiometric);
+    // .pipe(take(1))
+    // .subscribe();
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
@@ -340,20 +321,11 @@ export class SessionFacadeService {
   }
 
   async logoutUser(navigateToEntry: boolean = true) {
-    console.log("sessionFacade logoutUser called... ", navigateToEntry)
     if (navigateToEntry) {
       await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
       this.onLogOutObservable$.next();
     }
-    this.resetAll();
-  }
-
-  private async resetAll(): Promise<void> {
-    await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
-    await this.identityFacadeService.logoutUser();
-    this.merchantFacadeService.clearState();
-    this.settingsFacadeService.cleanCache();
-    this.contentStringFacade.clearState();
+    this.identityFacadeService.logoutUser();
   }
 
   async getIsWeb(): Promise<boolean> {

@@ -1,8 +1,5 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { from, Observable, of, throwError } from 'rxjs';
-
+import { Injectable } from '@angular/core';
+import { from, Observable, throwError } from 'rxjs';
 import { ModalController, Platform } from '@ionic/angular';
 import {
   AuthMode,
@@ -12,27 +9,13 @@ import {
   LockEvent,
   VaultConfig,
   VaultError,
-  VaultErrorCodes,
 } from '@ionic-enterprise/identity-vault';
 
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { catchError, finalize, switchMap, take } from 'rxjs/operators';
-import { ROLES } from '../../../app.global';
-import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
-import { LoadingService } from '@core/service/loading/loading.service';
 import { Capacitor } from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-import { ConnectionService } from '@shared/services/connection-service';
-import { NavigationService } from '@shared/services/navigation.service';
-import { APP_ROUTES } from '@sections/section.config';
-import { NoConnectivityScreen } from '@shared/no-connectivity-screen/no-connectivity-screen';
-import { CommonService } from '@shared/services/common.service';
 import { firstValueFrom } from '@shared/utils';
-import { ConnectivityScreenCsModel } from '@shared/no-connectivity-screen/model/no-connectivity.cs.model';
-import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
-import { RetryHandler } from '@shared/no-connectivity-screen/model/retry-handler';
 
 export class VaultSessionData implements DefaultSession {
   token: string; /// unused
@@ -47,21 +30,11 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   private temporaryPin: string = undefined;
   private isLocked: boolean = true;
   unclockInProgress: boolean;
-  unclockPinInProgress: boolean;
-  canRetryPinLogin: boolean = true;
-  wasPinLogin: boolean;
 
   constructor(
     private browserAuthPlugin: BrowserAuthPlugin,
     private modalController: ModalController,
-    private router: Router,
-    private plt: Platform,
-    private readonly authFacadeService: AuthFacadeService,
-    private readonly loadingService: LoadingService,
-    private readonly connectionService: ConnectionService,
-    private readonly routingService: NavigationService,
-    private readonly commonService: CommonService
-  ) {
+    private plt: Platform) {
     // TODO: hideScreenOnBackground hangs promises on permissions prompt.
     // if this is needed have to find a fix/workaround.
     super(plt, {
@@ -101,39 +74,24 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   initAndUnlock(
     session: VaultSessionData,
     biometricEnabled: boolean,
-    navigateToDashboard: boolean = true
-  ): Observable<void> {
-    if (navigateToDashboard) {
-      this.navigateToDashboard();
-    }
+  ): Promise<void> {
     this.temporaryPin = session.pin;
-    return from(
-      super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly).then(res => {
+    return super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly).then(res => {
         this.setIsLocked(false);
         return res;
-      })
-    );
+      });
   }
 
+  // called when biometric is setup.
   /// unlock the vault to make data accessible with identity controlled method
-  unlockVault(): Observable<void> {
-    debugger
+  async unlockVault(): Promise<any> {
     this.unclockInProgress = true;
-    return from(super.unlock()).pipe(
-      take(1),
-      finalize(() => (this.unclockInProgress = false))
-    );
+    return super.unlock(AuthMode.BiometricOnly).finally(() => (this.unclockInProgress = false));
   }
 
   /// unlock the vault to make data accessible with pin
-  unlockVaultPin(): Observable<void> {
-    this.unclockPinInProgress = true;
-    return from(super.unlock(AuthMode.PasscodeOnly)).pipe(
-      take(1),
-      finalize(() => {
-        this.unclockPinInProgress = false;
-      })
-    );
+  async unlockVaultPin(): Promise<void> {
+    return super.unlock(AuthMode.PasscodeOnly);
   }
 
   /// unlock the vault to make data accessible with biometric and pin backup
@@ -148,6 +106,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   /// lock the vault to make data inaccessible
   lockVault(): Observable<void> {
+    console.log("LOCKING VAULT YEAH BABE.")
     return from(super.lockOut());
   }
 
@@ -167,57 +126,29 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     return from(super.logout());
   }
 
-  async tryPinLogin(): Promise<string> {
-    if (this.canRetryPinLogin) {
-      const sessionPin = await this.onPasscodeRequest(false);
-      if (sessionPin) await this.navigateToDashboard();
-      return sessionPin
-    }
-    return Promise.reject({ code: VaultErrorCodes.TooManyFailedAttempts });
-  }
-
 
   /// used for pin set and validation
   async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> {
-
-    console.log('onPasscodeRequest: ',)
 
     if (isPasscodeSetRequest) {
       /// will happen on pin set
       return Promise.resolve(this.temporaryPin);
     } else {
       /// will happen on pin login
-      this.canRetryPinLogin = false;
       const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
-      console.log('onPasscodeRequest: ', role)
-      switch (role) {
-        case 'cancel': /// identity vault cancel role
-          throw {
-            code: VaultErrorCodes.UserCanceledInteraction,
-            message: 'User has canceled pin login',
-          };
-        case PinCloseStatus.MAX_FAILURE:
-          console.log('onPasscodeRequest PinCloseStatus.MAX_FAILURE')
-          this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry], { state: { logoutUser: true } });
-          throw {
-            code: VaultErrorCodes.TooManyFailedAttempts,
-            message: 'User has exceeded max pin attempts',
-          };
-        case PinCloseStatus.LOGIN_SUCCESS:
-          console.log('DATA: ', data);
-          break;
-        default:
-          throw {
-            code: VaultErrorCodes.UserCanceledInteraction,
-            message: 'User has canceled pin login',
-          };
+
+      if (PinCloseStatus.LOGIN_SUCCESS !== role) {
+        throw {
+          code: role,
+          message: data,
+        };
       }
       return Promise.resolve(data);
     }
   }
 
+
   async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
-    this.wasPinLogin = true;
     let componentProps = { pinAction, ...pinModalProps };
     const pinModal = await this.modalController.create({
       backdropDismiss: false,
@@ -228,57 +159,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     return await pinModal.onDidDismiss();
   }
 
-  async showNoConnectivityModal(retryHandler: RetryHandler) {
-    const { content } = await firstValueFrom(this.commonService.loadContentString(ContentStringCategory.noConnectivity));
-    console.log('got content strings: ', content);
-    const modal = await this.modalController.create({
-      backdropDismiss: false,
-      componentProps: {
-        strings: content,
-        retryHandler
-      },
-      component: NoConnectivityScreen,
-    });
-    await modal.present();
-    return await modal.onDidDismiss();
-  }
-
-
-  private async onAuthenticateUserPinFailed(error): Promise<any> {
-    if ((await this.connectionService.deviceOffline())) {
-      return await this.showNoConnectivityModal({
-        onRetry: this.authenticateUserPin
-      });
-    } else {
-      return this.navigateToDashboard();
-    }
-  }
-
-  private async onAuthenticateUserPinSuccess() {
-    try {
-      console.log('Navigating to dashboard after user pin authentication succeeded.');
-      this.navigateToDashboard();
-    } catch (error) {
-      console.log('Got Errors while navigating to dashboard: ', error);
-    }
-  }
-
-  private async authenticateUserPin() {
-    await this.loadingService.showSpinner();
-    this.getVaultData()
-      .pipe(
-        switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)),
-        take(1),
-        catchError((error) => this.onAuthenticateUserPinFailed(error)))
-      .subscribe({
-        next: () => this.onAuthenticateUserPinSuccess()
-      });
-  }
-
-  public async navigateToDashboard() {
-    console.log('identityService.navigateToDashboard');
-    this.canRetryPinLogin = true;
-    return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+  async retrieveVaultPin(): Promise<any> {
+    return await firstValueFrom(this.getVaultData());
   }
 
   /// used to determine storage method
@@ -312,15 +194,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   onVaultUnlocked(config: VaultConfig): void {
-    console.log('config: **** ', config)
+    console.log("onVaultUnlocked: ", config)
     this.setIsLocked(false);
-    if (this.wasPinLogin) {
-      this.wasPinLogin = false;
-      this.navigateToDashboard();
-    } else {
-      console.log('onVaultUnlocked loginUser');
-      this.authenticateUserPin();
-    }
   }
 
   onVaultLocked(event: LockEvent): void {

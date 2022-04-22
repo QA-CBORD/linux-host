@@ -127,7 +127,12 @@ export const noConnectivityScreentDefaultStrings = {
   description: 'Make sure your Wi-Fi or mobile data is turned on, then try again.',
   scan_card_desc: 'You may still scan your card when you are offline.',
   scan_card_btn: 'Scan Card',
-  try_again_btn: 'Try Again'
+  try_again_btn: 'Try Again',
+  description_server_error: 'We are working on fixing the problem. Try again or come back later.',
+  title_server_error: 'Something went wrong',
+  connect_failed: 'Unable to connect.',
+  scan_card_desc_server_error: '',
+  retry: 'Retry'
 };
 
 export const depositDefaultStrings = {

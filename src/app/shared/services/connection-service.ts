@@ -1,24 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, Observer, fromEvent, merge, of } from 'rxjs';
-import { map, mapTo, debounceTime, switchMap } from 'rxjs/operators';
+import { Observable, Observer, fromEvent, merge, of, BehaviorSubject } from 'rxjs';
+import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
-import { registerPlugin } from '@capacitor/core';
-import { LoadingService } from '@core/service/loading/loading.service';
-const DeviceConnection = registerPlugin<any>('HIDPlugin');
+import { firstValueFrom } from '@shared/utils';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConnectionService {
 
-
+  modalRefreshHandle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private online$: Observable<boolean> = undefined;
 
-  constructor(private network: Network, public platform: Platform,
-    private readonly loadingService: LoadingService) {
+  constructor(private http: HttpClient,
+    private environmentFacade: EnvironmentFacadeService,
+    private network: Network,
+    public platform: Platform) {
+
     this.online$ = new Observable(observer => observer.next(true)).pipe(mapTo(true));
-    window['connectionService'] = this;
     if (this.platform.is('capacitor')) {
       this.network.downlinkMax
       // on Device
@@ -52,19 +54,15 @@ export class ConnectionService {
   }
 
   public networkStatus(time: number = 300): Observable<boolean> {
-    return this.online$.pipe(debounceTime(time), switchMap(async () => !(this.deviceOffline())));
+    return this.online$.pipe(debounceTime(time), switchMap(async () => !(await this.deviceOffline())));
   }
 
-  public async deviceOffline(): Promise<boolean> {
-    try {
-      this.loadingService.showSpinner();
-      const response = await DeviceConnection.isDeviceOnline();
-      return !response.isDeviceOnline;
-    } catch (error) {
-      return true;
-    } finally {
-      this.loadingService.closeSpinner();
-    }
-  }
+  async deviceOffline(): Promise<boolean> {
+    if (!navigator.onLine) return true;
 
+    return await firstValueFrom(this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
+      timeout(2000),
+      map(({ status }) => status == 0),
+      catchError(({ message, status }) => of((/Timeout/.test(message)) || (status == 0)))))
+  }
 }

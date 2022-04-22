@@ -1,7 +1,7 @@
 import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { from, Observable, of, zip } from 'rxjs';
-import { catchError, finalize, first, map, take } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { finalize, first, map, take } from 'rxjs/operators';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
@@ -17,8 +17,6 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ProminentDisclosureService } from '../services/prominent-disclosure.service';
-import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
-import { firstValueFrom } from '@shared/utils';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
@@ -31,48 +29,17 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly loadingService: LoadingService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
-    private readonly prominentDisclosureService: ProminentDisclosureService,
-    private readonly environmentFacade: EnvironmentFacadeService
+    private readonly prominentDisclosureService: ProminentDisclosureService
   ) { }
 
   resolve(): Observable<SettingInfoList> {
     this.prominentDisclosureService.openProminentDisclosure();
     /// get fresh data on dashboard load
+    this.loadingService.showSpinner();
     return this.loadAllData().pipe(
       take(1),
       map(([, , featureSettingsList]) => featureSettingsList),
-      catchError((error) => this.loadDataErrorHandler(error))
-    );
-  }
-
-  private async loadDataErrorHandler({ message }): Promise<any> {
-
-    if (/Invalid session/.test(message)) {
-      // switch to dev environnment here..
-      return this.switchEnvironmentAndRetry();
-    } else {
-      return [];
-    }
-  }
-
-  private async switchEnvironmentAndRetry(): Promise<any> {
-    for (let i=4; i>=0; i--) {
-      debugger
-      try {
-        this.environmentFacade.setSavedEnvironmentInfo(i);
-        return await this.dataPromise();
-      } catch ({ message }) {
-        debugger
-        if (!(/Invalid session/.test(message)) && !(/0 Unknown Error/.test(message))) {
-          break;
-        }
-      }
-    }
-    return []
-  }
-
-  private async dataPromise() {
-    return firstValueFrom(this.loadAllData().pipe(map(([, , featureSettingsList]) => featureSettingsList)));
+      finalize(() => this.loadingService.closeSpinner()))
   }
 
   private loadAllData(): Observable<any> {
@@ -83,9 +50,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     const accountContentStrings = this.accountsService.initContentStringsList();
     const mCredential$ = this.mobileCredentialFacade.mobileCredentialEnabled$().pipe(take(1));
     const tilesConfig = this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first());
-    this.loadingService.showSpinner();
-    return zip(user, inst, settingList, mCredential$, tilesConfig, accountContentStrings, ...strings)
-    .pipe(finalize(() => this.loadingService.closeSpinner()));
+    return zip(user, inst, settingList, mCredential$, tilesConfig, accountContentStrings, ...strings);
   }
 
   private loadContentStrings(): Observable<ContentStringInfo>[] {
