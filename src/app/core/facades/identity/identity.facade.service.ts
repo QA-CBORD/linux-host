@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { IdentityService } from '@core/service/identity/identity.service';
-import { Settings } from '../../../app.global';
+import { ROLES, Settings } from '../../../app.global';
 import { map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
+import { Router } from '@angular/router';
 
 export enum LoginState {
   DONE,
@@ -25,26 +27,55 @@ export enum LoginState {
   providedIn: 'root',
 })
 export class IdentityFacadeService extends ServiceStateFacade {
-
   private ttl: number = 600000; // 10min
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
-  
+  private navigateToNativePlugin: boolean;
+  navigatedFromGpay: boolean = false;
 
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
-    private readonly globalNav: GlobalNavService
+    private readonly ngZone: NgZone,
+    private readonly router: Router
   ) {
     super();
   }
 
-  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> { 
+  get navigatedToPlugin() {
+    return this.navigateToNativePlugin;
+  }
+
+  set navigatedToPlugin(value: boolean) {
+    this.navigateToNativePlugin = value;
+  }
+
+  async onAppResume() {
+    if (this.navigatedToPlugin) {
+      this.navigateToNativePlugin = false;
+      return;
+    }
+
+    if (this.navigatedFromGpay) {
+      return;
+    }
+
+    if ((await this.isVaultLocked()) && !this.pinEntryInProgress) {
+      this.ngZone.run(async () => {
+        await this.router
+          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
+          .then(navigated => {})
+          .catch(err => {});
+      });
+    }
+  }
+
+  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> {
     return this.identityService.onPasscodeRequest(isPasscodeSetRequest);
   }
 
-  onAppStateChanged(stateActive){
+  onAppStateChanged(stateActive) {
     this.identityService.onAppStateChanged(stateActive);
   }
 
@@ -85,7 +116,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     }
   }
 
-  get pinEntryInProgress():boolean{
+  get pinEntryInProgress(): boolean {
     return this.identityService.unclockPinInProgress;
   }
 
@@ -93,7 +124,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.identityService.canRetryUnlock;
   }
 
-  set canRetryUnlock(value: boolean){
+  set canRetryUnlock(value: boolean) {
     this.identityService.canRetryUnlock = value;
   }
 

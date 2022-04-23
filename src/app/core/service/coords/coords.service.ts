@@ -4,7 +4,7 @@ import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { skipWhile, take } from 'rxjs/operators';
 import { Capacitor} from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-import { LocationPermissionsService } from '@sections/dashboard/services/location-permissions.service';
+import { AndroidPermissionsService } from '@sections/dashboard/services/android-permissions.service';
 import { LoadingService } from '../loading/loading.service';
 import { Position, Geolocation} from '@capacitor/geolocation';
 
@@ -36,7 +36,7 @@ export class CoordsService {
   };
 
   constructor(
-    private readonly androidPermissions: LocationPermissionsService,
+    private readonly androidPermissions: AndroidPermissionsService,
     private readonly loadingService: LoadingService
   ) {}
 

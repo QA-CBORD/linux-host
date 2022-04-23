@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { ROLES } from '../../../app.global';
@@ -32,16 +32,12 @@ enum AppStatus {
 })
 export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
-  private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   private _deepLinkPath: string[];
-
-  navigatedFromGpay: boolean = false;
   onLogOutObservable$: Subject<any> = new Subject<any>();
 
   constructor(
     private readonly platform: Platform,
-    private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -55,7 +51,6 @@ export class SessionFacadeService {
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly ngZone: NgZone
   ) {
     this.appStateListeners();
   }
@@ -93,23 +88,7 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    if (this.navigatedToPlugin) {
-      this.navigateToNativePlugin = false;
-      return;
-    }
-
-    if (this.navigatedFromGpay) {
-      return;
-    }
-
-    if ((await this.isVaultLocked()) && !this.identityFacadeService.pinEntryInProgress) {
-      this.ngZone.run(async () => {
-        await this.router
-          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
-          .then(navigated => {})
-          .catch(err => {});
-      });
-    }
+    this.identityFacadeService.onAppResume();
   }
 
   private async onActiveState() {
@@ -118,13 +97,6 @@ export class SessionFacadeService {
     this.appStatus = AppStatus.FOREGROUND;
   }
 
-  get navigatedToPlugin() {
-    return this.navigateToNativePlugin;
-  }
-
-  set navigatedToPlugin(value: boolean) {
-    this.navigateToNativePlugin = value;
-  }
   get deepLinkPath() {
     return this._deepLinkPath;
   }

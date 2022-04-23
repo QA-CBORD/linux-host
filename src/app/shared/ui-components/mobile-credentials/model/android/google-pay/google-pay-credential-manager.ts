@@ -7,8 +7,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController, ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { registerPlugin } from '@capacitor/core';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 const  GooglePayPlugin  = registerPlugin<any>('GooglePayPlugin');
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +17,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     private readonly modalCtrl: ModalController,
     protected readonly loadingService: LoadingService,
     private readonly credentialServ: GooglePayCredentialDataService,
-    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly identityFacadeService: IdentityFacadeService,
     protected readonly alertCtrl: AlertController
   ) {
     super(loadingService, credentialServ, alertCtrl);
@@ -54,7 +54,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   private async watchOnResume(): Promise<void> {
     const appResumedEventListener = GooglePayPlugin.addListener('appResumed', async () => {
       appResumedEventListener.remove();
-      setTimeout(() => (this.sessionFacadeService.navigatedFromGpay = false), 2500); // this is so we don't get the loggin screen, we're already logged in.
+      setTimeout(() => (this.identityFacadeService.navigatedFromGpay = false), 2500); // this is so we don't get the loggin screen, we're already logged in.
       let counter = 0;
       let timeOut = 3000;
       const intervalId = setInterval(async () => {
@@ -135,7 +135,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     }
     this.mCredential = newCredential;
     let { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
-    this.sessionFacadeService.navigatedFromGpay = true;
+    this.identityFacadeService.navigatedFromGpay = true;
     GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();
     });
