@@ -140,7 +140,9 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   get isOrderASAP(): Observable<boolean> {
-    return this.cartService.orderDetailsOptions$.pipe(map(({ isASAP }) => isASAP));
+    return this.cartService.orderDetailsOptions$.pipe(
+      filter((orderDetailOptions) => orderDetailOptions !== null),
+      map(({ isASAP }) => isASAP));
   }
 
   get isExistingOrder(): boolean {
@@ -450,6 +452,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private getPickupLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
+      filter((pickupsLocations) => pickupsLocations !== null),
       switchMap(({ storeAddress, settings }) =>
         this.merchantService.retrievePickupLocations(
           storeAddress,

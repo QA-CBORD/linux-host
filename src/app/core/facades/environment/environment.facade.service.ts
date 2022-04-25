@@ -140,7 +140,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   getPartnerServicesURL(): string {
-    return this.currentEnvironment.partner_services_url;
+    return this.currentEnvironment?.partner_services_url;
   }
 
   getEnvironmentObject(): EnvironmentInfo {
@@ -148,7 +148,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   getServicesURL(): string {
-    return this.currentEnvironment.services_url;
+    return this.currentEnvironment?.services_url;
   }
 
   getSitesURL(): string {
