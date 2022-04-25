@@ -7,8 +7,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController, ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { registerPlugin } from '@capacitor/core';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 const  GooglePayPlugin  = registerPlugin<any>('GooglePayPlugin');
 
 @Injectable({ providedIn: 'root' })

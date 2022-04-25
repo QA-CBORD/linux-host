@@ -29,16 +29,14 @@ enum AppStatus {
 })
 export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
-  private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   private _deepLinkPath: string[];
-
-  navigatedFromGpay: boolean = false;
   onLogOutObservable$: Subject<any> = new Subject<any>();
+  navigatedFromPlugin: boolean = false;
+  navigatedFromGpay: boolean = false;
 
   constructor(
     private readonly platform: Platform,
-    private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -49,6 +47,7 @@ export class SessionFacadeService {
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly ngZone: NgZone,
+    private readonly router: Router,
     private readonly connectivityService: ConnectivityService
   ) {
     this.appStateListeners();
@@ -88,14 +87,13 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    if (this.navigatedToPlugin) {
-      this.navigatedToPlugin = false;
+    if (this.navigatedFromPlugin) {
+      this.navigatedFromPlugin = false;
       return;
     }
     if (this.navigatedFromGpay || this.identityFacadeService.userIsAuthenticating()) {
       return;
     }
-
 
     const appLocked = await this.isVaultLocked();
     const currentRouteIsStartupPage = this.router.url.includes("startup");
@@ -119,13 +117,6 @@ export class SessionFacadeService {
     this.appStatus = AppStatus.FOREGROUND;
   }
 
-  get navigatedToPlugin() {
-    return this.navigateToNativePlugin;
-  }
-
-  set navigatedToPlugin(value: boolean) {
-    this.navigateToNativePlugin = value;
-  }
   get deepLinkPath() {
     return this._deepLinkPath;
   }

@@ -43,7 +43,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
   private isAuthenticating: boolean = false;
 
-
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
