@@ -9,7 +9,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
   providedIn: 'root',
 })
 export class AppPermissionsService {
-  promptDismissed = false;
+  locationPromptDismissed = false;
   constructor(
     private readonly androidPermissions: AndroidPermissions,
     private readonly platform: Platform,

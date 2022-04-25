@@ -44,7 +44,7 @@ export class LocationPermissionModal {
   }
 
   async close() {
-    this.appPermissions.promptDismissed = true;
+    this.appPermissions.locationPromptDismissed = true;
     await this.modalController.dismiss();
   }
 }
