@@ -11,9 +11,9 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
-import { CameraDirection, CameraResultType, CameraSource, Camera, Photo } from '@capacitor/camera';
-import { AppPermissionsService } from '@sections/dashboard/services/app-permissions.service';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
+import { CameraService } from '../services/camera.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -71,14 +71,14 @@ export class PhotoUploadComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly domsanitizer: DomSanitizer,
-    private readonly identityFacadeService: IdentityFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastService: ToastService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly cd: ChangeDetectorRef,
     private readonly photoCropModalService: PhotoCropModalService,
-    private readonly appPermissions: AppPermissionsService
+    private readonly cameraService: CameraService
   ) {}
 
   ngOnInit() {
@@ -303,8 +303,20 @@ export class PhotoUploadComponent implements OnInit {
 
   /// handle request to take new photo
   async onGetPhoto(photoType: PhotoType, cameraSource: CameraSource) {
-    await this.appPermissions.requestCameraPermission(cameraSource);
-    this.getPhoto(photoType, cameraSource)
+    const uploadSettings = this.photoUploadService.photoUploadSettings;
+    from(
+      this.cameraService.getPhoto({
+        quality: 100,
+        correctOrientation: true,
+        preserveAspectRatio: true,
+        width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
+        height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
+        direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
+        resultType: CameraResultType.DataUrl,
+        source: cameraSource,
+        saveToGallery: false,
+      })
+    )
       .pipe(take(1))
       .subscribe(
         response => {
@@ -315,7 +327,7 @@ export class PhotoUploadComponent implements OnInit {
         },
         () => {},
         () => {
-          this.identityFacadeService.navigatedFromPlugin = true;
+          this.sessionFacadeService.navigatedFromPlugin = true;
         }
       );
   }
@@ -400,25 +412,6 @@ export class PhotoUploadComponent implements OnInit {
       catchError(error => {
         this.presentToast(toastErrorMessage);
         return of(false);
-      })
-    );
-  }
-
-  /// Camera plugin control
-  private getPhoto(photoType: PhotoType, cameraSource: CameraSource): Observable<Photo> {
-    const uploadSettings = this.photoUploadService.photoUploadSettings;
-    /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
-    return from(
-      Camera.getPhoto({
-        quality: 100,
-        correctOrientation: true,
-        preserveAspectRatio: true,
-        width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
-        height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
-        direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
-        resultType: CameraResultType.DataUrl,
-        source: cameraSource,
-        saveToGallery: false,
       })
     );
   }

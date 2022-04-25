@@ -1,8 +1,8 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { IdentityService } from '@core/service/identity/identity.service';
-import { ROLES, Settings } from '../../../app.global';
+import { Settings } from '../../../app.global';
 import { map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
@@ -41,8 +41,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
   private isAuthenticating: boolean = false;
-  navigatedFromPlugin: boolean = false;
-  navigatedFromGpay: boolean = false;
 
   constructor(
     private readonly storageStateService: StorageStateService,

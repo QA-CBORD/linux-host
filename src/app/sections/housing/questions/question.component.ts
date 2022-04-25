@@ -6,7 +6,7 @@ import { QuestionHeader, QUESTIONS_TYPES } from './questions.model';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RequestedRoommate } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { Observable, Subscription, from, BehaviorSubject } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
@@ -16,9 +16,10 @@ import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesys
 
 const IMAGE_DIR = 'stored-images';
 
-import { CameraDirection, Photo, CameraResultType, CameraSource, Camera } from '@capacitor/camera';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { AppPermissionsService } from '@sections/dashboard/services/app-permissions.service';
+import { CameraDirection, Photo, CameraResultType, CameraSource } from '@capacitor/camera';
+import { CameraService } from '@sections/settings/pages/services/camera.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -43,12 +44,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
     public _applicationsStateService: ApplicationsStateService, //TODO: delete
     private _termService: TermsService,
     private actionSheetCtrl: ActionSheetController,
-    private identityFacadeService: IdentityFacadeService,
+    private sessionFacadeService: SessionFacadeService,
     private toastService: ToastService,
     private _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService,
     private plt: Platform,
-    private appPermissions: AppPermissionsService
+    private cameraService: CameraService
   ) {}
 
   ngOnDestroy(): void {
@@ -184,7 +185,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.onGetPhoto(cameraSource);
   }
   async onGetPhoto(cameraSource: CameraSource) {
-    await this.appPermissions.requestCameraPermission(cameraSource);
     this.getPhoto(cameraSource);
   }
 
@@ -192,7 +192,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private async getPhoto(cameraSource: CameraSource) {
     // const uploadSettings = this.photoUploadService.photoUploadSettings;
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
-    const image = await Camera.getPhoto({
+    const image = await this.cameraService.getPhoto({
       quality: 90,
       height: 500,
       width: 500,
@@ -204,7 +204,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       source: cameraSource,
       saveToGallery: true,
     }).finally(() => {
-      this.identityFacadeService.navigatedFromPlugin = true;
+      this.sessionFacadeService.navigatedFromPlugin = true;
     });
 
     if (image) {
@@ -221,7 +221,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           directory: FilesystemDirectory.Data,
         });
       } catch (error) {
-        console.log('Directory already exists');
       }
     }
 
@@ -282,7 +281,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
       directory: FilesystemDirectory.Data,
     }).then(
       async result => {
-        console.log('inside the then loadFiles');
         await this.loadFileData(result.files);
       },
       async err => {

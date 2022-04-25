@@ -32,6 +32,9 @@ export class SessionFacadeService {
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   private _deepLinkPath: string[];
   onLogOutObservable$: Subject<any> = new Subject<any>();
+  navigatedFromPlugin: boolean = false;
+  navigatedFromGpay: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly authFacadeService: AuthFacadeService,
@@ -84,14 +87,13 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    if (this.identityFacadeService.navigatedFromPlugin) {
-      this.identityFacadeService.navigatedFromPlugin = false;
+    if (this.navigatedFromPlugin) {
+      this.navigatedFromPlugin = false;
       return;
     }
-    if (this.identityFacadeService.navigatedFromGpay || this.identityFacadeService.userIsAuthenticating()) {
+    if (this.navigatedFromGpay || this.identityFacadeService.userIsAuthenticating()) {
       return;
     }
-
 
     const appLocked = await this.isVaultLocked();
     const currentRouteIsStartupPage = this.router.url.includes("startup");

@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { LocationDisclosureCsModel } from './location-disclosure-content-string.model';
-import { AppPermissionsService } from '@sections/dashboard/services/app-permissions.service';
+import { AndroidPermissionsService } from '@sections/dashboard/services/android-permissions.service';
 
 @Component({
   selector: 'st-location-disclosure',
@@ -20,7 +20,7 @@ export class LocationPermissionModal {
     private readonly modalController: ModalController,
     private readonly loadingService: LoadingService,
     private readonly navigationFacade: NavigationFacadeSettingsService,
-    private readonly appPermissions: AppPermissionsService,
+    private readonly appPermissions: AndroidPermissionsService,
   ) {}
 
   ionViewWillEnter() {

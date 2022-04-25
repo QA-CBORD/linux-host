@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { skipWhile, take } from 'rxjs/operators';
 import { Capacitor } from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-import { AppPermissionsService } from '@sections/dashboard/services/app-permissions.service';
+import { AndroidPermissionsService } from '@sections/dashboard/services/android-permissions.service';
 import { LoadingService } from '../loading/loading.service';
 import { Position, Geolocation } from '@capacitor/geolocation';
 
@@ -34,7 +33,7 @@ export class CoordsService {
   };
 
   constructor(
-    private readonly appPermissions: AppPermissionsService,
+    private readonly appPermissions: AndroidPermissionsService,
     private readonly loadingService: LoadingService
   ) {}
 
