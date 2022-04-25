@@ -315,7 +315,7 @@ export class PhotoUploadComponent implements OnInit {
         },
         () => {},
         () => {
-          this.identityFacadeService.navigatedToPlugin = true;
+          this.identityFacadeService.navigatedFromPlugin = true;
         }
       );
   }

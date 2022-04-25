@@ -204,7 +204,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       source: cameraSource,
       saveToGallery: true,
     }).finally(() => {
-      this.identityFacadeService.navigatedToPlugin = true;
+      this.identityFacadeService.navigatedFromPlugin = true;
     });
 
     if (image) {

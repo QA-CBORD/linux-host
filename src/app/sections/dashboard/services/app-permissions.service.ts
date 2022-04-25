@@ -39,7 +39,7 @@ export class AppPermissionsService {
   private preventLockScreen() {
     this.platform.ready().then(() => {
       this.platform.resume.pipe(take(1)).subscribe(() => {
-        this.identityFacadeService.navigatedToPlugin = true;
+        this.identityFacadeService.navigatedFromPlugin = true;
       });
     });
   }
