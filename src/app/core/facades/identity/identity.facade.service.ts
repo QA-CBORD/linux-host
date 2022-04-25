@@ -8,7 +8,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { RetryHandler } from '@shared/no-connectivity-screen/model/retry-handler';
+import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/retry-handler';
 import { UserFacadeService } from '../user/user.facade.service';
 import { MerchantFacadeService } from '../merchant/merchant-facade.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
@@ -19,6 +19,7 @@ import { AuthFacadeService } from '../auth/auth.facade.service';
 import { ConnectivityService } from '@shared/services/connectivity.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
+import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 
 export enum LoginState {
   DONE,
@@ -141,7 +142,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   deviceMarkedAsLost({ message }) {
-    return /9510|Device marked as lost/.test(message);
+    return DEVICE_MARKED_LOST.test(message);
   }
 
   private async onAuthenticateUserPinFailed(error): Promise<any> {
