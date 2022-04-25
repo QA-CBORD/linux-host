@@ -323,7 +323,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   private async resetAll(): Promise<void> {
-    this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
+    firstValueFrom(this.userFacadeService.logoutAndRemoveUserNotification());
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
     this.contentStringFacade.clearState();
