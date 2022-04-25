@@ -12,7 +12,7 @@ import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource, Camera, Photo } from '@capacitor/camera';
-import { AndroidPermissionsService } from '@sections/dashboard/services/android-permissions.service';
+import { AppPermissionsService } from '@sections/dashboard/services/app-permissions.service';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 export enum LocalPhotoStatus {
@@ -78,7 +78,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly cd: ChangeDetectorRef,
     private readonly photoCropModalService: PhotoCropModalService,
-    private readonly androidPermissions: AndroidPermissionsService
+    private readonly appPermissions: AppPermissionsService
   ) {}
 
   ngOnInit() {
@@ -303,7 +303,7 @@ export class PhotoUploadComponent implements OnInit {
 
   /// handle request to take new photo
   async onGetPhoto(photoType: PhotoType, cameraSource: CameraSource) {
-    await this.androidPermissions.requestCameraPermission(cameraSource);
+    await this.appPermissions.requestCameraPermission(cameraSource);
     this.getPhoto(photoType, cameraSource)
       .pipe(take(1))
       .subscribe(
@@ -313,9 +313,7 @@ export class PhotoUploadComponent implements OnInit {
             this.photoUploadService.onNewPhoto(photoType, photoBase64);
           });
         },
-        () => {
-          this.presentToast('Something went wrong with the photo upload.');
-        },
+        () => {},
         () => {
           this.identityFacadeService.navigatedToPlugin = true;
         }

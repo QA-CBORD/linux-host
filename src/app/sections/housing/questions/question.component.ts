@@ -18,7 +18,7 @@ const IMAGE_DIR = 'stored-images';
 
 import { CameraDirection, Photo, CameraResultType, CameraSource, Camera } from '@capacitor/camera';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { AndroidPermissionsService } from '@sections/dashboard/services/android-permissions.service';
+import { AppPermissionsService } from '@sections/dashboard/services/app-permissions.service';
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -48,7 +48,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService,
     private plt: Platform,
-    private androidPermissions: AndroidPermissionsService
+    private appPermissions: AppPermissionsService
   ) {}
 
   ngOnDestroy(): void {
@@ -184,7 +184,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.onGetPhoto(cameraSource);
   }
   async onGetPhoto(cameraSource: CameraSource) {
-    await this.androidPermissions.requestCameraPermission(cameraSource);
+    await this.appPermissions.requestCameraPermission(cameraSource);
     this.getPhoto(cameraSource);
   }
 

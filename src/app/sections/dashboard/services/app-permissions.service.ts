@@ -8,7 +8,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 @Injectable({
   providedIn: 'root',
 })
-export class AndroidPermissionsService {
+export class AppPermissionsService {
   promptDismissed = false;
   constructor(
     private readonly androidPermissions: AndroidPermissions,

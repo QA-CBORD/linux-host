@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { skipWhile, take } from 'rxjs/operators';
-import { Capacitor} from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-import { AndroidPermissionsService } from '@sections/dashboard/services/android-permissions.service';
+import { AppPermissionsService } from '@sections/dashboard/services/app-permissions.service';
 import { LoadingService } from '../loading/loading.service';
-import { Position, Geolocation} from '@capacitor/geolocation';
+import { Position, Geolocation } from '@capacitor/geolocation';
 
 @Injectable({
   providedIn: 'root',
@@ -23,9 +23,7 @@ export class CoordsService {
       longitude: null,
     },
   };
-  private readonly _location$: BehaviorSubject<Position> = new BehaviorSubject<Position>(
-    undefined
-  );
+  private readonly _location$: BehaviorSubject<Position> = new BehaviorSubject<Position>(undefined);
   private readonly emptyPosition: Position | any = {
     timestamp: null,
     coords: {
@@ -36,7 +34,7 @@ export class CoordsService {
   };
 
   constructor(
-    private readonly androidPermissions: AndroidPermissionsService,
+    private readonly appPermissions: AppPermissionsService,
     private readonly loadingService: LoadingService
   ) {}
 
@@ -57,12 +55,12 @@ export class CoordsService {
     if (timeDiff > this.fetchInterval) {
       if (Capacitor.getPlatform() == PLATFORM.android) {
         (async () => {
-          await this.androidPermissions.checkLocationPermission().then(result => {
+          await this.appPermissions.checkLocationPermission().then(result => {
             if (result.hasPermission) {
               this.requestLocationFromDevice();
-            } else if (this.androidPermissions.promptDismissed) {
+            } else if (this.appPermissions.promptDismissed) {
               this.requestLocationFromDevice();
-              this.androidPermissions.promptDismissed = false;
+              this.appPermissions.promptDismissed = false;
             } else {
               this.emptyPositions();
             }
