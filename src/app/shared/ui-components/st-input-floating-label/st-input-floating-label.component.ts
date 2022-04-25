@@ -48,7 +48,7 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
   ngAfterViewInit(): void {
     if(this.type == 'password') {
       this.control.valueChanges.subscribe(value => {
-        this.passwordFieldDirty = (value as string).length > 0;
+        this.passwordFieldDirty = value && (value as string).length > 0;
       });
     }
   }
