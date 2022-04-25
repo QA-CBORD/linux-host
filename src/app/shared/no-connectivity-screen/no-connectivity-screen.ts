@@ -35,11 +35,11 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   refreshSubscrription: Subscription;
 
   constructor(
+    private readonly connectionService: ConnectionService,
     private readonly loadingService: LoadingService,
     public readonly modalController: ModalController,
     private readonly router: Router,
     private readonly toastService: ToastController,
-    private readonly connectionService: ConnectionService,
     private readonly commonService: CommonService,
     private readonly accessCardService: AccessCardService,
     private readonly barcodeFacadeService: BarcodeFacadeService,
