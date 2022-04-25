@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { IdentityService } from '@core/service/identity/identity.service';
-import { ROLES, Settings } from '../../../app.global';
+import { Settings } from '../../../app.global';
 import { map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
@@ -19,7 +19,6 @@ import { AuthFacadeService } from '../auth/auth.facade.service';
 import { ConnectivityService } from '@shared/services/connectivity.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
-import { Router } from '@angular/router';
 
 export enum LoginState {
   DONE,
@@ -49,7 +48,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly router: Router,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
@@ -96,12 +94,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async handlePinUnlockSuccess(data) {
-    console.log("handlePinUnlockSuccess: ", data);
     this.navigateToDashboard();
   }
 
   async handleBiometricUnlockSuccess(data) {
-    console.log("handleBiometricUnlockSuccess: ", data);
     this.authenticateUserPin();
   }
 
@@ -118,19 +114,25 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
-    console.log("handleBiometricUnlockError: ", message, " code: ", code);
     return this.unlockVaultPin()
   }
 
 
   private async authenticateUserPin() {
-    const { pin: savedPin } = await this.identityService.retrieveVaultPin();
+    let userPin: string;
+
+    try {
+      const vaultSession = await this.identityService.retrieveVaultPin();
+      userPin = vaultSession.pin;
+    } catch (error) {
+      return await this.logoutUser();
+    }
+
     try {
       await this.loadingService.showSpinner();
-      await firstValueFrom(this.authFacadeService.authenticatePin$(savedPin));
+      await firstValueFrom(this.authFacadeService.authenticatePin$(userPin));
       await this.loadingService.showSpinner();
     } catch (error) {
-      console.log("authenticateUserPin error: ", error)
       await this.loadingService.closeSpinner();
       return await this.onAuthenticateUserPinFailed(error);
     }
@@ -154,7 +156,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
           await this.loadingService.closeSpinner();
           return await this.navigateToDashboard();
         } catch (error) {
-          console.log("onAuthenticateUserPinFailed: ", error);
           await this.loadingService.closeSpinner();
         }
         return false;
@@ -181,8 +182,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
       onRetry: async () => {
         try {
           return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
-        } catch (err) {
-          console.log("onNavigateToDashboardFailed: ", err)
+        } catch (ignored) {
+          // ignored on purpose. 
         }
         return false;
       },
@@ -197,7 +198,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   async handlePinUnlockError({ message, code }) {
-    console.log('handlePinUnlockError ', code, '   message: ', message);
     return this.logoutUser();
   }
 
@@ -215,10 +215,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   async redirectToEntry() {
-    return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true })
-    //this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry], { replaceUrl: true })
-      .then((v) => console.log("NAVIGATED: ", v))
-      .catch((e) => console.log("ERROR NAVIGATING TO ENTRY: ", e));
+    return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
   }
 
 

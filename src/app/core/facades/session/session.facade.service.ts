@@ -7,12 +7,9 @@ import { Institution } from '@core/model/institution';
 import { take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
-import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { Subject } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Router } from '@angular/router';
@@ -22,7 +19,6 @@ import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { firstValueFrom } from '@shared/utils';
 import { ConnectivityService } from '@shared/services/connectivity.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 enum AppStatus {
   BACKGROUND,
@@ -181,7 +177,6 @@ export class SessionFacadeService {
 
   async handleLoginState(state: LoginState): Promise<void> {
     const routeConfig = { replaceUrl: true };
-    console.log("state: ", state);
     switch (state) {
       case LoginState.SELECT_INSTITUTION:
         await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
@@ -228,8 +223,6 @@ export class SessionFacadeService {
     this.loadingService.closeSpinner();
     await this.identityFacadeService
       .loginUser(useBiometric);
-    // .pipe(take(1))
-    // .subscribe();
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {

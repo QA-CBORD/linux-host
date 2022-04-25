@@ -29,7 +29,6 @@ export class VaultSessionData implements DefaultSession {
 export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   private temporaryPin: string = undefined;
   private isLocked: boolean = true;
-  unclockInProgress: boolean;
 
   constructor(
     private browserAuthPlugin: BrowserAuthPlugin,
@@ -85,8 +84,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   // called when biometric is setup.
   /// unlock the vault to make data accessible with identity controlled method
   async unlockVault(): Promise<any> {
-    this.unclockInProgress = true;
-    return super.unlock(AuthMode.BiometricOnly).finally(() => (this.unclockInProgress = false));
+    return super.unlock(AuthMode.BiometricOnly);
   }
 
   /// unlock the vault to make data accessible with pin
@@ -106,7 +104,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   /// lock the vault to make data inaccessible
   lockVault(): Observable<void> {
-    console.log("LOCKING VAULT YEAH BABE.")
     return from(super.lockOut());
   }
 
@@ -174,13 +171,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     return this.browserAuthPlugin;
   }
 
-  onSessionRestored(session: VaultSessionData) {
-    // console.log('Session Restored: ', session);
-  }
-
-  onSetupError(error: VaultError): void {
-    // console.error('Get error during setup', error);
-  }
 
   onConfigChange(config: VaultConfig): void {
     // console.log('Got a config update: ', config);
@@ -189,12 +179,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     }
   }
 
-  onVaultReady(config: VaultConfig): void {
-    // console.log('The service is ready with config: ', config);
-  }
 
   onVaultUnlocked(config: VaultConfig): void {
-    console.log("onVaultUnlocked: ", config)
     this.setIsLocked(false);
   }
 

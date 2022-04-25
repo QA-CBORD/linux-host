@@ -30,7 +30,6 @@ export class ConnectivityService {
 
 
   async handleConnectionError(handler: RetryHandler) {
-    console.log("handleConnectionError:: ", handler)
     if ((await this.isOpened())) {
       this.connectionService.modalRefreshHandle.next(true);
     } else {
