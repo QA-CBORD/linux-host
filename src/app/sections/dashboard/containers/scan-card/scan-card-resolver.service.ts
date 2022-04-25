@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable } from 'rxjs';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { Settings } from '../../../../app.global';

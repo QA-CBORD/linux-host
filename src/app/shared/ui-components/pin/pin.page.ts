@@ -269,17 +269,17 @@ export class PinPage implements OnInit {
             this.setErrorText('Error logging in - please try again');
           }
         },
-        error => {
+        ({ message }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
             setTimeout(() => {
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
-          } else if (/9510|Device marked as lost/.test(error.message)) {
+          } else if (/9510|Device marked as lost/.test(message)) {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
-          } else if (error instanceof GetThrowable) {
-            this.setErrorText(error.message);
+          } else if (/Timeout/.test(message)) {
+            this.setErrorText(message);
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }

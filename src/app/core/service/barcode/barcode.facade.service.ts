@@ -4,7 +4,7 @@ import { SettingInfo } from "@core/model/configuration/setting-info.model";
 import { UserSettingInfo } from "@core/model/user";
 import { StorageStateService } from "@core/states/storage/storage-state.service";
 import { Observable, of, zip } from "rxjs";
-import { map, switchMap, take, tap } from "rxjs/operators";
+import { switchMap, take, tap } from "rxjs/operators";
 import { Settings, User } from "src/app/app.global";
 import { BarcodeService } from "./barcode.service";
 
@@ -20,19 +20,14 @@ export class BarcodeFacadeService {
         private readonly storageStateService: StorageStateService) { }
 
     getSetting(setting: Settings.Setting): Observable<SettingInfo> {
-        console.log('getSetting:  called: ', setting);
         return this.getInStorage<SettingInfo>(setting).pipe(switchMap((data) => data && of(data) || this.fetchSetting(setting)));
     }
 
     getUserSetting(setting: User.Settings): Observable<UserSettingInfo> {
-        console.log('getSetting:  called: ', setting);
         return this.getInStorage<UserSettingInfo>(setting).pipe(switchMap((data) => data && of(data) || this.fetchUserSetting(setting)));
     }
 
     generateBarcode(arg0: boolean): Observable<string> {
-
-        console.log('generateBarcode:  called: ', arg0);
-
         return zip(
             this.getUserSetting(User.Settings.CASHLESS_KEY),
             this.getSetting(Settings.Setting.SOA_KEY)

@@ -13,7 +13,6 @@ import { ROLES, User } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { ConnectivityError, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
 import { RetryHandler } from './model/retry-handler';
-import { PluginListenerHandle } from '@capacitor/core';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -85,14 +84,12 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log("ngOnDestroy destroying the shit out of it.")
-    this.toastService.dismiss().catch((err) => console.log('ERROR Closing: ', err));
+    this.toastService.dismiss().catch(() => {});
   }
 
 
   async addSubscription() {
     this.refreshSubscrription = this.connectionService.modalRefreshHandle.subscribe((refresh) => {
-      console.log("GOING TO REFRESH MY ASS OUT ?: ", refresh);
       if (refresh) {
         this.onRetryFailed();
       }
@@ -103,15 +100,28 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     const string$ = this.strings;
     let myToast = await this.toastService.create({
       message: string$.connect_failed,
-      duration: 8000,
+      duration: 30000,
+      mode: 'ios',
       position: 'top',
       buttons: [
         {
-          text: string$.retry,
-          handler: () => {
-            myToast.dismiss(true);
-          },
+          icon: '/assets/icon/Union.svg',
+          cssClass: 'toast-message',
+          side: 'start',
+          handler: () => myToast.dismiss(false)
         },
+        {
+          text: string$.retry,
+          handler: () => myToast.dismiss(true)
+        },
+        {
+          text: "|",
+          handler: () => { },
+        },
+        {
+          icon: "/assets/icon/remove_x_icon.svg",
+          handler: () => myToast.dismiss(),
+        }
       ],
     });
     myToast.setAttribute('role', 'alert');
