@@ -18,6 +18,7 @@ export enum PinCloseStatus {
   CANCELED = 'cancelled',
   ERROR = 'error',
   MAX_FAILURE = 'max_failure',
+  DEVICE_MARK_LOST = 'device_marked_lost'
 }
 
 export enum PinAction {
@@ -64,8 +65,8 @@ export class PinPage implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService
-  ) {}
-  
+  ) { }
+
   @Input() pinAction: PinAction;
   @Input() showDismiss: boolean = true;
 
@@ -176,7 +177,7 @@ export class PinPage implements OnInit {
     }
   }
 
-  enter() {}
+  enter() { }
 
   delete() {
     this.removeNumber();
@@ -268,15 +269,17 @@ export class PinPage implements OnInit {
             this.setErrorText('Error logging in - please try again');
           }
         },
-        error => {
+        ({ message }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
             setTimeout(() => {
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
-          } else if (error instanceof GetThrowable) {
-            this.setErrorText(error.message);
+          } else if (/9510|Device marked as lost/.test(message)) {
+            this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
+          } else if (/Timeout/.test(message)) {
+            this.setErrorText(message);
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }

@@ -8,9 +8,17 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { RetryHandler } from '@shared/no-connectivity-screen/model/retry-handler';
+import { UserFacadeService } from '../user/user.facade.service';
+import { MerchantFacadeService } from '../merchant/merchant-facade.service';
+import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { Router } from '@angular/router';
+import { firstValueFrom } from '@shared/utils';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { AuthFacadeService } from '../auth/auth.facade.service';
+import { ConnectivityService } from '@shared/services/connectivity.service';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/services/navigation.service';
 
 export enum LoginState {
   DONE,
@@ -27,56 +35,28 @@ export enum LoginState {
   providedIn: 'root',
 })
 export class IdentityFacadeService extends ServiceStateFacade {
+
+
   private ttl: number = 600000; // 10min
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
-  private navigateToNativePlugin: boolean;
+  private isAuthenticating: boolean = false;
+  navigatedFromPlugin: boolean = false;
   navigatedFromGpay: boolean = false;
 
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
-    private readonly ngZone: NgZone,
-    private readonly router: Router
+    private readonly userFacadeService: UserFacadeService,
+    private readonly merchantFacadeService: MerchantFacadeService,
+    private readonly contentStringFacade: ContentStringsFacadeService,
+    private readonly routingService: NavigationService,
+    private readonly loadingService: LoadingService,
+    private readonly authFacadeService: AuthFacadeService,
+    private readonly connectivityService: ConnectivityService,
   ) {
     super();
-  }
-
-  get navigatedToPlugin() {
-    return this.navigateToNativePlugin;
-  }
-
-  set navigatedToPlugin(value: boolean) {
-    this.navigateToNativePlugin = value;
-  }
-
-  async onAppResume() {
-    if (this.navigatedToPlugin) {
-      this.navigateToNativePlugin = false;
-      return;
-    }
-
-    if (this.navigatedFromGpay) {
-      return;
-    }
-
-    if ((await this.isVaultLocked()) && !this.pinEntryInProgress) {
-      this.ngZone.run(async () => {
-        await this.router
-          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
-          .then(navigated => {})
-          .catch(err => {});
-      });
-    }
-  }
-
-  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> {
-    return this.identityService.onPasscodeRequest(isPasscodeSetRequest);
-  }
-
-  onAppStateChanged(stateActive) {
-    this.identityService.onAppStateChanged(stateActive);
   }
 
   async pinLoginSetup(
@@ -100,39 +80,145 @@ export class IdentityFacadeService extends ServiceStateFacade {
           message: 'There was an issue setting your pin',
         };
       case PinCloseStatus.SET_SUCCESS:
-        this.identityService
-          .initAndUnlock({ username: undefined, token: undefined, pin: data }, biometricEnabled, navigateToDashboard)
-          .pipe(take(1))
-          .toPromise();
-        return Promise.resolve();
+        return this.initAndUnlock({ username: undefined, token: undefined, pin: data }, biometricEnabled, navigateToDashboard);
     }
   }
 
-  loginUser(useBiometric: boolean) {
+
+  /// will attempt to use pin and/or biometric - will fall back to passcode if needed
+  /// will require pin set
+  initAndUnlock(data, biometricEnabled: boolean, navigateToDashboard: boolean = true): Promise<void> {
+    if (navigateToDashboard) {
+      this.navigateToDashboard();
+    }
+    return this.identityService.initAndUnlock(data, biometricEnabled);
+  }
+
+  async handlePinUnlockSuccess(data) {
+    this.navigateToDashboard();
+  }
+
+  async handleBiometricUnlockSuccess(data) {
+    this.authenticateUserPin();
+  }
+
+
+  async loginUser(useBiometric: boolean) {
+    this.isAuthenticating = true;
     if (useBiometric) {
-      return this.identityService.unlockVault();
+      this.unlockVaultBiometrics().finally(() => this.isAuthenticating = false);
     } else {
-      return this.identityService.unlockVaultPin();
+      this.unlockVaultPin().finally(() => this.isAuthenticating = false);
     }
   }
 
-  get pinEntryInProgress(): boolean {
-    return this.identityService.unclockPinInProgress;
+
+  async handleBiometricUnlockError({ message, code }) {
+    // user has another chance of authenticating with PIN if they fail biometrics
+    return this.unlockVaultPin()
   }
 
-  get canRetryUnlock(): boolean {
-    return this.identityService.canRetryUnlock;
+
+  private async authenticateUserPin() {
+    let userPin: string;
+
+    try {
+      const vaultSession = await this.identityService.retrieveVaultPin();
+      userPin = vaultSession.pin;
+    } catch (error) {
+      return await this.logoutUser();
+    }
+
+    try {
+      await this.loadingService.showSpinner();
+      await firstValueFrom(this.authFacadeService.authenticatePin$(userPin));
+      await this.loadingService.showSpinner();
+    } catch (error) {
+      await this.loadingService.closeSpinner();
+      return await this.onAuthenticateUserPinFailed(error);
+    }
+    return await this.navigateToDashboard();
   }
 
-  set canRetryUnlock(value: boolean) {
-    this.identityService.canRetryUnlock = value;
+  deviceMarkedAsLost({ message }) {
+    return /9510|Device marked as lost/.test(message);
   }
 
-  logoutUser(): Promise<void> {
+  private async onAuthenticateUserPinFailed(error): Promise<any> {
+    if (this.deviceMarkedAsLost(error)) {
+      return this.handleDeviceLostException();
+    }
+    return this.handleConnectionErrors({
+      onRetry: async () => {
+        const { pin: savedPin } = await this.identityService.retrieveVaultPin();
+        try {
+          await this.loadingService.showSpinner();
+          await firstValueFrom(this.authFacadeService.authenticatePin$(savedPin));
+          await this.loadingService.closeSpinner();
+          return await this.navigateToDashboard();
+        } catch (error) {
+          await this.loadingService.closeSpinner();
+        }
+        return false;
+      },
+      onScanCode: async () => this.lockVault()
+    });
+  }
+
+  async handleDeviceLostException() {
+    this.logoutUser();
+  }
+
+  public async navigateToDashboard() {
+    try {
+      return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+    } catch (err) {
+      this.onNavigateToDashboardFailed(err);
+    }
+    return false;
+  }
+
+  private async onNavigateToDashboardFailed(err): Promise<any> {
+    return this.handleConnectionErrors({
+      onRetry: async () => {
+        try {
+          return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+        } catch (ignored) {
+          // ignored on purpose. 
+        }
+        return false;
+      },
+      onScanCode: async () => this.lockVault()
+    });
+  }
+
+
+  userIsAuthenticating(): boolean {
+    return this.isAuthenticating;
+  }
+
+
+  async handlePinUnlockError({ message, code }) {
+    return this.logoutUser();
+  }
+
+  private async handleConnectionErrors(retryHandler: RetryHandler): Promise<any> {
+    return await this.connectivityService.handleConnectionError(retryHandler);
+  }
+
+  async logoutUser(): Promise<any> {
+    this.redirectToEntry();
     this._pinEnabledUserPreference = true;
     this._biometricsEnabledUserPreference = true;
+    this.resetAll();
     return this.identityService.logoutUser();
   }
+
+
+  async redirectToEntry() {
+    return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
+  }
+
 
   async isVaultLocked() {
     return this.identityService.isVaultLocked();
@@ -164,6 +250,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .pipe(take(1))
       .toPromise();
   }
+
 
   async getAvailableBiometricHardware(): Promise<string[]> {
     return this.identityService
@@ -220,5 +307,26 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   getIsLocked() {
     return this.identityService.getIsLocked();
+  }
+
+  private async unlockVaultBiometrics() {
+    return this.identityService.unlockVault()
+      .then((v) => this.handleBiometricUnlockSuccess(v))
+      .catch((error) => this.handleBiometricUnlockError(error))
+  }
+
+  private async unlockVaultPin() {
+    return this.identityService.unlockVaultPin()
+      .then((v) => this.handlePinUnlockSuccess(v))
+      .catch((error) => this.handlePinUnlockError(error));
+  }
+
+
+
+  private async resetAll(): Promise<void> {
+    firstValueFrom(this.userFacadeService.logoutAndRemoveUserNotification());
+    this.merchantFacadeService.clearState();
+    this.settingsFacadeService.cleanCache();
+    this.contentStringFacade.clearState();
   }
 }
