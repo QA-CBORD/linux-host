@@ -321,11 +321,14 @@ export class PhotoUploadComponent implements OnInit {
       .subscribe(
         response => {
           this.photoCropModalService.show(response.dataUrl, photoType).then(dataUrl => {
+            if (!dataUrl) return;
             const photoBase64 = dataUrl.split(',')[1];
             this.photoUploadService.onNewPhoto(photoType, photoBase64);
           });
         },
-        () => {},
+        () => {
+          // There was an issue uploading the photo information'
+        },
         () => {
           this.sessionFacadeService.navigatedFromPlugin = true;
         }

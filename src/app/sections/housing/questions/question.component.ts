@@ -131,7 +131,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const getImageSub = this._workOrderStateService.workOrderImage$.subscribe(res => {
       if (!!(res && res.contents)) {
         const extension = res.filename.split('.').pop();
-        let imageContent = res.contents.startsWith('data:image')
+         const imageContent = res.contents.startsWith('data:image')
           ? res.contents
           : `data:image/${extension};base64,${res.contents}`;
 
