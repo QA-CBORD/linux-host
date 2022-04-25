@@ -58,9 +58,9 @@ export class CoordsService {
           await this.appPermissions.checkLocationPermission().then(result => {
             if (result.hasPermission) {
               this.requestLocationFromDevice();
-            } else if (this.appPermissions.locationPromptDismissed) {
+            } else if (this.appPermissions.permissionDismissed) {
               this.requestLocationFromDevice();
-              this.appPermissions.locationPromptDismissed = false;
+              this.appPermissions.permissionDismissed = false;
             } else {
               this.emptyPositions();
             }
