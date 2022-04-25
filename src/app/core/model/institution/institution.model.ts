@@ -16,7 +16,6 @@ export interface Institution {
   payWithGETOnly: boolean;
   type: number;
   imageBannerFull: string;
-  servicesUrl: string;
 }
 export interface InstitutionLookupListItem {
   id: string;
@@ -26,7 +25,7 @@ export interface InstitutionLookupListItem {
   guestDeposit: number;
   guestLogin: number;
   guestLoginNotRequired: number;
-  servicesUrl?: string;
+  environmentName?: string;
   guestSettings: GuestSetting;
   acuteCare: boolean;
 }

@@ -38,6 +38,7 @@
                 <!-- HOSTS -->
                 <data android:host="get.cbord.com" />
                 <data android:host="get.dev.cbord.com" />
+                <data android:host="get.ca.cbord.com" />
                 <data android:pathPrefix="/patron" />
                 <data android:pathPrefix="/guest" />
             </intent-filter>
