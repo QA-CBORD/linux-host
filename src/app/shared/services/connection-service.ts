@@ -4,8 +4,9 @@ import { Observable, Observer, fromEvent, merge, of, BehaviorSubject } from 'rxj
 import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import { firstValueFrom } from '@shared/utils';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { CONNECTION_TIME_OUT_MESSAGE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
 
 @Injectable({
   providedIn: 'root'
@@ -61,7 +62,7 @@ export class ConnectionService {
     if (!navigator.onLine) return true;
 
     return await firstValueFrom(this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
-      timeout(2000),
+      timeout(TIME_OUT_DURATION),
       map((res) => this.isConnectionIssues(<any>res)),
       catchError((error) => of(this.isConnectionIssues(error))))
     );
@@ -69,6 +70,6 @@ export class ConnectionService {
 
 
   isConnectionIssues({ message, status }): boolean {
-    return (/Timeout/.test(message)) || (status == 0);
+    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || (status == 0);
   }
 }
