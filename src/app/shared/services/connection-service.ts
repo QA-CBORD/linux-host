@@ -1,34 +1,43 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, Observer, fromEvent, merge, of } from 'rxjs';
-import { map, mapTo } from 'rxjs/operators';
+import { Observable, Observer, fromEvent, merge, of, BehaviorSubject } from 'rxjs';
+import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
+import { firstValueFrom } from '@shared/utils';
+import { HttpClient } from '@angular/common/http';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { CONNECTION_TIME_OUT_MESSAGE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConnectionService {
 
+  modalRefreshHandle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private online$: Observable<boolean> = undefined;
 
-  constructor(public network: Network, public platform: Platform) {
-    this.online$ = Observable.create(observer => observer.next(true)).pipe(mapTo(true));
+  constructor(private http: HttpClient,
+    private environmentFacade: EnvironmentFacadeService,
+    private network: Network,
+    public platform: Platform) {
 
+    this.online$ = new Observable(observer => observer.next(true)).pipe(mapTo(true));
     if (this.platform.is('capacitor')) {
-        // on Device
-        this.online$ = merge(
-            this.network.onConnect().pipe(mapTo(true)),
-            this.network.onDisconnect().pipe(mapTo(false))
-        );
+      this.network.downlinkMax
+      // on Device
+      this.online$ = merge(
+        this.network.onConnect().pipe(mapTo(true)),
+        this.network.onDisconnect().pipe(mapTo(false))
+      );
     } else {
-        // on Browser
-        this.online$ = merge(
-            of(navigator.onLine),
-            fromEvent(window, 'online').pipe(mapTo(true)),
-            fromEvent(window, 'offline').pipe(mapTo(false))
-        );
+      // on Browser
+      this.online$ = merge(
+        of(navigator.onLine),
+        fromEvent(window, 'online').pipe(mapTo(true)),
+        fromEvent(window, 'offline').pipe(mapTo(false))
+      );
     }
-}
+  }
 
   obsUserConnection$() {
     return merge<boolean>(
@@ -42,10 +51,25 @@ export class ConnectionService {
 
 
   public getNetworkType(): string {
-      return this.network.type;
+    return this.network.type;
   }
 
-  public networkStatus(): Observable<boolean> {
-      return this.online$;
+  public networkStatus(time: number = 300): Observable<boolean> {
+    return this.online$.pipe(debounceTime(time), switchMap(async () => !(await this.deviceOffline())));
+  }
+
+  async deviceOffline(): Promise<boolean> {
+    if (!navigator.onLine) return true;
+
+    return await firstValueFrom(this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
+      timeout(TIME_OUT_DURATION),
+      map((res) => this.isConnectionIssues(<any>res)),
+      catchError((error) => of(this.isConnectionIssues(error))))
+    );
+  }
+
+
+  isConnectionIssues({ message, status }): boolean {
+    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || (status == 0);
   }
 }

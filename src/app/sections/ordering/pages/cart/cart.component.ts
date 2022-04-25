@@ -135,7 +135,6 @@ export class CartComponent implements OnInit, OnDestroy {
   subscribe2NetworkChanges() {
     this.networkSubcription = this.connectionService
       .networkStatus()
-      .pipe(debounceTime(300))
       .subscribe(isOnline => (this.isOnline = isOnline));
   }
 

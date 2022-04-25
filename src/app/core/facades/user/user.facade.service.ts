@@ -143,18 +143,18 @@ export class UserFacadeService extends ServiceStateFacade {
   isApplePayEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_PAY_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
+        map(({ value }) => Boolean(Number(value))),
+        take(1)
+      )
       : of(false);
   }
 
   isAppleWalletEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
+        map(({ value }) => Boolean(Number(value))),
+        take(1)
+      )
       : of(false);
   }
 
@@ -290,5 +290,12 @@ export class UserFacadeService extends ServiceStateFacade {
     this.storageStateService.clearState();
     this.storageStateService.clearStorage();
     this.userSettingStateService.clearState();
+  }
+
+  getUserInfo(): Observable<UserInfo> {
+    return this.storageStateService.getStateEntityByKey$<UserInfo>(this.userKey).pipe(
+      switchMap(data => data && of(data.value) || this.getUser$()),
+      take(1)
+    );
   }
 }

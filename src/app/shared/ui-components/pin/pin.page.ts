@@ -9,8 +9,8 @@ import { finalize, take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
-import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { CONNECTION_TIME_OUT_MESSAGE, DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -18,6 +18,7 @@ export enum PinCloseStatus {
   CANCELED = 'cancelled',
   ERROR = 'error',
   MAX_FAILURE = 'max_failure',
+  DEVICE_MARK_LOST = 'device_marked_lost'
 }
 
 export enum PinAction {
@@ -64,8 +65,8 @@ export class PinPage implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService
-  ) {}
-  
+  ) { }
+
   @Input() pinAction: PinAction;
   @Input() showDismiss: boolean = true;
 
@@ -176,7 +177,6 @@ export class PinPage implements OnInit {
     }
   }
 
-  enter() {}
 
   delete() {
     this.removeNumber();
@@ -268,15 +268,17 @@ export class PinPage implements OnInit {
             this.setErrorText('Error logging in - please try again');
           }
         },
-        error => {
+        ({ message }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
             setTimeout(() => {
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
-          } else if (error instanceof GetThrowable) {
-            this.setErrorText(error.message);
+          } else if (DEVICE_MARKED_LOST.test(message)) {
+            this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
+          } else if (CONNECTION_TIME_OUT_MESSAGE.test(message)) {
+            this.setErrorText(message);
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }

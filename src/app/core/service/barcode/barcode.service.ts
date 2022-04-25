@@ -6,6 +6,8 @@ import { catchError, startWith, switchMap, take, tap } from 'rxjs/operators';
 import bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
 import { GetThrowable } from '@core/interceptors/server-error.interceptor';
+import { UserSettingInfo } from '@core/model/user';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -53,12 +55,10 @@ export class BarcodeService {
     );
   }
 
-  generateBarcode(withInterval: boolean = false): Observable<string> {
+  generateBarcode(withInterval: boolean = false, userSetting: UserSettingInfo, settingInfo: SettingInfo): Observable<string> {
     const timerObservable = interval(this.generationTimer).pipe(startWith(-1));
-    const barcodeObservable = zip(
-      this.settingFacade.getUserSetting(User.Settings.CASHLESS_KEY),
-      this.settingFacade.getSetting(Settings.Setting.SOA_KEY)
-    ).pipe(
+    const barcodeObservable = zip(of(userSetting), of(settingInfo))
+    .pipe(
       switchMap(response => {
         if (!response || response.length < 2 || !response[0] || !response[1]) {
           throwError(new Error('Unable to generate barcode, required values missing'));

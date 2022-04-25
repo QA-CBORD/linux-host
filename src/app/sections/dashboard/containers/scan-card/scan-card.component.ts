@@ -8,12 +8,11 @@ import bwipjs from 'bwip-angular2';
 import { UserInfo } from '@core/model/user';
 import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { BarcodeService } from '@core/service/barcode/barcode.service';
 import { Settings } from '../../../../app.global';
+import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 
 @Component({
   selector: 'st-scan-card',
@@ -36,13 +35,13 @@ export class ScanCardComponent implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly route: ActivatedRoute,
     private readonly commerceApiService: CommerceApiService,
-    private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly userFacadeService: UserFacadeService,
-    private readonly barcodeService: BarcodeService
+    private readonly barcodeFacadeService: BarcodeFacadeService,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   ngOnInit() {
-    this.isMediaSettingExists$ = this.settingsFacadeService
+    console.log("ScanCardComponent: ", )
+    this.isMediaSettingExists$ = this.barcodeFacadeService
       .getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE)
       .pipe(map(({ value }) => !!value && !!value.length));
     this.setInstitutionColor();
@@ -55,12 +54,12 @@ export class ScanCardComponent implements OnInit {
   }
 
   get userFullName$(): Observable<string> {
-    return this.userFacadeService.getUserData$().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
+    return this.userFacadeService.getUserInfo().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
   }
 
   private setUserId() {
     this.userFacadeService
-      .getUserData$()
+      .getUserInfo()
       .pipe(take(1))
       .subscribe(({ id }) => (this.userId = id));
   }
@@ -78,14 +77,14 @@ export class ScanCardComponent implements OnInit {
   }
 
   private setInstitution() {
-    this.institution$ = this.userFacadeService.getUserData$().pipe(
+    this.institution$ = this.userFacadeService.getUserInfo().pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionFacadeService.getInstitutionInfo$(institutionId)),
       take(1)
     );
   }
 
   private setInstitutionPhoto() {
-    this.institutionPhoto$ = this.userFacadeService.getUserData$().pipe(
+    this.institutionPhoto$ = this.userFacadeService.getUserInfo().pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionFacadeService.getInstitutionPhoto$(institutionId)),
       skipWhile(d => !d || d === null),
       map(({ data, mimeType }: InstitutionPhotoInfo) => {
@@ -96,7 +95,7 @@ export class ScanCardComponent implements OnInit {
   }
 
   private initBarcode() {
-    this.generateBarcode$ = this.barcodeService.generateBarcode(true).pipe(
+    this.generateBarcode$ = this.barcodeFacadeService.generateBarcode(true).pipe(
       map(value => {
         this.generateBarcode(value);
         return true;
