@@ -14,7 +14,7 @@ import { creditCardMgmtCsModel } from '@sections/settings/creditCards/creditCard
 import { LocationDisclosureCsModel } from '@sections/dashboard/components/location-disclosure/location-disclosure-content-string.model';
 import { CheckingContentCsModel, CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 import { ScanCodeCsModel } from '@sections/check-in/components/scan-code/scan-code-content-strings.model';
-import { ConnectivityScreenCsModel } from '@shared/no-connectivity-screen/model/no-connectivity.cs.model';
+import { ConnectivityScreenCsModel } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
 
 export enum ContentStringCategory {
   forgotPassword = 'forgotPassword',

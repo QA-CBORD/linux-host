@@ -9,8 +9,8 @@ import { finalize, take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
-import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { CONNECTION_TIME_OUT_MESSAGE, DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -177,7 +177,6 @@ export class PinPage implements OnInit {
     }
   }
 
-  enter() { }
 
   delete() {
     this.removeNumber();
@@ -276,9 +275,9 @@ export class PinPage implements OnInit {
             setTimeout(() => {
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
-          } else if (/9510|Device marked as lost/.test(message)) {
+          } else if (DEVICE_MARKED_LOST.test(message)) {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
-          } else if (/Timeout/.test(message)) {
+          } else if (CONNECTION_TIME_OUT_MESSAGE.test(message)) {
             this.setErrorText(message);
           } else {
             this.setErrorText('Incorrect PIN - please try again');
