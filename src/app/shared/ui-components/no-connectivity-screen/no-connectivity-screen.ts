@@ -84,7 +84,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.toastService.dismiss().catch(() => {});
+    this.toastService.dismiss().catch(() => { });
   }
 
 
@@ -153,7 +153,8 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async setConnectionErrorType(): Promise<void> {
-    if ((await this.connectionService.deviceOffline())) {
+    const isDeviceOffline = await this.connectionService.deviceOffline();
+    if (isDeviceOffline) {
       this.errorType = ConnectivityError.DEVICE_CONNECTION;
     } else {
       this.errorType = ConnectivityError.SERVER_CONNECTION;
