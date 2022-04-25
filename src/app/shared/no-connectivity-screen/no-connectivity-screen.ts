@@ -100,7 +100,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     const string$ = this.strings;
     let myToast = await this.toastService.create({
       message: string$.connect_failed,
-      duration: 30000,
+      duration: 3000,
       mode: 'ios',
       position: 'top',
       buttons: [
