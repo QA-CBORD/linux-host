@@ -8,7 +8,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { RetryHandler } from '@shared/no-connectivity-screen/model/retry-handler';
+import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/retry-handler';
 import { UserFacadeService } from '../user/user.facade.service';
 import { MerchantFacadeService } from '../merchant/merchant-facade.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
