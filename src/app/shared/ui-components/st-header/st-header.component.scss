@@ -73,3 +73,8 @@
     box-shadow: 0 30px 40px -30px rgba(122, 130, 143, 0.3), 0 0 30px 0 rgba(122, 130, 143, 0.15);
   }
 }
+
+.address-edit__header-remove-btn {
+  --color: #e22942 !important;
+  @include font-nunito-semibold(16px);
+}

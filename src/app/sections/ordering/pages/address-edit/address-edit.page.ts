@@ -11,9 +11,8 @@ import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { PopoverController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'st-address-edit-page',
   templateUrl: './address-edit.page.html',
@@ -34,8 +33,8 @@ export class AddressEditPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
-    private readonly userFacadeService: UserFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly location: Location,
   ) {}
 
   ngOnInit() {
@@ -62,7 +61,7 @@ export class AddressEditPage implements OnInit {
   }
 
   onBack() {
-    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses]);
+    this.location.back();
   }
 
   onRemove() {
@@ -89,7 +88,7 @@ export class AddressEditPage implements OnInit {
         this.merchantService
           .removeAddress(addressData.id)
           .pipe(take(1))
-          .subscribe(() => this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses]));
+          .subscribe(() => this.onBack());
     });
     await modal.present();
   }
