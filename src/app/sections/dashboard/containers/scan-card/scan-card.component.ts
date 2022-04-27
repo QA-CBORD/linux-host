@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import bwipjs from 'bwip-angular2';
@@ -14,6 +14,10 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { BarcodeService } from '@core/service/barcode/barcode.service';
 import { Settings } from '../../../../app.global';
+import { GetBrightnessReturnValue, ScreenBrightness } from '@capacitor-community/screen-brightness';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { App } from '@capacitor/app';
+import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 
 @Component({
   selector: 'st-scan-card',
@@ -30,6 +34,7 @@ export class ScanCardComponent implements OnInit {
   userPhoto: string;
   userId: string;
   institutionColor: string;
+  previousBrigness: GetBrightnessReturnValue;
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -38,8 +43,18 @@ export class ScanCardComponent implements OnInit {
     private readonly commerceApiService: CommerceApiService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly barcodeService: BarcodeService
-  ) {}
+    private readonly barcodeService: BarcodeService,
+    private readonly naviteProvider: NativeProvider,
+    private readonly router: Router
+  ) {
+    App.addListener('appStateChange', async ({ isActive }) => {
+      if (isActive && this.router.url.includes(DASHBOARD_NAVIGATE.scanCard)) {
+        this.setFullBrightness();
+      } else {
+        this.setPreviousBrightness();
+      }
+    });
+  }
 
   ngOnInit() {
     this.isMediaSettingExists$ = this.settingsFacadeService
@@ -51,6 +66,7 @@ export class ScanCardComponent implements OnInit {
     this.setInstitution();
     this.setInstitutionPhoto();
     this.initBarcode();
+    this.setFullBrightness();
     this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => (d.length ? d : 'None')));
   }
 
@@ -122,5 +138,22 @@ export class ScanCardComponent implements OnInit {
 
   private setInstitutionColor() {
     this.institutionColor = this.route.snapshot.queryParams.color;
+  }
+
+  private async setFullBrightness() {
+    if (this.naviteProvider.isMobile()) {
+      this.previousBrigness = await ScreenBrightness.getBrightness();
+      await ScreenBrightness.setBrightness({ brightness: 1.0 });
+    }
+  }
+
+  async setPreviousBrightness() {
+    if (this.naviteProvider.isMobile()) {
+      await ScreenBrightness.setBrightness({ brightness: this.previousBrigness.brightness });
+    }
+  }
+
+  async ionViewWillLeave() {
+    this.setPreviousBrightness();
   }
 }
