@@ -21,6 +21,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
+import { AlertController } from '@ionic/angular';
 
 export enum LoginState {
   DONE,
@@ -55,7 +56,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly loadingService: LoadingService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly connectivityService: ConnectivityService,
-    private readonly connectionService: ConnectionService
+    private readonly connectionService: ConnectionService,
+    private readonly alertController: AlertController
   ) {
     super();
   }
@@ -88,7 +90,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  initAndUnlock(data, biometricEnabled: boolean, navigateToDashboard: boolean = true): Promise<void> {
+  private async initAndUnlock(data, biometricEnabled: boolean, navigateToDashboard: boolean = true): Promise<void> {
     if (navigateToDashboard) {
       this.navigateToDashboard();
     }
@@ -116,7 +118,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
-    return this.unlockVaultPin()
+    (await this.alertController.create({
+      message: "handleBiometricUnlockError: " + message + " CODE: " + code
+    })).present();
+    //return this.unlockVaultPin()
   }
 
 

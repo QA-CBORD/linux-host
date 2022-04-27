@@ -6,7 +6,7 @@ import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config'
 import { Institution } from '@core/model/institution';
 import { take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { NavController, Platform } from '@ionic/angular';
+import { AlertController, NavController, Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -48,7 +48,8 @@ export class SessionFacadeService {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly ngZone: NgZone,
     private readonly router: Router,
-    private readonly connectivityService: ConnectivityService
+    private readonly connectivityService: ConnectivityService,
+    private readonly alerController: AlertController
   ) {
     this.appStateListeners();
   }
@@ -95,8 +96,14 @@ export class SessionFacadeService {
       return;
     }
 
+
+
     const appLocked = await this.isVaultLocked();
     const currentRouteIsStartupPage = this.router.url.includes("startup");
+    (await this.alerController.create({
+      message: "appResumeLogic: appLocked: " + appLocked + " currentRouteIsStartupPage: " + currentRouteIsStartupPage
+    })).present();
+
     if (currentRouteIsStartupPage && appLocked) {
       this.doLoginChecks();
     } else if (appLocked) {
@@ -126,7 +133,12 @@ export class SessionFacadeService {
 
 
   async determineAppLoginState(systemSessionId) {
-    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(() => LoginState.PIN_LOGIN);
+    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(async () => {
+      (await this.alerController.create({
+        message: "returning pinLogin: " + LoginState.PIN_LOGIN
+      })).present();
+      return LoginState.PIN_LOGIN;
+    });
     await this.handleLoginState(appLoginState);
   }
 
