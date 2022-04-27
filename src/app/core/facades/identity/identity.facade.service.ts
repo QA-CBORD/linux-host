@@ -198,7 +198,9 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   async handlePinUnlockError({ message, code }) {
-    return this.logoutUser();
+    console.log("handlinUnlock ", message, code);
+    if (PinCloseStatus.CLOSED_NO_CONNECTION != code)
+        return this.logoutUser();
   }
 
   private async handleConnectionErrors(retryHandler: RetryHandler): Promise<any> {

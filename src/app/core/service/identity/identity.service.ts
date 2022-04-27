@@ -70,7 +70,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  initAndUnlock(
+  async initAndUnlock(
     session: VaultSessionData,
     biometricEnabled: boolean,
   ): Promise<void> {

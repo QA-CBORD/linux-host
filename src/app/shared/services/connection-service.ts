@@ -6,7 +6,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { firstValueFrom } from '@shared/utils';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { CONNECTION_TIME_OUT_MESSAGE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
+import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
 
 @Injectable({
   providedIn: 'root'
@@ -70,6 +70,6 @@ export class ConnectionService {
 
 
   isConnectionIssues({ message, status }): boolean {
-    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || (status == 0);
+    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || (status == NO_INTERNET_STATUS_CODE);
   }
 }

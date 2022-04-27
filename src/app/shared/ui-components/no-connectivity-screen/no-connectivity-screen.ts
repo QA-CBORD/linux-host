@@ -138,9 +138,10 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async scanCard() {
+    await this.retryHandler.onScanCode();
     await this.loadingService.showSpinner();
     const color = await this.institutionColor();
-    this.retryHandler.onScanCode();
+    
 
     this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.scanCard], { queryParams: { color } })
       .then(() => this.closeSelf())

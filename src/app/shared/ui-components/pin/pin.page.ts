@@ -10,7 +10,9 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { CONNECTION_TIME_OUT_MESSAGE, DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
+import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
+import { ConnectionService } from '@shared/services/connection-service';
+import { ConnectivityService } from '@shared/services/connectivity.service';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -18,7 +20,8 @@ export enum PinCloseStatus {
   CANCELED = 'cancelled',
   ERROR = 'error',
   MAX_FAILURE = 'max_failure',
-  DEVICE_MARK_LOST = 'device_marked_lost'
+  DEVICE_MARK_LOST = 'device_marked_lost',
+  CLOSED_NO_CONNECTION = 'closed_no_connection'
 }
 
 export enum PinAction {
@@ -64,7 +67,9 @@ export class PinPage implements OnInit {
     private readonly authFacadeService: AuthFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly a11yService: AccessibilityService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly connectionService: ConnectionService,
+    private readonly connectivityService: ConnectivityService,
   ) { }
 
   @Input() pinAction: PinAction;
@@ -268,7 +273,7 @@ export class PinPage implements OnInit {
             this.setErrorText('Error logging in - please try again');
           }
         },
-        ({ message }) => {
+        ({ message, status }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
@@ -277,8 +282,21 @@ export class PinPage implements OnInit {
             }, 3000);
           } else if (DEVICE_MARKED_LOST.test(message)) {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
-          } else if (CONNECTION_TIME_OUT_MESSAGE.test(message)) {
-            this.setErrorText(message);
+          } else if (this.connectionService.isConnectionIssues({ message, status })) {
+            this.currentLoginAttempts--;
+            this.connectivityService.handleConnectionError({
+              onScanCode: async () => {
+                await this.modalController.dismiss(null, PinCloseStatus.CLOSED_NO_CONNECTION);
+                await this.modalController.dismiss(null, PinCloseStatus.CLOSED_NO_CONNECTION);
+              },
+              onRetry: async () => {
+                await this.loadingService.showSpinner();
+                const connectionRestored = !(await this.connectionService.deviceOffline())
+                await this.loadingService.closeSpinner();
+                return connectionRestored;
+              }
+            });
+            // this.setErrorText('Timeout occurred, Please check your connection');
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
