@@ -159,6 +159,6 @@ export class AddressEditPage implements OnInit {
 
   private initContentStrings() {
     this.contentStrings.buttonSave = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSave);
-    this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
+    this.contentStrings.titleEditAddresses = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.titleEditAddresses);
   }
 }
