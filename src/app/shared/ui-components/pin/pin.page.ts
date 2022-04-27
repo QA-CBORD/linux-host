@@ -10,7 +10,7 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
+import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
 import { ConnectivityService } from '@shared/services/connectivity.service';
 
@@ -286,8 +286,8 @@ export class PinPage implements OnInit {
             this.currentLoginAttempts--;
             this.connectivityService.handleConnectionError({
               onScanCode: async () => {
-                await this.modalController.dismiss(null, PinCloseStatus.CLOSED_NO_CONNECTION);
-                await this.modalController.dismiss(null, PinCloseStatus.CLOSED_NO_CONNECTION);
+                await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
+                await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
               },
               onRetry: async () => {
                 await this.loadingService.showSpinner();

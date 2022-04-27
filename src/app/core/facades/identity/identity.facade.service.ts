@@ -20,6 +20,7 @@ import { ConnectivityService } from '@shared/services/connectivity.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
+import { ConnectionService } from '@shared/services/connection-service';
 
 export enum LoginState {
   DONE,
@@ -54,6 +55,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly loadingService: LoadingService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly connectivityService: ConnectivityService,
+    private readonly connectionService: ConnectionService
   ) {
     super();
   }
@@ -198,9 +200,9 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   async handlePinUnlockError({ message, code }) {
-    console.log("handlinUnlock ", message, code);
-    if (PinCloseStatus.CLOSED_NO_CONNECTION != code)
-        return this.logoutUser();
+    if (!this.connectionService.isConnectionIssues({ message, status: code })) {
+      return this.logoutUser();
+    }
   }
 
   private async handleConnectionErrors(retryHandler: RetryHandler): Promise<any> {
