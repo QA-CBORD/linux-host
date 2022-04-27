@@ -296,7 +296,6 @@ export class PinPage implements OnInit {
                 return connectionRestored;
               }
             });
-            // this.setErrorText('Timeout occurred, Please check your connection');
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
