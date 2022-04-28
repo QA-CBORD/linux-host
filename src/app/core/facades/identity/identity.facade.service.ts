@@ -119,12 +119,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
-    this.toastController.create({
+    (await this.toastController.create({
       message: message + " CODE: " + code,
       position: 'top',
       duration: 60000,
       showCloseButton: true,
-    });
+    })).present();
     if (code == VaultErrorCodes.UserCanceledInteraction || code == VaultErrorCodes.TooManyFailedAttempts) {
       return this.unlockVaultPin();
     }
