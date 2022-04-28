@@ -82,7 +82,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   // called when biometric is setup.
   /// unlock the vault to make data accessible with identity controlled method
   async unlockVault(): Promise<any> {
-    return await super.unlock(AuthMode.BiometricOnly);
+    return await super.unlock(AuthMode.BiometricAndPasscode);
   }
 
   /// unlock the vault to make data accessible with pin
@@ -167,7 +167,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
 
   onConfigChange(config: VaultConfig): void {
-    // console.log('Got a config update: ', config);
     if (!this.config.isPasscodeSetupNeeded) {
       this.temporaryPin = undefined;
     }
@@ -180,7 +179,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   onVaultLocked(event: LockEvent): void {
     this.setIsLocked();
-    // console.log('The vault was locked by event: ', event);
   }
 
   setIsLocked(lock: boolean = true) {

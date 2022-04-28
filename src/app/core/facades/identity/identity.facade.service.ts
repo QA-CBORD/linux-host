@@ -57,8 +57,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly loadingService: LoadingService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly connectivityService: ConnectivityService,
-    private readonly connectionService: ConnectionService,
-    private readonly toastController: ToastController
+    private readonly connectionService: ConnectionService
   ) {
     super();
   }
@@ -119,13 +118,9 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
-    (await this.toastController.create({
-      message: message + " CODE: " + code,
-      position: 'top',
-      duration: 60000,
-      showCloseButton: true,
-    })).present();
-    if (code == VaultErrorCodes.UserCanceledInteraction || code == VaultErrorCodes.TooManyFailedAttempts) {
+    if (code == PinCloseStatus.MAX_FAILURE) {
+      return this.logoutUser();
+    } else if (code == VaultErrorCodes.TooManyFailedAttempts || code == VaultErrorCodes.UserCanceledInteraction) {
       return this.unlockVaultPin();
     }
   }

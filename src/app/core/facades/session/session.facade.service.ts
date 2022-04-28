@@ -6,7 +6,7 @@ import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config'
 import { Institution } from '@core/model/institution';
 import { take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { AlertController, NavController, Platform, ToastController } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -49,8 +49,7 @@ export class SessionFacadeService {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly ngZone: NgZone,
     private readonly router: Router,
-    private readonly connectivityService: ConnectivityService,
-    private readonly toastService: ToastController
+    private readonly connectivityService: ConnectivityService
   ) {
     this.appStateListeners();
   }
@@ -89,7 +88,6 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    console.log("appResumeLogic called....")
     if (this.navigatedFromPlugin) {
       this.navigatedFromPlugin = false;
       return;
@@ -97,22 +95,8 @@ export class SessionFacadeService {
     if (this.navigatedFromGpay || this.identityFacadeService.userIsAuthenticating()) {
       return;
     }
-
-
-
     const appLocked = await this.isVaultLocked();
     const currentRouteIsStartupPage = this.router.url.includes("startup");
-    // (await this.alerController.create({
-    //   message: "appResumeLogic: appLocked: " + appLocked + " currentRouteIsStartupPage: " + currentRouteIsStartupPage
-    // })).present();
-
-    (await this.toastService.create({
-      duration: 50000,
-      showCloseButton: true,
-      message: "appResumeLogic called.... " + appLocked + " :  " + currentRouteIsStartupPage
-    })).present();
-
-
     if (currentRouteIsStartupPage && appLocked) {
       this.doLoginChecks();
     } else if (appLocked) {
@@ -142,14 +126,7 @@ export class SessionFacadeService {
 
 
   async determineAppLoginState(systemSessionId) {
-    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(async () => {
-      (await this.toastService.create({
-        showCloseButton: true,
-        duration: 40000,
-        message: "returning pinLogin: " + LoginState.PIN_LOGIN
-      })).present();
-      return LoginState.PIN_LOGIN;
-    });
+    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(async () => LoginState.PIN_LOGIN);
     await this.handleLoginState(appLoginState);
   }
 
@@ -191,12 +168,6 @@ export class SessionFacadeService {
 
   async handleLoginState(state: LoginState): Promise<void> {
     const routeConfig = { replaceUrl: true };
-    console.log("state: ", state);
-    (await this.toastService.create({
-      duration: 50000,
-      showCloseButton: true,
-      message: "handleLoginState called.... " + state
-    })).present();
     switch (state) {
      
       case LoginState.SELECT_INSTITUTION:
