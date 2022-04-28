@@ -75,16 +75,14 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     biometricEnabled: boolean,
   ): Promise<void> {
     this.temporaryPin = session.pin;
-    return super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly).then(res => {
-        this.setIsLocked(false);
-        return res;
-      });
+    await super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly);
+    this.setIsLocked(false);
   }
 
   // called when biometric is setup.
   /// unlock the vault to make data accessible with identity controlled method
   async unlockVault(): Promise<any> {
-    return super.unlock(AuthMode.BiometricOnly);
+    return await super.unlock(AuthMode.BiometricOnly);
   }
 
   /// unlock the vault to make data accessible with pin
@@ -92,10 +90,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     return super.unlock(AuthMode.PasscodeOnly);
   }
 
-  /// unlock the vault to make data accessible with biometric and pin backup
-  unlockVaultBiometricAndPinBackup(): Observable<void> {
-    return from(super.unlock(AuthMode.BiometricAndPasscode));
-  }
 
   /// save data to vault
   setVaultData(data: VaultSessionData): Observable<void> {

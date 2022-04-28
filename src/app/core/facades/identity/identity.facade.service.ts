@@ -21,7 +21,8 @@ import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
+import { ToastService } from '@core/service/toast/toast.service';
 
 export enum LoginState {
   DONE,
@@ -57,7 +58,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly authFacadeService: AuthFacadeService,
     private readonly connectivityService: ConnectivityService,
     private readonly connectionService: ConnectionService,
-    private readonly alertController: AlertController
+    private readonly toastService: ToastController
   ) {
     super();
   }
@@ -118,10 +119,15 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
-    (await this.alertController.create({
+
+    (await this.toastService.create({
+      duration: 40000,
+      showCloseButton: true,
       message: "handleBiometricUnlockError: " + message + " CODE: " + code
     })).present();
-    //return this.unlockVaultPin()
+
+    console.log("handleBiometricUnlockError: " + message + " CODE: " + code)
+    return this.unlockVaultPin()
   }
 
 
@@ -205,6 +211,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   async handlePinUnlockError({ message, code }) {
+    console.log("handlePinUnlockError: ", message, " Code: ", code);
     if (!this.connectionService.isConnectionIssues({ message, status: code })) {
       return this.logoutUser();
     }
