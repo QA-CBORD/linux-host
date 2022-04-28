@@ -21,8 +21,8 @@ import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { AlertController, ToastController } from '@ionic/angular';
-import { ToastService } from '@core/service/toast/toast.service';
+import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
+import { ToastController } from '@ionic/angular';
 
 export enum LoginState {
   DONE,
@@ -58,7 +58,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly authFacadeService: AuthFacadeService,
     private readonly connectivityService: ConnectivityService,
     private readonly connectionService: ConnectionService,
-    private readonly toastService: ToastController
+    private readonly toastController: ToastController
   ) {
     super();
   }
@@ -119,15 +119,15 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
-
-    (await this.toastService.create({
-      duration: 40000,
+    this.toastController.create({
+      message: message + " CODE: " + code,
+      position: 'top',
+      duration: 60000,
       showCloseButton: true,
-      message: "handleBiometricUnlockError: " + message + " CODE: " + code
-    })).present();
-
-    console.log("handleBiometricUnlockError: " + message + " CODE: " + code)
-    return this.unlockVaultPin()
+    });
+    if (code == VaultErrorCodes.UserCanceledInteraction || code == VaultErrorCodes.TooManyFailedAttempts) {
+      return this.unlockVaultPin();
+    }
   }
 
 
@@ -211,7 +211,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   async handlePinUnlockError({ message, code }) {
-    console.log("handlePinUnlockError: ", message, " Code: ", code);
     if (!this.connectionService.isConnectionIssues({ message, status: code })) {
       return this.logoutUser();
     }
