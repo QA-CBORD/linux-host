@@ -243,6 +243,18 @@ export class ItemDetailComponent implements OnInit {
       .then(() => {
         this.cartService.cartsErrorMessage = null;
         this.onClose();
+
+        this.cartService.menuItems$
+          .pipe(
+            filter((val, index) => val !== 0 || index > 1),
+            distinctUntilChanged(),
+            take(1)
+          )
+          .subscribe(items => {
+            if (items) {
+              this.showAddedItemsQuantity(items);
+            }
+          });
       })
       .catch(async error => {
         // Temporary solution:
@@ -261,20 +273,7 @@ export class ItemDetailComponent implements OnInit {
         this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })
-      .finally(() => {
-        this.loadingService.closeSpinner();
-        this.cartService.menuItems$
-          .pipe(
-            filter((val, index) => val !== 0 || index > 1),
-            distinctUntilChanged(),
-            take(1)
-          )
-          .subscribe(items => {
-            if (items) {
-              this.showAddedItemsQuantity(items);
-            }
-          });
-      });
+      .finally(() => this.loadingService.closeSpinner());
   }
 
   private async failedValidateOrder(message: string) {
@@ -345,7 +344,7 @@ export class ItemDetailComponent implements OnInit {
   showAddedItemsQuantity(items: number) {
     this.cartService.orderInfo$.pipe(take(1)).subscribe(order => {
       const itemsQuantity = `${items} ${items > 1 ? 'items' : 'item'}`;
-      
+
       let message = `${itemsQuantity} currently in your cart.`;
       message = order.checkNumber ? `${itemsQuantity} added to order #${order.checkNumber} cart. ` : message;
 
