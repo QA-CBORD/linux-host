@@ -246,7 +246,7 @@ export class ItemDetailComponent implements OnInit {
 
         this.cartService.menuItems$
           .pipe(
-            filter((val, index) => val !== 0 || index > 1),
+            filter((val, index) => !!val || index > 1),
             distinctUntilChanged(),
             take(1)
           )
