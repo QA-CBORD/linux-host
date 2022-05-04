@@ -250,11 +250,7 @@ export class ItemDetailComponent implements OnInit {
             distinctUntilChanged(),
             take(1)
           )
-          .subscribe(items => {
-            if (items) {
-              this.showAddedItemsQuantity(items);
-            }
-          });
+          .subscribe(items =>  this.showAddedItemsQuantity(items));
       })
       .catch(async error => {
         // Temporary solution:
