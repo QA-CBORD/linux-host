@@ -236,9 +236,13 @@ export class PinPage implements OnInit {
             this.setErrorText('Error setting your PIN - please try again');
           }
         },
-        error => {
+        ({ message, status }) => {
           this.cleanLocalState();
-          this.setErrorText('Error setting your PIN - please try again');
+          if (this.connectionService.isConnectionIssues({ message, status })) {
+            this.handleConnectionIssues({ message })
+          } else {
+            this.setErrorText('Error setting your PIN - please try again');
+          }
         }
       );
   }
@@ -284,24 +288,31 @@ export class PinPage implements OnInit {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
           } else if (this.connectionService.isConnectionIssues({ message, status })) {
             this.currentLoginAttempts--;
-            this.connectivityService.handleConnectionError({
-              onScanCode: async () => {
-                await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
-                await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
-              },
-              onRetry: async () => {
-                await this.loadingService.showSpinner();
-                const connectionRestored = !(await this.connectionService.deviceOffline())
-                await this.loadingService.closeSpinner();
-                return connectionRestored;
-              }
-            });
+            this.handleConnectionIssues({ message });
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
         }
       );
     // on success, return the pin so the vault can be unlocked
+  }
+  handleConnectionIssues({ message }) {
+    this.connectivityService.handleConnectionError({
+      onScanCode: async () => {
+        try {
+          await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
+          await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
+        } catch (ignored) {
+          console.log("error: ", ignored);
+        }
+      },
+      onRetry: async () => {
+        await this.loadingService.showSpinner();
+        const connectionRestored = !(await this.connectionService.deviceOffline())
+        await this.loadingService.closeSpinner();
+        return connectionRestored;
+      }
+    });
   }
 
   get showReset() {

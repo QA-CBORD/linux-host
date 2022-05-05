@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, throwError } from 'rxjs';
-import { ModalController, Platform } from '@ionic/angular';
-import {
-  AuthMode,
-  DefaultSession,
-  IonicIdentityVaultUser,
-  IonicNativeAuthPlugin,
-  LockEvent,
-  VaultConfig,
-  VaultError,
-} from '@ionic-enterprise/identity-vault';
+// import { from, Observable, throwError } from 'rxjs';
+// import { ModalController, Platform } from '@ionic/angular';
+// import {
+//   AuthMode,
+//   DefaultSession,
+//   IonicIdentityVaultUser,
+//   IonicNativeAuthPlugin,
+//   LockEvent,
+//   VaultConfig,
+//   VaultError,
+// } from '@ionic-enterprise/identity-vault';
 
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
@@ -17,175 +17,175 @@ import { Capacitor } from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { firstValueFrom } from '@shared/utils';
 
-export class VaultSessionData implements DefaultSession {
-  token: string; /// unused
-  username: string;
-  pin?: string;
-}
+// export class VaultSessionData implements DefaultSession {
+//   token: string; /// unused
+//   username: string;
+//   pin?: string;
+// }
 
 @Injectable({
   providedIn: 'root',
 })
-export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
+export class IdentityService  {
   private temporaryPin: string = undefined;
   private isLocked: boolean = true;
 
-  constructor(
-    private browserAuthPlugin: BrowserAuthPlugin,
-    private modalController: ModalController,
-    private plt: Platform) {
-    // TODO: hideScreenOnBackground hangs promises on permissions prompt.
-    // if this is needed have to find a fix/workaround.
-    super(plt, {
-      restoreSessionOnReady: false,
-      unlockOnReady: false,
-      unlockOnAccess: false,
-      lockAfter: 5000,
-      hideScreenOnBackground: false,
-      allowSystemPinFallback: false,
-      shouldClearVaultAfterTooManyFailedAttempts: false,
-    });
-  }
+  // constructor(
+  //   private browserAuthPlugin: BrowserAuthPlugin,
+  //   private modalController: ModalController,
+  //   private plt: Platform) {
+  //   // TODO: hideScreenOnBackground hangs promises on permissions prompt.
+  //   // if this is needed have to find a fix/workaround.
+  //   super(plt, {
+  //     restoreSessionOnReady: false,
+  //     unlockOnReady: false,
+  //     unlockOnAccess: false,
+  //     lockAfter: 5000,
+  //     hideScreenOnBackground: false,
+  //     allowSystemPinFallback: false,
+  //     shouldClearVaultAfterTooManyFailedAttempts: false,
+  //   });
+  // }
 
-  /// get string of available biometric types
-  getAvailableBiometricHardware(): Observable<string[]> {
-    return from(super.getAvailableHardware());
-  }
+  // /// get string of available biometric types
+  // getAvailableBiometricHardware(): Observable<string[]> {
+  //   return from(super.getAvailableHardware());
+  // }
 
-  /// Check whether or not biometrics is supported by the device and has been configured by the current user of the device
-  areBiometricsAvailable(): Observable<boolean> {
-    return from(super.isBiometricsAvailable());
-  }
+  // /// Check whether or not biometrics is supported by the device and has been configured by the current user of the device
+  // areBiometricsAvailable(): Observable<boolean> {
+  //   return from(super.isBiometricsAvailable());
+  // }
 
-  logoutUser(): Promise<void> {
-    return super.logout();
-  }
+  // logoutUser(): Promise<void> {
+  //   return super.logout();
+  // }
 
-  async isVaultLocked() {
-    if (Capacitor.getPlatform() == PLATFORM.ios) {
-      await this.hasStoredSession(); // Hack: for unexpected vault behavior with the pin not showing up
-    }
-    return this.isLocked && (await this.hasStoredSession());
-  }
+  // async isVaultLocked() {
+  //   if (Capacitor.getPlatform() == PLATFORM.ios) {
+  //     await this.hasStoredSession(); // Hack: for unexpected vault behavior with the pin not showing up
+  //   }
+  //   return this.isLocked && (await this.hasStoredSession());
+  // }
 
-  /// will attempt to use pin and/or biometric - will fall back to passcode if needed
-  /// will require pin set
-  async initAndUnlock(
-    session: VaultSessionData,
-    biometricEnabled: boolean,
-  ): Promise<void> {
-    this.temporaryPin = session.pin;
-    await super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly);
-    this.setIsLocked(false);
-  }
+  // /// will attempt to use pin and/or biometric - will fall back to passcode if needed
+  // /// will require pin set
+  // async initAndUnlock(
+  //   session: VaultSessionData,
+  //   biometricEnabled: boolean,
+  // ): Promise<void> {
+  //   this.temporaryPin = session.pin;
+  //   await super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly);
+  //   this.setIsLocked(false);
+  // }
 
-  // called when biometric is setup.
-  /// unlock the vault to make data accessible with identity controlled method
-  async unlockVault(): Promise<any> {
-    return await super.unlock(AuthMode.BiometricAndPasscode);
-  }
+  // // called when biometric is setup.
+  // /// unlock the vault to make data accessible with identity controlled method
+  // async unlockVault(): Promise<any> {
+  //   return super.unlock();
+  // }
 
-  /// unlock the vault to make data accessible with pin
-  async unlockVaultPin(): Promise<void> {
-    return super.unlock(AuthMode.PasscodeOnly);
-  }
-
-
-  /// save data to vault
-  setVaultData(data: VaultSessionData): Observable<void> {
-    return from(super.saveSession(data));
-  }
-
-  /// lock the vault to make data inaccessible
-  lockVault(): Observable<void> {
-    return from(super.lockOut());
-  }
-
-  /// restore session will attempt to login the user if a session exists
-  /// if no session exists, will return undefined
-  /// if vault locked, will return error code 1
-  getVaultData(): Observable<any> {
-    try {
-      return from(super.restoreSession());
-    } catch (error) {
-      throwError(error['code']);
-    }
-  }
-
-  /// will lock vault and clear all data
-  logoutVault(): Observable<void> {
-    return from(super.logout());
-  }
+  // /// unlock the vault to make data accessible with pin
+  // async unlockVaultPin(): Promise<void> {
+  //   return super.unlock(AuthMode.PasscodeOnly);
+  // }
 
 
-  /// used for pin set and validation
-  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> {
+  // /// save data to vault
+  // setVaultData(data: VaultSessionData): Observable<void> {
+  //   return from(super.saveSession(data));
+  // }
 
-    if (isPasscodeSetRequest) {
-      /// will happen on pin set
-      return Promise.resolve(this.temporaryPin);
-    } else {
-      /// will happen on pin login
-      const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
+  // /// lock the vault to make data inaccessible
+  // lockVault(): Observable<void> {
+  //   return from(super.lockOut());
+  // }
 
-      if (PinCloseStatus.LOGIN_SUCCESS !== role) {
-        throw {
-          code: role,
-          message: data,
-        };
-      }
-      return Promise.resolve(data);
-    }
-  }
+  // /// restore session will attempt to login the user if a session exists
+  // /// if no session exists, will return undefined
+  // /// if vault locked, will return error code 1
+  // getVaultData(): Observable<any> {
+  //   try {
+  //     return from(super.restoreSession());
+  //   } catch (error) {
+  //     throwError(error['code']);
+  //   }
+  // }
 
-
-  async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
-    let componentProps = { pinAction, ...pinModalProps };
-    const pinModal = await this.modalController.create({
-      backdropDismiss: false,
-      component: PinPage,
-      componentProps,
-    });
-    await pinModal.present();
-    return await pinModal.onDidDismiss();
-  }
-
-  async retrieveVaultPin(): Promise<any> {
-    return await firstValueFrom(this.getVaultData());
-  }
-
-  /// used to determine storage method
-  /// uses capacitor secure storage for mobile
-  /// uses our custom method for web
-  getPlugin(): IonicNativeAuthPlugin {
-    if (this.plt.is('capacitor')) {
-      return super.getPlugin();
-    }
-    /// we do not want to do this on web.
-    return this.browserAuthPlugin;
-  }
+  // /// will lock vault and clear all data
+  // logoutVault(): Observable<void> {
+  //   return from(super.logout());
+  // }
 
 
-  onConfigChange(config: VaultConfig): void {
-    if (!this.config.isPasscodeSetupNeeded) {
-      this.temporaryPin = undefined;
-    }
-  }
+  // /// used for pin set and validation
+  // async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> {
+
+  //   if (isPasscodeSetRequest) {
+  //     /// will happen on pin set
+  //     return Promise.resolve(this.temporaryPin);
+  //   } else {
+  //     /// will happen on pin login
+  //     const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
+
+  //     if (PinCloseStatus.LOGIN_SUCCESS !== role) {
+  //       throw {
+  //         code: role,
+  //         message: data,
+  //       };
+  //     }
+  //     return Promise.resolve(data);
+  //   }
+  // }
 
 
-  onVaultUnlocked(config: VaultConfig): void {
-    this.setIsLocked(false);
-  }
+  // async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
+  //   let componentProps = { pinAction, ...pinModalProps };
+  //   const pinModal = await this.modalController.create({
+  //     backdropDismiss: false,
+  //     component: PinPage,
+  //     componentProps,
+  //   });
+  //   await pinModal.present();
+  //   return await pinModal.onDidDismiss();
+  // }
 
-  onVaultLocked(event: LockEvent): void {
-    this.setIsLocked();
-  }
+  // async retrieveVaultPin(): Promise<any> {
+  //   return await firstValueFrom(this.getVaultData());
+  // }
 
-  setIsLocked(lock: boolean = true) {
-    this.isLocked = lock;
-  }
+  // /// used to determine storage method
+  // /// uses capacitor secure storage for mobile
+  // /// uses our custom method for web
+  // getPlugin(): IonicNativeAuthPlugin {
+  //   if (this.plt.is('capacitor')) {
+  //     return super.getPlugin();
+  //   }
+  //   /// we do not want to do this on web.
+  //   return this.browserAuthPlugin;
+  // }
 
-  getIsLocked() {
-    return this.isLocked;
-  }
+
+  // onConfigChange(config: VaultConfig): void {
+  //   if (!this.config.isPasscodeSetupNeeded) {
+  //     this.temporaryPin = undefined;
+  //   }
+  // }
+
+
+  // onVaultUnlocked(config: VaultConfig): void {
+  //   this.setIsLocked(false);
+  // }
+
+  // onVaultLocked(event: LockEvent): void {
+  //   this.setIsLocked();
+  // }
+
+  // setIsLocked(lock: boolean = true) {
+  //   this.isLocked = lock;
+  // }
+
+  // getIsLocked() {
+  //   return this.isLocked;
+  // }
 }

@@ -70,6 +70,6 @@ export class ConnectionService {
 
 
   isConnectionIssues({ message, status }): boolean {
-    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || (status == NO_INTERNET_STATUS_CODE);
+    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || status !== null && (Number(status) === NO_INTERNET_STATUS_CODE);
   }
 }

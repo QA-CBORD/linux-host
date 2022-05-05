@@ -26,6 +26,7 @@ export class ScanCardComponent implements OnInit {
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
   isMediaSettingExists$: Observable<boolean>;
+  userFullName$: Observable<string>;
   userPhoto: string;
   userId: string;
   institutionColor: string;
@@ -41,6 +42,7 @@ export class ScanCardComponent implements OnInit {
 
   ngOnInit() {
     console.log("ScanCardComponent: ", )
+    this.setUserFullName$();
     this.isMediaSettingExists$ = this.barcodeFacadeService
       .getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE)
       .pipe(map(({ value }) => !!value && !!value.length));
@@ -53,13 +55,17 @@ export class ScanCardComponent implements OnInit {
     this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => (d.length ? d : 'None')));
   }
 
-  get userFullName$(): Observable<string> {
-    return this.userFacadeService.getUserInfo().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
+  setUserFullName$() {
+    console.log("userFullName$()  userFullName$()")
+    this.userFullName$ = this.getUserInfo().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
+  }
+
+  private getUserInfo(){
+    return this.userFacadeService.getUserInfo();
   }
 
   private setUserId() {
-    this.userFacadeService
-      .getUserInfo()
+    this.getUserInfo()
       .pipe(take(1))
       .subscribe(({ id }) => (this.userId = id));
   }
@@ -77,14 +83,14 @@ export class ScanCardComponent implements OnInit {
   }
 
   private setInstitution() {
-    this.institution$ = this.userFacadeService.getUserInfo().pipe(
+    this.institution$ = this.getUserInfo().pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionFacadeService.getInstitutionInfo$(institutionId)),
       take(1)
     );
   }
 
   private setInstitutionPhoto() {
-    this.institutionPhoto$ = this.userFacadeService.getUserInfo().pipe(
+    this.institutionPhoto$ = this.getUserInfo().pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionFacadeService.getInstitutionPhoto$(institutionId)),
       skipWhile(d => !d || d === null),
       map(({ data, mimeType }: InstitutionPhotoInfo) => {

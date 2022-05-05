@@ -47,7 +47,6 @@ export class SessionFacadeService {
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly ngZone: NgZone,
     private readonly router: Router,
     private readonly connectivityService: ConnectivityService
   ) {
@@ -60,7 +59,6 @@ export class SessionFacadeService {
     App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
         this.onActiveState();
-        await this.appResumeLogic();
       } else {
         if (!this.identityFacadeService.getIsLocked()) {
           this.closeTopControllers();
@@ -88,27 +86,19 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
+    console.log("appResumeLogic called..")
     if (this.navigatedFromPlugin) {
       this.navigatedFromPlugin = false;
       return;
     }
-    if (this.navigatedFromGpay || this.identityFacadeService.userIsAuthenticating()) {
+
+    if (this.navigatedFromGpay) {
       return;
     }
     const appLocked = await this.isVaultLocked();
     const currentRouteIsStartupPage = this.router.url.includes("startup");
-    if (currentRouteIsStartupPage && appLocked) {
-      this.doLoginChecks();
-    } else if (appLocked) {
-      this.ngZone.run(async () => {
-        await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
-          .then(navigated => {
-            if (!navigated) {
-              this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true });
-            }
-          });
-      });
-    }
+
+    console.log("appResumeLogic called..: ", appLocked, currentRouteIsStartupPage)
   }
 
   private async onActiveState() {
@@ -168,6 +158,8 @@ export class SessionFacadeService {
 
   async handleLoginState(state: LoginState): Promise<void> {
     const routeConfig = { replaceUrl: true };
+
+    console.log("handleLoginState: ", state);
     switch (state) {
      
       case LoginState.SELECT_INSTITUTION:
@@ -213,8 +205,7 @@ export class SessionFacadeService {
 
   private async loginUser(useBiometric: boolean) {
     this.loadingService.closeSpinner();
-    await this.identityFacadeService
-      .loginUser(useBiometric);
+    await this.identityFacadeService.loginUser(useBiometric);
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
@@ -274,7 +265,7 @@ export class SessionFacadeService {
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
       const vaultLocked: boolean = await this.identityFacadeService.isVaultLocked();
-      const vaultLoginSet: boolean = await this.identityFacadeService.storedSession();
+      const vaultLoginSet: boolean = await this.identityFacadeService.hasStoredSession();
 
       /// pin not set but have logged in before, use normal login
       if (!vaultLoginSet) {

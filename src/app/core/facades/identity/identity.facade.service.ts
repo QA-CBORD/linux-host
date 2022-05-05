@@ -19,10 +19,9 @@ import { AuthFacadeService } from '../auth/auth.facade.service';
 import { ConnectivityService } from '@shared/services/connectivity.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
-import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
+import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
-import { ToastController } from '@ionic/angular';
+import { VaultService } from '@core/service/identity/vault.identity.service';
 
 export enum LoginState {
   DONE,
@@ -44,12 +43,11 @@ export class IdentityFacadeService extends ServiceStateFacade {
   private ttl: number = 600000; // 10min
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
-  private isAuthenticating: boolean = false;
 
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly identityService: IdentityService,
+    private readonly identityService: VaultService,
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly contentStringFacade: ContentStringsFacadeService,
@@ -60,6 +58,27 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly connectionService: ConnectionService
   ) {
     super();
+    window['identityFacade'] = this;
+    this.vaultEventSubscription();
+  }
+
+
+
+  vaultEventSubscription() {
+    this.identityService.vaultAuthEventObs.subscribe(({ success, biometricUsed, error }) => {
+      if (success) {
+        if (biometricUsed) {
+          this.handleBiometricUnlockSuccess();
+        } else {
+          this.handlePinUnlockSuccess();
+        }
+      } else {
+        console.log("big ass error: ", error);
+        if (!this.connectionService.isConnectionIssues({ message: error?.message, status: error?.code })) {
+          this.logoutUser();
+        }
+      }
+    });
   }
 
   async pinLoginSetup(
@@ -94,56 +113,41 @@ export class IdentityFacadeService extends ServiceStateFacade {
     if (navigateToDashboard) {
       this.navigateToDashboard();
     }
-    return this.identityService.initAndUnlock(data, biometricEnabled);
+    return await this.identityService.login(data, biometricEnabled);
   }
 
-  async handlePinUnlockSuccess(data) {
+  async handlePinUnlockSuccess() {
+    console.log("handlePinUnlockSuccess: ")
     this.navigateToDashboard();
   }
 
-  async handleBiometricUnlockSuccess(data) {
+  async handleBiometricUnlockSuccess() {
+    console.log("handleBiometricUnlockSuccess: ");
     this.authenticateUserPin();
   }
 
 
   async loginUser(useBiometric: boolean) {
-    this.isAuthenticating = true;
-    if (useBiometric) {
-      this.unlockVaultBiometrics().finally(() => this.isAuthenticating = false);
-    } else {
-      this.unlockVaultPin().finally(() => this.isAuthenticating = false);
-    }
+    this.identityService.unlockVault(useBiometric);
   }
-
-
-  async handleBiometricUnlockError({ message, code }) {
-    // user has another chance of authenticating with PIN if they fail biometrics
-    if (code == PinCloseStatus.MAX_FAILURE) {
-      return this.logoutUser();
-    } else if (code == VaultErrorCodes.TooManyFailedAttempts || code == VaultErrorCodes.UserCanceledInteraction) {
-      return this.unlockVaultPin();
-    }
-  }
-
 
   private async authenticateUserPin() {
-    let userPin: string;
+    let pin: string;
 
     try {
-      const vaultSession = await this.identityService.retrieveVaultPin();
-      userPin = vaultSession.pin;
+      pin = await this.identityService.retrieveVaultPin();
     } catch (error) {
       return await this.logoutUser();
     }
 
     try {
-      await this.loadingService.showSpinner();
-      await firstValueFrom(this.authFacadeService.authenticatePin$(userPin));
-      await this.loadingService.showSpinner();
+      this.loadingService.showSpinner({ duration: 50000 });
+      await firstValueFrom(this.authFacadeService.authenticatePin$(pin))
     } catch (error) {
       await this.loadingService.closeSpinner();
       return await this.onAuthenticateUserPinFailed(error);
     }
+    await this.loadingService.closeSpinner();
     return await this.navigateToDashboard();
   }
 
@@ -157,10 +161,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
     }
     return this.handleConnectionErrors({
       onRetry: async () => {
-        const { pin: savedPin } = await this.identityService.retrieveVaultPin();
+        const pin = await this.identityService.retrieveVaultPin();
         try {
           await this.loadingService.showSpinner();
-          await firstValueFrom(this.authFacadeService.authenticatePin$(savedPin));
+          await firstValueFrom(this.authFacadeService.authenticatePin$(pin));
           await this.loadingService.closeSpinner();
           return await this.navigateToDashboard();
         } catch (error) {
@@ -199,13 +203,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
     });
   }
 
-
-  userIsAuthenticating(): boolean {
-    return this.isAuthenticating;
-  }
-
-
   async handlePinUnlockError({ message, code }) {
+    console.log("handlePinUnlockError: ", message, " Code :", code)
     if (!this.connectionService.isConnectionIssues({ message, status: code })) {
       return this.logoutUser();
     }
@@ -220,7 +219,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this._pinEnabledUserPreference = true;
     this._biometricsEnabledUserPreference = true;
     this.resetAll();
-    return this.identityService.logoutUser();
+    return this.identityService.logout();
   }
 
 
@@ -254,18 +253,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async areBiometricsAvailable(): Promise<boolean> {
-    return this.identityService
-      .areBiometricsAvailable()
-      .pipe(take(1))
-      .toPromise();
+    return this.identityService.areBiometricsAvailable();
   }
 
 
   async getAvailableBiometricHardware(): Promise<string[]> {
-    return this.identityService
-      .getAvailableBiometricHardware()
-      .pipe(take(1))
-      .toPromise();
+    return this.identityService.getAvailableBiometricHardware();
   }
 
   setBiometricsEnabled(isBiometricsEnabled: boolean): Promise<void> {
@@ -302,7 +295,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.storageStateService.updateStateEntity(this.biometricsEnabledUserPreference, value, { highPriorityKey: true });
   }
 
-  storedSession(): Promise<boolean> {
+  hasStoredSession(): Promise<boolean> {
     return this.identityService.hasStoredSession();
   }
 
@@ -311,26 +304,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   setIsLocked() {
-    this.identityService.setIsLocked();
+    this.identityService.lockVault();
   }
 
   getIsLocked() {
     return this.identityService.getIsLocked();
   }
-
-  private async unlockVaultBiometrics() {
-    return this.identityService.unlockVault()
-      .then((v) => this.handleBiometricUnlockSuccess(v))
-      .catch((error) => this.handleBiometricUnlockError(error))
-  }
-
-  private async unlockVaultPin() {
-    return this.identityService.unlockVaultPin()
-      .then((v) => this.handlePinUnlockSuccess(v))
-      .catch((error) => this.handlePinUnlockError(error));
-  }
-
-
 
   private async resetAll(): Promise<void> {
     firstValueFrom(this.userFacadeService.logoutAndRemoveUserNotification());

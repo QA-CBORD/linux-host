@@ -33,6 +33,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
   ) { }
 
   resolve(): Observable<SettingInfoList> {
+    console.log("DASHBOARD RESOLVING....YEAHHHs")
     this.prominentDisclosureService.openProminentDisclosure();
     /// get fresh data on dashboard load
     this.loadingService.showSpinner();

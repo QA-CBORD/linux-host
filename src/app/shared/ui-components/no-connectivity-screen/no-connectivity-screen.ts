@@ -150,7 +150,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
 
   async closeSelf() {
-    this.modalController.dismiss();
+    this.modalController.dismiss().catch(()=>{});
   }
 
   async setConnectionErrorType(): Promise<void> {
