@@ -22,6 +22,7 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
 import { VaultService } from '@core/service/identity/vault.identity.service';
+import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 
 export enum LoginState {
   DONE,
@@ -41,8 +42,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   private ttl: number = 600000; // 10min
-  private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
-  private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
+
 
   constructor(
     private readonly storageStateService: StorageStateService,
@@ -55,7 +55,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly loadingService: LoadingService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly connectivityService: ConnectivityService,
-    private readonly connectionService: ConnectionService
+    private readonly connectionService: ConnectionService,
+    private readonly userPreferenceService: UserPreferenceService
   ) {
     super();
     window['identityFacade'] = this;
@@ -268,31 +269,19 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   get cachedPinEnabledUserPreference$(): Promise<boolean> {
-    return this.storageStateService
-      .getStateEntityByKey$<string>(this.pinEnabledUserPreference)
-      .pipe(
-        map(data => (data ? Boolean(data.value) : true)),
-        take(1)
-      )
-      .toPromise();
+    return this.userPreferenceService.cachedPinEnabledUserPreference();
   }
 
   get cachedBiometricsEnabledUserPreference$(): Promise<boolean> {
-    return this.storageStateService
-      .getStateEntityByKey$<string>(this.biometricsEnabledUserPreference)
-      .pipe(
-        map(data => (data ? Boolean(data.value) : true)),
-        take(1)
-      )
-      .toPromise();
+    return this.userPreferenceService.cachedBiometricsEnabledUserPreference();
   }
 
   set _pinEnabledUserPreference(value: boolean) {
-    this.storageStateService.updateStateEntity(this.pinEnabledUserPreference, value, { highPriorityKey: true });
+    this.userPreferenceService.setPinEnabledUserPreference(value);
   }
 
   set _biometricsEnabledUserPreference(value: boolean) {
-    this.storageStateService.updateStateEntity(this.biometricsEnabledUserPreference, value, { highPriorityKey: true });
+    this.userPreferenceService.setBiometricsEnabledUserPreference(value);
   }
 
   hasStoredSession(): Promise<boolean> {

@@ -205,7 +205,7 @@ export class SessionFacadeService {
 
   private async loginUser(useBiometric: boolean) {
     this.loadingService.closeSpinner();
-    await this.identityFacadeService.loginUser(useBiometric);
+    this.identityFacadeService.loginUser(useBiometric);
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {

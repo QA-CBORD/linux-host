@@ -1,9 +1,12 @@
 import { Inject, Injectable, Injector, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { BrowserVault, Device, DeviceSecurityType, IdentityVaultConfig, Vault, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
+import { firstValueFrom } from '@shared/utils';
 import { Subject } from 'rxjs';
 import { ROLES } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
@@ -31,9 +34,11 @@ export class VaultService {
     private vault: Vault | BrowserVault;
     public vaultAuthEventObs: Subject<{ success: boolean, biometricUsed: boolean, error?: any }> = new Subject();
 
+
     constructor(
         private ngZone: NgZone,
         @Inject(Injector) private injector: Injector,
+        private readonly userPreferenceService: UserPreferenceService,
         private router: Router) {
         this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
         window['VaultService'] = this;
@@ -70,6 +75,12 @@ export class VaultService {
             });
         });
 
+        await this.migrateIfLegacyVault();
+    }
+
+
+    private async migrateIfLegacyVault(): Promise<boolean> {
+
         try {
             const migrator = new VaultMigrator({
                 // old V4 config
@@ -83,18 +94,23 @@ export class VaultService {
 
             })
             const oldData = await migrator.exportVault();
+            console.log("Device.isBiometricsEnabled(): ", await this.userPreferenceService.cachedBiometricsEnabledUserPreference());
             if (oldData) {
                 // Import data into new vault
                 console.log("VAULT oldData: ", oldData);
-                const { session: { pin } } = oldData;
-                await this.vault.importVault({ [key]: pin });
+                const { session } = oldData;
+                await this.vault.importVault({ [key]: session.pin });
                 // Remove all of the old data from the legacy vault
                 await migrator.clear();
+                this.login(session, await this.userPreferenceService.cachedBiometricsEnabledUserPreference());
+                return true;
             }
+            return false;
         } catch (err) {
             // Something went wrong...
-            console.log("MIGRATOR ERROR: ", err.message);
+            console.log("MIGRATOR ERROR: ", err);
         }
+        return false;
     }
 
     async restoreSession() {
@@ -108,29 +124,22 @@ export class VaultService {
         biometricEnabled: boolean,
     ): Promise<void> {
         console.log("initAndUnlock: ", session, biometricEnabled);
-        this.setUnlockMode(biometricEnabled);
-        this.vault.setCustomPasscode(session.pin || '');
+        this.setUnlockMode({ pin: session.pin, useBiometric: biometricEnabled });
         this.setPin(session.pin);
         this.setIsLocked(false);
     }
 
-
-
-
-    get TheDevice() {
-        return Device;
-    }
-
-    private async setUnlockMode(useBiometric: boolean) {
+    private async setUnlockMode(session: { useBiometric: boolean, pin?: string }) {
         let type = VaultType.CustomPasscode;
         let deviceSecurityType = DeviceSecurityType.None;
         this.state.biometricEnabled = false;
-        if (useBiometric) {
+        if (session.useBiometric) {
             type = VaultType.DeviceSecurity;
             deviceSecurityType = DeviceSecurityType.Biometrics;
             this.state.biometricEnabled = true;
+        } else if (session.pin) {
+            this.vault.setCustomPasscode(session.pin);
         }
-
         console.log("NEW CONFIG: ", type, " deviceSecurityType:", deviceSecurityType);
 
         await this.vault.updateConfig({
@@ -219,7 +228,7 @@ export class VaultService {
     }
 
     async setBiometricsEnabled(biometricEnabled: boolean): Promise<void> {
-        return this.setUnlockMode(biometricEnabled);
+        return this.setUnlockMode({ useBiometric: biometricEnabled });
     }
 
     async lockVault(): Promise<void> {
@@ -229,16 +238,14 @@ export class VaultService {
     async unlockVault(biometricEnabled: boolean) {
         this.state.biometricEnabled = biometricEnabled;
         return this.showSplashScreen().then(async () => {
-            setTimeout(async () => {
-                return await this.vault.unlock().catch(async (error) => {
-                    console.log("GOT ERROR 1: ", biometricEnabled, error)
-                    if (biometricEnabled) {
-                        this.retryPinUnlock();
-                    } else {
-                        this.vaultAuthEventObs.next({ success: false, error, biometricUsed: biometricEnabled })
-                    }
-                });
-            }, 10);
+            return await this.vault.unlock().catch(async (error) => {
+                console.log("GOT ERROR 1: ", biometricEnabled, error)
+                if (biometricEnabled) {
+                    this.retryPinUnlock();
+                } else {
+                    this.vaultAuthEventObs.next({ success: false, error, biometricUsed: biometricEnabled })
+                }
+            });
         });
     }
 
@@ -274,4 +281,5 @@ export class VaultService {
             }
         });
     }
+
 }

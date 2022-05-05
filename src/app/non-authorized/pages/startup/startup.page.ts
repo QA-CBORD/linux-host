@@ -16,7 +16,6 @@ export class StartupPage implements OnInit {
   constructor(
     private readonly elementRef: ElementRef,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly router: Router,
     private readonly location: Location,
     private readonly sessionFacadeService: SessionFacadeService
   ) { }
@@ -27,7 +26,6 @@ export class StartupPage implements OnInit {
   ionViewDidEnter() {
     const historyState = this.location.getState() as any;
     console.log("ROUTER HISTORY STATE: ", historyState);
-
     if (!historyState.skipLoginFlow) {
       this.checkLoginFlow();
     }
