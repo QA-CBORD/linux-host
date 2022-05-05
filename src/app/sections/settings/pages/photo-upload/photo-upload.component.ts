@@ -7,12 +7,13 @@ import { catchError, finalize, first, switchMap, take, tap } from 'rxjs/operator
 import { UserPhotoInfo } from '@core/model/user';
 import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-upload.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
-import { CameraDirection, CameraResultType, CameraSource, Camera, Photo } from '@capacitor/camera';
+import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
+import { CameraService } from '../services/camera.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -76,7 +77,8 @@ export class PhotoUploadComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly cd: ChangeDetectorRef,
-    private readonly photoCropModalService: PhotoCropModalService
+    private readonly photoCropModalService: PhotoCropModalService,
+    private readonly cameraService: CameraService
   ) {}
 
   ngOnInit() {
@@ -300,24 +302,36 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   /// handle request to take new photo
-  onGetPhoto(photoType: PhotoType, cameraSource: CameraSource) {
-    this.getPhoto(photoType, cameraSource)
+  async onGetPhoto(photoType: PhotoType, cameraSource: CameraSource) {
+    const uploadSettings = this.photoUploadService.photoUploadSettings;
+    from(
+      this.cameraService.getPhoto({
+        quality: 100,
+        correctOrientation: true,
+        preserveAspectRatio: true,
+        width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
+        height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
+        direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
+        resultType: CameraResultType.DataUrl,
+        source: cameraSource,
+        saveToGallery: false,
+      })
+    )
       .pipe(take(1))
       .subscribe(
         response => {
-          this.photoCropModalService
-            .show(response.dataUrl, photoType)
-            .then(dataUrl => {
-              const photoBase64 = dataUrl.split(',')[1];
-              this.sessionFacadeService.navigatedToPlugin = true;
-              this.photoUploadService.onNewPhoto(photoType, photoBase64);
-            })
-            .catch(error => {});
+          this.photoCropModalService.show(response.dataUrl, photoType).then(dataUrl => {
+            if (!dataUrl) return;
+            const photoBase64 = dataUrl.split(',')[1];
+            this.photoUploadService.onNewPhoto(photoType, photoBase64);
+          });
         },
-        error => {
-          this.presentToast('There was an issue with the picture. Please, try again.');
+        () => {
+          // There was an issue uploading the photo information'
         },
-        () => {}
+        () => {
+          this.sessionFacadeService.navigatedFromPlugin = true;
+        }
       );
   }
 
@@ -401,26 +415,6 @@ export class PhotoUploadComponent implements OnInit {
       catchError(error => {
         this.presentToast(toastErrorMessage);
         return of(false);
-      })
-    );
-  }
-
-  /// Camera plugin control
-  private getPhoto(photoType: PhotoType, cameraSource: CameraSource): Observable<Photo> {
-    const uploadSettings = this.photoUploadService.photoUploadSettings;
-    /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
-    this.sessionFacadeService.navigatedToPlugin = true;
-    return from(
-      Camera.getPhoto({
-        quality: 100,
-        correctOrientation: true,
-        preserveAspectRatio: true,
-        width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
-        height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
-        direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
-        resultType: CameraResultType.DataUrl,
-        source: cameraSource,
-        saveToGallery: false,
       })
     );
   }

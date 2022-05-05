@@ -17,7 +17,9 @@ export class StHeaderComponent implements OnInit {
   @Output() onSearchedValue = new EventEmitter<string>();
   @Input() isBackButtonShow: boolean = true;
   @Input() isDismissButtonShow: boolean;
+  @Input() isRemoveButtonShow: boolean;
   @Output() onDismiss = new EventEmitter<void>();
+  @Output() onRemove = new EventEmitter<void>();
 
   constructor() {}
 
@@ -33,5 +35,9 @@ export class StHeaderComponent implements OnInit {
 
   onDissmissClicked() {
     this.onDismiss.emit();
+  }
+
+  onRemoveClicked() {
+    this.onRemove.emit();
   }
 }

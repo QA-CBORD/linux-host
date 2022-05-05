@@ -3,6 +3,7 @@ export enum CONTENT_STRINGS_DOMAINS {
   get_web_gui = 'get_web_gui',
 }
 
+
 export enum CONTENT_STRINGS_CATEGORIES {
   mealDonation = 'meal_donation',
   ordering = 'ordering',
@@ -30,6 +31,7 @@ export enum CONTENT_STRINGS_CATEGORIES {
   locationDisclosure = 'location_disclosure_screen',
   scanAndGo = 'scan_and_go',
   lostCardScreen = 'lost_card_screen',
+  noConnectivity = 'noConnectivity',
 }
 
 export enum CONTENT_STRINGS_LOCALES {

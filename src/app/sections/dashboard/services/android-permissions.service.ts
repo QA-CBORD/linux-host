@@ -4,8 +4,9 @@ import { AndroidPermissionResponse, AndroidPermissions } from '@ionic-native/and
 @Injectable({
   providedIn: 'root',
 })
-export class LocationPermissionsService {
-  promptDismissed = false;
+
+export class AndroidPermissionsService {
+  permissionDismissed = false;
   constructor(private readonly androidPermissions: AndroidPermissions) {}
 
   async checkLocationPermission(): Promise<AndroidPermissionResponse> {
