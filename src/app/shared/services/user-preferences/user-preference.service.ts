@@ -26,7 +26,10 @@ export class UserPreferenceService {
     private async isEnabledByKey(key: string): Promise<boolean> {
         const data = await firstValueFrom(this.storageStateService.getStateEntityByKey$<string>(key));
         console.log("getStoredValues: ", data, "  key: ", key);
-        return data && Boolean(data.value) || true;
+         if (data) {
+            return Boolean(data.value)
+        } 
+        return true;
     }
 
     setPinEnabledUserPreference(value: boolean) {
