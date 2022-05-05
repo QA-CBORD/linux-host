@@ -1,21 +1,20 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { Platform } from '@ionic/angular';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
 import { EntryPage } from './entry.page';
-import { CoreProviders } from 'src/app/testing/core-providers';
-import { of } from 'rxjs';
+import { CoreProviders, routerMock } from 'src/app/testing/core-providers';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
+import { ROLES } from 'src/app/app.global';
 
 describe('EntryPage', () => {
   let component: EntryPage;
   let fixture: ComponentFixture<EntryPage>;
-  let platform: any;
-
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [EntryPage],
-        imports: [...CoreTestingModules],
+        imports: [...CoreTestingModules, AppRoutingModule],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
         providers: [...CoreProviders],
       }).compileComponents();
@@ -25,14 +24,15 @@ describe('EntryPage', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EntryPage);
     component = fixture.componentInstance;
-
     fixture.detectChanges();
-    platform = TestBed.inject(Platform);
   });
 
   it('should create', () => {
-    platform.pause.mockReturnValue(of(true));
-
     expect(component).toBeTruthy();
+  });
+
+  it('should navigate to institutions', () => {
+    component.redirectTo();
+    expect(routerMock.navigate).toHaveBeenCalledWith([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
   });
 });
