@@ -31,13 +31,14 @@ const appInitFactory = (vaultService: VaultService): (() => Promise<void>) => ()
     PinModule,
     SharedModule
   ],
-  providers: [{ provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network,
-  // {
-  //   provide: APP_INITIALIZER,
-  //   useFactory: appInitFactory,
-  //   deps: [VaultService],
-  //   multi: true,
-  // },
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitFactory,
+      deps: [VaultService],
+      multi: true,
+    },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network,
   ],
   bootstrap: [AppComponent],
 })

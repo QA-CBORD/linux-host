@@ -1,10 +1,10 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Inject, Injectable, Injector, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { BrowserVault, Device, DeviceSecurityType, IdentityVaultConfig, Vault, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
 import { ModalController, Platform } from '@ionic/angular';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ROLES } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 
@@ -18,8 +18,7 @@ interface VaultSessionData {
 const config: IdentityVaultConfig = {
     key: 'get.cbord.com',
     type: VaultType.SecureStorage,
-    lockAfterBackgrounded: 5000,
-    unlockVaultOnLoad: false,  
+    lockAfterBackgrounded: 5000
 };
 const key = 'sessionPin';
 
@@ -34,16 +33,19 @@ export class VaultService {
 
     constructor(
         private ngZone: NgZone,
-        private platform: Platform,
-        private modalController: ModalController,
+        @Inject(Injector) private injector: Injector,
         private router: Router) {
         this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
         window['VaultService'] = this;
-        this.init();
+    }
+
+    private get modalController(): ModalController {
+        return this.injector.get(ModalController);
     }
 
     async init() {
-        await this.platform.ready(); // This is required only for Cordova
+        //await this.platform.ready(); // This is required only for Cordova
+        await Device.setHideScreenOnBackground(false, false);
         this.vault.onPasscodeRequested(async (isPasscodeSetRequest) => this.onPasscodeRequested(isPasscodeSetRequest));
 
         this.vault.onError((error) => {
@@ -60,10 +62,10 @@ export class VaultService {
         this.vault.onLock(({ timeout }) => {
             console.log("ONLOCK Timeout: ", timeout);
             this.ngZone.run(() => {
+                this.state.pin = null;
+                this.setIsLocked(true);
                 if (timeout) {
                     this.unlockVault(this.state.biometricEnabled);
-                } else {
-                    this.setIsLocked(true);
                 }
             });
         });
@@ -84,7 +86,8 @@ export class VaultService {
             if (oldData) {
                 // Import data into new vault
                 console.log("VAULT oldData: ", oldData);
-                await this.vault.importVault(oldData);
+                const { session: { pin } } = oldData;
+                await this.vault.importVault({ [key]: pin });
                 // Remove all of the old data from the legacy vault
                 await migrator.clear();
             }
@@ -112,6 +115,11 @@ export class VaultService {
     }
 
 
+
+
+    get TheDevice() {
+        return Device;
+    }
 
     private async setUnlockMode(useBiometric: boolean) {
         let type = VaultType.CustomPasscode;
@@ -221,14 +229,16 @@ export class VaultService {
     async unlockVault(biometricEnabled: boolean) {
         this.state.biometricEnabled = biometricEnabled;
         return this.showSplashScreen().then(async () => {
-            return await this.vault.unlock().catch(async (error) => {
-                console.log("GOT ERROR 1: ", biometricEnabled, error)
-                if (biometricEnabled) {
-                    this.retryPinUnlock();
-                } else {
-                    this.vaultAuthEventObs.next({ success: false, error, biometricUsed: biometricEnabled })
-                }
-            });
+            setTimeout(async () => {
+                return await this.vault.unlock().catch(async (error) => {
+                    console.log("GOT ERROR 1: ", biometricEnabled, error)
+                    if (biometricEnabled) {
+                        this.retryPinUnlock();
+                    } else {
+                        this.vaultAuthEventObs.next({ success: false, error, biometricUsed: biometricEnabled })
+                    }
+                });
+            }, 10);
         });
     }
 
