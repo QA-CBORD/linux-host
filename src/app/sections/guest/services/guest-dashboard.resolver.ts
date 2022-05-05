@@ -17,7 +17,7 @@ export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
     private readonly userFacade: UserFacadeService,
     private readonly messageProxy: MessageProxy,
     private readonly prominentDisclosureService: ProminentDisclosureService,
-  ) {}
+  ) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserInfo> {
     this.prominentDisclosureService.openProminentDisclosure();
@@ -25,11 +25,11 @@ export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
     const user$ = this.userFacade.getUserData$();
     const dashboardSectionsObs = this.guestFacadeService.configureGuestDashboard().pipe(take(1));
     return zip(user$, dashboardSectionsObs).pipe(
+      take(1),
       map(([user, dashboardSections]) => {
         this.messageProxy.put(dashboardSections);
         return user;
       }),
-      take(1),
       finalize(() => this.loadingService.closeSpinner())
     );
   }

@@ -1,25 +1,13 @@
-<ion-header class="address-edit__header" mode="ios" no-border>
-  <ion-toolbar mode="ios" class="address-edit__header-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button
-        class="address-edit__header-back-btn"
-        color="dark"
-        [text]="'Back'"
-        [icon]="'ios-arrow-back'"
-        mode="ios"
-      >
-      </ion-back-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button class="address-edit__header-remove-btn" mode="ios" (click)="onRemove()">
-        Remove
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="address-edit__header-title">
-      Edit Address
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<st-header
+  [title]="contentStrings.titleEditAddresses | async"
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-arrow-back'"
+  [isToolbarShow]="true"
+  [isBackButtonShow]="true"
+  [isRemoveButtonShow]="true"
+  (onRemove)="onRemove()"
+  class="address-edit__header-back-btn"
+></st-header>
 
 <ion-content>
   <div class="address-edit__add-address-container">

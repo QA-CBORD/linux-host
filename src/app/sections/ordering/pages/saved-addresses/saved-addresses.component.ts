@@ -34,8 +34,7 @@ export class SavedAddressesComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly router: Router,
-    private readonly route: ActivatedRoute,
-
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -50,10 +49,6 @@ export class SavedAddressesComponent implements OnInit {
 
   changeAddNewAdddressState() {
     this.addNewAdddressState = !this.addNewAdddressState;
-  }
-
-  onPageDismissed(){
-    this.navigate(PATRON_NAVIGATION.settings);
   }
 
   async navigate(url: PATRON_NAVIGATION | string): Promise<void> {
@@ -180,5 +175,5 @@ export class SavedAddressesComponent implements OnInit {
   private async initRelativeRoute() {
     const routeData = await this.route.data.pipe(take(1)).toPromise();
     this.relativeRoute = routeData.relativeRoute;
-  }
+  } 
 }

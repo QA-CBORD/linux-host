@@ -18,7 +18,7 @@ export interface RawContentStringObject {
 
 export abstract class ContentStringModel {
   protected params?: any;
-  protected content: RawContentStringObject;
+  content: RawContentStringObject;
   constructor(config: ContentStringBuilderConfig, defaultContentStrings: RawContentStringObject) {
     this.doSetup(config, defaultContentStrings);
   }

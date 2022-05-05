@@ -45,11 +45,11 @@
         </div>
       </ion-col>
     </ion-row>
-    <ion-row class="card__student-container" *ngIf="!housingOnlyEnabled">
+    <ion-row class="card__student-container">
       <ion-col class="card__student-name-wrapper" [size]="(mobileCredentialFacade.isEnabled$ | async ) ? 6 : 'auto'">
         <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
       </ion-col>
-      <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async)" size="6">
+      <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async) && !housingOnlyEnabled" size="6">
         <div class="card__student-wallet">
           <img *ngIf="( mobileCredentialFacade.uiIconUrl$ | async ) as imageUrl"
             mode="ios"

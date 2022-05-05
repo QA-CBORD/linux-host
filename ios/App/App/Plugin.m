@@ -12,5 +12,6 @@ CAP_PLUGIN(Plugin, "IOSDevice",
             CAP_PLUGIN_METHOD(getAppleWalletInfo, CAPPluginReturnPromise);
             CAP_PLUGIN_METHOD(addToAppleWallet, CAPPluginReturnPromise);
             CAP_PLUGIN_METHOD(setEnvironment, CAPPluginReturnPromise);
+            CAP_PLUGIN_METHOD(checkIsConnectedToNetwork, CAPPluginReturnPromise);
            )
 

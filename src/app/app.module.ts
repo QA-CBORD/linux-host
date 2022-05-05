@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
 import { Network } from '@ionic-native/network/ngx';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,7 +26,8 @@ import { Network } from '@ionic-native/network/ngx';
     IonicModule.forRoot({ swipeBackEnabled: false }),
     IonicStorageModule.forRoot(),
     CommonModule,
-    PinModule
+    PinModule,
+    SharedModule
   ],
   providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}, InAppBrowser, Network],
   bootstrap: [AppComponent],

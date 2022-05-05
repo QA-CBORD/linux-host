@@ -4,24 +4,21 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { ROLES } from '../../../app.global';
 import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
-import { switchMap, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
-import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { Subject } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { NavigationService } from '@shared/services/navigation.service';
-import { APP_ROUTES } from '@sections/section.config';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
 import { Router } from '@angular/router';
-import { ToastService } from '@core/service/toast/toast.service';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
+import { firstValueFrom } from '@shared/utils';
+import { ConnectivityService } from '@shared/services/connectivity.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 enum AppStatus {
   BACKGROUND,
@@ -32,30 +29,26 @@ enum AppStatus {
 })
 export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
-  private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   private _deepLinkPath: string[];
-
-  navigatedFromGpay: boolean = false;
   onLogOutObservable$: Subject<any> = new Subject<any>();
+  navigatedFromPlugin: boolean = false;
+  navigatedFromGpay: boolean = false;
 
   constructor(
     private readonly platform: Platform,
-    private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly merchantFacadeService: MerchantFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService,
     private navCtrl: NavController,
-    private readonly toastService: ToastService,
     private readonly loadingService: LoadingService,
-    private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    private readonly router: Router,
+    private readonly connectivityService: ConnectivityService
   ) {
     this.appStateListeners();
   }
@@ -72,6 +65,7 @@ export class SessionFacadeService {
           this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
+        this.connectivityService.isOpened().then((opened) => opened && this.lockVault());
       }
     });
     App.addListener('appUrlOpen', data => {
@@ -93,21 +87,26 @@ export class SessionFacadeService {
   }
 
   private async appResumeLogic() {
-    if (this.navigatedToPlugin) {
-      this.navigateToNativePlugin = false;
+    if (this.navigatedFromPlugin) {
+      this.navigatedFromPlugin = false;
+      return;
+    }
+    if (this.navigatedFromGpay || this.identityFacadeService.userIsAuthenticating()) {
       return;
     }
 
-    if (this.navigatedFromGpay) {
-      return;
-    }
-
-    if ((await this.isVaultLocked()) && !this.identityFacadeService.pinEntryInProgress) {
+    const appLocked = await this.isVaultLocked();
+    const currentRouteIsStartupPage = this.router.url.includes("startup");
+    if (currentRouteIsStartupPage && appLocked) {
+      this.doLoginChecks();
+    } else if (appLocked) {
       this.ngZone.run(async () => {
-        await this.router
-          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
-          .then(navigated => {})
-          .catch(err => {});
+        await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
+          .then(navigated => {
+            if (!navigated) {
+              this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true });
+            }
+          });
       });
     }
   }
@@ -118,130 +117,103 @@ export class SessionFacadeService {
     this.appStatus = AppStatus.FOREGROUND;
   }
 
-  get navigatedToPlugin() {
-    return this.navigateToNativePlugin;
-  }
-
-  set navigatedToPlugin(value: boolean) {
-    this.navigateToNativePlugin = value;
-  }
   get deepLinkPath() {
     return this._deepLinkPath;
   }
   navigatedToLinkPath() {
     this._deepLinkPath = null;
   }
-  doLoginChecks() {
-    this.loadingService.showSpinner();
-    const routeConfig = { replaceUrl: true };
-    this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(
-        take(1),
-        switchMap(async sessionId => {
-          try {
-            return await this.determineFromBackgroundLoginState(sessionId);
-          } catch (message) {
-            const newSessionId = await this.authFacadeService.authenticateSystem$().toPromise();
-            try {
-              return await this.determineFromBackgroundLoginState(newSessionId);
-            } catch (message) {
-              // can't determine login state // will ask user to re-enter pin
-              if (/isPingEnabled/.test(message)) {
-                return LoginState.PIN_LOGIN;
-              }
-              throw new Error('An Unexpected error occurred');
-            }
-          }
-        })
-      )
-      .subscribe(
-        async state => {
-          await this.loadingService.closeSpinner();
-          switch (state) {
-            case LoginState.SELECT_INSTITUTION:
-              this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
-              break;
-            case LoginState.BIOMETRIC_LOGIN:
-              this.loginUser(true);
-              break;
-            case LoginState.BIOMETRIC_SET:
-              this.navigateToDashboard();
-              break;
-            case LoginState.PIN_LOGIN:
-              this.loginUser(false);
-              break;
-            case LoginState.PIN_SET:
-              this.identityFacadeService.pinLoginSetup(false);
-              break;
-            case LoginState.HOSTED:
-              this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
-              break;
-            case LoginState.EXTERNAL:
-              // check if institution has guest login enabled and user had been logged in as guest previously.  if yes redirect to login page instead.
-              const isGuestloginEnabled = await this.authFacadeService.isGuestUser().toPromise();
-              if (isGuestloginEnabled) {
-                this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
-              } else {
-                this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
-              }
-              break;
-            case LoginState.DONE:
-              this.navigateToDashboard();
-              break;
-            default:
-              this.logoutUser(true);
-          }
-        },
-        async ({ message }) => {
-          this.toastService.showToast({ message });
-          await this.loadingService.closeSpinner();
-          (async () => this.logoutUser(true))();
-        }
-      );
+
+
+  async determineAppLoginState(systemSessionId) {
+    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(() => LoginState.PIN_LOGIN);
+    await this.handleLoginState(appLoginState);
   }
 
-  private async navigate2Dashboard(): Promise<boolean> {
-    return this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+  async onScanCode(): Promise<void> {
+    return this.lockVault();
   }
-  private navigateToDashboard = () => {
-    this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+
+  async onRetry(): Promise<boolean> {
+    await this.loadingService.showSpinner();
+    let systemSesssionId;
+    try {
+      systemSesssionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
+    } catch ({ message }) {
+      return false;
+    }
+    this.determineAppLoginState(systemSesssionId);
+    return true;
+  }
+
+  async retrieveSystemSessionToken(): Promise<boolean> {
+    await this.loadingService.showSpinner();
+    let systemSesssionId;
+    try {
+      systemSesssionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
+    } catch ({ message }) {
+      this.connectivityService.handleConnectionError(this);
+      return false;
+    }
+    await this.connectivityService.closeIfOpened();
+    this.determineAppLoginState(systemSesssionId);
+    return true;
+  }
+
+
+  async doLoginChecks() {
+    await this.retrieveSystemSessionToken();
+  }
+
+
+  async handleLoginState(state: LoginState): Promise<void> {
+    const routeConfig = { replaceUrl: true };
+    switch (state) {
+      case LoginState.SELECT_INSTITUTION:
+        await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
+        break;
+      case LoginState.BIOMETRIC_LOGIN:
+        await this.loginUser(true);
+        break;
+      case LoginState.BIOMETRIC_SET:
+        await this.navigateToDashboard();
+        break;
+      case LoginState.PIN_LOGIN:
+        await this.loginUser(false);
+        break;
+      case LoginState.PIN_SET:
+        await this.identityFacadeService.pinLoginSetup(false);
+        break;
+      case LoginState.HOSTED:
+        await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
+        break;
+      case LoginState.EXTERNAL:
+        // check if institution has guest login enabled and user had been logged in as guest previously.  if yes redirect to login page instead.
+        const isGuestloginEnabled = await this.authFacadeService.isGuestUser().toPromise();
+        if (isGuestloginEnabled) {
+          await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
+        } else {
+          await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
+        }
+        break;
+      case LoginState.DONE:
+        await this.navigateToDashboard();
+        break;
+      default:
+        await this.logoutUser(true);
+    }
+  }
+
+
+  private navigateToDashboard = async () => {
+    return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true })
+      .catch(() => false);
   };
 
   private async loginUser(useBiometric: boolean) {
-    // await this.identityFacadeService.loginUser(useBiometric).toPromise();
-
-    this.identityFacadeService
-      .loginUser(useBiometric)
-      .pipe(take(1))
-      .subscribe(
-        () => {
-          this.identityFacadeService.canRetryUnlock = true;
-          this.navigateToDashboard();
-        },
-        async ({ code }) => {
-          let logoutUser = true;
-          if (
-            (VaultErrorCodes.TooManyFailedAttempts == code &&
-              useBiometric &&
-              this.identityFacadeService.canRetryUnlock) ||
-            VaultErrorCodes.Unknown == code ||
-            VaultErrorCodes.BiometricsNotEnabled == code
-          ) {
-            logoutUser = !(await this.identityFacadeService
-              .onPasscodeRequest(false)
-              .then(async data => data && (await this.navigate2Dashboard()))
-              .catch(err => {})
-              .finally(() => (this.identityFacadeService.canRetryUnlock = true)));
-          }
-
-          if (logoutUser) {
-            this.identityFacadeService.canRetryUnlock = true;
-            this.loadingService.closeSpinner();
-            this.logoutUser(true);
-          }
-        }
-      );
+    this.loadingService.closeSpinner();
+    await this.identityFacadeService
+      .loginUser(useBiometric);
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
@@ -334,18 +306,10 @@ export class SessionFacadeService {
 
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
-      const didNavigate = await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
+      await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
       this.onLogOutObservable$.next();
     }
-    this.resetAll();
-  }
-
-  private async resetAll(): Promise<void> {
-    await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
-    await this.identityFacadeService.logoutUser();
-    this.merchantFacadeService.clearState();
-    this.settingsFacadeService.cleanCache();
-    this.contentStringFacade.clearState();
+    this.identityFacadeService.logoutUser();
   }
 
   async getIsWeb(): Promise<boolean> {
