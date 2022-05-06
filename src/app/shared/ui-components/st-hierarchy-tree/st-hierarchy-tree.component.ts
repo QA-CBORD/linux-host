@@ -6,6 +6,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 import { Subscription } from 'rxjs';
 import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'st-hierarchy-tree',
@@ -13,19 +14,26 @@ import { ContractListStateService } from '@sections/housing/contract-list/contra
   styleUrls: ['./st-hierarchy-tree.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class StHierarcheTreeComponent implements OnDestroy  {
+export class StHierarcheTreeComponent implements OnDestroy, OnInit  {
   public selectedItem: NamedIdentity;
   private _subscription: Subscription = new Subscription();
   @Input() public lookups: LookUpItem[];
   @Input() public allowParent: boolean;
   @Input() public isDisable: boolean;
   @Input() public label: string;
+  @Input() parentGroup: FormGroup;
+  valueTitle: any;
   constructor(
     public modalCtrl: ModalController,
     public _workOrderStateService: WorkOrderStateService,
     public _contractListStateService: ContractListStateService
     ) {
     this.selectedItem = null;
+  }
+  async ngOnInit() {
+    await this._workOrderStateService.getSelectedFacility$().subscribe(res => {
+      this.valueTitle = res
+    });
   }
 
   ngOnDestroy(): void {

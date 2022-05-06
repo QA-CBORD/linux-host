@@ -1,16 +1,12 @@
-<div class="input__wrapper input-select-facility">
-  <ion-textarea
-    class="input__control hierarchy-tree-text-area"
-    #input
-    type="text"
-    [ngClass]="{ 'input__control--error': false }"
-    [disabled]="isDisable"
-    [attr.value]="(this._workOrderStateService.getSelectedFacility$() |async)?.name"
-    [attr.aria-required]="true"
-    (click)="open()"
-    placeholder="Location"
-  ></ion-textarea>
-  <label class="input__placeholder" >{{ label }}</label>
-  <ion-icon class="facility-btn-ion-icon" item-right name="arrow-forward"></ion-icon>
-</div>
-
+<st-textarea-floating-label
+    [control]=""
+    [isError]=""
+    [data]="(this._workOrderStateService.getSelectedFacility$() |async)?.name"
+    class="question__item question__control"
+    [idd]=""
+    [label]="label"
+    title="Type your message here..."
+    rows="3"
+  >
+</st-textarea-floating-label>
+{{(this._workOrderStateService.getSelectedFacility$() |async)?.name}}
