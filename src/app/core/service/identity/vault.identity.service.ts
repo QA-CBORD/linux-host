@@ -18,7 +18,7 @@ export interface SessionData {
 
 const config: IdentityVaultConfig = {
     key: 'get.cbord.com',
-    type: VaultType.DeviceSecurity,
+    type: VaultType.CustomPasscode,
     lockAfterBackgrounded: 5000
 };
 const key = 'sessionPin';
@@ -116,9 +116,7 @@ export class VaultService {
         return value;
     }
 
-    async login(
-        session: SessionData,
-    ): Promise<void> {
+    async login(session: SessionData): Promise<void> {
         console.log("initAndUnlock: ", session);
         this.setUnlockMode(session);
         this.setPin(session.pin);
@@ -129,7 +127,6 @@ export class VaultService {
         let type = VaultType.CustomPasscode;
         let deviceSecurityType = DeviceSecurityType.None;
         this.state.useBiometric = session.useBiometric;
-
         if (session.useBiometric) {
             type = VaultType.DeviceSecurity;
             deviceSecurityType = DeviceSecurityType.Biometrics;
@@ -140,7 +137,6 @@ export class VaultService {
             type,
             deviceSecurityType
         });
-        this.vault.setCustomPasscode(session.pin || await this.getPin());
     }
 
     async isVaultLocked(): Promise<boolean> {
@@ -188,8 +184,10 @@ export class VaultService {
         return await this.getPin();
     }
 
-    async setPin(sessionPin: string) {
-        console.log("Setting the sessionPin to: ", sessionPin)
+    async setPin(pin: string) {
+        const sessionPin = pin || await this.getPin();
+        console.log("Setting the sessionPin to: ", sessionPin);
+        await this.vault.setCustomPasscode(sessionPin);
         this.state.pin = sessionPin;
         this.vault.setValue(key, sessionPin);
     }
@@ -222,7 +220,7 @@ export class VaultService {
     }
 
     async setBiometricsEnabled(biometricEnabled: boolean): Promise<void> {
-        return this.setUnlockMode({ useBiometric: biometricEnabled });
+        return this.login({ useBiometric: biometricEnabled });
     }
 
     async lockVault(): Promise<void> {
