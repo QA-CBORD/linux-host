@@ -2,6 +2,7 @@ import { ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { CameraSource } from '@capacitor/camera';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -46,9 +47,9 @@ describe('PhotoUploadComponent', () => {
     closeSpinner: jest.fn(),
   };
   let actionSheetCtrl = {
-    // create: jest.fn().mockResolvedValue(({ present: jest.fn().mockResolvedValue(null), onWillDismiss: jest.fn().mockResolvedValue( { role: 'take-photo'}) })),
     create: jest.fn().mockResolvedValue(true),
   };
+
   let cd = {
     detectChanges: jest.fn(),
   };
@@ -61,10 +62,15 @@ describe('PhotoUploadComponent', () => {
     getPhoto: jest.fn().mockResolvedValue(true),
   };
 
-  let controller = {
-    present: jest.fn(async() => true),
-    onWillDismiss: jest.fn(async() => ({ role: 'take-photo'}))
-  }
+  let takePhotoController = {
+    present: jest.fn(async () => true),
+    onWillDismiss: jest.fn(async () => ({ role: 'take-photo' })),
+  };
+
+  let selectPhotoController = {
+    present: jest.fn(async () => true),
+    onWillDismiss: jest.fn(async () => ({ role: 'select-photo' })),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -95,41 +101,40 @@ describe('PhotoUploadComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // it('should call camera service ', () => {
-  //   let spy = jest.spyOn(cameraService, 'getPhoto');
-  //   component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Camera);
-  //   component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Photos);
-  //   component.onGetPhoto(PhotoType.GOVT_ID_BACK, CameraSource.Camera);
-  //   component.onGetPhoto(PhotoType.GOVT_ID_BACK, CameraSource.Photos);
-  //   component.onGetPhoto(PhotoType.PROFILE, CameraSource.Camera);
-  //   component.onGetPhoto(PhotoType.PROFILE, CameraSource.Photos);
-  //   component.onGetPhoto(PhotoType.PROFILE_PENDING, CameraSource.Camera);
-  //   component.onGetPhoto(PhotoType.PROFILE_PENDING, CameraSource.Photos);
-  //   expect(spy).toHaveBeenCalledTimes(8);
-  // });
+  it('should call camera service ', () => {
+    const spy = jest.spyOn(cameraService, 'getPhoto');
+    component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Camera);
+    component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Photos);
+    component.onGetPhoto(PhotoType.GOVT_ID_BACK, CameraSource.Camera);
+    component.onGetPhoto(PhotoType.GOVT_ID_BACK, CameraSource.Photos);
+    component.onGetPhoto(PhotoType.PROFILE, CameraSource.Camera);
+    component.onGetPhoto(PhotoType.PROFILE, CameraSource.Photos);
+    component.onGetPhoto(PhotoType.PROFILE_PENDING, CameraSource.Camera);
+    component.onGetPhoto(PhotoType.PROFILE_PENDING, CameraSource.Photos);
+    expect(spy).toHaveBeenCalledTimes(8);
+  });
 
-  it('should call camera service', async () => {
-    //jest.resetAllMocks();
-     const createdIphone = await actionSheetCtrl.create();;
-     console.log(createdIphone);
-    //  const c = await createdIphone.present();
-    //  const d = await createdIphone.onWillDismiss();
-    // const created = await createdIphone.present();
-    // const dismiss = await createdIphone.onWillDismiss();
-    let spy =  jest
-      .spyOn(actionSheetCtrl,'create')
-      .mockResolvedValue(controller);
-    let spy2 = jest.spyOn(component, 'onGetPhoto');
-    try {
-      await component.presentPhotoTypeSelection(PhotoType.GOVT_ID_FRONT);
-    } catch (error) {
-      console.log(error);
-    }
+  it('should call onGetPhoto on take-photo role', async () => {
+    const spy = jest.spyOn(actionSheetCtrl, 'create').mockResolvedValue(takePhotoController);
+    const spy2 = jest.spyOn(component, 'onGetPhoto');
+    await presentPhotoTypeSelections(component);
+    expect(spy).toHaveBeenCalledTimes(4);
+    expect(spy2).toHaveBeenCalledTimes(4);
+  });
 
-    // component.presentPhotoTypeSelection(PhotoType.GOVT_ID_BACK);
-    // component.presentPhotoTypeSelection(PhotoType.PROFILE);
-    // component.presentPhotoTypeSelection(PhotoType.PROFILE_PENDING);
-    //expect(spy).toBeCalledTimes(1);
-    expect(spy2).toHaveBeenCalledTimes(1);
+  it('should call onGetPhoto on select-photo role', async () => {
+    jest.clearAllMocks();
+    const spy = jest.spyOn(actionSheetCtrl, 'create').mockResolvedValue(selectPhotoController);
+    const spy2 = jest.spyOn(component, 'onGetPhoto');
+    await presentPhotoTypeSelections(component);
+    expect(spy).toHaveBeenCalledTimes(4);
+    expect(spy2).toHaveBeenCalledTimes(4);
   });
 });
+
+async function presentPhotoTypeSelections(component: PhotoUploadComponent) {
+  await component.presentPhotoTypeSelection(PhotoType.GOVT_ID_FRONT);
+  await component.presentPhotoTypeSelection(PhotoType.GOVT_ID_BACK);
+  await component.presentPhotoTypeSelection(PhotoType.PROFILE);
+  await component.presentPhotoTypeSelection(PhotoType.PROFILE_PENDING);
+}
