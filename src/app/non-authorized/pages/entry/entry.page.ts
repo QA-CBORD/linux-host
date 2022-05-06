@@ -55,7 +55,7 @@ export class EntryPage implements OnInit {
     );
   }
 
-  async redirectTo() {
+  redirectTo() {
     this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
   }
 
