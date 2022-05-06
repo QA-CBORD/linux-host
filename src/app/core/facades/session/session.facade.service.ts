@@ -161,29 +161,22 @@ export class SessionFacadeService {
 
     console.log("handleLoginState: ", state);
     switch (state) {
-     
+
       case LoginState.SELECT_INSTITUTION:
         await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
         break;
       case LoginState.BIOMETRIC_LOGIN:
         await this.loginUser(true);
         break;
-      case LoginState.BIOMETRIC_SET:
-        await this.navigateToDashboard();
-        break;
       case LoginState.PIN_LOGIN:
         await this.loginUser(false);
-        break;
-      case LoginState.PIN_SET:
-        await this.identityFacadeService.pinLoginSetup(false);
         break;
       case LoginState.HOSTED:
         await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
         break;
       case LoginState.EXTERNAL:
         // check if institution has guest login enabled and user had been logged in as guest previously.  if yes redirect to login page instead.
-        const isGuestloginEnabled = await this.authFacadeService.isGuestUser().toPromise();
-        if (isGuestloginEnabled) {
+        if ((await firstValueFrom(this.authFacadeService.isGuestUser()))) {
           await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
         } else {
           await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
@@ -198,9 +191,8 @@ export class SessionFacadeService {
   }
 
 
-  private navigateToDashboard = async () => {
-    return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true })
-      .catch(() => false);
+  private async navigateToDashboard() {
+    this.identityFacadeService.navigateToDashboard();
   };
 
   private async loginUser(useBiometric: boolean) {

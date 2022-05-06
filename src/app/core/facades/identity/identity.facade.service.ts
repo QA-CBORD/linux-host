@@ -21,7 +21,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { VaultService } from '@core/service/identity/vault.identity.service';
+import { SessionData, VaultService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 
 export enum LoginState {
@@ -40,12 +40,7 @@ export enum LoginState {
 })
 export class IdentityFacadeService extends ServiceStateFacade {
 
-
-  private ttl: number = 600000; // 10min
-
-
   constructor(
-    private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: VaultService,
     private readonly userFacadeService: UserFacadeService,
@@ -103,18 +98,18 @@ export class IdentityFacadeService extends ServiceStateFacade {
           message: 'There was an issue setting your pin',
         };
       case PinCloseStatus.SET_SUCCESS:
-        return this.initAndUnlock({ username: undefined, token: undefined, pin: data }, biometricEnabled, navigateToDashboard);
+        return this.initAndUnlock({ pin: data, useBiometric: biometricEnabled }, navigateToDashboard);
     }
   }
 
 
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  private async initAndUnlock(data, biometricEnabled: boolean, navigateToDashboard: boolean = true): Promise<void> {
+  private async initAndUnlock(session: SessionData, navigateToDashboard: boolean): Promise<void> {
     if (navigateToDashboard) {
       this.navigateToDashboard();
     }
-    return await this.identityService.login(data, biometricEnabled);
+    await this.identityService.login(session);
   }
 
   async handlePinUnlockSuccess() {
@@ -262,7 +257,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.identityService.getAvailableBiometricHardware();
   }
 
-  setBiometricsEnabled(isBiometricsEnabled: boolean): Promise<void> {
+  async setBiometricsEnabled(isBiometricsEnabled: boolean): Promise<void> {
     return this.identityService.setBiometricsEnabled(isBiometricsEnabled).then(() => {
       this._biometricsEnabledUserPreference = isBiometricsEnabled;
     });
@@ -276,7 +271,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.userPreferenceService.cachedBiometricsEnabledUserPreference();
   }
 
-  set _pinEnabledUserPreference(value: boolean) {
+  private set _pinEnabledUserPreference(value: boolean) {
     this.userPreferenceService.setPinEnabledUserPreference(value);
   }
 
