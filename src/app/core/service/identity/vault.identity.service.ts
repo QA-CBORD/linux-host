@@ -110,17 +110,11 @@ export class VaultService {
         return false;
     }
 
-    async restoreSession() {
-        const value = await this.vault.getValue(key);
-        this.state.pin = value;
-        return value;
-    }
-
     async login(session: SessionData): Promise<void> {
         console.log("initAndUnlock: ", session);
-        this.setUnlockMode(session);
-        this.setPin(session.pin);
         this.setIsLocked(false);
+        this.setUnlockMode(session);
+        this.setState(session);
     }
 
     private async setUnlockMode(session: SessionData) {
@@ -184,11 +178,12 @@ export class VaultService {
         return await this.getPin();
     }
 
-    async setPin(pin: string) {
-        const sessionPin = pin || await this.getPin();
+    async setState(session: SessionData) {
+        const sessionPin = session.pin || await this.getPin();
         console.log("Setting the sessionPin to: ", sessionPin);
         await this.vault.setCustomPasscode(sessionPin);
         this.state.pin = sessionPin;
+        this.state.useBiometric = session.useBiometric;
         this.vault.setValue(key, sessionPin);
     }
 
