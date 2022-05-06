@@ -2,7 +2,7 @@
   "apps": [
     {
       "appId": "ce5a556b",
-      "webBuildCommand": "npm run build-prod"
+      "webBuildCommand": "npm run build"
     }
   ]
 }

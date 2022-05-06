@@ -3,7 +3,7 @@
     <div class="order-details">
       <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'dueTime' }}</ion-label>
 
-      <p style="margin-bottom: 3px;" class="order-details__value" *ngIf="orderDetailOptions.dueTime">
+      <p style="margin-bottom: 3px;" class="order-details__value" *ngIf="orderDetailOptions.dueTime || orderDetailOptions.isASAP">
         {{ orderDetailOptions | modifyPrepTime: orderTypes  }}
       </p>
 
