@@ -15,13 +15,16 @@ export interface SessionData {
     pin?: string;
     useBiometric: boolean;
 }
+const key = 'sessionPin';
+
+const MAX_PIN_RETRY_COUNT = 2;;
 
 const config: IdentityVaultConfig = {
     key: 'get.cbord.com',
     type: VaultType.CustomPasscode,
-    lockAfterBackgrounded: 5000
+    lockAfterBackgrounded: 5000,
+    customPasscodeInvalidUnlockAttempts: MAX_PIN_RETRY_COUNT
 };
-const key = 'sessionPin';
 
 
 @Injectable({ providedIn: 'root' })
@@ -75,27 +78,41 @@ export class VaultService {
     }
 
 
-    private async migrateIfLegacyVault(): Promise<boolean> {
+
+
+    private async migrateIfLegacyVault(retryCount: number = 0): Promise<boolean> {
+
+        console.log("RETRYCOUNT: ", retryCount);
+
+        const isBiometricsEnabled = async () => (await Device.isBiometricsEnabled()) && await this.userPreferenceService.cachedBiometricsEnabledUserPreference();
+
+        const noDataInLegacyVault = ({ code, message }) => (code == undefined && /legacy/.test(message));
+
+        const canRetry = async (error): Promise<boolean> => {
+            return !noDataInLegacyVault(error) && !(await isBiometricsEnabled()) && retryCount < MAX_PIN_RETRY_COUNT;
+        }
+
+        const migrator = new VaultMigrator({
+            // old V4 config
+            restoreSessionOnReady: false,
+            unlockOnReady: false,
+            unlockOnAccess: false,
+            lockAfter: 5000,
+            hideScreenOnBackground: false,
+            allowSystemPinFallback: false,
+            shouldClearVaultAfterTooManyFailedAttempts: false
+        });
 
         try {
-            const migrator = new VaultMigrator({
-                // old V4 config
-                restoreSessionOnReady: false,
-                unlockOnReady: false,
-                unlockOnAccess: false,
-                lockAfter: 5000,
-                hideScreenOnBackground: false,
-                allowSystemPinFallback: false,
-                shouldClearVaultAfterTooManyFailedAttempts: false,
-
-            })
             const oldData = await migrator.exportVault();
-            const useBiometric = (await Device.isBiometricsEnabled()) && await this.userPreferenceService.cachedBiometricsEnabledUserPreference();
-            console.log("userPreferenceService.isBiometricsEnabled(): ", useBiometric);
             if (oldData) {
+                const { session } = oldData;
+                await this.vault.setCustomPasscode(session.pin);
+                const useBiometric = await isBiometricsEnabled();
+                console.log("userPreferenceService.isBiometricsEnabled(): ", useBiometric);
                 // Import data into new vault
                 console.log("VAULT oldData: ", oldData);
-                const { session } = oldData;
+
                 await this.vault.importVault({ [key]: session.pin });
                 // Remove all of the old data from the legacy vault
                 await migrator.clear();
@@ -103,12 +120,18 @@ export class VaultService {
                 return true;
             }
             return false;
-        } catch (err) {
+        } catch (error) {
             // Something went wrong...
-            console.log("MIGRATOR ERROR: ", err);
+            if ((await canRetry(error))) {
+                return await this.migrateIfLegacyVault(++retryCount);
+            } else if (!noDataInLegacyVault(error)) {
+                await migrator.clear();
+            }
         }
         return false;
     }
+
+
 
     async login(session: SessionData): Promise<void> {
         console.log("initAndUnlock: ", session);

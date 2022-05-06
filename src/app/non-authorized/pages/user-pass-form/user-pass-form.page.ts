@@ -71,7 +71,7 @@ export class UserPassForm implements OnInit {
     private readonly messageProxy: MessageProxy,
     private readonly globalNav: GlobalNavService,
     private readonly plt: Platform
-  ) {}
+  ) { }
 
   get username(): AbstractControl {
     return this.loginForm.get(this.controlsNames.username);
@@ -97,6 +97,10 @@ export class UserPassForm implements OnInit {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  ionViewDidEnter() {
+    this.loadingService.closeSpinner();
   }
 
   async asyncOnInit(): Promise<void> {
