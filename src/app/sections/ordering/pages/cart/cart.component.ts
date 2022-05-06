@@ -12,7 +12,7 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { catchError, debounceTime, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, debounceTime, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
@@ -115,7 +115,7 @@ export class CartComponent implements OnInit, OnDestroy {
       tap(
         merchant =>
           (this.merchantTimeZoneDisplayingMessage =
-            merchant.timeZone && "The time zone reflects the merchant's location")
+            merchant?.timeZone && "The time zone reflects the merchant's location")
       )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
@@ -139,7 +139,9 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   get isOrderASAP(): Observable<boolean> {
-    return this.cartService.orderDetailsOptions$.pipe(map(({ isASAP }) => isASAP));
+    return this.cartService.orderDetailsOptions$.pipe(
+      filter((orderDetailOptions) => orderDetailOptions !== null),
+      map(({ isASAP }) => isASAP));
   }
 
   get isExistingOrder(): boolean {
@@ -148,30 +150,34 @@ export class CartComponent implements OnInit, OnDestroy {
 
   initAddressModalConfig(): Observable<AddressModalSettings> {
     this.loadingService.showSpinner();
-    return combineLatest(
+    return combineLatest([
       this.cartService.orderDetailsOptions$,
       this.merchantService.retrieveBuildings(),
       this.cartService.merchant$,
       this.getDeliveryLocations(),
-      this.getPickupLocations()
-    ).pipe(
+      this.getPickupLocations(),
+    ]).pipe(
       map(
         ([
-          { address: defaultAddress, orderType },
+          orderDetailOptions,
           buildings,
-          { id: merchantId },
+          merchant,
           deliveryAddresses,
           pickupLocations,
-        ]) => ({
-          defaultAddress,
-          buildings,
-          isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
-          pickupLocations,
-          deliveryAddresses,
-          merchantId,
-        })
+        ]) => {
+          return {
+            defaultAddress: orderDetailOptions?.address,
+            buildings,
+            isOrderTypePickup: orderDetailOptions?.orderType === ORDER_TYPE.PICKUP,
+            pickupLocations,
+            deliveryAddresses,
+            merchantId: merchant?.id,
+          } as AddressModalSettings;
+        }
       ),
-      tap(() => this.loadingService.closeSpinner())
+      tap(() => {
+        this.loadingService.closeSpinner();
+      })
     );
   }
 
@@ -437,6 +443,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private getDeliveryLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
+      filter((merchant) => merchant !== null),
       switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
       map(([, deliveryLocations]) => deliveryLocations)
     );
@@ -444,6 +451,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private getPickupLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
+      filter((pickupsLocations) => pickupsLocations !== null),
       switchMap(({ storeAddress, settings }) =>
         this.merchantService.retrievePickupLocations(
           storeAddress,

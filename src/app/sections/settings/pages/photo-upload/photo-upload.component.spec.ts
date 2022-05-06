@@ -101,7 +101,7 @@ describe('PhotoUploadComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call camera service ', () => {
+  it('should call camera service', () => {
     const spy = jest.spyOn(cameraService, 'getPhoto');
     component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Camera);
     component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Photos);
@@ -129,6 +129,12 @@ describe('PhotoUploadComponent', () => {
     await presentPhotoTypeSelections(component);
     expect(spy).toHaveBeenCalledTimes(4);
     expect(spy2).toHaveBeenCalledTimes(4);
+  });
+
+  it('should have cleared the photo info', async () => {
+    const spy = jest.spyOn(photoUploadService, 'clearLocalGovernmentIdPhotos');
+    component.ionViewWillEnter();
+    expect(spy).toHaveBeenCalledTimes(1);;
   });
 });
 

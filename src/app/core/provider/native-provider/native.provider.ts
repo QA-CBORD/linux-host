@@ -88,6 +88,10 @@ export class NativeProvider {
     return !this.platform.is('cordova');
   }
 
+  isMobile() {
+    return this.platform.is('cordova');
+  }
+
   sendAndroidData<T>(methodName: NativeData, data: T) {
     androidInterface[methodName](data);
   }

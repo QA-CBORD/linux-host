@@ -98,6 +98,7 @@ class Plugin: CAPPlugin {
                   let fullPath = environmentURL["services_url"] as? String, let index = fullPath.endIndex(of: "com") else {
                 return
             }
+            
             let serviceURL = String(fullPath[..<index])
             UserDefaults.standard.set(true, forKey: "custom_setting")
             UserDefaults.standard.set(serviceURL, forKey: "host_url")
