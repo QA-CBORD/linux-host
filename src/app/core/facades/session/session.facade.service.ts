@@ -50,12 +50,12 @@ export class SessionFacadeService {
     private readonly router: Router,
     private readonly connectivityService: ConnectivityService
   ) {
-    this.appStateListeners();
+    this.addAppStateListeners();
   }
 
   // handle app state changes
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
-  private appStateListeners() {
+  public addAppStateListeners() {
     App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
         this.onActiveState();
@@ -84,6 +84,23 @@ export class SessionFacadeService {
         this.appStatus = AppStatus.BACKGROUND;
       });
     });
+  }
+
+  /**
+   * @function addCustomAppStateListener
+   * @description Add specific logic to the appStateChange event
+   * @param callBack function to executre on event.
+   */
+  public addCustomAppStateListener(callBack: Function) {
+    App.addListener('appStateChange', async (appState) => callBack(appState));
+  }
+
+  /**
+   * @function removeAppStateListener
+   * @description Remove all app event listener
+   */
+  public removeAppStateListener() {
+    App.removeAllListeners();
   }
 
   private async appResumeLogic() {

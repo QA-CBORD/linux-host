@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -14,17 +14,17 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { Settings } from '../../../../app.global';
 import { GetBrightnessReturnValue, ScreenBrightness } from '@capacitor-community/screen-brightness';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { App } from '@capacitor/app';
+import { AppState } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Component({
   selector: 'st-scan-card',
   templateUrl: './scan-card.component.html',
   styleUrls: ['./scan-card.component.scss'],
 })
-export class ScanCardComponent implements OnInit {
+export class ScanCardComponent implements OnInit, OnDestroy {
   private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
@@ -44,15 +44,18 @@ export class ScanCardComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly barcodeFacadeService: BarcodeFacadeService,
     private readonly naviteProvider: NativeProvider,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sessionFacadeService: SessionFacadeService
   ) {
-    App.addListener('appStateChange', async ({ isActive }) => {
-      if (isActive && this.router.url.includes(DASHBOARD_NAVIGATE.scanCard)) {
-        this.setFullBrightness();
-      } else {
-        this.setPreviousBrightness();
-      }
-    });
+    this.sessionFacadeService.addCustomAppStateListener(this.adjustBrignessOnAppState)
+  }
+
+  async adjustBrignessOnAppState(appState: AppState) {
+    if (appState.isActive && this.router.url.includes(DASHBOARD_NAVIGATE.scanCard)) {
+      this.setFullBrightness();
+    } else {
+      this.setPreviousBrightness();
+    }
   }
 
   ngOnInit() {
@@ -155,5 +158,13 @@ export class ScanCardComponent implements OnInit {
 
   async ionViewWillLeave() {
     this.setPreviousBrightness();
+  }
+
+  /**
+   * Remove all appStateChange listener then listen only the one that is specfied on the sessionFacade.
+   */
+  ngOnDestroy(): void {
+    this.sessionFacadeService.removeAppStateListener();
+    this.sessionFacadeService.addAppStateListeners();
   }
 }
