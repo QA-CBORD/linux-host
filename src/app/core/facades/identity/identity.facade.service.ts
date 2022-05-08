@@ -40,6 +40,10 @@ export enum LoginState {
 })
 export class IdentityFacadeService extends ServiceStateFacade {
 
+  canLockScreen(canLock: boolean) {
+    this.identityService.canLockScreen(canLock);
+  }
+
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: VaultService,

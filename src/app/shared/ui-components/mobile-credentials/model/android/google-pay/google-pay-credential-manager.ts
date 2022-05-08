@@ -54,7 +54,6 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   private async watchOnResume(): Promise<void> {
     const appResumedEventListener = GooglePayPlugin.addListener('appResumed', async () => {
       appResumedEventListener.remove();
-      setTimeout(() => (this.sessionFacadeService.navigatedFromGpay = false), 2500); // this is so we don't get the loggin screen, we're already logged in.
       let counter = 0;
       let timeOut = 3000;
       const intervalId = setInterval(async () => {
@@ -135,7 +134,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     }
     this.mCredential = newCredential;
     let { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
-    this.sessionFacadeService.navigatedFromGpay = true;
+    this.sessionFacadeService.canLockScreen = false;
     GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();
     });

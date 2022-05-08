@@ -204,7 +204,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       source: cameraSource,
       saveToGallery: true,
     }).finally(() => {
-      this.sessionFacadeService.navigatedFromPlugin = true;
+      this.sessionFacadeService.canLockScreen = false;
     });
 
     if (image) {

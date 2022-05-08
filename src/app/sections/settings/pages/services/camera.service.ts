@@ -11,25 +11,27 @@ export class CameraService {
 
   constructor(private readonly platform: Platform,
     private readonly sessionFacadeService: SessionFacadeService) { }
-   
- async getPhoto(options: ImageOptions): Promise<Photo> {
-      await this.requestCameraPermission(options?.source || CameraSource.Photos);
-      return Camera.getPhoto(options);
+
+  async getPhoto(options: ImageOptions): Promise<Photo> {
+    await this.requestCameraPermission(options?.source || CameraSource.Photos);
+    return Camera.getPhoto(options);
   }
 
   private async requestCameraPermission(cameraSource: CameraSource) {
     const permission = await Camera.checkPermissions();
     const source = cameraSource.toLocaleLowerCase();
+    this.sessionFacadeService.canLockScreen = false;
     if (/prompt/.test(permission[source])) {
-      await Camera.requestPermissions({ permissions: [<CameraPermissionType>source] });
-      this.preventLockScreen();
+      const permissionStatus = await Camera.requestPermissions({ permissions: [<CameraPermissionType>source] }).catch((error) => console.log("CAMERA: ", error));
+      console.log("PERMISION STATUS: ", permissionStatus);
+      this.sessionFacadeService.canLockScreen = !(/granted/.test(permissionStatus[source]));
     }
   }
 
   private preventLockScreen() {
     this.platform.ready().then(() => {
       this.platform.resume.pipe(take(1)).subscribe(() => {
-        this.sessionFacadeService.navigatedFromPlugin = true;
+
       });
     });
   }

@@ -1,5 +1,6 @@
 import { Inject, Injectable, Injector, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { BrowserVault, Device, DeviceSecurityType, IdentityVaultConfig, Vault, VaultErrorCodes, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
 import { ModalController } from '@ionic/angular';
@@ -17,12 +18,16 @@ export interface SessionData {
 }
 const key = 'sessionPin';
 
-const MAX_PIN_RETRY_COUNT = 2;;
+const MAX_PIN_RETRY_COUNT = 2;
+
+const DEFAULT_TIME_OUT = 5000;
+
+const TIME_OUT_WITH_EXTRA = 600000;
 
 const config: IdentityVaultConfig = {
     key: 'get.cbord.com',
     type: VaultType.SecureStorage,
-    lockAfterBackgrounded: 5000,
+    lockAfterBackgrounded: DEFAULT_TIME_OUT,
     customPasscodeInvalidUnlockAttempts: MAX_PIN_RETRY_COUNT
 };
 
@@ -33,6 +38,7 @@ export class VaultService {
         useBiometric: false,
         pin: null,
     };
+    private canLock = true;
     private vault: Vault | BrowserVault;
     public vaultAuthEventObs: Subject<{ success: boolean, biometricUsed: boolean, error?: any }> = new Subject();
 
@@ -44,6 +50,13 @@ export class VaultService {
         private router: Router) {
         this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
         window['VaultService'] = this;
+        App.addListener('appStateChange', async ({ isActive }) => {
+            if (isActive && !this.canLock) {
+                setTimeout(() => {
+                    this.canLockScreen(true);
+                }, 3000)
+            }
+        });
     }
 
     private get modalController(): ModalController {
@@ -65,7 +78,7 @@ export class VaultService {
             })
         });
         this.vault.onLock(({ timeout }) => {
-            console.log("ONLOCK Timeout: ", timeout);
+            console.log("ONLOCK Timeout: ", timeout, " : ");
             this.ngZone.run(() => {
                 this.state.pin = null;
                 this.setIsLocked(true);
@@ -77,8 +90,6 @@ export class VaultService {
 
         await this.migrateIfLegacyVault();
     }
-
-
 
 
     private async migrateIfLegacyVault(retryCount: number = 0): Promise<boolean> {
@@ -140,11 +151,7 @@ export class VaultService {
             deviceSecurityType = DeviceSecurityType.Biometrics;
         }
         console.log("NEW CONFIG: ", type, " deviceSecurityType:", deviceSecurityType);
-        await this.vault.updateConfig({
-            ...this.vault.config,
-            type,
-            deviceSecurityType
-        });
+        await this.patchVaultConfig({ type, deviceSecurityType });
     }
 
     async isVaultLocked(): Promise<boolean> {
@@ -235,6 +242,23 @@ export class VaultService {
         return await this.vault.lock();
     }
 
+    canLockScreen(canLock: boolean) {
+        console.log("canLockScreen: ", canLock);
+        this.canLock = canLock;
+        if (canLock) {
+            this.patchVaultConfig({ lockAfterBackgrounded: DEFAULT_TIME_OUT });
+        } else {
+            this.patchVaultConfig({ lockAfterBackgrounded: TIME_OUT_WITH_EXTRA });
+        }
+    }
+
+
+    private async patchVaultConfig(config) {
+        await this.vault.updateConfig({
+            ...this.vault.config,
+            ...config
+        })
+    }
 
     async unlockVault(biometricEnabled: boolean) {
         this.state.useBiometric = biometricEnabled;

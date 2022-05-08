@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { ROLES } from '../../../app.global';
@@ -12,14 +12,11 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { Router } from '@angular/router';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { firstValueFrom } from '@shared/utils';
 import { ConnectivityService } from '@shared/services/connectivity.service';
-import { APP_ROUTES } from '@sections/section.config';
-import { ToastService } from '@core/service/toast/toast.service';
 
 enum AppStatus {
   BACKGROUND,
@@ -33,8 +30,6 @@ export class SessionFacadeService {
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   private _deepLinkPath: string[];
   onLogOutObservable$: Subject<any> = new Subject<any>();
-  navigatedFromPlugin: boolean = false;
-  navigatedFromGpay: boolean = false;
 
   constructor(
     private readonly platform: Platform,
@@ -47,7 +42,6 @@ export class SessionFacadeService {
     private readonly routingService: NavigationService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly router: Router,
     private readonly connectivityService: ConnectivityService
   ) {
     this.appStateListeners();
@@ -85,20 +79,9 @@ export class SessionFacadeService {
     });
   }
 
-  private async appResumeLogic() {
-    console.log("appResumeLogic called..")
-    if (this.navigatedFromPlugin) {
-      this.navigatedFromPlugin = false;
-      return;
-    }
 
-    if (this.navigatedFromGpay) {
-      return;
-    }
-    const appLocked = await this.isVaultLocked();
-    const currentRouteIsStartupPage = this.router.url.includes("startup");
-
-    console.log("appResumeLogic called..: ", appLocked, currentRouteIsStartupPage)
+  set canLockScreen(canLock: boolean) {
+     this.identityFacadeService.canLockScreen(canLock);
   }
 
   private async onActiveState() {

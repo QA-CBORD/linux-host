@@ -330,7 +330,7 @@ export class PhotoUploadComponent implements OnInit {
           // There was an issue uploading the photo information'
         },
         () => {
-          this.sessionFacadeService.navigatedFromPlugin = true;
+          this.sessionFacadeService.canLockScreen = false;
         }
       );
   }
