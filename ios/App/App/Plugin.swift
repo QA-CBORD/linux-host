@@ -105,22 +105,6 @@ class Plugin: CAPPlugin {
             UserDefaults.standard.set(partnerURL, forKey: "partner_url")
         }
         call.resolve();
-    }
+    } 
     
-    @objc func checkIsConnectedToNetwork(_ call: CAPPluginCall) {
-        let pingUrl = "https://google.com"
-        if let url = URL(string: pingUrl) {
-            var request = URLRequest(url: url)
-            request.httpMethod = "HEAD"
-            URLSession(configuration: .default).dataTask(with: request) { (_, response, error) -> Void in
-                var connectionState = true
-                if error != nil || (response as? HTTPURLResponse)?.statusCode != 200 {
-                    connectionState = false
-                }
-                call.resolve([
-                    "connected": connectionState,
-                ])
-            }.resume()
-        }
-    }
 }

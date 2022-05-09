@@ -7,6 +7,7 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: ANONYMOUS_ROUTES.startup,
+    pathMatch: 'full'
   },
   {
     path: ANONYMOUS_ROUTES.startup,
