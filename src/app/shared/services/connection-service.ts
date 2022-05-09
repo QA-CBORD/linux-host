@@ -1,19 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, Observer, fromEvent, merge, of, BehaviorSubject } from 'rxjs';
+import { Observable, Observer, fromEvent, merge, of, BehaviorSubject, Subject } from 'rxjs';
 import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import { firstValueFrom } from '@shared/utils';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
+import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConnectionService {
 
-  modalRefreshHandle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  modalRefreshHandle: Subject<boolean> = new Subject();
+  retrySubject: Subject<RetryHandler> = new Subject();
   private online$: Observable<boolean> = undefined;
 
   constructor(private http: HttpClient,

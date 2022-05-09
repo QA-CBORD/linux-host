@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { IdentityService } from '@core/service/identity/identity.service';
 import { Settings } from '../../../app.global';
 import { map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/retry-handler';
+import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { UserFacadeService } from '../user/user.facade.service';
 import { MerchantFacadeService } from '../merchant/merchant-facade.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
@@ -40,9 +38,7 @@ export enum LoginState {
 })
 export class IdentityFacadeService extends ServiceStateFacade {
 
-  canLockScreen(canLock: boolean) {
-    this.identityService.canLockScreen(canLock);
-  }
+
 
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -73,8 +69,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
           this.handlePinUnlockSuccess();
         }
       } else {
-        console.log("big ass error: ", error);
-        if (!this.connectionService.isConnectionIssues({ message: error?.message, status: error?.code })) {
+        console.log("error event: ", error);
+        if (PinCloseStatus.CLOSED_NO_CONNECTION === error?.code) {
+          this.handlePinUnlockError(error);
+        } else {
           this.logoutUser();
         }
       }
@@ -166,13 +164,14 @@ export class IdentityFacadeService extends ServiceStateFacade {
           await this.loadingService.showSpinner();
           await firstValueFrom(this.authFacadeService.authenticatePin$(pin));
           await this.loadingService.closeSpinner();
+          await this.showSplashScreen();
           return await this.navigateToDashboard();
         } catch (error) {
           await this.loadingService.closeSpinner();
         }
         return false;
       },
-      onScanCode: async () => this.lockVault()
+      onScanCode: async () => {}
     });
   }
 
@@ -193,19 +192,39 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.handleConnectionErrors({
       onRetry: async () => {
         try {
+          await this.showSplashScreen();
           return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
         } catch (ignored) {
           // ignored on purpose. 
         }
         return false;
       },
-      onScanCode: async () => this.lockVault()
+      onScanCode: async () => {}
     });
   }
 
-  async handlePinUnlockError({ message, code }) {
+
+
+  private async handlePinUnlockError({ message, code }) {
     console.log("handlePinUnlockError: ", message, " Code :", code)
-    if (!this.connectionService.isConnectionIssues({ message, status: code })) {
+    if (PinCloseStatus.CLOSED_NO_CONNECTION === code) {
+      return this.handleConnectionErrors({
+        onScanCode: async () => {},
+        onRetry: async () => {
+          console.log("ON_RETRY CALLEED.....")
+          await this.loadingService.showSpinner();
+          const connectionRestored = !(await this.connectionService.deviceOffline())
+          await this.loadingService.closeSpinner();
+          console.log("ON_RETRY connectionRestored.....", connectionRestored)
+          if (connectionRestored) {
+            this.showSplashScreen().then(() => {
+                this.identityService.retryPinUnlock();
+            })
+          }
+          return connectionRestored;
+        }
+      });
+    } else {
       return this.logoutUser();
     }
   }
@@ -230,6 +249,14 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async isVaultLocked() {
     return this.identityService.isVaultLocked();
+  }
+
+  canLockScreen(canLock: boolean) {
+    this.identityService.canLockScreen(canLock);
+  }
+
+  async showSplashScreen(): Promise<boolean> {
+    return this.identityService.showSplashScreen();
   }
 
   isExternalLogin(institutionInfo: Institution): boolean {

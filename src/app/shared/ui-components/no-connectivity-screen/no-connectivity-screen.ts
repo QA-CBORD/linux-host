@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController, ToastController } from '@ionic/angular';
@@ -11,8 +11,8 @@ import { firstValueFrom } from '@shared/utils';
 import { map } from 'rxjs/operators';
 import { ROLES, User } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { ConnectivityError, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
-import { RetryHandler } from './model/retry-handler';
+import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
+import { ConnectivityPageInfo, RetryHandler } from './model/connectivity-page.model';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -22,9 +22,12 @@ import { Subscription } from 'rxjs';
 })
 export class NoConnectivityScreen implements OnInit, OnDestroy {
 
+  refreshSubscription: Subscription;
+  retrySubscription: Subscription;
+  routeSubscription: Subscription;
   @Input() csModel: ConnectivityScreenCsModel;
   @Input() retryHandler: RetryHandler;
-  @Input() errorType: ConnectivityError;
+  @Input() errorType: ConnectivityErrorType;
   @Input() freshContentStringsLoaded: boolean = false;
 
   strings: any;
@@ -32,50 +35,59 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   isLoading: boolean = false;
   config: ConnectivityPageConfig;
   canScanCard: boolean = false;
-  refreshSubscrription: Subscription;
 
   constructor(
     private readonly connectionService: ConnectionService,
     private readonly loadingService: LoadingService,
-    public readonly modalController: ModalController,
     private readonly router: Router,
     private readonly toastService: ToastController,
     private readonly commonService: CommonService,
     private readonly accessCardService: AccessCardService,
     private readonly barcodeFacadeService: BarcodeFacadeService,
-    private readonly changeDetector: ChangeDetectorRef
+    private readonly changeDetector: ChangeDetectorRef,
+    private readonly activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit() {
-    this.dataInitialize();
+    this.init();
     this.addSubscription();
   }
 
 
-  async dataInitialize() {
+  async dataInitialize(data: ConnectivityPageInfo) {
+    this.csModel = data?.csModel;
+    this.freshContentStringsLoaded = data?.freshContentStringsLoaded;
+    this.errorType = data?.errorType;
+
     this.config = connectivityPageConfigurations[this.errorType];
     this.strings = this.config.getContent(this.csModel);
-    const canScan = async () => {
-      const isServerError = this.errorType === ConnectivityError.SERVER_CONNECTION;
+    this.canScanCard = await (async () => {
+      const isServerError = this.errorType === ConnectivityErrorType.SERVER_CONNECTION;
       return isServerError || !!(await firstValueFrom(this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)));
-    };
-    this.canScanCard = await canScan();
+    })();
+  }
+
+  async init() {
+    this.routeSubscription = this.activatedRoute.data.subscribe(async ({ data }) => {
+      console.log("ROUTING DATA: ", data);
+      this.dataInitialize(data);
+    });
   }
 
   async retryOperations() {
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
-      await this.closeSelf();
+      console.log("GOIN TO CLOSE.....");
     } else {
       this.onRetryFailed();
     }
   }
 
   async onRetryFailed() {
-    await this.loadingService.showSpinner({ duration: 30000 });
+    await this.loadingService.showSpinner();
     await this.setConnectionErrorType();
     await this.loadFreshContentStrings();
-    await this.dataInitialize();
+    await this.dataInitialize(this);
     this.changeDetector.detectChanges();
     await this.loadingService.closeSpinner();
     if ((await this.showRetryToast())) {
@@ -84,16 +96,24 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.toastService.dismiss().catch(() => { });
+    console.log("GETTING DESTROYED::");
+    this.routeSubscription.unsubscribe();
+    this.refreshSubscription.unsubscribe();
+    this.retrySubscription.unsubscribe();
   }
 
 
   async addSubscription() {
-    this.refreshSubscrription = this.connectionService.modalRefreshHandle.subscribe((refresh) => {
+    this.refreshSubscription = this.connectionService.modalRefreshHandle.subscribe((refresh) => {
       if (refresh) {
         this.onRetryFailed();
       }
-    })
+    });
+
+    this.retrySubscription = this.connectionService.retrySubject.subscribe((handler) => {
+      console.log("RECIEVED RETRY HANDLER: ", handler);
+      this.retryHandler = handler;
+    });
   }
 
   private async showRetryToast(): Promise<boolean> {
@@ -131,7 +151,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async loadFreshContentStrings(): Promise<void> {
-    if (!this.freshContentStringsLoaded && this.errorType == ConnectivityError.SERVER_CONNECTION) {
+    if (!this.freshContentStringsLoaded && this.errorType == ConnectivityErrorType.SERVER_CONNECTION) {
       this.csModel = await firstValueFrom(this.commonService.loadContentString(ContentStringCategory.noConnectivity));
       this.freshContentStringsLoaded = true;
     }
@@ -141,29 +161,30 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     await this.retryHandler.onScanCode();
     await this.loadingService.showSpinner();
     const color = await this.institutionColor();
-    
+
 
     this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.scanCard], { queryParams: { color } })
-      .then(() => this.closeSelf())
+      .then(async () => await this.closeSelf())
       .finally(() => this.loadingService.closeSpinner());
   }
 
 
   async closeSelf() {
-    this.modalController.dismiss().catch(()=>{});
+
   }
 
   async setConnectionErrorType(): Promise<void> {
     const isDeviceOffline = await this.connectionService.deviceOffline();
     if (isDeviceOffline) {
-      this.errorType = ConnectivityError.DEVICE_CONNECTION;
+      this.errorType = ConnectivityErrorType.DEVICE_CONNECTION;
     } else {
-      this.errorType = ConnectivityError.SERVER_CONNECTION;
+      this.errorType = ConnectivityErrorType.SERVER_CONNECTION;
     }
   }
 
   async institutionColor() {
-    if (!(await this.connectionService.deviceOffline())) {
+    const isDeviceOffline = await this.connectionService.deviceOffline();
+    if (!isDeviceOffline) {
       return await firstValueFrom(this.accessCardService.getInstitutionColor().pipe(
         map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : ''))))
         .catch(() => '');

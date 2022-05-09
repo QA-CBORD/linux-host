@@ -24,7 +24,6 @@ export class CameraService {
     if (/prompt/.test(permission[source])) {
       const permissionStatus = await Camera.requestPermissions({ permissions: [<CameraPermissionType>source] }).catch((error) => console.log("CAMERA: ", error));
       console.log("PERMISION STATUS: ", permissionStatus);
-      this.sessionFacadeService.canLockScreen = !(/granted/.test(permissionStatus[source]));
     }
   }
 

@@ -58,7 +58,6 @@ export class SessionFacadeService {
           this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
-        this.connectivityService.isOpened().then((opened) => opened && this.lockVault());
       }
     });
     App.addListener('appUrlOpen', data => {
@@ -81,7 +80,7 @@ export class SessionFacadeService {
 
 
   set canLockScreen(canLock: boolean) {
-     this.identityFacadeService.canLockScreen(canLock);
+    this.identityFacadeService.canLockScreen(canLock);
   }
 
   private async onActiveState() {
@@ -115,6 +114,8 @@ export class SessionFacadeService {
     } catch ({ message }) {
       return false;
     }
+
+    await this.identityFacadeService.showSplashScreen();
     this.determineAppLoginState(systemSesssionId);
     return true;
   }
@@ -128,7 +129,7 @@ export class SessionFacadeService {
       this.connectivityService.handleConnectionError(this);
       return false;
     }
-    await this.connectivityService.closeIfOpened();
+    //await this.connectivityService.closeIfOpened();
     this.determineAppLoginState(systemSesssionId);
     return true;
   }

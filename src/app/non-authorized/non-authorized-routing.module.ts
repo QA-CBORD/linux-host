@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { ANONYMOUS_ROUTES } from './non-authorized.config';
+
 const routes: Routes = [
   {
     path: '',
@@ -38,7 +39,11 @@ const routes: Routes = [
   {
     path: ANONYMOUS_ROUTES.scanCard,
     loadChildren: () => import('../sections/dashboard/containers/scan-card/scan-card.module').then(m => m.ScanCardModule),
-  }
+  },
+  {
+    path: ANONYMOUS_ROUTES.noConnectivity,
+    loadChildren: () => import('../shared/connectivity.module').then(m => m.ConnectivityModule),
+  },
 ];
 
 

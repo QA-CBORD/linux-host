@@ -27,8 +27,7 @@ const TIME_OUT_WITH_EXTRA = 600000;
 const config: IdentityVaultConfig = {
     key: 'get.cbord.com',
     type: VaultType.SecureStorage,
-    lockAfterBackgrounded: DEFAULT_TIME_OUT,
-    customPasscodeInvalidUnlockAttempts: MAX_PIN_RETRY_COUNT
+    lockAfterBackgrounded: DEFAULT_TIME_OUT
 };
 
 
@@ -51,7 +50,7 @@ export class VaultService {
         this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
         window['VaultService'] = this;
         App.addListener('appStateChange', async ({ isActive }) => {
-            if (isActive && !this.canLock) {
+            if (isActive && this.canLock === false) {
                 setTimeout(() => {
                     this.canLockScreen(true);
                 }, 3000)
@@ -68,7 +67,11 @@ export class VaultService {
 
         this.vault.onError((error) => console.log("VAULT.ONERROR: ", error));
 
-        this.vault.onPasscodeRequested(async (isPasscodeSetRequest) => this.onPasscodeRequested(isPasscodeSetRequest));
+        this.vault.onPasscodeRequested((isPasscodeSetRequest) => {
+            console.log("vault.onPasscodeRequested: ", isPasscodeSetRequest);
+            return this.onPasscodeRequested(isPasscodeSetRequest, true);
+        });
+
         this.vault.onUnlock(() => {
             this.ngZone.run(async () => {
                 console.log("onUnlock CALLED...")
@@ -160,7 +163,7 @@ export class VaultService {
     }
 
 
-    private async onPasscodeRequested(isPasscodeSetRequest: boolean): Promise<string> {
+    private async onPasscodeRequested(isPasscodeSetRequest: boolean, callByVault = false): Promise<string> {
 
         if (isPasscodeSetRequest) {
             /// will happen on pin set
@@ -168,17 +171,15 @@ export class VaultService {
         } else {
             /// will happen on pin login
             const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
+
             if (PinCloseStatus.LOGIN_SUCCESS !== role) {
-                this.vaultAuthEventObs.next({
-                    biometricUsed: this.state.useBiometric,
-                    success: false,
-                    error: {
-                        code: role,
-                        message: data
-                    }
-                });
-                return Promise.resolve(null);
+                const error = { code: role, message: data };
+                this.vaultAuthEventObs.next({ biometricUsed: this.state.useBiometric, success: false, error });
+                console.log("GOIN TO RETURN : ", error);
+                return Promise.reject(error);
             }
+
+            console.log("ARRIVED HERE....");
             this.vault.setCustomPasscode(data);
             return Promise.resolve(data);
         }
@@ -262,11 +263,12 @@ export class VaultService {
 
     async unlockVault(biometricEnabled: boolean) {
         this.state.useBiometric = biometricEnabled;
-        return await this.vault.unlock().catch(async (error) => {
+        return await this.vault.unlock().catch((error) => {
             console.log("GOT ERROR 1: ", biometricEnabled, error);
             if (biometricEnabled) {
                 this.retryPinUnlock();
             } else {
+                console.log("GOT ERROR 222: ", biometricEnabled, error);
                 this.vaultAuthEventObs.next({ success: false, error, biometricUsed: biometricEnabled })
             }
         });
@@ -276,17 +278,18 @@ export class VaultService {
         return this.showSplashScreen().then(() => this.unlockVault(biometricEnabled));
     }
 
-    private async retryPinUnlock() {
-        this.onPasscodeRequested(false).then(async (data) => {
+    async retryPinUnlock() {
+        console.log("retryPinUnlock ............")
+        try {
+            const data = await this.onPasscodeRequested(false);
             if (data) {
-                this.vaultAuthEventObs.next({
-                    success: true,
-                    biometricUsed: false,
-                });
+                this.vaultAuthEventObs.next({ success: true, biometricUsed: false, });
                 await this.logout();
-                this.login({ pin: data, useBiometric: true });
+                this.login({ pin: data, useBiometric: this.state.useBiometric });
             }
-        })
+        } catch (err) {
+            console.log("ERROR CAUGHT: ", err);
+        }
     }
 
     async hasStoredSession(): Promise<boolean> {
@@ -294,12 +297,9 @@ export class VaultService {
     }
 
 
-    private async showSplashScreen() {
+    async showSplashScreen(data = { replaceUrl: true, state: { skipLoginFlow: true } }) {
         return await this.ngZone.run(async () => {
-            const data = {
-                replaceUrl: true,
-                state: { skipLoginFlow: true }
-            };
+
             const navigated = await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], data)
             if (!navigated) {
                 return await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], data)

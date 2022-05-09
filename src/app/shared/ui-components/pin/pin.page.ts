@@ -287,8 +287,7 @@ export class PinPage implements OnInit {
           } else if (DEVICE_MARKED_LOST.test(message)) {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
           } else if (this.connectionService.isConnectionIssues({ message, status })) {
-            this.currentLoginAttempts--;
-            this.handleConnectionIssues({ message });
+            this.closePage(null, PinCloseStatus.CLOSED_NO_CONNECTION);
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
