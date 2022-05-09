@@ -13,6 +13,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
 import { ConnectivityService } from '@shared/services/connectivity.service';
+import { App } from '@capacitor/app';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -299,8 +300,8 @@ export class PinPage implements OnInit {
     this.connectivityService.handleConnectionError({
       onScanCode: async () => {
         try {
-          await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
-          await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
+          this.closePage(null, PinCloseStatus.ERROR);
+          this.modalController.dismiss();
         } catch (ignored) {
           console.log("error: ", ignored);
         }
@@ -311,7 +312,7 @@ export class PinPage implements OnInit {
         await this.loadingService.closeSpinner();
         return connectionRestored;
       }
-    });
+    }, true);
   }
 
   get showReset() {

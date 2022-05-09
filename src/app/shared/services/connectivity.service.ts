@@ -4,6 +4,14 @@ import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model
 import { ConnectionService } from './connection-service';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { ROLES } from 'src/app/app.global';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalController } from '@ionic/angular';
+import { CommonService } from './common.service';
+import { ContentStringApi, ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { noConnectivityScreentDefaultStrings } from '@shared/model/content-strings/default-strings';
+import { ConnectivityErrorType, ConnectivityScreenCsModel } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
+import { firstValueFrom } from '@shared/utils';
+import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/no-connectivity-screen';
 
 
 @Injectable({
@@ -14,23 +22,73 @@ export class ConnectivityService {
   constructor(
     private connectionService: ConnectionService,
     private readonly router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private modalController: ModalController,
+    private readonly commonService: CommonService,
+    private loadingService: LoadingService,
   ) { }
 
   isOpened(): boolean {
     return this.router.url.includes(ANONYMOUS_ROUTES.noConnectivity);
   }
 
-  async handleConnectionError(handler: RetryHandler) {
-    if (this.isOpened()) {
-      this.connectionService.modalRefreshHandle.next(true);
+  async closeIfOpened() {
+    if ((await this.isOpenedAsModal())) {
+      await this.modalController.dismiss();
+    }
+  }
+  async isOpenedAsModal() {
+    const currentTopModal = await this.modalController.getTop();
+    return currentTopModal && currentTopModal.componentProps.retryHandler;
+  }
+
+
+  async handleConnectionError(handler: RetryHandler, showAsModal: boolean = false) {
+    if (showAsModal) {
+      if ((await this.isOpenedAsModal())) {
+        this.connectionService.modalRefreshHandle.next(true);
+      } else {
+        return await this.showConnectivityIssuePageAsModal(handler);
+      }
     } else {
-      return await this.showConnectivityIssuePage(handler);
+      if (this.isOpened()) {
+        this.connectionService.modalRefreshHandle.next(true);
+      } else {
+        return await this.showConnectivityIssuePage(handler);
+      }
     }
   }
 
   private async showConnectivityIssuePage(retryHandler: RetryHandler) {
     this.ngZone.run(() => this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.noConnectivity], { replaceUrl: true }).then(() => this.connectionService.retrySubject.next(retryHandler)));
+  }
+
+  private async showConnectivityIssuePageAsModal(retryHandler: RetryHandler) {
+    await this.loadingService.showSpinner({ duration: 80000 });
+    let csModel: ConnectivityScreenCsModel = {} as any;
+    let errorType: ConnectivityErrorType;
+    let freshContentStringsLoaded: boolean = false;
+    if ((await this.connectionService.deviceOffline())) {
+      errorType = ConnectivityErrorType.DEVICE_CONNECTION;
+      csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: noConnectivityScreentDefaultStrings });
+    } else {
+      errorType = ConnectivityErrorType.SERVER_CONNECTION;
+      csModel = await firstValueFrom(this.commonService.loadContentString(ContentStringCategory.noConnectivity));
+      freshContentStringsLoaded = true;
+    }
+    return this.presentModal({ csModel, freshContentStringsLoaded, errorType, retryHandler });
+  }
+
+  private async presentModal(componentProps: any): Promise<any> {
+    const modal = await this.modalController.create({
+      backdropDismiss: false,
+      mode: 'ios',
+      componentProps,
+      component: NoConnectivityScreen,
+    });
+    await modal.present();
+    await this.loadingService.closeSpinner();
+    return await modal.onDidDismiss();
   }
 
 }

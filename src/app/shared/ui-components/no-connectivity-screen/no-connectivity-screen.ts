@@ -46,6 +46,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     private readonly barcodeFacadeService: BarcodeFacadeService,
     private readonly changeDetector: ChangeDetectorRef,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -55,9 +56,9 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
 
   async dataInitialize(data: ConnectivityPageInfo) {
-    this.csModel = data?.csModel;
-    this.freshContentStringsLoaded = data?.freshContentStringsLoaded;
-    this.errorType = data?.errorType;
+    this.csModel = data?.csModel || this.csModel;
+    this.freshContentStringsLoaded = data?.freshContentStringsLoaded || this.freshContentStringsLoaded;
+    this.errorType = data?.errorType || this.errorType;
 
     this.config = connectivityPageConfigurations[this.errorType];
     this.strings = this.config.getContent(this.csModel);
@@ -78,6 +79,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
       console.log("GOIN TO CLOSE.....");
+      this.closeSelf();
     } else {
       this.onRetryFailed();
     }
@@ -162,7 +164,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     await this.loadingService.showSpinner();
     const color = await this.institutionColor();
 
-
     this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.scanCard], { queryParams: { color } })
       .then(async () => await this.closeSelf())
       .finally(() => this.loadingService.closeSpinner());
@@ -170,7 +171,11 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
 
   async closeSelf() {
-
+    try {
+      await this.modalController.dismiss();
+    } catch (err) {
+      console.log("ERROR CLOSING MODAL: ", err);
+    }
   }
 
   async setConnectionErrorType(): Promise<void> {
