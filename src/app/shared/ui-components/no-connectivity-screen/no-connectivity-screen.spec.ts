@@ -7,7 +7,8 @@ import { NoConnectivityScreen } from './no-connectivity-screen';
 describe('NoConnectivityScreen', () => {
   let fixture: NoConnectivityScreen;
   let connectionService, loadingService, modalController, router,
-    toastService, commonService, accessCardService, barcodeFacadeService, changeDetector;
+    toastService, commonService, accessCardService, 
+    barcodeFacadeService, changeDetector, activatedRoute;
   beforeEach(() => {
     connectionService = {
       networkStatus: jest.fn()
@@ -19,7 +20,15 @@ describe('NoConnectivityScreen', () => {
     modalController = {
       dismiss: jest.fn()
     }
-    fixture = new NoConnectivityScreen(connectionService, loadingService, modalController, router, toastService, commonService, accessCardService, barcodeFacadeService, changeDetector);
+    fixture = new NoConnectivityScreen(
+      connectionService, 
+      loadingService,  
+      router, 
+      toastService, 
+      commonService, 
+      accessCardService, 
+      barcodeFacadeService, 
+      changeDetector, activatedRoute, modalController);
   });
 
   describe('retryOperations', () => {
