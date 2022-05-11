@@ -2,7 +2,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import bwipjs from 'bwip-angular2';
 
 import { UserInfo } from '@core/model/user';
@@ -18,6 +18,7 @@ import { AppState } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
 
 @Component({
   selector: 'st-scan-card',
@@ -26,6 +27,8 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 })
 export class ScanCardComponent implements OnInit, OnDestroy {
   private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
+  private readonly appStateSuscription: Subscription = new Subscription();;
+
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
@@ -35,6 +38,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   userId: string;
   institutionColor: string;
   previousBrigness: GetBrightnessReturnValue;
+  
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -45,9 +49,9 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     private readonly barcodeFacadeService: BarcodeFacadeService,
     private readonly naviteProvider: NativeProvider,
     private readonly router: Router,
-    private readonly sessionFacadeService: SessionFacadeService
+    private readonly appStatesFacadeService: AppStatesFacadeService
   ) {
-    this.sessionFacadeService.addCustomAppStateListener(this.adjustBrignessOnAppState)
+    this.appStateSuscription = this.appStatesFacadeService.getStateChangeEvent$.subscribe(this.adjustBrignessOnAppState);
   }
 
   async adjustBrignessOnAppState(appState: AppState) {
@@ -164,7 +168,6 @@ export class ScanCardComponent implements OnInit, OnDestroy {
    * Remove all appStateChange listener then listen only the one that is specfied on the sessionFacade.
    */
   ngOnDestroy(): void {
-    this.sessionFacadeService.removeAppStateListener();
-    this.sessionFacadeService.addAppStateListeners();
+    this.appStateSuscription.unsubscribe();
   }
 }
