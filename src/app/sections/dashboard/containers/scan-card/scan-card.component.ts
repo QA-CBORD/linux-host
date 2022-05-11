@@ -17,7 +17,6 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { AppState } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
 
 @Component({
@@ -27,7 +26,7 @@ import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facad
 })
 export class ScanCardComponent implements OnInit, OnDestroy {
   private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
-  private readonly appStateSuscription: Subscription = new Subscription();;
+  private readonly appStateSuscription: Subscription = new Subscription();
 
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
@@ -38,7 +37,6 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   userId: string;
   institutionColor: string;
   previousBrigness: GetBrightnessReturnValue;
-  
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -51,16 +49,18 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly appStatesFacadeService: AppStatesFacadeService
   ) {
-    this.appStateSuscription = this.appStatesFacadeService.getStateChangeEvent$.subscribe(this.adjustBrignessOnAppState);
+    this.appStateSuscription = this.appStatesFacadeService.getStateChangeEvent$.subscribe(
+      this.adjustBrignessOnAppState
+    );
   }
 
-  async adjustBrignessOnAppState(appState: AppState) {
+  adjustBrignessOnAppState = async (appState: AppState) => {
     if (appState.isActive && this.router.url.includes(DASHBOARD_NAVIGATE.scanCard)) {
       this.setFullBrightness();
     } else {
       this.setPreviousBrightness();
     }
-  }
+  };
 
   ngOnInit() {
     console.log('ScanCardComponent: ');
