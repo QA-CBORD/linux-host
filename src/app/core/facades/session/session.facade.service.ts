@@ -14,11 +14,11 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Router } from '@angular/router';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
-import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { firstValueFrom } from '@shared/utils';
 import { ConnectivityService } from '@shared/services/connectivity.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 
 enum AppStatus {
   BACKGROUND,
@@ -48,15 +48,18 @@ export class SessionFacadeService {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly ngZone: NgZone,
     private readonly router: Router,
-    private readonly connectivityService: ConnectivityService
+    private readonly connectivityService: ConnectivityService,
+    private readonly appStatesFacadeService: AppStatesFacadeService
   ) {
-    this.appStateListeners();
+    this.addAppStateListeners();
   }
 
-  // handle app state changes
-  // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
-  private appStateListeners() {
-    App.addListener('appStateChange', async ({ isActive }) => {
+  /**
+   * @function addAppStateListeners
+   * @description handle app state changes, must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
+   */
+  public addAppStateListeners() {
+    this.appStatesFacadeService.getStateChangeEvent$.subscribe(async ({ isActive }) => {
       if (isActive) {
         this.onActiveState();
         await this.appResumeLogic();
@@ -65,10 +68,10 @@ export class SessionFacadeService {
           this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
-        this.connectivityService.isOpened().then((opened) => opened && this.lockVault());
+        this.connectivityService.isOpened().then(opened => opened && this.lockVault());
       }
     });
-    App.addListener('appUrlOpen', data => {
+    this.appStatesFacadeService.getAppUrlOpenEvent$.subscribe(data => {
       const url: string = data.url;
       if (url && url.includes('cbord.com')) {
         this._deepLinkPath = new URL(data.url).pathname.split('/').filter(s => s);
@@ -96,12 +99,13 @@ export class SessionFacadeService {
     }
 
     const appLocked = await this.isVaultLocked();
-    const currentRouteIsStartupPage = this.router.url.includes("startup");
+    const currentRouteIsStartupPage = this.router.url.includes('startup');
     if (currentRouteIsStartupPage && appLocked) {
       this.doLoginChecks();
     } else if (appLocked) {
       this.ngZone.run(async () => {
-        await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
+        await this.router
+          .navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true })
           .then(navigated => {
             if (!navigated) {
               this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true });
@@ -124,9 +128,10 @@ export class SessionFacadeService {
     this._deepLinkPath = null;
   }
 
-
   async determineAppLoginState(systemSessionId) {
-    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(() => LoginState.PIN_LOGIN);
+    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(
+      () => LoginState.PIN_LOGIN
+    );
     await this.handleLoginState(appLoginState);
   }
 
@@ -160,11 +165,9 @@ export class SessionFacadeService {
     return true;
   }
 
-
   async doLoginChecks() {
     await this.retrieveSystemSessionToken();
   }
-
 
   async handleLoginState(state: LoginState): Promise<void> {
     const routeConfig = { replaceUrl: true };
@@ -204,16 +207,13 @@ export class SessionFacadeService {
     }
   }
 
-
   private navigateToDashboard = async () => {
-    return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true })
-      .catch(() => false);
+    return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true }).catch(() => false);
   };
 
   private async loginUser(useBiometric: boolean) {
     this.loadingService.closeSpinner();
-    await this.identityFacadeService
-      .loginUser(useBiometric);
+    await this.identityFacadeService.loginUser(useBiometric);
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
