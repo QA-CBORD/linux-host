@@ -12,7 +12,7 @@ import { getUserFullName } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Settings } from '../../../../app.global';
-import { GetBrightnessReturnValue, ScreenBrightness } from '@capacitor-community/screen-brightness';
+import { Brightness } from '@ionic-native/brightness/ngx';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { AppState } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
@@ -33,7 +33,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   userPhoto: string;
   userId: string;
   institutionColor: string;
-  previousBrigness: GetBrightnessReturnValue;
+  previousBrigness: number;
   suscription: Subscription = new Subscription();
 
   constructor(
@@ -45,7 +45,8 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     private readonly barcodeFacadeService: BarcodeFacadeService,
     private readonly naviteProvider: NativeProvider,
     private readonly router: Router,
-    private readonly appStatesFacadeService: AppStatesFacadeService
+    private readonly appStatesFacadeService: AppStatesFacadeService,
+    private readonly brightness: Brightness
   ) { }
 
   adjustBrignessOnAppState = async (appState: AppState) => {
@@ -143,15 +144,14 @@ export class ScanCardComponent implements OnInit, OnDestroy {
 
   private async setFullBrightness() {
     if (this.naviteProvider.isMobile()) {
-      this.previousBrigness = await ScreenBrightness.getBrightness();
-      await ScreenBrightness.setBrightness({ brightness: 1.0 });
+      this.previousBrigness = await this.brightness.getBrightness();
+      await this.brightness.setBrightness(1);
     }
   }
 
   async setPreviousBrightness() {
-    if (this.naviteProvider.isMobile() && this.previousBrigness?.brightness) {
-      await ScreenBrightness.setBrightness({ brightness: this.previousBrigness.brightness });
-      this.previousBrigness = {} as GetBrightnessReturnValue;
+    if (this.naviteProvider.isMobile() && this.previousBrigness) {
+      await this.brightness.setBrightness(this.previousBrigness);
     }
   }
 
@@ -160,7 +160,6 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.previousBrigness = {} as GetBrightnessReturnValue;
     this.suscription.unsubscribe();
   }
 }
