@@ -24,7 +24,7 @@ import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facad
   templateUrl: './scan-card.component.html',
   styleUrls: ['./scan-card.component.scss'],
 })
-export class ScanCardComponent implements OnInit {
+export class ScanCardComponent implements OnInit, OnDestroy {
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
@@ -34,6 +34,7 @@ export class ScanCardComponent implements OnInit {
   userId: string;
   institutionColor: string;
   previousBrigness: GetBrightnessReturnValue;
+  suscription: Subscription = new Subscription();
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -45,11 +46,7 @@ export class ScanCardComponent implements OnInit {
     private readonly naviteProvider: NativeProvider,
     private readonly router: Router,
     private readonly appStatesFacadeService: AppStatesFacadeService
-  ) {
-    this.appStatesFacadeService.getStateChangeEvent$.subscribe(
-      this.adjustBrignessOnAppState
-    );
-  }
+  ) { }
 
   adjustBrignessOnAppState = async (appState: AppState) => {
     if (appState.isActive && this.router.url.includes(DASHBOARD_NAVIGATE.scanCard)) {
@@ -70,7 +67,7 @@ export class ScanCardComponent implements OnInit {
     this.setInstitution();
     this.setInstitutionPhoto();
     this.initBarcode();
-    this.setFullBrightness();
+    this.suscription = this.appStatesFacadeService.getStateChangeEvent$.subscribe(this.adjustBrignessOnAppState);
     this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => (d.length ? d : 'None')));
   }
 
@@ -154,10 +151,16 @@ export class ScanCardComponent implements OnInit {
   async setPreviousBrightness() {
     if (this.naviteProvider.isMobile() && this.previousBrigness?.brightness) {
       await ScreenBrightness.setBrightness({ brightness: this.previousBrigness.brightness });
+      this.previousBrigness = {} as GetBrightnessReturnValue;
     }
   }
 
   async ionViewWillLeave() {
     this.setPreviousBrightness();
+  }
+
+  ngOnDestroy(): void {
+    this.previousBrigness = {} as GetBrightnessReturnValue;
+    this.suscription.unsubscribe();
   }
 }
