@@ -1,11 +1,10 @@
 import { Inject, Injectable, Injector, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
-import { BrowserVault, Device, DeviceSecurityType, IdentityVaultConfig, Vault, VaultErrorCodes, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
-import { ModalController } from '@ionic/angular';
+import { BrowserVault, Device, DeviceSecurityType, IdentityVaultConfig, Vault, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
+import { CustomPinService } from '@shared/ui-components/pin/pin.service';
 import { Subject } from 'rxjs';
 import { ROLES } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
@@ -20,46 +19,42 @@ const key = 'sessionPin';
 
 const MAX_PIN_RETRY_COUNT = 2;
 
-const DEFAULT_TIME_OUT = 5000;
-
-const TIME_OUT_WITH_EXTRA = 600000;
+export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 5000;
 
 const config: IdentityVaultConfig = {
     key: 'get.cbord.com',
     type: VaultType.SecureStorage,
-    lockAfterBackgrounded: DEFAULT_TIME_OUT
+    lockAfterBackgrounded: VAULT_DEFAULT_TIME_OUT_IN_MILLIS
 };
+
+export interface PinResultObserver {
+    notify: (data: any, role: any) => void
+}
+
+export interface VaultMessage {
+    canLock: boolean;
+    canLockOnResume: boolean;
+}
 
 
 @Injectable({ providedIn: 'root' })
 export class VaultService {
-    public state: SessionData = {
-        useBiometric: false,
-        pin: null,
-    };
-    private canLock = true;
+    public state: SessionData = { useBiometric: false, pin: null };
     private vault: Vault | BrowserVault;
     public vaultAuthEventObs: Subject<{ success: boolean, biometricUsed: boolean, error?: any }> = new Subject();
 
-
     constructor(
-        private ngZone: NgZone,
         @Inject(Injector) private injector: Injector,
+        private ngZone: NgZone,
         private readonly userPreferenceService: UserPreferenceService,
-        private router: Router) {
+        private router: Router
+    ) {
         this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
         window['VaultService'] = this;
-        App.addListener('appStateChange', async ({ isActive }) => {
-            if (isActive && this.canLock === false) {
-                setTimeout(() => {
-                    this.canLockScreen(true);
-                }, 3000)
-            }
-        });
     }
 
-    private get modalController(): ModalController {
-        return this.injector.get(ModalController);
+    private get pinService(): CustomPinService {
+        return this.injector.get(CustomPinService);
     }
 
     async init() {
@@ -69,19 +64,17 @@ export class VaultService {
 
         this.vault.onPasscodeRequested((isPasscodeSetRequest) => {
             console.log("vault.onPasscodeRequested: ", isPasscodeSetRequest);
-            return this.onPasscodeRequested(isPasscodeSetRequest, true);
+            return this.onPasscodeRequested(isPasscodeSetRequest);
         });
 
         this.vault.onUnlock(() => {
             this.ngZone.run(async () => {
-                console.log("onUnlock CALLED...")
                 this.setIsLocked(false);
                 this.state.pin = await this.vault.getValue(key);
                 this.vaultAuthEventObs.next({ success: true, biometricUsed: this.state.useBiometric });
             })
         });
         this.vault.onLock(({ timeout }) => {
-            console.log("ONLOCK Timeout: ", timeout, " : ");
             this.ngZone.run(() => {
                 this.state.pin = null;
                 this.setIsLocked(true);
@@ -95,9 +88,16 @@ export class VaultService {
     }
 
 
-    private async migrateIfLegacyVault(retryCount: number = 0): Promise<boolean> {
 
-        console.log("RETRYCOUNT: ", retryCount);
+
+
+
+    // this method is called when this app is going to open another app;
+    // we may not want this app to lock itself is we're expecting a result from the other app.
+
+
+
+    private async migrateIfLegacyVault(retryCount: number = 0): Promise<boolean> {
         const isBiometricsEnabled = async () => (await Device.isBiometricsEnabled()) && await this.userPreferenceService.cachedBiometricsEnabledUserPreference();
         const noDataInLegacyVault = ({ code, message }) => (code == undefined && /legacy/.test(message));
         const canRetry = async (error): Promise<boolean> => !noDataInLegacyVault(error) && !(await isBiometricsEnabled()) && retryCount < MAX_PIN_RETRY_COUNT;
@@ -158,12 +158,11 @@ export class VaultService {
     }
 
     async isVaultLocked(): Promise<boolean> {
-        const hasSession = await this.hasStoredSession();
-        return hasSession && await this.vault.isLocked();
+        return (await this.hasStoredSession()) && (await this.vault.isLocked());
     }
 
 
-    private async onPasscodeRequested(isPasscodeSetRequest: boolean, callByVault = false): Promise<string> {
+    private async onPasscodeRequested(isPasscodeSetRequest: boolean): Promise<string> {
 
         if (isPasscodeSetRequest) {
             /// will happen on pin set
@@ -171,7 +170,6 @@ export class VaultService {
         } else {
             /// will happen on pin login
             const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
-
             if (PinCloseStatus.LOGIN_SUCCESS !== role) {
                 const error = { code: role, message: data };
                 this.vaultAuthEventObs.next({ biometricUsed: this.state.useBiometric, success: false, error });
@@ -186,15 +184,9 @@ export class VaultService {
     }
 
     async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
-        let componentProps = { pinAction, ...pinModalProps };
-        const pinModal = await this.modalController.create({
-            backdropDismiss: false,
-            component: PinPage,
-            componentProps,
-        });
-        await pinModal.present();
-        return await pinModal.onDidDismiss();
+        return await this.pinService.navigateToPinPage(pinAction, pinModalProps);
     }
+
 
     async retrieveVaultPin(): Promise<string> {
         return await this.getPin();
@@ -213,6 +205,7 @@ export class VaultService {
     }
 
     async logout() {
+        console.log("clearing vaults");
         this.state.pin = undefined;
         this.state.isLocked = false;
         await this.vault.clear();
@@ -243,18 +236,10 @@ export class VaultService {
         return await this.vault.lock();
     }
 
-    canLockScreen(canLock: boolean) {
-        console.log("canLockScreen: ", canLock);
-        this.canLock = canLock;
-        if (canLock) {
-            this.patchVaultConfig({ lockAfterBackgrounded: DEFAULT_TIME_OUT });
-        } else {
-            this.patchVaultConfig({ lockAfterBackgrounded: TIME_OUT_WITH_EXTRA });
-        }
-    }
 
 
-    private async patchVaultConfig(config) {
+
+    async patchVaultConfig(config) {
         await this.vault.updateConfig({
             ...this.vault.config,
             ...config
@@ -275,7 +260,9 @@ export class VaultService {
     }
 
     private async doUnlockVault(biometricEnabled: boolean) {
-        return this.showSplashScreen().then(() => this.unlockVault(biometricEnabled));
+        return this.showSplashScreen().then(() => {
+            setTimeout(() => this.unlockVault(biometricEnabled), biometricEnabled ? 0 : 500);
+        });
     }
 
     async retryPinUnlock() {

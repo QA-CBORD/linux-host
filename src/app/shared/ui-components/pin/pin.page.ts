@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -10,10 +10,11 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
+import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { ConnectivityService } from '@shared/services/connectivity.service';
-import { App } from '@capacitor/app';
+import { CustomPinService } from './pin.service';
+import { Location } from '@angular/common';
+import { SkipBackButtonEvent } from './skip-back-button-event';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -38,7 +39,7 @@ export enum PinAction {
   templateUrl: './pin.page.html',
   styleUrls: ['./pin.page.scss'],
 })
-export class PinPage implements OnInit {
+export class PinPage extends SkipBackButtonEvent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   readonly setNumbers: ReadonlyArray<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   pinNumber: number[] = [];
@@ -61,6 +62,7 @@ export class PinPage implements OnInit {
   private readonly currentPinText: string = 'Enter current PIN';
   private readonly newPinText: string = 'Enter your new PIN';
   private readonly confirmNewPinText: string = 'Confirm your new PIN';
+  private navigateBackOnClose: boolean = false;
 
   constructor(
     private modalController: ModalController,
@@ -70,16 +72,36 @@ export class PinPage implements OnInit {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityService: ConnectivityService,
-  ) { }
+    private readonly pinService: CustomPinService,
+    private readonly location: Location
+  ) {
+    super();
+  }
+
+
+  ngOnDestroy(): void {
+    this.removeBackButtonEventSubscription();
+  }
 
   @Input() pinAction: PinAction;
   @Input() showDismiss: boolean = true;
 
+
   ngOnInit() {
+    this.retrievePinData();
     this.retrievePinRetrys();
     this.setInstructionText();
     this.a11yService.readAloud(this.instructionText);
+  }
+
+  retrievePinData() {
+    const { pinAction, showDismiss, navigateBackOnClose } = (<any>this.location.getState());
+    if ((pinAction == undefined || pinAction == null) === false) {
+      this.showDismiss = showDismiss == undefined ? true : showDismiss;
+      this.navigateBackOnClose = navigateBackOnClose;
+      this.pinAction = pinAction;
+      console.log("GOT THIS IN PIN PAGE: ", { pinAction, showDismiss, navigateBackOnClose });
+    }
   }
 
   private setInstructionText(text: string = null) {
@@ -188,9 +210,15 @@ export class PinPage implements OnInit {
     this.removeNumber();
   }
 
-  closePage(pin: string, status: PinCloseStatus) {
+  async closePage(pin: string, status: PinCloseStatus) {
     this.loadingService.closeSpinner();
-    this.modalController.dismiss(pin, status);
+    try {
+      await this.modalController.dismiss(pin, status);
+    } catch (errr) {
+      console.log("NOT A MODAL....GRRRRR");
+      this.navigateBackOnClose && this.location.back();
+      this.pinService.onPinResults.next({ data: pin, role: status });
+    }
   }
 
   back() {
@@ -240,7 +268,7 @@ export class PinPage implements OnInit {
         ({ message, status }) => {
           this.cleanLocalState();
           if (this.connectionService.isConnectionIssues({ message, status })) {
-            this.handleConnectionIssues({ message })
+            this.pinService.handleConnectionIssues();
           } else {
             this.setErrorText('Error setting your PIN - please try again');
           }
@@ -288,31 +316,13 @@ export class PinPage implements OnInit {
           } else if (DEVICE_MARKED_LOST.test(message)) {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
           } else if (this.connectionService.isConnectionIssues({ message, status })) {
-            this.closePage(null, PinCloseStatus.CLOSED_NO_CONNECTION);
+            this.pinService.handleConnectionIssues();
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
         }
       );
     // on success, return the pin so the vault can be unlocked
-  }
-  handleConnectionIssues({ message }) {
-    this.connectivityService.handleConnectionError({
-      onScanCode: async () => {
-        try {
-          this.closePage(null, PinCloseStatus.ERROR);
-          this.modalController.dismiss();
-        } catch (ignored) {
-          console.log("error: ", ignored);
-        }
-      },
-      onRetry: async () => {
-        await this.loadingService.showSpinner();
-        const connectionRestored = !(await this.connectionService.deviceOffline())
-        await this.loadingService.closeSpinner();
-        return connectionRestored;
-      }
-    }, true);
   }
 
   get showReset() {

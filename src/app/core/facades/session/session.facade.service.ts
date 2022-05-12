@@ -79,10 +79,6 @@ export class SessionFacadeService {
   }
 
 
-  set canLockScreen(canLock: boolean) {
-    this.identityFacadeService.canLockScreen(canLock);
-  }
-
   private async onActiveState() {
     /// use app status to prevent double calling
     if (this.appStatus === AppStatus.FOREGROUND) return;

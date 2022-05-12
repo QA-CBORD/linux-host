@@ -2,6 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { ANONYMOUS_ROUTES } from './non-authorized.config';
+import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/no-connectivity-screen';
+import { ConnectivityPageResolver } from '@shared/services/connectivity-route.resolver';
+import { PinPage } from '@shared/ui-components/pin/pin.page';
+import { CanDeactivatePage } from '@shared/ui-components/pin/can-deactivate.pin.page';
 
 const routes: Routes = [
   {
@@ -43,8 +47,15 @@ const routes: Routes = [
   },
   {
     path: ANONYMOUS_ROUTES.noConnectivity,
-    loadChildren: () => import('../shared/connectivity.module').then(m => m.ConnectivityModule),
+    component: NoConnectivityScreen,
+    resolve: { data: ConnectivityPageResolver },
+    canDeactivate: [CanDeactivatePage]
   },
+  {
+    path: ANONYMOUS_ROUTES.pin,
+    component: PinPage,
+    canDeactivate: [CanDeactivatePage]
+  }
 ];
 
 
@@ -52,4 +63,4 @@ const routes: Routes = [
   imports: [CommonModule, RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class NonAuthorizedRoutingModule {}
+export class NonAuthorizedRoutingModule { }

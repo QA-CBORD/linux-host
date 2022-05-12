@@ -15,13 +15,6 @@ import { StHeaderModule } from "./ui-components/st-header/st-header.module";
         CommonModule,
         FormsModule,
         IonicModule,
-        RouterModule.forChild([{
-            path: '',
-            component: NoConnectivityScreen,
-            resolve: {
-                data: ConnectivityPageResolver
-            }
-        }]),
         StHeaderModule,
         StButtonModule,
     ],

@@ -1,9 +1,8 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-startup',
@@ -17,6 +16,7 @@ export class StartupPage implements OnInit {
     private readonly elementRef: ElementRef,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly location: Location,
+    private readonly loadingService: LoadingService,
     private readonly sessionFacadeService: SessionFacadeService
   ) { }
 
@@ -24,9 +24,10 @@ export class StartupPage implements OnInit {
 
   /// check login on enter
   ionViewDidEnter() {
-    const historyState = this.location.getState() as any;
-    console.log("ROUTER HISTORY STATE: ", historyState);
-    if (!historyState.skipLoginFlow) {
+    this.loadingService.showSpinner();
+    const state = this.location.getState() as any;
+    console.log("ROUTER HISTORY STATE: ", state);
+    if (!state.skipLoginFlow) {
       this.checkLoginFlow();
     }
   }
@@ -40,6 +41,7 @@ export class StartupPage implements OnInit {
 
   /// destroy after login complete
   ionViewDidLeave() {
+    this.loadingService.closeSpinner();
     this.elementRef.nativeElement.remove();
   }
 }

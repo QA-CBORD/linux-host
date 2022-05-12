@@ -21,6 +21,7 @@ import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/gener
 import { ConnectionService } from '@shared/services/connection-service';
 import { SessionData, VaultService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
+import { ApplicationService, EventInfo } from '@shared/services/application.service';
 
 export enum LoginState {
   DONE,
@@ -50,8 +51,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly loadingService: LoadingService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly connectivityService: ConnectivityService,
-    private readonly connectionService: ConnectionService,
-    private readonly userPreferenceService: UserPreferenceService
+    private readonly userPreferenceService: UserPreferenceService,
+    private readonly vaultStateService: ApplicationService,
   ) {
     super();
     window['identityFacade'] = this;
@@ -70,9 +71,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
         }
       } else {
         console.log("error event: ", error);
-        if (PinCloseStatus.CLOSED_NO_CONNECTION === error?.code) {
-          this.handlePinUnlockError(error);
-        } else {
+        if (this.shouldLogoutUser(error)) {
           this.logoutUser();
         }
       }
@@ -105,11 +104,18 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
 
+
+  async onNavigateExternal(e: EventInfo) {
+    this.vaultStateService.onNavigateExternal(e);
+  }
+
+
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
   private async initAndUnlock(session: SessionData, navigateToDashboard: boolean): Promise<void> {
+    console.log("initAndUnlock navigateToDashboard: ", navigateToDashboard)
     if (navigateToDashboard) {
-      this.navigateToDashboard();
+      this.navigateToDashboard()
     }
     await this.identityService.login(session);
   }
@@ -124,6 +130,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.authenticateUserPin();
   }
 
+
+  shouldLogoutUser(error): boolean {
+    return !(error?.code === PinCloseStatus.CLOSED_NO_CONNECTION);
+  }
 
   async loginUser(useBiometric: boolean) {
     this.identityService.unlockVault(useBiometric);
@@ -159,19 +169,21 @@ export class IdentityFacadeService extends ServiceStateFacade {
     }
     return this.handleConnectionErrors({
       onRetry: async () => {
+        console.log("onAuthenticateUserPinFailed onRetry: ");
         const pin = await this.identityService.retrieveVaultPin();
         try {
           await this.loadingService.showSpinner();
           await firstValueFrom(this.authFacadeService.authenticatePin$(pin));
           await this.loadingService.closeSpinner();
           await this.showSplashScreen();
+          console.log("onAuthenticateUserPinFailed onRetry: 222 ");
           return await this.navigateToDashboard();
         } catch (error) {
           await this.loadingService.closeSpinner();
         }
         return false;
       },
-      onScanCode: async () => {}
+      onScanCode: async () => { }
     });
   }
 
@@ -181,7 +193,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   public async navigateToDashboard() {
     try {
-      return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
+      return this.showSplashScreen()
+          .then(async () => await this.routingService.navigate([APP_ROUTES.dashboard], { 
+             replaceUrl: true, 
+             state: { skipLoading: true },
+             queryParams: { skipLoading: true }
+            }));
     } catch (err) {
       this.onNavigateToDashboardFailed(err);
     }
@@ -194,43 +211,17 @@ export class IdentityFacadeService extends ServiceStateFacade {
         try {
           await this.showSplashScreen();
           return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
-        } catch (ignored) {
-          // ignored on purpose. 
+        } catch (error) {
+          //
         }
         return false;
       },
-      onScanCode: async () => {}
-    });
+      onScanCode: async () => { }
+    }, true);
   }
 
-
-
-  private async handlePinUnlockError({ message, code }) {
-    console.log("handlePinUnlockError: ", message, " Code :", code)
-    if (PinCloseStatus.CLOSED_NO_CONNECTION === code) {
-      return this.handleConnectionErrors({
-        onScanCode: async () => {},
-        onRetry: async () => {
-          console.log("ON_RETRY CALLEED.....")
-          await this.loadingService.showSpinner();
-          const connectionRestored = !(await this.connectionService.deviceOffline())
-          await this.loadingService.closeSpinner();
-          console.log("ON_RETRY connectionRestored.....", connectionRestored)
-          if (connectionRestored) {
-            this.showSplashScreen().then(() => {
-                this.identityService.retryPinUnlock();
-            })
-          }
-          return connectionRestored;
-        }
-      });
-    } else {
-      return this.logoutUser();
-    }
-  }
-
-  private async handleConnectionErrors(retryHandler: RetryHandler): Promise<any> {
-    return await this.connectivityService.handleConnectionError(retryHandler);
+  private async handleConnectionErrors(retryHandler: RetryHandler, openAsModal: boolean = false): Promise<any> {
+    return await this.connectivityService.handleConnectionError(retryHandler, openAsModal);
   }
 
   async logoutUser(): Promise<any> {
@@ -243,16 +234,13 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   async redirectToEntry() {
-    return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
+    return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true })
+      .then((success) => !success && this.redirectToEntry());
   }
 
 
   async isVaultLocked() {
     return this.identityService.isVaultLocked();
-  }
-
-  canLockScreen(canLock: boolean) {
-    this.identityService.canLockScreen(canLock);
   }
 
   async showSplashScreen(): Promise<boolean> {

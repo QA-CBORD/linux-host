@@ -28,16 +28,11 @@ export class ConnectivityService {
     private loadingService: LoadingService,
   ) { }
 
-  isOpened(): boolean {
+  private isOpened(): boolean {
     return this.router.url.includes(ANONYMOUS_ROUTES.noConnectivity);
   }
 
-  async closeIfOpened() {
-    if ((await this.isOpenedAsModal())) {
-      await this.modalController.dismiss();
-    }
-  }
-  async isOpenedAsModal() {
+  private async isOpenedAsModal() {
     const currentTopModal = await this.modalController.getTop();
     return currentTopModal && currentTopModal.componentProps.retryHandler;
   }
@@ -48,7 +43,7 @@ export class ConnectivityService {
       if ((await this.isOpenedAsModal())) {
         this.connectionService.modalRefreshHandle.next(true);
       } else {
-        return await this.showConnectivityIssuePageAsModal(handler);
+        return this.showConnectivityIssuePageAsModal(handler);
       }
     } else {
       if (this.isOpened()) {
@@ -64,7 +59,7 @@ export class ConnectivityService {
   }
 
   private async showConnectivityIssuePageAsModal(retryHandler: RetryHandler) {
-    await this.loadingService.showSpinner({ duration: 80000 });
+    this.loadingService.showSpinner();
     let csModel: ConnectivityScreenCsModel = {} as any;
     let errorType: ConnectivityErrorType;
     let freshContentStringsLoaded: boolean = false;

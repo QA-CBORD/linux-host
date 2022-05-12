@@ -14,13 +14,15 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
 import { ConnectivityPageInfo, RetryHandler } from './model/connectivity-page.model';
 import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
+import { SkipBackButtonEvent } from '../pin/skip-back-button-event';
 
 @Component({
   selector: 'st-no-connectivity-screen',
   templateUrl: './no-connectivity-screen.html',
   styleUrls: ['./no-connectivity-screen.scss'],
 })
-export class NoConnectivityScreen implements OnInit, OnDestroy {
+export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit, OnDestroy {
 
   refreshSubscription: Subscription;
   retrySubscription: Subscription;
@@ -46,8 +48,11 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     private readonly barcodeFacadeService: BarcodeFacadeService,
     private readonly changeDetector: ChangeDetectorRef,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly modalController: ModalController
-  ) { }
+    private readonly modalController: ModalController,
+    private readonly location: Location
+  ) {
+    super();
+   }
 
   ngOnInit() {
     this.init();
@@ -102,6 +107,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     this.routeSubscription.unsubscribe();
     this.refreshSubscription.unsubscribe();
     this.retrySubscription.unsubscribe();
+    this.removeBackButtonEventSubscription();
   }
 
 
@@ -175,6 +181,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
       await this.modalController.dismiss();
     } catch (err) {
       console.log("ERROR CLOSING MODAL: ", err);
+      //this.location.back();
     }
   }
 

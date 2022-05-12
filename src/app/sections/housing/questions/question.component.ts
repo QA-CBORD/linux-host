@@ -18,7 +18,7 @@ const IMAGE_DIR = 'stored-images';
 
 import { CameraDirection, Photo, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '@sections/settings/pages/services/camera.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { ApplicationService } from '@shared/services/application.service';
 
 @Component({
   selector: 'st-question',
@@ -44,13 +44,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
     public _applicationsStateService: ApplicationsStateService, //TODO: delete
     private _termService: TermsService,
     private actionSheetCtrl: ActionSheetController,
-    private sessionFacadeService: SessionFacadeService,
+    private appService: ApplicationService,
     private toastService: ToastService,
     private _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService,
     private plt: Platform,
     private cameraService: CameraService
-  ) {}
+  ) { }
 
   ngOnDestroy(): void {
     this._applicationsStateService.setRequestedRoommates([]);
@@ -131,7 +131,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const getImageSub = this._workOrderStateService.workOrderImage$.subscribe(res => {
       if (!!(res && res.contents)) {
         const extension = res.filename.split('.').pop();
-         const imageContent = res.contents.startsWith('data:image')
+        const imageContent = res.contents.startsWith('data:image')
           ? res.contents
           : `data:image/${extension};base64,${res.contents}`;
 
@@ -204,7 +204,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       source: cameraSource,
       saveToGallery: true,
     }).finally(() => {
-      this.sessionFacadeService.canLockScreen = false;
+      this.appService.onNavigateExternal({ makeVaultUnLockable: true, estimatedTimeInMillis: 600000 });
     });
 
     if (image) {

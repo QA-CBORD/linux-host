@@ -14,6 +14,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
 import { Network } from '@ionic-native/network/ngx';
 import { VaultService } from '@core/service/identity/vault.identity.service';
+import { CanDeactivatePage } from '@shared/ui-components/pin/can-deactivate.pin.page';
 
 const appInitFactory = (vaultService: VaultService): (() => Promise<void>) => () => vaultService.init();
 @NgModule({
@@ -33,7 +34,7 @@ const appInitFactory = (vaultService: VaultService): (() => Promise<void>) => ()
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [VaultService],
+      deps: [VaultService, CanDeactivatePage],
       multi: true,
     },
     { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network,

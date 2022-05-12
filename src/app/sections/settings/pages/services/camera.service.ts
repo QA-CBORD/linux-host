@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Camera, CameraPermissionType, CameraSource, ImageOptions, Photo } from '@capacitor/camera';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { Platform } from '@ionic/angular';
+import { ApplicationService } from '@shared/services/application.service';
 import { take } from 'rxjs/operators';
 
 @Injectable({
@@ -10,7 +11,7 @@ import { take } from 'rxjs/operators';
 export class CameraService {
 
   constructor(private readonly platform: Platform,
-    private readonly sessionFacadeService: SessionFacadeService) { }
+    private readonly appService: ApplicationService) { }
 
   async getPhoto(options: ImageOptions): Promise<Photo> {
     await this.requestCameraPermission(options?.source || CameraSource.Photos);
@@ -20,7 +21,7 @@ export class CameraService {
   private async requestCameraPermission(cameraSource: CameraSource) {
     const permission = await Camera.checkPermissions();
     const source = cameraSource.toLocaleLowerCase();
-    this.sessionFacadeService.canLockScreen = false;
+    this.appService.onNavigateExternal({ makeVaultUnLockable: true });
     if (/prompt/.test(permission[source])) {
       const permissionStatus = await Camera.requestPermissions({ permissions: [<CameraPermissionType>source] }).catch((error) => console.log("CAMERA: ", error));
       console.log("PERMISION STATUS: ", permissionStatus);

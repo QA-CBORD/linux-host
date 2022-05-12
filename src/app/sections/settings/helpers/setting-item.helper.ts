@@ -7,7 +7,7 @@ import {
   StatusSettingValidation,
 } from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { from, concat, zip, Observable, of } from 'rxjs';
+import { from, concat, zip, Observable } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
 import { PinAction } from '@shared/ui-components/pin/pin.page';
 import { ReportCardStatus } from '../models/report-card-status.config';
@@ -59,12 +59,17 @@ export function toggleBiometricStatus(services: SettingsServices) {
 
 export function handlePinAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
-  setting.callback = async function() {
+  setting.callback = async function () {
     const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
+    services.identity.onNavigateExternal({ makeVaultUnLockable: true, keepVaultUnLockableOnResume: true });
     return services.identity
       .pinLoginSetup(biometricsEnabled, false, {
+        navigateBackOnClose: true,
         showDismiss: true,
         pinAction: biometricsEnabled ? PinAction.CHANGE_PIN_BIOMETRIC : PinAction.CHANGE_PIN_ONLY,
+      }).finally(() => {
+        console.log("SETTING.ITEM.HELPER FINALLY... ");
+        services.identity.onNavigateExternal({ makeVaultUnLockable: false });
       });
   };
 }

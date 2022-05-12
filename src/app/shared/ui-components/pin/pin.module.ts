@@ -9,15 +9,8 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { PinPage } from './pin.page';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: PinPage,
-  },
-];
-
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes), StButtonModule],
+  imports: [CommonModule, FormsModule, IonicModule, StButtonModule],
   declarations: [PinPage],
   exports: [PinPage],
   entryComponents: [PinPage],
