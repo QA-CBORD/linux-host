@@ -43,7 +43,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     private readonly commerceApiService: CommerceApiService,
     private readonly userFacadeService: UserFacadeService,
     private readonly barcodeFacadeService: BarcodeFacadeService,
-    private readonly naviteProvider: NativeProvider,
+    private readonly nativeProvider: NativeProvider,
     private readonly router: Router,
     private readonly appStatesFacadeService: AppStatesFacadeService,
     private readonly brightness: Brightness
@@ -143,14 +143,14 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   private async setFullBrightness() {
-    if (this.naviteProvider.isMobile()) {
+    if (this.nativeProvider.isMobile()) {
       this.previousBrigness = await this.brightness.getBrightness();
       await this.brightness.setBrightness(1);
     }
   }
 
   async setPreviousBrightness() {
-    if (this.naviteProvider.isMobile() && this.previousBrigness) {
+    if (this.nativeProvider.isMobile() && this.previousBrigness) {
       await this.brightness.setBrightness(this.previousBrigness);
     }
   }
