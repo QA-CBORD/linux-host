@@ -49,7 +49,32 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   applicationKey: number;
 
   isSubmitted: boolean;
+ 
 
+  // private _initSubscription(): void {
+  //   const dashboardSubscription: Subscription = merge(
+  //     this._housingService.refreshDefinitions$,
+  //     this._termsService.termId$
+  //   )
+  //     .pipe(
+  //       switchMap((termId: number) => {
+  //         this._loadingService.showSpinner();
+  //         return merge(
+  //           this._housingService.getDefinitions(termId),
+  //           this._housingService.getRoomSelects(termId),
+  //           this._housingService.getPatronContracts(termId),
+  //           this._housingService.getCheckInOuts(termId),
+  //           this._housingService.getInspections(termId)
+  //         )
+  //       })
+  //     )
+  //     .subscribe({
+  //       next: (response: DefinitionsResponse) => this._handleSuccess(response),
+  //       error: () => this._loadingService.closeSpinner(),
+  //     });
+      
+  //   this._subscription.add(dashboardSubscription);
+  // }
   constructor(
     private _route: ActivatedRoute,
     private _applicationsService: ApplicationsService,
@@ -67,6 +92,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
     this._initApplicationDetailsObservable();
     this._initPagesObservable();
+
   }
 
   ngOnDestroy(): void {
@@ -125,7 +151,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       tap((applicationDetails: ApplicationDetails) => {
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
-
+       alert(JSON.stringify(applicationDetails.applicationDefinition.accountCodeKey))
         this.isSubmitted = status === ApplicationStatus.Submitted;
 
         if(!this.isSubmitted && this._applicationsStateService.requestingRoommate != null) {
