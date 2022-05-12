@@ -8,10 +8,10 @@ import { filter } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AppStatesFacadeService {
-  protected readonly _appStateChangeEvent$: BehaviorSubject<AppState> = new BehaviorSubject<AppState>(null);
+  protected readonly _appStateChangeEvent$: BehaviorSubject<AppState> = new BehaviorSubject<AppState>({} as AppState);
   protected readonly _appUrlOpenEvent$: BehaviorSubject<URLOpenListenerEvent> = new BehaviorSubject<
     URLOpenListenerEvent
-  >(null);
+  >({} as URLOpenListenerEvent);
 
   constructor() {
     /**

@@ -24,10 +24,7 @@ import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facad
   templateUrl: './scan-card.component.html',
   styleUrls: ['./scan-card.component.scss'],
 })
-export class ScanCardComponent implements OnInit, OnDestroy {
-  private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
-  private readonly appStateSuscription: Subscription = new Subscription();
-
+export class ScanCardComponent implements OnInit {
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
@@ -49,7 +46,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly appStatesFacadeService: AppStatesFacadeService
   ) {
-    this.appStateSuscription = this.appStatesFacadeService.getStateChangeEvent$.subscribe(
+    this.appStatesFacadeService.getStateChangeEvent$.subscribe(
       this.adjustBrignessOnAppState
     );
   }
@@ -155,19 +152,12 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   async setPreviousBrightness() {
-    if (this.naviteProvider.isMobile()) {
+    if (this.naviteProvider.isMobile() && this.previousBrigness?.brightness) {
       await ScreenBrightness.setBrightness({ brightness: this.previousBrigness.brightness });
     }
   }
 
   async ionViewWillLeave() {
     this.setPreviousBrightness();
-  }
-
-  /**
-   * Remove all appStateChange listener then listen only the one that is specfied on the sessionFacade.
-   */
-  ngOnDestroy(): void {
-    this.appStateSuscription.unsubscribe();
   }
 }
