@@ -23,7 +23,7 @@ const  MobileCredentialStatusPlugin  = registerPlugin<any>('MobileCredentialStat
 })
 export class MobileCredentialFacade {
   private mobileCredentialManager: MobileCredentialManager = null;
-  private mCredentialEnabled: boolean = false;
+  private mCredentialEnabled = false;
   private mobileCredentialSettingsAlreadyChecked = false;
   constructor(
     private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
@@ -70,12 +70,14 @@ export class MobileCredentialFacade {
   enabledCredentialsSettings(): Observable<any> {
     const iosCredentialSettings = this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
       take(1),
+      // eslint-disable-next-line no-extra-boolean-cast
       map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.IosCredential : false))
     );
     const androidCredentialSettings = this.settingsFacadeService
       .getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED)
       .pipe(
         take(1),
+        // eslint-disable-next-line no-extra-boolean-cast
         map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.AndroidCredential : false))
       );
 
@@ -166,7 +168,7 @@ export class MobileCredentialFacade {
     const readDeviceState = async () => {
       let credentialType = 'HID';
       if (this.mobileCredentialManager instanceof GooglePayCredentialManager) credentialType = 'NXP_GOOGLE';
-      let response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType });
+      const response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType });
       const deviceState = new DeviceState(response.deviceState);
       deviceState.env$ = envString(this.environmentFacade.getEnvironmentObject());
       deviceState.osVersion$ = (await Device.getInfo()).osVersion;

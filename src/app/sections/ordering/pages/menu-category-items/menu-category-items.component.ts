@@ -20,7 +20,7 @@ import { APP_ROUTES } from '@sections/section.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuCategoryItemsComponent implements OnInit {
-  searchState: boolean = false;
+  searchState = false;
   menuInfo$: Observable<MenuInfo>;
   menuCategory: MenuCategoryInfo;
   filteredMenuCategoryItems: MenuCategoryItemInfo[] = [];

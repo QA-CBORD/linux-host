@@ -214,7 +214,7 @@ export class OrderingApiService {
     dateTime: string,
     orderType: number,
     locale: string = null,
-    depth: number = 4
+    depth = 4
   ): Observable<any> {
     const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
     const queryConfig = new RPCQueryConfig('getDisplayMenu', postParams, true);

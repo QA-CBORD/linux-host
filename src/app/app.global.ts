@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-export let DEBUG_ON = true;
+export const DEBUG_ON = true;
 
 export namespace Environment {
   export enum Value {

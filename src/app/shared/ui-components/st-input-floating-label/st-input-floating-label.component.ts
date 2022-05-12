@@ -15,36 +15,35 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   styleUrls: ['./st-input-floating-label.component.scss'],
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR],
 })
-export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, ControlValueAccessor, FocusableElement {
+export class StInputFloatingLabelComponent implements AfterViewInit, ControlValueAccessor, FocusableElement {
   @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() type: string;
-  @Input() maxlength: string = '';
+  @Input() maxlength = '';
   @Input() idd: string;
   @Input() isError: boolean;
   @Input() inputmode: string;
   @Input() enterkeyhint: string;
   @Input() tabindex: string;
-  showOrHide: string = 'Show';
+  showOrHide = 'Show';
   @Input('stFocusNext')
   set focusNextDr(value: FocusableElement) {
     if (!this.enterkeyhint) this.enterkeyhint = 'next';
   }
 
   @Input() icon: string;
-  private errorIcon: string = '/assets/icon/input-error.svg';
+  private errorIcon = '/assets/icon/input-error.svg';
   imageSrc: string = this.errorIcon;
   passwordFieldDirty: boolean;
   @HostBinding('class.disabled')
   @Input()
-  isDisabled: boolean = false;
+  isDisabled = false;
 
   @ViewChild('input', { static: true }) inputRef: ElementRef<HTMLInputElement>;
   innerValue: string | number = '';
   private onChange: (v: any) => void;
   private onTouched: () => void;
 
-  constructor() {}
   ngAfterViewInit(): void {
     if(this.type == 'password') {
       this.control.valueChanges.subscribe(value => {
@@ -69,8 +68,6 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
       this.showOrHide = 'Show';
     }
   }
-
-  ngOnInit() {}
 
   //get accessor
   get value(): any {

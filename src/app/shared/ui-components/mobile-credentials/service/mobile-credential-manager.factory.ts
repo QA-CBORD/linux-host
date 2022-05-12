@@ -55,13 +55,13 @@ export class MobileCredentialManagerFactory {
   }
 
   private createHidCredentialManagerFor(mCredential: HIDCredential): HIDCredentialManager {
-    let credentialManager = this.injector.get(HIDCredentialManager);
+    const credentialManager = this.injector.get(HIDCredentialManager);
     credentialManager.setCredential(mCredential);
     return credentialManager;
   }
 
   private createGoogleCredentialManagerFor(mCredential: GoogleCredential): GooglePayCredentialManager {
-    let credentialManager = this.injector.get(GooglePayCredentialManager);
+    const credentialManager = this.injector.get(GooglePayCredentialManager);
     credentialManager.setCredential(mCredential);
     return credentialManager;
   }

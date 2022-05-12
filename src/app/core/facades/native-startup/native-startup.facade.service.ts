@@ -13,7 +13,7 @@ import { App } from '@capacitor/app';
 })
 export class NativeStartupFacadeService extends ServiceStateFacade {
   protected readonly _blockGlobalNavigation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private blockGlobalNavigation: boolean = false;
+  private blockGlobalNavigation = false;
   private digestKey = 'get_nativeStartupMessageDigest';
   private blockNavStartup = false;
 
@@ -49,7 +49,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           return null;
         }
 
-        let appInfo = await App.getInfo();
+        const appInfo = await App.getInfo();
         return {
           platform: deviceInfo.platform,
           build: appInfo.build,

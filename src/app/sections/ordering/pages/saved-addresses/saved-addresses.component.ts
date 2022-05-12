@@ -20,8 +20,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class SavedAddressesComponent implements OnInit {
   userAddresses: AddressInfo[];
   buildings$: Observable<BuildingInfo[]>;
-  errorState: boolean = false;
-  addNewAdddressState: boolean = false;
+  errorState = false;
+  addNewAdddressState = false;
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   defaultAddress: string;

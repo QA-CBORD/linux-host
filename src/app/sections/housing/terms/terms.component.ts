@@ -16,7 +16,7 @@ import { Term } from './terms.model';
 export class TermsComponent implements OnInit {
   terms$: Observable<Term[]>;
 
-  label: string = 'Select Term';
+  label = 'Select Term';
 
   customPopoverOptions: any = {
     mode: 'md',

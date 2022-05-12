@@ -10,9 +10,7 @@ export class GlobalNavService {
   private readonly _isNavBarMenuExpanded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private readonly _isBackdropShown$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  private modalStack: number = 0;
-
-  constructor() {}
+  private modalStack = 0;
 
   get isNavBarMenuExpanded$(): Observable<boolean> {
     return this._isNavBarMenuExpanded$

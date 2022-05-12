@@ -156,7 +156,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           }
         });
         order.orderItems = [];
-        for (let value of map.values()) {
+        for (const value of map.values()) {
           order.orderItems.push(value);
         }
         if (this.orderCheckStatus.isNotCheckedIn(checkinStatus)) {
@@ -226,7 +226,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
-    let [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder()
+    const [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder()
       .pipe(first())
       .toPromise();
     if (hasMissedItems) {

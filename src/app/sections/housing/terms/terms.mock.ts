@@ -5,7 +5,7 @@ export function generateTerm(_: any, index: number): Term {
   const termId: number = index;
   const termStartDate: string = new Date(now).toISOString();
   const termEndDate: string = new Date(now + index).toISOString();
-  const termName: string = `Term ${index}`;
+  const termName = `Term ${index}`;
 
   return new Term({
     termId,
@@ -15,6 +15,6 @@ export function generateTerm(_: any, index: number): Term {
   });
 }
 
-export function generateTerms(amount: number = 3): Term[] {
+export function generateTerms(amount = 3): Term[] {
   return Array.apply(null, Array(amount)).map(generateTerm);
 }

@@ -43,6 +43,7 @@ export interface AndroidCredentialState extends MobileCredentialState {
 }
 
 export class CredentialStateResolver {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
   static fromActivePasses(activePasses: ActivePasses): MobileCredentialState {
@@ -202,7 +203,7 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     return this.credentialState;
   }
 
-  revoked(): Boolean {
+  revoked(): boolean {
     return this.credentialState.revoked();
   }
 
@@ -269,7 +270,7 @@ export class HIDCredential extends AndroidCredential<HID> {
   }
 
   getPersistable(): Persistable {
-    let { id } = this.credentialBundle;
+    const { id } = this.credentialBundle;
     return new Persistable(id, MobileCredentialStatuses.PROCESSING);
   }
 
@@ -284,7 +285,7 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
   }
 
   getPersistable(): Persistable {
-    let { id } = this.credentialBundle;
+    const { id } = this.credentialBundle;
     return { id };
   }
 }

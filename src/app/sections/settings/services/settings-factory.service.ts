@@ -77,7 +77,7 @@ export class SettingsFactoryService {
     for (let sectionIndex = 0; sectionIndex < parsedSettings.length; sectionIndex++) {
       const section = parsedSettings[sectionIndex];
       const promises = [];
-      const hiddenSettings: { [key: string]: Boolean } = {};
+      const hiddenSettings: { [key: string]: boolean } = {};
 
       for (let settingIndex = 0; settingIndex < section.items.length; settingIndex++) {
         const setting = section.items[settingIndex];

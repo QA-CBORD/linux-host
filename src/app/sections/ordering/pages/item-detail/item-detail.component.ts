@@ -36,7 +36,7 @@ export class ItemDetailComponent implements OnInit {
   menuItem: MenuItemInfo;
   menuItemImg: string;
   menuInfo$: Observable<MenuInfo>;
-  errorState: boolean = false;
+  errorState = false;
   cartSelectedItem: OrderItem;
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;

@@ -144,6 +144,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         ],
         supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest],
         checkIsEnabled: async function (services: SettingsServices) {
+          // eslint-disable-next-line @typescript-eslint/no-this-alias
           const self: SettingItemConfig = this;
           // if is guest user return false.
           if (await isGuestUser(services) || !((await isSupportedInCurrentProfile(services))(self))) return false;

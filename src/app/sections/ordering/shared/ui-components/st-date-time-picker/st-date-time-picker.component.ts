@@ -29,12 +29,12 @@ export class StDateTimePickerComponent implements OnInit {
   @Output() onTimeSelected: EventEmitter<any> = new EventEmitter<any>();
   @Input() dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
-  private selectedDayIdx: number = 0;
+  private selectedDayIdx = 0;
   private picker: HTMLIonPickerElement;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   private weekArray: ContentStringInfo[];
   private monthArray: ContentStringInfo[];
-  private tomorrowString: string = 'Tomorrow';
+  private tomorrowString = 'Tomorrow';
 
   constructor(
     private readonly pickerController: PickerController,
@@ -107,8 +107,9 @@ export class StDateTimePickerComponent implements OnInit {
     if (value === 'asap') {
       dateValue = 'ASAP';
     } else {
+      // eslint-disable-next-line prefer-const
       let [hours, mins] = value.split(':');
-      let [minutes, period = ''] = mins.split(' ');
+      const [minutes, period = ''] = mins.split(' ');
       hours = (period.includes('PM') && +hours != 12 && +hours + 12) || +hours;
       hours = period.includes('AM') && +hours == 12 ? 0 : hours;
       timeStamp = this.getTimeStamp(date.value, +hours, minutes);
@@ -136,7 +137,7 @@ export class StDateTimePickerComponent implements OnInit {
     }
   }
 
-  private preparePickerArr(i: number = 0): any[] {
+  private preparePickerArr(i = 0): any[] {
     const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
       (previous, hourBlock) => [
@@ -150,7 +151,7 @@ export class StDateTimePickerComponent implements OnInit {
 
   private createColumns() {
     const numberOfColumns = 2;
-    let columns = [];
+    const columns = [];
     let isToday;
     let prevSelectedTimeIdx;
     const dataArr = this.preparePickerArr(this.selectedDayIdx);
@@ -178,7 +179,7 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday): any[] {
-    let pickerColumns = [];
+    const pickerColumns = [];
     const total = columnIndex === 0 ? daysOptions : timeOptions;
     const getColumnText = i => {
       if (columnIndex === 1) {

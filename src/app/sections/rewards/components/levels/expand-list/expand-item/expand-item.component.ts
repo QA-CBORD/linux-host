@@ -13,7 +13,7 @@ export class ExpandItemComponent {
   @Input() levelInfo: UserTrackLevelInfo;
   @Input() currentLevel: number;
   @Output() onClickExpand: EventEmitter<number> = new EventEmitter<number>();
-  show: boolean = false;
+  show = false;
 
   constructor(private readonly cdRef: ChangeDetectorRef) {}
 
@@ -78,6 +78,7 @@ export class ExpandItemComponent {
   }
 
   onExpandHandle() {
+    // eslint-disable-next-line no-cond-assign
     this.onClickExpand.emit((this.show = !this.show) ? this.levelInfo.level : null);
   }
 

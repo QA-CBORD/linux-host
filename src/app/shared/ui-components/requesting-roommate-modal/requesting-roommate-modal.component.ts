@@ -45,7 +45,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
 
   @Input() requestingRoommate: RoommatePreferences[];
 
-  @Input() text: string = 'Back';
+  @Input() text = 'Back';
 
   ngOnDestroy(): void {
     this._subscription.unsubscribe();

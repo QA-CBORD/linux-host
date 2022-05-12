@@ -36,7 +36,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() settings: any;
   @Input() activeDeliveryAddressId: string;
   @Input() activeOrderType: ORDER_TYPE = null;
-  @Input() showNavBarOnDestroy: boolean = true;
+  @Input() showNavBarOnDestroy = true;
   @Input() timeZone: string;
   @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   dateTimeWithTimeZone: string;

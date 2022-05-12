@@ -128,7 +128,7 @@ export class WorkOrdersService {
     workOrderDetails: WorkOrderDetails
   ): FormControl {
     let value: any = storedValue;
-    let disabled: boolean = false;
+    const disabled = false;
 
     const validators: ValidatorFn[] = [];
 
@@ -236,9 +236,9 @@ export class WorkOrdersService {
 
   sendWorkOrderImage(workOrderId : number, imageData: ImageData ): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
+      const workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
-      let img = new Image();
+      const img = new Image();
       
       img.onerror = (event) => {
         reject('error load')
@@ -325,7 +325,8 @@ export class WorkOrdersService {
   }
 
   private createFacilityTreeQuestion(){
-    let facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
+    // eslint-disable-next-line no-useless-escape
+    const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
     return parseJsonToArray(facilityTreeString);
   }
 }

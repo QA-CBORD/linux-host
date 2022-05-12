@@ -95,7 +95,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   }
 
   updateCredential$(credential: AndroidCredential<any>): Observable<boolean> {
-    let requestBody = {
+    const requestBody = {
       referenceIdentifier: credential.getReferenceIdentifier(),
       status: credential.isProcessing() ? MobileCredentialStatuses.PROVISIONED : credential.getCredStatus(),
       credentialID: credential.getId(),
@@ -174,8 +174,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
         map(settingInfo => {
           if (settingInfo.value) {
             const [credentialId, endpointStatusString] = settingInfo.value.split('||');
-            let id = credentialId;
-            let endpointStatus = Number(endpointStatusString || -1);
+            const id = credentialId;
+            const endpointStatus = Number(endpointStatusString || -1);
             const endpointState = new EndpointState(endpointStatus, id, settingInfo.userId);
             this.saveEndpointStateInLocalStorage(endpointState);
             return endpointState;

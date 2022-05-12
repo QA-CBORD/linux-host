@@ -54,7 +54,7 @@ export class PhotoUploadComponent implements OnInit {
   profileImage$: Observable<SafeResourceUrl>;
   profileImagePending$: Observable<SafeResourceUrl>;
 
-  submitButtonDisabled: boolean = true;
+  submitButtonDisabled = true;
   frontId: Dimensions;
   backId: Dimensions;
   fitCover: boolean;
@@ -127,7 +127,9 @@ export class PhotoUploadComponent implements OnInit {
         first()
       )
       .subscribe(
-        data => {},
+        data => {
+          return;
+        },
         error => {
           this.photoDataFetchErrorToast();
         }
@@ -351,7 +353,7 @@ export class PhotoUploadComponent implements OnInit {
   //will submit all photos that have been uploaded
   async submitPhotos() {
     await this.loadingService.showSpinner();
-    let newPhotos: Observable<boolean>[] = [];
+    const newPhotos: Observable<boolean>[] = [];
 
     if (this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW) {
       newPhotos.push(
@@ -383,8 +385,12 @@ export class PhotoUploadComponent implements OnInit {
     zip(...newPhotos)
       .pipe(take(1))
       .subscribe(
-        data => {},
-        error => {},
+        data => {
+          return;
+        },
+        error => {
+          return;
+        },
         () => {
           this.photoUploadService.clearLocalGovernmentIdPhotos();
           this.clearLocalStateData();

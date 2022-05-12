@@ -30,9 +30,9 @@ export class CreditCardMgmtComponent implements OnInit {
 
   @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
 
-  noCreditCardFound: boolean = false;
+  noCreditCardFound = false;
 
-  addNewCreditCartState: boolean = false;
+  addNewCreditCartState = false;
 
   constructor(
     private readonly modalControler: ModalController,

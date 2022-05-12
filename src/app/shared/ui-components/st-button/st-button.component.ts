@@ -7,13 +7,13 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StButtonComponent {
-  @Input() buttonModifier: string = '';
-  @Input() type: string = 'button';
+  @Input() buttonModifier = '';
+  @Input() type = 'button';
   // TODO: Refactor areas that expect the button to emit even when disabled.
-  @Input() isDisabled: boolean = false;
-  @Input() disabled: boolean = false;
-  @Input() expand: string = 'block';
-  @Input() fill: string = 'solid';
+  @Input() isDisabled = false;
+  @Input() disabled = false;
+  @Input() expand = 'block';
+  @Input() fill = 'solid';
   @Input() color: string;
   @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
 

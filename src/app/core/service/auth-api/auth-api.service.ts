@@ -92,7 +92,7 @@ export class AuthApiService {
    * @param sessionId String
    */
   getAuthenticationToken(): Observable<string> {
-    let params: ServiceParameters = {};
+    const params: ServiceParameters = {};
     const queryConfig = new RPCQueryConfig('getAuthenticationToken', params, true);
 
     // MARK: Remove the token setting from the service

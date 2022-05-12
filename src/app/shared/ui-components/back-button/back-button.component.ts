@@ -15,10 +15,10 @@ import { map } from 'rxjs/operators';
 export class BackButtonComponent implements OnDestroy {
   @Input() defaultHref: string;
 
-  @Input() text: string = 'Back';
+  @Input() text = 'Back';
 
   requestedRoommates$: Observable<RequestedRoommate[]>;
-  private selectedTermKey: number = 0;
+  private selectedTermKey = 0;
   private subscriptions: Subscription = new Subscription();
 
   constructor(

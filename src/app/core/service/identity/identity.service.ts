@@ -28,7 +28,7 @@ export class VaultSessionData implements DefaultSession {
 })
 export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   private temporaryPin: string = undefined;
-  private isLocked: boolean = true;
+  private isLocked = true;
 
   constructor(
     private browserAuthPlugin: BrowserAuthPlugin,
@@ -146,7 +146,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
 
   async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
-    let componentProps = { pinAction, ...pinModalProps };
+    const componentProps = { pinAction, ...pinModalProps };
     const pinModal = await this.modalController.create({
       backdropDismiss: false,
       component: PinPage,
@@ -189,7 +189,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     // console.log('The vault was locked by event: ', event);
   }
 
-  setIsLocked(lock: boolean = true) {
+  setIsLocked(lock = true) {
     this.isLocked = lock;
   }
 

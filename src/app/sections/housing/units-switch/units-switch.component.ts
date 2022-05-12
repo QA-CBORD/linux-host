@@ -12,7 +12,7 @@ import { filter } from 'rxjs/operators';
 })
 export class UnitsSwitchComponent implements OnInit {
   @Input() units: Unit[];
-  isFacilityActive: boolean = true;
+  isFacilityActive = true;
   constructor(private _router: Router) {
   }
 

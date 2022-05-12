@@ -20,9 +20,11 @@ export class RewardsPage implements OnInit {
   tabsConfig: TabsConfig = { tabs: [] };
   contentString: { [key: string]: string };
 
-  constructor(private readonly platform: Platform,
-              private readonly rewardsService: RewardsService,
-              private readonly nativeProvider: NativeProvider) {
+  constructor(
+    private readonly platform: Platform,
+    private readonly rewardsService: RewardsService,
+    private readonly nativeProvider: NativeProvider
+  ) {
     this.initComponent();
   }
 
@@ -36,17 +38,16 @@ export class RewardsPage implements OnInit {
 
   private initComponent() {
     this.platform.ready().then(() => {
-      combineLatest(
-        this.rewardsService.getUserOptInStatus(),
-        this.rewardsService.getRewardsTabsConfig()
-      )
+      combineLatest(this.rewardsService.getUserOptInStatus(), this.rewardsService.getRewardsTabsConfig())
         .pipe(take(1))
         .subscribe(
           ([optInStatus, tabsConfig]) => {
             this.optInStatus = optInStatus;
             this.tabsConfig = tabsConfig;
           },
-          error => {}
+          error => {
+            return;
+          }
         );
     });
   }

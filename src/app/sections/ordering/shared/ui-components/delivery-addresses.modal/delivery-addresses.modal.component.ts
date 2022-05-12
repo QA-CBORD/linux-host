@@ -28,9 +28,9 @@ export class DeliveryAddressesModalComponent implements OnInit {
   @Input() merchantId: string;
 
   buildings$: Observable<BuildingInfo[]>;
-  addNewAdddressState: boolean = false;
+  addNewAdddressState = false;
   addNewAdddressForm: { value: any; valid: boolean } = { value: null, valid: false };
-  errorState: boolean = false;
+  errorState = false;
   selectedAddress: AddressInfo;
   listOfAddresses: Array<AddressInfoExpanded>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};

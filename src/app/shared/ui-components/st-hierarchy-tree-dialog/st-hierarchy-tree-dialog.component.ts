@@ -31,7 +31,7 @@ export class StHierarcheTreeDialogComponent {
   }
   public async ionViewDidLoad() {
     // Need to show a progress UI since it might take 1-2 secs to init the dialog if the lookups contains many items
-    let load = await this.loading.create({
+    const load = await this.loading.create({
       message: "please wait"
     });
     load.present();
@@ -140,7 +140,7 @@ export class StHierarcheTreeDialogComponent {
 
     const recurse = (_lookUps: LookUpItem[]) => {
 
-      // tslint:disable-next-line:prefer-for-of
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < _lookUps.length; i++) {
 
         // Found the lookUpItem!
@@ -179,7 +179,7 @@ export class StHierarcheTreeDialogComponent {
   }
 
   public itemSelected(item: SlideItem) {
-    let selectedItem: NamedIdentity = null;
+    const selectedItem: NamedIdentity = null;
     if (item) {
       this._workOrderStateService.setSelectedFacilityTree(item);
     }

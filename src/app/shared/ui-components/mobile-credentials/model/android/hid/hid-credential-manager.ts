@@ -180,8 +180,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private async showCredentialAlreadyProvisionedAlert(callerOnAcceptHandler?: () => Promise<void>): Promise<void> {
     // notify user he needs to uninstall from previous device first.
     const string$ = (await this.contentStringAsync()).alreadyProvisionedDialogString$;
-    let header = string$.title;
-    let message = string$.mContent;
+    const header = string$.title;
+    const message = string$.mContent;
 
     const defaultOnAcceptHandler = async () => {
       const deleteSuccessfull = await this.handleRetriableOperation({
@@ -282,10 +282,10 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.credentialService.updateCachedCredential$(EndpointStatuses.REVOKED);
   }
 
-  private async onEndpointRevoked(timeToUpdate: number = 60000): Promise<void> {
+  private async onEndpointRevoked(timeToUpdate = 60000): Promise<void> {
     this.setCredentialRevoked();
     let counter = 0;
-    let maxRefreshAttempt = 11;
+    const maxRefreshAttempt = 11;
     const deleteEndpoint = async (isLastTry?: boolean) => {
       await this.handleRetriableOperation({
         fn: this.deleteCredentialFromServer$,
@@ -332,7 +332,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
     const header = string$.title;
     const message = string$.mContent;
-    let buttons = [
+    const buttons = [
       { text: string$.cancel, role: 'cancel' },
       {
         text: string$.confirm,
@@ -342,7 +342,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         },
       },
     ];
-    let alertIonAlert = await this.createAlertDialog(header, message, buttons);
+    const alertIonAlert = await this.createAlertDialog(header, message, buttons);
     alertIonAlert.present();
   }
 
@@ -427,7 +427,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       .toPromise();
   }
 
-  private onTermsAndConditionsAccepted(forceInstall: boolean = false): void {
+  private onTermsAndConditionsAccepted(forceInstall = false): void {
     this.showLoading();
     this.getCredentialBundle$()
       .then(credentialBundle => {
@@ -447,7 +447,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       .toPromise();
   };
 
-  private doNativeInstall$ = async (forceInstall: boolean = false): Promise<boolean> => {
+  private doNativeInstall$ = async (forceInstall = false): Promise<boolean> => {
     const params = { forceInstall, invitationCode: (this.mCredential as HIDCredential).getInvitationCode() };
     return await this.hidSdkManager()
       .setupEndpoint(params)
@@ -457,7 +457,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       });
   };
 
-  private async installCredentialOnDevice(forceInstall: boolean = false): Promise<void> {
+  private async installCredentialOnDevice(forceInstall = false): Promise<void> {
     const credentialDeviceInstallSuccess = await this.handleRetriableOperation({
       fn: this.doNativeInstall$,
       checkErrors: true,
@@ -557,7 +557,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async showRetryToast(): Promise<boolean> {
     const string$ = await this.contentStringAsync();
-    let myToast = await this.toastService.create({
+    const myToast = await this.toastService.create({
       message: string$.installError,
       duration: 15000,
       position: 'bottom',
@@ -613,7 +613,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   };
 
   private deleteCredentialFromDevice$ = async (): Promise<boolean> => {
-    let transactionResultCode = await this.hidSdkManager().deleteEndpoint();
+    const transactionResultCode = await this.hidSdkManager().deleteEndpoint();
     if (transactionResultCode == HID_SDK_ERR.TRANSACTION_SUCCESS) {
       this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
       this.onCredentialStateChanged();
@@ -624,7 +624,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async onDeleteConfirmed(): Promise<void> {
     this.showLoading();
-    let credentialDeleteOnServerSuccess = await this.handleRetriableOperation({
+    const credentialDeleteOnServerSuccess = await this.handleRetriableOperation({
       fn: this.deleteCredentialFromServer$,
       onErrors: this.doCheckCredentialAvailability,
     });

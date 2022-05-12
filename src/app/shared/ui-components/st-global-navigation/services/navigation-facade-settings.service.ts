@@ -38,7 +38,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private get config$(): Observable<NavigationBottomBarElement[]> {
     return this.storage
       .getStateEntityByKey$<NavigationBottomBarElement[]>(this.key)
-      .pipe(map(data => (!!data ? data.value : null)));
+      .pipe(map(data => (data ? data.value : null)));
   }
 
   async update(settings: NavigationBottomBarElement[]): Promise<void> {
@@ -99,7 +99,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       });
     }
     return NAVIGATION_BASE_CONFIG.map(setting => {
-      let s = settings.find(({ name }) => name === setting.id);
+      const s = settings.find(({ name }) => name === setting.id);
       return s ? { ...setting, isEnable: !!Number(s.value) } : setting;
     });
   }

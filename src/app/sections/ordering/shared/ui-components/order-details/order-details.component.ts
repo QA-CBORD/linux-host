@@ -51,7 +51,7 @@ import { Keyboard } from '@capacitor/keyboard';
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() orderDetailOptions: OrderDetailOptions;
-  @Input() readonly: boolean = true;
+  @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
   @Input() orderItems: OrderItem[] = [];
@@ -83,7 +83,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
   @Input() orderPayment: OrderPayment[];
-  isApplePayment: boolean = false;
+  isApplePayment = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};

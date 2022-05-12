@@ -92,6 +92,7 @@ export class HIDPlugginProxy {
   private static instance: HIDPlugginProxy;
   taskExecutionObs$: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
   private taskExecutor: TaskExecutor;
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
   static getInstance(): HIDPlugginProxy {
@@ -119,7 +120,7 @@ export class HIDPlugginProxy {
   }
 
   async setupEndpoint(params): Promise<boolean> {
-    let transactionResult = await this.executeCall<HID_SDK_ERR>(HIDPlugin.setupEndpoint, { ...params });
+    const transactionResult = await this.executeCall<HID_SDK_ERR>(HIDPlugin.setupEndpoint, { ...params });
     if (transactionResult == HID_SDK_ERR.TRANSACTION_SUCCESS) {
       return true;
     }
@@ -143,7 +144,7 @@ export class HIDPlugginProxy {
   }
 
   private async executeCall<T>(pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<T> {
-    let transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
+    const transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
     return transactionResponse.transactionStatus;
   }
 
@@ -153,20 +154,20 @@ export class HIDPlugginProxy {
 
   private async startScanning(controller: TaskExecutionController): Promise<void> {
     controller.incrementExecCount();
-    let executeCall = async (pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<any> => {
-      let transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
+    const executeCall = async (pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<any> => {
+      const transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
       return transactionResponse.transactionStatus;
     };
 
-    let endpointRefreshSuccess = async (): Promise<boolean> => {
-      let endpointRefreshResult = await executeCall(HIDPlugin.refreshEndpoint);
+    const endpointRefreshSuccess = async (): Promise<boolean> => {
+      const endpointRefreshResult = await executeCall(HIDPlugin.refreshEndpoint);
       return endpointRefreshResult == HID_SDK_ERR.TRANSACTION_SUCCESS;
     };
-    let isEndpointActiveNow = async (): Promise<boolean> => {
+    const isEndpointActiveNow = async (): Promise<boolean> => {
       return await executeCall(HIDPlugin.isEndpointActive);
     };
-    let startScanningSuccess = async (): Promise<boolean> => {
-      let startScanTransactionResult = await executeCall(HIDPlugin.startScanning);
+    const startScanningSuccess = async (): Promise<boolean> => {
+      const startScanTransactionResult = await executeCall(HIDPlugin.startScanning);
       return startScanTransactionResult == HID_SDK_ERR.TRANSACTION_SUCCESS;
     };
     if ((await endpointRefreshSuccess()) && !controller.maxExecutionReached()) {

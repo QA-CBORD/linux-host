@@ -51,7 +51,7 @@ export class ServerError implements HttpInterceptor {
     return errorString.search(NUM_DSCRPTN_REGEXP) !== -1;
   }
 
-  private handleServerException(exceptionString: string = '', method: string): never {
+  private handleServerException(exceptionString = '', method: string): never {
     if (this.isKnownError(exceptionString)) {
       const errorMessageParts = exceptionString.split('|');
       throw this.determineErrorByCodeAndThrow(errorMessageParts as [string, string], method);

@@ -9,6 +9,7 @@ export class AppleWalletState implements MobileCredentialState {
     return provider == CredentialProviders.APPLE;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateStatusMsg(): void {}
   getStatusMsg(): string {
     return null; // for now
@@ -43,6 +44,7 @@ export class AppleWalletState implements MobileCredentialState {
   getUiIconUrl(): string {
     throw new Error('Method not implemented.');
   }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setStatus(status: number): void {}
 
   iWatchPaired(): boolean {
