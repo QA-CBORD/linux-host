@@ -175,6 +175,7 @@ export class WorkOrdersService {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next(formValue: any): Observable<any> {
     return of(true);
   }
@@ -228,7 +229,7 @@ export class WorkOrdersService {
     });
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
-      catchError(err=> of(false)),
+      catchError(()=> of(false)),
       switchMap((response: Response) => {
         return this.sendWorkOrderImage(response.data, image)
       })
@@ -241,6 +242,7 @@ export class WorkOrdersService {
 
       const img = new Image();
       
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       img.onerror = (event) => {
         reject('error load')
       };

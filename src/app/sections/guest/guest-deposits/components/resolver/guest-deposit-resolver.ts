@@ -14,10 +14,7 @@ export class GuestDepositResolver implements Resolve<Observable<any>> {
     private readonly commonService: CommonService,
     private readonly guestDepositsService: GuestDepositsService
   ) {}
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<any> | Observable<Observable<any>> | Promise<Observable<any>> {
+  resolve(): Observable<any> | Observable<Observable<any>> | Promise<Observable<any>> {
     this.loadingService.showSpinner();
     const contentString$ = this.commonService.loadContentString(ContentStringCategory.identifyRecipient);
     const recipientList = this.guestDepositsService.getRecipientList().pipe(take(1));

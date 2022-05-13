@@ -12,7 +12,7 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { catchError, debounceTime, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
@@ -366,7 +366,7 @@ export class CartComponent implements OnInit, OnDestroy {
             this.onErrorModal(result.errorMessage);
           }
         })
-        .catch(async error => {
+        .catch(async () => {
           this.placingOrder = false;
           return await this.onErrorModal('Something went wrong, please try again...');
         })

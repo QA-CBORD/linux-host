@@ -418,7 +418,7 @@ export class PhotoUploadComponent implements OnInit {
 
     return photoObservable.pipe(
       switchMap(photoInfo => this.photoUploadService.submitPhoto(photoInfo)),
-      catchError(error => {
+      catchError(() => {
         this.presentToast(toastErrorMessage);
         return of(false);
       })

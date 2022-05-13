@@ -74,6 +74,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
               of(addedAddress)
             )
         ),
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         switchMap(([isDefaultAddressAdded, addedAddress]) =>
           this.merchantService.filterDeliveryAddresses(this.merchantId, [addedAddress])
         ),

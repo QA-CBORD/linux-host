@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, timer, zip, of, Subject } from 'rxjs';
+import { Observable, timer, zip, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 
-// import { AuthService } from '@core/service/auth-service/auth-api.service';
 import { SecureMessagingApiService } from './secure-messaging-api.service';
 
 import {

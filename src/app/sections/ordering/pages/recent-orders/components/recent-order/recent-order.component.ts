@@ -252,6 +252,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         // Temporary solution:
         if (typeof error === 'object') {
           this.loadingService.closeSpinner();
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const [code, text] = error;
           await this.presentPopup(text);
           throw text;

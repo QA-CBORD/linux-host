@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
@@ -18,7 +18,6 @@ import { NonCheckingSuccessComponent } from './non-checking-success.component';
 
 describe('NonCheckingSuccessComponent', () => {
   let component: NonCheckingSuccessComponent;
-  let fixture: ComponentFixture<NonCheckingSuccessComponent>;
   let routerServiceMock: any;
   let orderingServiceMock: any;
   let nonCheckingServiceMock: any;
