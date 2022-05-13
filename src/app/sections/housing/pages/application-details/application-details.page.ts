@@ -26,6 +26,8 @@ import { QuestionsPage } from '../../questions/questions.model';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
 import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
+import { ApplicationPaymentComponent } from '../application-payment/application-payment.component';
+import { CreditCardMgmtComponent } from '@sections/settings/creditCards/credit-card-mgmt/credit-card-mgmt.component';
 
 @Component({
   selector: 'st-application-details',
@@ -37,7 +39,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
   @ViewChild('content') private content: any;
-  
+
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -49,7 +51,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   applicationKey: number;
 
   isSubmitted: boolean;
- 
 
   // private _initSubscription(): void {
   //   const dashboardSubscription: Subscription = merge(
@@ -72,7 +73,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   //       next: (response: DefinitionsResponse) => this._handleSuccess(response),
   //       error: () => this._loadingService.closeSpinner(),
   //     });
-      
+
   //   this._subscription.add(dashboardSubscription);
   // }
   constructor(
@@ -84,7 +85,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private modalController: ModalController,
-    private _termService: TermsService,
+    private _termService: TermsService
   ) {}
 
   async ngOnInit() {
@@ -92,7 +93,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
     this._initApplicationDetailsObservable();
     this._initPagesObservable();
-
   }
 
   ngOnDestroy(): void {
@@ -110,18 +110,31 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     return false;
   }
 
-  submit(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): void {
-    this._touch();
+  async submit(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
 
-    if (!this.isSubmitted && !form.valid) {
-      return;
+    if(applicationDetails.applicationDefinition.accountCodeKey)  {
+      const modal = await this.modalController.create({
+        component: ApplicationPaymentComponent,
+        animated: false,
+        backdropDismiss: false,
+      });
+      await modal.present();
+  
+      //  return modal.onDidDismiss().then(({ role }) => role === BUTTON_TYPE.OKAY);
     }
 
-    if (!isLastPage) {
-      this._next(applicationDetails, form.value);
-    } else {
-      this._update('submit', this.applicationKey, applicationDetails, form.value);
-    }
+
+    // this._touch();
+
+    // if (!this.isSubmitted && !form.valid) {
+    //   return;
+    // }
+
+    // if (!isLastPage) {
+    //   this._next(applicationDetails, form.value);
+    // } else {
+    //   this._update('submit', this.applicationKey, applicationDetails, form.value);
+    // }
   }
 
   private _touch(): void {
@@ -151,21 +164,17 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       tap((applicationDetails: ApplicationDetails) => {
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
-       alert(JSON.stringify(applicationDetails.applicationDefinition.accountCodeKey))
         this.isSubmitted = status === ApplicationStatus.Submitted;
 
-        if(!this.isSubmitted && this._applicationsStateService.requestingRoommate != null) {
+        if (!this.isSubmitted && this._applicationsStateService.requestingRoommate != null) {
           this._loadingService.closeSpinner();
           this.Showmodal();
         } else {
           this._subscription.add(
-            this._termService.termId$
-                .subscribe(termId => 
-                  this._housingService
-                      .getRequestedRommate(termId)
-                      .subscribe(x => this._loadingService.closeSpinner())
-                )
-              );
+            this._termService.termId$.subscribe(termId =>
+              this._housingService.getRequestedRommate(termId).subscribe(x => this._loadingService.closeSpinner())
+            )
+          );
         }
       }),
       catchError((error: any) => {
@@ -177,15 +186,23 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   async Showmodal() {
-    this._applicationsStateService.requestingRoommate.forEach((restingroommate,index)=>{
-      return this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.some(requested =>requested.patronKeyRoommate === restingroommate.patronKeyRoommate)? this._applicationsStateService.deleteRequestingRoommate(index) : undefined 
+    this._applicationsStateService.requestingRoommate.forEach((restingroommate, index) => {
+      return this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.some(
+        requested => requested.patronKeyRoommate === restingroommate.patronKeyRoommate
+      )
+        ? this._applicationsStateService.deleteRequestingRoommate(index)
+        : undefined;
     });
     let requestingRoommate = this._applicationsStateService.requestingRoommate.filter(result => {
-      if(this._applicationsStateService.roommatePreferencesSelecteds.find(value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0 )){
-        return result
+      if (
+        this._applicationsStateService.roommatePreferencesSelecteds.find(
+          value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
+        )
+      ) {
+        return result;
       }
     });
-    this._applicationsStateService.setRequestingRoommate(requestingRoommate)
+    this._applicationsStateService.setRequestingRoommate(requestingRoommate);
 
     const RequestingRoommateModal = await this.modalController.create({
       component: RequestingRoommateModalComponent,

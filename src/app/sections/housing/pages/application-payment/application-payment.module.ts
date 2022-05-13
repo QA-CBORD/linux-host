@@ -2,13 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-
-import { ApplicationDetailsRoutingModule } from './application-details.routing.module';
 import { QuestionsModule } from '../../questions/questions.module';
 import { StepperModule } from '../../stepper/stepper.module';
-
-import { ApplicationDetailsPage } from './application-details.page';
-import { ApplicationPaymentModule } from '../application-payment/application-payment.module';
+import { ApplicationPaymentComponent } from './application-payment.component';
+import { CreditCardModule } from '@sections/settings/creditCards/credit-card.module';
+import { CreditCardMgmtComponent } from '@sections/settings/creditCards/credit-card-mgmt/credit-card-mgmt.component';
 
 const imports = [
   CommonModule,
@@ -16,13 +14,12 @@ const imports = [
   IonicModule,
   QuestionsModule,
   StepperModule,
-  ApplicationDetailsRoutingModule,
-  ApplicationPaymentModule
 ];
-const declarations = [ApplicationDetailsPage];
-
+const declarations = [ApplicationPaymentComponent];
+const entryComponents = [ApplicationPaymentComponent];
 @NgModule({
   imports,
   declarations,
+  entryComponents
 })
-export class ApplicationDetailsPageModule {}
+export class ApplicationPaymentModule {}
