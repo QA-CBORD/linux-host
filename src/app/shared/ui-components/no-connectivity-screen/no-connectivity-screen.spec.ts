@@ -1,6 +1,3 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { of } from 'rxjs';
 import { NoConnectivityScreen } from './no-connectivity-screen';
 
 

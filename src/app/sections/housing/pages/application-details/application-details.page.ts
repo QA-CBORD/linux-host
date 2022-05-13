@@ -154,7 +154,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._applicationsStateService.requestingRoommate.forEach((restingroommate,index)=>{
       return this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.some(requested =>requested.patronKeyRoommate === restingroommate.patronKeyRoommate)? this._applicationsStateService.deleteRequestingRoommate(index) : undefined 
     });
-    let requestingRoommate = this._applicationsStateService.requestingRoommate.filter(result => {
+    const requestingRoommate = this._applicationsStateService.requestingRoommate.filter(result => {
       if(this._applicationsStateService.roommatePreferencesSelecteds.find(value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0 )){
         return result
       }

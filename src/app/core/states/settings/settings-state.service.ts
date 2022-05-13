@@ -10,7 +10,7 @@ import { Settings } from '../../../app.global';
   providedIn: 'root',
 })
 export class SettingsStateService extends SingleEntityStateManager<SettingInfo[]> {
-  protected activeUpdaters: number = 0;
+  protected activeUpdaters = 0;
   protected state: SettingInfo[] = [];
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   protected readonly _state$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(this.state);

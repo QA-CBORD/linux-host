@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { OnInit } from '@angular/core';
 
 import { Unit } from './unit.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-unit',
@@ -10,16 +10,12 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./unit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnitComponent implements  OnInit{
+export class UnitComponent {
   @Input() unit: Unit;
 
-  constructor(private _router: Router) {
-  }
+  constructor(private _router: Router) {}
 
-  ngOnInit() {
-  }
   goToUnitDetails() {
     this._router.navigateByUrl(`patron/housing/units/${this.unit.key}/building/${this.unit.parentKey}`);
-
   }
 }

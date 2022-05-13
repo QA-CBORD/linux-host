@@ -13,7 +13,7 @@ export class AddCreditCardService {
 
   getCardType(number): string {
     // visa
-    var re = new RegExp('^4');
+    const re = new RegExp('^4');
     if (number.match(re) != null) return 'Visa';
 
     // Mastercard

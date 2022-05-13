@@ -3,7 +3,7 @@ export interface QuestionBaseOptions {
   label?: string;
   attribute?: string;
   buttonText?: string;
-  action?: Function;
+  action?: () => void;
 }
 
 export interface QuestionBaseOptionValue {
@@ -17,7 +17,7 @@ export class QuestionBase implements QuestionBaseOptions {
   label: string;
   attribute: string;
   buttonText?: string;
-  action?: Function;
+  action?: () => void;
 
   constructor(options: QuestionBaseOptions = {}) {
     this.type = options.type || '';

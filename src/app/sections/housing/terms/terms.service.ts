@@ -20,7 +20,7 @@ export class TermsService {
       ) {}
 
   getTerms(): Observable<Term[]> {
-    const apiUrl: string = `${
+    const apiUrl = `${
         this._environmentFacadeService.getEnvironmentObject().housing_aws_url
     }/patron-applications/v.1.0/patron-terms/patrons/self`;
 

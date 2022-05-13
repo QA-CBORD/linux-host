@@ -11,7 +11,6 @@ import { User } from 'src/app/app.global';
 import {
   AndroidCredential,
   EndpointState,
-  HID,
   HidCredentialBundle,
   Persistable,
 } from '../model/android/android-credential.model';

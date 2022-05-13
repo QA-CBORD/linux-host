@@ -38,7 +38,7 @@ export class ChargeSchedulesService {
         const chargeScheduleFieldEnum = parseInt(value.value, 10);
         const chargeScheduleField: string = ChargeScheduleFields[chargeScheduleFieldEnum];
         const type = this.getChargeScheduleFieldType(chargeScheduleFieldEnum);
-        let csValue = new ChargeScheduleValue({ label: value.label, value: chargeScheduleField, type: type });
+        const csValue = new ChargeScheduleValue({ label: value.label, value: chargeScheduleField, type: type });
         return csValue;
       });
   }

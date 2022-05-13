@@ -12,9 +12,9 @@ import { buildConversationsFromMessages } from '@core/utils/conversations-helper
 })
 export class ConversationsTileComponent implements OnInit, OnDestroy {
   lastTwoMessagesArray: SecureMessageConversation[] = [];
-  conversationDisplayedAmount: number = 2;
+  conversationDisplayedAmount = 2;
   conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(
     private readonly secureMessagingService: SecureMessagingService,

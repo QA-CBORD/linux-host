@@ -14,7 +14,7 @@ export class NativeStartupApiService {
   constructor(private readonly http: HttpClient) {}
 
   nativeStartup(clientType: string, clientVersion: string): Observable<MessageResponse<NativeStartupInfo>> {
-    let params = {
+    const params = {
       clientType,
       clientVersion,
     };

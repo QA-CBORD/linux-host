@@ -21,7 +21,7 @@ export class AppleWalletCredentialState implements MobileCredentialState {
      return provider == CredentialProviders.APPLE;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,  @typescript-eslint/no-unused-vars
   setStatus(status: number): void {}
 
   getUiIconUrl(): string {

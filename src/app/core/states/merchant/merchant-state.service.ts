@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MerchantInfo } from '@sections/ordering';
 
 export class MerchantStateService extends SingleEntityStateManager<MerchantInfo[]> {
-  protected activeUpdaters: number = 0;
+  protected activeUpdaters = 0;
   protected state: MerchantInfo[] = [];
   protected readonly _state$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>(this.state);
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);

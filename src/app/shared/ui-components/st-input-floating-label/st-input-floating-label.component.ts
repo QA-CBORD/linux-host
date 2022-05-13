@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef, HostBinding, AfterViewInit } from '@angular/core';
+import { Component, Input, forwardRef, ViewChild, ElementRef, HostBinding, AfterViewInit } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
 import { FocusableElement } from '@core/interfaces/focusable-element.interface';
 import { hasRequiredField } from '@core/utils/general-helpers';

@@ -41,7 +41,7 @@ export class APIService {
     params?: HttpParams,
     headers?: HttpHeaders
   ): Observable<T> {
-    const options: Object = this.getOptions(responseType, params, headers);
+    const options = this.getOptions(responseType, params, headers);
 
     return this.http.get(url, options).pipe(
       subscribeOn(async),
@@ -153,7 +153,7 @@ export class APIService {
         break;
     }
 
-    return httpCall$.pipe(catchError(error => throwError({ message: 'There was an issue with the request' })));
+    return httpCall$.pipe(catchError(() => throwError({ message: 'There was an issue with the request' })));
   }
 
   /**

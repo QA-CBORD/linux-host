@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IonSlides, LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { SlideItem, NamedIdentity, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
@@ -72,6 +72,7 @@ export class StHierarcheTreeDialogComponent {
       const _topParentSlideItems: SlideItem[] = [];
       const _topParentSlide: Slide = { parentSlideItem: null, parentSlide: null, slideIndex: currentSlideIndex, items: _topParentSlideItems };
       slides.push(_topParentSlide);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       lookUpsAsTree.forEach((lookUpItem: LookUpItem, index: number) => {
         lookUpItem.children = Object.keys(lookUpItem.children).map(key => {
           return lookUpItem.children[key];
@@ -107,6 +108,7 @@ export class StHierarcheTreeDialogComponent {
     const _slide: Slide = { parentSlideItem, parentSlide, slideIndex: currentSlideIndex, items: _slideItems };
     slides.push(_slide);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     children.forEach((lookUpItem: LookUpItem, index: number) => {
       lookUpItem.children = Object.keys(lookUpItem.children).map(key => {
         return lookUpItem.children[key];

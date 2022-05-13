@@ -15,4 +15,4 @@ export enum LOCAL_ROUTING {
   inspections = 'inspections'
 }
 
-export const STORAGE_KEY: string = 'housing';
+export const STORAGE_KEY = 'housing';

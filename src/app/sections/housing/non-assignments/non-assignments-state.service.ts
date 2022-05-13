@@ -60,8 +60,6 @@ export class NonAssignmentsStateService {
     return this._nonAssignmentsStateSource.getValue();
   }
 
-  constructor() { }
-
   setNonAssignment(key: number, nonAssignmentDetails: NonAssignmentListDetails) {
     const entities: NonAssignmentEntities = this.nonAssignmentsState.entities;
 

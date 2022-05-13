@@ -95,10 +95,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.identityService.initAndUnlock(data, biometricEnabled);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handlePinUnlockSuccess(data) {
     this.navigateToDashboard();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleBiometricUnlockSuccess(data) {
     this.authenticateUserPin();
   }
@@ -114,6 +116,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
     return this.unlockVaultPin()
@@ -179,6 +182,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return false;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async onNavigateToDashboardFailed(err): Promise<any> {
     return this.handleConnectionErrors({
       onRetry: async () => {

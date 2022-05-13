@@ -12,8 +12,6 @@ export class ItemDetailModalComponent implements OnInit {
   @Input() message: string;
   config: PopoverConfig<string>;
 
-  constructor() {}
-
   ngOnInit() {
     this.config = {
       type: PopupTypes.SUCCESS,

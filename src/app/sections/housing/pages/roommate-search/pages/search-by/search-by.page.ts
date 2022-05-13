@@ -46,7 +46,7 @@ export class SearchByPage implements OnInit, OnDestroy {
   searchOptions$: Observable<RoommateSearchOptions>;
   requestedRoommates$: Observable<RequestedRoommate[]>;
   
-  private selectedTermKey: number = 0;
+  private selectedTermKey = 0;
   private subscriptions: Subscription = new Subscription();
   
   constructor(

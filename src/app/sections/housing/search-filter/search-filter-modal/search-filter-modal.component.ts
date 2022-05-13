@@ -9,7 +9,7 @@ import { Category } from '../filter-sort/filter-sort.model';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { Observable, of, pipe } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {  map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -70,7 +70,7 @@ export class SearchFilterModalComponent implements OnInit {
     this.categories = this._roomsService.getFilterCategories();
     this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
     const builderOptions = {};
-    for (let item in this.categoryOptions) {
+    for (const item in this.categoryOptions) {
       const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
       builderOptions[item] = this._formBuilder.array(optionsInfo.map(x => x.isSelected));
     }
@@ -80,7 +80,7 @@ export class SearchFilterModalComponent implements OnInit {
   filter(data: any) {
       this._loadingService.showSpinner();
 
-      let  categoriesToFilter = new Map<string, boolean[]>();
+      const  categoriesToFilter = new Map<string, boolean[]>();
       const dataMap = convertObjectToMap(data);
       dataMap.forEach((values, key) => {
         const selected = values.find(x => x);
@@ -89,7 +89,7 @@ export class SearchFilterModalComponent implements OnInit {
         }
       });
       const filterOptions: Map<string, string[]> = new Map<string, string[]>();
-      let hasPatronAttribute: boolean = false;
+      let hasPatronAttribute = false;
       categoriesToFilter.forEach((options, category)  => {
         const selectedOptions: number[] = [];
         let lastFound = 0;
@@ -159,9 +159,9 @@ export class SearchFilterModalComponent implements OnInit {
     return name;
   }
 
-  sort(control: SortControlComponent): void {}
+  sort(control: SortControlComponent): void {return;}
 
-  getId(key: string, index: number): Number {
+  getId(key: string, index: number): number {
     return Number(key) - index;
   }
 }

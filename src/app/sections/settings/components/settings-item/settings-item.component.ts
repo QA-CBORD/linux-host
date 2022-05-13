@@ -8,15 +8,13 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./settings-item.component.scss'],
 })
 export class SettingsItemComponent implements OnInit {
-  @Input() lines: string = 'inset';
+  @Input() lines = 'inset';
 
   @Input() setting: SettingItemConfig;
 
   @Output() settingTapped = new EventEmitter<SettingItemConfig>();
 
   settingLabel$: Observable<string>;
-
-  constructor() {}
 
   settingTap(settingItem: SettingItemConfig) {
     this.settingTapped.next(settingItem);

@@ -162,10 +162,10 @@ export class ApplicationsService {
     );
   }
 
-  selectRoommate(roommateParam: RoommateDetails): Observable<Boolean> {
+  selectRoommate(roommateParam: RoommateDetails): Observable<boolean> {
     if (this._applicationsStateService.maximumSelectedRoommates >= 0) {
       let isSetRoommate = false;
-      let requestedRoommates = this._applicationsStateService.getRoommateSearchOptions();
+      const requestedRoommates = this._applicationsStateService.getRoommateSearchOptions();
       this._applicationsStateService.setRoommatesPreferences(
         this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
           requestedRoommates.preferences.forEach((requestedRommate) => {
@@ -393,7 +393,7 @@ export class ApplicationsService {
   }
 
   private _patchApplicationByStoredStatus(applicationDetails: ApplicationDetails): Observable<ApplicationDetails> {
-    let patronApplication: PatronApplication = applicationDetails.patronApplication;
+    const patronApplication: PatronApplication = applicationDetails.patronApplication;
     const status: ApplicationStatus = patronApplication && patronApplication.status;
 
     if (status && status !== ApplicationStatus.New) {

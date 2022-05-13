@@ -37,7 +37,7 @@ export class WaitingListsService {
     private _housingProxyService: HousingProxyService) { }
 
   removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
-    let urlRemove = this.WaitingListUrl + `/patron`;
+    const urlRemove = this.WaitingListUrl + `/patron`;
     const queryParams = new HttpParams().set('patronWaitingListKey', `${patronWaitingListKey}`);
     return this._proxy.delete(urlRemove, queryParams).pipe(map((response: Response) => {
       if (isSuccessful(response.status)) {
@@ -146,7 +146,7 @@ export class WaitingListsService {
     waitingListDetails: WaitingListDetails
   ): FormControl {
     let value: any = storedValue;
-    let disabled: boolean = false;
+    let disabled = false;
 
     if (!isDefined(value)) {
       if (question.consumerKey) {
@@ -162,7 +162,7 @@ export class WaitingListsService {
   }
 
   private _getSelectedWaitingListValue(waitingList: WaitingListDetails): string {
-    let value: string = '';
+    let value = '';
     
     if (waitingList.facilities != null) {
       const item = waitingList.facilities

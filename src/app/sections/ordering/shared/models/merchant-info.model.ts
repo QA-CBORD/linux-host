@@ -36,6 +36,7 @@ export interface MerchantInfo {
   imageFull: string;
   hasMenu: boolean;
   serviceConsumerId: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   settings: { list: MerchantSettingInfo[]; map: Map<string, MerchantSettingInfo> | Object };
   faxNotificationActive: boolean;
   faxNotificationRequired: boolean;

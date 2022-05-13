@@ -69,6 +69,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
     this.mCredential = mobileCredential;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUiImageClicked(event?: any): void {
     this.addToAppleWallet();
   }

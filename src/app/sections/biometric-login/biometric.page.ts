@@ -8,7 +8,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
   styleUrls: ['./biometric.page.scss'],
 })
 export class BiometricPage implements OnInit {
-  loading: boolean = false;
+  loading = false;
   biometricConfig: { type: string; name: string } = null;
   constructor(
     private readonly identityFacadeService: IdentityFacadeService, 

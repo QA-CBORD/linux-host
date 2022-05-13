@@ -48,7 +48,7 @@ export class ConnectivityService {
     await this.loadingService.showSpinner({ duration: 80000 });
     let csModel: ConnectivityScreenCsModel = {} as any;
     let errorType: ConnectivityError;
-    let freshContentStringsLoaded: boolean = false;
+    let freshContentStringsLoaded = false;
     if ((await this.connectionService.deviceOffline())) {
       errorType = ConnectivityError.DEVICE_CONNECTION;
       csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: noConnectivityScreentDefaultStrings });

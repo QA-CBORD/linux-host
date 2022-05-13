@@ -16,5 +16,6 @@ export function generateTerm(_: any, index: number): Term {
 }
 
 export function generateTerms(amount = 3): Term[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateTerm);
 }

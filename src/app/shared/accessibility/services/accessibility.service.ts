@@ -66,7 +66,7 @@ export class AccessibilityService {
     return true;
   }
 
-  async hideElementsByClassName(hide: boolean = true, className: string = 'browser-hidden') {
+  async hideElementsByClassName(hide = true, className = 'browser-hidden') {
     if (this.isVoiceOverEnabled$) {
       const displayType = hide ? 'none' : 'block';
       const elements = document.getElementsByClassName(className);

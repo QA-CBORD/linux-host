@@ -13,10 +13,7 @@ export class SecureMessagePopoverComponent implements OnInit {
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };
 
-  constructor() {}
-
   ngOnInit() {
-    // this.setContentStrings();
     this.initPopover();
   }
 

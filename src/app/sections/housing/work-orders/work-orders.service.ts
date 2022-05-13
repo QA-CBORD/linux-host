@@ -2,8 +2,8 @@ import { Injectable, SecurityContext } from "@angular/core";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
-import { of, Observable, defer } from "rxjs";
-import { catchError, map, withLatestFrom, tap, switchMap } from 'rxjs/operators';
+import { of, Observable } from "rxjs";
+import { catchError, map, withLatestFrom, switchMap } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
 import { QuestionsStorageService, QuestionsEntries } from '../questions/questions-storage.service';
@@ -84,6 +84,7 @@ export class WorkOrdersService {
   }
 
   private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
+    // eslint-disable-next-line no-useless-escape
     const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
       .map((question: QuestionBase) => {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)

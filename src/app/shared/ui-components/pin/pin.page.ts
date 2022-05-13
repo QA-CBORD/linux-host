@@ -236,7 +236,7 @@ export class PinPage implements OnInit {
             this.setErrorText('Error setting your PIN - please try again');
           }
         },
-        error => {
+        () => {
           this.cleanLocalState();
           this.setErrorText('Error setting your PIN - please try again');
         }

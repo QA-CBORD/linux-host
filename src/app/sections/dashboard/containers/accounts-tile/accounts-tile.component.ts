@@ -20,10 +20,10 @@ export class AccountsTileComponent {
     width: 350,
     autoHeight: true,
   };
-  itemsPerSlide: number = 4;
+  itemsPerSlide = 4;
   slides: UserAccount[][] = [];
-  isLoading: boolean = true;
-  pager: boolean = false;
+  isLoading = true;
+  pager = false;
 
   constructor(
     private readonly accountsService: AccountsService,

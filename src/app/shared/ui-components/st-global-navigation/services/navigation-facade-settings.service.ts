@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { BehaviorSubject, from, Observable, zip } from 'rxjs';
+import { from, Observable, zip } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import {
   GUEST_NAVIGATION_BASE_CONFIG,
@@ -41,13 +41,6 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       .pipe(map(data => (data ? data.value : null)));
   }
 
-  async update(settings: NavigationBottomBarElement[]): Promise<void> {
-    const state = await this.storage
-      .getStateEntityByKey$(this.key)
-      .pipe(take(1))
-      .toPromise();
-  }
-  
   get permissionsPrompted$(): Observable<boolean> {
     return this.storage
       .getStateEntityByKey$<boolean>(this.firstNavKey)

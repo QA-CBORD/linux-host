@@ -280,7 +280,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.cart]);
   }
 
-  private async onValidateErrorToast(message: string, onDismiss: () => {}) {
+  private async onValidateErrorToast(message: string, onDismiss: () => void) {
     await this.toastService.showToast({ message, toastButtons: [{ text: 'Close' }], onDismiss: onDismiss });
   }
 

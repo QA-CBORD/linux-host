@@ -91,7 +91,7 @@ export class HousingService {
   }
 
   getDefinitions(termId: number) {
-    const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
+    const apiUrl = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
 
     return this._housingProxyService.get<DefinitionsResponse>(apiUrl).pipe(
       map((response: any) => new DefinitionsResponse(response)),
@@ -112,7 +112,7 @@ export class HousingService {
 
   getDetails(key: number, queryParams: string[] = []): Observable<DetailsResponse> {
     const queryString: string = queryParams.length ? `?${queryParams.join('&')}` : '';
-    const apiUrl: string = `${this._applicationDefinitionUrl}/${key}/patron/self${queryString}`;
+    const apiUrl = `${this._applicationDefinitionUrl}/${key}/patron/self${queryString}`;
 
     return this._housingProxyService.get<DetailsResponse>(apiUrl).pipe(
       map((response: any) => new DetailsResponse(response)),
@@ -158,7 +158,7 @@ export class HousingService {
   }
 
   getRoomSelects(termId: number) {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
     return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
       map((response: any) => new RoomSelectResponse(response)),
       tap((response: RoomSelectResponse) => this._setRoomsState(response.roomSelects)),
@@ -167,7 +167,7 @@ export class HousingService {
   }
 
   getInspections(termId: number){
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`
     return this._housingProxyService.get<InspectionsData>(apiUrl).pipe(
       map((response: any) => new InspectionsData(response)),
       tap((response: InspectionsData) => this._setInspectionsList(response.data)),
@@ -176,7 +176,7 @@ export class HousingService {
   }
 
   getInspectionDetails(termId: number,residentInspectionKey?: number, contractElementKey?: number, checkIn?: boolean){
-    const apiUrl: string = !!residentInspectionKey ? `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn+''}`:
+    const apiUrl: string = residentInspectionKey ? `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn+''}`:
     `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`;
     return this._housingProxyService.get<Inspection>(apiUrl).pipe(
       map((response: any) =>  new Inspection(response)),
@@ -186,7 +186,7 @@ export class HousingService {
   }
 
   getRequestedRoommates(request: RequestedRoommateRequest) {
-    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
     return this._housingProxyService.post<RequestedRoommateResponse>(apiUrl, request).pipe(
       map((response: any) => new RequestedRoommateResponse(response.data)),
       catchError(() => this._handleGetRequestedRoommatesError())
@@ -194,7 +194,7 @@ export class HousingService {
   }
 
   getPatronContracts(termId: number) {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
     return this._housingProxyService.get<ContractListResponse>(apiUrl).pipe(
       map((response: any) => new ContractListResponse(response)),
       tap((response: ContractListResponse) => this._setContractSummariesState(response.contractSummaries)),
@@ -203,7 +203,7 @@ export class HousingService {
   }
 
   getCheckInOuts(termId: number) {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
     return this._housingProxyService.get<CheckInOutResponse>(apiUrl).pipe(
       map((response: any) => new CheckInOutResponse(response)),
       tap((response: CheckInOutResponse) => this._setCheckInOutsState(response.checkInOuts)),
@@ -212,7 +212,7 @@ export class HousingService {
   }
 
   getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]> {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
     return this._housingProxyService.get<CheckInOutSlot[]>(apiUrl).pipe(
       map((response: any) => new CheckInOutSlotResponse(response).slots),
       catchError((err) => { throw err })
@@ -264,7 +264,7 @@ export class HousingService {
 
 
   searchRoommates(searchBy: string, searchValue: string): Observable<RoommateDetails[]> {
-    const queryString: string = `?type=${searchBy}&searchValue=${searchValue}`;
+    const queryString = `?type=${searchBy}&searchValue=${searchValue}`;
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patrons/search${queryString}`;
     return this._housingProxyService.get<Response>(apiUrl).pipe(
       map(response => {
@@ -276,7 +276,7 @@ export class HousingService {
   }
 
   getWaitList(key: number): Observable<WaitingListDetails> {
-    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
     return this._housingProxyService.get<WaitingListDetails>(apiUrl).pipe(
       map((response: any) => {
         this._waitingListStateService.setWaitingListDetails(response)
@@ -285,9 +285,9 @@ export class HousingService {
       ));
   }
 
-  getWorkOrders(termKey: number,workOrderKey: number = 0): Observable<WorkOrderDetails> {
+  getWorkOrders(termKey: number,workOrderKey = 0): Observable<WorkOrderDetails> {
     //TODO: change url work orders
-    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/work-orders/${termKey}/${workOrderKey}/`;
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/work-orders/${termKey}/${workOrderKey}/`;
     return this._housingProxyService.get<WorkOrderDetails>(apiUrl).pipe(
       map((response: any) => {
         this._workOrderStateService.setWorkOrderDetails(response)

@@ -27,15 +27,15 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled$: Observable<boolean>;
-  appleWalletEnabled: boolean = false;
+  appleWalletEnabled = false;
   appleWalletInfo: AppleWalletInfo;
   cardStatusMessage: string;
   appleWalletMessageImage: string;
-  appleWalletButtonHidden: boolean = true;
+  appleWalletButtonHidden = true;
   userPhoto?: string;
-  isLoadingPhoto: boolean = true;
+  isLoadingPhoto = true;
   userInfo: string;
-  mobileCredentialAvailable: boolean = false;
+  mobileCredentialAvailable = false;
   housingOnlyEnabled: boolean;
 
   constructor(

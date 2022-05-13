@@ -5,7 +5,7 @@
   "plugins": ["@typescript-eslint"],
   "overrides": [
     {
-      "files": ["*.component.html"],
+      "files": ["*.component.html", "*.page.html", "settings.html", "*-screen.html"],
       "parser": "@angular-eslint/template-parser",
       "rules": {
         "@typescript-eslint/dot-notation": "off",
@@ -17,5 +17,6 @@
       },
       "plugins": ["@angular-eslint/template"]
     }
-  ]
+  ],
+  "rules": { "@typescript-eslint/no-unused-vars": ["error"] }
 }

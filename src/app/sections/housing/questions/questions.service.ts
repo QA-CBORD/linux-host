@@ -84,7 +84,7 @@ export class QuestionsService {
     storedQuestions: QuestionsEntries,
     iteratee: (group: any, question: QuestionFormControl, questionName: string, storedValue: string) => void
   ): FormGroup {
-    let group: any = {};
+    const group: any = {};
 
     questions
       .filter((question: QuestionBase) => question && (question as QuestionFormControl).name)
@@ -107,7 +107,7 @@ export class QuestionsService {
 
   toQuestionAssetTypeDetailsGroup(storedValue: any, question: QuestionAssetTypeDetails): FormGroup {
     const assetTypeGroup: AssetTypeDetailValue[][] = storedValue || question.assetTypes;
-    let groups: any = {};
+    const groups: any = {};
 
     assetTypeGroup.forEach((at: AssetTypeDetailValue[], index: number) => {
       const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl(detail.value));

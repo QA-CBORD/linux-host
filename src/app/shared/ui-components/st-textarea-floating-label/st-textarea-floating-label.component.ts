@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, forwardRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {

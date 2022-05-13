@@ -41,7 +41,7 @@ import { Subscription } from 'rxjs';
 export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   @ViewChild('chatScroll', { read: ElementRef }) chatScroll: ElementRef;
 
-  newMessageText: string = '';
+  newMessageText = '';
   private readonly sourceSub: Subscription = new Subscription();
 
   // TODO: Implement from store
@@ -141,7 +141,8 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   /**
    * click listener for backing out of conversation (small UI only)
    */
-  onClickBackConversation() {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onClickBackConversation(): void {}
 
   /**
    * Create message body object for sending a new message to a group

@@ -3,7 +3,7 @@ import { QuestionBaseOptionValue } from './question-base';
 
 import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
 
-let counter: number = 0;
+let counter = 0;
 
 export interface ActionFunc {
     (metaData: string): void
@@ -20,8 +20,9 @@ export interface QuestionRoommatePreferenceOptions extends QuestionFormControlOp
 
 export interface QuestionActionButtonOptions extends QuestionFormControlOptions {
     buttonText: string;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     metadata?: {};
-    action: Function;
+    action: () => void;
 }
 
 export class QuestionRoommatePreference extends QuestionFormControl implements QuestionRoommatePreferenceOptions {
@@ -51,8 +52,9 @@ export class QuestionRoommatePreference extends QuestionFormControl implements Q
 }
 
 export class QuestionActionButton extends QuestionFormControl implements QuestionActionButtonOptions {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     metadata?: {};
-    action: Function;
+    action: () => void;
     buttonText: string;
 
     constructor(options: QuestionActionButtonOptions) {

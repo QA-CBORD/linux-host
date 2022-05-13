@@ -120,7 +120,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-unused-vars
   private getCredentialFor(body: object, extraHeaders?: object): Observable<any> {
     /**
      * makes call to partner payments api, resource: android/version/credential.

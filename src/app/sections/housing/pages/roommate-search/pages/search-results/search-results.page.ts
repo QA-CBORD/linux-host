@@ -55,6 +55,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
       tap(data => {
+        // eslint-disable-next-line no-prototype-builtins
         this.maximumPreferences = data.preferences.filter(res => res.hasOwnProperty('selected')  ).length
         this._applicationStateService.setMaximumSelectedRoommates(this.maximumPreferences)
         this.roommates$ = this._housingService.searchRoommates(data.searchOptions, data.searchValue).pipe(
@@ -153,7 +154,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   getRoommatePreferencesSelecteds(): string {
     let options;
     this.roommateSearchOptions$.subscribe(res => options = res)
-    let roommates = this.roommateSelecteds.map(res => {
+    const roommates = this.roommateSelecteds.map(res => {
       if (res.patronKeyRoommate !== 0) {
         this._applicationStateService.setSubtractSelectedRoommates();  
       }

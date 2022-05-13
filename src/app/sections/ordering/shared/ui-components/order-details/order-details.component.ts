@@ -181,7 +181,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAccessoryBarVisible(isVisible: boolean) {
-    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {});
+    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {return;});
   }
 
   initForm() {

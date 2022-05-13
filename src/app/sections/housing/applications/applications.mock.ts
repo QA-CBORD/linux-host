@@ -10,7 +10,8 @@ import {
 } from './applications.model';
 import { QuestionBase } from '../questions/types/question-base';
 
-export function generateApplications(amount: number = 3): ApplicationDetails[] {
+export function generateApplications(amount = 3): ApplicationDetails[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateApplicationDetails);
 }
 
@@ -41,9 +42,9 @@ export function generatePatronApplication(applicationDefinitionKey: number): Pat
 export function generatePatronAttribute(_: any, index: number): PatronAttribute {
   const nowDateTime: string = new Date().toISOString();
   const attributeConsumerKey = index + 100;
-  const value: string = `Attribute Value ${index}`;
+  const value = `Attribute Value ${index}`;
   const key: number = index;
-  const patronKey: number = 8000712;
+  const patronKey = 8000712;
   const effectiveDate: string = nowDateTime;
   const endDate: string = nowDateTime;
 
@@ -57,7 +58,8 @@ export function generatePatronAttribute(_: any, index: number): PatronAttribute 
   });
 }
 
-export function generatePatronAttributes(amount: number = 2): PatronAttribute[] {
+export function generatePatronAttributes(amount = 2): PatronAttribute[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generatePatronAttribute);
 }
 
@@ -75,7 +77,8 @@ export function generatePatronPreference(_: any, index: number): PatronPreferenc
   });
 }
 
-export function generatePatronPreferences(amount: number = 2): PatronPreference[] {
+export function generatePatronPreferences(amount = 2): PatronPreference[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generatePatronPreference);
 }
 

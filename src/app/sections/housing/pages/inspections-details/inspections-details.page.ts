@@ -62,10 +62,10 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   checkIn: boolean;
   selectedAssetKey: number;
   selectedAssetName: string;
-  termKey: number = 0;
-  isSubmitted: boolean = false;
-  canSubmit: boolean = true;
-  section: string = '';
+  termKey = 0;
+  isSubmitted = false;
+  canSubmit = true;
+  section = '';
   conditions: any[] = [];
 
   constructor(

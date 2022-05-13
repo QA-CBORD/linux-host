@@ -59,9 +59,9 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   nonAssignmentKey: number;
   selectedAssetKey: number;
   selectedAssetName: string;
-  termKey: number = 0;
-  isSubmitted: boolean = false;
-  canSubmit: boolean = true;
+  termKey = 0;
+  isSubmitted = false;
+  canSubmit = true;
   
   constructor(
     private _platform: Platform,

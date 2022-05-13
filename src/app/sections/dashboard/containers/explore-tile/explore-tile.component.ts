@@ -23,7 +23,7 @@ import { APP_ROUTES } from '@sections/section.config';
 export class ExploreTileComponent implements OnInit {
   favMerchants$: Observable<MerchantInfo[]>;
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,

@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { iif, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialProviders } from '../model/shared/credential-utils';

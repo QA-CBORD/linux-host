@@ -74,8 +74,8 @@ export class RoomsService {
   private _getFacilityAttributeCategories(): Category[] {
     let childrenFacilities: Facility[] = [];
     const parentFacilities = this._stateService.getParentFacilities();
-    let facilityOptions: Category[] = [];
-    let encounteredOptions: Category[] = [];
+    const facilityOptions: Category[] = [];
+    const encounteredOptions: Category[] = [];
 
     parentFacilities.forEach(parent => {
       childrenFacilities = childrenFacilities.concat(this._stateService.getParentFacilityChildren(parent.facilityId));
@@ -231,7 +231,7 @@ export class RoomsService {
   private _matchAllAttributes(filterOptions: Map<string, string[]>, facility: Facility): boolean {
 
     let matchesAll = true;
-    for(let [category, options] of filterOptions) {
+    for(const [category, options] of filterOptions) {
       if(category === 'Buildings') {
         continue;
       }

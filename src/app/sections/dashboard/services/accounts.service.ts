@@ -22,7 +22,7 @@ export class AccountsService {
     return this.commerceApiService.getUserAccounts().pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
   }
 
-  removeCreditCardAccount({ id: accountId }: UserAccount): Promise<Boolean> {
+  removeCreditCardAccount({ id: accountId }: UserAccount): Promise<boolean> {
     return firstValueFrom(this.commerceApiService.removeAccount({ accountId }));
   }
 

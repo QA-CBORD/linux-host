@@ -8,7 +8,7 @@ import { distinctUntilChanged, map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class ContentStringsStateService extends SingleEntityStateManager<ContentStringInfo[]> {
-  protected activeUpdaters: number = 0;
+  protected activeUpdaters = 0;
   protected state: ContentStringInfo[] = [];
   protected readonly _state$: BehaviorSubject<ContentStringInfo[]> = new BehaviorSubject<ContentStringInfo[]>(this.state);
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);

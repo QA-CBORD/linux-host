@@ -12,10 +12,10 @@ import { ActionsListComponent } from './actions-list/actions-list.component';
 export class ActionsComponent {
   @Input() path: string;
   @Input() edit: boolean;
-  @Input() key: string = '';
-  @Input() showEdit: boolean = true;
-  @Input() showView: boolean = true;
-  @Input() showRemove: boolean = false;
+  @Input() key = '';
+  @Input() showEdit = true;
+  @Input() showView = true;
+  @Input() showRemove = false;
 
   @Output() remove = new EventEmitter();
 

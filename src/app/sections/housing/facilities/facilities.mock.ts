@@ -1,14 +1,14 @@
 import { Facility } from './facilities.model';
 
 export function generateFacility(_: any, index: number): Facility {
-  const facilityName: string = 'Gryffindor';
+  const facilityName = 'Gryffindor';
   const facilityId: number = index;
-  const bedCount: string = '1-4';
-  const bathCount: string = 'Communal';
+  const bedCount = '1-4';
+  const bathCount = 'Communal';
   const floors: number = 7 + index;
   const builtYear: number = 1997 + index;
-  const campus: string = 'North';
-  const parking: string = 'Whomping Willow';
+  const campus = 'North';
+  const parking = 'Whomping Willow';
   const availableUnits: number = 50 + index;
 
   return new Facility(

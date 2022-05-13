@@ -41,7 +41,7 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   ) {
     this.suscription = this.router.events
       .pipe(filter(e => e instanceof NavigationStart))
-      .subscribe(async (e: NavigationStart) => {
+      .subscribe(async () => {
         try {
           await this.popoverController.dismiss();
           await this.modalController.dismiss();

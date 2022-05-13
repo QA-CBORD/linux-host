@@ -1,5 +1,5 @@
 import { MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
-import { ActivePasses, CredentialProviders, MobileCredentialProvider } from '../shared/credential-utils';
+import { ActivePasses, CredentialProviders } from '../shared/credential-utils';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 
 export class AppleWalletState implements MobileCredentialState {
@@ -44,7 +44,7 @@ export class AppleWalletState implements MobileCredentialState {
   getUiIconUrl(): string {
     throw new Error('Method not implemented.');
   }
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   setStatus(status: number): void {}
 
   iWatchPaired(): boolean {

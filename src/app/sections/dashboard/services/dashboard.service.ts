@@ -48,7 +48,7 @@ export class DashboardService {
 
   getUpdatedTilesBaseConfig(settings: SettingInfoList): TileWrapperConfig[] {
     return TILES_BASE_CONFIG.map((setting) => {
-      let s = settings.list.find(({ name }) => name === setting.id);
+      const s = settings.list.find(({ name }) => name === setting.id);
       return s
         ? { ...setting, isEnable: !!Number(s.value) }
         : setting;

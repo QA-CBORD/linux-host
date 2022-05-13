@@ -32,7 +32,7 @@ export class Attribute implements AttributeOptions {
 }
 
 export class OccupantAttribute extends Attribute {
-  name: string = 'Some Attribute'
+  name = 'Some Attribute'
 
   constructor(options: any) {
     super(options);

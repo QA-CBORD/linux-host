@@ -16,7 +16,7 @@ import { Platform } from '@ionic/angular';
   styleUrls: ['./entry.page.scss'],
 })
 export class EntryPage implements OnInit {
-  private changeEnvClicks: number = 0;
+  private changeEnvClicks = 0;
   appVersion$: Observable<string>;
 
   constructor(
@@ -32,11 +32,13 @@ export class EntryPage implements OnInit {
     this.appVersion$ = this.fetchDeviceInfo();
   }
 
-  private async initialization(logoutUser: boolean = false) {
+  private async initialization(logoutUser = false) {
     await this.loadingService.showSpinner();
     try {
       logoutUser = this.route.getCurrentNavigation().extras.state.logoutUser;
-    } catch (e) {}
+    } catch (e) {
+      return;
+    }
 
     if (logoutUser) {
       await this.sessionFacadeService.logoutUser(false);
