@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 
-import { combineLatest, Subscription } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { RewardsService } from './services';
@@ -45,7 +45,7 @@ export class RewardsPage implements OnInit {
             this.optInStatus = optInStatus;
             this.tabsConfig = tabsConfig;
           },
-          error => {
+          () => {
             return;
           }
         );

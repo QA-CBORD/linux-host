@@ -127,10 +127,10 @@ export class PhotoUploadComponent implements OnInit {
         first()
       )
       .subscribe(
-        data => {
+        () => {
           return;
         },
-        error => {
+        () => {
           this.photoDataFetchErrorToast();
         }
       );
@@ -385,10 +385,10 @@ export class PhotoUploadComponent implements OnInit {
     zip(...newPhotos)
       .pipe(take(1))
       .subscribe(
-        data => {
+        () => {
           return;
         },
-        error => {
+        () => {
           return;
         },
         () => {

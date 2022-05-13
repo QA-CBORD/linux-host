@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PickerController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { ORDERING_CONTENT_STRINGS, ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { take, timestamp } from 'rxjs/operators';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
-import { formatDateByContentStrings, getDateTimeInGMT, isSameDay } from '@core/utils/date-helper';
+import { formatDateByContentStrings, isSameDay } from '@core/utils/date-helper';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MerchantInfo } from '@sections/ordering';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -102,7 +102,6 @@ export class StDateTimePickerComponent implements OnInit {
 
   private pickerClickHandler(dateInfo: any) {
     const [date, { value }] = Object.values(dateInfo);
-    const [year, month, day] = date.value.split('-');
     let dateValue, timeStamp;
     if (value === 'asap') {
       dateValue = 'ASAP';

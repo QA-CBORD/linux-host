@@ -293,6 +293,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       )
     );
     this.orderDetailsOptions$ = zip(address, this.order$, this.userFacadeService.getUserData$(), this.merchant$).pipe(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       map(([address, { type, dueTime }, { locale, timeZone }, merchant]) => {
         const date = new Date(dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));
         const time = date.toLocaleString(locale, { hour12: false, timeZone });

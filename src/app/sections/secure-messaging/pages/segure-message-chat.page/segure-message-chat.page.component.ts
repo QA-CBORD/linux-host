@@ -8,9 +8,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { LoadingService } from '@core/service/loading/loading.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { Platform, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import {
   SecureMessageInfo,
   SecureMessageConversation,

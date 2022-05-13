@@ -8,7 +8,7 @@ import {
   StatusSettingValidation,
 } from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { from, concat, zip, Observable, of } from 'rxjs';
+import { from, concat, zip, Observable } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
 import { PinAction } from '@shared/ui-components/pin/pin.page';
 import { ReportCardStatus } from '../models/report-card-status.config';

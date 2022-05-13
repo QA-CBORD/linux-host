@@ -2,7 +2,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
-import { catchError, first, map, switchMap, tap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 import { EndpointStatuses, MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { EndpointState, HIDCredential, HidCredentialBundle } from '../android-credential.model';

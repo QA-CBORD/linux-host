@@ -5,7 +5,7 @@ import { OrderItem } from '../../models';
   name: 'orderItemsSummary',
 })
 export class OrderItemsSummaryPipe implements PipeTransform {
-  transform(value: OrderItem[], args?: any): string {
+  transform(value: OrderItem[]): string {
     if (typeof value === 'undefined' || value.length === 0) {
       return '';
     }

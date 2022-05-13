@@ -207,7 +207,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     await this.loadingService.showSpinner();
     const currentTimeOb$ = this.merchantService
       .getCurrentLocaleTime(this.timeZone)
-      .pipe(map(dueTime => this.selectedTimeStamp));
+      .pipe(map(() => this.selectedTimeStamp));
 
     zip(isOutsideMerchantDeliveryArea, currentTimeOb$)
       .pipe(

@@ -1,4 +1,3 @@
-import { AppleWalletCredentialState } from '../ios/applet-wallet-credential.state';
 import { AppleWalletState } from '../ios/applet-wallet.state';
 import { EndpointStatuses, MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
 import { ActivePasses, CredentialProviders } from '../shared/credential-utils';
@@ -176,6 +175,7 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
 
 // android credentials implementations.
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
   public credentialBundle: CredentialBundle;
 

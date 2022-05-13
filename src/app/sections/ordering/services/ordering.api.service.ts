@@ -46,6 +46,7 @@ export class OrderingApiService {
     return this.merchantFacadeService.removeFavoriteMerchant(merchantId);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getSuccessfulOrdersList(userId: string, institutionId: string): Observable<OrderInfo[]> {
     const postParams: ServiceParameters = { userId, merchantId: null, maxReturn: 30 };
     const queryConfig = new RPCQueryConfig('retrieveSuccessfulOrdersList', postParams, true, true);

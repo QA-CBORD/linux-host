@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 

@@ -103,11 +103,11 @@ export class CreditCardMgmtComponent implements OnInit {
         secondaryBtnText: strings.cancel_remove_card_btn,
         primaryBtnColor: 'danger',
         secondaryBtnColor: 'light',
-        onClickPrimary: async e => {
+        onClickPrimary: async () => {
           await onRemoveConfirmed();
           this.popoverCtrl.dismiss({});
         },
-        onClickSecondary: e => {
+        onClickSecondary: () => {
           this.popoverCtrl.dismiss({});
         },
       },

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { SettingItemConfig } from '@sections/settings/models/setting-items-config.model';
 import { Observable, of } from 'rxjs';
 

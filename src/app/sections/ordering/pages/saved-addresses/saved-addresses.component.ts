@@ -90,6 +90,7 @@ export class SavedAddressesComponent implements OnInit {
         take(1),
         finalize(() => this.loader.closeSpinner())
       )
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .subscribe(([success, addedAddress]) => {
         //Set Default Address.
         if (this.addNewAddressForm.value.default) {

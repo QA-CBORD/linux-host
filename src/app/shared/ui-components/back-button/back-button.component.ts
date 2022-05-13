@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { HousingService } from '../../../sections/housing/housing.service';
 import { TermsService } from '../../../sections/housing/terms/terms.service';
