@@ -5,8 +5,7 @@ import { take } from 'rxjs/operators';
 import { PreloginCsModel } from '../../pre-login/models/prelogin-content-strings.model';
 import { GuestRegistration } from '../models/guest-registration';
 import { PatronRegistration } from '../models/patron-registration';
-import { RegistrationCsModel } from '../models/registration-content-strings.model';
-import { FormFieldList, RegistrationData, UserRegistrationManager } from '../models/registration-utils';
+import { RegistrationData, UserRegistrationManager } from '../models/registration-utils';
 import { RegistrationService } from './registration.service';
 
 @Injectable({

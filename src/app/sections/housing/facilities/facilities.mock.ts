@@ -25,5 +25,6 @@ export function generateFacility(_: any, index: number): Facility {
 }
 
 export function generateFacilities(amount: number): Facility[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateFacility);
 }

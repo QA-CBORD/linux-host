@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { ROLES } from '../../app.global';
-import { forkJoin, Observable, of, pipe, Subject, throwError } from 'rxjs';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import { HousingProxyService } from './housing-proxy.service';
@@ -27,7 +27,7 @@ import {
   ContractListResponse,
   DefinitionsResponse,
   DetailsResponse,
-  FacilityDetailsResponse, OccupantDetailsResponse, OccupantDetailsResponseOptions,
+  FacilityDetailsResponse, OccupantDetailsResponse,
   Response,
   RoomSelectResponse,
 } from './housing.model';
@@ -46,7 +46,6 @@ import {
 } from './non-assignments/non-assignments.model';
 import { NonAssignmentsStateService } from './non-assignments/non-assignments-state.service';
 import { WaitingList, WaitingListDetails } from './waiting-lists/waiting-lists.model';
-import { WaitingListsService } from './waiting-lists/waiting-lists.service';
 import { WaitingListStateService } from './waiting-lists/waiting-list-state.service';
 import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
@@ -376,6 +375,7 @@ export class HousingService {
     return of(this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions()));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSuccessfulAssignment(contractKey: number): void {
     this.handleSuccess$().subscribe(() => {
       // TODO goes to contract form based on contract element key & contract form key

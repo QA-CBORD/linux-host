@@ -137,7 +137,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
                 .subscribe(termId => 
                   this._housingService
                       .getRequestedRommate(termId)
-                      .subscribe(x => this._loadingService.closeSpinner())
+                      .subscribe(() => this._loadingService.closeSpinner())
                 )
               );
         }

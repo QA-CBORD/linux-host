@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { AccountsService } from '@sections/dashboard/services';
 import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';

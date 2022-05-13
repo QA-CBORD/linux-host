@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   SecureMessageConversation,
   SecureMessageConversationListItem,

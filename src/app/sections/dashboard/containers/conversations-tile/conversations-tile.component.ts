@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SecureMessagingService } from './services/secure-messaging.service';
 import { take, finalize } from 'rxjs/operators';
 import { SecureMessageConversation } from '@sections/secure-messaging';
@@ -10,7 +10,7 @@ import { buildConversationsFromMessages } from '@core/utils/conversations-helper
   styleUrls: ['./conversations-tile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConversationsTileComponent implements OnInit, OnDestroy {
+export class ConversationsTileComponent implements OnInit {
   lastTwoMessagesArray: SecureMessageConversation[] = [];
   conversationDisplayedAmount = 2;
   conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
@@ -24,8 +24,6 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializePage();
   }
-
-  ngOnDestroy() {}
 
   initializePage() {
     this.secureMessagingService

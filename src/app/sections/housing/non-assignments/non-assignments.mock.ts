@@ -30,6 +30,7 @@ export function generateNonAssignmentsList(amount = 3): NonAssignmentListDetails
     return Array.apply(null, Array(amount)).map(generateNonAssignmentDetails);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateNonAssignmentInfo(index: number): NonAssignmentInfo {
 
     return new NonAssignmentInfo({

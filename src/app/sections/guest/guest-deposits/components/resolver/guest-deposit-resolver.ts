@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { Resolve } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';

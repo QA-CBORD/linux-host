@@ -121,7 +121,7 @@ export class NonAssignmentsService {
         }
       }
       ),
-      catchError(_ => of(false)));
+      catchError(() => of(false)));
   }
 
   next(nonAssignmentKey: number, formValue: any): Observable<any> {

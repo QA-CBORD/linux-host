@@ -29,8 +29,6 @@ export class MCache {
   userPhotoInfo: UserPhotoInfo;
   userSettings: UserSettingInfo[] = new Array<UserSettingInfo>();
 
-  constructor() {}
-
   static fromT(o: MCache) {
     const t: MCache = new MCache();
     t.applicationUUID = o.applicationUUID;

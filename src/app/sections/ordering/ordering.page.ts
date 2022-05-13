@@ -65,6 +65,7 @@ export class OrderingPage implements OnInit {
       );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   locationPinHandler(event: string) {
     // TODO location feature
   }

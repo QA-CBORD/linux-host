@@ -275,7 +275,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             this.onErrorRetrieve(result.errorMessage);
           }
         })
-        .catch(async error => {
+        .catch(async () => {
           this.onErrorRetrieve('Something went wrong, please try again...');
         })
         .finally(() => {
@@ -346,7 +346,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             }),
             take(1)
           )
-          .subscribe(() => {}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
+          .subscribe(() => {return;}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
       }
 
       if (data) {

@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component, 
   OnDestroy, 
   OnInit,
@@ -79,7 +78,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log(isMobile(this._platform));
     if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(x => {
+      this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });
@@ -134,7 +133,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
 
     this.nonAssignmentDetails$ = this._housingService.getNonAssignmentDetails(this.nonAssignmentKey, queryParams)
       .pipe(
-        tap((nonAssignmentDetails: NonAssignmentDetails) => {
+        tap(() => {
           this.isSubmitted = false; //!!nonAssignmentDetails.nonAssignmentInfo.dateTimeSigned;
           this._loadingService.closeSpinner();
         }),

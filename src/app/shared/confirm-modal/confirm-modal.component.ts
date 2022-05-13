@@ -21,9 +21,12 @@ export class ConfirmModalComponent {
 
   @Input() secondaryBtnColor: string;
 
-  @Input() onClickSecondary: () => void;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  @Input() onClickSecondary: Function;
 
-  @Input() onClickPrimary: () => void;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  @Input() onClickPrimary: Function;
+
 
   @Input() primaryBtnDisabled = false;
 

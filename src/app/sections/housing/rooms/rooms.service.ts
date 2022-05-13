@@ -48,7 +48,7 @@ export class RoomsService {
 
         return false;
       }),
-      catchError(err => of(false))
+      catchError(() => of(false))
     );
   }
 

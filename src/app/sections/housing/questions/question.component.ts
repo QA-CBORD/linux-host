@@ -285,7 +285,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       async result => {
         await this.loadFileData(result.files);
       },
-      async err => {
+      async () => {
         // Folder does not yet exists!
         await Filesystem.mkdir({
           path: IMAGE_DIR,

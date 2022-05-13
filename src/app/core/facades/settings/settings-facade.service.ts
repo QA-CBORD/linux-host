@@ -5,7 +5,7 @@ import { SettingsStateService } from '@core/states/settings/settings-state.servi
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsApiService } from '@core/service/settings-api-service/settings-api.service';
 import { UserSettingInfo } from '@core/model/user';
-import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 import { Settings, User } from '../../../app.global';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';

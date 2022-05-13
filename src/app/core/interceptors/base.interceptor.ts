@@ -90,7 +90,9 @@ export class BaseInterceptor implements HttpInterceptor {
   }
 
   private getRequiredData({ body: { params } }: HttpRequest<any>): Observable<[string, string]> {
+    // eslint-disable-next-line no-prototype-builtins
     const hasInstitutionId: boolean = params.hasOwnProperty('institutionId');
+    // eslint-disable-next-line no-prototype-builtins
     const hasSessionId: boolean = params.hasOwnProperty('sessionId');
 
     const institutionId$ = hasInstitutionId

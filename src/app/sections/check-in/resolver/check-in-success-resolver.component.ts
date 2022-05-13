@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { Resolve } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
@@ -17,7 +17,7 @@ export class CheckinSuccessResolver implements Resolve<Observable<any>> {
     private readonly loadingService: LoadingService,
     private readonly merchantService: MerchantService) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<any> {
+  resolve(): Observable<any> {
     const checkinSuccess = this.commonService.loadContentString<CheckingSuccessContentCsModel>(
       ContentStringCategory.checkinSuccess
     );

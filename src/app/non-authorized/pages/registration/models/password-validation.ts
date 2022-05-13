@@ -38,6 +38,7 @@ export class SupportedInputValidators {
 
   static email(): InputValidator {
     return {
+      // eslint-disable-next-line no-useless-escape
       test: value => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value),
     };
   }
@@ -88,6 +89,7 @@ export class SupportedInputValidators {
 
   static minOneSpecialChar: InputValidator = {
     test: value => {
+      // eslint-disable-next-line no-useless-escape
       const testResult = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
       return testResult;
     },

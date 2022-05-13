@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, interval, Observable, of, throwError, zip } from 'rxjs';
-import { Settings, User } from '../../../app.global';
+import { Settings } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { catchError, startWith, switchMap, take, tap } from 'rxjs/operators';
 import bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
-import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 import { UserSettingInfo } from '@core/model/user';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
@@ -67,7 +66,7 @@ export class BarcodeService {
       }),
       tap(value => (this._barcodeValue = value))
     );
-    return withInterval ? timerObservable.pipe(switchMap(v => barcodeObservable)) : barcodeObservable.pipe(take(1));
+    return withInterval ? timerObservable.pipe(switchMap(() => barcodeObservable)) : barcodeObservable.pipe(take(1));
   }
 
   private async beginBarcodeGeneration(patronKey: string, institutionKey: string): Promise<string> {
@@ -111,6 +110,7 @@ export class BarcodeService {
    *
    * @return: a numeric String in base 10 that includes digits
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async generateTOTP(key: Int8Array, time: BigInteger, returnDigits: number, crypto: string): Promise<string> {
     let result: string;
 
@@ -160,6 +160,7 @@ export class BarcodeService {
    * @param text: the message or text to be authenticated
    */
   private async hmac_sha(keyBytes: Int8Array, textBytes: Int8Array): Promise<Int8Array> {
+    // eslint-disable-next-line no-useless-catch
     try {
       const cryptoKey = await crypto.subtle.importKey('raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, true, [
         'sign',

@@ -4,6 +4,7 @@ import { WaitingList, WaitingListDetails } from "./waiting-lists.model";
 import { FacilityAttribute } from '../facilities/facilities.model';
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateWaitingListDetails(index: number): WaitingListDetails {
     const attributes: PatronAttribute[] = generatePatronAttributes();
     const facilities: FacilityAttribute[] = [];//generateFacilityAttributes();
@@ -24,6 +25,7 @@ export function generateWaitingList(amount = 3): WaitingList[] {
     return Array.apply(null, Array(amount)).map(generateWaitingList);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateWaitingListInfo(index: number): WaitingList {
 
     return null;

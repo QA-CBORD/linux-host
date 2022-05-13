@@ -17,7 +17,6 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { App } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 
 @Component({
   selector: 'st-scan-card',
@@ -117,7 +116,7 @@ export class ScanCardComponent implements OnInit {
         this.generateBarcode(value);
         return true;
       }),
-      catchError(_ => of(false))
+      catchError(() => of(false))
     );
   }
 
@@ -130,7 +129,7 @@ export class ScanCardComponent implements OnInit {
         includetext: false,
         height: 10,
       },
-      (err, cvs) => {
+      () => {
         /// don't care
       }
     );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { PATRON_NAVIGATION } from './../../../app.global';
 import { Router } from '@angular/router';
 import { Injectable, NgZone } from '@angular/core';
@@ -204,7 +205,7 @@ export class NativeProvider {
    *  Apple Pay
    */
 
-  payWithApplePay(payType: NativeData, moreParams: Object): Observable<ApplePayResponse> {
+  payWithApplePay(payType: NativeData, moreParams: object): Observable<ApplePayResponse> {
     if (this.isAndroid()) {
       return of({ success: false, errorMessage: 'Apple Pay does not work on Android.', accountId: null });
     } else if (this.isIos()) {
@@ -214,7 +215,7 @@ export class NativeProvider {
     }
   }
 
-  getIosData(methodName: NativeData, moreParams?: Object): Promise<any> {
+  getIosData(methodName: NativeData, moreParams?: object): Promise<any> {
     return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function

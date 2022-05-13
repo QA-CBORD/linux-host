@@ -47,7 +47,7 @@ export class SearchFilterModalComponent implements OnInit {
     if (facilityKeys && facilityKeys.length > 0) {
       return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
         .pipe(
-          tap(data => {
+          tap(() => {
             this._handleFilters()
           }),
           map(data => {
@@ -119,7 +119,7 @@ export class SearchFilterModalComponent implements OnInit {
     }
   }
   private goToUnitsTab(): void {
-    this.close().then(x => {
+    this.close().then(() => {
       this._loadingService.closeSpinner();
       this._router.navigateByUrl(`patron/housing/rooms-search/${
         this._roomStateService.getActiveRoomSelect().key}/units`).catch(err => console.log(err));
@@ -127,7 +127,7 @@ export class SearchFilterModalComponent implements OnInit {
   }
 
   private _goToBuildingsTab(): void {
-    this.close().then(x=> {
+    this.close().then(()=> {
       this._loadingService.closeSpinner();
       this._router.navigateByUrl(`patron/housing/rooms-search/${
         this._roomStateService.getActiveRoomSelect().key}/buildings`)
@@ -159,7 +159,8 @@ export class SearchFilterModalComponent implements OnInit {
     return name;
   }
 
-  sort(control: SortControlComponent): void {return;}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+  sort(control: SortControlComponent): void {}
 
   getId(key: string, index: number): number {
     return Number(key) - index;

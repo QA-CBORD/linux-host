@@ -257,6 +257,7 @@ export class QuestionsService {
     }
     return false;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _sortByQuestionDateSigned(current: QuestionBase, next: QuestionBase): number {
     if (current instanceof QuestionDateSigned) {
       return 1;

@@ -48,7 +48,7 @@ export class UnitDetailsPage implements OnInit, OnDestroy {
     }
     console.log(isMobile(this._platform));
     if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(x => {
+      this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });

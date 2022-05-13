@@ -5,8 +5,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrls: ['./scan-code-background.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
-export class ScanCodeBackground {
-  constructor() {}
-
-}
+export class ScanCodeBackground {}

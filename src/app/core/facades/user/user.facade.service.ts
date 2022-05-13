@@ -265,7 +265,7 @@ export class UserFacadeService extends ServiceStateFacade {
 
   saveUser$(user: UserInfo): Observable<string> {
     return this.userApiService.updateUserInfo$(user).pipe(
-      tap(res => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
+      tap(() => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
       take(1)
     );
   }

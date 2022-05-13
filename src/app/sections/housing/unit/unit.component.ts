@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { OnInit } from '@angular/core';
 
 import { Unit } from './unit.model';
 import { Router } from '@angular/router';

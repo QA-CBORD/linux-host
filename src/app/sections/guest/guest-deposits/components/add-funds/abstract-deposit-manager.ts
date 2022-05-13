@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChangeDetectorRef } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { UserAccount } from '@core/model/account/account.model';
@@ -41,28 +43,20 @@ export abstract class AbstractDepositManager {
     isActive: true,
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onPaymentChanged(_target) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   formatAmount(_event) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onAmountChanged(_event) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onSubmitDeposit() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setSourceAccounts(guestAccounts: UserAccount[]) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setDestinationAccounts(recipientAccounts: UserAccount[]) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async confirmationDepositPopover(data: any) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async finalizeDepositModal(data): Promise<void> {}
 
   defineDestAccounts(target) {

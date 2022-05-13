@@ -8,7 +8,6 @@ import {
   IonicNativeAuthPlugin,
   LockEvent,
   VaultConfig,
-  VaultError,
 } from '@ionic-enterprise/identity-vault';
 
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
@@ -172,6 +171,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onConfigChange(config: VaultConfig): void {
     // console.log('Got a config update: ', config);
     if (!this.config.isPasscodeSetupNeeded) {
@@ -180,10 +180,12 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onVaultUnlocked(config: VaultConfig): void {
     this.setIsLocked(false);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onVaultLocked(event: LockEvent): void {
     this.setIsLocked();
     // console.log('The vault was locked by event: ', event);

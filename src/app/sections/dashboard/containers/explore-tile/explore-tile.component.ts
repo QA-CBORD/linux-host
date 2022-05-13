@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
 import { MerchantInfo } from '@sections/ordering';
-import { combineLatest, Observable, zip } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { Settings } from '../../../../app.global';
 import { EXPLORE_ROUTING } from '@sections/explore/explore.config';

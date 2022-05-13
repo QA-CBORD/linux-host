@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 // Email template pattern
 export const EMAIL_REGEXP = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnInit} from '@angular/core';
+import { Component, ChangeDetectionStrategy} from '@angular/core';
 
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { FacilityToUnitsMapper, Unit } from '@sections/housing/unit/unit.model';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({

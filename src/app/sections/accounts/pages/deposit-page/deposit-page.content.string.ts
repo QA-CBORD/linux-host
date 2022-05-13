@@ -86,13 +86,14 @@ export class DepositSuccessCs extends DepositBase {
     return this.content.subtitle_detail_text;
   }
 
+  set subTitleDetail(text: string) {
+    this.content.subtitle_detail_text = text;
+  }
+
   get billMeText(): string {
     return this.content.bill_me_pay_method;
   }
 
-  set subTitleDetail(text: string) {
-    this.content.subtitle_detail_text = text;
-  }
 }
 
 

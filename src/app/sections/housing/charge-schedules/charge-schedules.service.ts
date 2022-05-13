@@ -10,7 +10,6 @@ import {
   providedIn: 'root',
 })
 export class ChargeSchedulesService {
-  constructor() {}
 
   getChargeSchedules(
     chargeSchedules: ChargeSchedule[],

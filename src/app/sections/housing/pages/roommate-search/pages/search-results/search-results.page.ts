@@ -39,7 +39,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(x => {
+      this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });
@@ -59,7 +59,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
         this.maximumPreferences = data.preferences.filter(res => res.hasOwnProperty('selected')  ).length
         this._applicationStateService.setMaximumSelectedRoommates(this.maximumPreferences)
         this.roommates$ = this._housingService.searchRoommates(data.searchOptions, data.searchValue).pipe(
-          tap(_ => {
+          tap(() => {
             this._loadingService.closeSpinner();
             this.stillLoading$.next(false);
           }),

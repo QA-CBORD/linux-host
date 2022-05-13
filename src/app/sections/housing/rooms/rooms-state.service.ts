@@ -7,7 +7,7 @@ import { Unit } from '@sections/housing/unit/unit.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 import { hasValue, isDefined } from '@sections/housing/utils';
-import { map, startWith } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 
 export interface StateService<K, V> {
@@ -158,7 +158,6 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   getUnitDetails(parentFacilityKey: number, unitKey: number) {
     const childrenFacilities = this.entityDictionary.get(parentFacilityKey);
     const facility = childrenFacilities.find(child => child.facilityId == unitKey);
-    const parentFacility = this._parentFacilities.find(parent => parent.facilityId == parentFacilityKey);
 
     return new Unit({
       facilityKey: facility.facilityId,

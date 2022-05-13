@@ -114,7 +114,7 @@ export class SearchByPage implements OnInit, OnDestroy {
           preferredName: d.preferredName ? d.preferredName :''
         });
       })),
-      tap(_ => {
+      tap(() => {
         this._loadingService.closeSpinner();
       }),
       catchError((error: any) => {

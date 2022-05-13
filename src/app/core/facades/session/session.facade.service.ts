@@ -189,6 +189,7 @@ export class SessionFacadeService {
         break;
       case LoginState.EXTERNAL:
         // check if institution has guest login enabled and user had been logged in as guest previously.  if yes redirect to login page instead.
+        // eslint-disable-next-line no-case-declarations
         const isGuestloginEnabled = await this.authFacadeService.isGuestUser().toPromise();
         if (isGuestloginEnabled) {
           await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
