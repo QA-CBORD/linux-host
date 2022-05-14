@@ -16,54 +16,11 @@
     </ion-button>
   </div>
 
-  <h2 class="application-details__title">Title</h2>
+  <h2 class="application-details__title">2022 Housing Application</h2>
 
   <div class="application-details__card">
-    <st-stepper class="stepper--white">
-      <st-step
-        [stepControl]="page.form"
-      >
-        <form>
-          <ng-container>
-            <st-question
-              [parentGroup]="page.form"
-              [question]="question"
-              [name]="$any(question).name"
-              [class.question--first]="isFirstQuestion"
-              [isSubmitted]="isSubmitted"
-            ></st-question>
-          </ng-container>
-
-          <st-stepper-footer>
-            <ion-button
-              class="btn application-details__back"
-              type="button"
-              fill="clear"
-              mode="ios"
-              stepperBack
-              >Back</ion-button
-            >
-
-            <ion-button
-              class="btn application-details__next"
-              [class.stepper-footer__button--right]="isFirstPage"
-              mode="ios"
-              fill="outline"
-              type="submit"
-            >
-              Next
-            </ion-button>
-
-            <ion-button
-              class="btn application-details__submit"
-              mode="ios"
-              type="submit"
-              [class.stepper-footer__button--right]="isFirstPage"
-            >
-            </ion-button>
-          </st-stepper-footer>
-        </form>
-      </st-step>
-    </st-stepper>
+    <h3>As part of the application submission process, a one-time payment is required. Please review the amount below and select a payment method.</h3>
+    <h1>$100.00</h1>
+   <st-credit-card-mgmt [userAccounts]="userAccounts"></st-credit-card-mgmt>
   </div>
 </ion-content>

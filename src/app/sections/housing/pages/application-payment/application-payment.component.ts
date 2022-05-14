@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { UserAccount } from '@core/model/account/account.model';
+import { AccountsService } from '@sections/dashboard/services';
+import { PaymentSystemType } from 'src/app/app.global';
 
 @Component({
   selector: 'st-application-payment',
@@ -6,9 +9,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./application-payment.component.scss'],
 })
 export class ApplicationPaymentComponent implements OnInit {
+  userAccounts: any;
+  constructor(private readonly accountService: AccountsService) {}
 
-  constructor() { }
-
-  ngOnInit() {}
-
+  ngOnInit() {
+    this.userAccounts = this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]);
+  }
 }

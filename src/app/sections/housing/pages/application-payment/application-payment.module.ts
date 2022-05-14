@@ -14,6 +14,7 @@ const imports = [
   IonicModule,
   QuestionsModule,
   StepperModule,
+  CreditCardModule
 ];
 const declarations = [ApplicationPaymentComponent];
 const entryComponents = [ApplicationPaymentComponent];
