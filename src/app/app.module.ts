@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
 import { Network } from '@ionic-native/network/ngx';
+import { Brightness } from '@ionic-native/brightness/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,7 +29,7 @@ import { Network } from '@ionic-native/network/ngx';
     PinModule
   ],
   providers: [
-    { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network,
+    { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network, Brightness
   ],
   bootstrap: [AppComponent],
 })

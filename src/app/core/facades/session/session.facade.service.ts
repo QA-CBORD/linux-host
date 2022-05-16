@@ -7,11 +7,11 @@ import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
-import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { firstValueFrom } from '@shared/utils';
 import { ConnectivityService } from '@shared/services/connectivity.service';
 import { StartupService } from 'src/app/non-authorized/pages/startup/startup-helper.service';
+import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 
 enum AppStatus {
   BACKGROUND,
@@ -34,15 +34,18 @@ export class SessionFacadeService {
     private readonly startupService: StartupService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly connectivityService: ConnectivityService
+    private readonly connectivityService: ConnectivityService,
+    private readonly appStatesFacadeService: AppStatesFacadeService
   ) {
-    this.appStateListeners();
+    this.addAppStateListeners();
   }
 
-  // handle app state changes
-  // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
-  private appStateListeners() {
-    App.addListener('appStateChange', async ({ isActive }) => {
+  /**
+   * @function addAppStateListeners
+   * @description handle app state changes, must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
+   */
+  public addAppStateListeners() {
+    this.appStatesFacadeService.getStateChangeEvent$.subscribe(async ({ isActive }) => {
       if (isActive) {
         this.onActiveState();
       } else {
@@ -52,7 +55,7 @@ export class SessionFacadeService {
         this.appStatus = AppStatus.BACKGROUND;
       }
     });
-    App.addListener('appUrlOpen', data => {
+    this.appStatesFacadeService.getAppUrlOpenEvent$.subscribe(data => {
       const url: string = data.url;
       if (url && url.includes('cbord.com')) {
         this._deepLinkPath = new URL(data.url).pathname.split('/').filter(s => s);

@@ -4,8 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { ANONYMOUS_ROUTES } from './non-authorized.config';
 import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/no-connectivity-screen';
 import { ConnectivityPageResolver } from '@shared/services/connectivity-route.resolver';
-import { PinPage } from '@shared/ui-components/pin/pin.page';
-import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 
 const routes: Routes = [
   {
@@ -42,17 +40,9 @@ const routes: Routes = [
     loadChildren: () => import('./pages/external-login/external-login.module').then(m => m.ExternalLoginPageModule),
   },
   {
-    path: ANONYMOUS_ROUTES.scanCard,
-    component: ScanCardComponent,
-  },
-  {
     path: ANONYMOUS_ROUTES.noConnectivity,
     component: NoConnectivityScreen,
     resolve: { data: ConnectivityPageResolver }
-  },
-  {
-    path: ANONYMOUS_ROUTES.pin,
-    component: PinPage
   }
 ];
 
