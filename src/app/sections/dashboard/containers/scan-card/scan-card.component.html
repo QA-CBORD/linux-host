@@ -2,6 +2,9 @@
   [title]="'Scan Card'"
   [backButtonTitle]="'Back'"
   [isToolbarShow]="true"
+  [isBackButtonShow]="isBackButtonShow"
+  [isDismissButtonShow]="isDismissButtonShow"
+  (onDismiss)="onBack()"
   [backButtonIcon]="'ios-arrow-back'"
   [isTitleShow]="true"
 ></st-header>

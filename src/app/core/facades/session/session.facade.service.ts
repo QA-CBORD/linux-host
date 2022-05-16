@@ -1,22 +1,17 @@
 import { Injectable } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { ROLES } from '../../../app.global';
-import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
-import { take } from 'rxjs/operators';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { NavController, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { NavigationService } from '@shared/services/navigation.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { App } from '@capacitor/app';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { firstValueFrom } from '@shared/utils';
 import { ConnectivityService } from '@shared/services/connectivity.service';
+import { StartupService } from 'src/app/non-authorized/pages/startup/startup-helper.service';
 
 enum AppStatus {
   BACKGROUND,
@@ -33,13 +28,10 @@ export class SessionFacadeService {
 
   constructor(
     private readonly platform: Platform,
-    private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private navCtrl: NavController,
-    private readonly loadingService: LoadingService,
-    private readonly routingService: NavigationService,
+    private readonly startupService: StartupService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly connectivityService: ConnectivityService
@@ -54,7 +46,7 @@ export class SessionFacadeService {
       if (isActive) {
         this.onActiveState();
       } else {
-        if (!this.identityFacadeService.getIsLocked()) {
+        if (!(await this.connectivityService.isModalOpened())) {
           this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
@@ -93,91 +85,8 @@ export class SessionFacadeService {
   }
 
 
-  async determineAppLoginState(systemSessionId) {
-    const appLoginState = await this.determineFromBackgroundLoginState(systemSessionId).catch(async () => LoginState.PIN_LOGIN);
-    await this.handleLoginState(appLoginState);
-  }
-
-  async onScanCode(): Promise<void> {
-    return this.lockVault();
-  }
-
-  async onRetry(): Promise<boolean> {
-    await this.loadingService.showSpinner();
-    let systemSesssionId;
-    try {
-      systemSesssionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
-    } catch ({ message }) {
-      return false;
-    }
-
-    await this.identityFacadeService.showSplashScreen();
-    this.determineAppLoginState(systemSesssionId);
-    return true;
-  }
-
-  async retrieveSystemSessionToken(): Promise<boolean> {
-    await this.loadingService.showSpinner();
-    let systemSesssionId;
-    try {
-      systemSesssionId = await firstValueFrom(this.authFacadeService.getAuthSessionToken$());
-    } catch ({ message }) {
-      this.connectivityService.handleConnectionError(this);
-      return false;
-    }
-    //await this.connectivityService.closeIfOpened();
-    this.determineAppLoginState(systemSesssionId);
-    return true;
-  }
-
-
-  async doLoginChecks() {
-    await this.retrieveSystemSessionToken();
-  }
-
-
-  async handleLoginState(state: LoginState): Promise<void> {
-    const routeConfig = { replaceUrl: true };
-
-    console.log("handleLoginState: ", state);
-    switch (state) {
-
-      case LoginState.SELECT_INSTITUTION:
-        await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
-        break;
-      case LoginState.BIOMETRIC_LOGIN:
-        await this.loginUser(true);
-        break;
-      case LoginState.PIN_LOGIN:
-        await this.loginUser(false);
-        break;
-      case LoginState.HOSTED:
-        await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
-        break;
-      case LoginState.EXTERNAL:
-        // check if institution has guest login enabled and user had been logged in as guest previously.  if yes redirect to login page instead.
-        if ((await firstValueFrom(this.authFacadeService.isGuestUser()))) {
-          await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
-        } else {
-          await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.external, routeConfig);
-        }
-        break;
-      case LoginState.DONE:
-        await this.navigateToDashboard();
-        break;
-      default:
-        await this.logoutUser(true);
-    }
-  }
-
-
-  private async navigateToDashboard() {
-    this.identityFacadeService.navigateToDashboard();
-  };
-
-  private async loginUser(useBiometric: boolean) {
-    this.loadingService.closeSpinner();
-    this.identityFacadeService.loginUser(useBiometric);
+  async determineAppLoginState(systemSessionId: string): Promise<LoginState> {
+    return await this.determineFromBackgroundLoginState(systemSessionId);
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
@@ -185,7 +94,10 @@ export class SessionFacadeService {
     if (isWeb) {
       return LoginState.DONE;
     } else {
-      const isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionId);
+      const { data: isPinLoginEnabled } = await this.startupService.executePromise({
+        actualMethod: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionId),
+        showLoading: false
+      });
       const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
       if (isPinLoginEnabled && isPinEnabledForUserPreference) {
         const isBiometricsAvailable = await this.identityFacadeService.areBiometricsAvailable();
@@ -202,17 +114,12 @@ export class SessionFacadeService {
   }
 
   async determineInstitutionSelectionLoginState(): Promise<LoginState> {
-    const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
-      .pipe(take(1))
-      .toPromise();
-
+    const institutionInfo: Institution = await firstValueFrom(this.institutionFacadeService.cachedInstitutionInfo$);
     return this.identityFacadeService.isExternalLogin(institutionInfo) ? LoginState.EXTERNAL : LoginState.HOSTED;
   }
 
   async determineFromBackgroundLoginState(sessionId: string): Promise<LoginState> {
-    const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
-      .pipe(take(1))
-      .toPromise();
+    const institutionInfo: Institution = await firstValueFrom(this.institutionFacadeService.cachedInstitutionInfo$);
     const isInstitutionSelected: boolean = !!institutionInfo;
     if (!isInstitutionSelected) {
       return LoginState.SELECT_INSTITUTION;
@@ -226,13 +133,10 @@ export class SessionFacadeService {
       return usernamePasswordLoginType;
     }
 
-    let isPinLoginEnabled = false;
-
-    try {
-      isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
-    } catch (error) {
-      throw new Error('cannot determine isPingEnabled');
-    }
+    const { data: isPinLoginEnabled } = await this.startupService.executePromise({
+      actualMethod: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id),
+      showLoading: false
+    });
 
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
@@ -268,12 +172,11 @@ export class SessionFacadeService {
     this.userFacadeService.handlePushNotificationRegistration();
   }
 
-  async logoutUser(navigateToEntry: boolean = true) {
+  async logoutUser(navigateToEntry: boolean = true): Promise<boolean> {
     if (navigateToEntry) {
-      await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
       this.onLogOutObservable$.next();
     }
-    this.identityFacadeService.logoutUser();
+    return this.identityFacadeService.logoutUser();
   }
 
   async getIsWeb(): Promise<boolean> {

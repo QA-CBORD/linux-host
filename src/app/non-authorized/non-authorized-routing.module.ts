@@ -6,6 +6,7 @@ import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-scre
 import { ConnectivityPageResolver } from '@shared/services/connectivity-route.resolver';
 import { PinPage } from '@shared/ui-components/pin/pin.page';
 import { CanDeactivatePage } from '@shared/ui-components/pin/can-deactivate.pin.page';
+import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 
 const routes: Routes = [
   {
@@ -43,7 +44,7 @@ const routes: Routes = [
   },
   {
     path: ANONYMOUS_ROUTES.scanCard,
-    loadChildren: () => import('../sections/dashboard/containers/scan-card/scan-card.module').then(m => m.ScanCardModule),
+    component: ScanCardComponent,
   },
   {
     path: ANONYMOUS_ROUTES.noConnectivity,

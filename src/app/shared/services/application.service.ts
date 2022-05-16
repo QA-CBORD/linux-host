@@ -11,7 +11,7 @@ export interface EventInfo {
 
 const APP_STATE_CHANGE = 'appStateChange';
 
-const TIME_OUT_WITH_EXTRA = 600000 / 10; // 10 minutes.
+const TIME_OUT_WITH_EXTRA = 600000; // 10 minutes.
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationService {
@@ -27,7 +27,6 @@ export class ApplicationService {
         if (canLockVault) {
             return this.canLockScreen(true).finally(() => {
                 this.pluginListenerHandle?.remove();
-                console.log("");
                 this.pluginListenerHandle = null;
             });
         }
@@ -46,7 +45,9 @@ export class ApplicationService {
         if (e.keepVaultUnLockableOnResume) {
             setTimeout(async () => {
                 console.log("keepVaultUnLockableOnResume: going to reset vault..............: ", this.pluginListenerHandle)
-                this.canLockScreen(true).finally(() => this.pluginListenerHandle?.remove());
+                if (this.pluginListenerHandle) {
+                    this.canLockScreen(true).finally(() => this.pluginListenerHandle?.remove());
+                }
             }, estimatedTimeInMillis);
         }
     }

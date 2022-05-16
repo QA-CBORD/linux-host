@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController, ToastController } from '@ionic/angular';
@@ -9,20 +9,18 @@ import { CommonService } from '@shared/services/common.service';
 import { ConnectionService } from '@shared/services/connection-service';
 import { firstValueFrom } from '@shared/utils';
 import { map } from 'rxjs/operators';
-import { ROLES, User } from 'src/app/app.global';
-import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
+import { Settings, User } from 'src/app/app.global';
 import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
-import { ConnectivityPageInfo, RetryHandler } from './model/connectivity-page.model';
+import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
 import { Subscription } from 'rxjs';
-import { Location } from '@angular/common';
-import { SkipBackButtonEvent } from '../pin/skip-back-button-event';
+import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 
 @Component({
   selector: 'st-no-connectivity-screen',
   templateUrl: './no-connectivity-screen.html',
   styleUrls: ['./no-connectivity-screen.scss'],
 })
-export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit, OnDestroy {
+export class NoConnectivityScreen implements OnInit, OnDestroy {
 
   refreshSubscription: Subscription;
   retrySubscription: Subscription;
@@ -41,7 +39,6 @@ export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit,
   constructor(
     private readonly connectionService: ConnectionService,
     private readonly loadingService: LoadingService,
-    private readonly router: Router,
     private readonly toastService: ToastController,
     private readonly commonService: CommonService,
     private readonly accessCardService: AccessCardService,
@@ -49,10 +46,7 @@ export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit,
     private readonly changeDetector: ChangeDetectorRef,
     private readonly activatedRoute: ActivatedRoute,
     private readonly modalController: ModalController,
-    private readonly location: Location
-  ) {
-    super();
-   }
+  ) { }
 
   ngOnInit() {
     this.init();
@@ -69,7 +63,8 @@ export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit,
     this.strings = this.config.getContent(this.csModel);
     this.canScanCard = await (async () => {
       const isServerError = this.errorType === ConnectivityErrorType.SERVER_CONNECTION;
-      return isServerError || !!(await firstValueFrom(this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)));
+      const cashlessKeyInCache = !!(await firstValueFrom(this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)));
+      return isServerError && cashlessKeyInCache || cashlessKeyInCache;
     })();
   }
 
@@ -84,7 +79,7 @@ export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit,
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
       console.log("GOIN TO CLOSE.....");
-      this.closeSelf();
+      this.closeSelf(ExecStatus.Execution_success);
     } else {
       this.onRetryFailed();
     }
@@ -107,7 +102,6 @@ export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit,
     this.routeSubscription.unsubscribe();
     this.refreshSubscription.unsubscribe();
     this.retrySubscription.unsubscribe();
-    this.removeBackButtonEventSubscription();
   }
 
 
@@ -166,19 +160,31 @@ export class NoConnectivityScreen extends SkipBackButtonEvent implements OnInit,
   }
 
   async scanCard() {
-    await this.retryHandler.onScanCode();
-    await this.loadingService.showSpinner();
-    const color = await this.institutionColor();
-
-    this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.scanCard], { queryParams: { color } })
-      .then(async () => await this.closeSelf())
-      .finally(() => this.loadingService.closeSpinner());
+    if (this.retryHandler.onScanCode)
+      await this.retryHandler.onScanCode();
+    await this.openScanCard();
+    console.log("SCAN card got closed")
   }
 
 
-  async closeSelf() {
+  async openScanCard(): Promise<any> {
+    // return await this.pinService.navigateToPinPage(pinAction, pinModalProps);
+    const color = await this.institutionColor();
+    await firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE));
+    let componentProps = { color, isBackButtonShow: false, isDismissButtonShow: true };
+    const pinModal = await this.modalController.create({
+      backdropDismiss: true,
+      component: ScanCardComponent,
+      componentProps,
+    });
+    await pinModal.present();
+    return await pinModal.onDidDismiss();
+  }
+
+
+  async closeSelf(status: ExecStatus) {
     try {
-      await this.modalController.dismiss();
+      await this.modalController.dismiss(null, status);
     } catch (err) {
       console.log("ERROR CLOSING MODAL: ", err);
       //this.location.back();

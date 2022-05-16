@@ -2,7 +2,7 @@ import { ConnectivityErrorType, ConnectivityScreenCsModel } from "./no-connectiv
 
 export interface RetryHandler {
     onRetry(args?: any): Promise<boolean>;
-    onScanCode(args?: any): Promise<any>
+    onScanCode?: (args?: any) => Promise<any>
 }
 
 export interface ConnectivityPageInfo {
@@ -10,4 +10,8 @@ export interface ConnectivityPageInfo {
     freshContentStringsLoaded: boolean,
     errorType: ConnectivityErrorType,
     retryHandler?: RetryHandler
+}
+
+export enum ExecStatus {
+    Execution_success = "exec_success"
 }

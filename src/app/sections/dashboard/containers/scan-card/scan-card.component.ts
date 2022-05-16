@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -17,7 +17,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { App } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'st-scan-card',
@@ -34,7 +34,10 @@ export class ScanCardComponent implements OnInit {
   userFullName$: Observable<string>;
   userPhoto: string;
   userId: string;
-  institutionColor: string;
+  @Input() isBackButtonShow: boolean = true;
+  @Input() isDismissButtonShow: boolean;
+  @Input('color') institutionColor: string;
+
   previousBrigness: GetBrightnessReturnValue;
 
   constructor(
@@ -45,7 +48,8 @@ export class ScanCardComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly barcodeFacadeService: BarcodeFacadeService,
     private readonly naviteProvider: NativeProvider,
-    private readonly router: Router
+    private readonly router: Router,
+    private modalController: ModalController
   ) {
     App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive && this.router.url.includes(DASHBOARD_NAVIGATE.scanCard)) {
@@ -77,7 +81,7 @@ export class ScanCardComponent implements OnInit {
     this.userFullName$ = this.getUserInfo().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
   }
 
-  private getUserInfo(){
+  private getUserInfo() {
     return this.userFacadeService.getUserInfo();
   }
 
@@ -117,6 +121,13 @@ export class ScanCardComponent implements OnInit {
     );
   }
 
+  async onBack() {
+    try{
+      await this.modalController.dismiss();
+    }catch(ignored){}
+    
+  }
+
   private initBarcode() {
     this.generateBarcode$ = this.barcodeFacadeService.generateBarcode(true).pipe(
       map(value => {
@@ -143,7 +154,7 @@ export class ScanCardComponent implements OnInit {
   }
 
   private setInstitutionColor() {
-    this.institutionColor = this.route.snapshot.queryParams.color;
+    this.institutionColor = this.institutionColor || this.route.snapshot.queryParams.color;
   }
 
   private async setFullBrightness() {

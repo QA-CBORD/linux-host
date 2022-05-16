@@ -6,22 +6,17 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { UserFacadeService } from '../user/user.facade.service';
 import { MerchantFacadeService } from '../merchant/merchant-facade.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { firstValueFrom } from '@shared/utils';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { AuthFacadeService } from '../auth/auth.facade.service';
-import { ConnectivityService } from '@shared/services/connectivity.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
-import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
-import { ConnectionService } from '@shared/services/connection-service';
-import { SessionData, VaultService } from '@core/service/identity/vault.identity.service';
+import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
+import { SessionData, VaultMigrateResult, VaultService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
-import { ApplicationService, EventInfo } from '@shared/services/application.service';
+import { StartupService } from 'src/app/non-authorized/pages/startup/startup-helper.service';
 
 export enum LoginState {
   DONE,
@@ -39,8 +34,6 @@ export enum LoginState {
 })
 export class IdentityFacadeService extends ServiceStateFacade {
 
-
-
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: VaultService,
@@ -48,35 +41,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
-    private readonly loadingService: LoadingService,
-    private readonly authFacadeService: AuthFacadeService,
-    private readonly connectivityService: ConnectivityService,
     private readonly userPreferenceService: UserPreferenceService,
-    private readonly vaultStateService: ApplicationService,
+    private readonly startupService: StartupService
   ) {
     super();
-    window['identityFacade'] = this;
-    this.vaultEventSubscription();
   }
 
-
-
-  vaultEventSubscription() {
-    this.identityService.vaultAuthEventObs.subscribe(({ success, biometricUsed, error }) => {
-      if (success) {
-        if (biometricUsed) {
-          this.handleBiometricUnlockSuccess();
-        } else {
-          this.handlePinUnlockSuccess();
-        }
-      } else {
-        console.log("error event: ", error);
-        if (this.shouldLogoutUser(error)) {
-          this.logoutUser();
-        }
-      }
-    });
-  }
 
   async pinLoginSetup(
     biometricEnabled: boolean,
@@ -103,13 +73,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
     }
   }
 
-
-
-  async onNavigateExternal(e: EventInfo) {
-    this.vaultStateService.onNavigateExternal(e);
-  }
-
-
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
   private async initAndUnlock(session: SessionData, navigateToDashboard: boolean): Promise<void> {
@@ -120,14 +83,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
     await this.identityService.login(session);
   }
 
-  async handlePinUnlockSuccess() {
-    console.log("handlePinUnlockSuccess: ")
-    this.navigateToDashboard();
-  }
-
-  async handleBiometricUnlockSuccess() {
-    console.log("handleBiometricUnlockSuccess: ");
-    this.authenticateUserPin();
+  async migrateIfLegacyVault(retryCount: number = 0): Promise<VaultMigrateResult> {
+    return this.identityService.migrateIfLegacyVault(retryCount);
   }
 
 
@@ -135,56 +92,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return !(error?.code === PinCloseStatus.CLOSED_NO_CONNECTION);
   }
 
-  async loginUser(useBiometric: boolean) {
-    this.identityService.unlockVault(useBiometric);
-  }
-
-  private async authenticateUserPin() {
-    let pin: string;
-
-    try {
-      pin = await this.identityService.retrieveVaultPin();
-    } catch (error) {
-      return await this.logoutUser();
-    }
-
-    try {
-      this.loadingService.showSpinner({ duration: 50000 });
-      await firstValueFrom(this.authFacadeService.authenticatePin$(pin))
-    } catch (error) {
-      await this.loadingService.closeSpinner();
-      return await this.onAuthenticateUserPinFailed(error);
-    }
-    await this.loadingService.closeSpinner();
-    return await this.navigateToDashboard();
+  async unlockVault(useBiometric: boolean): Promise<{ pin: string, biometricUsed: boolean }> {
+    return this.identityService.unlockVault(useBiometric);
   }
 
   deviceMarkedAsLost({ message }) {
     return DEVICE_MARKED_LOST.test(message);
-  }
-
-  private async onAuthenticateUserPinFailed(error): Promise<any> {
-    if (this.deviceMarkedAsLost(error)) {
-      return this.handleDeviceLostException();
-    }
-    return this.handleConnectionErrors({
-      onRetry: async () => {
-        console.log("onAuthenticateUserPinFailed onRetry: ");
-        const pin = await this.identityService.retrieveVaultPin();
-        try {
-          await this.loadingService.showSpinner();
-          await firstValueFrom(this.authFacadeService.authenticatePin$(pin));
-          await this.loadingService.closeSpinner();
-          await this.showSplashScreen();
-          console.log("onAuthenticateUserPinFailed onRetry: 222 ");
-          return await this.navigateToDashboard();
-        } catch (error) {
-          await this.loadingService.closeSpinner();
-        }
-        return false;
-      },
-      onScanCode: async () => { }
-    });
   }
 
   async handleDeviceLostException() {
@@ -192,59 +105,37 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   public async navigateToDashboard() {
-    try {
-      return this.showSplashScreen()
-          .then(async () => await this.routingService.navigate([APP_ROUTES.dashboard], { 
-             replaceUrl: true, 
-             state: { skipLoading: true },
-             queryParams: { skipLoading: true }
-            }));
-    } catch (err) {
-      this.onNavigateToDashboardFailed(err);
-    }
-    return false;
+    this.startupService.executePromise({
+      actualMethod: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
+        replaceUrl: true, queryParams: { skipLoading: true }
+      })
+    });
   }
 
-  private async onNavigateToDashboardFailed(err): Promise<any> {
-    return this.handleConnectionErrors({
-      onRetry: async () => {
-        try {
-          await this.showSplashScreen();
-          return await this.routingService.navigate([APP_ROUTES.dashboard], { replaceUrl: true });
-        } catch (error) {
-          //
-        }
-        return false;
-      },
-      onScanCode: async () => { }
-    }, true);
+  async logoutUser(): Promise<boolean> {
+    return this.redirectToEntry().then(() => {
+      this.clearAll();
+      return true;
+    });
   }
 
-  private async handleConnectionErrors(retryHandler: RetryHandler, openAsModal: boolean = false): Promise<any> {
-    return await this.connectivityService.handleConnectionError(retryHandler, openAsModal);
-  }
 
-  async logoutUser(): Promise<any> {
-    this.redirectToEntry();
+  async clearAll() {
     this._pinEnabledUserPreference = true;
     this._biometricsEnabledUserPreference = true;
     this.resetAll();
-    return this.identityService.logout();
+    this.identityService.logout();
   }
 
 
-  async redirectToEntry() {
-    return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true })
-      .then((success) => !success && this.redirectToEntry());
+  async redirectToEntry(): Promise<boolean> {
+    console.log("redirectToEntry: redirectToEntry")
+    return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
   }
 
 
   async isVaultLocked() {
     return this.identityService.isVaultLocked();
-  }
-
-  async showSplashScreen(): Promise<boolean> {
-    return this.identityService.showSplashScreen();
   }
 
   isExternalLogin(institutionInfo: Institution): boolean {
@@ -258,13 +149,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async isPinEnabled(sessionId: string, institutionId: string): Promise<boolean> {
-    return this.settingsFacadeService
+    return firstValueFrom(this.settingsFacadeService
       .getSetting(Settings.Setting.PIN_ENABLED, sessionId, institutionId)
       .pipe(
         map(({ value }) => parseInt(value) === 1),
         take(1)
-      )
-      .toPromise();
+      ));
   }
 
   async areBiometricsAvailable(): Promise<boolean> {
@@ -319,5 +209,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
     this.contentStringFacade.clearState();
+
   }
 }

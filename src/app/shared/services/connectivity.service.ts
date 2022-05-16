@@ -19,6 +19,8 @@ import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-scre
 })
 export class ConnectivityService {
 
+  pinModalOpened: boolean = false;
+  connectivityModalOpened: boolean = false;
   constructor(
     private connectionService: ConnectionService,
     private readonly router: Router,
@@ -35,6 +37,10 @@ export class ConnectivityService {
   private async isOpenedAsModal() {
     const currentTopModal = await this.modalController.getTop();
     return currentTopModal && currentTopModal.componentProps.retryHandler;
+  }
+
+  async isModalOpened(): Promise<boolean> {
+    return this.pinModalOpened || this.connectivityModalOpened;
   }
 
 
@@ -77,13 +83,15 @@ export class ConnectivityService {
   private async presentModal(componentProps: any): Promise<any> {
     const modal = await this.modalController.create({
       backdropDismiss: false,
+      showBackdrop: true,
       mode: 'ios',
       componentProps,
       component: NoConnectivityScreen,
     });
+    this.connectivityModalOpened=true;
     await modal.present();
     await this.loadingService.closeSpinner();
-    return await modal.onDidDismiss();
+    return await modal.onDidDismiss().finally(()=> this.connectivityModalOpened=false);
   }
 
 }

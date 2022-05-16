@@ -20,7 +20,8 @@ import { ProminentDisclosureService } from '../services/prominent-disclosure.ser
 import { Location } from '@angular/common';
 
 @Injectable()
-export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
+export class DashboardPageResolver implements Resolve<Observable<SettingInfoList> | Promise<SettingInfoList>> {
+  makeItFail = false;
   constructor(
     private readonly accountsService: AccountService,
     private readonly userFacadeService: UserFacadeService,
@@ -31,10 +32,13 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly loadingService: LoadingService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly prominentDisclosureService: ProminentDisclosureService,
-    private readonly location: Location
-  ) { }
+  ) {
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<SettingInfoList> {
+    window['dasboardResolver'] = this;
+
+  }
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<SettingInfoList> | Promise<SettingInfoList> {
 
     const showLoading = !(route.queryParams.skipLoading && JSON.parse(route.queryParams.skipLoading));
 
@@ -42,10 +46,17 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     this.prominentDisclosureService.openProminentDisclosure();
     /// get fresh data on dashboard load
     showLoading && this.loadingService.showSpinner();
-    return this.loadAllData().pipe(
-      take(1),
-      map(([, , featureSettingsList]) => featureSettingsList),
-      finalize(() => showLoading && this.loadingService.closeSpinner()))
+
+    if (this.makeItFail) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => reject({ message: "Failing on purpose" }), 3000);
+      })
+    } else {
+      return this.loadAllData().pipe(
+        take(1),
+        map(([, , featureSettingsList]) => featureSettingsList),
+        finalize(() => showLoading && this.loadingService.closeSpinner()))
+    }
   }
 
   private loadAllData(): Observable<any> {
