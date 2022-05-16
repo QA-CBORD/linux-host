@@ -21,6 +21,44 @@
   <div class="application-details__card">
     <h3>As part of the application submission process, a one-time payment is required. Please review the amount below and select a payment method.</h3>
     <h1>$100.00</h1>
-   <st-credit-card-mgmt [userAccounts]="userAccounts"></st-credit-card-mgmt>
+    <div class="main_content">
+      <div class="cards">
+        <div class="card-items">
+          <ion-list class="card-items-ion-list">
+            <ion-item *ngFor="let account of userAccounts" button="true" class="credit-card-item" lines="full">
+              <div class="card-icon">
+                <ion-icon class="ionic-icon-left" [src]="account.iconSrc" name="credit-card.svg"></ion-icon>
+              </div>
+              <ion-label class="credit__card_item-label">
+                <div class="order-item__label-title">
+                  {{ account.display }}
+                </div>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+  
+        <div class="no-credit-card-block-wrapper" *ngIf="noCreditCardFound">
+          <div class="no-credit-card-block-message">
+            <img class="no-credit-card-block-img" height="auto" src="/assets/images/no_credit_card.svg"
+              alt="map locations" />
+            <div class="no-credit-card-block-text">
+              <div>
+                <p>{{contentStrings.no_card_found}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="info-to-user">
+          <div class="info-to-user-icon">
+            <ion-icon attr.alt="info-circle" src="/assets/icon/info-circle.svg" name="info-circle.svg"></ion-icon>
+          </div>
+          <div class="info-to-user-text">
+             {{contentStrings.user_info_text}}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </ion-content>

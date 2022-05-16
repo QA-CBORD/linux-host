@@ -79,114 +79,98 @@ h1 {
   line-height: 80px;
 }
 
-
-.divider{
-    height: 16px;
-    background: #F3F3F3;
-  }
-.ionic_content {
-    --background: #f1f1f1;
-    .main_content {
-
-        .no-credit-card-block-wrapper {
-            margin-top: 10vh;
-            .no-credit-card-block-message{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20vh;
-                .no-credit-card-block-text{
-                    font-family: 'Nunito';
-                    font-size: 15px;
-                    width: 155px;
-                    letter-spacing: 1px;
-                    margin-left: 22px;
-                    line-height: 22px;
-                }
-            }
-        }
-
-        .cards {
-            .card-items{
-                .card-items-ion-list{
-                    max-height: 62vh;
-                    overflow-y: scroll;
-                    padding-top: 0px;
-                    padding-bottom: 0px;
-                }
-                .credit-card-item {
-                    --border-width: 0 0 .3px 0;
-                    padding: 4px 0px;
-                    .card-icon {
-                        .ionic-icon-left{
-                            width: 44px;
-                            height: 28.05px;
-                        }
-                    }
-                    .credit__card_item-label{
-                        display: flex;
-                        justify-content: space-between;
-                        margin-left: 10px;
-                        margin-top: -3px;
-                        margin-bottom: 0px;
-                        font-size: 18px;
-                        font-style: normal;
-                        line-height: 16px;
-                        font-family: 'Nunito SemiBold';
-                    }
-
-                    .icon-wrapper {
-                        background: #F1F1F1;
-                        width: 40px;
-                        font-size: 25px;
-                        height: 40px;
-                        border-radius: 21px;
-                        margin-bottom: 8px;
-                        .ionic-icon {
-                            margin: 8px;
-                        }
-                    }
-                }
-            }
-
-        }
-       
-        .add-new-cc_item {
-            margin-top: 25px;
-            margin-bottom: 25px;
-        }
-
-        .info-to-user{
-            margin: 16px 16px 0px 16px;
-            padding: 15px;
-            font-weight: 400;
-            line-height: 21px;
-            font-family: 'Nunito Regular';
-            display: flex;
-            div:nth-child(1) {
-               font-size: 30px;
-            }
-            div:nth-child(2) {
-                width: 80%;
-                margin: auto;
-                font-size: 15px;
-            }
-        }    
+.main_content {
+  .no-credit-card-block-wrapper {
+    margin-top: 10vh;
+    .no-credit-card-block-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20vh;
+      .no-credit-card-block-text {
+        font-family: 'Nunito';
+        font-size: 15px;
+        width: 155px;
+        letter-spacing: 1px;
+        margin-left: 22px;
+        line-height: 22px;
+      }
     }
+  }
+
+  .cards {
+    .card-items {
+      // .card-items-ion-list{
+      //     max-height: 62vh;
+      //     overflow-y: scroll;
+      //     padding-top: 0px;
+      //     padding-bottom: 0px;
+      //     padding-left: 0px !important;
+      // }
+      .credit-card-item {
+        --border-width: 0 0 0.3px 0;
+        padding: 4px 0px;
+        .card-icon {
+          .ionic-icon-left {
+            width: 44px;
+            height: 28.05px;
+          }
+        }
+        .credit__card_item-label {
+          display: flex;
+          justify-content: space-between;
+          margin-left: 10px;
+          margin-top: -3px;
+          margin-bottom: 0px;
+          font-size: 18px;
+          font-style: normal;
+          line-height: 16px;
+          font-family: 'Nunito SemiBold';
+        }
+
+        .icon-wrapper {
+          background: #f1f1f1;
+          width: 40px;
+          font-size: 25px;
+          height: 40px;
+          border-radius: 21px;
+          margin-bottom: 8px;
+          .ionic-icon {
+            margin: 8px;
+          }
+        }
+      }
+    }
+  }
+
+  .add-new-cc_item {
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+
+  .info-to-user {
+    margin: 16px 16px 0px 16px;
+    padding: 15px;
+    font-weight: 400;
+    line-height: 21px;
+    font-family: 'Nunito Regular';
+    display: flex;
+    div:nth-child(1) {
+      font-size: 30px;
+    }
+    div:nth-child(2) {
+      width: 80%;
+      margin: auto;
+      font-size: 15px;
+    }
+  }
 }
 .add-new-card-btn {
-    margin: 0px 16px 33px 16px;
+  margin: 0px 16px 33px 16px;
 
-    .st-button-card{
-        color: #166DFF;
-        border-radius: 8px;
-        height: 42px;
-     }
+  .st-button-card {
+    color: #166dff;
+    border-radius: 8px;
+    height: 42px;
+  }
 }
-
-.ionic-footer {
-    background: #f1f1f1;
-}
-
-
-

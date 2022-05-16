@@ -17,7 +17,7 @@ const imports = [
   CreditCardModule
 ];
 const declarations = [ApplicationPaymentComponent];
-const entryComponents = [ApplicationPaymentComponent];
+const entryComponents = [ApplicationPaymentComponent, CreditCardMgmtComponent];
 @NgModule({
   imports,
   declarations,

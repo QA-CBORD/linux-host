@@ -451,9 +451,9 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
     if (applicationDetails.applicationDefinition.accountCodeKey) {
       const modal = await this.modalController.create({
-        component: CreditCardMgmtComponent,
+        component: ApplicationPaymentComponent,
         animated: false,
-        backdropDismiss: false,
+        backdropDismiss: true,
         componentProps: { contentStrings: reduceToObject(cString, defaultCreditCardMgmtCs), userAccounts },
       });
       await modal.present();

@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
+import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { AccountsService } from '@sections/dashboard/services';
+import { firstValueFrom } from '@shared/utils';
+import { of } from 'rxjs';
 import { PaymentSystemType } from 'src/app/app.global';
 
 @Component({
@@ -9,10 +12,19 @@ import { PaymentSystemType } from 'src/app/app.global';
   styleUrls: ['./application-payment.component.scss'],
 })
 export class ApplicationPaymentComponent implements OnInit {
-  userAccounts: any;
-  constructor(private readonly accountService: AccountsService) {}
+  @Input() contentStrings: {
+    screen_title: string;
+    no_card_found: string;
+    add_new_card_btn_text: string;
+    user_info_text: string;
+    error_loading_cards: string;
+    remove_success_msg: string;
+    remove_failure_msg: string;
+    added_success_msg: string;
+  };
 
-  ngOnInit() {
-    this.userAccounts = this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]);
-  }
+  @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
+  constructor() {}
+
+  ngOnInit() {}
 }
