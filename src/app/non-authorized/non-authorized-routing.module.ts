@@ -5,7 +5,6 @@ import { ANONYMOUS_ROUTES } from './non-authorized.config';
 import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/no-connectivity-screen';
 import { ConnectivityPageResolver } from '@shared/services/connectivity-route.resolver';
 import { PinPage } from '@shared/ui-components/pin/pin.page';
-import { CanDeactivatePage } from '@shared/ui-components/pin/can-deactivate.pin.page';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 
 const routes: Routes = [
@@ -49,13 +48,11 @@ const routes: Routes = [
   {
     path: ANONYMOUS_ROUTES.noConnectivity,
     component: NoConnectivityScreen,
-    resolve: { data: ConnectivityPageResolver },
-    canDeactivate: [CanDeactivatePage]
+    resolve: { data: ConnectivityPageResolver }
   },
   {
     path: ANONYMOUS_ROUTES.pin,
-    component: PinPage,
-    canDeactivate: [CanDeactivatePage]
+    component: PinPage
   }
 ];
 
