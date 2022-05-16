@@ -1,5 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
+import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { AccountsService } from '@sections/dashboard/services';
 import { firstValueFrom } from '@shared/utils';
@@ -24,7 +27,57 @@ export class ApplicationPaymentComponent implements OnInit {
   };
 
   @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
-  constructor() {}
+  noCreditCardFound: boolean;
+  constructor(
+    private externalPaymentService: ExternalPaymentService,
+    private loadingService: LoadingService,
+    private readonly toastService: ToastService,
+    private readonly accountService: AccountsService,
+  ) {}
 
   ngOnInit() {}
+
+  async addCreditCard() {
+    alert("bobo")
+    try {
+      const strings = this.contentStrings as any;
+      const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
+      if (success) {
+        this.userAccounts = await this.retrieveAccounts();
+        this.showMessage(strings.added_success_msg);
+      } else {
+        this.showMessage(errorMessage);
+      }
+    } finally {
+      this.loadingService.closeSpinner();
+    }
+  }
+
+  private async showMessage(message: string, duration = 5000) {
+    await this.toastService.showToast({ message, duration });
+  }
+
+  async retrieveAccounts() {
+    this.loadingService.showSpinner();
+    const accounts = await firstValueFrom(
+      this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
+    )
+      .then(accounts => accounts.map(acc => this.buildStr(acc)))
+      .finally(() => this.loadingService.closeSpinner());
+    this.noCreditCardFound = !accounts.length;
+    return accounts;
+  }
+
+  private buildStr(account: UserAccount) {
+    const { accountTender, lastFour } = account;
+    const creditCardTypeNumber = parseInt(accountTender) - 1;
+    const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
+    const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
+    return {
+      display,
+      account,
+      iconSrc,
+    };
+  }
+
 }
