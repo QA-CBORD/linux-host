@@ -14,6 +14,7 @@ import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/s
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
+import { RequestFundsResolver } from './resolvers/request-funds.resolver';
 
 const declarations = [RequestFundsPageComponent, PopoverComponent];
 const imports = [
@@ -35,9 +36,11 @@ const imports = [
   FocusNextModule,
 ];
 const entryComponents = [PopoverComponent];
+const providers = [RequestFundsResolver];
 @NgModule({
   declarations,
-  imports: [imports],
+  imports,
   entryComponents,
+  providers
 })
 export class RequestFundsModule {}
