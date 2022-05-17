@@ -72,6 +72,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   ngOnInit() {
     this.isOrderTypePickup = true;
+    this.orderType =
+      this.activeOrderType !== null
+        ? this.activeOrderType
+        : this.orderTypes.pickup
+        ? ORDER_TYPE.PICKUP
+        : ORDER_TYPE.DELIVERY;
     this.dispatchingData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
@@ -86,13 +92,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   dispatchingData() {
-    this.orderType =
-      this.activeOrderType !== null
-        ? this.activeOrderType
-        : this.orderTypes.pickup
-        ? ORDER_TYPE.PICKUP
-        : ORDER_TYPE.DELIVERY;
-
     this.loadingService.showSpinner();
     zip(
       this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.PICKUP, this.timeZone),
@@ -149,9 +148,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onRadioGroupChanged({ target }) {
+    this.orderType = +target.value;
+    this.isOrderTypePickup = this.orderType === ORDER_TYPE.PICKUP;
     this.dispatchingData();
-    this.orderType = target.value;
-    this.isOrderTypePickup = target.value === ORDER_TYPE.PICKUP;
     this.defineOrderOptionsData(this.isOrderTypePickup);
   }
 
