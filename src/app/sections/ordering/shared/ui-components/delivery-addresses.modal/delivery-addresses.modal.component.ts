@@ -45,6 +45,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.selectedAddress = this.defaultAddress;
     this.listOfAddresses = this.defineListOfAddresses(this.defaultAddress);
     this.buildings$ = this.merchantService.retrieveBuildings();
     this.initContentStrings();

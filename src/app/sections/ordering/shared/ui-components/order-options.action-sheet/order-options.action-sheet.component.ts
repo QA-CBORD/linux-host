@@ -150,8 +150,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   onRadioGroupChanged({ target }) {
     this.dispatchingData();
-    this.isOrderTypePickup = target.value === 'pickup';
-    this.orderType = this.isOrderTypePickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
+    this.orderType = target.value;
+    this.isOrderTypePickup = target.value === ORDER_TYPE.PICKUP;
     this.defineOrderOptionsData(this.isOrderTypePickup);
   }
 
