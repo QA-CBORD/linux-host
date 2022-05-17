@@ -88,7 +88,6 @@ export class StDateTimePickerComponent implements OnInit {
       }
 
       picker.columns = this.createColumns();
-      picker.forceUpdate();
     });
     this.picker = picker;
     await this.updateAsapOption();

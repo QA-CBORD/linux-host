@@ -398,7 +398,7 @@ export class HousingService {
         message,
         position: 'top',
         duration: 3000,
-        showCloseButton: true,
+        buttons: [{ text: 'Dismiss' }],
       })
       .then((toast: HTMLIonToastElement) => toast.present());
   }
