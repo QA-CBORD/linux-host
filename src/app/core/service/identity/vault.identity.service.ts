@@ -132,7 +132,7 @@ export class VaultService {
             // Something went wrong...
             console.log("GOT ERROR AQUI: ", error);
             this.alertService.create({
-                message: "message: "  + error.message + " code: " + error.code
+                message: "message: " + error.message + " code: " + error.code
             }).then((a) => a.present());
 
             if (noDataInLegacyVault(error)) {
@@ -338,15 +338,14 @@ export class VaultService {
     }
 
 
-    private async showSplashScreen(biometricUsed: boolean, skipLoginFlow: boolean = true, navigateToDashboard: boolean = false) {
-
-        const state = {
-            skipLoginFlow,
-            navigateToDashboard,
-            biometricUsed: biometricUsed
-        }
-
-        const data = { replaceUrl: true, state };
+    private async showSplashScreen(biometricUsed: boolean, skipLoginFlow: boolean = true) {
+        const data = {
+            replaceUrl: true,
+            state: {
+                skipLoginFlow,
+                biometricUsed: biometricUsed
+            }
+        };
 
         return await this.ngZone.run(async () => {
             const navigated = await this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], data)

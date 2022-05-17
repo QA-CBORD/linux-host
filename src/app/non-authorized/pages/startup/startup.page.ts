@@ -43,14 +43,11 @@ export class StartupPage implements OnInit {
     console.log("STARTUP PAGE, ION VIEW DID ENTER: ");
 
     this.loadingService.showSpinner();
-    const { skipLoginFlow, navigateToDashboard, biometricUsed } = this.location.getState() as any;
-    console.log("ROUTER HISTORY STATE: ",
-      { skipLoginFlow, navigateToDashboard, biometricUsed });
+    const { skipLoginFlow, biometricUsed } = this.location.getState() as any;
+    console.log("ROUTER HISTORY STATE: ", { skipLoginFlow, biometricUsed });
 
     if (skipLoginFlow) {
       this.unlockVault(biometricUsed)
-    } else if (navigateToDashboard) {
-      this.navigateToDashboard();
     } else {
       this.checkLoginFlow();
     }
@@ -61,18 +58,18 @@ export class StartupPage implements OnInit {
     // step 1: determine and initialize current environment.
     await this.environmentFacadeService.initialization();
 
-    // step 2: check if vault needs to migrate data.
 
+    // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
+    const { data: systemSessionId } = await this.connectivityFacade.executePromise({
+      promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
+    });
+
+    // step 3: check if vault needs to migrate data.
     const migrationResult = await this.identityFacadeService.migrateIfLegacyVault();
 
     if (this.vaultMigrationFailed(migrationResult)) {
       return this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
     }
-
-    // step 3: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
-    const { data: systemSessionId } = await this.connectivityFacade.executePromise({
-      promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
-    });
 
     // step 4: determine appLoginState;
     const appLoginState = await this.sessionFacadeService.determineAppLoginState(systemSessionId);
@@ -81,7 +78,7 @@ export class StartupPage implements OnInit {
     if (this.userIsLoggedIn(appLoginState)) {
       this.unlockVault(appLoginState == LoginState.BIOMETRIC_LOGIN);
     } else {
-      this.handleLoginState(appLoginState);
+      this.handleAppLoginState(appLoginState);
     }
   }
 
@@ -113,6 +110,11 @@ export class StartupPage implements OnInit {
   }
 
 
+  /**
+   * This only returns true if the user failed to authenticate (enters wrong pin, or fails biometric auth), while doing vault data migration;
+   * @param migrationResult 
+   * @returns 
+   */
   private vaultMigrationFailed(migrationResult: VaultMigrateResult) {
     return VaultMigrateResult.MIGRATION_FAILED === migrationResult;
   }
@@ -123,7 +125,7 @@ export class StartupPage implements OnInit {
     }).finally(() => clearAll && this.identityFacadeService.clearAll());
   }
 
-  async handleLoginState(state: LoginState): Promise<void> {
+  async handleAppLoginState(state: LoginState): Promise<void> {
     const routeConfig = { replaceUrl: true };
 
     console.log("handleLoginState: ", state);
