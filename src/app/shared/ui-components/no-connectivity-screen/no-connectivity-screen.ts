@@ -171,7 +171,8 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
 
   async openScanCard(): Promise<any> {
-    this.closeToastIfOpened();
+    await this.loadingService.showSpinner();
+    await this.closeToastIfOpened();
     const color = await this.institutionColor();
     await firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE));
     let componentProps = { color, isBackButtonShow: false, isDismissButtonShow: true };
@@ -180,6 +181,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
       component: ScanCardComponent,
       componentProps,
     });
+    this.loadingService.closeSpinner();
     await pinModal.present();
     return await pinModal.onDidDismiss();
   }
