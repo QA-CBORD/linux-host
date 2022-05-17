@@ -32,17 +32,8 @@ export class EntryPage implements OnInit {
     this.appVersion$ = this.fetchDeviceInfo();
   }
 
-  private async initialization(logoutUser = false) {
+  private async initialization() {
     await this.loadingService.showSpinner();
-    try {
-      logoutUser = this.route.getCurrentNavigation().extras.state.logoutUser;
-    } catch (e) {
-      return;
-    }
-
-    if (logoutUser) {
-      await this.sessionFacadeService.logoutUser(false);
-    }
     // Reset services url to current environment after logout and before any other service call
     await this.environmentFacadeService.resetEnvironmentAndCreateSession(true);
     this.loadingService.closeSpinner();
