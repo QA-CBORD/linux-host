@@ -75,17 +75,17 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     });
   }
 
-  async retryOperations() {
+  async retryOperations(canShowToast: boolean = true) {
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
       console.log("GOIN TO CLOSE.....");
       this.closeSelf(ExecStatus.Execution_success);
     } else {
-      this.onRetryFailed();
+      this.onRetryFailed(canShowToast);
     }
   }
 
-  async onRetryFailed() {
+  async onRetryFailed(canShowToast: boolean) {
     await this.closeToastIfOpened();
     await this.loadingService.showSpinner();
     await this.setConnectionErrorType();
@@ -93,8 +93,8 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     await this.dataInitialize(this);
     this.changeDetector.detectChanges();
     await this.loadingService.closeSpinner();
-    if ((await this.showRetryToast())) {
-      this.retryOperations();
+    if (canShowToast && (await this.showRetryToast())) {
+      this.retryOperations(false);
     }
   }
 
@@ -111,7 +111,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   async addSubscription() {
     this.refreshSubscription = this.connectionService.modalRefreshHandle.subscribe((refresh) => {
       if (refresh) {
-        this.onRetryFailed();
+        this.onRetryFailed(true);
       }
     });
 
@@ -151,8 +151,9 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     });
     myToast.setAttribute('role', 'alert');
     await myToast.present();
-    const { data } = await myToast.onDidDismiss();
-    return data ? true : false;
+    const { data: shouldRetryAgain } = await myToast.onDidDismiss();
+    console.log("data: ", shouldRetryAgain);
+    return shouldRetryAgain;
   }
 
   async loadFreshContentStrings(): Promise<void> {
