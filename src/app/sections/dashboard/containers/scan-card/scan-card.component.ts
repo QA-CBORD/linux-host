@@ -179,6 +179,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.setPreviousBrightness();
     this.suscription.unsubscribe();
   }
 
