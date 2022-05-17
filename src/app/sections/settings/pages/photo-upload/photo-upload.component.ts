@@ -13,8 +13,7 @@ import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '../services/camera.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { ApplicationService } from '@shared/services/application.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -72,7 +71,6 @@ export class PhotoUploadComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly domsanitizer: DomSanitizer,
-    private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastService: ToastService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
@@ -80,7 +78,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly cd: ChangeDetectorRef,
     private readonly photoCropModalService: PhotoCropModalService,
     private readonly cameraService: CameraService,
-    private readonly appService: ApplicationService
+    private identityFacadeService: IdentityFacadeService,
   ) {}
 
   ngOnInit() {
@@ -332,7 +330,7 @@ export class PhotoUploadComponent implements OnInit {
           // There was an issue uploading the photo information'
         },
         () => {
-          this.appService.onNavigateExternal({ makeVaultUnLockable: true })
+          this.identityFacadeService.onNavigateExternal({ makeVaultUnLockable: true })
         }
       );
   }

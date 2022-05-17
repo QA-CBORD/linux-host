@@ -8,7 +8,7 @@ import { AlertController, ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { registerPlugin } from '@capacitor/core';
-import { ApplicationService } from '@shared/services/application.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 const GooglePayPlugin = registerPlugin<any>('GooglePayPlugin');
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +17,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     private readonly modalCtrl: ModalController,
     protected readonly loadingService: LoadingService,
     private readonly credentialServ: GooglePayCredentialDataService,
-    private readonly appService: ApplicationService,
+    private identityFacadeService: IdentityFacadeService,
     protected readonly alertCtrl: AlertController
   ) {
     super(loadingService, credentialServ, alertCtrl);
@@ -134,7 +134,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     }
     this.mCredential = newCredential;
     let { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
-    this.appService.onNavigateExternal({ makeVaultUnLockable: true, estimatedTimeInMillis: 900000 });
+    this.identityFacadeService.onNavigateExternal({ makeVaultUnLockable: true, estimatedTimeInMillis: 900000 });
     GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();
     });

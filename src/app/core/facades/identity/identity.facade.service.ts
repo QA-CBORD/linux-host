@@ -14,7 +14,7 @@ import { firstValueFrom } from '@shared/utils';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
-import { SessionData, VaultMigrateResult, VaultService } from '@core/service/identity/vault.identity.service';
+import { EventInfo, SessionData, VaultMigrateResult, VaultService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { StartupService } from 'src/app/non-authorized/pages/startup/startup-helper.service';
 
@@ -83,10 +83,13 @@ export class IdentityFacadeService extends ServiceStateFacade {
     await this.identityService.login(session);
   }
 
-  async migrateIfLegacyVault(retryCount: number = 0): Promise<VaultMigrateResult> {
-    return this.identityService.migrateIfLegacyVault(retryCount);
+  async migrateIfLegacyVault(): Promise<VaultMigrateResult> {
+    return this.identityService.migrateIfLegacyVault();
   }
 
+  onNavigateExternal(e: EventInfo){
+    return this.identityService.onNavigateExternal(e);
+  }
 
   shouldLogoutUser(error): boolean {
     return !(error?.code === PinCloseStatus.CLOSED_NO_CONNECTION);

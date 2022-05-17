@@ -18,7 +18,7 @@ const IMAGE_DIR = 'stored-images';
 
 import { CameraDirection, Photo, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '@sections/settings/pages/services/camera.service';
-import { ApplicationService } from '@shared/services/application.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 @Component({
   selector: 'st-question',
@@ -44,7 +44,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     public _applicationsStateService: ApplicationsStateService, //TODO: delete
     private _termService: TermsService,
     private actionSheetCtrl: ActionSheetController,
-    private appService: ApplicationService,
+    private identityFacadeService: IdentityFacadeService,
     private toastService: ToastService,
     private _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService,
@@ -204,7 +204,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       source: cameraSource,
       saveToGallery: true,
     }).finally(() => {
-      this.appService.onNavigateExternal({ makeVaultUnLockable: true, estimatedTimeInMillis: 600000 });
+      this.identityFacadeService.onNavigateExternal({ makeVaultUnLockable: true, estimatedTimeInMillis: 600000 });
     });
 
     if (image) {
