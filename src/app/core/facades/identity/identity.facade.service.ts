@@ -16,7 +16,7 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { EventInfo, SessionData, VaultMigrateResult, VaultService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
-import { StartupService } from 'src/app/non-authorized/pages/startup/startup-helper.service';
+import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
 
 export enum LoginState {
   DONE,
@@ -42,7 +42,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
     private readonly userPreferenceService: UserPreferenceService,
-    private readonly startupService: StartupService
+    private readonly connectivityFacade: ConnectivityFacadeService
   ) {
     super();
   }
@@ -108,8 +108,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   public async navigateToDashboard() {
-    this.startupService.executePromise({
-      actualMethod: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
+    this.connectivityFacade.executePromise({
+      promise: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true, queryParams: { skipLoading: true }
       })
     });

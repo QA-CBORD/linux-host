@@ -104,13 +104,16 @@ export class VaultService {
         const noDataInLegacyVault = ({ code, message }) => (code == undefined && /no data in legacy vault/.test(message));
 
         const userFailedBiometricsAuth = async (error) => {
-            return await isBiometricsEnabled() && (error.code == VaultErrorCodes.TooManyFailedAttempts
+            return await isBiometricsEnabled() && (
+                error.code == VaultErrorCodes.TooManyFailedAttempts
                 || error.code == VaultErrorCodes.iOSBiometricsLockedOut
-                || error.code == VaultErrorCodes.AndroidBiometricsLockedOut);
+                || error.code == VaultErrorCodes.AndroidBiometricsLockedOut
+                || error.code == VaultErrorCodes.SecurityNotAvailable
+                || error.code == VaultErrorCodes.BiometricsNotEnabled);
         }
 
         // old V4 config
-        const migrator = new VaultMigrator({
+        const oldVaultConfig = {
             restoreSessionOnReady: false,
             unlockOnReady: false,
             unlockOnAccess: false,
@@ -118,8 +121,8 @@ export class VaultService {
             hideScreenOnBackground: false,
             allowSystemPinFallback: false,
             shouldClearVaultAfterTooManyFailedAttempts: false
-        }, (isPasscodeSetRequest) => this.onPasscodeRequested(isPasscodeSetRequest));
-
+        };
+        const migrator = new VaultMigrator(oldVaultConfig, () => this.onPasscodeRequested(false));
         try {
             this.loadingService.closeSpinner();
             const oldVaultData = await migrator.exportVault();
@@ -129,12 +132,12 @@ export class VaultService {
             // Something went wrong...
             console.log("GOT ERROR AQUI: ", error);
             this.alertService.create({
-                message: error.message + " code: " + error.code
+                message: "message: "  + error.message + " code: " + error.code
             }).then((a) => a.present());
 
             if (noDataInLegacyVault(error)) {
                 return VaultMigrateResult.MIGRATION_NOT_NEEDED;
-            } if (await userFailedBiometricsAuth(error)) {
+            } if ((await userFailedBiometricsAuth(error))) {
                 return this.retryPinUnlock()
                     .then(async ({ pin }) => this.onVaultMigrated({ pin }, migrator, true))
                     .catch(() => migrator.clear() && VaultMigrateResult.MIGRATION_FAILED)
@@ -208,17 +211,17 @@ export class VaultService {
             return Promise.resolve(this.state.pin);
         } else {
             /// will happen on pin login
-            const { data: pin, role: status } = await this.presentPinModal(PinAction.LOGIN_PIN);
-            if (PinCloseStatus.LOGIN_SUCCESS !== status) {
-                const error = { code: status, message: pin };
-                if (publishError) this.vaultPinUnlockError$.next(error);
-                console.log("GOIN TO RETURN : ", error);
-                return Promise.reject(error);
+            const { data: pin, role: responseStatus } = await this.presentPinModal(PinAction.LOGIN_PIN);
+            if (PinCloseStatus.LOGIN_SUCCESS == responseStatus) {
+                console.log("ARRIVED HERE....");
+                this.vault.setCustomPasscode(pin);
+                return Promise.resolve(pin);
             }
 
-            console.log("ARRIVED HERE....");
-            this.vault.setCustomPasscode(pin);
-            return Promise.resolve(pin);
+            const error = { code: responseStatus, message: pin };
+            if (publishError) this.vaultPinUnlockError$.next(error);
+            console.log("GOIN TO RETURN : ", error);
+            return Promise.reject(error);
         }
     }
 

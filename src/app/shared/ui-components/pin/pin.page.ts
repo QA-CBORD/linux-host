@@ -12,8 +12,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { Location } from '@angular/common';
-import { ConnectivityService } from '@shared/services/connectivity.service';
+import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -70,7 +69,7 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityService: ConnectivityService
+    private readonly connectivityFacade: ConnectivityFacadeService
   ) { }
 
 
@@ -82,7 +81,7 @@ export class PinPage implements OnInit, OnDestroy {
     this.retrievePinRetrys();
     this.setInstructionText();
     this.a11yService.readAloud(this.instructionText);
-    this.connectivityService.pinModalOpened = true;
+    this.connectivityFacade.setPinModalOpened(true);
   }
 
 
@@ -188,7 +187,7 @@ export class PinPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.connectivityService.pinModalOpened = false;
+    this.connectivityFacade.setPinModalOpened(false);
   }
 
   delete() {
@@ -311,7 +310,7 @@ export class PinPage implements OnInit, OnDestroy {
   }
 
   handleConnectionIssues() {
-    return this.connectivityService.handleConnectionError({
+    return this.connectivityFacade.handleConnectionError({
         onRetry: async () => {
             console.log("handlePinConnectionIssues, onRetry")
             await this.loadingService.showSpinner();

@@ -10,8 +10,8 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { firstValueFrom } from '@shared/utils';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { StartupService } from './startup-helper.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
+import { ConnectivityFacadeService } from './connectivity-facade.service';
 
 @Component({
   selector: 'st-startup',
@@ -31,7 +31,7 @@ export class StartupPage implements OnInit {
     private readonly ngZone: NgZone,
     private readonly authFacadeService: AuthFacadeService,
     private readonly navigationService: NavigationService,
-    private readonly startupService: StartupService
+    private readonly connectivityFacade: ConnectivityFacadeService
   ) { }
 
   ngOnInit(): void {
@@ -70,8 +70,8 @@ export class StartupPage implements OnInit {
     }
 
     // step 3: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
-    const { data: systemSessionId } = await this.startupService.executePromise({
-      actualMethod: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
+    const { data: systemSessionId } = await this.connectivityFacade.executePromise({
+      promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
     });
 
     // step 4: determine appLoginState;
@@ -95,22 +95,18 @@ export class StartupPage implements OnInit {
     console.log(" handleVaultLoginFailure: ", error);
     this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
   }
-  async handleVaultLoginSuccess(pin: string, biometricUsed: boolean): Promise<any> {
+
+
+  async handleVaultLoginSuccess(pin: string, biometricUsed: boolean): Promise<void> {
     console.log(" handleVaultLoginSuccess: ", pin, " biometricUsed: ", biometricUsed)
     if (biometricUsed) {
-      // first get a new sessionId using the pin you got from vault. watch for connectionIssues on this call.
-      try {
-        await this.startupService.executePromise({
-          actualMethod: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
-          showLoading: true,
-          skipError: ({ message }) => DEVICE_MARKED_LOST.test(message)
-        });
-        this.navigateToDashboard();
-      } catch (error) {
-        // asumming this pin expired/reported lost.
-        console.log("Error executing authFacadeService.authenticatePin$ with pin ", pin, "Details: ", error);
-        this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
-      }
+      const code = {
+        promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
+        skipError: ({ message }) => DEVICE_MARKED_LOST.test(message)
+      };
+      this.connectivityFacade.executePromise(code)
+        .then(() => this.navigateToDashboard())
+        .catch(() => this.navigateAnonymous(ANONYMOUS_ROUTES.entry));
     } else {
       this.navigateToDashboard();
     }
@@ -156,8 +152,8 @@ export class StartupPage implements OnInit {
   }
 
   public async navigateToDashboard() {
-    await this.startupService.executePromise({
-      actualMethod: async () => this.navigationService.navigate([APP_ROUTES.dashboard], {
+    await this.connectivityFacade.executePromise({
+      promise: async () => this.navigationService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true,
         queryParams: { skipLoading: true }
       })
