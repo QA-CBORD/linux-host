@@ -81,7 +81,6 @@ describe('NonCheckingSuccessComponent', () => {
         CartRoutingModule,
         OrderDetailsModule,
         StHeaderModule,
-        IonicModule,
         PriceUnitsResolverModule,
         StButtonModule,
         TypeMessageModule,

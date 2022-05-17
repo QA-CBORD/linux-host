@@ -1,4 +1,4 @@
-<ion-radio-group (ionChange)="onTypeChange($event)">
+<ion-radio-group [value]="activeType"  (ionChange)="onTypeChange($event)">
   <ion-item class="deposits__radio-item" lines="none">
     <ion-label class="deposits__radio-label-wrapper">
       <div class="deposits__radio-label-title">Automatic Deposit</div>
@@ -7,7 +7,6 @@
     <ion-radio class="deposits__radio"
             slot="start"
                [value]="autoDepositTypes.automaticDepositOff"
-               [checked]="activeType === autoDepositTypes.automaticDepositOff "
                mode="md"></ion-radio>
   </ion-item>
 
@@ -21,7 +20,6 @@
     <ion-radio class="deposits__radio"
             slot="start"
                [value]="autoDepositTypes.lowBalance"
-               [checked]="activeType === autoDepositTypes.lowBalance"
                mode="md"></ion-radio>
   </ion-item>
 
@@ -33,7 +31,6 @@
     <ion-radio class="deposits__radio"
             slot="start"
                [value]="autoDepositTypes.timeBased"
-               [checked]="activeType === autoDepositTypes.timeBased"
                mode="md"></ion-radio>
   </ion-item>
 </ion-radio-group>
