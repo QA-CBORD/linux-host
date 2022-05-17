@@ -46,7 +46,7 @@ export class RewardsPage implements OnInit {
             this.tabsConfig = tabsConfig;
           },
           () => {
-            return;
+          // TODO: Properly handle exception
           }
         );
     });

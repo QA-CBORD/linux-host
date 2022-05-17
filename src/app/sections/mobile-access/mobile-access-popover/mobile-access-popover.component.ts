@@ -78,7 +78,7 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
         includetext: false,
       },
       () => {
-        return;
+          // TODO: Properly handle exception
       }
     );
   }

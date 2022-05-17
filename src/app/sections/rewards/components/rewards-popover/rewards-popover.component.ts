@@ -123,7 +123,9 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         text: this.popoverConfig.code,
         includetext: false,
       },
-      () => { return; }
+      () => {
+          // TODO: Properly handle exception
+      }
     );
   }
 

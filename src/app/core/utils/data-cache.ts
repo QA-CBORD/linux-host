@@ -247,8 +247,12 @@ export class DataCache {
       .then(() => {
         this.storage
           .set(key, data)
-          .catch(() => {return;});
+          .catch(() => {
+          // TODO: Properly handle exception
+          });
       })
-      .catch(() => {return;});
+      .catch(() => {
+          // TODO: Properly handle exception
+      });
   }
 }

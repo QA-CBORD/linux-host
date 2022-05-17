@@ -128,7 +128,7 @@ export class PhotoUploadComponent implements OnInit {
       )
       .subscribe(
         () => {
-          return;
+          // TODO: Remove empty block
         },
         () => {
           this.photoDataFetchErrorToast();
@@ -386,10 +386,10 @@ export class PhotoUploadComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         () => {
-          return;
+          // TODO: Remove empty block
         },
         () => {
-          return;
+          // TODO: Remove empty block
         },
         () => {
           this.photoUploadService.clearLocalGovernmentIdPhotos();

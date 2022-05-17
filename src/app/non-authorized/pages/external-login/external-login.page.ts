@@ -75,7 +75,9 @@ export class ExternalLoginPage {
       () => {
         this.showModal('Oops!', 'There was an issue loading the login page - please try again');
       },
-      () => {return;}
+      () => {
+          // TODO: Properly handle exception
+      }
     );
     this.subscriptions.add(instSub);
   }

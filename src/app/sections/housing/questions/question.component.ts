@@ -222,7 +222,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           directory: FilesystemDirectory.Data,
         });
       } catch (error) {
-        return;
+          // TODO: Properly handle exception
       }
     }
 

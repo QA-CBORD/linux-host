@@ -46,7 +46,7 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
           await this.popoverController.dismiss();
           await this.modalController.dismiss();
         } catch (error) {
-          return;
+          // TODO: Properly handle exception
         }
       });
   }

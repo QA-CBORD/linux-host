@@ -42,7 +42,6 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 
-
 @Component({
   selector: 'st-order-details',
   templateUrl: './order-details.component.html',
@@ -181,7 +180,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAccessoryBarVisible(isVisible: boolean) {
-    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {return;});
+    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {
+      // TODO: Properly handle exception
+    });
   }
 
   initForm() {
