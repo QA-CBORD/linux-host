@@ -18,9 +18,8 @@ import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-scre
   providedIn: 'root'
 })
 export class ConnectivityService {
-
-  pinModalOpened: boolean = false;
-  connectivityModalOpened: boolean = false;
+  private pinModalOpened: boolean = false;
+  private connectivityModalOpened: boolean = false;
   constructor(
     private connectionService: ConnectionService,
     private readonly router: Router,
@@ -39,10 +38,14 @@ export class ConnectivityService {
     return currentTopModal && currentTopModal.componentProps.retryHandler;
   }
 
+
+  setPinModalOpened(isOpened: boolean){
+    this.pinModalOpened = isOpened;
+  }
+
   async isModalOpened(): Promise<boolean> {
     return this.pinModalOpened || this.connectivityModalOpened;
   }
-
 
   async handleConnectionError(handler: RetryHandler, showAsModal: boolean = false) {
     if (showAsModal) {

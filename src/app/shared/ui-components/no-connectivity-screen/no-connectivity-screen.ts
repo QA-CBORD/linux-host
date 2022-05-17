@@ -86,6 +86,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async onRetryFailed() {
+    await this.closeToastIfOpened();
     await this.loadingService.showSpinner();
     await this.setConnectionErrorType();
     await this.loadFreshContentStrings();
@@ -102,7 +103,9 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     this.routeSubscription.unsubscribe();
     this.refreshSubscription.unsubscribe();
     this.retrySubscription.unsubscribe();
+    this.closeToastIfOpened();
   }
+
 
 
   async addSubscription() {
@@ -168,7 +171,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
 
   async openScanCard(): Promise<any> {
-    // return await this.pinService.navigateToPinPage(pinAction, pinModalProps);
+    this.closeToastIfOpened();
     const color = await this.institutionColor();
     await firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE));
     let componentProps = { color, isBackButtonShow: false, isDismissButtonShow: true };
@@ -187,7 +190,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
       await this.modalController.dismiss(null, status);
     } catch (err) {
       console.log("ERROR CLOSING MODAL: ", err);
-      //this.location.back();
     }
   }
 
@@ -201,13 +203,19 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async institutionColor() {
-    const isDeviceOffline = await this.connectionService.deviceOffline();
-    if (!isDeviceOffline) {
-      return await firstValueFrom(this.accessCardService.getInstitutionColor().pipe(
-        map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : ''))))
-        .catch(() => '');
-    }
-    return ''
+    const defaultInstitutionColor = "";
+    const deviceOffline = (await this.connectionService.deviceOffline());
+    if (deviceOffline) return defaultInstitutionColor;
+    return await firstValueFrom(this.accessCardService.getInstitutionColor())
+      .then((v) => {
+        const valueAsJson = JSON.parse(v);
+        return '#' + (valueAsJson ? valueAsJson['native-header-bg'] : defaultInstitutionColor)
+      }).catch(() => defaultInstitutionColor);
+  }
+
+  async closeToastIfOpened() {
+    await this.toastService.dismiss()
+      .catch((ignored) => { /** ignored error, do not remove error block though */ });
   }
 
 }

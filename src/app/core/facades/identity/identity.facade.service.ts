@@ -14,9 +14,9 @@ import { firstValueFrom } from '@shared/utils';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
-import { SessionData, VaultMigrateResult, VaultService } from '@core/service/identity/vault.identity.service';
+import { EventInfo, SessionData, VaultMigrateResult, VaultService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
-import { StartupService } from 'src/app/non-authorized/pages/startup/startup-helper.service';
+import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
 
 export enum LoginState {
   DONE,
@@ -42,7 +42,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
     private readonly userPreferenceService: UserPreferenceService,
-    private readonly startupService: StartupService
+    private readonly connectivityFacade: ConnectivityFacadeService
   ) {
     super();
   }
@@ -83,10 +83,13 @@ export class IdentityFacadeService extends ServiceStateFacade {
     await this.identityService.login(session);
   }
 
-  async migrateIfLegacyVault(retryCount: number = 0): Promise<VaultMigrateResult> {
-    return this.identityService.migrateIfLegacyVault(retryCount);
+  async migrateIfLegacyVault(): Promise<VaultMigrateResult> {
+    return this.identityService.migrateIfLegacyVault();
   }
 
+  onNavigateExternal(e: EventInfo){
+    return this.identityService.onNavigateExternal(e);
+  }
 
   shouldLogoutUser(error): boolean {
     return !(error?.code === PinCloseStatus.CLOSED_NO_CONNECTION);
@@ -105,8 +108,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   public async navigateToDashboard() {
-    this.startupService.executePromise({
-      actualMethod: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
+    this.connectivityFacade.executePromise({
+      promise: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true, queryParams: { skipLoading: true }
       })
     });

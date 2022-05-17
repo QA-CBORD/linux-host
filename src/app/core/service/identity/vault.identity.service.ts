@@ -1,14 +1,26 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
+import { Capacitor, PluginListenerHandle } from '@capacitor/core';
 import { BrowserVault, Device, DeviceSecurityType, IdentityVaultConfig, Vault, VaultErrorCodes, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
 import { Subject } from 'rxjs';
 import { ROLES } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { LoadingService } from '../loading/loading.service';
+
+
+export interface EventInfo {
+    estimatedTimeInMillis?: number;
+    makeVaultUnLockable: boolean;
+    keepVaultUnLockableOnResume?: boolean;
+}
+
+const APP_STATE_CHANGE = 'appStateChange';
+
+const TIME_OUT_WITH_EXTRA = 600000; // 10 minutes.
 
 
 export interface SessionData {
@@ -49,26 +61,26 @@ export enum VaultMigrateResult {
 export class VaultService {
     public state: SessionData = { useBiometric: false, pin: null };
     private vault: Vault | BrowserVault;
-    //public vaultAuthEventObs: Subject<{ success: boolean, biometricUsed: boolean, error?: any }> = new Subject();
     private vaultPinUnlockError$: Subject<any> = new Subject();
+    private pluginListenerHandle: PluginListenerHandle;
 
     constructor(
         private ngZone: NgZone,
         private readonly userPreferenceService: UserPreferenceService,
         private router: Router,
         private modalController: ModalController,
-        private loadingService: LoadingService
+        private loadingService: LoadingService,
+        private alertService: AlertController
     ) {
         this.vault = Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
         this.init();
         window['VaultService'] = this;
     }
 
-    async init() {
+    private async init() {
         await Device.setHideScreenOnBackground(false, false);
 
         this.vault.onError((error) => console.log("VAULT.ONERROR: ", error));
-
         this.vault.onPasscodeRequested((isPasscodeSetRequest) => {
             console.log("vault.onPasscodeRequested: ", isPasscodeSetRequest);
             return this.onPasscodeRequested(isPasscodeSetRequest);
@@ -86,28 +98,22 @@ export class VaultService {
     }
 
 
-
-
-
-
-    // this method is called when this app is going to open another app;
-    // we may not want this app to lock itself is we're expecting a result from the other app.
-
-
-
-    async migrateIfLegacyVault(retryCount: number = 0): Promise<VaultMigrateResult> {
+    async migrateIfLegacyVault(): Promise<VaultMigrateResult> {
 
         const isBiometricsEnabled = async () => (await Device.isBiometricsEnabled()) && await this.userPreferenceService.cachedBiometricsEnabledUserPreference();
         const noDataInLegacyVault = ({ code, message }) => (code == undefined && /no data in legacy vault/.test(message));
 
         const userFailedBiometricsAuth = async (error) => {
-            return await isBiometricsEnabled() && (error.code == VaultErrorCodes.TooManyFailedAttempts
+            return await isBiometricsEnabled() && (
+                error.code == VaultErrorCodes.TooManyFailedAttempts
                 || error.code == VaultErrorCodes.iOSBiometricsLockedOut
-                || error.code == VaultErrorCodes.AndroidBiometricsLockedOut);
+                || error.code == VaultErrorCodes.AndroidBiometricsLockedOut
+                || error.code == VaultErrorCodes.SecurityNotAvailable
+                || error.code == VaultErrorCodes.BiometricsNotEnabled);
         }
 
         // old V4 config
-        const migrator = new VaultMigrator({
+        const oldVaultConfig = {
             restoreSessionOnReady: false,
             unlockOnReady: false,
             unlockOnAccess: false,
@@ -115,8 +121,8 @@ export class VaultService {
             hideScreenOnBackground: false,
             allowSystemPinFallback: false,
             shouldClearVaultAfterTooManyFailedAttempts: false
-        }, (isPasscodeSetRequest) => this.onPasscodeRequested(isPasscodeSetRequest));
-
+        };
+        const migrator = new VaultMigrator(oldVaultConfig, () => this.onPasscodeRequested(false));
         try {
             this.loadingService.closeSpinner();
             const oldVaultData = await migrator.exportVault();
@@ -125,11 +131,15 @@ export class VaultService {
         } catch (error) {
             // Something went wrong...
             console.log("GOT ERROR AQUI: ", error);
+            this.alertService.create({
+                message: "message: "  + error.message + " code: " + error.code
+            }).then((a) => a.present());
+
             if (noDataInLegacyVault(error)) {
                 return VaultMigrateResult.MIGRATION_NOT_NEEDED;
-            } if (await userFailedBiometricsAuth(error)) {
+            } if ((await userFailedBiometricsAuth(error))) {
                 return this.retryPinUnlock()
-                    .then(async ({ pin }) => this.onVaultMigrated({ pin }, migrator, await isBiometricsEnabled()))
+                    .then(async ({ pin }) => this.onVaultMigrated({ pin }, migrator, true))
                     .catch(() => migrator.clear() && VaultMigrateResult.MIGRATION_FAILED)
             }
         }
@@ -139,17 +149,25 @@ export class VaultService {
     }
 
 
-    async onVaultMigrated(session: { pin: string }, migrator: VaultMigrator, isBiometricsEnabled: boolean): Promise<VaultMigrateResult> {
+    /**
+     * Called when we successfully migrated data from old vault config to new vault.
+     */
+    private async onVaultMigrated(session: { pin: string }, migrator: VaultMigrator, isBiometricsEnabled: boolean): Promise<VaultMigrateResult> {
         try {
             await this.vault.setCustomPasscode(session.pin);
             await this.vault.importVault({ [key]: session.pin });
             await migrator.clear();
             this.login({ ...session, useBiometric: isBiometricsEnabled });
-        } catch (error) { }
+        } catch (error) { /**Ignored on purpose */ }
         return VaultMigrateResult.MIGRATION_SUCCESS;
     }
 
 
+    /**
+     * Called to start vault setup.
+     * @param session 
+     * session must contain the pin.
+     */
     async login(session: SessionData): Promise<void> {
         console.log("initAndUnlock: ", session);
         this.setIsLocked(false);
@@ -157,6 +175,10 @@ export class VaultService {
         this.setUnlockMode(session);
     }
 
+    /**
+     * We want to able to change vaults config on the fly, from biometrics to customPasscode.
+     * @param session 
+     */
     private async setUnlockMode(session: SessionData) {
         let type = VaultType.CustomPasscode;
         let deviceSecurityType = DeviceSecurityType.None;
@@ -175,6 +197,12 @@ export class VaultService {
     }
 
 
+    /**
+     * Called by iv when customPasscode is used and we try to unlock vault.
+     * @param isPasscodeSetRequest 
+     * @param publishError 
+     * @returns 
+     */
     private async onPasscodeRequested(isPasscodeSetRequest: boolean, publishError: boolean = true): Promise<string> {
         console.log("onPasscodeRequested: called: ", isPasscodeSetRequest);
 
@@ -183,23 +211,22 @@ export class VaultService {
             return Promise.resolve(this.state.pin);
         } else {
             /// will happen on pin login
-            const { data: pin, role: status } = await this.presentPinModal(PinAction.LOGIN_PIN);
-            if (PinCloseStatus.LOGIN_SUCCESS !== status) {
-                const error = { code: status, message: pin };
-                if (publishError) this.vaultPinUnlockError$.next(error);
-                console.log("GOIN TO RETURN : ", error);
-                return Promise.reject(error);
+            const { data: pin, role: responseStatus } = await this.presentPinModal(PinAction.LOGIN_PIN);
+            if (PinCloseStatus.LOGIN_SUCCESS == responseStatus) {
+                console.log("ARRIVED HERE....");
+                this.vault.setCustomPasscode(pin);
+                return Promise.resolve(pin);
             }
 
-            console.log("ARRIVED HERE....");
-            this.vault.setCustomPasscode(pin);
-            return Promise.resolve(pin);
+            const error = { code: responseStatus, message: pin };
+            if (publishError) this.vaultPinUnlockError$.next(error);
+            console.log("GOIN TO RETURN : ", error);
+            return Promise.reject(error);
         }
     }
 
     async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
-        // return await this.pinService.navigateToPinPage(pinAction, pinModalProps);
-        let componentProps = { pinAction, ...pinModalProps };
+        const componentProps = { pinAction, ...pinModalProps };
         const pinModal = await this.modalController.create({
             backdropDismiss: false,
             component: PinPage,
@@ -209,20 +236,15 @@ export class VaultService {
         return await pinModal.onDidDismiss();
     }
 
-
-    async retrieveVaultPin(): Promise<string> {
-        return await this.getPin();
-    }
-
-    async setState(session: SessionData) {
-        const sessionPin = session.pin || await this.getPin()
+    private async setState(session: SessionData) {
+        const sessionPin = session.pin || await this.getPin();
         console.log("Setting the sessionPin to: ", sessionPin);
         this.state.pin = sessionPin;
         this.state.useBiometric = session.useBiometric;
         this.vault.setValue(key, sessionPin);
     }
 
-    async getPin() {
+    private async getPin() {
         return this.state.pin || await this.vault.getValue(key);
     }
 
@@ -258,19 +280,20 @@ export class VaultService {
         return await this.vault.lock();
     }
 
-
-
-
-    async patchVaultConfig(config) {
+    private async patchVaultConfig(config) {
         await this.vault.updateConfig({
             ...this.vault.config,
             ...config
         })
     }
 
-    async unlockVault(biometricEnabled: boolean): Promise<{ pin: string, biometricUsed: boolean }> {
 
-        biometricEnabled = biometricEnabled == null ? this.state.useBiometric : biometricEnabled;
+    /**
+     * Called to unlock vault. will ask user to enter biometrics (fingerprint, faceID) or pin.
+     * @param biometricEnabled 
+     * @returns 
+     */
+    async unlockVault(biometricEnabled: boolean = this.state.useBiometric): Promise<{ pin: string, biometricUsed: boolean }> {
         this.state.useBiometric = biometricEnabled;
         // close any modal if any opened.
         await this.closeAllModals();
@@ -315,7 +338,7 @@ export class VaultService {
     }
 
 
-    async showSplashScreen(biometricUsed: boolean, skipLoginFlow: boolean = true, navigateToDashboard: boolean = false) {
+    private async showSplashScreen(biometricUsed: boolean, skipLoginFlow: boolean = true, navigateToDashboard: boolean = false) {
 
         const state = {
             skipLoginFlow,
@@ -335,7 +358,7 @@ export class VaultService {
         });
     }
 
-    async closeAllModals(): Promise<void> {
+    private async closeAllModals(): Promise<void> {
         /// check for all loaders and remove them
         this.loadingService.closeSpinner();
         let topModal = await this.modalController.getTop();
@@ -343,6 +366,57 @@ export class VaultService {
         while (topModal) {
             (await topModal.dismiss()) ? (topModal = await this.modalController.getTop()) : (topModal = null);
         }
+    }
+
+    /**
+     * this method should be called when this app (GetApp) is going to open another app (or an activity from another app), because vault will lock this app while you're still in the other app.
+     * We may not want vault to lock itself if we're expecting a result from the other app.
+     * otherwise the user will be asked to authenticate and you will probably lose the results from the other app.
+     * @param e 
+     *  e.makeVaultUnLockable=true means you don't want GetApp to lock itself, defaults to "false"
+     *  e.estimatedTimeInMillis means for how long you want vault to wait before it locks itself. defaults to "TIME_OUT_WITH_EXTRA" (10min)
+     *  e.keepVaultUnLockableOnResume=true means you don't want vaultService to auto-adjust it's "lockAfterBackgrounded" setting back to "VAULT_DEFAULT_TIME_OUT_IN_MILLIS (5000)" once you get back from the app you opened.
+     *  this defaults to false, meaning that vault will try to adjust the "lockAfterBackgrounded" setting back to 5000 millis unless otherwise specified.
+     * @returns 
+     */
+    async onNavigateExternal(e: EventInfo) {
+        let canLockVault = !e.makeVaultUnLockable;
+
+        if (canLockVault) {
+            return this.canLockScreen(true).finally(() => {
+                this.pluginListenerHandle?.remove();
+                this.pluginListenerHandle = null;
+            });
+        }
+        const estimatedTimeInMillis = e.estimatedTimeInMillis || TIME_OUT_WITH_EXTRA;
+        this.canLockScreen(canLockVault, estimatedTimeInMillis);
+        const makeVaultLockableOnResume = !e.keepVaultUnLockableOnResume;
+        this.pluginListenerHandle = await App.addListener(APP_STATE_CHANGE, ({ isActive }) => {
+            console.log("onNavigateExternal APP_STATE_CHANGE: ", isActive, makeVaultLockableOnResume);
+            if (isActive) {
+                if (makeVaultLockableOnResume)
+                    setTimeout(() => this.canLockScreen(true), 3000);
+                this.pluginListenerHandle?.remove();
+            }
+        });
+
+        if (e.keepVaultUnLockableOnResume) {
+            setTimeout(async () => {
+                console.log("keepVaultUnLockableOnResume: going to reset vault..............: ", this.pluginListenerHandle)
+                if (this.pluginListenerHandle) {
+                    this.canLockScreen(true).finally(() => this.pluginListenerHandle?.remove());
+                }
+            }, estimatedTimeInMillis);
+        }
+    }
+
+    private async canLockScreen(canLock: boolean, estimatedTime: number = VAULT_DEFAULT_TIME_OUT_IN_MILLIS) {
+        const isVaultCurrentlyNotLocked = !(await this.isVaultLocked());
+        console.log("canLockScreen: ", canLock, estimatedTime, isVaultCurrentlyNotLocked);
+        if (isVaultCurrentlyNotLocked) {
+            return this.patchVaultConfig({ lockAfterBackgrounded: estimatedTime }).then(() => true);
+        }
+        return false;
     }
 
 }
