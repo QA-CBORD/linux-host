@@ -207,7 +207,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           { type: SETTINGS_VALIDATIONS.Biometric, value: 'biometric' },
         ],
         checkIsEnabled: async function (services: SettingsServices) {
-          const biometricsEnabled = await services.identity.areBiometricsAvailable();
+          const biometricsEnabled = await services.identity.isBiometricsEnabled();
           if (biometricsEnabled) {
             const biometrics = await services.identity.getAvailableBiometricHardware();
             const biometric = configureBiometricsConfig(biometrics);

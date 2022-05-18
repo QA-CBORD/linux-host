@@ -9,7 +9,6 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { firstValueFrom } from '@shared/utils';
-import { ConnectivityService } from '@shared/services/connectivity.service';
 import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
 import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 
@@ -102,10 +101,10 @@ export class SessionFacadeService {
       });
       const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
       if (isPinLoginEnabled && isPinEnabledForUserPreference) {
-        const isBiometricsAvailable = await this.identityFacadeService.areBiometricsAvailable();
+        const isBiometricsEnabled = await this.identityFacadeService.isBiometricsEnabled();
         const isBiometricsEnabledForUserPreference = await this.identityFacadeService
           .cachedBiometricsEnabledUserPreference$;
-        if (isBiometricsAvailable && isBiometricsEnabledForUserPreference) {
+        if (isBiometricsEnabled && isBiometricsEnabledForUserPreference) {
           return LoginState.BIOMETRIC_SET;
         } else {
           return LoginState.PIN_SET;
@@ -154,10 +153,10 @@ export class SessionFacadeService {
         return LoginState.DONE;
       }
 
-      const isBiometricsAvailable = await this.identityFacadeService.areBiometricsAvailable();
+      const isBiometricsEnabled = await this.identityFacadeService.isBiometricsEnabled();
       const isBiometricsEnabledForUserPreference = await this.identityFacadeService
         .cachedBiometricsEnabledUserPreference$;
-      if (isBiometricsAvailable && isBiometricsEnabledForUserPreference) {
+      if (isBiometricsEnabled && isBiometricsEnabledForUserPreference) {
         return LoginState.BIOMETRIC_LOGIN;
       } else {
         return LoginState.PIN_LOGIN;

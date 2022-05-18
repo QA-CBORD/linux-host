@@ -198,9 +198,7 @@ export class PinPage implements OnInit, OnDestroy {
     this.loadingService.closeSpinner();
     try {
       await this.modalController.dismiss(pin, status);
-    } catch (errr) {
-      console.log("NOT A MODAL....");
-    }
+    } catch (errr) { /**Ignored on purpose */ }
   }
 
   back() {
@@ -300,7 +298,6 @@ export class PinPage implements OnInit, OnDestroy {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
           } else if (this.connectionService.isConnectionIssues({ message, status })) {
             const { data, role } = await this.handleConnectionIssues();
-            console.log("NO-CONNECTIVITY SCREEN CLOSED 22: ", { data, role });
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
@@ -311,15 +308,14 @@ export class PinPage implements OnInit, OnDestroy {
 
   handleConnectionIssues() {
     return this.connectivityFacade.handleConnectionError({
-        onRetry: async () => {
-            console.log("handlePinConnectionIssues, onRetry")
-            await this.loadingService.showSpinner();
-            const connectionRestored = !(await this.connectionService.deviceOffline());
-            await this.loadingService.closeSpinner();
-            return connectionRestored;
-        }
+      onRetry: async () => {
+        await this.loadingService.showSpinner();
+        const connectionRestored = !(await this.connectionService.deviceOffline());
+        await this.loadingService.closeSpinner();
+        return connectionRestored;
+      }
     }, true);
-}
+  }
 
   get showReset() {
     return this.pinNumber.length < 4 && this.pinNumberCopy.length === 4;

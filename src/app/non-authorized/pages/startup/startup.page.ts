@@ -18,7 +18,7 @@ import { ConnectivityFacadeService } from './connectivity-facade.service';
   templateUrl: './startup.page.html',
   styleUrls: ['./startup.page.scss'],
 })
-export class StartupPage implements OnInit {
+export class StartupPage {
   /// startup page used as a backdrop for login, it ensures global navbar is hidden by url route checking
 
   constructor(
@@ -34,18 +34,10 @@ export class StartupPage implements OnInit {
     private readonly connectivityFacade: ConnectivityFacadeService
   ) { }
 
-  ngOnInit(): void {
-    console.log("STARTUP PAGE, ngOnInit: ");
-  }
-
   /// check login on enter
   ionViewDidEnter() {
-    console.log("STARTUP PAGE, ION VIEW DID ENTER: ");
-
     this.loadingService.showSpinner();
-    const { skipLoginFlow, biometricUsed } = this.location.getState() as any;
-    console.log("ROUTER HISTORY STATE: ", { skipLoginFlow, biometricUsed });
-
+    const { skipLoginFlow, biometricUsed } = (<any>this.location.getState());
     if (skipLoginFlow) {
       this.unlockVault(biometricUsed)
     } else {
@@ -89,13 +81,11 @@ export class StartupPage implements OnInit {
 
 
   handleVaultLoginFailure(error: any): any {
-    console.log(" handleVaultLoginFailure: ", error);
     this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
   }
 
 
   async handleVaultLoginSuccess(pin: string, biometricUsed: boolean): Promise<void> {
-    console.log(" handleVaultLoginSuccess: ", pin, " biometricUsed: ", biometricUsed)
     if (biometricUsed) {
       const code = {
         promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
@@ -128,9 +118,7 @@ export class StartupPage implements OnInit {
   async handleAppLoginState(state: LoginState): Promise<void> {
     const routeConfig = { replaceUrl: true };
 
-    console.log("handleLoginState: ", state);
     switch (state) {
-
       case LoginState.SELECT_INSTITUTION:
         await this.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
         break;

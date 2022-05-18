@@ -76,7 +76,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
   private async initAndUnlock(session: SessionData, navigateToDashboard: boolean): Promise<void> {
-    console.log("initAndUnlock navigateToDashboard: ", navigateToDashboard)
     if (navigateToDashboard) {
       this.navigateToDashboard()
     }
@@ -131,8 +130,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
 
-  async redirectToEntry(): Promise<boolean> {
-    console.log("redirectToEntry: redirectToEntry")
+  private async redirectToEntry(): Promise<boolean> {
     return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
   }
 
@@ -160,8 +158,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
       ));
   }
 
-  async areBiometricsAvailable(): Promise<boolean> {
-    return this.identityService.areBiometricsAvailable();
+  async isBiometricsEnabled(): Promise<boolean> {
+    return this.identityService.isBiometricsEnabled();
   }
 
 
