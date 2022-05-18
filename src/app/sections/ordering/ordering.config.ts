@@ -111,7 +111,8 @@ export enum ORDERING_CONTENT_STRINGS {
   duplicateOrdering ='ordering_duplicate',
   noConnection = 'ordering_no_connection',
   orderingDatesUnavailable = 'ordering_dates_unavailable',
-  lblBtnAdd2Cart = 'lbl_btn_add2_cart'
+  lblBtnAdd2Cart = 'lbl_btn_add2_cart',
+  titleEditAddresses = 'title_edit_address',
 }
 export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
   manualEntryInstructions = 'manual-entry_instructions'

@@ -51,7 +51,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     this.menuInfo$ = this.cartService.menuInfo$;
     this.menuItems$ = this.cartService.menuItems$.pipe(
       // If is not first emission from an empty cart
-      filter((val, index) => val !== 0 || index > 1),
+      filter((val, index) => !!val || index > 1),
       distinctUntilChanged()
     );
     zip(this.cartService.menuInfo$, this.activatedRoute.params)

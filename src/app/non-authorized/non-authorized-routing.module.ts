@@ -6,6 +6,7 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: ANONYMOUS_ROUTES.startup,
+    pathMatch: 'full'
   },
   {
     path: ANONYMOUS_ROUTES.startup,
@@ -35,6 +36,10 @@ const routes: Routes = [
     path: ANONYMOUS_ROUTES.external,
     loadChildren: () => import('./pages/external-login/external-login.module').then(m => m.ExternalLoginPageModule),
   },
+  {
+    path: ANONYMOUS_ROUTES.scanCard,
+    loadChildren: () => import('../sections/dashboard/containers/scan-card/scan-card.module').then(m => m.ScanCardModule),
+  }
 ];
 
 

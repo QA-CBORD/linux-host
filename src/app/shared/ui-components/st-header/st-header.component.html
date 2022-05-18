@@ -10,8 +10,13 @@
       ></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="start" *ngIf="isDismissButtonShow">
-      <ion-button mode="ios" class="st-header__dissmiss-btn" (click)='onDissmissClicked()'>
+      <ion-button mode="ios" class="st-header__dissmiss-btn" (click)="onDissmissClicked()">
         <ion-icon [icon]="backButtonIcon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="isRemoveButtonShow">
+      <ion-button class="address-edit__header-remove-btn" mode="ios" (click)="onRemoveClicked()">
+        Remove
       </ion-button>
     </ion-buttons>
     <ion-title class="st-header__title" *ngIf="isTitleShow">{{ title }}</ion-title>

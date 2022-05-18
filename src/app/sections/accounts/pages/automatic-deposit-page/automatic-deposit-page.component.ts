@@ -75,7 +75,8 @@ export class AutomaticDepositPageComponent {
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly externalPaymentService: ExternalPaymentService,
-    private readonly userFacadeService: UserFacadeService  ) {}
+    private readonly userFacadeService: UserFacadeService
+  ) {}
 
   ionViewWillEnter() {
     this.showContent = true;
@@ -164,7 +165,7 @@ export class AutomaticDepositPageComponent {
 
   get billMeAmounts$(): Observable<string[]> {
     return this.settingsFacadeService
-      .getSetting(Settings.Setting.FREEFORM_DEPOSIT_ENABLED)
+      .getSetting(Settings.Setting.BILLME_AMOUNTS)
       .pipe(map(({ value }) => parseArrayFromString(value)));
   }
 
