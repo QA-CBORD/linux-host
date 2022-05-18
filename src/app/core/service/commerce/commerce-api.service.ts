@@ -139,7 +139,7 @@ export class CommerceApiService {
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }
 
-  sale(fromAccountId: string, total: string, ): Observable<string> {
+  sale(fromAccountId: string, total: string): Observable<string> {
     const params = {  fromAccountId, total };
     const queryConfig = new RPCQueryConfig('sale', params, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);

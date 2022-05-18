@@ -4,9 +4,11 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
+import { DepositService } from '@sections/accounts/services/deposit.service';
 import { AccountsService } from '@sections/dashboard/services';
 import { firstValueFrom } from '@shared/utils';
 import { of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { PaymentSystemType } from 'src/app/app.global';
 
 @Component({
@@ -33,12 +35,12 @@ export class ApplicationPaymentComponent implements OnInit {
     private loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly accountService: AccountsService,
+    private readonly depositService: DepositService
   ) {}
 
   ngOnInit() {}
 
   async addCreditCard() {
-    alert("bobo")
     try {
       const strings = this.contentStrings as any;
       const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
@@ -53,8 +55,9 @@ export class ApplicationPaymentComponent implements OnInit {
     }
   }
 
-  private async showMessage(message: string, duration = 5000) {
-    await this.toastService.showToast({ message, duration });
+  feePayment(acc) {
+    this.depositService.feePayment(acc.account?.id, "100").pipe(take(1)).subscribe();
+   // alert("This is a bobo " + JSON.stringify(acc.account?.id))
   }
 
   async retrieveAccounts() {
@@ -68,6 +71,10 @@ export class ApplicationPaymentComponent implements OnInit {
     return accounts;
   }
 
+  private async showMessage(message: string, duration = 5000) {
+    await this.toastService.showToast({ message, duration });
+  }
+
   private buildStr(account: UserAccount) {
     const { accountTender, lastFour } = account;
     const creditCardTypeNumber = parseInt(accountTender) - 1;
@@ -79,5 +86,4 @@ export class ApplicationPaymentComponent implements OnInit {
       iconSrc,
     };
   }
-
 }
