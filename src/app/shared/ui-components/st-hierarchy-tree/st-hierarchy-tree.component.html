@@ -1,12 +1,13 @@
 <st-textarea-floating-label
     [control]=""
     [isError]=""
-    [data]="(this._workOrderStateService.getSelectedFacility$() |async)?.name"
+    [facilityData]="facilityName"
     class="question__item question__control"
     [idd]=""
     [label]="label"
     title="Type your message here..."
     rows="3"
+    (click)="open()"
+    [ngClass]="{ 'ng-valid form-control--filled ng-touched':true }"
   >
 </st-textarea-floating-label>
-{{(this._workOrderStateService.getSelectedFacility$() |async)?.name}}

@@ -14,7 +14,7 @@ import { FormGroup } from '@angular/forms';
   styleUrls: ['./st-hierarchy-tree.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class StHierarcheTreeComponent implements OnDestroy, OnInit  {
+export class StHierarcheTreeComponent implements OnDestroy  {
   public selectedItem: NamedIdentity;
   private _subscription: Subscription = new Subscription();
   @Input() public lookups: LookUpItem[];
@@ -22,18 +22,13 @@ export class StHierarcheTreeComponent implements OnDestroy, OnInit  {
   @Input() public isDisable: boolean;
   @Input() public label: string;
   @Input() parentGroup: FormGroup;
-  valueTitle: any;
+  @Input() facilityName: any;
   constructor(
     public modalCtrl: ModalController,
     public _workOrderStateService: WorkOrderStateService,
     public _contractListStateService: ContractListStateService
     ) {
     this.selectedItem = null;
-  }
-  async ngOnInit() {
-    await this._workOrderStateService.getSelectedFacility$().subscribe(res => {
-      this.valueTitle = res
-    });
   }
 
   ngOnDestroy(): void {

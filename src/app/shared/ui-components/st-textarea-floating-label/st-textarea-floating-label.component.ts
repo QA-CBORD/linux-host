@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, forwardRef, OnInit, AfterViewInit, Output, EventEmitter, OnChanges } from '@angular/core';
 import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
@@ -13,7 +13,7 @@ export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
   styleUrls: ['./st-textarea-floating-label.component.scss'],
   providers: [CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR],
 })
-export class StTextareaFloatingLabelComponent extends DefaultValueAccessor implements AfterViewInit {
+export class StTextareaFloatingLabelComponent extends DefaultValueAccessor implements AfterViewInit, OnInit {
   @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() idd: string;
@@ -21,19 +21,21 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   @Input() rows: string = '3';
   @Input() isDisabled: boolean;
   @Input() maxLength: number = 128;
-  @Input() data: string;
+  @Input() facilityData: string;
   onTouched: () => void;
   onChange: (_: any) => void;
   innerValue: any = '';
   @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
-  ngAfterViewInit(): void {
-    if(this.data){
-      this.writeValue(this.data);
-      // this.control.markAsTouched();
+  ngOnInit(): void {
+    if(this.facilityData){
+      this.writeValue(this.facilityData);
       this.onTouched()
     }
+  }
+
+  ngAfterViewInit(): void {
     if (this.control && this.control.value) {
       this.control.markAsTouched();
     }

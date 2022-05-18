@@ -29,6 +29,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   facilityFullName: string;
   currectFacility: string;
   images: LocalFile[] = [];
+  facilityName: any;
   workOrderFieldsText: any = {
     notify : 'Would you like to receive updates?',
     phone : 'Enter your phone number.',
@@ -62,6 +63,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._initTermsSubscription();
     this._initGetImage();
     this._setFacility();
+    this._getFacilityName();
   }
 
   @Input() question: QuestionBase;
@@ -381,5 +383,11 @@ async startUpload(file: LocalFile,value: string) {
         facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey
       });
     }
+  }
+
+  private _getFacilityName() {
+    this._workOrderStateService.getSelectedFacility$().subscribe(res => {
+      this.facilityName = res?.name
+    });
   }
 }
