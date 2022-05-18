@@ -27,6 +27,7 @@ pipelines:
     '**':
       - step:
           name: Build and test
+          image: node:v14.17.6
           script:
             - npm run test
       
