@@ -29,6 +29,7 @@ pipelines:
           name: Build and test
           image: atlassian/default-image:3
           script:
+            - npm install
             - npm run test
       
 
