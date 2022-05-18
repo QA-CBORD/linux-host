@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StHierarcheTreeDialogComponent } from './st-hierarchy-tree-dialog.component';
 import { IonicModule } from '@ionic/angular';
+import { OrderByPipeModule } from '@shared/pipes/order-by-pipe/order-by-pipe.module';
+
 
 const declarations = [StHierarcheTreeDialogComponent];
 
@@ -9,7 +11,8 @@ const declarations = [StHierarcheTreeDialogComponent];
   declarations,
   imports: [
     CommonModule,
-    IonicModule
+    IonicModule,
+    OrderByPipeModule
   ],
   exports: declarations,
   entryComponents: declarations

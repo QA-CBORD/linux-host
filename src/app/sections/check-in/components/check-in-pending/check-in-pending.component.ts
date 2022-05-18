@@ -20,8 +20,8 @@ import {
 } from '@sections/ordering';
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { Observable, Subscription } from 'rxjs';
+import { firstValueFrom } from '@shared/utils';
+import { Observable, of, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
@@ -71,7 +71,6 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
-    private readonly globalNav: GlobalNavService,
     private readonly cart: CartService,
     private readonly cdRef: ChangeDetectorRef,
     private platform: Platform,
@@ -90,13 +89,8 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
     this.loadingService.closeSpinner();
     this.cdRef.detectChanges();
-  }
-
-  ionViewDidEnter() {
-    this.globalNav.hideNavBar();
   }
 
   async onAddItems() {
@@ -210,12 +204,15 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private async showSuccessModal() {
+    const orderDetailOptions = await firstValueFrom(this.orderDetailOptions$);
+
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.success], {
       queryParams: {
         orderId: this.orderId,
         total: this.total,
         checkNumber: this.checkNumber,
         data: JSON.stringify(this.data),
+        orderDetailOptions: JSON.stringify(orderDetailOptions)
       },
     });
   }
@@ -231,7 +228,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       },
     });
     modal.onDidDismiss().then(async ({ data }) => {
-      if (data.scancode) {
+      if (data?.scancode) {
         await this.onScanCode();
       }
     });
@@ -248,8 +245,9 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   }
 
   private watchLocationChanges() {
-    this.locationSubscription = this.coordsService.location$.subscribe(({ coords: { latitude, longitude } }) => {
-      this.locationPermissionDisabled = !(latitude && longitude);
+    this.locationSubscription = this.coordsService.location$.subscribe((location) => {
+      if(!location || !location.coords) return of(null);
+      this.locationPermissionDisabled = !(location.coords.latitude && location.coords.longitude);
     });
   }
 

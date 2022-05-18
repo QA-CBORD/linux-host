@@ -10,7 +10,7 @@ const TAP_TIME_LAPSE = 300;
 export enum PLATFORM {
   ios = 'ios',
   android = 'android',
-  web = 'web'
+  web = 'web',
 }
 @Injectable()
 export class AccessibilityService {
@@ -18,7 +18,7 @@ export class AccessibilityService {
   private toggle = false;
 
   readAloud(text: string) {
-    if(!this.platform.is('cordova')) return;
+    if (!this.platform.is('cordova')) return;
 
     return ScreenReader.isEnabled().then(isRunning => {
       if (isRunning.value) {
@@ -64,5 +64,20 @@ export class AccessibilityService {
       return false;
     }
     return true;
+  }
+
+  async hideElementsByClassName(hide: boolean = true, className: string = 'browser-hidden') {
+    if (this.isVoiceOverEnabled$) {
+      const displayType = hide ? 'none' : 'block';
+      const elements = document.getElementsByClassName(className);
+      if (elements) {
+        for (let i = 0; i < elements.length; i++) {
+          const element = elements[i];
+          if (element instanceof HTMLElement) {
+            element.style.display = displayType;
+          }
+        }
+      }
+    }
   }
 }

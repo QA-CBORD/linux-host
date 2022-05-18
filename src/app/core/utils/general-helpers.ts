@@ -197,22 +197,6 @@ export function configureBiometricsConfig(
   }
 }
 
-export function getRandomColorExtendedPalette(): string {
-  const colors = [
-    '#9A39D2',
-    '#C564FC',
-    '#AE4F07',
-    '#D67A12',
-    '#505AE3',
-    '#807FFF',
-    '#F254A6',
-    '#C7246F',
-    '#377914',
-    '#4AA40D',
-  ];
-  return colors[Math.floor(Math.random() * (colors.length - 1))];
-}
-
 export function getCashlessStatus(isLost: boolean): number {
   return isLost ? ReportCardStatus.LOST : ReportCardStatus.FOUND;
 }

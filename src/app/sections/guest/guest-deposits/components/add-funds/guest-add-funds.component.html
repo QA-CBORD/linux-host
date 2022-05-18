@@ -4,9 +4,9 @@
   [backButtonIcon]="'ios-arrow-back'"
   [isBackButtonShow]="true"
   [isToolbarShow]="true"
-  class="deposit__header"
+  class="deposit__header browser-hidden"
 ></st-header>
-<ion-content>
+<ion-content class="browser-hidden">
   <form novalidate [formGroup]="guestDepositForm">
     <section class="deposit__selection-block">
       <ion-label>{{ replaceRecipientName(this.addFundsCs.noticeText) }}</ion-label>
@@ -121,7 +121,7 @@
     </section>
   </form>
 </ion-content>
-<ion-footer class="deposit__footer" mode="ios">
+<ion-footer class="deposit__footer browser-hidden" mode="ios">
   <st-button
     (onClick)="onSubmitDeposit()"
     tabindex="0"

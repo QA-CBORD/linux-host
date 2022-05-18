@@ -22,7 +22,7 @@ export class SecureMessagingService {
     private readonly authFacadeService: AuthFacadeService,
     private readonly secureMessagingService: SecureMessagingApiService
   ) {}
-
+  // TODO: Switch from static method to another implementation
   static GetSecureMessagesAuthInfo(): SecureMessagingAuthInfo {
     return SecureMessagingService.smAuthInfo;
   }
@@ -45,7 +45,7 @@ export class SecureMessagingService {
     return this.secureMessagingService.getSecureMessages(
       this.ma_type,
       SecureMessagingService.smAuthInfo.id_field,
-      SecureMessagingService.smAuthInfo.id_value,
+      SecureMessagingService.smAuthInfo.id_value
     );
   }
 

@@ -24,11 +24,11 @@
     </div>
   </div>
   <div class="pending-checkin__colored-bg">
-    <div class="padded">
-      <div class="title-lbl faded">{{ (orderDetailOptions$ | async ).orderType | typeMessage: 'DueTime' | uppercase }}</div>
+    <div class="padded" *ngIf="orderDetailOptions$ | async as orderDetailOptions">
+      <div class="title-lbl faded">{{ orderDetailOptions.orderType | typeMessage: 'DueTime' | uppercase }}</div>
       <span class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</span>
       <div class="small-content faded">{{ contentStrings.pickup_info }}</div>
-      <div class="title-lbl faded">{{ (orderDetailOptions$ | async ).orderType | typeMessage: 'Address' | uppercase }}</div>
+      <div class="title-lbl faded">{{ orderDetailOptions.orderType | typeMessage: 'Address' | uppercase }}</div>
       <div class="text-dark address">
         <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
         <span>{{ data.storeAddress | addressHeaderFormat }}</span>

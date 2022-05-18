@@ -3,11 +3,11 @@ import { UserAccount } from '@core/model/account/account.model';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { AlertController, ModalController } from '@ionic/angular';
-import { CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
+import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { AccountsService } from '@sections/dashboard/services';
-import { from, Observable, of, throwError } from 'rxjs';
-import { catchError, finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
+import { firstValueFrom } from '@shared/utils';
 import { PaymentSystemType } from 'src/app/app.global';
 
 @Component({
@@ -16,19 +16,19 @@ import { PaymentSystemType } from 'src/app/app.global';
   styleUrls: ['./credit-card-mgmt.component.scss'],
 })
 export class CreditCardMgmtComponent implements OnInit {
-  @Input() contentStrings = {};
+  
+  @Input() contentStrings: {
+    screen_title: string;
+    no_card_found: string;
+    add_new_card_btn_text: string;
+    user_info_text: string;
+    error_loading_cards: string;
+    remove_success_msg: string;
+    remove_failure_msg: string;
+    added_success_msg: string;
+  };
 
-  creditCards = [
-    { ccName: 'master card 1234' },
-    { ccName: 'amex card  0011' },
-    { ccName: 'visa card 9966' },
-    { ccName: 'master card 1234' },
-    { ccName: 'master card 1234' },
-  ];
-
-  @Input() accounts: UserAccount[] = [];
-
-  accountsObs: Observable<{ account: UserAccount; display: string }[]>;
+  @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
 
   noCreditCardFound: boolean = false;
 
@@ -40,28 +40,34 @@ export class CreditCardMgmtComponent implements OnInit {
     private externalPaymentService: ExternalPaymentService,
     private loadingService: LoadingService,
     private readonly toastService: ToastService,
-    protected readonly alertCtrl: AlertController
+    protected readonly alertCtrl: AlertController,
+    protected readonly popoverCtrl: PopoverController
   ) {}
 
   ngOnInit() {
-    this.accountsObs = this.retrieveAccounts();
+    this.noCreditCardFound = !this.userAccounts.length;
   }
 
-  retrieveAccounts() {
+  async retrieveAccounts() {
     this.loadingService.showSpinner();
-    return this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]).pipe(
-      map(accounts => accounts.map(acc => this.buildStr(acc))),
-      tap(x => (this.noCreditCardFound = !x.length)),
-      finalize(() => this.loadingService.closeSpinner())
-    );
+    const accounts = await firstValueFrom(
+      this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
+    )
+      .then(accounts => accounts.map(acc => this.buildStr(acc)))
+      .finally(() => this.loadingService.closeSpinner());
+    this.noCreditCardFound = !accounts.length;
+    return accounts;
   }
 
   private buildStr(account: UserAccount) {
     const { accountTender, lastFour } = account;
-    const display = `${CREDITCARD_TYPE[parseInt(accountTender) - 1]} ending in ${lastFour}`;
+    const creditCardTypeNumber = parseInt(accountTender) - 1;
+    const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
+    const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
     return {
       display,
       account,
+      iconSrc,
     };
   }
 
@@ -69,72 +75,63 @@ export class CreditCardMgmtComponent implements OnInit {
     this.modalControler.dismiss();
   }
 
-  changeAddNewCreditCardState() {}
-
-  async removeAccount({ account }) {
+  async removeAccount({ account, display }) {
+    const strings = this.contentStrings as any;
     const onRemoveConfirmed = async () => {
       this.alertCtrl.dismiss();
       this.loadingService.showSpinner();
-      await this.accountService
-        .removeCreditCardAccount(account)
-        .pipe(
-          tap(success => {
-            this.accountsObs = this.retrieveAccounts();
-            (success && this.showMessage('Your credit card has been removed successfully.')) ||
-              this.showMessage('We could not remove your credit card, please try again later.');
-          }),
-          catchError(() => this.showMessage('We could not remove your credit card, please try again later.')),
-          finalize(() => this.loadingService.closeSpinner())
-        )
-        .toPromise();
+      try {
+        const isSuccess = await this.accountService.removeCreditCardAccount(account);
+        this.userAccounts = await this.retrieveAccounts();
+        (isSuccess && this.showMessage(strings.remove_success_msg)) || this.showMessage(strings.remove_failure_msg);
+      } catch (err) {
+        this.showMessage(strings.remove_failure_msg);
+      } finally {
+        this.loadingService.closeSpinner();
+      }
     };
 
-    await this.createAlertDialog(
-      'Confirm',
-      'Are you sure you want to remove credit card ending in ' + account.lastFour,
-      [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Confirm',
-          handler: () => onRemoveConfirmed(),
+    const cardType = display.split(' ')[0];
+    const modal = await this.popoverCtrl.create({
+      component: ConfirmModalComponent,
+      mode: 'md',
+      backdropDismiss: false,
+      componentProps: {
+        titleString: `Remove ${cardType}?`,
+        bodyString: `Are you sure you want to remove your ${display}?`,
+        primaryBtnText: strings.remove_card_btn,
+        secondaryBtnText: strings.cancel_remove_card_btn,
+        primaryBtnColor: 'danger',
+        secondaryBtnColor: 'light',
+        onClickPrimary: async e => {
+          await onRemoveConfirmed();
+          this.popoverCtrl.dismiss({});
         },
-      ]
-    );
+        onClickSecondary: e => {
+          this.popoverCtrl.dismiss({});
+        },
+      },
+    });
+
+    await modal.present();
   }
 
   async addCreditCard() {
-    from(this.externalPaymentService.addUSAePayCreditCard())
-      .pipe(
-        switchMap(({ success, errorMessage }) => {
-          if (!success) {
-            return throwError(errorMessage);
-          }
-          return this.retrieveAccounts().pipe(
-            tap(() => this.showMessage('Your credit card has been added successfully'))
-          );
-        }),
-        take(1)
-      )
-      .subscribe(
-        data => (this.accountsObs = of(data)),
-        message => this.showMessage(message),
-        () => this.loadingService.closeSpinner()
-      );
+    try {
+      const strings = this.contentStrings as any;
+      const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
+      if (success) {
+        this.userAccounts = await this.retrieveAccounts();
+        this.showMessage(strings.added_success_msg);
+      } else {
+        this.showMessage(errorMessage);
+      }
+    } finally {
+      this.loadingService.closeSpinner();
+    }
   }
 
-  private async showMessage(message: string) {
-    await this.toastService.showToast({ message, duration: 10000 });
-  }
-
-  private async createAlertDialog(header: string, msg: string, buttons: Array<any>) {
-    const alert = await this.alertCtrl.create({
-      cssClass: 'alert-dialog',
-      backdropDismiss: false,
-      mode: 'ios',
-      message: msg,
-      buttons: buttons,
-      header: header,
-    });
-    alert.present();
+  private async showMessage(message: string, duration = 5000) {
+    await this.toastService.showToast({ message, duration });
   }
 }

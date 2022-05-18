@@ -3,9 +3,7 @@ import { ModalController, IonReorderGroup } from '@ionic/angular';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-
+import { take } from 'rxjs/operators';
 @Component({
   selector: 'st-edit-home-page-modal',
   templateUrl: './edit-home-page-modal.component.html',
@@ -17,17 +15,11 @@ export class EditHomePageModalComponent implements OnInit {
   @ViewChild(IonReorderGroup, { static: true }) reorderGroup: IonReorderGroup;
 
   constructor(private readonly modalController: ModalController,
-              private readonly tileConfigFacadeService: TileConfigFacadeService,
-              private readonly globalNavService: GlobalNavService) {
+              private readonly tileConfigFacadeService: TileConfigFacadeService) {
   }
 
   ngOnInit() {
-    this.globalNavService.hideNavBar();
     this.homeConfigList$ = this.tileConfigFacadeService.tileSettings$;
-  }
-
-  ngOnDestroy() {
-    this.globalNavService.showNavBar();
   }
 
   async onToggle({ detail: { value, checked } }) {

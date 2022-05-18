@@ -7,7 +7,8 @@ export enum WorkOrdersFields {
   LOCATION= "LOCATION",
   PHONE_NUMBER = "CONTACT_PHONE_NUMBER",
   EMAIL = "EMAIL",
-  IMAGE ="IMAGE"
+  IMAGE ="IMAGE",
+  FACILITY = "FACILITY",
 }
 
 export interface ImageDataOptions {
@@ -15,6 +16,14 @@ export interface ImageDataOptions {
   contents: string;
   filename: string;
   studentSubmitted: boolean;
+  workOrderKey: number;
+  photoUrl?: string;
+}
+
+export interface LocalFile {
+  name: string;
+  path: string;
+  data: string;
 }
 
 export class ImageData implements ImageDataOptions {
@@ -22,6 +31,8 @@ export class ImageData implements ImageDataOptions {
   contents: string;
   filename: string;
   studentSubmitted: boolean;
+  workOrderKey: number;
+  photoUrl?: string;
   constructor(options: ImageDataOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as ImageDataOptions;
@@ -30,6 +41,7 @@ export class ImageData implements ImageDataOptions {
     this.contents = String(options.contents);
     this.filename = String(options.filename);
     this.studentSubmitted = Boolean(options.studentSubmitted);
+    this.workOrderKey = Number(options.workOrderKey);
   }
 }
 export interface WorkOrdersDetailsListOptions {

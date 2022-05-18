@@ -30,9 +30,28 @@ export const defaultIdentifyRecipientCs = {
   save_recipient_for_future: 'Save this recipient for future deposits ?'
 }
 
-export const defaultCreditCardMgmtCs = {
-  setting_section_title: 'Payment Methods',
-  setting_section_subtitle: 'Add or delete stored credit cards'
+export const defaultCreditCardMgmtCs: {
+  screen_title: string;
+  no_card_found: string;
+  add_new_card_btn_text: string;
+  user_info_text: string;
+  error_loading_cards: string;
+  remove_success_msg: string;
+  remove_failure_msg: string;
+  added_success_msg: string;
+  remove_card_btn: string;
+  cancel_remove_card_btn: string;
+} = {
+  screen_title: 'Payment Methods',
+  no_card_found: "You don't have any payment methods.",
+  add_new_card_btn_text: "Add New Card",
+  user_info_text:"Credit card information is handled by USAePay. After adding a new card, you will be redirected back to this screen.",
+  error_loading_cards: "An error occurred while loading your credit card accounts.",
+  remove_success_msg: "Your credit card has been removed successfully.",
+  remove_failure_msg: "We could not remove your credit card, please try again later.",
+  added_success_msg: "Your credit card has been added successfully.",
+  remove_card_btn: 'Remove Card',
+  cancel_remove_card_btn: 'Cancel'
 }
 
 export const checkingDefaultCs = {
@@ -67,7 +86,15 @@ export const checkingSuccessCs = {
   lbl_pickup_address: 'PICKUP ADDRESS',
   lbl_total: 'Total',
   lbl_btn_order_detail: 'Order Details',
-  done: 'Done'
+  done: 'Done',
+  labelOrder: 'Order',
+  lbl_subtotal: 'Subtotal',
+  lbl_tip: 'Tip',
+  lbl_tax: 'Tax',
+  lbl_discount: 'Discount',
+  lbl_pickupFee: 'PICK UP FEE',
+  lbl_deliveryFee: 'DELIVERY FEE'
+
 }
 
 export const defaultRegistrationCs = {
@@ -93,6 +120,19 @@ export const guestDashboardDefaultStrings = {
   deposit: 'Guest deposit',
   order: 'Start an order',
   explore: 'Explore',
+};
+
+export const noConnectivityScreentDefaultStrings = {
+  title: 'No connection',
+  description: 'Make sure your Wi-Fi or mobile data is turned on, then try again.',
+  scan_card_desc: 'You may still scan your card when you are offline.',
+  scan_card_btn: 'Scan Card',
+  try_again_btn: 'Try Again',
+  description_server_error: 'We are working on fixing the problem. Try again or come back later.',
+  title_server_error: 'Something went wrong',
+  connect_failed: 'Unable to connect.',
+  scan_card_desc_server_error: '',
+  retry: 'Retry'
 };
 
 export const depositDefaultStrings = {

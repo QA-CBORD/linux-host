@@ -1,42 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
-import { CartService, MenuInfo, MerchantService, OrderDetailOptions } from '@sections/ordering';
+import { MerchantService, OrderDetailOptions, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { orderInfo } from '../check-in-pending/check-in-pending.component';
 
 @Component({
   templateUrl: './check-in-success.component.html',
   styleUrls: ['./check-in-success.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class CheckInSuccessComponent implements OnInit {
-  total: number;
+  order$: Observable<OrderInfo>;
   orderId: string;
-  data: orderInfo;
-  checkNumber: number;
-  contentString: CheckingSuccessContentCsModel;
-  mealBased: boolean;
-  menuInfo$: Observable<MenuInfo>;
-  order$: any;
-  orderDetailOptions$: Observable<OrderDetailOptions>;
+  checkNumber: string;
+  contentStrings: CheckingSuccessContentCsModel;
+  data: any;
+  orderDetailOptions: OrderDetailOptions;
 
   constructor(
     private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly cart: CartService,
+    private readonly activatedRoute: ActivatedRoute
   ) {}
 
+  initContentString() {
+    this.contentStrings = this.activatedRoute.snapshot.data.data.contentString as CheckingSuccessContentCsModel;
+  }
 
   ngOnInit() {
+    this.initContentString();
     this.setData();
   }
 
@@ -57,18 +56,12 @@ export class CheckInSuccessComponent implements OnInit {
   }
 
   private setData() {
-    this.orderDetailOptions$ = this.cart.orderDetailsOptions$;
-    this.menuInfo$ = this.cart.menuInfo$;
-    this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === this.orderId)));
-    this.activatedRoute.data.subscribe(response => {
-      this.contentString = response.data.contentString;
-    });
     this.activatedRoute.queryParams.subscribe(response => {
-      const { total, orderId, data, checkNumber } = response;
-      this.total = total;
-      this.orderId = orderId;
+      const { checkNumber, orderId, data, orderDetailOptions } = response;
       this.checkNumber = checkNumber;
+      this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === orderId)));
       this.data = JSON.parse(data);
+      this.orderDetailOptions =  JSON.parse(orderDetailOptions);
     });
   }
 }

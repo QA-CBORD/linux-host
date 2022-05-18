@@ -34,9 +34,9 @@
               mode="ios"
               type="submit"
               [class.stepper-footer__button--right]="isFirstPage"
+              [disabled]="workOrderListDetails.workOrderKey"
               >
-              <!-- [disabled]="workOrderListDetails.workOrders.status" -->
-              Submit
+              Submit Work Order
             </ion-button>
           </st-stepper-footer>
         </form>

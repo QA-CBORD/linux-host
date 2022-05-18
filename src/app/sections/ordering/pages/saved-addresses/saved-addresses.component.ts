@@ -10,7 +10,6 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User, PATRON_NAVIGATION } from '../../../../app.global';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -34,20 +33,13 @@ export class SavedAddressesComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly globalNav: GlobalNavService,
     private readonly router: Router,
-    private readonly route: ActivatedRoute,
-
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.initContentStrings();
-    this.globalNav.hideNavBar();
     this.initRelativeRoute();
-  }
-
-  ngOnDestroy() {
-    this.globalNav.showNavBar();
   }
 
   ionViewWillEnter() {
@@ -57,6 +49,10 @@ export class SavedAddressesComponent implements OnInit {
 
   changeAddNewAdddressState() {
     this.addNewAdddressState = !this.addNewAdddressState;
+  }
+
+  async navigate(url: PATRON_NAVIGATION | string): Promise<void> {
+    await this.router.navigate([url]);
   }
 
   onAddressFormChanged(event) {
@@ -179,5 +175,5 @@ export class SavedAddressesComponent implements OnInit {
   private async initRelativeRoute() {
     const routeData = await this.route.data.pipe(take(1)).toPromise();
     this.relativeRoute = routeData.relativeRoute;
-  }
+  } 
 }

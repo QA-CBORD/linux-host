@@ -1,0 +1,29 @@
+.header {
+    margin-bottom: 22px;
+    font-size: 20px;
+    padding: 12px;
+    padding-left: 18px;
+    background-color: #ddca710f;
+    display: flex;
+    justify-content: space-between;
+    .x-icon{
+      font-weight: bold;
+    }
+  }
+  
+  
+  
+  .content-wrapper {
+    padding: 12px;
+  
+    .message {
+      margin-bottom: 30px;
+      font-size: 18px;
+      padding-left: 6px;
+    }
+  
+    .btn-primary, .btn-secondary {
+      margin-bottom: 17px;
+    }
+  }
+  

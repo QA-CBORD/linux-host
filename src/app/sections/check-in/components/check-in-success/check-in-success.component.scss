@@ -1,19 +1,12 @@
 @import 'tools';
 
-.divider {
-  border: 0.5px lightgray;
-}
+.final-order {
 
-.pending-checkin {
-
-  &__main-img {
-    margin-bottom: -30px;
-  }
-  
   &__title {
     letter-spacing: 0;
     text-align: center;
     outline: none;
+
     @include font-nunito-heavy(20px);
   }
 
@@ -21,67 +14,7 @@
     border-bottom: 1px solid $color-whisper;
   }
 
-  &__body-wrapper {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-  }
-
-  &__sub-header {
-    color: $color-charcoal;
-    text-align: center;
-    @include font-nunito-heavy(24px);
-  }
-
-  &__body {
-    color: $color-charcoal;
-
-    @include font-nunito-regular(15px);
-  }
-
-  &__colored-bg {
-    background-color: #d3d3d31f;
-    padding-top: 5px;
-
-    .small-content {
-      font-size: 11px;
-    }
-
-    .title-lbl {
-      margin: 18px 0px 5px 0px;
-    }
-    .padded {
-      padding: 0 20px;
-    }
-    .faded {
-      opacity: 0.6;
-    }
-
-    .section-divided {
-      display: flex;
-      justify-content: space-between;
-      margin: 25px 0px 5px 0px;
-    }
-
-    .address {
-      display: flex;
-      span {
-        margin-top: 3px;
-      }
-    }
-  }
-
   &__footer {
-    display: flex;
-    padding: 10px 10px 30px 10px;
-    justify-content: space-between;
+    padding: 10px 10px 10px;
   }
-}
-
-.btn-disabled {
-  opacity: 0.4;
-}
-
-span {
-  @include font-nunito-heavy(15px);
 }

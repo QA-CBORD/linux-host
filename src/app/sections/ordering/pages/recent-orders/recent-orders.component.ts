@@ -9,7 +9,6 @@ import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 
@@ -30,7 +29,6 @@ export class RecentOrdersComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly orderingService: OrderingService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly globalNav: GlobalNavService,
     private readonly loadingService: LoadingService,
     public readonly checkinService: CheckingServiceFacade,
     private readonly cartService: CartService,
@@ -39,10 +37,6 @@ export class RecentOrdersComponent implements OnInit {
   ngOnInit() {
     this.initOrders();
     this.initContentStrings();
-  }
-
-  ionViewWillEnter() {
-    this.showNavBar();
   }
 
   async ionViewDidEnter() {
@@ -62,7 +56,6 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   async onNavigateToCheckin(orderInfo) {
-    this.globalNav.hideNavBar();
     await this.checkinProcess.start(orderInfo, false);
   }
 
@@ -105,14 +98,6 @@ export class RecentOrdersComponent implements OnInit {
       ORDERING_CONTENT_STRINGS.noRecentOrders
     );
     await this.checkinService.getContentStringByName('pickup_info').toPromise();
-  }
-
-  private showNavBar() {
-    this.globalNav.isNavBarShown$.pipe(take(1)).subscribe(shown => {
-      if (!shown) {
-        this.globalNav.showNavBar();
-      }
-    });
   }
 
   async close() {

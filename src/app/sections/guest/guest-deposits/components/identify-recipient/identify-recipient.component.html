@@ -4,9 +4,9 @@
   [isToolbarShow]="true"
   backButtonIcon="close"
   backButtonTitle=""
-  class="shadow-header"
+  class="shadow-header browser-hidden"
 ></st-header>
-<ion-content class="container ion-padding-top">
+<ion-content class="container ion-padding-top browser-hidden">
   <div class="section ion-padding-top ion-padding-horizontal">
     <label class="ion-margin section__title">{{ contentString.subTitle }}</label>
     <ion-radio-group mode="md" [(ngModel)]="selectedRecipient">
@@ -81,7 +81,7 @@
     </ng-container>
   </div>
 </ion-content>
-<ion-footer class="ion-padding footer" no-border>
+<ion-footer class="ion-padding footer browser-hidden" no-border>
   <st-button
     [disabled]="
       !selectedRecipient || (selectedRecipient === someoneElseRecipient && !newRecipientFields?.valid) || isLoading

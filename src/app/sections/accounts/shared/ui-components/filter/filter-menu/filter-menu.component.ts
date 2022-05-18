@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 import { Observable } from 'rxjs';
@@ -6,9 +6,7 @@ import { Observable } from 'rxjs';
 import { DateUtilObject, getUniquePeriodName } from '../date-util';
 import { ALL_ACCOUNTS, CONTENT_STRINGS, TIME_PERIOD } from '../../../../accounts.config';
 import { UserAccount } from 'src/app/core/model/account/account.model';
-import { AccountService } from '../../../../services/accounts.service';
 import { TransactionService } from '../../../../services/transaction.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-filter-menu',
@@ -16,7 +14,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
   styleUrls: ['./filter-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterMenuComponent implements OnInit, OnDestroy {
+export class FilterMenuComponent implements OnInit {
   @Input() accounts: Observable<UserAccount[]>;
   @Input() periods: DateUtilObject[];
   @Input() activeAccountId: string;
@@ -26,19 +24,12 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly accountsService: AccountService,
-    private readonly transactionsService: TransactionService,
-    private readonly globalNav: GlobalNavService
+    private readonly transactionsService: TransactionService
   ) {}
 
   ngOnInit() {
     this.setContentStrings();
     this.initFilterState();
-    this.globalNav.hideNavBar();
-  }
-
-  ngOnDestroy(): void {
-    this.globalNav.showNavBar();
   }
 
   get isAllAccounts(): boolean {

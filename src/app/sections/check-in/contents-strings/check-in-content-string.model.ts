@@ -43,4 +43,32 @@ export class CheckingSuccessContentCsModel extends ContentStringModel {
     get doneBtn(): string {
       return this.content.done;
     }
+
+    get labelOrder(): string {
+      return this.content.labelOrder;
+    }
+
+    get labelDiscount(): string {
+      return this.content.lbl_discount;
+    }
+
+    get labelTax(): string {
+      return this.content.lbl_tax;
+    }
+
+    get labelTip(): string {
+      return this.content.lbl_tip;
+    }
+
+    get labelSubTotal(): string {
+      return this.content.lbl_subtotal;
+    }
+
+    get labelPickupFee(): string {
+      return this.content.lbl_pickupFee;
+    }
+
+    get labelDeliveryFee(): string {
+      return this.content.lbl_deliveryFee;
+    }
 }

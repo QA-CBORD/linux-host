@@ -31,10 +31,18 @@ export class GlobalNavService {
     );
   }
 
+  /**
+   * @description This method is only allowed to use within showhide-navbar-directive, section.page or guest-section.page.
+   * please refer to the showhide-navbar directive in shared folder.
+   */
   hideNavBar(): void {
     this._isNavBarShown$.next(false);
   }
 
+  /**
+   * @decrption This method is only allowed to use within showhide-navbar-directive, section.page or guest-section.page.
+   * please refer to the showhide-navbar directive in shared folder.
+   */
   showNavBar(): void {
     this._isNavBarShown$.next(true);
   }

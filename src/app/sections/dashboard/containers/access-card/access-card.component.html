@@ -49,7 +49,7 @@
       <ion-col class="card__student-name-wrapper" [size]="(mobileCredentialFacade.isEnabled$ | async ) ? 6 : 'auto'">
         <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
       </ion-col>
-      <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async)" size="6">
+      <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async) && !housingOnlyEnabled" size="6">
         <div class="card__student-wallet">
           <img *ngIf="( mobileCredentialFacade.uiIconUrl$ | async ) as imageUrl"
             mode="ios"
@@ -61,7 +61,7 @@
         </div>
       </ion-col>
     </ion-row>
-    <ion-row class="card__quick-actions-container">
+    <ion-row class="card__quick-actions-container" *ngIf="!housingOnlyEnabled">
       <ion-col class="card__quick-actions-wrapper" *ngIf="(getMyCardEnabled$ | async)">
         <ion-button mode="ios" class="card__quick-actions-btn" (click)="onScanCardClick()">
           <div class="card__quick-actions-btn-wrapper">

@@ -26,11 +26,12 @@ export class RangeComponent implements OnInit {
     this.price = this.calculatePrice({ lower: this.min, upper: this.max });
   }
 
-  handleRangeChange(value: RangeValueHash): void {
+  handleRangeChange(value: RangeValue): void {
     this.price = this.calculatePrice(value);
   }
 
-  private calculatePrice(value: RangeValueHash): string {
+  private calculatePrice(value: RangeValue): string {
+    value = value as RangeValueHash;
     if (value.upper === this.max) {
       return 'Any Price';
     }

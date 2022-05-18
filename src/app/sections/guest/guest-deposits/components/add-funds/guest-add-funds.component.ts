@@ -19,7 +19,6 @@ import { GuestAddFundsCsModel } from '@sections/guest/model/guest-add-funds.cont
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, Observable, of, throwError } from 'rxjs';
 import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
@@ -52,7 +51,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly globalNav: GlobalNavService,
     private readonly router: Router,
     private readonly loadingService: LoadingService,
     private readonly modalController: ModalController,
@@ -75,14 +73,9 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
     this.depositButtonLabel();
     this.setFormValidators();
     this.cdRef.detectChanges();
-  }
-
-  ionViewWillLeave() {
-    this.globalNav.showNavBar();
   }
 
   initForm() {
@@ -366,5 +359,3 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.paymentMethod.markAsPristine();
   }
 }
-
-

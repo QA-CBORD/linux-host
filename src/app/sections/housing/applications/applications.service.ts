@@ -278,7 +278,7 @@ export class ApplicationsService {
       .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
         QuestionReorder.sort(preferences, current, next, selectedValues.length)
       )
-      .map((value: QuestionReorderValue) => new FormControl(value));
+      .map((value: QuestionReorderValue) => new FormControl({value, disabled: question.readonly}));
 
     return new FormArray(controls);
   }
@@ -309,7 +309,7 @@ export class ApplicationsService {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
-    return new FormControl({ value, disabled: isSubmitted }, validators);
+    return new FormControl({ value, disabled: isSubmitted || question.readonly }, validators);
   }
 
   private _updateCreatedDateTime(key: number, patronApplication: PatronApplication): Observable<string> {

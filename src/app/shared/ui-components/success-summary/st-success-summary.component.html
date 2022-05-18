@@ -1,0 +1,62 @@
+<div class="final-order__body-wrapper">
+  <img src="/assets/images/big_check_confetti.svg" alt="big check order" class="final-order__main-img" />
+  <div class="final-order__sub-header">{{ labelOrderPlacedTitle }}</div>
+
+  <div class="final-order__body">
+    {{ labelOrderPlacedDescription }}
+  </div>
+
+  <div class="total">
+    <div *ngIf="orderDetailOptions !== null" class="total__item-wrapper">
+      <div class="label">{{ type | typeMessage: 'Time' | uppercase }}</div>
+      <div class="label--bold">
+        {{ orderDetailOptions | modifyPrepTime: orderType }}
+      </div>
+    </div>
+
+    <div *ngIf="orderType !== null" class="total__item-wrapper">
+      <div class="label">{{ type | typeMessage: 'Address' | uppercase }}</div>
+      <div class="label--bold">
+        <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
+        <span>{{ address | addressHeaderFormat }}</span>
+      </div>
+    </div>
+
+    <div class="total__summary">
+      <div *ngIf="subTotal" class="total__item">
+        {{ contentStrings.labelSubtotal | async }}
+        <span class="total__item">{{ subTotal | priceUnitsResolver: mealBased }}</span>
+      </div>
+
+      <div *ngIf="discount" class="total__item">
+        {{ contentStrings.labelDiscount | async }}
+        <span class="total__item">{{ discount | priceUnitsResolver: mealBased }}</span>
+      </div>
+
+      <div *ngIf="tip" class="total__item">
+        {{ contentStrings.labelTip | async }}
+        <span class="total__item">{{ tip | priceUnitsResolver: mealBased }}</span>
+      </div>
+
+      <div *ngIf="fee" class="total__item">
+        {{ type === 0  ? (contentStrings.labelPickupFee | async) : (contentStrings.labelDeliveryFee | async) }}
+        <span class="total__item">{{ fee | priceUnitsResolver: mealBased }}</span>
+      </div>
+
+      <div *ngIf="tax" class="total__item">
+        {{ contentStrings.labelTax | async }}
+        <span class="total__item">{{ tax | priceUnitsResolver: mealBased }}</span>
+      </div>
+
+      <div *ngIf="total" class="total__item total__item--bold16px">
+        <span class="total__item--capitalize">{{ contentStrings.labelTotal | async }}</span>
+        <span class="total__item--bold">{{ total | priceUnitsResolver: mealBased }}</span>
+      </div>
+
+      <div class="total__item ion-margin-top" [class.total__item--grid]="paymentMethod.length > 20">
+        <span class="total__item--capitalize">{{ contentStrings.labelPaymentMethod | async }}</span>
+        <span class="total__item--capitalize">{{ paymentMethod }}</span>
+      </div>
+    </div>
+  </div>
+</div>

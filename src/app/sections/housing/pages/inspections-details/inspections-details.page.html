@@ -1,0 +1,67 @@
+<ion-content class="ion-padding inspection-details__content" *ngIf="(inspectionDetails$ | async) as inspectionDetails"
+  #content>
+  <div class="inspection-details__actions">
+    <ion-button class="btn inspection-details__page-back" [routerLink]="['/patron/housing/dashboard']" routerDirection="back"
+      mode="ios" fill="clear">
+      Cancel
+    </ion-button>
+    <ion-button class="btn inspection-details__page-back btn-save" mode="ios" fill="clear" (click)="save(inspectionDetails)">
+      Save
+    </ion-button>
+  </div>
+
+  <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
+  <ion-segment  [(ngModel)]="section" scrollable>
+    <ion-segment-button [value]="room.name" *ngFor="let room of inspectionDetails.sections">
+      <ion-label>{{room.name}}</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="section" class="inspection-details__card">
+    <ng-container *ngFor="let room of inspectionDetails.sections">
+      <ng-container *ngSwitchCase="room.name">
+        <ion-card *ngFor="let item of room.items;let i = index;">
+          <ion-item lines="none">
+            <ion-label>
+              <h1>{{item.name}}</h1>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-select class="selectorCondition" [(ngModel)]="item.residentConditionKey" placeholder="select a condition" >
+              <ion-select-option *ngFor="let condition of conditions" [value]="+condition.value">{{condition.label}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+            <ion-item lines="none" *ngIf="item.staffConditionKey" >
+              <ion-label class="staffCondition">
+                The staff rated this item’s condition as <span class="__color">{{getConditionStaff(item.staffConditionKey)}}</span>
+              </ion-label>
+            </ion-item>       
+          <ion-item class="comments" lines="none">
+            <ion-label position="stacked">Add comments</ion-label>
+            <ion-textarea
+              (onfocus)="true"
+              class="textarea__control"
+              label="Add comments"
+              [(ngModel)]="item.comments"
+            >
+            </ion-textarea>
+         </ion-item>
+        </ion-card>
+      </ng-container>
+    </ng-container>
+    <st-stepper-footer>
+      <h2 class="inspection-details__title">Room Inspections</h2>
+      {{ countItemsLeft(inspectionDetails) }} Room{{countItemsLeft(inspectionDetails)==1? '':'s'}} Left
+      <ion-button
+        class="btn btn-submit"
+        mode="ios"
+        type="submit"
+        item-right
+        (click)="submitInspection(inspectionDetails)"
+        [disabled]="countItemsLeft(inspectionDetails)>0"
+      >
+        Submit
+      </ion-button>
+    </st-stepper-footer>
+  </div>
+</ion-content>

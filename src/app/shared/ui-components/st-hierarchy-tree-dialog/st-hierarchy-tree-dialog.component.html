@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-slides [pager]="false">
+  <ion-slides [options]="slidesConfig" [pager]="false">
     <ion-slide *ngFor="let slide of slides">
       <ion-toolbar mode="ios">
         <ion-buttons slot="start" *ngIf="slide.parentSlide" (click)="slideTo(slide.parentSlide?.slideIndex)">
@@ -17,7 +17,7 @@
           (click)="itemSelected(slide.parentSlideItem)">
           {{ slide.parentSlideItem?.name }}
         </ion-item>
-        <ion-item [ngClass]="{ 'selected': item.selected }" *ngFor="let item of slide.items"
+        <ion-item [ngClass]="{ 'selected': item.selected }" *ngFor="let item of slide.items | order_by:'name'"
           (click)="handleItemClick(item)">
           <div class="content_title">
             {{ item.name }}

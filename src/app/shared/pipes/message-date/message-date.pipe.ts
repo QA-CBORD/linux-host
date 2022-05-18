@@ -10,9 +10,11 @@ import { checkIsYesterday } from '@core/utils/general-helpers';
 export class MessageDatePipe implements PipeTransform {
   constructor(private datePipe: DatePipe) {}
 
-  transform({ sent_date }: SecureMessageInfo, args?: any): any {
+  transform(message: SecureMessageInfo): any {
+    if (!message?.sent_date) return '';
+
     const today: Date = new Date();
-    const sentDate: Date = new Date(sent_date);
+    const sentDate: Date = new Date(message.sent_date);
 
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {

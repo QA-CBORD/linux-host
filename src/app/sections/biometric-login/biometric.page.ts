@@ -10,7 +10,9 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 export class BiometricPage implements OnInit {
   loading: boolean = false;
   biometricConfig: { type: string; name: string } = null;
-  constructor(private readonly identityFacadeService: IdentityFacadeService, private readonly router: Router) {}
+  constructor(
+    private readonly identityFacadeService: IdentityFacadeService, 
+    private readonly router: Router) {}
 
   ngOnInit() {
     this.biometricConfig = this.router.getCurrentNavigation().extras.state.biometricConfig;
@@ -28,6 +30,7 @@ export class BiometricPage implements OnInit {
 
   private async openPinModal(isBiometric: boolean): Promise<void> {
     try {
+      // Displaying loading spinner while waiting for login response
       this.loading = true;
       this.loading = !!(await this.identityFacadeService.pinLoginSetup(isBiometric));
     } catch (e) {

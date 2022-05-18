@@ -8,13 +8,15 @@ import { SecureMessagingService } from './service';
 import { SecureMessagingApiService } from './service';
 import { SecureMessageRoutingModule } from './secure-message-routing.module';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
+import { SegureMessageChatPageComponent } from './pages/segure-message-chat.page/segure-message-chat.page.component';
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { MessageDatePipeModule } from '@shared/pipes/message-date';
-import { ConversationDatePipeModule } from '@shared/pipes/conversation-date';
+import { RouterModule } from '@angular/router';
+import { StConversationItemModule } from '@shared/ui-components';
 
-const declarations = [SecureMessagePage, SecureMessagePopoverComponent];
+const declarations = [SecureMessagePage, SegureMessageChatPageComponent, SecureMessagePopoverComponent];
 
 const providers: Provider[] = [SecureMessagingService, SecureMessagingApiService];
 
@@ -22,12 +24,13 @@ const imports = [
   CommonModule,
   FormsModule,
   IonicModule,
+  RouterModule,
   SecureMessageRoutingModule,
   StopPropagationModule,
   StPopoverLayoutModule,
   StHeaderModule,
   MessageDatePipeModule,
-  ConversationDatePipeModule
+  StConversationItemModule
 ];
 
 const entryComponents = [SecureMessagePopoverComponent];

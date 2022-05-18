@@ -5,7 +5,6 @@ import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNTS_VALIDATION_ERRORS,
   ACCOUNT_TYPES,
-  CONTENT_STRINGS,
   LOCAL_ROUTING,
   PAYMENT_SYSTEM_TYPE,
   PAYMENT_TYPE,
@@ -27,7 +26,6 @@ import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Browser } from '@capacitor/browser';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
@@ -36,7 +34,7 @@ import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
 
 export enum browserState {
-  FINISHED = 'browserFinished'
+  FINISHED = 'browserFinished',
 }
 @Component({
   selector: 'st-deposit-page',
@@ -87,14 +85,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly cdRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
-    private readonly globalNav: GlobalNavService,
     private readonly a11yService: AccessibilityService,
     private readonly commonService: CommonService
   ) {}
 
   ngOnInit() {
     this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
-    this.globalNav.hideNavBar();
     this.initForm();
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
@@ -103,7 +99,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
-    this.globalNav.showNavBar();
   }
 
   get isFreeFromDepositEnabled$(): Observable<boolean> {
@@ -118,7 +113,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       })
     );
   }
-
 
   get isAllowFreeFormBillMe$(): Observable<boolean> {
     return this.depositService.settings$.pipe(
@@ -141,7 +135,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  
   get billMeAmounts$(): Observable<string[]> {
     return this.depositService.settings$.pipe(
       map(settings => {
@@ -190,7 +183,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return JSON.parse(billMePaymentTypesEnabled).indexOf(PAYMENT_TYPE.CREDIT) !== -1;
   }
 
-  
   get minMaxOfAmmounts() {
     const minAmountbillme = this.getSettingByName(
       this.depositSettings,
@@ -251,7 +243,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.depositForm.get('mainInput').setValue(value.slice(0, index + 2));
     }
   }
-
 
   onFormSubmit() {
     if ((this.depositForm && this.depositForm.invalid) || this.isDepositing) return;
@@ -426,7 +417,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             })
           )
         )
-        
       )
       .subscribe(() => {
         this.defineDestAccounts(PAYMENT_TYPE.CREDIT);

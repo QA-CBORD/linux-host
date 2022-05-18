@@ -34,8 +34,9 @@ export class WorkOrderStateService  {
   public workOrderDetails: BehaviorSubject<WorkOrderDetails> = new BehaviorSubject<WorkOrderDetails>(this._defaultStateDetails);
   public workOrder: BehaviorSubject<WorkOrder> = new BehaviorSubject<WorkOrder>(this._defaultState);
   public workOrderFormDetails: BehaviorSubject<FormDefinition> = new BehaviorSubject<FormDefinition>(this._defaultStateFormDetails);
-  public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null)
+  public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null);
   public selectedFacility$: BehaviorSubject<NamedIdentity> = new BehaviorSubject<NamedIdentity>(null);
+  public workOrderImageBlob: BehaviorSubject<FormData> = new BehaviorSubject<FormData>(null);
   constructor() {
    
   }
@@ -78,5 +79,17 @@ export class WorkOrderStateService  {
 
   clearSelectedFacility() {
     this.selectedFacility$.next(null)
+  }
+
+  setWorkOrderImageBlob(value: FormData){
+    this.workOrderImageBlob.next(value)
+  }
+
+  destroyWorkOrderImageBlob(){
+    this.workOrderImageBlob.next(null);
+  }
+  
+  get WorkOrderImageBlob(){
+    return this.workOrderImageBlob;
   }
 }

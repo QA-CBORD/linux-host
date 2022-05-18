@@ -13,6 +13,7 @@ import { OrderInfo } from '@sections/ordering';
 const  IOSDevice  = registerPlugin<any>('IOSDevice');
 
 import { Browser } from '@capacitor/browser';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -22,7 +23,8 @@ export class ExternalPaymentService {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly accessibilityService: AccessibilityService
   ) {}
 
   /* USAePay */
@@ -35,13 +37,7 @@ export class ExternalPaymentService {
       zip(authTokenObservable, institutionInfoObservable).subscribe(
         ([authToken, institutionInfo]) => {
           const browser = this.openUSAePayPage(authToken, institutionInfo.shortName);
-          browser.on('loadstart').subscribe(event => {
-            this.handleUSAePayResponse(event, resolve, reject, browser);
-          });
-          browser.on('loaderror').subscribe(() => {
-            reject('Your request failed. Please try again.');
-            browser.close();
-          });
+          this.browserListeners(browser, resolve, reject);
         },
         error => {
           reject({ success: false, errorMessage: `The request failed: ${error}` });
@@ -102,7 +98,9 @@ export class ExternalPaymentService {
     const applePayBaseURL = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/applepay.php?`;
     switch (handleApplePay) {
       case ApplePay.ORDERS_WITH_APPLE_PAY: {
-        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <Partial<OrderInfo>>queryParams;
+        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <
+          Partial<OrderInfo>
+        >queryParams;
         return `${applePayBaseURL}order_total=${total || ''}&session_token=${authToken || ''}&sub_total=${subTotal ||
           ''}&fee=${useFee || ''}&tax=${tax || '0.00'}&discount=${discount || '0.00'}&pickup_fee=${pickupFee ||
           ''}&delivery_fee=${deliveryFee || ''}&tip=${tip || ''}&merchantId=${merchantId || ''}`;
@@ -167,6 +165,20 @@ export class ExternalPaymentService {
 
   private async onUSAePayCallBackRetrieve(message: string) {
     await this.toastService.showToast({ message });
+  }
+
+  private browserListeners(browser: InAppBrowserObject, resolve: (value: USAePayResponse | PromiseLike<USAePayResponse>) => void, reject: (reason?: any) => void) {
+    browser.on('loadstart').subscribe(event => {
+      this.accessibilityService.hideElementsByClassName();
+      this.handleUSAePayResponse(event, resolve, reject, browser);
+    });
+    browser.on('loaderror').subscribe(() => {
+      reject('Your request failed. Please try again.');
+      browser.close();
+    });
+    browser.on('exit').pipe(take(1)).subscribe(() => {
+      this.accessibilityService.hideElementsByClassName(false);
+    });
   }
 }
 export interface DepositInfo {

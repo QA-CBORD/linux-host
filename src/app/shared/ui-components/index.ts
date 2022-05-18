@@ -11,3 +11,4 @@ export * from './st-spinner';
 export * from './st-textarea-floating-label';
 export * from './pin';
 export * from './st-hierarchy-tree';
+export * from './st-conversation-item';

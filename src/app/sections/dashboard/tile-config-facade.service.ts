@@ -2,16 +2,19 @@ import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { DashboardService } from '@sections/dashboard/services';
 import { Observable, zip } from 'rxjs';
-import { ButtonConfig, TileWrapperConfig } from '@sections/dashboard/models';
+import { APP_PROFILES, ButtonConfig, TileWrapperConfig } from '@sections/dashboard/models';
 import { first, map, switchMap, tap } from 'rxjs/operators';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 
 @Injectable()
 export class TileConfigFacadeService extends ServiceStateFacade {
   private readonly key: string = 'DASHBOARD_TILES_SETTINGS';
 
   constructor(private readonly dashboardService: DashboardService,
-              private readonly storage: StorageStateService) {
+              private readonly storage: StorageStateService,
+              private readonly profileService: ProfileServiceFacade
+              ) {
     super();
   }
 
@@ -44,10 +47,12 @@ export class TileConfigFacadeService extends ServiceStateFacade {
       this.dashboardService.retrieveSettingsList(),
     );
 
+
     return this.makeRequestWithUpdatingStateHandler(configData, this.storage).pipe(
-      map(([config, settings]) => {
+      switchMap(async([config, settings]) => {
         const updatedBaseConfigs = this.dashboardService.getUpdatedTilesBaseConfig(settings);
-        const allowedConfigFromBE = updatedBaseConfigs.filter(({ isEnable }) => isEnable);
+        const currentProfile: APP_PROFILES = await this.profileService.determineCurrentProfile(settings.list); 
+        const allowedConfigFromBE = updatedBaseConfigs.filter(({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile));
 
         return this.isValidConfig(config)
           ? this.dashboardService.updateConfigByCashedConfig(allowedConfigFromBE, config)

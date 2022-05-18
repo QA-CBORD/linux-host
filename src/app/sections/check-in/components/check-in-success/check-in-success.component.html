@@ -1,44 +1,37 @@
-<ion-header class="pending-checkin__header" no-border>
+<ion-header class="final-order__header" no-border>
   <ion-toolbar mode="ios">
     <ion-buttons slot="start">
       <ion-button color="dark" (click)="goToRecentOrders()">
         <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title id="modal-mainTitle" tabindex="0" class="pending-checkin__title">Order #{{ checkNumber }}</ion-title>
+    <ion-title id="modal-mainTitle" tabindex="0" class="final-order__title"
+      >{{ contentStrings.labelOrder }} #{{ checkNumber }}</ion-title
+    >
   </ion-toolbar>
 </ion-header>
-<div class="divider"></div>
+
 <ion-content>
-  <div class="pending-checkin__body-wrapper">
-    <img src="/assets/images/big_check_checkin.svg" alt="big Order Pending" class="pending-checkin__main-img" />
-    <div class="pending-checkin__sub-header">{{ contentString.subtitle }} </div>
-    <div class="pending-checkin__body">
-      <p>{{ contentString.instructions }}</p>
-    </div>
-  </div>
-  <div class="pending-checkin__colored-bg">
-    <div class="padded">
-      <div class="title-lbl faded">{{ (orderDetailOptions$ | async ).orderType | typeMessage: 'DueTime' | uppercase }}</div>
-      <span class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</span>
-      <div class="title-lbl faded">{{ (orderDetailOptions$ | async ).orderType | typeMessage: 'Address' | uppercase }}</div>
-      <div class="text-dark address">
-        <img width="16" src="./assets/icon/location-pin.svg" alt="pin" />
-        <span>{{ data.storeAddress | addressHeaderFormat }}</span>
-      </div>
-      <div class="section-divided">
-        <span class="text-dark">{{ contentString.totalLbl }}</span>
-        <span class="text-dark">{{ total  | priceUnitsResolver: (menuInfo$ | async)?.mealBased || (order$ | async)?.mealBased }}</span>
-      </div>
-       <br/>
-    </div>
-  </div>
+  <st-success-summary
+    *ngIf="(order$ | async) as order"
+    [mealBased]="order.mealBased"
+    [labelOrderPlacedTitle]="contentStrings.subtitle"
+    [labelOrderPlacedDescription]="contentStrings.instructions"
+    [orderType]="data.orderTypes"
+    [type]="order.type"
+    [orderDetailOptions]="orderDetailOptions"
+    [address]="data.storeAddress"
+    [subTotal]="order.subTotal"
+    [total]="order.total"
+    [tip]="order.tip"
+    [tax]="order.tax"
+    [fee]="order.pickupFee || order.deliveryFee"
+    [discount]="order.discount"
+    [paymentMethod]="order.orderPayment[0]?.accountName"
+  ></st-success-summary>
 </ion-content>
-<ion-footer class="pending-checkin__footer" mode="ios">
-    <st-button (onClick)="goToRecentOrders()" buttonModifier="rectangular">
-      <span>
-        {{ contentString.doneBtn }}
-      
-      </span>
-    </st-button>
+<ion-footer class="final-order__footer" mode="ios">
+  <st-button (onClick)="goToRecentOrders()">
+    {{ contentStrings.doneBtn }}
+  </st-button>
 </ion-footer>

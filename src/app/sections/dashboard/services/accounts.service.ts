@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 
@@ -9,23 +9,21 @@ import { UserAccount } from 'src/app/core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { firstValueFrom } from '@shared/utils';
 
 @Injectable()
 export class AccountsService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
-    private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
   getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Observable<UserAccount[]> {
-    return this.commerceApiService
-      .getUserAccounts()
-      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
+    return this.commerceApiService.getUserAccounts().pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
   }
 
-  removeCreditCardAccount({ id: accountId }: UserAccount): Observable<Boolean> {
-    return this.commerceApiService.removeAccount({ accountId });
+  removeCreditCardAccount({ id: accountId }: UserAccount): Promise<Boolean> {
+    return firstValueFrom(this.commerceApiService.removeAccount({ accountId }));
   }
 
   transformStringToArray(value: string): Array<unknown> {
@@ -38,8 +36,7 @@ export class AccountsService {
     return this.settingsFacadeService.getSetting(Settings.Setting.DISPLAY_TENDERS).pipe(
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-        this.getUserAccounts(
-          [PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
+      this.getUserAccounts([PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
         ).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );

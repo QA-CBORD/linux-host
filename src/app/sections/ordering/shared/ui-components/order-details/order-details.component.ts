@@ -59,6 +59,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() tax: number;
   @Input() discount: number;
   @Input() total: number;
+  @Input() notes: string;
   @Input() orderPaymentName: string;
   @Input() deliveryFee: number;
   @Input() pickupFee: number;
@@ -187,7 +188,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.detailsForm = this.fb.group({
       [FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
-      [FORM_CONTROL_NAMES.note]: [''],
+      [FORM_CONTROL_NAMES.note]: [this.notes],
       [FORM_CONTROL_NAMES.phone]: [''],
     });
 

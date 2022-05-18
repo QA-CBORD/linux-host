@@ -136,6 +136,8 @@ export class CartService {
       minute: '2-digit',
     };
 
+    if(/Invalid Date/.test(String(date))) return;
+
     if (!timeZone) return Intl.DateTimeFormat('en-US', options).format(date);
     options.timeZone = timeZone;
     options.timeZoneName = 'short';
@@ -182,6 +184,7 @@ export class CartService {
     await this.getMerchantMenu(id, dueTime, orderType).then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }
+
 
   private async setInitialEmptyOrder(): Promise<void> {
     this._pendingOrderId = null;

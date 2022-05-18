@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   templateUrl: './scan-code-background.component.html',
@@ -8,13 +7,6 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 })
 
 export class ScanCodeBackground {
-  constructor(private readonly globalNav: GlobalNavService) {}
+  constructor() {}
 
-  ionViewWillEnter() {
-    this.globalNav.hideNavBar();
-  }
-
-  ionViewWillLeave() {
-    this.globalNav.showNavBar();
-  }
 }

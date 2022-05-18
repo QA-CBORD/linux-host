@@ -1,43 +1,52 @@
-<st-header [title]="contentStrings.labelCart | async"
-           [isTitleShow]="true"
-           [backButtonTitle]="''"
-           [backButtonIcon]="'close'"
-           [isToolbarShow]="true">
+<st-header
+  [title]="contentStrings.labelCart | async"
+  [isTitleShow]="true"
+  [backButtonTitle]="''"
+  [backButtonIcon]="'close'"
+  [isToolbarShow]="true"
+  class="browser-hidden"
+>
 </st-header>
 
-<ion-content>
+<ion-content class="browser-hidden">
   <st-order-details
-          [readonly]="false"
-          [orderPayment]="(order$ | async).orderPayment"
-          [accounts]="accounts$ | async"
-          [tax]="(order$ | async).tax"
-          [discount]="(order$ | async).discount"
-          [accInfoList]="accountInfoList$ | async"
-          [isExistingOrder]="isExistingOrder"
-          [tip]="(order$ | async).tip"
-          [subTotal]="(order$ | async).subTotal"
-          [pickupFee]="(order$ | async).pickupFee"
-          [deliveryFee]="(order$ | async).deliveryFee"
-          [total]="(order$ | async).total"
-          [orderItems]="(order$ | async).orderItems"
-          [orderDetailOptions]="orderDetailOptions$ | async"
-          [orderTypes]="orderTypes$ | async"
-          [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
-          [applePayEnabled]="applePayEnabled$ | async"
-          [mealBased]="(order$ | async).mealBased"
-          [merchantSettingsList]="(merchant$ | async).settings.list"
-          [addressModalConfig]="(addressModalSettings$ | async)"
-          (onFormChange)="onCartStateFormChanged($event)"
-          (onOrderItemRemovedId)="removeOrderItem($event)"
-          (onOrderItemClicked)="onOrderItemClicked($event)"
-          (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
-          (onOrderTipChanged)="onOrderTipChanged($event)"
-          #orderDetails>
-    <st-button (onClick)="onSubmit()" [disabled]='placingOrder' [isDisabled]="!cartFormState?.valid && !isExistingOrder">
-      {{(isOrderASAP | async)
-            ? (contentStrings.buttonPlaceOrder | async)
-            : (contentStrings.buttonScheduleOrder | async)}}
-      {{(order$ | async).total | priceUnitsResolver: (order$ | async).mealBased}}
+    [readonly]="false"
+    [orderPayment]="(order$ | async).orderPayment"
+    [accounts]="accounts$ | async"
+    [tax]="(order$ | async).tax"
+    [discount]="(order$ | async).discount"
+    [accInfoList]="accountInfoList$ | async"
+    [isExistingOrder]="isExistingOrder"
+    [tip]="(order$ | async).tip"
+    [subTotal]="(order$ | async).subTotal"
+    [pickupFee]="(order$ | async).pickupFee"
+    [deliveryFee]="(order$ | async).deliveryFee"
+    [notes]="(order$ | async).notes"
+    [total]="(order$ | async).total"
+    [orderItems]="(order$ | async).orderItems"
+    [orderDetailOptions]="orderDetailOptions$ | async"
+    [orderTypes]="orderTypes$ | async"
+    [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
+    [applePayEnabled]="applePayEnabled$ | async"
+    [mealBased]="(order$ | async).mealBased"
+    [merchantSettingsList]="(merchant$ | async).settings.list"
+    [addressModalConfig]="addressModalSettings$ | async"
+    (onFormChange)="onCartStateFormChanged($event)"
+    (onOrderItemRemovedId)="removeOrderItem($event)"
+    (onOrderItemClicked)="onOrderItemClicked($event)"
+    (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
+    (onOrderTipChanged)="onOrderTipChanged($event)"
+    #orderDetails
+  >
+    <st-button
+      (onClick)="onSubmit()"
+      [disabled]="placingOrder"
+      [isDisabled]="!cartFormState?.valid && !isExistingOrder"
+    >
+      {{
+        (isOrderASAP | async) ? (contentStrings.buttonPlaceOrder | async) : (contentStrings.buttonScheduleOrder | async)
+      }}
+      {{ (order$ | async).total | priceUnitsResolver: (order$ | async).mealBased }}
     </st-button>
   </st-order-details>
 </ion-content>

@@ -5,109 +5,100 @@
         <div *ngSwitchCase="'byExactId'">
           <h4 class="serch-by__header">Search by exact match of ID#</h4>
           <div class="input__control">
-            <st-input-floating-label
-              label="ID#"
-              formControlName="input1"
-              [control]="searchForm.get('input1')"
-              type="text"
-              idd="search_1">
+            <st-input-floating-label label="ID#" formControlName="input1" [control]="searchForm.get('input1')"
+              type="text" idd="search_1">
             </st-input-floating-label>
           </div>
         </div>
         <div *ngSwitchCase="'byPartialPreferredFirstLast'">
           <h4 class="serch-by__header">Search by preferred first and last name</h4>
           <div class="input__control">
-            <st-input-floating-label
-              label="Preferred First Name"
-              formControlName="input1"
-              [control]="searchForm.get('input1')"
-              type="text"
-              idd="search_1">
+            <st-input-floating-label label="Preferred First Name" formControlName="input1"
+              [control]="searchForm.get('input1')" type="text" idd="search_1">
             </st-input-floating-label>
           </div>
 
           <div class="input__control">
-            <st-input-floating-label
-              label="Last Name"
-              formControlName="input2"
-              [control]="searchForm.get('input2')"
-              type="text"
-              idd="search_2">
+            <st-input-floating-label label="Last Name" formControlName="input2" [control]="searchForm.get('input2')"
+              type="text" idd="search_2">
             </st-input-floating-label>
           </div>
         </div>
-        <div *ngSwitchCase="'byPartialLastFirst'"> 
+        <div *ngSwitchCase="'byPartialLastFirst'">
           <h4 class="serch-by__header">Search by last and first name</h4>
           <div class="input__control">
-            <st-input-floating-label
-              label="Last Name"
-              formControlName="input1"
-              [control]="searchForm.get('input1')"
-              type="text"
-              idd="search_1">
+            <st-input-floating-label label="Last Name" formControlName="input1" [control]="searchForm.get('input1')"
+              type="text" idd="search_1">
             </st-input-floating-label>
           </div>
 
           <div class="input__control">
-            <st-input-floating-label
-              label="First Name"
-              formControlName="input2"
-              [control]="searchForm.get('input2')"
-              type="text"
-              idd="search_2">
+            <st-input-floating-label label="First Name" formControlName="input2" [control]="searchForm.get('input2')"
+              type="text" idd="search_2">
             </st-input-floating-label>
           </div>
         </div>
         <div *ngSwitchCase="'byExactAlternateId'">
           <h4 class="serch-by__header">Search by exact match of alternate ID#</h4>
           <div class="input__control">
-            <st-input-floating-label
-              label="Alternate ID#"
-              formControlName="input1"
-              [control]="searchForm.get('input1')"
-              type="text"
-              idd="search_1">
+            <st-input-floating-label label="Alternate ID#" formControlName="input1" [control]="searchForm.get('input1')"
+              type="text" idd="search_1">
             </st-input-floating-label>
           </div>
         </div>
         <div *ngSwitchCase="'byPartialEmail'">
           <h4 class="serch-by__header">Search by university email</h4>
           <div class="input__control">
-            <st-input-floating-label
-              label="Email"
-              formControlName="input1"
-              [control]="searchForm.get('input1')"
-              type="text"
-              idd="search_1">
+            <st-input-floating-label label="Email" formControlName="input1" [control]="searchForm.get('input1')"
+              type="text" idd="search_1">
             </st-input-floating-label>
           </div>
         </div>
       </ng-container>
       <div>
-        <ion-button
-          expand="block"
-          color="primary"
-          mode="ios"
-          (click)="searchRoommates(options)"
+        <ion-button expand="block" color="primary" mode="ios" (click)="searchRoommates(options)"
           [disabled]="!searchForm.valid || isApplicationSubmitted()">
           Search
         </ion-button>
       </div>
     </form>
   </div>
-  <div
-    *ngIf="(requestedRoommates$ | async) as requestedRoommates"
-    class="roommate-requested__container">
-    <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
-    <div *ngFor="let roommate of requestedRoommates">
-      <ion-card>
-        <ion-card-content>{{ roommate.firstName }} {{ roommate.lastName }}</ion-card-content>
-        <ion-footer class="status">
-          <ion-row>
-            <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-          </ion-row>
-        </ion-footer>
-      </ion-card>
+  <div *ngIf="(requestedRoommates$ | async) as requestedRoommates" class="roommate-requested__container">
+    <div *ngIf="(searchOptions$ | async) as options">
+      <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
+      <div *ngFor="let roommate of requestedRoommates">
+        <ng-container [ngSwitch]="options.showOptions">
+          <ion-card *ngSwitchCase="OptionsName.FullName">
+            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
+              roommate.lastName}}</ion-card-content>
+              <ion-footer class="status">
+                <ion-row>
+                  <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+                </ion-row>
+              </ion-footer>
+          </ion-card>
+
+          <ion-card *ngSwitchCase="OptionsName.PreferredName">
+            <ion-card-content>{{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName
+              : roommate.preferredName }} {{ roommate.lastName}}</ion-card-content>
+              <ion-footer class="status">
+                <ion-row>
+                  <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+                </ion-row>
+              </ion-footer>
+          </ion-card>
+
+          <ion-card *ngSwitchCase="OptionsName.FullNameDOB">
+            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
+              roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}</ion-card-content>
+              <ion-footer class="status">
+                <ion-row>
+                  <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+                </ion-row>
+              </ion-footer>
+          </ion-card>
+        </ng-container>
+      </div>
     </div>
-  </div> 
+  </div>
 </ion-content>

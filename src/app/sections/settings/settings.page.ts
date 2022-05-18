@@ -12,6 +12,8 @@ import { from, Observable, of } from 'rxjs';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserInfo } from '@core/model/user';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
+import { APP_PROFILES } from '@sections/dashboard/models';
 import { App } from '@capacitor/app';
 
 @Component({
@@ -34,8 +36,9 @@ export class SettingsPage implements OnInit {
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFactory: SettingsFactoryService,
-    private readonly route: ActivatedRoute
-  ) {}
+    private readonly route: ActivatedRoute,
+    private readonly profileService: ProfileServiceFacade
+  ) { }
 
   ngOnInit() {
     this.settingSections = this.settingsFactory.getSettings();
@@ -48,7 +51,7 @@ export class SettingsPage implements OnInit {
 
   //couldnt get photo upload route to work correctly, still trying to fix
   async navigateToPhotoUpload() {
-    if (!(await this.settingsFactory.photoUploadEnabled$.toPromise())) {
+    if (!(await this.settingsFactory.photoUploadEnabled$.toPromise()) || (await this.profileService.determineCurrentProfile$().toPromise()) == APP_PROFILES.housing) {
       return;
     }
     this.router.navigate([PATRON_NAVIGATION.settings, LOCAL_ROUTING.photoUpload]);

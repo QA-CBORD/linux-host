@@ -54,10 +54,26 @@ export class HousingProxyService {
   //   );
   // }
 
+  putInspection<T>(apiUrl: string, body: any): Observable<T> {
+    return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+      this._http.put<T>(apiUrl, body, {
+        headers: headers.set('Content-Type', 'application/json'),
+      }),
+    );
+  }
+
   post<T>(apiUrl: string, body: any): Observable<T> {
     return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
       this._http.post<T>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
+      }),
+    );
+  }
+
+  postImage<T>(apiUrl: string, body: any): Observable<T> {
+    return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+      this._http.post<T>(apiUrl, body, {
+        headers
       }),
     );
   }

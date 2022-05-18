@@ -4,7 +4,7 @@
       <h3 class="form__secondary-header">Upload a photo</h3>
       <div class="container__image">
         <ng-container *ngIf="(image$ | async) as image; else defaultImage" witdh="95%" heigth=95% >
-          <ion-img class="image" [(src)]="image"></ion-img>
+          <ion-img class="image" [src]="image"></ion-img>
         </ng-container>
         <ng-template #defaultImage >
           <div class="label"> New photo</div>
@@ -18,7 +18,7 @@
     </ng-container>
     <ng-container *ngSwitchCase="'FACILITY'">
       <div item-content>
-        <st-hierarchy-tree [isDisable]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
+        <st-hierarchy-tree [label]="getLabel(question)" [isDisable]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
       </div>
     </ng-container>
 
@@ -29,7 +29,7 @@
       class="question__item question__control"
       type="text"
       [control]="parentGroup.get(question['name'])"
-      [label]="question.label"
+      [label]="getLabel(question)"
       [idd]="question['name']"
       [formControlName]="question['name']"
       [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
@@ -48,7 +48,7 @@
     [formControlName]="question['name']"
     class="question__item question__control"
     [idd]="question['name']"
-    [label]="question.label"
+    [label]="getLabel(question)"
     title="Type your message here..."
     rows="3"
     [stEmptyFormControl]="parentGroup.get(question['name'])"
@@ -162,7 +162,7 @@
     </ng-container>
 
     <div *ngSwitchCase="'radio-group'" class="question__section">
-      <h3 class="form__secondary-header">{{ question.label }}</h3>
+      <h3 class="form__secondary-header">{{ getLabel(question) }}</h3>
 
       <st-control-errors
         class="control-hint--no-indent"
@@ -209,7 +209,7 @@
                     </ion-card-content>
                     
                     <ion-card-content *ngSwitchCase="'preferredNameLast'">
-                      {{ roommate.preferredName == 'null' ? '' : roommate.preferredName }} {{ roommate.lastName}}
+                      {{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName }} {{ roommate.lastName}}
                     </ion-card-content>
         
                     <ion-card-content *ngSwitchCase="'fullNameDOB'">

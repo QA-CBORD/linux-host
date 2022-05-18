@@ -12,8 +12,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-
 @Component({
   selector: 'st-ordering.page',
   templateUrl: './ordering.page.html',
@@ -29,7 +27,6 @@ export class OrderingPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly cartService: CartService,
-    private readonly globalNav: GlobalNavService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly orderingService: OrderingService,
     private readonly routingService: NavigationService
@@ -38,16 +35,11 @@ export class OrderingPage implements OnInit {
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
     this.initContentStrings();
-    this.handleActiveMerchantInRoute();
   }
 
   async ionViewDidEnter() {
-    this.globalNav.showNavBar();
+    this.handleActiveMerchantInRoute();
     await this.loadingService.closeSpinner();
-  }
-
-  async ionViewWillEnter() {
-    this.globalNav.showNavBar();
   }
 
   merchantClickHandler(merchantInfo: MerchantInfo) {
@@ -87,19 +79,23 @@ export class OrderingPage implements OnInit {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
     this.merchantService.orderTypes = orderTypes;
+    this.cartService.removeOrderDetailsOptions();
 
-    const modal = await this.modalController.create({
-      component: OrderOptionsActionSheetComponent,
-      cssClass,
-      componentProps: {
-        orderTypes,
-        footerButtonName,
-        merchantId,
-        storeAddress,
-        settings,
-        timeZone,
+    const modal = await this.modalController.create(
+      {
+        component: OrderOptionsActionSheetComponent,
+        cssClass,
+        componentProps: {
+          orderTypes,
+          footerButtonName,
+          merchantId,
+          storeAddress,
+          settings,
+          timeZone,
+        },
       },
-    });
+      true
+    );
 
     modal.onDidDismiss().then(({ data }) => {
       if (data) {

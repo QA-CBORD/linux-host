@@ -109,6 +109,10 @@ export namespace Settings {
     GUEST_AMOUNTS = 'get.deposit.guest_amounts',
     GUEST_MAXIMUM = 'get.deposit.guest_maximum',
     GUEST_MINIMUM = 'get.deposit.guest_minimum',
+    ENABLE_HOUSING_ONLY = 'get.feature.enable_housing_only',
+    HOUSING_ENABLE_HOUSING = 'get.housing.enable_housing',
+    HOUSING_ENABLE_SECURE_MESSAGING = 'get.housing.enable_secure_messaging',
+    ENABLE_CREDIT_CARD_PAYMENT = 'get.feature.enable_credit_card_payments',
   }
 }
 

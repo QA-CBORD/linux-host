@@ -29,7 +29,7 @@
     border: 1px solid $color-light-gray;
     border-radius: 8px;
     -webkit-appearance: none;
-    padding-left: 10px;
+    margin-top: 25px;
 
     &:focus,
     &:focus-within {
@@ -62,7 +62,6 @@
     position: absolute;
     top: 0;
     left: 0;
-    padding: 15px 0 0 13px;
     transition: all 200ms;
     opacity: 0.6;
     z-index: 2;
@@ -82,6 +81,7 @@
 }
 .input__wrapper{
   display: flex;
+  height: 100%;
 }
 
 .facility-btn-ion-icon{
@@ -91,4 +91,9 @@
   left: -33px;
   padding: 0;
   width: 30px;
+}
+
+.input-select-facility{
+  margin: 1em 0 1em;
+  padding: 0.7em 0;
 }

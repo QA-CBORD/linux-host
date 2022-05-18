@@ -78,9 +78,14 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this.dispatchStateChanges();
   }
 
+  protected async getStateFromStorage(): Promise<void> {
+    this.state = await this.getStateFromLocalStorage();
+  }
+
   protected async initState(): Promise<void> {
     this.state = await this.getStateFromLocalStorage();
     this.isStateInitialized = true;
+    await this.setStateToStorage();
   }
 
   protected async setStateToStorage(): Promise<void> {

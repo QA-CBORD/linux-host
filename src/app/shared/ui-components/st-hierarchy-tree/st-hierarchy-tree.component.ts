@@ -19,7 +19,7 @@ export class StHierarcheTreeComponent implements OnDestroy  {
   @Input() public lookups: LookUpItem[];
   @Input() public allowParent: boolean;
   @Input() public isDisable: boolean;
-
+  @Input() public label: string;
   constructor(
     public modalCtrl: ModalController,
     public _workOrderStateService: WorkOrderStateService,

@@ -1,0 +1,20 @@
+@import 'tools';
+
+.final-order {
+
+  &__title {
+    letter-spacing: 0;
+    text-align: center;
+    outline: none;
+
+    @include font-nunito-heavy(20px);
+  }
+
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__footer {
+    padding: 10px 10px 10px;
+  }
+}

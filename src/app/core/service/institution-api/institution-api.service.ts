@@ -48,6 +48,20 @@ export class InstitutionApiService {
       .pipe(map(({ response }) => response));
   }
 
+  getInstitutionDataByShortName(shortName: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
+    let params = { shortName } as { shortName: string; sessionId?: string };
+    const useSession = useSessionId === false ? useSessionId : true;
+
+    if (sessionId) {
+      params = { ...params, sessionId };
+    }
+    const queryConfig = new RPCQueryConfig('retrieveByShortName', params, useSession);
+
+    return this.http
+      .post<MessageResponse<Institution>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response));
+  }
+
   getInstitutionPhotoById(
     institutionId: string,
     sessionId?: string,

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
-import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '@sections/ordering/shared/models';
+import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { ActivatedRoute } from '@angular/router';
 import {
   LOCAL_ROUTING,
@@ -10,7 +10,7 @@ import {
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
-import { filter, first, map, take } from 'rxjs/operators';
+import { first, map, take } from 'rxjs/operators';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -19,7 +19,6 @@ import { FullMenuPopoverComponent } from './full-menu-popover';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { OverlayEventDetail } from '@ionic/core';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
@@ -49,7 +48,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService
   ) {}
 
@@ -91,12 +89,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     );
   }
 
-  ionViewDidEnter(){
-    this.globalNav.hideNavBar();
-  }
-
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
     this.menuItems$ = this.cartService.menuItems$;
     const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
     openTimeSlot && this.openOrderOptions();
@@ -136,7 +129,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
-        showNavBarOnDestroy: false,
         orderTypes,
         footerButtonName,
         merchantId,
@@ -152,7 +144,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   private async onDismissOrderDetails({ data }: OverlayEventDetail): Promise<void> {
-    this.globalNav.hideNavBar();
     if (!data) return;
 
     const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();

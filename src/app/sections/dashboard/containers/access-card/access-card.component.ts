@@ -1,14 +1,17 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { catchError, first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { PATRON_NAVIGATION, Settings, User } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
+import { ProfileServiceFacade } from '@shared/services/app.profile.services';
+import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
+import { firstValueFrom } from '@shared/utils';
 
 @Component({
   selector: 'st-access-card',
@@ -33,6 +36,7 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   isLoadingPhoto: boolean = true;
   userInfo: string;
   mobileCredentialAvailable: boolean = false;
+  housingOnlyEnabled: boolean;
 
   constructor(
     private readonly accessCardService: AccessCardService,
@@ -40,8 +44,10 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly changeRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
-    public readonly mobileCredentialFacade: MobileCredentialFacade
-  ) {}
+    public readonly mobileCredentialFacade: MobileCredentialFacade,
+    private readonly profileService: ProfileServiceFacade,
+    private readonly barcodeFacadeService: BarcodeFacadeService
+  ) { }
 
   ngOnDestroy(): void {
     this.mobileCredentialFacade.onDestroy();
@@ -51,10 +57,12 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     this.setInstitutionData();
     this.getFeaturesEnabled();
     this.getUserName();
+    this.setHousingOnlyEnabled();
   }
 
   ngAfterViewInit(): void {
     this.mobileCredentialFacade.setCredentialStateChangeListener(this);
+    this.loadScanCardInputs();
   }
 
   onCredentialStateChanged(): void {
@@ -80,6 +88,12 @@ export class AccessCardComponent implements OnInit, OnDestroy {
           this.changeRef.detectChanges();
         }
       );
+  }
+
+  async loadScanCardInputs() {
+    firstValueFrom(this.barcodeFacadeService.getUserSetting(User.Settings.CASHLESS_KEY));
+    firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.SOA_KEY));
+    firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE));
   }
 
   private setInstitutionData() {
@@ -119,5 +133,10 @@ export class AccessCardComponent implements OnInit, OnDestroy {
           this.userInfo = JSON.stringify(response);
         }
       );
+  }
+
+
+  private async setHousingOnlyEnabled(){
+    this.housingOnlyEnabled = await this.profileService.housingOnlyEnabled();
   }
 }

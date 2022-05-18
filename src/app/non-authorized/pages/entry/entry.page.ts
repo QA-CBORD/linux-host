@@ -3,7 +3,6 @@ import { ROLES } from './../../../app.global';
 import { ANONYMOUS_ROUTES } from './../../non-authorized.config';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { App } from '@capacitor/app';
@@ -22,7 +21,6 @@ export class EntryPage implements OnInit {
 
   constructor(
     private readonly route: Router,
-    private readonly authFacadeService: AuthFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly loadingService: LoadingService,
@@ -43,11 +41,8 @@ export class EntryPage implements OnInit {
     if (logoutUser) {
       await this.sessionFacadeService.logoutUser(false);
     }
-
-    await this.authFacadeService
-      .authenticateSystem$()
-      .pipe(take(1))
-      .toPromise();
+    // Reset services url to current environment after logout and before any other service call
+    await this.environmentFacadeService.resetEnvironmentAndCreateSession(true);
     this.loadingService.closeSpinner();
   }
 

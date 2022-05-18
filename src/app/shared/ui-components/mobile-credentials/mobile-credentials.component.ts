@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GlobalNavService } from '../st-global-navigation/services/global-nav.service';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { TermsContent } from './model/android/android-credential-content-strings.model';
 
@@ -17,7 +16,6 @@ export class MobileCredentialsComponent implements OnInit {
   @Input() closeNavbar: boolean = true;
 
   constructor(
-    private globalNav: GlobalNavService,
     private readonly modalCtrl: ModalController,
     private popoverCtrl: PopoverController
   ) {}
@@ -26,7 +24,6 @@ export class MobileCredentialsComponent implements OnInit {
     setTimeout(() => {
       if (this.terms) {
         this.title = this.terms.title;
-        this.globalNav.hideNavBar();
       }
     });
   }
@@ -37,12 +34,6 @@ export class MobileCredentialsComponent implements OnInit {
 
   onDecline(): void {
     this.modalCtrl.dismiss({ termsAccepted: false }).catch(() => this.popoverCtrl.dismiss({ action: null }));
-  }
-
-  ngOnDestroy(): void {
-    if (this.closeNavbar) {
-      this.globalNav.showNavBar();
-    }
   }
 
   onButtonClicked(): void {

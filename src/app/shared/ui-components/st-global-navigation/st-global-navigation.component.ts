@@ -1,20 +1,20 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
-import { Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../../app.global';
-import { Observable } from 'rxjs';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { Observable, Subscription } from 'rxjs';
+import { ModalController, NavController, PopoverController } from '@ionic/angular';
 import { GlobalNavService } from './services/global-nav.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'st-global-navigation',
   templateUrl: './st-global-navigation.component.html',
   styleUrls: ['./st-global-navigation.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StGlobalNavigationComponent implements OnInit {
- 
+export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   _isListShown: boolean = false;
 
   set isListShown(value: boolean) {
@@ -27,15 +27,27 @@ export class StGlobalNavigationComponent implements OnInit {
   }
 
   navElements$: Observable<NavigationBottomBarElement[]>;
+  navElements: NavigationBottomBarElement[] = [];
   visibleAmountOfElements: number = 5;
+  suscription: Subscription;
 
   constructor(
     private readonly navigationSettingsService: NavigationFacadeSettingsService,
-              private readonly router: Router,
+    private readonly router: Router,
+    private readonly navCtrl: NavController,
     private readonly popoverController: PopoverController,
     private readonly modalController: ModalController,
     private readonly globalNav: GlobalNavService
-  ) {}
+  ) {
+    this.suscription = this.router.events
+      .pipe(filter(e => e instanceof NavigationStart))
+      .subscribe(async (e: NavigationStart) => {
+        try {
+          await this.popoverController.dismiss();
+          await this.modalController.dismiss();
+        } catch (error) {}
+      });
+  }
 
   ngOnInit() {
     this.navElements$ = this.navigationSettingsService.settings$;
@@ -46,19 +58,15 @@ export class StGlobalNavigationComponent implements OnInit {
   }
 
   async navigate(url: PATRON_NAVIGATION | string): Promise<void> {
-    try {
-      await this.popoverController.dismiss();
-    } catch (e) {
-      console.log('Global Navigation - No active popover')
-    }
-
-    try {
-      await this.modalController.dismiss();
-    } catch (e){
-      console.log('Global Navigation - No active modal')
-    }
-
     this.isListShown = false;
-    await this.router.navigate([url]);
+    await this.navCtrl.navigateForward([url]);
+  }
+
+  ngOnDestroy(): void {
+    this.suscription.unsubscribe();
+  }
+
+  getUrl(url: string) {
+    return `/${url}`;
   }
 }

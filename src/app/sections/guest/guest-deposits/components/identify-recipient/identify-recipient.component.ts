@@ -11,7 +11,6 @@ import { GuestDepositsService } from '@sections/guest/services/guest-deposits.se
 import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { StInputFloatingLabelComponent } from '@shared/ui-components/st-input-floating-label';
 import { ROLES } from 'src/app/app.global';
 import { IdentifyRecipientCsModel } from './identity-recipient.content.string';
@@ -53,7 +52,6 @@ export class IdentifyRecipientComponent implements OnInit {
     private readonly router: Router,
     private activatedRoute: ActivatedRoute,
     private readonly toastService: ToastService,
-    private readonly globalNav: GlobalNavService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly commonService: CommonService
   ) {
@@ -81,14 +79,6 @@ export class IdentifyRecipientComponent implements OnInit {
     });
     this.contentString = this.commonService.getString(ContentStringCategory.identifyRecipient);
     this.someoneElseRecipient.nickname = this.contentString.addOtherRecipientText;
-  }
-
-  ionViewWillEnter() {
-    this.globalNav.hideNavBar();
-  }
-
-  ionViewWillLeave() {
-    this.globalNav.showNavBar();
   }
 
   getNextField(index: number) {

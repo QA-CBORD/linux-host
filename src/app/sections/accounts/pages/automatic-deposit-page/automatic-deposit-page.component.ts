@@ -31,7 +31,6 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
@@ -76,12 +75,9 @@ export class AutomaticDepositPageComponent {
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly externalPaymentService: ExternalPaymentService,
-    private readonly userFacadeService: UserFacadeService,
-    private readonly globalNav: GlobalNavService
-  ) {}
+    private readonly userFacadeService: UserFacadeService  ) {}
 
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
     this.showContent = true;
     this.getAccounts();
     this.cdRef.detectChanges();
@@ -89,7 +85,6 @@ export class AutomaticDepositPageComponent {
   }
 
   ionViewWillLeave() {
-    this.globalNav.showNavBar();
     this.deleteForm();
     this.showContent = false;
     this.sourceSubscription.unsubscribe();

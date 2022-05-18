@@ -2,6 +2,8 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { IonicModule } from "@ionic/angular";
 import { AccountsService } from "@sections/dashboard/services";
+import { ConfirmModule } from "@shared/confirm-modal/confirm-modal.module";
+import { StButtonModule } from "@shared/ui-components/st-button";
 import { StHeaderModule } from "@shared/ui-components/st-header/st-header.module";
 import { CreditCardMgmtComponent } from "./credit-card-mgmt/credit-card-mgmt.component";
 
@@ -11,7 +13,9 @@ import { CreditCardMgmtComponent } from "./credit-card-mgmt/credit-card-mgmt.com
     imports: [
       CommonModule,
       IonicModule,
-      StHeaderModule
+      StHeaderModule,
+      ConfirmModule,
+      StButtonModule,
     ],
     declarations: [
         CreditCardMgmtComponent

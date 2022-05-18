@@ -28,7 +28,6 @@ import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccou
 import { UserAccount } from '@core/model/account/account.model';
 import { PopoverController } from '@ionic/angular';
 import { AccountType, Settings } from '../../../../app.global';
-import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
@@ -37,8 +36,6 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { ToastService } from '@core/service/toast/toast.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
@@ -47,7 +44,10 @@ import { buttons as Buttons } from '@core/utils/buttons.config';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
-import  { Browser } from '@capacitor/browser';
+import { Browser } from '@capacitor/browser';
+import { firstValueFrom } from '@shared/utils';
+import { NonCheckingService } from './services/non-checking.service';
+import { CART_ROUTES } from './cart-config';
 
 @Component({
   selector: 'st-cart',
@@ -88,18 +88,16 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
     private readonly popoverController: PopoverController,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
-    private readonly globalNav: GlobalNavService,
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
-    private readonly checkinProcess: CheckingProcess
+    private readonly checkinProcess: CheckingProcess,
+    private readonly nonCheckingService: NonCheckingService
   ) {}
 
   ionViewWillEnter() {
-    this.globalNav.hideNavBar();
     this.accounts$ = this.getAvailableAccounts().then(accounts => {
       if (this.isExistingOrder) this.orderDetail.initAccountSelected(accounts);
       return accounts;
@@ -131,14 +129,12 @@ export class CartComponent implements OnInit, OnDestroy {
     this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
-    this.globalNav.hideNavBar();
     this.subscribe2NetworkChanges();
   }
 
   subscribe2NetworkChanges() {
     this.networkSubcription = this.connectionService
       .networkStatus()
-      .pipe(debounceTime(300))
       .subscribe(isOnline => (this.isOnline = isOnline));
   }
 
@@ -257,29 +253,26 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const modal = await this.modalController.create({
-      component: SuccessModalComponent,
-      componentProps: {
-        tax,
-        discount,
-        total,
-        subTotal,
-        deliveryFee,
-        pickupFee,
-        tip,
-        checkNumber,
-        accountName: orderPayment[0].accountName,
-        mealBased,
-        merchantId,
-        dueTime,
-      },
-    });
+    const orderDetailOptions = await firstValueFrom(await this.orderDetailOptions$);
+    const orderTypes = await firstValueFrom(this.orderTypes$);
 
-    modal.onDidDismiss().then(async () => {
-      await this.routingService.navigate([APP_ROUTES.ordering]);
+    this.nonCheckingService.setSummary({
+      tax,
+      discount,
+      total,
+      subTotal,
+      deliveryFee,
+      pickupFee,
+      tip,
+      checkNumber,
+      accountName: orderPayment[0].accountName,
+      mealBased,
+      dueTime,
+      type,
+      orderType: orderTypes,
+      orderDetailOptions,
     });
-
-    await modal.present();
+    this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart, CART_ROUTES.success]);
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {

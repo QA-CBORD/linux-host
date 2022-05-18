@@ -1,5 +1,5 @@
 import { PATRON_NAVIGATION, Settings } from 'src/app/app.global';
-import { TileWrapperConfig } from './models';
+import { APP_PROFILES, TileWrapperConfig } from './models';
 import { ALL_ACCOUNTS, LOCAL_ROUTING as ACCOUNT_ROUTING } from '@sections/accounts/accounts.config';
 import { getSettingName } from '@core/utils/settings-helper';
 
@@ -47,6 +47,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Add Funds',
       navigate: `${PATRON_NAVIGATION.accounts}/${ACCOUNT_ROUTING.addFunds}`,
     },
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.transactions,
@@ -60,6 +61,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       navigate: `${PATRON_NAVIGATION.accounts}/${ACCOUNT_ROUTING.accountDetailsM}/${ALL_ACCOUNTS}`,
     },
     navigateBack: PATRON_NAVIGATION.accounts,
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.rewards,
@@ -70,6 +72,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     buttonConfig: {
       show: false,
     },
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.mobileAccess,
@@ -82,6 +85,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'All Locations',
       navigate: PATRON_NAVIGATION.mobileAccess,
     },
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.mealDonations,
@@ -94,6 +98,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Meal Donation',
       navigate: `${PATRON_NAVIGATION.accounts}/${ACCOUNT_ROUTING.mealDonations}`,
     },
+    supportProfiles: [APP_PROFILES.patron]
   },
   {
     id: TILES_ID.order,
@@ -106,6 +111,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Start an order',
       navigate: PATRON_NAVIGATION.ordering,
     },
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest]
   },
   {
     id: TILES_ID.explore,
@@ -118,6 +124,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Explore All',
       navigate: PATRON_NAVIGATION.explore,
     },
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest]
   },
   {
     id: TILES_ID.conversations,
@@ -130,6 +137,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Start a conversation',
       navigate: PATRON_NAVIGATION.secureMessage,
     },
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.housing,
@@ -142,6 +150,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Go to Housing',
       navigate: PATRON_NAVIGATION.housing,
     },
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   // {
   //   id: TILES_ID.settings,

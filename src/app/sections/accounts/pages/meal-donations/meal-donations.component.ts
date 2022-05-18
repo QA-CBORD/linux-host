@@ -21,7 +21,6 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { DonateModalComponent } from './components/donate-modal';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
@@ -30,7 +29,7 @@ import { ToastService } from '@core/service/toast/toast.service';
   styleUrls: ['./meal-donations.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealDonationsComponent implements OnInit, OnDestroy {
+export class MealDonationsComponent implements OnInit {
   formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   showContent: boolean;
   accounts$: Observable<UserAccount[]>;
@@ -55,18 +54,13 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
     private readonly modalCtrl: ModalController,
     private readonly navCtrl: NavController,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
-    this.globalNav.hideNavBar();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
   }
 
-  ngOnDestroy(): void {
-    this.globalNav.showNavBar();
-  }
 
   ionViewWillEnter() {
     this.accounts$ = this.mealDonationsService.getAccountsFilteredByMealsTenders();

@@ -30,11 +30,19 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly loadingService: LoadingService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly prominentDisclosureService: ProminentDisclosureService
-  ) {}
+  ) { }
 
   resolve(): Observable<SettingInfoList> {
     this.prominentDisclosureService.openProminentDisclosure();
     /// get fresh data on dashboard load
+    this.loadingService.showSpinner();
+    return this.loadAllData().pipe(
+      take(1),
+      map(([, , featureSettingsList]) => featureSettingsList),
+      finalize(() => this.loadingService.closeSpinner()))
+  }
+
+  private loadAllData(): Observable<any> {
     const strings = this.loadContentStrings();
     const user = this.userFacadeService.getUser$();
     const inst = this.institutionService.fetchInstitutionData();
@@ -42,12 +50,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     const accountContentStrings = this.accountsService.initContentStringsList();
     const mCredential$ = this.mobileCredentialFacade.mobileCredentialEnabled$().pipe(take(1));
     const tilesConfig = this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first());
-    this.loadingService.showSpinner();
-    return zip(user, inst, settingList, mCredential$, tilesConfig, accountContentStrings, ...strings).pipe(
-      map(([userInfo, institutionInfo, featureSettingsList]) => featureSettingsList),
-      take(1),
-      finalize(() => this.loadingService.closeSpinner())
-    );
+    return zip(user, inst, settingList, mCredential$, tilesConfig, accountContentStrings, ...strings);
   }
 
   private loadContentStrings(): Observable<ContentStringInfo>[] {

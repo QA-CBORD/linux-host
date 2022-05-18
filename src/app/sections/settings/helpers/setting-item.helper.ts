@@ -1,5 +1,4 @@
 import { map, take, concatMap, reduce, switchMap } from 'rxjs/operators';
-import { UserInfo } from '@core/model/user';
 import {
   SettingsServices,
   SettingItemConfig,
@@ -62,13 +61,11 @@ export function handlePinAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = async function() {
     const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
-    services.globalNav.hideNavBar();
     return services.identity
       .pinLoginSetup(biometricsEnabled, false, {
         showDismiss: true,
         pinAction: biometricsEnabled ? PinAction.CHANGE_PIN_BIOMETRIC : PinAction.CHANGE_PIN_ONLY,
-      })
-      .finally(() => services.globalNav.showNavBar());
+      });
   };
 }
 
@@ -99,7 +96,6 @@ export function handleOpenHTMLModal(services: SettingsServices) {
       htmlContent,
       title: setting.label,
       onClose: () => {
-        services.globalNav.showNavBar();
         services.modalController.dismiss();
       },
     };
@@ -108,32 +104,27 @@ export function handleOpenHTMLModal(services: SettingsServices) {
       component: setting.modalContent.component,
       componentProps,
     });
-    services.globalNav.hideNavBar();
     return settingModal.present();
   };
 }
 
 export async function openModal(services: SettingsServices) {
-  let contentStringList = null;
   const setting: SettingItemConfig = this;
-  const contentCategories = setting.modalContent.contentStrings;
-  if (contentCategories) {
-    contentStringList = await contentStringsByCategory(services, contentCategories);
-  }
 
   setting.callback = async function() {
+    let componentData = {};
+    if (setting.modalContent.fetchData) componentData = await setting.modalContent.fetchData(services);
+
     const settingModal = await services.modalController.create({
       backdropDismiss: false,
       component: setting.modalContent.component,
-      componentProps: { contentStrings: contentStringList },
+      componentProps: { ...componentData },
     });
-    services.globalNav.hideNavBar();
-    settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
     return settingModal.present();
   };
 }
 
-async function contentStringsByCategory(
+export async function contentStringsByCategory(
   services: SettingsServices,
   contentStrings: DomainContentString[]
 ): Promise<[ContentStringInfo[]]> {
@@ -167,7 +158,8 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
 
     const link = await linkPromise;
     setting.callback = async function() {
-      services.appBrowser.create(link, inAppBrowserTarget, {location: 'no'});
+      // We need for the device to handle the mailto intent.
+      services.appBrowser.create(link, '_system');
     };
   }
   if (resource.type === 'link') {
@@ -192,7 +184,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
         )
         .toPromise();
       const link = await linkPromise;
-      services.appBrowser.create(link, inAppBrowserTarget, { location: 'no'});
+      services.appBrowser.create(link, inAppBrowserTarget, { location: 'no' });
     };
   }
 }

@@ -98,7 +98,6 @@ export class DashboardPage implements OnInit {
     this.accessCard.ionViewWillEnter();
     this.updateTiles();
     this.checkNativeStartup();
-    this.globalNav.showNavBar();
   }
 
   private async checkNativeStartup() {

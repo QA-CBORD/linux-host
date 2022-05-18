@@ -1,6 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { DatePipe } from '@angular/common';
 import { MerchantOrderTypesInfo } from '@sections/ordering'; 
 import { CartService } from '@sections/ordering/services';
 
@@ -20,7 +18,7 @@ export class ModifyPrepTimePipe implements PipeTransform {
     ): string {
 
     if (isASAP && !isShowTime) return 'ASAP';
-    
+
     return this.cartService.extractTimeZonedString(dueTime, orderTypes.merchantTimeZone, showFullDate);
   }
 }
