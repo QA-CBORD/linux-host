@@ -2,7 +2,7 @@
   [title]="(contentStrings.labelOrder | async) + ' #' + (order$ | async).checkNumber"
   [isTitleShow]="true"
   [backButtonTitle]="'Back'"
-  [backButtonIcon]="'ios-arrow-back'"
+  backButtonIcon="chevron-back"
   [isToolbarShow]="true"
   class="recent-orders__header"
   (click)="onClosed()"

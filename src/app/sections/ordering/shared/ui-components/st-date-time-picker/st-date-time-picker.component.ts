@@ -69,7 +69,7 @@ export class StDateTimePickerComponent implements OnInit {
       mode: 'ios',
       cssClass: 'picker-time-picker order-options-action-sheet order-options-action-sheet-p-d',
       buttons: [
-        { text: back, role: 'cancel', cssClass: 'ios-arrow-back' },
+        { text: back, role: 'cancel', cssClass: 'chevron-back' },
         { text: title, role: 'title', cssClass: 'picker-title' },
         { text: confirm, handler: this.pickerClickHandler.bind(this) },
       ],
