@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { CameraSource } from '@capacitor/camera';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -22,7 +23,7 @@ describe('PhotoUploadComponent', () => {
   };
 
   let domSanitizer = {};
-  let sessionFacadeService = {};
+  let identityFacadeServiceStub = {};
   let toastService = {
     showToast: jest.fn(),
   };
@@ -79,7 +80,7 @@ describe('PhotoUploadComponent', () => {
       providers: [
         { provide: Router, useValue: router },
         { provide: DomSanitizer, useValue: domSanitizer },
-        { provide: SessionFacadeService, useValue: sessionFacadeService },
+        { provide: IdentityFacadeService, useValue: identityFacadeServiceStub },
         { provide: ToastService, useValue: toastService },
         { provide: PhotoUploadService, useValue: photoUploadService },
         { provide: LoadingService, useValue: loadingService },
