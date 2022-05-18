@@ -10,5 +10,6 @@ export const MockAccountsData: { userAccounts: Partial<UserAccount>[]; userSetti
 
 export class MockAccountsService {
   getUserAccounts = (): Observable<Partial<UserAccount>[]> => of(MockAccountsData.userAccounts);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getUserSettings = (_settings: Settings.Setting[]): Observable<Partial<SettingInfo>[]> => of(MockAccountsData.userSettings);
 }
