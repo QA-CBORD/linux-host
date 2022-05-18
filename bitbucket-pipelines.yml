@@ -23,5 +23,11 @@ pipelines:
   branches:
     develop: # or the name of your main branch
       - step: *build-step
+  pull-requests:
+    '**':
+      - step:
+          name: Build and test
+          script:
+            - npm run test
       
 
