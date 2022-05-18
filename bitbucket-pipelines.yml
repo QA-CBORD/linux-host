@@ -27,7 +27,7 @@ pipelines:
     '**':
       - step:
           name: Build and test
-          image: node:14.9.2
+          image: atlassian/default-image:3
           script:
             - npm run test
       
