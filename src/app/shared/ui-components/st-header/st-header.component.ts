@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
@@ -6,24 +6,20 @@ import { Keyboard } from '@capacitor/keyboard';
   templateUrl: './st-header.component.html',
   styleUrls: ['./st-header.component.scss'],
 })
-export class StHeaderComponent implements OnInit {
+export class StHeaderComponent {
   @Input() title: string;
   @Input() placeholder: string;
-  @Input() backButtonTitle: string = 'Back';
+  @Input() backButtonTitle = 'Back';
   @Input() backButtonIcon: string | null = null;
-  @Input() isToolbarShow: boolean = false;
-  @Input() isSubToolbarShow: boolean = false;
-  @Input() isTitleShow: boolean = false;
+  @Input() isToolbarShow = false;
+  @Input() isSubToolbarShow = false;
+  @Input() isTitleShow = false;
   @Output() onSearchedValue = new EventEmitter<string>();
-  @Input() isBackButtonShow: boolean = true;
+  @Input() isBackButtonShow = true;
   @Input() isDismissButtonShow: boolean;
   @Input() isRemoveButtonShow: boolean;
   @Output() onDismiss = new EventEmitter<void>();
   @Output() onRemove = new EventEmitter<void>();
-
-  constructor() {}
-
-  ngOnInit() {}
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);

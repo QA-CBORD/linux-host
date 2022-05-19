@@ -6,10 +6,12 @@ export function generateWorkOrder(_: any, index: number) {
   };
 }
 
-export function generateWorkOrders(amount: number = 3): Inspection {
+export function generateWorkOrders(amount = 3): Inspection {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateWorkOrder);
 }
 
-export function generateWorkOrdersDetails(amount: number=3): Inspection {
+export function generateWorkOrdersDetails(amount=3): Inspection {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateWorkOrder);
 }

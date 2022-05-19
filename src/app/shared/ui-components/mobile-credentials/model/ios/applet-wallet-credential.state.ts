@@ -6,14 +6,14 @@ import { MOBILE_CREDENTIAL_CONFIGS, MobileCredentialConfig } from '../shared/mob
 export class AppleWalletCredentialState implements MobileCredentialState {
   private cardStatusMessage: string;
   private appleWalletMessageImage: string;
-  private appleWalletEnabled: boolean = false;
+  private appleWalletEnabled = false;
   private appleWalletButtonHidden: boolean;
 
   constructor(private appleWalletInfo: AppleWalletInfo) {
     this.setAppleWalletMessage();
   }
 
-  revoked(): Boolean {
+  revoked(): boolean {
     return false;
   }
 
@@ -21,6 +21,7 @@ export class AppleWalletCredentialState implements MobileCredentialState {
      return provider == CredentialProviders.APPLE;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,  @typescript-eslint/no-unused-vars
   setStatus(status: number): void {}
 
   getUiIconUrl(): string {
@@ -58,11 +59,11 @@ export class AppleWalletCredentialState implements MobileCredentialState {
   private setAppleWalletMessage() {
     if (this.appleWalletInfo && this.appleWalletInfo.isAppleWalletEnabled && this.appleWalletInfo.canAddPass) {
       this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
-      let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
-      let isWatchPaired = this.appleWalletInfo.watchPaired;
-      let isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
-      let watchCredStatus = this.appleWalletInfo.watchCredStatus;
-      let iPhoneCredStatus = this.appleWalletInfo.iPhoneCredStatus;
+      const isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
+      const isWatchPaired = this.appleWalletInfo.watchPaired;
+      const isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
+      const watchCredStatus = this.appleWalletInfo.watchCredStatus;
+      const iPhoneCredStatus = this.appleWalletInfo.iPhoneCredStatus;
 
       /// code ported from iOS with some unused parts left commented out, which we might use later
       if (isIPhoneAlreadyProvisioned && !isWatchPaired) {

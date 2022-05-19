@@ -16,7 +16,7 @@ import { InspectionService } from './inspections-forms.service';
 export class InspectionsComponent implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
   public urlEditForm: string;
-  private selectedTermKey: number = 0;
+  private selectedTermKey = 0;
   public inspectionList: BehaviorSubject<Inspections[]>;
 
   constructor(public _inspectionsStateService: InspectionsStateService,
@@ -69,7 +69,8 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   }
 
   getPath(inspection: Inspections): string {
-    let url = !!inspection.residentInspectionKey? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${inspection.contractKey}/${inspection.checkIn}`: `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.checkIn}`;
+    // eslint-disable-next-line no-extra-boolean-cast
+    const url = !!inspection.residentInspectionKey? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${inspection.contractKey}/${inspection.checkIn}`: `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.checkIn}`;
     return url;
   }
 

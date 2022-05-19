@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
   providedIn: 'root',
 })
 export class UuidGeneratorService {
-  //
-  constructor() {}
 
   public newUUID(): string {
     return uuidv4();

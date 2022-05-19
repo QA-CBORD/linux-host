@@ -67,7 +67,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  getLocalStoredUserData<T>(dataKey: string, forAnyUser: boolean = false): Observable<T> {
+  getLocalStoredUserData<T>(dataKey: string, forAnyUser = false): Observable<T> {
     return this.storageStateService.getStateEntityByKey$<T>(dataKey).pipe(
       switchMap(data => {
         if (data && data.value) {
@@ -79,11 +79,12 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   protected androidCredentialBundle$(requestBody: any, extraHeaders?: object): Observable<CredentialBundle> {
     return this.getCredentialFor(requestBody, extraHeaders).pipe(
       take(1),
       map((credentialData: any[]) => {
-        let [credentialBundle] = credentialData;
+        const [credentialBundle] = credentialData;
         return credentialBundle;
       })
     );
@@ -119,6 +120,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-unused-vars
   private getCredentialFor(body: object, extraHeaders?: object): Observable<any> {
     /**
      * makes call to partner payments api, resource: android/version/credential.

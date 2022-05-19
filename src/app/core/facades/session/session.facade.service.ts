@@ -32,8 +32,8 @@ export class SessionFacadeService {
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   private _deepLinkPath: string[];
   onLogOutObservable$: Subject<any> = new Subject<any>();
-  navigatedFromPlugin: boolean = false;
-  navigatedFromGpay: boolean = false;
+  navigatedFromPlugin = false;
+  navigatedFromGpay = false;
 
   constructor(
     private readonly platform: Platform,
@@ -192,6 +192,7 @@ export class SessionFacadeService {
         break;
       case LoginState.EXTERNAL:
         // check if institution has guest login enabled and user had been logged in as guest previously.  if yes redirect to login page instead.
+        // eslint-disable-next-line no-case-declarations
         const isGuestloginEnabled = await this.authFacadeService.isGuestUser().toPromise();
         if (isGuestloginEnabled) {
           await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.login, routeConfig);
@@ -249,7 +250,7 @@ export class SessionFacadeService {
     const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
       .pipe(take(1))
       .toPromise();
-    const isInstitutionSelected: boolean = !!institutionInfo;
+    const isInstitutionSelected = !!institutionInfo;
     if (!isInstitutionSelected) {
       return LoginState.SELECT_INSTITUTION;
     }
@@ -304,7 +305,7 @@ export class SessionFacadeService {
     this.userFacadeService.handlePushNotificationRegistration();
   }
 
-  async logoutUser(navigateToEntry: boolean = true) {
+  async logoutUser(navigateToEntry = true) {
     if (navigateToEntry) {
       await this.navCtrl.navigateRoot([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
       this.onLogOutObservable$.next();

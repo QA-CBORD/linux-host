@@ -17,8 +17,6 @@ export class MerchantListComponent {
   }>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor() {}
-
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
   }

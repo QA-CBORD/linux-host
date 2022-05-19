@@ -36,7 +36,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() settings: any;
   @Input() activeDeliveryAddressId: string;
   @Input() activeOrderType: ORDER_TYPE = null;
-  @Input() showNavBarOnDestroy: boolean = true;
+  @Input() showNavBarOnDestroy = true;
   @Input() timeZone: string;
   @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   dateTimeWithTimeZone: string;
@@ -72,6 +72,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   ngOnInit() {
     this.isOrderTypePickup = true;
+    this.orderType =
+      this.activeOrderType !== null
+        ? this.activeOrderType
+        : this.orderTypes.pickup
+        ? ORDER_TYPE.PICKUP
+        : ORDER_TYPE.DELIVERY;
     this.dispatchingData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
@@ -86,13 +92,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   dispatchingData() {
-    this.orderType =
-      this.activeOrderType !== null
-        ? this.activeOrderType
-        : this.orderTypes.pickup
-        ? ORDER_TYPE.PICKUP
-        : ORDER_TYPE.DELIVERY;
-
     this.loadingService.showSpinner();
     zip(
       this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.PICKUP, this.timeZone),
@@ -149,9 +148,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onRadioGroupChanged({ target }) {
+    this.orderType = +target.value;
+    this.isOrderTypePickup = this.orderType === ORDER_TYPE.PICKUP;
     this.dispatchingData();
-    this.isOrderTypePickup = target.value === 'pickup';
-    this.orderType = this.isOrderTypePickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
     this.defineOrderOptionsData(this.isOrderTypePickup);
   }
 
@@ -207,7 +206,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     await this.loadingService.showSpinner();
     const currentTimeOb$ = this.merchantService
       .getCurrentLocaleTime(this.timeZone)
-      .pipe(map(dueTime => this.selectedTimeStamp));
+      .pipe(map(() => this.selectedTimeStamp));
 
     zip(isOutsideMerchantDeliveryArea, currentTimeOb$)
       .pipe(

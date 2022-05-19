@@ -29,8 +29,6 @@ export class MCache {
   userPhotoInfo: UserPhotoInfo;
   userSettings: UserSettingInfo[] = new Array<UserSettingInfo>();
 
-  constructor() {}
-
   static fromT(o: MCache) {
     const t: MCache = new MCache();
     t.applicationUUID = o.applicationUUID;
@@ -57,7 +55,7 @@ export class MCache {
 
   private generateUUID() {
     this.applicationUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(X_Y_REGEXP, function(c) {
-      // tslint:disable-next-line:no-bitwise
+      // eslint-disable-next-line no-bitwise
       const r = (Math.random() * 16) | 0,
         v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);

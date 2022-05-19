@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, of, zip } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
@@ -27,15 +27,15 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled$: Observable<boolean>;
-  appleWalletEnabled: boolean = false;
+  appleWalletEnabled = false;
   appleWalletInfo: AppleWalletInfo;
   cardStatusMessage: string;
   appleWalletMessageImage: string;
-  appleWalletButtonHidden: boolean = true;
+  appleWalletButtonHidden = true;
   userPhoto?: string;
-  isLoadingPhoto: boolean = true;
+  isLoadingPhoto = true;
   userInfo: string;
-  mobileCredentialAvailable: boolean = false;
+  mobileCredentialAvailable = false;
   housingOnlyEnabled: boolean;
 
   constructor(

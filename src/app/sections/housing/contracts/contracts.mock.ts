@@ -11,16 +11,16 @@ export function generateContractListDetails(_: any, index: number): ContractList
   const nowISO: string = new Date().toISOString();
   const id: number = index;
   const contractElementId: number = index + 100;
-  const state: string = `Contract Status ${index}`;
-  const applicationDescription: string = `Description ${index}`;
+  const state = `Contract Status ${index}`;
+  const applicationDescription = `Description ${index}`;
   const applicationFormJson: string = JSON.stringify(generateQuestions());
-  const applicationTitle: string = `Contract Title ${index}`;
+  const applicationTitle = `Contract Title ${index}`;
   const applicationTypeId: number = index + 200;
   const applicationAvailableEndDateTime: string = nowISO;
   const applicationAvailableStartDateTime: string = nowISO;
   const cancellationDateTime: string = nowISO;
   const expirationDateTime: string = nowISO;
-  const expireWhenAssigned: number = 1;
+  const expireWhenAssigned = 1;
   const numberOfDaysToExpire: number = index + 300;
   const termId: number = index + 400;
   // const acceptedDate: string = nowISO;
@@ -44,7 +44,8 @@ export function generateContractListDetails(_: any, index: number): ContractList
   });
 }
 
-export function generateContractsList(amount: number = 3): ContractListDetails[] {
+export function generateContractsList(amount = 3): ContractListDetails[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateContractListDetails);
 }
 
@@ -53,7 +54,7 @@ export function generateFacilityAttribute(_: any, index: number): FacilityAttrib
   const facilityAttributeKey: number = index;
   const facilityKey: number = index + 100;
   const attributeConsumerKey: number = index + 200;
-  const value: string = `Facility Attribute Value ${index}`;
+  const value = `Facility Attribute Value ${index}`;
   const effectiveDate: string = nowISO;
   const endDate: string = nowISO;
 
@@ -67,38 +68,39 @@ export function generateFacilityAttribute(_: any, index: number): FacilityAttrib
   });
 }
 
-export function generateFacilityAttributes(amount: number = 3): FacilityAttribute[] {
+export function generateFacilityAttributes(amount = 3): FacilityAttribute[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateFacilityAttribute);
 }
 
 export function generateContractInfo(index: number): ContractInfo {
   const nowISO: string = new Date().toISOString();
   const id: number = index;
-  const contractName: string = `Contract ${id}`;
-  const term: number = 1;
+  const contractName = `Contract ${id}`;
+  const term = 1;
   const expectedStartDate: string = nowISO;
   const expectedEndDate: string = nowISO;
-  const status: string = `Contract status ${id}`;
-  const facilityId: number = 100;
+  const status = `Contract status ${id}`;
+  const facilityId = 100;
   const chargedThroughDate: string = nowISO;
   const expirationDate: string = nowISO;
   const actualStartDate: string = nowISO;
   const actualEndDate: string = nowISO;
-  const depositRequired: number = 1;
-  const depositPaid: number = 0;
-  const gracePeriodBeforeStart: number = 200;
-  const gracePeriodBeforeEnd: number = 200;
-  const contractNumber: string = `Contract number ${id + 100}`;
+  const depositRequired = 1;
+  const depositPaid = 0;
+  const gracePeriodBeforeStart = 200;
+  const gracePeriodBeforeEnd = 200;
+  const contractNumber = `Contract number ${id + 100}`;
   const checkInDateTime: string = nowISO;
   const checkOutDateTime: string = nowISO;
-  const linkToSpace: string = `Link to Space ${id}`;
-  const changeRoomIn: number = 0;
-  const changeRoomOut: number = 1;
-  const note: string = `Note ${id}`;
-  const assetTypeName: string = `Asset Type Name ${id}`;
-  const assetTypeId: number = 0;
+  const linkToSpace = `Link to Space ${id}`;
+  const changeRoomIn = 0;
+  const changeRoomOut = 1;
+  const note = `Note ${id}`;
+  const assetTypeName = `Asset Type Name ${id}`;
+  const assetTypeId = 0;
   const dateTimeAccepted: string = nowISO;
-  const buyOut: boolean = false;
+  const buyOut = false;
   const accessStartDate: string = nowISO;
   const accessEndDate: string = nowISO;
   // const dateTimeSigned: string = nowISO;

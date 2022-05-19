@@ -1,6 +1,6 @@
 import { QuestionTextbox, QuestionTextboxOptions } from './question-textbox';
 
-let counter: number = 0;
+let counter = 0;
 
 export class QuestionImageWorkOrder extends QuestionTextbox {
   constructor(options: QuestionTextboxOptions = {}) {

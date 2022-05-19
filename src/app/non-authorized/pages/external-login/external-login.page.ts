@@ -15,7 +15,6 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { PopoverConfig } from '@core/model/popover/popover.model';
 import { PopupTypes } from '@sections/rewards/rewards.config';
-import { PopupButton } from '@core/model/button';
 import { PopoverController } from '@ionic/angular';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
@@ -73,10 +72,12 @@ export class ExternalLoginPage {
         this.nativeHeaderBg$ = this.getNativeHeaderBg(this.institutionId);
         this.initializeInAppBrowser(institutionInfo);
       },
-      error => {
+      () => {
         this.showModal('Oops!', 'There was an issue loading the login page - please try again');
       },
-      () => {}
+      () => {
+          // TODO: Properly handle exception
+      }
     );
     this.subscriptions.add(instSub);
   }
@@ -106,7 +107,7 @@ export class ExternalLoginPage {
       }
     });
 
-    const browserEventShow = this.browser.on('loadstop').subscribe(event => {
+    const browserEventShow = this.browser.on('loadstop').subscribe(() => {
       this.browser.show();
     });
 
@@ -153,7 +154,9 @@ export class ExternalLoginPage {
         await this.identityFacadeService.pinLoginSetup(false);
         break;
       case LoginState.BIOMETRIC_SET:
+        // eslint-disable-next-line no-case-declarations
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
+        // eslint-disable-next-line no-case-declarations
         const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
         this.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { ROLES } from 'src/app/app.global'
 import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../applications.model';
 

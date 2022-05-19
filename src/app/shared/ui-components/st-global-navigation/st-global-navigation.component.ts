@@ -15,7 +15,7 @@ import { filter } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StGlobalNavigationComponent implements OnInit, OnDestroy {
-  _isListShown: boolean = false;
+  _isListShown = false;
 
   set isListShown(value: boolean) {
     this._isListShown = value;
@@ -28,7 +28,7 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
 
   navElements$: Observable<NavigationBottomBarElement[]>;
   navElements: NavigationBottomBarElement[] = [];
-  visibleAmountOfElements: number = 5;
+  visibleAmountOfElements = 5;
   suscription: Subscription;
 
   constructor(
@@ -41,11 +41,13 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   ) {
     this.suscription = this.router.events
       .pipe(filter(e => e instanceof NavigationStart))
-      .subscribe(async (e: NavigationStart) => {
+      .subscribe(async () => {
         try {
           await this.popoverController.dismiss();
           await this.modalController.dismiss();
-        } catch (error) {}
+        } catch (error) {
+          // TODO: Properly handle exception
+        }
       });
   }
 

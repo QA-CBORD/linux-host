@@ -1,4 +1,4 @@
-import { ComponentRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { ContentStringApi, ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
@@ -48,7 +48,7 @@ export class ConnectivityService {
     await this.loadingService.showSpinner({ duration: 80000 });
     let csModel: ConnectivityScreenCsModel = {} as any;
     let errorType: ConnectivityError;
-    let freshContentStringsLoaded: boolean = false;
+    let freshContentStringsLoaded = false;
     if ((await this.connectionService.deviceOffline())) {
       errorType = ConnectivityError.DEVICE_CONNECTION;
       csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: noConnectivityScreentDefaultStrings });

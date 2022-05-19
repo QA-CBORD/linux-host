@@ -17,10 +17,7 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };
 
-  constructor(
-    private popoverCtrl: PopoverController,
-    private mobileAccessService: MobileAccessService
-  ) {}
+  constructor(private popoverCtrl: PopoverController, private mobileAccessService: MobileAccessService) {}
 
   ngOnInit() {
     this.setContentStrings();
@@ -80,7 +77,9 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
         text: this.popoverConfig.code,
         includetext: false,
       },
-      (err, cvs) => {}
+      () => {
+          // TODO: Properly handle exception
+      }
     );
   }
 

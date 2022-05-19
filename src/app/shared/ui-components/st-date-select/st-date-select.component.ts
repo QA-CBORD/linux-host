@@ -31,11 +31,11 @@ export class StDateSelectComponent implements ControlValueAccessor {
 
   @Input() idd: string;
 
-  @Input() displayFormat: string = 'MMM DD, YYYY';
+  @Input() displayFormat = 'MMM DD, YYYY';
 
   @HostBinding('class.date-select__disabled')
   @Input()
-  isDisabled: boolean = false;
+  isDisabled = false;
 
   onChange: (value: any) => void;
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,12 +11,10 @@ import { ToastService } from '@core/service/toast/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./room-selection-list.component.scss'],
 })
-export class RoomSelectionListComponent implements OnInit, AfterViewInit {
+export class RoomSelectionListComponent implements AfterViewInit {
   @ViewChild('container') divContainer: ElementRef;
   @Input() roomSelects: RoomSelect[]
 
-  ngOnInit() {
-  }
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
    if(this.roomSelects.length > 0)

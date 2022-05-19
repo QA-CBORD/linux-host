@@ -75,6 +75,4 @@ const providers = [
   providers,
   entryComponents: [PhoneEmailComponent, LocationPermissionModal],
 })
-export class DashboardPageModule {
-  constructor() {}
-}
+export class DashboardPageModule {}

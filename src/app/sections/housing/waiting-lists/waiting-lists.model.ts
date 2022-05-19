@@ -98,13 +98,13 @@ export class WaitingListDetails implements WaitingListDetailstOptions{
 export interface WaitingListDetailstOptionsRequest {
   facilityKey: number;
   waitListKey: number;
-  attributeValue: String;
+  attributeValue: string;
 }
 
 export class WaitingListDetailsRequest implements WaitingListDetailstOptionsRequest{
   facilityKey: number;
   waitListKey: number;
-  attributeValue: String;
+  attributeValue: string;
   constructor(options: WaitingListDetailstOptionsRequest){
     if (options == null || typeof options !== 'object') {
       options = {} as WaitingListDetailstOptionsRequest;

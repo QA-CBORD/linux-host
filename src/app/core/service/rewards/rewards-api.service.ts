@@ -25,8 +25,8 @@ export class RewardsApiService {
   }
 
   getUserRewardTrackInfo(
-    headerOnly: boolean = false,
-    showToastOnError: boolean = true,
+    headerOnly = false,
+    showToastOnError = true,
   ): Observable<UserRewardTrackInfo> {
     const postParams: ServiceParameters = { headerOnly };
     const queryConfig = new RPCQueryConfig('retrieveUserRewardTrackInfo', postParams, true);
@@ -46,7 +46,7 @@ export class RewardsApiService {
     return this.platform.is(name);
   }
 
-  private onErrorHandler(showToastOnError: boolean = true) {
+  private onErrorHandler(showToastOnError = true) {
     return (source: Observable<any>) =>
       source.pipe(
         catchError(err => {

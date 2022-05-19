@@ -188,7 +188,9 @@ export class DashboardPage implements OnInit {
           this.appBrowser.create('https://play.google.com/store/apps/details?id=com.cbord.get', '_system');
         }
       })
-      .catch(reason => {});
+      .catch(() => {
+          // TODO: Properly handle exception
+      });
   }
 
   pushNotificationRegistration() {

@@ -21,11 +21,11 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 export class MerchantDetailsPage implements OnInit {
   merchant$: Observable<MerchantInfo>;
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-  isHoursHidden: boolean = true;
-  isNotesHidden: boolean = true;
-  guestOrderEnabled: boolean = true;
-  filledStarPath: string = '/assets/icon/star-filled.svg';
-  blankStarPath: string = '/assets/icon/star-outline.svg';
+  isHoursHidden = true;
+  isNotesHidden = true;
+  guestOrderEnabled = true;
+  filledStarPath = '/assets/icon/star-filled.svg';
+  blankStarPath = '/assets/icon/star-outline.svg';
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,

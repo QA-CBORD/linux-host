@@ -5,7 +5,7 @@ const lRange = [25, 60];
 const getHashOfString = str => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
-    // tslint:disable-next-line: no-bitwise
+    // eslint-disable-next-line no-bitwise
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
   hash = Math.abs(hash);

@@ -319,6 +319,7 @@ export class AutomaticDepositPageComponent {
         this.initPredefinedAccounts(depositSettings, accounts);
         this.defineDestAccounts(this.paymentMethodAccount);
         this.autoDepositSettings.active && (await this.initForm());
+        this.onDepositTypeChangedHandler(this.autoDepositSettings?.active ? this.autoDepositSettings?.autoDepositType : this.autoDepositTypes.automaticDepositOff)
       });
 
     this.sourceSubscription.add(subscription);

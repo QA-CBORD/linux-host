@@ -201,7 +201,9 @@ export class UserPassForm implements OnInit {
         }
         break;
       case LoginState.BIOMETRIC_SET:
+        // eslint-disable-next-line no-case-declarations
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
+        // eslint-disable-next-line no-case-declarations
         const biometricConfig = configureBiometricsConfig(supportedBiometricType);
         await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;

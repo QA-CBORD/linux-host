@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { CheckInOutStateService} from './check-in-out-state.service';
 
@@ -8,12 +8,9 @@ import { CheckInOutStateService} from './check-in-out-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./check-in-out.component.scss'],
 })
-export class CheckInOutComponent implements OnInit {
+export class CheckInOutComponent {
 
   constructor(
     public checkInOutStateService: CheckInOutStateService
   ) {}
-
-  ngOnInit() {
-  }
 }

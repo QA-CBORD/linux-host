@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
-  Router,
-  NavigationStart,
   CanDeactivate,
   UrlTree,
 } from '@angular/router';

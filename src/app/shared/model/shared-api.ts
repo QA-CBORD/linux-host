@@ -7,7 +7,6 @@
  */ 
 
 export class MutableMessage {
-  private constructor() {}
 
   private static instance: MutableMessage;
 

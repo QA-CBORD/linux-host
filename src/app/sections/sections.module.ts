@@ -16,10 +16,7 @@ import { StGlobalNavigationModule } from '@shared/ui-components/st-global-naviga
     ReactiveFormsModule,
     SectionsRoutingModule,
     ShowHideNavbarModule,
-    StGlobalNavigationModule
+    StGlobalNavigationModule,
   ],
 })
-export class SectionsModule {
-  constructor() {
-  }
-}
+export class SectionsModule {}

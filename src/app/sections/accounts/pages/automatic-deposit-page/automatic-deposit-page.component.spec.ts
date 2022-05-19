@@ -29,7 +29,7 @@ describe('AutomaticDepositPageComponent', () => {
             domain: 'get',
             id: '17f9bad2-c45a-4cef-8348-bccd6f1242d4',
             name: 'onetime_amounts',
-            value:  '[\"25.00\",\"50.00\",\"100.00\"]'
+            value:  '["25.00","50.00","100.00"]'
           } as SettingInfo);
         }),
       }),

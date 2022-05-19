@@ -2,7 +2,7 @@ import { isDefined } from '@sections/housing/utils';
 
 import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
 
-let counter: number = 0;
+let counter = 0;
 
 export interface QuestionContractDetailsOptions extends QuestionFormControlOptions {
   subtype?: string;

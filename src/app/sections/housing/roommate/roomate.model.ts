@@ -1,4 +1,4 @@
-import { Attribute, OccupantAttribute } from '@sections/housing/attributes/attributes.model';
+import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 interface FacilityOccupantDetailsOptions {
   patronKey: number;

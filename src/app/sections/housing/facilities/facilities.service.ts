@@ -12,6 +12,7 @@ import { Facility } from './facilities.model';
 export class FacilitiesService {
   facilities: Facility[] = generateFacilities(4);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getFacilities(applicationKey: number): Observable<Facility[]> {
     return of(this.facilities).pipe(map((facilities: Facility[]) => facilities.map(FacilitiesService._toModel)));
   }

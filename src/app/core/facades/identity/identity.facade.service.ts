@@ -39,10 +39,10 @@ export enum LoginState {
 export class IdentityFacadeService extends ServiceStateFacade {
 
 
-  private ttl: number = 600000; // 10min
+  private ttl = 600000; // 10min
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
-  private isAuthenticating: boolean = false;
+  private isAuthenticating = false;
 
   constructor(
     private readonly storageStateService: StorageStateService,
@@ -62,7 +62,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async pinLoginSetup(
     biometricEnabled: boolean,
-    navigateToDashboard: boolean = true,
+    navigateToDashboard = true,
     pinModalProps?: any
   ): Promise<any> {
     const { data, role } = await this.identityService.presentPinModal(
@@ -88,17 +88,19 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  initAndUnlock(data, biometricEnabled: boolean, navigateToDashboard: boolean = true): Promise<void> {
+  initAndUnlock(data, biometricEnabled: boolean, navigateToDashboard = true): Promise<void> {
     if (navigateToDashboard) {
       this.navigateToDashboard();
     }
     return this.identityService.initAndUnlock(data, biometricEnabled);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handlePinUnlockSuccess(data) {
     this.navigateToDashboard();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleBiometricUnlockSuccess(data) {
     this.authenticateUserPin();
   }
@@ -114,6 +116,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleBiometricUnlockError({ message, code }) {
     // user has another chance of authenticating with PIN if they fail biometrics
     return this.unlockVaultPin()
@@ -179,6 +182,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return false;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async onNavigateToDashboardFailed(err): Promise<any> {
     return this.handleConnectionErrors({
       onRetry: async () => {

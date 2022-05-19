@@ -8,7 +8,6 @@ import {
   IonicNativeAuthPlugin,
   LockEvent,
   VaultConfig,
-  VaultError,
 } from '@ionic-enterprise/identity-vault';
 
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
@@ -28,7 +27,7 @@ export class VaultSessionData implements DefaultSession {
 })
 export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   private temporaryPin: string = undefined;
-  private isLocked: boolean = true;
+  private isLocked = true;
 
   constructor(
     private browserAuthPlugin: BrowserAuthPlugin,
@@ -146,7 +145,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
 
   async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
-    let componentProps = { pinAction, ...pinModalProps };
+    const componentProps = { pinAction, ...pinModalProps };
     const pinModal = await this.modalController.create({
       backdropDismiss: false,
       component: PinPage,
@@ -172,6 +171,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onConfigChange(config: VaultConfig): void {
     // console.log('Got a config update: ', config);
     if (!this.config.isPasscodeSetupNeeded) {
@@ -180,16 +180,18 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onVaultUnlocked(config: VaultConfig): void {
     this.setIsLocked(false);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onVaultLocked(event: LockEvent): void {
     this.setIsLocked();
     // console.log('The vault was locked by event: ', event);
   }
 
-  setIsLocked(lock: boolean = true) {
+  setIsLocked(lock = true) {
     this.isLocked = lock;
   }
 

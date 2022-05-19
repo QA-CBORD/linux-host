@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, interval, Observable, of, throwError, zip } from 'rxjs';
-import { Settings, User } from '../../../app.global';
+import { Settings } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { catchError, startWith, switchMap, take, tap } from 'rxjs/operators';
 import bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
-import { GetThrowable } from '@core/interceptors/server-error.interceptor';
 import { UserSettingInfo } from '@core/model/user';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
@@ -55,7 +54,7 @@ export class BarcodeService {
     );
   }
 
-  generateBarcode(withInterval: boolean = false, userSetting: UserSettingInfo, settingInfo: SettingInfo): Observable<string> {
+  generateBarcode(withInterval = false, userSetting: UserSettingInfo, settingInfo: SettingInfo): Observable<string> {
     const timerObservable = interval(this.generationTimer).pipe(startWith(-1));
     const barcodeObservable = zip(of(userSetting), of(settingInfo))
     .pipe(
@@ -67,12 +66,12 @@ export class BarcodeService {
       }),
       tap(value => (this._barcodeValue = value))
     );
-    return withInterval ? timerObservable.pipe(switchMap(v => barcodeObservable)) : barcodeObservable.pipe(take(1));
+    return withInterval ? timerObservable.pipe(switchMap(() => barcodeObservable)) : barcodeObservable.pipe(take(1));
   }
 
   private async beginBarcodeGeneration(patronKey: string, institutionKey: string): Promise<string> {
-    const cryptoAlgorithm: string = 'HmacSHA256';
-    const returnDigits: number = 9;
+    const cryptoAlgorithm = 'HmacSHA256';
+    const returnDigits = 9;
     const checksum: number = this.generateDigit(patronKey);
     const institutionKeyBytes: Int8Array = this.hexStringToByteArray(institutionKey);
     const patronKeyBytesPadded: Int8Array = this.patronKeyToByteArray(patronKey);
@@ -95,7 +94,7 @@ export class BarcodeService {
   }
 
   private createBarcodeString(timestamp: BigInteger, encryptedKey: BigInteger, patronKeyChecksum: number) {
-    const version: string = '1';
+    const version = '1';
     const timeString: string = timestamp.toString().padStart(10, '0');
     const keyString: string = encryptedKey.toString().padStart(10, '0');
     return timeString + version + keyString + patronKeyChecksum.toString();
@@ -111,22 +110,23 @@ export class BarcodeService {
    *
    * @return: a numeric String in base 10 that includes digits
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async generateTOTP(key: Int8Array, time: BigInteger, returnDigits: number, crypto: string): Promise<string> {
     let result: string;
 
     // convert the time to a 0 padded 8 Byte array
-    let msg = new Int8Array([0, 0, 0, 0, 0, 0, 0, 0]);
-    let timeBytes = this.longToByteArrayLittleEndian(time);
+    const msg = new Int8Array([0, 0, 0, 0, 0, 0, 0, 0]);
+    const timeBytes = this.longToByteArrayLittleEndian(time);
     for (let i = 0; i < msg.length; i++) {
       msg[msg.length - i - 1] = timeBytes[i];
     }
 
     // Perform hash
-    let hash: Int8Array = await this.hmac_sha(key, msg);
+    const hash: Int8Array = await this.hmac_sha(key, msg);
     // put selected bytes into result int
-    let offset: number = hash[hash.length - 1] & 0xf;
+    const offset: number = hash[hash.length - 1] & 0xf;
 
-    let binary: BigInteger = bigInt(hash[offset])
+    const binary: BigInteger = bigInt(hash[offset])
       .and(bigInt(0x7f))
       .shiftLeft(bigInt(24))
       .or(
@@ -141,7 +141,7 @@ export class BarcodeService {
           )
       );
 
-    let otp: BigInteger = binary.mod(this.DIGITS_POWER[returnDigits]);
+    const otp: BigInteger = binary.mod(this.DIGITS_POWER[returnDigits]);
 
     result = otp.toString();
 
@@ -160,6 +160,7 @@ export class BarcodeService {
    * @param text: the message or text to be authenticated
    */
   private async hmac_sha(keyBytes: Int8Array, textBytes: Int8Array): Promise<Int8Array> {
+    // eslint-disable-next-line no-useless-catch
     try {
       const cryptoKey = await crypto.subtle.importKey('raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, true, [
         'sign',
@@ -175,7 +176,7 @@ export class BarcodeService {
    * XOR encrypt the given subject with the given key. subject - byte[] to be encrypted. key - byte[] array to use to encrypt subject.
    */
   private XorEncrypt(subject: Int8Array, key: Int8Array): Int8Array {
-    let result = new Int8Array(subject.length);
+    const result = new Int8Array(subject.length);
     for (let i = 0; i < subject.length; result[i] = subject[i] ^ key[i++ % key.length]);
     return result;
   }
@@ -188,9 +189,9 @@ export class BarcodeService {
    */
   private patronKeyToByteArray(patronKey: string): Int8Array {
     // Convert the patron key to a padded byte array
-    let patronKeyBytesPadded = new Int8Array([0, 0, 0, 0]);
+    const patronKeyBytesPadded = new Int8Array([0, 0, 0, 0]);
     // convert the patron key string to a long, then to a byte array
-    let patronKeyBytes = this.longToByteArrayLittleEndian(bigInt(patronKey));
+    const patronKeyBytes = this.longToByteArrayLittleEndian(bigInt(patronKey));
     // copy the bytes into a padded array
     for (let i = 0; i < patronKeyBytesPadded.length; i++) {
       patronKeyBytesPadded[i] = patronKeyBytes[i];
@@ -199,8 +200,8 @@ export class BarcodeService {
   }
 
   private hexStringToByteArray(s: string): Int8Array {
-    let len = s.length;
-    let data: Int8Array = new Int8Array(len / 2);
+    const len = s.length;
+    const data: Int8Array = new Int8Array(len / 2);
     for (let i = 0; i < len; i += 2) {
       data[i / 2] = (parseInt(s.charAt(i), 16) << 4) + parseInt(s.charAt(i + 1), 16);
     }
@@ -214,7 +215,7 @@ export class BarcodeService {
    * @return long value of the byte array
    */
   private byteArrayToLongBigEndian(value: Int8Array): BigInteger {
-    // @ts-ignore
+    // @es-ignore
     let result: BigInteger = bigInt(0);
     for (let i = 0; i < value.length; i++) {
       result = result.add(
@@ -233,7 +234,7 @@ export class BarcodeService {
    * @return long value of the byte array
    */
   public byteArrayToLongLittleEndian(value: Int8Array): BigInteger {
-    // @ts-ignore
+    // @es-ignore
     let result: BigInteger = bigInt(0);
     for (let i = 0; i < value.length; i++) {
       result = result.add(
@@ -252,17 +253,17 @@ export class BarcodeService {
    * @return byte[]
    */
   private longToByteArrayLittleEndian(value: BigInteger): Int8Array {
-    let longSize = 8;
-    let patronKeyBytesPadded: Int8Array = new Int8Array(longSize);
+    const longSize = 8;
+    const patronKeyBytesPadded: Int8Array = new Int8Array(longSize);
     for (let i = 0; i < longSize; i++) {
-      let bi = bigInt(i);
+      const bi = bigInt(i);
       patronKeyBytesPadded[i] = Number(value.shiftRight(bigInt(8).multiply(bi)).and(bigInt(0xff)));
     }
     return patronKeyBytesPadded;
   }
 
   private generateDigit(s: string): number {
-    let digit = 10 - (this.doLuhn(s, true) % 10);
+    const digit = 10 - (this.doLuhn(s, true) % 10);
     if (digit % 10 == 0) {
       return 0;
     } else {
@@ -271,7 +272,7 @@ export class BarcodeService {
   }
 
   private doLuhn(s: string, evenPosition: boolean): number {
-    let sum: number = 0;
+    let sum = 0;
     for (let i = s.length - 1; i >= 0; i--) {
       let n = Number(s.substring(i, i + 1));
       if (evenPosition) {

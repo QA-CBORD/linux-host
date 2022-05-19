@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, OnInit, AfterViewInit, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, forwardRef, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
@@ -18,9 +18,9 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   @Input() label: string;
   @Input() idd: string;
   @Input() isError: boolean;
-  @Input() rows: string = '3';
+  @Input() rows = '3';
   @Input() isDisabled: boolean;
-  @Input() maxLength: number = 128;
+  @Input() maxLength = 128;
   @Input() facilityData: string;
   @Input() placeholder: string;
   onTouched: () => void;

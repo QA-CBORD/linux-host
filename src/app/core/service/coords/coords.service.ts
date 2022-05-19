@@ -12,7 +12,7 @@ import { Position, Geolocation } from '@capacitor/geolocation';
 })
 export class CoordsService {
   private readonly fetchInterval: number = 5000;
-  private timestamp: number = 0;
+  private timestamp = 0;
 
   private latestPosition: Position | any = {
     timestamp: null,

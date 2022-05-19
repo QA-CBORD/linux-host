@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { Resolve } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { Observable, zip } from 'rxjs';
 import { finalize, map, take } from 'rxjs/operators';
@@ -19,7 +19,7 @@ export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
     private readonly prominentDisclosureService: ProminentDisclosureService,
   ) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserInfo> {
+  resolve(): Observable<UserInfo> {
     this.prominentDisclosureService.openProminentDisclosure();
     this.loadingService.showSpinner();
     const user$ = this.userFacade.getUserData$();

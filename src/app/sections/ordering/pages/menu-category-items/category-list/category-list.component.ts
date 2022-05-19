@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MenuCategoryItemInfo } from '@sections/ordering';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 

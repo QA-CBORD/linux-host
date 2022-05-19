@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 
 @Component({
@@ -6,12 +6,7 @@ import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.mode
   templateUrl: './roommate.component.html',
   styleUrls: ['./roommate.component.scss'],
 })
-export class RoommateComponent implements OnInit {
+export class RoommateComponent {
   @Input() patron : FacilityOccupantDetails;
   @Input() roommateNumber: number;
-  constructor() { }
-
-  ngOnInit() {
-  }
-
 }

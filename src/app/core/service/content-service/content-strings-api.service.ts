@@ -21,7 +21,7 @@ export class ContentStringsApiService {
     sessionId?: string,
     useSessionId?: boolean,
   ): Observable<ContentStringInfo> {
-    let useSession = useSessionId === false ? useSessionId : true;
+    const useSession = useSessionId === false ? useSessionId : true;
     let params;
     config = config.locale ? config : { ...config, locale: null };
     params = { ...config };

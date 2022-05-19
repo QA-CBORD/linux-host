@@ -12,8 +12,8 @@ export class MobileCredentialsComponent implements OnInit {
   @Input() terms: TermsContent;
   @Input() usageText: Promise<string>;
   @Input() buttonText: string;
-  @Input() showFooter: boolean = true;
-  @Input() closeNavbar: boolean = true;
+  @Input() showFooter = true;
+  @Input() closeNavbar = true;
 
   constructor(
     private readonly modalCtrl: ModalController,

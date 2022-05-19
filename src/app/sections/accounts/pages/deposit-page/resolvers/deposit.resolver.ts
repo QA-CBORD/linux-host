@@ -7,9 +7,7 @@ import { tap } from 'rxjs/operators';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { Settings } from '../../../../../app.global';
 import { CommonService } from '@shared/services/common.service';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
-import { DepositCsModel } from '../deposit-page.content.string';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 

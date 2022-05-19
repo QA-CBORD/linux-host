@@ -1,8 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RoomsStateService } from './rooms-state.service';
-
-
 
 @Component({
   selector: 'st-rooms',
@@ -10,12 +8,6 @@ import { RoomsStateService } from './rooms-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./rooms.component.scss'],
 })
-export class RoomsComponent implements OnInit {
-
-  constructor(
-    public roomsStateService: RoomsStateService
-  ) {}
-
-  ngOnInit() {
-  }
+export class RoomsComponent {
+  constructor(public roomsStateService: RoomsStateService) {}
 }

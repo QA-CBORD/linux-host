@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RoommatePreferences } from './applications.model';
 
@@ -7,8 +7,6 @@ import {
   ApplicationDetails,
   RequestedRoommate,
   RoommateSearchOptions,
-
-  RoommatePreferencesOptions
 } from './applications.model';
 
 export interface ApplicationsState {
@@ -67,6 +65,7 @@ export class ApplicationsStateService {
     return this.requestedroommate
   }
 
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   get applicationsState(): ApplicationsState {
     return this._applicationsStateSource.getValue();
   }
@@ -99,14 +98,14 @@ export class ApplicationsStateService {
 
   deleteRequestingRoommate(patronKeyRoommate: number) {
     if(this.applicationsState.applicationDetails.requestingRoommates.find( value => value.patronKeyRoommate === patronKeyRoommate)){
-      let index = this.applicationsState.applicationDetails.requestingRoommates.findIndex( value => value.patronKeyRoommate === patronKeyRoommate)
+      const index = this.applicationsState.applicationDetails.requestingRoommates.findIndex( value => value.patronKeyRoommate === patronKeyRoommate)
       this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
     }
   }
 
   deleteLocalRequestedRoommate(preferenceKey: number, patronKeyRoommate: number){
     if(this.requestedroommate.find( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)){
-      let index = this.requestedroommate.findIndex( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)
+      const index = this.requestedroommate.findIndex( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)
       this.requestedroommate.splice(index, 1)
     }
   }
@@ -117,7 +116,7 @@ export class ApplicationsStateService {
 
   deleteOverrideRequestingRoommate(preferenceKey: number, patronKeyRoommate: number) {
     if(this.applicationsState.applicationDetails.roommatePreferences.find(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)){
-      let index = this.applicationsState.applicationDetails.roommatePreferences.findIndex(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)
+      const index = this.applicationsState.applicationDetails.roommatePreferences.findIndex(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)
       this.applicationsState.applicationDetails.roommatePreferences.splice(index, 1)
     }
   }
@@ -152,7 +151,7 @@ export class ApplicationsStateService {
     this.roommatePreferences = roommates;
   }
 
-  addRoommatesPreferences(addedRoommate: RoommatePreferences, isOverride: boolean = false) {
+  addRoommatesPreferences(addedRoommate: RoommatePreferences, isOverride = false) {
     let roommatePreference;
     if (isOverride) {
       roommatePreference = this.applicationsState.applicationDetails.roommatePreferences.find(roommate =>
@@ -169,7 +168,7 @@ export class ApplicationsStateService {
     }
 
     if (!this.requestedroommate.some(roommate => roommate.patronRoommateKey === addedRoommate.patronKeyRoommate && roommate.preferenceKey === addedRoommate.preferenceKey)) {
-      let roommateRequested = new RequestedRoommate(
+      const roommateRequested = new RequestedRoommate(
         {
           'firstName': addedRoommate.firstName,
           'lastName': addedRoommate.lastName,

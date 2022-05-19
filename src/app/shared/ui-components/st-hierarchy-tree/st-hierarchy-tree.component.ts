@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { StHierarcheTreeDialogComponent } from '../st-hierarchy-tree-dialog/st-hierarchy-tree-dialog.component';
 import { NamedIdentity, LookUpItem } from '../../../sections/housing/work-orders/work-orders.model';

@@ -4,7 +4,7 @@ export function AutoUnsubscribe(blackList = []) {
 		const original = constructor.prototype.ngOnDestroy;
 
 		constructor.prototype.ngOnDestroy = function () {
-			for (let prop in this) {
+			for (const prop in this) {
 				console.log(prop);
 				const property = this[prop];
 				if (!blackList.includes(prop)) {
@@ -13,6 +13,7 @@ export function AutoUnsubscribe(blackList = []) {
 					}
 				}
 			}
+			// eslint-disable-next-line prefer-rest-params
 			original && typeof original === 'function' && original.apply(this, arguments);
 		};
 	}

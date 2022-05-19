@@ -53,6 +53,7 @@
   <ion-radio-group
     mode="md"
     class="delivery-address__radio-group"
+    [value]="selectedAddress"
     (ionChange)="onRadioGroupChanged($event)"
     *ngIf="listOfAddresses?.length"
   >
@@ -73,7 +74,6 @@
         mode="md"
         slot="start"
         [value]="item.item"
-        [checked]="item.checked"
         class="delivery-address__radio-item"
       ></ion-radio>
     </ion-item>

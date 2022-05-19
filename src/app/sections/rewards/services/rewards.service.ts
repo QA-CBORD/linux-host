@@ -62,7 +62,7 @@ export class RewardsService {
   combineAllRewards(): Observable<RedeemableRewardInfo[]> {
     return this.rewardTrack.pipe(
       map(({ trackLevels = [], redeemableRewards = [] }) => {
-        let rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
+        const rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
 
         return [...redeemableRewards, ...rewards];
       })
@@ -239,6 +239,7 @@ export class RewardsService {
   ): string {
     switch (status) {
       case LEVEL_STATUS.locked:
+        // eslint-disable-next-line no-case-declarations
         const requiredXP = this.getExpToNextLevel(trackLevels, level, points);
         return `${requiredXP} ${this.getContentValueByName(CONTENT_STRINGS.xpAwayFromRewardLabel)}`;
       case LEVEL_STATUS.claimed:

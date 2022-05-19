@@ -30,9 +30,9 @@ export class CreditCardMgmtComponent implements OnInit {
 
   @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
 
-  noCreditCardFound: boolean = false;
+  noCreditCardFound = false;
 
-  addNewCreditCartState: boolean = false;
+  addNewCreditCartState = false;
 
   constructor(
     private readonly modalControler: ModalController,
@@ -103,11 +103,11 @@ export class CreditCardMgmtComponent implements OnInit {
         secondaryBtnText: strings.cancel_remove_card_btn,
         primaryBtnColor: 'danger',
         secondaryBtnColor: 'light',
-        onClickPrimary: async e => {
+        onClickPrimary: async () => {
           await onRemoveConfirmed();
           this.popoverCtrl.dismiss({});
         },
-        onClickSecondary: e => {
+        onClickSecondary: () => {
           this.popoverCtrl.dismiss({});
         },
       },

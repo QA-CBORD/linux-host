@@ -24,7 +24,7 @@ import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/pus
   providedIn: 'root',
 })
 export class UserFacadeService extends ServiceStateFacade {
-  private ttl: number = 600000; // 10min
+  private ttl = 600000; // 10min
   private userPhoto: UserPhotoInfo = null;
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
@@ -158,7 +158,7 @@ export class UserFacadeService extends ServiceStateFacade {
       : of(false);
   }
 
-  private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
+  private getPhotoIdByStatus(photoList: UserPhotoInfo[], status = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
   }
 
@@ -265,7 +265,7 @@ export class UserFacadeService extends ServiceStateFacade {
 
   saveUser$(user: UserInfo): Observable<string> {
     return this.userApiService.updateUserInfo$(user).pipe(
-      tap(res => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
+      tap(() => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
       take(1)
     );
   }

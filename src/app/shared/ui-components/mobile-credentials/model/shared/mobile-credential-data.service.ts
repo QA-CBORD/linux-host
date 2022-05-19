@@ -20,13 +20,13 @@ const resourceUrls = {
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MobileCredentialDataService {
-  protected ttl: number = 600000;
-  protected jwtToken_key: string = 'jwt_token';
-  protected authBlob_key: string = 'auth_blob';
-  protected credential_key: string = 'mobile_credential';
+  protected ttl = 600000;
+  protected jwtToken_key = 'jwt_token';
+  protected authBlob_key = 'auth_blob';
+  protected credential_key = 'mobile_credential';
 
   constructor(
     protected storageStateService: StorageStateService,
@@ -34,9 +34,10 @@ export class MobileCredentialDataService {
     protected institutionFacadeService: InstitutionFacadeService,
     protected apiService: APIService,
     protected readonly userFacade: UserFacadeService,
-    protected contentStringFacade: ContentStringsFacadeService,
-  ) { }
+    protected contentStringFacade: ContentStringsFacadeService
+  ) {}
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<object> {
     return this.authFacadeService.retrieveAuthorizationBlob(deviceModel, osVersion).pipe(
       map(({ response }) => response),
@@ -61,7 +62,7 @@ export class MobileCredentialDataService {
     category: CONTENT_STRINGS_CATEGORIES;
     name: string;
   }): Observable<string> {
-    let { domain, category, name } = contentStringSettings;
+    const { domain, category, name } = contentStringSettings;
     return this.contentStringFacade.fetchContentString$(domain, category, name).pipe(
       map(data => {
         return data.value;
@@ -91,7 +92,9 @@ export class MobileCredentialDataService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   protected authorizationBlob$(): Observable<object> {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     return this.storageStateService.getStateEntityByKey$<object>(this.authBlob_key).pipe(
       switchMap(data => {
         if (data && data.lastModified + data.timeToLive >= Date.now()) {
@@ -106,6 +109,7 @@ export class MobileCredentialDataService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   activePasses$(args?: any): Observable<MobileCredential> {
     return this.getActivePasses().pipe(map(activePasses => MobileCredentialFactory.fromActivePasses(activePasses)));
   }
@@ -119,21 +123,25 @@ export class MobileCredentialDataService {
     return this.authorizationBlob$().pipe(
       switchMap(authorizationBlob => this.getPasses({ authorizationBlob })),
       tap(({ passes, credStatus }) => {
-
         if (!passes.android_hid && !passes.android_nxp && !credStatus.android_hid && !credStatus.android_nxp) {
           // no point in keeping auth_blob in state when mobile credential not enabled.
-          console.log('called activePasses, mobile credential not enabled. clearing auth_blob from state: ', passes, credStatus)
+          console.log(
+            'called activePasses, mobile credential not enabled. clearing auth_blob from state: ',
+            passes,
+            credStatus
+          );
           this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
         }
       }),
-      catchError((error) => {
-        console.log('got error from calling activePasses, clearing authblob: ', error)
+      catchError(error => {
+        console.log('got error from calling activePasses, clearing authblob: ', error);
         this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
         return throwError(error);
       })
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   private getPasses(requestBody: { authorizationBlob: object }): Observable<ActivePasses> {
     /**
      * @params omniIDToken -> jwt token needed to authenticate with partner payments api on aws.
