@@ -16,10 +16,9 @@ const imports = [
   QuestionsModule,
   StepperModule,
   CreditCardModule,
-  StButtonModule
 ];
 const declarations = [ApplicationPaymentComponent];
-const entryComponents = [ApplicationPaymentComponent, CreditCardMgmtComponent];
+const entryComponents = [ApplicationPaymentComponent];
 @NgModule({
   imports,
   declarations,

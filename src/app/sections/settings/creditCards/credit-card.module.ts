@@ -5,6 +5,7 @@ import { AccountsService } from "@sections/dashboard/services";
 import { ConfirmModule } from "@shared/confirm-modal/confirm-modal.module";
 import { StButtonModule } from "@shared/ui-components/st-button";
 import { StHeaderModule } from "@shared/ui-components/st-header/st-header.module";
+import { CardsComponent } from "./credit-card-mgmt/cards/cards.component";
 import { CreditCardMgmtComponent } from "./credit-card-mgmt/credit-card-mgmt.component";
 
 
@@ -18,14 +19,15 @@ import { CreditCardMgmtComponent } from "./credit-card-mgmt/credit-card-mgmt.com
       StButtonModule,
     ],
     declarations: [
-        CreditCardMgmtComponent
+        CreditCardMgmtComponent, CardsComponent
     ],
     entryComponents: [
         CreditCardMgmtComponent
     ],
     providers: [
       AccountsService
-    ]
+    ],
+    exports: [CardsComponent]
   })
   export class CreditCardModule {
     constructor() {}

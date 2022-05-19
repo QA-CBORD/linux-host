@@ -8,6 +8,7 @@ import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.c
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { AccountsService } from '@sections/dashboard/services';
 import { GUEST_FORM_CONTROL_NAMES } from '@sections/guest/guest-deposits/components/add-funds/guest-add-funds.component';
+import { accountsType, cardCs } from '@sections/settings/creditCards/credit-card-mgmt/cards/cards.component';
 import { firstValueFrom } from '@shared/utils';
 import { take } from 'rxjs/operators';
 import { PaymentSystemType } from 'src/app/app.global';
@@ -19,18 +20,10 @@ import { PaymentSystemType } from 'src/app/app.global';
 })
 
 export class ApplicationPaymentComponent implements OnInit {
-  @Input() contentStrings: {
-    screen_title: string;
-    no_card_found: string;
-    add_new_card_btn_text: string;
-    user_info_text: string;
-    error_loading_cards: string;
-    remove_success_msg: string;
-    remove_failure_msg: string;
-    added_success_msg: string;
-  };
+  @Input() contentStrings: cardCs;
 
-  @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
+  @Input() userAccounts: accountsType = [];
+
   noCreditCardFound: boolean;
   guestDepositForm: FormGroup;
   constructor(
@@ -78,8 +71,8 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   feePayment(acc: { account: { id: string; }; }) {
-    //this.depositService.feePayment(acc.account?.id, this.mainFormInput.value).pipe(take(1)).subscribe();
-   // alert("This is a bobo " + JSON.stringify(acc.account?.id))
+    this.depositService.feePayment(acc.account?.id, this.mainFormInput.value).pipe(take(1)).subscribe();
+    alert("This is a bobo " + JSON.stringify(acc.account?.id))
   }
 
   async retrieveAccounts() {

@@ -9,6 +9,7 @@ import { AccountsService } from '@sections/dashboard/services';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
 import { firstValueFrom } from '@shared/utils';
 import { PaymentSystemType } from 'src/app/app.global';
+import { accountsType, cardCs } from './cards/cards.component';
 
 @Component({
   selector: 'st-credit-card-mgmt',
@@ -17,22 +18,11 @@ import { PaymentSystemType } from 'src/app/app.global';
 })
 export class CreditCardMgmtComponent implements OnInit {
   
-  @Input() contentStrings: {
-    screen_title: string;
-    no_card_found: string;
-    add_new_card_btn_text: string;
-    user_info_text: string;
-    error_loading_cards: string;
-    remove_success_msg: string;
-    remove_failure_msg: string;
-    added_success_msg: string;
-  };
+  @Input() contentStrings: cardCs;
 
-  @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
+  @Input() userAccounts: accountsType = [];
 
   noCreditCardFound: boolean = false;
-
-  addNewCreditCartState: boolean = false;
 
   constructor(
     private readonly modalControler: ModalController,

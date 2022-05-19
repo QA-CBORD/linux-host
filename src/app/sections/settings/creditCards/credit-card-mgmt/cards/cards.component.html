@@ -1,0 +1,43 @@
+<div class="main_content">
+  <div class="cards">
+    <div class="card-items"  *ngIf="!noCreditCardFound">
+      <ion-list class="card-items-ion-list">
+        <ion-item *ngFor="let account of userAccounts" button="true" class="credit-card-item" lines="full">
+          <div class="card-icon">
+            <ion-icon class="ionic-icon-left" [src]="account.iconSrc" name="credit-card.svg"></ion-icon>
+          </div>
+          <ion-label class="credit__card_item-label">
+            <div class="order-item__label-title">
+              {{ account.display }}
+            </div>
+          </ion-label>
+          <div *ngIf="removeIcon" class="icon-wrapper" (click)="onRemoveClicked(account)">
+            <ion-icon class="ionic-icon" attr.alt="trash-can" src="/assets/icon/trash.svg" name="trash.svg">
+            </ion-icon>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div class="no-credit-card-block-wrapper" *ngIf="noCreditCardFound">
+      <div class="no-credit-card-block-message">
+        <img class="no-credit-card-block-img" height="auto" src="/assets/images/no_credit_card.svg"
+          alt="map locations" />
+        <div class="no-credit-card-block-text">
+          <div>
+            <p>{{contentStrings.no_card_found}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-to-user">
+      <div class="info-to-user-icon">
+        <ion-icon attr.alt="info-circle" src="/assets/icon/info-circle.svg" name="info-circle.svg"></ion-icon>
+      </div>
+      <div class="info-to-user-text">
+         {{contentStrings.user_info_text}}
+      </div>
+    </div>
+  </div>
+</div>
