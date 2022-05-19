@@ -31,46 +31,8 @@ export class ConnectivityFacadeService {
         private readonly connectionService: ConnectionService) { }
 
 
-
-
     async watchForConnectionIssuesOnExec<T>(options: PromiseExecOptions<T>): Promise<PromiseExecResult<T>> {
-
-        const showLoading = options.showLoading == undefined ? true : options.showLoading;
-
-        return await new Promise(async (resolve, reject) => {
-            let result = null;
-            try {
-                console.log("EXECUTING ACTUAL METHOD 2: WAIT ******");
-                result = await this.run(options.promise, showLoading);
-                resolve({ execStatus: ExecStatus.Execution_success, data: result });
-            } catch (error) {
-                console.log("CATCHED error here 2: ", error);
-                if (this.isConnectionError(error)) {
-                    await this.connectivityService.handleConnectionError({
-                        onRetry: async () => {
-                            this.loadingService.showSpinner();
-                            try {
-                                result = await this.run(options.promise, showLoading);
-                                resolve(result);
-                                return true;
-                            } catch (error) {
-                                if (this.isConnectionError(error)) {
-                                    console.log("CATCHED error here AGAIN 2: ", error);
-                                    return false;
-                                } else {
-                                    reject(error);
-                                    return true;
-                                }
-                            } finally {
-                                this.loadingService.closeSpinner();
-                            }
-                        }
-                    }, true);
-                } else {
-                    reject(error);
-                }
-            }
-        });
+        return this.exec({ ...options, skipError: (e) => !this.isConnectionError(e) });
     }
 
     private isConnectionError(error): boolean {
@@ -84,13 +46,18 @@ export class ConnectivityFacadeService {
         this.connectivityService.setPinModalOpened(isOpened);
     }
 
-    async executePromise<T>(options: PromiseExecOptions<T>): Promise<PromiseExecResult<T>> {
+    private setOptionsDefaults(options: PromiseExecOptions<any>) {
         options.showLoading = options.showLoading == undefined ? true : options.showLoading;
+        options.skipError = options.skipError ? options.skipError : () => false;
+    }
+
+    async exec<T>(options: PromiseExecOptions<T>): Promise<PromiseExecResult<T>> {
+        this.setOptionsDefaults(options);
         return await new Promise(async (resolve, reject) => {
             try {
                 resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(options.promise, options.showLoading) });
             } catch (error) {
-                if (options.skipError && options.skipError(error)) {
+                if (options.skipError(error)) {
                     reject(error);
                 } else {
                     const { data, promiseResolved } = await this.handleError(options);
@@ -106,18 +73,14 @@ export class ConnectivityFacadeService {
     }
 
 
-
-
     private async handleError<T>(options: PromiseExecOptions<T>): Promise<{ data, promiseResolved }> {
         let promiseResolved = false;
         let data = null;
         await this.connectivityService.handleConnectionError({
             onRetry: async () => {
-                this.loadingService.showSpinner();
-                return this.run(options.promise, options.showLoading)
+                return this.run(options.promise, true)
                     .then(r => (promiseResolved = true) && (((data = r) && true) || true))
-                    .catch(e => options.skipError && options.skipError(e) && ((data = e) && true))
-                    .finally(() => this.loadingService.showSpinner())
+                    .catch(e => options.skipError(e) && ((data = e) && true));
             }
         }, true);
         return { promiseResolved, data };

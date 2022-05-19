@@ -95,7 +95,7 @@ export class SessionFacadeService {
     if (isWeb) {
       return LoginState.DONE;
     } else {
-      const { data: isPinLoginEnabled } = await this.connectivityFacade.executePromise({
+      const { data: isPinLoginEnabled } = await this.connectivityFacade.exec({
         promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionId),
         showLoading: false
       });
@@ -134,7 +134,7 @@ export class SessionFacadeService {
       return usernamePasswordLoginType;
     }
 
-    const { data: isPinLoginEnabled } = await this.connectivityFacade.executePromise({
+    const { data: isPinLoginEnabled } = await this.connectivityFacade.exec({
       promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id),
       showLoading: false
     });

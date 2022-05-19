@@ -52,7 +52,7 @@ export class StartupPage {
 
 
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
-    const { data: systemSessionId } = await this.connectivityFacade.executePromise({
+    const { data: systemSessionId } = await this.connectivityFacade.exec({
       promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
     });
 
@@ -91,7 +91,7 @@ export class StartupPage {
         promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
         skipError: ({ message }) => DEVICE_MARKED_LOST.test(message)
       };
-      this.connectivityFacade.executePromise(code)
+      this.connectivityFacade.exec(code)
         .then(() => this.navigateToDashboard())
         .catch(() => this.navigateAnonymous(ANONYMOUS_ROUTES.entry));
     } else {
@@ -142,7 +142,7 @@ export class StartupPage {
   }
 
   public async navigateToDashboard() {
-    await this.connectivityFacade.executePromise({
+    await this.connectivityFacade.exec({
       promise: async () => this.navigationService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true,
         queryParams: { skipLoading: true }
