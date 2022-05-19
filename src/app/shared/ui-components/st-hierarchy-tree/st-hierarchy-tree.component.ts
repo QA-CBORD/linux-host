@@ -6,6 +6,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 import { Subscription } from 'rxjs';
 import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'st-hierarchy-tree',
@@ -20,6 +21,8 @@ export class StHierarcheTreeComponent implements OnDestroy  {
   @Input() public allowParent: boolean;
   @Input() public isDisable: boolean;
   @Input() public label: string;
+  @Input() parentGroup: FormGroup;
+  @Input() facilityName: any;
   constructor(
     public modalCtrl: ModalController,
     public _workOrderStateService: WorkOrderStateService,
