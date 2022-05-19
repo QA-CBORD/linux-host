@@ -24,7 +24,7 @@ import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 
-enum GUEST_FORM_CONTROL_NAMES {
+export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
   toAccount = 'toAccount',
   amountToDeposit = 'amountToDeposit',

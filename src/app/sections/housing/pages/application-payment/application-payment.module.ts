@@ -7,6 +7,7 @@ import { StepperModule } from '../../stepper/stepper.module';
 import { ApplicationPaymentComponent } from './application-payment.component';
 import { CreditCardModule } from '@sections/settings/creditCards/credit-card.module';
 import { CreditCardMgmtComponent } from '@sections/settings/creditCards/credit-card-mgmt/credit-card-mgmt.component';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const imports = [
   CommonModule,
@@ -14,7 +15,8 @@ const imports = [
   IonicModule,
   QuestionsModule,
   StepperModule,
-  CreditCardModule
+  CreditCardModule,
+  StButtonModule
 ];
 const declarations = [ApplicationPaymentComponent];
 const entryComponents = [ApplicationPaymentComponent, CreditCardMgmtComponent];
