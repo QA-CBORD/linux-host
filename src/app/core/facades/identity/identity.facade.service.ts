@@ -107,7 +107,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   public async navigateToDashboard() {
-    this.connectivityFacade.executePromise({
+    this.connectivityFacade.exec({
       promise: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true, queryParams: { skipLoading: true }
       })
