@@ -17,6 +17,7 @@ import { AccountDisplayPipeModule } from '@sections/accounts/shared/pipes/accoun
 import { AccessibleSelectModule } from '@shared/accessibility/directives/accessible-select.module';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { DestinationAccountDisplayModule } from './pipes/destination-account-display.module';
+import { InputAmountComponent } from './input-amount/input-amount.component';
 
 const imports = [
   CommonModule,
@@ -35,7 +36,7 @@ const imports = [
   AccessibleSelectModule,
   DestinationAccountDisplayModule
 ];
-const declarations = [DepositPageComponent];
+const declarations = [DepositPageComponent, InputAmountComponent];
 const providers = [DepositResolver, DepositService, AccessibilityService];
 const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
 

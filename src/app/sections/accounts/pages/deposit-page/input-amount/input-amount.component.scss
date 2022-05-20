@@ -1,0 +1,49 @@
+@import 'tools';
+
+.deposit {
+
+  &__main-input-container {
+    color: $color-dim-gray;
+
+    @include font-nunito-regular(80px);
+
+    &--decrease-font {
+      @include font-nunito-regular(60px);
+    }
+  }
+
+  &__main-input {
+    text-align: center;
+    width: 70%;
+    margin: 0 auto;
+    transition: font-size 0.3s ease 0s;
+
+    &--focus {
+      color: #000;
+      border-bottom: 2px solid $color-dodger-blue !important;
+    }
+
+    &--error {
+      color: $color-alizarin;
+      text-align: center;
+
+      @include font-nunito-heavy(14px);
+    }
+
+    &.ng-invalid.ng-dirty {
+      border-bottom: 2px solid red !important;
+    }
+
+    --padding-bottom: 0;
+    --padding-top: 0;
+    --padding-start: 0;
+
+    &::before {
+      content: '$';
+      font-size: 70%;
+      position: relative;
+      left: 5px;
+      bottom: 10px;
+    }
+  }
+}
