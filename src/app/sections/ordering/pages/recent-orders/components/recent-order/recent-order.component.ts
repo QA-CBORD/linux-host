@@ -30,6 +30,7 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
+import { firstValueFrom } from '@shared/utils';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -369,12 +370,13 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   private async initConfirmModal(onSuccessCb): Promise<void> {
+    const message = await firstValueFrom(this.contentStrings.reorderNotAvailableItemMessage);
     const modal = await this.popoverController.create({
       component: StGlobalPopoverComponent,
       componentProps: {
         data: {
           title: 'Warning',
-          message: 'Some of order items dont available for picked date',
+          message,
           buttons: [{ ...buttons.OKAY, label: 'PROCEED' }],
         },
       },
@@ -448,6 +450,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder
+    );
+    this.contentStrings.reorderNotAvailableItemMessage = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.reorderNotAvailableItemMessage
     );
   }
 
