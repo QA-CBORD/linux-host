@@ -28,8 +28,11 @@ export class EntryPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.initialization();
     this.appVersion$ = this.fetchDeviceInfo();
+  }
+
+  ionViewWillEnter() {
+    this.initialization();
   }
 
   private async initialization() {
