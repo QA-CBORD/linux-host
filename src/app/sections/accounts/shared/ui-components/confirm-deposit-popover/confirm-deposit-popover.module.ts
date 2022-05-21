@@ -16,6 +16,6 @@ import { TransactionUnitsPipeModule } from '@shared/pipes';
   ],
   providers: [],
   declarations: [ConfirmDepositPopoverComponent],
-  exports: [ConfirmDepositPopoverComponent]
+  exports: [ConfirmDepositPopoverComponent],
 })
 export class ConfirmDepositPopoverModule { }

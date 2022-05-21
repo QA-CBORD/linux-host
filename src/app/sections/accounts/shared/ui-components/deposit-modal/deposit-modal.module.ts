@@ -16,6 +16,6 @@ import { StButtonModule } from '@shared/ui-components/st-button/st-button.module
   ],
   providers: [],
   declarations: [DepositModalComponent],
-  exports: [DepositModalComponent]
+  exports: [DepositModalComponent],
 })
 export class DepositModalModule { }

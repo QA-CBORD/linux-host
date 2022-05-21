@@ -36,7 +36,7 @@ const imports = [
   AccessibleSelectModule,
   DestinationAccountDisplayModule
 ];
-const declarations = [DepositPageComponent, InputAmountComponent];
+const declarations = [DepositPageComponent, InputAmountComponent, ];
 const providers = [DepositResolver, DepositService, AccessibilityService];
 const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
 
@@ -44,6 +44,7 @@ const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
   declarations,
   imports: [imports],
   providers,
-  entryComponents
+  entryComponents,
+  exports: [InputAmountComponent]
 })
 export class DepositModule {}

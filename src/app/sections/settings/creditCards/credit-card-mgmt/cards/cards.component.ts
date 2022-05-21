@@ -19,7 +19,7 @@ export type accountsType = {
 }[];
 
 @Component({
-  selector: 'st-cards',
+  selector: 'st-payment-items',
   templateUrl: './cards.component.html',
   styleUrls: ['./cards.component.scss'],
 })
@@ -32,6 +32,10 @@ export class CardsComponent implements OnInit {
 
   @Output() onRemove: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
 
+  @Output() onClick: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
+  
+  @Output() onAdd: EventEmitter<Event> = new EventEmitter<Event>();
+
   noCreditCardFound: boolean;
 
   constructor() {}
@@ -40,7 +44,15 @@ export class CardsComponent implements OnInit {
     this.noCreditCardFound = !this.userAccounts.length;
   }
 
-  onRemoveClicked(account: UserAccount) {
+  onRemoveEvent(account: UserAccount) {
     this.onRemove.emit(account);
+  }
+
+  onClickEvent(account: UserAccount) {
+    this.onClick.emit(account);
+  }
+
+  onAddEvent() {
+    this.onAdd.emit();
   }
 }

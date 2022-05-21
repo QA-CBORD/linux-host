@@ -1,0 +1,57 @@
+<st-popover-layout [popoverConfig]="popoverConfig">
+  <section class="cdp__policy-container" *ngIf="showDepositInstructions">
+    <h5 class="cdp__policy-title">{{ contentString.policyTitle }}</h5>
+    <div class="cdp__policy-body">
+      {{ showDepositInstructions }}
+    </div>
+  </section>
+
+  <section class="cdp__info-container">
+    <div class="cdp__label">
+      {{ contentString.lblDepositAmount }}:
+      <span class="cdp__value">{{
+        popoverConfig.message['amount'] | transactionUnits: popoverConfig.message['selectedAccount'].accountType
+      }}</span>
+    </div>
+    <ng-container *ngIf="popoverConfig.message['fee']">
+      <div class="cdp__label">
+        {{ contentString.convenienceFeeLabel }}:
+        <span class="cdp__value">{{
+          popoverConfig.message['fee'] | transactionUnits: popoverConfig.message['selectedAccount'].accountType
+        }}</span>
+      </div>
+      <div class="cdp__label">
+        {{ contentString.totalPaymentLabel }}:
+        <span class="cdp__value">
+          {{
+            +popoverConfig.message['amount'] + +popoverConfig.message['fee']
+              | transactionUnits: popoverConfig.message['selectedAccount'].accountType
+          }}
+        </span>
+      </div>
+    </ng-container>
+    <div class="cdp__label">
+      {{ contentString.lblAccount }}:
+      <span class="cdp__value">{{ popoverConfig.message['selectedAccount'].accountDisplayName }}</span>
+    </div>
+    <div class="cdp__label">
+      {{ contentString.lblSelectPaymentMethod }}:
+      <span
+        class="cdp__value"
+        *ngIf="popoverConfig.message['sourceAcc'].accountTender === 'Apple Pay'; else creditcard"
+      >
+        {{ popoverConfig.message['sourceAcc'].accountTender }}
+      </span>
+      <ng-template #creditcard>
+        <span class="cdp__value" *ngIf="!popoverConfig.message['billme']; else billme">
+          {{ popoverConfig.message['sourceAcc'].accountTender | creditCardType }} {{ contentString.endingInText }}
+          {{ popoverConfig.message['sourceAcc'].lastFour }}
+        </span>
+      </ng-template>
+    </div>
+  </section>
+</st-popover-layout>
+
+<ng-template #billme>
+  <span class="cdp__value" *ngIf="data['billme']"> {{ contentString.billMeLabel }} </span>
+</ng-template>
