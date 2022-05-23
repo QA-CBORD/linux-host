@@ -32,8 +32,7 @@ const imports = [
   CheckInOutModule,
   WaitingListsModule,
   WorkOrdersModule,
-  InspectionsModule,
-  ApplicationPaymentModule
+  InspectionsModule
 ];
 const declarations = [HousingDashboardPage];
 

@@ -25,7 +25,6 @@ const imports = [
   CreditCardTypeModule,
   CreditCardModule,
   DepositModule,
-  ApplicationDetailsPageModule,
   ConfirmDepositPopoverModule,
   DepositModalModule
 ];
