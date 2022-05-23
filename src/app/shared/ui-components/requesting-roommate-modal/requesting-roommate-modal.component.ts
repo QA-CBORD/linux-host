@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy } from '@a
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RoommatePreferences } from '../../../sections/housing/applications/applications.model';
 import { AlertController, ModalController, Platform } from '@ionic/angular';
-import { RoommateResponse } from '../../../sections/housing/roommate/roomate.model';
 import { HousingService } from '../../../sections/housing/housing.service';
 import { TermsService } from '../../../sections/housing/terms/terms.service';
 import { Subscription } from 'rxjs';
@@ -33,7 +32,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   
   ngOnInit(): void {
     if (isMobile(this._platform)) {
-      this._subscription = this._platform.pause.subscribe(x => {
+      this._subscription = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });
@@ -45,7 +44,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
 
   @Input() requestingRoommate: RoommatePreferences[];
 
-  @Input() text: string = 'Back';
+  @Input() text = 'Back';
 
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
@@ -59,6 +58,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
     await this.modalController.dismiss();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async acceptRoommateRequest(roommate: RoommatePreferences,index:number){
     if (this._applicationsStateService.roommatePreferencesSelecteds.find( value => value.patronKeyRoommate !== roommate.patronKeyRoommate && value.patronKeyRoommate != 0 && value.preferenceKey === roommate.preferenceKey)){
       const alert = await this._alertController.create({

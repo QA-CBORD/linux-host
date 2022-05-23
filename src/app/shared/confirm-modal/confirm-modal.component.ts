@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 
@@ -7,7 +7,7 @@ import { CheckingContentCsModel } from '@sections/check-in/contents-strings/chec
   templateUrl: './confirm-modal.component.html',
   styleUrls: ['./confirm-modal.component.scss'],
 })
-export class ConfirmModalComponent implements OnInit {
+export class ConfirmModalComponent {
 
   @Input() titleString: string;
 
@@ -21,13 +21,16 @@ export class ConfirmModalComponent implements OnInit {
 
   @Input() secondaryBtnColor: string;
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   @Input() onClickSecondary: Function;
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   @Input() onClickPrimary: Function;
 
-  @Input() primaryBtnDisabled: boolean = false;
 
-  @Input() secondaryBtnDisabled: boolean = false;
+  @Input() primaryBtnDisabled = false;
+
+  @Input() secondaryBtnDisabled = false;
 
   @Output() onPrimaryBtnClicked: EventEmitter<any> = new EventEmitter<Event>();
 
@@ -38,8 +41,6 @@ export class ConfirmModalComponent implements OnInit {
   @Input() locationPermissionDisabled: boolean;
 
   constructor(protected readonly popoverCtrl: PopoverController,) {}
-
-  ngOnInit() {}
 
   async onScanCode() {
     await this.popoverCtrl.dismiss({

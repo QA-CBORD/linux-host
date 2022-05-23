@@ -1,4 +1,4 @@
-import { OrderItem, OrderPayment } from '.';
+import { OrderItem } from '.';
 
 export interface ExistingOrderInfo {
   orderID: string;

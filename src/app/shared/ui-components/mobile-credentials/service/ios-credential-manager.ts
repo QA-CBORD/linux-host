@@ -24,6 +24,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
   ) {}
   
   
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async onCredentialStateChanged(): Promise<void> {}
 
   
@@ -36,6 +37,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
      return null; // is not in use for now.
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async onWillLogout(): Promise<void> {}
 
   refresh(): void {
@@ -67,6 +69,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
     this.mCredential = mobileCredential;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUiImageClicked(event?: any): void {
     this.addToAppleWallet();
   }
@@ -88,7 +91,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
   }
 
   credentialAvailable$(): Observable<boolean> {
-    let isAvailable = this.mCredential ? this.mCredential.isAvailable() : false;
+    const isAvailable = this.mCredential ? this.mCredential.isAvailable() : false;
     return of(isAvailable);
   }
 
@@ -98,7 +101,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
       take(1),
       map(appleWalletCredential => {
         this.mCredential = appleWalletCredential;
-        let appleWalletEnabled = this.mCredential.isEnabled();
+        const appleWalletEnabled = this.mCredential.isEnabled();
         if (appleWalletEnabled) {
           this.registerAppletWalletEvent();
         }

@@ -20,7 +20,7 @@ export class AccountListComponent implements OnInit {
   transactions: Observable<TransactionHistory[]>;
   accountsShowed: UserAccount[] = [];
   accountsHidden: UserAccount[] = [];
-  tabletResolution: boolean = false;
+  tabletResolution = false;
   allAccounts: string = ALL_ACCOUNTS;
   activeAccount: number | string = ALL_ACCOUNTS;
   private readonly amountToShow: number = 7;
@@ -72,7 +72,7 @@ export class AccountListComponent implements OnInit {
   }
 
   private defineResolution() {
-    const tabletResolution: number = 767;
+    const tabletResolution = 767;
 
     this.tabletResolution = this.platform.width() > tabletResolution;
   }

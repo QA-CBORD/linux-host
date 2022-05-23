@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -11,8 +10,8 @@ import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { UserInfo } from '@core/model/user';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
-import { ContentStringCategory, ExtraContent } from '@shared/model/content-strings/content-strings-api';
-import { iif, Observable, of } from 'rxjs';
+import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { iif, Observable } from 'rxjs';
 import { skipWhile, map, take, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 import { MessageProxy } from './injectable-message.proxy';
@@ -30,7 +29,7 @@ export class CommonService {
     private readonly messageProxy: MessageProxy
   ) {}
 
-  async getInstitutionPhoto(useCache: boolean = true, sanitizer: DomSanitizer = null): Promise<SafeResourceUrl> {
+  async getInstitutionPhoto(useCache = true, sanitizer: DomSanitizer = null): Promise<SafeResourceUrl> {
     const sessId = await this.sessionId();
     const instId = await this.institionId();
     const cachedPhoto$ = this.institutionFacadeService.getInstitutionPhoto$(instId, sessId, true);
@@ -98,8 +97,7 @@ export class CommonService {
 
   loadContentString<T extends ContentStringModel>(
     category: ContentStringCategory,
-    args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {},
-    save:boolean = false
+    args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {}
   ): Observable<T> {
     return this.contentStringFacadeService.fetchContentStringModel<T>(category, args).pipe(
       take(1),
@@ -111,7 +109,7 @@ export class CommonService {
     return this.getInstitution(null, true).then(({ name }) => name);
   }
 
-  async getInstitution(instId = null, useCache: boolean = true): Promise<Institution> {
+  async getInstitution(instId = null, useCache = true): Promise<Institution> {
     const sessId = await this.sessionId();
     const id = instId || (await this.institionId());
     const cachedInstitution$ = this.institutionFacadeService.getInstitutionInfo$(id, sessId, true);
@@ -121,7 +119,7 @@ export class CommonService {
       .toPromise();
   }
 
-  async getInstitutionBgColor(useCache: boolean = true): Promise<string> {
+  async getInstitutionBgColor(useCache = true): Promise<string> {
     const sessId = await this.sessionId();
     const instId = await this.institionId();
     const cachedBgColor$ = this.settingsFacadeService.getSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessId, instId);

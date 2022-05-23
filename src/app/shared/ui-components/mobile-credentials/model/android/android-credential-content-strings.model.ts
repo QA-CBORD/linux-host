@@ -171,6 +171,7 @@ export class AndroidCredentialCsModel extends ContentStringModel {
   private terms: TermsContent;
   private cStatus: CredentialStatusCs;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(nullable: NullableContent, args?: any) {
     super(nullable.getConfig(), defaultMobileCredentialCs);
     this.init();

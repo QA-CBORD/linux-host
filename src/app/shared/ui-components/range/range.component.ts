@@ -36,6 +36,6 @@ export class RangeComponent implements OnInit {
       return 'Any Price';
     }
 
-    return `\$${value.upper} or less`;
+    return `$${value.upper} or less`;
   }
 }

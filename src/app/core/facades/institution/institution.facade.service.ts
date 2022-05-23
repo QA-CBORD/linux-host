@@ -78,8 +78,8 @@ export class InstitutionFacadeService extends ServiceStateFacade {
         switchMap(sessionId => {
           return this.settingsFacadeService.getIsGuestRegAllowed(sessionId, institutionId).pipe(
             take(1),
-            map(({ value }) => true),
-            catchError(err => {
+            map(() => true),
+            catchError(() => {
               return of(true);
             })
           );

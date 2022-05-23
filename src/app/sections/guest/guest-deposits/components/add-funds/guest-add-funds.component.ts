@@ -46,8 +46,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   confirmationCs: ContentStringModel;
   guestDepositForm: FormGroup;
   recipientName: string;
-  isMaxCharLength: boolean = false;
-  focusLine: boolean = false;
+  isMaxCharLength = false;
+  focusLine = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -142,7 +142,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     if (this.isReadyToSubmit()) return;
     this.isDepositing = true;
     const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.guestDepositForm.value;
-    let amount = this.formatAmountValue(mainInput, amountToDeposit);
+    const amount = this.formatAmountValue(mainInput, amountToDeposit);
     if (this.isApplePayEnabled(paymentMethod)) {
       this.handleApplePay(toAccount, amount);
     } else {
@@ -171,6 +171,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         )
         .subscribe(
           info => {
+            // eslint-disable-next-line @typescript-eslint/ban-types
             this.confirmationDepositPopover({ ...(info as {}) });
           },
           () => {

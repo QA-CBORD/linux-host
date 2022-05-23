@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { HousingService } from '../../../sections/housing/housing.service';
 import { TermsService } from '../../../sections/housing/terms/terms.service';
@@ -15,10 +15,10 @@ import { map } from 'rxjs/operators';
 export class BackButtonComponent implements OnDestroy {
   @Input() defaultHref: string;
 
-  @Input() text: string = 'Back';
+  @Input() text = 'Back';
 
   requestedRoommates$: Observable<RequestedRoommate[]>;
-  private selectedTermKey: number = 0;
+  private selectedTermKey = 0;
   private subscriptions: Subscription = new Subscription();
 
   constructor(

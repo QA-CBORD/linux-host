@@ -10,8 +10,6 @@ export class CheckInOutStateService  {
   private checkInOutSpots: Subject<CheckInOutSpot> = new Subject<CheckInOutSpot>();
   private _selectedCheckInOut: CheckInOut;
 
-  constructor() { }
-
   setCheckInOuts(value: CheckInOut[]) {
     this.checkInOuts.next(value);
   }

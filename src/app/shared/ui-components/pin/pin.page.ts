@@ -42,16 +42,16 @@ export class PinPage implements OnInit {
   readonly setNumbers: ReadonlyArray<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   pinNumber: number[] = [];
   pinNumberCopy: number[] = [];
-  arePINsMatch: boolean = true;
-  disableInput: boolean = false;
-  disableDelete: boolean = false;
-  disableEnter: boolean = false;
+  arePINsMatch = true;
+  disableInput = false;
+  disableDelete = false;
+  disableEnter = false;
 
   instructionText: string = null;
   errorText: string = null;
 
-  currentLoginAttempts: number = 0;
-  maxLoginAttempts: number = 3;
+  currentLoginAttempts = 0;
+  maxLoginAttempts = 3;
 
   /// temporary solution before content strings added
   private readonly setPinText: string = 'Create a 4 digit PIN to use when biometrics are not available';
@@ -73,7 +73,7 @@ export class PinPage implements OnInit {
   ) { }
 
   @Input() pinAction: PinAction;
-  @Input() showDismiss: boolean = true;
+  @Input() showDismiss = true;
 
   ngOnInit() {
     this.retrievePinRetrys();
@@ -124,8 +124,8 @@ export class PinPage implements OnInit {
 
   async append(number: number) {
     this.setErrorText(null);
-    let executeSetPinLogic = this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC;
-    let executeLoginPinLogic =
+    const executeSetPinLogic = this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC;
+    const executeLoginPinLogic =
       this.pinAction === PinAction.LOGIN_PIN ||
       this.pinAction === PinAction.CHANGE_PIN_ONLY ||
       this.pinAction === PinAction.CHANGE_PIN_BIOMETRIC;
@@ -236,7 +236,7 @@ export class PinPage implements OnInit {
             this.setErrorText('Error setting your PIN - please try again');
           }
         },
-        error => {
+        () => {
           this.cleanLocalState();
           this.setErrorText('Error setting your PIN - please try again');
         }

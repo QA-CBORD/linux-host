@@ -21,7 +21,7 @@ export class PhoneEmailComponent implements OnInit {
   phoneEmailForm: FormGroup;
   user: UserInfoSet;
   isLoading: boolean;
-  title: string = '';
+  title = '';
   private readonly titleUpdateContact: string = 'Email & Phone Number';
   private readonly titleStaleProfile: string = 'Update Contact Information';
 

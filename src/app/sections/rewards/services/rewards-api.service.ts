@@ -22,8 +22,8 @@ export class RewardsApiService {
   }
 
   getUserRewardTrackInfo(
-    headerOnly: boolean = false,
-    showToastOnError: boolean = true,
+    headerOnly = false,
+    showToastOnError = true,
   ): Observable<UserRewardTrackInfo> {
     const postParams: ServiceParameters = { headerOnly };
     const queryConfig = new RPCQueryConfig('retrieveUserRewardTrackInfo', postParams, true);
@@ -40,7 +40,7 @@ export class RewardsApiService {
   }
 
   getUserRewardHistoryInfo(
-    showToast: boolean = true,
+    showToast = true,
     rewardTrackId: string = null,
     startDate: Date = null,
     endDate: Date = null,
@@ -60,7 +60,7 @@ export class RewardsApiService {
     );
   }
 
-  optUserIntoRewardTrack(trackId: string, userId: string, showToastOnError: boolean = true): Observable<boolean> {
+  optUserIntoRewardTrack(trackId: string, userId: string, showToastOnError = true): Observable<boolean> {
     const postParams: ServiceParameters = { trackId, userId };
     const queryConfig = new RPCQueryConfig('optUserIntoRewardTrack', postParams, true);
 
@@ -71,7 +71,7 @@ export class RewardsApiService {
     );
   }
 
-  claimReward(rewardId: string, showToast: boolean = true) {
+  claimReward(rewardId: string, showToast = true) {
     const queryConfig = new RPCQueryConfig('claimRewardV2', { rewardId }, true);
 
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(
@@ -84,7 +84,7 @@ export class RewardsApiService {
     return this.platform.is(name);
   }
 
-  private onErrorHandler(showToastOnError: boolean = true) {
+  private onErrorHandler(showToastOnError = true) {
     return (source: Observable<any>) =>
       source.pipe(
         catchError(err => {

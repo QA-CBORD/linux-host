@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';

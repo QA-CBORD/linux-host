@@ -13,7 +13,7 @@ import { UserRewardTrackInfo } from '@core/model/rewards/rewards.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RewardsTileComponent implements OnInit {
-  isLoadingData: boolean = true;
+  isLoadingData = true;
   rewardTrackInfo$: Observable<UserRewardTrackInfo>;
   currentLvlInfo$: Observable<UserTrackLevelInfo>;
   nextLvlRequirePoints$: Observable<number | null>;

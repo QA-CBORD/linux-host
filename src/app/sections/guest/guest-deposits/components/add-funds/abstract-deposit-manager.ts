@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChangeDetectorRef } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { UserAccount } from '@core/model/account/account.model';
@@ -27,7 +29,7 @@ export abstract class AbstractDepositManager {
 
   private activePaymentType: PAYMENT_TYPE;
   depositButtonText: string;
-  isDepositing: boolean = false;
+  isDepositing = false;
   applePayEnabled: boolean;
   creditCardDestinationAccounts: Array<UserAccount>;
   creditCardSourceAccounts: Array<UserAccount>;

@@ -1,0 +1,22 @@
+{
+  "root": true,
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "overrides": [
+    {
+      "files": ["*.component.html", "*.page.html", "settings.html", "*-screen.html"],
+      "parser": "@angular-eslint/template-parser",
+      "rules": {
+        "@typescript-eslint/dot-notation": "off",
+        "@typescript-eslint/no-implied-eval": "off",
+        "@typescript-eslint/no-throw-literal": "off",
+        "strict": "off",
+        "import/first": "off",
+        "lines-around-directive": "off"
+      },
+      "plugins": ["@angular-eslint/template"]
+    }
+  ],
+  "rules": { "@typescript-eslint/no-unused-vars": ["error"] }
+}

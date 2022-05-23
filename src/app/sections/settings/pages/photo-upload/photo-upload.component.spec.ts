@@ -17,17 +17,17 @@ describe('PhotoUploadComponent', () => {
   let component: PhotoUploadComponent;
   let fixture: ComponentFixture<PhotoUploadComponent>;
 
-  let router = {
+  const router = {
     navigate: jest.fn(),
   };
 
-  let domSanitizer = {};
-  let sessionFacadeService = {};
-  let toastService = {
+  const domSanitizer = {};
+  const sessionFacadeService = {};
+  const toastService = {
     showToast: jest.fn(),
   };
 
-  let photoUploadService = {
+  const photoUploadService = {
     clearLocalGovernmentIdPhotos: jest.fn(),
     clearLocalProfilePhoto: jest.fn(),
     getInitialPhotoData$: jest.fn(() => of(true)),
@@ -42,32 +42,32 @@ describe('PhotoUploadComponent', () => {
     },
   };
 
-  let loadingService = {
+  const loadingService = {
     showSpinner: jest.fn(),
     closeSpinner: jest.fn(),
   };
-  let actionSheetCtrl = {
+  const actionSheetCtrl = {
     create: jest.fn().mockResolvedValue(true),
   };
 
-  let cd = {
+  const cd = {
     detectChanges: jest.fn(),
   };
 
-  let photoCropModalService = {
+  const photoCropModalService = {
     photoCropModalService: jest.fn(),
   };
 
-  let cameraService = {
+  const cameraService = {
     getPhoto: jest.fn().mockResolvedValue(true),
   };
 
-  let takePhotoController = {
+  const takePhotoController = {
     present: jest.fn(async () => true),
     onWillDismiss: jest.fn(async () => ({ role: 'take-photo' })),
   };
 
-  let selectPhotoController = {
+  const selectPhotoController = {
     present: jest.fn(async () => true),
     onWillDismiss: jest.fn(async () => ({ role: 'select-photo' })),
   };
@@ -134,7 +134,7 @@ describe('PhotoUploadComponent', () => {
   it('should have cleared the photo info', async () => {
     const spy = jest.spyOn(photoUploadService, 'clearLocalGovernmentIdPhotos');
     component.ionViewWillEnter();
-    expect(spy).toHaveBeenCalledTimes(1);;
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
 

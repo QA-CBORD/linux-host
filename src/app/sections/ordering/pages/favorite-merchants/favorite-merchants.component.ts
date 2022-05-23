@@ -68,6 +68,7 @@ export class FavoriteMerchantsComponent implements OnInit {
       );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   locationPinHandler(event: string) {
     // console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }

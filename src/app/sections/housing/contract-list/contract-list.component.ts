@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ContractListStateService } from './contract-list-state.service';
 
@@ -10,12 +10,9 @@ import { ContractListStateService } from './contract-list-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./contract-list.component.scss'],
 })
-export class ContractListComponent implements OnInit {
+export class ContractListComponent {
 
   constructor(
     public contractListStateService: ContractListStateService
   ) {}
-
-  ngOnInit() {
-  }
 }

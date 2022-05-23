@@ -13,8 +13,8 @@ export class ModifyPrepTimePipe implements PipeTransform {
   transform(
     { dueTime, isASAP }: any = {},
     orderTypes: MerchantOrderTypesInfo,
-    isShowTime: boolean = true,
-    showFullDate: boolean = true
+    isShowTime = true,
+    showFullDate = true
     ): string {
 
     if (isASAP && !isShowTime) return 'ASAP';

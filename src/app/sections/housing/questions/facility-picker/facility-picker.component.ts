@@ -15,7 +15,7 @@ export class FacilityPickerComponent implements OnInit, OnDestroy {
 
   @Input() parentForm: FormGroup;
 
-  @Input() isDisabled: boolean = false;
+  @Input() isDisabled = false;
 
   facilities: QuestionReorderValue[];
 

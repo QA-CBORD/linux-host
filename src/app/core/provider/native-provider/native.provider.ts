@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { PATRON_NAVIGATION } from './../../../app.global';
 import { Router } from '@angular/router';
 import { Injectable, NgZone } from '@angular/core';
@@ -5,7 +6,7 @@ import { Platform, ModalController, PopoverController, ActionSheetController, Al
 import { Observable, Observer, from, of, throwError } from 'rxjs';
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
-declare var androidInterface: any;
+declare let androidInterface: any;
 
 export enum NativeData {
   SESSION_ID = 'getSessionId',
@@ -59,7 +60,7 @@ export interface AppleWalletInfo {
   providedIn: 'root',
 })
 export class NativeProvider {
-  private previousRoute: string = '';
+  private previousRoute = '';
   private keepTopModal = false;
   constructor(
     private readonly platform: Platform,
@@ -122,7 +123,7 @@ export class NativeProvider {
     this.dismissTopControllers().finally(() => this.zone.run(() => this.doNativeNavigation()));
   }
 
-  async dismissTopControllers(keepPopover: boolean = false, keepModal: boolean = false) {
+  async dismissTopControllers(keepPopover = false, keepModal = false) {
     const [modal, popover, actionSheet, alertCtrl] = await Promise.all([
       this.modalController.getTop(),
       this.popoverController.getTop(),
@@ -136,10 +137,10 @@ export class NativeProvider {
   }
 
   private doNativeNavigation() {
-    let url: string = this.router.url;
+    const url: string = this.router.url;
     let destination: string = PATRON_NAVIGATION.dashboard;
 
-    for (let n in PATRON_NAVIGATION) {
+    for (const n in PATRON_NAVIGATION) {
       /// if 1 page deep from dashboard, navigate back to dashboard
       destination =
         url.indexOf(PATRON_NAVIGATION[n]) >= 0 && url !== `/${PATRON_NAVIGATION[n]}`
@@ -204,7 +205,7 @@ export class NativeProvider {
    *  Apple Pay
    */
 
-  payWithApplePay(payType: NativeData, moreParams: Object): Observable<ApplePayResponse> {
+  payWithApplePay(payType: NativeData, moreParams: object): Observable<ApplePayResponse> {
     if (this.isAndroid()) {
       return of({ success: false, errorMessage: 'Apple Pay does not work on Android.', accountId: null });
     } else if (this.isIos()) {
@@ -214,7 +215,7 @@ export class NativeProvider {
     }
   }
 
-  getIosData(methodName: NativeData, moreParams?: Object): Promise<any> {
+  getIosData(methodName: NativeData, moreParams?: object): Promise<any> {
     return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function

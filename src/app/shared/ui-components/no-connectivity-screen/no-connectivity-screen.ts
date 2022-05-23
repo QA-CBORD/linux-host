@@ -25,13 +25,13 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   @Input() csModel: ConnectivityScreenCsModel;
   @Input() retryHandler: RetryHandler;
   @Input() errorType: ConnectivityError;
-  @Input() freshContentStringsLoaded: boolean = false;
+  @Input() freshContentStringsLoaded = false;
 
   strings: any;
 
-  isLoading: boolean = false;
+  isLoading = false;
   config: ConnectivityPageConfig;
-  canScanCard: boolean = false;
+  canScanCard = false;
   refreshSubscrription: Subscription;
 
   constructor(
@@ -84,7 +84,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.toastService.dismiss().catch(() => { });
+    this.toastService.dismiss().catch(() => null);
   }
 
 
@@ -98,7 +98,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
   private async showRetryToast(): Promise<boolean> {
     const string$ = this.strings;
-    let myToast = await this.toastService.create({
+    const myToast = await this.toastService.create({
       message: string$.connect_failed,
       duration: 3000,
       mode: 'ios',
@@ -116,7 +116,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
         },
         {
           text: "|",
-          handler: () => { },
+          handler: () => true,
         },
         {
           icon: "/assets/icon/remove_x_icon.svg",

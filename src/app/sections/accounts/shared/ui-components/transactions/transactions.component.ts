@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TransactionHistory } from '../../../models/transaction-history.model';
 
 @Component({
@@ -10,6 +10,4 @@ import { TransactionHistory } from '../../../models/transaction-history.model';
 export class TransactionsComponent {
   @Input() transactions: TransactionHistory[];
   @Input() dividers: boolean;
-
-  constructor() {}
 }

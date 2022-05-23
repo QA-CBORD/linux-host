@@ -45,7 +45,7 @@ export enum browserState {
 export class DepositPageComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   private activePaymentType: PAYMENT_TYPE;
-  focusLine: boolean = false;
+  focusLine = false;
   depositSettings: SettingInfo[];
   depositForm: FormGroup;
   creditCardSourceAccounts: Array<UserAccount>;
@@ -53,8 +53,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   billmeDestinationAccounts: Array<UserAccount>;
   destinationAccounts: Array<UserAccount>;
   billmeMappingArr: any[];
-  isMaxCharLength: boolean = false;
-  isDepositing: boolean = false;
+  isMaxCharLength = false;
+  isDepositing = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
     accountDisplayName: DisplayName.APPLEPAY,
@@ -275,7 +275,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             this.onErrorRetrieve(result.errorMessage);
           }
         })
-        .catch(async error => {
+        .catch(async () => {
           this.onErrorRetrieve('Something went wrong, please try again...');
         })
         .finally(() => {
@@ -346,7 +346,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             }),
             take(1)
           )
-          .subscribe(() => {}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
+          .subscribe(() => {return;}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
       }
 
       if (data) {

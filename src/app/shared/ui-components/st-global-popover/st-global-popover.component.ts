@@ -13,8 +13,6 @@ export class StGlobalPopoverComponent implements OnInit {
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };
 
-  constructor() {}
-
   ngOnInit() {
     // this.setContentStrings();
     this.initPopover();

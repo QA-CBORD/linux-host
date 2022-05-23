@@ -8,7 +8,7 @@
             class="close-btn"
             color="dark"
             text=""
-            icon="ios-close" mode="ios"></ion-back-button>
+            icon="close" mode="ios"></ion-back-button>
     <ion-button slot="end" class="filter-menu__done-btn"
                 (click)="onFilterDone()">{{ contentString[csNames.doneBtn] }}</ion-button>
   </ion-buttons>
@@ -19,7 +19,7 @@
   </ion-item-divider>
 
   <ion-list class="filter-menu__item-list">
-    <ion-radio-group>
+    <ion-radio-group [value]="activeTimeRange.name">
       <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="onTimeChosen(period)">
         <ion-label>
           {{period | timeRange: contentString}}
@@ -27,7 +27,6 @@
         <ion-radio
                 class="filter-menu__radio-btn"
                 slot="start"
-                [checked]="activeTimeRange.name === period.name"
                 [value]="period.name"
                 mode="md"
         >
@@ -41,7 +40,7 @@
   </ion-item-divider>
 
   <ion-list class="filter-menu__item-list">
-    <ion-radio-group>
+    <ion-radio-group [value]="activeAccountId">
       <ion-item lines="none">
         <ion-label>
           {{ contentString[csNames.allAccountsLabel] }}
@@ -50,9 +49,8 @@
                 class="filter-menu__radio-btn"
                 slot="start"
                 (ionSelect)="onAllAccountChosen()"
-                value="all"
+                value="all_accounts"
                 mode="md"
-                [checked]="isAllAccounts"
         >
         </ion-radio>
       </ion-item>
@@ -63,9 +61,8 @@
         <ion-radio
                 class="filter-menu__radio-btn"
                 slot="start"
-                [value]="account.accountDisplayName"
+                [value]="account.id"
                 mode="md"
-                [checked]="activeAccountId === account.id"
         >
         </ion-radio>
       </ion-item>

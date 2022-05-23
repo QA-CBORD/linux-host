@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  OnInit
+  Input
 } from '@angular/core';
 
 import { isDefined } from '@sections/housing/utils';
@@ -20,12 +19,8 @@ import {
   styleUrls: ['../../applications/applications-list/applications-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NonAssignmentsListComponent implements OnInit {
+export class NonAssignmentsListComponent {
   @Input() nonAssignments: NonAssignmentListDetails[];
-
-  constructor() { }
-
-  ngOnInit() {}
 
   getPath(key: number): string {
     return `${PATRON_NAVIGATION.housing}/non-assignments/${key}`;

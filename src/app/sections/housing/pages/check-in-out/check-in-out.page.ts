@@ -18,7 +18,6 @@ import { HousingService } from '@sections/housing/housing.service';
 import {
   BehaviorSubject,
   Observable,
-  of,
   throwError
 } from 'rxjs';
 import {
@@ -73,7 +72,7 @@ export class CheckInOutPage implements OnInit {
           this.availableSlots = this.availableSlots.sort((a, b) => a.slotDateTime.getTime() - b.slotDateTime.getTime());
           return this.availableSlots;
         }),
-        tap((data) => {
+        tap(() => {
           this._loadingService.closeSpinner();
         }),
         catchError((error: any) => {

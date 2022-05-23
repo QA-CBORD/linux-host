@@ -1,16 +1,16 @@
 <ion-list>
-    <ion-radio-group (ionChange)="onFrequencyChange($event)">
+    <ion-radio-group [value]="selectedFrequency" (ionChange)="onFrequencyChange($event)">
         <ion-label class="frequency__header-title">Deposit Frequency</ion-label>
 
         <ion-item lines="none" class="frequency__radio">
             <ion-label>Once per week</ion-label>
-            <ion-radio mode="md" slot="start" [checked]="autoDepositSettings?.dayOfWeek !== 0"
+            <ion-radio mode="md" slot="start"
                        [value]="frequency.week"></ion-radio>
         </ion-item>
 
         <ion-item lines="none" class="frequency__radio">
             <ion-label>Once per month</ion-label>
-            <ion-radio mode="md" slot="start" [checked]="autoDepositSettings?.dayOfMonth !== 0"
+            <ion-radio mode="md" slot="start"
                        [value]="frequency.month"></ion-radio>
         </ion-item>
     </ion-radio-group>

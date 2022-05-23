@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { Resolve } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
@@ -14,10 +14,7 @@ export class GuestDepositResolver implements Resolve<Observable<any>> {
     private readonly commonService: CommonService,
     private readonly guestDepositsService: GuestDepositsService
   ) {}
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<any> | Observable<Observable<any>> | Promise<Observable<any>> {
+  resolve(): Observable<any> | Observable<Observable<any>> | Promise<Observable<any>> {
     this.loadingService.showSpinner();
     const contentString$ = this.commonService.loadContentString(ContentStringCategory.identifyRecipient);
     const recipientList = this.guestDepositsService.getRecipientList().pipe(take(1));

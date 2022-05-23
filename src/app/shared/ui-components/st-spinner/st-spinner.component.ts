@@ -6,5 +6,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./st-spinner.component.scss'],
 })
 export class StSpinnerComponent {
-  @Input('refreshText') refreshText: string = '';
+  @Input('refreshText') refreshText = '';
 }

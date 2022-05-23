@@ -12,8 +12,6 @@ export class PopoverComponent implements OnInit {
   @Input() data: { [key: string]: string };
   config: PopoverConfig<string>;
 
-  constructor() {}
-
   ngOnInit() {
     this.config = {
       type: PopupTypes.CANCEL,

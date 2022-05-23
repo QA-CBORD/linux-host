@@ -3,6 +3,7 @@ import { defaultRegistrationCs } from '@shared/model/content-strings/default-str
 
 export class RegistrationCsModel extends ContentStringModel {
   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(nullable: NullableContent, args?: any) {
     super(nullable.getConfig(), defaultRegistrationCs);
   }

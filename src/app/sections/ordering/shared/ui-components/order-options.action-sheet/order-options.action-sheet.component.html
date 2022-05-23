@@ -5,7 +5,7 @@
               class="order-options__list">
       <div class="order-options__radio-group-container"
            *ngIf="orderTypes.delivery && orderTypes.pickup">
-        <ion-radio-group mode="md"
+        <ion-radio-group [value]="orderType" mode="md"
                          class="order-options__radio-group"
                          (ionChange)="onRadioGroupChanged($event)">
           <ion-item lines="none"
@@ -13,8 +13,7 @@
             <ion-label class="order-options__radio-label">{{ contentStrings.labelPickup | async }}</ion-label>
             <ion-radio mode="md"
                        slot="start"
-                       value="pickup"
-                       [checked]="enumOrderTypes.PICKUP === orderType"
+                       [value]="enumOrderTypes.PICKUP"
                        class="order-options__radio-item"></ion-radio>
           </ion-item>
 
@@ -23,8 +22,7 @@
             <ion-label class="order-options__radio-label">{{ contentStrings.labelDelivery | async }}</ion-label>
             <ion-radio mode="md"
                        slot="start"
-                       value="delivery"
-                       [checked]="enumOrderTypes.DELIVERY === orderType"
+                       [value]="enumOrderTypes.DELIVERY"
                        class="order-options__radio-item"></ion-radio>
           </ion-item>
         </ion-radio-group>

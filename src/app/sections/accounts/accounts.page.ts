@@ -58,7 +58,7 @@ export class AccountsPage implements OnInit {
   }
 
   private defineResolution() {
-    const tabletResolution: number = 767;
+    const tabletResolution = 767;
 
     return this.platform.width() > tabletResolution;
   }

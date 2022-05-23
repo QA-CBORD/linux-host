@@ -28,9 +28,9 @@ export class DeliveryAddressesModalComponent implements OnInit {
   @Input() merchantId: string;
 
   buildings$: Observable<BuildingInfo[]>;
-  addNewAdddressState: boolean = false;
+  addNewAdddressState = false;
   addNewAdddressForm: { value: any; valid: boolean } = { value: null, valid: false };
-  errorState: boolean = false;
+  errorState = false;
   selectedAddress: AddressInfo;
   listOfAddresses: Array<AddressInfoExpanded>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -45,6 +45,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.selectedAddress = this.defaultAddress;
     this.listOfAddresses = this.defineListOfAddresses(this.defaultAddress);
     this.buildings$ = this.merchantService.retrieveBuildings();
     this.initContentStrings();
@@ -74,6 +75,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
               of(addedAddress)
             )
         ),
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         switchMap(([isDefaultAddressAdded, addedAddress]) =>
           this.merchantService.filterDeliveryAddresses(this.merchantId, [addedAddress])
         ),

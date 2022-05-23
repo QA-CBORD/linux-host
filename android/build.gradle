@@ -17,6 +17,10 @@ buildscript {
     }
 }
 
+plugins {
+  id "org.sonarqube" version "3.3"
+}
+
 apply from: "variables.gradle"
 
 allprojects {
@@ -31,4 +35,10 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "gcs-patron-frontend"
+  }
 }

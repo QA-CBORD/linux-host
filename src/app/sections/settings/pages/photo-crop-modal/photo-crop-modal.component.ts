@@ -1,11 +1,10 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ImageCroppedEvent, Dimensions } from 'ngx-image-cropper';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 enum Default {
   HEIGHT = 170,

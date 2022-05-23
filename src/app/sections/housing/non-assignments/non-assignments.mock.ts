@@ -25,10 +25,12 @@ export function generateNonAssignmentDetails(index: number): NonAssignmentDetail
     });
 }
 
-export function generateNonAssignmentsList(amount: number = 3): NonAssignmentListDetails[] {
+export function generateNonAssignmentsList(amount = 3): NonAssignmentListDetails[] {
+    // eslint-disable-next-line prefer-spread
     return Array.apply(null, Array(amount)).map(generateNonAssignmentDetails);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateNonAssignmentInfo(index: number): NonAssignmentInfo {
 
     return new NonAssignmentInfo({

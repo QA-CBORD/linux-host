@@ -44,12 +44,12 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   }
 
   onItemsChecked({ detail: { value } }) {
-    let innerArray = this.innerValue;
+    const innerArray = this.innerValue;
     const formValue = innerArray.find(({ id }) => id === value.id);
     if (!formValue) {
       innerArray.push(value);
     } else {
-      for (var i = 0; i < innerArray.length; i++) {
+      for (let i = 0; i < innerArray.length; i++) {
         if (this.innerValue[i].id === value.id) {
           innerArray.splice(i, 1);
         }

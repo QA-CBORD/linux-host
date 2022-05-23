@@ -8,7 +8,7 @@ import { LoadingOptions } from '@ionic/core';
 })
 export class LoadingService {
   private readonly maxDuration: number = 30000;
-  private isLoading: Boolean = false;
+  private isLoading = false;
 
   constructor(private loadingController: LoadingController) {}
 
@@ -50,7 +50,7 @@ export class LoadingService {
     });
   }
 
-  notLoading(): Boolean{
+  notLoading(): boolean{
     return this.isLoading == false;
   }
 

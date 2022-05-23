@@ -1,7 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { first } from 'rxjs/operators';
 
 @Pipe({
   name: 'merchantDistance',

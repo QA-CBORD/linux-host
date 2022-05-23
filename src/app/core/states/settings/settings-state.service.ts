@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SingleEntityStateManager } from '@core/classes/single-entity-state-manager';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { distinctUntilChanged, map, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { distinctUntilChanged, map, take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { getSettingInfoObject } from '@core/utils/settings-helper';
 import { Settings } from '../../../app.global';
@@ -10,7 +10,7 @@ import { Settings } from '../../../app.global';
   providedIn: 'root',
 })
 export class SettingsStateService extends SingleEntityStateManager<SettingInfo[]> {
-  protected activeUpdaters: number = 0;
+  protected activeUpdaters = 0;
   protected state: SettingInfo[] = [];
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   protected readonly _state$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(this.state);

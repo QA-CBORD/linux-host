@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, 
   Component,
-  OnInit
 } from '@angular/core';
 
 import { NonAssignmentsStateService } from './non-assignments-state.service';
@@ -11,10 +10,8 @@ import { NonAssignmentsStateService } from './non-assignments-state.service';
   templateUrl: './non-assignments.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NonAssignmentsComponent implements OnInit {
+export class NonAssignmentsComponent {
 
   constructor(public nonAssignmentsStateService: NonAssignmentsStateService) { }
-
-  ngOnInit() {}
 
 }

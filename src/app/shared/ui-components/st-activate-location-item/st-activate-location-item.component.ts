@@ -11,12 +11,12 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 })
 export class StActivateLocationItemComponent {
   @Input() userInfoId: string;
-  @Input() isShowId: boolean = true;
+  @Input() isShowId = true;
   @Input() location$: Observable<MMobileLocationInfo>;
   @Input() institutionName: string;
   @Input() userPhoto: string = null;
   @Input() userFullName: string;
   @Input() starClass: string;
   @Input() institutionPhoto: SafeResourceUrl;
-  @Input() institutionColor: string = '';
+  @Input() institutionColor = '';
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { WorkOrder, WorkOrderDetails, FormDefinition, ImageData, NamedIdentity } from './work-orders.model';
 
 @Injectable({
@@ -37,9 +37,6 @@ export class WorkOrderStateService  {
   public workOrderImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null);
   public selectedFacility$: BehaviorSubject<NamedIdentity> = new BehaviorSubject<NamedIdentity>(null);
   public workOrderImageBlob: BehaviorSubject<FormData> = new BehaviorSubject<FormData>(null);
-  constructor() {
-   
-  }
 
   setWorkOrder(value: WorkOrder) {
     this.workOrder.next(value);

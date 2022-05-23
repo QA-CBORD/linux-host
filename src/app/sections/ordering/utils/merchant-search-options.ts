@@ -3,8 +3,6 @@ import { MerchantSearchOption } from '../shared/models';
 export class MerchantSearchOptions {
   private list: MerchantSearchOption[] = [];
 
-  constructor() {}
-
   getSearchOptions(): MerchantSearchOption[] {
     return this.list;
   }
