@@ -9,9 +9,6 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { ConfirmDepositCs, DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 import { DepositService } from '@sections/accounts/services/deposit.service';
-import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
-import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
-import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { AccountsService } from '@sections/dashboard/services';
 import { GUEST_FORM_CONTROL_NAMES } from '@sections/guest/guest-deposits/components/add-funds/guest-add-funds.component';
 import { accountsType, cardCs } from '@sections/settings/creditCards/credit-card-mgmt/cards/cards.component';
@@ -20,6 +17,7 @@ import { firstValueFrom } from '@shared/utils';
 import { take } from 'rxjs/operators';
 import { PaymentSystemType } from 'src/app/app.global';
 import { ConfirmFeePopoverComponent } from './confirm-fee-popover/confirm-fee-popover.component';
+import { PaymentModalComponent } from './payment-modal/payment-modal.component';
 
 @Component({
   selector: 'st-application-payment',
@@ -160,17 +158,17 @@ export class ApplicationPaymentComponent implements OnInit {
   
     const contentString =  new ConfirmDepositCs(
       ({
-        title: "Confirm Deposit",
+        title: "Confirm Payment",
         policy_title: "Refund Policy",
-        lbl_deposit_amount: "Deposit Amount",
+        lbl_deposit_amount: "Pay amount",
         convenience_fee: "Convenience Fee",
         total_payment: "Total Payment",
         lbl_account: "Account",
         bill_me_pay_method: "Bill me",
         cc_ending_in_text: "ending in",
-        lbl_ok_button: "DEPOSIT",
-        lbl_cancel_button: "CANCEL",
-        lbl_select_payment_method: "Payment Method",
+        lbl_ok_button: "Pay",
+        lbl_cancel_button: "Cancel",
+        lbl_select_payment_method: "Card Type",
         new_credit_card_text: "Add a Credit Card",
         lbl_card_security_code: "Card Security Code",
         card_security_code_error_text: "Please enter a valid card security code.",
@@ -181,10 +179,10 @@ export class ApplicationPaymentComponent implements OnInit {
         amount_pattern_error_text: "Please enter a valid amount.",
         submit_button_lbl: "Deposit",
         choose_action_placeholder_text: "Please Choose",
-        success_screen_title: "Deposit",
+        success_screen_title: "Confirm Payment",
         subtitle_detail_text: "This transaction was successful. You can review it to make sure everything checks out.",
         subtitle_summary_text: "Success!",
-        done_button_text: "DONE",
+        done_button_text: "Confirm Payment",
       })
     );
 
@@ -200,7 +198,7 @@ export class ApplicationPaymentComponent implements OnInit {
     // let test = JSON.parse(JSON.stringify(data));
     // alert(JSON.stringify(test))
     // let bobo =  JSON.parse(contentString);
-    const popover = await this.popoverCtrl.create({ component: ConfirmDepositPopoverComponent,
+    const popover = await this.popoverCtrl.create({ component: ConfirmFeePopoverComponent,
       componentProps: {
         data,
         contentString
@@ -210,8 +208,7 @@ export class ApplicationPaymentComponent implements OnInit {
     });
     popover.onDidDismiss().then(async ({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
-        alert("good here")
-        const modal = await this.modalCtrl.create({ component: DepositModalComponent,
+        const modal = await this.modalCtrl.create({ component: PaymentModalComponent,
           componentProps: {
             data,
             contentString

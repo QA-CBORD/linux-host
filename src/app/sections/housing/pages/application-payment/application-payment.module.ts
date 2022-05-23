@@ -14,6 +14,7 @@ import { AccountService } from '@sections/accounts/services/accounts.service';
 import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
 import { DepositModalModule } from '@sections/accounts/shared/ui-components/deposit-modal/deposit-modal.module';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
+import { PaymentModalComponent } from './payment-modal/payment-modal.component';
 
 const imports = [
   CommonModule,
@@ -28,8 +29,8 @@ const imports = [
   ConfirmDepositPopoverModule,
   DepositModalModule
 ];
-const declarations = [ApplicationPaymentComponent, ConfirmFeePopoverComponent];
-const entryComponents = [ApplicationPaymentComponent, ConfirmFeePopoverComponent, DepositModalComponent];
+const declarations = [ApplicationPaymentComponent, ConfirmFeePopoverComponent, PaymentModalComponent];
+const entryComponents = [ApplicationPaymentComponent, ConfirmFeePopoverComponent, DepositModalComponent, PaymentModalComponent];
 
 @NgModule({
   imports,

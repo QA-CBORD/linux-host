@@ -29,9 +29,9 @@ export class ConfirmModalComponent implements OnInit {
 
   @Input() secondaryBtnDisabled: boolean = false;
 
-  @Output() onPrimaryBtnClicked: EventEmitter<any> = new EventEmitter<Event>();;
+  @Output() onPrimaryBtnClicked: EventEmitter<any> = new EventEmitter<Event>();
 
-  @Output() onSecondaryBtnClicked: EventEmitter<any> = new EventEmitter<Event>();;
+  @Output() onSecondaryBtnClicked: EventEmitter<any> = new EventEmitter<Event>();
 
 
   @Input() contentStrings: CheckingContentCsModel;
