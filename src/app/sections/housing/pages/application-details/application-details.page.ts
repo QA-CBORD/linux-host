@@ -101,36 +101,41 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   async submit(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
-
-    const parseAccountData = (account: UserAccount) => {
-      const { accountTender, lastFour } = account;
-      const creditCardTypeNumber = parseInt(accountTender) - 1;
-      const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
-      const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
-      return { display, account, iconSrc };
-    };
-
-    let userAccounts = [];
-    try {
-
-      
-      //userAccounts = await firstValueFrom(of(accounts)).then(accounts => accounts.map(acc => parseAccountData(acc)));
-    } catch (ignored) {
-      // fallback on empty userAccounts array
-    } finally {
-      await this._loadingService.closeSpinner();
-    }
+    const cString = [
+      {
+        id: 'a246b105-f0a7-48cd-a84c-3e97652f4895',
+        name: 'screen_title',
+        domain: 'patron-ui',
+        category: 'creditCardMgmt',
+        locale: null,
+        contentMediaType: 1,
+        value: 'Payment Methods-OP',
+        description: 'credit card mgmt page title',
+      },
+      {
+        id: '00320662-c51d-4e38-a8e4-65d93dbe5adc',
+        name: 'cancel_remove_card_btn',
+        domain: 'patron-ui',
+        category: 'creditCardMgmt',
+        locale: null,
+        contentMediaType: 1,
+        value: 'Cancel',
+        description: 'cancel_remove_card button text',
+      },
+    ];
 
     if (applicationDetails.applicationDefinition.accountCodeKey) {
+      const accounts = await firstValueFrom(this.accountService.getUserAccounts([PaymentSystemType.USAEPAY]))
+        .then(accounts => accounts.map(acc => this.buildStr(acc)))
+        .finally(() => this._loadingService.closeSpinner());
+
       const modal = await this.modalController.create({
         component: ApplicationPaymentComponent,
         animated: false,
         backdropDismiss: true,
-       // componentProps: { contentStrings: reduceToObject(cString, defaultCreditCardMgmtCs), userAccounts },
+        componentProps: { contentStrings: reduceToObject(cString, defaultCreditCardMgmtCs), userAccounts: accounts },
       });
       await modal.present();
-
-      //  return modal.onDidDismiss().then(({ role }) => role === BUTTON_TYPE.OKAY);
     }
 
     // this._touch();
@@ -183,13 +188,10 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
           this.Showmodal();
         } else {
           this._subscription.add(
-            this._termService.termId$
-                .subscribe(termId => 
-                  this._housingService
-                      .getRequestedRommate(termId)
-                      .subscribe(() => this._loadingService.closeSpinner())
-                )
-              );
+            this._termService.termId$.subscribe(termId =>
+              this._housingService.getRequestedRommate(termId).subscribe(() => this._loadingService.closeSpinner())
+            )
+          );
         }
       }),
       catchError((error: any) => {
@@ -209,8 +211,12 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
         : undefined;
     });
     const requestingRoommate = this._applicationsStateService.requestingRoommate.filter(result => {
-      if(this._applicationsStateService.roommatePreferencesSelecteds.find(value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0 )){
-        return result
+      if (
+        this._applicationsStateService.roommatePreferencesSelecteds.find(
+          value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
+        )
+      ) {
+        return result;
       }
     });
     this._applicationsStateService.setRequestingRoommate(requestingRoommate);
@@ -250,7 +256,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._housingService.handleErrors(error);
   }
 
-
   private _initSubscription(): void {
     const dashboardSubscription: Subscription = merge(
       this._housingService.refreshDefinitions$,
@@ -265,7 +270,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
             this._housingService.getPatronContracts(termId),
             this._housingService.getCheckInOuts(termId),
             this._housingService.getInspections(termId)
-          )
+          );
         })
       )
       .subscribe({
@@ -274,5 +279,17 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       });
 
     this._subscription.add(dashboardSubscription);
+  }
+
+  private buildStr(account: UserAccount) {
+    const { accountTender, lastFour } = account;
+    const creditCardTypeNumber = parseInt(accountTender) - 1;
+    const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
+    const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
+    return {
+      display,
+      account,
+      iconSrc,
+    };
   }
 }

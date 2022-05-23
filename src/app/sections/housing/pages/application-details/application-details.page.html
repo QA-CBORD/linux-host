@@ -61,7 +61,7 @@
               Next
             </ion-button>
 
-            <st-button *ngIf="isLastPage" [class.stepper-footer__button--right]="isFirstPage">
+            <st-button type="submit" *ngIf="isLastPage" [class.stepper-footer__button--right]="isFirstPage">
               {{ applicationDetails.applicationDefinition.accountCodeKey ? "Continue to payment" : "Submit"}}
             </st-button>
           </st-stepper-footer>
