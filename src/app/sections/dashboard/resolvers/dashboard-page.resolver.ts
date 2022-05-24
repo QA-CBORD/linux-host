@@ -17,11 +17,9 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ProminentDisclosureService } from '../services/prominent-disclosure.service';
-import { Location } from '@angular/common';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList> | Promise<SettingInfoList>> {
-  makeItFail = false;
   constructor(
     private readonly accountsService: AccountService,
     private readonly userFacadeService: UserFacadeService,
@@ -32,31 +30,20 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly loadingService: LoadingService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly prominentDisclosureService: ProminentDisclosureService,
-  ) {
-
-    window['dasboardResolver'] = this;
-
-  }
+  ) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<SettingInfoList> | Promise<SettingInfoList> {
 
     const showLoading = !(route.queryParams.skipLoading && JSON.parse(route.queryParams.skipLoading));
 
-    console.log("DASHBOARD RESOLVING....YEAHHHs: showLoading: ", showLoading, route.queryParams.skipLoading)
     this.prominentDisclosureService.openProminentDisclosure();
     /// get fresh data on dashboard load
     showLoading && this.loadingService.showSpinner();
 
-    if (this.makeItFail) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => reject({ message: "Failing on purpose" }), 3000);
-      })
-    } else {
-      return this.loadAllData().pipe(
-        take(1),
-        map(([, , featureSettingsList]) => featureSettingsList),
-        finalize(() => showLoading && this.loadingService.closeSpinner()))
-    }
+    return this.loadAllData().pipe(
+      take(1),
+      map(([, , featureSettingsList]) => featureSettingsList),
+      finalize(() => showLoading && this.loadingService.closeSpinner()));
   }
 
   private loadAllData(): Observable<any> {

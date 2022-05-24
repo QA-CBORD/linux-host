@@ -65,7 +65,6 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    console.log('ScanCardComponent: ');
     this.setUserFullName$();
     this.isMediaSettingExists$ = this.barcodeFacadeService
       .getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE)
@@ -81,7 +80,6 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   setUserFullName$() {
-    console.log("userFullName$()  userFullName$()")
     this.userFullName$ = this.getUserInfo().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
   }
 

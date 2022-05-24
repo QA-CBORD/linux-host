@@ -14,16 +14,16 @@ export class CameraService {
 
   async getPhoto(options: ImageOptions): Promise<Photo> {
     await this.requestCameraPermission(options?.source || CameraSource.Photos);
-    return Camera.getPhoto(options);
+    this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
+    return Camera.getPhoto(options).finally(() =>
+      this.identityFacadeService.updateVaultTimeout({ extendTimeout: false }));
   }
 
   private async requestCameraPermission(cameraSource: CameraSource) {
     const permission = await Camera.checkPermissions();
     const source = cameraSource.toLocaleLowerCase();
-    this.identityFacadeService.onNavigateExternal({ makeVaultUnLockable: true });
     if (/prompt/.test(permission[source])) {
-      const permissionStatus = await Camera.requestPermissions({ permissions: [<CameraPermissionType>source] }).catch((error) => console.log("CAMERA: ", error));
-      console.log("PERMISION STATUS: ", permissionStatus);
+       await Camera.requestPermissions({ permissions: [<CameraPermissionType>source] });
     }
   }
 

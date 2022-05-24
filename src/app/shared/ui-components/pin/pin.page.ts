@@ -248,8 +248,7 @@ export class PinPage implements OnInit, OnDestroy {
         (async ({ message, status }) => {
           this.cleanLocalState();
           if (this.connectionService.isConnectionIssues({ message, status })) {
-            const { data, role } = await this.handleConnectionIssues();
-            console.log("NO-CONNECTIVITY SCREEN CLOSED: ", { data, role });
+             await this.handleConnectionIssues();
           } else {
             this.setErrorText('Error setting your PIN - please try again');
           }

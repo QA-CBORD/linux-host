@@ -101,7 +101,7 @@ export class SessionFacadeService {
       });
       const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
       if (isPinLoginEnabled && isPinEnabledForUserPreference) {
-        const isBiometricsEnabled = await this.identityFacadeService.isBiometricsEnabled();
+        const isBiometricsEnabled = await this.identityFacadeService.isBiometricAvailable();
         const isBiometricsEnabledForUserPreference = await this.identityFacadeService
           .cachedBiometricsEnabledUserPreference$;
         if (isBiometricsEnabled && isBiometricsEnabledForUserPreference) {
@@ -153,7 +153,7 @@ export class SessionFacadeService {
         return LoginState.DONE;
       }
 
-      const isBiometricsEnabled = await this.identityFacadeService.isBiometricsEnabled();
+      const isBiometricsEnabled = await this.identityFacadeService.isBiometricAvailable();
       const isBiometricsEnabledForUserPreference = await this.identityFacadeService
         .cachedBiometricsEnabledUserPreference$;
       if (isBiometricsEnabled && isBiometricsEnabledForUserPreference) {

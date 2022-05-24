@@ -77,8 +77,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly cd: ChangeDetectorRef,
     private readonly photoCropModalService: PhotoCropModalService,
-    private readonly cameraService: CameraService,
-    private identityFacadeService: IdentityFacadeService,
+    private readonly cameraService: CameraService
   ) {}
 
   ngOnInit() {
@@ -328,9 +327,6 @@ export class PhotoUploadComponent implements OnInit {
         },
         () => {
           // There was an issue uploading the photo information'
-        },
-        () => {
-          this.identityFacadeService.onNavigateExternal({ makeVaultUnLockable: true })
         }
       );
   }

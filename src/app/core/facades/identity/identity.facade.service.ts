@@ -14,7 +14,7 @@ import { firstValueFrom } from '@shared/utils';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
-import { EventInfo, SessionData, VaultMigrateResult, VaultService } from '@core/service/identity/vault.identity.service';
+import { SessionData, VaultMigrateResult, VaultIdentityService, VaultTimeoutOptions } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
 
@@ -36,7 +36,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly identityService: VaultService,
+    private readonly identityService: VaultIdentityService,
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly contentStringFacade: ContentStringsFacadeService,
@@ -69,7 +69,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
           message: 'There was an issue setting your pin',
         };
       case PinCloseStatus.SET_SUCCESS:
-        return this.initAndUnlock({ pin: data, useBiometric: biometricEnabled }, navigateToDashboard);
+        return this.initAndUnlock({ pin: data, biometricEnabled }, navigateToDashboard);
     }
   }
 
@@ -86,16 +86,16 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.identityService.migrateIfLegacyVault();
   }
 
-  onNavigateExternal(e: EventInfo){
-    return this.identityService.onNavigateExternal(e);
+ updateVaultTimeout(options: VaultTimeoutOptions) {
+    return this.identityService.updateVaultTimeout(options);
   }
 
   shouldLogoutUser(error): boolean {
     return !(error?.code === PinCloseStatus.CLOSED_NO_CONNECTION);
   }
 
-  async unlockVault(useBiometric: boolean): Promise<{ pin: string, biometricUsed: boolean }> {
-    return this.identityService.unlockVault(useBiometric);
+  async unlockVault(biometricEnabled: boolean): Promise<{ pin: string, biometricEnabled: boolean }> {
+    return this.identityService.unlockVault(biometricEnabled);
   }
 
   deviceMarkedAsLost({ message }) {
@@ -158,8 +158,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
       ));
   }
 
-  async isBiometricsEnabled(): Promise<boolean> {
-    return this.identityService.isBiometricsEnabled();
+  async isBiometricAvailable(): Promise<boolean> {
+    return this.identityService.isBiometricAvailable();
   }
 
 

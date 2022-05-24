@@ -37,16 +37,16 @@ export class StartupPage {
   /// check login on enter
   ionViewDidEnter() {
     this.loadingService.showSpinner();
-    const { skipLoginFlow, biometricUsed } = (<any>this.location.getState());
+    const { skipLoginFlow, biometricEnabled } = (<any>this.location.getState());
     if (skipLoginFlow) {
-      this.unlockVault(biometricUsed)
+      this.unlockVault(biometricEnabled)
     } else {
       this.checkLoginFlow();
     }
   }
 
 
-  private async checkLoginFlow() {
+  async checkLoginFlow() {
     // step 1: determine and initialize current environment.
     await this.environmentFacadeService.initialization();
 
@@ -85,15 +85,18 @@ export class StartupPage {
   }
 
 
-  async handleVaultLoginSuccess(pin: string, biometricUsed: boolean): Promise<void> {
-    if (biometricUsed) {
-      const code = {
+  async handleVaultLoginSuccess(pin: string, biometricEnabled: boolean): Promise<void> {
+    if (biometricEnabled) {
+      const logic = {
         promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
         skipError: ({ message }) => DEVICE_MARKED_LOST.test(message)
       };
-      this.connectivityFacade.exec(code)
-        .then(() => this.navigateToDashboard())
-        .catch(() => this.navigateAnonymous(ANONYMOUS_ROUTES.entry));
+      try {
+        await this.connectivityFacade.exec(logic);
+        this.navigateToDashboard();
+      } catch (e) {
+        this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
+      }
     } else {
       this.navigateToDashboard();
     }
@@ -110,9 +113,8 @@ export class StartupPage {
   }
 
   async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: any, clearAll: boolean = true) {
-    return await this.ngZone.run(async () => {
-      return await this.navigationService.navigateAnonymous(where, { ...data });
-    }).finally(() => clearAll && this.identityFacadeService.clearAll());
+    return await this.navigationService.navigateAnonymous(where, { ...data })
+      .finally(() => clearAll && this.identityFacadeService.clearAll());
   }
 
   async handleAppLoginState(state: LoginState): Promise<void> {
@@ -152,9 +154,9 @@ export class StartupPage {
 
 
   // 
-  private async unlockVault(biometricEnabled: boolean): Promise<any> {
+  async unlockVault(biometricEnabled: boolean): Promise<any> {
     return await this.identityFacadeService.unlockVault(biometricEnabled)
-      .then(({ pin, biometricUsed }) => this.handleVaultLoginSuccess(pin, biometricUsed))
+      .then(({ pin, biometricEnabled }) => this.handleVaultLoginSuccess(pin, biometricEnabled))
       .catch((error) => this.handleVaultLoginFailure(error));
   }
 

@@ -203,8 +203,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
       resultType: CameraResultType.Uri,
       source: cameraSource,
       saveToGallery: true,
-    }).finally(() => {
-      this.identityFacadeService.onNavigateExternal({ makeVaultUnLockable: true, estimatedTimeInMillis: 600000 });
     });
 
     if (image) {

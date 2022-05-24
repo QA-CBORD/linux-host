@@ -7,14 +7,15 @@ import { firstValueFrom } from "@shared/utils";
 })
 export class UserPreferenceService {
 
-    private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
-    private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
-
+    private readonly pinEnabledUserPreference = 'get_pinEnabledUserPreference';
+    private readonly biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
+    private readonly biometricPermissionDeniedKey = "userDeniedBiometricPermission";
     constructor(private readonly storageStateService: StorageStateService) { }
 
 
     async cachedBiometricsEnabledUserPreference(useStrongCheck: boolean = false): Promise<boolean> {
-        return await this.isEnabledByKey(this.biometricsEnabledUserPreference, useStrongCheck);
+        const biometricEnabled = await this.isEnabledByKey(this.biometricsEnabledUserPreference, useStrongCheck);
+        return biometricEnabled && !await this.getBiometricPermissionDenied();
     }
 
     async cachedPinEnabledUserPreference(useStrongCheck: boolean = false): Promise<boolean> {
@@ -23,7 +24,7 @@ export class UserPreferenceService {
 
     private async isEnabledByKey(key: string, useStrongCheck: boolean): Promise<boolean> {
         const storedData = await firstValueFrom(this.storageStateService.getStateEntityByKey$<string>(key));
-        if (storedData) 
+        if (storedData)
             return Boolean(storedData.value);
         return !useStrongCheck;
     }
@@ -34,5 +35,16 @@ export class UserPreferenceService {
 
     setBiometricsEnabledUserPreference(value: boolean) {
         this.storageStateService.updateStateEntity(this.biometricsEnabledUserPreference, value, { highPriorityKey: true });
+    }
+
+    setBiometricPermissionDenied() {
+        this.setBiometricsEnabledUserPreference(false);
+        this.storageStateService.updateStateEntity(this.biometricPermissionDeniedKey, true, {
+            highPriorityKey: true
+        });
+    }
+
+    async getBiometricPermissionDenied(): Promise<boolean> {
+        return await this.isEnabledByKey(this.biometricPermissionDeniedKey, true);
     }
 }
