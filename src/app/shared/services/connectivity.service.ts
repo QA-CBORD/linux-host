@@ -18,8 +18,8 @@ import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-scre
   providedIn: 'root'
 })
 export class ConnectivityService {
-  private pinModalOpened: boolean = false;
-  private connectivityModalOpened: boolean = false;
+  private pinModalOpened = false;
+  private connectivityModalOpened = false;
   constructor(
     private connectionService: ConnectionService,
     private readonly router: Router,
@@ -47,7 +47,7 @@ export class ConnectivityService {
     return this.pinModalOpened || this.connectivityModalOpened;
   }
 
-  async handleConnectionError(handler: RetryHandler, showAsModal: boolean = false) {
+  async handleConnectionError(handler: RetryHandler, showAsModal = false) {
     if (showAsModal) {
       if ((await this.isOpenedAsModal())) {
         this.connectionService.modalRefreshHandle.next(true);
@@ -71,7 +71,7 @@ export class ConnectivityService {
     this.loadingService.showSpinner();
     let csModel: ConnectivityScreenCsModel = {} as any;
     let errorType: ConnectivityErrorType;
-    let freshContentStringsLoaded: boolean = false;
+    let freshContentStringsLoaded = false;
     if ((await this.connectionService.deviceOffline())) {
       errorType = ConnectivityErrorType.DEVICE_CONNECTION;
       csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: noConnectivityScreentDefaultStrings });

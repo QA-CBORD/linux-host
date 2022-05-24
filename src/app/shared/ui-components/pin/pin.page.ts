@@ -296,7 +296,7 @@ export class PinPage implements OnInit, OnDestroy {
           } else if (DEVICE_MARKED_LOST.test(message)) {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
           } else if (this.connectionService.isConnectionIssues({ message, status })) {
-            const { data, role } = await this.handleConnectionIssues();
+            await this.handleConnectionIssues();
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }

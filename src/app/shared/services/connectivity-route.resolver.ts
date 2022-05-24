@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
+import { Resolve } from "@angular/router";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { ContentStringApi, ContentStringCategory } from "@shared/model/content-strings/content-strings-api";
 import { noConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
@@ -20,7 +20,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
         private connectionService: ConnectionService) { }
 
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ConnectivityPageInfo> | Promise<ConnectivityPageInfo> {
+    resolve(): Observable<ConnectivityPageInfo> | Promise<ConnectivityPageInfo> {
         return this.resolveData().finally(() => this.loadingService.closeSpinner());
     }
 
@@ -29,7 +29,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
         await this.loadingService.showSpinner({ duration: 80000 });
         let csModel: ConnectivityScreenCsModel = {} as any;
         let errorType: ConnectivityErrorType;
-        let freshContentStringsLoaded: boolean = false;
+        let freshContentStringsLoaded = false;
         const isDeviceOffline = await this.connectionService.deviceOffline();
         if (isDeviceOffline) {
             errorType = ConnectivityErrorType.DEVICE_CONNECTION;

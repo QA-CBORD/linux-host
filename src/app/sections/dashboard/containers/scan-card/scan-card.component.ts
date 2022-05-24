@@ -35,7 +35,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   userFullName$: Observable<string>;
   userPhoto: string;
   userId: string;
-  @Input() isBackButtonShow: boolean = true;
+  @Input() isBackButtonShow = true;
   @Input() isDismissButtonShow: boolean;
   @Input('color') institutionColor: string;
 
@@ -124,10 +124,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   async onBack() {
-    try {
-      await this.modalController.dismiss();
-    } catch (ignored) { }
-
+    this.modalController.dismiss().catch();
   }
 
   private initBarcode() {

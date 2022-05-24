@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { Platform } from '@ionic/angular';
 
 import { CameraService } from './camera.service';

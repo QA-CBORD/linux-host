@@ -1,40 +1,31 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
-import { NavigationService } from '@shared/services/navigation.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
-import { ROLES } from 'src/app/app.global';
-import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { VaultFactory, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './vault-factory.service';
 import { VaultIdentityService, VaultMigrateResult } from './vault.identity.service';
 
 
 describe('VaultIdentityService', () => {
     let service: VaultIdentityService,
-        injector, ngZone,
+        injector,
         userPreferenceService,
-        vault, navigationService;
+        vault;
     beforeEach(async () => {
         vault = {
-            onError: (args) => { },
-            onPasscodeRequested: (args) => { },
-            setCustomPasscode: (args) => { },
-            importVault: (args) => { },
-            onLock: (args) => { },
-            setValue: (args) => { },
-            getValue: () => { },
-            updateConfig: (args) => { },
-            onUnlock: () => { },
-            clear: () => { }
+            onError: jest.fn(),
+            onPasscodeRequested: jest.fn(),
+            setCustomPasscode: jest.fn(),
+            importVault: jest.fn(),
+            onLock: jest.fn(),
+            setValue: jest.fn(),
+            getValue: jest.fn(),
+            updateConfig: jest.fn(),
+            onUnlock: jest.fn(),
+            clear: jest.fn()
         };
         injector = {
             get: jest.fn()
-        };
-        navigationService = {
-            navigate: jest.fn()
-        }
-        ngZone = {
-            run: jest.fn()
         };
         userPreferenceService = {
             cachedBiometricsEnabledUserPreference: jest.fn(async () => true),
@@ -45,8 +36,7 @@ describe('VaultIdentityService', () => {
         TestBed.configureTestingModule({
             providers: [
                 { provide: Injector, useValue: injector },
-                { provide: UserPreferenceService, useValue: userPreferenceService },
-                { provide: NavigationService, useValue: navigationService }
+                { provide: UserPreferenceService, useValue: userPreferenceService }
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         });
@@ -64,7 +54,7 @@ describe('VaultIdentityService', () => {
         beforeEach(async () => {
             migrator = {
                 exportVault: () => ({ session: { pin: '1111' } }),
-                clear: () => { }
+                clear: jest.fn()
             };
             jest.spyOn(VaultFactory, 'newVaultMigratorInstance').mockReturnValue(migrator);
         });
@@ -169,14 +159,10 @@ describe('VaultIdentityService', () => {
     describe('misc', () => {
         it('should pass required params when routing to startup page', async () => {
             const skipLoginFlow = true, biometricEnabled = true;
-            const spy1 = jest.spyOn(service.routingService, 'navigate').mockResolvedValue(true);
-            await service.showSplashScreen(biometricEnabled, skipLoginFlow);
+            const spy1 = jest.spyOn(service, 'showSplashScreen').mockResolvedValue(true);
+            await service.openStartupPage(biometricEnabled, skipLoginFlow);
             expect(spy1).toBeCalledTimes(1);
-            expect(spy1).toBeCalledWith(
-                [ROLES.anonymous, ANONYMOUS_ROUTES.startup], {
-                replaceUrl: true,
-                state: { skipLoginFlow, biometricEnabled }
-            });
+            expect(spy1).toBeCalledWith({ skipLoginFlow, biometricEnabled });
         });
 
         it('should only set new timeout if vault if currently not locked: Option V1', async () => {

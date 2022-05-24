@@ -121,7 +121,7 @@ export class SessionFacadeService {
 
   async determineFromBackgroundLoginState(sessionId: string): Promise<LoginState> {
     const institutionInfo: Institution = await firstValueFrom(this.institutionFacadeService.cachedInstitutionInfo$);
-    const isInstitutionSelected: boolean = !!institutionInfo;
+    const isInstitutionSelected = !!institutionInfo;
     if (!isInstitutionSelected) {
       return LoginState.SELECT_INSTITUTION;
     }
@@ -173,7 +173,7 @@ export class SessionFacadeService {
     this.userFacadeService.handlePushNotificationRegistration();
   }
 
-  async logoutUser(navigateToEntry: boolean = true): Promise<boolean> {
+  async logoutUser(navigateToEntry = true): Promise<boolean> {
     if (navigateToEntry) {
       this.onLogOutObservable$.next();
     }

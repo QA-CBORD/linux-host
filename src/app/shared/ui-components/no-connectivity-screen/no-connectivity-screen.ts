@@ -8,7 +8,6 @@ import { ContentStringCategory } from '@shared/model/content-strings/content-str
 import { CommonService } from '@shared/services/common.service';
 import { ConnectionService } from '@shared/services/connection-service';
 import { firstValueFrom } from '@shared/utils';
-import { map } from 'rxjs/operators';
 import { Settings, User } from 'src/app/app.global';
 import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
@@ -28,13 +27,13 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   @Input() csModel: ConnectivityScreenCsModel;
   @Input() retryHandler: RetryHandler;
   @Input() errorType: ConnectivityErrorType;
-  @Input() freshContentStringsLoaded: boolean = false;
+  @Input() freshContentStringsLoaded = false;
 
   strings: any;
 
   isLoading = false;
   config: ConnectivityPageConfig;
-  canScanCard: boolean = false;
+  canScanCard = false;
 
   constructor(
     private readonly connectionService: ConnectionService,
@@ -75,7 +74,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     });
   }
 
-  async retryOperations(canShowToast: boolean = true) {
+  async retryOperations(canShowToast = true) {
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
       console.log("GOIN TO CLOSE.....");
@@ -176,7 +175,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     await this.closeToastIfOpened();
     const color = await this.institutionColor();
     await firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE));
-    let componentProps = { color, isBackButtonShow: false, isDismissButtonShow: true };
+    const componentProps = { color, isBackButtonShow: false, isDismissButtonShow: true };
     const pinModal = await this.modalController.create({
       backdropDismiss: true,
       component: ScanCardComponent,
@@ -218,7 +217,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
   async closeToastIfOpened() {
     await this.toastService.dismiss()
-      .catch((ignored) => { /** ignored error, do not remove error block though */ });
+      .catch(() => { /** ignored error, do not remove error block though */ });
   }
 
 }

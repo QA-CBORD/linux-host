@@ -4,7 +4,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { CameraSource } from '@capacitor/camera';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ActionSheetController } from '@ionic/angular';
@@ -22,9 +21,9 @@ describe('PhotoUploadComponent', () => {
     navigate: jest.fn(),
   };
 
-  let domSanitizer = {};
-  let identityFacadeServiceStub = {};
-  let toastService = {
+  const domSanitizer = {};
+  const identityFacadeServiceStub = {};
+  const toastService = {
     showToast: jest.fn(),
   };
 

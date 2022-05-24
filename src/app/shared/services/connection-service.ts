@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, Observer, fromEvent, merge, of, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, Observer, fromEvent, merge, of, Subject } from 'rxjs';
 import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import { firstValueFrom } from '@shared/utils';

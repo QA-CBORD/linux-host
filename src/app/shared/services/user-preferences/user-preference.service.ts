@@ -13,12 +13,12 @@ export class UserPreferenceService {
     constructor(private readonly storageStateService: StorageStateService) { }
 
 
-    async cachedBiometricsEnabledUserPreference(useStrongCheck: boolean = false): Promise<boolean> {
+    async cachedBiometricsEnabledUserPreference(useStrongCheck = false): Promise<boolean> {
         const biometricEnabled = await this.isEnabledByKey(this.biometricsEnabledUserPreference, useStrongCheck);
         return biometricEnabled && !await this.getBiometricPermissionDenied();
     }
 
-    async cachedPinEnabledUserPreference(useStrongCheck: boolean = false): Promise<boolean> {
+    async cachedPinEnabledUserPreference(useStrongCheck = false): Promise<boolean> {
         return await this.isEnabledByKey(this.pinEnabledUserPreference, useStrongCheck);
     }
 

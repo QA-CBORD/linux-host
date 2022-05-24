@@ -1,6 +1,5 @@
 import { Capacitor } from "@capacitor/core";
 import { BrowserVault, DeviceSecurityType, IdentityVaultConfig, Vault, VaultMigrator, VaultType } from "@ionic-enterprise/identity-vault";
-import { VaultConfig } from "@ionic-enterprise/identity-vault/dist/typings/definitions";
 
 
 export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 5000;

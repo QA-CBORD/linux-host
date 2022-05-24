@@ -134,7 +134,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
       return;
     }
     this.mCredential = newCredential;
-    let { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
+    const { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, estimatedTimeInMillis: 900000 });
     GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();

@@ -53,25 +53,28 @@ export class ConnectivityFacadeService {
 
     async exec<T>(options: PromiseExecOptions<T>): Promise<PromiseExecResult<T>> {
         this.setOptionsDefaults(options);
-        return await new Promise(async (resolve, reject) => {
-            try {
-                resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(options.promise, options.showLoading) });
-            } catch (error) {
-                if (options.skipError(error)) {
-                    reject(error);
-                } else {
-                    const { data, promiseResolved } = await this.handleError(options);
-                    if (promiseResolved) {
-                        resolve(data);
-                    } else {
-                        reject(data);
-                    }
-                }
-            }
+        return new Promise((resolve, reject) => {
+            this.runExecutionLogic(resolve, reject, options);
         });
 
     }
 
+    private async runExecutionLogic(resolve, reject, options: PromiseExecOptions<any>) {
+        try {
+            resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(options.promise, options.showLoading) });
+        } catch (error) {
+            if (options.skipError(error)) {
+                reject(error);
+            } else {
+                const { data, promiseResolved } = await this.handleError(options);
+                if (promiseResolved) {
+                    resolve(data);
+                } else {
+                    reject(data);
+                }
+            }
+        }
+    }
 
     private async handleError<T>(options: PromiseExecOptions<T>): Promise<{ data, promiseResolved }> {
         let promiseResolved = false;
@@ -87,7 +90,7 @@ export class ConnectivityFacadeService {
     }
 
 
-    async handleConnectionError(handler: RetryHandler, showAsModal: boolean = false) {
+    async handleConnectionError(handler: RetryHandler, showAsModal = false) {
         return this.connectivityService.handleConnectionError(handler, showAsModal);
     }
 

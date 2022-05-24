@@ -183,7 +183,7 @@ export class VaultIdentityService {
      * @param publishError 
      * @returns 
      */
-    private async onPasscodeRequested(isPasscodeSetRequest: boolean, publishError: boolean = true): Promise<string> {
+    private async onPasscodeRequested(isPasscodeSetRequest: boolean, publishError = true): Promise<string> {
 
         if (isPasscodeSetRequest) {
             /// will happen on pin set
@@ -278,40 +278,44 @@ export class VaultIdentityService {
      */
     async unlockVault(biometricEnabled: boolean = this.state.biometricEnabled): Promise<{ pin: string, biometricEnabled: boolean }> {
         this.state.biometricEnabled = biometricEnabled;
-        // close any modal if any opened.
         await this.closeAllModals();
-        return await new Promise<{ pin: string, biometricEnabled: boolean }>(async (resolve, reject) => {
-            const subscription = this.vaultPinUnlockError$.subscribe(reject);
-            this.vault.onUnlock(() => {
-                this.ngZone?.run(async () => {
-                    this.setIsLocked(false);
-                    this.state.pin = await this.vault.getValue(key);
-                    resolve({ pin: this.state.pin, biometricEnabled });
-                })
-            });
-
-            try {
-                await this.vault.unlock();
-            } catch (error) {
-                if (biometricEnabled) {
-                    this.isBiometricPermissionDenied(error);
-                    this.retryPinUnlock().then(async (data) => {
-                        await this.logout();
-                        await this.login({ pin: data.pin, biometricEnabled: this.state.biometricEnabled });
-                    }).catch(() => { /** Ignored on purpose */ });
-                }
-            } finally {
-                subscription.unsubscribe();
-            }
+        return new Promise<{ pin: string, biometricEnabled: boolean }>((resolve, reject) => {
+            this.runUnlockLogic(resolve, reject, biometricEnabled);
         });
     }
 
+    private async runUnlockLogic(resolve, reject, biometricEnabled: boolean) {
+        this.state.biometricEnabled = biometricEnabled;
+        const subscription = this.vaultPinUnlockError$.subscribe(reject);
+        this.vault.onUnlock(() => {
+            this.ngZone?.run(async () => {
+                this.setIsLocked(false);
+                this.state.pin = await this.vault.getValue(key);
+                resolve({ pin: this.state.pin, biometricEnabled });
+            })
+        });
+
+        try {
+            await this.vault.unlock();
+        } catch (error) {
+            if (biometricEnabled) {
+                this.isBiometricPermissionDenied(error);
+                this.retryPinUnlock().then(async (data) => {
+                    await this.logout();
+                    await this.login({ pin: data.pin, biometricEnabled: this.state.biometricEnabled });
+                }).catch(() => { /** Ignored on purpose */ });
+            }
+        } finally {
+            subscription.unsubscribe();
+        }
+    }
+
     private async doUnlockVault(biometricEnabled: boolean) {
-        return this.showSplashScreen(biometricEnabled);
+        return this.openStartupPage(biometricEnabled);
     }
 
     async retryPinUnlock(): Promise<{ pin: string, biometricEnabled: boolean }> {
-        let sessionPin = await this.onPasscodeRequested(false, false);
+        const sessionPin = await this.onPasscodeRequested(false, false);
         return { pin: sessionPin, biometricEnabled: false };
     }
 
@@ -320,12 +324,13 @@ export class VaultIdentityService {
     }
 
 
-    async showSplashScreen(biometricEnabled: boolean, skipLoginFlow: boolean = true) {
-        const data = {
-            replaceUrl: true,
-            state: { skipLoginFlow, biometricEnabled }
-        };
-        return await this.routingService.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], data);
+    async openStartupPage(biometricEnabled: boolean, skipLoginFlow = true) {
+        return this.showSplashScreen({ skipLoginFlow, biometricEnabled });
+    }
+
+    async showSplashScreen(state: { skipLoginFlow: boolean, biometricEnabled: boolean }) {
+        return await this.routingService.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup],
+            { replaceUrl: true, state });
     }
 
     async closeAllModals(): Promise<void> {

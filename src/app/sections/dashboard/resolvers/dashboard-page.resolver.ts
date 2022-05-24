@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, zip } from 'rxjs';
 import { finalize, first, map, take } from 'rxjs/operators';
@@ -32,7 +32,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly prominentDisclosureService: ProminentDisclosureService,
   ) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<SettingInfoList> | Promise<SettingInfoList> {
+  resolve(route: ActivatedRouteSnapshot): Observable<SettingInfoList> | Promise<SettingInfoList> {
 
     const showLoading = !(route.queryParams.skipLoading && JSON.parse(route.queryParams.skipLoading));
 

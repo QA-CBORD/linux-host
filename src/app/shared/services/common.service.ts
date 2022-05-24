@@ -11,7 +11,7 @@ import { UserInfo } from '@core/model/user';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
-import { iif, Observable, of } from 'rxjs';
+import { iif, Observable } from 'rxjs';
 import { skipWhile, map, take, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 import { MessageProxy } from './injectable-message.proxy';

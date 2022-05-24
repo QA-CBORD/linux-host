@@ -1,4 +1,4 @@
-import { Component, ElementRef, NgZone, OnInit } from '@angular/core';
+import { Component, ElementRef, NgZone } from '@angular/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Location } from '@angular/common';
@@ -80,7 +80,7 @@ export class StartupPage {
   }
 
 
-  handleVaultLoginFailure(error: any): any {
+  handleVaultLoginFailure(): any {
     this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
   }
 
@@ -112,7 +112,7 @@ export class StartupPage {
     return VaultMigrateResult.MIGRATION_FAILED === migrationResult;
   }
 
-  async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: any, clearAll: boolean = true) {
+  async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: any, clearAll = true) {
     return await this.navigationService.navigateAnonymous(where, { ...data })
       .finally(() => clearAll && this.identityFacadeService.clearAll());
   }
@@ -157,7 +157,7 @@ export class StartupPage {
   async unlockVault(biometricEnabled: boolean): Promise<any> {
     return await this.identityFacadeService.unlockVault(biometricEnabled)
       .then(({ pin, biometricEnabled }) => this.handleVaultLoginSuccess(pin, biometricEnabled))
-      .catch((error) => this.handleVaultLoginFailure(error));
+      .catch(() => this.handleVaultLoginFailure());
   }
 
   /// destroy after login complete

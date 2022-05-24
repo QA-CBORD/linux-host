@@ -13,7 +13,6 @@ import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '../services/camera.service';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 export enum LocalPhotoStatus {
   NONE,

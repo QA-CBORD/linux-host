@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Camera, CameraPermissionType, CameraSource, ImageOptions, Photo } from '@capacitor/camera';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { Platform } from '@ionic/angular';
-import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -25,13 +24,5 @@ export class CameraService {
     if (/prompt/.test(permission[source])) {
        await Camera.requestPermissions({ permissions: [<CameraPermissionType>source] });
     }
-  }
-
-  private preventLockScreen() {
-    this.platform.ready().then(() => {
-      this.platform.resume.pipe(take(1)).subscribe(() => {
-
-      });
-    });
   }
 }
