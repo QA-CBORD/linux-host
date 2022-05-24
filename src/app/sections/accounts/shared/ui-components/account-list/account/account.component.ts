@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UserAccount } from '../../../../../../core/model/account/account.model';
 
 @Component({
@@ -7,14 +7,8 @@ import { UserAccount } from '../../../../../../core/model/account/account.model'
   styleUrls: ['./account.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountComponent implements OnInit, OnDestroy {
+export class AccountComponent {
   @Input() tabletResolution: boolean;
   @Input() account: UserAccount;
   @Input() lastItem: boolean;
-
-  constructor() {}
-
-  ngOnInit() {}
-
-  ngOnDestroy() {}
 }

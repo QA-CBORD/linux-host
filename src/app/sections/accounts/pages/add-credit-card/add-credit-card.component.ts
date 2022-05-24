@@ -18,7 +18,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 })
 export class AddCreditCardComponent implements OnInit {
   ccForm: FormGroup;
-  cardType: string = '';
+  cardType = '';
   private inputKeyCode: number;
   private readonly sourceSubscription: Subscription = new Subscription();
 

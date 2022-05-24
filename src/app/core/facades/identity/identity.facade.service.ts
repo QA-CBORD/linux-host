@@ -50,7 +50,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   async pinLoginSetup(
     biometricEnabled: boolean,
-    navigateToDashboard: boolean = true,
+    navigateToDashboard = true,
     pinModalProps?: any
   ): Promise<any> {
     const { data, role } = await this.identityService.presentPinModal(

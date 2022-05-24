@@ -1,11 +1,12 @@
 import { Category } from './filter-sort.model';
 
 export function generateCategory(_: any, index: number): Category {
-  const name: string = `Category ${index}`;
+  const name = `Category ${index}`;
 
   return new Category(name, -1);
 }
 
-export function generateCategories(amount: number = 5): Category[] {
+export function generateCategories(amount = 5): Category[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateCategory);
 }

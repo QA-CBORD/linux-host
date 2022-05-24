@@ -29,7 +29,7 @@ export class CommonService {
     private readonly messageProxy: MessageProxy
   ) {}
 
-  async getInstitutionPhoto(useCache: boolean = true, sanitizer: DomSanitizer = null): Promise<SafeResourceUrl> {
+  async getInstitutionPhoto(useCache = true, sanitizer: DomSanitizer = null): Promise<SafeResourceUrl> {
     const sessId = await this.sessionId();
     const instId = await this.institionId();
     const cachedPhoto$ = this.institutionFacadeService.getInstitutionPhoto$(instId, sessId, true);
@@ -97,8 +97,7 @@ export class CommonService {
 
   loadContentString<T extends ContentStringModel>(
     category: ContentStringCategory,
-    args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {},
-    save:boolean = false
+    args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {}
   ): Observable<T> {
     return this.contentStringFacadeService.fetchContentStringModel<T>(category, args).pipe(
       take(1),
@@ -110,7 +109,7 @@ export class CommonService {
     return this.getInstitution(null, true).then(({ name }) => name);
   }
 
-  async getInstitution(instId = null, useCache: boolean = true): Promise<Institution> {
+  async getInstitution(instId = null, useCache = true): Promise<Institution> {
     const sessId = await this.sessionId();
     const id = instId || (await this.institionId());
     const cachedInstitution$ = this.institutionFacadeService.getInstitutionInfo$(id, sessId, true);
@@ -120,7 +119,7 @@ export class CommonService {
       .toPromise();
   }
 
-  async getInstitutionBgColor(useCache: boolean = true): Promise<string> {
+  async getInstitutionBgColor(useCache = true): Promise<string> {
     const sessId = await this.sessionId();
     const instId = await this.institionId();
     const cachedBgColor$ = this.settingsFacadeService.getSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessId, instId);

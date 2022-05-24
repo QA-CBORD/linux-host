@@ -34,7 +34,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
-  merchantInfoState: boolean = false;
+  merchantInfoState = false;
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};

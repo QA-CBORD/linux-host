@@ -13,7 +13,7 @@ export class CategoryOptionDetail {
   key: string;
   category: string;
   value: string;
-  isSelected: boolean = false;
+  isSelected = false;
 
   constructor(category: string,option: string , selected: false) {
     this.key = `${category}${option}`.trim();
@@ -93,8 +93,8 @@ export class CategoryOptions {
     this.addOptions('Buildings', facilityNames);
   }
   public getCategoryOptions(): {[key: string]: string[]} {
-    let options = {};
-    for (let [key, values] of Array.from(this._options.entries())) {
+    const options = {};
+    for (const [key, values] of Array.from(this._options.entries())) {
       options[key] = values;
     }
 

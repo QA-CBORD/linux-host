@@ -47,11 +47,11 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   contractElementKey: number;
 
-  isSubmitted: boolean = false;
+  isSubmitted = false;
 
-  isSigned: boolean = true;
+  isSigned = true;
 
-  canSubmit: boolean = true;
+  canSubmit = true;
 
   constructor(
     private _route: ActivatedRoute,

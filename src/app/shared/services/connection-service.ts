@@ -57,7 +57,7 @@ export class ConnectionService {
     return this.network.type;
   }
 
-  public networkStatus(time: number = 300): Observable<boolean> {
+  public networkStatus(time = 300): Observable<boolean> {
     return this.online$.pipe(debounceTime(time), switchMap(async () => !(await this.deviceOffline())));
   }
 

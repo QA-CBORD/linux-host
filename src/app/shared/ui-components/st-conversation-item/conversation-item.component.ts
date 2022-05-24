@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { generateColorHslFromText } from '@core/utils/colors-helper';
 import { mapConversationToListItem } from '@core/utils/conversations-helper';
 import { SecureMessageConversation, SecureMessageConversationListItem } from '@sections/secure-messaging';

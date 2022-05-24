@@ -12,7 +12,7 @@ import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials
 })
 export class MobileCredentialMetadata implements OnInit {
   deviceState: any = {};
-  isHid: boolean = true;
+  isHid = true;
 
   constructor(
     public readonly mobileCredentialFacade: MobileCredentialFacade,

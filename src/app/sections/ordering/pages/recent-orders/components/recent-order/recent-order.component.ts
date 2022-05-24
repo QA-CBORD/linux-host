@@ -30,6 +30,7 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
+import { firstValueFrom } from '@shared/utils';
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -156,7 +157,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           }
         });
         order.orderItems = [];
-        for (let value of map.values()) {
+        for (const value of map.values()) {
           order.orderItems.push(value);
         }
         if (this.orderCheckStatus.isNotCheckedIn(checkinStatus)) {
@@ -226,7 +227,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
-    let [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder()
+    const [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder()
       .pipe(first())
       .toPromise();
     if (hasMissedItems) {
@@ -252,6 +253,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         // Temporary solution:
         if (typeof error === 'object') {
           this.loadingService.closeSpinner();
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const [code, text] = error;
           await this.presentPopup(text);
           throw text;
@@ -280,7 +282,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.cart]);
   }
 
-  private async onValidateErrorToast(message: string, onDismiss: () => {}) {
+  private async onValidateErrorToast(message: string, onDismiss: () => void) {
     await this.toastService.showToast({ message, toastButtons: [{ text: 'Close' }], onDismiss: onDismiss });
   }
 
@@ -293,6 +295,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       )
     );
     this.orderDetailsOptions$ = zip(address, this.order$, this.userFacadeService.getUserData$(), this.merchant$).pipe(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       map(([address, { type, dueTime }, { locale, timeZone }, merchant]) => {
         const date = new Date(dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));
         const time = date.toLocaleString(locale, { hour12: false, timeZone });
@@ -367,12 +370,13 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   private async initConfirmModal(onSuccessCb): Promise<void> {
+    const message = await firstValueFrom(this.contentStrings.reorderNotAvailableItemMessage);
     const modal = await this.popoverController.create({
       component: StGlobalPopoverComponent,
       componentProps: {
         data: {
           title: 'Warning',
-          message: 'Some of order items dont available for picked date',
+          message,
           buttons: [{ ...buttons.OKAY, label: 'PROCEED' }],
         },
       },
@@ -446,6 +450,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder
+    );
+    this.contentStrings.reorderNotAvailableItemMessage = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.reorderNotAvailableItemMessage
     );
   }
 

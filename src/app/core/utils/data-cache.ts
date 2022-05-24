@@ -34,7 +34,7 @@ export class DataCache {
 
   constructor(private platform: Platform, private appV: AppVersion, private storage: Storage) {
     /// is on mobile? cordova not available on website
-    this.platform.ready().then(_ => {
+    this.platform.ready().then(() => {
       if (this.platform.is('cordova')) {
         this.appV.getVersionNumber().then(vNum => DataCache.setAppVersion(vNum));
       }
@@ -106,7 +106,7 @@ export class DataCache {
             onFailure();
           }
         },
-        error => {
+        () => {
           onFailure();
         }
       );
@@ -216,7 +216,7 @@ export class DataCache {
     return Observable.create((observer: Observer<T>) => {
       this.storage
         .ready()
-        .then(value => {
+        .then(() => {
           this.storage
             .get(key)
             .then(data => {
@@ -244,12 +244,15 @@ export class DataCache {
   private set(key: string, data: any) {
     this.storage
       .ready()
-      .then(val => {
+      .then(() => {
         this.storage
           .set(key, data)
-          .then(resp => {})
-          .catch(error => {});
+          .catch(() => {
+          // TODO: Properly handle exception
+          });
       })
-      .catch(error => {});
+      .catch(() => {
+          // TODO: Properly handle exception
+      });
   }
 }

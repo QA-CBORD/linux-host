@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { map, take, concatMap, reduce, switchMap } from 'rxjs/operators';
 import {
   SettingsServices,
@@ -21,6 +22,7 @@ export function getCardStatusValidation(services: SettingsServices): Observable<
 }
 
 export async function setBiometricStatus(services: SettingsServices): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   const setting: SettingItemConfig = this;
   setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
 }
@@ -35,9 +37,11 @@ export function setReportCardLabel(services: SettingsServices) {
         map(([{ value: lsEnabled }, { value: fcEnabled }]) => {
           let result = null;
           if (user.cashlessMediaStatus === ReportCardStatus.LOST) {
+            // eslint-disable-next-line no-extra-boolean-cast
             if (Boolean(+fcEnabled)) {
               result = setting.toggleLabel.checked;
             }
+          // eslint-disable-next-line no-extra-boolean-cast
           } else if (Boolean(+lsEnabled)) {
             result = setting.toggleLabel.unchecked;
           }
@@ -130,7 +134,7 @@ export async function contentStringsByCategory(
   contentStrings: DomainContentString[]
 ): Promise<[ContentStringInfo[]]> {
   const contentStringList: [ContentStringInfo[]] = [[]];
-  for (let content of contentStrings) {
+  for (const content of contentStrings) {
     if (content.name === null) {
       const item = await services.contentString
         .fetchContentStrings$(content.domain, content.category)

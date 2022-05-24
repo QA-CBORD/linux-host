@@ -20,7 +20,7 @@ import { Location } from '@angular/common';
 })
 export class AddressEditPage implements OnInit {
   addressData: any;
-  addNewAdddressState: boolean = false;
+  addNewAdddressState = false;
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   merchantId: string;
   buildings$: Observable<any[]>;

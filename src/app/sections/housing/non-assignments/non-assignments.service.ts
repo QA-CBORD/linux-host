@@ -121,7 +121,7 @@ export class NonAssignmentsService {
         }
       }
       ),
-      catchError(_ => of(false)));
+      catchError(() => of(false)));
   }
 
   next(nonAssignmentKey: number, formValue: any): Observable<any> {
@@ -169,12 +169,12 @@ export class NonAssignmentsService {
      return [];
    }
 
-    var selectedValues = question.values.filter(p => p.selected);
+    const selectedValues = question.values.filter(p => p.selected);
     
-    let nameLabel: string = '';
-    let mealsLabel: string = '';
-    let diningDollarsLabel: string = '';
-    let costLabel: string = '';
+    let nameLabel = '';
+    let mealsLabel = '';
+    let diningDollarsLabel = '';
+    let costLabel = '';
 
     selectedValues.forEach(p => {
       switch (p.value) {
@@ -241,6 +241,7 @@ export class NonAssignmentsService {
           default:
             break;
         }
+        // eslint-disable-next-line prefer-const
         assetTypeValue = new AssetTypeDetailValue({
           assetTypeKey: assetType.assetTypeKey,
           label,

@@ -8,7 +8,7 @@ import { Platform } from '@ionic/angular';
   providedIn: 'root',
 })
 export class StorageStateService extends ExtendableStateManager<WebStorageStateEntity> {
-  protected activeUpdaters: number = 0;
+  protected activeUpdaters = 0;
   protected state: WebStorageStateEntity = {};
   protected readonly _state$: BehaviorSubject<WebStorageStateEntity> = new BehaviorSubject<WebStorageStateEntity>(
     this.state
@@ -16,7 +16,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   private readonly storageKey: string = 'cbord_gcs';
   private readonly storage = Storage;
-  private isStateInitialized: boolean = false;
+  private isStateInitialized = false;
 
   constructor(private readonly platform: Platform) {
     super();

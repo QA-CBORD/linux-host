@@ -9,7 +9,7 @@ import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewCartComponent implements OnChanges, OnInit {
-  @Input() menuItemsCount: number = 0;
+  @Input() menuItemsCount = 0;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(private readonly orderingService: OrderingService) {}

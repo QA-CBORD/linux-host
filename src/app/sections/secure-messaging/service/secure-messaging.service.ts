@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, timer, zip, of, Subject } from 'rxjs';
+import { Observable, timer, zip, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 
-// import { AuthService } from '@core/service/auth-service/auth-api.service';
 import { SecureMessagingApiService } from './secure-messaging-api.service';
 
 import {
@@ -96,7 +95,7 @@ export class SecureMessagingService {
 
   private newGuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(X_Y_REGEXP, function(c) {
-      // tslint:disable-next-line:no-bitwise
+      // eslint-disable-next-line no-bitwise
       const r = (Math.random() * 16) | 0,
         v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);

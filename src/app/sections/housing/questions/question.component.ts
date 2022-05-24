@@ -31,6 +31,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   facilityFullName: string;
   currectFacility: string;
   images: LocalFile[] = [];
+  facilityName: any;
   workOrderFieldsText: any = {
     notify: 'Would you like to receive updates?',
     phone: 'Enter your phone number.',
@@ -66,6 +67,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._initTermsSubscription();
     this._initGetImage();
     this._setFacility();
+    this._getFacilityName();
   }
 
   @Input() question: QuestionBase;
@@ -80,7 +82,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   requestedRoommates$: Observable<RequestedRoommate[]>;
   roommateSearchOptions$: any;
-  private selectedTermKey: number = 0;
+  private selectedTermKey = 0;
   private subscriptions: Subscription = new Subscription();
 
   customActionSheetOptions: { [key: string]: string } = {
@@ -129,6 +131,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   private _initGetImage() {
     const getImageSub = this._workOrderStateService.workOrderImage$.subscribe(res => {
+      // eslint-disable-next-line no-extra-boolean-cast
       if (!!(res && res.contents)) {
         const extension = res.filename.split('.').pop();
         const imageContent = res.contents.startsWith('data:image')
@@ -219,6 +222,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           directory: FilesystemDirectory.Data,
         });
       } catch (error) {
+          // TODO: Properly handle exception
       }
     }
 
@@ -281,7 +285,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       async result => {
         await this.loadFileData(result.files);
       },
-      async err => {
+      async () => {
         // Folder does not yet exists!
         await Filesystem.mkdir({
           path: IMAGE_DIR,
@@ -292,7 +296,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   async loadFileData(fileNames: string[]) {
-    for (let f of fileNames) {
+    for (const f of fileNames) {
       const filePath = `${IMAGE_DIR}/${f}`;
 
       const readFile = await Filesystem.readFile({
@@ -322,7 +326,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const imageFormat = file.name.split('.')[1];
     const rawData = atob(value);
     const bytes = new Array(rawData.length);
-    for (var x = 0; x < rawData.length; x++) {
+    for (let x = 0; x < rawData.length; x++) {
       bytes[x] = rawData.charCodeAt(x);
     }
     const arr = new Uint8Array(bytes);
@@ -378,5 +382,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
         facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey,
       });
     }
+  }
+
+  private _getFacilityName() {
+    this._workOrderStateService.getSelectedFacility$().subscribe(res => {
+      this.facilityName = res?.name
+    });
   }
 }

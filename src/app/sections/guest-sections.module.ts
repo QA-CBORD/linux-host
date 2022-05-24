@@ -19,6 +19,4 @@ import { StGlobalNavigationModule } from '@shared/ui-components/st-global-naviga
     StGlobalNavigationModule,
   ],
 })
-export class GuestSectionsModule {
-  constructor() {}
-}
+export class GuestSectionsModule {}

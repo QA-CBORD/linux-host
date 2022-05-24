@@ -28,7 +28,7 @@ import { firstValueFrom } from '@shared/utils';
 })
 export class IdentityService  {
   private temporaryPin: string = undefined;
-  private isLocked: boolean = true;
+  private isLocked = true;
 
   // constructor(
   //   private browserAuthPlugin: BrowserAuthPlugin,

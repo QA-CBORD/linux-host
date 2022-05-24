@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { ContractSummary } from '@sections/housing/contract-list/contractSummary.model';
 import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,12 +10,10 @@ import { ToastService } from '@core/service/toast/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./contract-list-items.component.scss'],
 })
-export class ContractListItemsComponent implements OnInit, AfterViewInit {
+export class ContractListItemsComponent implements AfterViewInit {
   @ViewChild('container') divContainer: ElementRef;
   @Input() contractSummaries: ContractSummary[]
 
-  ngOnInit() {
-  }
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
    if(this.contractSummaries.length > 0)

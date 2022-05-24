@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
-import { from, merge, Observable, of, zip } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   SettingItemConfig,
-  SETTINGS_VALIDATIONS,
   SettingsSectionConfig,
   SettingsServices,
-  StatusSettingValidation,
 } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG } from '../settings.config';
-import { catchError, map, reduce, take, tap, mergeMap, switchMap } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
-import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -21,7 +19,6 @@ import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import Setting = Settings.Setting;
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
@@ -77,7 +74,7 @@ export class SettingsFactoryService {
     for (let sectionIndex = 0; sectionIndex < parsedSettings.length; sectionIndex++) {
       const section = parsedSettings[sectionIndex];
       const promises = [];
-      const hiddenSettings: { [key: string]: Boolean } = {};
+      const hiddenSettings: { [key: string]: boolean } = {};
 
       for (let settingIndex = 0; settingIndex < section.items.length; settingIndex++) {
         const setting = section.items[settingIndex];

@@ -9,7 +9,7 @@ import { Category } from '../filter-sort/filter-sort.model';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { Observable, of, pipe } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {  map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -47,7 +47,7 @@ export class SearchFilterModalComponent implements OnInit {
     if (facilityKeys && facilityKeys.length > 0) {
       return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
         .pipe(
-          tap(data => {
+          tap(() => {
             this._handleFilters()
           }),
           map(data => {
@@ -70,7 +70,7 @@ export class SearchFilterModalComponent implements OnInit {
     this.categories = this._roomsService.getFilterCategories();
     this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
     const builderOptions = {};
-    for (let item in this.categoryOptions) {
+    for (const item in this.categoryOptions) {
       const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
       builderOptions[item] = this._formBuilder.array(optionsInfo.map(x => x.isSelected));
     }
@@ -80,7 +80,7 @@ export class SearchFilterModalComponent implements OnInit {
   filter(data: any) {
       this._loadingService.showSpinner();
 
-      let  categoriesToFilter = new Map<string, boolean[]>();
+      const  categoriesToFilter = new Map<string, boolean[]>();
       const dataMap = convertObjectToMap(data);
       dataMap.forEach((values, key) => {
         const selected = values.find(x => x);
@@ -89,7 +89,7 @@ export class SearchFilterModalComponent implements OnInit {
         }
       });
       const filterOptions: Map<string, string[]> = new Map<string, string[]>();
-      let hasPatronAttribute: boolean = false;
+      let hasPatronAttribute = false;
       categoriesToFilter.forEach((options, category)  => {
         const selectedOptions: number[] = [];
         let lastFound = 0;
@@ -119,7 +119,7 @@ export class SearchFilterModalComponent implements OnInit {
     }
   }
   private goToUnitsTab(): void {
-    this.close().then(x => {
+    this.close().then(() => {
       this._loadingService.closeSpinner();
       this._router.navigateByUrl(`patron/housing/rooms-search/${
         this._roomStateService.getActiveRoomSelect().key}/units`).catch(err => console.log(err));
@@ -127,7 +127,7 @@ export class SearchFilterModalComponent implements OnInit {
   }
 
   private _goToBuildingsTab(): void {
-    this.close().then(x=> {
+    this.close().then(()=> {
       this._loadingService.closeSpinner();
       this._router.navigateByUrl(`patron/housing/rooms-search/${
         this._roomStateService.getActiveRoomSelect().key}/buildings`)
@@ -159,9 +159,10 @@ export class SearchFilterModalComponent implements OnInit {
     return name;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   sort(control: SortControlComponent): void {}
 
-  getId(key: string, index: number): Number {
+  getId(key: string, index: number): number {
     return Number(key) - index;
   }
 }

@@ -5,8 +5,8 @@ import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 
 export let sessionFacadeServiceMock: Partial<SessionFacadeService>;
-export let platformMock: Partial<Platform> = { is: jest.fn(), pause: new Subject() };
-export let routerMock: Partial<Router> = {
+export const platformMock: Partial<Platform> = { is: jest.fn(), pause: new Subject() };
+export const routerMock: Partial<Router> = {
   navigate: jest.fn(),
 };
 

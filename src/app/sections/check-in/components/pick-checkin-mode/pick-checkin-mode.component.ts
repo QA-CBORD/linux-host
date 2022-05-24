@@ -1,19 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
-import { CheckingContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
+import { Component, Input } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'st-pick-checkin-mode',
   templateUrl: './pick-checkin-mode.component.html',
   styleUrls: ['./pick-checkin-mode.component.scss'],
 })
-export class PickCheckinModeComponent implements OnInit {
+export class PickCheckinModeComponent {
   @Input() contentStrings: any;
   @Input() locationPermissionDisabled: boolean;
 
   constructor(protected readonly popoverCtrl: PopoverController,) {}
-
-  ngOnInit() {}
 
   async onScanCode() {
     await this.popoverCtrl.dismiss({

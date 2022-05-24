@@ -16,7 +16,7 @@ export class InstitutionApiService {
   constructor(private readonly http: HttpClient) {}
 
   getInstitutionData(): Observable<Institution> {
-    let params = {};
+    const params = {};
 
     const queryConfig = new RPCQueryConfig('retrieve', params, true, true);
 

@@ -7,8 +7,8 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import { Observable, throwError, TimeoutError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { NUM_DSCRPTN_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
 
@@ -51,7 +51,7 @@ export class ServerError implements HttpInterceptor {
     return errorString.search(NUM_DSCRPTN_REGEXP) !== -1;
   }
 
-  private handleServerException(exceptionString: string = '', method: string): never {
+  private handleServerException(exceptionString = '', method: string): never {
     if (this.isKnownError(exceptionString)) {
       const errorMessageParts = exceptionString.split('|');
       throw this.determineErrorByCodeAndThrow(errorMessageParts as [string, string], method);

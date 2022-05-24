@@ -5,7 +5,7 @@ import { Directive, HostBinding } from '@angular/core';
 })
 export class TogglerDirective {
   @HostBinding('class.toggled')
-  toggled: boolean = false;
+  toggled = false;
 
   toggle(): void {
     this.toggled = !this.toggled;

@@ -5,8 +5,6 @@ import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
 import { catchError, map } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
-import { QuestionsStorageService } from '../questions/questions-storage.service';
-import { QuestionsService } from '../questions/questions.service';
 import { Inspection } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 
@@ -45,7 +43,7 @@ export class InspectionService {
           }
         }
         ),
-        catchError(_ => of(false))
+        catchError(() => of(false))
       );
     }
 
@@ -58,7 +56,7 @@ export class InspectionService {
         }
       }
       ),
-      catchError(_ => of(false))
+      catchError(() => of(false))
     );
   }
 

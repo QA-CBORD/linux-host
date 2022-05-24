@@ -6,7 +6,6 @@ import { CONTENT_STRINGS, TIME_PERIOD } from '@sections/accounts/accounts.config
   name: 'timeRange',
 })
 export class TimeRangePipe implements PipeTransform {
-  constructor() {}
 
   transform(value: DateUtilObject, contentString: any): string {
     return this.localGetUniquePeriodName(value, contentString);

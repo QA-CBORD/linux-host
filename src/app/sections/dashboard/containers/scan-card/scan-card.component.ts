@@ -136,7 +136,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
         this.generateBarcode(value);
         return true;
       }),
-      catchError(_ => of(false))
+      catchError(() => of(false))
     );
   }
 
@@ -149,7 +149,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
         includetext: false,
         height: 10,
       },
-      (err, cvs) => {
+      () => {
         /// don't care
       }
     );

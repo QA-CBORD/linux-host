@@ -9,7 +9,6 @@ import { AccountService } from '../../../services/accounts.service';
 import { TIME_PERIOD, CONTENT_STRINGS } from '../../../accounts.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TransactionService } from '../../../services/transaction.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-filter',

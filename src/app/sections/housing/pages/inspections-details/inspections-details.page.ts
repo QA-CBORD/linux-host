@@ -1,8 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  DoCheck,
   OnDestroy,
   OnInit,
   QueryList,
@@ -27,7 +25,7 @@ import {
 } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '@sections/housing/housing.service';
-import { AssetTypeDetailValue, NonAssignmentDetails } from '@sections/housing/non-assignments/non-assignments.model';
+import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
@@ -62,10 +60,10 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   checkIn: boolean;
   selectedAssetKey: number;
   selectedAssetName: string;
-  termKey: number = 0;
-  isSubmitted: boolean = false;
-  canSubmit: boolean = true;
-  section: string = '';
+  termKey = 0;
+  isSubmitted = false;
+  canSubmit = true;
+  section = '';
   conditions: any[] = [];
 
   constructor(
@@ -83,7 +81,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(x => {
+      this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });
@@ -108,6 +106,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async submit(workOrderDetails: WorkOrderDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
     this._touch();
 

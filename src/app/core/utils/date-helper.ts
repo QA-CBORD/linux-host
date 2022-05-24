@@ -69,8 +69,8 @@ export const formatDateByContentStrings = (
   weekContentStrings: ContentStringInfo[],
   monthContentStrings: ContentStringInfo[]
 ): string => {
-  let formattedWeek = sortContentStringsBySourceArray(weekContentStrings, WEEK);
-  let formattedMonth = sortContentStringsBySourceArray(monthContentStrings, MONTH);
+  const formattedWeek = sortContentStringsBySourceArray(weekContentStrings, WEEK);
+  const formattedMonth = sortContentStringsBySourceArray(monthContentStrings, MONTH);
 
   return `${formattedWeek[date.getDay()]}, ${formattedMonth[date.getMonth()]} ${date.getDate()}`;
 };
@@ -79,7 +79,7 @@ export const sortContentStringsBySourceArray = (
   contentStrings: ContentStringInfo[],
   sourceArray: string[]
 ): string[] => {
-  let res = [];
+  const res = [];
 
   for (let i = 0; i < contentStrings.length; i++) {
     const index = sourceArray.findIndex(elem => elem.toLowerCase() === contentStrings[i].name.toLowerCase());

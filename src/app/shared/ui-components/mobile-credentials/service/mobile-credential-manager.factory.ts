@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { iif, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialProviders } from '../model/shared/credential-utils';
@@ -55,13 +55,13 @@ export class MobileCredentialManagerFactory {
   }
 
   private createHidCredentialManagerFor(mCredential: HIDCredential): HIDCredentialManager {
-    let credentialManager = this.injector.get(HIDCredentialManager);
+    const credentialManager = this.injector.get(HIDCredentialManager);
     credentialManager.setCredential(mCredential);
     return credentialManager;
   }
 
   private createGoogleCredentialManagerFor(mCredential: GoogleCredential): GooglePayCredentialManager {
-    let credentialManager = this.injector.get(GooglePayCredentialManager);
+    const credentialManager = this.injector.get(GooglePayCredentialManager);
     credentialManager.setCredential(mCredential);
     return credentialManager;
   }

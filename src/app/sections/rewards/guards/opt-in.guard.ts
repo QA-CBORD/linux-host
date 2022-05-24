@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivate } from '@angular/router';
 
 import { Observable, Subject } from 'rxjs';
 import { map, retryWhen, switchMap, tap } from 'rxjs/operators';
@@ -23,7 +23,7 @@ export class OptInGuard implements CanActivate {
     private readonly toastService: ToastService
   ) {}
 
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivate(): Observable<boolean> {
     return this.rewardsService.initContentStringsList().pipe(
       switchMap(() => this.rewardsService.getUserRewardTrackInfo()),
       map((rewardTrackInfo: UserRewardTrackInfo) => {

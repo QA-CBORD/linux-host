@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 import { IonTabs } from '@ionic/angular';
 import { Router } from '@angular/router';

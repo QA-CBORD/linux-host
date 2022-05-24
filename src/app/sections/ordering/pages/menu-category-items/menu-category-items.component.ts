@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
 import { Observable, zip } from 'rxjs';
-import { take, first, tap, distinctUntilChanged, filter } from 'rxjs/operators';
+import { take, first, distinctUntilChanged, filter } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
 import { handleServerError } from '@core/utils/general-helpers';
 import { AlertController } from '@ionic/angular';
@@ -20,7 +20,7 @@ import { APP_ROUTES } from '@sections/section.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuCategoryItemsComponent implements OnInit {
-  searchState: boolean = false;
+  searchState = false;
   menuInfo$: Observable<MenuInfo>;
   menuCategory: MenuCategoryInfo;
   filteredMenuCategoryItems: MenuCategoryItemInfo[] = [];

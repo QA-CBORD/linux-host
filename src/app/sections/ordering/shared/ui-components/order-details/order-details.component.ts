@@ -42,7 +42,6 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 
-
 @Component({
   selector: 'st-order-details',
   templateUrl: './order-details.component.html',
@@ -51,7 +50,7 @@ import { Keyboard } from '@capacitor/keyboard';
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() orderDetailOptions: OrderDetailOptions;
-  @Input() readonly: boolean = true;
+  @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
   @Input() orderItems: OrderItem[] = [];
@@ -83,7 +82,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
   @Input() orderPayment: OrderPayment[];
-  isApplePayment: boolean = false;
+  isApplePayment = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -181,7 +180,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setAccessoryBarVisible(isVisible: boolean) {
-    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {});
+    Keyboard.setAccessoryBarVisible({ isVisible: isVisible }).catch(() => {
+      // TODO: Properly handle exception
+    });
   }
 
   initForm() {

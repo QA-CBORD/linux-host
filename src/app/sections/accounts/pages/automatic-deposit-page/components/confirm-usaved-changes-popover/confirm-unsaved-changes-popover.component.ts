@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PopoverConfig } from '@core/model/popover/popover.model';
 import { PopupTypes } from '@sections/rewards/rewards.config';
 import { buttons } from '@core/utils/buttons.config';
@@ -10,8 +10,6 @@ import { buttons } from '@core/utils/buttons.config';
 })
 export class ConfirmUnsavedChangesPopoverComponent implements OnInit {
   config: PopoverConfig<string>;
-
-  constructor() {}
 
   ngOnInit() {
     this.config = {

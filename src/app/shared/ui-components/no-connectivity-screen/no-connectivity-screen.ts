@@ -32,7 +32,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
   strings: any;
 
-  isLoading: boolean = false;
+  isLoading = false;
   config: ConnectivityPageConfig;
   canScanCard: boolean = false;
 
@@ -123,7 +123,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
   private async showRetryToast(): Promise<boolean> {
     const string$ = this.strings;
-    let myToast = await this.toastService.create({
+    const myToast = await this.toastService.create({
       message: string$.connect_failed,
       duration: 3000,
       mode: 'ios',
@@ -141,7 +141,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
         },
         {
           text: "|",
-          handler: () => { },
+          handler: () => true,
         },
         {
           icon: "/assets/icon/remove_x_icon.svg",

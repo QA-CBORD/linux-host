@@ -12,7 +12,7 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { catchError, debounceTime, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
@@ -66,11 +66,11 @@ export class CartComponent implements OnInit, OnDestroy {
   accountInfoList$: Observable<MerchantAccountInfoList>;
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-  placingOrder: boolean = false;
-  isProcessingOrder: boolean = false;
+  placingOrder = false;
+  isProcessingOrder = false;
   @ViewChild('orderDetails', { static: true }) orderDetail: OrderDetailsComponent;
   merchantTimeZoneDisplayingMessage: string;
-  isOnline: boolean = true;
+  isOnline = true;
   networkSubcription: Subscription;
   orderSubmitErrorMessage = {
     timeout: '',
@@ -282,7 +282,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
-    let data: any = {
+    const data: any = {
       title: 'Oooops',
       message,
       showClose: !buttonLable,
@@ -349,7 +349,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.updateOrderPhone(this.cartFormState.data[FORM_CONTROL_NAMES.phone]);
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
-      let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
+      const orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
 
       Browser.addListener(browserState.FINISHED, () => {
         this.placingOrder = false;
@@ -366,7 +366,7 @@ export class CartComponent implements OnInit, OnDestroy {
             this.onErrorModal(result.errorMessage);
           }
         })
-        .catch(async error => {
+        .catch(async () => {
           this.placingOrder = false;
           return await this.onErrorModal('Something went wrong, please try again...');
         })

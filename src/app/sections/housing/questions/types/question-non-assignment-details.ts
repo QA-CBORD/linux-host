@@ -10,7 +10,7 @@ import {
 } from '@sections/housing/questions/types/question-base';
 import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
 
-let counter: number = 0;
+let counter = 0;
 
 export interface QuestionAssetTypeDetailsBaseOptions extends QuestionBaseOptions {
   required: boolean;

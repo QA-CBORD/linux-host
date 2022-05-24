@@ -46,6 +46,7 @@ export class OrderingApiService {
     return this.merchantFacadeService.removeFavoriteMerchant(merchantId);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getSuccessfulOrdersList(userId: string, institutionId: string): Observable<OrderInfo[]> {
     const postParams: ServiceParameters = { userId, merchantId: null, maxReturn: 30 };
     const queryConfig = new RPCQueryConfig('retrieveSuccessfulOrdersList', postParams, true, true);
@@ -214,7 +215,7 @@ export class OrderingApiService {
     dateTime: string,
     orderType: number,
     locale: string = null,
-    depth: number = 4
+    depth = 4
   ): Observable<any> {
     const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
     const queryConfig = new RPCQueryConfig('getDisplayMenu', postParams, true);

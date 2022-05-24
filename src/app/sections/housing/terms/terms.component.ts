@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { TermsService } from './terms.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -16,7 +16,7 @@ import { Term } from './terms.model';
 export class TermsComponent implements OnInit {
   terms$: Observable<Term[]>;
 
-  label: string = 'Select Term';
+  label = 'Select Term';
 
   customPopoverOptions: any = {
     mode: 'md',

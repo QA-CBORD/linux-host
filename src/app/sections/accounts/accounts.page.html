@@ -5,9 +5,9 @@
         [isBackButtonShow]="false"
         class="shadow-header"
 ></st-header>
-<ion-split-pane when="md" class="accounts-pane">
+<ion-content class="accounts-pane">
 
-  <ion-content main class="accounts-content-wrapper">
+  <div class="accounts-content-wrapper">
     <div class="accounts-content">
       <section class="accounts-content__main-page accounts-page">
         <st-menu-receiving-funds class="accounts-page__menu"></st-menu-receiving-funds>
@@ -25,7 +25,7 @@
         </section>
       </section>
     </div>
-  </ion-content>
+  </div>
 
   <section class="accounts-details-page">
     <article class="accounts-details-page__header accounts-details-menu">
@@ -42,4 +42,4 @@
 
     <ion-router-outlet class="accounts-details-page__router" [animated]="false"></ion-router-outlet>
   </section>
-</ion-split-pane>
+</ion-content>

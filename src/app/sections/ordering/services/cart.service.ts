@@ -22,7 +22,7 @@ export class CartService {
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
-  public orderIsAsap: boolean = false;
+  public orderIsAsap = false;
   checkNumber: number;
   currentOrderId: string;
   merchantTimeZone: string;
