@@ -9,51 +9,38 @@
   </div>
   <h2 class="application-details__title">2022 Housing Application</h2>
 <ion-card class="application-details__card">
-  <!-- <header class="deposit-modal__header">
-    <ion-toolbar mode="ios">
-      <ion-title class="deposit-modal__title">{{ contentString.title }}</ion-title>
-    </ion-toolbar>
-  </header>
-   -->
-  <ion-content>
     <div class="deposit-modal__img-wrapper">
       <img src="/assets/images/housing/success-payment.svg" alt="big_check_deposit" />
     </div>
-    <h1 class="deposit-modal__title-label">{{ contentString.subTitleSummary }}</h1>
+    <h1 class="deposit-modal__title-label">Bobo</h1>
     <section class="deposit-modal__sub-title">
-      {{ contentString.subTitleDetail }}
+      Bobo
     </section>
     <section class="deposit-modal__info-container">
       <div class="deposit-modal__label">
-        {{ contentString.lblDepositAmount }}:
+        Bobo:
         <span class="deposit-modal__value">{{
           data.amount | transactionUnits: data['selectedAccount'].accountType
         }}</span>
       </div>
       <div class="deposit-modal__label">
-        {{ contentString.lblAccount }}:
+        Bobo:
         <span class="deposit-modal__value">{{ data['selectedAccount'].accountDisplayName }}</span>
       </div>
       <div class="deposit-modal__label">
-        {{ contentString.lblSelectPaymentMethod }}:
+        Bobo:
         <span class="deposit-modal__value" *ngIf="data['sourceAcc'].accountTender === 'Apple Pay'; else creditcard">
           {{ data['sourceAcc'].accountTender }}
         </span>
         <ng-template #creditcard>
           <span class="deposit-modal__value" *ngIf="!data['billme']; else billme">
-            {{ data['sourceAcc'].accountTender | creditCardType }} {{ contentString.endingInText }}
+            {{ data['sourceAcc'].accountTender | creditCardType }} Bobo
             {{ data['sourceAcc'].lastFour }}
           </span>
         </ng-template>
       </div>
     </section>
-  </ion-content>
-  <!-- <ion-footer class="deposit-modal__footer" mode="ios">
+ <ion-footer class="deposit-modal__footer" mode="ios">
     <st-button (onClick)="onClickedDone()">Done</st-button>
-  </ion-footer>
-  
-  <ng-template #billme>
-    <span class="deposit-modal__value" *ngIf="data['billme']"> {{ contentString.billMeText }} </span>
-  </ng-template> -->
-  
+  </ion-footer> 
 </ion-card>

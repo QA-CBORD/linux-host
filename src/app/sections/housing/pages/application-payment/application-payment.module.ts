@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 import { ApplicationPaymentComponent } from './application-payment.component';
 import { CreditCardModule } from '@sections/settings/creditCards/credit-card.module';
 import { DepositModule } from '@sections/accounts/pages/deposit-page/deposit.module';
-import { ApplicationDetailsPageModule } from '../application-details/application-details.module';
 import { ConfirmPaymentPopover } from './confirm-fee-popover/confirm-fee-popover.component';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
@@ -15,6 +14,7 @@ import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-compon
 import { DepositModalModule } from '@sections/accounts/shared/ui-components/deposit-modal/deposit-modal.module';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { SuccessfulPaymentModal } from './payment-modal/payment-modal.component';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const imports = [
   CommonModule,
@@ -27,6 +27,7 @@ const imports = [
   DepositModule,
   ConfirmDepositPopoverModule,
   DepositModalModule,
+  StButtonModule
 ];
 const declarations = [ApplicationPaymentComponent, ConfirmPaymentPopover, SuccessfulPaymentModal];
 const entryComponents = [

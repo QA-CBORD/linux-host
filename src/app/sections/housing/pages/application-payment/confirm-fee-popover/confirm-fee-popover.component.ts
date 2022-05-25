@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PopoverConfig } from '@core/model/popover/popover.model';
 import { buttons } from '@core/utils/buttons.config';
-import { ConfirmDepositCs } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 
 @Component({
   selector: 'st-confirm-fee-popover',
@@ -10,29 +9,40 @@ import { ConfirmDepositCs } from '@sections/accounts/pages/deposit-page/deposit-
 })
 export class ConfirmPaymentPopover implements OnInit {
   @Input() data: any;
-  @Input() contentString: ConfirmDepositCs = {} as any;
+  @Input() contentString: any;
   @Input() intructions?: any;
   popoverConfig: PopoverConfig<string | number>;
 
   constructor() {}
 
   ngOnInit() {
+    this.setContentString();
     this.initPopover();
   }
 
   initPopover() {
-    const { title, lblOkButton, lblCancelButton } = this.contentString;
+    const { title, cancelButton, okButton } = this.contentString;
     this.popoverConfig = {
       title: title,
       type: 'SUCCESS',
-      buttons: [{ ...buttons.CANCEL, label: lblCancelButton }, { ...buttons.OKAY, label: lblOkButton }],
+      buttons: [{ ...buttons.CANCEL, label: cancelButton }, { ...buttons.OKAY, label: okButton }],
       message: this.data,
     };
   }
 
   get showDepositInstructions(): string {
-    return this.popoverConfig.message['billme']
-      ? this.contentString.depositReviewBillMe
-      : this.contentString.depositReviewCredit || this.intructions;
+    return this.intructions;
+  }
+
+  private setContentString() {
+    this.contentString = {
+      title: 'Confirm Payment',
+      endingIn: 'ending in',
+      okButton: 'Confirm',
+      cancelButton: 'Cancel',
+      paymentMethod: 'Card Type',
+      depositAmount: 'Deposit Amount',
+      account: 'Account'
+    };
   }
 }

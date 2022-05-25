@@ -38,6 +38,10 @@
     }
   }
 
+  .large-popover {
+    --width: fit-content;
+  }
+  
   .st-nav-tabs {
     &.tabs-wrapper {
       //  Remove ionic bug for ion-router-outlet for Rewards Tabs page:
