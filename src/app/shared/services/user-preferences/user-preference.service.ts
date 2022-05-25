@@ -40,7 +40,8 @@ export class UserPreferenceService {
     setBiometricPermissionDenied() {
         this.setBiometricsEnabledUserPreference(false);
         this.storageStateService.updateStateEntity(this.biometricPermissionDeniedKey, true, {
-            highPriorityKey: true
+            highPriorityKey: true,
+            keepOnLogout: true,
         });
     }
 

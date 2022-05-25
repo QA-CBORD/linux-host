@@ -2,7 +2,7 @@ import { Inject, Injectable, Injector, NgZone } from '@angular/core';
 import { App } from '@capacitor/app';
 import { PluginListenerHandle } from '@capacitor/core';
 import { BrowserVault, Device, DeviceSecurityType, Vault, VaultErrorCodes, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { NavigationService } from '@shared/services/navigation.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
@@ -67,6 +67,10 @@ export class VaultIdentityService {
         return this.injector.get(LoadingService);
     }
 
+    get alertController(): AlertController {
+        return this.injector.get(AlertController);
+    }
+
 
     async init(vault?: Vault | BrowserVault) {
         this.vault = vault || VaultFactory.newVaultInstance();
@@ -85,11 +89,15 @@ export class VaultIdentityService {
         });
     }
 
-    isBiometricPermissionDenied({ code }): boolean {
+    isBiometricPermissionDenied({ code, message }): boolean {
         const userDeniedBiometricPermission = code == VaultErrorCodes.SecurityNotAvailable;
         if (userDeniedBiometricPermission) {
             this.userPreferenceService.setBiometricPermissionDenied();
         }
+        this.alertController.create({
+            message: `code: ${code},  message: ${message}`,
+            mode: 'ios'
+        }).then((view) => view.present());
         return userDeniedBiometricPermission;
     }
 
