@@ -98,38 +98,46 @@ export class VaultIdentityService {
      * @returns 
      */
     async migrateIfLegacyVault(): Promise<VaultMigrateResult> {
-        const wasBiometricUserPreference = await this.userPreferenceService.cachedBiometricsEnabledUserPreference();
-        const isBiometricsEnabled = async () => (wasBiometricUserPreference && await this.isBiometricAvailable());
+
+        const isBiometricsEnabled = async () => (await this.userPreferenceService.cachedBiometricsEnabledUserPreference() && await this.isBiometricAvailable());
         const noDataInLegacyVault = ({ code, message }) => (code == undefined && /no data in legacy vault/.test(message));
 
-        const userFailedBiometricsAuth = async (error) => {
+        const userFailedBiometricsAuth = (error) => {
             return this.isBiometricPermissionDenied(error)
-                || wasBiometricUserPreference && (
-                    error.code == VaultErrorCodes.TooManyFailedAttempts
-                    || error.code == VaultErrorCodes.iOSBiometricsLockedOut
-                    || error.code == VaultErrorCodes.AndroidBiometricsLockedOut
-                    || error.code == VaultErrorCodes.BiometricsNotEnabled);
+                || error.code === VaultErrorCodes.TooManyFailedAttempts
+                || error.code === VaultErrorCodes.iOSBiometricsLockedOut
+                || error.code === VaultErrorCodes.AndroidBiometricsLockedOut
+                || error.code === VaultErrorCodes.BiometricsNotEnabled
+                || error.code === VaultErrorCodes.UserCanceledInteraction;
         }
-        const migrator = VaultFactory.newVaultMigratorInstance(this.onPasscodeRequested);
+        const migrator = VaultFactory.newVaultMigratorInstance((value) => this.onPasscodeRequested(value));
         try {
             this.loadingService.closeSpinner();
             const oldVaultData = await migrator.exportVault();
-            if (oldVaultData)
-                return this.onVaultMigratedSuccess(oldVaultData.session, migrator, await isBiometricsEnabled())
+            if (oldVaultData) {
+                return this.onVaultMigratedSuccess(oldVaultData.session, migrator, await isBiometricsEnabled());
+            }
         } catch (error) {
             if (noDataInLegacyVault(error)) {
                 return VaultMigrateResult.MIGRATION_NOT_NEEDED;
-            } if ((await userFailedBiometricsAuth(error))) {
-                return this.retryPinUnlock()
-                    .then(async ({ pin }) => this.onVaultMigratedSuccess({ pin }, migrator, await isBiometricsEnabled()))
-                    .catch(() => migrator.clear() && VaultMigrateResult.MIGRATION_FAILED)
+            } if (userFailedBiometricsAuth(error)) {
+                return this.handleAuthFailureOnVaultMigration(migrator, await isBiometricsEnabled());
             }
         }
 
-        await migrator.clear();
+        migrator.clear();
         return VaultMigrateResult.MIGRATION_FAILED;
     }
 
+
+    async handleAuthFailureOnVaultMigration(migrator: VaultMigrator, biometricEnabled: boolean): Promise<VaultMigrateResult> {
+        try {
+            return this.onVaultMigratedSuccess(await this.retryPinUnlock(), migrator, biometricEnabled);
+        } catch (e) {
+            migrator.clear();
+            return VaultMigrateResult.MIGRATION_FAILED
+        }
+    }
 
     /**
      * Called when we successfully migrated data from old vault config to new vault.
