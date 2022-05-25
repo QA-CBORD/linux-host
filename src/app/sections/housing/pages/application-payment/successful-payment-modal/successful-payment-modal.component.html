@@ -12,29 +12,26 @@
     <div class="deposit-modal__img-wrapper">
       <img src="/assets/images/housing/success-payment.svg" alt="big_check_deposit" />
     </div>
-    <h1 class="deposit-modal__title-label">Bobo</h1>
-    <section class="deposit-modal__sub-title">
-      Bobo
-    </section>
+    <ion-card-title class="deposit-modal__title-label">{{ contentString.title }}</ion-card-title>
     <section class="deposit-modal__info-container">
       <div class="deposit-modal__label">
-        Bobo:
+        {{ contentString.amount }}:
         <span class="deposit-modal__value">{{
           data.amount | transactionUnits: data['selectedAccount'].accountType
         }}</span>
       </div>
       <div class="deposit-modal__label">
-        Bobo:
+        {{ contentString.account }}:
         <span class="deposit-modal__value">{{ data['selectedAccount'].accountDisplayName }}</span>
       </div>
       <div class="deposit-modal__label">
-        Bobo:
+        {{ contentString.paymentMethod }}:
         <span class="deposit-modal__value" *ngIf="data['sourceAcc'].accountTender === 'Apple Pay'; else creditcard">
           {{ data['sourceAcc'].accountTender }}
         </span>
         <ng-template #creditcard>
           <span class="deposit-modal__value" *ngIf="!data['billme']; else billme">
-            {{ data['sourceAcc'].accountTender | creditCardType }} Bobo
+            {{ data['sourceAcc'].accountTender | creditCardType }} {{ contentString.endingIn }}
             {{ data['sourceAcc'].lastFour }}
           </span>
         </ng-template>
@@ -44,3 +41,4 @@
     <st-button (onClick)="onClickedDone()">Done</st-button>
   </ion-footer> 
 </ion-card>
+</ion-content>

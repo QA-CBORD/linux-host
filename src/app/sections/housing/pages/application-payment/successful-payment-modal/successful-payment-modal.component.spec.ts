@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SuccessfulPaymentModal } from './payment-modal.component';
+import { SuccessfulPaymentModal } from './successful-payment-modal.component';
 
 describe('SuccessfulPaymentModal', () => {
   let component: SuccessfulPaymentModal;
