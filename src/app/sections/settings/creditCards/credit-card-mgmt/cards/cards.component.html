@@ -42,12 +42,23 @@
 
     <div class="info-to-user">
       <div class="info-to-user-icon">
-        <ion-icon attr.alt="info-circle" src="/assets/icon/info-circle.svg" name="info-circle.svg"></ion-icon>
+        <ion-icon
+          *ngIf="!addItem"
+          attr.alt="info-circle"
+          src="/assets/icon/info-circle.svg"
+          name="info-circle.svg"
+        ></ion-icon>
+        <ion-icon
+          *ngIf="addItem"
+          attr.alt="add-icon"
+          src="/assets/images/housing/add-item-icon.svg"
+          (click)="onAddEvent()"
+        ></ion-icon>
       </div>
       <div class="info-to-user-text">
-        <div (click)="onAddEvent()">
+        <ion-label *ngIf="addItem" (click)="onAddEvent()">
           Add a new credit card
-        </div>
+        </ion-label>
         {{ contentStrings.user_info_text }}
       </div>
     </div>

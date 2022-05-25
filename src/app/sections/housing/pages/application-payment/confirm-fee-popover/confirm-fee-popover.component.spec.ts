@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConfirmFeePopoverComponent } from './confirm-fee-popover.component';
+import { ConfirmPaymentPopover } from './confirm-fee-popover.component';
 
-describe('ConfirmFeePopoverComponent', () => {
-  let component: ConfirmFeePopoverComponent;
-  let fixture: ComponentFixture<ConfirmFeePopoverComponent>;
+describe('ConfirmPaymentPopover', () => {
+  let component: ConfirmPaymentPopover;
+  let fixture: ComponentFixture<ConfirmPaymentPopover>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmFeePopoverComponent ],
+      declarations: [ConfirmPaymentPopover],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConfirmFeePopoverComponent);
+    fixture = TestBed.createComponent(ConfirmPaymentPopover);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -6,8 +6,7 @@
   <div class="application-details__actions">
     <ion-button
       class="btn application-details__page-back"
-      [routerLink]="['../../../..']"
-      routerDirection="back"
+      (click)="onBack()"
       mode="ios"
       fill="clear"
     >

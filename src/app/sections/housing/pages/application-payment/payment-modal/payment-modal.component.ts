@@ -7,8 +7,7 @@ import { DepositSuccessCs } from '@sections/accounts/pages/deposit-page/deposit-
   templateUrl: './payment-modal.component.html',
   styleUrls: ['./payment-modal.component.scss'],
 })
-export class PaymentModalComponent {
-
+export class SuccessfulPaymentModal {
   @Input() data;
   @Input() contentString: DepositSuccessCs = {} as any;
 
@@ -17,5 +16,4 @@ export class PaymentModalComponent {
   async onClickedDone() {
     await this.modalController.dismiss();
   }
-
 }

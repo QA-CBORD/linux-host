@@ -1,6 +1,12 @@
 <ion-content class="ion-padding application-details__content" #content>
   <div class="application-details__actions">
-    <ion-button class="btn application-details__page-back" routerDirection="back" mode="ios" fill="clear" (click)="cancel()">
+    <ion-button
+      class="btn application-details__page-back"
+      routerDirection="back"
+      mode="ios"
+      fill="clear"
+      (click)="cancel()"
+    >
       Cancel
     </ion-button>
     <ion-button class="btn application-details__save" mode="ios" fill="clear" (click)="save(applicationDetails)">
@@ -8,18 +14,20 @@
     </ion-button>
   </div>
   <h2 class="application-details__title">2022 Housing Application</h2>
-<ion-card class="application-details__card">
-    <h3>
+  <ion-card class="application-details__card">
+    <ion-card-content>
       As part of the application submission process, a one-time payment is required. Please review the amount below and
       select a payment method.
-    </h3>
-    <st-input-amount [contentString]="contentString" [control]="mainFormInput"></st-input-amount>
-    <st-payment-items
+    </ion-card-content>
+    <ion-card-subtitle>Amount you'll pay </ion-card-subtitle>
+    <st-input-amount [contentString]="contentString" [control]="control"></st-input-amount>
+    <st-card-items
       [contentStrings]="contentStrings"
       [userAccounts]="userAccounts"
+      [addItem]="true"
       (onClick)="feePayment($event)"
       (onAdd)="addCreditCard()"
-    ></st-payment-items>
-    <h3>Back</h3>
+    ></st-card-items>
+    <ion-label>Back</ion-label>
   </ion-card>
 </ion-content>

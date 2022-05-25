@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
 
-export interface cardCs {
+export interface CardCs {
   screen_title: string;
   no_card_found: string;
   add_new_card_btn_text: string;
@@ -12,28 +12,24 @@ export interface cardCs {
   added_success_msg: string;
 }
 
-export type accountsType = {
+export type AccountsType = {
   account: UserAccount;
   display: string;
   iconSrc: string;
 }[];
 
 @Component({
-  selector: 'st-payment-items',
+  selector: 'st-card-items',
   templateUrl: './cards.component.html',
   styleUrls: ['./cards.component.scss'],
 })
 export class CardsComponent implements OnInit {
-  @Input() contentStrings: cardCs;
-
-  @Input() userAccounts: accountsType = [];
-
+  @Input() contentStrings: CardCs;
+  @Input() userAccounts: AccountsType = [];
   @Input() removeIcon: boolean;
-
+  @Input() addItem: boolean;
   @Output() onRemove: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
-
   @Output() onClick: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
-  
   @Output() onAdd: EventEmitter<Event> = new EventEmitter<Event>();
 
   noCreditCardFound: boolean;

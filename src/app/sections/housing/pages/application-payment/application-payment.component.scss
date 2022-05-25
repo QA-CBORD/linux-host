@@ -1,7 +1,7 @@
 @import 'tools';
 
 .ionic_content {
-  --background: #f1f1f1;
+  --background: white;
 }
 
 .application-details__content {
@@ -28,18 +28,14 @@
 
 .application-details__page-back {
   @include font-family($font-nunito-regular);
-
- // --color: #{rgba($color-black, 0.9)};
 }
 
 .application-details__save {
   @include font-family($font-nunito-heavy);
-
   --color: #{$color-dodger-blue};
 }
 
 .application-details__card {
-
   --background: #f1f1f1;
   background-color: $color-white;
   border-radius: 16px;
@@ -49,9 +45,7 @@
 
 .application-details__back {
   @include font-family($font-nunito-heavy);
-
   --color: #{$color-dodger-blue};
-
   min-width: 80px;
 }
 
@@ -76,11 +70,33 @@
   --background: #{$color-dodger-blue};
 }
 
-h1 {
-  font-family: 'Nunito';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 73px;
-  line-height: 80px;
+ion-card-content {
+  @include font-nunito-regular(16px);
+  margin-top: 78px;
+  margin-right: 25px;
+  margin-left: 25px;
+  color: black;
 }
 
+ion-card-subtitle {
+  @include font-nunito-heavy(18px);
+  margin-top: 50px;
+  margin-bottom: 30px;
+  text-align: center;
+  color: black;
+}
+
+st-input-amount {
+  display: block;
+  margin-bottom: 100px;
+  color: black;
+}
+
+ion-label {
+  @include font-nunito-regular(18px);
+  display: flex;
+  margin-top: 100px;
+  margin-bottom:25px;
+  margin-left: 30px;
+  color: black;
+}

@@ -129,6 +129,7 @@
             [contentString]="contentString"
             (onInput)="onAmountChanged($event)"
             (onKeyDown)="formatInput($event)"
+            (onBlur)="onAmountChanged($event)"
             [control]="mainFormInput"
           ></st-input-amount>
         </ng-template>

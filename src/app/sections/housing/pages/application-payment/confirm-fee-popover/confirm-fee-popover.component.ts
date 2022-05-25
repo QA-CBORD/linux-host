@@ -8,8 +8,7 @@ import { ConfirmDepositCs } from '@sections/accounts/pages/deposit-page/deposit-
   templateUrl: './confirm-fee-popover.component.html',
   styleUrls: ['./confirm-fee-popover.component.scss'],
 })
-export class ConfirmFeePopoverComponent implements OnInit {
-
+export class ConfirmPaymentPopover implements OnInit {
   @Input() data: any;
   @Input() contentString: ConfirmDepositCs = {} as any;
   @Input() intructions?: any;
@@ -18,7 +17,7 @@ export class ConfirmFeePopoverComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-   this.initPopover();
+    this.initPopover();
   }
 
   initPopover() {
@@ -34,7 +33,6 @@ export class ConfirmFeePopoverComponent implements OnInit {
   get showDepositInstructions(): string {
     return this.popoverConfig.message['billme']
       ? this.contentString.depositReviewBillMe
-      :  this.contentString.depositReviewCredit || this.intructions;
+      : this.contentString.depositReviewCredit || this.intructions;
   }
-
 }

@@ -1,28 +1,23 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CURRENCY_REGEXP } from '@core/utils/regexp-patterns';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AbstractControl, FormControl } from '@angular/forms';
 import { DepositCsModel } from '../deposit-page.content.string';
 
 @Component({
   selector: 'st-input-amount',
   templateUrl: './input-amount.component.html',
   styleUrls: ['./input-amount.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InputAmountComponent implements OnInit {
- 
-  @Input()  contentString: DepositCsModel = {} as any;
- 
+export class InputAmountComponent {
+  @Input() contentString: DepositCsModel;
   @Input() control: AbstractControl = new FormControl();
- 
   @Output() onInput: EventEmitter<Event> = new EventEmitter<Event>();
-
   @Output() onKeyDown: EventEmitter<Event> = new EventEmitter<Event>();
+  @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
-  private focusLine: boolean = false;
+  focusLine: boolean = false;
 
-  constructor() { }
-
-  ngOnInit() {}
+  constructor() {}
 
   ionInputEvent(event: Event) {
     this.onInput.emit(event);
@@ -30,5 +25,9 @@ export class InputAmountComponent implements OnInit {
 
   keydownEvent(event: Event) {
     this.onKeyDown.emit(event);
+  }
+
+  onBlurEvent(event: Event) {
+    this.onBlur.emit(event);
   }
 }

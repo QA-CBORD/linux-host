@@ -7,6 +7,7 @@ import { StButtonModule } from "@shared/ui-components/st-button";
 import { StHeaderModule } from "@shared/ui-components/st-header/st-header.module";
 import { CardsComponent } from "./credit-card-mgmt/cards/cards.component";
 import { CreditCardMgmtComponent } from "./credit-card-mgmt/credit-card-mgmt.component";
+import { CreditCardService } from "./credit-card.service";
 
 
 
@@ -25,7 +26,7 @@ import { CreditCardMgmtComponent } from "./credit-card-mgmt/credit-card-mgmt.com
         CreditCardMgmtComponent
     ],
     providers: [
-      AccountsService
+      AccountsService, CreditCardService
     ],
     exports: [CardsComponent]
   })

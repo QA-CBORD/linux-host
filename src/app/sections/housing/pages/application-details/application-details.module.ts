@@ -10,6 +10,7 @@ import { StepperModule } from '../../stepper/stepper.module';
 import { ApplicationDetailsPage } from './application-details.page';
 import { ApplicationPaymentModule } from '../application-payment/application-payment.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
+import { AccountsService } from '@sections/dashboard/services';
 
 const imports = [
   CommonModule,
@@ -26,5 +27,6 @@ const declarations = [ApplicationDetailsPage];
 @NgModule({
   imports,
   declarations,
+  providers: [AccountsService]
 })
 export class ApplicationDetailsPageModule {}
