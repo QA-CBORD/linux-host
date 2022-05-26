@@ -69,7 +69,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
 
   async init() {
     this.routeSubscription = this.activatedRoute.data.subscribe(async ({ data }) => {
-      console.log("ROUTING DATA: ", data);
       this.dataInitialize(data);
     });
   }
@@ -77,7 +76,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   async retryOperations(canShowToast = true) {
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
-      console.log("GOIN TO CLOSE.....");
       this.closeSelf(ExecStatus.Execution_success);
     } else {
       this.onRetryFailed(canShowToast);
@@ -98,7 +96,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log("GETTING DESTROYED::");
     this.routeSubscription.unsubscribe();
     this.refreshSubscription.unsubscribe();
     this.retrySubscription.unsubscribe();
@@ -115,7 +112,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     });
 
     this.retrySubscription = this.connectionService.retrySubject.subscribe((handler) => {
-      console.log("RECIEVED RETRY HANDLER: ", handler);
       this.retryHandler = handler;
     });
   }
@@ -151,7 +147,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     myToast.setAttribute('role', 'alert');
     await myToast.present();
     const { data: shouldRetryAgain } = await myToast.onDidDismiss();
-    console.log("data: ", shouldRetryAgain);
     return shouldRetryAgain;
   }
 
@@ -166,7 +161,6 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
     if (this.retryHandler.onScanCode)
       await this.retryHandler.onScanCode();
     await this.openScanCard();
-    console.log("SCAN card got closed")
   }
 
 
@@ -190,9 +184,7 @@ export class NoConnectivityScreen implements OnInit, OnDestroy {
   async closeSelf(status: ExecStatus) {
     try {
       await this.modalController.dismiss(null, status);
-    } catch (err) {
-      console.log("ERROR CLOSING MODAL: ", err);
-    }
+    } catch (err) {/** ignored on purpose */}
   }
 
   async setConnectionErrorType(): Promise<void> {
