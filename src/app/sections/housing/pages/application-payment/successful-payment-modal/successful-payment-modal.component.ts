@@ -22,7 +22,7 @@ export class SuccessfulPaymentModal implements OnInit {
 
   private setContentString() {
     this.contentString = {
-      title: 'Fee payment succeeded',
+      title: 'Fee payment successful.',
       amount: 'Amount',
       account: 'Account',
       paymentMethod: 'Payment method',

@@ -2,11 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { AbstractControl, FormControl } from '@angular/forms';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import {
   AccountsType as UserAccountType,
-  CardCs,
 } from '@sections/settings/creditCards/credit-card-mgmt/cards/cards.component';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
@@ -20,7 +19,6 @@ import { SuccessfulPaymentModal } from './successful-payment-modal/successful-pa
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ApplicationPaymentComponent implements OnInit {
-  @Input() contentStrings: CardCs;
   @Input() userAccounts: UserAccountType = [];
   @Input() amount: number;
   control: AbstractControl;
@@ -31,7 +29,8 @@ export class ApplicationPaymentComponent implements OnInit {
     private readonly creditCard: CreditCardService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly popoverCtrl: PopoverController,
-    private readonly modalCtrl: ModalController
+    private readonly modalCtrl: ModalController,
+    private readonly toastCtrl: ToastController
   ) {}
 
   ngOnInit() {
@@ -40,7 +39,7 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   async addCreditCard() {
-    await this.creditCard.addCreditCard(this.contentStrings);
+    await this.creditCard.addCreditCard();
     this.userAccounts = await this.creditCard.retrieveAccounts();
   }
 
@@ -73,11 +72,13 @@ export class ApplicationPaymentComponent implements OnInit {
       .onDidDismiss()
       .then(async ({ role }) => {
         if (role === BUTTON_TYPE.OKAY) {
-         this.depositService.feePayment(acc.account?.id, this.amount.toString()).pipe(take(1)).subscribe((str) => {
-             console.log(str)
-         });
-         // if success then
+         this.depositService.feePayment(acc.account?.id, this.amount.toString()).pipe(take(1)).subscribe(async (str) => {
+                // if success then
           await this.successfulPayment(data);
+         }, (err) => {
+             this.toastCtrl.create({ message: "Something went wrong."});
+         });
+      
         } else { 
           this.cdRef.detectChanges();
         }
@@ -99,6 +100,6 @@ export class ApplicationPaymentComponent implements OnInit {
       backdropDismiss: true,
     });
     modal.present();
-   // this.loadingService.showSpinner();
+    this.loadingService.showSpinner();
   }
 }

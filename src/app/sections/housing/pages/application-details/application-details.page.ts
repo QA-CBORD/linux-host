@@ -82,17 +82,17 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   async submit(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
-    if (this.isPaymentDue(applicationDetails)) return await this.continueToPayment(applicationDetails);
 
     this._updateQuestions();
 
     if (!this.isSubmitted && form.invalid) return;
 
-    if (!isLastPage) {
-      this._next(applicationDetails, form.value);
-    } else {
-      this._updateSubscription(UpdateType.SUBMIT, this.applicationKey, applicationDetails, form.value);
-    }
+    if (!isLastPage) return this._next(applicationDetails, form.value);
+    
+    if (this.isPaymentDue(applicationDetails)) return await this.continueToPayment(applicationDetails);
+     
+    this._updateSubscription(UpdateType.SUBMIT, this.applicationKey, applicationDetails, form.value);
+  
   }
 
   async showModal() {
@@ -202,18 +202,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._housingService.handleErrors(error);
   }
 
-  private buildStr(account: UserAccount) {
-    const { accountTender, lastFour } = account;
-    const creditCardTypeNumber = parseInt(accountTender) - 1;
-    const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
-    const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
-    return {
-      display,
-      account,
-      iconSrc,
-    };
-  }
-
   private _setApplicationKey() {
     this.applicationKey = this._route.snapshot.params.applicationKey;
   }
@@ -223,35 +211,13 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private async continueToPayment(appDetails: ApplicationDetails) {
-    const cString = [
-      {
-        id: 'a246b105-f0a7-48cd-a84c-3e97652f4895',
-        name: 'screen_title',
-        domain: 'patron-ui',
-        category: 'creditCardMgmt',
-        locale: null,
-        contentMediaType: 1,
-        value: 'Payment Methods-OP',
-        description: 'credit card mgmt page title',
-      },
-      {
-        id: '00320662-c51d-4e38-a8e4-65d93dbe5adc',
-        name: 'cancel_remove_card_btn',
-        domain: 'patron-ui',
-        category: 'creditCardMgmt',
-        locale: null,
-        contentMediaType: 1,
-        value: 'Cancel',
-        description: 'cancel_remove_card button text',
-      },
-    ];
 
     const accounts = await this.creditCardService.retrieveAccounts();
     const modal = await this.modalController.create({
       component: ApplicationPaymentComponent,
       animated: false,
       backdropDismiss: true,
-      componentProps: { contentStrings: reduceToObject(cString, defaultCreditCardMgmtCs), userAccounts: accounts, amount: appDetails.applicationDefinition.amount.toString() },
+      componentProps: { userAccounts: accounts, amount: appDetails.applicationDefinition.amount.toString() },
     });
     await modal.present();
   }

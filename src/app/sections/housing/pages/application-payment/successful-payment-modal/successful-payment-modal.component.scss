@@ -11,7 +11,7 @@
   }
 
   &__title-label {
-    color: #464646;
+    color: #000000;
     text-align: center;
 
     @include font-nunito-heavy(32px);
@@ -38,6 +38,7 @@
   }
 
   &__label {
+    color: #000000;
     display: flex;
     justify-content: space-between;
 
@@ -51,12 +52,12 @@
 
   &__value {
     text-align: right;
-
+    color: #000000;
     @include font-nunito-heavy(16px);
   }
 
   &__footer {
-    padding: 10px 10px 50px;
+    padding: 100px 10px 25px;
   }
 }
 
@@ -94,7 +95,6 @@
 
 .application-details__save {
   @include font-family($font-nunito-heavy);
-
   --color: #{$color-dodger-blue};
 }
 
@@ -136,11 +136,11 @@
   --background: #{$color-dodger-blue};
 }
 
-h1 {
-  font-family: 'Nunito';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 73px;
-  line-height: 80px;
+.deposit-modal__img-wrapper {
+    margin-top: 75px;
+    margin-bottom: 25px;
 }
 
+.deposit-modal__title-label {
+  margin-bottom: 50px;
+}

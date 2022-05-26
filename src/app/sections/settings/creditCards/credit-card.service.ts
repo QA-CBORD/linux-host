@@ -19,11 +19,11 @@ export class CreditCardService {
     private readonly accountService: AccountsService,
   ) {}
 
-  async addCreditCard(contentStrings: any) {
+  async addCreditCard() {
     try {
       const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
       if (success) {
-        this.showMessage(contentStrings.added_success_msg);
+        this.showMessage("Your credit card has been added successfully.");
       } else {
         this.showMessage(errorMessage);
       }
