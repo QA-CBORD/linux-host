@@ -4,7 +4,7 @@ import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { VaultFactory, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './vault-factory.service';
 import { VaultIdentityService, VaultMigrateResult } from './vault.identity.service';
-
+import sinon from 'sinon';
 
 describe('VaultIdentityService', () => {
     let service: VaultIdentityService,
@@ -22,7 +22,8 @@ describe('VaultIdentityService', () => {
             getValue: jest.fn(),
             updateConfig: jest.fn(),
             onUnlock: jest.fn(),
-            clear: jest.fn()
+            clear: jest.fn(),
+            unlock: jest.fn()
         };
         injector = {
             get: jest.fn()
@@ -106,6 +107,8 @@ describe('VaultIdentityService', () => {
 
     describe('Vault login, unlock and logout', () => {
 
+        afterEach(() => sinon.restore());
+
         it('should configure vault with biometrics', async () => {
             const spy = jest.spyOn(service, 'patchVaultConfig');
             await service.setUnlockMode({ pin: '1111', biometricEnabled: true });
@@ -152,6 +155,16 @@ describe('VaultIdentityService', () => {
             expect(loginSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledWith(session)
             expect(unlockResult).toStrictEqual(session);
+        });
+
+        it('should logout user when pin retry fails', async () => {
+            const session = { pin: '1111', biometricEnabled: true };
+            sinon.stub(service, 'closeAllModals').resolves();
+            sinon.stub(vault, 'unlock').rejects({ message: 'biometric auth failed' });
+            const retryPinUnlockStub = sinon.stub(service, 'retryPinUnlock').rejects({ message: 'Failed pin retry' });
+            const results = await service.unlockVault(session.biometricEnabled).catch(e => e);
+            expect(retryPinUnlockStub.calledOnce).toBe(true);
+            expect(results).toStrictEqual({ message: 'Failed pin retry' })
         });
     });
 

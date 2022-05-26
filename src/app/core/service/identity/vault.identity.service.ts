@@ -2,7 +2,7 @@ import { Inject, Injectable, Injector, NgZone } from '@angular/core';
 import { App } from '@capacitor/app';
 import { PluginListenerHandle } from '@capacitor/core';
 import { BrowserVault, Device, DeviceSecurityType, Vault, VaultErrorCodes, VaultMigrator, VaultType } from '@ionic-enterprise/identity-vault';
-import { AlertController, ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { NavigationService } from '@shared/services/navigation.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
@@ -67,15 +67,9 @@ export class VaultIdentityService {
         return this.injector.get(LoadingService);
     }
 
-    get alertController(): AlertController {
-        return this.injector.get(AlertController);
-    }
-
-
     async init(vault?: Vault | BrowserVault) {
         this.vault = vault || VaultFactory.newVaultInstance();
         await Device.setHideScreenOnBackground(false, false);
-        this.vault.onError((error) => this.isBiometricPermissionDenied(error));
         this.vault.onPasscodeRequested((isPassSetReq) => this.onPasscodeRequested(isPassSetReq));
 
         this.vault.onLock(({ timeout }) => {
@@ -89,15 +83,10 @@ export class VaultIdentityService {
         });
     }
 
-    isBiometricPermissionDenied({ code, message }): boolean {
-        const userDeniedBiometricPermission = code == VaultErrorCodes.SecurityNotAvailable;
-        if (userDeniedBiometricPermission) {
+    isBiometricPermissionDenied({ code }): boolean {
+        const userDeniedBiometricPermission = code == (VaultErrorCodes.SecurityNotAvailable || VaultErrorCodes.AuthFailed);
+        if (userDeniedBiometricPermission)
             this.userPreferenceService.setBiometricPermissionDenied();
-        }
-        this.alertController.create({
-            message: `code: ${code},  message: ${message}`,
-            mode: 'ios'
-        }).then((view) => view.present());
         return userDeniedBiometricPermission;
     }
 
@@ -300,7 +289,7 @@ export class VaultIdentityService {
         });
     }
 
-    private async runUnlockLogic(resolve, reject, biometricEnabled: boolean) {
+    async runUnlockLogic(resolve, reject, biometricEnabled: boolean) {
         this.state.biometricEnabled = biometricEnabled;
         const subscription = this.vaultPinUnlockError$.subscribe(reject);
         this.vault.onUnlock(() => {
@@ -319,7 +308,9 @@ export class VaultIdentityService {
                 this.retryPinUnlock().then(async (data) => {
                     await this.logout();
                     await this.login({ pin: data.pin, biometricEnabled: this.state.biometricEnabled });
-                }).catch(() => { /** Ignored on purpose */ });
+                }).catch((e) => {
+                    reject(e);
+                });
             }
         } finally {
             subscription.unsubscribe();
