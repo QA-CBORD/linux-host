@@ -28,6 +28,13 @@ export enum PAYMENT_SYSTEM_TYPE {
 export enum PAYMENT_TYPE {
   CREDIT = 1,
   BILLME = 2,
+  APPLEPAY = 'applePay'
+}
+
+export enum PAYMENT_TYPE_LABELS { 
+  CREDIT_CARD = 'Credit Card',
+  BILLME = 'Bill Me',
+  APPLE_PAY = 'Apple Pay'
 }
 
 export const ALL_ACCOUNTS = 'all_accounts';

@@ -41,7 +41,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   dateTimeWithTimeZone: string;
   activeMerchant$: Observable<MerchantInfo>;
-  isOrderTypePickup: boolean;
   merchantInfo: MerchantInfo;
   orderOptionsData: OrderOptions;
   deliveryAddresses: AddressInfo[];
@@ -71,7 +70,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.isOrderTypePickup = true;
     this.orderType =
       this.activeOrderType !== null
         ? this.activeOrderType
@@ -81,6 +79,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.dispatchingData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
+  }
+
+  get isOrderTypePickup (): boolean {
+    return this.orderType === ORDER_TYPE.PICKUP;
   }
 
   get enumOrderTypes() {
@@ -149,7 +151,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   onRadioGroupChanged({ target }) {
     this.orderType = +target.value;
-    this.isOrderTypePickup = this.orderType === ORDER_TYPE.PICKUP;
     this.dispatchingData();
     this.defineOrderOptionsData(this.isOrderTypePickup);
   }
@@ -158,7 +159,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.modalWindow();
   }
 
-  async defineOrderOptionsData(isOrderTypePickup) {
+  async defineOrderOptionsData(isOrderTypePickup: boolean) {
     if (!this.deliveryAddresses || !this.pickupLocations) return;
     const defineDeliveryAddress = this.deliveryAddresses.find(({ id }) => id === this.defaultDeliveryAddress);
 
