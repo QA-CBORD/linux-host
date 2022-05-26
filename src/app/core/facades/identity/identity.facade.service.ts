@@ -13,7 +13,6 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { firstValueFrom } from '@shared/utils';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
-import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { SessionData, VaultMigrateResult, VaultIdentityService, VaultTimeoutOptions } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
@@ -90,21 +89,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.identityService.updateVaultTimeout(options);
   }
 
-  shouldLogoutUser(error): boolean {
-    return !(error?.code === PinCloseStatus.CLOSED_NO_CONNECTION);
-  }
-
   async unlockVault(biometricEnabled: boolean): Promise<{ pin: string, biometricEnabled: boolean }> {
     return this.identityService.unlockVault(biometricEnabled);
   }
 
-  deviceMarkedAsLost({ message }) {
-    return DEVICE_MARKED_LOST.test(message);
-  }
-
-  async handleDeviceLostException() {
-    this.logoutUser();
-  }
 
   public async navigateToDashboard() {
     this.connectivityFacade.exec({
@@ -195,14 +183,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   lockVault() {
     this.identityService.lockVault();
-  }
-
-  setIsLocked() {
-    this.identityService.lockVault();
-  }
-
-  getIsLocked() {
-    return this.identityService.getIsLocked();
   }
 
   private async resetAll(): Promise<void> {
