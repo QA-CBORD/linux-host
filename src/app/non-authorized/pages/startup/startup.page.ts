@@ -1,4 +1,4 @@
-import { Component, ElementRef, NgZone } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Location } from '@angular/common';
@@ -28,7 +28,6 @@ export class StartupPage {
     private readonly loadingService: LoadingService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
-    private readonly ngZone: NgZone,
     private readonly authFacadeService: AuthFacadeService,
     private readonly navigationService: NavigationService,
     private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService
