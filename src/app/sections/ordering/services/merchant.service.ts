@@ -7,6 +7,7 @@ import {
   MerchantAccountInfoList,
   MenuItemInfo,
   MerchantOrderTypesInfo,
+  MerchantSettingInfo,
 } from '../shared/models';
 import { Injectable } from '@angular/core';
 
@@ -228,8 +229,8 @@ export class MerchantService {
     return this.userFacadeService.getUserAddresses$();
   }
 
-  retrievePickupLocations(storeAddress, { value }): Observable<any> {
-    switch (value) {
+  retrievePickupLocations(storeAddress: AddressInfo, info: MerchantSettingInfo): Observable<any> {
+    switch (info?.value) {
       case null:
         return of([]);
       case 'true':

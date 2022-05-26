@@ -61,7 +61,7 @@ describe('AutomaticDepositPageComponent', () => {
     );
   });
 
-  describe('getSetting', () => {
+  describe('AutomaticDeposit', () => {
     it('Should retreive the list of amount', async () => {
       const amounts = await firstValueFrom(fixture.billMeAmounts$);
       expect(amounts.length).toBeGreaterThan(0);
