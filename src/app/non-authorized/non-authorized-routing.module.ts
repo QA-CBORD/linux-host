@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { ANONYMOUS_ROUTES } from './non-authorized.config';
-import { NoConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/no-connectivity-screen';
+import { ConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/connectivity-screen';
 import { ConnectivityPageResolver } from '@shared/services/connectivity-route.resolver';
 
 const routes: Routes = [
@@ -41,7 +41,7 @@ const routes: Routes = [
   },
   {
     path: ANONYMOUS_ROUTES.noConnectivity,
-    component: NoConnectivityScreen,
+    component: ConnectivityScreen,
     resolve: { data: ConnectivityPageResolver }
   }
 ];

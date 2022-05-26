@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Resolve } from "@angular/router";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { ContentStringApi, ContentStringCategory } from "@shared/model/content-strings/content-strings-api";
-import { noConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
+import { ConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
 import { ConnectivityPageInfo } from "@shared/ui-components/no-connectivity-screen/model/connectivity-page.model";
 import { ConnectivityErrorType, ConnectivityScreenCsModel } from "@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model";
 import { firstValueFrom } from "@shared/utils";
@@ -33,7 +33,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
         const isDeviceOffline = await this.connectionService.deviceOffline();
         if (isDeviceOffline) {
             errorType = ConnectivityErrorType.DEVICE_CONNECTION;
-            csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: noConnectivityScreentDefaultStrings });
+            csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: ConnectivityScreentDefaultStrings });
         } else {
             errorType = ConnectivityErrorType.SERVER_CONNECTION;
             csModel = await firstValueFrom(this.commonService.loadContentString(ContentStringCategory.noConnectivity));

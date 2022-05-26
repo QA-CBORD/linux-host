@@ -10,7 +10,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { ExecStatus } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
-import { ConnectivityFacadeService } from './connectivity-facade.service';
+import { ConnectivityAwareFacadeService } from './connectivity-aware-facade.service';
 import { StartupPage } from './startup.page';
 
 describe('Application Startup Flow', () => {
@@ -53,7 +53,7 @@ describe('Application Startup Flow', () => {
       navigateAnonymous: jest.fn()
     };
     connectivityFacade = {
-      exec: jest.fn()
+      execute: jest.fn()
     };
 
     await TestBed.configureTestingModule({
@@ -68,7 +68,7 @@ describe('Application Startup Flow', () => {
         { provide: IdentityFacadeService, useValue: identityFacadeService },
         { provide: AuthFacadeService, useValue: authFacadeService },
         { provide: NavigationService, useValue: navigationService },
-        { provide: ConnectivityFacadeService, useValue: connectivityFacade },
+        { provide: ConnectivityAwareFacadeService, useValue: connectivityFacade },
       ],
     }).compileComponents();
   });
@@ -112,7 +112,7 @@ describe('Application Startup Flow', () => {
     const results = { data: "1122334455", execStatus: ExecStatus.Execution_success };
     beforeEach(() => {
       initEnvSpy = jest.spyOn(environmentFacadeService, 'initialization').mockResolvedValue(true);
-      execSpy = jest.spyOn(connectivityFacade, 'exec').mockReturnValue(results);
+      execSpy = jest.spyOn(connectivityFacade, 'execute').mockReturnValue(results);
       clearAllSpy = jest.spyOn(identityFacadeService, 'clearAll').mockResolvedValue(true);
     });
 
@@ -161,7 +161,7 @@ describe('Application Startup Flow', () => {
     const session = { pin: '1111', biometricEnabled: true };
     it('should nav to dashboard on vault authentication success with BIOMETRIC', async () => {
       const unlockIvSpy = jest.spyOn(identityFacadeService, 'unlockVault').mockResolvedValue(session);
-      const execSpy = jest.spyOn(connectivityFacade, 'exec').mockResolvedValue({});
+      const execSpy = jest.spyOn(connectivityFacade, 'execute').mockResolvedValue({});
       const navDshbrdSpy = jest.spyOn(component, 'navigateToDashboard');
       const onsucessSpy = jest.spyOn(component, 'handleVaultLoginSuccess');
       await component.unlockVault(session.biometricEnabled);
@@ -187,16 +187,16 @@ describe('Application Startup Flow', () => {
     it('should nav to dashboard on vault authentication success with PIN ONLY', async () => {
       const sessionCopy = { ...session, biometricEnabled: false };
       const unlockIvSpy = jest.spyOn(identityFacadeService, 'unlockVault').mockResolvedValue(sessionCopy);
-      const execSpy = jest.spyOn(connectivityFacade, 'exec').mockResolvedValue({});
+      const execSpy = jest.spyOn(connectivityFacade, 'execute').mockResolvedValue({});
       const navDshbrdSpy = jest.spyOn(component, 'navigateToDashboard');
       const onsucessSpy = jest.spyOn(component, 'handleVaultLoginSuccess');
-      const biometricLoginSuccessSpy = jest.spyOn(component, 'handleBiometricLoginSuccess');
+      const authenticatePinSpy = jest.spyOn(component, 'authenticatePin');
       await component.unlockVault(sessionCopy.biometricEnabled);
       expect(unlockIvSpy).toHaveBeenCalledWith(sessionCopy.biometricEnabled);
       expect(onsucessSpy).toHaveBeenCalledWith(sessionCopy.pin, sessionCopy.biometricEnabled);
       expect(navDshbrdSpy).toHaveBeenCalledTimes(1);
       expect(execSpy).toHaveBeenCalledTimes(1);
-      expect(biometricLoginSuccessSpy).not.toHaveBeenCalled();
+      expect(authenticatePinSpy).not.toHaveBeenCalled();
     });
   });
 

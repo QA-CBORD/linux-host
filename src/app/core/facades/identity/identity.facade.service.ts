@@ -15,7 +15,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { SessionData, VaultMigrateResult, VaultIdentityService, VaultTimeoutOptions } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
-import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
+import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 
 export enum LoginState {
   DONE,
@@ -41,7 +41,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly contentStringFacade: ContentStringsFacadeService,
     private readonly routingService: NavigationService,
     private readonly userPreferenceService: UserPreferenceService,
-    private readonly connectivityFacade: ConnectivityFacadeService
+    private readonly connectivityFacade: ConnectivityAwareFacadeService
   ) {
     super();
   }
@@ -95,7 +95,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
 
   public async navigateToDashboard() {
-    this.connectivityFacade.exec({
+    this.connectivityFacade.execute({
       promise: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true, queryParams: { skipLoading: true }
       })

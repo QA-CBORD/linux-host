@@ -9,7 +9,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
 import { firstValueFrom } from '@shared/utils';
-import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
+import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 
 enum AppStatus {
@@ -30,7 +30,7 @@ export class SessionFacadeService {
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly connectivityFacade: ConnectivityFacadeService,
+    private readonly connectivityFacade: ConnectivityAwareFacadeService,
     private readonly nativeProvider: NativeProvider,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly appStatesFacadeService: AppStatesFacadeService
@@ -95,7 +95,7 @@ export class SessionFacadeService {
     if (isWeb) {
       return LoginState.DONE;
     } else {
-      const { data: isPinLoginEnabled } = await this.connectivityFacade.exec({
+      const { data: isPinLoginEnabled } = await this.connectivityFacade.execute({
         promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionId),
         showLoading: false
       });
@@ -134,7 +134,7 @@ export class SessionFacadeService {
       return usernamePasswordLoginType;
     }
 
-    const { data: isPinLoginEnabled } = await this.connectivityFacade.exec({
+    const { data: isPinLoginEnabled } = await this.connectivityFacade.execute({
       promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id),
       showLoading: false
     });

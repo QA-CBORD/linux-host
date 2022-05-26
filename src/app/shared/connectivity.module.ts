@@ -6,13 +6,13 @@ import { IonicModule } from "@ionic/angular";
 import { ScanCardModule } from "@sections/dashboard/containers/scan-card/scan-card.module";
 import { ANONYMOUS_ROUTES } from "../non-authorized/non-authorized.config";
 import { ConnectivityPageResolver } from "./services/connectivity-route.resolver";
-import { NoConnectivityScreen } from "./ui-components/no-connectivity-screen/no-connectivity-screen";
+import { ConnectivityScreen } from "./ui-components/no-connectivity-screen/connectivity-screen";
 import { StButtonModule } from "./ui-components/st-button";
 import { StHeaderModule } from "./ui-components/st-header/st-header.module";
 
 
 @NgModule({
-    declarations: [NoConnectivityScreen],
+    declarations: [ConnectivityScreen],
     imports: [
         CommonModule,
         FormsModule,

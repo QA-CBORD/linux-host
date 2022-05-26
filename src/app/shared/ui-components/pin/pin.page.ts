@@ -12,7 +12,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { ConnectivityFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-facade.service';
+import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -69,7 +69,7 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityFacade: ConnectivityFacadeService
+    private readonly connectivityFacade: ConnectivityAwareFacadeService
   ) { }
 
 
@@ -306,14 +306,14 @@ export class PinPage implements OnInit, OnDestroy {
   }
 
   handleConnectionIssues() {
-    return this.connectivityFacade.handleConnectionError({
+    return this.connectivityFacade.onConnectivityError({
       onRetry: async () => {
         await this.loadingService.showSpinner();
         const connectionRestored = !(await this.connectionService.deviceOffline());
         await this.loadingService.closeSpinner();
         return connectionRestored;
       }
-    }, true);
+    });
   }
 
   get showReset() {

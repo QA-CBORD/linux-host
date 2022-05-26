@@ -15,11 +15,11 @@ import { Subscription } from 'rxjs';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 
 @Component({
-  selector: 'st-no-connectivity-screen',
-  templateUrl: './no-connectivity-screen.html',
-  styleUrls: ['./no-connectivity-screen.scss'],
+  selector: 'st-connectivity-screen',
+  templateUrl: './connectivity-screen.html',
+  styleUrls: ['./connectivity-screen.scss'],
 })
-export class NoConnectivityScreen implements OnInit, OnDestroy {
+export class ConnectivityScreen implements OnInit, OnDestroy {
 
   refreshSubscription: Subscription;
   retrySubscription: Subscription;

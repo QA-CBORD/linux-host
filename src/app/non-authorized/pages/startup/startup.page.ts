@@ -11,7 +11,7 @@ import { firstValueFrom } from '@shared/utils';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
-import { ConnectivityFacadeService } from './connectivity-facade.service';
+import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-aware-facade.service';
 
 @Component({
   selector: 'st-startup',
@@ -31,7 +31,7 @@ export class StartupPage {
     private readonly ngZone: NgZone,
     private readonly authFacadeService: AuthFacadeService,
     private readonly navigationService: NavigationService,
-    private readonly connectivityFacade: ConnectivityFacadeService
+    private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService
   ) { }
 
   /// check login on enter
@@ -52,7 +52,7 @@ export class StartupPage {
 
 
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
-    const { data: systemSessionId } = await this.connectivityFacade.exec({
+    const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute({
       promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
     });
 
@@ -85,23 +85,25 @@ export class StartupPage {
   }
 
 
+  async connectionIssueAwarePromiseExecute(options: ExecOptions<any>) {
+    return this.connectivityAwareFacadeService.execute(options);
+  }
 
 
-
-  handleBiometricLoginSuccess(pin: string) {
-    const logic = {
+  authenticatePin(pin: string) {
+    this.connectionIssueAwarePromiseExecute({
       promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
-      skipError: ({ message }) => DEVICE_MARKED_LOST.test(message)
-    };
-    this.connectivityFacade.exec(logic)
+      throwError: ({ message }) => DEVICE_MARKED_LOST.test(message)
+    }
+    )
       .then(() => this.navigateToDashboard())
       .catch(() => this.navigateAnonymous(ANONYMOUS_ROUTES.entry));
   }
 
 
-  async handleVaultLoginSuccess(pin: string, biometricEnabled: boolean): Promise<void> {
-    if (biometricEnabled) {
-      this.handleBiometricLoginSuccess(pin);
+  async handleVaultLoginSuccess(pin: string, biometricUsed: boolean): Promise<void> {
+    if (biometricUsed) {
+      this.authenticatePin(pin);
     } else {
       this.navigateToDashboard();
     }
@@ -149,12 +151,12 @@ export class StartupPage {
   }
 
   public async navigateToDashboard() {
-    await this.connectivityFacade.exec({
+    this.connectionIssueAwarePromiseExecute({
       promise: async () => this.navigationService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true,
         queryParams: { skipLoading: true }
       })
-    })
+    });
   }
 
 
