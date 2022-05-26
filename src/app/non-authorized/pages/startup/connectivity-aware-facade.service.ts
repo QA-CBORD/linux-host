@@ -57,14 +57,14 @@ export class ConnectivityAwareFacadeService {
 
     }
 
-    private async runExecutionLogic(resolve, reject, options: ExecOptions<any>) {
+    private async runExecutionLogic(resolve, reject, { throwError, promise, showLoading }: ExecOptions<any>) {
         try {
-            resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(options.promise, options.showLoading) });
+            resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(promise, showLoading) });
         } catch (error) {
-            if (options.throwError(error)) {
+            if (throwError(error)) {
                 reject(error);
             } else {
-                const { data, promiseResolved } = await this.handleError(options);
+                const { data, promiseResolved } = await this.handleConnectivityError({ throwError, promise });
                 if (promiseResolved) {
                     resolve(data);
                 } else {
@@ -74,14 +74,15 @@ export class ConnectivityAwareFacadeService {
         }
     }
 
-    private async handleError<T>(options: ExecOptions<T>): Promise<{ data, promiseResolved }> {
+    private async handleConnectivityError<T>({ promise, throwError }: ExecOptions<T>): Promise<{ data, promiseResolved }> {
         let promiseResolved = false;
         let data = null;
+        const showLoading = true;
         await this.connectionFacadeService.handleConnectionError({
             onRetry: async () => {
-                return this.run(options.promise, true)
+                return this.run(promise, showLoading)
                     .then(r => (promiseResolved = true) && (((data = r) && true) || true))
-                    .catch(e => options.throwError(e) && ((data = e) && true));
+                    .catch(e => throwError(e) && ((data = e) && true));
             }
         }, true);
         return { promiseResolved, data };
