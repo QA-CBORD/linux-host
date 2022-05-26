@@ -84,7 +84,7 @@ export class VaultIdentityService {
     }
 
     isBiometricPermissionDenied({ code }): boolean {
-        const userDeniedBiometricPermission = code == (VaultErrorCodes.SecurityNotAvailable || VaultErrorCodes.AuthFailed);
+        const userDeniedBiometricPermission = (code == VaultErrorCodes.SecurityNotAvailable) || (code == VaultErrorCodes.AuthFailed);
         if (userDeniedBiometricPermission)
             this.userPreferenceService.setBiometricPermissionDenied();
         return userDeniedBiometricPermission;
@@ -289,25 +289,31 @@ export class VaultIdentityService {
         });
     }
 
-    async runUnlockLogic(resolve, reject, biometricEnabled: boolean) {
+    private async runUnlockLogic(resolve, reject, biometricEnabled: boolean) {
+        let isUnlockedWithPinRetry = false;
         this.state.biometricEnabled = biometricEnabled;
         const subscription = this.vaultPinUnlockError$.subscribe(reject);
         this.vault.onUnlock(() => {
-            this.ngZone?.run(async () => {
-                this.setIsLocked(false);
-                this.state.pin = await this.vault.getValue(key);
-                resolve({ pin: this.state.pin, biometricEnabled });
-            })
+            if (!isUnlockedWithPinRetry) {
+                this.ngZone?.run(async () => {
+                    this.setIsLocked(false);
+                    this.state.pin = await this.vault.getValue(key);
+                    resolve({ pin: this.state.pin, biometricEnabled });
+                });
+            }
         });
 
         try {
             await this.vault.unlock();
         } catch (error) {
             if (biometricEnabled) {
-                this.isBiometricPermissionDenied(error);
+                const biometricAllowed = !this.isBiometricPermissionDenied(error);
+                isUnlockedWithPinRetry = true;
                 this.retryPinUnlock().then(async (data) => {
+                    const session = { pin: data.pin, biometricEnabled: biometricAllowed && biometricEnabled };
                     await this.logout();
-                    await this.login({ pin: data.pin, biometricEnabled: this.state.biometricEnabled });
+                    this.login(session);
+                    resolve({ ...session, biometricEnabled: false });
                 }).catch((e) => {
                     reject(e);
                 });

@@ -85,18 +85,23 @@ export class StartupPage {
   }
 
 
+
+
+
+  handleBiometricLoginSuccess(pin: string) {
+    const logic = {
+      promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
+      skipError: ({ message }) => DEVICE_MARKED_LOST.test(message)
+    };
+    this.connectivityFacade.exec(logic)
+      .then(() => this.navigateToDashboard())
+      .catch(() => this.navigateAnonymous(ANONYMOUS_ROUTES.entry));
+  }
+
+
   async handleVaultLoginSuccess(pin: string, biometricEnabled: boolean): Promise<void> {
     if (biometricEnabled) {
-      const logic = {
-        promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
-        skipError: ({ message }) => DEVICE_MARKED_LOST.test(message)
-      };
-      try {
-        await this.connectivityFacade.exec(logic);
-        this.navigateToDashboard();
-      } catch (e) {
-        this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
-      }
+      this.handleBiometricLoginSuccess(pin);
     } else {
       this.navigateToDashboard();
     }

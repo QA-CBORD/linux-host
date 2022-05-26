@@ -1,10 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { VaultErrorCodes } from '@ionic-enterprise/identity-vault';
+import { DeviceSecurityType, VaultErrorCodes, VaultType } from '@ionic-enterprise/identity-vault';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { VaultFactory, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './vault-factory.service';
 import { VaultIdentityService, VaultMigrateResult } from './vault.identity.service';
 import sinon from 'sinon';
+import { Device } from '@ionic-enterprise/identity-vault';
 
 describe('VaultIdentityService', () => {
     let service: VaultIdentityService,
@@ -65,11 +66,22 @@ describe('VaultIdentityService', () => {
             const exportVaultSpy = jest.spyOn(migrator, 'exportVault');
             const migrateSuccessSpy = jest.spyOn(service, 'onVaultMigratedSuccess');
             const clearSpy = jest.spyOn(migrator, 'clear');
+            const loginSpy = jest.spyOn(service, 'login');
+            const patchVaultConfigSpy = jest.spyOn(service, 'patchVaultConfig');
+            jest.spyOn(service, 'isBiometricAvailable').mockResolvedValue(true);
+
             const migrationResult = await service.migrateIfLegacyVault();
+
             expect(exportVaultSpy).toHaveBeenCalledTimes(1);
             expect(migrateSuccessSpy).toHaveBeenCalledTimes(1);
             expect(clearSpy).toHaveBeenCalledTimes(1);
+            expect(loginSpy).toHaveBeenCalledTimes(1);
+            expect(loginSpy).toHaveBeenNthCalledWith(1, { pin: '1111', biometricEnabled: true });
             expect(migrationResult).toBe(VaultMigrateResult.MIGRATION_SUCCESS);
+            expect(patchVaultConfigSpy).toHaveBeenNthCalledWith(1, {
+                type: VaultType.DeviceSecurity,
+                deviceSecurityType: DeviceSecurityType.Biometrics
+            })
         });
 
         it('should result in migrationNotNeeded when no data foud in old-vault', async () => {
@@ -113,7 +125,7 @@ describe('VaultIdentityService', () => {
             const spy = jest.spyOn(service, 'patchVaultConfig');
             await service.setUnlockMode({ pin: '1111', biometricEnabled: true });
             expect(spy).toHaveBeenCalledTimes(1);
-            expect(spy).toHaveBeenCalledWith({ type: "DeviceSecurity", deviceSecurityType: "Biometrics" });
+            expect(spy).toHaveBeenCalledWith({ type: VaultType.DeviceSecurity, deviceSecurityType: DeviceSecurityType.Biometrics });
         });
 
         it('should configure vault with pin only', async () => {
@@ -121,7 +133,7 @@ describe('VaultIdentityService', () => {
             const spy2 = jest.spyOn(vault, 'updateConfig');
             await service.setUnlockMode({ pin: '1111', biometricEnabled: false });
             expect(spy1).toHaveBeenCalledTimes(1);
-            expect(spy1).toHaveBeenCalledWith({ type: "CustomPasscode", deviceSecurityType: "None" });
+            expect(spy1).toHaveBeenCalledWith({ type: VaultType.CustomPasscode, deviceSecurityType: DeviceSecurityType.None });
             expect(spy2).toHaveBeenCalledTimes(1);
         });
 
@@ -137,7 +149,7 @@ describe('VaultIdentityService', () => {
             expect(unlockResult).toStrictEqual(session);
         });
 
-        it('should retry unlock vault with pin when biometric fails', async () => {
+        it('should retry unlock vault with pin when biometric auth fails', async () => {
             const session = { pin: '1111', biometricEnabled: true };
             let onUnlockCallback;
             vault.onUnlock = (cb) => (onUnlockCallback = cb)
@@ -145,8 +157,8 @@ describe('VaultIdentityService', () => {
             vault.getValue = async () => session.pin;
             jest.spyOn(service, 'closeAllModals').mockResolvedValue();
             const retryPinSpy = jest.spyOn(service, 'retryPinUnlock').mockResolvedValue(session);
-            const loginSpy = jest.spyOn(service, 'login').mockImplementation(async () => onUnlockCallback());
             const logoutSpy = jest.spyOn(service, 'logout').mockResolvedValue();
+            const loginSpy = jest.spyOn(service, 'login').mockImplementation(async () => onUnlockCallback());
 
             const unlockResult = await service.unlockVault(true);
 
@@ -154,7 +166,7 @@ describe('VaultIdentityService', () => {
             expect(logoutSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledWith(session)
-            expect(unlockResult).toStrictEqual(session);
+            expect(unlockResult).toStrictEqual({ ...session, biometricEnabled: false });
         });
 
         it('should logout user when pin retry fails', async () => {
@@ -195,6 +207,31 @@ describe('VaultIdentityService', () => {
             expect(patchVaultConfigSpy).toHaveBeenCalledWith({ lockAfterBackgrounded: VAULT_DEFAULT_TIME_OUT_IN_MILLIS });
             expect(result).toBe(true);
         });
+
+        it('should result in biometricNotAvailable when user has denied permissions to use it', async () => {
+            const store = { userDeniedBiometricPermission: false };
+            const deviceMock = jest.spyOn(Device, 'isBiometricsEnabled').mockResolvedValue(true);
+            const getBiometricPermissionDeniedSpy = jest.spyOn(userPreferenceService, 'getBiometricPermissionDenied')
+                .mockImplementation(() => store.userDeniedBiometricPermission);
+
+            let isBiometricAvailable = await service.isBiometricAvailable();
+            expect(deviceMock).toHaveBeenCalledTimes(1);
+            expect(getBiometricPermissionDeniedSpy).toBeCalledTimes(1);
+            expect(isBiometricAvailable).toBe(true);
+
+            const denyPermissionStub = jest.spyOn(userPreferenceService, 'setBiometricPermissionDenied')
+                .mockImplementation(() => (store.userDeniedBiometricPermission = true));
+
+            const isBiometricDenied1 = service.isBiometricPermissionDenied({ code: VaultErrorCodes.AuthFailed });
+            const isBiometricDenied2 = service.isBiometricPermissionDenied({ code: VaultErrorCodes.SecurityNotAvailable });
+
+            expect(denyPermissionStub).toHaveBeenCalledTimes(2);
+            expect(isBiometricDenied1).toBe(true);
+            expect(isBiometricDenied2).toBe(true);
+
+            isBiometricAvailable = await service.isBiometricAvailable();
+            expect(isBiometricAvailable).toBe(false);
+        })
     });
 });
 

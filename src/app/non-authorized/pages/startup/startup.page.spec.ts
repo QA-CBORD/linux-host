@@ -90,7 +90,7 @@ describe('Application Startup Flow', () => {
       jest.spyOn(location, 'getState').mockReturnValue({ skipLoginFlow: true, biometricEnabled: false });
       const spy1 = jest.spyOn(component, 'unlockVault').mockResolvedValue(true);
       const spy2 = jest.spyOn(component, 'checkLoginFlow').mockResolvedValue(true);
-      
+
       component.ionViewDidEnter();
       expect(spy1).toBeCalled();
       expect(spy2).not.toBeCalled();
@@ -161,7 +161,7 @@ describe('Application Startup Flow', () => {
     const session = { pin: '1111', biometricEnabled: true };
     it('should nav to dashboard on vault authentication success with BIOMETRIC', async () => {
       const unlockIvSpy = jest.spyOn(identityFacadeService, 'unlockVault').mockResolvedValue(session);
-      const execSpy = jest.spyOn(connectivityFacade, 'exec').mockReturnValue({});
+      const execSpy = jest.spyOn(connectivityFacade, 'exec').mockResolvedValue({});
       const navDshbrdSpy = jest.spyOn(component, 'navigateToDashboard');
       const onsucessSpy = jest.spyOn(component, 'handleVaultLoginSuccess');
       await component.unlockVault(session.biometricEnabled);
@@ -187,16 +187,17 @@ describe('Application Startup Flow', () => {
     it('should nav to dashboard on vault authentication success with PIN ONLY', async () => {
       const sessionCopy = { ...session, biometricEnabled: false };
       const unlockIvSpy = jest.spyOn(identityFacadeService, 'unlockVault').mockResolvedValue(sessionCopy);
-      const execSpy = jest.spyOn(connectivityFacade, 'exec').mockReturnValue({});
+      const execSpy = jest.spyOn(connectivityFacade, 'exec').mockResolvedValue({});
       const navDshbrdSpy = jest.spyOn(component, 'navigateToDashboard');
       const onsucessSpy = jest.spyOn(component, 'handleVaultLoginSuccess');
+      const biometricLoginSuccessSpy = jest.spyOn(component, 'handleBiometricLoginSuccess');
       await component.unlockVault(sessionCopy.biometricEnabled);
       expect(unlockIvSpy).toHaveBeenCalledWith(sessionCopy.biometricEnabled);
       expect(onsucessSpy).toHaveBeenCalledWith(sessionCopy.pin, sessionCopy.biometricEnabled);
       expect(navDshbrdSpy).toHaveBeenCalledTimes(1);
       expect(execSpy).toHaveBeenCalledTimes(1);
+      expect(biometricLoginSuccessSpy).not.toHaveBeenCalled();
     });
-
   });
 
 });
