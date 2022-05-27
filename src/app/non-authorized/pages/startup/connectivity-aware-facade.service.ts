@@ -36,7 +36,8 @@ export class ConnectivityAwareFacadeService {
     private isConnectionError(error): boolean {
         return this.connectionFacadeService.isConnectionError(error);
     }
-    async isModalOpened(): Promise<boolean> {
+    
+    isModalOpened(): boolean {
         return this.connectionFacadeService.isModalOpened();
     }
 

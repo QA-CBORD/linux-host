@@ -47,7 +47,7 @@ export class ConnectionFacadeService {
     this.pinModalOpened = isOpened;
   }
 
-  async isModalOpened(): Promise<boolean> {
+  isModalOpened(): boolean {
     return this.pinModalOpened || this.connectivityModalOpened;
   }
 

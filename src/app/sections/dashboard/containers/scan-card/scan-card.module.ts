@@ -16,8 +16,4 @@ const providers = [ScanCardResolverService];
   declarations,
   providers,
 })
-export class ScanCardModule {
- constructor(){
-  console.log("SCANCARD MODULE IMPORTED");
- }
-}
+export class ScanCardModule {}

@@ -47,7 +47,7 @@ export class SessionFacadeService {
       if (isActive) {
         this.onActiveState();
       } else {
-        if (!(await this.connectivityFacade.isModalOpened())) {
+        if (!(this.connectivityFacade.isModalOpened())) {
           this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;

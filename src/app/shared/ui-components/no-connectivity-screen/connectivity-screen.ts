@@ -67,7 +67,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     })();
   }
 
-  async init() {
+  init() {
     this.routeSubscription = this.activatedRoute.data.subscribe(async ({ data }) => {
       this.dataInitialize(data);
     });
@@ -104,16 +104,12 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
 
 
 
-  async addSubscription() {
-    this.refreshSubscription = this.connectionService.modalRefreshHandle.subscribe((refresh) => {
-      if (refresh) {
-        this.onRetryFailed(true);
-      }
-    });
+  addSubscription() {
+    this.refreshSubscription = this.connectionService.modalRefreshHandle
+      .subscribe((refresh) => refresh && this.onRetryFailed(true));
 
-    this.retrySubscription = this.connectionService.retrySubject.subscribe((handler) => {
-      this.retryHandler = handler;
-    });
+    this.retrySubscription = this.connectionService.retrySubject
+      .subscribe((handler) => (this.retryHandler = handler));
   }
 
   private async showRetryToast(): Promise<boolean> {
@@ -184,7 +180,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   async closeSelf(status: ExecStatus) {
     try {
       await this.modalController.dismiss(null, status);
-    } catch (err) {/** ignored on purpose */}
+    } catch (err) {/** ignored on purpose */ }
   }
 
   async setConnectionErrorType(): Promise<void> {
@@ -200,10 +196,10 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     const defaultInstitutionColor = "";
     const deviceOffline = (await this.connectionService.deviceOffline());
     if (deviceOffline) return defaultInstitutionColor;
-    return await firstValueFrom(this.accessCardService.getInstitutionColor())
+    return firstValueFrom(this.accessCardService.getInstitutionColor())
       .then((v) => {
         const valueAsJson = JSON.parse(v);
-        return '#' + (valueAsJson ? valueAsJson['native-header-bg'] : defaultInstitutionColor)
+        return `#${(valueAsJson && valueAsJson['native-header-bg'] || defaultInstitutionColor)}`;
       }).catch(() => defaultInstitutionColor);
   }
 

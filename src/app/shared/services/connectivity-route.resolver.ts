@@ -26,7 +26,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
 
 
     private async resolveData(): Promise<ConnectivityPageInfo> {
-        await this.loadingService.showSpinner({ duration: 80000 });
+        await this.loadingService.showSpinner();
         let csModel: ConnectivityScreenCsModel = {} as any;
         let errorType: ConnectivityErrorType;
         let freshContentStringsLoaded = false;

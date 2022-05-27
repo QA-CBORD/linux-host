@@ -74,27 +74,27 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  private async initAndUnlock(session: SessionData, navigateToDashboard: boolean): Promise<void> {
+  private initAndUnlock(session: SessionData, navigateToDashboard: boolean) {
     if (navigateToDashboard) {
       this.navigateToDashboard()
     }
-    await this.identityService.login(session);
+    this.identityService.login(session);
   }
 
-  async migrateIfLegacyVault(): Promise<VaultMigrateResult> {
+  migrateIfLegacyVault(): Promise<VaultMigrateResult> {
     return this.identityService.migrateIfLegacyVault();
   }
 
- updateVaultTimeout(options: VaultTimeoutOptions) {
+  updateVaultTimeout(options: VaultTimeoutOptions) {
     return this.identityService.updateVaultTimeout(options);
   }
 
-  async unlockVault(biometricEnabled: boolean): Promise<{ pin: string, biometricEnabled: boolean }> {
+  unlockVault(biometricEnabled: boolean): Promise<{ pin: string, biometricEnabled: boolean }> {
     return this.identityService.unlockVault(biometricEnabled);
   }
 
 
-  public async navigateToDashboard() {
+  public navigateToDashboard() {
     this.connectivityFacade.execute({
       promise: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true, queryParams: { skipLoading: true }
@@ -103,10 +103,9 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async logoutUser(): Promise<boolean> {
-    return this.redirectToEntry().then(() => {
-      this.clearAll();
-      return true;
-    });
+    await this.redirectToEntry();
+    this.clearAll();
+    return true;
   }
 
 
@@ -118,12 +117,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
 
-  private async redirectToEntry(): Promise<boolean> {
+  private redirectToEntry(): Promise<boolean> {
     return this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
   }
 
 
-  async isVaultLocked() {
+  isVaultLocked() {
     return this.identityService.isVaultLocked();
   }
 
@@ -137,7 +136,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     );
   }
 
-  async isPinEnabled(sessionId: string, institutionId: string): Promise<boolean> {
+  isPinEnabled(sessionId: string, institutionId: string): Promise<boolean> {
     return firstValueFrom(this.settingsFacadeService
       .getSetting(Settings.Setting.PIN_ENABLED, sessionId, institutionId)
       .pipe(
@@ -146,19 +145,18 @@ export class IdentityFacadeService extends ServiceStateFacade {
       ));
   }
 
-  async isBiometricAvailable(): Promise<boolean> {
+  isBiometricAvailable(): Promise<boolean> {
     return this.identityService.isBiometricAvailable();
   }
 
 
-  async getAvailableBiometricHardware(): Promise<string[]> {
+  getAvailableBiometricHardware(): Promise<string[]> {
     return this.identityService.getAvailableBiometricHardware();
   }
 
   async setBiometricsEnabled(isBiometricsEnabled: boolean): Promise<void> {
-    return this.identityService.setBiometricsEnabled(isBiometricsEnabled).then(() => {
-      this._biometricsEnabledUserPreference = isBiometricsEnabled;
-    });
+    await this.identityService.setBiometricsEnabled(isBiometricsEnabled);
+    this._biometricsEnabledUserPreference = isBiometricsEnabled;
   }
 
   get cachedPinEnabledUserPreference$(): Promise<boolean> {
@@ -185,11 +183,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.identityService.lockVault();
   }
 
-  private async resetAll(): Promise<void> {
+  private resetAll() {
     firstValueFrom(this.userFacadeService.logoutAndRemoveUserNotification());
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
     this.contentStringFacade.clearState();
-
   }
 }
