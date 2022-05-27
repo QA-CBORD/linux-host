@@ -109,7 +109,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
 
-  async clearAll() {
+  clearAll() {
     this._pinEnabledUserPreference = true;
     this._biometricsEnabledUserPreference = true;
     this.resetAll();
