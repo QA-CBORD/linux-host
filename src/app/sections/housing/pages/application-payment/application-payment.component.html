@@ -21,13 +21,13 @@
     </ion-card-content>
     <ion-card-subtitle>Amount you'll pay </ion-card-subtitle>
     <st-input-amount [contentString]="contentString" [control]="control"></st-input-amount>
-    <st-card-items
+    <st-credit-card-list
       [contentStrings]="contentStrings"
       [userAccounts]="userAccounts"
       [addItem]="true"
       (onClick)="confirmationPayment($event)"
       (onAdd)="addCreditCard()"
-    ></st-card-items>
+    ></st-credit-card-list>
     <ion-label>Back</ion-label>
   </ion-card>
 </ion-content>

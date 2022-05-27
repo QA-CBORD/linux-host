@@ -7,7 +7,7 @@ import { buttons } from '@core/utils/buttons.config';
   templateUrl: './confirm-fee-popover.component.html',
   styleUrls: ['./confirm-fee-popover.component.scss'],
 })
-export class ConfirmPaymentPopover implements OnInit {
+export class ConfirmFeePopover implements OnInit {
   @Input() data: any;
   @Input() contentString: any;
   @Input() intructions?: any;
@@ -42,7 +42,7 @@ export class ConfirmPaymentPopover implements OnInit {
       cancelButton: 'Cancel',
       paymentMethod: 'Card Type',
       depositAmount: 'Deposit Amount',
-      account: 'Account'
+      account: 'Account',
     };
   }
 }

@@ -19,11 +19,11 @@ export type AccountsType = {
 }[];
 
 @Component({
-  selector: 'st-card-items',
-  templateUrl: './cards.component.html',
-  styleUrls: ['./cards.component.scss'],
+  selector: 'st-credit-card-list',
+  templateUrl: './credit-card-list.component.html',
+  styleUrls: ['./credit-card-list.component.scss'],
 })
-export class CardsComponent implements OnInit {
+export class CardListComponent implements OnInit {
   @Input() contentStrings: CardCs;
   @Input() userAccounts: AccountsType = [];
   @Input() removeIcon: boolean;

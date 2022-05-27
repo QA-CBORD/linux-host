@@ -1,13 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { UserAccount } from '@core/model/account/account.model';
-import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
-import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
 import { CreditCardService } from '../credit-card.service';
-import { AccountsType, CardCs } from './cards/cards.component';
+import { AccountsType, CardCs } from './card-list/credit-card-list.component';
 
 @Component({
   selector: 'st-credit-card-mgmt',
@@ -16,9 +13,7 @@ import { AccountsType, CardCs } from './cards/cards.component';
 })
 export class CreditCardMgmtComponent implements OnInit {
   @Input() contentStrings: CardCs;
-
   @Input() userAccounts: AccountsType = [];
-
   noCreditCardFound = false;
 
   constructor(
@@ -36,22 +31,10 @@ export class CreditCardMgmtComponent implements OnInit {
 
   async retrieveAccounts() {
     this.loadingService.showSpinner();
-    const accounts = await this.creditCardService.retrieveAccounts()
+    const accounts = await this.creditCardService.retrieveAccounts();
     this.loadingService.closeSpinner();
-     this.noCreditCardFound = !accounts.length;
+    this.noCreditCardFound = !accounts.length;
     return this.creditCardService.retrieveAccounts();
-  }
-
-  private buildStr(account: UserAccount) {
-    const { accountTender, lastFour } = account;
-    const creditCardTypeNumber = parseInt(accountTender) - 1;
-    const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
-    const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
-    return {
-      display,
-      account,
-      iconSrc,
-    };
   }
 
   close() {
@@ -99,9 +82,7 @@ export class CreditCardMgmtComponent implements OnInit {
     await modal.present();
   }
 
-  async addCreditCard() {
-
-  }
+  async addCreditCard() {}
 
   private async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });

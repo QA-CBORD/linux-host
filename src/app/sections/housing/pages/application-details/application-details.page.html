@@ -4,12 +4,7 @@
   #content
 >
   <div class="application-details__actions">
-    <ion-button
-      class="btn application-details__page-back"
-      (click)="onBack()"
-      mode="ios"
-      fill="clear"
-    >
+    <ion-button class="btn application-details__page-back" (click)="onBack()" mode="ios" fill="clear">
       Cancel
     </ion-button>
     <ion-button class="btn application-details__save" mode="ios" fill="clear" (click)="save(applicationDetails)">
@@ -25,7 +20,7 @@
         *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
         [stepControl]="page.form"
       >
-        <form [formGroup]="page.form" (ngSubmit)="submit(applicationDetails, page.form, isLastPage)">
+        <form [formGroup]="page.form" (ngSubmit)="submitForm(applicationDetails, page.form, isLastPage)">
           <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
             <st-question
               *ngIf="question"
@@ -49,7 +44,7 @@
               >Back</ion-button
             >
 
-            <ion-button
+            <st-button
               class="btn application-details__next"
               [class.stepper-footer__button--right]="isFirstPage"
               mode="ios"
@@ -58,10 +53,22 @@
               *ngIf="!isLastPage"
             >
               Next
-            </ion-button>
-
-            <st-button type="submit" *ngIf="isLastPage" [class.stepper-footer__button--right]="isFirstPage">
-              {{ applicationDetails.applicationDefinition.accountCodeKey ? "Continue to payment" : "Submit"}}
+            </st-button>
+            <st-button
+              class="btn application-details__submit"
+              mode="ios"
+              type="submit"
+              *ngIf="isLastPage && !applicationDetails.applicationDefinition.accountCodeKey"
+              [class.stepper-footer__button--right]="isFirstPage"
+            >
+              Submit
+          </st-button>
+            <st-button
+              type="submit"
+              *ngIf="isLastPage && applicationDetails.applicationDefinition.accountCodeKey"
+              [class.stepper-footer__button--right]="isFirstPage"
+            >
+              Continue to payment
             </st-button>
           </st-stepper-footer>
         </form>

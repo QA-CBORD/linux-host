@@ -5,15 +5,14 @@ import { AccountsService } from '@sections/dashboard/services';
 import { ConfirmModule } from '@shared/confirm-modal/confirm-modal.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
-import { StCreditCardListModule } from './credit-card-mgmt/card-list/credit-card-list.module';
-import { CreditCardMgmtComponent } from './credit-card-mgmt/credit-card-mgmt.component';
+import { CardListComponent as CreditCardListComponent } from './credit-card-list.component';
 
 @NgModule({
-  imports: [CommonModule, IonicModule, StHeaderModule, ConfirmModule, StButtonModule, StCreditCardListModule],
-  declarations: [CreditCardMgmtComponent],
-  entryComponents: [CreditCardMgmtComponent],
+  imports: [CommonModule, IonicModule, StHeaderModule, ConfirmModule, StButtonModule],
+  declarations: [CreditCardListComponent],
   providers: [AccountsService],
+  exports: [CreditCardListComponent],
 })
-export class CreditCardModule {
+export class StCreditCardListModule {
   constructor() {}
 }

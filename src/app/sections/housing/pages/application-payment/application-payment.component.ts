@@ -4,12 +4,10 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
-import {
-  AccountsType as UserAccountType,
-} from '@sections/settings/creditCards/credit-card-mgmt/cards/cards.component';
+import { AccountsType, CardCs } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
-import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-fee-popover.component';
+import { ConfirmFeePopover } from './confirm-fee-popover/confirm-fee-popover.component';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
 
 @Component({
@@ -19,7 +17,8 @@ import { SuccessfulPaymentModal } from './successful-payment-modal/successful-pa
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ApplicationPaymentComponent implements OnInit {
-  @Input() userAccounts: UserAccountType = [];
+  @Input() contentStrings: CardCs;
+  @Input() userAccounts: AccountsType = [];
   @Input() amount: number;
   control: AbstractControl;
 
@@ -60,7 +59,7 @@ export class ApplicationPaymentComponent implements OnInit {
       amount: this.amount.toString(),
     };
     const popover = await this.popoverCtrl.create({
-      component: ConfirmPaymentPopover,
+      component: ConfirmFeePopover,
       componentProps: {
         data,
       },
