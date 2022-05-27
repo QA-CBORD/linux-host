@@ -5,7 +5,7 @@
         [text]="backButtonTitle" [icon]="backButtonIcon" mode="ios"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="start" *ngIf="isDismissButtonShow">
-      <ion-button mode="ios" [ngClass]="{'st-header__dissmiss-btn': !backButtonTitle, 'st-header__back-btn': backButtonTitle }" (click)="onDissmissClicked()">
+      <ion-button color="dark" mode="ios" [ngClass]="{'st-header__dissmiss-btn': !backButtonTitle, 'st-header__back-btn': backButtonTitle }" (click)="onDissmissClicked()">
         <ion-icon [icon]="backButtonIcon" [ngClass]="{'st-header__dismiss-icon': backButtonTitle}"></ion-icon>
         <ion-label>{{backButtonTitle}}</ion-label>
       </ion-button>
