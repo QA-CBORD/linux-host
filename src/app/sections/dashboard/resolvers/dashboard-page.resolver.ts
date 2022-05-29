@@ -1,4 +1,4 @@
-import { Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, zip } from 'rxjs';
 import { finalize, first, map, take } from 'rxjs/operators';
@@ -19,7 +19,7 @@ import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/me
 import { ProminentDisclosureService } from '../services/prominent-disclosure.service';
 
 @Injectable()
-export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
+export class DashboardPageResolver implements Resolve<Observable<SettingInfoList> | Promise<SettingInfoList>> {
   constructor(
     private readonly accountsService: AccountService,
     private readonly userFacadeService: UserFacadeService,
@@ -29,17 +29,21 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly loadingService: LoadingService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
-    private readonly prominentDisclosureService: ProminentDisclosureService
+    private readonly prominentDisclosureService: ProminentDisclosureService,
   ) { }
 
-  resolve(): Observable<SettingInfoList> {
+  resolve(route: ActivatedRouteSnapshot): Observable<SettingInfoList> | Promise<SettingInfoList> {
+
+    const showLoading = !(route.queryParams.skipLoading && JSON.parse(route.queryParams.skipLoading));
+
     this.prominentDisclosureService.openProminentDisclosure();
     /// get fresh data on dashboard load
-    this.loadingService.showSpinner();
+    showLoading && this.loadingService.showSpinner();
+
     return this.loadAllData().pipe(
       take(1),
       map(([, , featureSettingsList]) => featureSettingsList),
-      finalize(() => this.loadingService.closeSpinner()))
+      finalize(() => showLoading && this.loadingService.closeSpinner()));
   }
 
   private loadAllData(): Observable<any> {

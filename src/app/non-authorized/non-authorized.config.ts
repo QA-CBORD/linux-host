@@ -6,7 +6,9 @@ export enum ANONYMOUS_ROUTES {
   pre_login = 'pre-login',
   external = 'external-login',
   forgotPassword = 'forgot-password',
-  scanCard= 'scan-card'
+  scanCard= 'scan-card',
+  noConnectivity = 'no-connectivity',
+  pin = 'pinPage'
 }
 
 export enum AUTHENTICATION_SYSTEM_TYPE {

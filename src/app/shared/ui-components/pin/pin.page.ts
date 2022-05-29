@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -10,9 +10,9 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { DEVICE_MARKED_LOST, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
+import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
-import { ConnectivityService } from '@shared/services/connectivity.service';
+import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -37,7 +37,7 @@ export enum PinAction {
   templateUrl: './pin.page.html',
   styleUrls: ['./pin.page.scss'],
 })
-export class PinPage implements OnInit {
+export class PinPage implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   readonly setNumbers: ReadonlyArray<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   pinNumber: number[] = [];
@@ -69,17 +69,21 @@ export class PinPage implements OnInit {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityService: ConnectivityService,
+    private readonly connectivityFacade: ConnectivityAwareFacadeService
   ) { }
+
 
   @Input() pinAction: PinAction;
   @Input() showDismiss = true;
+
 
   ngOnInit() {
     this.retrievePinRetrys();
     this.setInstructionText();
     this.a11yService.readAloud(this.instructionText);
+    this.connectivityFacade.setPinModalOpened(true);
   }
+
 
   private setInstructionText(text: string = null) {
     if (text !== null) {
@@ -182,14 +186,19 @@ export class PinPage implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.connectivityFacade.setPinModalOpened(false);
+  }
 
   delete() {
     this.removeNumber();
   }
 
-  closePage(pin: string, status: PinCloseStatus) {
+  async closePage(pin: string, status: PinCloseStatus) {
     this.loadingService.closeSpinner();
-    this.modalController.dismiss(pin, status);
+    try {
+      await this.modalController.dismiss(pin, status);
+    } catch (errr) { /**Ignored on purpose */ }
   }
 
   back() {
@@ -236,11 +245,15 @@ export class PinPage implements OnInit {
             this.setErrorText('Error setting your PIN - please try again');
           }
         },
-        () => {
+        (async ({ message, status }) => {
           this.cleanLocalState();
-          this.setErrorText('Error setting your PIN - please try again');
+          if (this.connectionService.isConnectionIssues({ message, status })) {
+             await this.handleConnectionIssues();
+          } else {
+            this.setErrorText('Error setting your PIN - please try again');
+          }
         }
-      );
+        ));
   }
 
   private async loginPin() {
@@ -273,7 +286,7 @@ export class PinPage implements OnInit {
             this.setErrorText('Error logging in - please try again');
           }
         },
-        ({ message, status }) => {
+        (async ({ message, status }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
@@ -283,25 +296,24 @@ export class PinPage implements OnInit {
           } else if (DEVICE_MARKED_LOST.test(message)) {
             this.closePage(null, PinCloseStatus.DEVICE_MARK_LOST);
           } else if (this.connectionService.isConnectionIssues({ message, status })) {
-            this.currentLoginAttempts--;
-            this.connectivityService.handleConnectionError({
-              onScanCode: async () => {
-                await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
-                await this.modalController.dismiss(message, `${NO_INTERNET_STATUS_CODE}`);
-              },
-              onRetry: async () => {
-                await this.loadingService.showSpinner();
-                const connectionRestored = !(await this.connectionService.deviceOffline())
-                await this.loadingService.closeSpinner();
-                return connectionRestored;
-              }
-            });
+            await this.handleConnectionIssues();
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
         }
-      );
+        ));
     // on success, return the pin so the vault can be unlocked
+  }
+
+  handleConnectionIssues() {
+    return this.connectivityFacade.onConnectivityError({
+      onRetry: async () => {
+        await this.loadingService.showSpinner();
+        const connectionRestored = !(await this.connectionService.deviceOffline());
+        await this.loadingService.closeSpinner();
+        return connectionRestored;
+      }
+    });
   }
 
   get showReset() {
