@@ -6,11 +6,11 @@
       maxlength="10"
       placeholder="0"
       tabindex="0"
-      [ngStyle]="{ width: control.value.length ? ('' + control.value).length + 1 + 'ch' : '2ch' }"
+      [ngStyle]="{ width: control.value?.length ? ('' + control.value)?.length + 1 + 'ch' : '2ch' }"
       [ngClass]="{
         'amount__main-input--focus': focusLine,
         shakeit: isMaxCharLength,
-        'amount__main-input-container--decrease-font': control.value && ('' + control.value).length >= 7
+        'amount__main-input-container--decrease-font': control.value && ('' + control.value)?.length >= 7
         }"
       (ionFocus)="focusLine = true"
       (ionBlur)="focusLine = false; onBlurEvent($event)"

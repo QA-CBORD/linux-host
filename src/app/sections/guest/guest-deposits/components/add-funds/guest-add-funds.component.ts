@@ -130,7 +130,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   onAmountChanged(event) {
-    const amount = (event && event.target.value) || undefined;
+    const amount = (event && event.target?.value) || undefined;
     if (!isNaN(+amount)) {
       this.depositButtonLabel('Deposit $' + amount);
     } else {
