@@ -13,7 +13,6 @@ import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '../services/camera.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -71,7 +70,6 @@ export class PhotoUploadComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly domsanitizer: DomSanitizer,
-    private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastService: ToastService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
@@ -330,9 +328,6 @@ export class PhotoUploadComponent implements OnInit {
         },
         () => {
           // There was an issue uploading the photo information'
-        },
-        () => {
-          this.sessionFacadeService.navigatedFromPlugin = true;
         }
       );
   }

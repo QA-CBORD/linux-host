@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, APP_INITIALIZER } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -13,8 +13,10 @@ import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
 import { Network } from '@ionic-native/network/ngx';
-import { SharedModule } from '@shared/shared.module';
+import { Brightness } from '@ionic-native/brightness/ngx';
+import { VaultIdentityService } from '@core/service/identity/vault.identity.service';
 
+const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void>) => () => vaultService.init();
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -26,10 +28,17 @@ import { SharedModule } from '@shared/shared.module';
     IonicModule.forRoot({ swipeBackEnabled: false }),
     IonicStorageModule.forRoot(),
     CommonModule,
-    PinModule,
-    SharedModule
+    PinModule
   ],
-  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}, InAppBrowser, Network],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitFactory,
+      deps: [VaultIdentityService],
+      multi: true,
+    },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network, Brightness
+  ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,13 +1,13 @@
 import { ContentStringModel, NullableContent } from "@shared/model/content-strings/content-string-models";
-import { noConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
+import { ConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
 
 export class ConnectivityScreenCsModel extends ContentStringModel {
     constructor(contentWrapper: NullableContent) {
-        super(contentWrapper.getConfig(), noConnectivityScreentDefaultStrings);
+        super(contentWrapper.getConfig(), ConnectivityScreentDefaultStrings);
     }
 }
 
-export enum ConnectivityError {
+export enum ConnectivityErrorType {
     DEVICE_CONNECTION = 'DEVICE_CONNECTION',
     SERVER_CONNECTION = 'SERVER_CONNECTION'
 }
@@ -18,16 +18,16 @@ export interface ConnectivityPageConfig {
     getContent: (csModel: ConnectivityScreenCsModel) => any
 }
 
-type ConfigType = { -readonly [key in keyof typeof ConnectivityError]: ConnectivityPageConfig };
+type ConfigType = { -readonly [key in keyof typeof ConnectivityErrorType]: ConnectivityPageConfig };
 
 export const connectivityPageConfigurations: ConfigType = {
-    [ConnectivityError.DEVICE_CONNECTION]: {
+    [ConnectivityErrorType.DEVICE_CONNECTION]: {
         titleIcon: '/assets/images/wifi-img.svg',
         mainImg: '/assets/images/Search_Connection_Undraw.svg',
         getContent: (csModel) => csModel.content
     },
 
-    [ConnectivityError.SERVER_CONNECTION]: {
+    [ConnectivityErrorType.SERVER_CONNECTION]: {
         titleIcon: '/assets/images/exclamation.svg',
         mainImg: '/assets/images/server-error.svg',
         getContent: (csModel) => {
