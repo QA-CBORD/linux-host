@@ -13,8 +13,6 @@ export class ConfirmFeePopover implements OnInit {
   @Input() intructions?: any;
   popoverConfig: PopoverConfig<string | number>;
 
-  constructor() {}
-
   ngOnInit() {
     this.setContentString();
     this.initPopover();

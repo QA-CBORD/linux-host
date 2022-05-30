@@ -14,5 +14,4 @@ import { CardListComponent as CreditCardListComponent } from './credit-card-list
   exports: [CreditCardListComponent],
 })
 export class StCreditCardListModule {
-  constructor() {}
 }

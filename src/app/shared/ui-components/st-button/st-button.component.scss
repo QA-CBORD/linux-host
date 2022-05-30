@@ -23,7 +23,7 @@
   height: 50px;
   border-radius: 8px;
 
-  @include font-nunito-heavy(15px);
+  @include font-nunito-heavy(16px);
 
   &--disabled {
     --ion-color-primary: #e1e1e1;

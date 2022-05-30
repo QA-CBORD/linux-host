@@ -35,6 +35,7 @@ export class ApplicationPaymentComponent implements OnInit {
   ngOnInit() {
     this.control = new FormControl(this.amount);
     this.control.disable();
+    this.control.markAsPristine();  
   }
 
   async addCreditCard() {
@@ -71,10 +72,9 @@ export class ApplicationPaymentComponent implements OnInit {
       .onDidDismiss()
       .then(async ({ role }) => {
         if (role === BUTTON_TYPE.OKAY) {
-         this.depositService.feePayment(acc.account?.id, this.amount.toString()).pipe(take(1)).subscribe(async (str) => {
-                // if success then
+         this.depositService.feePayment(acc.account?.id, this.amount.toString()).pipe(take(1)).subscribe(async () => {
           await this.successfulPayment(data);
-         }, (err) => {
+         }, () => {
              this.toastCtrl.create({ message: "Something went wrong."});
          });
       
@@ -82,7 +82,7 @@ export class ApplicationPaymentComponent implements OnInit {
           this.cdRef.detectChanges();
         }
       })  
-      .catch(err => console.log(err));
+      .catch();
     return await popover.present();
   }
 
@@ -99,6 +99,5 @@ export class ApplicationPaymentComponent implements OnInit {
       backdropDismiss: true,
     });
     modal.present();
-    this.loadingService.showSpinner();
   }
 }

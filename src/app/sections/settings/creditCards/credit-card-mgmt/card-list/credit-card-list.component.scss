@@ -9,8 +9,7 @@
       align-items: center;
       margin-bottom: 20vh;
       .no-credit-card-block-text {
-        font-family: 'Nunito';
-        font-size: 15px;
+        @include font-nunito-regular(15px);
         width: 155px;
         letter-spacing: 1px;
         margin-left: 22px;
@@ -43,9 +42,7 @@
           margin-left: 10px;
           margin-top: -3px;
           margin-bottom: 0px;
-          font-size: 18px;
-          font-style: normal;
-          font-family: 'Nunito SemiBold';
+          @include font-nunito-regular(18px);
         }
 
         .icon-wrapper {

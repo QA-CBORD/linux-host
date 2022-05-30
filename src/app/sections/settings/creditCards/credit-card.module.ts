@@ -7,13 +7,13 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StCreditCardListModule } from './credit-card-mgmt/card-list/credit-card-list.module';
 import { CreditCardMgmtComponent } from './credit-card-mgmt/credit-card-mgmt.component';
+import { CreditCardService } from './credit-card.service';
 
 @NgModule({
   imports: [CommonModule, IonicModule, StHeaderModule, ConfirmModule, StButtonModule, StCreditCardListModule],
   declarations: [CreditCardMgmtComponent],
   entryComponents: [CreditCardMgmtComponent],
-  providers: [AccountsService],
+  providers: [AccountsService, CreditCardService],
 })
 export class CreditCardModule {
-  constructor() {}
 }

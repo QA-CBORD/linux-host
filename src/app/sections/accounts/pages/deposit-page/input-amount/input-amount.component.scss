@@ -1,10 +1,7 @@
 @import 'tools';
 
-.deposit {
-
+.amount {
   &__main-input-container {
-    color: $color-dim-gray;
-
     @include font-nunito-regular(80px);
 
     &--decrease-font {
@@ -17,7 +14,8 @@
     width: 70%;
     margin: 0 auto;
     transition: font-size 0.3s ease 0s;
-
+    @include font-nunito-regular(73px);
+    line-height: 80px;
     &--focus {
       color: #000;
       border-bottom: 2px solid $color-dodger-blue !important;
@@ -40,10 +38,10 @@
 
     &::before {
       content: '$';
-      font-size: 70%;
       position: relative;
       left: 5px;
       bottom: 10px;
+      @include font-nunito-regular(40px);
     }
   }
 }

@@ -34,8 +34,6 @@ export class CardListComponent implements OnInit {
 
   noCreditCardFound: boolean;
 
-  constructor() {}
-
   ngOnInit() {
     this.noCreditCardFound = !this.userAccounts.length;
   }

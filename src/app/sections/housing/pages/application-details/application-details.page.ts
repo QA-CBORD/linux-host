@@ -59,7 +59,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
-    private readonly creditCardService: CreditCardService
+    private creditCardService: CreditCardService
   ) {}
 
   async ngOnInit() {

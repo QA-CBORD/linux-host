@@ -2,11 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-
 import { ApplicationDetailsRoutingModule } from './application-details.routing.module';
 import { QuestionsModule } from '../../questions/questions.module';
 import { StepperModule } from '../../stepper/stepper.module';
-
 import { ApplicationDetailsPage } from './application-details.page';
 import { ApplicationPaymentModule } from '../application-payment/application-payment.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
@@ -28,6 +26,6 @@ const declarations = [ApplicationDetailsPage];
 @NgModule({
   imports,
   declarations,
-  providers: [AccountsService, CreditCardService]
+  providers: [AccountsService, CreditCardService],
 })
 export class ApplicationDetailsPageModule {}

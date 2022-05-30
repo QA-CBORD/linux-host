@@ -34,7 +34,7 @@ export class CreditCardMgmtComponent implements OnInit {
     const accounts = await this.creditCardService.retrieveAccounts();
     this.loadingService.closeSpinner();
     this.noCreditCardFound = !accounts.length;
-    return this.creditCardService.retrieveAccounts();
+    return accounts;
   }
 
   close() {
@@ -82,7 +82,9 @@ export class CreditCardMgmtComponent implements OnInit {
     await modal.present();
   }
 
-  async addCreditCard() {}
+  async addCreditCard() {
+    await this.creditCardService.addCreditCard();
+  }
 
   private async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });

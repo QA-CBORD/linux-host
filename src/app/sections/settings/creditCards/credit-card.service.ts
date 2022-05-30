@@ -8,9 +8,7 @@ import { AccountsService } from '@sections/dashboard/services';
 import { firstValueFrom } from '@shared/utils';
 import { PaymentSystemType } from 'src/app/app.global';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class CreditCardService {
   constructor(
     private readonly externalPaymentService: ExternalPaymentService,
