@@ -51,8 +51,6 @@ import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
 import { Inspections, Inspection, InspectionsData } from './inspections-forms/inspections-forms.model';
-import { isNull } from '@angular/compiler/src/output/output_ast';
-
 @Injectable({
   providedIn: 'root',
 })
