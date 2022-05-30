@@ -122,7 +122,7 @@ export const guestDashboardDefaultStrings = {
   explore: 'Explore',
 };
 
-export const noConnectivityScreentDefaultStrings = {
+export const ConnectivityScreentDefaultStrings = {
   title: 'No connection',
   description: 'Make sure your Wi-Fi or mobile data is turned on, then try again.',
   scan_card_desc: 'You may still scan your card when you are offline.',

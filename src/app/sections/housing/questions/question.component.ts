@@ -18,7 +18,7 @@ const IMAGE_DIR = 'stored-images';
 
 import { CameraDirection, Photo, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '@sections/settings/pages/services/camera.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 @Component({
   selector: 'st-question',
@@ -45,13 +45,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
     public _applicationsStateService: ApplicationsStateService, //TODO: delete
     private _termService: TermsService,
     private actionSheetCtrl: ActionSheetController,
-    private sessionFacadeService: SessionFacadeService,
+    private identityFacadeService: IdentityFacadeService,
     private toastService: ToastService,
     private _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService,
     private plt: Platform,
     private cameraService: CameraService
-  ) {}
+  ) { }
 
   ngOnDestroy(): void {
     this._applicationsStateService.setRequestedRoommates([]);
@@ -134,7 +134,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line no-extra-boolean-cast
       if (!!(res && res.contents)) {
         const extension = res.filename.split('.').pop();
-         const imageContent = res.contents.startsWith('data:image')
+        const imageContent = res.contents.startsWith('data:image')
           ? res.contents
           : `data:image/${extension};base64,${res.contents}`;
 
@@ -206,8 +206,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
       resultType: CameraResultType.Uri,
       source: cameraSource,
       saveToGallery: true,
-    }).finally(() => {
-      this.sessionFacadeService.navigatedFromPlugin = true;
     });
 
     if (image) {

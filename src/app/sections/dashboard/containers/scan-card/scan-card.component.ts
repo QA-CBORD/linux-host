@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
 import { Observable, of, Subscription } from 'rxjs';
@@ -18,6 +18,7 @@ import { AppState } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'st-scan-card',
@@ -25,14 +26,19 @@ import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facad
   styleUrls: ['./scan-card.component.scss'],
 })
 export class ScanCardComponent implements OnInit, OnDestroy {
+
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
   isMediaSettingExists$: Observable<boolean>;
+  userFullName$: Observable<string>;
   userPhoto: string;
   userId: string;
-  institutionColor: string;
+  @Input() isBackButtonShow = true;
+  @Input() isDismissButtonShow: boolean;
+  @Input('color') institutionColor: string;
+
   previousBrigness: number;
   suscription: Subscription = new Subscription();
 
@@ -46,11 +52,12 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     private readonly nativeProvider: NativeProvider,
     private readonly router: Router,
     private readonly appStatesFacadeService: AppStatesFacadeService,
-    private readonly brightness: Brightness
+    private readonly brightness: Brightness,
+    private readonly modalController: ModalController
   ) { }
 
   adjustBrignessOnAppState = async (appState: AppState) => {
-    if (appState.isActive && this.router.url.includes(DASHBOARD_NAVIGATE.scanCard)) {
+    if (appState.isActive && (this.router.url.includes(DASHBOARD_NAVIGATE.scanCard) || this.isOpenedAsModal())) {
       this.setFullBrightness();
     } else {
       this.setPreviousBrightness();
@@ -58,7 +65,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    console.log('ScanCardComponent: ');
+    this.setUserFullName$();
     this.isMediaSettingExists$ = this.barcodeFacadeService
       .getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE)
       .pipe(map(({ value }) => !!value && !!value.length));
@@ -72,13 +79,16 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => (d.length ? d : 'None')));
   }
 
-  get userFullName$(): Observable<string> {
-    return this.userFacadeService.getUserInfo().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
+  setUserFullName$() {
+    this.userFullName$ = this.getUserInfo().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
+  }
+
+  private getUserInfo() {
+    return this.userFacadeService.getUserInfo();
   }
 
   private setUserId() {
-    this.userFacadeService
-      .getUserInfo()
+    this.getUserInfo()
       .pipe(take(1))
       .subscribe(({ id }) => (this.userId = id));
   }
@@ -96,14 +106,14 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   private setInstitution() {
-    this.institution$ = this.userFacadeService.getUserInfo().pipe(
+    this.institution$ = this.getUserInfo().pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionFacadeService.getInstitutionInfo$(institutionId)),
       take(1)
     );
   }
 
   private setInstitutionPhoto() {
-    this.institutionPhoto$ = this.userFacadeService.getUserInfo().pipe(
+    this.institutionPhoto$ = this.getUserInfo().pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionFacadeService.getInstitutionPhoto$(institutionId)),
       skipWhile(d => !d || d === null),
       map(({ data, mimeType }: InstitutionPhotoInfo) => {
@@ -111,6 +121,10 @@ export class ScanCardComponent implements OnInit, OnDestroy {
       }),
       map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
     );
+  }
+
+  async onBack() {
+    this.modalController.dismiss().catch();
   }
 
   private initBarcode() {
@@ -139,7 +153,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   private setInstitutionColor() {
-    this.institutionColor = this.route.snapshot.queryParams.color;
+    this.institutionColor = this.institutionColor || this.route.snapshot.queryParams.color;
   }
 
   private async setFullBrightness() {
@@ -162,5 +176,9 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.setPreviousBrightness();
     this.suscription.unsubscribe();
+  }
+
+  isOpenedAsModal(): boolean {
+    return this.isDismissButtonShow && !(this.isBackButtonShow);
   }
 }
