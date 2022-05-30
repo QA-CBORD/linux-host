@@ -24,7 +24,7 @@ import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import { LOCAL_ROUTING, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, PAYMENT_TYPE_LABELS } from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { PATRON_NAVIGATION, Settings } from 'src/app/app.global';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -609,13 +609,7 @@ export class AutomaticDepositPageComponent {
   }
 
   private getModalBodyMessage(): string {
-    const paymentTypeMaps = {
-      [PAYMENT_TYPE.APPLEPAY]: PAYMENT_TYPE_LABELS.APPLE_PAY,
-      [PAYMENT_TYPE.BILLME]: PAYMENT_TYPE_LABELS.APPLE_PAY,
-      [PAYMENT_TYPE.CREDIT]: PAYMENT_TYPE_LABELS.CREDIT_CARD
-    }
-
-    const accName = paymentTypeMaps[this.activePaymentType];
+    const accName = this.destinationAccount.accountDisplayName;
 
     if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
       return getLowBalanceSuccessBodyMessage(this.amountToDeposit.value, this.lowBalanceAmount.value, accName);
