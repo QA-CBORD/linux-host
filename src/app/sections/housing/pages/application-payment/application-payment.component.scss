@@ -4,20 +4,20 @@
   --background: white;
 }
 
-.application-details__content {
+.application-payment__content {
   --background: #{$porcelain};
   --padding-top: 8px;
   --padding-start: 8px;
   --padding-end: 8px;
 }
 
-.application-details__actions {
+.application-payment__actions {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
 }
 
-.application-details__title {
+.application-payment__title {
   @include font-family($font-nunito-heavy);
 
   font-size: 20px;
@@ -26,16 +26,16 @@
   margin-bottom: 10px;
 }
 
-.application-details__page-back {
+.application-payment__page-back {
   @include font-family($font-nunito-regular);
 }
 
-.application-details__save {
+.application-payment__save {
   @include font-family($font-nunito-heavy);
   --color: #{$color-dodger-blue};
 }
 
-.application-details__card {
+.application-payment__card {
   --background: #f1f1f1;
   background-color: $color-white;
   border-radius: 16px;
@@ -43,14 +43,14 @@
   padding: 16px;
 }
 
-.application-details__back {
+.application-payment__back {
   @include font-family($font-nunito-heavy);
   --color: #{$color-dodger-blue};
   min-width: 80px;
 }
 
-.application-details__next,
-.application-details__submit {
+.application-payment__next,
+.application-payment__submit {
   @include font-family($font-nunito-heavy);
 
   --border-radius: 8px;
@@ -59,14 +59,14 @@
   text-transform: uppercase;
 }
 
-.application-details__next {
+.application-payment__next {
   --background-activated: #{$color-dodger-blue};
   --border-color: #{$color-dodger-blue};
   --border-width: 2px;
   --color: #{$color-dodger-blue};
 }
 
-.application-details__submit {
+.application-payment__submit {
   --background: #{$color-dodger-blue};
 }
 

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
-import { LoadingService } from '@core/service/loading/loading.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
+import { HousingService } from '@sections/housing/housing.service';
 import { AccountsType, CardCs } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
@@ -23,13 +23,13 @@ export class ApplicationPaymentComponent implements OnInit {
   control: AbstractControl;
 
   constructor(
-    private loadingService: LoadingService,
     private readonly depositService: DepositService,
     private readonly creditCard: CreditCardService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
-    private readonly toastCtrl: ToastController
+    private readonly toastCtrl: ToastController,
+    private readonly housingService: HousingService,
   ) {}
 
   ngOnInit() {
@@ -73,6 +73,7 @@ export class ApplicationPaymentComponent implements OnInit {
       .then(async ({ role }) => {
         if (role === BUTTON_TYPE.OKAY) {
          this.depositService.feePayment(acc.account?.id, this.amount.toString()).pipe(take(1)).subscribe(async () => {
+         this.housingService.updatePaymentSuccess();
           await this.successfulPayment(data);
          }, () => {
              this.toastCtrl.create({ message: "Something went wrong."});

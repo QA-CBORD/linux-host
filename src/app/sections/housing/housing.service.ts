@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { ROLES } from '../../app.global';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 
 import { HousingProxyService } from './housing-proxy.service';
 import { ApplicationsStateService } from './applications/applications-state.service';
@@ -51,6 +51,7 @@ import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
 import { Inspections, Inspection, InspectionsData } from './inspections-forms/inspections-forms.model';
+import { isNull } from '@angular/compiler/src/output/output_ast';
 
 @Injectable({
   providedIn: 'root',
@@ -506,5 +507,12 @@ export class HousingService {
         })
       }))
 
+  }
+
+  updatePaymentSuccess() {
+    return this._housingProxyService.put(this._patronApplicationsUrl, null).pipe(
+      take(1),
+      catchError(() => this._handleGetDefinitionsError())
+    ).subscribe();
   }
 }
