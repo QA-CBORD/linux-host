@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -13,24 +13,8 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
-
-export enum PinCloseStatus {
-  SET_SUCCESS = 'set_success',
-  LOGIN_SUCCESS = 'login_success',
-  CANCELED = 'cancelled',
-  ERROR = 'error',
-  MAX_FAILURE = 'max_failure',
-  DEVICE_MARK_LOST = 'device_marked_lost',
-  CLOSED_NO_CONNECTION = 'closed_no_connection'
-}
-
-export enum PinAction {
-  SET_BIOMETRIC,
-  SET_PIN_ONLY,
-  CHANGE_PIN_BIOMETRIC,
-  CHANGE_PIN_ONLY,
-  LOGIN_PIN,
-}
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
 
 @Component({
   selector: 'st-pin',
@@ -69,13 +53,17 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityFacade: ConnectivityAwareFacadeService
+    private readonly connectivityFacade: ConnectivityAwareFacadeService,
+    private readonly injector: Injector
   ) { }
 
 
   @Input() pinAction: PinAction;
   @Input() showDismiss = true;
 
+  get identityFacade(): IdentityFacadeService {
+    return this.injector.get(IdentityFacadeService);
+  }
 
   ngOnInit() {
     this.retrievePinRetrys();
@@ -182,7 +170,7 @@ export class PinPage implements OnInit, OnDestroy {
 
     if (this.pinNumber.length === 4) {
       // check if confirming pin
-      this.loginPin();
+      this.unlockVault();
     }
   }
 
@@ -248,7 +236,7 @@ export class PinPage implements OnInit, OnDestroy {
         (async ({ message, status }) => {
           this.cleanLocalState();
           if (this.connectionService.isConnectionIssues({ message, status })) {
-             await this.handleConnectionIssues();
+            await this.handleConnectionIssues();
           } else {
             this.setErrorText('Error setting your PIN - please try again');
           }
@@ -256,13 +244,28 @@ export class PinPage implements OnInit, OnDestroy {
         ));
   }
 
-  private async loginPin() {
+  private async unlockVault() {
     this.setInstructionText('');
-    await this.loadingService.showSpinner();
     this.currentLoginAttempts++;
+    const pin = this.pinNumber.join('');
+    this.identityFacade.setCustomPasscode(pin)
+      .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
+      .catch((e) => {
+        console.log(e);
+        this.cleanLocalState();
+        if (this.currentLoginAttempts >= this.maxLoginAttempts) {
+          this.setErrorText('Maximum login attempts reached - logging you out');
+          setTimeout(() => this.closePage(null, PinCloseStatus.MAX_FAILURE), 2000);
+        } else {
+          this.setErrorText('Incorrect PIN - please try again');
+        }
+      });
+  }
 
+  private async loginPin(pin: string) {
+    await this.loadingService.showSpinner()
     this.authFacadeService
-      .authenticatePin$(this.pinNumber.join(''))
+      .authenticatePin$(pin)
       .pipe(
         finalize(() => this.loadingService.closeSpinner()),
         take(1)

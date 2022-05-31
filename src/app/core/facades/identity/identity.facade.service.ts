@@ -5,7 +5,6 @@ import { map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
-import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
 import { UserFacadeService } from '../user/user.facade.service';
 import { MerchantFacadeService } from '../merchant/merchant-facade.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
@@ -13,9 +12,10 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { firstValueFrom } from '@shared/utils';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
-import { SessionData, VaultMigrateResult, VaultIdentityService, VaultTimeoutOptions } from '@core/service/identity/vault.identity.service';
+import { VaultIdentityService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
+import { SessionData, VaultMigrateResult, VaultTimeoutOptions, VaultSession, PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
 
 export enum LoginState {
   DONE,
@@ -28,9 +28,7 @@ export enum LoginState {
   SELECT_INSTITUTION,
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class IdentityFacadeService extends ServiceStateFacade {
 
   constructor(
@@ -89,8 +87,16 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.identityService.updateVaultTimeout(options);
   }
 
-  unlockVault(biometricEnabled: boolean): Promise<{ pin: string, biometricEnabled: boolean }> {
+  setCustomPasscode(passcode: string) {
+    return this.identityService.setVaultPasscode(passcode);
+  }
+
+  unlockVault(biometricEnabled: boolean): Promise<VaultSession> {
     return this.identityService.unlockVault(biometricEnabled);
+  }
+
+  unlockVaultIfLocked(): Promise<VaultSession> {
+    return this.identityService.unlockVaultIfLocked();
   }
 
 

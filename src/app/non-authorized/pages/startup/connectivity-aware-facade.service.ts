@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { ConnectionFacadeService } from "@shared/services/connection-facade.service";
 import { ExecStatus, RetryHandler } from "@shared/ui-components/no-connectivity-screen/model/connectivity-page.model";
+import { Observable } from "rxjs";
+import { firstValueFrom } from '@shared/utils';
 
 
 export interface PromiseExecResult<T> {
@@ -15,7 +17,7 @@ export enum PromiseExecStatus {
 }
 
 export interface ExecOptions<T> {
-    promise: () => Promise<T>,
+    promise: () => Promise<T> | Observable<T>,
     showLoading?: boolean;
     rejectOnError?: (error: any) => boolean
 }
@@ -36,7 +38,7 @@ export class ConnectivityAwareFacadeService {
     private isConnectionError(error): boolean {
         return this.connectionFacadeService.isConnectionError(error);
     }
-    
+
     isModalOpened(): boolean {
         return this.connectionFacadeService.isModalOpened();
     }
@@ -94,12 +96,20 @@ export class ConnectivityAwareFacadeService {
         return this.connectionFacadeService.handleConnectionError(handler, showAsModal);
     }
 
-    private async run<T>(actualMethod: () => Promise<T>, showLoading: boolean): Promise<T> {
+    private async run<T>(actualMethod: () => Promise<T> | Observable<T>, showLoading: boolean): Promise<T> {
         if (showLoading) {
             await this.loadingService.showSpinner();
-            return await actualMethod().finally(() => this.loadingService.closeSpinner());
+            return await this.firstValueFromw(actualMethod)
+                .finally(() => this.loadingService.closeSpinner());
         } else {
-            return await actualMethod();
+            return await this.firstValueFromw(actualMethod);
         }
+    }
+
+    private async firstValueFromw<T>(method: () => Promise<T> | Observable<T>) {
+        if (method instanceof Observable) {
+            return await firstValueFrom(method)
+        }
+        return await method();
     }
 }

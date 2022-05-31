@@ -5,41 +5,16 @@ import { BrowserVault, Device, DeviceSecurityType, Vault, VaultErrorCodes, Vault
 import { ModalController } from '@ionic/angular';
 import { NavigationService } from '@shared/services/navigation.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
-import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
-import { Subject } from 'rxjs';
+import { PinPage } from '@shared/ui-components/pin/pin.page';
+import { Subject, Subscription } from 'rxjs';
 import { ROLES } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { LoadingService } from '../loading/loading.service';
-import { VaultFactory, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './vault-factory.service';
+import { SessionData, TIME_OUT_WITH_EXTRA, VaultMigrateResult, VaultTimeoutOptions, VaultSession, VAULT_DEFAULT_TIME_OUT_IN_MILLIS, PinAction, PinCloseStatus } from './model.identity';
+import { VaultFactory } from './vault-factory.service';
 
-
-export interface VaultTimeoutOptions {
-    extendTimeout: boolean;
-    estimatedTimeInMillis?: number;
-    keepTimeoutExtendedOnResume?: boolean;
-}
-
-const APP_STATE_CHANGE = 'appStateChange';
-
-const TIME_OUT_WITH_EXTRA = 600000; // 10 minutes.
-
-export interface SessionData {
-    isLocked?: boolean;
-    pin?: string;
-    biometricEnabled: boolean;
-}
 const key = 'sessionPin';
-export interface VaultMessage {
-    canLock: boolean;
-    canLockOnResume: boolean;
-}
-
-export enum VaultMigrateResult {
-    MIGRATION_SUCCESS,
-    MIGRATION_FAILED,
-    MIGRATION_NOT_NEEDED
-}
-
+const APP_STATE_CHANGE = 'appStateChange';
 
 @Injectable({ providedIn: 'root' })
 export class VaultIdentityService {
@@ -48,12 +23,19 @@ export class VaultIdentityService {
     private vaultPinUnlockError$: Subject<any> = new Subject();
     private pluginListenerHandle: PluginListenerHandle;
     private setTimeoutId: number;
+    private pinModalOpened = false;
+    private tempPin: string;
+    private isMigrating = false;
+    pinSupplier$ = new Subject<string>();
+    pinErrorSupplier$ = new Subject<string>();
 
     constructor(
         @Inject(Injector) private injector: Injector,
         private readonly ngZone: NgZone,
         private userPreferenceService: UserPreferenceService
-    ) { }
+    ) {
+        window['vaultIdentityService'] = this;
+    }
 
 
     get routingService(): NavigationService {
@@ -70,8 +52,8 @@ export class VaultIdentityService {
     async init(vault?: Vault | BrowserVault) {
         this.vault = vault || VaultFactory.newVaultInstance();
         await Device.setHideScreenOnBackground(false, false);
-        this.vault.onPasscodeRequested((isPassSetReq) => this.onPasscodeRequested(isPassSetReq));
-
+        this.vault.onPasscodeRequested((isPassSetReq, cb) => this.onPasscodeRequestedV2(isPassSetReq, cb));
+        this.vault.onError((e) => console.log("VAULT.ERROR: ", e));
         this.vault.onLock(({ timeout }) => {
             this.ngZone?.run(() => {
                 this.state.pin = null;
@@ -99,26 +81,45 @@ export class VaultIdentityService {
         const isBiometricsEnabled = async () => (await this.userPreferenceService.cachedBiometricsEnabledUserPreference() && await this.isBiometricAvailable());
         const noDataInLegacyVault = ({ code, message }) => (code == undefined && /no data in legacy vault/.test(message));
 
-        const userFailedBiometricsAuth = (error) => {
-            return this.isBiometricPermissionDenied(error)
+        const userFailedBiometricsAuth = async (error) => {
+            const isBiometric = await this.userPreferenceService.cachedBiometricsEnabledUserPreference();
+            return isBiometric && this.isBiometricPermissionDenied(error)
                 || error.code === VaultErrorCodes.TooManyFailedAttempts
                 || error.code === VaultErrorCodes.iOSBiometricsLockedOut
                 || error.code === VaultErrorCodes.AndroidBiometricsLockedOut
                 || error.code === VaultErrorCodes.BiometricsNotEnabled
                 || error.code === VaultErrorCodes.UserCanceledInteraction;
         }
-        const migrator = VaultFactory.newVaultMigratorInstance((value) => this.onPasscodeRequested(value));
+        const migrator = VaultFactory.newVaultMigratorInstance((e) => {
+            console.log("MIGRATING WITH PIN: this.isMigrating: ", this.isMigrating);
+            if (!this.isMigrating) {
+                this.presentPinModal(PinAction.LOGIN_PIN);
+            }
+            this.isMigrating = true;
+            return new Promise((resolve) => {
+                this.pinSupplier$.subscribe({
+                    next: (pin) => resolve(pin)
+                })
+            });
+        });
         try {
             this.loadingService.closeSpinner();
             const oldVaultData = await migrator.exportVault();
+            this.isMigrating = false;
+            this.pinSupplier$.next(null);
+            
             if (oldVaultData) {
                 return this.onVaultMigratedSuccess(oldVaultData.session, migrator, await isBiometricsEnabled());
             }
         } catch (error) {
             if (noDataInLegacyVault(error)) {
                 return VaultMigrateResult.MIGRATION_NOT_NEEDED;
-            } if (userFailedBiometricsAuth(error)) {
+            } if (await userFailedBiometricsAuth(error)) {
                 return this.handleAuthFailureOnVaultMigration(migrator, await isBiometricsEnabled());
+            } else {
+                // pin rejected....
+                this.pinErrorSupplier$.error(error);
+                return await this.migrateIfLegacyVault()
             }
         }
 
@@ -141,6 +142,8 @@ export class VaultIdentityService {
      */
     async onVaultMigratedSuccess(session: { pin: string }, migrator: VaultMigrator, biometricEnabled: boolean): Promise<VaultMigrateResult> {
         try {
+
+            debugger
             await this.vault.setCustomPasscode(session.pin);
             await this.vault.importVault({ [key]: session.pin });
             await migrator.clear();
@@ -157,7 +160,7 @@ export class VaultIdentityService {
      */
     async login(session: SessionData): Promise<void> {
         this.setIsLocked(false);
-        this.setState(session);
+        await this.setState(session);
         this.setUnlockMode(session);
     }
 
@@ -169,7 +172,6 @@ export class VaultIdentityService {
         let type = VaultType.CustomPasscode;
         let deviceSecurityType = DeviceSecurityType.None;
         this.state.biometricEnabled = session.biometricEnabled;
-        await this.vault.setCustomPasscode(session.pin || await this.getPin());
         if (session.biometricEnabled) {
             type = VaultType.DeviceSecurity;
             deviceSecurityType = DeviceSecurityType.Biometrics;
@@ -181,6 +183,18 @@ export class VaultIdentityService {
         return (await this.hasStoredSession()) && (await this.vault.isLocked());
     }
 
+    private async onPasscodeRequestedV2(isPasscodeSetRequest: boolean, complete) {
+        console.log("onPasscodeRequestedV2: ", isPasscodeSetRequest);
+        debugger
+        if (isPasscodeSetRequest) {
+            /// will happen on pin set
+            return Promise.resolve(this.state.pin);
+        } else {
+            this.vault.setCustomPasscode(this.tempPin);
+            return Promise.resolve(this.tempPin);
+        }
+    }
+
 
     /**
      * Called by iv when customPasscode is used and we try to unlock vault.
@@ -189,6 +203,8 @@ export class VaultIdentityService {
      * @returns 
      */
     private async onPasscodeRequested(isPasscodeSetRequest: boolean, publishError = true): Promise<string> {
+
+        console.log("onPasscodeRequested: ", isPasscodeSetRequest);
 
         if (isPasscodeSetRequest) {
             /// will happen on pin set
@@ -207,7 +223,25 @@ export class VaultIdentityService {
         }
     }
 
+    async setVaultPasscode(pin: string) {
+        this.tempPin = pin;
+        if (this.isMigrating) {
+            this.pinSupplier$.next(this.tempPin);
+            return new Promise((resolve, reject) => {
+                const susbcription: Subscription = this.pinErrorSupplier$.subscribe({
+                    next: () => resolve(pin),
+                    error: (e) => reject(e),
+                    complete: () => susbcription.unsubscribe()
+                });
+            })
+        } else {
+            return this.vault.unlock();
+        }
+    }
+
     async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
+
+        this.pinModalOpened = true;
         const componentProps = { pinAction, ...pinModalProps };
         const pinModal = await this.modalController.create({
             backdropDismiss: false,
@@ -222,6 +256,7 @@ export class VaultIdentityService {
         const sessionPin = session.pin || await this.getPin();
         this.state.pin = sessionPin;
         this.state.biometricEnabled = session.biometricEnabled;
+        await this.vault.setCustomPasscode(sessionPin);
         this.vault.setValue(key, sessionPin);
     }
 
@@ -275,52 +310,78 @@ export class VaultIdentityService {
         })
     }
 
+    /**
+     * 
+     * @returns VaultSession
+     */
+    async unlockVaultIfLocked(): Promise<VaultSession> {
+        if (await this.hasStoredSession()) {
+            return this.unlockVault(await this.userPreferenceService.cachedBiometricsEnabledUserPreference());
+        }
+        return { pin: null };
+    }
+
+
+    private async unlockVaultPin(resolve, reject) {
+        const { data: pin, role: responseStatus } = await this.presentPinModal(PinAction.LOGIN_PIN);
+        if (PinCloseStatus.LOGIN_SUCCESS == responseStatus) {
+            this.onVaultUnlockSuccess(pin);
+            return resolve({ pin, biometricUsed: false });
+        }
+        return reject({ message: responseStatus });
+    }
+
+    onVaultUnlockSuccess(pin: string) {
+        console.log("onVaultUnlockSuccess*** : ", pin);
+        this.setIsLocked(false);
+        this.state.pin = pin;
+    }
+
+
+    private async unlockVaultBiometric(resolve, reject) {
+        try {
+            await this.vault.unlock();
+            const pin = await this.vault.getValue(key);
+            this.onVaultUnlockSuccess(pin);
+            resolve({ pin, biometricUsed: true });
+        } catch (error) {
+            debugger
+            await this.onBiometricAuthFailed(error, resolve, reject);
+            reject(error);
+        }
+    }
+
 
     /**
-     * Called to unlock vault. will ask user to enter biometrics (fingerprint, faceID) or pin.
+     * Called to unlock vault. will ask user to enter biometrics (fingerprint, faceID) or pin, but will only do that if vault is locked.
      * @param biometricEnabled 
      * @returns 
      */
-    async unlockVault(biometricEnabled: boolean = this.state.biometricEnabled): Promise<{ pin: string, biometricEnabled: boolean }> {
+    async unlockVault(biometricEnabled: boolean): Promise<VaultSession> {
         this.state.biometricEnabled = biometricEnabled;
         await this.closeAllModals();
-        return new Promise<{ pin: string, biometricEnabled: boolean }>((resolve, reject) => {
-            this.runUnlockLogic(resolve, reject, biometricEnabled);
+        return new Promise<VaultSession>((resolve, reject) => {
+            if (this.state.biometricEnabled) {
+                this.unlockVaultBiometric(resolve, reject);
+            } else {
+                this.unlockVaultPin(resolve, reject);
+            }
         });
     }
 
-    private async runUnlockLogic(resolve, reject, biometricEnabled: boolean) {
-        let isUnlockedWithPinRetry = false;
-        this.state.biometricEnabled = biometricEnabled;
-        const subscription = this.vaultPinUnlockError$.subscribe(reject);
-        this.vault.onUnlock(() => {
-            if (!isUnlockedWithPinRetry) {
-                this.ngZone?.run(async () => {
-                    this.setIsLocked(false);
-                    this.state.pin = await this.vault.getValue(key);
-                    resolve({ pin: this.state.pin, biometricEnabled });
-                });
-            }
+    async onBiometricAuthFailed(error, resolve, reject) {
+        const biometricAllowed = !this.isBiometricPermissionDenied(error);
+        await this.patchVaultConfig({
+            type: VaultType.CustomPasscode, deviceSecurityType: DeviceSecurityType.None
         });
-
-        try {
-            await this.vault.unlock();
-        } catch (error) {
-            if (biometricEnabled) {
-                const biometricAllowed = !this.isBiometricPermissionDenied(error);
-                isUnlockedWithPinRetry = true;
-                this.retryPinUnlock().then(async (data) => {
-                    const session = { pin: data.pin, biometricEnabled: biometricAllowed && biometricEnabled };
-                    await this.logout();
-                    this.login(session);
-                    resolve({ ...session, biometricEnabled: false });
-                }).catch((e) => {
-                    reject(e);
-                });
-            }
-        } finally {
-            subscription.unsubscribe();
-        }
+        await this.retryPinUnlock().then(async (data) => {
+            const session = { pin: data.pin, biometricEnabled: biometricAllowed };
+            await this.logout();
+            this.login(session);
+            resolve({ ...session, biometricUsed: false });
+        }).catch((e) => {
+            reject(e);
+        });
     }
 
     private async doUnlockVault(biometricEnabled: boolean) {

@@ -4,7 +4,6 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { Location } from '@angular/common';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { VaultMigrateResult } from '@core/service/identity/vault.identity.service';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { firstValueFrom } from '@shared/utils';
@@ -12,6 +11,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-aware-facade.service';
+import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
 
 @Component({
   selector: 'st-startup',
@@ -48,38 +48,35 @@ export class StartupPage {
   async checkLoginFlow() {
     // step 1: determine and initialize current environment.
     await this.environmentFacadeService.initialization();
+    let session = null;
 
-
+    try {
+      session = await this.unlockVaultIfSetup();
+    } catch (e) {
+      /** will only get this error if vault was setup but user could not authenticate */
+      return this.handleVaultUnlockFailure();
+    }
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
     const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute({
       promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
     });
 
-    // step 3: check if vault needs to migrate data.
-    const migrationResult = await this.identityFacadeService.migrateIfLegacyVault();
-
-    if (this.vaultMigrationFailed(migrationResult)) {
-      return this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
+    if (session?.pin) {
+      return this.handleVaultLoginSuccess(session);
     }
 
+    // step 3: check if vault needs to migrate data.
+    if (this.vaultMigrationFailed(await this.identityFacadeService.migrateIfLegacyVault())) {
+      return this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
+    }
     // step 4: determine appLoginState;
     const appLoginState = await this.sessionFacadeService.determineAppLoginState(systemSessionId);
 
     // step 5: interpret appLoginState and proceed accordingly.
-    if (this.userIsLoggedIn(appLoginState)) {
-      this.unlockVault(appLoginState == LoginState.BIOMETRIC_LOGIN);
-    } else {
-      this.handleAppLoginState(appLoginState);
-    }
+    this.handleAppLoginState(appLoginState);
   }
 
-
-  private userIsLoggedIn(appLoginState: LoginState): boolean {
-    return appLoginState == LoginState.BIOMETRIC_LOGIN || appLoginState == LoginState.PIN_LOGIN;
-  }
-
-
-  handleVaultLoginFailure(): any {
+  handleVaultUnlockFailure(): any {
     this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
   }
 
@@ -93,19 +90,19 @@ export class StartupPage {
     this.connectionIssueAwarePromiseExecute({
       promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
       rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message)
-    }
-    )
+    })
       .then(() => this.navigateToDashboard())
       .catch(() => this.navigateAnonymous(ANONYMOUS_ROUTES.entry));
   }
 
 
-  async handleVaultLoginSuccess(pin: string, biometricUsed: boolean): Promise<void> {
-    if (biometricUsed) {
-      this.authenticatePin(pin);
-    } else {
-      this.navigateToDashboard();
-    }
+  async handleVaultLoginSuccess(session: VaultSession): Promise<void> {
+    this.authenticatePin(session.pin);
+    // if (session.biometricUsed) {
+    //   this.authenticatePin(session.pin);
+    // } else {
+    //   this.navigateToDashboard();
+    // }
   }
 
 
@@ -145,7 +142,7 @@ export class StartupPage {
         await this.navigateToDashboard();
         break;
       default:
-        await this.sessionFacadeService.logoutUser(true);
+        await this.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);;
     }
   }
 
@@ -162,8 +159,12 @@ export class StartupPage {
   // 
   async unlockVault(biometricEnabled: boolean): Promise<any> {
     return await this.identityFacadeService.unlockVault(biometricEnabled)
-      .then(({ pin, biometricEnabled }) => this.handleVaultLoginSuccess(pin, biometricEnabled))
-      .catch(() => this.handleVaultLoginFailure());
+      .then((session) => this.handleVaultLoginSuccess(session))
+      .catch(() => this.handleVaultUnlockFailure());
+  }
+
+  async unlockVaultIfSetup(): Promise<VaultSession> {
+    return this.identityFacadeService.unlockVaultIfLocked();
   }
 
   /// destroy after login complete

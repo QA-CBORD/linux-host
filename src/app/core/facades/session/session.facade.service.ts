@@ -152,15 +152,14 @@ export class SessionFacadeService {
       if (!vaultLocked) {
         return LoginState.DONE;
       }
-
-      const isBiometricsEnabled = await this.identityFacadeService.isBiometricAvailable();
-      const isBiometricsEnabledForUserPreference = await this.identityFacadeService
-        .cachedBiometricsEnabledUserPreference$;
-      if (isBiometricsEnabled && isBiometricsEnabledForUserPreference) {
-        return LoginState.BIOMETRIC_LOGIN;
-      } else {
-        return LoginState.PIN_LOGIN;
-      }
+      // const isBiometricsEnabled = await this.identityFacadeService.isBiometricAvailable();
+      // const isBiometricsEnabledForUserPreference = await this.identityFacadeService
+      //   .cachedBiometricsEnabledUserPreference$;
+      // if (isBiometricsEnabled && isBiometricsEnabledForUserPreference) {
+      //   return LoginState.BIOMETRIC_LOGIN;
+      // } else {
+      //   return LoginState.PIN_LOGIN;
+      // }
     }
     return usernamePasswordLoginType;
   }

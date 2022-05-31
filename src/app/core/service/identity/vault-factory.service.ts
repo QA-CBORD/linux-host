@@ -1,14 +1,15 @@
 import { Capacitor } from "@capacitor/core";
 import { BrowserVault, DeviceSecurityType, IdentityVaultConfig, Vault, VaultMigrator, VaultType } from "@ionic-enterprise/identity-vault";
+import { VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from "./model.identity";
 
 
-export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 5000;
-
-export const vaultConfig: IdentityVaultConfig = {
+const vaultConfig: IdentityVaultConfig = {
     key: 'get.cbord.com',
     type: VaultType.CustomPasscode,
     deviceSecurityType: DeviceSecurityType.None,
-    lockAfterBackgrounded: VAULT_DEFAULT_TIME_OUT_IN_MILLIS
+    lockAfterBackgrounded: VAULT_DEFAULT_TIME_OUT_IN_MILLIS,
+    shouldClearVaultAfterTooManyFailedAttempts: true,
+    customPasscodeInvalidUnlockAttempts: 5,
 };
 
 export class VaultFactory {
