@@ -15,9 +15,9 @@
       [contentStrings]="contentStrings"
       [userAccounts]="userAccounts"
       [addItem]="true"
-      (onClick)="confirmationPayment($event)"
+      (onClick)="confirmPayment($event)"
       (onAdd)="addCreditCard()"
     ></st-credit-card-list>
-    <ion-label>Back</ion-label>
+    <ion-label class="application-payment__back" (click)="dismiss()">Back</ion-label>
   </ion-card>
 </ion-content>

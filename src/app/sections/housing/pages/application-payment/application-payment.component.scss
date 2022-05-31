@@ -45,7 +45,7 @@
 
 .application-payment__back {
   @include font-family($font-nunito-heavy);
-  --color: #{$color-dodger-blue};
+  color: #{$color-dodger-blue};
   min-width: 80px;
 }
 

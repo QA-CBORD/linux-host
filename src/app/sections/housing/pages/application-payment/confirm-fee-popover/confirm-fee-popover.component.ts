@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { PopoverConfig } from '@core/model/popover/popover.model';
 import { buttons } from '@core/utils/buttons.config';
 
@@ -6,6 +6,7 @@ import { buttons } from '@core/utils/buttons.config';
   selector: 'st-confirm-fee-popover',
   templateUrl: './confirm-fee-popover.component.html',
   styleUrls: ['./confirm-fee-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmFeePopover implements OnInit {
   @Input() data: any;
