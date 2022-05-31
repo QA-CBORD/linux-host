@@ -214,8 +214,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     const modal = await this.modalController.create({
       component: ApplicationPaymentComponent,
       animated: false,
-      backdropDismiss: true,
-      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts: accounts, amount: appDetails.applicationDefinition.amount.toString() },
+      backdropDismiss: false,
+      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts: accounts, appDetails },
     });
     await modal.present();
   }

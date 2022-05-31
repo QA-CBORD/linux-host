@@ -4,6 +4,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
+import { ApplicationDetails } from '@sections/housing/applications/applications.model';
 import { HousingService } from '@sections/housing/housing.service';
 import {
   AccountsType,
@@ -41,7 +42,7 @@ export interface TransactionalData {
 export class ApplicationPaymentComponent implements OnInit {
   @Input() contentStrings: CardCs;
   @Input() userAccounts: AccountsType = [];
-  @Input() amount: number;
+  @Input() appDetails: ApplicationDetails;
   control: AbstractControl;
 
   constructor(
@@ -55,8 +56,13 @@ export class ApplicationPaymentComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.control = new FormControl(this.amount);
+    this.control = new FormControl(
+      this.getAmount());
     this.control.disable();
+  }
+
+  private getAmount() {
+    return this.appDetails.applicationDefinition.amount.toString();
   }
 
   async addCreditCard() {
@@ -66,7 +72,7 @@ export class ApplicationPaymentComponent implements OnInit {
 
   async confirmPayment(cardInfo?: AccountData) {
     const { account } = cardInfo;
-    const amount = String(this.amount);
+    const amount = this.getAmount();
     const data: TransactionalData = {
       sourceAcc: {
         accountTender: account.accountTender,
@@ -91,7 +97,7 @@ export class ApplicationPaymentComponent implements OnInit {
       .catch();
     return await popover.present();
   }
-  
+
   async dismiss() {
     await this.modalCtrl.dismiss();
   }
@@ -114,8 +120,8 @@ export class ApplicationPaymentComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         async () => {
-          this.housingService.updatePaymentSuccess();
-          await this.successfulPayment(data);
+          this.housingService.updatePaymentSuccess(this.appDetails);
+          await this.onPaymentSuccess(data);
         },
         () => {
           this.toastCtrl.create({ message: 'Something went wrong.' });
@@ -123,7 +129,7 @@ export class ApplicationPaymentComponent implements OnInit {
       );
   }
 
-  private async successfulPayment(data: TransactionalData) {
+  private async onPaymentSuccess(data: TransactionalData) {
     this.dismiss();
     const modal = await this.modalCtrl.create({
       component: SuccessfulPaymentModal,
