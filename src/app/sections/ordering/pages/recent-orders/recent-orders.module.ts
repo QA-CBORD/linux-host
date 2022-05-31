@@ -12,6 +12,8 @@ import { ConfirmPopoverModule } from '@sections/ordering/shared/ui-components/co
 import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/type-message.pipe.module';
+import { SafeHtmlPipeModule } from '@shared/pipes/safe-html-pipe/safe-html-pipe.module';
+import { SafeHtmlPipe } from '@shared/pipes';
 
 const imports = [
     CommonModule,
@@ -25,13 +27,16 @@ const imports = [
     OrderOptionsActionSheetModule,
     StButtonModule,
     StSpinnerModule,
-    TypeMessageModule
+    TypeMessageModule,
+    SafeHtmlPipeModule
 ];
 const declarations = [RecentOrdersComponent, RecentOrderComponent];
 
+const providers = [SafeHtmlPipe];
 @NgModule({
     declarations,
     imports,
+    providers
 })
 export class RecentOrdersModule {
 }

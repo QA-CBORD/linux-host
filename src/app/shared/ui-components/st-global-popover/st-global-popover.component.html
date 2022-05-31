@@ -1,5 +1,3 @@
 <st-popover-layout [popoverConfig]="popoverConfig">
-    <div class="st-popover__content">
-        {{ popoverConfig.message }}
-    </div>
+    <div class="st-popover__content" [innerHTML]="popoverConfig.message"></div>
 </st-popover-layout>
