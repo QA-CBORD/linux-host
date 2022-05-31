@@ -120,7 +120,6 @@ export class ApplicationPaymentComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         async () => {
-          this.housingService.updatePaymentSuccess(this.appDetails);
           await this.onPaymentSuccess(data);
         },
         () => {
@@ -130,6 +129,11 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(data: TransactionalData) {
+    this.housingService.updatePaymentSuccess(this.appDetails);
+    await this.onPaymentSuccessModal(data);
+  }
+
+  private async onPaymentSuccessModal(data: TransactionalData) {
     this.dismiss();
     const modal = await this.modalCtrl.create({
       component: SuccessfulPaymentModal,

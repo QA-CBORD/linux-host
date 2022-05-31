@@ -11,7 +11,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SuccessfulPaymentModal implements OnInit {
-  @Input() data;
+  @Input() data: any;
   @Input() contentString: any;
 
   constructor(private readonly modalController: ModalController, private readonly route: Router) {}
@@ -21,8 +21,8 @@ export class SuccessfulPaymentModal implements OnInit {
   }
 
   async onDoneClicked() {
-    await this.modalController.dismiss();
     await this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard]);
+    await this.modalController.dismiss();
   }
 
   private setContentString() {
