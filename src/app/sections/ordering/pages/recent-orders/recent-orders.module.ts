@@ -31,7 +31,7 @@ const declarations = [RecentOrdersComponent, RecentOrderComponent];
 
 @NgModule({
     declarations,
-    imports,
+    imports
 })
 export class RecentOrdersModule {
 }
