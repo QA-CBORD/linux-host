@@ -38,7 +38,6 @@
               class="btn application-details__back"
               type="button"
               fill="clear"
-              mode="ios"
               stepperBack
               (back)="content.scrollToTop()"
               >Back</ion-button
@@ -47,7 +46,6 @@
             <st-button
               class="btn application-details__next"
               [class.stepper-footer__button--right]="isFirstPage"
-              mode="ios"
               fill="outline"
               type="submit"
               *ngIf="!isLastPage"
@@ -56,16 +54,15 @@
             </st-button>
             <st-button
               class="btn application-details__submit"
-              mode="ios"
               type="submit"
-              *ngIf="isLastPage && !applicationDetails.applicationDefinition.accountCodeKey"
+              *ngIf="isLastPage && (!applicationDetails.applicationDefinition.accountCodeKey || isSubmitted)"
               [class.stepper-footer__button--right]="isFirstPage"
             >
               Submit
           </st-button>
             <st-button
               type="submit"
-              *ngIf="isLastPage && applicationDetails.applicationDefinition.accountCodeKey"
+              *ngIf="isLastPage && applicationDetails.applicationDefinition.accountCodeKey && !isSubmitted"
               [class.stepper-footer__button--right]="isFirstPage"
             >
               Continue to payment

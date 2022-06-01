@@ -84,13 +84,9 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   async submitForm(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
 
     this.updateQuestions();
-
     if (!this.isSubmitted && form.invalid) return;
-
-    if (!isLastPage) return this.nextPage(applicationDetails, form.value);
-    
-    if (this.isPaymentDue(applicationDetails)) return await this.continueToPayment(applicationDetails);
-     
+    if (!isLastPage) return this.nextPage(applicationDetails, form.value); 
+    if (this.isPaymentDue(applicationDetails) && !this.isSubmitted) return await this.continueToPayment(applicationDetails);  
     this.updateSubscription(form.value, applicationDetails, UpdateType.SUBMIT);
   }
 
@@ -210,12 +206,12 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private async continueToPayment(appDetails: ApplicationDetails) {
-    const accounts = await this.creditCardService.retrieveAccounts();
+    const userAccounts = await this.creditCardService.retrieveAccounts();
     const modal = await this.modalController.create({
       component: ApplicationPaymentComponent,
       animated: false,
       backdropDismiss: false,
-      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts: accounts, appDetails },
+      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts, appDetails },
     });
     await modal.present();
   }

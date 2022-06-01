@@ -64,7 +64,7 @@
       }
 
       &--filled {
-        --background: #166DFF;
+        --background: #{$color-dodger-blue};
         --color-activated: #0043b3 !important;
         --background-hover: #0043b3 !important;
         --border-radius: 10px;
@@ -83,7 +83,7 @@
     &__footer-content {
       white-space: pre-wrap;
       word-break: break-all;
-      // text-transform: capitalize;
+      text-transform: uppercase;
     }
   }
 }

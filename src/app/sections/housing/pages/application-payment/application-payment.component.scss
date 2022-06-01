@@ -6,9 +6,6 @@
 
 .application-payment__content {
   --background: #{$porcelain};
-  --padding-top: 8px;
-  --padding-start: 8px;
-  --padding-end: 8px;
 }
 
 .application-payment__actions {
@@ -20,7 +17,7 @@
 .application-payment__title {
   @include font-family($font-nunito-heavy);
 
-  font-size: 20px;
+  font-size: 16px;
   text-align: center;
   margin-top: 0;
   margin-bottom: 10px;
@@ -40,7 +37,6 @@
   background-color: $color-white;
   border-radius: 16px;
   box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
-  padding: 16px;
 }
 
 .application-payment__back {
@@ -70,33 +66,43 @@
   --background: #{$color-dodger-blue};
 }
 
+ion-card {
+  margin: 8px !important;
+}
 ion-card-content {
-  @include font-nunito-regular(16px);
-  margin-top: 78px;
-  margin-right: 25px;
-  margin-left: 25px;
-  color: black;
+  @include font-nunito-regular(14px);
+  margin-top: 38px;
+  margin-right: 0px;
+  margin-left: 0px;
+  color: #{$color-black};
 }
 
-ion-card-subtitle {
-  @include font-nunito-heavy(18px);
-  margin-top: 50px;
-  margin-bottom: 30px;
+ion-card-title {
+  @include font-nunito-heavy(16px);
+  margin-top: 25px;
+  margin-bottom: 5px;
   text-align: center;
-  color: black;
+  color: #{$color-black};
 }
 
 st-input-amount {
   display: block;
-  margin-bottom: 100px;
-  color: black;
+  margin-bottom: 25px;
+  color: #{$color-black};
 }
 
 ion-label {
   @include font-nunito-regular(18px);
   display: flex;
-  margin-top: 100px;
-  margin-bottom:25px;
+  margin-top: 50px;
+  padding-bottom:30px;
   margin-left: 30px;
-  color: black;
+  color: #{$color-black};
+}
+
+.ion-padding {
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
 }

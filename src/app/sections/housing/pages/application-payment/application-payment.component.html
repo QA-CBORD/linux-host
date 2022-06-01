@@ -1,15 +1,15 @@
 <ion-content class="ion-padding application-payment__content" #content>
   <div class="application-payment__actions">
-    <ion-button class="btn application-payment__page-back" routerDirection="back" mode="ios" fill="clear"> </ion-button>
-    <ion-button class="btn application-payment__save" mode="ios" fill="clear"> </ion-button>
+    <ion-button class="btn application-payment__page-back" routerDirection="back" fill="clear"></ion-button>
+    <ion-button class="btn application-payment__save" fill="clear"></ion-button>
   </div>
   <h2 class="application-payment__title">2022 Housing Application</h2>
-  <ion-card class="application-payment__card">
+  <ion-card no-padding class="application-payment__card ion-no-margin">
     <ion-card-content>
       As part of the application submission process, a one-time payment is required. Please review the amount below and
       select a payment method.
     </ion-card-content>
-    <ion-card-subtitle>Amount you'll pay </ion-card-subtitle>
+    <ion-card-title>Amount you'll pay </ion-card-title>
     <st-input-amount [contentString]="contentString" [control]="control"></st-input-amount>
     <st-credit-card-list
       [contentStrings]="contentStrings"

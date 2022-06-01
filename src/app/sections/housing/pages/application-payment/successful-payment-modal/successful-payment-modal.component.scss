@@ -1,6 +1,6 @@
 @import 'tools';
 
-.deposit-modal {
+.success-modal {
   &__header {
     border-bottom: 1px solid $color-whisper;
     margin-top: $notch-top;
@@ -132,11 +132,11 @@
   --background: #{$color-dodger-blue};
 }
 
-.deposit-modal__img-wrapper {
+.success-modal__img-wrapper {
     margin-top: 75px;
 }
 
-.deposit-modal__title-label {
+.success-modal__title-label {
   margin-top: 25px;
   margin-bottom: 50px;
 }
