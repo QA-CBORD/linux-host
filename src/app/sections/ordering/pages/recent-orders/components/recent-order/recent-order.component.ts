@@ -31,7 +31,7 @@ import { CheckingProcess } from '@sections/check-in/services/check-in-process-bu
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { firstValueFrom } from '@shared/utils';
-import { SafeHtmlPipe } from '@shared/pipes';
+
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -60,8 +60,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     public readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
-    private readonly safeHtmlPipe: SafeHtmlPipe,
-
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess
   ) { }
@@ -372,7 +370,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   private async initConfirmModal(onSuccessCb): Promise<void> {
-    const message = this.safeHtmlPipe.transform(await firstValueFrom(this.contentStrings.reorderNotAvailableItemMessage));
+    const message = await firstValueFrom(this.contentStrings.reorderNotAvailableItemMessage);
     const modal = await this.popoverController.create({
       component: StGlobalPopoverComponent,
       componentProps: {
