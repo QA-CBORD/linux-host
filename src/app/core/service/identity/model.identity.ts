@@ -52,17 +52,14 @@ export class VaultAuthenticator {
     private pinVerifier: Subject<any> = new Subject();
 
     registerPinSuppliedCb(cb: (pin: string) => void) {
-        console.log("registering callback: PinSuppliedCb", cb);
         this.onPinSuppliedCb = cb;
     }
 
     registerPinModalClosedCb(cb: (status: PinCloseStatus) => void) {
-        console.log("registering callback: PinModalClosedCb", cb);
         this.onPinModalClosedCb = cb;
     }
 
     async authenticate(pin: string): Promise<void> {
-        console.log("Authenticate called...", pin);
         this.onPinSuppliedCb(pin);
         return new Promise((resolve, reject) => {
             const subscription = this.pinVerifier.subscribe({
@@ -77,12 +74,10 @@ export class VaultAuthenticator {
     }
 
     onPinFailed(pin?: string) {
-        console.log("onPinFailed: ", pin);
         this.pinVerifier.next({ success: false });
     }
 
     onPinSuccess(pin?: string) {
-        console.log("onPinSuccess: ", pin);
         this.pinVerifier.next({ success: true });
     }
 }
