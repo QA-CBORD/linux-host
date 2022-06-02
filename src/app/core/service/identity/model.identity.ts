@@ -73,11 +73,11 @@ export class VaultAuthenticator {
         this.onPinModalClosedCb(status);
     }
 
-    onPinFailed(pin?: string) {
+    onPinFailed() {
         this.pinVerifier.next({ success: false });
     }
 
-    onPinSuccess(pin?: string) {
+    onPinSuccess() {
         this.pinVerifier.next({ success: true });
     }
 }
