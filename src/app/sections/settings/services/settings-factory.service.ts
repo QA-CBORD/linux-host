@@ -13,7 +13,6 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { IdentityService } from '@core/service/identity/identity.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -49,7 +48,6 @@ export class SettingsFactoryService {
   constructor(
     private readonly authFacadeService: AuthFacadeService,
     private readonly settingsFacade: SettingsFacadeService,
-    private readonly identityService: IdentityService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,

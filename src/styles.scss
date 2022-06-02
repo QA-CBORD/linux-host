@@ -24,7 +24,7 @@
   //Temp styles for popover:
   .sc-ion-popover-md-h,
   .sc-ion-popover-ios-h {
-    --min-width: 300px !important;
+    --min-width: 302px !important;
 
     ion-backdrop {
       opacity: 0.5 !important;
@@ -114,7 +114,7 @@
       --height: 360px;
     }
 
-    .modal-wrapper {
+    .modal-wrapper, .modal-shadow {
       position: absolute;
       bottom: 0;
     }

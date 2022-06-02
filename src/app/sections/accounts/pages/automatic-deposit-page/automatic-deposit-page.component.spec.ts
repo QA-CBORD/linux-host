@@ -1,6 +1,7 @@
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { firstValueFrom } from '@shared/utils';
 import { of } from 'rxjs';
+import { DEPOSIT_FREQUENCY } from './auto-deposit.config';
 import { AutomaticDepositPageComponent } from './automatic-deposit-page.component';
 
 describe('AutomaticDepositPageComponent', () => {
@@ -61,10 +62,13 @@ describe('AutomaticDepositPageComponent', () => {
     );
   });
 
-  describe('getSetting', () => {
+  describe('AutomaticDeposit', () => {
     it('Should retreive the list of amount', async () => {
       const amounts = await firstValueFrom(fixture.billMeAmounts$);
       expect(amounts.length).toBeGreaterThan(0);
+    });
+    it('Should have activeFrequency settled as monthly by default', async () => {
+      expect(fixture.activeFrequency).toEqual(DEPOSIT_FREQUENCY.month);
     });
   });
 });

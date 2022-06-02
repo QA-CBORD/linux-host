@@ -63,10 +63,11 @@ export function toggleBiometricStatus(services: SettingsServices) {
 
 export function handlePinAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
-  setting.callback = async function() {
+  setting.callback = async function () {
     const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
     return services.identity
       .pinLoginSetup(biometricsEnabled, false, {
+        navigateBackOnClose: true,
         showDismiss: true,
         pinAction: biometricsEnabled ? PinAction.CHANGE_PIN_BIOMETRIC : PinAction.CHANGE_PIN_ONLY,
       });
