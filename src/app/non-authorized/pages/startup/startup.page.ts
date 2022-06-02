@@ -48,7 +48,7 @@ export class StartupPage {
   async checkLoginFlow() {
     // step 1: determine and initialize current environment.
     await this.environmentFacadeService.initialization();
-    let session = null;
+    let session: VaultSession = null;
 
     try {
       session = await this.unlockVaultIfSetup();
@@ -59,7 +59,7 @@ export class StartupPage {
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
     const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute({
       promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$())
-    });
+    }, !session?.pin);
 
     if (session?.pin) {
       return this.handleVaultLoginSuccess(session);
@@ -81,8 +81,8 @@ export class StartupPage {
   }
 
 
-  async connectionIssueAwarePromiseExecute(options: ExecOptions<any>) {
-    return this.connectivityAwareFacadeService.execute(options);
+  async connectionIssueAwarePromiseExecute(options: ExecOptions<any>, isVaultLocked = false) {
+    return this.connectivityAwareFacadeService.execute(options, isVaultLocked);
   }
 
 
@@ -98,11 +98,6 @@ export class StartupPage {
 
   async handleVaultLoginSuccess(session: VaultSession): Promise<void> {
     this.authenticatePin(session.pin);
-    // if (session.biometricUsed) {
-    //   this.authenticatePin(session.pin);
-    // } else {
-    //   this.navigateToDashboard();
-    // }
   }
 
 
@@ -142,7 +137,7 @@ export class StartupPage {
         await this.navigateToDashboard();
         break;
       default:
-        await this.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);;
+        await this.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
     }
   }
 
@@ -158,7 +153,7 @@ export class StartupPage {
 
   // 
   async unlockVault(biometricEnabled: boolean): Promise<any> {
-    return await this.identityFacadeService.unlockVault(biometricEnabled)
+    return this.identityFacadeService.unlockVault(biometricEnabled)
       .then((session) => this.handleVaultLoginSuccess(session))
       .catch(() => this.handleVaultUnlockFailure());
   }

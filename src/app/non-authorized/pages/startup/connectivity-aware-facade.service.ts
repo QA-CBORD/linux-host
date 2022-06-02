@@ -52,22 +52,22 @@ export class ConnectivityAwareFacadeService {
         options.rejectOnError = options.rejectOnError ? options.rejectOnError : () => false;
     }
 
-    async execute<T>(options: ExecOptions<T>): Promise<PromiseExecResult<T>> {
+    async execute<T>(options: ExecOptions<T>, isVaultLocked = true): Promise<PromiseExecResult<T>> {
         this.setOptionsDefaults(options);
         return new Promise((resolve, reject) => {
-            this.runExecutionLogic(resolve, reject, options);
+            this.runExecutionLogic(resolve, reject, options, isVaultLocked);
         });
 
     }
 
-    private async runExecutionLogic(resolve, reject, { rejectOnError, promise, showLoading }: ExecOptions<any>) {
+    private async runExecutionLogic(resolve, reject, { rejectOnError, promise, showLoading }: ExecOptions<any>, isVaultLocked: boolean) {
         try {
             resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(promise, showLoading) });
         } catch (error) {
             if (rejectOnError(error)) {
                 reject(error);
             } else {
-                const { data, promiseResolved } = await this.handleConnectivityError({ rejectOnError, promise });
+                const { data, promiseResolved } = await this.handleConnectivityError({ rejectOnError, promise }, isVaultLocked);
                 if (promiseResolved) {
                     resolve(data);
                 } else {
@@ -77,7 +77,7 @@ export class ConnectivityAwareFacadeService {
         }
     }
 
-    private async handleConnectivityError<T>({ promise, rejectOnError }: ExecOptions<T>): Promise<{ data, promiseResolved }> {
+    private async handleConnectivityError<T>({ promise, rejectOnError }: ExecOptions<T>, isVaultLocked: boolean): Promise<{ data, promiseResolved }> {
         let promiseResolved = false;
         let data = null;
         const showLoading = true;
@@ -87,7 +87,7 @@ export class ConnectivityAwareFacadeService {
                     .then(r => (promiseResolved = true) && (((data = r) && true) || true))
                     .catch(e => rejectOnError(e) && ((data = e) && true));
             }
-        }, true);
+        }, true, isVaultLocked);
         return { promiseResolved, data };
     }
 

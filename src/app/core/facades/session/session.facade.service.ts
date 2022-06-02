@@ -98,7 +98,7 @@ export class SessionFacadeService {
       const { data: isPinLoginEnabled } = await this.connectivityFacade.execute({
         promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionId),
         showLoading: false
-      });
+      }, false);
       const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
       if (isPinLoginEnabled && isPinEnabledForUserPreference) {
         const isBiometricsEnabled = await this.identityFacadeService.isBiometricAvailable();

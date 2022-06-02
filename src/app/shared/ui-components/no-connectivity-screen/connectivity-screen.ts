@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, Injector, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -13,7 +13,6 @@ import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigur
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
 import { Subscription } from 'rxjs';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 @Component({
   selector: 'st-connectivity-screen',
@@ -29,6 +28,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   @Input() retryHandler: RetryHandler;
   @Input() errorType: ConnectivityErrorType;
   @Input() freshContentStringsLoaded = false;
+  @Input() isVaultLocked = true;
 
   strings: any;
 
@@ -46,16 +46,11 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     private readonly changeDetector: ChangeDetectorRef,
     private readonly activatedRoute: ActivatedRoute,
     private readonly modalController: ModalController,
-    private readonly injector: Injector
   ) { }
 
   ngOnInit() {
     this.init();
     this.addSubscription();
-  }
-
-  get identityFacadeService(): IdentityFacadeService {
-    return this.injector.get(IdentityFacadeService);
   }
 
   async dataInitialize(data: ConnectivityPageInfo) {
@@ -66,7 +61,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     this.config = connectivityPageConfigurations[this.errorType];
     this.strings = this.config.getContent(this.csModel);
     this.canScanCard = await (async () => {
-      const isVaultUnlocked = !(await this.identityFacadeService.isVaultLocked());
+      const isVaultUnlocked = !this.isVaultLocked;
       const isServerError = this.errorType === ConnectivityErrorType.SERVER_CONNECTION;
       const cashlessKeyInCache = !!(await firstValueFrom(this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)));
       return isVaultUnlocked && isServerError && cashlessKeyInCache || isVaultUnlocked && cashlessKeyInCache;

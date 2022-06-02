@@ -1,6 +1,8 @@
 import { Capacitor } from "@capacitor/core";
 import { BrowserVault, DeviceSecurityType, IdentityVaultConfig, Vault, VaultMigrator, VaultType } from "@ionic-enterprise/identity-vault";
+import { ModalController } from "@ionic/angular";
 import { VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from "./model.identity";
+import { PinAuthentication } from "./pin-authentication";
 
 
 const vaultConfig: IdentityVaultConfig = {
@@ -16,6 +18,10 @@ export class VaultFactory {
 
     static newVaultInstance(config: IdentityVaultConfig = vaultConfig): Vault | BrowserVault {
         return Capacitor.getPlatform() === 'web' ? new BrowserVault(config) : new Vault(config);
+    }
+
+    static newVaultPinAuthenticatorInstance(modalController: ModalController): PinAuthentication {
+        return new PinAuthentication(modalController);
     }
 
 

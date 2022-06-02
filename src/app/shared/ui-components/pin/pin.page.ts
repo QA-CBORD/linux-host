@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -13,8 +13,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
+import { PinAction, PinCloseStatus, VaultAuthenticator } from '@core/service/identity/model.identity';
 
 @Component({
   selector: 'st-pin',
@@ -36,6 +35,7 @@ export class PinPage implements OnInit, OnDestroy {
 
   currentLoginAttempts = 0;
   maxLoginAttempts = 3;
+  private authenticator: VaultAuthenticator
 
   /// temporary solution before content strings added
   private readonly setPinText: string = 'Create a 4 digit PIN to use when biometrics are not available';
@@ -53,17 +53,14 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityFacade: ConnectivityAwareFacadeService,
-    private readonly injector: Injector
-  ) { }
+    private readonly connectivityFacade: ConnectivityAwareFacadeService
+  ) {
+    window['PinPage'] = this;
+  }
 
 
   @Input() pinAction: PinAction;
   @Input() showDismiss = true;
-
-  get identityFacade(): IdentityFacadeService {
-    return this.injector.get(IdentityFacadeService);
-  }
 
   ngOnInit() {
     this.retrievePinRetrys();
@@ -170,12 +167,26 @@ export class PinPage implements OnInit, OnDestroy {
 
     if (this.pinNumber.length === 4) {
       // check if confirming pin
-      this.unlockVault();
+      this.onPinSupplied();
+    }
+  }
+
+  onPinSupplied() {
+    const pin = this.pinNumber.join('');
+    if (this.authenticator) {
+      this.authenticateWithVault(pin)
+    } else {
+      this.loginPin(pin);
     }
   }
 
   ngOnDestroy(): void {
     this.connectivityFacade.setPinModalOpened(false);
+  }
+
+  dismissModal() {
+    this.authenticator?.onPinClosed(PinCloseStatus.CANCELED);
+    this.closePage(null, PinCloseStatus.CANCELED);
   }
 
   delete() {
@@ -244,25 +255,29 @@ export class PinPage implements OnInit, OnDestroy {
         ));
   }
 
-  private async unlockVault() {
+  private async authenticateWithVault(pin: string) {
     this.setInstructionText('');
     this.currentLoginAttempts++;
-    const pin = this.pinNumber.join('');
-    this.identityFacade.setCustomPasscode(pin)
+    await this.loadingService.showSpinner();
+    this.authenticator.authenticate(pin)
       .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
-      .catch((e) => {
-        console.log(e);
+      .catch(() => {
         this.cleanLocalState();
         if (this.currentLoginAttempts >= this.maxLoginAttempts) {
           this.setErrorText('Maximum login attempts reached - logging you out');
-          setTimeout(() => this.closePage(null, PinCloseStatus.MAX_FAILURE), 2000);
+          setTimeout(() => {
+            this.authenticator.onPinClosed(PinCloseStatus.MAX_FAILURE);
+            this.closePage(null, PinCloseStatus.MAX_FAILURE);
+          }, 3000);
         } else {
           this.setErrorText('Incorrect PIN - please try again');
         }
-      });
+      }).finally(() => this.loadingService.closeSpinner());
   }
 
   private async loginPin(pin: string) {
+    this.setInstructionText('');
+    this.currentLoginAttempts++;
     await this.loadingService.showSpinner()
     this.authFacadeService
       .authenticatePin$(pin)

@@ -35,7 +35,7 @@ export class ConnectionFacadeService {
 
   public isConnectionError(error): boolean {
     return this.connectionService.isConnectionIssues(error);
-}
+  }
 
   private async isOpenedAsModal() {
     const currentTopModal = await this.modalController.getTop();
@@ -43,7 +43,7 @@ export class ConnectionFacadeService {
   }
 
 
-  setPinModalOpened(isOpened: boolean){
+  setPinModalOpened(isOpened: boolean) {
     this.pinModalOpened = isOpened;
   }
 
@@ -51,27 +51,27 @@ export class ConnectionFacadeService {
     return this.pinModalOpened || this.connectivityModalOpened;
   }
 
-  async handleConnectionError(handler: RetryHandler, showAsModal = false) {
+  async handleConnectionError(handler: RetryHandler, showAsModal = false, isVaultLocked = true) {
     if (showAsModal) {
       if ((await this.isOpenedAsModal())) {
         this.connectionService.modalRefreshHandle.next(true);
       } else {
-        return this.showConnectionIssuePageAsModal(handler);
+        return this.showConnectionIssuePageAsModal(handler, isVaultLocked);
       }
     } else {
       if (this.isOpened()) {
         this.connectionService.modalRefreshHandle.next(true);
       } else {
-        return await this.showConnectivityIssuePage(handler);
+        return await this.showConnectivityIssuePage(handler, isVaultLocked);
       }
     }
   }
 
-  private async showConnectivityIssuePage(retryHandler: RetryHandler) {
-    this.ngZone.run(() => this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.noConnectivity], { replaceUrl: true }).then(() => this.connectionService.retrySubject.next(retryHandler)));
+  private async showConnectivityIssuePage(retryHandler: RetryHandler, isVaultLocked: boolean) {
+    this.ngZone.run(() => this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.noConnectivity], { replaceUrl: true, state: { isVaultLocked } }).then(() => this.connectionService.retrySubject.next(retryHandler)));
   }
 
-  private async showConnectionIssuePageAsModal(retryHandler: RetryHandler) {
+  private async showConnectionIssuePageAsModal(retryHandler: RetryHandler, isVaultLocked: boolean) {
     this.loadingService.showSpinner();
     let csModel: ConnectivityScreenCsModel = {} as any;
     let errorType: ConnectivityErrorType;
@@ -84,7 +84,7 @@ export class ConnectionFacadeService {
       csModel = await firstValueFrom(this.commonService.loadContentString(ContentStringCategory.noConnectivity));
       freshContentStringsLoaded = true;
     }
-    return this.presentModal({ csModel, freshContentStringsLoaded, errorType, retryHandler });
+    return this.presentModal({ csModel, freshContentStringsLoaded, errorType, retryHandler, isVaultLocked });
   }
 
   private async presentModal(componentProps: any): Promise<any> {
@@ -95,10 +95,10 @@ export class ConnectionFacadeService {
       componentProps,
       component: ConnectivityScreen,
     });
-    this.connectivityModalOpened=true;
+    this.connectivityModalOpened = true;
     await modal.present();
     await this.loadingService.closeSpinner();
-    return await modal.onDidDismiss().finally(()=> this.connectivityModalOpened=false);
+    return await modal.onDidDismiss().finally(() => this.connectivityModalOpened = false);
   }
 
 }

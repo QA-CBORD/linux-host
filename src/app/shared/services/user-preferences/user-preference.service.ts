@@ -10,7 +10,10 @@ export class UserPreferenceService {
     private readonly pinEnabledUserPreference = 'get_pinEnabledUserPreference';
     private readonly biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
     private readonly biometricPermissionDeniedKey = "userDeniedBiometricPermission";
-    constructor(private readonly storageStateService: StorageStateService) { }
+
+    constructor(
+        private readonly storageStateService: StorageStateService
+    ) { }
 
 
     async cachedBiometricsEnabledUserPreference(useStrongCheck = false): Promise<boolean> {

@@ -15,7 +15,7 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { VaultIdentityService } from '@core/service/identity/vault.identity.service';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
-import { SessionData, VaultMigrateResult, VaultTimeoutOptions, VaultSession, PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
+import { VaultSession, VaultMigrateResult, VaultTimeoutOptions, PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
 
 export enum LoginState {
   DONE,
@@ -66,13 +66,13 @@ export class IdentityFacadeService extends ServiceStateFacade {
           message: 'There was an issue setting your pin',
         };
       case PinCloseStatus.SET_SUCCESS:
-        return this.initAndUnlock({ pin: data, biometricEnabled }, navigateToDashboard);
+        return this.initAndUnlock({ pin: data, biometricUsed: biometricEnabled }, navigateToDashboard);
     }
   }
 
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  private initAndUnlock(session: SessionData, navigateToDashboard: boolean) {
+  private initAndUnlock(session: VaultSession, navigateToDashboard: boolean) {
     if (navigateToDashboard) {
       this.navigateToDashboard()
     }
@@ -85,10 +85,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   updateVaultTimeout(options: VaultTimeoutOptions) {
     return this.identityService.updateVaultTimeout(options);
-  }
-
-  setCustomPasscode(passcode: string) {
-    return this.identityService.setVaultPasscode(passcode);
   }
 
   unlockVault(biometricEnabled: boolean): Promise<VaultSession> {
@@ -105,7 +101,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
       promise: async () => await this.routingService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true, queryParams: { skipLoading: true }
       })
-    });
+    }, false);
   }
 
   async logoutUser(): Promise<boolean> {
