@@ -24,7 +24,7 @@ import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 
-enum GUEST_FORM_CONTROL_NAMES {
+export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
   toAccount = 'toAccount',
   amountToDeposit = 'amountToDeposit',
@@ -130,7 +130,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   onAmountChanged(event) {
-    const amount = (event && event.target.value) || undefined;
+    const amount = (event && event.target?.value) || undefined;
     if (!isNaN(+amount)) {
       this.depositButtonLabel('Deposit $' + amount);
     } else {

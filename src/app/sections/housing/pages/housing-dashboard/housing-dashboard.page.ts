@@ -21,10 +21,10 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
   _selectedHousingTab: SelectedHousingTab = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();
 
-  isHeaderVisible = false;
-  hasRoomSelections = false;
-  hasContracts = false;
-  hasCheckInOuts = false;
+  isHeaderVisible: boolean;
+  hasRoomSelections: boolean;
+  hasContracts: boolean;
+  hasCheckInOuts: boolean;
 
   constructor(
     private _termsService: TermsService,

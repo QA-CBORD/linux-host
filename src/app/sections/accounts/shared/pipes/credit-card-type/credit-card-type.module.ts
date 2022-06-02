@@ -6,9 +6,7 @@ const declarations = [CreditCardTypePipe];
 
 @NgModule({
   declarations,
-  imports: [
-    CommonModule
-  ],
-  exports: declarations
+  imports: [CommonModule],
+  exports: declarations,
 })
-export class CreditCardTypeModule { }
+export class CreditCardTypePipeModule {}

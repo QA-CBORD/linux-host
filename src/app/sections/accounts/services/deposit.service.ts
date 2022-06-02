@@ -147,4 +147,9 @@ export class DepositService {
   getContentValueByName(name: string): string {
     return this.contentString[name] || '';
   }
+  
+  // Payment perform from housing application
+  feePayment(fromAccountId: string, amount: string): Observable<string> {
+    return this.commerceApiService.sale(fromAccountId, amount);
+  }
 }

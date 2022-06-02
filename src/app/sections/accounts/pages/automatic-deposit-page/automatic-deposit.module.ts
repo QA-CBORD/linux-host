@@ -12,7 +12,7 @@ import { AutoDepositApiService } from './service/auto-deposit-api-service.servic
 import { AutomaticDepositResolver } from './resolver/automatic-deposit.resolver';
 import { DepositFrequencyComponent } from './components/deposit-frequency/deposit-frequency.component';
 import { PopoverComponent } from './components/popover/popover.component';
-import { CreditCardTypeModule } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.module';
+import { CreditCardTypePipeModule } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.module';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
@@ -26,7 +26,7 @@ const declarations = [
   DepositTypeNavComponent,
   DepositFrequencyComponent,
   PopoverComponent,
-  ConfirmUnsavedChangesPopoverComponent
+  ConfirmUnsavedChangesPopoverComponent,
 ];
 const imports = [
   CommonModule,
@@ -36,7 +36,7 @@ const imports = [
   StHeaderModule,
   StPopoverLayoutModule,
   TransactionUnitsPipeModule,
-  CreditCardTypeModule,
+  CreditCardTypePipeModule,
   AutomaticDepositRoutingModule,
   StButtonModule,
   IonicModule.forRoot({
@@ -48,9 +48,7 @@ const entryComponents = [PopoverComponent, ConfirmUnsavedChangesPopoverComponent
 const providers = [AutoDepositService, AutoDepositApiService, AutomaticDepositResolver, UnsavedChangesGuard];
 
 @NgModule({
-  imports: [
-    imports,
-  ],
+  imports: [imports],
   declarations,
   providers,
   entryComponents: entryComponents,
