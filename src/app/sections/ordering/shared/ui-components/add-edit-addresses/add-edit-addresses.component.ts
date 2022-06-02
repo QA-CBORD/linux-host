@@ -68,9 +68,9 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.getSetting(Settings.Setting.ADDRESS_RESTRICTION);
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
+    this.getSetting(Settings.Setting.ADDRESS_RESTRICTION);
   }
 
   ngOnDestroy() {
