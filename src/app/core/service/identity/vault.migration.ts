@@ -5,12 +5,14 @@ import { VaultFactory } from "./vault-factory.service";
 import { VaultIdentityService } from "./vault.identity.service";
 
 export class VaultMigration {
-    private migrator: VaultMigrator;
     private pinAuthenticator: PinAuthentication;
 
     constructor(private readonly vaultService: VaultIdentityService) {
         this.pinAuthenticator = VaultFactory.newVaultPinAuthenticatorInstance(vaultService.modalController);
-        this.migrator = VaultFactory.newVaultMigratorInstance(() => this.pinAuthenticator.onPasscodeRequested());
+    }
+
+    private initMigrator(onPasscodeRequestedCb: () => Promise<string>): VaultMigrator {
+        return VaultFactory.newVaultMigratorInstance(onPasscodeRequestedCb);
     }
 
     private noDataInLegacyVault({ code, message }) {
@@ -18,12 +20,12 @@ export class VaultMigration {
     }
 
     private userFailedBiometricsAuth(error) {
-        return this.vaultService.isBiometricPermissionDenied(error)
+        return (error.code != VaultErrorCodes.AuthFailed
+            && this.vaultService.isBiometricPermissionDenied(error))
             || error.code === VaultErrorCodes.TooManyFailedAttempts
             || error.code === VaultErrorCodes.iOSBiometricsLockedOut
             || error.code === VaultErrorCodes.AndroidBiometricsLockedOut
-            || error.code === VaultErrorCodes.BiometricsNotEnabled
-            || error.code === VaultErrorCodes.AuthFailed;
+            || error.code === VaultErrorCodes.BiometricsNotEnabled;
     }
 
 
@@ -36,19 +38,21 @@ export class VaultMigration {
     }
 
     private async migrateBiometricLogin(): Promise<{ pin?: string, migrationResult: VaultMigrateResult, biometricUsed: boolean }> {
+        const migrator = this.initMigrator(() => this.handleAuthFailureOnVaultMigration().then(({ pin }) => pin || "Failed"));
         let migrationResponse: any = { migrationResult: VaultMigrateResult.MIGRATION_FAILED };
         try {
-            const { session } = await this.migrator.exportVault();
+            const { session } = await migrator.exportVault();
             migrationResponse = this.onMigrateSuccess(session.pin);
         } catch (error) {
-            console.log("ERROR MIGRATING: ", error);
             if (this.noDataInLegacyVault(error)) {
                 migrationResponse.migrationResult = VaultMigrateResult.MIGRATION_NOT_NEEDED;
             } if (this.userFailedBiometricsAuth(error)) {
                 migrationResponse = await this.handleAuthFailureOnVaultMigration();
             }
+        } finally {
+            migrator.clear();
         }
-        this.migrator.clear();
+
         return { ...migrationResponse, biometricUsed: await this.vaultService.isBiometricAvailable() };
     }
 
@@ -58,15 +62,17 @@ export class VaultMigration {
  */
     private async migratePinLogin(): Promise<{ pin?: string, migrationResult: VaultMigrateResult, biometricUsed: boolean }> {
         let migrationResponse: any = { migrationResult: VaultMigrateResult.MIGRATION_FAILED };
+        const migrator = this.initMigrator(() => this.pinAuthenticator.onPasscodeRequested());
         try {
-            const { session } = await this.pinAuthenticator.try(() => this.migrator.exportVault());
+            const { session } = await this.pinAuthenticator.try(() => migrator.exportVault());
             migrationResponse = this.onMigrateSuccess(session.pin);
         } catch (error) {
             if (this.noDataInLegacyVault(error)) {
                 migrationResponse.migrationResult = VaultMigrateResult.MIGRATION_NOT_NEEDED;
             }
+        } finally {
+            migrator.clear();
         }
-        this.migrator.clear();
         return { ...migrationResponse, biometricUsed: false };
     }
 
