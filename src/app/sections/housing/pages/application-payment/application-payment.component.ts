@@ -123,9 +123,13 @@ export class ApplicationPaymentComponent implements OnInit {
           await this.onPaymentSuccess(data);
         },
         () => {
-          this.toastCtrl.create({ message: 'Something went wrong.' });
+          this.errorMessage();
         }
       );
+  }
+
+  private errorMessage() {
+    this.toastCtrl.create({ message: 'Something went wrong.' });
   }
 
   private async onPaymentSuccess(data: TransactionalData) {
@@ -144,5 +148,9 @@ export class ApplicationPaymentComponent implements OnInit {
       backdropDismiss: false,
     });
     modal.present();
+  }
+
+  get year() {
+    return new Date().getFullYear(); 
   }
 }

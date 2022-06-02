@@ -34,4 +34,8 @@ export class SuccessfulPaymentModal implements OnInit {
       endingIn: 'ending in',
     };
   }
+
+  get year() {
+    return new Date().getFullYear(); 
+  }
 }

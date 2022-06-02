@@ -35,12 +35,12 @@ export class ConfirmFeePopover implements OnInit {
 
   private setContentString() {
     this.contentString = {
-      title: 'Confirm Payment',
+      title: 'Payment method',
       endingIn: 'ending in',
       okButton: 'Confirm',
       cancelButton: 'Cancel',
       paymentMethod: 'Card Type',
-      depositAmount: 'Deposit Amount',
+      depositAmount: 'Amount',
       account: 'Account',
     };
   }

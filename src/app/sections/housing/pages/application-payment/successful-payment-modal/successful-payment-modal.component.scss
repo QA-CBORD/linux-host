@@ -67,9 +67,6 @@
 
 .application-details__content {
   --background: #{$porcelain};
-  --padding-top: 8px;
-  --padding-start: 8px;
-  --padding-end: 8px;
 }
 
 .application-details__actions {
@@ -102,7 +99,6 @@
   background-color: $color-white;
   border-radius: 16px;
   box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
-  padding: 16px;
 }
 
 .application-details__back {
@@ -139,4 +135,44 @@
 .success-modal__title-label {
   margin-top: 25px;
   margin-bottom: 50px;
+}
+
+ion-card {
+  margin: 8px !important;
+}
+
+ion-card-content {
+  @include font-nunito-regular(14px);
+  margin-top: 38px;
+  margin-right: 0px;
+  margin-left: 0px;
+  color: #{$color-black};
+}
+
+ion-card-title {
+  @include font-nunito-heavy(16px);
+  margin-top: 25px;
+  margin-bottom: 5px;
+  text-align: center;
+  color: #{$color-black};
+}
+
+ion-label {
+  @include font-nunito-regular(18px);
+  display: flex;
+  margin-top: 50px;
+  padding-bottom:30px;
+  margin-left: 30px;
+  color: #{$color-black};
+}
+
+.ion-padding {
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+}
+
+st-button {
+  margin-bottom: 16px;
 }
