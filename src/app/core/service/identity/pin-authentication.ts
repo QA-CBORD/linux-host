@@ -5,7 +5,7 @@ import { firstValueFrom } from "@shared/utils";
 import { Subject } from "rxjs";
 import { PinAction, PinCloseStatus, VaultAuthenticator } from "./model.identity";
 
-export class PinAuthentication {
+export class PinAuthenticator {
     private pinModalOpened = false;
     private authenticator: VaultAuthenticator = new VaultAuthenticator();
     private pinClosedSubject = new Subject<PinCloseStatus>();

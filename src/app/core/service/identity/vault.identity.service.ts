@@ -9,9 +9,8 @@ import { ROLES } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { LoadingService } from '../loading/loading.service';
 import { TIME_OUT_WITH_EXTRA, VaultMigrateResult, VaultTimeoutOptions, VaultSession, VAULT_DEFAULT_TIME_OUT_IN_MILLIS, PinAction, PinCloseStatus } from './model.identity';
-import { PinAuthentication } from './pin-authentication';
+import { PinAuthenticator } from './pin-authentication';
 import { VaultFactory } from './vault-factory.service';
-import { VaultMigration } from './vault.migration';
 
 const key = 'sessionPin';
 const APP_STATE_CHANGE = 'appStateChange';
@@ -22,7 +21,7 @@ export class VaultIdentityService {
     private vault: Vault | BrowserVault;
     private pluginListenerHandle: PluginListenerHandle;
     private setTimeoutId: number;
-    pinAuthenticator: PinAuthentication;
+    pinAuthenticator: PinAuthenticator;
 
     constructor(
         @Inject(Injector) private injector: Injector,
@@ -43,7 +42,7 @@ export class VaultIdentityService {
     }
 
     async init(vault?: Vault | BrowserVault) {
-        this.pinAuthenticator = new PinAuthentication(this.modalController);
+        this.pinAuthenticator = new PinAuthenticator(this.modalController);
         this.vault = vault || VaultFactory.newVaultInstance();
         await Device.setHideScreenOnBackground(false, false);
         this.vault.onPasscodeRequested((isPasscodeSetRequest) => {
@@ -76,7 +75,7 @@ export class VaultIdentityService {
      */
     async migrateIfLegacyVault(): Promise<VaultMigrateResult> {
         this.loadingService.closeSpinner();
-        const { biometricUsed, pin, migrationResult } = await new VaultMigration(this).doVaultMigration();
+        const { biometricUsed, pin, migrationResult } = await VaultFactory.newVaultMigrationInstance(this).doVaultMigration();
         if (migrationResult == VaultMigrateResult.MIGRATION_SUCCESS)
             this.onVaultMigratedSuccess({ pin, biometricUsed });
         return migrationResult;
