@@ -1,0 +1,40 @@
+<ion-content class="ion-padding application-details__content" #content>
+  <div class="application-details__actions">
+    <ion-button class="btn application-details__page-back" routerDirection="back" mode="ios" fill="clear"> </ion-button>
+    <ion-button class="btn application-details__save" mode="ios" fill="clear"> </ion-button>
+  </div>
+  <h2 class="application-details__title">{{ year }} Housing Application</h2>
+  <ion-card no-padding class="application-details__card">
+    <div class="success-modal__img-wrapper">
+      <img src="/assets/images/housing/success-payment.svg" alt="big_check_success" />
+    </div>
+    <ion-card-title class="success-modal__title-label">{{ contentString.title }}</ion-card-title>
+    <section class="success-modal__info-container">
+      <div class="success-modal__label">
+        {{ contentString.amount }}:
+        <span class="success-modal__value">{{
+          data.amount | transactionUnits: data['selectedAccount'].accountType
+        }}</span>
+      </div>
+      <div class="success-modal__label">
+        {{ contentString.account }}:
+        <span class="success-modal__value">{{ data['selectedAccount'].accountDisplayName }}</span>
+      </div>
+      <div class="success-modal__label">
+        {{ contentString.paymentMethod }}:
+        <span class="success-modal__value" *ngIf="data['sourceAcc'].accountTender === 'Apple Pay'; else creditcard">
+          {{ data['sourceAcc'].accountTender }}
+        </span>
+        <ng-template #creditcard>
+          <span class="success-modal__value" *ngIf="!data['billme']; else billme">
+            {{ data['sourceAcc'].accountTender | creditCardType }} {{ contentString.endingIn }}
+            {{ data['sourceAcc'].lastFour }}
+          </span>
+        </ng-template>
+      </div>
+    </section>
+    <ion-footer class="success-modal__footer">
+      <st-button (onClick)="onDoneClicked()">Done</st-button>
+    </ion-footer>
+  </ion-card>
+</ion-content>

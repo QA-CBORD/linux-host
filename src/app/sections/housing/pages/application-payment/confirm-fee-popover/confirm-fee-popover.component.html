@@ -1,0 +1,36 @@
+<st-popover-layout [popoverConfig]="popoverConfig">
+  <section class="cdp__info-container">
+    <div class="cdp__label">
+      {{ contentString.title }}:
+      <span
+        class="cdp__value"
+        *ngIf="popoverConfig.message['sourceAcc'].accountTender === 'Apple Pay'; else creditcard"
+      >
+        {{ popoverConfig.message['sourceAcc'].accountTender }}
+      </span>
+      <ng-template #creditcard>
+        <span class="cdp__value">
+          {{ popoverConfig.message['sourceAcc'].accountTender | creditCardType }} {{ contentString.endingIn }}
+          {{ popoverConfig.message['sourceAcc'].lastFour }}
+        </span>
+      </ng-template>
+    </div>
+    <div class="cdp__label">
+      {{ contentString.depositAmount }}:
+      <span class="cdp__value">{{
+        popoverConfig.message['amount'] | transactionUnits: popoverConfig.message['selectedAccount'].accountType
+      }}</span>
+    </div>
+
+    <div class="cdp__label">
+      {{ contentString.account }}:
+      <span class="cdp__value">{{ popoverConfig.message['selectedAccount'].accountDisplayName }}</span>
+    </div>
+    <section class="cdp__policy-container" *ngIf="showDepositInstructions">
+      <h5 class="cdp__policy-title">{{ contentString.policyTitle }}</h5>
+      <div class="cdp__policy-body">
+        {{ showDepositInstructions }}
+      </div>
+    </section>
+  </section>
+</st-popover-layout>

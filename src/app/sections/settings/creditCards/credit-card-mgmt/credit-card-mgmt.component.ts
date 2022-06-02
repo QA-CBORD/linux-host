@@ -1,14 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { UserAccount } from '@core/model/account/account.model';
-import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
-import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
-import { AccountsService } from '@sections/dashboard/services';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
-import { firstValueFrom } from '@shared/utils';
-import { PaymentSystemType } from 'src/app/app.global';
+import { CreditCardService } from '../credit-card.service';
+import { AccountsType, CardCs } from './card-list/credit-card-list.component';
 
 @Component({
   selector: 'st-credit-card-mgmt',
@@ -16,28 +12,13 @@ import { PaymentSystemType } from 'src/app/app.global';
   styleUrls: ['./credit-card-mgmt.component.scss'],
 })
 export class CreditCardMgmtComponent implements OnInit {
-  
-  @Input() contentStrings: {
-    screen_title: string;
-    no_card_found: string;
-    add_new_card_btn_text: string;
-    user_info_text: string;
-    error_loading_cards: string;
-    remove_success_msg: string;
-    remove_failure_msg: string;
-    added_success_msg: string;
-  };
-
-  @Input() userAccounts: { account: UserAccount; display: string; iconSrc: string }[] = [];
-
+  @Input() contentStrings: CardCs;
+  @Input() userAccounts: AccountsType = [];
   noCreditCardFound = false;
-
-  addNewCreditCartState = false;
 
   constructor(
     private readonly modalControler: ModalController,
-    private readonly accountService: AccountsService,
-    private externalPaymentService: ExternalPaymentService,
+    private readonly creditCardService: CreditCardService,
     private loadingService: LoadingService,
     private readonly toastService: ToastService,
     protected readonly alertCtrl: AlertController,
@@ -50,25 +31,10 @@ export class CreditCardMgmtComponent implements OnInit {
 
   async retrieveAccounts() {
     this.loadingService.showSpinner();
-    const accounts = await firstValueFrom(
-      this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
-    )
-      .then(accounts => accounts.map(acc => this.buildStr(acc)))
-      .finally(() => this.loadingService.closeSpinner());
+    const accounts = await this.creditCardService.retrieveAccounts();
+    this.loadingService.closeSpinner();
     this.noCreditCardFound = !accounts.length;
     return accounts;
-  }
-
-  private buildStr(account: UserAccount) {
-    const { accountTender, lastFour } = account;
-    const creditCardTypeNumber = parseInt(accountTender) - 1;
-    const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
-    const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
-    return {
-      display,
-      account,
-      iconSrc,
-    };
   }
 
   close() {
@@ -81,7 +47,7 @@ export class CreditCardMgmtComponent implements OnInit {
       this.alertCtrl.dismiss();
       this.loadingService.showSpinner();
       try {
-        const isSuccess = await this.accountService.removeCreditCardAccount(account);
+        const isSuccess = await this.creditCardService.removeCreditCardAccount(account);
         this.userAccounts = await this.retrieveAccounts();
         (isSuccess && this.showMessage(strings.remove_success_msg)) || this.showMessage(strings.remove_failure_msg);
       } catch (err) {
@@ -117,18 +83,7 @@ export class CreditCardMgmtComponent implements OnInit {
   }
 
   async addCreditCard() {
-    try {
-      const strings = this.contentStrings as any;
-      const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
-      if (success) {
-        this.userAccounts = await this.retrieveAccounts();
-        this.showMessage(strings.added_success_msg);
-      } else {
-        this.showMessage(errorMessage);
-      }
-    } finally {
-      this.loadingService.closeSpinner();
-    }
+    await this.creditCardService.addCreditCard();
   }
 
   private async showMessage(message: string, duration = 5000) {

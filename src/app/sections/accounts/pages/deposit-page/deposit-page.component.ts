@@ -433,7 +433,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   onAmountChanged(event) {
-    const amount: string = event.target.value;
+    const amount: string = event.target?.value;
     const { submitButtonText } = this.contentString;
     document.getElementById('depositBtnText').innerHTML =
       amount && amount.length ? `${submitButtonText} $` + amount : submitButtonText;

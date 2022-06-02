@@ -1,0 +1,95 @@
+@import 'tools';
+
+.main_content {
+  .no-credit-card-block-wrapper {
+    margin-top: 10vh;
+    .no-credit-card-block-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20vh;
+      .no-credit-card-block-text {
+        @include font-nunito-regular(15px);
+        width: 155px;
+        letter-spacing: 1px;
+        margin-left: 22px;
+        line-height: 22px;
+      }
+    }
+  }
+
+  .cards {
+    .card-items {
+      .card-items-ion-list {
+        max-height: 62vh;
+        overflow-y: auto;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-right: 0px;
+      }
+      .credit-card-item {
+        --border-width: 0 0 0.3px 0;
+        padding: 4px 0px;
+        .card-icon {
+          .ionic-icon-left {
+            width: 44px;
+            height: 28.05px;
+          }
+        }
+        .credit__card_item-label {
+          display: flex;
+          justify-content: space-between;
+          margin-left: 10px;
+          margin-top: -3px;
+          margin-bottom: 0px;
+          @include font-nunito-regular(16px);
+        }
+
+        .icon-wrapper {
+          background: #f1f1f1;
+          width: 40px;
+          font-size: 25px;
+          height: 40px;
+          border-radius: 21px;
+          margin-bottom: 8px;
+          .ionic-icon {
+            margin: 8px;
+          }
+        }
+      }
+    }
+  }
+
+  .add-new-cc_item {
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+
+  .info-to-user {
+    margin: 16px 16px 0px 16px;
+    font-weight: 400;
+    line-height: 21px;
+    font-family: 'Nunito Regular';
+    display: flex;
+    div:nth-child(1) {
+      font-size: 30px;
+      .add-icon {
+        font-size: 15px;
+      }
+    }
+    div:nth-child(2) {
+      width: 80%;
+      margin: auto;
+      font-size: 14px;
+    }
+  }
+}
+
+.info-to-user-text {
+  @include font-nunito-regular(14px);
+}
+
+.info-to-user-text ion-label {
+  @include font-nunito-regular(16px);
+  color: black;
+}
