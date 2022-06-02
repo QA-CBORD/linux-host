@@ -228,9 +228,9 @@ export class VaultIdentityService {
 
     async retryPinUnlock(e): Promise<VaultSession> {
         const biometricAllowed = !this.isBiometricPermissionDenied(e);
-        this.logout();
         const { pin, status } = await this.pinAuthenticator.tryUnlock0();
         if (status == PinCloseStatus.LOGIN_SUCCESS) {
+            await this.logout();
             this.login({ pin, biometricUsed: biometricAllowed });
             return { pin, biometricUsed: false };
         } else {
