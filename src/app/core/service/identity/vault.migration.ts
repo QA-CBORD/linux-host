@@ -23,7 +23,7 @@ export class VaultMigration {
             || error.code === VaultErrorCodes.iOSBiometricsLockedOut
             || error.code === VaultErrorCodes.AndroidBiometricsLockedOut
             || error.code === VaultErrorCodes.BiometricsNotEnabled
-        // || error.code === VaultErrorCodes.UserCanceledInteraction;
+            || error.code === VaultErrorCodes.AuthFailed;
     }
 
 
@@ -41,6 +41,7 @@ export class VaultMigration {
             const { session } = await this.migrator.exportVault();
             migrationResponse = this.onMigrateSuccess(session.pin);
         } catch (error) {
+            console.log("ERROR MIGRATING: ", error);
             if (this.noDataInLegacyVault(error)) {
                 migrationResponse.migrationResult = VaultMigrateResult.MIGRATION_NOT_NEEDED;
             } if (this.userFailedBiometricsAuth(error)) {

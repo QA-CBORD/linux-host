@@ -255,24 +255,25 @@ export class PinPage implements OnInit, OnDestroy {
         ));
   }
 
-  private async authenticateWithVault(pin: string) {
+  private authenticateWithVault(pin: string) {
     this.setInstructionText('');
     this.currentLoginAttempts++;
-    await this.loadingService.showSpinner();
-    this.authenticator.authenticate(pin)
-      .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
-      .catch(() => {
-        this.cleanLocalState();
-        if (this.currentLoginAttempts >= this.maxLoginAttempts) {
-          this.setErrorText('Maximum login attempts reached - logging you out');
-          setTimeout(() => {
-            this.authenticator.onPinClosed(PinCloseStatus.MAX_FAILURE);
-            this.closePage(null, PinCloseStatus.MAX_FAILURE);
-          }, 3000);
-        } else {
-          this.setErrorText('Incorrect PIN - please try again');
-        }
-      }).finally(() => this.loadingService.closeSpinner());
+    setTimeout(() => {
+      this.authenticator.authenticate(pin)
+        .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
+        .catch(() => {
+          this.cleanLocalState();
+          if (this.currentLoginAttempts >= this.maxLoginAttempts) {
+            this.setErrorText('Maximum login attempts reached - logging you out');
+            setTimeout(() => {
+              this.authenticator.onPinClosed(PinCloseStatus.MAX_FAILURE);
+              this.closePage(null, PinCloseStatus.MAX_FAILURE);
+            }, 3000);
+          } else {
+            this.setErrorText('Incorrect PIN - please try again');
+          }
+        });
+    }, 100);
   }
 
   private async loginPin(pin: string) {
