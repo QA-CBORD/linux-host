@@ -46,7 +46,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   @ViewChildren(QuestionComponent) private questions: QueryList<QuestionComponent>;
   private subscription: Subscription = new Subscription();
   private applicationKey: number;
-  private isSubmitted: boolean;
+  isSubmitted: boolean;
   applicationDetails$: Observable<ApplicationDetails>;
   pages$: Observable<QuestionsPage[]>;
 

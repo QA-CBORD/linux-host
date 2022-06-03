@@ -14,7 +14,7 @@ export class InputAmountComponent {
   @Output() onInput: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() onKeyDown: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
-
+  isMaxCharLength = false;
   focusLine: boolean;
 
   ionInputEvent(event: Event) {
