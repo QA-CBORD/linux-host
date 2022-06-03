@@ -134,14 +134,14 @@ export class StartupPage {
         }
         break;
       case LoginState.DONE:
-        this.navigateToDashboard();
+        await this.navigateToDashboard();
         break;
       default:
         await this.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
     }
   }
 
-  navigateToDashboard() {
+  public async navigateToDashboard() {
     this.connectionIssueAwarePromiseExecute({
       promise: async () => this.navigationService.navigate([APP_ROUTES.dashboard], {
         replaceUrl: true,
@@ -153,12 +153,9 @@ export class StartupPage {
 
   // 
   async unlockVault(biometricEnabled: boolean): Promise<any> {
-    try {
-      return this.handleVaultLoginSuccess(
-        await this.identityFacadeService.unlockVault(biometricEnabled));
-    } catch {
-      return this.handleVaultUnlockFailure();
-    }
+    return await this.identityFacadeService.unlockVault(biometricEnabled)
+      .then((session) => this.handleVaultLoginSuccess(session))
+      .catch(() => this.handleVaultUnlockFailure());
   }
 
   unlockVaultIfSetup(): Promise<VaultSession> {
