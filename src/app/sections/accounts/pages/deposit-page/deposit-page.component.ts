@@ -53,7 +53,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   billmeDestinationAccounts: Array<UserAccount>;
   destinationAccounts: Array<UserAccount>;
   billmeMappingArr: any[];
-  isMaxCharLength = false;
   isDepositing = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,

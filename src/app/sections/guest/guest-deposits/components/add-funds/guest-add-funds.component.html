@@ -78,7 +78,7 @@
         </st-select-floating-label>
         <ng-template #mainInput>
           <st-input-amount
-            [contentString]="contentString"
+            [contentString]="errorCs"
             (onInput)="onAmountChanged($event)"
             (onKeyDown)="formatAmount($event)"
             (onBlur)="onAmountChanged($event)"
