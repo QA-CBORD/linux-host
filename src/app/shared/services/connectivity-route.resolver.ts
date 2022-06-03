@@ -9,7 +9,7 @@ import { firstValueFrom } from "@shared/utils";
 import { Observable } from "rxjs";
 import { CommonService } from "./common.service";
 import { ConnectionService } from "./connection-service";
-
+import { Location } from '@angular/common';
 
 @Injectable()
 export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
@@ -17,16 +17,17 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
     constructor(
         private readonly commonService: CommonService,
         private loadingService: LoadingService,
-        private connectionService: ConnectionService) { }
+        private connectionService: ConnectionService,
+        private readonly location: Location) { }
 
 
     resolve(): Observable<ConnectivityPageInfo> | Promise<ConnectivityPageInfo> {
         return this.resolveData().finally(() => this.loadingService.closeSpinner());
     }
 
-
     private async resolveData(): Promise<ConnectivityPageInfo> {
         await this.loadingService.showSpinner();
+        const { isVaultLocked } = <any>this.location.getState();
         let csModel: ConnectivityScreenCsModel = {} as any;
         let errorType: ConnectivityErrorType;
         let freshContentStringsLoaded = false;
@@ -40,7 +41,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
             freshContentStringsLoaded = true;
         }
 
-        return { csModel, freshContentStringsLoaded, errorType }
+        return { csModel, freshContentStringsLoaded, errorType, isVaultLocked }
     }
 
 }

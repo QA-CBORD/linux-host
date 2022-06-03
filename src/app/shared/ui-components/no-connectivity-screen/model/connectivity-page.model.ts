@@ -9,7 +9,8 @@ export interface ConnectivityPageInfo {
     csModel: ConnectivityScreenCsModel,
     freshContentStringsLoaded: boolean,
     errorType: ConnectivityErrorType,
-    retryHandler?: RetryHandler
+    retryHandler?: RetryHandler,
+    isVaultLocked: boolean
 }
 
 export enum ExecStatus {

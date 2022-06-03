@@ -57,6 +57,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     this.csModel = data?.csModel || this.csModel;
     this.freshContentStringsLoaded = data?.freshContentStringsLoaded || this.freshContentStringsLoaded;
     this.errorType = data?.errorType || this.errorType;
+    this.isVaultLocked = this.getVaultIsLocked(data);
 
     this.config = connectivityPageConfigurations[this.errorType];
     this.strings = this.config.getContent(this.csModel);
@@ -68,8 +69,16 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     })();
   }
 
+
+  private getVaultIsLocked(data: ConnectivityPageInfo): boolean {
+    if (data) {
+      return data.isVaultLocked;
+    }
+    return this.isVaultLocked;
+  }
+
   init() {
-    this.routeSubscription = this.activatedRoute.data.subscribe(async ({ data }) => {
+    this.routeSubscription = this.activatedRoute.data.subscribe(({ data }) => {
       this.dataInitialize(data);
     });
   }

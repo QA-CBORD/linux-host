@@ -51,7 +51,7 @@ export class ConnectionFacadeService {
     return this.pinModalOpened || this.connectivityModalOpened;
   }
 
-  async handleConnectionError(handler: RetryHandler, showAsModal = false, isVaultLocked = true) {
+  async handleConnectionError(handler: RetryHandler, showAsModal = true, isVaultLocked = true) {
     if (showAsModal) {
       if ((await this.isOpenedAsModal())) {
         this.connectionService.modalRefreshHandle.next(true);

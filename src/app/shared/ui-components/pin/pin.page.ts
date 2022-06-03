@@ -54,9 +54,7 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
     private readonly connectivityFacade: ConnectivityAwareFacadeService
-  ) {
-    window['PinPage'] = this;
-  }
+  ) {}
 
 
   @Input() pinAction: PinAction;
