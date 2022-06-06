@@ -38,8 +38,8 @@ export class EntryPage implements OnInit {
   private async initialization() {
     await this.loadingService.showSpinner();
     // Reset services url to current environment after logout and before any other service call
-    await this.environmentFacadeService.resetEnvironmentAndCreateSession(true);
-    this.loadingService.closeSpinner();
+    this.environmentFacadeService.resetEnvironmentAndCreateSession(true)
+      .finally(() => this.loadingService.closeSpinner());
   }
 
   private fetchDeviceInfo(): Observable<string> {

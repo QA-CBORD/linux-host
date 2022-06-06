@@ -10,9 +10,9 @@ import {
 import { Settings } from 'src/app/app.global';
 import { from, concat, zip, Observable } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
-import { PinAction } from '@shared/ui-components/pin/pin.page';
 import { ReportCardStatus } from '../models/report-card-status.config';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { PinAction } from '@core/service/identity/model.identity';
 
 export function getCardStatusValidation(services: SettingsServices): Observable<string> {
   const statusValidation = this as StatusSettingValidation;

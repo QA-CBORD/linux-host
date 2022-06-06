@@ -28,6 +28,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   @Input() retryHandler: RetryHandler;
   @Input() errorType: ConnectivityErrorType;
   @Input() freshContentStringsLoaded = false;
+  @Input() isVaultLocked = true;
 
   strings: any;
 
@@ -52,23 +53,32 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     this.addSubscription();
   }
 
-
   async dataInitialize(data: ConnectivityPageInfo) {
     this.csModel = data?.csModel || this.csModel;
     this.freshContentStringsLoaded = data?.freshContentStringsLoaded || this.freshContentStringsLoaded;
     this.errorType = data?.errorType || this.errorType;
+    this.isVaultLocked = this.getVaultIsLocked(data);
 
     this.config = connectivityPageConfigurations[this.errorType];
     this.strings = this.config.getContent(this.csModel);
     this.canScanCard = await (async () => {
+      const isVaultUnlocked = !this.isVaultLocked;
       const isServerError = this.errorType === ConnectivityErrorType.SERVER_CONNECTION;
       const cashlessKeyInCache = !!(await firstValueFrom(this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)));
-      return isServerError && cashlessKeyInCache || cashlessKeyInCache;
+      return isVaultUnlocked && isServerError && cashlessKeyInCache || isVaultUnlocked && cashlessKeyInCache;
     })();
   }
 
+
+  private getVaultIsLocked(data: ConnectivityPageInfo): boolean {
+    if (data) {
+      return data.isVaultLocked;
+    }
+    return this.isVaultLocked;
+  }
+
   init() {
-    this.routeSubscription = this.activatedRoute.data.subscribe(async ({ data }) => {
+    this.routeSubscription = this.activatedRoute.data.subscribe(({ data }) => {
       this.dataInitialize(data);
     });
   }

@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { ConnectionFacadeService } from "@shared/services/connection-facade.service";
 import { ExecStatus, RetryHandler } from "@shared/ui-components/no-connectivity-screen/model/connectivity-page.model";
+import { Observable } from "rxjs";
+import { firstValueFrom } from '@shared/utils';
 
 
 export interface PromiseExecResult<T> {
@@ -15,7 +17,7 @@ export enum PromiseExecStatus {
 }
 
 export interface ExecOptions<T> {
-    promise: () => Promise<T>,
+    promise: () => Promise<T> | Observable<T>,
     showLoading?: boolean;
     rejectOnError?: (error: any) => boolean
 }
@@ -36,7 +38,7 @@ export class ConnectivityAwareFacadeService {
     private isConnectionError(error): boolean {
         return this.connectionFacadeService.isConnectionError(error);
     }
-    
+
     isModalOpened(): boolean {
         return this.connectionFacadeService.isModalOpened();
     }
@@ -50,22 +52,22 @@ export class ConnectivityAwareFacadeService {
         options.rejectOnError = options.rejectOnError ? options.rejectOnError : () => false;
     }
 
-    async execute<T>(options: ExecOptions<T>): Promise<PromiseExecResult<T>> {
+    async execute<T>(options: ExecOptions<T>, isVaultLocked = true): Promise<PromiseExecResult<T>> {
         this.setOptionsDefaults(options);
         return new Promise((resolve, reject) => {
-            this.runExecutionLogic(resolve, reject, options);
+            this.runExecutionLogic(resolve, reject, options, isVaultLocked);
         });
 
     }
 
-    private async runExecutionLogic(resolve, reject, { rejectOnError, promise, showLoading }: ExecOptions<any>) {
+    private async runExecutionLogic(resolve, reject, { rejectOnError, promise, showLoading }: ExecOptions<any>, isVaultLocked: boolean) {
         try {
             resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(promise, showLoading) });
         } catch (error) {
             if (rejectOnError(error)) {
                 reject(error);
             } else {
-                const { data, promiseResolved } = await this.handleConnectivityError({ rejectOnError, promise });
+                const { data, promiseResolved } = await this.handleConnectivityError({ rejectOnError, promise }, isVaultLocked);
                 if (promiseResolved) {
                     resolve(data);
                 } else {
@@ -75,7 +77,7 @@ export class ConnectivityAwareFacadeService {
         }
     }
 
-    private async handleConnectivityError<T>({ promise, rejectOnError }: ExecOptions<T>): Promise<{ data, promiseResolved }> {
+    private async handleConnectivityError<T>({ promise, rejectOnError }: ExecOptions<T>, isVaultLocked: boolean): Promise<{ data, promiseResolved }> {
         let promiseResolved = false;
         let data = null;
         const showLoading = true;
@@ -85,7 +87,7 @@ export class ConnectivityAwareFacadeService {
                     .then(r => (promiseResolved = true) && (((data = r) && true) || true))
                     .catch(e => rejectOnError(e) && ((data = e) && true));
             }
-        }, true);
+        }, true, isVaultLocked);
         return { promiseResolved, data };
     }
 
@@ -94,12 +96,20 @@ export class ConnectivityAwareFacadeService {
         return this.connectionFacadeService.handleConnectionError(handler, showAsModal);
     }
 
-    private async run<T>(actualMethod: () => Promise<T>, showLoading: boolean): Promise<T> {
+    private async run<T>(actualMethod: () => Promise<T> | Observable<T>, showLoading: boolean): Promise<T> {
         if (showLoading) {
             await this.loadingService.showSpinner();
-            return await actualMethod().finally(() => this.loadingService.closeSpinner());
+            return await this.firstValueFromw(actualMethod)
+                .finally(() => this.loadingService.closeSpinner());
         } else {
-            return await actualMethod();
+            return await this.firstValueFromw(actualMethod);
         }
+    }
+
+    private async firstValueFromw<T>(method: () => Promise<T> | Observable<T>) {
+        if (method instanceof Observable) {
+            return await firstValueFrom(method)
+        }
+        return await method();
     }
 }

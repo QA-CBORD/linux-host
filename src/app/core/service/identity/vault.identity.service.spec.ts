@@ -2,16 +2,19 @@ import { CUSTOM_ELEMENTS_SCHEMA, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { DeviceSecurityType, VaultErrorCodes, VaultType } from '@ionic-enterprise/identity-vault';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
-import { VaultFactory, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './vault-factory.service';
-import { VaultIdentityService, VaultMigrateResult } from './vault.identity.service';
+import { VaultFactory } from './vault-factory.service';
+import { VaultIdentityService } from './vault.identity.service';
 import sinon from 'sinon';
 import { Device } from '@ionic-enterprise/identity-vault';
+import { PinCloseStatus, VaultMigrateResult, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './model.identity';
+import { ModalController } from '@ionic/angular';
 
 describe('VaultIdentityService', () => {
     let service: VaultIdentityService,
         injector,
         userPreferenceService,
-        vault;
+        vault,
+        modalController;
     beforeEach(async () => {
         vault = {
             onError: jest.fn(),
@@ -26,6 +29,9 @@ describe('VaultIdentityService', () => {
             clear: jest.fn(),
             unlock: jest.fn()
         };
+        modalController = {
+            create: jest.fn()
+        }
         injector = {
             get: jest.fn()
         };
@@ -38,7 +44,8 @@ describe('VaultIdentityService', () => {
         TestBed.configureTestingModule({
             providers: [
                 { provide: Injector, useValue: injector },
-                { provide: UserPreferenceService, useValue: userPreferenceService }
+                { provide: UserPreferenceService, useValue: userPreferenceService },
+                { provide: ModalController, useValue: modalController }
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         });
@@ -67,21 +74,13 @@ describe('VaultIdentityService', () => {
             const migrateSuccessSpy = jest.spyOn(service, 'onVaultMigratedSuccess');
             const clearSpy = jest.spyOn(migrator, 'clear');
             const loginSpy = jest.spyOn(service, 'login');
-            const patchVaultConfigSpy = jest.spyOn(service, 'patchVaultConfig');
             jest.spyOn(service, 'isBiometricAvailable').mockResolvedValue(true);
-
             const migrationResult = await service.migrateIfLegacyVault();
-
             expect(exportVaultSpy).toHaveBeenCalledTimes(1);
             expect(migrateSuccessSpy).toHaveBeenCalledTimes(1);
             expect(clearSpy).toHaveBeenCalledTimes(1);
-            expect(loginSpy).toHaveBeenCalledTimes(1);
-            expect(loginSpy).toHaveBeenNthCalledWith(1, { pin: '1111', biometricEnabled: true });
             expect(migrationResult).toBe(VaultMigrateResult.MIGRATION_SUCCESS);
-            expect(patchVaultConfigSpy).toHaveBeenNthCalledWith(1, {
-                type: VaultType.DeviceSecurity,
-                deviceSecurityType: DeviceSecurityType.Biometrics
-            })
+            expect(loginSpy).toHaveBeenNthCalledWith(1, { pin: '1111', biometricUsed: true });
         });
 
         it('should result in migrationNotNeeded when no data foud in old-vault', async () => {
@@ -91,16 +90,17 @@ describe('VaultIdentityService', () => {
         });
 
         it('should allow pin retry on biometric failure when migrating data', async () => {
-            migrator.exportVault = () => {
-                throw {
-                    code: VaultErrorCodes.TooManyFailedAttempts
-                }
-            };
-
-            const retryPinSpy = jest.spyOn(service, 'retryPinUnlock').mockResolvedValue({ pin: '1111', biometricEnabled: true })
+            const vaultAutenticator: any = {
+                tryUnlock0: async () => {
+                    return { pin: '1111', biometricUsed: true }
+                },
+            }
+            jest.spyOn(VaultFactory, 'newVaultPinAuthenticatorInstance').mockReturnValue(vaultAutenticator);
+            jest.spyOn(migrator, 'exportVault').mockRejectedValue({ code: VaultErrorCodes.TooManyFailedAttempts })
+            const tryUnlock0Spy = jest.spyOn(vaultAutenticator, 'tryUnlock0').mockResolvedValue({ pin: '1111', status: PinCloseStatus.LOGIN_SUCCESS });
             const migrateSuccessSpy = jest.spyOn(service, 'onVaultMigratedSuccess');
             const migrationResult = await service.migrateIfLegacyVault();
-            expect(retryPinSpy).toHaveBeenCalledTimes(1);
+            expect(tryUnlock0Spy).toHaveBeenCalledTimes(1)
             expect(migrateSuccessSpy).toHaveBeenCalledTimes(1);
             expect(migrationResult).toBe(VaultMigrateResult.MIGRATION_SUCCESS);
         });
@@ -109,10 +109,8 @@ describe('VaultIdentityService', () => {
             jest.spyOn(userPreferenceService, 'cachedBiometricsEnabledUserPreference').mockResolvedValue(false);
             migrator.exportVault = () => { throw new Error('Some pin related error occurred') };
             const migrateSuccessSpy = jest.spyOn(service, 'onVaultMigratedSuccess');
-            const retryPinSpy = jest.spyOn(service, 'retryPinUnlock');
             const migrationResult = await service.migrateIfLegacyVault();
             expect(migrateSuccessSpy).toHaveBeenCalledTimes(0);
-            expect(retryPinSpy).toHaveBeenCalledTimes(0);
             expect(migrationResult).toBe(VaultMigrateResult.MIGRATION_FAILED);
         })
     });
@@ -123,7 +121,7 @@ describe('VaultIdentityService', () => {
 
         it('should configure vault with biometrics', async () => {
             const spy = jest.spyOn(service, 'patchVaultConfig');
-            await service.setUnlockMode({ pin: '1111', biometricEnabled: true });
+            await service.setUnlockMode({ pin: '1111', biometricUsed: true });
             expect(spy).toHaveBeenCalledTimes(1);
             expect(spy).toHaveBeenCalledWith({ type: VaultType.DeviceSecurity, deviceSecurityType: DeviceSecurityType.Biometrics });
         });
@@ -131,63 +129,61 @@ describe('VaultIdentityService', () => {
         it('should configure vault with pin only', async () => {
             const spy1 = jest.spyOn(service, 'patchVaultConfig');
             const spy2 = jest.spyOn(vault, 'updateConfig');
-            await service.setUnlockMode({ pin: '1111', biometricEnabled: false });
+            await service.setUnlockMode({ pin: '1111', biometricUsed: false });
             expect(spy1).toHaveBeenCalledTimes(1);
             expect(spy1).toHaveBeenCalledWith({ type: VaultType.CustomPasscode, deviceSecurityType: DeviceSecurityType.None });
             expect(spy2).toHaveBeenCalledTimes(1);
         });
 
         it('should unlock vault with biometric', async () => {
-            let unOnlockCallback;
-            const session = { pin: "1111", biometricEnabled: true };
-            vault.onUnlock = (callback) => (unOnlockCallback = callback)
-            vault.unlock = async () => unOnlockCallback();
+            const session = { pin: "1111", biometricUsed: true };
+            vault.unlock = async () => true;
             vault.getValue = async () => session.pin;
-            const closeAllModalsSpy = jest.spyOn(service, 'closeAllModals').mockResolvedValue();
+            const closeAllModalsSpy = jest.spyOn(service, 'closeAllModals').mockReturnValue(void 0);
             const unlockResult = await service.unlockVault(true);
             expect(closeAllModalsSpy).toHaveBeenCalledTimes(1);
             expect(unlockResult).toStrictEqual(session);
         });
 
         it('should retry unlock vault with pin when biometric auth fails', async () => {
-            const session = { pin: '1111', biometricEnabled: true };
-            let onUnlockCallback;
-            vault.onUnlock = (cb) => (onUnlockCallback = cb)
+            const session = { pin: '1111', biometricUsed: true };
             vault.unlock = async () => { throw new Error('random error') };
             vault.getValue = async () => session.pin;
             jest.spyOn(service, 'closeAllModals').mockResolvedValue();
-            const retryPinSpy = jest.spyOn(service, 'retryPinUnlock').mockResolvedValue(session);
+            const retryPinSpy = jest.spyOn(service, 'retryPinUnlock');
             const logoutSpy = jest.spyOn(service, 'logout').mockResolvedValue();
-            const loginSpy = jest.spyOn(service, 'login').mockImplementation(async () => onUnlockCallback());
+            const pinModalSpy = jest.spyOn(service.pinAuthenticator, 'tryUnlock0').mockResolvedValue({ pin: session.pin, status: PinCloseStatus.LOGIN_SUCCESS })
+            const loginSpy = jest.spyOn(service, 'login').mockResolvedValue();
 
             const unlockResult = await service.unlockVault(true);
-
-            expect(retryPinSpy).toHaveBeenCalledTimes(1);
+            expect(pinModalSpy).toHaveBeenCalledTimes(1)
+            expect(retryPinSpy).toHaveBeenNthCalledWith(1, new Error('random error'));
             expect(logoutSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledWith(session)
-            expect(unlockResult).toStrictEqual({ ...session, biometricEnabled: false });
+            expect(unlockResult).toStrictEqual({ ...session, biometricUsed: false });
         });
 
         it('should logout user when pin retry fails', async () => {
-            const session = { pin: '1111', biometricEnabled: true };
+            const session = { pin: '1111', biometricUsed: true };
             sinon.stub(service, 'closeAllModals').resolves();
             sinon.stub(vault, 'unlock').rejects({ message: 'biometric auth failed' });
-            const retryPinUnlockStub = sinon.stub(service, 'retryPinUnlock').rejects({ message: 'Failed pin retry' });
-            const results = await service.unlockVault(session.biometricEnabled).catch(e => e);
-            expect(retryPinUnlockStub.calledOnce).toBe(true);
-            expect(results).toStrictEqual({ message: 'Failed pin retry' })
+            const retryPinUnlockStub = jest.spyOn(service, 'retryPinUnlock');
+            const pinModalSpy = jest.spyOn(service.pinAuthenticator, 'tryUnlock0').mockResolvedValue({ pin: null, status: PinCloseStatus.MAX_FAILURE })
+            const results = await service.unlockVault(session.biometricUsed).catch(e => e);
+            expect(retryPinUnlockStub).toHaveBeenNthCalledWith(1, { message: 'biometric auth failed' });
+            expect(pinModalSpy).toHaveBeenCalledTimes(1);
+            expect(results).toStrictEqual({ code: PinCloseStatus.MAX_FAILURE })
         });
     });
 
 
     describe('misc', () => {
         it('should pass required params when routing to startup page', async () => {
-            const skipLoginFlow = true, biometricEnabled = true;
+            const skipLoginFlow = true, biometricUsed = true;
             const spy1 = jest.spyOn(service, 'showSplashScreen').mockResolvedValue(true);
-            await service.openStartupPage(biometricEnabled, skipLoginFlow);
-            expect(spy1).toBeCalledTimes(1);
-            expect(spy1).toBeCalledWith({ skipLoginFlow, biometricEnabled });
+            await service.openStartupPage(biometricUsed);
+            expect(spy1).toHaveBeenNthCalledWith(1, { skipLoginFlow, biometricEnabled: biometricUsed });
         });
 
         it('should only set new timeout if vault if currently not locked: Option V1', async () => {

@@ -13,24 +13,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
-
-export enum PinCloseStatus {
-  SET_SUCCESS = 'set_success',
-  LOGIN_SUCCESS = 'login_success',
-  CANCELED = 'cancelled',
-  ERROR = 'error',
-  MAX_FAILURE = 'max_failure',
-  DEVICE_MARK_LOST = 'device_marked_lost',
-  CLOSED_NO_CONNECTION = 'closed_no_connection'
-}
-
-export enum PinAction {
-  SET_BIOMETRIC,
-  SET_PIN_ONLY,
-  CHANGE_PIN_BIOMETRIC,
-  CHANGE_PIN_ONLY,
-  LOGIN_PIN,
-}
+import { PinAction, PinCloseStatus, VaultAuthenticator } from '@core/service/identity/model.identity';
 
 @Component({
   selector: 'st-pin',
@@ -52,6 +35,7 @@ export class PinPage implements OnInit, OnDestroy {
 
   currentLoginAttempts = 0;
   maxLoginAttempts = 3;
+  private authenticator: VaultAuthenticator
 
   /// temporary solution before content strings added
   private readonly setPinText: string = 'Create a 4 digit PIN to use when biometrics are not available';
@@ -70,12 +54,11 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
     private readonly connectivityFacade: ConnectivityAwareFacadeService
-  ) { }
+  ) {}
 
 
   @Input() pinAction: PinAction;
   @Input() showDismiss = true;
-
 
   ngOnInit() {
     this.retrievePinRetrys();
@@ -182,12 +165,26 @@ export class PinPage implements OnInit, OnDestroy {
 
     if (this.pinNumber.length === 4) {
       // check if confirming pin
-      this.loginPin();
+      this.onPinSupplied();
+    }
+  }
+
+  onPinSupplied() {
+    const pin = this.pinNumber.join('');
+    if (this.authenticator) {
+      this.authenticateWithVault(pin)
+    } else {
+      this.loginPin(pin);
     }
   }
 
   ngOnDestroy(): void {
     this.connectivityFacade.setPinModalOpened(false);
+  }
+
+  dismissModal() {
+    this.authenticator?.onPinClosed(PinCloseStatus.CANCELED);
+    this.closePage(null, PinCloseStatus.CANCELED);
   }
 
   delete() {
@@ -248,7 +245,7 @@ export class PinPage implements OnInit, OnDestroy {
         (async ({ message, status }) => {
           this.cleanLocalState();
           if (this.connectionService.isConnectionIssues({ message, status })) {
-             await this.handleConnectionIssues();
+            await this.handleConnectionIssues();
           } else {
             this.setErrorText('Error setting your PIN - please try again');
           }
@@ -256,13 +253,33 @@ export class PinPage implements OnInit, OnDestroy {
         ));
   }
 
-  private async loginPin() {
+  private authenticateWithVault(pin: string) {
     this.setInstructionText('');
-    await this.loadingService.showSpinner();
     this.currentLoginAttempts++;
+    setTimeout(() => {
+      this.authenticator.authenticate(pin)
+        .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
+        .catch(() => {
+          this.cleanLocalState();
+          if (this.currentLoginAttempts >= this.maxLoginAttempts) {
+            this.setErrorText('Maximum login attempts reached - logging you out');
+            setTimeout(() => {
+              this.authenticator.onPinClosed(PinCloseStatus.MAX_FAILURE);
+              this.closePage(null, PinCloseStatus.MAX_FAILURE);
+            }, 3000);
+          } else {
+            this.setErrorText('Incorrect PIN - please try again');
+          }
+        });
+    }, 100);
+  }
 
+  private async loginPin(pin: string) {
+    this.setInstructionText('');
+    this.currentLoginAttempts++;
+    await this.loadingService.showSpinner()
     this.authFacadeService
-      .authenticatePin$(this.pinNumber.join(''))
+      .authenticatePin$(pin)
       .pipe(
         finalize(() => this.loadingService.closeSpinner()),
         take(1)
