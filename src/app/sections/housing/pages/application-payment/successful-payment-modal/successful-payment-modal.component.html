@@ -26,7 +26,7 @@
           {{ data['sourceAcc'].accountTender }}
         </span>
         <ng-template #creditcard>
-          <span class="success-modal__value" *ngIf="!data['billme']; else billme">
+          <span class="success-modal__value">
             {{ data['sourceAcc'].accountTender | creditCardType }} {{ contentString.endingIn }}
             {{ data['sourceAcc'].lastFour }}
           </span>

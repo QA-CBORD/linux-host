@@ -46,8 +46,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   confirmationCs: ContentStringModel;
   guestDepositForm: FormGroup;
   recipientName: string;
-  isMaxCharLength = false;
   focusLine = false;
+  errorCs: { maxAmountError: string; minAmountError: string; amountPatternError: string; };
 
   constructor(
     private readonly fb: FormBuilder,
@@ -70,6 +70,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.activatedRoute.data.subscribe(response => {
       this.setResolvedData(response);
     });
+    this.setContentString();
   }
 
   ionViewWillEnter() {
@@ -358,5 +359,13 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       );
     this.paymentMethod.reset();
     this.paymentMethod.markAsPristine();
+  }
+
+  private setContentString() {
+    this.errorCs = { 
+      maxAmountError: 'The maximum amount for a deposit is',
+      minAmountError: 'The minimum amount for a deposit is',
+      amountPatternError: 'Please enter a valid amount.',
+    }
   }
 }
