@@ -19,7 +19,20 @@ export class ShowHideNavbarDirective {
     'cart',
     'deposit',
     'addfunds',
-    'scanCode'
+    'scanCode',
+    'applications',
+    'rooms-search',
+    'check-in-out',
+    'facilities',
+    'contracts',
+    'work-orders',
+    'units',
+    'favorites',
+    'non-assignments',
+    'check-in-out-spots',
+    'roommates-search',
+    'waiting-lists',
+    'inspections'
   ];
 
   /**
@@ -31,7 +44,7 @@ export class ShowHideNavbarDirective {
     'accounts',
     'settings',
     'securemessaging',
-    'housing',
+    'housing/dashboard',
     'explore'
   ];
 
