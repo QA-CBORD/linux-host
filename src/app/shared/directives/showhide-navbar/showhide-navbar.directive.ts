@@ -23,6 +23,16 @@ export class ShowHideNavbarDirective {
     'applications',
     'rooms-search',
     'check-in-out',
+    'facilities',
+    'contracts',
+    'work-orders',
+    'units',
+    'favorites',
+    'non-assignments',
+    'check-in-out-spots',
+    'roommates-search',
+    'waiting-lists',
+    'inspections'
   ];
 
   /**
