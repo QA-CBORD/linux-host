@@ -54,7 +54,7 @@ export class AutomaticDepositPageComponent {
   formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   automaticDepositForm: FormGroup;
   activeAutoDepositType: number;
-  activeFrequency: string = DEPOSIT_FREQUENCY.month;
+  activeFrequency: string = DEPOSIT_FREQUENCY.week;
   applePayEnabled$: Observable<boolean>;
   autoDepositSettings: UserAutoDepositSettingInfo;
   sourceAccounts: Array<UserAccount | PAYMENT_TYPE> = [];
@@ -78,14 +78,14 @@ export class AutomaticDepositPageComponent {
     private readonly userFacadeService: UserFacadeService
   ) {}
 
-  ionViewWillEnter() {
+  ionViewWillEnter(): void {
     this.showContent = true;
     this.getAccounts();
     this.cdRef.detectChanges();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
   }
 
-  ionViewWillLeave() {
+  ionViewWillLeave(): void {
     this.deleteForm();
     this.showContent = false;
     this.sourceSubscription.unsubscribe();
@@ -93,15 +93,15 @@ export class AutomaticDepositPageComponent {
 
   //-------------------- Constants block --------------------------//
 
-  get controlNames() {
+  get controlNames(): typeof AUTOMATIC_DEPOSIT_CONTROL_NAMES {
     return AUTOMATIC_DEPOSIT_CONTROL_NAMES;
   }
 
-  get autoDepositTypes() {
+  get autoDepositTypes(): typeof AUTO_DEPOSIT_PAYMENT_TYPES {
     return AUTO_DEPOSIT_PAYMENT_TYPES;
   }
 
-  get frequency() {
+  get frequency(): typeof DEPOSIT_FREQUENCY {
     return DEPOSIT_FREQUENCY;
   }
 
@@ -109,7 +109,7 @@ export class AutomaticDepositPageComponent {
     return WEEK;
   }
 
-  get paymentTypes() {
+  get paymentTypes(): typeof PAYMENT_TYPE {
     return PAYMENT_TYPE;
   }
 
@@ -145,7 +145,7 @@ export class AutomaticDepositPageComponent {
 
   //-------------------- Dynamic form settings block --------------------------//
 
-  get amountsForSelect$() {
+  get amountsForSelect$(): Observable<string[]> {
     return iif(() => this.activePaymentType === PAYMENT_TYPE.BILLME, this.billMeAmounts$, this.oneTimeAmounts$);
   }
 
@@ -245,11 +245,11 @@ export class AutomaticDepositPageComponent {
     return `${i}-${Math.random()}`;
   }
 
-  parseFloat(value): number {
+  parseFloat(value: string): number {
     return parseFloat(value);
   }
 
-  async onPaymentMethodChanged(value) {
+  async onPaymentMethodChanged(value: string): Promise<void> {
     if (value === 'addCC') {
       this.automaticDepositForm.reset();
       const paymentSystem = await this.definePaymentSystemType();
@@ -319,6 +319,8 @@ export class AutomaticDepositPageComponent {
         this.initPredefinedAccounts(depositSettings, accounts);
         this.defineDestAccounts(this.paymentMethodAccount);
         this.autoDepositSettings.active && (await this.initForm());
+        const frecuency = this.autoDepositSettings.dayOfMonth > 0 ? DEPOSIT_FREQUENCY.month : DEPOSIT_FREQUENCY.week;
+        this._activeFrequency = String(frecuency);
         this.onDepositTypeChangedHandler(this.autoDepositSettings?.active ? this.autoDepositSettings?.autoDepositType : this.autoDepositTypes.automaticDepositOff)
       });
 
@@ -350,7 +352,7 @@ export class AutomaticDepositPageComponent {
 
   // -------------------- Events handlers block--------------------------//
 
-  async onDepositTypeChangedHandler(type: number) {
+  async onDepositTypeChangedHandler(type: number): Promise<AUTO_DEPOSIT_PAYMENT_TYPES> {
     const isAutomaticDepositOff = type === this.autoDepositTypes.automaticDepositOff;
     const wasDestroyed =
       type !== this.autoDepositTypes.automaticDepositOff &&
@@ -363,7 +365,7 @@ export class AutomaticDepositPageComponent {
       this.initForm();
     }
 
-    await this.updateFormStateByDepositType(type);
+    await this.updateFormStateByDepositType(type, this.activeFrequency);
   }
 
   async onFrequencyChanged(event: string): Promise<void> {
@@ -375,10 +377,11 @@ export class AutomaticDepositPageComponent {
     if (this.automaticDepositForm && this.automaticDepositForm.invalid) return;
 
     let predefinedUpdateCall;
+    let autoDepositSettingsValues = {...this.autoDepositSettings};
 
     if (this.automaticDepositForm === null) {
       predefinedUpdateCall = this.autoDepositService.updateAutoDepositSettings({
-        ...this.autoDepositSettings,
+        ...autoDepositSettingsValues,
         active: false,
       });
     } else {
@@ -388,8 +391,14 @@ export class AutomaticDepositPageComponent {
         switchMap(billmeMappingArr => this.depositService.sourceAccForBillmeDeposit(account, billmeMappingArr))
       );
 
+      if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
+        autoDepositSettingsValues = this.activeFrequency === DEPOSIT_FREQUENCY.week
+          ? { ...autoDepositSettingsValues, dayOfMonth: 0 }
+          : { ...autoDepositSettingsValues, dayOfWeek: 0 };
+      }
+
       const resultSettings = {
-        ...this.autoDepositSettings,
+        ...autoDepositSettingsValues,
         ...rest,
         autoDepositType: this.activeAutoDepositType,
         toAccountId: account.id,
@@ -479,7 +488,7 @@ export class AutomaticDepositPageComponent {
     }
   }
 
-  private async getAmountToDepositErrors(): Promise<any[]> {
+  private async getAmountToDepositErrors() {
     const { amountToDeposit } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
 
     const maxSetting = await this.settingsFacadeService
@@ -609,7 +618,7 @@ export class AutomaticDepositPageComponent {
   }
 
   private getModalBodyMessage(): string {
-    const accName = this.destinationAccount.accountDisplayName;
+    const accName = this.account.value.accountDisplayName;
 
     if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
       return getLowBalanceSuccessBodyMessage(this.amountToDeposit.value, this.lowBalanceAmount.value, accName);

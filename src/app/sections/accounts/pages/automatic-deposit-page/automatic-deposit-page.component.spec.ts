@@ -67,8 +67,8 @@ describe('AutomaticDepositPageComponent', () => {
       const amounts = await firstValueFrom(fixture.billMeAmounts$);
       expect(amounts.length).toBeGreaterThan(0);
     });
-    it('Should have activeFrequency settled as monthly by default', async () => {
-      expect(fixture.activeFrequency).toEqual(DEPOSIT_FREQUENCY.month);
+    it('Should have activeFrequency settled as week by default', async () => {
+      expect(fixture.activeFrequency).toEqual(DEPOSIT_FREQUENCY.week);
     });
   });
 });
