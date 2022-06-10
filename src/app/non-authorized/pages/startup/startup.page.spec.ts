@@ -44,6 +44,7 @@ describe('Application Startup Flow', () => {
     identityFacadeService = {
       migrateIfLegacyVault: jest.fn(),
       clearAll: jest.fn(),
+      isVaultLocked: jest.fn(),
       unlockVault: jest.fn()
     };
     authFacadeService = {
@@ -161,6 +162,7 @@ describe('Application Startup Flow', () => {
     const session = { pin: '1111', biometricUsed: true };
     it('should nav to dashboard on vault authentication success with BIOMETRIC', async () => {
       const unlockIvSpy = jest.spyOn(identityFacadeService, 'unlockVault').mockResolvedValue(session);
+      const isLockedSpy = jest.spyOn(identityFacadeService, 'isVaultLocked').mockResolvedValue(false);
       const execSpy = jest.spyOn(connectivityFacade, 'execute').mockResolvedValue({});
       const navDshbrdSpy = jest.spyOn(component, 'navigateToDashboard');
       const onsucessSpy = jest.spyOn(component, 'handleVaultLoginSuccess');
@@ -169,9 +171,25 @@ describe('Application Startup Flow', () => {
       expect(unlockIvSpy).toHaveBeenCalledTimes(1);
       expect(unlockIvSpy).toHaveBeenCalledWith(session.biometricUsed);
       expect(onsucessSpy).toHaveBeenCalledTimes(1);
+      expect(isLockedSpy).toHaveBeenCalledTimes(1);
       expect(onsucessSpy).toHaveBeenCalledWith(session);
       expect(navDshbrdSpy).toHaveBeenCalledTimes(1);
       expect(execSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should NOT nav to dashboard on vault authentication success with BIOMETRIC but vault locked after', async () => {
+      const unlockIvSpy = jest.spyOn(identityFacadeService, 'unlockVault').mockResolvedValue(session);
+      const isLockedSpy = jest.spyOn(identityFacadeService, 'isVaultLocked').mockResolvedValue(true);
+      const navDshbrdSpy = jest.spyOn(component, 'navigateToDashboard');
+      const onsucessSpy = jest.spyOn(component, 'handleVaultLoginSuccess');
+      await component.unlockVault(session.biometricUsed);
+
+      expect(unlockIvSpy).toHaveBeenCalledTimes(1);
+      expect(unlockIvSpy).toHaveBeenCalledWith(session.biometricUsed);
+      expect(onsucessSpy).toHaveBeenCalledTimes(1);
+      expect(isLockedSpy).toHaveBeenCalledTimes(1);
+      expect(onsucessSpy).toHaveBeenCalledWith(session);
+      expect(navDshbrdSpy).not.toHaveBeenCalled();
     });
 
     it('should logout on vault authentication failure', async () => {
