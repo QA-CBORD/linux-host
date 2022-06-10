@@ -618,15 +618,13 @@ export class AutomaticDepositPageComponent {
   }
 
   private getModalBodyMessage(): string {
-    const accName = this.account.value.accountDisplayName;
-
     if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
-      return getLowBalanceSuccessBodyMessage(this.amountToDeposit.value, this.lowBalanceAmount.value, accName);
+      return getLowBalanceSuccessBodyMessage(this.amountToDeposit.value, this.lowBalanceAmount.value, this.account.value.accountDisplayName);
     }
     if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
       return this.activeFrequency === DEPOSIT_FREQUENCY.month
-        ? getMonthlySuccessBodyMessage(this.amountToDeposit.value, this.dayOfMonth.value, accName)
-        : getWeeklySuccessBodyMessage(this.amountToDeposit.value, this.dayOfWeek.value - 1, accName);
+        ? getMonthlySuccessBodyMessage(this.amountToDeposit.value, this.dayOfMonth.value, this.account.value.accountDisplayName)
+        : getWeeklySuccessBodyMessage(this.amountToDeposit.value, this.dayOfWeek.value - 1, this.account.value.accountDisplayName);
     }
   }
 
