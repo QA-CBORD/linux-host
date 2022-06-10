@@ -44,7 +44,6 @@ export class StartupPage {
     }
   }
 
-
   async checkLoginFlow() {
     // step 1: determine and initialize current environment.
     await this.environmentFacadeService.initialization();
@@ -92,11 +91,14 @@ export class StartupPage {
       rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message),
     })
       .then(async () => {
-        // Making sure vault is unlocked before continuing and repeating the flow in case it is. 
+        // Making sure vault is unlocked before continuing and repeating the flow in case it is.
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
           const { biometricEnabled } = <any>this.location.getState();
-          return this.unlockVault(biometricEnabled);
+          return await this.identityFacadeService
+            .unlockVault(biometricEnabled)
+            .then(() => this.navigateToDashboard())
+            .catch(() => this.handleVaultUnlockFailure());
         }
 
         return this.navigateToDashboard();
