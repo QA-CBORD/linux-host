@@ -3,12 +3,12 @@ import { PopoverConfig } from '@core/model/popover/popover.model';
 import { buttons } from '@core/utils/buttons.config';
 
 @Component({
-  selector: 'st-confirm-fee-popover',
-  templateUrl: './confirm-fee-popover.component.html',
-  styleUrls: ['./confirm-fee-popover.component.scss'],
+  selector: 'st-confirm-payment-popover',
+  templateUrl: './confirm-payment-popover.component.html',
+  styleUrls: ['./confirm-payment-popover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfirmFeePopover implements OnInit {
+export class ConfirmPaymentPopover implements OnInit {
   @Input() data: any;
   @Input() contentString: any;
   @Input() intructions?: any;
@@ -42,10 +42,10 @@ export class ConfirmFeePopover implements OnInit {
       paymentMethod: 'Payment method',
       depositAmount: 'Amount',
       account: 'Account',
-      policyTitle: 'Card policy'
+      policyTitle: 'Card policy',
     };
 
     this.intructions =
-      'Once your payment is accepted, your application (OR your Housing Form) will be submitted and cannot be edited';
+      'Once your payment is accepted, your application (OR your Housing Form) will be submitted and cannot be edited.';
   }
 }

@@ -12,7 +12,7 @@ import {
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
 import { CurrentApplication as CurrentForm } from '../application-details/application-details.page';
-import { ConfirmFeePopover } from './confirm-fee-popover/confirm-fee-popover.component';
+import { ConfirmPaymentPopover } from './confirm-fee-popover/confirm-payment-popover.component';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
 
 export interface AccountSelectedItem {
@@ -76,7 +76,7 @@ export class ApplicationPaymentComponent implements OnInit {
 
   private onConfirmation(role: string, account: UserAccount, amount: string, info: TransactionalData) {
     if (role == BUTTON_TYPE.OKAY) {
-      this.payFee(account.id, amount).subscribe(
+      this.makePayment(account.id, amount).subscribe(
         async () => {
           await this.onPaymentSuccess(info);
         },
@@ -93,18 +93,17 @@ export class ApplicationPaymentComponent implements OnInit {
 
   private async confirmPaymentPopover(data: TransactionalData) {
     return await this.popoverCtrl.create({
-      component: ConfirmFeePopover,
+      component: ConfirmPaymentPopover,
       componentProps: {
         data,
       },
       cssClass: 'large-popover',
-      animated: false,
       backdropDismiss: false,
     });
   }
 
-  private payFee(accountId: string, amount: string) {
-    return this.depositService.feePayment(accountId, amount).pipe(take(1));
+  private makePayment(accountId: string, amount: string) {
+    return this.depositService.makePayment(accountId, amount).pipe(take(1));
   }
 
   private showErrorMessage() {
@@ -112,9 +111,7 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    this.applicationsService
-      .submitApplication(this.application)
-      .subscribe();
+    this.applicationsService.submitApplication(this.application).subscribe();
     await this.openPaymentSuccessModal(transaction);
   }
 
@@ -137,7 +134,7 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   get getAmount(): string {
-    return `${this.application.details.applicationDefinition.amount}`;
+    return this.application.details.applicationDefinition.amount.toFixed(2);
   }
 
   private buildTransactionInfo(account: UserAccount, amount: string): TransactionalData {
