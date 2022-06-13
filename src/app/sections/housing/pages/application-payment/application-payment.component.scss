@@ -16,8 +16,7 @@
 
 .application-payment__title {
   @include font-family($font-nunito-heavy);
-
-  font-size: 16px;
+  font-size: 20px;
   text-align: center;
   margin-top: 0;
   margin-bottom: 10px;
@@ -27,22 +26,11 @@
   @include font-family($font-nunito-regular);
 }
 
-.application-payment__save {
-  @include font-family($font-nunito-heavy);
-  --color: #{$color-dodger-blue};
-}
-
 .application-payment__card {
   --background: #f1f1f1;
   background-color: $color-white;
   border-radius: 16px;
   box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
-}
-
-.application-payment__back {
-  @include font-family($font-nunito-heavy);
-  color: #{$color-dodger-blue};
-  min-width: 80px;
 }
 
 .application-payment__next,
@@ -92,12 +80,24 @@ st-input-amount {
 }
 
 ion-label {
-  @include font-nunito-regular(18px);
+  @include font-family($font-nunito-heavy);
+  font-size: 20px;
+  color: $color-black;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.application-payment__back {
+  @include font-nunito-heavy(18px);
   display: flex;
   margin-top: 50px;
   padding-bottom:30px;
   margin-left: 30px;
-  color: #{$color-black};
+  color: #{$color-dodger-blue};
+  justify-content: left !important;
 }
 
 .ion-padding {

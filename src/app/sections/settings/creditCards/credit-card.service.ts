@@ -36,12 +36,11 @@ export class CreditCardService {
 
   async retrieveAccounts() {
     this.loadingService.showSpinner();
-    const accounts = await firstValueFrom(
+    return  await firstValueFrom(
       this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
     )
       .then(accounts => accounts.map(acc => this.buildStr(acc)))
       .finally(() => this.loadingService.closeSpinner());
-    return accounts;
   }
   
   removeCreditCardAccount({ account }) {

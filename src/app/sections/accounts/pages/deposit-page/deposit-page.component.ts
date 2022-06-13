@@ -481,17 +481,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return `${i}-${Math.random()}`;
   }
 
-  openActionSheet(ref: string) {
+  openWithVoiceOver(selector: string) {
     this.a11yService.isVoiceOverClick$.then(value => {
-      if (value) {
-        if (ref === 'payment') {
-          this.selectPayment.open();
-        } else if (ref === 'account') {
-          this.selectAccount.open();
-        } else if (ref === 'deposit') {
-          this.selectDeposit.open();
-        }
-      }
+      if(!value) return;
+      if (/payment/.test(selector))  this.selectPayment.open();
+      if (/account/.test(selector))  this.selectAccount.open();
+      if (/deposit/.test(selector))  this.selectDeposit.open();
     });
   }
 

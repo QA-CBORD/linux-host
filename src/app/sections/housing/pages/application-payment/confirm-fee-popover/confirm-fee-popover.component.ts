@@ -35,13 +35,17 @@ export class ConfirmFeePopover implements OnInit {
 
   private setContentString() {
     this.contentString = {
-      title: 'Payment method',
+      title: 'Confirm payment',
       endingIn: 'ending in',
       okButton: 'Confirm',
       cancelButton: 'Cancel',
-      paymentMethod: 'Card Type',
+      paymentMethod: 'Payment method',
       depositAmount: 'Amount',
       account: 'Account',
+      policyTitle: 'Card policy'
     };
+
+    this.intructions =
+      'Once your payment is accepted, your application (OR your Housing Form) will be submitted and cannot be edited';
   }
 }

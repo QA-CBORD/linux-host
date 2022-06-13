@@ -13,6 +13,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 export class SuccessfulPaymentModal implements OnInit {
   @Input() data: any;
   @Input() contentString: any;
+  @Input() title: string;
 
   constructor(private readonly modalController: ModalController, private readonly route: Router) {}
 
@@ -33,9 +34,5 @@ export class SuccessfulPaymentModal implements OnInit {
       paymentMethod: 'Payment method',
       endingIn: 'ending in',
     };
-  }
-
-  get year() {
-    return new Date().getFullYear(); 
   }
 }
