@@ -48,13 +48,13 @@ export class StartupPage {
     // step 1: determine and initialize current environment.
     await this.environmentFacadeService.initialization();
     let session: VaultSession = null;
-    const hasPin = session && session.pin;
     try {
       session = await this.unlockVaultIfSetup();
     } catch (e) {
       /** will only get this error if vault was setup but user could not authenticate */
       return this.handleVaultUnlockFailure();
     }
+    const hasPin = session && session.pin;
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
     const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute(
       {
@@ -95,10 +95,7 @@ export class StartupPage {
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
           const { biometricEnabled } = <any>this.location.getState();
-          return await this.identityFacadeService
-            .unlockVault(biometricEnabled)
-            .then(() => this.navigateToDashboard())
-            .catch(() => this.handleVaultUnlockFailure());
+          return this.unlockVault(biometricEnabled);
         }
 
         return this.navigateToDashboard();
