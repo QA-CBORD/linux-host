@@ -130,9 +130,13 @@
       class="deposit-form__label"
     >
       <ng-container role="options">
-        <ion-select-option *ngIf="(applePayEnabled$ | async)" [value]="'applePay'">
+        <!-- 
+          Hiding this option as requested on get-3936
+
+          <ion-select-option *ngIf="(applePayEnabled$ | async)" [value]="'applePay'">
           Apple Pay
         </ion-select-option>
+         -->
 
         <ng-container *ngFor="let account of sourceAccounts; trackBy: trackByAccountId">
           <ng-container *ngIf="account === paymentTypes.BILLME; then billMe; else creditCard"></ng-container>
