@@ -15,7 +15,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { StCreditCardListModule } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.module';
 import { StInputAmountModule } from '@sections/accounts/pages/deposit-page/input-amount/input-amount.module';
 import { HttpClientModule } from '@angular/common/http';
-import { ConfirmPaymentPopover } from './confirm-fee-popover/confirm-payment-popover.component';
+import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
 
 const imports = [
   CommonModule,

@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
-import { LOCAL_ROUTING } from '@sections/housing/housing.config';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { HousingService } from '@sections/housing/housing.service';
 
 @Component({
   selector: 'st-payment-modal',
@@ -15,14 +13,14 @@ export class SuccessfulPaymentModal implements OnInit {
   @Input() contentString: any;
   @Input() title: string;
 
-  constructor(private readonly modalController: ModalController, private readonly route: Router) {}
+  constructor(private readonly modalController: ModalController, private housingService: HousingService) {}
 
   ngOnInit(): void {
     this.setContentString();
   }
 
   async onDoneClicked() {
-    await this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard]);
+    this.housingService.handleSuccess();
     await this.modalController.dismiss();
   }
 

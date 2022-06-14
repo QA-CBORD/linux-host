@@ -206,7 +206,7 @@ export class ApplicationDetailsPage implements OnInit {
       component: ApplicationPaymentComponent,
       animated: false,
       backdropDismiss: false,
-      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts, application: { details: appDetails, formValue: form, key: this.getApplicationKey(), isSubmitted: false },
+      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts, currentForm: { details: appDetails, formValue: form, key: this.getApplicationKey(), isSubmitted: false },
   }});
     await modal.present();
   }

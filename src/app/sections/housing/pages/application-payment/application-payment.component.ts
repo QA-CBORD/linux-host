@@ -12,10 +12,10 @@ import {
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
 import { CurrentApplication as CurrentForm } from '../application-details/application-details.page';
-import { ConfirmPaymentPopover } from './confirm-fee-popover/confirm-payment-popover.component';
+import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
 
-export interface AccountSelectedItem {
+export interface CreditCardItem {
   display: string;
   account: UserAccount;
   iconSrc: string;
@@ -42,7 +42,7 @@ export interface TransactionalData {
 export class ApplicationPaymentComponent implements OnInit {
   @Input() contentStrings: CardCs;
   @Input() userAccounts: AccountsType = [];
-  @Input() application: CurrentForm;
+  @Input() currentForm: CurrentForm;
   control: AbstractControl;
 
   constructor(
@@ -64,12 +64,11 @@ export class ApplicationPaymentComponent implements OnInit {
     this.userAccounts = await this.creditCard.retrieveAccounts();
   }
 
-  async confirmPayment(accountInfo?: AccountSelectedItem) {
-    const { account } = accountInfo;
-    const info: TransactionalData = this.buildTransactionInfo(account, this.getAmount);
+  async confirmPayment(cardInfo?: CreditCardItem) {
+    const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.getAmount);
     const popover = await this.confirmPaymentPopover(info);
     popover.onDidDismiss().then(async ({ role }) => {
-      this.onConfirmation(role, account, this.getAmount, info);
+      this.onConfirmation(role, cardInfo?.account, this.getAmount, info);
     });
     await popover.present();
   }
@@ -98,6 +97,7 @@ export class ApplicationPaymentComponent implements OnInit {
         data,
       },
       cssClass: 'large-popover',
+      animated: false,
       backdropDismiss: false,
     });
   }
@@ -111,7 +111,7 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    this.applicationsService.submitApplication(this.application).subscribe();
+    this.applicationsService.submitApplication(this.currentForm).subscribe();
     await this.openPaymentSuccessModal(transaction);
   }
 
@@ -130,11 +130,11 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   get applicationTitle(): string {
-    return this.application.details.applicationDefinition.applicationTitle;
+    return this.currentForm.details.applicationDefinition.applicationTitle;
   }
 
   get getAmount(): string {
-    return this.application.details.applicationDefinition.amount.toFixed(2);
+    return this.currentForm.details.applicationDefinition.amount.toFixed(2);
   }
 
   private buildTransactionInfo(account: UserAccount, amount: string): TransactionalData {
