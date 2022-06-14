@@ -16,6 +16,7 @@ st-textarea-floating-label{
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+  padding-top: var(--ion-safe-area-top, 0);
 }
 
 .inspection-details__title {
