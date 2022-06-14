@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { UserAccount } from '@core/model/account/account.model';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
@@ -37,7 +37,6 @@ export interface TransactionalData {
   selector: 'st-application-payment',
   templateUrl: './application-payment.component.html',
   styleUrls: ['./application-payment.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationPaymentComponent implements OnInit {
   @Input() contentStrings: CardCs;
