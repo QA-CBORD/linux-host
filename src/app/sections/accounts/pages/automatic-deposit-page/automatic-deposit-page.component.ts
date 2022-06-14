@@ -374,6 +374,8 @@ export class AutomaticDepositPageComponent {
   }
 
   async onSubmit(): Promise<void> {
+    this.loadingService.showSpinner();
+
     if (this.automaticDepositForm && this.automaticDepositForm.invalid) return;
 
     let predefinedUpdateCall;
@@ -416,8 +418,9 @@ export class AutomaticDepositPageComponent {
     predefinedUpdateCall
       .pipe(take(1))
       .subscribe(
-        async res => res && (await this.showModal()),
-        async () => await this.showToast('Something went wrong please try again later...')
+        async res => res && this.loadingService.closeSpinner() && (await this.showModal()),
+        async () => this.loadingService.closeSpinner() && await this.showToast('Something went wrong please try again later...'),
+        () => this.loadingService.closeSpinner()
       );
   }
 
