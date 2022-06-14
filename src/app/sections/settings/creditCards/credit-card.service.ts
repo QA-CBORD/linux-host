@@ -30,7 +30,7 @@ export class CreditCardService {
     }
   }
 
-  private async showMessage(message: string, duration = 5000) {
+ async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });
   }
 

@@ -46,10 +46,9 @@ export class ApplicationPaymentComponent implements OnInit {
 
   constructor(
     private readonly depositService: DepositService,
-    private readonly creditCard: CreditCardService,
+    private readonly creditCardService: CreditCardService,
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
-    private readonly toastCtrl: ToastController,
     private applicationsService: ApplicationsService
   ) {}
 
@@ -59,8 +58,8 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   async addCreditCard() {
-    await this.creditCard.addCreditCard();
-    this.userAccounts = await this.creditCard.retrieveAccounts();
+    await this.creditCardService.addCreditCard();
+    this.userAccounts = await this.creditCardService.retrieveAccounts();
   }
 
   async confirmPayment(cardInfo?: CreditCardItem) {
@@ -105,13 +104,12 @@ export class ApplicationPaymentComponent implements OnInit {
     return this.depositService.makePayment(accountId, amount).pipe(take(1));
   }
 
-  private showErrorMessage() {
-    this.toastCtrl.create({ message: 'Something went wrong, please try again...' });
+  private async showErrorMessage() {
+    await this.creditCardService.showMessage('Something went wrong, please try again...');
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    this.applicationsService.submitApplication(this.currentForm).subscribe();
-    await this.openPaymentSuccessModal(transaction);
+    this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () =>  await this.openPaymentSuccessModal(transaction));
   }
 
   private async openPaymentSuccessModal(data: TransactionalData) {
