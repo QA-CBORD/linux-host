@@ -27,11 +27,11 @@ export class ServerError implements HttpInterceptor {
             res.body.exception !== null
           ) {
             if (shouldDelegateErrorToCaller(req.body.method)) {
-                 throw new Error(res.body.exception);
+              throw new Error(res.body.exception);
             }
 
-            console.log('handleServerException res: ', res)
-            console.log('handleServerException req: ', req)
+            console.log('handleServerException res: ', res);
+            console.log('handleServerException req: ', req);
             this.handleServerException(res.body.exception, req.body.method);
           }
         },
@@ -96,6 +96,7 @@ const GENERAL_ERRORS = {
   6100: {
     depositForUserFromAnyAccount: 'There was an issue with the transaction',
     deposit: 'There was an issue with the transaction',
+    sale: 'Your billing information does not match your credit card.',
     default: 'Unable to retrieve mobile locations.',
   },
   6113: {

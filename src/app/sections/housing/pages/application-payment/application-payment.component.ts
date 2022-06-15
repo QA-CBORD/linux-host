@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { UserAccount } from '@core/model/account/account.model';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
@@ -49,7 +50,8 @@ export class ApplicationPaymentComponent implements OnInit {
     private readonly creditCardService: CreditCardService,
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
-    private applicationsService: ApplicationsService
+    private readonly applicationsService: ApplicationsService,
+    private readonly loadingService: LoadingService
   ) {}
 
   ngOnInit() {
@@ -77,12 +79,13 @@ export class ApplicationPaymentComponent implements OnInit {
 
   private onConfirmation(role: string, account: UserAccount, amount: string, info: TransactionalData) {
     if (role == BUTTON_TYPE.OKAY) {
+    this.loadingService.showSpinner();
       this.makePayment(account.id, amount).subscribe(
         async () => {
           await this.onPaymentSuccess(info);
         },
-        () => {
-          this.showErrorMessage();
+        (err) => {
+          this.showErrorMessage(err);
         }
       );
     }
@@ -108,12 +111,16 @@ export class ApplicationPaymentComponent implements OnInit {
     return this.depositService.makePayment(accountId, amount).pipe(take(1));
   }
 
-  private async showErrorMessage() {
-    await this.creditCardService.showMessage('Something went wrong, please try again...');
+  private async showErrorMessage(err: string) {
+    await this.creditCardService.showMessage(err);
+    this.loadingService.closeSpinner();
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () =>  await this.openPaymentSuccessModal(transaction));
+    this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () =>  { 
+        await this.openPaymentSuccessModal(transaction); 
+        this.loadingService.closeSpinner();
+    });
   }
 
   private async openPaymentSuccessModal(data: TransactionalData) {
