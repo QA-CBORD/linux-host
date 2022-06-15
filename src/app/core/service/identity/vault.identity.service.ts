@@ -62,10 +62,14 @@ export class VaultIdentityService {
         });
     }
 
-    isBiometricPermissionDenied({ code }): boolean {
-        const userDeniedBiometricPermission = (code == VaultErrorCodes.SecurityNotAvailable) || (code == VaultErrorCodes.AuthFailed);
-        if (userDeniedBiometricPermission)
-            this.userPreferenceService.setBiometricPermissionDenied();
+    isBiometricPermissionDenied({ code }: { code: VaultErrorCodes }): boolean {
+        const userDeniedBiometricPermission = [
+          VaultErrorCodes.SecurityNotAvailable,
+          VaultErrorCodes.AuthFailed,
+          VaultErrorCodes.TooManyFailedAttempts,
+        ].includes(code);
+
+        if (userDeniedBiometricPermission) this.userPreferenceService.setBiometricPermissionDenied();
         return userDeniedBiometricPermission;
     }
 

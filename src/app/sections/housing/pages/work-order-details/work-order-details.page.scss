@@ -11,6 +11,7 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+  padding-top: var(--ion-safe-area-top, 0);
 }
 
 .work-order-details__title {

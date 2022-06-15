@@ -1,4 +1,9 @@
 @import 'tools';
+
+#facility-list {
+  padding-top: var(--ion-safe-area-top, 0);
+}
+
 ion-slide{
   .swiper-slide{
     display: block !important;

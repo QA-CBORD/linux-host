@@ -47,7 +47,7 @@ export class SessionFacadeService {
       if (isActive) {
         this.onActiveState();
       } else {
-        if (!(this.connectivityFacade.isModalOpened())) {
+        if (!this.connectivityFacade.isModalOpened()) {
           this.closeTopControllers();
         }
         this.appStatus = AppStatus.BACKGROUND;
@@ -71,7 +71,6 @@ export class SessionFacadeService {
     });
   }
 
-
   private async onActiveState() {
     /// use app status to prevent double calling
     if (this.appStatus === AppStatus.FOREGROUND) return;
@@ -85,7 +84,6 @@ export class SessionFacadeService {
     this._deepLinkPath = null;
   }
 
-
   async determineAppLoginState(systemSessionId: string): Promise<LoginState> {
     return await this.determineFromBackgroundLoginState(systemSessionId);
   }
@@ -95,10 +93,13 @@ export class SessionFacadeService {
     if (isWeb) {
       return LoginState.DONE;
     } else {
-      const { data: isPinLoginEnabled } = await this.connectivityFacade.execute({
-        promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionId),
-        showLoading: false
-      }, false);
+      const { data: isPinLoginEnabled } = await this.connectivityFacade.execute(
+        {
+          promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionId),
+          showLoading: false,
+        },
+        false
+      );
       const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
       if (isPinLoginEnabled && isPinEnabledForUserPreference) {
         const isBiometricsEnabled = await this.identityFacadeService.isBiometricAvailable();
@@ -136,7 +137,7 @@ export class SessionFacadeService {
 
     const { data: isPinLoginEnabled } = await this.connectivityFacade.execute({
       promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id),
-      showLoading: false
+      showLoading: false,
     });
 
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
@@ -180,6 +181,8 @@ export class SessionFacadeService {
   }
 
   private async closeTopControllers() {
+    if (!this.platform.is('cordova')) return;
+
     const taskId = await BackgroundTask.beforeExit(async () => {
       this.nativeProvider.dismissTopControllers(
         !!this.nativeStartupFacadeService.blockNavigationStartup,
