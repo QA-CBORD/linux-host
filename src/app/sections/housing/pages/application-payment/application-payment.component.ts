@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { UserAccount } from '@core/model/account/account.model';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import {
@@ -53,8 +53,12 @@ export class ApplicationPaymentComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.control = new FormControl(this.getAmount);
+    this.control = this.initFormControl();
     this.control.disable();
+  }
+
+  private initFormControl() {
+     return new FormControl(this.getAmountDue);
   }
 
   async addCreditCard() {
@@ -63,10 +67,10 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   async confirmPayment(cardInfo?: CreditCardItem) {
-    const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.getAmount);
+    const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.getAmountDue);
     const popover = await this.confirmPaymentPopover(info);
     popover.onDidDismiss().then(async ({ role }) => {
-      this.onConfirmation(role, cardInfo?.account, this.getAmount, info);
+      this.onConfirmation(role, cardInfo?.account, this.getAmountDue, info);
     });
     await popover.present();
   }
@@ -118,7 +122,7 @@ export class ApplicationPaymentComponent implements OnInit {
       component: SuccessfulPaymentModal,
       componentProps: {
         data,
-        title: this.applicationTitle,
+        title: this.formTitle,
       },
       animated: false,
       backdropDismiss: false,
@@ -126,11 +130,11 @@ export class ApplicationPaymentComponent implements OnInit {
     modal.present();
   }
 
-  get applicationTitle(): string {
+  get formTitle(): string {
     return this.currentForm.details.applicationDefinition.applicationTitle;
   }
 
-  get getAmount(): string {
+  get getAmountDue(): string {
     return this.currentForm.details.applicationDefinition.amount.toFixed(2);
   }
 
