@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { UserAccount } from '@core/model/account/account.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
-import { CreditCardService } from '../credit-card.service';
+import { AccountsConf, CreditCardService } from '../credit-card.service';
 import { AccountsType, CardCs } from './card-list/credit-card-list.component';
 
 @Component({
@@ -12,7 +13,7 @@ import { AccountsType, CardCs } from './card-list/credit-card-list.component';
   styleUrls: ['./credit-card-mgmt.component.scss'],
 })
 export class CreditCardMgmtComponent implements OnInit {
-  @Input() contentStrings: CardCs;
+  @Input() contentStrings: CardCs = {} as CardCs;
   @Input() userAccounts: AccountsType = [];
   noCreditCardFound = false;
 
@@ -25,11 +26,11 @@ export class CreditCardMgmtComponent implements OnInit {
     protected readonly popoverCtrl: PopoverController
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.noCreditCardFound = !this.userAccounts.length;
   }
 
-  async retrieveAccounts() {
+  async retrieveAccounts(): Promise<AccountsConf[]> {
     this.loadingService.showSpinner();
     const accounts = await this.creditCardService.retrieveAccounts();
     this.loadingService.closeSpinner();
@@ -37,26 +38,25 @@ export class CreditCardMgmtComponent implements OnInit {
     return accounts;
   }
 
-  close() {
+  close(): void {
     this.modalControler.dismiss();
   }
 
-  async removeAccount({ account, display }) {
-    const strings = this.contentStrings as any;
-    const onRemoveConfirmed = async () => {
-      this.alertCtrl.dismiss();
-      this.loadingService.showSpinner();
-      try {
-        const isSuccess = await this.creditCardService.removeCreditCardAccount(account);
-        this.userAccounts = await this.retrieveAccounts();
-        (isSuccess && this.showMessage(strings.remove_success_msg)) || this.showMessage(strings.remove_failure_msg);
-      } catch (err) {
-        this.showMessage(strings.remove_failure_msg);
-      } finally {
-        this.loadingService.closeSpinner();
-      }
-    };
+  async onRemoveConfirmed (account: UserAccount, strings: CardCs): Promise<void> {
+    this.loadingService.showSpinner();
+    try {
+      const isSuccess = await this.creditCardService.removeCreditCardAccount(account);
+      this.userAccounts = await this.retrieveAccounts();
+      this.showMessage(isSuccess ? strings.remove_success_msg : strings.remove_failure_msg);
+    } catch (err) {
+      this.showMessage(strings.remove_failure_msg);
+    } finally {
+      this.loadingService.closeSpinner();
+    }
+  }
 
+   removeAccount = async ({ account, display }): Promise<void> => {
+    const strings = this.contentStrings as any;
     const cardType = display.split(' ')[0];
     const modal = await this.popoverCtrl.create({
       component: ConfirmModalComponent,
@@ -70,11 +70,11 @@ export class CreditCardMgmtComponent implements OnInit {
         primaryBtnColor: 'danger',
         secondaryBtnColor: 'light',
         onClickPrimary: async () => {
-          await onRemoveConfirmed();
-          this.popoverCtrl.dismiss({});
+          await this.onRemoveConfirmed(account, strings);
+          await this.popoverCtrl.dismiss({});
         },
-        onClickSecondary: () => {
-          this.popoverCtrl.dismiss({});
+        onClickSecondary: async () => {
+          await this.popoverCtrl.dismiss({});
         },
       },
     });
@@ -82,11 +82,12 @@ export class CreditCardMgmtComponent implements OnInit {
     await modal.present();
   }
 
-  async addCreditCard() {
+  async addCreditCard(): Promise<void> {
     await this.creditCardService.addCreditCard();
+    this.userAccounts = await this.retrieveAccounts();
   }
 
-  private async showMessage(message: string, duration = 5000) {
-    await this.toastService.showToast({ message, duration });
+  private showMessage(message: string, duration = 5000) {
+    this.toastService.showToast({ message, duration });
   }
 }

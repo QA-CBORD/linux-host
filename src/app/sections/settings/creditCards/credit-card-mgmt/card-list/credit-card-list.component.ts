@@ -24,7 +24,7 @@ export type AccountsType = {
   styleUrls: ['./credit-card-list.component.scss'],
 })
 export class CardListComponent implements OnInit {
-  @Input() contentStrings: CardCs;
+  @Input() contentStrings: CardCs = {} as CardCs;
   @Input() userAccounts: AccountsType = [];
   @Input() removeIcon: boolean;
   @Input() addItem: boolean;
@@ -34,19 +34,19 @@ export class CardListComponent implements OnInit {
 
   noCreditCardFound: boolean;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.noCreditCardFound = !this.userAccounts.length;
   }
 
-  onRemoveEvent(account: UserAccount) {
+  onRemoveEvent(account: UserAccount): void {
     this.onRemove.emit(account);
   }
 
-  onClickEvent(account: UserAccount) {
+  onClickEvent(account: UserAccount): void {
     this.onClick.emit(account);
   }
 
-  onAddEvent() {
+  onAddEvent(): void {
     this.onAdd.emit();
   }
 }
