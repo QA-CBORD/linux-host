@@ -1,10 +1,10 @@
 <div class="amount__main-input-container">
     <ion-input
       class="amount__main-input"
-      type="tel"
+      type="number"
       inputmode="decimal"
       maxlength="10"
-      placeholder="0"
+      placeholder="0.00"
       tabindex="0"
       [ngStyle]="{ width: control.value?.length ? ('' + control.value)?.length + 1 + 'ch' : '2ch' }"
       [ngClass]="{

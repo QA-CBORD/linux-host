@@ -1,21 +1,22 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { UserAccount } from '@core/model/account/account.model';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
-import { ApplicationDetails } from '@sections/housing/applications/applications.model';
-import { HousingService } from '@sections/housing/housing.service';
+import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import {
   AccountsType,
   CardCs,
 } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
-import { ConfirmFeePopover } from './confirm-fee-popover/confirm-fee-popover.component';
+import { CurrentApplication as CurrentForm } from '../application-details/application-details.page';
+import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
 
-export interface AccountData {
+export interface CreditCardItem {
   display: string;
   account: UserAccount;
   iconSrc: string;
@@ -37,43 +38,118 @@ export interface TransactionalData {
   selector: 'st-application-payment',
   templateUrl: './application-payment.component.html',
   styleUrls: ['./application-payment.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ApplicationPaymentComponent implements OnInit {
   @Input() contentStrings: CardCs;
   @Input() userAccounts: AccountsType = [];
-  @Input() appDetails: ApplicationDetails;
+  @Input() currentForm: CurrentForm;
   control: AbstractControl;
 
   constructor(
     private readonly depositService: DepositService,
-    private readonly creditCard: CreditCardService,
-    private readonly cdRef: ChangeDetectorRef,
+    private readonly creditCardService: CreditCardService,
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
-    private readonly toastCtrl: ToastController,
-    private readonly housingService: HousingService
+    private readonly applicationsService: ApplicationsService,
+    private readonly loadingService: LoadingService,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.control = new FormControl(
-      this.getAmount());
+    this.control = this.initFormControl();
     this.control.disable();
   }
 
-  private getAmount() {
-    return this.appDetails.applicationDefinition.amount.toString();
+  private initFormControl() {
+     return new FormControl(this.getAmountDue);
   }
 
   async addCreditCard() {
-    await this.creditCard.addCreditCard();
-    this.userAccounts = await this.creditCard.retrieveAccounts();
+    await this.creditCardService.addCreditCard();
+    this.userAccounts = await this.creditCardService.retrieveAccounts();
+    this.cdRef.detectChanges();
   }
 
-  async confirmPayment(cardInfo?: AccountData) {
-    const { account } = cardInfo;
-    const amount = this.getAmount();
-    const data: TransactionalData = {
+  async confirmPayment(cardInfo?: CreditCardItem) {
+    const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.getAmountDue);
+    const popover = await this.confirmPaymentPopover(info);
+    popover.onDidDismiss().then(async ({ role }) => {
+      this.onConfirmation(role, cardInfo?.account, this.getAmountDue, info);
+    });
+    await popover.present();
+  }
+
+  private onConfirmation(role: string, account: UserAccount, amount: string, info: TransactionalData) {
+    if (role == BUTTON_TYPE.OKAY) {
+    this.loadingService.showSpinner();
+      this.makePayment(account.id, amount).subscribe(
+        async () => {
+          await this.onPaymentSuccess(info);
+        },
+        (err) => {
+          this.showErrorMessage(err);
+        }
+      );
+    }
+  }
+
+  async dismiss() {
+    await this.modalCtrl.dismiss();
+  }
+
+  private async confirmPaymentPopover(data: TransactionalData) {
+    return await this.popoverCtrl.create({
+      component: ConfirmPaymentPopover,
+      componentProps: {
+        data,
+      },
+      cssClass: 'large-popover',
+      animated: false,
+      backdropDismiss: false,
+    });
+  }
+
+  private makePayment(accountId: string, amount: string) {
+    return this.depositService.makePayment(accountId, amount).pipe(take(1));
+  }
+
+  private async showErrorMessage(err: string) {
+    await this.creditCardService.showMessage(err);
+    this.loadingService.closeSpinner();
+  }
+
+  private async onPaymentSuccess(transaction: TransactionalData) {
+    this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () =>  { 
+        await this.openPaymentSuccessModal(transaction); 
+        this.loadingService.closeSpinner();
+    });
+  }
+
+  private async openPaymentSuccessModal(data: TransactionalData) {
+    this.dismiss();
+    const modal = await this.modalCtrl.create({
+      component: SuccessfulPaymentModal,
+      componentProps: {
+        data,
+        title: this.formTitle,
+      },
+      animated: false,
+      backdropDismiss: false,
+    });
+    modal.present();
+  }
+
+  get formTitle(): string {
+    return this.currentForm.details.applicationDefinition.applicationTitle;
+  }
+
+  get getAmountDue(): string {
+    return this.currentForm.details.applicationDefinition.amount.toFixed(2);
+  }
+
+  private buildTransactionInfo(account: UserAccount, amount: string): TransactionalData {
+    return {
       sourceAcc: {
         accountTender: account.accountTender,
         lastFour: account.lastFour,
@@ -84,73 +160,5 @@ export class ApplicationPaymentComponent implements OnInit {
       },
       amount: amount,
     };
-    const popover = await this.confirmPaymentPopover(data);
-    popover
-      .onDidDismiss()
-      .then(async ({ role }) => {
-        if (role === BUTTON_TYPE.OKAY) {
-          this.payFee(account.id, amount, data);
-        } else {
-          this.cdRef.detectChanges();
-        }
-      })
-      .catch();
-    return await popover.present();
-  }
-
-  async dismiss() {
-    await this.modalCtrl.dismiss();
-  }
-
-  private async confirmPaymentPopover(data: TransactionalData) {
-    return await this.popoverCtrl.create({
-      component: ConfirmFeePopover,
-      componentProps: {
-        data,
-      },
-      cssClass: 'large-popover',
-      animated: false,
-      backdropDismiss: false,
-    });
-  }
-
-  private payFee(accountId: string, amount: string, data: TransactionalData) {
-    this.depositService
-      .feePayment(accountId, amount)
-      .pipe(take(1))
-      .subscribe(
-        async () => {
-          await this.onPaymentSuccess(data);
-        },
-        () => {
-          this.errorMessage();
-        }
-      );
-  }
-
-  private errorMessage() {
-    this.toastCtrl.create({ message: 'Something went wrong.' });
-  }
-
-  private async onPaymentSuccess(data: TransactionalData) {
-    this.housingService.updatePaymentSuccess(this.appDetails);
-    await this.onPaymentSuccessModal(data);
-  }
-
-  private async onPaymentSuccessModal(data: TransactionalData) {
-    this.dismiss();
-    const modal = await this.modalCtrl.create({
-      component: SuccessfulPaymentModal,
-      componentProps: {
-        data,
-      },
-      animated: false,
-      backdropDismiss: false,
-    });
-    modal.present();
-  }
-
-  get year() {
-    return new Date().getFullYear(); 
   }
 }
