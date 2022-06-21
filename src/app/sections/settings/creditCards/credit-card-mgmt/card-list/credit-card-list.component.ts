@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
+import { AccountsConf } from '../../credit-card.service';
 
 export interface CardCs {
   screen_title: string;
@@ -12,12 +13,6 @@ export interface CardCs {
   added_success_msg: string;
 }
 
-export type AccountsType = {
-  account: UserAccount;
-  display: string;
-  iconSrc: string;
-}[];
-
 @Component({
   selector: 'st-credit-card-list',
   templateUrl: './credit-card-list.component.html',
@@ -25,7 +20,7 @@ export type AccountsType = {
 })
 export class CardListComponent implements OnInit {
   @Input() contentStrings: CardCs = {} as CardCs;
-  @Input() userAccounts: AccountsType = [];
+  @Input() userAccounts: AccountsConf[] = [];
   @Input() removeIcon: boolean;
   @Input() addItem: boolean;
   @Output() onRemove: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();

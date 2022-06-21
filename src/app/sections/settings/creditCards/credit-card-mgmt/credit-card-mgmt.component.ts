@@ -5,7 +5,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
 import { AccountsConf, CreditCardService } from '../credit-card.service';
-import { AccountsType, CardCs } from './card-list/credit-card-list.component';
+import { CardCs } from './card-list/credit-card-list.component';
 
 @Component({
   selector: 'st-credit-card-mgmt',
@@ -14,7 +14,7 @@ import { AccountsType, CardCs } from './card-list/credit-card-list.component';
 })
 export class CreditCardMgmtComponent implements OnInit {
   @Input() contentStrings: CardCs = {} as CardCs;
-  @Input() userAccounts: AccountsType = [];
+  @Input() userAccounts: AccountsConf[] = [];
   noCreditCardFound = false;
 
   constructor(

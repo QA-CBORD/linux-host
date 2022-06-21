@@ -6,11 +6,8 @@ import { ModalController, PopoverController, ToastController } from '@ionic/angu
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ApplicationDetails } from '@sections/housing/applications/applications.model';
 import { HousingService } from '@sections/housing/housing.service';
-import {
-  AccountsType,
-  CardCs,
-} from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
+import { CardCs } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
+import { AccountsConf, CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
 import { ConfirmFeePopover } from './confirm-fee-popover/confirm-fee-popover.component';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
@@ -41,7 +38,7 @@ export interface TransactionalData {
 })
 export class ApplicationPaymentComponent implements OnInit {
   @Input() contentStrings: CardCs;
-  @Input() userAccounts: AccountsType = [];
+  @Input() userAccounts: AccountsConf[] = [];
   @Input() appDetails: ApplicationDetails;
   control: AbstractControl;
 
@@ -56,8 +53,7 @@ export class ApplicationPaymentComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.control = new FormControl(
-      this.getAmount());
+    this.control = new FormControl(this.getAmount());
     this.control.disable();
   }
 
@@ -151,6 +147,6 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   get year() {
-    return new Date().getFullYear(); 
+    return new Date().getFullYear();
   }
 }
