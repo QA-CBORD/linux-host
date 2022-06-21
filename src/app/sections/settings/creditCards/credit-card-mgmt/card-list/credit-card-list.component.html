@@ -1,6 +1,6 @@
 <div class="main_content">
   <div class="cards">
-    <div class="card-items" *ngIf="!noCreditCardFound">
+    <div class="card-items" *ngIf="!!userAccounts.length">
       <ion-list class="card-items-ion-list">
         <ion-item
           *ngFor="let account of userAccounts"
@@ -24,7 +24,7 @@
       </ion-list>
     </div>
 
-    <div class="no-credit-card-block-wrapper" *ngIf="noCreditCardFound">
+    <div class="no-credit-card-block-wrapper" *ngIf="userAccounts.length === 0">
       <div class="no-credit-card-block-message">
         <img
           class="no-credit-card-block-img"
