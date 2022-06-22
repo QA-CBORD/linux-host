@@ -7,10 +7,9 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import {
-  AccountsType,
   CardCs,
 } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
+import { AccountsConf, CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
 import { CurrentApplication as CurrentForm } from '../application-details/application-details.page';
 import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
@@ -42,7 +41,7 @@ export interface TransactionalData {
 })
 export class ApplicationPaymentComponent implements OnInit {
   @Input() contentStrings: CardCs;
-  @Input() userAccounts: AccountsType = [];
+  @Input() userAccounts: AccountsConf[] = [];
   @Input() currentForm: CurrentForm;
   control: AbstractControl;
 
