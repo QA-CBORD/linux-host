@@ -26,6 +26,7 @@ export function generateChargeSchedule(_: any, index: number): ChargeSchedule {
   });
 }
 
-export function generateChargeSchedules(amount: number = 3): ChargeSchedule[] {
+export function generateChargeSchedules(amount = 3): ChargeSchedule[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateChargeSchedule);
 }

@@ -44,7 +44,7 @@
     --margin-start: 10px;
     --icon-padding-end: 5px;
     --icon-font-size: 15px;
-    &__icon-ios-close {
+    &__icon-close {
       --icon-font-size: 35px;
     }
     &__icon-close {
@@ -57,6 +57,9 @@
     --icon-padding-end: 5px;
     color: $color-black;
     @include font-nunito-regular(20px);
+  }
+  &__dismiss-icon{
+    font-size: 16px;
   }
   &__title {
     width: 100%;

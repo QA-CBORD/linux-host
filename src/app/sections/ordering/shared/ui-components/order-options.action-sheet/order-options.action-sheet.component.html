@@ -1,44 +1,47 @@
 <ion-content>
   <div class="order-options">
-    <h1 id='modal-mainTitle' tabindex='0' class="order-options__title">{{ contentStrings.labelOrderOptions | async }}</h1>
-    <ion-list mode="md"
-              class="order-options__list">
-      <div class="order-options__radio-group-container"
-           *ngIf="orderTypes.delivery && orderTypes.pickup">
-        <ion-radio-group mode="md"
-                         class="order-options__radio-group"
-                         (ionChange)="onRadioGroupChanged($event)">
-          <ion-item lines="none"
-                    class="order-options__radio-container">
+    <h1 id="modal-mainTitle" tabindex="0" class="order-options__title">
+      {{ contentStrings.labelOrderOptions | async }}
+    </h1>
+    <ion-list mode="md" class="order-options__list">
+      <div class="order-options__radio-group-container" *ngIf="orderTypes.delivery && orderTypes.pickup">
+        <ion-radio-group
+          [value]="orderType"
+          mode="md"
+          class="order-options__radio-group"
+          (ionChange)="onRadioGroupChanged($event)"
+        >
+          <ion-item lines="none" class="order-options__radio-container">
             <ion-label class="order-options__radio-label">{{ contentStrings.labelPickup | async }}</ion-label>
-            <ion-radio mode="md"
-                       slot="start"
-                       value="pickup"
-                       [checked]="enumOrderTypes.PICKUP === orderType"
-                       class="order-options__radio-item"></ion-radio>
+            <ion-radio
+              mode="md"
+              slot="start"
+              [value]="enumOrderTypes.PICKUP"
+              class="order-options__radio-item"
+            ></ion-radio>
           </ion-item>
 
-          <ion-item lines="none"
-                    class="order-options__radio-container">
+          <ion-item lines="none" class="order-options__radio-container">
             <ion-label class="order-options__radio-label">{{ contentStrings.labelDelivery | async }}</ion-label>
-            <ion-radio mode="md"
-                       slot="start"
-                       value="delivery"
-                       [checked]="enumOrderTypes.DELIVERY === orderType"
-                       class="order-options__radio-item"></ion-radio>
+            <ion-radio
+              mode="md"
+              slot="start"
+              [value]="enumOrderTypes.DELIVERY"
+              class="order-options__radio-item"
+            ></ion-radio>
           </ion-item>
         </ion-radio-group>
       </div>
-      <ion-item lines="full"
-                attr.tabindex="0"
-                [detail]="orderOptionsData?.isClickble"
-                (click)="orderOptionsData?.isClickble && openDeliveryAddressesModal()">
+      <ion-item
+        lines="full"
+        attr.tabindex="0"
+        [detail]="orderOptionsData?.isClickble"
+        (click)="orderOptionsData?.isClickble && openDeliveryAddressesModal()"
+      >
         <div class="order-options__select-container">
           <div class="order-options__select-label">{{ orderOptionsData?.labelAddress }}</div>
           <div class="order-options__select-value">
-            <img width="16"
-                 src="./assets/icon/location-pin.svg"
-                 alt="pin" />
+            <img width="16" src="./assets/icon/location-pin.svg" alt="pin" />
             <span>
               <ng-container *ngIf="orderOptionsData?.address; then addressContainer; else placeholder"></ng-container>
             </span>
@@ -51,23 +54,21 @@
           </div>
         </div>
       </ion-item>
-      <ion-item [detail]="isTimeDisable"
-                lines="full"
-                (click)="callChildPicker()"
-                attr.tabindex="0">
-        <st-date-time-picker [schedule]="orderType === enumOrderTypes.PICKUP ? schedulePickup : scheduleDelivery"
-                             [isTimeDisable]="isTimeDisable"
-                             [data]="orderOptionsData"
-                             [dateTimePicker]="dateTimePicker"
-                             [merchantInfo]="activeMerchant$ | async"
-                             [dateTimeWithTimeZone]="dateTimeWithTimeZone"
-                             [userData]="userData$ | async"
-                             (onTimeSelected)="onDateTimeSelected($event)"
-                             ></st-date-time-picker>
+      <ion-item [detail]="isTimeDisable" lines="full" (click)="callChildPicker()" attr.tabindex="0">
+        <st-date-time-picker
+          [schedule]="orderType === enumOrderTypes.PICKUP ? schedulePickup : scheduleDelivery"
+          [isTimeDisable]="isTimeDisable"
+          [data]="orderOptionsData"
+          [dateTimePicker]="dateTimePicker"
+          [merchantInfo]="activeMerchant$ | async"
+          [dateTimeWithTimeZone]="dateTimeWithTimeZone"
+          [userData]="userData$ | async"
+          (onTimeSelected)="onDateTimeSelected($event)"
+        ></st-date-time-picker>
       </ion-item>
     </ion-list>
   </div>
 </ion-content>
 <ion-footer mode="ios" class="order-options__footer">
-  <st-button (onClick)="onSubmit()">{{footerButtonName}}</st-button>
+  <st-button (onClick)="onSubmit()">{{ footerButtonName }}</st-button>
 </ion-footer>

@@ -20,7 +20,7 @@ import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-credential-metadata.page';
 import { PasswordChangeComponent } from '@shared/ui-components/change-password/password-change.component';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { APP_PROFILES } from '@sections/dashboard/models';
@@ -144,6 +144,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         ],
         supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest],
         checkIsEnabled: async function (services: SettingsServices) {
+          // eslint-disable-next-line @typescript-eslint/no-this-alias
           const self: SettingItemConfig = this;
           // if is guest user return false.
           if (await isGuestUser(services) || !((await isSupportedInCurrentProfile(services))(self))) return false;
@@ -207,7 +208,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           { type: SETTINGS_VALIDATIONS.Biometric, value: 'biometric' },
         ],
         checkIsEnabled: async function (services: SettingsServices) {
-          const biometricsEnabled = await services.identity.areBiometricsAvailable();
+          const biometricsEnabled = await services.identity.isBiometricAvailable();
           if (biometricsEnabled) {
             const biometrics = await services.identity.getAvailableBiometricHardware();
             const biometric = configureBiometricsConfig(biometrics);

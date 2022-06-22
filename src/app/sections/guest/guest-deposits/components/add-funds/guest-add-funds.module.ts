@@ -21,6 +21,7 @@ import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-compon
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { GuestAddFundsResolver } from '../resolver/guest-add-funds.resolver';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
+import { StInputAmountModule } from '@sections/accounts/pages/deposit-page/input-amount/input-amount.module';
 
 
 const imports = [
@@ -44,7 +45,8 @@ const imports = [
   AccessibleSelectModule,
   StSelectFloatingLabelModule,
   DestinationAccountDisplayModule,
-  TransactionUnitsPipeModule
+  TransactionUnitsPipeModule,
+  StInputAmountModule
 ];
 
 const declarations = [GuestAddFundsComponent];

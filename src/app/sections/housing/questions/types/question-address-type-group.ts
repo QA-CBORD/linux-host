@@ -1,7 +1,6 @@
 import { isDefined } from '@sections/housing/utils';
 import { QuestionBase, QuestionBaseOptions, QuestionBaseOptionValue } from './question-base';
 
-let counter: number = 0;
 
 export interface QuestionAddressTypeGroupOptions extends QuestionBaseOptions {
     required: boolean;

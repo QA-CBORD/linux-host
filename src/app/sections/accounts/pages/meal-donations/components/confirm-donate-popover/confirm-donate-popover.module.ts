@@ -4,18 +4,12 @@ import { IonicModule } from '@ionic/angular';
 import { ConfirmDonatePopoverComponent } from './confirm-donate-popover.component';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
-import { CreditCardTypeModule } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.module';
+import { CreditCardTypePipeModule } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.module';
 
 @NgModule({
-  imports: [
-    IonicModule,
-    CommonModule,
-    StPopoverLayoutModule,
-    TransactionUnitsPipeModule,
-    CreditCardTypeModule
-  ],
+  imports: [IonicModule, CommonModule, StPopoverLayoutModule, TransactionUnitsPipeModule, CreditCardTypePipeModule],
   providers: [],
   declarations: [ConfirmDonatePopoverComponent],
-  exports: [ConfirmDonatePopoverComponent]
+  exports: [ConfirmDonatePopoverComponent],
 })
-export class ConfirmDonatePopoverModule { }
+export class ConfirmDonatePopoverModule {}

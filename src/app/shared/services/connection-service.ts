@@ -1,19 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, Observer, fromEvent, merge, of, BehaviorSubject } from 'rxjs';
+import { Observable, Observer, fromEvent, merge, of, Subject } from 'rxjs';
 import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import { firstValueFrom } from '@shared/utils';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
+import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConnectionService {
 
-  modalRefreshHandle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  modalRefreshHandle: Subject<boolean> = new Subject();
+  retrySubject: Subject<RetryHandler> = new Subject();
   private online$: Observable<boolean> = undefined;
 
   constructor(private http: HttpClient,
@@ -54,7 +57,7 @@ export class ConnectionService {
     return this.network.type;
   }
 
-  public networkStatus(time: number = 300): Observable<boolean> {
+  public networkStatus(time = 300): Observable<boolean> {
     return this.online$.pipe(debounceTime(time), switchMap(async () => !(await this.deviceOffline())));
   }
 
@@ -70,6 +73,6 @@ export class ConnectionService {
 
 
   isConnectionIssues({ message, status }): boolean {
-    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || (status == NO_INTERNET_STATUS_CODE);
+    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || status !== null && (Number(status) === NO_INTERNET_STATUS_CODE);
   }
 }

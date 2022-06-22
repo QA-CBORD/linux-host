@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { WaitingList, WaitingListDetails } from './waiting-lists.model';
 
 @Injectable({
@@ -17,8 +17,6 @@ export class WaitingListStateService  {
   private waitingList: BehaviorSubject<WaitingList[]> = new BehaviorSubject<WaitingList[]>([]);
   private waitingListDetails: BehaviorSubject<WaitingListDetails> = new BehaviorSubject<WaitingListDetails>(this._defaultState);
   private formSelection: BehaviorSubject<any> = new BehaviorSubject<any>({});
-
-  constructor() { }
 
   setWaitingList(value: WaitingList[]) {
     this.waitingList.next(value);

@@ -9,7 +9,7 @@ import { SettingsFactoryService } from './services/settings-factory.service';
 import { HTMLRendererModule } from '@shared/ui-components/html-renderer/html-renderer.module';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
-import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module'
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { ReportCardModule } from '@sections/settings/pages/report-card/report-card.module';
 import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials/mobile.credential.module';
 import { PasswordChangeModule } from '@shared/ui-components/change-password/password-change.module';
@@ -22,17 +22,14 @@ const imports = [
   PhotoUploadModule,
   HTMLRendererModule,
   PhoneEmailModule,
-  StHeaderModule, 
+  StHeaderModule,
   EditHomePageModalModule,
   ReportCardModule,
   MobileCredentialModule,
   PasswordChangeModule,
-  CreditCardModule
+  CreditCardModule,
 ];
-const declarations = [
-  SettingsPage, 
-  SettingsItemComponent
-];
+const declarations = [SettingsPage, SettingsItemComponent];
 const entryComponents = [];
 const providers = [SettingsFactoryService];
 @NgModule({
@@ -41,7 +38,4 @@ const providers = [SettingsFactoryService];
   providers,
   entryComponents,
 })
-export class SettingsModule {
-  constructor() {}
-}
-
+export class SettingsModule {}

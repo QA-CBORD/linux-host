@@ -17,7 +17,7 @@ import { ROLES } from 'src/app/app.global';
 export class WorkOrdersComponent implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
   public urlEditForm: string;
-  private selectedTermKey: number = 0;
+  private selectedTermKey = 0;
 
   constructor(private _workOrdersService: WorkOrdersService,
     public _workOrderStateService: WorkOrderStateService,

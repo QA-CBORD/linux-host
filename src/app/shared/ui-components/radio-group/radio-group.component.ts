@@ -28,7 +28,7 @@ export class RadioGroupComponent implements ControlValueAccessor {
 
   @Input() options: RadioGroupOption[];
 
-  isDisabled: boolean = false;
+  isDisabled = false;
 
   onChange: (value: any) => void;
 

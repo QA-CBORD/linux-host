@@ -2,7 +2,10 @@
   [title]="'Scan Card'"
   [backButtonTitle]="'Back'"
   [isToolbarShow]="true"
-  [backButtonIcon]="'ios-arrow-back'"
+  [isBackButtonShow]="isBackButtonShow"
+  [isDismissButtonShow]="isDismissButtonShow"
+  (onDismiss)="onBack()"
+  backButtonIcon="chevron-back"
   [isTitleShow]="true"
 ></st-header>
 <ion-content class="ion-padding">

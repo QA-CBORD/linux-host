@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
@@ -25,17 +24,14 @@ import {
   tap
 } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { FormTypes } from '@sections/housing/housing.model';
 import { HousingService } from '@sections/housing/housing.service';
-import { AssetTypeDetailValue, NonAssignmentDetails } from '@sections/housing/non-assignments/non-assignments.model';
-import { NonAssignmentsService } from '@sections/housing/non-assignments/non-assignments.service';
+import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { isMobile } from '@core/utils/platform-helper';
 import { ToastService } from '@core/service/toast/toast.service';
-import { NonAssignmentsStateService } from '@sections/housing/non-assignments/non-assignments-state.service';
 import { FormGroup } from '@angular/forms';
 import { WorkOrderDetails } from '../../work-orders/work-orders.model';
 import { WorkOrdersService } from '../../work-orders/work-orders.service';
@@ -60,9 +56,9 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
   workOrderKey: number;
   selectedAssetKey: number;
   selectedAssetName: string;
-  termKey: number = 0;
-  isSubmitted: boolean = false;
-  canSubmit: boolean = true;
+  termKey = 0;
+  isSubmitted = false;
+  canSubmit = true;
 
   constructor(
     private _platform: Platform,
@@ -78,7 +74,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(x => {
+      this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });
@@ -123,7 +119,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
 
     this.workOrderDetails$ = this._housingService.getWorkOrders(this.termKey,this.workOrderKey)
       .pipe(
-        tap((workOrderDetails: WorkOrderDetails) => {
+        tap(() => {
           this.isSubmitted = false; 
           this._loadingService.closeSpinner();
         }),
@@ -139,6 +135,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     this.subscriptions.add(termSubs);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _next(formValue: any): void {
     this.content.scrollToTop();
 

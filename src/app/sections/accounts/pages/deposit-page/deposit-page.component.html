@@ -1,7 +1,7 @@
 <st-header
   title="Add Funds"
   [isTitleShow]="true"
-  [backButtonIcon]="'ios-close'"
+  backButtonIcon="close"
   [backButtonTitle]="''"
   [isToolbarShow]="true"
   tabindex="0"
@@ -125,44 +125,13 @@
         </div>
 
         <ng-template #mainInput>
-          <div class="deposit__main-input-container">
-            <ion-input
-              class="deposit__main-input"
-              type="tel"
-              inputmode="decimal"
-              maxlength="10"
-              #inputText
-              placeholder="0"
-              tabindex="0"
-              [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
-              [ngClass]="{
-                'deposit__main-input--focus': focusLine,
-                shakeit: isMaxCharLength,
-                'deposit__main-input-container--decrease-font': inputText.value && inputText.value.length >= 7
-              }"
-              (ionFocus)="focusLine = true"
-              (ionBlur)="focusLine = false; onAmountChanged($event)"
-              (ionInput)="onAmountChanged($event)"
-              (keydown)="formatInput($event)"
-              formControlName="mainInput"
-            ></ion-input>
-            <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']" class="deposit__main-input--error">
-              {{ contentString.maxAmountError }} {{ mainFormInput.errors['maxLength'].max | transactionUnits }}
-            </div>
-            <div *ngIf="mainFormInput.errors && mainFormInput.errors['minLength']" class="deposit__main-input--error">
-              {{ contentString.minAmountError }} {{ mainFormInput.errors['minLength'].min | transactionUnits }}
-            </div>
-            <div
-              *ngIf="
-                mainFormInput.errors &&
-                mainFormInput.errors['pattern'] &&
-                (mainFormInput.dirty || mainFormInput.touched)
-              "
-              class="deposit__main-input--error"
-            >
-              {{ contentString.amountPatternError }}
-            </div>
-          </div>
+          <st-input-amount
+            [contentString]="contentString"
+            (onInput)="onAmountChanged($event)"
+            (onKeyDown)="formatInput($event)"
+            (onBlur)="onAmountChanged($event)"
+            [control]="mainFormInput"
+          ></st-input-amount>
         </ng-template>
       </div>
     </section>

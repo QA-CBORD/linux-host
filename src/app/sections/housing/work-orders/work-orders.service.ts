@@ -2,8 +2,8 @@ import { Injectable, SecurityContext } from "@angular/core";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
-import { of, Observable, defer } from "rxjs";
-import { catchError, map, withLatestFrom, tap, switchMap } from 'rxjs/operators';
+import { of, Observable } from "rxjs";
+import { catchError, map, withLatestFrom, switchMap } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
 import { QuestionsStorageService, QuestionsEntries } from '../questions/questions-storage.service';
@@ -84,6 +84,7 @@ export class WorkOrdersService {
   }
 
   private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
+    // eslint-disable-next-line no-useless-escape
     const questions: QuestionBase[][] = parseJsonToArray(workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) + `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`)
       .map((question: QuestionBase) => {
         const mappedQuestion = this._toWorkOrderListCustomType(question,workOrderDetails)
@@ -128,7 +129,7 @@ export class WorkOrdersService {
     workOrderDetails: WorkOrderDetails
   ): FormControl {
     let value: any = storedValue;
-    let disabled: boolean = false;
+    const disabled = false;
 
     const validators: ValidatorFn[] = [];
 
@@ -174,6 +175,7 @@ export class WorkOrdersService {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next(formValue: any): Observable<any> {
     return of(true);
   }
@@ -227,7 +229,7 @@ export class WorkOrdersService {
     });
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
-      catchError(err=> of(false)),
+      catchError(()=> of(false)),
       switchMap((response: Response) => {
         return this.sendWorkOrderImage(response.data, image)
       })
@@ -236,10 +238,11 @@ export class WorkOrdersService {
 
   sendWorkOrderImage(workOrderId : number, imageData: ImageData ): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      let workOrderImageURL = `${this.workOrderListUrl}/attachments`;
+      const workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
-      let img = new Image();
+      const img = new Image();
       
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       img.onerror = (event) => {
         reject('error load')
       };
@@ -325,7 +328,8 @@ export class WorkOrdersService {
   }
 
   private createFacilityTreeQuestion(){
-    let facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
+    // eslint-disable-next-line no-useless-escape
+    const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
     return parseJsonToArray(facilityTreeString);
   }
 }

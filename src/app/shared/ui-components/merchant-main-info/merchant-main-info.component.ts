@@ -8,8 +8,8 @@ import { MerchantInfo } from '@sections/ordering';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MerchantMainInfoComponent {
-  @Input() isShowOrderType: boolean = true;
-  @Input() isShowMerchantStatus: boolean = true;
+  @Input() isShowOrderType = true;
+  @Input() isShowMerchantStatus = true;
   @Input() merchant: MerchantInfo;
 
 }

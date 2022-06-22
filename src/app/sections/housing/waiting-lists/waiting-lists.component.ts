@@ -34,7 +34,7 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(x => {
+      this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });

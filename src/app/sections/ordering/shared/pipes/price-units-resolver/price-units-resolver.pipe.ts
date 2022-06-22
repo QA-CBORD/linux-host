@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
@@ -9,15 +9,15 @@ import { take } from 'rxjs/operators';
   pure: false,
 })
 export class PriceUnitsResolverPipe implements PipeTransform {
-  private singleMealUnit: string = 'meal';
-  private pluralMealUnit: string = 'meals';
+  private singleMealUnit = 'meal';
+  private pluralMealUnit = 'meals';
 
   constructor(private readonly currencyPipe: CurrencyPipe,
               private readonly orderingService: OrderingService) {
     this.updateMealStringUnits();
   }
 
-  transform(value: number, mealBased: boolean = false): string {
+  transform(value: number, mealBased = false): string {
     return mealBased
       ? `${value} ${value === 1 ? this.singleMealUnit : this.pluralMealUnit}`
       : this.currencyPipe.transform(value);

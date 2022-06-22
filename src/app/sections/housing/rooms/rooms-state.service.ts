@@ -7,7 +7,7 @@ import { Unit } from '@sections/housing/unit/unit.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 import { hasValue, isDefined } from '@sections/housing/utils';
-import { map, startWith } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 
 export interface StateService<K, V> {
@@ -39,7 +39,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     occupantFacilities.forEach(facility => {
       const occupantKeys: number[] = facilityOccupants.map(x => x.patronKey);
       const facilityOccupantKeys = facility.occupantKeys;
-      let occupantDetails: FacilityOccupantDetails[] = [];
+      const occupantDetails: FacilityOccupantDetails[] = [];
       facilityOccupantKeys.forEach(occupantKey => {
         const index = occupantKeys.indexOf(occupantKey);
         if (index >= 0) {
@@ -73,7 +73,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     return  this._findOccupantFacilities();
   }
   getAllOccupantAttributes(): OccupantAttribute[] {
-    let attributes: OccupantAttribute[] = [];
+    const attributes: OccupantAttribute[] = [];
     this._occupantDictionary.forEach(occupantDetails => {
       occupantDetails.forEach(occupant => {
         occupant.attributes.forEach(attribute => {
@@ -103,7 +103,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   private _findOccupantFacilities(): Facility[] {
-    let occupantFacilities: Facility[] = [];
+    const occupantFacilities: Facility[] = [];
 
     const parentFacilities = this.getParentFacilities();
     parentFacilities.forEach(parent => {
@@ -158,7 +158,6 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   getUnitDetails(parentFacilityKey: number, unitKey: number) {
     const childrenFacilities = this.entityDictionary.get(parentFacilityKey);
     const facility = childrenFacilities.find(child => child.facilityId == unitKey);
-    const parentFacility = this._parentFacilities.find(parent => parent.facilityId == parentFacilityKey);
 
     return new Unit({
       facilityKey: facility.facilityId,

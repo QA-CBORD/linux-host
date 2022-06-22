@@ -4,7 +4,7 @@ import { ROLES, Settings } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { tap, take, switchMap, map } from 'rxjs/operators';
+import { tap, switchMap, map } from 'rxjs/operators';
 import { from, zip } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';

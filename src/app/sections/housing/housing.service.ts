@@ -4,8 +4,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { ROLES } from '../../app.global';
-import { forkJoin, Observable, of, pipe, Subject, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 
 import { HousingProxyService } from './housing-proxy.service';
 import { ApplicationsStateService } from './applications/applications-state.service';
@@ -15,10 +15,10 @@ import { ApplicationsService } from './applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service'
-import { ContractSummary } from '@sections/housing/contract-list/contractSummary.model'
-import { CheckInOutStateService } from '@sections/housing/check-in-out/check-in-out-state.service'
-import { CheckInOut, CheckInOutSlot } from '@sections/housing/check-in-out/check-in-out.model'
+import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
+import { ContractSummary } from '@sections/housing/contract-list/contractSummary.model';
+import { CheckInOutStateService } from '@sections/housing/check-in-out/check-in-out-state.service';
+import { CheckInOut, CheckInOutSlot } from '@sections/housing/check-in-out/check-in-out.model';
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 import {
@@ -27,7 +27,8 @@ import {
   ContractListResponse,
   DefinitionsResponse,
   DetailsResponse,
-  FacilityDetailsResponse, OccupantDetailsResponse, OccupantDetailsResponseOptions,
+  FacilityDetailsResponse,
+  OccupantDetailsResponse,
   Response,
   RoomSelectResponse,
 } from './housing.model';
@@ -35,24 +36,19 @@ import {
   ApplicationDetails,
   RequestedRoommate,
   RequestedRoommateRequest,
-  RequestedRoommateResponse
+  RequestedRoommateResponse,
 } from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 import { FacilityOccupantDetails, RoommateDetails, RoommateResponse } from '@sections/housing/roommate/roomate.model';
-import {
-  NonAssignmentDetails,
-  NonAssignmentListDetails
-} from './non-assignments/non-assignments.model';
+import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
 import { NonAssignmentsStateService } from './non-assignments/non-assignments-state.service';
 import { WaitingList, WaitingListDetails } from './waiting-lists/waiting-lists.model';
-import { WaitingListsService } from './waiting-lists/waiting-lists.service';
 import { WaitingListStateService } from './waiting-lists/waiting-list-state.service';
 import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
 import { Inspections, Inspection, InspectionsData } from './inspections-forms/inspections-forms.model';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -91,17 +87,20 @@ export class HousingService {
   }
 
   getDefinitions(termId: number) {
-    const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
+    const apiUrl = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
 
     return this._housingProxyService.get<DefinitionsResponse>(apiUrl).pipe(
       map((response: any) => new DefinitionsResponse(response)),
       switchMap((response: DefinitionsResponse) => this._patchDefinitionsByStore(response)),
       tap((response: DefinitionsResponse) =>
-        this._setState(response.applicationDefinitions,
+        this._setState(
+          response.applicationDefinitions,
           response.contractDetails,
           response.nonAssignmentDetails,
           response.waitingLists,
-          response.workOrders)),
+          response.workOrders
+        )
+      ),
       catchError(() => this._handleGetDefinitionsError())
     );
   }
@@ -112,7 +111,7 @@ export class HousingService {
 
   getDetails(key: number, queryParams: string[] = []): Observable<DetailsResponse> {
     const queryString: string = queryParams.length ? `?${queryParams.join('&')}` : '';
-    const apiUrl: string = `${this._applicationDefinitionUrl}/${key}/patron/self${queryString}`;
+    const apiUrl = `${this._applicationDefinitionUrl}/${key}/patron/self${queryString}`;
 
     return this._housingProxyService.get<DetailsResponse>(apiUrl).pipe(
       map((response: any) => new DetailsResponse(response)),
@@ -152,13 +151,11 @@ export class HousingService {
   }
 
   getNonAssignmentDetails(key: number, queryParams: string[] = []): Observable<NonAssignmentDetails> {
-    return this.getDetails(key, queryParams).pipe(
-      map((response: DetailsResponse) => response.nonAssignmentDetails)
-    );
+    return this.getDetails(key, queryParams).pipe(map((response: DetailsResponse) => response.nonAssignmentDetails));
   }
 
   getRoomSelects(termId: number) {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
     return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
       map((response: any) => new RoomSelectResponse(response)),
       tap((response: RoomSelectResponse) => this._setRoomsState(response.roomSelects)),
@@ -166,8 +163,8 @@ export class HousingService {
     );
   }
 
-  getInspections(termId: number){
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`
+  getInspections(termId: number) {
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`;
     return this._housingProxyService.get<InspectionsData>(apiUrl).pipe(
       map((response: any) => new InspectionsData(response)),
       tap((response: InspectionsData) => this._setInspectionsList(response.data)),
@@ -175,18 +172,24 @@ export class HousingService {
     );
   }
 
-  getInspectionDetails(termId: number,residentInspectionKey?: number, contractElementKey?: number, checkIn?: boolean){
-    const apiUrl: string = !!residentInspectionKey ? `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn+''}`:
-    `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`;
+  getInspectionDetails(termId: number, residentInspectionKey?: number, contractElementKey?: number, checkIn?: boolean) {
+    const apiUrl: string = residentInspectionKey
+      ? `${
+          this._baseUrl
+        }/roomselectproxy/v.1.0/room-inspections-proxy/?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn +
+          ''}`
+      : `${
+          this._baseUrl
+        }/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`;
     return this._housingProxyService.get<Inspection>(apiUrl).pipe(
-      map((response: any) =>  new Inspection(response)),
+      map((response: any) => new Inspection(response)),
       tap((response: Inspection) => this._setInspection(response)),
       catchError(() => this._handleInspectionSelectedError())
     );
   }
 
   getRequestedRoommates(request: RequestedRoommateRequest) {
-    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
     return this._housingProxyService.post<RequestedRoommateResponse>(apiUrl, request).pipe(
       map((response: any) => new RequestedRoommateResponse(response.data)),
       catchError(() => this._handleGetRequestedRoommatesError())
@@ -194,7 +197,7 @@ export class HousingService {
   }
 
   getPatronContracts(termId: number) {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
     return this._housingProxyService.get<ContractListResponse>(apiUrl).pipe(
       map((response: any) => new ContractListResponse(response)),
       tap((response: ContractListResponse) => this._setContractSummariesState(response.contractSummaries)),
@@ -203,7 +206,7 @@ export class HousingService {
   }
 
   getCheckInOuts(termId: number) {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
     return this._housingProxyService.get<CheckInOutResponse>(apiUrl).pipe(
       map((response: any) => new CheckInOutResponse(response)),
       tap((response: CheckInOutResponse) => this._setCheckInOutsState(response.checkInOuts)),
@@ -212,88 +215,100 @@ export class HousingService {
   }
 
   getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]> {
-    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
     return this._housingProxyService.get<CheckInOutSlot[]>(apiUrl).pipe(
       map((response: any) => new CheckInOutSlotResponse(response).slots),
-      catchError((err) => { throw err })
+      catchError(err => {
+        throw err;
+      })
     );
   }
 
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
-    const apiUrl = `${this._baseUrl
-      }/roomselectproxy/v.1.0/room-selects-proxy/facilities/details/${roomSelectKey}`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/facilities/details/${roomSelectKey}`;
     return this._housingProxyService.get<FacilityDetailsResponse>(apiUrl).pipe(
       map((response: any) => {
-        const details = new FacilityDetailsResponse(response)
+        const details = new FacilityDetailsResponse(response);
         return this._facilityMapper.map(details.facilityDetails);
       }),
-      catchError((e) => { throw e })
+      catchError(e => {
+        throw e;
+      })
     );
   }
 
   getOccupantDetails(roomSelectKey: number, facilityKey: number): Observable<FacilityOccupantDetails[]> {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
-    return this._housingProxyService.post<Response>(apiUrl, {
-      roomSelectKey: roomSelectKey,
-      facilityKeys: [facilityKey]
-    }).pipe(
-      map((response: Response) => {
-        const details = new OccupantDetailsResponse(response.data);
-        return details.occupants;
-      }),
-      catchError(err => { throw err })
-    )
+    return this._housingProxyService
+      .post<Response>(apiUrl, {
+        roomSelectKey: roomSelectKey,
+        facilityKeys: [facilityKey],
+      })
+      .pipe(
+        map((response: Response) => {
+          const details = new OccupantDetailsResponse(response.data);
+          return details.occupants;
+        }),
+        catchError(err => {
+          throw err;
+        })
+      );
   }
 
   getAllOccupantDetails(roomSelectKey: number, facilityKeys: number[]): Observable<FacilityOccupantDetails[]> {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities`;
-    return this._housingProxyService.post<Response>(apiUrl, {
-      roomSelectKey: roomSelectKey,
-      facilityKeys: facilityKeys
-    }).pipe(
-      map((response: Response) => {
-        const details = new OccupantDetailsResponse(response.data);
-        return details.occupants;
-      }),
-      tap(occupants => {
-        this._roomsStateService.setOccupantDetails(occupants);
-      }),
-      catchError(err => { throw err })
-    )
+    return this._housingProxyService
+      .post<Response>(apiUrl, {
+        roomSelectKey: roomSelectKey,
+        facilityKeys: facilityKeys,
+      })
+      .pipe(
+        map((response: Response) => {
+          const details = new OccupantDetailsResponse(response.data);
+          return details.occupants;
+        }),
+        tap(occupants => {
+          this._roomsStateService.setOccupantDetails(occupants);
+        }),
+        catchError(err => {
+          throw err;
+        })
+      );
   }
 
-
   searchRoommates(searchBy: string, searchValue: string): Observable<RoommateDetails[]> {
-    const queryString: string = `?type=${searchBy}&searchValue=${searchValue}`;
+    const queryString = `?type=${searchBy}&searchValue=${searchValue}`;
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patrons/search${queryString}`;
     return this._housingProxyService.get<Response>(apiUrl).pipe(
       map(response => {
         const roommates = new RoommateResponse(response);
         return roommates.roommates;
       }),
-      catchError(err => { throw err })
+      catchError(err => {
+        throw err;
+      })
     );
   }
 
   getWaitList(key: number): Observable<WaitingListDetails> {
-    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
     return this._housingProxyService.get<WaitingListDetails>(apiUrl).pipe(
       map((response: any) => {
-        this._waitingListStateService.setWaitingListDetails(response)
-        return new WaitingListDetails(response)
-      }
-      ));
+        this._waitingListStateService.setWaitingListDetails(response);
+        return new WaitingListDetails(response);
+      })
+    );
   }
 
-  getWorkOrders(termKey: number,workOrderKey: number = 0): Observable<WorkOrderDetails> {
+  getWorkOrders(termKey: number, workOrderKey = 0): Observable<WorkOrderDetails> {
     //TODO: change url work orders
-    const apiUrl: string = `${this._baseUrl}/patron-applications/v.1.0/work-orders/${termKey}/${workOrderKey}/`;
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/work-orders/${termKey}/${workOrderKey}/`;
     return this._housingProxyService.get<WorkOrderDetails>(apiUrl).pipe(
       map((response: any) => {
-        this._workOrderStateService.setWorkOrderDetails(response)
-        return new WorkOrderDetails(response)
-      }
-      ));
+        this._workOrderStateService.setWorkOrderDetails(response);
+        return new WorkOrderDetails(response);
+      })
+    );
   }
 
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
@@ -312,7 +327,7 @@ export class HousingService {
 
   _handleInspectionListSelectedError(): Observable<Inspections> {
     const inspection: Inspections[] = [];
-    this._setInspectionsList(inspection)
+    this._setInspectionsList(inspection);
 
     return of(new Inspections(null));
   }
@@ -341,7 +356,6 @@ export class HousingService {
     this._roomsStateService.setRoomSelects(roomSelects);
   }
   _setContractSummariesState(contractSummaries: ContractSummary[]): void {
-
     this._contractListStateService.setContractSummaries(contractSummaries);
   }
   _setCheckInOutsState(checkInOuts: CheckInOut[]): void {
@@ -352,11 +366,11 @@ export class HousingService {
     this._applicationsStateService.setRequestedRoommates(roommates);
   }
 
-  _setInspectionsList(value: Inspections[]): void{
+  _setInspectionsList(value: Inspections[]): void {
     this._inspectionsStateService.setInspectionList(value);
   }
 
-  _setInspection(value: Inspection): void{
+  _setInspection(value: Inspection): void {
     this._inspectionsStateService.setInspectionForm(value);
   }
 
@@ -376,6 +390,7 @@ export class HousingService {
     return of(this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions()));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSuccessfulAssignment(contractKey: number): void {
     this.handleSuccess$().subscribe(() => {
       // TODO goes to contract form based on contract element key & contract form key
@@ -398,7 +413,7 @@ export class HousingService {
         message,
         position: 'top',
         duration: 3000,
-        showCloseButton: true,
+        buttons: [{ text: 'Dismiss' }],
       })
       .then((toast: HTMLIonToastElement) => toast.present());
   }
@@ -411,26 +426,39 @@ export class HousingService {
         ? this._applicationsService.patchApplicationsByStoredStatus(applicationDefinitions)
         : of([]);
 
-    return forkJoin(patchedApplications, of(contractDetails), of(nonAssignmentDetails), of(waitingLists),of(workOrders)).pipe(
+    return forkJoin(
+      patchedApplications,
+      of(contractDetails),
+      of(nonAssignmentDetails),
+      of(waitingLists),
+      of(workOrders)
+    ).pipe(
       map(
-        ([applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists]:
-          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[], WaitingList[],WorkOrder]) =>
+        ([applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists]: [
+          ApplicationDetails[],
+          ContractListDetails[],
+          NonAssignmentListDetails[],
+          WaitingList[],
+          WorkOrder
+        ]) =>
           new DefinitionsResponse({
             applicationDefinitions,
             contractDetails,
             nonAssignmentDetails,
             waitingLists,
-            workOrders
+            workOrders,
           })
       )
     );
   }
 
-  private _setState(applications: ApplicationDetails[],
+  private _setState(
+    applications: ApplicationDetails[],
     contracts: ContractListDetails[],
     nonAssignments: NonAssignmentListDetails[],
     waitingLists: WaitingList[],
-    workOrders: WorkOrder): void {
+    workOrders: WorkOrder
+  ): void {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
     this._nonAssignmentsStateService.setNonAssignments(nonAssignments);
@@ -448,7 +476,7 @@ export class HousingService {
     const workOrders: WorkOrder = new WorkOrder({
       canSubmit: null,
       workOrders: [],
-      });
+    });
 
     this._setState(applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists, workOrders);
 
@@ -458,7 +486,7 @@ export class HousingService {
         contractDetails,
         nonAssignmentDetails,
         waitingLists,
-        workOrders
+        workOrders,
       })
     );
   }
@@ -468,22 +496,28 @@ export class HousingService {
     const requestedRoommates = this._applicationsStateService.getRequestedRoommate();
     const patronRequests = applicationDetails.roommatePreferences
       .filter(x => x.patronKeyRoommate !== 0)
-      .map(x => new RequestedRoommate({
-        preferenceKey: x.preferenceKey,
-        patronRoommateKey: x.patronKeyRoommate
-      }));
+      .map(
+        x =>
+          new RequestedRoommate({
+            preferenceKey: x.preferenceKey,
+            patronRoommateKey: x.patronKeyRoommate,
+          })
+      );
 
     const requestBody = new RequestedRoommateRequest({
       termKey: termKey,
-      patronRequests
+      patronRequests,
     });
-    
+
     return this.getRequestedRoommates(requestBody).pipe(
       map((data: RequestedRoommateResponse) => {
         data.requestedRoommates.map(d => {
-          const roommatePref = applicationDetails.roommatePreferences
-            .find(f => f.patronKeyRoommate === d.patronRoommateKey
-              && f.preferenceKey === d.preferenceKey && !requestedRoommates.find(y=> y.patronRoommateKey === d.patronRoommateKey));
+          const roommatePref = applicationDetails.roommatePreferences.find(
+            f =>
+              f.patronKeyRoommate === d.patronRoommateKey &&
+              f.preferenceKey === d.preferenceKey &&
+              !requestedRoommates.find(y => y.patronRoommateKey === d.patronRoommateKey)
+          );
 
           const requestedRoommateObj = new RequestedRoommate({
             firstName: roommatePref ? roommatePref.firstName : '',
@@ -491,20 +525,42 @@ export class HousingService {
             preferenceKey: d.preferenceKey,
             patronRoommateKey: d.patronRoommateKey,
             confirmed: applicationDetails.roommatePreferences.some(roommate => {
-              if(roommate.patronKeyRoommate === d.patronRoommateKey && d.confirmed ){
+              if (roommate.patronKeyRoommate === d.patronRoommateKey && d.confirmed) {
                 return true;
               }
-              return d.confirmed
+              return d.confirmed;
             }),
             middleName: d.middleName ? d.middleName : '',
             birthDate: d.birthDate,
-            preferredName: d.preferredName ? d.preferredName : ''
+            preferredName: d.preferredName ? d.preferredName : '',
           });
-          if(requestedRoommateObj.firstName){
-            this._applicationsStateService.setRequestedRoommate(requestedRoommateObj)
+          if (requestedRoommateObj.firstName) {
+            this._applicationsStateService.setRequestedRoommate(requestedRoommateObj);
           }
-        })
-      }))
+        });
+      })
+    );
+  }
 
+  updatePaymentSuccess(appDetails: ApplicationDetails) {
+    const { patronAttributes, patronPreferences, roommatePreferences, patronAddresses } = appDetails;
+    const body = {
+      patronAttributes,
+      patronPreferences,
+      roommatePreferences,
+      patronAddresses,
+      patronApplication: {
+        termKey: appDetails.applicationDefinition.termKey,
+        applicationDefinitionKey: appDetails.applicationDefinition.key,
+        status: 3
+      },
+    };
+    return this._housingProxyService
+      .put(this._patronApplicationsUrl, body)
+      .pipe(
+        take(1),
+        catchError(() => this._handleGetDefinitionsError())
+      )
+      .subscribe();
   }
 }

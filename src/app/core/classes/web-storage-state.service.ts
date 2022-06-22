@@ -3,7 +3,7 @@ import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
 export class WebStorageState extends ExtendableStateManager<WebStorageStateEntity> {
-  protected activeUpdaters: number = 0;
+  protected activeUpdaters = 0;
   protected state: WebStorageStateEntity = {};
   protected readonly _state$: BehaviorSubject<WebStorageStateEntity> = new BehaviorSubject<WebStorageStateEntity>(this.state);
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);

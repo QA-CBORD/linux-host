@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   Input,
-  OnInit,
   ViewChild
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +17,7 @@ import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./check-in-out-items.component.scss'],
 })
-export class CheckInOutItemsComponent implements OnInit {
+export class CheckInOutItemsComponent {
   @ViewChild('container') divContainer: ElementRef;
   @Input() checkInOuts: CheckInOut[]
   
@@ -26,8 +25,6 @@ export class CheckInOutItemsComponent implements OnInit {
               private _router: Router,
               private _activeRoute: ActivatedRoute,
               private _toastService: ToastService) { }
-
-  ngOnInit() { }
 
   openCheckInOutSlots(key: any): void {
     const checkInOut: CheckInOut = this.checkInOuts.find(x => x.key === key);

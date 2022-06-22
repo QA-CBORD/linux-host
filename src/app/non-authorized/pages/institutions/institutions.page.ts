@@ -31,8 +31,8 @@ const IOSDevice = registerPlugin<any>('IOSDevice');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstitutionsPage implements OnInit {
-  searchString: string = '';
-  isLoading: boolean = true;
+  searchString = '';
+  isLoading = true;
   institutions: InstitutionLookupListItem[];
 
   constructor(

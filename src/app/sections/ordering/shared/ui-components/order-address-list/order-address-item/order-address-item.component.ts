@@ -11,13 +11,11 @@ export class OrderAddressItemComponent implements OnInit {
   @Input() iconAlt: string;
   @Input() isSelected: boolean;
   @Input() iconIsFile: boolean;
-  @Input() iconNameDefault: string = 'star-outline.svg';
-  @Input() iconNameSelected: string = 'star-filled.svg';
+  @Input() iconNameDefault = 'star-outline.svg';
+  @Input() iconNameSelected = 'star-filled.svg';
   @Input() defaultAddress: string;
 
-  isDefault: boolean = false;
-
-  constructor() {}
+  isDefault = false;
 
   ngOnInit() {
     if (

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserPhotoUploadSettings } from '@core/model/user/user-photo-upload-settings.model';
-import { BehaviorSubject, iif, Observable, of, zip } from 'rxjs';
+import { BehaviorSubject, Observable, of, zip } from 'rxjs';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
 import { Settings } from '../../../../app.global';
 import SettingList = Settings.SettingList;
@@ -36,7 +36,6 @@ export class PhotoUploadService {
   private readonly _profileImagePending$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
   private readonly _govtIdRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  private govtIdRequired: boolean = false;
   orientation: Orientation;
   
   private userPhotoUploadSettings: UserPhotoUploadSettings = {
@@ -96,7 +95,6 @@ export class PhotoUploadService {
   }
 
   private set governmentIdRequired(value: boolean) {
-    this.govtIdRequired = value;
     this._govtIdRequired$.next(value);
   }
 
@@ -170,7 +168,7 @@ export class PhotoUploadService {
   }
 
   onNewPhoto(photoType: PhotoType, photoData: any) {
-    let newPhotoInfo: UserPhotoInfo = {
+    const newPhotoInfo: UserPhotoInfo = {
       externalId: null,
       userId: null,
       mimeType: 'image/jpg',

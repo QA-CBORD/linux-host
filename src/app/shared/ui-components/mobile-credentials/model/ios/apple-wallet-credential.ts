@@ -11,6 +11,7 @@ export class AppleWalletCredential extends MobileCredential {
         super(credentialState);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getCredentialBundle<T>(): any {
        return null;
     }

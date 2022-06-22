@@ -1,6 +1,5 @@
 import { Label } from '@shared/ui-components/label/label.model';
-import { Facility, FacilityAttribute, IMapper } from '@sections/housing/facilities/facilities.model';
-import { isDefined } from '@sections/housing/utils';
+import { Facility, IMapper } from '@sections/housing/facilities/facilities.model';
 import { LabelHelper } from '@sections/housing/rooms/labelHelper';
 
 export class Building {

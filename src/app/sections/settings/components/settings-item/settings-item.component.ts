@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { SettingItemConfig } from '@sections/settings/models/setting-items-config.model';
 import { Observable, of } from 'rxjs';
 
@@ -8,15 +8,13 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./settings-item.component.scss'],
 })
 export class SettingsItemComponent implements OnInit {
-  @Input() lines: string = 'inset';
+  @Input() lines = 'inset';
 
   @Input() setting: SettingItemConfig;
 
   @Output() settingTapped = new EventEmitter<SettingItemConfig>();
 
   settingLabel$: Observable<string>;
-
-  constructor() {}
 
   settingTap(settingItem: SettingItemConfig) {
     this.settingTapped.next(settingItem);

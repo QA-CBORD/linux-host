@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CHECKIN_ROUTES } from '../check-in-config';

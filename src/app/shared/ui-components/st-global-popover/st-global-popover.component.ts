@@ -13,14 +13,11 @@ export class StGlobalPopoverComponent implements OnInit {
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };
 
-  constructor() {}
-
-  ngOnInit() {
-    // this.setContentStrings();
+  ngOnInit(): void {
     this.initPopover();
   }
 
-  initPopover() {
+  initPopover(): void {
     const { message, title, buttons, showClose } = this.data;
 
     this.popoverConfig = {
@@ -31,37 +28,11 @@ export class StGlobalPopoverComponent implements OnInit {
     };
   }
 
-  resolveButtons(buttons = [], showCancelBtn = true) {
+  resolveButtons(buttons = [], showCancelBtn = true): any[] {
     if (buttons.length && !showCancelBtn) {
       return buttons;
     }
     const cancelBtn = { ...BUTTONS.CLOSE, label: 'CLOSE' };
     return buttons.length ? [cancelBtn, ...buttons] : [cancelBtn];
   }
-
-  // private setContentStrings() {
-  //   const errorResponseDialogHeader = this.mobileAccessService.getContentValueByName(
-  //     CONTENT_STRINGS.errorResponseDialogHeader,
-  //   );
-  //   const successResponseDialogHeader = this.mobileAccessService.getContentValueByName(
-  //     CONTENT_STRINGS.successResponseDialogHeader,
-  //   );
-  //   const scanBarcodeDialogHeader = this.mobileAccessService.getContentValueByName(
-  //     CONTENT_STRINGS.scanBarcodeDialogHeader,
-  //   );
-  //   const enterCodeDialogHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.enterCodeDialogHeader);
-  //   const closeBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.closeBtn);
-  //   const retryBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.retryBtn);
-  //   const cancelBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.cancelBtn);
-  //
-  //   this.contentString = {
-  //     errorResponseDialogHeader,
-  //     successResponseDialogHeader,
-  //     scanBarcodeDialogHeader,
-  //     enterCodeDialogHeader,
-  //     closeBtn,
-  //     retryBtn,
-  //     cancelBtn,
-  //   };
-  // }
 }

@@ -16,7 +16,7 @@ import { Observable } from 'rxjs';
 export class MobileAccessTileComponent implements OnInit {
   accessList$: Observable<MMobileLocationInfo[]>;
   isLoadingData = true;
-  maxAmount: number = 4;
+  maxAmount = 4;
   skeletonArray: any[] = new Array(this.maxAmount);
 
   constructor(

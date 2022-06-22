@@ -13,7 +13,6 @@ import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '../services/camera.service';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -54,7 +53,7 @@ export class PhotoUploadComponent implements OnInit {
   profileImage$: Observable<SafeResourceUrl>;
   profileImagePending$: Observable<SafeResourceUrl>;
 
-  submitButtonDisabled: boolean = true;
+  submitButtonDisabled = true;
   frontId: Dimensions;
   backId: Dimensions;
   fitCover: boolean;
@@ -71,7 +70,6 @@ export class PhotoUploadComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly domsanitizer: DomSanitizer,
-    private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastService: ToastService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
@@ -127,8 +125,10 @@ export class PhotoUploadComponent implements OnInit {
         first()
       )
       .subscribe(
-        data => {},
-        error => {
+        () => {
+          // TODO: Remove empty block
+        },
+        () => {
           this.photoDataFetchErrorToast();
         }
       );
@@ -328,9 +328,6 @@ export class PhotoUploadComponent implements OnInit {
         },
         () => {
           // There was an issue uploading the photo information'
-        },
-        () => {
-          this.sessionFacadeService.navigatedFromPlugin = true;
         }
       );
   }
@@ -351,7 +348,7 @@ export class PhotoUploadComponent implements OnInit {
   //will submit all photos that have been uploaded
   async submitPhotos() {
     await this.loadingService.showSpinner();
-    let newPhotos: Observable<boolean>[] = [];
+    const newPhotos: Observable<boolean>[] = [];
 
     if (this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW) {
       newPhotos.push(
@@ -383,8 +380,12 @@ export class PhotoUploadComponent implements OnInit {
     zip(...newPhotos)
       .pipe(take(1))
       .subscribe(
-        data => {},
-        error => {},
+        () => {
+          // TODO: Remove empty block
+        },
+        () => {
+          // TODO: Remove empty block
+        },
         () => {
           this.photoUploadService.clearLocalGovernmentIdPhotos();
           this.clearLocalStateData();
@@ -412,7 +413,7 @@ export class PhotoUploadComponent implements OnInit {
 
     return photoObservable.pipe(
       switchMap(photoInfo => this.photoUploadService.submitPhoto(photoInfo)),
-      catchError(error => {
+      catchError(() => {
         this.presentToast(toastErrorMessage);
         return of(false);
       })

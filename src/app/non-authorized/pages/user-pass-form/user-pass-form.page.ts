@@ -71,7 +71,7 @@ export class UserPassForm implements OnInit {
     private readonly messageProxy: MessageProxy,
     private readonly globalNav: GlobalNavService,
     private readonly plt: Platform
-  ) {}
+  ) { }
 
   get username(): AbstractControl {
     return this.loginForm.get(this.controlsNames.username);
@@ -97,6 +97,10 @@ export class UserPassForm implements OnInit {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  ionViewDidEnter() {
+    this.loadingService.closeSpinner();
   }
 
   async asyncOnInit(): Promise<void> {
@@ -201,7 +205,9 @@ export class UserPassForm implements OnInit {
         }
         break;
       case LoginState.BIOMETRIC_SET:
+        // eslint-disable-next-line no-case-declarations
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
+        // eslint-disable-next-line no-case-declarations
         const biometricConfig = configureBiometricsConfig(supportedBiometricType);
         await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;

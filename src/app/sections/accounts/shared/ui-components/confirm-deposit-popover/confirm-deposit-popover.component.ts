@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ConfirmDepositCs, DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
+import { ConfirmDepositCs } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
 import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
 @Component({
@@ -12,8 +12,6 @@ export class ConfirmDepositPopoverComponent implements OnInit {
   @Input() contentString: ConfirmDepositCs = {} as any;
   @Input() intructions?: any;
   popoverConfig: PopoverConfig<string | number>;
-
-  constructor() {}
 
   ngOnInit() {
     this.initPopover();

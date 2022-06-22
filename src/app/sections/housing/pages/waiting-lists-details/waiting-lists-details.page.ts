@@ -10,7 +10,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
-import { Observable, Subscription, throwError, of } from 'rxjs';
+import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ToastService } from '@core/service/toast/toast.service';
 
@@ -140,7 +140,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this._loadingService.showSpinner();
 
     this.waitingListDetails$ = this._housingService.getWaitList(this.waitingKey).pipe(
-      tap((waitingListDetails: WaitingListDetails) => {
+      tap(() => {
         this.isSubmitted = true;
         this._loadingService.closeSpinner();
       }),

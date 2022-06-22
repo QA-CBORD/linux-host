@@ -166,7 +166,7 @@ export class TransactionService {
     accountId: string = null,
     newestDate: string = null,
     oldestDate: string = null,
-    maxReturnMostRecent: number = 20
+    maxReturnMostRecent = 20
   ) {
     this.queryCriteria = {
       maxReturnMostRecent,

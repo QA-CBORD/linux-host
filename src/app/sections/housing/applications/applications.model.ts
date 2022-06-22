@@ -15,6 +15,8 @@ export interface ApplicationDefinitionOptions {
   termKey: number;
   applicationTitle: string;
   applicationFormJson?: string;
+  accountCodeKey?: number;
+  amount?: number;
 }
 
 export class ApplicationDefinition implements ApplicationDefinitionOptions {
@@ -22,6 +24,8 @@ export class ApplicationDefinition implements ApplicationDefinitionOptions {
   termKey: number;
   applicationTitle: string;
   applicationFormJson?: string;
+  accountCodeKey?: number;
+  amount?: number;
 
   constructor(options: ApplicationDefinitionOptions) {
     if (options == null || typeof options !== 'object') {
@@ -31,6 +35,8 @@ export class ApplicationDefinition implements ApplicationDefinitionOptions {
     this.key = Number(options.key);
     this.termKey = Number(options.termKey);
     this.applicationTitle = String(options.applicationTitle);
+    this.accountCodeKey = Number(options.accountCodeKey);
+    this.amount = Number(options.amount);
 
     if (isDefined(options.applicationFormJson)) {
       this.applicationFormJson = String(options.applicationFormJson);

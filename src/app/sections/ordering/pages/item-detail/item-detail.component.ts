@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
-import { distinctUntilChanged, filter, first, map, take } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, take } from 'rxjs/operators';
 
 import {
   LOCAL_ROUTING,
@@ -12,7 +12,7 @@ import {
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
-import { CartService, MenuInfo, MenuItemInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
+import { CartService, MenuInfo, MenuItemInfo, MerchantService, OrderItem } from '@sections/ordering';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
@@ -21,7 +21,6 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 
 @Component({
   selector: 'st-item-detail',
@@ -36,7 +35,7 @@ export class ItemDetailComponent implements OnInit {
   menuItem: MenuItemInfo;
   menuItemImg: string;
   menuInfo$: Observable<MenuInfo>;
-  errorState: boolean = false;
+  errorState = false;
   cartSelectedItem: OrderItem;
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;
@@ -243,6 +242,14 @@ export class ItemDetailComponent implements OnInit {
       .then(() => {
         this.cartService.cartsErrorMessage = null;
         this.onClose();
+
+        this.cartService.menuItems$
+          .pipe(
+            filter((val, index) => !!val || index > 1),
+            distinctUntilChanged(),
+            take(1)
+          )
+          .subscribe(items =>  this.showAddedItemsQuantity(items));
       })
       .catch(async error => {
         // Temporary solution:
@@ -261,20 +268,7 @@ export class ItemDetailComponent implements OnInit {
         this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })
-      .finally(() => {
-        this.loadingService.closeSpinner();
-        this.cartService.menuItems$
-          .pipe(
-            filter((val, index) => val !== 0 || index > 1),
-            distinctUntilChanged(),
-            take(1)
-          )
-          .subscribe(items => {
-            if (items) {
-              this.showAddedItemsQuantity(items);
-            }
-          });
-      });
+      .finally(() => this.loadingService.closeSpinner());
   }
 
   private async failedValidateOrder(message: string) {
@@ -345,7 +339,7 @@ export class ItemDetailComponent implements OnInit {
   showAddedItemsQuantity(items: number) {
     this.cartService.orderInfo$.pipe(take(1)).subscribe(order => {
       const itemsQuantity = `${items} ${items > 1 ? 'items' : 'item'}`;
-      
+
       let message = `${itemsQuantity} currently in your cart.`;
       message = order.checkNumber ? `${itemsQuantity} added to order #${order.checkNumber} cart. ` : message;
 

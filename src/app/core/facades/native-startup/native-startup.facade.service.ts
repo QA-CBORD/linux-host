@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, of, zip } from 'rxjs';
+import { BehaviorSubject, from, Observable, zip } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
@@ -13,7 +13,7 @@ import { App } from '@capacitor/app';
 })
 export class NativeStartupFacadeService extends ServiceStateFacade {
   protected readonly _blockGlobalNavigation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private blockGlobalNavigation: boolean = false;
+  private blockGlobalNavigation = false;
   private digestKey = 'get_nativeStartupMessageDigest';
   private blockNavStartup = false;
 
@@ -49,7 +49,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           return null;
         }
 
-        let appInfo = await App.getInfo();
+        const appInfo = await App.getInfo();
         return {
           platform: deviceInfo.platform,
           build: appInfo.build,

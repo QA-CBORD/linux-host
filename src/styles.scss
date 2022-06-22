@@ -24,7 +24,7 @@
   //Temp styles for popover:
   .sc-ion-popover-md-h,
   .sc-ion-popover-ios-h {
-    --min-width: 300px !important;
+    --min-width: 302px !important;
 
     ion-backdrop {
       opacity: 0.5 !important;
@@ -38,6 +38,10 @@
     }
   }
 
+  .large-popover {
+    --width: fit-content;
+  }
+  
   .st-nav-tabs {
     &.tabs-wrapper {
       //  Remove ionic bug for ion-router-outlet for Rewards Tabs page:
@@ -110,7 +114,7 @@
       --height: 360px;
     }
 
-    .modal-wrapper {
+    .modal-wrapper, .modal-shadow {
       position: absolute;
       bottom: 0;
     }
@@ -302,7 +306,7 @@ article {
   --background: transparent;
 }
 
-.ios-arrow-back {
+.chevron-back {
   position: relative;
 
   &::before {

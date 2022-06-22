@@ -39,7 +39,7 @@ import { PatronAddress, AddressFields } from "./address.model";
             let state = '', country = '', zip = '', addrPhone = '', email = '';
             let addressKey = 0;
             let patronId = 0;
-            let addrTypeKey = addressType.addressTypeId;
+            const addrTypeKey = addressType.addressTypeId;
             
             const foundAddress = addresses.find((addr: PatronAddress) => addr.addrTypeKey === addrTypeKey);
 

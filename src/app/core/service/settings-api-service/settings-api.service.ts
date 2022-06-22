@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, zip } from 'rxjs';
 import { UserSettingInfo } from '@core/model/user';
-import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
+import { MessageResponse } from '@core/model/service/message-response.model';
 import { map } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { Settings, User } from '../../../app.global';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
-import { getSettingInfoObject, getSettingInfoObjectArray } from '@core/utils/settings-helper';
+import { getSettingInfoObject } from '@core/utils/settings-helper';
 
 @Injectable({
   providedIn: 'root',

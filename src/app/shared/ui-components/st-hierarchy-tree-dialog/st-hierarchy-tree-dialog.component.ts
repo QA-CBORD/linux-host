@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IonSlides, LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { SlideItem, NamedIdentity, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
@@ -31,7 +31,7 @@ export class StHierarcheTreeDialogComponent {
   }
   public async ionViewDidLoad() {
     // Need to show a progress UI since it might take 1-2 secs to init the dialog if the lookups contains many items
-    let load = await this.loading.create({
+    const load = await this.loading.create({
       message: "please wait"
     });
     load.present();
@@ -72,6 +72,7 @@ export class StHierarcheTreeDialogComponent {
       const _topParentSlideItems: SlideItem[] = [];
       const _topParentSlide: Slide = { parentSlideItem: null, parentSlide: null, slideIndex: currentSlideIndex, items: _topParentSlideItems };
       slides.push(_topParentSlide);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       lookUpsAsTree.forEach((lookUpItem: LookUpItem, index: number) => {
         lookUpItem.children = Object.keys(lookUpItem.children).map(key => {
           return lookUpItem.children[key];
@@ -107,6 +108,7 @@ export class StHierarcheTreeDialogComponent {
     const _slide: Slide = { parentSlideItem, parentSlide, slideIndex: currentSlideIndex, items: _slideItems };
     slides.push(_slide);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     children.forEach((lookUpItem: LookUpItem, index: number) => {
       lookUpItem.children = Object.keys(lookUpItem.children).map(key => {
         return lookUpItem.children[key];
@@ -140,7 +142,7 @@ export class StHierarcheTreeDialogComponent {
 
     const recurse = (_lookUps: LookUpItem[]) => {
 
-      // tslint:disable-next-line:prefer-for-of
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < _lookUps.length; i++) {
 
         // Found the lookUpItem!
@@ -179,7 +181,7 @@ export class StHierarcheTreeDialogComponent {
   }
 
   public itemSelected(item: SlideItem) {
-    let selectedItem: NamedIdentity = null;
+    const selectedItem: NamedIdentity = null;
     if (item) {
       this._workOrderStateService.setSelectedFacilityTree(item);
     }

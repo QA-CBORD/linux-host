@@ -50,6 +50,7 @@ export function generateLabel(_: any, index: number): Label {
   return new Label(`Honors Unit ${index}`);
 }
 
-export function generateLabels(amount: number = 2): Label[] {
+export function generateLabels(amount = 2): Label[] {
+  // eslint-disable-next-line prefer-spread
   return Array.apply(null, Array(amount)).map(generateLabel);
 }

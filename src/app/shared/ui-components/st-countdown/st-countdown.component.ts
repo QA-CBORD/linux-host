@@ -9,7 +9,7 @@ import { map, takeWhile, tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StCountdownComponent implements OnInit {
-  @Input() seconds: number = 3;
+  @Input() seconds = 3;
   @Output() onTimeout: EventEmitter<boolean> = new EventEmitter<boolean>();
   countdown$: Observable<number>;
 

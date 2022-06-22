@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
@@ -16,15 +15,13 @@ import { QuestionAssetTypeDetails } from '../questions/types';
   styleUrls: ['../questions/question.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AssetTypeDetailsComponent implements OnInit {
+export class AssetTypeDetailsComponent {
   @Input() question: QuestionAssetTypeDetails;
   @Input() parentGroup: FormGroup;
   @Input() isSubmitted: boolean;
 
   constructor(
     private _nonAssignmentsStateService: NonAssignmentsStateService) { }
-
-  ngOnInit() {}
 
   trackByLabel(_: number, assetTypeDetail: AssetTypeDetailValue): string {
     return assetTypeDetail.label;

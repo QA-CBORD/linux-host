@@ -101,6 +101,7 @@ export class RegistrationComponent implements OnInit {
     return errorCounter > 0;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async onRegistrationSuccess(response): Promise<void> {
     this.modalCtrl.dismiss();
     const { registrationCs: contentStrings } = await (await this.registrationFacade.getData()).contentString;

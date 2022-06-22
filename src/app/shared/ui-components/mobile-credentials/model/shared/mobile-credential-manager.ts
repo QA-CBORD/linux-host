@@ -3,6 +3,7 @@ import { AndroidCredentialCsModel } from '../android/android-credential-content-
 import { MobileCredential } from './mobile-credential';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MobileCredentialManagerAdapter {}
 
 export interface CredentialStateChangeListener {

@@ -1,0 +1,108 @@
+@import 'tools';
+
+.ionic_content {
+  --background: white;
+}
+
+.application-payment__content {
+  --background: #{$porcelain};
+}
+
+.application-payment__actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.application-payment__title {
+  @include font-family($font-nunito-heavy);
+
+  font-size: 16px;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.application-payment__page-back {
+  @include font-family($font-nunito-regular);
+}
+
+.application-payment__save {
+  @include font-family($font-nunito-heavy);
+  --color: #{$color-dodger-blue};
+}
+
+.application-payment__card {
+  --background: #f1f1f1;
+  background-color: $color-white;
+  border-radius: 16px;
+  box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
+}
+
+.application-payment__back {
+  @include font-family($font-nunito-heavy);
+  color: #{$color-dodger-blue};
+  min-width: 80px;
+}
+
+.application-payment__next,
+.application-payment__submit {
+  @include font-family($font-nunito-heavy);
+
+  --border-radius: 8px;
+  width: 150px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.application-payment__next {
+  --background-activated: #{$color-dodger-blue};
+  --border-color: #{$color-dodger-blue};
+  --border-width: 2px;
+  --color: #{$color-dodger-blue};
+}
+
+.application-payment__submit {
+  --background: #{$color-dodger-blue};
+}
+
+ion-card {
+  margin: 8px !important;
+}
+ion-card-content {
+  @include font-nunito-regular(14px);
+  margin-top: 38px;
+  margin-right: 0px;
+  margin-left: 0px;
+  color: #{$color-black};
+}
+
+ion-card-title {
+  @include font-nunito-heavy(16px);
+  margin-top: 25px;
+  margin-bottom: 5px;
+  text-align: center;
+  color: #{$color-black};
+}
+
+st-input-amount {
+  display: block;
+  margin-bottom: 25px;
+  color: #{$color-black};
+}
+
+ion-label {
+  @include font-nunito-regular(18px);
+  display: flex;
+  margin-top: 50px;
+  padding-bottom:30px;
+  margin-left: 30px;
+  color: #{$color-black};
+}
+
+.ion-padding {
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+}

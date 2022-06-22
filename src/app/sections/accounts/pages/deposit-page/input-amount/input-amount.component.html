@@ -1,0 +1,33 @@
+<div class="amount__main-input-container">
+    <ion-input
+      class="amount__main-input"
+      type="tel"
+      inputmode="decimal"
+      maxlength="10"
+      placeholder="0"
+      tabindex="0"
+      [ngStyle]="{ width: control.value?.length ? ('' + control.value)?.length + 1 + 'ch' : '2ch' }"
+      [ngClass]="{
+        'amount__main-input--focus': focusLine,
+        shakeit: isMaxCharLength,
+        'amount__main-input-container--decrease-font': control.value && ('' + control.value)?.length >= 7
+        }"
+      (ionFocus)="focusLine = true"
+      (ionBlur)="focusLine = false; onBlurEvent($event)"
+      (ionInput)="ionInputEvent($event)"
+      (keydown)="keydownEvent($event)"
+      [formControl]="control"
+    ></ion-input>
+    <div *ngIf="control.errors && control.errors['maxLength']" class="amount__main-input--error">
+      {{ contentString.maxAmountError }} {{ control.errors['maxLength'].max | transactionUnits }}
+    </div>
+    <div *ngIf="control.errors && control.errors['minLength']" class="amount__main-input--error">
+      {{ contentString.minAmountError }} {{ control.errors['minLength'].min | transactionUnits }}
+    </div>
+    <div
+      *ngIf="control.errors && control.errors['pattern'] && (control.dirty || control.touched)"
+      class="amount__main-input--error"
+    >
+      {{ contentString.amountPatternError }}
+    </div>
+  </div>

@@ -20,8 +20,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class SavedAddressesComponent implements OnInit {
   userAddresses: AddressInfo[];
   buildings$: Observable<BuildingInfo[]>;
-  errorState: boolean = false;
-  addNewAdddressState: boolean = false;
+  errorState = false;
+  addNewAdddressState = false;
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   defaultAddress: string;
@@ -90,6 +90,7 @@ export class SavedAddressesComponent implements OnInit {
         take(1),
         finalize(() => this.loader.closeSpinner())
       )
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .subscribe(([success, addedAddress]) => {
         //Set Default Address.
         if (this.addNewAddressForm.value.default) {

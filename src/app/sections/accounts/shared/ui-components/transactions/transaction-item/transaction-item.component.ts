@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TransactionHistory } from '../../../../models/transaction-history.model';
 
 @Component({
@@ -7,9 +7,6 @@ import { TransactionHistory } from '../../../../models/transaction-history.model
   styleUrls: ['./transaction-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionItemComponent implements OnInit {
+export class TransactionItemComponent {
   @Input() transaction: TransactionHistory;
-  constructor() {}
-
-  ngOnInit() {}
 }

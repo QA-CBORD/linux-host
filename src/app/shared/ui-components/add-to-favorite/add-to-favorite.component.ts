@@ -17,11 +17,11 @@ import {
 export class AddToFavoriteComponent implements OnChanges {
   private readonly iconUrlPrefix: string = '/assets/icon/add-to-favorite';
 
-  @Input() active: boolean = false;
+  @Input() active = false;
 
   @Output() added: EventEmitter<void> = new EventEmitter<void>();
 
-  iconUrl: string = `${this.iconUrlPrefix}.svg`;
+  iconUrl = `${this.iconUrlPrefix}.svg`;
 
   ngOnChanges(changes: SimpleChanges): void {
     const { active }: SimpleChanges = changes;

@@ -29,7 +29,6 @@
     border: 1px solid $color-light-gray;
     border-radius: 8px;
     -webkit-appearance: none;
-    margin-top: 25px;
 
     &:focus,
     &:focus-within {
@@ -96,4 +95,8 @@
 .input-select-facility{
   margin: 1em 0 1em;
   padding: 0.7em 0;
+}
+
+.hierarchy-tree-text-area{
+  margin-top: 30px;
 }

@@ -11,9 +11,9 @@ import { take, finalize } from 'rxjs/operators';
 })
 export class TransactionsTileComponent implements OnInit {
   transactions: TransactionHistory[] = [];
-  transactionsAmount: number = 3;
+  transactionsAmount = 3;
   skeletonArray: any[] = new Array(this.transactionsAmount);
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(private readonly transactionService: TransactionService,
               private readonly cdRef: ChangeDetectorRef) { }

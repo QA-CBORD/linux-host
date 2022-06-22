@@ -16,5 +16,4 @@ const providers = [ScanCardResolverService];
   declarations,
   providers,
 })
-export class ScanCardModule {
-}
+export class ScanCardModule {}

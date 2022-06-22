@@ -1,6 +1,5 @@
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import {
-  InputValidator,
   SupportedInputValidators,
   Validation,
 } from 'src/app/non-authorized/pages/registration/models/password-validation';

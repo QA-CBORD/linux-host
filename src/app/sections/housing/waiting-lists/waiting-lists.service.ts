@@ -3,12 +3,12 @@ import { EnvironmentFacadeService } from "@core/facades/environment/environment.
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { WaitingListStateService } from './waiting-list-state.service';
 import { WaitingListDetails, WaitingListDetailsRequest } from './waiting-lists.model';
 import { QuestionsPage } from '../questions/questions.model';
-import { QuestionsStorageService, QuestionsEntries, StoredApplication } from '../questions/questions-storage.service';
+import { QuestionsEntries } from '../questions/questions-storage.service';
 import { QuestionBase } from '../questions/types/question-base';
 import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
@@ -32,12 +32,11 @@ export class WaitingListsService {
     private _proxy: HousingProxyService,
     private _environment: EnvironmentFacadeService,
     private _waitingListState: WaitingListStateService,
-    private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
     private _housingProxyService: HousingProxyService) { }
 
   removeFromWaitingList(patronWaitingListKey: number): Observable<boolean> {
-    let urlRemove = this.WaitingListUrl + `/patron`;
+    const urlRemove = this.WaitingListUrl + `/patron`;
     const queryParams = new HttpParams().set('patronWaitingListKey', `${patronWaitingListKey}`);
     return this._proxy.delete(urlRemove, queryParams).pipe(map((response: Response) => {
       if (isSuccessful(response.status)) {
@@ -46,9 +45,10 @@ export class WaitingListsService {
         throw new Error(response.status.message);
       }
     }),
-      catchError(_ => of(false)))
+      catchError(() => of(false)))
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getQuestions(key: number): Observable<QuestionsPage[]> {
     return this._waitingListState.waitingListDetails$.pipe(
       map((waitingListDetails: WaitingListDetails) => {
@@ -146,7 +146,7 @@ export class WaitingListsService {
     waitingListDetails: WaitingListDetails
   ): FormControl {
     let value: any = storedValue;
-    let disabled: boolean = false;
+    let disabled = false;
 
     if (!isDefined(value)) {
       if (question.consumerKey) {
@@ -162,7 +162,7 @@ export class WaitingListsService {
   }
 
   private _getSelectedWaitingListValue(waitingList: WaitingListDetails): string {
-    let value: string = '';
+    let value = '';
     
     if (waitingList.facilities != null) {
       const item = waitingList.facilities
@@ -202,7 +202,9 @@ export class WaitingListsService {
           .subscribe(d => formQuestions = Object.entries(d));
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const selectedValue = formQuestions.find(([key, _]) => key.includes('attribute-selection'));
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const selectedFacility = formQuestions.find(([key, _]) => key.includes('facility-selection'));
 
       const attributeValue: string = selectedValue ? String(selectedValue[1]) : null;
@@ -223,7 +225,7 @@ export class WaitingListsService {
             }
           }
         ),
-        catchError(_ => of(false))
+        catchError(() => of(false))
       );
   }
 }

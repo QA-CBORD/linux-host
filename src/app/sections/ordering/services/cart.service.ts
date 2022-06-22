@@ -22,7 +22,7 @@ export class CartService {
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
-  public orderIsAsap: boolean = false;
+  public orderIsAsap = false;
   checkNumber: number;
   currentOrderId: string;
   merchantTimeZone: string;
@@ -94,6 +94,7 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
+      filter((orderInfo) => orderInfo && orderInfo.orderItems.length > 0),
       map(({ orderItems }) => orderItems.reduce((state, { quantity }) => state + quantity, 0))
     );
   }

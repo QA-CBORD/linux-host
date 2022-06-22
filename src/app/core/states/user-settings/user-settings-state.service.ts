@@ -4,13 +4,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map, take } from 'rxjs/operators';
 import { UserSettingInfo } from '@core/model/user';
 import { User } from '../../../app.global';
-import { getSettingInfoObject } from '@core/utils/settings-helper';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserSettingsStateService extends SingleEntityStateManager<UserSettingInfo[]> {
-  protected activeUpdaters: number = 0;
+  protected activeUpdaters = 0;
   protected state: UserSettingInfo[] = [];
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   protected readonly _state$: BehaviorSubject<UserSettingInfo[]> = new BehaviorSubject<UserSettingInfo[]>(this.state);

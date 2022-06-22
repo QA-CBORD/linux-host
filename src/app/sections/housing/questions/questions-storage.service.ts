@@ -96,7 +96,7 @@ export class QuestionsStorageService {
   updateQuestions(key: number, formValue: any, status: number): Observable<any> {
     return this.getApplication(key).pipe(
       switchMap((storedForm: StoredApplication) => {
-        let questions: QuestionsEntries = storedForm && storedForm.questions ? storedForm.questions : {};
+        const questions: QuestionsEntries = storedForm && storedForm.questions ? storedForm.questions : {};
 
         Object.keys(formValue).forEach(
           (formControlName: any) => (questions[formControlName] = formValue[formControlName])

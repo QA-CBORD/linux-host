@@ -21,10 +21,10 @@ export class OrderTileComponent implements OnInit {
   };
 
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-  amountPerSlide: number = 2;
+  amountPerSlide = 2;
   slides: MerchantInfo[][] = [];
   skeletonArray: any[] = new Array(this.amountPerSlide);
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,

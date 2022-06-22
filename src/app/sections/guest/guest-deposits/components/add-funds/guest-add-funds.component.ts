@@ -24,7 +24,7 @@ import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 
-enum GUEST_FORM_CONTROL_NAMES {
+export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
   toAccount = 'toAccount',
   amountToDeposit = 'amountToDeposit',
@@ -46,8 +46,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   confirmationCs: ContentStringModel;
   guestDepositForm: FormGroup;
   recipientName: string;
-  isMaxCharLength: boolean = false;
-  focusLine: boolean = false;
+  focusLine = false;
+  errorCs: { maxAmountError: string; minAmountError: string; amountPatternError: string; };
 
   constructor(
     private readonly fb: FormBuilder,
@@ -70,6 +70,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.activatedRoute.data.subscribe(response => {
       this.setResolvedData(response);
     });
+    this.setContentString();
   }
 
   ionViewWillEnter() {
@@ -130,7 +131,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   onAmountChanged(event) {
-    const amount = (event && event.target.value) || undefined;
+    const amount = (event && event.target?.value) || undefined;
     if (!isNaN(+amount)) {
       this.depositButtonLabel('Deposit $' + amount);
     } else {
@@ -142,7 +143,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     if (this.isReadyToSubmit()) return;
     this.isDepositing = true;
     const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.guestDepositForm.value;
-    let amount = this.formatAmountValue(mainInput, amountToDeposit);
+    const amount = this.formatAmountValue(mainInput, amountToDeposit);
     if (this.isApplePayEnabled(paymentMethod)) {
       this.handleApplePay(toAccount, amount);
     } else {
@@ -171,6 +172,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         )
         .subscribe(
           info => {
+            // eslint-disable-next-line @typescript-eslint/ban-types
             this.confirmationDepositPopover({ ...(info as {}) });
           },
           () => {
@@ -357,5 +359,13 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       );
     this.paymentMethod.reset();
     this.paymentMethod.markAsPristine();
+  }
+
+  private setContentString() {
+    this.errorCs = { 
+      maxAmountError: 'The maximum amount for a deposit is',
+      minAmountError: 'The minimum amount for a deposit is',
+      amountPatternError: 'Please enter a valid amount.',
+    }
   }
 }

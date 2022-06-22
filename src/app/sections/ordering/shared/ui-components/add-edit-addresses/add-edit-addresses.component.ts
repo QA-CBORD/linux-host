@@ -22,7 +22,6 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../../../app.global';
-import { StInputFloatingLabelComponent } from '@shared/ui-components';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -69,9 +68,9 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.getSetting(Settings.Setting.ADDRESS_RESTRICTION);
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
+    this.getSetting(Settings.Setting.ADDRESS_RESTRICTION);
   }
 
   ngOnDestroy() {
@@ -140,7 +139,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
         ({ value }) => {
           this.initForm(parseInt(value), this.editAddress && this.editAddress.address);
         },
-        ({ error }) => {
+        () => {
           this.loader.closeSpinner();
         },
 

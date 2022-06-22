@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { from, Observable, of } from 'rxjs';
-import { map, skipWhile, switchMap, take } from 'rxjs/operators';
+import { map, skipWhile, switchMap } from 'rxjs/operators';
 
 import { Settings } from 'src/app/app.global';
 import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';

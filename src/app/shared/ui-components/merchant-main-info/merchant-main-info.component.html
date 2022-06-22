@@ -1,13 +1,29 @@
-<article class="info-block">
-  <h3 class="info-block__merchant-name">{{merchant.name}}</h3>
-  <p class="info-block__distance">{{merchant.distanceFromUser | merchantDistance}}</p>
-  <div class="info-block__main-info">
-    <p *ngIf="isShowMerchantStatus" class="info-block__access-state"
-       [ngClass]="{
-           'info-block__access-state--open': merchant.openNow,
-           'info-block__access-state--closed': !merchant.openNow
-            }"
-    >{{ merchant.openNow ? 'Open' : 'Closed' }}</p>
-    <p *ngIf="isShowOrderType" class="info-block__order-type">{{merchant | orderType}}</p>
-  </div>
-</article>
+<ion-grid class="ion-no-padding info-block" fixed>
+  <ion-row>
+    <ion-col class="ion-no-padding">
+      <h3 class="info-block__merchant-name">{{ merchant.name }}</h3>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="ion-no-padding">
+      <p class="info-block__distance">{{ merchant.distanceFromUser | merchantDistance }}</p>
+    </ion-col>
+  </ion-row>
+  <ion-row class="info-block__main-info">
+    <ion-col class="ion-no-padding ">
+      <p
+        *ngIf="isShowMerchantStatus"
+        class="info-block__access-state"
+        [ngClass]="{
+          'info-block__access-state--open': merchant.openNow,
+          'info-block__access-state--closed': !merchant.openNow
+        }"
+      >
+        {{ merchant.openNow ? 'Open' : 'Closed' }}
+      </p>
+    </ion-col>
+    <ion-col class="ion-no-padding ion-text-right">
+      <p *ngIf="isShowOrderType" class="info-block__order-type">{{ merchant | orderType }}</p>
+    </ion-col>
+  </ion-row>
+</ion-grid>

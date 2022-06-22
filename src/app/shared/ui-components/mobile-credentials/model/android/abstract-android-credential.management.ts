@@ -107,7 +107,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     }
   }
 
-  protected async checkCredentialAvailability(showLoading: boolean = true): Promise<boolean> {
+  protected async checkCredentialAvailability(showLoading = true): Promise<boolean> {
     return (await this.fetchFromServer$(!showLoading)).isAvailable();
   }
 
@@ -134,6 +134,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
       .toPromise();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onUiIconClicked(): void {}
 
   getCredential(): MobileCredential {
