@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { UserAccount } from '@core/model/account/account.model';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -6,11 +6,13 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
+import { HousingService } from '@sections/housing/housing.service';
 import {
   AccountsType,
   CardCs,
 } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
+import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
 import { take } from 'rxjs/operators';
 import { CurrentApplication as CurrentForm } from '../application-details/application-details.page';
 import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
@@ -35,15 +37,15 @@ export interface TransactionalData {
 }
 
 @Component({
-  selector: 'st-application-payment',
-  templateUrl: './application-payment.component.html',
-  styleUrls: ['./application-payment.component.scss'],
+  selector: 'st-form-payment',
+  templateUrl: './form-payment.component.html',
+  styleUrls: ['./form-payment.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ApplicationPaymentComponent implements OnInit {
-  @Input() contentStrings: CardCs;
-  @Input() userAccounts: AccountsType = [];
-  @Input() currentForm: CurrentForm;
+export class FormPaymentComponent implements OnInit {
+  contentStrings: CardCs;
+  userAccounts: AccountsType = [];
+  currentForm: CurrentForm;
   control: AbstractControl;
 
   constructor(
@@ -53,10 +55,14 @@ export class ApplicationPaymentComponent implements OnInit {
     private readonly modalCtrl: ModalController,
     private readonly applicationsService: ApplicationsService,
     private readonly loadingService: LoadingService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private housingService: HousingService
   ) {}
 
   ngOnInit() {
+    this.contentStrings = defaultCreditCardMgmtCs;
+    this.userAccounts = <AccountsType>history.state.userAccounts; 
+    this.currentForm = <CurrentForm>history.state.currentForm;
     this.control = this.initFormControl();
     this.control.disable();
   }
@@ -94,8 +100,8 @@ export class ApplicationPaymentComponent implements OnInit {
     }
   }
 
-  async dismiss() {
-    await this.modalCtrl.dismiss();
+  async onBack() {
+    this.housingService.handleSuccess();
   }
 
   private async confirmPaymentPopover(data: TransactionalData) {
@@ -127,7 +133,6 @@ export class ApplicationPaymentComponent implements OnInit {
   }
 
   private async openPaymentSuccessModal(data: TransactionalData) {
-    this.dismiss();
     const modal = await this.modalCtrl.create({
       component: SuccessfulPaymentModal,
       componentProps: {

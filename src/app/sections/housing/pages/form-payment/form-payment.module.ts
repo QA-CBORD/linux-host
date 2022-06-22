@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { ApplicationPaymentComponent } from './application-payment.component';
+import { FormPaymentComponent } from './form-payment.component';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { CreditCardTypePipeModule } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.module';
@@ -16,6 +16,8 @@ import { StCreditCardListModule } from '@sections/settings/creditCards/credit-ca
 import { StInputAmountModule } from '@sections/accounts/pages/deposit-page/input-amount/input-amount.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
+import { FormPaymentRoutingModule } from './form-payment-routing.module';
+import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 
 const imports = [
   CommonModule,
@@ -30,19 +32,15 @@ const imports = [
   ConfirmDepositPopoverModule,
   DepositModalModule,
   StButtonModule,
+  FormPaymentRoutingModule
 ];
-const declarations = [ApplicationPaymentComponent, ConfirmPaymentPopover, SuccessfulPaymentModal];
-const entryComponents = [
-  ApplicationPaymentComponent,
-  ConfirmPaymentPopover,
-  DepositModalComponent,
-  SuccessfulPaymentModal,
-];
+const declarations = [FormPaymentComponent, ConfirmPaymentPopover, SuccessfulPaymentModal];
+const entryComponents = [FormPaymentComponent, ConfirmPaymentPopover, DepositModalComponent, SuccessfulPaymentModal];
 
 @NgModule({
   imports,
   declarations,
   entryComponents,
-  providers: [AccountService],
+  providers: [AccountService, CreditCardService],
 })
-export class ApplicationPaymentModule {}
+export class FormPaymentModule {}

@@ -6,10 +6,10 @@ import { ApplicationDetailsRoutingModule } from './application-details.routing.m
 import { QuestionsModule } from '../../questions/questions.module';
 import { StepperModule } from '../../stepper/stepper.module';
 import { ApplicationDetailsPage } from './application-details.page';
-import { ApplicationPaymentModule } from '../application-payment/application-payment.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { AccountsService } from '@sections/dashboard/services';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
+import { FormPaymentModule } from '../form-payment/form-payment.module';
 
 const imports = [
   CommonModule,
@@ -18,8 +18,8 @@ const imports = [
   QuestionsModule,
   StepperModule,
   ApplicationDetailsRoutingModule,
-  ApplicationPaymentModule,
-  StButtonModule
+  FormPaymentModule,
+  StButtonModule,
 ];
 const declarations = [ApplicationDetailsPage];
 

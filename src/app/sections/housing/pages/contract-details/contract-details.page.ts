@@ -8,21 +8,17 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-
-import { QuestionsService } from '../../questions/questions.service';
 import { ContractsService } from '../../contracts/contracts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../../housing.service';
-
 import { StepperComponent } from '../../stepper/stepper.component';
 import { QuestionComponent } from '../../questions/question.component';
-
 import { QuestionsPage } from '../../questions/questions.model';
 import { ContractDetails } from '../../contracts/contracts.model';
+import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'st-contract-details',
@@ -33,7 +29,7 @@ import { ContractDetails } from '../../contracts/contracts.model';
 export class ContractDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
-  @ViewChild('content') private content: any;
+  @ViewChild('content') private content: IonContent;
 
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
@@ -55,18 +51,15 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   constructor(
     private _route: ActivatedRoute,
-    private _questionsService: QuestionsService,
     private _contractsService: ContractsService,
-    private _router: Router,
-    private _toastController: ToastController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.contractKey = parseInt(this._route.snapshot.paramMap.get('contractKey'), 10);
-    this.contractElementKey = parseInt(this._route.snapshot.paramMap.get('contractElementKey'), 10);
+    this.contractKey = parseInt(this._route.snapshot.params.contractKey);
+    this.contractElementKey = parseInt(this._route.snapshot.params.contractElementKey);
 
     this._initContractDetailsObservable();
     this._initPagesObservable();
@@ -78,8 +71,9 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  submit(isLastPage: boolean): void {
+  submitForm(isLastPage: boolean): void {
     if (this.isSubmitted) {
+      // if is paymentDue
       if (!isLastPage) {
         this._next();
         return;

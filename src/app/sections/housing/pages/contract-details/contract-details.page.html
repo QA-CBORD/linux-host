@@ -23,7 +23,7 @@
         *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
         [stepControl]="page.form"
       >
-        <form [formGroup]="page.form" (ngSubmit)="submit(isLastPage)">
+        <form [formGroup]="page.form" (ngSubmit)="submitForm(isLastPage)">
           <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
             <st-question
               *ngIf="question"
