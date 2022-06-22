@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
 import { AccountsConf } from '../../credit-card.service';
 
@@ -18,7 +18,7 @@ export interface CardCs {
   templateUrl: './credit-card-list.component.html',
   styleUrls: ['./credit-card-list.component.scss'],
 })
-export class CardListComponent implements OnInit {
+export class CardListComponent {
   @Input() contentStrings: CardCs = {} as CardCs;
   @Input() userAccounts: AccountsConf[] = [];
   @Input() removeIcon: boolean;
@@ -26,12 +26,6 @@ export class CardListComponent implements OnInit {
   @Output() onRemove: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
   @Output() onClick: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
   @Output() onAdd: EventEmitter<Event> = new EventEmitter<Event>();
-
-  noCreditCardFound: boolean;
-
-  ngOnInit(): void {
-    this.noCreditCardFound = !this.userAccounts.length;
-  }
 
   onRemoveEvent(account: UserAccount): void {
     this.onRemove.emit(account);
