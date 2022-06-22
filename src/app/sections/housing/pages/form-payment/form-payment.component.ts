@@ -8,11 +8,10 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import { HousingService } from '@sections/housing/housing.service';
 import {
-  AccountsType,
   CardCs,
 } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
+import { AccountsConf, CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
 import { CurrentApplication as CurrentForm } from '../application-details/application-details.page';
 import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
@@ -44,7 +43,7 @@ export interface TransactionalData {
 })
 export class FormPaymentComponent implements OnInit {
   contentStrings: CardCs;
-  userAccounts: AccountsType = [];
+  userAccounts: AccountsConf[] = [];
   currentForm: CurrentForm;
   control: AbstractControl;
 
@@ -61,7 +60,7 @@ export class FormPaymentComponent implements OnInit {
 
   ngOnInit() {
     this.contentStrings = defaultCreditCardMgmtCs;
-    this.userAccounts = <AccountsType>history.state.userAccounts; 
+    this.userAccounts = <AccountsConf[]>history.state.userAccounts; 
     this.currentForm = <CurrentForm>history.state.currentForm;
     this.control = this.initFormControl();
     this.control.disable();
