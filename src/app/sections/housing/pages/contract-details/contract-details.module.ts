@@ -9,10 +9,10 @@ import { StepperModule } from '../../stepper/stepper.module';
 import { SignContractModule } from '@sections/housing/sign-contract/sign-contract.module';
 
 import { ContractDetailsPage } from './contract-details.page';
-import { AccountsService } from '@sections/dashboard/services';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { FormPaymentService } from '../form-payment/form-payment.service';
+import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
+import { AccountsService } from '@sections/dashboard/services';
 
 const imports = [
   CommonModule,
@@ -29,6 +29,6 @@ const declarations = [ContractDetailsPage];
 @NgModule({
   imports,
   declarations,
-  providers: [AccountsService, CreditCardService, FormPaymentService],
+  providers: [FormPaymentService, CreditCardService, AccountsService],
 })
 export class ContractDetailsPageModule {}

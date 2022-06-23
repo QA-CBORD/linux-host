@@ -7,10 +7,10 @@ import { QuestionsModule } from '../../questions/questions.module';
 import { StepperModule } from '../../stepper/stepper.module';
 import { ApplicationDetailsPage } from './application-details.page';
 import { StButtonModule } from '@shared/ui-components/st-button';
-import { AccountsService } from '@sections/dashboard/services';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { FormPaymentModule } from '../form-payment/form-payment.module';
 import { FormPaymentService } from '../form-payment/form-payment.service';
+import { AccountsService } from '@sections/dashboard/services';
+import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 
 const imports = [
   CommonModule,
@@ -27,6 +27,6 @@ const declarations = [ApplicationDetailsPage];
 @NgModule({
   imports,
   declarations,
-  providers: [AccountsService, CreditCardService, FormPaymentService],
+  providers: [FormPaymentService, CreditCardService, AccountsService],
 })
 export class ApplicationDetailsPageModule {}

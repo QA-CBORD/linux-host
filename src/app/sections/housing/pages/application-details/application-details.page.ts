@@ -188,7 +188,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   private async continueToPayment(appDetails: ApplicationDetails, form: FormControl) {
-    this.formPaymentService.continueToPayment(appDetails, form, this.getApplicationKey(), FormType.Application);
+    this.formPaymentService.continueToFormPayment(appDetails, form, this.getApplicationKey(), FormType.Application);
   }
 
   private isPaymentDue(applicationDetails: ApplicationDetails): boolean {
