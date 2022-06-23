@@ -234,6 +234,8 @@ export interface ContractDetailsOptions {
 export class ContractDetails implements ContractDetailsOptions {
   contractInfo: ContractInfo;
   formJson: any;
+  accountCodeKey?: number;
+  amount?: number;
   chargeSchedules: ChargeSchedule[];
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];

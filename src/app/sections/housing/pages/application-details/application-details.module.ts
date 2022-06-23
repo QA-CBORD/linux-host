@@ -10,6 +10,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { AccountsService } from '@sections/dashboard/services';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { FormPaymentModule } from '../form-payment/form-payment.module';
+import { FormPaymentService } from '../form-payment/form-payment.service';
 
 const imports = [
   CommonModule,
@@ -26,6 +27,6 @@ const declarations = [ApplicationDetailsPage];
 @NgModule({
   imports,
   declarations,
-  providers: [AccountsService, CreditCardService],
+  providers: [AccountsService, CreditCardService, FormPaymentService],
 })
 export class ApplicationDetailsPageModule {}

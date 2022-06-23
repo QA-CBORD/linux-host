@@ -13,17 +13,25 @@ import {
 import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
 import { AccountsConf, CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
-import { CurrentApplication as CurrentForm } from '../application-details/application-details.page';
 import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
+import { ContractsService } from '@sections/housing/contracts/contracts.service';
+import { ThisReceiver } from '@angular/compiler';
 
-export interface CreditCardItem {
-  display: string;
-  account: UserAccount;
-  iconSrc: string;
+
+export const FormType = {
+  Application: 'application',
+  WorkOrder: 'work-order'
+}
+export interface CurrentForm {
+  key: number,
+  details: any,
+  formValue: FormControl,
+  isSubmitted: boolean,
+  type: 'application' | 'work-order'
 }
 
-export interface TransactionalData {
+interface TransactionalData {
   sourceAcc: {
     accountTender: string;
     lastFour: string;
@@ -55,7 +63,8 @@ export class FormPaymentComponent implements OnInit {
     private readonly applicationsService: ApplicationsService,
     private readonly loadingService: LoadingService,
     private readonly cdRef: ChangeDetectorRef,
-    private housingService: HousingService
+    private housingService: HousingService,
+    private contractsService: ContractsService,
   ) {}
 
   ngOnInit() {
@@ -67,7 +76,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private initFormControl() {
-     return new FormControl(this.getAmountDue);
+     return new FormControl(this.amountDue);
   }
 
   async addCreditCard() {
@@ -76,11 +85,11 @@ export class FormPaymentComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  async confirmPayment(cardInfo?: CreditCardItem) {
-    const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.getAmountDue);
+  async confirmPayment(cardInfo?: AccountsConf) {
+    const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.amountDue);
     const popover = await this.confirmPaymentPopover(info);
     popover.onDidDismiss().then(async ({ role }) => {
-      this.onConfirmation(role, cardInfo?.account, this.getAmountDue, info);
+      this.onConfirmation(role, cardInfo?.account, this.amountDue, info);
     });
     await popover.present();
   }
@@ -125,10 +134,19 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () =>  { 
+    if(this.currentForm.type == FormType.Application) {
+      this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () =>  { 
         await this.openPaymentSuccessModal(transaction); 
         this.loadingService.closeSpinner();
-    });
+    }); 
+    } else if (this.currentForm.type == FormType.WorkOrder) {
+      this.contractsService.submitContract(this.currentForm.key).pipe(take(1)).subscribe(
+        async () =>  { 
+          await this.openPaymentSuccessModal(transaction); 
+          this.loadingService.closeSpinner();
+        });
+    }
+    
   }
 
   private async openPaymentSuccessModal(data: TransactionalData) {
@@ -145,11 +163,19 @@ export class FormPaymentComponent implements OnInit {
   }
 
   get formTitle(): string {
-    return this.currentForm.details.applicationDefinition.applicationTitle;
+    if(this.currentForm.type == FormType.Application) {
+      return this.currentForm.details.applicationDefinition.applicationTitle;
+    } else if (this.currentForm.type == FormType.WorkOrder) {
+      return this.currentForm.details.contractInfo.contractName
+    }
   }
 
-  get getAmountDue(): string {
-    return this.currentForm.details.applicationDefinition.amount.toFixed(2);
+  get amountDue(): string {
+    if(this.currentForm.type == FormType.Application) {
+      return this.currentForm.details.applicationDefinition.amount.toFixed(2);
+    } else if (this.currentForm.type == FormType.WorkOrder) {
+      return this.currentForm.details.amount.toFixed(2);
+    }
   }
 
   private buildTransactionInfo(account: UserAccount, amount: string): TransactionalData {

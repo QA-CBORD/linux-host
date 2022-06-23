@@ -6,7 +6,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { IonContent, ModalController } from '@ionic/angular';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, throwError } from 'rxjs';
@@ -22,19 +22,9 @@ import { RequestingRoommateModalComponent } from '@shared/ui-components/requesti
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Location } from '@angular/common';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
-import { UserAccount } from '@core/model/account/account.model';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { LOCAL_ROUTING } from '../../housing.config';
-import { reduceToObject } from '@shared/model/content-strings/content-string-utils';
-import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
+import { CurrentForm } from '../form-payment/form-payment.component';
+import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
 
-export interface CurrentApplication {
-  key: number,
-  details: ApplicationDetails,
-  formValue: FormControl,
-  isSubmitted: boolean
-}
 
 enum UpdateType {
   SUBMIT = 'submit',
@@ -64,8 +54,7 @@ export class ApplicationDetailsPage implements OnInit {
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
-    private creditCardService: CreditCardService,
-    private _router: Router,
+    private formPaymentService: FormPaymentService
   ) {}
 
   async ngOnInit() {
@@ -80,7 +69,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   updateApplicationService(formValue: FormControl, applicationDetails: ApplicationDetails, type: UpdateType = UpdateType.SAVE) {
-    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted }).pipe(take(1)).subscribe({
+    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted, type: 'application' }).pipe(take(1)).subscribe({
       next: () => this._handleSuccess(),
       error: (error: Error) => this._handleErrors(error),
     });
@@ -136,7 +125,7 @@ export class ApplicationDetailsPage implements OnInit {
 
   private _updateApplicationService(
     type: string,
-    application: CurrentApplication
+    application: CurrentForm
   ) {
     this.loadingService.showSpinner();
     if (/save/.test(type)) {
@@ -199,12 +188,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   private async continueToPayment(appDetails: ApplicationDetails, form: FormControl) {
-    const userAccounts = await this.creditCardService.retrieveAccounts();
-    await this.openFormPayment(userAccounts, appDetails, form);
-  }
-
-  private async openFormPayment(userAccounts: { display: string; account: UserAccount, iconSrc: string }[], appDetails: ApplicationDetails, form: FormControl ) {
-  await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.formPayment}`], { state: { userAccounts, currentForm: { details: appDetails, formValue: form, key: this.getApplicationKey(), isSubmitted: false }} } );
+    this.formPaymentService.continueToPayment(appDetails, form, this.getApplicationKey(), FormType.Application);
   }
 
   private isPaymentDue(applicationDetails: ApplicationDetails): boolean {

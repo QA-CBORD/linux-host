@@ -41,7 +41,7 @@ import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { RoommatePreferences } from './applications.model';
 import { RoommateDetails } from '../roommate/roomate.model';
-import { CurrentApplication } from '../pages/application-details/application-details.page';
+import { CurrentForm } from '../pages/form-payment/form-payment.component';
 
 @Injectable({
   providedIn: 'root',
@@ -78,7 +78,7 @@ export class ApplicationsService {
     );
   }
 
-  submitApplication(application: CurrentApplication): Observable<ResponseStatus> {
+  submitApplication(application: CurrentForm): Observable<ResponseStatus> {
     if (application.isSubmitted) {
       return this._updateApplication(application.details, application.formValue, ApplicationStatus.Submitted);
     }
@@ -101,7 +101,7 @@ export class ApplicationsService {
     );
   }
 
-  saveApplication(application: CurrentApplication): Observable<ResponseStatus> {
+  saveApplication(application: CurrentForm): Observable<ResponseStatus> {
     if (application.isSubmitted) {
       return this._updateApplication(application.details, application.formValue, ApplicationStatus.Pending);
     }
