@@ -4,17 +4,17 @@
   --background: white;
 }
 
-.application-payment__content {
+.form-payment__content {
   --background: #{$porcelain};
 }
 
-.application-payment__actions {
+.form-payment__actions {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
 }
 
-.application-payment__title {
+.form-payment__title {
   @include font-family($font-nunito-heavy);
   font-size: 20px;
   text-align: center;
@@ -22,19 +22,19 @@
   margin-bottom: 10px;
 }
 
-.application-payment__page-back {
+.form-payment__page-back {
   @include font-family($font-nunito-regular);
 }
 
-.application-payment__card {
+.form-payment__card {
   --background: #f1f1f1;
   background-color: $color-white;
   border-radius: 16px;
   box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
 }
 
-.application-payment__next,
-.application-payment__submit {
+.form-payment__next,
+.form-payment__submit {
   @include font-family($font-nunito-heavy);
 
   --border-radius: 8px;
@@ -43,14 +43,14 @@
   text-transform: uppercase;
 }
 
-.application-payment__next {
+.form-payment__next {
   --background-activated: #{$color-dodger-blue};
   --border-color: #{$color-dodger-blue};
   --border-width: 2px;
   --color: #{$color-dodger-blue};
 }
 
-.application-payment__submit {
+.form-payment__submit {
   --background: #{$color-dodger-blue};
 }
 
@@ -91,7 +91,7 @@ ion-label {
   justify-content: center;
 }
 
-.application-payment__back {
+.form-payment__back {
   @include font-nunito-heavy(18px);
   display: flex;
   margin-top: 35px;

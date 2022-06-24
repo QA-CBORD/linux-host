@@ -20,20 +20,11 @@ import { QuestionsPage } from '../../questions/questions.model';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
 import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { ApplicationPaymentComponent } from '../application-payment/application-payment.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Location } from '@angular/common';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
-import { reduceToObject } from '@shared/model/content-strings/content-string-utils';
-import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
-import { UserAccount } from '@core/model/account/account.model';
+import { CurrentForm } from '../form-payment/form-payment.component';
+import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
 
-export interface CurrentApplication {
-  key: number,
-  details: ApplicationDetails,
-  formValue: FormControl,
-  isSubmitted: boolean
-}
 
 enum UpdateType {
   SUBMIT = 'submit',
@@ -63,7 +54,7 @@ export class ApplicationDetailsPage implements OnInit {
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
-    private creditCardService: CreditCardService
+    private formPaymentService: FormPaymentService
   ) {}
 
   async ngOnInit() {
@@ -78,7 +69,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   updateApplicationService(formValue: FormControl, applicationDetails: ApplicationDetails, type: UpdateType = UpdateType.SAVE) {
-    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted }).pipe(take(1)).subscribe({
+    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted, type: FormType.Application }).pipe(take(1)).subscribe({
       next: () => this._handleSuccess(),
       error: (error: Error) => this._handleErrors(error),
     });
@@ -134,7 +125,7 @@ export class ApplicationDetailsPage implements OnInit {
 
   private _updateApplicationService(
     type: string,
-    application: CurrentApplication
+    application: CurrentForm
   ) {
     this.loadingService.showSpinner();
     if (/save/.test(type)) {
@@ -197,21 +188,10 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   private async continueToPayment(appDetails: ApplicationDetails, form: FormControl) {
-    const userAccounts = await this.creditCardService.retrieveAccounts();
-    await this.openApplicationPayment(userAccounts, appDetails, form);
+    this.formPaymentService.continueToFormPayment(appDetails, form, this.getApplicationKey(), FormType.Application);
   }
 
-  private async openApplicationPayment(userAccounts: { display: string; account: UserAccount, iconSrc: string }[], appDetails: ApplicationDetails, form: FormControl ) {
-    const modal = await this.modalController.create({
-      component: ApplicationPaymentComponent,
-      animated: false,
-      backdropDismiss: false,
-      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts, currentForm: { details: appDetails, formValue: form, key: this.getApplicationKey(), isSubmitted: false },
-  }});
-    await modal.present();
-  }
-
-  private isPaymentDue(applicationDetails: ApplicationDetails) {
-    return applicationDetails.applicationDefinition.accountCodeKey;
+  private isPaymentDue(applicationDetails: ApplicationDetails): boolean {
+    return applicationDetails.applicationDefinition.amount > 0;
   }
 }
