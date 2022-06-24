@@ -104,7 +104,7 @@ export class FormPaymentComponent implements OnInit {
     }
   }
 
-  async onBack() {
+  onBack() {
     this.housingService.handleSuccess();
   }
 
