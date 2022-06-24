@@ -229,17 +229,19 @@ export interface ContractDetailsOptions {
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
   patronAddresses?: PatronAddress[];
+  accountCodeKey?: number;
+  amount?: number;
 }
 
 export class ContractDetails implements ContractDetailsOptions {
   contractInfo: ContractInfo;
   formJson: any;
-  accountCodeKey?: number;
-  amount?: number;
   chargeSchedules: ChargeSchedule[];
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
   patronAddresses?: PatronAddress[];
+  accountCodeKey?: number;
+  amount?: number;
 
   constructor(options: ContractDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
@@ -264,6 +266,9 @@ export class ContractDetails implements ContractDetailsOptions {
     this.patronAddresses = Array.isArray(options.patronAddresses)
       ? options.patronAddresses.map((address: any) => new PatronAddress(address))
       : [];
+
+    this.accountCodeKey = Number(options.accountCodeKey);
+    this.amount = Number(options.amount);
   }
 }
 

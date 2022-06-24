@@ -46,6 +46,6 @@ export class ConfirmPaymentPopover implements OnInit {
     };
 
     this.intructions =
-      'Once your payment is accepted, your application (OR your Housing Form) will be submitted and cannot be edited.';
+      'Once your payment is accepted, your housing form will be submitted and cannot be edited.';
   }
 }

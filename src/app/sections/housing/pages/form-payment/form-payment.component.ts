@@ -16,13 +16,8 @@ import { take } from 'rxjs/operators';
 import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
-import { ThisReceiver } from '@angular/compiler';
+import { FormType } from './form-payment.service';
 
-
-export const FormType = {
-  Application: 'application',
-  WorkOrder: 'work-order'
-}
 export interface CurrentForm {
   key: number,
   details: any,
@@ -67,12 +62,13 @@ export class FormPaymentComponent implements OnInit {
     private contractsService: ContractsService,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.contentStrings = defaultCreditCardMgmtCs;
-    this.userAccounts = <AccountsConf[]>history.state.userAccounts; 
     this.currentForm = <CurrentForm>history.state.currentForm;
+    this.userAccounts = <AccountsConf[]>history.state.userAccounts;
     this.control = this.initFormControl();
     this.control.disable();
+    this.loadingService.closeSpinner();
   }
 
   private initFormControl() {
@@ -166,7 +162,7 @@ export class FormPaymentComponent implements OnInit {
     if(this.currentForm.type == FormType.Application) {
       return this.currentForm.details.applicationDefinition.applicationTitle;
     } else if (this.currentForm.type == FormType.WorkOrder) {
-      return this.currentForm.details.contractInfo.contractName
+      return this.currentForm.details.contractInfo.contractName;
     }
   }
 

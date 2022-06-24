@@ -9,8 +9,8 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, take, tap } from 'rxjs/operators';
 import { ContractsService } from '../../contracts/contracts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../../housing.service';
@@ -19,6 +19,8 @@ import { QuestionComponent } from '../../questions/question.component';
 import { QuestionsPage } from '../../questions/questions.model';
 import { ContractDetails } from '../../contracts/contracts.model';
 import { IonContent } from '@ionic/angular';
+import { FormControl, FormGroup } from '@angular/forms';
+import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
 
 @Component({
   selector: 'st-contract-details',
@@ -27,26 +29,15 @@ import { IonContent } from '@ionic/angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContractDetailsPage implements OnInit, OnDestroy {
-  private _subscription: Subscription = new Subscription();
-
   @ViewChild('content') private content: IonContent;
-
   @ViewChild(StepperComponent) stepper: StepperComponent;
-
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
-
   contractDetails$: Observable<ContractDetails>;
-
   pages$: Observable<QuestionsPage[]>;
-
   contractKey: number;
-
   contractElementKey: number;
-
   isSubmitted = false;
-
   isSigned = true;
-
   canSubmit = true;
 
   constructor(
@@ -54,13 +45,13 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     private _contractsService: ContractsService,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
-    private _changeDetector: ChangeDetectorRef
+    private _changeDetector: ChangeDetectorRef,
+    private formPaymentService: FormPaymentService
   ) {}
 
   ngOnInit(): void {
     this.contractKey = parseInt(this._route.snapshot.params.contractKey);
     this.contractElementKey = parseInt(this._route.snapshot.params.contractElementKey);
-
     this._initContractDetailsObservable();
     this._initPagesObservable();
     this._initIsSignedObservable();
@@ -68,43 +59,44 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._contractsService.sign(false);
-    this._subscription.unsubscribe();
   }
 
-  submitForm(isLastPage: boolean): void {
-    if (this.isSubmitted) {
-      // if is paymentDue
+  submitForm(contractDetails: ContractDetails, form: FormGroup, isLastPage: boolean): void {
+    if (!this.isSubmitted) {
       if (!isLastPage) {
         this._next();
-        return;
+      } else if (this.isPaymentDue(contractDetails)) {
+        this.continueToPayment(contractDetails, form.value);
       } else {
-        return;
+        this._update(this.contractElementKey);
       }
     }
+  }
 
-    if (!isLastPage) {
-      this._next();
-    } else {
-      this._update(this.contractElementKey);
-    }
+  isPaymentDue(contractDetails: ContractDetails) {
+    return contractDetails.amount > 0;
+  }
+
+  private async continueToPayment(contractDetails: ContractDetails, form: FormControl) {
+    this.formPaymentService.continueToFormPayment(
+      contractDetails,
+      form,
+      `${this.contractElementKey}`,
+      FormType.WorkOrder
+    );
   }
 
   private _update(contractKey: number): void {
     this._loadingService.showSpinner();
-
-    const subscription: Subscription = this._contractsService.submitContract(contractKey).subscribe({
+    this._contractsService.submitContract(contractKey).pipe(take(1)).subscribe({
       next: () => this._handleSuccess(),
-      error: (error: any) => this._handleErrors(error),
+      error: (error: Error) => this._handleErrors(error),
     });
-
-    this._subscription.add(subscription);
   }
 
   private _initContractDetailsObservable(): void {
     this._loadingService.showSpinner();
-
     const queryParams: string[] = [`contractKey=${this.contractElementKey}`];
-
     this.contractDetails$ = this._housingService.getContractDetails(this.contractKey, queryParams).pipe(
       tap((contractDetails: ContractDetails) => {
         this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
@@ -137,12 +129,10 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initIsSignedObservable() {
-    const isSignedSubscription: Subscription = this._contractsService.isSigned$.subscribe((isSigned: boolean) => {
+    this._contractsService.isSigned$.pipe(take(1)).subscribe((isSigned: boolean) => {
       this.isSigned = isSigned;
       this.canSubmit = !this.isSubmitted && isSigned;
       this._changeDetector.markForCheck();
     });
-
-    this._subscription.add(isSignedSubscription);
   }
 }
