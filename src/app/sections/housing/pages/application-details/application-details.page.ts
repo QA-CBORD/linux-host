@@ -69,7 +69,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   updateApplicationService(formValue: FormControl, applicationDetails: ApplicationDetails, type: UpdateType = UpdateType.SAVE) {
-    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted, type: 'application' }).pipe(take(1)).subscribe({
+    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted, type: FormType.Application }).pipe(take(1)).subscribe({
       next: () => this._handleSuccess(),
       error: (error: Error) => this._handleErrors(error),
     });

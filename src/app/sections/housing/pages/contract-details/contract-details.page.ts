@@ -9,8 +9,8 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
-import { catchError, take, tap } from 'rxjs/operators';
+import { Observable, Subscription, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { ContractsService } from '../../contracts/contracts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../../housing.service';
@@ -19,8 +19,8 @@ import { QuestionComponent } from '../../questions/question.component';
 import { QuestionsPage } from '../../questions/questions.model';
 import { ContractDetails } from '../../contracts/contracts.model';
 import { IonContent } from '@ionic/angular';
-import { FormControl, FormGroup } from '@angular/forms';
 import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'st-contract-details',
@@ -29,6 +29,7 @@ import { FormPaymentService, FormType } from '../form-payment/form-payment.servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContractDetailsPage implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
   @ViewChild('content') private content: IonContent;
   @ViewChild(StepperComponent) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -59,6 +60,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._contractsService.sign(false);
+    this._subscription.unsubscribe();
   }
 
   submitForm(contractDetails: ContractDetails, form: FormGroup, isLastPage: boolean): void {
@@ -88,10 +90,11 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   private _update(contractKey: number): void {
     this._loadingService.showSpinner();
-    this._contractsService.submitContract(contractKey).pipe(take(1)).subscribe({
+    const subscription: Subscription = this._contractsService.submitContract(contractKey).subscribe({
       next: () => this._handleSuccess(),
       error: (error: Error) => this._handleErrors(error),
     });
+    this._subscription.add(subscription);
   }
 
   private _initContractDetailsObservable(): void {
@@ -103,7 +106,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
         this.canSubmit = !this.isSubmitted && this.isSigned;
         this._loadingService.closeSpinner();
       }),
-      catchError((error: any) => {
+      catchError((error: Error) => {
         this._loadingService.closeSpinner();
 
         return throwError(error);
@@ -124,15 +127,16 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     this._housingService.handleSuccess();
   }
 
-  private _handleErrors(error: any): void {
+  private _handleErrors(error: Error): void {
     this._housingService.handleErrors(error);
   }
 
   private _initIsSignedObservable() {
-    this._contractsService.isSigned$.pipe(take(1)).subscribe((isSigned: boolean) => {
+    const isSignedSubscription: Subscription = this._contractsService.isSigned$.subscribe((isSigned: boolean) => {
       this.isSigned = isSigned;
       this.canSubmit = !this.isSubmitted && isSigned;
       this._changeDetector.markForCheck();
     });
+    this._subscription.add(isSignedSubscription);
   }
 }

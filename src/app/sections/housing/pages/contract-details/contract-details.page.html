@@ -62,14 +62,14 @@
               mode="ios"
               type="submit"
               [disabled]="!canSubmit"
-              *ngIf="isLastPage && (!contractDetails.accountCodeKey || isSubmitted)"
+              *ngIf="isLastPage && (!contractDetails.amount || isSubmitted)"
             >
               Submit
             </st-button>
             <st-button
             [disabled]="!canSubmit"
             type="submit"
-            *ngIf="isLastPage && contractDetails.accountCodeKey && !isSubmitted"
+            *ngIf="isLastPage && contractDetails.amount && !isSubmitted"
             [class.stepper-footer__button--right]="isFirstPage"
           >
             Continue to payment
