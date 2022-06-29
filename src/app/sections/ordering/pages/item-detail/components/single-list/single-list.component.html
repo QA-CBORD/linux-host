@@ -10,7 +10,7 @@
     </div>
   </ion-item-divider>
 
-  <ion-radio-group lines="none" [value]="innerValue">
+  <ion-radio-group lines="none" [value]="innerValue" (ionChange)="itemChosen($event)">
     <ng-container *ngFor="let option of options">
       <ion-item lines="none"
                 class="single-list__item-size">
@@ -21,7 +21,6 @@
         </ion-label>
         <ion-radio class="single-list__radio-size"
                    slot="start"
-                   (ionSelect)="itemChosen($event)"
                    [value]="option.menuItem"
                    mode="md">
         </ion-radio>
