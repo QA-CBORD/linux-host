@@ -6,7 +6,6 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
-import { HousingService } from '@sections/housing/housing.service';
 import {
   CardCs,
 } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.component';
@@ -17,6 +16,7 @@ import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { FormType } from './form-payment.service';
+import { Location } from '@angular/common';
 
 export interface CurrentForm {
   key: number,
@@ -58,8 +58,8 @@ export class FormPaymentComponent implements OnInit {
     private readonly applicationsService: ApplicationsService,
     private readonly loadingService: LoadingService,
     private readonly cdRef: ChangeDetectorRef,
-    private housingService: HousingService,
     private contractsService: ContractsService,
+    private location: Location
   ) {}
 
   async ngOnInit() {
@@ -67,14 +67,15 @@ export class FormPaymentComponent implements OnInit {
     this.currentForm = <CurrentForm>history.state.currentForm;
     this.userAccounts = <AccountsConf[]>history.state.userAccounts;
     this.control = this.initFormControl();
-    this.control.disable();
     this.loadingService.closeSpinner();
   }
 
-  private initFormControl() {
-     return new FormControl(this.amountDue);
+  ionViewWillEnter() {
+    if(this.currentForm.type == FormType.Application) {
+      this.applicationsService.saveApplication(this.currentForm).pipe(take(1)).subscribe(); 
+    } 
   }
-
+  
   async addCreditCard() {
     await this.creditCardService.addCreditCard();
     this.userAccounts = await this.creditCardService.retrieveAccounts();
@@ -105,7 +106,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   onBack() {
-    this.housingService.handleSuccess();
+    this.location.back();
   }
 
   private async confirmPaymentPopover(data: TransactionalData) {
@@ -130,19 +131,16 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
+    const handleSuccess = async () => {
+      await this.openPaymentSuccessModal(transaction);
+      this.loadingService.closeSpinner();
+    };
     if(this.currentForm.type == FormType.Application) {
-      this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () =>  { 
-        await this.openPaymentSuccessModal(transaction); 
-        this.loadingService.closeSpinner();
-    }); 
+      this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(handleSuccess); 
+
     } else if (this.currentForm.type == FormType.WorkOrder) {
-      this.contractsService.submitContract(this.currentForm.key).pipe(take(1)).subscribe(
-        async () =>  { 
-          await this.openPaymentSuccessModal(transaction); 
-          this.loadingService.closeSpinner();
-        });
+      this.contractsService.submitContract(this.currentForm.key).pipe(take(1)).subscribe(handleSuccess);
     }
-    
   }
 
   private async openPaymentSuccessModal(data: TransactionalData) {
@@ -186,5 +184,11 @@ export class FormPaymentComponent implements OnInit {
       },
       amount: amount,
     };
+  }
+
+  private initFormControl() {
+    const control =  new FormControl(this.amountDue);
+    control.disable();
+    return control;
   }
 }
