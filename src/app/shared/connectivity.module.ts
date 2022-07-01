@@ -3,6 +3,8 @@ import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
+import { ScanCardComponent } from "@sections/dashboard/containers/scan-card";
+import { ScanCardResolverService } from "@sections/dashboard/containers/scan-card/scan-card-resolver.service";
 import { ScanCardModule } from "@sections/dashboard/containers/scan-card/scan-card.module";
 import { ANONYMOUS_ROUTES } from "../non-authorized/non-authorized.config";
 import { ConnectivityPageResolver } from "./services/connectivity-route.resolver";
@@ -23,7 +25,12 @@ import { StHeaderModule } from "./ui-components/st-header/st-header.module";
             path: '',
             redirectTo: ANONYMOUS_ROUTES.noConnectivity,
             pathMatch: 'full'
-        }]),
+        }, {
+            path: ANONYMOUS_ROUTES.scanCard,
+            component: ScanCardComponent,
+            resolve: { data: ScanCardResolverService },
+        }
+        ]),
         ScanCardModule,
     ],
     providers: [ConnectivityPageResolver]
