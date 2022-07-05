@@ -231,6 +231,7 @@ export interface ContractDetailsOptions {
   patronAddresses?: PatronAddress[];
   accountCodeKey?: number;
   amount?: number;
+  formKey?: number;
 }
 
 export class ContractDetails implements ContractDetailsOptions {
@@ -270,6 +271,7 @@ export class ContractDetails implements ContractDetailsOptions {
 
     this.accountCodeKey = Number(options.accountCodeKey);
     this.amount = Number(options.amount);
+    this.formKey = Number(options.formKey)
   }
 }
 
