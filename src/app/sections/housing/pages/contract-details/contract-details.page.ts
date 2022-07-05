@@ -40,6 +40,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   isSubmitted = false;
   isSigned = true;
   canSubmit = true;
+  formKey: number;
 
   constructor(
     private _route: ActivatedRoute,
@@ -90,7 +91,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   private _update(contractKey: number): void {
     this._loadingService.showSpinner();
-    const subscription: Subscription = this._contractsService.submitContract(contractKey).subscribe({
+    const subscription: Subscription = this._contractsService.submitContract(contractKey, this.formKey).subscribe({
       next: () => this._handleSuccess(),
       error: (error: Error) => this._handleErrors(error),
     });
@@ -104,6 +105,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
       tap((contractDetails: ContractDetails) => {
         this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
         this.canSubmit = !this.isSubmitted && this.isSigned;
+        this.formKey = contractDetails.formKey || 0 ;
         this._loadingService.closeSpinner();
       }),
       catchError((error: Error) => {
