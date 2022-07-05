@@ -18,7 +18,7 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserInfo } from '@core/model/user/user-info.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-picker.component';
+import { DateTimeSelected, StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-picker.component';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes/address-header-format-pipe';
@@ -81,7 +81,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.cartService.resetClientOrderId();
   }
 
-  get isOrderTypePickup (): boolean {
+  get isOrderTypePickup(): boolean {
     return this.orderType === ORDER_TYPE.PICKUP;
   }
 
@@ -178,20 +178,25 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  async callChildPicker() {
+  async callChildPicker(): Promise<void> {
     if (this.child.isTimeDisable) {
       this.child.openPicker();
+      const element = document.getElementById('time_element');
+      if (element) element.focus();
     }
   }
 
-  onDateTimeSelected(event) {
-    const { dateTimePicker, timeStamp } = event;
+  onDateTimeSelected({ dateTimePicker, timeStamp }: DateTimeSelected): void {
     this.dateTimePicker = dateTimePicker;
     this.selectedTimeStamp = timeStamp;
+   
+    const element = document.getElementById('time_element');
+    if(element) element.focus();
+
     this.cdRef.detectChanges();
   }
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     let date = { dueTime: this.selectedTimeStamp || this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
     const chooseAddressError = await this.contentStrings.formErrorChooseAddress.pipe(take(1)).toPromise();
     this.cartService.orderIsAsap = date.isASAP;
