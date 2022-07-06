@@ -8,12 +8,11 @@ import { ContentStringCategory } from '@shared/model/content-strings/content-str
 import { CommonService } from '@shared/services/common.service';
 import { ConnectionService } from '@shared/services/connection-service';
 import { firstValueFrom } from '@shared/utils';
-import { ROLES, Settings, User } from 'src/app/app.global';
+import { Settings, User } from 'src/app/app.global';
 import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
 import { Subscription } from 'rxjs';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
-import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { NavigationService } from '@shared/services/navigation.service';
 
@@ -38,7 +37,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   isLoading = false;
   config: ConnectivityPageConfig;
   canScanCard = false;
-  isCurrentView: Boolean;
+  isCurrentView: boolean;
   platformBackButtonClickSubscription: Subscription;
 
   constructor(
@@ -60,15 +59,13 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
 
 
   ionViewDidEnter() {
-    console.log("ionViewDidEnter ")
     this.isCurrentView = true;
-    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(9999, () => {
-      console.log("CANCELLED BACK BUTTON EVENT")
+    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
+      processNextHandler();
     })
   }
 
   ionViewWillLeave() {
-    console.log("ionViewWillLeave ")
     this.isCurrentView = false;
     this.platformBackButtonClickSubscription.unsubscribe();
   }
@@ -110,7 +107,6 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async retryOperations(canShowToast = true) {
-    console.log("this.navBackUrl: ", this.navBackUrl)
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
       this.closeSelf(ExecStatus.Execution_success);

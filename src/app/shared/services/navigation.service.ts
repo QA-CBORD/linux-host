@@ -1,10 +1,8 @@
-import { Injectable, NgZone, Type } from '@angular/core';
-import { NavigationBehaviorOptions, Router, Event } from '@angular/router';
+import { Injectable, NgZone } from '@angular/core';
+import { NavigationBehaviorOptions, Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
-import { firstValueFrom } from '@shared/utils';
-import { filter } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 

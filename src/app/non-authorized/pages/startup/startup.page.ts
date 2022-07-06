@@ -88,7 +88,7 @@ export class StartupPage {
       promise: () => firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
       rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message)
     })
-      .then(async (res) => {
+      .then(async () => {
         // Making sure vault is unlocked before continuing and repeating the flow in case it is.
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
@@ -123,7 +123,7 @@ export class StartupPage {
       return await this.navigationService
         .navigateAnonymous(where, { ...data });
     } finally {
-      return clearAll && this.identityFacadeService.clearAll();
+      clearAll && this.identityFacadeService.clearAll();
     }
   }
 

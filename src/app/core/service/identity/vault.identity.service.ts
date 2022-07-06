@@ -177,12 +177,14 @@ export class VaultIdentityService {
         return await this.vault.lock();
     }
 
+    /**
+     * checks if user has denied biometric usage for this app. 
+     * currently using a custom mechanism to detect if user has denied permission, since current vault version does not detect that.
+     * issue has been submitted to ionic support and they will add support for that on next release.
+     * 
+     * @returns boolean, is biometric allowed or not
+     */
     private async isBiometricAllowed(): Promise<boolean> {
-
-        // uncomment next line when ionic fix reported bug
-        // const status = await Device.isBiometricsAllowed();
-        // return status == 'prompt' || status == 'granted';
-
         return !(await this.userPreferenceService.getBiometricPermissionDenied());
     }
 

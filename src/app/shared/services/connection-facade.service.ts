@@ -1,9 +1,7 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { ConnectionService } from './connection-service';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { ROLES } from 'src/app/app.global';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { CommonService } from './common.service';
