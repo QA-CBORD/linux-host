@@ -36,10 +36,17 @@ export class StartupPage {
   /// check login on enter
   ionViewDidEnter() {
     this.loadingService.showSpinner();
-    const { skipLoginFlow, biometricEnabled, navedBack } = <any>this.location.getState();
+    const { skipAuthFlow, ...rest } = <any>this.location.getState();
+    if (!skipAuthFlow) {
+      this.startAuthFlow(rest)
+    }
+  }
+
+
+  startAuthFlow({ skipLoginFlow, biometricEnabled, }) {
     if (skipLoginFlow) {
       this.unlockVault(biometricEnabled);
-    } else if (!navedBack) {
+    } else {
       this.checkLoginFlow();
     }
   }

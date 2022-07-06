@@ -25,7 +25,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
         return this.resolveData(route.queryParams).finally(() => this.loadingService.closeSpinner());
     }
 
-    private async resolveData(queryParams): Promise<ConnectivityPageInfo> {
+    private async resolveData(params: { [key: string]: any }): Promise<ConnectivityPageInfo> {
         await this.loadingService.showSpinner();
         let csModel: ConnectivityScreenCsModel = {} as any;
         let errorType: ConnectivityErrorType;
@@ -40,8 +40,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
             freshContentStringsLoaded = true;
         }
 
-        console.log("queryParams ::: ", queryParams)
-        return { csModel, freshContentStringsLoaded, errorType, ...queryParams, isVaultLocked: JSON.parse(queryParams.isVaultLocked) }
+        return { csModel, freshContentStringsLoaded, errorType, ...params, isVaultLocked: JSON.parse(params.isVaultLocked) }
     }
 
 }

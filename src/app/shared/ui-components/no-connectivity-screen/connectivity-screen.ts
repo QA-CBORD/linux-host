@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { NavigationService } from '@shared/services/navigation.service';
-
+const EXECUTION_PRIORITY = 9999
 @Component({
   selector: 'st-connectivity-screen',
   templateUrl: './connectivity-screen.html',
@@ -54,15 +54,9 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     private readonly routingService: NavigationService
   ) { }
 
-
-
-
-
   ionViewDidEnter() {
     this.isCurrentView = true;
-    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
-      processNextHandler();
-    })
+    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(EXECUTION_PRIORITY, () => {/**ignored on purpose */})
   }
 
   ionViewWillLeave() {
@@ -220,7 +214,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     } catch (err) {
       if (this.navBackUrl) {
         this.retryHandler.onClose(status);
-        this.routingService.navigateByUrl(this.navBackUrl, { state: { status, navedBack: true } });
+        this.routingService.navigateByUrl(this.navBackUrl, { state: { status, skipAuthFlow: true } });
       }
     }
   }
