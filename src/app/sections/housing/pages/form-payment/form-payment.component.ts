@@ -23,7 +23,7 @@ export interface CurrentForm {
   details: any,
   formValue: FormControl,
   isSubmitted: boolean,
-  type: 'application' | 'work-order'
+  type: 'application' | 'work-order',
 }
 
 interface TransactionalData {
@@ -139,7 +139,7 @@ export class FormPaymentComponent implements OnInit {
       this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(handleSuccess); 
 
     } else if (this.currentForm.type == FormType.WorkOrder) {
-      this.contractsService.submitContract(this.currentForm.key).pipe(take(1)).subscribe(handleSuccess);
+      this.contractsService.submitContract(this.currentForm.key, this.currentForm.details?.formKey).pipe(take(1)).subscribe(handleSuccess);
     }
   }
 
