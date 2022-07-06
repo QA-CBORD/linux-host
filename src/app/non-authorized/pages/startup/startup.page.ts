@@ -60,7 +60,6 @@ export class StartupPage {
       promise: () => firstValueFrom(this.authFacadeService.getAuthSessionToken$()),
     }, !hasPin);
 
-    console.log("systemSessionId: ", systemSessionId)
 
     if (hasPin) {
       return this.handleVaultLoginSuccess(session);
@@ -92,7 +91,6 @@ export class StartupPage {
       .then(async (res) => {
         // Making sure vault is unlocked before continuing and repeating the flow in case it is.
         // This may ocurr on no conectivity screen sent to background.
-        console.log("res: ", res)
         if (await this.identityFacadeService.isVaultLocked()) {
           const { biometricEnabled } = <any>this.location.getState();
           return this.unlockVault(biometricEnabled);
@@ -101,7 +99,6 @@ export class StartupPage {
         return this.navigateToDashboard();
       })
       .catch((error) => {
-        console.log("ERRORRR: ", error)
         if (error) {
           this.navigateAnonymous(ANONYMOUS_ROUTES.entry)
         }
