@@ -10,20 +10,10 @@
 
 <ng-template #staticHeader>
   <ion-header class="order-detail__static-header">
-    <ion-img [src]="menuItemImg"
-         alt="{{ menuItem.name }}"
-         class="order-detail__appetizer-photo"></ion-img>
-    <ion-buttons class="order-detail__header-buttons"
-                 slot="start">
-      <ion-button (click)="onClose()"
-                  class="order-detail__close-button"
-                  color="dark">
-        <ion-icon class="order-detail__header-icon"
-                  name="close"
-                  size="large"
-                  slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <ion-img [src]="menuItemImg" alt="{{ menuItem.name }}" class="order-detail__appetizer-photo"></ion-img>
+    <ion-button shape="round" (click)="onClose()" class="order-detail__close-button" color="light">
+      <ion-icon class="order-detail__header-icon" name="close" size="large" slot="icon-only"></ion-icon>
+    </ion-button>
   </ion-header>
 </ng-template>
 

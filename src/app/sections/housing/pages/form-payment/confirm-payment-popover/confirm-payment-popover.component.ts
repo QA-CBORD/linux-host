@@ -13,6 +13,7 @@ export class ConfirmPaymentPopover implements OnInit {
   @Input() contentString: any;
   @Input() intructions?: any;
   popoverConfig: PopoverConfig<string | number>;
+  disclaimer: string;
 
   ngOnInit() {
     this.setContentString();
@@ -33,19 +34,23 @@ export class ConfirmPaymentPopover implements OnInit {
     return this.intructions;
   }
 
+  get showDisclaimer(): string {
+    return this.disclaimer;
+  }
+
   private setContentString() {
     this.contentString = {
-      title: 'Confirm payment',
+      title: 'Confirm Payment',
       endingIn: 'ending in',
       okButton: 'Confirm',
       cancelButton: 'Cancel',
       paymentMethod: 'Payment method',
       depositAmount: 'Amount',
       account: 'Account',
-      policyTitle: 'Card policy',
     };
 
     this.intructions =
-      'Once your payment is accepted, your Housing Form will be submitted and cannot be edited.';
+      'Card Policy: As the storage database, USAePay is responsible for the processing of your card information for payment to this institution.';
+    this.disclaimer = 'Once your payment is accepted, your Housing Form will be submitted and cannot be edited. ';
   }
 }
