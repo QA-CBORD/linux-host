@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationBehaviorOptions, Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
@@ -14,7 +14,7 @@ export class NavigationService {
     private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly ngZone: NgZone
-  ) {}
+  ) { }
 
   async navigate(params: string[], extras?: any): Promise<boolean> {
     const isGuestUser = await this.authFacadeService.isGuestUser().toPromise();
@@ -32,6 +32,18 @@ export class NavigationService {
 
   async navigateAnonymous(path: ANONYMOUS_ROUTES, extras?: any): Promise<boolean> {
     return this.ngZone.run(async () => await this.router.navigate([ROLES.anonymous, path], extras));
+  }
+
+  navigateByUrl(url: string, extras: NavigationBehaviorOptions = {}): Promise<boolean> {
+    return this.router.navigateByUrl(url, extras);
+  }
+
+  getUrl(): string {
+    return this.router.url;
+  }
+
+  isRoute(urlChunk: string): boolean {
+    return this.getUrl().includes(urlChunk);
   }
 }
 

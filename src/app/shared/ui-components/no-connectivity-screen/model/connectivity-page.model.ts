@@ -2,7 +2,7 @@ import { ConnectivityErrorType, ConnectivityScreenCsModel } from "./no-connectiv
 
 export interface RetryHandler {
     onRetry(args?: any): Promise<boolean>;
-    onScanCode?: (args?: any) => Promise<any>
+    onClose?: (args?: any) => void
 }
 
 export interface ConnectivityPageInfo {
@@ -10,7 +10,8 @@ export interface ConnectivityPageInfo {
     freshContentStringsLoaded: boolean,
     errorType: ConnectivityErrorType,
     retryHandler?: RetryHandler,
-    isVaultLocked: boolean
+    isVaultLocked: boolean,
+    navBackUrl?: string
 }
 
 export enum ExecStatus {

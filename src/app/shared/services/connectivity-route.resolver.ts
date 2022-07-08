@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Resolve } from "@angular/router";
+import { ActivatedRouteSnapshot, Resolve } from "@angular/router";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { ContentStringApi, ContentStringCategory } from "@shared/model/content-strings/content-strings-api";
 import { ConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
@@ -21,13 +21,12 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
         private readonly location: Location) { }
 
 
-    resolve(): Observable<ConnectivityPageInfo> | Promise<ConnectivityPageInfo> {
-        return this.resolveData().finally(() => this.loadingService.closeSpinner());
+    resolve(route: ActivatedRouteSnapshot): Observable<ConnectivityPageInfo> | Promise<ConnectivityPageInfo> {
+        return this.resolveData(route.queryParams).finally(() => this.loadingService.closeSpinner());
     }
 
-    private async resolveData(): Promise<ConnectivityPageInfo> {
+    private async resolveData(params: { [key: string]: any }): Promise<ConnectivityPageInfo> {
         await this.loadingService.showSpinner();
-        const { isVaultLocked } = <any>this.location.getState();
         let csModel: ConnectivityScreenCsModel = {} as any;
         let errorType: ConnectivityErrorType;
         let freshContentStringsLoaded = false;
@@ -41,7 +40,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
             freshContentStringsLoaded = true;
         }
 
-        return { csModel, freshContentStringsLoaded, errorType, isVaultLocked }
+        return { csModel, freshContentStringsLoaded, errorType, ...params, isVaultLocked: JSON.parse(params.isVaultLocked) }
     }
 
 }
