@@ -337,8 +337,8 @@ export class ApplicationsService {
           questions
         );
 
-        const roommatePreferences: RoommatePreferences[] = applicationDetails.roommatePreferences;
-
+        const roommatePreferences: RoommatePreferences[] = applicationDetails.roommatePreferences.filter((preference) => preference.patronKeyRoommate);
+            
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,
