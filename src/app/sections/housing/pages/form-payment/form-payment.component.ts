@@ -100,9 +100,6 @@ export class FormPaymentComponent implements OnInit {
   }
 
   onBack() {
-    if(this.currentForm.type == FormType.Application) {
-      this.applicationsService.saveApplication(this.currentForm).pipe(take(1)).subscribe(); 
-     } 
     this.location.back();
   }
 
