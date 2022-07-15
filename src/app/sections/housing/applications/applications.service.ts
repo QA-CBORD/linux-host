@@ -1,6 +1,6 @@
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of, iif } from 'rxjs';
 import { map, tap, switchMap, mapTo, withLatestFrom } from 'rxjs/operators';
 
 import { flat, isDefined, parseJsonToArray } from '../utils';
@@ -79,14 +79,10 @@ export class ApplicationsService {
   }
 
   submitApplication(application: CurrentForm): Observable<ResponseStatus> {
-    if (application.isSubmitted) {
-      return this._updateApplication(application.details, application.formValue, ApplicationStatus.Submitted);
-    }
-
-    return forkJoin(
+    return forkJoin([
       this._updateCreatedDateTime(application.key, application.details.patronApplication),
       this._questionsStorageService.updateSubmittedDateTime(application.key)
-    ).pipe(
+    ]).pipe(
       switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
           application.key,
@@ -95,17 +91,12 @@ export class ApplicationsService {
           createdDateTime,
           submittedDateTime
         );
-
         return this._updateApplication(applicationDetails, application.formValue, ApplicationStatus.Submitted);
       })
     );
   }
 
-  saveApplication(application: CurrentForm): Observable<ResponseStatus> {
-    if (application.isSubmitted) {
-      return this._updateApplication(application.details, application.formValue, ApplicationStatus.Pending);
-    }
-
+  saveApplication(application: CurrentForm, removeQuestions: boolean = true): Observable<ResponseStatus> {
     return this._updateCreatedDateTime(application.key, application.details.patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
@@ -115,7 +106,7 @@ export class ApplicationsService {
           createdDateTime
         );
 
-        return this._updateApplication(applicationDetails, application.formValue, ApplicationStatus.Pending);
+        return this._updateApplication(applicationDetails, application.formValue, ApplicationStatus.Pending, removeQuestions);
       })
     );
   }
@@ -314,7 +305,8 @@ export class ApplicationsService {
   private _updateApplication(
     applicationDetails: ApplicationDetails,
     form: any,
-    status: ApplicationStatus
+    status: ApplicationStatus,
+    removeQuestions: boolean = true
   ): Observable<ResponseStatus> {
     const applicationDefinition: ApplicationDefinition = applicationDetails.applicationDefinition;
     const applicationKey: number = applicationDefinition.key;
@@ -350,10 +342,8 @@ export class ApplicationsService {
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
       }),
       tap(() => this._applicationsStateService.setApplication(applicationKey, applicationDetails)),
-      switchMap((response: ResponseStatus) =>
-        this._questionsStorageService.removeApplication(applicationKey).pipe(mapTo(response))
-      )
-    );
+      switchMap(() => iif(() => removeQuestions, this._questionsStorageService.removeApplication(applicationKey), of(null))
+    ));
   }
 
   private _createApplicationDetails(
