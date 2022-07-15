@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
+import { AccountsConf, CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { CurrentForm } from './form-payment.component';
 
 export enum FormType {
   Application = 'application',
@@ -21,19 +21,24 @@ export class FormPaymentService {
     private readonly applicationsService: ApplicationsService
   ) {}
 
-  async continueToFormPayment(formDetails: any, form: FormControl, key: string, formType: FormType) {
+  async continueToFormPayment(currentForm: CurrentForm) {
     this._loadingService.showSpinner();
-    if (formDetails.type == FormType.Application) {
-      this.applicationsService
-        .saveApplication(formDetails)
-        .pipe(take(1))
-        .subscribe();
-    }
     const userAccounts = await this.creditCardService.retrieveAccounts();
-    await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.formPayment}`], {
+    if (currentForm.type == FormType.Application) {
+      this.applicationsService
+        .saveApplication(currentForm, false)
+        .pipe(take(1))
+        .subscribe(() => this.navigateToFormPayment(userAccounts, currentForm));
+    } else {
+      this.navigateToFormPayment(userAccounts, currentForm);
+    }
+  }
+
+  private navigateToFormPayment(userAccounts: AccountsConf[], currentForm: CurrentForm) {
+    this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.formPayment}`], {
       state: {
         userAccounts,
-        currentForm: { details: formDetails, formValue: form, key, type: formType, isSubmitted: false },
+        currentForm,
       },
     });
   }

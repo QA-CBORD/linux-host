@@ -22,7 +22,7 @@ export interface CurrentForm {
   key: number,
   details: any,
   formValue: FormControl,
-  isSubmitted: boolean,
+  isSubmitted?: boolean,
   type: 'application' | 'work-order',
 }
 
@@ -67,6 +67,9 @@ export class FormPaymentComponent implements OnInit {
     this.currentForm = <CurrentForm>history.state.currentForm;
     this.userAccounts = <AccountsConf[]>history.state.userAccounts;
     this.control = this.initFormControl();
+  }
+  
+  ionViewDidEnter() {
     this.loadingService.closeSpinner();
   }
   

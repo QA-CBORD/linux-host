@@ -81,12 +81,12 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   private async continueToPayment(contractDetails: ContractDetails, form: FormControl) {
-    this.formPaymentService.continueToFormPayment(
-      contractDetails,
-      form,
-      `${this.contractElementKey}`,
-      FormType.WorkOrder
-    );
+    this.formPaymentService.continueToFormPayment({
+      details: contractDetails,
+      formValue: form,
+      key: this.contractElementKey,
+      type: FormType.WorkOrder,
+    });
   }
 
   private _update(contractKey: number): void {
@@ -105,7 +105,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
       tap((contractDetails: ContractDetails) => {
         this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
         this.canSubmit = !this.isSubmitted && this.isSigned;
-        this.formKey = contractDetails.formKey || 0 ;
+        this.formKey = contractDetails.formKey || 0;
         this._loadingService.closeSpinner();
       }),
       catchError((error: Error) => {
