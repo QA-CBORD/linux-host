@@ -22,7 +22,7 @@ export interface CurrentForm {
   key: number,
   details: any,
   formValue: FormControl,
-  isSubmitted: boolean,
+  isSubmitted?: boolean,
   type: 'application' | 'work-order',
 }
 
@@ -67,13 +67,10 @@ export class FormPaymentComponent implements OnInit {
     this.currentForm = <CurrentForm>history.state.currentForm;
     this.userAccounts = <AccountsConf[]>history.state.userAccounts;
     this.control = this.initFormControl();
-    this.loadingService.closeSpinner();
   }
-
-  ionViewWillEnter() {
-    if(this.currentForm.type == FormType.Application) {
-      this.applicationsService.saveApplication(this.currentForm).pipe(take(1)).subscribe(); 
-    } 
+  
+  ionViewDidEnter() {
+    this.loadingService.closeSpinner();
   }
   
   async addCreditCard() {
@@ -94,9 +91,9 @@ export class FormPaymentComponent implements OnInit {
   private onConfirmation(role: string, account: UserAccount, amount: string, info: TransactionalData) {
     if (role == BUTTON_TYPE.OKAY) {
     this.loadingService.showSpinner();
-      this.makePayment(account.id, amount).subscribe(
-        async () => {
-          await this.onPaymentSuccess(info);
+      this.makePayment(account.id, amount).pipe(take(1)).subscribe(
+        () => {
+          this.onPaymentSuccess(info);
         },
         (err) => {
           this.showErrorMessage(err);
@@ -131,15 +128,15 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    const handleSuccess = async () => {
-      await this.openPaymentSuccessModal(transaction);
-      this.loadingService.closeSpinner();
-    };
     if(this.currentForm.type == FormType.Application) {
-      this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(handleSuccess); 
+      this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () => {
+        await this.openPaymentSuccessModal(transaction);
+      }); 
 
     } else if (this.currentForm.type == FormType.WorkOrder) {
-      this.contractsService.submitContract(this.currentForm.key, this.currentForm.details?.formKey).pipe(take(1)).subscribe(handleSuccess);
+      this.contractsService.submitContract(this.currentForm.key, this.currentForm.details?.formKey).pipe(take(1)).subscribe(async () => {
+        await this.openPaymentSuccessModal(transaction);
+      });
     }
   }
 
@@ -154,6 +151,7 @@ export class FormPaymentComponent implements OnInit {
       backdropDismiss: false,
     });
     modal.present();
+    this.loadingService.closeSpinner();
   }
 
   get formTitle(): string {
