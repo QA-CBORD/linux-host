@@ -1,7 +1,7 @@
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of, iif } from 'rxjs';
-import { map, tap, switchMap, mapTo, withLatestFrom } from 'rxjs/operators';
+import { map, tap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { flat, isDefined, parseJsonToArray } from '../utils';
 
@@ -96,7 +96,7 @@ export class ApplicationsService {
     );
   }
 
-  saveApplication(application: CurrentForm, removeQuestions: boolean = true): Observable<ResponseStatus> {
+  saveApplication(application: CurrentForm, removeQuestions = true): Observable<ResponseStatus> {
     return this._updateCreatedDateTime(application.key, application.details.patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
@@ -306,7 +306,7 @@ export class ApplicationsService {
     applicationDetails: ApplicationDetails,
     form: any,
     status: ApplicationStatus,
-    removeQuestions: boolean = true
+    removeQuestions = true
   ): Observable<ResponseStatus> {
     const applicationDefinition: ApplicationDefinition = applicationDetails.applicationDefinition;
     const applicationKey: number = applicationDefinition.key;
