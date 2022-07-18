@@ -81,7 +81,7 @@ export class ApplicationsService {
   submitApplication(application: CurrentForm): Observable<ResponseStatus> {
     return forkJoin([
       this._updateCreatedDateTime(application.key, application.details.patronApplication),
-      this._questionsStorageService.updateSubmittedDateTime(application.key)
+      this._questionsStorageService.updateSubmittedDateTime(application.key),
     ]).pipe(
       switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
@@ -106,7 +106,12 @@ export class ApplicationsService {
           createdDateTime
         );
 
-        return this._updateApplication(applicationDetails, application.formValue, ApplicationStatus.Pending, removeQuestions);
+        return this._updateApplication(
+          applicationDetails,
+          application.formValue,
+          ApplicationStatus.Pending,
+          removeQuestions
+        );
       })
     );
   }
@@ -329,8 +334,10 @@ export class ApplicationsService {
           questions
         );
 
-        const roommatePreferences: RoommatePreferences[] = applicationDetails.roommatePreferences.filter((preference) => preference.patronKeyRoommate);
-            
+        const roommatePreferences: RoommatePreferences[] = applicationDetails.roommatePreferences.filter(
+          preference => preference.patronKeyRoommate
+        );
+
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,
@@ -341,9 +348,13 @@ export class ApplicationsService {
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
       }),
-      tap(() => this._applicationsStateService.setApplication(applicationKey, applicationDetails)),
-      switchMap(() => iif(() => removeQuestions, this._questionsStorageService.removeApplication(applicationKey), of(null))
-    ));
+      tap(() => {
+        this._applicationsStateService.setApplication(applicationKey, applicationDetails);
+        if (removeQuestions) {
+          this._questionsStorageService.removeApplication(applicationKey);
+        }
+      })
+    );
   }
 
   private _createApplicationDetails(
