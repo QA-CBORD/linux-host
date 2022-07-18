@@ -1,6 +1,6 @@
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin, of, iif } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { map, tap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { flat, isDefined, parseJsonToArray } from '../utils';
