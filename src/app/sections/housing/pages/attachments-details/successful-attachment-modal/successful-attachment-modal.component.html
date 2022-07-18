@@ -1,0 +1,19 @@
+<ion-content class="ion-padding application-details__content" #content>
+  <div class="application-details__actions">
+    <ion-button class="btn application-details__page-back" routerDirection="back" mode="ios" fill="clear"> </ion-button>
+    <ion-button class="btn application-details__save" mode="ios" fill="clear"> </ion-button>
+  </div>
+  <h2 class="application-details__title"></h2>
+  <ion-card no-padding class="application-details__card">
+    <div class="success-modal__img-wrapper">
+      <img src="/assets/images/housing/success-check.svg" alt="big_check_success" />
+    </div>
+    <ion-card-title class="success-modal__title-label">{{ contentString.title }}</ion-card-title>
+    <ion-card-title class="success-modal__sub-title">{{ contentString.subtitle }}</ion-card-title>
+
+    <ion-footer class="success-modal__footer">
+      <st-button (onClick)="newAttachmentClicked()">Upload New Attachment</st-button>
+      <st-button (onClick)="onDoneClicked()">View Housing Section</st-button>
+    </ion-footer>
+  </ion-card>
+</ion-content>

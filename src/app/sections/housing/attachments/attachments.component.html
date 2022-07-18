@@ -1,0 +1,44 @@
+<section >
+  <ion-list 
+    class="ion-no-margin bg-transparent">
+    <ion-grid >
+      <ion-row class="container-header-work-order">
+        <div class="col-work-order ion-no-padding">
+            <h2 class="form__secondary-header">Uploaded Attachments</h2>
+        </div>
+        <div class="col-work-order ion-no-padding ion-no-margin">
+            <h2 class="form__secondary-header create-btn" [routerLink]="createAttachmentDefault()">+</h2>
+        </div>
+
+      </ion-row>
+      
+    </ion-grid>
+
+    <!-- TODO: Add plus button  -->
+    <!-- <ng-container>
+      <div #container *ngFor="let workOrder of workOrderLists.workOrders | sort_by_date : 'requestedDate' ">
+        <ion-item lines="none" class="attachment-list__item" [ngClass]="getClass(workOrder.statusKey)" >
+          <ion-label class="attachment-list__wrap">
+            <div class="attachment-list__info">
+              <h5 class="attachment-list__status" [ngClass]="getClass(workOrder.statusKey)" >{{ workOrder.status }}</h5>
+              <div class="attachment-list__date" *ngIf="workOrder?.requestedDate">
+                Submitted {{ workOrder?.requestedDate | date: 'MM/dd/yyyy' }}
+              </div>
+            </div>
+        
+            <h2 class="attachment-list__title">{{ workOrder.type !=='null'? workOrder.type : 'Others' }}</h2>
+          </ion-label>
+
+          <st-actions
+            [path]="getPath(workOrder.key)"
+            [edit]="!workOrder?.facilityKey"
+            [showEdit]="!workOrder?.facilityKey"
+            [showView]="workOrder?.facilityKey"
+            [showRemove]="false"
+            [key]="workOrder?.facilityKey">
+          </st-actions>
+        </ion-item>
+      </div>
+    </ng-container> -->
+  </ion-list>
+</section>
