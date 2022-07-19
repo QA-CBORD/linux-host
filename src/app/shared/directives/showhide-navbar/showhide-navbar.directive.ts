@@ -32,7 +32,8 @@ export class ShowHideNavbarDirective {
     'check-in-out-spots',
     'roommates-search',
     'waiting-lists',
-    'inspections'
+    'inspections',
+    'form-payment'
   ];
 
   /**
@@ -45,7 +46,7 @@ export class ShowHideNavbarDirective {
     'settings',
     'securemessaging',
     'housing/dashboard',
-    'explore'
+    'explore',
   ];
 
   constructor(

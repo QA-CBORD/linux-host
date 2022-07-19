@@ -8,20 +8,25 @@ import { AccountsService } from '@sections/dashboard/services';
 import { firstValueFrom } from '@shared/utils';
 import { PaymentSystemType } from 'src/app/app.global';
 
+export interface AccountsConf {
+  display: string;
+  account: UserAccount;
+  iconSrc: string;
+}
 @Injectable()
 export class CreditCardService {
   constructor(
     private readonly externalPaymentService: ExternalPaymentService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
-    private readonly accountService: AccountsService,
+    private readonly accountService: AccountsService
   ) {}
 
-  async addCreditCard() {
+  async addCreditCard(): Promise<void> {
     try {
       const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
       if (success) {
-        this.showMessage("Your credit card has been added successfully.");
+        this.showMessage('Your credit card has been added successfully.');
       } else {
         this.showMessage(errorMessage);
       }
@@ -30,25 +35,24 @@ export class CreditCardService {
     }
   }
 
-  private async showMessage(message: string, duration = 5000) {
+ async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });
   }
 
-  async retrieveAccounts() {
+  async retrieveAccounts(): Promise<AccountsConf[]> {
     this.loadingService.showSpinner();
-    const accounts = await firstValueFrom(
+    return  await firstValueFrom(
       this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
     )
       .then(accounts => accounts.map(acc => this.buildStr(acc)))
       .finally(() => this.loadingService.closeSpinner());
-    return accounts;
-  }
-  
-  removeCreditCardAccount({ account }) {
-    return this.accountService.removeCreditCardAccount(account);
   }
 
-  private buildStr(account: UserAccount) {
+  removeCreditCardAccount(userAccount: UserAccount): Promise<boolean> {
+    return this.accountService.removeCreditCardAccount(userAccount);
+  }
+
+  private buildStr(account: UserAccount): AccountsConf {
     const { accountTender, lastFour } = account;
     const creditCardTypeNumber = parseInt(accountTender) - 1;
     const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;

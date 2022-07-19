@@ -39,7 +39,7 @@
   }
 
   .large-popover {
-    --width: fit-content;
+    --width: 365px;
   }
   
   .st-nav-tabs {
@@ -322,4 +322,8 @@ article {
     height: 70%;
     content: '';
   }
+}
+
+.picker-col {
+  display: block;
 }

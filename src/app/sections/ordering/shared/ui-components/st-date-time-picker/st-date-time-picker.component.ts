@@ -12,6 +12,11 @@ import { Schedule } from '@sections/ordering/shared/ui-components/order-options.
 import { UserInfo } from '@core/model/user/user-info.model';
 import { CartService } from '@sections/ordering/services';
 
+export interface DateTimeSelected {
+  dateTimePicker: Date;
+  timeStamp: string;
+}
+
 @Component({
   selector: 'st-date-time-picker',
   templateUrl: './st-date-time-picker.component.html',
@@ -26,7 +31,7 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() dateTimePicker: Date | string;
   @Input() userData: UserInfo;
   @Input() orderType: number;
-  @Output() onTimeSelected: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onTimeSelected: EventEmitter<DateTimeSelected> = new EventEmitter<DateTimeSelected>();
   @Input() dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx = 0;
@@ -115,7 +120,7 @@ export class StDateTimePickerComponent implements OnInit {
       this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(timeStamp, this.merchantInfo.timeZone);
     }
     this.dateTimePicker = dateValue;
-    this.onTimeSelected.emit({ dateTimePicker: this.dateTimePicker, timeStamp });
+    this.onTimeSelected.emit({ dateTimePicker: this.dateTimePicker, timeStamp } as DateTimeSelected);
   }
 
   private hasTimeStamp(): boolean {

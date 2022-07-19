@@ -2,8 +2,7 @@ import { Injectable } from "@angular/core";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { ConnectionFacadeService } from "@shared/services/connection-facade.service";
 import { ExecStatus, RetryHandler } from "@shared/ui-components/no-connectivity-screen/model/connectivity-page.model";
-import { Observable } from "rxjs";
-import { firstValueFrom } from '@shared/utils';
+import { NavigationService } from "@shared/services/navigation.service";
 
 
 export interface PromiseExecResult<T> {
@@ -17,9 +16,10 @@ export enum PromiseExecStatus {
 }
 
 export interface ExecOptions<T> {
-    promise: () => Promise<T> | Observable<T>,
+    promise: () => Promise<T>,
     showLoading?: boolean;
-    rejectOnError?: (error: any) => boolean
+    rejectOnError?: (error: any) => boolean,
+    shouldNavigate?: boolean
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,7 +28,7 @@ export class ConnectivityAwareFacadeService {
 
     constructor(
         private readonly connectionFacadeService: ConnectionFacadeService,
-        private readonly loadingService: LoadingService) { }
+        private readonly loadingService: LoadingService, private routingService: NavigationService) { }
 
 
     async watchForConnectionIssuesOnExec<T>(options: { promise: () => Promise<T>, showLoading?: boolean }): Promise<PromiseExecResult<T>> {
@@ -48,8 +48,8 @@ export class ConnectivityAwareFacadeService {
     }
 
     private setOptionsDefaults(options: ExecOptions<any>) {
-        options.showLoading = options.showLoading == undefined ? true : options.showLoading;
-        options.rejectOnError = options.rejectOnError ? options.rejectOnError : () => false;
+        options.showLoading = options.showLoading === undefined ? true : options.showLoading;
+        options.rejectOnError = options.rejectOnError || (() => false);
     }
 
     async execute<T>(options: ExecOptions<T>, isVaultLocked = true): Promise<PromiseExecResult<T>> {
@@ -60,35 +60,37 @@ export class ConnectivityAwareFacadeService {
 
     }
 
-    private async runExecutionLogic(resolve, reject, { rejectOnError, promise, showLoading }: ExecOptions<any>, isVaultLocked: boolean) {
+    private async runExecutionLogic<T>(resolve: (data: PromiseExecResult<T>) => void, reject: (e) => void, options: ExecOptions<T>, isVaultLocked: boolean) {
+        const { rejectOnError, promise, showLoading, shouldNavigate } = options;
         try {
             resolve({ execStatus: ExecStatus.Execution_success, data: await this.run(promise, showLoading) });
         } catch (error) {
             if (rejectOnError(error)) {
                 reject(error);
             } else {
-                const { data, promiseResolved } = await this.handleConnectivityError({ rejectOnError, promise }, isVaultLocked);
-                if (promiseResolved) {
-                    resolve(data);
+                const response = await this.handleConnectivityError({ rejectOnError, promise, shouldNavigate }, isVaultLocked);
+                if (response.connectionReEstablished) {
+                    resolve({
+                        data: response.results,
+                        execStatus: ExecStatus.Execution_success
+                    });
                 } else {
-                    reject(data);
+                    reject(response);
                 }
             }
         }
     }
 
-    private async handleConnectivityError<T>({ promise, rejectOnError }: ExecOptions<T>, isVaultLocked: boolean): Promise<{ data, promiseResolved }> {
-        let promiseResolved = false;
-        let data = null;
-        const showLoading = true;
+    private async handleConnectivityError<T>({ promise, rejectOnError, shouldNavigate }: ExecOptions<T>, isVaultLocked: boolean): Promise<{ results: T, connectionReEstablished: boolean }> {
+        let connectionReEstablished = false;
+        let results = null;
         await this.connectionFacadeService.handleConnectionError({
-            onRetry: async () => {
-                return this.run(promise, showLoading)
-                    .then(r => (promiseResolved = true) && (((data = r) && true) || true))
-                    .catch(e => rejectOnError(e) && ((data = e) && true));
-            }
-        }, true, isVaultLocked);
-        return { promiseResolved, data };
+            onRetry: () => this.run(promise)
+                .then(r => (connectionReEstablished = true) && (((results = r) && true) || true))
+                .catch(e => rejectOnError(e) && ((results = e) && true))
+        }, !shouldNavigate, isVaultLocked);
+
+        return { connectionReEstablished, results };
     }
 
 
@@ -96,20 +98,13 @@ export class ConnectivityAwareFacadeService {
         return this.connectionFacadeService.handleConnectionError(handler, showAsModal);
     }
 
-    private async run<T>(actualMethod: () => Promise<T> | Observable<T>, showLoading: boolean): Promise<T> {
+    private async run<T>(actualMethod: () => Promise<T>, showLoading = true): Promise<T> {
         if (showLoading) {
             await this.loadingService.showSpinner();
-            return await this.firstValueFromw(actualMethod)
+            return await actualMethod()
                 .finally(() => this.loadingService.closeSpinner());
         } else {
-            return await this.firstValueFromw(actualMethod);
+            return await actualMethod();
         }
-    }
-
-    private async firstValueFromw<T>(method: () => Promise<T> | Observable<T>) {
-        if (method instanceof Observable) {
-            return await firstValueFrom(method)
-        }
-        return await method();
     }
 }

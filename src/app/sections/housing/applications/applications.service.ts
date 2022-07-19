@@ -1,7 +1,7 @@
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, tap, switchMap, mapTo, withLatestFrom } from 'rxjs/operators';
+import { map, tap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { flat, isDefined, parseJsonToArray } from '../utils';
 
@@ -41,13 +41,15 @@ import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { RoommatePreferences } from './applications.model';
 import { RoommateDetails } from '../roommate/roomate.model';
+import { CurrentForm } from '../pages/form-payment/form-payment.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationsService {
-  private readonly _patronApplicationsUrl: string = `${this._environmentFacadeService.getEnvironmentObject().housing_aws_url
-    }/patron-applications/v.1.0/patron-applications`;
+  private readonly _patronApplicationsUrl: string = `${
+    this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+  }/patron-applications/v.1.0/patron-applications`;
   selectedRoommate: any[] = [];
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
@@ -59,7 +61,7 @@ export class ApplicationsService {
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
     private _router: Router
-  ) { }
+  ) {}
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
     return this._questionsStorageService.getQuestions(key).pipe(
@@ -76,54 +78,40 @@ export class ApplicationsService {
     );
   }
 
-  submitApplication(
-    applicationKey: number,
-    application: ApplicationDetails,
-    form: any,
-    isSubmitted: boolean
-  ): Observable<ResponseStatus> {
-    if (isSubmitted) {
-      return this._updateApplication(application, form, ApplicationStatus.Submitted);
-    }
-
-    return forkJoin(
-      this._updateCreatedDateTime(applicationKey, application.patronApplication),
-      this._questionsStorageService.updateSubmittedDateTime(applicationKey)
-    ).pipe(
+  submitApplication(application: CurrentForm): Observable<ResponseStatus> {
+    return forkJoin([
+      this._updateCreatedDateTime(application.key, application.details.patronApplication),
+      this._questionsStorageService.updateSubmittedDateTime(application.key),
+    ]).pipe(
       switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
-          applicationKey,
-          application,
+          application.key,
+          application.details,
           ApplicationStatus.Submitted,
           createdDateTime,
           submittedDateTime
         );
-
-        return this._updateApplication(applicationDetails, form, ApplicationStatus.Submitted);
+        return this._updateApplication(applicationDetails, application.formValue, ApplicationStatus.Submitted);
       })
     );
   }
 
-  saveApplication(
-    applicationKey: number,
-    application: ApplicationDetails,
-    form: any,
-    isSubmitted: boolean
-  ): Observable<ResponseStatus> {
-    if (isSubmitted) {
-      return this._updateApplication(application, form, ApplicationStatus.Pending);
-    }
-
-    return this._updateCreatedDateTime(applicationKey, application.patronApplication).pipe(
+  saveApplication(application: CurrentForm, removeQuestions = true): Observable<ResponseStatus> {
+    return this._updateCreatedDateTime(application.key, application.details.patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
-          applicationKey,
-          application,
+          application.key,
+          application.details,
           ApplicationStatus.Pending,
           createdDateTime
         );
 
-        return this._updateApplication(applicationDetails, form, ApplicationStatus.Pending);
+        return this._updateApplication(
+          applicationDetails,
+          application.formValue,
+          ApplicationStatus.Pending,
+          removeQuestions
+        );
       })
     );
   }
@@ -141,12 +129,13 @@ export class ApplicationsService {
           createdDateTime,
           status: updatedStatus,
         });
-        const selectedPreferences = this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences;
+        const selectedPreferences = this._applicationsStateService.applicationsState.applicationDetails
+          .roommatePreferences;
 
         const updatedApplicationDetails: ApplicationDetails = new ApplicationDetails({
           ...applicationDetails,
           patronApplication: updatedPatronApplication,
-          roommatePreferences: selectedPreferences
+          roommatePreferences: selectedPreferences,
         });
 
         this._applicationsStateService.setApplication(applicationKey, updatedApplicationDetails);
@@ -167,21 +156,26 @@ export class ApplicationsService {
       let isSetRoommate = false;
       const requestedRoommates = this._applicationsStateService.getRoommateSearchOptions();
       this._applicationsStateService.setRoommatesPreferences(
-        this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter((roommate) => {
-          requestedRoommates.preferences.forEach((requestedRommate) => {
-            if (roommate.patronKeyRoommate == 0 && !isSetRoommate && requestedRommate.selected && requestedRommate.value == roommate.preferenceKey) {
+        this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences.filter(roommate => {
+          requestedRoommates.preferences.forEach(requestedRommate => {
+            if (
+              roommate.patronKeyRoommate == 0 &&
+              !isSetRoommate &&
+              requestedRommate.selected &&
+              requestedRommate.value == roommate.preferenceKey
+            ) {
               roommate.patronKeyRoommate = roommateParam.patronKey;
               roommate.firstName = roommateParam.firstName;
               roommate.lastName = roommateParam.lastName;
               roommate.birthDate = roommateParam.birthDate;
               roommate.middleName = roommateParam.middleName;
               isSetRoommate = true;
-              return roommate
+              return roommate;
             }
-            return roommate
-          })
+            return roommate;
+          });
         })
-      )
+      );
       return of(true);
     }
     return of(false);
@@ -191,7 +185,7 @@ export class ApplicationsService {
     const questions: QuestionBase[][] = this._questionsService
       .getQuestions(applicationDetails.applicationDefinition.applicationFormJson)
       .map((question: QuestionBase) => {
-        const mappedQuestions = this._questionsService.mapToAddressTypeGroup(question)
+        const mappedQuestions = this._questionsService.mapToAddressTypeGroup(question);
         return this._mapQuestions(mappedQuestions);
       });
 
@@ -208,7 +202,7 @@ export class ApplicationsService {
         searchOptions: question.searchOptions,
         showOptions: question.showOptions,
         preferences: question.values,
-        prefRank: question.prefRank
+        prefRank: question.prefRank,
       };
       this._applicationsStateService.setRoommateSearchOptions(options);
 
@@ -220,7 +214,7 @@ export class ApplicationsService {
           this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search`]).then(() => {
             this._applicationsStateService.setRoommateSearchOptions(options);
           });
-        }
+        },
       });
     });
   }
@@ -256,12 +250,7 @@ export class ApplicationsService {
             applicationDetails.patronPreferences
           );
         } else {
-          group[questionName] = this._toFormControl(
-            storedValue,
-            question,
-            applicationDetails,
-            isSubmitted
-          );
+          group[questionName] = this._toFormControl(storedValue, question, applicationDetails, isSubmitted);
         }
       }
     );
@@ -278,7 +267,7 @@ export class ApplicationsService {
       .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
         QuestionReorder.sort(preferences, current, next, selectedValues.length)
       )
-      .map((value: QuestionReorderValue) => new FormControl({value, disabled: question.readonly}));
+      .map((value: QuestionReorderValue) => new FormControl({ value, disabled: question.readonly }));
 
     return new FormArray(controls);
   }
@@ -321,7 +310,8 @@ export class ApplicationsService {
   private _updateApplication(
     applicationDetails: ApplicationDetails,
     form: any,
-    status: ApplicationStatus
+    status: ApplicationStatus,
+    removeQuestions = true
   ): Observable<ResponseStatus> {
     const applicationDefinition: ApplicationDefinition = applicationDetails.applicationDefinition;
     const applicationKey: number = applicationDefinition.key;
@@ -334,34 +324,36 @@ export class ApplicationsService {
           parsedJson,
           questions
         );
-        const patronPreferences: PatronPreference[] = applicationDetails.patronPreferences != null ?
-          this._preferencesService.getPreferences(
-            applicationDetails.patronPreferences,
-            parsedJson,
-            questions
-          ) : null;
+        const patronPreferences: PatronPreference[] =
+          applicationDetails.patronPreferences != null
+            ? this._preferencesService.getPreferences(applicationDetails.patronPreferences, parsedJson, questions)
+            : null;
         const patronAddresses: PatronAddress[] = this._patronAddressService.getAddresses(
           applicationDetails.patronAddresses,
           parsedJson,
           questions
         );
 
-        const roommatePreferences: RoommatePreferences[] = applicationDetails.roommatePreferences;
+        const roommatePreferences: RoommatePreferences[] = applicationDetails.roommatePreferences.filter(
+          preference => preference.patronKeyRoommate
+        );
 
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,
           patronPreferences,
           patronAddresses,
-          roommatePreferences
+          roommatePreferences,
         });
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
       }),
-      tap(() => this._applicationsStateService.setApplication(applicationKey, applicationDetails)),
-      switchMap((response: ResponseStatus) =>
-        this._questionsStorageService.removeApplication(applicationKey).pipe(mapTo(response))
-      )
+      tap(() => {
+        this._applicationsStateService.setApplication(applicationKey, applicationDetails);
+        if (removeQuestions) {
+          this._questionsStorageService.removeApplication(applicationKey);
+        }
+      })
     );
   }
 
@@ -386,8 +378,8 @@ export class ApplicationsService {
 
     const patronApplication: PatronApplication = new PatronApplication(options);
 
-    const roommatePreferences: RoommatePreferences[] =
-      this._applicationsStateService.applicationsState.applicationDetails.roommatePreferences;
+    const roommatePreferences: RoommatePreferences[] = this._applicationsStateService.applicationsState
+      .applicationDetails.roommatePreferences;
 
     return new ApplicationDetails({ ...applicationDetails, patronApplication, roommatePreferences });
   }
@@ -416,4 +408,3 @@ export class ApplicationsService {
     );
   }
 }
-

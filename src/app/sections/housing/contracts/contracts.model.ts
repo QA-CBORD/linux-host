@@ -229,6 +229,9 @@ export interface ContractDetailsOptions {
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
   patronAddresses?: PatronAddress[];
+  accountCodeKey?: number;
+  amount?: number;
+  formKey?: number;
 }
 
 export class ContractDetails implements ContractDetailsOptions {
@@ -238,6 +241,9 @@ export class ContractDetails implements ContractDetailsOptions {
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
   patronAddresses?: PatronAddress[];
+  accountCodeKey?: number;
+  amount?: number;
+  formKey: number;
 
   constructor(options: ContractDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
@@ -262,17 +268,23 @@ export class ContractDetails implements ContractDetailsOptions {
     this.patronAddresses = Array.isArray(options.patronAddresses)
       ? options.patronAddresses.map((address: any) => new PatronAddress(address))
       : [];
+
+    this.accountCodeKey = Number(options.accountCodeKey);
+    this.amount = Number(options.amount);
+    this.formKey = Number(options.formKey)
   }
 }
 
 export interface ContractRequestOptions {
   contractElementKey: number;
   dateSigned: string;
+  formKey: number;
 }
 
 export class ContractRequest {
   contractElementKey: number;
   dateSigned: string;
+  formKey: number;
 
   constructor(options: ContractRequestOptions) {
     if (options == null || typeof options !== 'object') {
@@ -281,5 +293,6 @@ export class ContractRequest {
 
     this.contractElementKey = Number(options.contractElementKey);
     this.dateSigned = String(options.dateSigned);
+    this.formKey = Number(options.formKey);
   }
 }

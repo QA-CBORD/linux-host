@@ -1,5 +1,6 @@
-<!-- Display most recent message -->
-<ion-item
+<ng-container *ngIf="conversationItem.conversation.messages.length">
+  <!-- Display most recent message -->
+  <ion-item
   *ngFor="let message of (conversationItem.conversation.messages | slice: -1)"
   (click)="onConversationSelected()"
   class="conversations__sender-item"
@@ -32,3 +33,5 @@
     </div>
   </ng-container>
 </ion-item>
+</ng-container>
+

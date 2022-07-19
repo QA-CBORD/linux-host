@@ -74,6 +74,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/roommate-search/roommate-search.module').then(m => m.RoommateSearchPageModule),
       },
       {
+        path: `${LOCAL_ROUTING.formPayment}`,
+        loadChildren: () => import('./pages/form-payment/form-payment.module').then(m => m.FormPaymentModule),
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
         pathMatch: 'full',
