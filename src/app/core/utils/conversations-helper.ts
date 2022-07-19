@@ -27,6 +27,7 @@ export const getConversationGroupName = ({ groupName }: SecureMessageConversatio
  * @param conversation conversation to get data for ui
  */
 export const getConversationDescription = ({ messages }: SecureMessageConversation): string => {
+  if (noPreviousMessages(messages)) return 'You: ';
   const lastIMessage: SecureMessageInfo = messages[messages.length - 1];
   const frontText: string = lastIMessage.sender.type === SecureMessageTypes.PATRON ? 'You: ' : '';
 
@@ -94,19 +95,23 @@ export const buildConversationsFromMessages = (
         }
       }
 
-      const conversation: SecureMessageConversation = {
-        institutionId: institution_id,
-        groupName: newGroupName,
-        groupIdValue: newGroupId,
-        groupDescription: newGroupDescription,
-        myIdValue: id_value,
-        messages: [],
-      };
-
+      const conversation = createConversation(institution_id, newGroupName, newGroupId, newGroupDescription, id_value);
       conversation.messages.push(message);
       tempConversations.push(conversation);
     }
   }
+
+  if (noPreviousMessages(messages)) {
+    const conversation = createConversation(
+      institution_id,
+      groups[0].name,
+      groups[0].id,
+      groups[0].description,
+      id_value
+    );
+    tempConversations.push(conversation);
+  }
+
   tempConversations.sort(sortConversations);
   return tempConversations;
 };
@@ -156,3 +161,23 @@ export const mapConversationToListItem = (
     conversation,
   };
 };
+function noPreviousMessages(messages: SecureMessageInfo[]) {
+  return !messages.length;
+}
+
+function createConversation(
+  institution_id: string,
+  newGroupName: string,
+  newGroupId: string,
+  newGroupDescription: string,
+  id_value: string
+): SecureMessageConversation {
+  return {
+    institutionId: institution_id,
+    groupName: newGroupName,
+    groupIdValue: newGroupId,
+    groupDescription: newGroupDescription,
+    myIdValue: id_value,
+    messages: [],
+  };
+}

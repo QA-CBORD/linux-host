@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
+import { AccountsConf } from '../../credit-card.service';
 
 export interface CardCs {
   screen_title: string;
@@ -12,41 +13,29 @@ export interface CardCs {
   added_success_msg: string;
 }
 
-export type AccountsType = {
-  account: UserAccount;
-  display: string;
-  iconSrc: string;
-}[];
-
 @Component({
   selector: 'st-credit-card-list',
   templateUrl: './credit-card-list.component.html',
   styleUrls: ['./credit-card-list.component.scss'],
 })
-export class CardListComponent implements OnInit {
-  @Input() contentStrings: CardCs;
-  @Input() userAccounts: AccountsType = [];
+export class CardListComponent {
+  @Input() contentStrings: CardCs = {} as CardCs;
+  @Input() userAccounts: AccountsConf[] = [];
   @Input() removeIcon: boolean;
   @Input() addItem: boolean;
   @Output() onRemove: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
   @Output() onClick: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
   @Output() onAdd: EventEmitter<Event> = new EventEmitter<Event>();
 
-  noCreditCardFound: boolean;
-
-  ngOnInit() {
-    this.noCreditCardFound = !this.userAccounts.length;
-  }
-
-  onRemoveEvent(account: UserAccount) {
+  onRemoveEvent(account: UserAccount): void {
     this.onRemove.emit(account);
   }
 
-  onClickEvent(account: UserAccount) {
+  onClickEvent(account: UserAccount): void {
     this.onClick.emit(account);
   }
 
-  onAddEvent() {
+  onAddEvent(): void {
     this.onAdd.emit();
   }
 }

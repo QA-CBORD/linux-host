@@ -31,12 +31,19 @@ export class StartupPage {
     private readonly authFacadeService: AuthFacadeService,
     private readonly navigationService: NavigationService,
     private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService
-  ) {}
+  ) { }
 
   /// check login on enter
   ionViewDidEnter() {
     this.loadingService.showSpinner();
-    const { skipLoginFlow, biometricEnabled } = <any>this.location.getState();
+    const { skipAuthFlow, ...rest } = <any>this.location.getState();
+    if (!skipAuthFlow) {
+      this.startAuthFlow(rest)
+    }
+  }
+
+
+  startAuthFlow({ skipLoginFlow, biometricEnabled, }) {
     if (skipLoginFlow) {
       this.unlockVault(biometricEnabled);
     } else {
@@ -56,12 +63,10 @@ export class StartupPage {
     }
     const hasPin = session && session.pin;
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
-    const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute(
-      {
-        promise: async () => firstValueFrom(this.authFacadeService.getAuthSessionToken$()),
-      },
-      !hasPin
-    );
+    const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute({
+      promise: () => firstValueFrom(this.authFacadeService.getAuthSessionToken$()),
+    }, !hasPin);
+
 
     if (hasPin) {
       return this.handleVaultLoginSuccess(session);
@@ -82,13 +87,13 @@ export class StartupPage {
   }
 
   async connectionIssueAwarePromiseExecute(options: ExecOptions<any>, isVaultLocked = false) {
-    return this.connectivityAwareFacadeService.execute(options, isVaultLocked);
+    return this.connectivityAwareFacadeService.execute({ shouldNavigate: true, ...options }, isVaultLocked);
   }
 
   authenticatePin(pin: string) {
     this.connectionIssueAwarePromiseExecute({
-      promise: async () => await firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
-      rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message),
+      promise: () => firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
+      rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message)
     })
       .then(async () => {
         // Making sure vault is unlocked before continuing and repeating the flow in case it is.
@@ -100,7 +105,11 @@ export class StartupPage {
 
         return this.navigateToDashboard();
       })
-      .catch(() => this.navigateAnonymous(ANONYMOUS_ROUTES.entry));
+      .catch((error) => {
+        if (error) {
+          this.navigateAnonymous(ANONYMOUS_ROUTES.entry)
+        }
+      });
   }
 
   async handleVaultLoginSuccess(session: VaultSession): Promise<void> {
@@ -117,9 +126,12 @@ export class StartupPage {
   }
 
   async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: any, clearAll = true) {
-    return await this.navigationService
-      .navigateAnonymous(where, { ...data })
-      .finally(() => clearAll && this.identityFacadeService.clearAll());
+    try {
+      return await this.navigationService
+        .navigateAnonymous(where, { ...data });
+    } finally {
+      clearAll && this.identityFacadeService.clearAll();
+    }
   }
 
   async handleAppLoginState(state: LoginState): Promise<void> {
@@ -150,7 +162,7 @@ export class StartupPage {
 
   public async navigateToDashboard() {
     this.connectionIssueAwarePromiseExecute({
-      promise: async () =>
+      promise: () =>
         this.navigationService.navigate([APP_ROUTES.dashboard], {
           replaceUrl: true,
           queryParams: { skipLoading: true },

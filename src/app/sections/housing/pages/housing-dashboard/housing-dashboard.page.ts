@@ -1,11 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription, merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TermsService } from '../../terms/terms.service';
 import { HousingService } from '../../housing.service';
-
 import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
 export enum SelectedHousingTab { Forms, Rooms, Contracts }
@@ -16,7 +14,7 @@ export enum SelectedHousingTab { Forms, Rooms, Contracts }
   styleUrls: ['./housing-dashboard.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HousingDashboardPage implements OnInit, OnDestroy {
+export class HousingDashboardPage {
   SelectedHousingTab = SelectedHousingTab; // needed to reference enum on front-end
   _selectedHousingTab: SelectedHousingTab = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();
@@ -38,6 +36,10 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
+  }
+
+  ionViewWillEnter() {
+    this._housingService.refreshDefinitions();
   }
 
   private _initSubscription(): void {
@@ -81,11 +83,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
       this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
       this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
     }
-    // if(response ){
-    //   //TODO: handleSuccess
-    //   this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
-    //   this.hasCheckInOuts = response.checkInOuts.length > 0 ? true:false;
-    // }
+
     this._loadingService.closeSpinner();
   }
 }

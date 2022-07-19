@@ -379,7 +379,7 @@ export class HousingService {
    */
   handleSuccess(): void {
     this._loadingService.closeSpinner();
-    this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions());
+    this._router.navigate([`${ROLES.patron}/housing/dashboard`]);
   }
 
   /**
@@ -387,7 +387,7 @@ export class HousingService {
    */
   handleSuccess$(): Observable<any> {
     this._loadingService.closeSpinner();
-    return of(this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions()));
+    return of(this._router.navigate([`${ROLES.patron}/housing/dashboard`]));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -396,8 +396,7 @@ export class HousingService {
       // TODO goes to contract form based on contract element key & contract form key
     });
   }
-  handleErrors(error: any): void {
-    console.log(error);
+  handleErrors(error: Error): void {
     let message = 'Something went wrong. Try again later';
 
     this._loadingService.closeSpinner();

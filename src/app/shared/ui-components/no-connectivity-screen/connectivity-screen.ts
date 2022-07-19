@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular
 import { ActivatedRoute } from '@angular/router';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController, Platform, ToastController } from '@ionic/angular';
 import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
@@ -13,7 +13,9 @@ import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigur
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
 import { Subscription } from 'rxjs';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
-
+import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
+import { NavigationService } from '@shared/services/navigation.service';
+const EXECUTION_PRIORITY = 9999
 @Component({
   selector: 'st-connectivity-screen',
   templateUrl: './connectivity-screen.html',
@@ -29,14 +31,17 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   @Input() errorType: ConnectivityErrorType;
   @Input() freshContentStringsLoaded = false;
   @Input() isVaultLocked = true;
-
+  @Input() navBackUrl: string;
   strings: any;
 
   isLoading = false;
   config: ConnectivityPageConfig;
   canScanCard = false;
+  isCurrentView: boolean;
+  platformBackButtonClickSubscription: Subscription;
 
   constructor(
+    private platform: Platform,
     private readonly connectionService: ConnectionService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastController,
@@ -46,7 +51,18 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     private readonly changeDetector: ChangeDetectorRef,
     private readonly activatedRoute: ActivatedRoute,
     private readonly modalController: ModalController,
+    private readonly routingService: NavigationService
   ) { }
+
+  ionViewDidEnter() {
+    this.isCurrentView = true;
+    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(EXECUTION_PRIORITY, () => {/**ignored on purpose */})
+  }
+
+  ionViewWillLeave() {
+    this.isCurrentView = false;
+    this.platformBackButtonClickSubscription.unsubscribe();
+  }
 
   ngOnInit() {
     this.init();
@@ -57,6 +73,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     this.csModel = data?.csModel || this.csModel;
     this.freshContentStringsLoaded = data?.freshContentStringsLoaded || this.freshContentStringsLoaded;
     this.errorType = data?.errorType || this.errorType;
+    this.navBackUrl = data?.navBackUrl;
     this.isVaultLocked = this.getVaultIsLocked(data);
 
     this.config = connectivityPageConfigurations[this.errorType];
@@ -164,11 +181,15 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async scanCard() {
-    if (this.retryHandler.onScanCode)
-      await this.retryHandler.onScanCode();
-    await this.openScanCard();
+    await this.openScanCardPage();
   }
 
+  async openScanCardPage(): Promise<void> {
+    const color = await this.institutionColor();
+    await this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.scanCard, {
+      queryParams: { color },
+    });
+  }
 
   async openScanCard(): Promise<any> {
     await this.loadingService.showSpinner();
@@ -190,7 +211,12 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   async closeSelf(status: ExecStatus) {
     try {
       await this.modalController.dismiss(null, status);
-    } catch (err) {/** ignored on purpose */ }
+    } catch (err) {
+      if (this.navBackUrl) {
+        this.retryHandler.onClose(status);
+        this.routingService.navigateByUrl(this.navBackUrl, { state: { status, skipAuthFlow: true } });
+      }
+    }
   }
 
   async setConnectionErrorType(): Promise<void> {

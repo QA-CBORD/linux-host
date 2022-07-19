@@ -4,17 +4,15 @@
   #content
 >
   <div class="application-details__actions">
-    <ion-button class="btn application-details__page-back" (click)="onBack()" mode="ios" fill="clear">
+    <ion-button class="btn application-details__page-back" (click)="onBack()" fill="clear">
       Cancel
     </ion-button>
-    <ion-button class="btn application-details__save" mode="ios" fill="clear" (click)="save(applicationDetails)">
+    <ion-button class="btn application-details__save" fill="clear" (click)="save(applicationDetails)">
       Save
     </ion-button>
   </div>
-
-  <h2 class="application-details__title">{{ applicationDetails.applicationDefinition.applicationTitle }}</h2>
-
-  <div class="application-details__card">
+  <ion-label>{{ applicationDetails.applicationDefinition.applicationTitle }}</ion-label>
+  <ion-card  no-padding class="application-details__card">
     <st-stepper class="stepper--white">
       <st-step
         *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
@@ -55,14 +53,14 @@
             <st-button
               class="btn application-details__submit"
               type="submit"
-              *ngIf="isLastPage && (!applicationDetails.applicationDefinition.accountCodeKey || isSubmitted)"
+              *ngIf="isLastPage && (!applicationDetails.applicationDefinition.amount || isSubmitted)"
               [class.stepper-footer__button--right]="isFirstPage"
             >
               Submit
           </st-button>
             <st-button
               type="submit"
-              *ngIf="isLastPage && applicationDetails.applicationDefinition.accountCodeKey && !isSubmitted"
+              *ngIf="isLastPage && applicationDetails.applicationDefinition.amount && !isSubmitted"
               [class.stepper-footer__button--right]="isFirstPage"
             >
               Continue to payment
@@ -71,5 +69,5 @@
         </form>
       </st-step>
     </st-stepper>
-  </div>
+  </ion-card>
 </ion-content>

@@ -36,6 +36,13 @@ import { CommonService } from '@shared/services/common.service';
 export enum browserState {
   FINISHED = 'browserFinished',
 }
+
+const dropdown = {
+  PAYMENT: /payment/,
+  ACCOUNT: /account/,
+  DEPOSIT: /deposit/
+}
+
 @Component({
   selector: 'st-deposit-page',
   templateUrl: './deposit-page.component.html',
@@ -481,16 +488,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return `${i}-${Math.random()}`;
   }
 
-  openActionSheet(ref: string) {
+  openWithVoiceOver(selector: string) {
     this.a11yService.isVoiceOverClick$.then(value => {
       if (value) {
-        if (ref === 'payment') {
-          this.selectPayment.open();
-        } else if (ref === 'account') {
-          this.selectAccount.open();
-        } else if (ref === 'deposit') {
-          this.selectDeposit.open();
-        }
+        if (dropdown.PAYMENT.test(selector)) return this.selectPayment.open();
+        if (dropdown.ACCOUNT.test(selector)) return this.selectAccount.open();
+        if (dropdown.DEPOSIT.test(selector)) return this.selectDeposit.open();
       }
     });
   }

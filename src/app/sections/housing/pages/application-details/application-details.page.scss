@@ -14,14 +14,15 @@
   padding-top: var(--ion-safe-area-top, 0);
 }
 
-.application-details__title {
+ ion-label {
   @include font-family($font-nunito-heavy);
-
   font-size: 20px;
-  color: $color-night-rider;
+  color: $color-black;
   text-align: center;
   margin-top: 0;
   margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .application-details__page-back {
@@ -70,4 +71,15 @@
 
 .application-details__submit {
   --background: #{$color-dodger-blue};
+}
+
+.ion-padding {
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+}
+
+ion-card {
+  margin: 8px !important;
 }

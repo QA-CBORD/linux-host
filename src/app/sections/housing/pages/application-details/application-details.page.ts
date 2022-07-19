@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
@@ -9,25 +8,23 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, ModalController } from '@ionic/angular';
-import { FormGroup } from '@angular/forms';
-import { Observable, Subscription, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { ApplicationsService } from '../../applications/applications.service';
 import { HousingService } from '../../housing.service';
 import { StepperComponent } from '../../stepper/stepper.component';
 import { QuestionComponent } from '../../questions/question.component';
-import { ApplicationDetails, ApplicationStatus } from '../../applications/applications.model';
+import { ApplicationDetails, ApplicationStatus, RoommatePreferences } from '../../applications/applications.model';
 import { QuestionsPage } from '../../questions/questions.model';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
 import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { ApplicationPaymentComponent } from '../application-payment/application-payment.component';
-import { UserAccount } from '@core/model/account/account.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Location } from '@angular/common';
-import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
-import { reduceToObject } from '@shared/model/content-strings/content-string-utils';
-import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
+import { CurrentForm } from '../form-payment/form-payment.component';
+import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
+
 
 enum UpdateType {
   SUBMIT = 'submit',
@@ -40,12 +37,10 @@ enum UpdateType {
   styleUrls: ['./application-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplicationDetailsPage implements OnInit, OnDestroy {
+export class ApplicationDetailsPage implements OnInit {
   @ViewChild('content') private page: IonContent;
   @ViewChild(StepperComponent) private stepper: StepperComponent;
   @ViewChildren(QuestionComponent) private questions: QueryList<QuestionComponent>;
-  private subscription: Subscription = new Subscription();
-  private applicationKey: number;
   isSubmitted: boolean;
   applicationDetails$: Observable<ApplicationDetails>;
   pages$: Observable<QuestionsPage[]>;
@@ -59,38 +54,50 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
-    private creditCardService: CreditCardService
+    private formPaymentService: FormPaymentService
   ) {}
 
   async ngOnInit() {
-    this.setApplicationKey();
-    this.initApplicationDetails$();
-    this.initPages$();
+    this.applicationDetails$ = this.initApplicationDetails$();
+    this.pages$ = this.getPages$();
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
 
   save(applicationDetails: ApplicationDetails) {
     this.updateQuestions();
-    this.updateSubscription(this.stepper.selected.stepControl.value, applicationDetails);
+    this.updateApplicationService(this.stepper.selected.stepControl.value, applicationDetails);
   }
 
-  updateSubscription(formValue: any, applicationDetails: ApplicationDetails, type: UpdateType = UpdateType.SAVE) {
-    this._updateSubscription(type, this.applicationKey, applicationDetails, formValue);
+  updateApplicationService(formValue: FormControl, applicationDetails: ApplicationDetails, type: UpdateType = UpdateType.SAVE) {
+    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted, type: FormType.Application }).pipe(take(1)).subscribe({
+      next: () => this._handleSuccess(),
+      error: (error: Error) => this._handleErrors(error),
+    });
   }
 
   async submitForm(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
-
     this.updateQuestions();
     if (!this.isSubmitted && form.invalid) return;
-    if (!isLastPage) return this.nextPage(applicationDetails, form.value); 
-    if (this.isPaymentDue(applicationDetails) && !this.isSubmitted) return await this.continueToPayment(applicationDetails);  
-    this.updateSubscription(form.value, applicationDetails, UpdateType.SUBMIT);
+    if (!isLastPage) return this.nextPage(applicationDetails, form.value);
+    if (this.isPaymentDue(applicationDetails) && !this.isSubmitted) return await this.continueToPayment(applicationDetails, form.value);
+    this.updateApplicationService(form.value, applicationDetails, UpdateType.SUBMIT);
   }
 
-  async showModal() {
+  async requestiongRoomate() {
+    const requestingRoommate = this.getRequestingRoomate();
+    this.applicationsStateService.setRequestingRoommate(requestingRoommate);
+    await this.requestingRoomateModal(requestingRoommate);
+  }
+
+  private async requestingRoomateModal(requestingRoommate: RoommatePreferences[]) {
+    const RequestingRoommateModal = await this.modalController.create({
+      component: RequestingRoommateModalComponent,
+      componentProps: { requestingRoommate },
+    });
+    await RequestingRoommateModal.present();
+  }
+
+  private getRequestingRoomate() {
     this.applicationsStateService.requestingRoommate.forEach((restingroommate, index) => {
       return this.applicationsStateService.applicationsState.applicationDetails.roommatePreferences.some(
         requested => requested.patronKeyRoommate === restingroommate.patronKeyRoommate
@@ -99,72 +106,49 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
         : null;
     });
     const requestingRoommate = this.applicationsStateService.requestingRoommate.filter(result => {
-      if (
-        this.applicationsStateService.roommatePreferencesSelecteds.find(
-          value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
-        )
-      ) {
+      if (this.applicationsStateService.roommatePreferencesSelecteds.find(
+        value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
+      )) {
         return result;
       }
     });
-    this.applicationsStateService.setRequestingRoommate(requestingRoommate);
-
-    const RequestingRoommateModal = await this.modalController.create({
-      component: RequestingRoommateModalComponent,
-      componentProps: { requestingRoommate },
-    });
-    await RequestingRoommateModal.present();
-  }
-
-  filterAccountsByPaymentSystem(accounts: UserAccount[], paymentSistems: number[]): UserAccount[] {
-    return accounts.filter(({ paymentSystemType: type }) => paymentSistems.includes(type));
+    return requestingRoommate;
   }
 
   onBack() {
     this.location.back();
   }
 
-  private updateQuestions(): void {
+  private updateQuestions() {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }
 
-  private _updateSubscription(
+  private _updateApplicationService(
     type: string,
-    applicationKey: number,
-    applicationDetails: ApplicationDetails,
-    formValue: any
-  ): void {
+    application: CurrentForm
+  ) {
     this.loadingService.showSpinner();
-
-    const subscription: Subscription = this.applicationsService[`${type}Application`](
-      applicationKey,
-      applicationDetails,
-      formValue,
-      this.isSubmitted
-    ).subscribe({
-      next: () => this._handleSuccess(),
-      error: (error: any) => this._handleErrors(error),
-    });
-
-    this.subscription.add(subscription);
+    if (/save/.test(type)) {
+      return this.applicationsService.saveApplication(application);
+    }
+    if (/submit/.test(type)) {
+      return this.applicationsService.submitApplication(application);
+    }
   }
 
-  private initApplicationDetails$(): void {
+  private initApplicationDetails$() {
     this.loadingService.showSpinner();
-
-    this.applicationDetails$ = this.housingService.getApplicationDetails(this.applicationKey).pipe(
+    return this.housingService.getApplicationDetails(this.getApplicationKey()).pipe(
       tap((applicationDetails: ApplicationDetails) => {
         this.isSubmitted = applicationDetails.patronApplication?.status === ApplicationStatus.Submitted;
         if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
           this.loadingService.closeSpinner();
-          this.showModal();
-        } else {
-          this.subscription.add(
-            this.termService.termId$.subscribe(termId =>
-              this.housingService.getRequestedRommate(termId).subscribe(() => this.loadingService.closeSpinner())
-            )
-          );
+          return this.requestiongRoomate();
         }
+        this.termService.termId$.pipe(switchMap(termId =>
+          this.housingService.getRequestedRommate(termId)
+        ), take(1)).subscribe(() => this.loadingService.closeSpinner())
+
       }),
       catchError(error => {
         this.loadingService.closeSpinner();
@@ -173,50 +157,41 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     );
   }
 
-  private initPages$(): void {
-    this.pages$ = this.applicationsService.getQuestions(this.applicationKey);
+  private getPages$() {
+    return this.applicationsService.getQuestions(this.getApplicationKey());
   }
 
-  private nextPage(applicationDetails: ApplicationDetails, formValue: any): void {
+  private nextPage(applicationDetails: ApplicationDetails, formValue: FormControl): void {
     this.page.scrollToTop();
 
     if (this.isSubmitted) {
       return this.stepper.next();
     }
 
-    const nextSubscription: Subscription = this.applicationsService
-      .next(this.applicationKey, applicationDetails, formValue)
-      .subscribe({
+    this.applicationsService
+      .next(this.getApplicationKey(), applicationDetails, formValue)
+      .pipe(take(1)).subscribe({
         next: () => this.stepper.next(),
       });
-
-    this.subscription.add(nextSubscription);
   }
 
-  private _handleSuccess(): void {
+  private _handleSuccess() {
     this.housingService.handleSuccess();
   }
 
-  private _handleErrors(error: any): void {
+  private _handleErrors(error: Error) {
     this.housingService.handleErrors(error);
   }
 
-  private setApplicationKey() {
-    this.applicationKey = this.route.snapshot.params.applicationKey;
+  private getApplicationKey() {
+    return this.route.snapshot.params.applicationKey;
   }
 
-  private async continueToPayment(appDetails: ApplicationDetails) {
-    const userAccounts = await this.creditCardService.retrieveAccounts();
-    const modal = await this.modalController.create({
-      component: ApplicationPaymentComponent,
-      animated: false,
-      backdropDismiss: false,
-      componentProps: { contentStrings: reduceToObject([], defaultCreditCardMgmtCs), userAccounts, appDetails },
-    });
-    await modal.present();
+  private async continueToPayment(appDetails: ApplicationDetails, form: FormControl) {
+    this.formPaymentService.continueToFormPayment( { details: appDetails, formValue: form, key: this.getApplicationKey(), type: FormType.Application });
   }
 
-  private isPaymentDue(applicationDetails: ApplicationDetails) {
-    return applicationDetails.applicationDefinition.accountCodeKey;
+  private isPaymentDue(applicationDetails: ApplicationDetails): boolean {
+    return applicationDetails.applicationDefinition.amount > 0;
   }
 }

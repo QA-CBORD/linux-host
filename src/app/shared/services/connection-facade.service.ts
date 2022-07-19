@@ -1,9 +1,7 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { ConnectionService } from './connection-service';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { ROLES } from 'src/app/app.global';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { CommonService } from './common.service';
@@ -12,6 +10,7 @@ import { ConnectivityScreentDefaultStrings } from '@shared/model/content-strings
 import { ConnectivityErrorType, ConnectivityScreenCsModel } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
 import { firstValueFrom } from '@shared/utils';
 import { ConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/connectivity-screen';
+import { NavigationService } from './navigation.service';
 
 
 @Injectable({
@@ -22,15 +21,14 @@ export class ConnectionFacadeService {
   private connectivityModalOpened = false;
   constructor(
     private connectionService: ConnectionService,
-    private readonly router: Router,
-    private ngZone: NgZone,
     private modalController: ModalController,
     private readonly commonService: CommonService,
     private loadingService: LoadingService,
+    private readonly routingService: NavigationService
   ) { }
 
   private isOpened(): boolean {
-    return this.router.url.includes(ANONYMOUS_ROUTES.noConnectivity);
+    return this.routingService.isRoute(ANONYMOUS_ROUTES.noConnectivity)
   }
 
   public isConnectionError(error): boolean {
@@ -68,7 +66,9 @@ export class ConnectionFacadeService {
   }
 
   private async showConnectivityIssuePage(retryHandler: RetryHandler, isVaultLocked: boolean) {
-    this.ngZone.run(() => this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.noConnectivity], { replaceUrl: true, state: { isVaultLocked } }).then(() => this.connectionService.retrySubject.next(retryHandler)));
+    const navBackUrl = this.routingService.getUrl();
+    this.routingService.navigateAnonymous(ANONYMOUS_ROUTES.noConnectivity, { queryParams: { isVaultLocked, navBackUrl } }).then(() => this.connectionService.retrySubject.next(retryHandler));
+    return new Promise((resolve) => retryHandler.onClose = resolve)
   }
 
   private async showConnectionIssuePageAsModal(retryHandler: RetryHandler, isVaultLocked: boolean) {

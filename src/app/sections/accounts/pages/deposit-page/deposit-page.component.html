@@ -20,7 +20,7 @@
           [interfaceOptions]="customActionSheetPaymentOptions"
           formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
-          (ionFocus)="openActionSheet('payment')"
+          (ionFocus)="openWithVoiceOver('payment')"
           placeholder="{{ contentString.selectPlaceHolderText }}"
           tabindex="0"
           [selectedText]="paymentMethod.value | accountDisplay"
@@ -85,7 +85,7 @@
           mode="md"
           interface="action-sheet"
           [interfaceOptions]="customActionSheetOptions"
-          (ionFocus)="openActionSheet('account')"
+          (ionFocus)="openWithVoiceOver('account')"
           formControlName="selectedAccount"
           placeholder="{{ contentString.selectPlaceHolderText }}"
           tabindex="0"
@@ -114,7 +114,7 @@
               [interfaceOptions]="customActionSheetOptions"
               formControlName="mainSelect"
               (ionChange)="onAmountChanged($event)"
-              (ionFocus)="openActionSheet('deposit')"
+              (ionFocus)="openWithVoiceOver('deposit')"
               #toDeposit
             >
               <ion-select-option [value]="amount" *ngFor="let amount of (amountsForSelect$ | async)">
