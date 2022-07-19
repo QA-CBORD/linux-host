@@ -15,6 +15,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { APP_PROFILES } from '@sections/dashboard/models';
 import { App } from '@capacitor/app';
+import { EnvironmentData } from '@environments/environment-data';
 
 @Component({
   selector: 'st-settings',
@@ -70,7 +71,7 @@ export class SettingsPage implements OnInit {
     return from(App.getInfo()).pipe(
       map(({ version }) => version),
       take(1),
-      catchError(() => of(''))
+      catchError(() => of(EnvironmentData.version.versionNumber))
     );
   }
 
