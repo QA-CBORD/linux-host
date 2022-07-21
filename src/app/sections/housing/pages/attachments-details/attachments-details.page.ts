@@ -102,7 +102,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
       this.getAttachmentType()
     }else {
       this.attachmentSelected = this._attachmentStateService.findAttachment(this.attachmentKey);
-      this._attachmentService.getAttachmentFile(this.attachmentSelected.attachmentKey).subscribe(res => this.fileBase64 = res.data)
+      this._attachmentService.getAttachmentFile(this.attachmentSelected.attachmentKey).subscribe(res => this.fileBase64 = res)
     }
     
   }

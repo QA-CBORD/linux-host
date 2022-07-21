@@ -26,7 +26,7 @@
       <h3 class="form__secondary-header">Add a .PDF, .DOC, .DOCX, OR JPEG file</h3>
       <div class="container__image" >
         <ng-container *ngIf="(file$ | async) as file; else defaultImage" witdh="95%" heigth=95%>
-          <ion-img *ngIf="!isFile" class="image" [src]="file.dataURI"></ion-img>
+          <ion-img *ngIf="!isFile" class="image" [src]="fileBase64?fileBase64:file.dataURI"></ion-img>
           <div *ngIf="isFile" class="file" ></div>
         </ng-container>
         <ng-template #defaultImage>
@@ -41,38 +41,5 @@
     <ion-button color="light" class="btn__image"  (click)="selectFile()">Choose a file </ion-button>
     <ion-button color="light" class="btn__image"  (click)="submitAttachmentForm()">Submit</ion-button>
 
-    
-    <!-- <st-stepper class="stepper--white">
-      <st-step *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
-        [stepControl]="page.form">
-        <form [formGroup]="page.form" (ngSubmit)="submit(workOrderListDetails, page.form, isLastPage)">
-          <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
-            <st-question *ngIf="question" [parentGroup]="page.form" [question]="question" [name]="$any(question).name"
-              [class.question--first]="isFirstPage" [isSubmitted]="isSubmitted"></st-question>
-          </ng-container>
-
-          <st-stepper-footer>
-            <ion-button *ngIf="!isFirstPage" class="btn work-order-details__back" type="button" fill="clear" mode="ios"
-              stepperBack (back)="content.scrollToTop()">Back</ion-button>
-
-            <ion-button class="btn work-order-details__next" [class.stepper-footer__button--right]="isFirstPage"
-              mode="ios" fill="outline" type="submit" *ngIf="!isLastPage">
-              Next
-            </ion-button>
-
-            <ion-button
-              *ngIf="isLastPage"
-              class="btn work-order-details__submit"
-              mode="ios"
-              type="submit"
-              [class.stepper-footer__button--right]="isFirstPage"
-              [disabled]="workOrderListDetails.workOrderKey"
-              >
-              Submit Work Order
-            </ion-button>
-          </st-stepper-footer>
-        </form>
-      </st-step>
-    </st-stepper> -->
   </div>
 </ion-content>
