@@ -1,12 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { AttachmentsService } from './attachments.service';
-
 import { Attachment } from './attachments.model';
 import { AttachmentStateService } from './attachments-state.service';
 import { TermsService } from '../terms/terms.service';
-import { ROLES } from 'src/app/app.global';
 
 @Component({
   selector: 'st-attachments',
@@ -19,30 +16,25 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
   public urlEditForm: string;
   private selectedTermKey = 0;
 
-  constructor(private _attachmentsService: AttachmentsService,
-    public _workOrderStateService: AttachmentStateService,
-    private _termService : TermsService
-    ) {}
+  constructor(
+    public _attachmentStateService: AttachmentStateService,
+    private _termService: TermsService
+  ) { }
 
   workOrders: Attachment[];
 
   ngOnInit() {
-    // const workOrdersSubscription: Subscription = this._attachmentsService
-    //   .getAttachments()
-    //   .subscribe();
-
-    // this._initTermsSubscription();
-    // this._subscription.add(workOrdersSubscription);
+    this._initTermsSubscription();
   }
 
   private _initTermsSubscription() {
     this._subscription.add(
       this._termService.termId$
-          .subscribe(termId => {
-            this.urlEditForm = `/patron/housing/work-orders/${termId}/`;
-            this.selectedTermKey = termId;
-          }));
-    
+        .subscribe(termId => {
+          this.urlEditForm = `/patron/housing/attachment/${termId}/`;
+          this.selectedTermKey = termId;
+        }));
+
   }
 
   ngOnDestroy(): void {
@@ -56,28 +48,12 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
 
     return 'New';
   }
-  
-  createAttachmentDefault(): string {
-    return `/patron/housing/attachments`;
+
+  createAttachmentDefault(id?: string): string {
+    return `/patron/housing/attachments/${id}`;
   }
 
   getPath(key: number): string {
-    return `${ROLES.patron}/housing/work-orders/${this.selectedTermKey}/${key}`;
-  }
-
-  getClass(key: number){
-    if(key === 1){
-      return 'open';
-    }else if(key === 2){
-      return 'inProcess';
-    }else if(key === 6){
-      return 'close';
-    }else if(key === 5){
-      return 'toCancel';
-    }else if(key === 90){
-      return 'cleaning';
-    }else {
-      return 'thinking';
-    }
+    return `/patron/housing/attachments//${key}`;
   }
 }

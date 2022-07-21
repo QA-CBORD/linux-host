@@ -1,16 +1,5 @@
 import { isDefined } from '../utils';
 
-export enum AttachmentsFields {
-  DESCRIPTION = "DESCRIPTION",
-  TYPE = "TYPE",
-  NOTIFY_BY_EMAIL = "NOTIFY_BY_EMAIL",
-  LOCATION= "LOCATION",
-  PHONE_NUMBER = "CONTACT_PHONE_NUMBER",
-  EMAIL = "EMAIL",
-  IMAGE ="IMAGE",
-  FACILITY = "FACILITY",
-}
-
 export interface ImageDataOptions {
   attachmentTypeKey: number;
   attachmentTypeName: string;
@@ -19,12 +8,6 @@ export interface ImageDataOptions {
   notes: string;
   fileLocalUrl: string;
   termKey: number;
-}
-
-export interface LocalFile {
-  name: string;
-  path: string;
-  data: string;
 }
 
 export class ImageData implements ImageDataOptions {
@@ -110,4 +93,31 @@ export class AttachmentTypes implements AttachmentTypesOptions{
     this.typeKey = Number(options.typeKey)
     this.name = String(options.name);
   }
+}
+
+export interface AttachmentsListOptions {
+  attachmentKey:number;
+  fileName: string;
+  attachmentType: string;
+  comments: string;
+  attachmentDate: string;
+}
+
+export class AttachmentsList implements AttachmentsListOptions {
+  attachmentKey:number;
+  fileName: string;
+  attachmentType: string;
+  comments: string;
+  attachmentDate: string;
+  constructor(options: AttachmentsListOptions) {
+    if (!isDefined(options) || typeof options !== 'object') {
+      options = {} as AttachmentsListOptions;
+    }
+    this.attachmentKey = Number(options.attachmentKey);
+    this.attachmentType = String(options.attachmentType);
+    this.fileName = String(options.fileName);
+    this.attachmentDate = String(options.attachmentDate);
+    this.comments = String(options.comments);
+  }
+
 }

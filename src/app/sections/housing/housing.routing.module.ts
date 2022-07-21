@@ -39,6 +39,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/attachments-details/attachments-details.module').then(m => m.AttachmentsDetailsPageModule),
       },
       {
+        path: `${LOCAL_ROUTING.attachments}/:attachmentKey`,
+        loadChildren: () => import('./pages/attachments-details/attachments-details.module').then(m => m.AttachmentsDetailsPageModule),
+      },
+      {
         path: `${LOCAL_ROUTING.inspections}/:termKey/:residentInspectionKey/:contractElementKey/:checkIn`,
         loadChildren: () => import('./pages/inspections-details/inspections-details.module').then(m => m.InspectionsDetailsPageModule),
       },

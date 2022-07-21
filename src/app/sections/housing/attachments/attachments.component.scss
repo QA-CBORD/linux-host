@@ -72,43 +72,14 @@ h4 {
     z-index: 1;
   }
 
-  .open{
-    color:#807FFF;
-  }
   .inProcess{
     color: #D77902;
   }
-  .close{
-    color: #007B53;
-  }
-  .toCancel{
-    color: #FF4751;
-  }
-  .cleaning{
-    color: #478DFF;
-  }
-  .thinking{
-    color:#C564FC;
-  }
 
 }
 
-.open::before{
-  background-color: #807FFF !important;
-}
 .inProcess::before{
   background-color: #D77902 !important;
 }
-.close::before{
-  background-color: #007B53 !important;
-}
-.toCancel::before{
-  background-color: #FF4751 !important;
-}
-.cleaning::before{
-  background-color: #478DFF !important;
-}
-.thinking::before{
-  background-color: #C564FC !important;
-}
+
 

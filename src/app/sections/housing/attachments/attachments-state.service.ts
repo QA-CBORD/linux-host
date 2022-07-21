@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Attachment, AttachmentsDetail, ImageData, AttachmentTypes } from './attachments.model';
+import { Attachment, AttachmentsDetail, ImageData, AttachmentTypes, AttachmentsList } from './attachments.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class AttachmentStateService  {
   public attachment: BehaviorSubject<Attachment> = new BehaviorSubject<Attachment>(this._defaultState);
   public attachmentTypes: BehaviorSubject<AttachmentTypes[]> = new BehaviorSubject<AttachmentTypes[]>(null);
   public attachmentImage: BehaviorSubject<ImageData> = new BehaviorSubject<ImageData>(null);
-  public attachmentImageBlob: BehaviorSubject<FormData> = new BehaviorSubject<FormData>(null);
+  public attachmentList: BehaviorSubject<AttachmentsList[]> = new BehaviorSubject<AttachmentsList[]>(null);
 
   setAttachment(value: Attachment) {
     this.attachment.next(value);
@@ -57,7 +57,6 @@ export class AttachmentStateService  {
   }
 
   setAttachmentImageBase(value) {
-    console.log(value)
     return this.attachmentImage.value.attachmentFile = value ;
   }
 
@@ -65,15 +64,15 @@ export class AttachmentStateService  {
     return this.attachment
   }
 
-  setAttachmentImageBlob(value: FormData){
-    this.attachmentImageBlob.next(value)
+  setAttachmentList(value: AttachmentsList[]){
+    this.attachmentList.next(value);
   }
 
-  destroyAttachmentImageBlob(){
-    this.attachmentImageBlob.next(null);
+  getAttachmentList(): BehaviorSubject< AttachmentsList[] >{
+    return this.attachmentList;
   }
-  
-  get AttachmentImageBlob(){
-    return this.attachmentImageBlob;
+
+  findAttachment(key:number):AttachmentsList{
+    return this.attachmentList.value.filter(list => list.attachmentKey == key)[0];
   }
 }

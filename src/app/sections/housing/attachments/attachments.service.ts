@@ -2,10 +2,12 @@ import { Injectable } from "@angular/core";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { of, Observable } from "rxjs";
-import { Attachment, AttachmentsDetail, ImageData, AttachmentsFields, AttachmentTypes } from './attachments.model';
+import { Attachment, AttachmentsDetail, AttachmentTypes, AttachmentsList } from './attachments.model';
 import { generateAttachments } from './attachments.mock';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
 import { DomSanitizer } from '@angular/platform-browser';
+import { map } from 'rxjs/operators';
+import { AttachmentStateService } from './attachments-state.service';
 
 
 const IMAGE_DIR = 'stored-images';
@@ -21,11 +23,10 @@ export class AttachmentsService {
   constructor(
     private _environment: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
-
-    ) { }
+    private _attachmentStateService : AttachmentStateService,
+  ) { }
 
   getAttachmentTypes() {
-    //TODO: change url work orders
     const apiUrl = `${this.AttachmentApiUrl}/attachment-types`;
     return this._housingProxyService.get<AttachmentTypes[]>(apiUrl);
   }
@@ -34,25 +35,20 @@ export class AttachmentsService {
     return of(this.Attachments);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next(formValue: any): Observable<any> {
-    return of(true);
-  }
 
-  sendAttachmentImage(dataAttachmentsDetail: FormData ){
-    
+  sendAttachmentImage(dataAttachmentsDetail: FormData) {
     return this._housingProxyService
-    .post<AttachmentsDetail>(this.AttachmentApiUrl, dataAttachmentsDetail);
-      
+      .post<AttachmentsDetail>(this.AttachmentApiUrl, dataAttachmentsDetail);
   }
 
 
-  async deleteImage() {
-    await Filesystem.rmdir({
-        directory: FilesystemDirectory.Data,
-        path: `${IMAGE_DIR}`,
-        recursive: true
-    });
+  getAttachmentsListDetails(termKey?: number) {
+    const apiUrl = `${this.AttachmentApiUrl}?termKey=${termKey}`
+    return this._housingProxyService.get<AttachmentsList[]>(apiUrl).pipe(map(res => this._attachmentStateService.setAttachmentList(res)));
   }
 
+  getAttachmentFile(attachmentKey?: number) {
+    const apiUrl = `${this.AttachmentApiUrl}/${attachmentKey}/file/internal`
+    return this._housingProxyService.get<string>(apiUrl).pipe(map(res => res));
+  }
 }

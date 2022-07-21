@@ -9,22 +9,22 @@
   <h2 class="work-order-details__title">Upload a new attachment.</h2>
 
   <div class="work-order-details__card">
-    <ion-select interface="popover" [(ngModel)]="selectedAssetKey"  placeholder="Select file type " >
+    <ion-select interface="popover" [(ngModel)]="selectedAssetKey"  [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'" [disabled]="attachmentSelected" >
       <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
         {{ option.name }}
       </ion-select-option>
     </ion-select>
 
     <ng-container>
-      <st-textarea-floating-label [(ngModel)]="notes" [isError]="isSubmitted" [label]="'sad'"
-        [label]="'Attachment Notes'" rows="3" [ngClass]="{ 'ng-valid form-control--filled ng-touched ng-dirty':true }">
+      <st-textarea-floating-label [(ngModel)]="notes" [disabled]="attachmentSelected" [isError]="isSubmitted"
+        [label]="attachmentSelected? attachmentSelected.comments:'Attachment Notes'" rows="3" [ngClass]="{ 'ng-valid form-control--filled ng-touched ng-dirty':true }">
       </st-textarea-floating-label>
     </ng-container>
 
 
     <ng-container class="container__image">
       <h3 class="form__secondary-header">Add a .PDF, .DOC, .DOCX, OR JPEG file</h3>
-      <div class="container__image">
+      <div class="container__image" >
         <ng-container *ngIf="(file$ | async) as file; else defaultImage" witdh="95%" heigth=95%>
           <ion-img *ngIf="!isFile" class="image" [src]="file.dataURI"></ion-img>
           <div *ngIf="isFile" class="file" ></div>
@@ -34,7 +34,7 @@
           <div class="icon" ></div>
         </ng-template>
       </div>
-     {{file?.name}}  File size: {{fileSizeInMB}}
+     File name:{{attachmentSelected? attachmentSelected.fileName : file?.name}}  File size: {{fileSizeInMB}}
     </ng-container>
 
 
