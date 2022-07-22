@@ -182,7 +182,7 @@ export class WorkOrdersService {
 
   submitWorkOrder(
     form: any,
-    formValue: any): Observable<any> {
+    formValue: FormControl): Observable<any> {
     const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
     const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
 
@@ -190,9 +190,9 @@ export class WorkOrdersService {
     let notifyByEmail: boolean;
     let type,location = 0;
     let image : ImageData | null;
-    workOrdersControls.forEach(x => {
-        const resultFormValue = formValue[x.name];
-        switch (x.workOrderFieldKey) {
+    workOrdersControls.forEach(control => {
+        const resultFormValue = formValue[control.name];
+        switch (control.workOrderFieldKey) {
           case WorkOrdersFields.PHONE_NUMBER:
             phoneNumber = resultFormValue;
             break;
@@ -216,10 +216,10 @@ export class WorkOrdersService {
     
     const body = new WorkOrdersDetailsList({
       key:null,
-      notificationPhone: phoneNumber, 
+      notificationPhone: phoneNumber ? phoneNumber: '', 
       typeKey: type,
       description: description,
-      notificationEmail: email,
+      notificationEmail: email ? email : '',
       facilityKey:location,
       notify: notifyByEmail,
       status:'',
@@ -236,7 +236,7 @@ export class WorkOrdersService {
     );
   }
 
-  sendWorkOrderImage(workOrderId : number, imageData: ImageData ): Promise<boolean> {
+  sendWorkOrderImage(workOrderId : number, imageData: ImageData): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
@@ -287,7 +287,7 @@ export class WorkOrdersService {
 
         resolve(true);
       };
-      img.src = this.sanitizer.sanitize(SecurityContext.URL, imageData.photoUrl);
+      img.src = this.sanitizer.sanitize(SecurityContext.URL, imageData?.photoUrl);
     });
   }
 

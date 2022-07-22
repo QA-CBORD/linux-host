@@ -5,24 +5,13 @@ import {
   OnInit,
   QueryList,
   ViewChild,
-  ViewChildren
+  ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-  AlertController,
-  Platform,
-  ToastController
-} from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 
-import {
-  Observable,
-  Subscription,
-  throwError
-} from 'rxjs';
-import {
-  catchError,
-  tap
-} from 'rxjs/operators';
+import { Observable, Subscription, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
@@ -32,7 +21,7 @@ import { StepperComponent } from '@sections/housing/stepper/stepper.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { isMobile } from '@core/utils/platform-helper';
 import { ToastService } from '@core/service/toast/toast.service';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { WorkOrderDetails } from '../../work-orders/work-orders.model';
 import { WorkOrdersService } from '../../work-orders/work-orders.service';
 @Component({
@@ -65,12 +54,11 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     private _alertController: AlertController,
     private _route: ActivatedRoute,
     private _workOrderService: WorkOrdersService,
-    private _toasController: ToastController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
     private _termsService: TermsService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     if (isMobile(this._platform)) {
@@ -81,8 +69,8 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.workOrderKey = parseInt(this._route.snapshot.paramMap.get('workOrderKey'), 10);
-    this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
+    this.workOrderKey = parseInt(this._route.snapshot.params.workOrderKey);
+    this.termKey = parseInt(this._route.snapshot.params.termKey);
     this._initWorkOrderDetailsObservable();
     this._initPagesObservable();
     this._initTermSubscription();
@@ -102,7 +90,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     if (!isLastPage) {
       this._next(form.value);
     } else {
-      this._update(this.workOrderKey, workOrderDetails, form.value);
+     this._update(workOrderDetails, form.value);
     }
   }
 
@@ -117,21 +105,20 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
   private _initWorkOrderDetailsObservable(): void {
     this._loadingService.showSpinner();
 
-    this.workOrderDetails$ = this._housingService.getWorkOrders(this.termKey,this.workOrderKey)
-      .pipe(
-        tap(() => {
-          this.isSubmitted = false; 
-          this._loadingService.closeSpinner();
-        }),
-        catchError((error: any) => {
-          this._loadingService.closeSpinner();
-          return throwError(error);
-        })
-      );
+    this.workOrderDetails$ = this._housingService.getWorkOrders(this.termKey, this.workOrderKey).pipe(
+      tap(() => {
+        this.isSubmitted = false;
+        this._loadingService.closeSpinner();
+      }),
+      catchError((error: any) => {
+        this._loadingService.closeSpinner();
+        return throwError(error);
+      })
+    );
   }
 
   private _initTermSubscription() {
-    const termSubs = this._termsService.termId$.subscribe(termId => this.termKey = termId);
+    const termSubs = this._termsService.termId$.subscribe(termId => (this.termKey = termId));
     this.subscriptions.add(termSubs);
   }
 
@@ -143,16 +130,14 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
       return this.stepper.next();
     }
 
-    const nextSubscription: Subscription = this._workOrderService
-      .next(this.workOrderKey)
-      .subscribe({
-        next: () => this.stepper.next(),
-      });
+    const nextSubscription: Subscription = this._workOrderService.next(this.workOrderKey).subscribe({
+      next: () => this.stepper.next(),
+    });
 
     this.subscriptions.add(nextSubscription);
   }
 
-  private async _update(workOrderKey: number, workOrderDetails: WorkOrderDetails, formValue: any): Promise<void> {
+  private async _update(workOrderDetails: WorkOrderDetails, formValue: FormControl): Promise<void> {
     const alert = await this._alertController.create({
       header: 'Confirm',
       message: `Are you sure you want to submit this work order?`,
@@ -174,23 +159,20 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
 
-            const createWorkOrderSubscription =
-              this._workOrderService.submitWorkOrder(
-                workOrderDetails,
-                formValue)
-                .subscribe(status => {
+            const createWorkOrderSubscription = this._workOrderService
+              .submitWorkOrder(workOrderDetails, formValue)
+              .subscribe(status => {
+                alert.dismiss().then(() => {
                   if (status) {
-                    alert.dismiss().then(() => this._housingService.handleSuccess());
+                    this._housingService.handleSuccess();
                   } else {
-                    alert.dismiss().then(() => {
-                      this._loadingService.closeSpinner();
-                      console.log('Unable to create Work Order for selected asset type');
-                      this._toastService.showToast({
-                        message: 'The form could not be processed at this time. Try again later',
-                      });
+                    this._loadingService.closeSpinner();
+                    this._toastService.showToast({
+                      message: 'The form could not be processed at this time. Try again later',
                     });
                   }
                 });
+              });
 
             this.subscriptions.add(createWorkOrderSubscription);
           },
