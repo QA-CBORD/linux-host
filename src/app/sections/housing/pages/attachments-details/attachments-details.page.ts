@@ -28,7 +28,6 @@ import { isMobile } from '@core/utils/platform-helper';
 import { AttachmentTypes, AttachmentsDetail, AttachmentsList } from '../../attachments/attachments.model';
 import { AttachmentsService } from '../../attachments/attachments.service';
 import { AttachmentStateService } from '../../attachments/attachments-state.service';
-import { ModalController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
