@@ -9,18 +9,14 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
-  AlertController,
   Platform,
-  ToastController
 } from '@ionic/angular';
 
 import {
   Observable,
   Subscription,
-  throwError
 } from 'rxjs';
 import {
-  catchError,
   tap
 } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -42,7 +38,6 @@ import { BASE64 } from '../../../../core/utils/regexp-patterns';
 import { Chooser, ChooserResult } from '@awesome-cordova-plugins/chooser/ngx';
 import { IdentityFacadeService } from '../../../../core/facades/identity/identity.facade.service';
 
-const IMAGE_DIR = 'stored-images';
 @Component({
   selector: 'st-work-order-details',
   templateUrl: './attachments-details.page.html',
@@ -78,7 +73,6 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _attachmentService: AttachmentsService,
     private _attachmentStateService: AttachmentStateService,
-    private readonly modalCtrl: ModalController,
     private route: Router,
     private _termService: TermsService,
     private chooser: Chooser,
@@ -134,7 +128,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
   public async submitAttachmentForm() {
 
-    let form: AttachmentsDetail = {
+    const form: AttachmentsDetail = {
       attachmentFile: this.file$.value.dataURI.replace(BASE64, ''),
       attachmentTypeKey: this.selectedAssetKey,
       attachmentTypeName: this.file$.value.mediaType,
@@ -143,7 +137,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
       termKey: this.selectedTermKey
     }
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('attachmentFile',form.attachmentFile)
     formData.append('attachmentTypeKey',form.attachmentTypeKey.toString())
     formData.append('attachmentTypeName',form.attachmentTypeName)

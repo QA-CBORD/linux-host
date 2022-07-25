@@ -4,13 +4,10 @@ import { HousingProxyService } from "../housing-proxy.service";
 import { of, Observable } from "rxjs";
 import { Attachment, AttachmentsDetail, AttachmentTypes, AttachmentsList } from './attachments.model';
 import { generateAttachments } from './attachments.mock';
-import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
-import { DomSanitizer } from '@angular/platform-browser';
 import { map } from 'rxjs/operators';
 import { AttachmentStateService } from './attachments-state.service';
 
 
-const IMAGE_DIR = 'stored-images';
 @Injectable({
   providedIn: 'root',
 })
