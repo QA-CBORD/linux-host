@@ -136,8 +136,6 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   public async submitAttachmentForm() {
     const multiLevelSelectDialogComponent = await this.modalCtrl.create({
       component: SuccessAttachmentModal,
-      componentProps: {
-      },
     });
 
     let form: AttachmentsDetail = {
@@ -158,7 +156,6 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     formData.append('termKey',form.termKey.toString())
 
     this._attachmentService.sendAttachmentImage(formData).subscribe(res => {
-      console.log(res);
       if(res){
         multiLevelSelectDialogComponent.present();
         this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
@@ -176,6 +173,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
         this.getSizeFile(file.data);
       })
   }
+
   getSizeFile(fileDataInt8){
     this.fileSizeInMB = (fileDataInt8.length / 1_048_576).toFixed(2);
   }

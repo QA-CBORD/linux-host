@@ -26,7 +26,7 @@ export class AttachmentsService {
     private _attachmentStateService : AttachmentStateService,
   ) { }
 
-  getAttachmentTypes() {
+  getAttachmentTypes(): Observable<AttachmentTypes[]>{
     const apiUrl = `${this.AttachmentApiUrl}/attachment-types`;
     return this._housingProxyService.get<AttachmentTypes[]>(apiUrl);
   }

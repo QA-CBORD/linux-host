@@ -36,7 +36,7 @@ export class AttachmentStateService  {
     this.attachmentTypes.next(value);
   }
 
-  getSelectedAttachmentTypeName(selected: number) {
+  getSelectedAttachmentTypeName(selected: number) : string{
     return this.attachmentTypes.value.find(v => v['typeKey'] === selected)['name'];
   }
 
@@ -48,11 +48,7 @@ export class AttachmentStateService  {
     this.attachmentImage.next(null);
   }
 
-  get attachmentImage$(){
-    return this.attachmentImage;
-  }
-
-  getAttachmentImage() {
+  getAttachmentImage() : string {
     return this.attachmentImage.value.attachmentFile;
   }
 
@@ -60,7 +56,7 @@ export class AttachmentStateService  {
     return this.attachmentImage.value.attachmentFile = value ;
   }
 
-  get attachment$(){
+  get attachment$(): BehaviorSubject<Attachment>{
     return this.attachment
   }
 
