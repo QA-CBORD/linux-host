@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { MerchantInfo } from '@sections/ordering/shared/models';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-merchant-item',
@@ -21,7 +21,7 @@ export class MerchantItemComponent {
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
-  constructor(private readonly environmentFacadeService: EnvironmentFacadeService, private readonly orderingService: OrderingService) {
+  constructor(private readonly environmentFacadeService: environmentFacadeService, private readonly orderingService: OrderingService) {
   }
 
   ngOnInit() {

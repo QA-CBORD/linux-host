@@ -54,6 +54,6 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
   }
 
   getPath(key: number): string {
-    return `/patron/housing/attachments//${key}`;
+    return `/patron/housing/attachments/${key}`;
   }
 }

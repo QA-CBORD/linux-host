@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
+import { environmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { of, Observable } from "rxjs";
 import { Attachment, AttachmentsDetail, AttachmentTypes, AttachmentsList } from './attachments.model';
@@ -21,7 +21,7 @@ export class AttachmentsService {
 
 
   constructor(
-    private _environment: EnvironmentFacadeService,
+    private _environment: environmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _attachmentStateService : AttachmentStateService,
   ) { }

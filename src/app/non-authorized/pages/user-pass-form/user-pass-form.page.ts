@@ -16,7 +16,7 @@ import { Device } from '@capacitor/device';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { AUTHENTICATION_SYSTEM_TYPE, ANONYMOUS_ROUTES } from '../../non-authorized.config';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Observable, of, Subscription } from 'rxjs';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -64,7 +64,7 @@ export class UserPassForm implements OnInit {
     private readonly modalCtrl: ModalController,
     private readonly registrationFacade: RegistrationServiceFacade,
     private readonly appBrowser: InAppBrowser,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly accessibilityService: AccessibilityService,
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer,

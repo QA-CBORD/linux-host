@@ -1,6 +1,6 @@
 import { Component, ElementRef } from '@angular/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Location } from '@angular/common';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
@@ -23,7 +23,7 @@ export class StartupPage {
 
   constructor(
     private readonly elementRef: ElementRef,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly location: Location,
     private readonly loadingService: LoadingService,
     private readonly sessionFacadeService: SessionFacadeService,
