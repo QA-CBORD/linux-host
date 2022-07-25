@@ -34,7 +34,6 @@ import { AttachmentsService } from '../../attachments/attachments.service';
 import { AttachmentStateService } from '../../attachments/attachments-state.service';
 import { ModalController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
-import { SuccessAttachmentModal } from './successful-attachment-modal/successful-attachment-modal.component';
 import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -134,9 +133,6 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   public async submitAttachmentForm() {
-    const multiLevelSelectDialogComponent = await this.modalCtrl.create({
-      component: SuccessAttachmentModal,
-    });
 
     let form: AttachmentsDetail = {
       attachmentFile: this.file$.value.dataURI.replace(BASE64, ''),
@@ -157,7 +153,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
     this._attachmentService.sendAttachmentImage(formData).subscribe(res => {
       if(res){
-        multiLevelSelectDialogComponent.present();
+        this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
         this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
       }
     })
