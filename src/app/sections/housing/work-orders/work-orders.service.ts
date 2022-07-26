@@ -3,7 +3,7 @@ import { EnvironmentFacadeService } from "@core/facades/environment/environment.
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
-import { catchError, map, withLatestFrom, switchMap } from 'rxjs/operators';
+import { catchError, map, withLatestFrom, switchMap, take } from 'rxjs/operators';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { QuestionsPage, QUESTIONS_SOURCES } from '../questions/questions.model';
 import { QuestionsStorageService, QuestionsEntries } from '../questions/questions-storage.service';
@@ -181,57 +181,18 @@ export class WorkOrdersService {
   }
 
   submitWorkOrder(
-    form: any,
-    formValue: FormControl): Observable<any> {
-    const parsedJson: any[] = parseJsonToArray(form.formDefinition.applicationFormJson);
-    const workOrdersControls: any[] = parsedJson.filter((control: any) => control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
-
-    let phoneNumber, description, email = '';
-    let notifyByEmail: boolean;
-    let type,location = 0;
-    let image : ImageData | null;
-    workOrdersControls.forEach(control => {
-        const resultFormValue = formValue[control.name];
-        switch (control.workOrderFieldKey) {
-          case WorkOrdersFields.PHONE_NUMBER:
-            phoneNumber = resultFormValue;
-            break;
-          case WorkOrdersFields.DESCRIPTION:
-            description = resultFormValue;
-            break;
-          case WorkOrdersFields.EMAIL:
-            email = resultFormValue;
-            break;
-          case WorkOrdersFields.NOTIFY_BY_EMAIL:
-            notifyByEmail = resultFormValue? true: false;
-            break;
-          case WorkOrdersFields.TYPE:
-            type = resultFormValue;
-            break;
-        }
-    })
-
-    this._workOrderStateService.workOrderImage$.subscribe(res=> res && res.studentSubmitted ? image = res: image = null);
-    this._workOrderStateService.getSelectedFacility$().subscribe(res=> res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
-    
-    const body = new WorkOrdersDetailsList({
-      key:null,
-      notificationPhone: phoneNumber ? phoneNumber: '', 
-      typeKey: type,
-      description: description,
-      notificationEmail: email ? email : '',
-      facilityKey:location,
-      notify: notifyByEmail,
-      status:'',
-      statusKey:0,
-      type: '',
-      requestedDate:'',
-    });
+    form: WorkOrderDetails,
+    formValue: FormControl): Observable<boolean> {
+    const parsedJson: string[] = parseJsonToArray(form.formDefinition.applicationFormJson);
+    const workOrdersControls: string[] = parsedJson.filter((control: any) => control && (<QuestionFormControl>control).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
+    const { body, image }: { body: WorkOrdersDetailsList; image: ImageData; } = this.buildWorkOrderList(workOrdersControls, formValue);
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
-      catchError(()=> of(false)),
+      catchError(() => of(false)),
       switchMap((response: Response) => {
-        return this.sendWorkOrderImage(response.data, image)
+        if(image) return this.sendWorkOrderImage(response.data, image);
+    
+        return of(true);
       })
     );
   }
@@ -331,5 +292,53 @@ export class WorkOrdersService {
     // eslint-disable-next-line no-useless-escape
     const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
     return parseJsonToArray(facilityTreeString);
+  }
+
+  private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
+    let phoneNumber: string;
+    let description: string;
+    let notifyByEmail: boolean;
+    let type: number;
+    let email: string;
+    let location: number;
+    let image: ImageData;
+
+    workOrdersControls.forEach(control => {
+      const resultFormValue = formValue[control.name];
+      switch (control.workOrderFieldKey) {
+        case WorkOrdersFields.PHONE_NUMBER:
+          phoneNumber = resultFormValue;
+          break;
+        case WorkOrdersFields.DESCRIPTION:
+          description = resultFormValue;
+          break;
+        case WorkOrdersFields.EMAIL:
+          email = resultFormValue;
+          break;
+        case WorkOrdersFields.NOTIFY_BY_EMAIL:
+          notifyByEmail = !!resultFormValue;
+          break;
+        case WorkOrdersFields.TYPE:
+          type = resultFormValue;
+          break;
+      }
+    });
+    
+    this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe( res => res && res.studentSubmitted ? image = res: image = null);
+    this._workOrderStateService.getSelectedFacility$().pipe(take(1)).subscribe(res => res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
+    
+    return { body: {
+      key: null,
+      notificationPhone: phoneNumber ? phoneNumber : '',
+      typeKey: type,
+      description: description,
+      notificationEmail: email ? email : '',
+      facilityKey: location,
+      notify: notifyByEmail,
+      status: '',
+      statusKey: 0,
+      type: '',
+      requestedDate: '',
+    }, image };
   }
 }
