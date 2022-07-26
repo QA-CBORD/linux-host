@@ -56,7 +56,8 @@
                        [mealBased]="(menuInfo$ | async).mealBased"
                        [minimum]="menuGroupItem.menuGroup.minimum"
                        [name]="menuGroupItem.menuGroup.name"
-                       [options]="menuGroupItem.menuGroup.menuGroupItems"></st-multi-list>
+                       [options]="menuGroupItem.menuGroup.menuGroupItems"
+                       [isExistingItemInCart]="routesData.queryParams.isItemExistsInCart"></st-multi-list>
       </ng-template>
     </ng-container>
 
