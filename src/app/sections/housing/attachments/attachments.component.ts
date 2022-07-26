@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { Attachment } from './attachments.model';
 import { AttachmentStateService } from './attachments-state.service';
 import { TermsService } from '../terms/terms.service';
+import { statusBarForm } from 'src/app/app.global';
 
 @Component({
   selector: 'st-attachments',
@@ -43,10 +44,10 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
 
   getStatus(key: number): string {
     if (key || key !== 0) {
-      return 'Submitted'
+      return statusBarForm.SUBMITTED;
     }
 
-    return 'New';
+    return statusBarForm.NEW;
   }
 
   createAttachmentDefault(id?: string): string {
