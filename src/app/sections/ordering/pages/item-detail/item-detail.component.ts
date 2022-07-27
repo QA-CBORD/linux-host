@@ -152,7 +152,7 @@ export class ItemDetailComponent implements OnInit {
     this.valueChanges();
   }
 
-  isErrorMultiList({ menuGroup: { minimum, maximum, name } }) {
+  isErrorMultiList({ menuGroup: { minimum, maximum, name } }): boolean {
     const { value } = this.itemOrderForm.get(name);
 
     if (!minimum && !maximum) {
@@ -169,17 +169,18 @@ export class ItemDetailComponent implements OnInit {
     }
   }
 
-  calculateTotalPrice() {
-    const calcValue = (this.menuItem.price + this.order.optionsPrice) * this.order.counter;
+  calculateTotalPrice(): void {
+    const price = isNaN(this.order.optionsPrice) ? 0 : this.order.optionsPrice;
+    const calcValue = (this.menuItem.price + price) * this.order.counter;
     this.order = { ...this.order, totalPrice: Number(calcValue.toFixed(2)) };
   }
 
-  removeItems() {
+  removeItems(): void {
     this.order.counter > 1 ? this.order.counter-- : null;
     this.calculateTotalPrice();
   }
 
-  addItems() {
+  addItems(): void {
     this.order.counter++;
     this.calculateTotalPrice();
   }
