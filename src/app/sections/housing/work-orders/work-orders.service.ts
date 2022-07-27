@@ -302,8 +302,8 @@ export class WorkOrdersService {
       [WorkOrdersFields.DESCRIPTION]: "",
       [WorkOrdersFields.EMAIL]: "",
       [WorkOrdersFields.NOTIFY_BY_EMAIL]: false,
-      [WorkOrdersFields.TYPE]: "",
-    }
+      [WorkOrdersFields.TYPE]: null,
+    };
 
     workOrdersControls.forEach(control => {
       const resultFormValue = formValue[control.name];
@@ -316,9 +316,9 @@ export class WorkOrdersService {
     
     return { body: {
       notificationPhone:  controls[WorkOrdersFields.PHONE_NUMBER] ? controls[WorkOrdersFields.PHONE_NUMBER] : '',
+      notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL]: '',
       typeKey: controls[WorkOrdersFields.TYPE],
       description: controls[WorkOrdersFields.DESCRIPTION],
-      notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL]: '',
       notify: !!controls[WorkOrdersFields.NOTIFY_BY_EMAIL],
       facilityKey: location,
       key: null,
