@@ -17,7 +17,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
@@ -43,7 +43,7 @@ export class ItemDetailComponent implements OnInit {
   routesData: RoutesData;
 
   constructor(
-    private readonly environmentFacadeService: environmentFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService,

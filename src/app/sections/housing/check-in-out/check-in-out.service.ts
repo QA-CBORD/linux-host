@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { environmentFacadeService } from "@core/facades/environment/environment.facade.service";
+import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { CheckInOutSlot } from "./check-in-out.model";
 import { Response } from '@sections/housing/housing.model';
@@ -17,7 +17,7 @@ export class CheckInOutService {
 
     constructor(
         private _proxy: HousingProxyService,
-        private _environment: environmentFacadeService) { }
+        private _environment: EnvironmentFacadeService) { }
 
     selectSpot(spot: CheckInOutSlot): Observable<boolean> {        
         return this._proxy.post<Response>(this._checkInOutUrl, spot)

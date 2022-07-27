@@ -4,7 +4,7 @@ import { ANONYMOUS_ROUTES } from './../../non-authorized.config';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { App } from '@capacitor/app';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { from, Observable } from 'rxjs';
@@ -22,7 +22,7 @@ export class EntryPage implements OnInit {
   constructor(
     private readonly route: Router,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly environmentFacadeService: environmentFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly loadingService: LoadingService,
     private readonly platform: Platform
   ) {}

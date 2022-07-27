@@ -7,7 +7,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
@@ -95,7 +95,7 @@ export interface SettingsServices {
   contentString: ContentStringsFacadeService;
   settings: SettingsFacadeService;
   institution: InstitutionFacadeService;
-  environment: environmentFacadeService;
+  environment: EnvironmentFacadeService;
   appBrowser: InAppBrowser;
   mobileCredentialFacade: MobileCredentialFacade,
   sessionFacadeService: SessionFacadeService,

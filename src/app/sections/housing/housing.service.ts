@@ -1,4 +1,4 @@
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -65,7 +65,7 @@ export class HousingService {
     .pipe(switchMap(() => this._termsService.termId$));
 
   constructor(
-    private _environmentFacadeService: environmentFacadeService,
+    private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _applicationsStateService: ApplicationsStateService,
     private _contractsStateService: ContractsStateService,

@@ -7,7 +7,7 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable()
 export class BaseInterceptor implements HttpInterceptor {
@@ -16,7 +16,7 @@ export class BaseInterceptor implements HttpInterceptor {
   constructor(
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly environmentFacadeService: environmentFacadeService
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

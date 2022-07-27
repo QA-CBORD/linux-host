@@ -6,7 +6,7 @@ import { take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
@@ -28,7 +28,7 @@ export class MerchantDetailsPage implements OnInit {
   blankStarPath = '/assets/icon/star-outline.svg';
 
   constructor(
-    private readonly environmentFacadeService: environmentFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly exploreService: ExploreService,
     private readonly loadingService: LoadingService,

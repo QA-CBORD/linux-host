@@ -1,4 +1,4 @@
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -39,7 +39,7 @@ export class ContractsService {
   isSigned$: Observable<boolean> = this._isSigned.asObservable();
 
   constructor(
-    private _environmentFacadeService: environmentFacadeService,
+    private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
