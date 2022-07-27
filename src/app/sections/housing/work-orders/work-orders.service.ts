@@ -297,7 +297,7 @@ export class WorkOrdersService {
   private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
     let image: ImageData;
     let location: number;
-    let controls: { [key: string]: any } = {
+    const controls: { [key: string]: any } = {
       [WorkOrdersFields.PHONE_NUMBER]: "",
       [WorkOrdersFields.DESCRIPTION]: "",
       [WorkOrdersFields.EMAIL]: "",
