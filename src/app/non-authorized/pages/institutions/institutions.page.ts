@@ -11,7 +11,7 @@ import { Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { Institution, InstitutionLookupListItem } from '@core/model/institution';
@@ -38,7 +38,7 @@ export class InstitutionsPage implements OnInit {
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
     private readonly sessionFacadeService: SessionFacadeService,

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
+import { environmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
@@ -16,7 +16,7 @@ export class InspectionService {
     }/roomselectproxy/v.1.0/room-inspections-proxy`;
 
   constructor(
-    private _environment: EnvironmentFacadeService,
+    private _environment: environmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _inspectionStateService: InspectionsStateService,
     ) { }

@@ -7,7 +7,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import {
   QuestionsEntries,
   QuestionsStorageService,
@@ -48,7 +48,7 @@ export class NonAssignmentsService {
   }/patron-applications/v.1.0/patron-contracts/contracts/self`;
 
   constructor(
-    private _environmentFacadeService: EnvironmentFacadeService,
+    private _environmentFacadeService: environmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,

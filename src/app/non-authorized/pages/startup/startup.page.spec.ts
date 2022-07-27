@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { VaultMigrateResult } from '@core/service/identity/model.identity';
@@ -62,7 +62,7 @@ describe('Application Startup Flow', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: ElementRef, useValue: elementRef },
-        { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
+        { provide: environmentFacadeService, useValue: environmentFacadeService },
         { provide: Location, useValue: location },
         { provide: LoadingService, useValue: loadingService },
         { provide: SessionFacadeService, useValue: sessionFacadeService },

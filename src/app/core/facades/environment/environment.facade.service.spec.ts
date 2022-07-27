@@ -5,11 +5,11 @@ import { firstValueFrom } from '@shared/utils';
 
 import { AuthFacadeService } from '../auth/auth.facade.service';
 import { MockAuthService } from 'src/app/testing/mock-services';
-import { EnvironmentFacadeService } from './environment.facade.service';
+import { environmentFacadeService } from './environment.facade.service';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
 
 describe('EnvironmentFacadeService', () => {
-  let service: EnvironmentFacadeService;
+  let service: environmentFacadeService;
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthFacadeService, { useValue: new MockAuthService() });
@@ -17,7 +17,7 @@ describe('EnvironmentFacadeService', () => {
     TestBed.configureTestingModule({
       imports: [...CoreTestingModules],
     });
-    service = TestBed.inject(EnvironmentFacadeService);
+    service = TestBed.inject(environmentFacadeService);
   });
 
   it('Should have PROD environment by default', async () => {

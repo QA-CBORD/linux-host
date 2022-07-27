@@ -3,7 +3,7 @@ import { MerchantInfo, MerchantService } from '@sections/ordering';
 import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../../../app.global';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-order-tile',
@@ -27,7 +27,7 @@ export class OrderTileComponent implements OnInit {
   isLoading = true;
 
   constructor(
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly router: Router

@@ -10,7 +10,7 @@ import { exploreMerchantSorting } from '@core/utils/general-helpers';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MenuMerchantFacadeService } from '@core/facades/menu-merchant/menu-merchant-facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
@@ -26,7 +26,7 @@ export class ExploreTileComponent implements OnInit {
   isLoading = true;
 
   constructor(
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly favMerchantFacadeService: FavoriteMerchantsFacadeService,
     private readonly menuMerchantFacadeService: MenuMerchantFacadeService,

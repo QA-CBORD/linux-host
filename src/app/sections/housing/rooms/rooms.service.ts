@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HousingProxyService } from '@sections/housing/housing-proxy.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -29,7 +29,7 @@ export class RoomsService {
   constructor(
     private _stateService: RoomsStateService,
     private _proxy: HousingProxyService,
-    private _environment: EnvironmentFacadeService
+    private _environment: environmentFacadeService
   ) {
       this._filterOptions = new CategoryOptions();
     }

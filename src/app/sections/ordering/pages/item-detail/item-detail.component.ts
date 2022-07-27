@@ -12,12 +12,12 @@ import {
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
-import { CartService, MenuInfo, MenuItemInfo, MerchantService, OrderItem } from '@sections/ordering';
+import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
@@ -43,7 +43,7 @@ export class ItemDetailComponent implements OnInit {
   routesData: RoutesData;
 
   constructor(
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService,
@@ -52,11 +52,9 @@ export class ItemDetailComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
     private readonly navService: NavigationService,
-    private readonly cdRef: ChangeDetectorRef,
-    private readonly merchantService: MerchantService
-  ) {}
+    private readonly cdRef: ChangeDetectorRef) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initContentStrings();
     this.activatedRoute.data.subscribe(({ data }) => {
       this.routesData = data;
@@ -77,17 +75,17 @@ export class ItemDetailComponent implements OnInit {
     await modal.present();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
   }
 
-  navigateToFullMenu() {
+  navigateToFullMenu(): void {
     this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
       queryParams: { openTimeSlot: true },
     });
   }
 
-  onClose() {
+  onClose(): void {
     if (this.routesData.queryParams.isScannedItem) {
       this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
     } else {
@@ -98,8 +96,8 @@ export class ItemDetailComponent implements OnInit {
     }
   }
 
-  initForm() {
-    const cartSelectedItems = this.cartOrderItemOptions;
+  initForm(): void {
+    const cartSelectedItems = this.routesData.queryParams.isItemExistsInCart && this.cartOrderItemOptions;
     const formGroup = {};
     if (!cartSelectedItems.length) {
       this.menuItem.menuItemOptions.forEach(({ menuGroup: { minimum, maximum, name } }) => {
@@ -337,7 +335,7 @@ export class ItemDetailComponent implements OnInit {
     );
   }
 
-  showAddedItemsQuantity(items: number) {
+  showAddedItemsQuantity(items: number): void {
     this.cartService.orderInfo$.pipe(take(1)).subscribe(order => {
       const itemsQuantity = `${items} ${items > 1 ? 'items' : 'item'}`;
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MenuCategoryItemInfo } from '@sections/ordering';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-category-list',
@@ -14,7 +14,7 @@ export class CategoryListComponent {
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
 
-  constructor(private readonly environmentFacadeService: EnvironmentFacadeService){}
+  constructor(private readonly environmentFacadeService: environmentFacadeService){}
 
   triggerMenuItemClick({ menuItem: { id } }) {
     this.onItemClicked.emit(id);
