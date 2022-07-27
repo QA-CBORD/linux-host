@@ -1,0 +1,128 @@
+@import 'tools';
+
+.work-order-details__content {
+  --background: #{$porcelain};
+  --padding-top: 8px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.work-order-details__actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-top: var(--ion-safe-area-top, 0);
+}
+
+.work-order-details__title {
+  @include font-family($font-nunito-heavy);
+
+  font-size: 20px;
+  color: $color-night-rider;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.work-order-details__page-back {
+  @include font-family($font-nunito-regular);
+
+  --color: #{rgba($color-black, 0.9)};
+}
+
+.work-order-details__save {
+  @include font-family($font-nunito-heavy);
+
+  --color: #{$color-dodger-blue};
+}
+
+.work-order-details__card {
+  background-color: $color-white;
+  border-radius: 16px;
+  box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
+  padding: 16px;
+
+  ion-select{
+    color: black;
+    font-weight: 400;
+    font-size: 16px;
+    @include font-family($font-nunito-regular);
+    border: 1px solid #d8d8d8;
+  }
+}
+
+.work-order-details__back {
+  @include font-family($font-nunito-heavy);
+
+  --color: #{$color-dodger-blue};
+
+  min-width: 80px;
+}
+
+.work-order-details__next,
+.work-order-details__submit {
+  @include font-family($font-nunito-heavy);
+
+  --border-radius: 8px;
+  width: 150px;
+  font-size: .7em;
+  text-transform: uppercase;
+}
+
+.work-order-details__next {
+  --background-activated: #{$color-dodger-blue};
+  --border-color: #{$color-dodger-blue};
+  --border-width: 2px;
+  --color: #{$color-dodger-blue};
+}
+
+.work-order-details__submit {
+  --background: #{$color-dodger-blue};
+}
+
+
+.container__image {
+  height: 200px;
+  border: 1px dashed #E2E2E2;
+  box-sizing: border-box;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+
+  .label {
+    padding-bottom: 2em;
+  }
+
+  .icon {
+    width: 4em;
+    height: 100%;
+    background: url('/assets/images/housing/image.svg') no-repeat 50% 0 ;
+  }
+
+  .file{
+    width: 200px;
+    height: 175px;
+    background: url('/assets/images/housing/file.svg') no-repeat 50% 0 ;
+  }
+
+  .image{
+    width: 200px;
+    height: 175px;
+  }
+}
+
+.btn__image{
+  width: 100%;
+  height: 1em;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 1em;
+  margin-top: 0.7em;
+  height: 2.4em;
+}
+
+.form__secondary-header {
+  margin-top: 30px;
+}

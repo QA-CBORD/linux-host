@@ -16,6 +16,7 @@ import { NonAssginmentsModule } from '@sections/housing/non-assignments/non-assi
 import { WaitingListsModule } from '../../waiting-lists/waiting-lists.module'
 import { WorkOrdersModule } from '@sections/housing/work-orders/work-orders.module';
 import { InspectionsModule } from '../../inspections-forms/inspections-forms.module';
+import { AttachmentModule } from '@sections/housing/attachments/attachments.module';
 
 const imports = [
   CommonModule,
@@ -32,7 +33,8 @@ const imports = [
   CheckInOutModule,
   WaitingListsModule,
   WorkOrdersModule,
-  InspectionsModule
+  InspectionsModule,
+  AttachmentModule
 ];
 const declarations = [HousingDashboardPage];
 
