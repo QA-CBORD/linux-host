@@ -4,7 +4,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { first, map, take } from 'rxjs/operators';
 import { Institution } from '@core/model/institution';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Subscription } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Router } from '@angular/router';
@@ -39,7 +39,7 @@ export class ExternalLoginPage {
     private readonly loadingService: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly environmentFacadeService: environmentFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,

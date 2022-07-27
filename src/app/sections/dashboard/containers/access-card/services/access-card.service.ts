@@ -9,12 +9,12 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { CommonService } from '@shared/services/common.service';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable()
 export class AccessCardService {
   constructor(
-    private readonly environmentFacadeService: environmentFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly nativeProvider: NativeProvider,

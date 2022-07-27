@@ -1,4 +1,4 @@
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, tap, switchMap, withLatestFrom } from 'rxjs/operators';
@@ -52,7 +52,7 @@ export class ApplicationsService {
   }/patron-applications/v.1.0/patron-applications`;
   selectedRoommate: any[] = [];
   constructor(
-    private _environmentFacadeService: environmentFacadeService,
+    private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _patronAttributesService: PatronAttributesService,
     private _preferencesService: PreferencesService,

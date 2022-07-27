@@ -6,7 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import { subscribeOn, observeOn, timeout, catchError } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 export enum RestCallType {
   get,
@@ -26,7 +26,7 @@ export enum HttpResponseType {
 export class APIService {
   private TIMEOUT_MS = 45000;
 
-  constructor(private readonly environmentFacadeService: environmentFacadeService, private http: HttpClient) {}
+  constructor(private readonly environmentFacadeService: EnvironmentFacadeService, private http: HttpClient) {}
 
   /**
    *  GET call to AWS API Gateway

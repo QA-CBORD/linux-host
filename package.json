@@ -27,6 +27,7 @@
     "@angular/platform-browser-dynamic": "^11.2.14",
     "@angular/router": "^11.2.14",
     "@awesome-cordova-plugins/chooser": "^5.44.0",
+    "@awesome-cordova-plugins/core": "^5.44.0",
     "@capacitor-community/barcode-scanner": "^2.0.1",
     "@capacitor/android": "^3.4.0",
     "@capacitor/app": "^1.1.0",

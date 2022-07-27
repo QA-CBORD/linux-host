@@ -1,4 +1,4 @@
-import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -15,7 +15,7 @@ export class TermsService {
   termId$: Observable<number> = this._termIdSource.asObservable();
 
   constructor(
-      private _environmentFacadeService: environmentFacadeService,
+      private _environmentFacadeService: EnvironmentFacadeService,
       private _housingProxyService: HousingProxyService
       ) {}
 

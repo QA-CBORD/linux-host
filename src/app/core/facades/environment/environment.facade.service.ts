@@ -13,7 +13,7 @@ export { EnvironmentType } from '@core/model/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class environmentFacadeService extends ServiceStateFacade {
+export class EnvironmentFacadeService extends ServiceStateFacade {
   private currentEnvironmentKey = 'current_environment';
   private overridedEnvironmentKey = 'overrided_environment';
   private currentEnvironment: EnvironmentInfo = null;
