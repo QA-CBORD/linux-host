@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
@@ -35,7 +35,7 @@ export class USAePayService {
     private inAppBrowser: InAppBrowser,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly toastService: ToastService
   ) {}
   

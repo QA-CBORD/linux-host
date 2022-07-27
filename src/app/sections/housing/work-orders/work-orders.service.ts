@@ -1,5 +1,5 @@
 import { Injectable, SecurityContext } from "@angular/core";
-import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
+import { environmentFacadeService } from "@core/facades/environment/environment.facade.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { Response } from '@sections/housing/housing.model';
 import { of, Observable } from "rxjs";
@@ -36,7 +36,7 @@ export class WorkOrdersService {
 
   constructor(
     private _proxy: HousingProxyService,
-    private _environment: EnvironmentFacadeService,
+    private _environment: environmentFacadeService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
     private _housingProxyService: HousingProxyService,

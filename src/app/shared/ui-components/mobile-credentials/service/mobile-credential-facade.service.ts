@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { Device } from '@capacitor/device';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
@@ -29,7 +29,7 @@ export class MobileCredentialFacade {
     private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
     private readonly nativeProvider: NativeProvider,
     private readonly settingsFacadeService: SettingsFacadeService,
-    public readonly environmentFacade: EnvironmentFacadeService,
+    public readonly environmentFacade: environmentFacadeService,
     private readonly sessionFacadeService: SessionFacadeService
   ) {
     this.onLogoutSubscription();

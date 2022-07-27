@@ -12,7 +12,7 @@ import { Settings } from 'src/app/app.global';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -50,7 +50,7 @@ export class SettingsFactoryService {
     private readonly settingsFacade: SettingsFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: environmentFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly globalNav: GlobalNavService,

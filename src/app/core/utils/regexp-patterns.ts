@@ -68,3 +68,6 @@ export const EXPRTN_DATE_7_REGEXP = /[^\d\/]|^[\/]{0,}$/g;
 export const EXPRTN_DATE_8_REGEXP = /\/\//g;
 
 export const ONE_LETTER_MIN = /[a-z]|[A-Z]/;
+
+//Getting the base64 without the file format
+export const BASE64 = /^data:(.*,)?/;

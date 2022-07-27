@@ -5,7 +5,7 @@ import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/o
 import { Network } from '@ionic-native/network/ngx';
 import { firstValueFrom } from '@shared/utils';
 import { HttpClient } from '@angular/common/http';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { environmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
 import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 
@@ -20,7 +20,7 @@ export class ConnectionService {
   private online$: Observable<boolean> = undefined;
 
   constructor(private http: HttpClient,
-    private environmentFacade: EnvironmentFacadeService,
+    private environmentFacade: environmentFacadeService,
     private network: Network,
     public platform: Platform) {
 
