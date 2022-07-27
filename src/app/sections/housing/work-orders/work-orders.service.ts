@@ -295,46 +295,33 @@ export class WorkOrdersService {
   }
 
   private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
-    let phoneNumber: string;
-    let description: string;
-    let notifyByEmail: boolean;
-    let type: number;
-    let email: string;
-    let location: number;
     let image: ImageData;
+    let location: number;
+    let controls: { [key: string]: any } = {
+      [WorkOrdersFields.PHONE_NUMBER]: "",
+      [WorkOrdersFields.DESCRIPTION]: "",
+      [WorkOrdersFields.EMAIL]: "",
+      [WorkOrdersFields.NOTIFY_BY_EMAIL]: false,
+      [WorkOrdersFields.TYPE]: "",
+    }
 
     workOrdersControls.forEach(control => {
       const resultFormValue = formValue[control.name];
-      switch (control.workOrderFieldKey) {
-        case WorkOrdersFields.PHONE_NUMBER:
-          phoneNumber = resultFormValue;
-          break;
-        case WorkOrdersFields.DESCRIPTION:
-          description = resultFormValue;
-          break;
-        case WorkOrdersFields.EMAIL:
-          email = resultFormValue;
-          break;
-        case WorkOrdersFields.NOTIFY_BY_EMAIL:
-          notifyByEmail = !!resultFormValue;
-          break;
-        case WorkOrdersFields.TYPE:
-          type = resultFormValue;
-          break;
-      }
+      const fieldType = control.workOrderFieldKey;
+      controls[fieldType] = resultFormValue;
     });
     
     this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe( res => res && res.studentSubmitted ? image = res: image = null);
     this._workOrderStateService.getSelectedFacility$().pipe(take(1)).subscribe(res => res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
     
     return { body: {
-      key: null,
-      notificationPhone: phoneNumber ? phoneNumber : '',
-      typeKey: type,
-      description: description,
-      notificationEmail: email ? email : '',
+      notificationPhone:  controls[WorkOrdersFields.PHONE_NUMBER] ? controls[WorkOrdersFields.PHONE_NUMBER] : '',
+      typeKey: controls[WorkOrdersFields.TYPE],
+      description: controls[WorkOrdersFields.DESCRIPTION],
+      notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL]: '',
+      notify: !!controls[WorkOrdersFields.NOTIFY_BY_EMAIL],
       facilityKey: location,
-      notify: notifyByEmail,
+      key: null,
       status: '',
       statusKey: 0,
       type: '',
