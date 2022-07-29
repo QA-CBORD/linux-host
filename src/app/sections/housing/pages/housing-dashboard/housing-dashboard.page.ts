@@ -58,7 +58,6 @@ export class HousingDashboardPage {
             this._housingService.getPatronContracts(termId),
             this._housingService.getCheckInOuts(termId),
             this._housingService.getInspections(termId),
-            this._attachmentService.getAttachmentsListDetails(termId)
           )
         })
       )
