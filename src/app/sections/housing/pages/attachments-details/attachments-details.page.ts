@@ -27,7 +27,6 @@ import { TermsService } from '@sections/housing/terms/terms.service';
 import { isMobile } from '@core/utils/platform-helper';
 import { AttachmentTypes, AttachmentsDetail, AttachmentsList } from '../../attachments/attachments.model';
 import { AttachmentsService } from '../../attachments/attachments.service';
-import { AttachmentStateService } from '../../attachments/attachments-state.service';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
@@ -36,6 +35,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { BASE64 } from '../../../../core/utils/regexp-patterns';
 import { Chooser, ChooserResult } from '@awesome-cordova-plugins/chooser/ngx';
 import { IdentityFacadeService } from '../../../../core/facades/identity/identity.facade.service';
+import { AttachmentStateService } from '@sections/housing/attachments/attachments-state.service';
 
 @Component({
   selector: 'st-work-order-details',
