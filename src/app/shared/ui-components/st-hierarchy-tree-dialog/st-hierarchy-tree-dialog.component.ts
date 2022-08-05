@@ -181,11 +181,10 @@ export class StHierarcheTreeDialogComponent {
   }
 
   public itemSelected(item: SlideItem) {
-    const selectedItem: NamedIdentity = null;
     if (item) {
       this._workOrderStateService.setSelectedFacilityTree(item);
     }
-    this.viewCtrl.dismiss(selectedItem);
+    this.viewCtrl.dismiss({ item });
   }
 
   public slideTo(itemOrIndex: SlideItem | number): void {

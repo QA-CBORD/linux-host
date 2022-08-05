@@ -67,7 +67,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._initTermsSubscription();
     this._initGetImage();
     this._setFacility();
-    this._getFacilityName();
   }
 
   @Input() question: QuestionBase;
@@ -384,9 +383,4 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private _getFacilityName() {
-    this._workOrderStateService.getSelectedFacility$().subscribe(res => {
-      this.facilityName = res?.name
-    });
-  }
 }

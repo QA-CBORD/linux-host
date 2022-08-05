@@ -21,7 +21,6 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   @Input() rows = '3';
   @Input() isDisabled: boolean;
   @Input() maxLength = 128;
-  @Input() facilityData: string;
   @Input() placeholder: string;
   onTouched: () => void;
   onChange: (_: any) => void;
@@ -30,10 +29,6 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
   ngOnInit(): void {
-    if(this.facilityData){
-      this.writeValue(this.facilityData);
-      this.onTouched()
-    }
   }
 
   ngAfterViewInit(): void {
