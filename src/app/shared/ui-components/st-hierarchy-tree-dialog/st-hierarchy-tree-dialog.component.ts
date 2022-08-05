@@ -1,6 +1,6 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IonSlides, LoadingController, ModalController, NavParams } from '@ionic/angular';
-import { SlideItem, NamedIdentity, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
+import { SlideItem, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 
 @Component({

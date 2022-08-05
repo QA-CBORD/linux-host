@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import { take, map, filter } from 'rxjs/operators';
 import { CartService } from '@sections/ordering/services';
 import { MenuCategoryItemInfo } from '@sections/ordering/shared/models';
 
@@ -26,8 +26,10 @@ export class ItemDetailResolver
     } = snapshot;
 
     return this.cartService.menuInfo$.pipe(
+      filter((menu) => menu !== null),
       map(({ menuCategories }) => {
-        const menuItems: any[] = menuCategories.map(({ menuCategoryItems }) =>
+
+        const menuItems = menuCategories.map(({ menuCategoryItems }) =>
           menuCategoryItems.find(menuCategoryItem => menuCategoryItem.menuItem.id === menuItemId)
         );
 
