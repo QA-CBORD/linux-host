@@ -13,6 +13,7 @@ export enum LOCAL_ROUTING {
   roommates = 'roommates-search',
   waitingLists = 'waiting-lists',
   inspections = 'inspections',
+  attachments = 'attachments',
   formPayment = 'form-payment'
 }
 
