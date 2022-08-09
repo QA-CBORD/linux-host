@@ -283,8 +283,9 @@ export class ItemDetailComponent implements OnInit {
         this.menuItemImg = this.menuItem.imageReference ? `${imageBaseUrl}${this.menuItem.imageReference}` : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
         this.allowNotes = !JSON.parse(settings.map[MerchantSettings.disableItemNotes].value);
-
-        this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+        if (orderItemId) {
+          this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+        }
         if (this.cartSelectedItem) {
           this.cartOrderItemOptions = this.cartSelectedItem.orderItemOptions;
           const optionsPrice = this.cartOrderItemOptions.reduce(
