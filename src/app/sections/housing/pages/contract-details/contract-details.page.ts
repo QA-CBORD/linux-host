@@ -65,14 +65,12 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   submitForm(contractDetails: ContractDetails, form: FormGroup, isLastPage: boolean): void {
-    if (!this.isSubmitted) {
-      if (!isLastPage) {
-        this._next();
-      } else if (this.isPaymentDue(contractDetails)) {
-        this.continueToPayment(contractDetails, form.value);
-      } else {
-        this._update(this.contractElementKey);
-      }
+    if (!this.isSubmitted && form.invalid) return;
+    if (!isLastPage) this._next();
+    else if (this.isPaymentDue(contractDetails)) {
+      this.continueToPayment(contractDetails, form.value);
+    } else {
+      this._update(this.contractElementKey);
     }
   }
 
