@@ -253,6 +253,8 @@ export class ItemDetailComponent implements OnInit {
       .catch(async error => {
         // Temporary solution:
 
+        this.cartService.removeLastOrderItem();
+
         if (Array.isArray(error)) {
           const [code, text] = error;
           if (+code === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
@@ -264,7 +266,6 @@ export class ItemDetailComponent implements OnInit {
             return;
           }
         }
-        this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })
       .finally(() => this.loadingService.closeSpinner());
