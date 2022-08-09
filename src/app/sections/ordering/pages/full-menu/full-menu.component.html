@@ -72,7 +72,7 @@
 </ion-content>
 <ion-footer mode="ios"
             class="full-menu__footer"
-            *ngIf="(menuItems$ | async)">
-  <st-view-cart [menuItemsCount]="menuItems$ | async"
+            *ngIf="menuItems$ | async">
+  <st-view-cart *ngIf="(menuItems$ | async) > 0" [menuItemsCount]="menuItems$ | async"
                 (click)="redirectToCart()"></st-view-cart>
 </ion-footer>
