@@ -265,6 +265,7 @@ export class ItemDetailComponent implements OnInit {
             return;
           }
         }
+        this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })
       .finally(() => this.loadingService.closeSpinner());
