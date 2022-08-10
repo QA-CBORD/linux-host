@@ -252,12 +252,11 @@ export class ItemDetailComponent implements OnInit {
       })
       .catch(async error => {
         // Temporary solution:
-
-        this.cartService.removeLastOrderItem();
-
+        
         if (Array.isArray(error)) {
           const [code, text] = error;
           if (+code === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+            this.cartService.removeLastOrderItem();
             await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
             return;
           } else {
@@ -266,6 +265,7 @@ export class ItemDetailComponent implements OnInit {
             return;
           }
         }
+        this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })
       .finally(() => this.loadingService.closeSpinner());
