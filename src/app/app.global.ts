@@ -251,3 +251,8 @@ export const GUEST_DEEP_LINKS: string[] = [
   GUEST_NAVIGATION.ordering,
   GUEST_NAVIGATION.settings,
 ];
+
+export enum statusBarForm {
+  NEW = 'New',
+  SUBMITTED = 'Submitted'
+}
