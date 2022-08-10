@@ -4,6 +4,7 @@ import { StHierarcheTreeComponent } from './st-hierarchy-tree.component';
 import { IonicModule } from '@ionic/angular';
 import { StHierarcheTreeDialogModule } from '@shared/ui-components/st-hierarchy-tree-dialog/st-hierarchy-tree-dialog.module';
 import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const declarations = [StHierarcheTreeComponent];
 
@@ -13,7 +14,8 @@ const declarations = [StHierarcheTreeComponent];
     CommonModule,
     IonicModule,
     StHierarcheTreeDialogModule,
-    StTextareaFloatingLabelModule
+    StTextareaFloatingLabelModule,
+    ReactiveFormsModule
   ],
   exports: declarations,
   entryComponents: declarations
