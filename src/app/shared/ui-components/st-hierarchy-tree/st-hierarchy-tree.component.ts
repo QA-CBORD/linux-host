@@ -6,7 +6,6 @@ import { WorkOrderStateService } from '../../../sections/housing/work-orders/wor
 import { Subscription } from 'rxjs';
 import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
 import { FormGroup, FormControl } from '@angular/forms';
-import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'st-hierarchy-tree',
