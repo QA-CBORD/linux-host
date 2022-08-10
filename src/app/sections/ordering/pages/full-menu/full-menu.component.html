@@ -1,14 +1,15 @@
-<st-header [title]="contentStrings.labelFullMenu | async"
-           [isTitleShow]="true"
-           [backButtonTitle]="'Order'"
-           backButtonIcon="chevron-back"
-           [isToolbarShow]="true"
-           class="full-menu__header"></st-header>
+<st-header
+  [title]="contentStrings.labelFullMenu | async"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Order'"
+  backButtonIcon="chevron-back"
+  [isToolbarShow]="true"
+  class="full-menu__header"
+></st-header>
 
 <ion-content>
   <ion-list class="full-menu__address-info-list">
-    <ion-item lines="full"
-              (click)="merchantInfoState = !merchantInfoState">
+    <ion-item lines="full" (click)="merchantInfoState = !merchantInfoState">
       <div class="full-menu__address-container">
         <div style="width: 92%;">
           <div class="full-menu__address-title">{{ (merchantInfo$ | async).name }}</div>
@@ -18,35 +19,29 @@
             </div>
           </ng-container>
           <div class="full-menu__address-info">
-            <img src="./assets/icon/location-pin.svg"
-                 height="16"
-                 alt="location-pin"/>
-            <div *ngIf="(orderInfo$ | async)?.address"
-                 class="full-menu__address-info-content">
+            <img src="./assets/icon/location-pin.svg" height="16" alt="location-pin" />
+            <div *ngIf="(orderInfo$ | async)?.address" class="full-menu__address-info-content">
               {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
               {{ (orderInfo$ | async)?.address | addressHeaderFormat }}
             </div>
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">
-          <img src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg"
-               alt="arrow"/>
+          <img src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg" alt="arrow" />
         </div>
       </div>
     </ion-item>
-    <ion-item lines="full"
-              (click)="openOrderOptions()">
+    <ion-item lines="full" (click)="openOrderOptions()">
       <div class="full-menu__date-time-container">
         <div class="full-menu__date-time-wrapper">
           <div class="full-menu__date-time-value">{{ orderType | async }}</div>
-          <div class="full-menu__date-time-helper">{{contentStrings.labelFor | async}}</div>
-          <div class="full-menu__date-time-value" *ngIf="orderDetails$ | async">
-            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes: false }}
+          <div class="full-menu__date-time-helper">{{ contentStrings.labelFor | async }}</div>
+          <div class="full-menu__date-time-value" *ngIf="(orderDetails$ | async)">
+            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes:false }}
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">
-          <img src="/assets/icon/angle-down-select.svg"
-               alt="arrow down"/>
+          <img src="/assets/icon/angle-down-select.svg" alt="arrow down" />
         </div>
       </div>
     </ion-item>
@@ -54,8 +49,8 @@
   </ion-list>
   <ion-list>
     <ion-item
-              lines="full"
-              *ngFor="let category of (menu$ | async)?.menuCategories"
+      lines="full"
+      *ngFor="let category of (menu$ | async)?.menuCategories"
       (click)="onCategoryClicked(category)"
     >
       <div class="full-menu__menu-item">
@@ -70,9 +65,6 @@
     </ion-item>
   </ion-list>
 </ion-content>
-<ion-footer mode="ios"
-            class="full-menu__footer"
-            *ngIf="(menuItems$ | async)">
-  <st-view-cart [menuItemsCount]="menuItems$ | async"
-                (click)="redirectToCart()"></st-view-cart>
+<ion-footer mode="ios" class="full-menu__footer" *ngIf="(menuItems$ | async) as menuItem">
+  <st-view-cart *ngIf="menuItem > 0" [menuItemsCount]="menuItem" (click)="redirectToCart()"></st-view-cart>
 </ion-footer>
