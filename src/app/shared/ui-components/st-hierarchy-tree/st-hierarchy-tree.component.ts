@@ -6,6 +6,7 @@ import { WorkOrderStateService } from '../../../sections/housing/work-orders/wor
 import { Subscription } from 'rxjs';
 import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
 import { FormGroup, FormControl } from '@angular/forms';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'st-hierarchy-tree',
@@ -27,15 +28,17 @@ export class StHierarcheTreeComponent implements OnInit ,OnDestroy  {
     ) {
     this.selectedItem = null;
   }
-  ngOnInit(): void {
 
-    this._workOrderStateService.getSelectedFacility$().subscribe(res => {
-      if( res?.name ){
-        this.form = new FormGroup({
-          facilityName: new FormControl(res.name)
-       });
-      }
-    })
+  ngOnInit(): void {
+    this._subscription.add(
+      this._workOrderStateService.getSelectedFacility$().pipe(first()).subscribe(res => {
+        if( res?.name ){
+          this.form = new FormGroup({
+            facilityName: new FormControl(res.name)
+         });
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
