@@ -10,8 +10,9 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
-import { ModalController } from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
+import { CameraSource } from '@capacitor/camera';
 
 export enum PhotoStatus {
   PENDING,
@@ -37,7 +38,7 @@ export class PhotoUploadService {
   private readonly _govtIdRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   orientation: Orientation;
-  
+
   private userPhotoUploadSettings: UserPhotoUploadSettings = {
     cacheTimeoutMinutes: null,
     displayHeight: null,
@@ -47,11 +48,11 @@ export class PhotoUploadService {
     saveWidth: null,
   };
 
-  
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly actionSheetCtrl: ActionSheetController
   ) {}
 
   get photoUploadSettings() {
@@ -207,19 +208,58 @@ export class PhotoUploadService {
   }
 
   async presentDeletePhotoModal(photoId: string) {
-    const modal = await this.modalController.create({ 
+    const modal = await this.modalController.create({
       component: DeleteModalComponent,
     });
     modal.onDidDismiss().then(data => {
       if (data.data === true) {
         this.userFacadeService
           .updateUserPhotoStatus(photoId, PhotoStatus.DELETED, 'Patron deleted photo')
-          .pipe(take(1)).subscribe();
-          this.clearLocalGovernmentIdPhotos();
+          .pipe(take(1))
+          .subscribe();
+        this.clearLocalGovernmentIdPhotos();
         this._profileImagePending = null;
       }
     });
 
     return await modal.present();
+  }
+
+  async presentPhotoTypeSelection() {
+    const photoSourceAS = await this.actionSheetCtrl.create({
+      keyboardClose: true,
+      backdropDismiss: true,
+      buttons: [
+        {
+          text: 'Take photo',
+          role: 'take-photo',
+          icon: '/assets/icon/camera-outline.svg',
+        },
+        {
+          text: 'Choose existing photo',
+          role: 'select-photo',
+          icon: '/assets/icon/select-photo.svg',
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+        },
+      ],
+    });
+
+    await photoSourceAS.present();
+
+    let cameraSource: CameraSource = null;
+
+    await photoSourceAS.onWillDismiss().then(result => {
+      if (result.role === 'take-photo') {
+        cameraSource = CameraSource.Camera;
+      } else if (result.role === 'select-photo') {
+        cameraSource = CameraSource.Photos;
+      }
+    });
+
+    return cameraSource;
   }
 }
