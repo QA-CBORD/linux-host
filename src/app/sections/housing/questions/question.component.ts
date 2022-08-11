@@ -88,7 +88,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._initTermsSubscription();
     this._initGetImage();
     this.setFacility();
-    this._getFacilityName();
   }
 
   createHeader(question: QuestionHeader): string {
@@ -305,12 +304,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
         facilityKey: this._contractListStateService.getContractDetails()[0].facilityKey,
       });
     }
-  }
-
-  private _getFacilityName() {
-    this._workOrderStateService.getSelectedFacility$().subscribe(res => {
-      this.facilityName = res?.name;
-    });
   }
 
   private _initTermsSubscription() {
