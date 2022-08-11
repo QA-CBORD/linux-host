@@ -37,7 +37,7 @@ export class PhotoUploadService {
   private readonly _govtIdRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   orientation: Orientation;
-  
+
   private userPhotoUploadSettings: UserPhotoUploadSettings = {
     cacheTimeoutMinutes: null,
     displayHeight: null,
@@ -47,7 +47,6 @@ export class PhotoUploadService {
     saveWidth: null,
   };
 
-  
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
@@ -119,9 +118,15 @@ export class PhotoUploadService {
 
   /// get photo data by status Accepted and Pending and fetch array of photos
   private fetchUserPhotosInList(photoList: UserPhotoList): Observable<UserPhotoInfo[]> {
-    return of(
-      photoList.list.filter(({ status }) => status === PhotoStatus.ACCEPTED || status == PhotoStatus.PENDING)
-    ).pipe(switchMap(photoList => zip(...photoList.map(({ id }) => this.handleUserPhotoById(id)))));
+    const validPhotos = photoList.list.filter(({ status }) =>
+      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING].includes(status)
+    );
+    if (!validPhotos.length) {
+      return of([]);
+    }
+    return of(validPhotos).pipe(
+      switchMap(photoList => zip(...photoList.map(({ id }) => this.handleUserPhotoById(id))))
+    );
   }
 
   /// fetch photo by id and set the data here if it exists
@@ -194,6 +199,10 @@ export class PhotoUploadService {
     this._profileImagePending = null;
   }
 
+  clearLocalPendingPhoto() {
+    this._profileImagePending = null;
+  }
+
   submitPhoto(newPhoto: UserPhotoInfo): Observable<boolean> {
     return this.userFacadeService.addUserPhoto(newPhoto).pipe(
       tap(success => {
@@ -207,15 +216,16 @@ export class PhotoUploadService {
   }
 
   async presentDeletePhotoModal(photoId: string) {
-    const modal = await this.modalController.create({ 
+    const modal = await this.modalController.create({
       component: DeleteModalComponent,
     });
     modal.onDidDismiss().then(data => {
       if (data.data === true) {
         this.userFacadeService
           .updateUserPhotoStatus(photoId, PhotoStatus.DELETED, 'Patron deleted photo')
-          .pipe(take(1)).subscribe();
-          this.clearLocalGovernmentIdPhotos();
+          .pipe(take(1))
+          .subscribe();
+        this.clearLocalGovernmentIdPhotos();
         this._profileImagePending = null;
       }
     });
