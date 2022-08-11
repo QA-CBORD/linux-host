@@ -258,7 +258,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   async presentPhotoTypeSelection(photoType: PhotoType) {
-    let cameraSource = await this.photoUploadService.presentPhotoTypeSelection();
+    const cameraSource = await this.photoUploadService.presentPhotoTypeSelection();
     this.onGetPhoto(photoType, cameraSource);
   }
 
