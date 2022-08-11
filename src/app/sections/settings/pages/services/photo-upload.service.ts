@@ -37,7 +37,7 @@ export class PhotoUploadService {
   private readonly _govtIdRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   orientation: Orientation;
-  
+
   private userPhotoUploadSettings: UserPhotoUploadSettings = {
     cacheTimeoutMinutes: null,
     displayHeight: null,
@@ -47,7 +47,6 @@ export class PhotoUploadService {
     saveWidth: null,
   };
 
-  
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
@@ -119,6 +118,12 @@ export class PhotoUploadService {
 
   /// get photo data by status Accepted and Pending and fetch array of photos
   private fetchUserPhotosInList(photoList: UserPhotoList): Observable<UserPhotoInfo[]> {
+    const validPhotos = photoList.list.filter(({ status }) =>
+      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING].includes(status)
+    );
+    if (!validPhotos.length) {
+      return of([]);
+    }
     return of(
       photoList.list.filter(({ status }) => status === PhotoStatus.ACCEPTED || status == PhotoStatus.PENDING)
     ).pipe(switchMap(photoList => zip(...photoList.map(({ id }) => this.handleUserPhotoById(id)))));
@@ -191,6 +196,10 @@ export class PhotoUploadService {
 
   clearLocalProfilePhoto() {
     this._profileImage = null;
+    this._profileImagePending = null;
+  }
+
+  clearLocalPendingPhoto() {
     this._profileImagePending = null;
   }
 

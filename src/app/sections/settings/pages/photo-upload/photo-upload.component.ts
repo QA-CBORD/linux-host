@@ -81,6 +81,7 @@ export class PhotoUploadComponent implements OnInit {
 
   ngOnInit() {
     this.clearLocalStateData();
+    this.photoUploadService.clearLocalPendingPhoto();
     this.getPhotoData();
     this.setupPhotoSubscriptions();
   }
