@@ -38,8 +38,9 @@
     </ng-container>
 
 
-    <ion-button color="light" class="btn__image"  (click)="selectFile()">Choose a file </ion-button>
-    <ion-button color="light" class="btn__image"  (click)="submitAttachmentForm()">Submit</ion-button>
+    <ion-button [disabled]="!!attachmentKey" color="light" class="btn__image"  (click)="selectFile()">Choose a file </ion-button>
+    <ion-button *ngIf="attachmentKey" color="danger" class="btn__image"  (click)="deleteAttachment()">Delete Attachment</ion-button>
+    <ion-button *ngIf="!attachmentKey" color="light" class="btn__image"  (click)="submitAttachmentForm()">Submit</ion-button>
 
   </div>
 </ion-content>

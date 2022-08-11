@@ -48,4 +48,9 @@ export class AttachmentsService {
     const apiUrl = `${this.AttachmentApiUrl}/${attachmentKey}/file/internal`
     return this._housingProxyService.get<string>(apiUrl).pipe(map(res => res));
   }
+
+  deleteAttachmentFile(attachmentKey?: number) {
+    const apiUrl = `${this.AttachmentApiUrl}`
+    return this._housingProxyService.delete(apiUrl,attachmentKey).pipe(map(res => res));
+  }
 }

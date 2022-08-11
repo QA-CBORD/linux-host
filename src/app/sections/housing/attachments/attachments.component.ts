@@ -22,8 +22,6 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
     private _termService: TermsService
   ) { }
 
-  workOrders: Attachment[];
-
   ngOnInit() {
     this._initTermsSubscription();
   }
