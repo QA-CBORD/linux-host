@@ -31,6 +31,7 @@ describe('PhotoUploadComponent', () => {
     clearLocalGovernmentIdPhotos: jest.fn(),
     clearLocalProfilePhoto: jest.fn(),
     getInitialPhotoData$: jest.fn(() => of(true)),
+    presentPhotoTypeSelection: jest.fn(() => of(CameraSource.Photos)),
     govtIdFront$: of(true),
     govtIdBack$: of(true),
     profileImage$: of(true),
@@ -60,16 +61,6 @@ describe('PhotoUploadComponent', () => {
 
   const cameraService = {
     getPhoto: jest.fn().mockResolvedValue(true),
-  };
-
-  const takePhotoController = {
-    present: jest.fn(async () => true),
-    onWillDismiss: jest.fn(async () => ({ role: 'take-photo' })),
-  };
-
-  const selectPhotoController = {
-    present: jest.fn(async () => true),
-    onWillDismiss: jest.fn(async () => ({ role: 'select-photo' })),
   };
 
   beforeEach(async () => {
@@ -115,20 +106,16 @@ describe('PhotoUploadComponent', () => {
   });
 
   it('should call onGetPhoto on take-photo role', async () => {
-    const spy = jest.spyOn(actionSheetCtrl, 'create').mockResolvedValue(takePhotoController);
-    const spy2 = jest.spyOn(component, 'onGetPhoto');
+    const spy = jest.spyOn(component, 'onGetPhoto');
     await presentPhotoTypeSelections(component);
     expect(spy).toHaveBeenCalledTimes(4);
-    expect(spy2).toHaveBeenCalledTimes(4);
   });
 
   it('should call onGetPhoto on select-photo role', async () => {
     jest.clearAllMocks();
-    const spy = jest.spyOn(actionSheetCtrl, 'create').mockResolvedValue(selectPhotoController);
-    const spy2 = jest.spyOn(component, 'onGetPhoto');
+    const spy = jest.spyOn(component, 'onGetPhoto');
     await presentPhotoTypeSelections(component);
     expect(spy).toHaveBeenCalledTimes(4);
-    expect(spy2).toHaveBeenCalledTimes(4);
   });
 
   it('should have cleared the photo info', async () => {
