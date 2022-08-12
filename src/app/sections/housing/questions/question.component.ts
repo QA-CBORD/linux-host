@@ -150,7 +150,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   async saveImage(photo: Photo) {
     const base64Data = await this.readAsBase64(photo);
-    const fileName = new Date().getTime() + '';
+    const fileName = this.date.getTime() + '.PNG';
     
     await Filesystem.writeFile({
       path: `${IMAGE_DIR}/${fileName}`,
@@ -172,7 +172,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private async readAsBase64(photo: Photo) {
-    if (this.sessionService.getIsWeb()) {
+    if (!this.sessionService.getIsWeb()) {
       const file = await Filesystem.readFile({
         path: photo.path,
       });
@@ -182,7 +182,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      return (await this.convertBlobToBase64(blob)) as string;
+      return (<string> await this.convertBlobToBase64(blob));
     }
   }
 
