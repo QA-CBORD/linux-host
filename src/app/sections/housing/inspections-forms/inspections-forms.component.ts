@@ -7,7 +7,7 @@ import { ROLES } from 'src/app/app.global';
 import { take } from 'rxjs/operators';
 
 const InspectionStatus = {
-  0: "New",
+  0: "NEW",
   1: "IN PROGRESS",
   2: "SUBMITTED",
   3: "INCOMPLETE"
