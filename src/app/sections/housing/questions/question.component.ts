@@ -1,25 +1,23 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-
 import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
 import { QuestionHeader, QUESTIONS_TYPES } from './questions.model';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
-import { RequestedRoommate } from '../applications/applications.model';
+import { RequestedRoommate, RoommateSearchOptions } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, BehaviorSubject } from 'rxjs';
-import { ActionSheetController, Platform } from '@ionic/angular';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
 import { FacilityTree, ImageData, LocalFile, WorkOrdersFields } from '../work-orders/work-orders.model';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
-
-const IMAGE_DIR = 'stored-images';
-
 import { CameraDirection, Photo, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '@sections/settings/pages/services/camera.service';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { PhotoUploadService } from '@sections/settings/pages/services/photo-upload.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
+const IMAGE_DIR = 'stored-images';
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
@@ -27,30 +25,53 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionComponent implements OnInit, OnDestroy {
+
+  @Input() question: QuestionBase;
+  @Input() name: string;
+  @Input() parentGroup: FormGroup;
+  @Input() isSubmitted: boolean;
+
   facilityTreeData: FacilityTree[];
   facilityFullName: string;
   currectFacility: string;
   images: LocalFile[] = [];
-  facilityName: any;
-  workOrderFieldsText: any = {
+  facilityName: string;
+  workOrderFieldsText = {
     notify: 'Would you like to receive updates?',
     phone: 'Enter your phone number.',
     email: 'Enter your email.',
     description: 'Describe what needs to be repaired.',
     location: 'Select the location where the repair is needed.',
   };
+ 
+  customActionSheetOptions: { [key: string]: string } = {
+    cssClass: 'custom-deposit-actionSheet',
+  };
+
+  errorMessages = {
+    required: 'This field is required',
+    numeric: 'This field should be numeric',
+    integer: 'This field should be integer',
+    string: 'This field should be string',
+  };
+
+  date = new Date();
+  requestedRoommates$: Observable<RequestedRoommate[]>;
+  roommateSearchOptions$: Observable<RoommateSearchOptions>;
+  image$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private _changeDetector: ChangeDetectorRef,
     public _applicationsStateService: ApplicationsStateService, //TODO: delete
     private _termService: TermsService,
-    private actionSheetCtrl: ActionSheetController,
-    private identityFacadeService: IdentityFacadeService,
     private toastService: ToastService,
     private _workOrderStateService: WorkOrderStateService,
     private _contractListStateService: ContractListStateService,
-    private plt: Platform,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private sessionService: SessionFacadeService,
+    private photoUploadService: PhotoUploadService,
+    private sanitizer: DomSanitizer,
   ) { }
 
   ngOnDestroy(): void {
@@ -66,37 +87,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.roommateSearchOptions$ = this._applicationsStateService.roommateSearchOptions;
     this._initTermsSubscription();
     this._initGetImage();
-    this._setFacility();
-    this._getFacilityName();
+    this.setFacility();
   }
-
-  @Input() question: QuestionBase;
-
-  @Input() name: string;
-
-  @Input() parentGroup: FormGroup;
-
-  @Input() isSubmitted: boolean;
-
-  public image$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
-  requestedRoommates$: Observable<RequestedRoommate[]>;
-  roommateSearchOptions$: any;
-  private selectedTermKey = 0;
-  private subscriptions: Subscription = new Subscription();
-
-  customActionSheetOptions: { [key: string]: string } = {
-    cssClass: 'custom-deposit-actionSheet',
-  };
-
-  errorMessages: any = {
-    required: 'This field is required',
-    numeric: 'This field should be numeric',
-    integer: 'This field should be integer',
-    string: 'This field should be string',
-  };
-
-  date = new Date();
 
   createHeader(question: QuestionHeader): string {
     const headerWeight: number = parseInt(question.subtype, 10);
@@ -125,68 +117,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return option.label;
   }
 
-  private _initTermsSubscription() {
-    this.subscriptions.add(this._termService.termId$.subscribe(termId => (this.selectedTermKey = termId)));
-  }
-
-  private _initGetImage() {
-    const getImageSub = this._workOrderStateService.workOrderImage$.subscribe(res => {
-      // eslint-disable-next-line no-extra-boolean-cast
-      if (!!(res && res.contents)) {
-        const extension = res.filename.split('.').pop();
-        const imageContent = res.contents.startsWith('data:image')
-          ? res.contents
-          : `data:image/${extension};base64,${res.contents}`;
-
-        this.image$.next(imageContent);
-      } else {
-        this.image$.next(null);
-      }
-    });
-
-    this.subscriptions.add(getImageSub);
-  }
-
   async presentPhotoTypeSelection() {
-    const photoSourceAS = await this.actionSheetCtrl.create({
-      keyboardClose: true,
-      backdropDismiss: true,
-      buttons: [
-        {
-          text: 'Take photo',
-          role: 'take-photo',
-          icon: '/assets/icon/camera-outline.svg',
-        },
-        {
-          text: 'Choose existing photo',
-          role: 'select-photo',
-          icon: '/assets/icon/select-photo.svg',
-        },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel',
-        },
-      ],
-    });
-
-    await photoSourceAS.present();
-
-    let cameraSource: CameraSource = null;
-
-    await photoSourceAS.onWillDismiss().then(result => {
-      if (result.role === 'take-photo') {
-        cameraSource = CameraSource.Camera;
-      } else if (result.role === 'select-photo') {
-        cameraSource = CameraSource.Photos;
-      }
-    });
-
-    if (!cameraSource) {
-      return;
-    }
+    const cameraSource = await this.photoUploadService.presentPhotoTypeSelection();
     this.onGetPhoto(cameraSource);
   }
+
   async onGetPhoto(cameraSource: CameraSource) {
     this.getPhoto(cameraSource);
   }
@@ -215,41 +150,29 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   async saveImage(photo: Photo) {
     const base64Data = await this.readAsBase64(photo);
-    if (this.plt.is('hybrid')) {
-      try {
-        await Filesystem.mkdir({
-          path: IMAGE_DIR,
-          directory: FilesystemDirectory.Data,
-        });
-      } catch (error) {
-          // TODO: Properly handle exception
-      }
-    }
-
-    const fileName = new Date().getTime() + '.PNG';
+    const fileName = this.date.getTime() + '.PNG';
+    
     await Filesystem.writeFile({
       path: `${IMAGE_DIR}/${fileName}`,
       data: base64Data,
       directory: FilesystemDirectory.Data,
+      recursive: true
     });
 
     const image: ImageData = {
       comments: '',
-      photoUrl: this.plt.is('hybrid') ? photo.webPath : base64Data,
+      photoUrl: this.sanitizeUrl(photo, base64Data),
       filename: fileName,
       contents: base64Data,
       studentSubmitted: true,
       workOrderKey: 0,
     };
     this._workOrderStateService.setWorkOrderImage(image);
-    // Reload the file list
-    // Improve by only loading for the new image and unshifting array!
     this.loadFiles();
   }
 
-  // https://ionicframework.com/docs/angular/your-first-app/3-saving-photos
   private async readAsBase64(photo: Photo) {
-    if (this.plt.is('hybrid')) {
+    if (!this.sessionService.getIsWeb()) {
       const file = await Filesystem.readFile({
         path: photo.path,
       });
@@ -259,8 +182,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-
-      return (await this.convertBlobToBase64(blob)) as string;
+      return (<string> await this.convertBlobToBase64(blob));
     }
   }
 
@@ -326,8 +248,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const imageFormat = file.name.split('.')[1];
     const rawData = atob(value);
     const bytes = new Array(rawData.length);
-    for (let x = 0; x < rawData.length; x++) {
-      bytes[x] = rawData.charCodeAt(x);
+    for (let i = 0; i < rawData.length; i++) {
+      bytes[i] = rawData.charCodeAt(i);
     }
     const arr = new Uint8Array(bytes);
     const blob = new Blob([arr], { type: `image/${imageFormat}` });
@@ -362,7 +284,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return question.label;
   }
 
-  _setFacility() {
+  setFacility() {
     if (this.question.type !== QUESTIONS_TYPES.FACILITY) return;
 
     this.facilityTreeData = this._workOrderStateService.workOrderDetails.getValue().facilityTree;
@@ -384,9 +306,29 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private _getFacilityName() {
-    this._workOrderStateService.getSelectedFacility$().subscribe(res => {
-      this.facilityName = res?.name
+  private _initTermsSubscription() {
+    this.subscriptions.add(this._termService.termId$.subscribe());
+  }
+
+  private _initGetImage() {
+    const getImageSub = this._workOrderStateService.workOrderImage$.subscribe(res => {
+      if (res && res.contents) {
+        const extension = res.filename.split('.').pop();
+        const imageContent = res.contents.startsWith('data:image')
+          ? res.contents
+          : `data:image/${extension};base64,${res.contents}`;
+
+        this.image$.next(imageContent);
+      } else {
+        this.image$.next(null);
+      }
     });
+
+    this.subscriptions.add(getImageSub);
+  }
+
+  private sanitizeUrl(photo: Photo, base64Data: string): string {
+    return <string>this.sanitizer.bypassSecurityTrustResourceUrl(this.sessionService.getIsWeb() ? photo.webPath : base64Data);
   }
 }
+

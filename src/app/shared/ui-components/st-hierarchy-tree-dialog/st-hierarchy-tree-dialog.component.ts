@@ -1,6 +1,6 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IonSlides, LoadingController, ModalController, NavParams } from '@ionic/angular';
-import { SlideItem, NamedIdentity, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
+import { SlideItem, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 
 @Component({
@@ -181,11 +181,10 @@ export class StHierarcheTreeDialogComponent {
   }
 
   public itemSelected(item: SlideItem) {
-    const selectedItem: NamedIdentity = null;
     if (item) {
       this._workOrderStateService.setSelectedFacilityTree(item);
     }
-    this.viewCtrl.dismiss(selectedItem);
+    this.viewCtrl.dismiss({ item });
   }
 
   public slideTo(itemOrIndex: SlideItem | number): void {

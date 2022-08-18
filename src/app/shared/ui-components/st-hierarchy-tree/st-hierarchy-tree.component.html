@@ -1,13 +1,15 @@
-<st-textarea-floating-label
-    [control]=""
+<form [formGroup]="form">
+  <st-textarea-floating-label
+    formControlName="facilityName"
+    [control]="form.get('facilityName')"
     [isError]=""
-    [facilityData]="facilityName"
     class="question__item question__control"
     [idd]=""
-    [label]="label"
+    label=""
     title="Type your message here..."
     rows="3"
     (click)="open()"
     [ngClass]="{ 'ng-valid form-control--filled ng-touched':true }"
   >
 </st-textarea-floating-label>
+</form>

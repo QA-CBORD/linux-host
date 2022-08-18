@@ -18,6 +18,7 @@ import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
 import { StHierarcheTreeModule } from '@shared/ui-components/st-hierarchy-tree/st-hierarchy-tree.module';
 import { StHierarcheTreeDialogModule } from '@shared/ui-components/st-hierarchy-tree-dialog/st-hierarchy-tree-dialog.module';
+import { PhotoUploadModule } from '@sections/settings/pages/photo-upload/photo-upload.module';
 
 const imports = [
   CommonModule,
@@ -34,7 +35,8 @@ const imports = [
   SignContractModule,
   AssetTypeDetailsModule,
   StHierarcheTreeModule,
-  StHierarcheTreeDialogModule
+  StHierarcheTreeDialogModule,
+  PhotoUploadModule
 ];
 const exports = [QuestionComponent];
 const declarations = [QuestionComponent, EmptyFormControlDirective];

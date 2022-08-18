@@ -8,7 +8,6 @@ import { UserPhotoInfo } from '@core/model/user';
 import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-upload.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -73,10 +72,9 @@ export class PhotoUploadComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
-    private readonly actionSheetCtrl: ActionSheetController,
     private readonly cd: ChangeDetectorRef,
     private readonly photoCropModalService: PhotoCropModalService,
-    private readonly cameraService: CameraService
+    private readonly cameraService: CameraService,
   ) {}
 
   ngOnInit() {
@@ -261,44 +259,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   async presentPhotoTypeSelection(photoType: PhotoType) {
-    const photoSourceAS = await this.actionSheetCtrl.create({
-      keyboardClose: true,
-      backdropDismiss: true,
-      buttons: [
-        {
-          text: 'Take photo',
-          role: 'take-photo',
-          icon: '/assets/icon/camera-outline.svg',
-        },
-        {
-          text: 'Choose existing photo',
-          role: 'select-photo',
-          icon: '/assets/icon/select-photo.svg',
-        },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel',
-        },
-      ],
-    });
-
-    await photoSourceAS.present();
-
-    let cameraSource: CameraSource = null;
-
-    await photoSourceAS.onWillDismiss().then(result => {
-      if (result.role === 'take-photo') {
-        cameraSource = CameraSource.Camera;
-      } else if (result.role === 'select-photo') {
-        cameraSource = CameraSource.Photos;
-      }
-    });
-
-    if (!cameraSource) {
-      return;
-    }
-
+    const cameraSource = await this.photoUploadService.presentPhotoTypeSelection();
     this.onGetPhoto(photoType, cameraSource);
   }
 
@@ -461,6 +422,6 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private coverBorderFit(orientation: Orientation): boolean {
-    return orientation === Orientation.PORTRAIT ? false : true;
+    return !(orientation === Orientation.PORTRAIT);
   }
 }

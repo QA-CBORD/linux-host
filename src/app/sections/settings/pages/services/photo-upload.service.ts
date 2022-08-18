@@ -10,8 +10,9 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
-import { ModalController } from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
+import { CameraSource } from '@capacitor/camera';
 
 export enum PhotoStatus {
   PENDING,
@@ -50,7 +51,8 @@ export class PhotoUploadService {
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly actionSheetCtrl: ActionSheetController
   ) {}
 
   get photoUploadSettings() {
@@ -231,5 +233,43 @@ export class PhotoUploadService {
     });
 
     return await modal.present();
+  }
+
+  async presentPhotoTypeSelection() {
+    const photoSourceAS = await this.actionSheetCtrl.create({
+      keyboardClose: true,
+      backdropDismiss: true,
+      buttons: [
+        {
+          text: 'Take photo',
+          role: 'take-photo',
+          icon: '/assets/icon/camera-outline.svg',
+        },
+        {
+          text: 'Choose existing photo',
+          role: 'select-photo',
+          icon: '/assets/icon/select-photo.svg',
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+        },
+      ],
+    });
+
+    await photoSourceAS.present();
+
+    let cameraSource: CameraSource = null;
+
+    await photoSourceAS.onWillDismiss().then(result => {
+      if (result.role === 'take-photo') {
+        cameraSource = CameraSource.Camera;
+      } else if (result.role === 'select-photo') {
+        cameraSource = CameraSource.Photos;
+      }
+    });
+
+    return cameraSource;
   }
 }
