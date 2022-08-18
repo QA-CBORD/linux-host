@@ -30,6 +30,7 @@ describe('PhotoUploadComponent', () => {
   const photoUploadService = {
     clearLocalGovernmentIdPhotos: jest.fn(),
     clearLocalProfilePhoto: jest.fn(),
+    clearLocalPendingPhoto: jest.fn(),
     getInitialPhotoData$: jest.fn(() => of(true)),
     govtIdFront$: of(true),
     govtIdBack$: of(true),

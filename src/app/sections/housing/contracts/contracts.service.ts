@@ -58,11 +58,12 @@ export class ContractsService {
     );
   }
 
-  submitContract(contractElementKey: number): Observable<ResponseStatus> {
+  submitContract(contractElementKey: number, formKey: number): Observable<ResponseStatus> {
     const dateSigned: string = new Date().toISOString();
     const body: ContractRequest = new ContractRequest({
       contractElementKey,
       dateSigned,
+      formKey
     });
 
     return this._housingProxyService.put(this._patronContractsUrl, body);

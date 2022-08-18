@@ -8,21 +8,19 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-
-import { QuestionsService } from '../../questions/questions.service';
 import { ContractsService } from '../../contracts/contracts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../../housing.service';
-
 import { StepperComponent } from '../../stepper/stepper.component';
 import { QuestionComponent } from '../../questions/question.component';
-
 import { QuestionsPage } from '../../questions/questions.model';
 import { ContractDetails } from '../../contracts/contracts.model';
+import { IonContent } from '@ionic/angular';
+import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'st-contract-details',
@@ -32,42 +30,30 @@ import { ContractDetails } from '../../contracts/contracts.model';
 })
 export class ContractDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
-
-  @ViewChild('content') private content: any;
-
+  @ViewChild('content') private content: IonContent;
   @ViewChild(StepperComponent) stepper: StepperComponent;
-
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
-
   contractDetails$: Observable<ContractDetails>;
-
   pages$: Observable<QuestionsPage[]>;
-
   contractKey: number;
-
   contractElementKey: number;
-
   isSubmitted = false;
-
   isSigned = true;
-
   canSubmit = true;
+  formKey: number;
 
   constructor(
     private _route: ActivatedRoute,
-    private _questionsService: QuestionsService,
     private _contractsService: ContractsService,
-    private _router: Router,
-    private _toastController: ToastController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
-    private _changeDetector: ChangeDetectorRef
+    private _changeDetector: ChangeDetectorRef,
+    private formPaymentService: FormPaymentService
   ) {}
 
   ngOnInit(): void {
-    this.contractKey = parseInt(this._route.snapshot.paramMap.get('contractKey'), 10);
-    this.contractElementKey = parseInt(this._route.snapshot.paramMap.get('contractElementKey'), 10);
-
+    this.contractKey = parseInt(this._route.snapshot.params.contractKey);
+    this.contractElementKey = parseInt(this._route.snapshot.params.contractElementKey);
     this._initContractDetailsObservable();
     this._initPagesObservable();
     this._initIsSignedObservable();
@@ -78,46 +64,49 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  submit(isLastPage: boolean): void {
-    if (this.isSubmitted) {
-      if (!isLastPage) {
-        this._next();
-        return;
-      } else {
-        return;
-      }
-    }
-
-    if (!isLastPage) {
-      this._next();
+  submitForm(contractDetails: ContractDetails, form: FormGroup, isLastPage: boolean): void {
+    if (!this.isSubmitted && form.invalid) return;
+    if (!isLastPage) this._next();
+    else if (this.isPaymentDue(contractDetails)) {
+      this.continueToPayment(contractDetails, form.value);
     } else {
       this._update(this.contractElementKey);
     }
   }
 
+  isPaymentDue(contractDetails: ContractDetails) {
+    return contractDetails.amount > 0;
+  }
+
+  private async continueToPayment(contractDetails: ContractDetails, form: FormControl) {
+    this.formPaymentService.continueToFormPayment({
+      details: contractDetails,
+      formValue: form,
+      key: this.contractElementKey,
+      type: FormType.WorkOrder,
+    });
+  }
+
   private _update(contractKey: number): void {
     this._loadingService.showSpinner();
-
-    const subscription: Subscription = this._contractsService.submitContract(contractKey).subscribe({
+    const subscription: Subscription = this._contractsService.submitContract(contractKey, this.formKey).subscribe({
       next: () => this._handleSuccess(),
-      error: (error: any) => this._handleErrors(error),
+      error: (error: Error) => this._handleErrors(error),
     });
-
     this._subscription.add(subscription);
   }
 
   private _initContractDetailsObservable(): void {
     this._loadingService.showSpinner();
-
     const queryParams: string[] = [`contractKey=${this.contractElementKey}`];
-
     this.contractDetails$ = this._housingService.getContractDetails(this.contractKey, queryParams).pipe(
       tap((contractDetails: ContractDetails) => {
         this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
         this.canSubmit = !this.isSubmitted && this.isSigned;
+        this.formKey = contractDetails.formKey || 0;
         this._loadingService.closeSpinner();
       }),
-      catchError((error: any) => {
+      catchError((error: Error) => {
         this._loadingService.closeSpinner();
 
         return throwError(error);
@@ -138,7 +127,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     this._housingService.handleSuccess();
   }
 
-  private _handleErrors(error: any): void {
+  private _handleErrors(error: Error): void {
     this._housingService.handleErrors(error);
   }
 
@@ -148,7 +137,6 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
       this.canSubmit = !this.isSubmitted && isSigned;
       this._changeDetector.markForCheck();
     });
-
     this._subscription.add(isSignedSubscription);
   }
 }

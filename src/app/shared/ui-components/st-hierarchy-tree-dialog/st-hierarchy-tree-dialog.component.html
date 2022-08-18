@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-slides [options]="slidesConfig" [pager]="false">
+  <ion-slides  id="facility-list" [options]="slidesConfig" [pager]="false">
     <ion-slide *ngFor="let slide of slides">
       <ion-toolbar mode="ios">
         <ion-buttons slot="start" *ngIf="slide.parentSlide" (click)="slideTo(slide.parentSlide?.slideIndex)">

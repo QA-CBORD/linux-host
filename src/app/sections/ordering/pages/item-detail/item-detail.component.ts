@@ -12,7 +12,7 @@ import {
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
-import { CartService, MenuInfo, MenuItemInfo, MerchantService, OrderItem } from '@sections/ordering';
+import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
@@ -52,11 +52,9 @@ export class ItemDetailComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
     private readonly navService: NavigationService,
-    private readonly cdRef: ChangeDetectorRef,
-    private readonly merchantService: MerchantService
-  ) {}
+    private readonly cdRef: ChangeDetectorRef) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initContentStrings();
     this.activatedRoute.data.subscribe(({ data }) => {
       this.routesData = data;
@@ -77,17 +75,17 @@ export class ItemDetailComponent implements OnInit {
     await modal.present();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
   }
 
-  navigateToFullMenu() {
+  navigateToFullMenu(): void {
     this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
       queryParams: { openTimeSlot: true },
     });
   }
 
-  onClose() {
+  onClose(): void {
     if (this.routesData.queryParams.isScannedItem) {
       this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
     } else {
@@ -98,8 +96,8 @@ export class ItemDetailComponent implements OnInit {
     }
   }
 
-  initForm() {
-    const cartSelectedItems = this.cartOrderItemOptions;
+  initForm(): void {
+    const cartSelectedItems = this.routesData.queryParams.isItemExistsInCart && this.cartOrderItemOptions;
     const formGroup = {};
     if (!cartSelectedItems.length) {
       this.menuItem.menuItemOptions.forEach(({ menuGroup: { minimum, maximum, name } }) => {
@@ -152,7 +150,7 @@ export class ItemDetailComponent implements OnInit {
     this.valueChanges();
   }
 
-  isErrorMultiList({ menuGroup: { minimum, maximum, name } }) {
+  isErrorMultiList({ menuGroup: { minimum, maximum, name } }): boolean {
     const { value } = this.itemOrderForm.get(name);
 
     if (!minimum && !maximum) {
@@ -169,17 +167,18 @@ export class ItemDetailComponent implements OnInit {
     }
   }
 
-  calculateTotalPrice() {
-    const calcValue = (this.menuItem.price + this.order.optionsPrice) * this.order.counter;
+  calculateTotalPrice(): void {
+    const price = isNaN(this.order.optionsPrice) ? 0 : this.order.optionsPrice;
+    const calcValue = (this.menuItem.price + price) * this.order.counter;
     this.order = { ...this.order, totalPrice: Number(calcValue.toFixed(2)) };
   }
 
-  removeItems() {
+  removeItems(): void {
     this.order.counter > 1 ? this.order.counter-- : null;
     this.calculateTotalPrice();
   }
 
-  addItems() {
+  addItems(): void {
     this.order.counter++;
     this.calculateTotalPrice();
   }
@@ -253,10 +252,11 @@ export class ItemDetailComponent implements OnInit {
       })
       .catch(async error => {
         // Temporary solution:
-
+        
         if (Array.isArray(error)) {
           const [code, text] = error;
           if (+code === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+            this.cartService.removeLastOrderItem();
             await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
             return;
           } else {
@@ -284,8 +284,9 @@ export class ItemDetailComponent implements OnInit {
         this.menuItemImg = this.menuItem.imageReference ? `${imageBaseUrl}${this.menuItem.imageReference}` : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
         this.allowNotes = !JSON.parse(settings.map[MerchantSettings.disableItemNotes].value);
-
-        this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+        if (orderItemId) {
+          this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+        }
         if (this.cartSelectedItem) {
           this.cartOrderItemOptions = this.cartSelectedItem.orderItemOptions;
           const optionsPrice = this.cartOrderItemOptions.reduce(
@@ -336,7 +337,7 @@ export class ItemDetailComponent implements OnInit {
     );
   }
 
-  showAddedItemsQuantity(items: number) {
+  showAddedItemsQuantity(items: number): void {
     this.cartService.orderInfo$.pipe(take(1)).subscribe(order => {
       const itemsQuantity = `${items} ${items > 1 ? 'items' : 'item'}`;
 

@@ -23,20 +23,21 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   @Input() options: MenuGroupItemInfo[];
   @Input() control: AbstractControl = new FormControl();
   @Input() isError: boolean;
+  @Input() isExistingItemInCart: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
   innerValue: any[] = [];
   modifiedOptions: MenuGroupItemInfoChecked[];
+  
 
   ngOnInit() {
     this.writeValue(this.control.value);
     this.onChange(this.control.value);
-
-    if (this.control.value.length) {
+    if (this.control.value.length && this.isExistingItemInCart) {
       this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options.map(elem => {
         const isMenuItemInclude = this.innerValue.includes(elem.menuItem);
 
-        return {...elem, checked: isMenuItemInclude};
+        return { ...elem, checked: isMenuItemInclude };
       });
     } else {
       this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options.map(elem => ({ ...elem, checked: false }));

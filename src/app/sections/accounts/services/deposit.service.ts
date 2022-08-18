@@ -12,12 +12,11 @@ import { ContentStringsApiService } from '@core/service/content-service/content-
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class DepositService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
-
-  private contentString;
+  public contentString;
 
   constructor(
     private readonly commerceApiService: CommerceApiService,
@@ -56,14 +55,13 @@ export class DepositService {
   }
 
   filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
-    return accounts.filter(
-      ({ paymentSystemType: type }) => type == PAYMENT_SYSTEM_TYPE.USAEPAY
-    );
+    return accounts.filter(({ paymentSystemType: type }) => type == PAYMENT_SYSTEM_TYPE.USAEPAY);
   }
 
   filterCreditCardDestAccounts(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
     return accounts.filter(
-      ({ depositAccepted, accountTender, accountType }) => depositAccepted && accountType !== ACCOUNT_TYPES.meals && tendersId.includes(accountTender)
+      ({ depositAccepted, accountTender, accountType }) =>
+        depositAccepted && accountType !== ACCOUNT_TYPES.meals && tendersId.includes(accountTender)
     );
   }
 
@@ -147,9 +145,9 @@ export class DepositService {
   getContentValueByName(name: string): string {
     return this.contentString[name] || '';
   }
-  
-  // Payment perform from housing application
-  feePayment(fromAccountId: string, amount: string): Observable<string> {
+
+  // Used to perform payments onbehalf of housing form
+  makePayment(fromAccountId: string, amount: string): Observable<string> {
     return this.commerceApiService.sale(fromAccountId, amount);
   }
 }

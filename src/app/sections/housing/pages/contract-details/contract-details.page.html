@@ -23,7 +23,7 @@
         *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
         [stepControl]="page.form"
       >
-        <form [formGroup]="page.form" (ngSubmit)="submit(isLastPage)">
+        <form [formGroup]="page.form" (ngSubmit)="submitForm(contractDetails, page.form, isLastPage)">
           <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
             <st-question
               *ngIf="question"
@@ -41,32 +41,36 @@
               class="btn contract-details__back"
               type="button"
               fill="clear"
-              mode="ios"
               stepperBack
               (back)="content.scrollToTop()"
               >Back</ion-button
             >
 
-            <ion-button
+            <st-button
               class="btn contract-details__next"
               [class.stepper-footer__button--right]="isFirstPage"
-              mode="ios"
               fill="outline"
               type="submit"
               *ngIf="!isLastPage"
             >
               Next
-            </ion-button>
-
-            <ion-button
+            </st-button>
+            <st-button
               class="btn contract-details__submit stepper-footer__button--right"
-              mode="ios"
               type="submit"
               [disabled]="!canSubmit"
-              *ngIf="isLastPage"
+              *ngIf="isLastPage && (!contractDetails.amount || isSubmitted)"
             >
               Submit
-            </ion-button>
+            </st-button>
+            <st-button
+            [disabled]="!canSubmit"
+            type="submit"
+            *ngIf="isLastPage && contractDetails.amount && !isSubmitted"
+            [class.stepper-footer__button--right]="isFirstPage"
+          >
+            Continue to payment
+          </st-button>
           </st-stepper-footer>
         </form>
       </st-step>

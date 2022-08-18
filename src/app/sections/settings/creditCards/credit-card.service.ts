@@ -35,18 +35,17 @@ export class CreditCardService {
     }
   }
 
-  private async showMessage(message: string, duration = 5000) {
+ async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });
   }
 
   async retrieveAccounts(): Promise<AccountsConf[]> {
     this.loadingService.showSpinner();
-    const accounts = await firstValueFrom(
+    return  await firstValueFrom(
       this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
     )
       .then(accounts => accounts.map(acc => this.buildStr(acc)))
       .finally(() => this.loadingService.closeSpinner());
-    return accounts;
   }
 
   removeCreditCardAccount(userAccount: UserAccount): Promise<boolean> {

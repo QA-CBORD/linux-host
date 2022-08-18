@@ -35,6 +35,14 @@ const routes: Routes = [
         loadChildren: () => import('./pages/work-order-details/work-order-details.module').then(m => m.WorkOrderDetailsPageModule),
       },
       {
+        path: `${LOCAL_ROUTING.attachments}`,
+        loadChildren: () => import('./pages/attachments-details/attachments-details.module').then(m => m.AttachmentsDetailsPageModule),
+      },
+      {
+        path: `${LOCAL_ROUTING.attachments}/:attachmentKey`,
+        loadChildren: () => import('./pages/attachments-details/attachments-details.module').then(m => m.AttachmentsDetailsPageModule),
+      },
+      {
         path: `${LOCAL_ROUTING.inspections}/:termKey/:residentInspectionKey/:contractElementKey/:checkIn`,
         loadChildren: () => import('./pages/inspections-details/inspections-details.module').then(m => m.InspectionsDetailsPageModule),
       },
@@ -68,6 +76,10 @@ const routes: Routes = [
       },{
         path: `${LOCAL_ROUTING.roommates}`,
         loadChildren: () => import('./pages/roommate-search/roommate-search.module').then(m => m.RoommateSearchPageModule),
+      },
+      {
+        path: `${LOCAL_ROUTING.formPayment}`,
+        loadChildren: () => import('./pages/form-payment/form-payment.module').then(m => m.FormPaymentModule),
       },
       {
         path: '',
