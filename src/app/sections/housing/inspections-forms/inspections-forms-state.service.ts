@@ -20,6 +20,7 @@ export class InspectionsStateService  {
     formTitle: null,
     totalItems: null,
     remainingItems: null,
+    status: null
   });
 
   private readonly _defaultStateFormDetails = new FormDefinition ({
