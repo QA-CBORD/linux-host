@@ -1,11 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { Subscription, BehaviorSubject } from 'rxjs';
-
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Inspection, Inspections } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
-import { InspectionService } from './inspections-forms.service';
+import { take } from 'rxjs/operators';
+
+const InspectionStatus = {
+  0: "New",
+  1: "IN PROGRESS",
+  2: "SUBMITTED",
+  3: "INCOMPLETE"
+};
 
 @Component({
   selector: 'st-inspections-forms',
@@ -13,65 +19,37 @@ import { InspectionService } from './inspections-forms.service';
   styleUrls: ['./inspections-forms.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InspectionsComponent implements OnInit, OnDestroy {
-  private _subscription: Subscription = new Subscription();
-  public urlEditForm: string;
+export class InspectionsComponent implements OnInit {
   private selectedTermKey = 0;
-  public inspectionList: BehaviorSubject<Inspections[]>;
-
-  constructor(public _inspectionsStateService: InspectionsStateService,
-    private _termService : TermsService,
-    private _inspectionService: InspectionService
-    ) {}
-
   inspections: Inspection[];
+  urlEditForm: string;
+
+  constructor(private _inspectionsStateService: InspectionsStateService, private _termService: TermsService) {}
 
   ngOnInit() {
-    this.inspectionList = this._inspectionsStateService.inspectionList$;
-    const inspectionsForm: Subscription = this._inspectionsStateService.inspectionForm$
-      .subscribe();
-
     this._initTermsSubscription();
-    this._subscription.add(inspectionsForm);
+  }
+
+  getInspectionStatus(value: Inspections): string {
+    return InspectionStatus[value.status];
+  }
+
+  getUrlPath(inspection: Inspections): string {
+    return inspection.residentInspectionKey
+      ? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${
+          inspection.contractKey
+        }/${inspection.checkIn}`
+      : `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.checkIn}`;
+  }
+
+  get inspectionList$(): BehaviorSubject<Inspections[]> {
+    return this._inspectionsStateService.inspectionList$;
   }
 
   private _initTermsSubscription() {
-    this._subscription.add(
-      this._termService.termId$
-          .subscribe(termId => {
-            this.urlEditForm = `/patron/housing/inspections/${termId}/`;
-            this.selectedTermKey = termId;
-          }));
-    
+    this._termService.termId$.pipe(take(1)).subscribe(termId => {
+      this.urlEditForm = `/patron/housing/inspections/${termId}/`;
+      this.selectedTermKey = termId;
+    });
   }
-
-  ngOnDestroy(): void {
-    this._subscription.unsubscribe();
-  }
-
-  getStatus(key: number): string {
-    if (key || key !== 0) {
-      return 'Submitted'
-    }
-
-    return 'New';
-  }
-
-  getInspectionStatus(value: Inspections): string{
-    if( value.isSubmitted == false && value.residentInspectionKey ){
-      return 'IN PROGRESS'
-    } else if(value.residentInspectionKey === 0 && value.isSubmitted === false){
-      return 'NEW'
-    }else if(value.isSubmitted) {
-      return 'COMPLETED'
-    }
-        
-  }
-
-  getPath(inspection: Inspections): string {
-    // eslint-disable-next-line no-extra-boolean-cast
-    const url = !!inspection.residentInspectionKey? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${inspection.contractKey}/${inspection.checkIn}`: `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.checkIn}`;
-    return url;
-  }
-
 }
