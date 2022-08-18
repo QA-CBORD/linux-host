@@ -157,7 +157,7 @@ describe('VaultIdentityService', () => {
 
             const unlockResult = await service.unlockVault(true);
             expect(pinModalSpy).toHaveBeenCalledTimes(1)
-            expect(retryPinSpy).toHaveBeenNthCalledWith(1, new Error('random error'));
+            expect(retryPinSpy).toHaveBeenNthCalledWith(1);
             expect(logoutSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledWith(session)
@@ -171,7 +171,7 @@ describe('VaultIdentityService', () => {
             const retryPinUnlockStub = jest.spyOn(service, 'retryPinUnlock');
             const pinModalSpy = jest.spyOn(service.pinAuthenticator, 'tryUnlock0').mockResolvedValue({ pin: null, status: PinCloseStatus.MAX_FAILURE })
             const results = await service.unlockVault(session.biometricUsed).catch(e => e);
-            expect(retryPinUnlockStub).toHaveBeenNthCalledWith(1, { message: 'biometric auth failed' });
+            expect(retryPinUnlockStub).toHaveBeenNthCalledWith(1);
             expect(pinModalSpy).toHaveBeenCalledTimes(1);
             expect(results).toStrictEqual({ code: PinCloseStatus.MAX_FAILURE })
         });

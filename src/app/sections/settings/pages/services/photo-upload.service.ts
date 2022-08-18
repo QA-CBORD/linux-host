@@ -120,9 +120,15 @@ export class PhotoUploadService {
 
   /// get photo data by status Accepted and Pending and fetch array of photos
   private fetchUserPhotosInList(photoList: UserPhotoList): Observable<UserPhotoInfo[]> {
-    return of(
-      photoList.list.filter(({ status }) => status === PhotoStatus.ACCEPTED || status == PhotoStatus.PENDING)
-    ).pipe(switchMap(photoList => zip(...photoList.map(({ id }) => this.handleUserPhotoById(id)))));
+    const validPhotos = photoList.list.filter(({ status }) =>
+      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING].includes(status)
+    );
+    if (!validPhotos.length) {
+      return of([]);
+    }
+    return of(validPhotos).pipe(
+      switchMap(photoList => zip(...photoList.map(({ id }) => this.handleUserPhotoById(id))))
+    );
   }
 
   /// fetch photo by id and set the data here if it exists
@@ -192,6 +198,10 @@ export class PhotoUploadService {
 
   clearLocalProfilePhoto() {
     this._profileImage = null;
+    this._profileImagePending = null;
+  }
+
+  clearLocalPendingPhoto() {
     this._profileImagePending = null;
   }
 
