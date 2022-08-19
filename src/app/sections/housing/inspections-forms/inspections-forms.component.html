@@ -1,34 +1,32 @@
-<section *ngIf="(inspectionList | async) as inspectionList" > 
-  <ion-list
-    class="ion-no-margin bg-transparent">
-    <ion-grid >
+<section *ngIf="(inspectionList$ | async) as inspectionList">
+  <ion-list class="ion-no-margin bg-transparent">
+    <ion-grid>
       <ion-row class="container-header-inspection">
-        <div class="col-inspection ion-no-padding" *ngIf="inspectionList.length > 0" >
-            <h2 class="form__secondary-header">INSPECTION</h2>
+        <div class="col-inspection ion-no-padding" *ngIf="inspectionList.length > 0">
+          <h2 class="form__secondary-header">INSPECTIONS</h2>
         </div>
       </ion-row>
     </ion-grid>
 
-    <ng-container >
-      <div #container *ngFor="let inspection of inspectionList" >
-        <ion-item lines="none" class="inspections-list__item" >
+    <ng-container>
+      <div #container *ngFor="let inspection of inspectionList">
+        <ion-item lines="none" class="inspections-list__item">
           <ion-label class="inspections-list__wrap">
             <div class="inspections-list__info">
-              <h5 class="inspections-list__status" [ngClass]="" > {{ getInspectionStatus(inspection) }}</h5>
-              <div class="inspections-list__date" >
-                {{ inspection.remainingItems }} item{{inspection.remainingItems==1? '':'s'}} Left
+              <h5 class="inspections-list__status" [ngClass]="">{{ getInspectionStatus(inspection) }}</h5>
+              <div class="inspections-list__date">
+                {{ inspection.remainingItems }} Room{{ inspection.remainingItems == 1 ? '' : 's' }} Left
               </div>
             </div>
-        
-            <h2 class="inspections-list__title">{{ inspection.formTitle }} </h2>
-          </ion-label>
 
+            <h2 class="inspections-list__title">{{ inspection.formTitle }}</h2>
+          </ion-label>
           <st-actions
             [showEdit]="!inspection.isSubmitted"
             [showView]="inspection.isSubmitted"
-            [path]="getPath(inspection)"
+            [path]="getUrlPath(inspection)"
             [edit]="!inspection.isSubmitted"
-            >
+          >
           </st-actions>
         </ion-item>
       </div>

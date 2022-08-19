@@ -206,6 +206,7 @@ export interface InspectionsOptions {
   formTitle: string;
   totalItems: number;
   remainingItems: number;
+  status: number;
 }
 
 export class Inspections implements InspectionsOptions {
@@ -221,6 +222,7 @@ export class Inspections implements InspectionsOptions {
   formTitle: string;
   totalItems: number;
   remainingItems: number;
+  status: number;
   constructor(options: InspectionsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as InspectionsOptions;
@@ -237,6 +239,7 @@ export class Inspections implements InspectionsOptions {
     this.formTitle = String(options.formTitle);
     this.totalItems = Number(options.totalItems);
     this.remainingItems = Number(options.remainingItems);
+    this.status = Number(options.status);
   }
 }
 
