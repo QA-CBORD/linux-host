@@ -5,7 +5,6 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { TermsService } from '../../terms/terms.service';
 import { HousingService } from '../../housing.service';
 import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
-import { AttachmentsService } from '../../attachments/attachments.service';
 
 export enum SelectedHousingTab { Forms, Rooms, Contracts }
 
@@ -29,7 +28,6 @@ export class HousingDashboardPage {
     private _termsService: TermsService,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
-    private _attachmentService: AttachmentsService,
   ) {}
 
   ngOnInit(): void {
@@ -58,6 +56,7 @@ export class HousingDashboardPage {
             this._housingService.getPatronContracts(termId),
             this._housingService.getCheckInOuts(termId),
             this._housingService.getInspections(termId),
+            this._housingService.getAttachmentsListDetails(termId)
           )
         })
       )

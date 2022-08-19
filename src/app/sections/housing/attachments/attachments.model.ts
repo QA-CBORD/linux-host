@@ -121,3 +121,16 @@ export class AttachmentsList implements AttachmentsListOptions {
   }
 
 }
+
+export interface AttachmentsListDataOptions{
+  data: AttachmentsList[]
+}
+export class AttachmentsListData implements AttachmentsListDataOptions {
+  data : AttachmentsList[];
+  constructor(options: AttachmentsListDataOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as AttachmentsListDataOptions;
+    }
+    this.data = Array.isArray(options) ? options.map((detail: any) => new AttachmentsList(detail)): [];
+  }
+}
