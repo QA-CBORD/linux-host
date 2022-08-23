@@ -29,7 +29,7 @@ export enum PhotoType {
   GOVT_ID_BACK = 2,
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PhotoUploadService {
   private readonly _govtIdFront$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
   private readonly _govtIdBack$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
