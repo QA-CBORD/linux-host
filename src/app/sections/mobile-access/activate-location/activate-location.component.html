@@ -14,9 +14,9 @@
     [institutionColor]="institutionColor$ | async"
   >
     <p class="user-data__location">
-      <span [ngClass]="starClass | async"  [attr.aria-label]="starAriaLabel | async" role="option" (click)="favouriteHandler()"></span>
+      <span [ngClass]="starClass | async"  [attr.aria-label]="starAriaLabel | async" role="radio" (click)="favouriteHandler()"></span>
       {{ (location$ | async)?.locationId }} - {{ (location$ | async)?.name }}
-    </p>
+    </p> 
     <div class="user-data__activate-btn-wrapper">
       <st-button 
         (onClick)="activateLocation()"
