@@ -34,6 +34,9 @@
       &.sc-ion-popover-md,
       &.sc-ion-popover-ios {
         border-radius: 15px;
+        .popover-viewport.sc-ion-popover-md {
+          overflow: auto;
+        }
       }
     }
   }
