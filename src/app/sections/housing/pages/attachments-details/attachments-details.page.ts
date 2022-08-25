@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
+  AlertController,
   Platform,
 } from '@ionic/angular';
 
@@ -36,6 +37,8 @@ import { BASE64 } from '../../../../core/utils/regexp-patterns';
 import { Chooser, ChooserResult } from '@awesome-cordova-plugins/chooser/ngx';
 import { IdentityFacadeService } from '../../../../core/facades/identity/identity.facade.service';
 import { AttachmentStateService } from '@sections/housing/attachments/attachments-state.service';
+import { HousingService } from '@sections/housing/housing.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-work-order-details',
@@ -54,7 +57,6 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   attachmentTypes$: Observable<AttachmentTypes[]>;
   pages$: Observable<QuestionsPage[]>;
 
-  workOrderKey: number;
   selectedAssetKey: number;
   selectedAssetName: string;
   selectedTermKey: number;
@@ -77,6 +79,9 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     private chooser: Chooser,
     private identityFacadeService: IdentityFacadeService,
     private _route: ActivatedRoute,
+    private _alertController: AlertController,
+    private _housingService: HousingService,
+    private _toastService: ToastService,
   ) { }
 
   ngOnInit(): void {
@@ -165,5 +170,50 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
   getSizeFile(fileDataInt8){
     this.fileSizeInMB = (fileDataInt8.length / 1_048_576).toFixed(2);
+  }
+
+  async deleteAttachment(){
+    const alert = await this._alertController.create({
+      header: 'Delete Attachment',
+      message: `Deleting this attachment will remove the Attachment Note and attached file.`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            this.activeAlerts = [];
+            alert.dismiss();
+          },
+        },
+        {
+          text: 'Delete',
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this._loadingService.showSpinner();
+            this.activeAlerts = [];
+            const attachmentSubscription = this._attachmentService
+              .deleteAttachmentFile(this.attachmentKey)
+              .subscribe(status => {
+                alert.dismiss().then(() => {
+                  if (status) {
+                    this._housingService.handleSuccess();
+                  } else {
+                    this._loadingService.closeSpinner();
+                    this._toastService.showToast({
+                      message: 'The deleted attachement could not be processed at this time. Try again later',
+                    });
+                  }
+                });
+              });
+
+            this.subscriptions.add(attachmentSubscription);
+          },
+        },
+      ],
+    });
+    this.activeAlerts.push(alert);
+    await alert.present();
   }
 }

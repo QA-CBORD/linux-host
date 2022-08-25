@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { Attachment } from './attachments.model';
 import { AttachmentStateService } from './attachments-state.service';
 import { TermsService } from '../terms/terms.service';
 import { statusBarForm } from 'src/app/app.global';
@@ -19,10 +18,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
 
   constructor(
     public _attachmentStateService: AttachmentStateService,
-    private _termService: TermsService
+    public _termService: TermsService
   ) { }
-
-  workOrders: Attachment[];
 
   ngOnInit() {
     this._initTermsSubscription();

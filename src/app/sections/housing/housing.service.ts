@@ -49,6 +49,8 @@ import { WorkOrderDetails, WorkOrder } from './work-orders/work-orders.model';
 import { WorkOrderStateService } from './work-orders/work-order-state.service';
 import { InspectionsStateService } from './inspections-forms/inspections-forms-state.service';
 import { Inspections, Inspection, InspectionsData } from './inspections-forms/inspections-forms.model';
+import { AttachmentsList, AttachmentsListData } from './attachments/attachments.model';
+import { AttachmentStateService } from './attachments/attachments-state.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -81,7 +83,8 @@ export class HousingService {
     private _checkInOutStateService: CheckInOutStateService,
     private _waitingListStateService: WaitingListStateService,
     private _workOrderStateService: WorkOrderStateService,
-    private _inspectionsStateService: InspectionsStateService
+    private _inspectionsStateService: InspectionsStateService,
+    private _attachmentStateService: AttachmentStateService
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();
   }
@@ -172,11 +175,20 @@ export class HousingService {
     );
   }
 
+  getAttachmentsListDetails(termKey?: number) {
+    const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-attachment?termKey=${termKey}`;
+    return this._housingProxyService.get<AttachmentsListData>(apiUrl).pipe(
+      map((response: any ) => new AttachmentsListData(response)),
+      tap((response: AttachmentsListData) => this._setAttachmenstList(response.data)),
+      catchError(() => this._handleAttachmentListSelectedError())
+      );
+  }
+
   getInspectionDetails(termId: number, residentInspectionKey?: number, contractElementKey?: number, checkIn?: boolean) {
     const apiUrl: string = residentInspectionKey
       ? `${
           this._baseUrl
-        }/roomselectproxy/v.1.0/room-inspections-proxy/?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn +
+        }/roomselectproxy/v.1.0/room-inspections-proxy?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn +
           ''}`
       : `${
           this._baseUrl
@@ -332,6 +344,13 @@ export class HousingService {
     return of(new Inspections(null));
   }
 
+  _handleAttachmentListSelectedError(): Observable<AttachmentsList> {
+    const attachmentsList: AttachmentsList[] = [];
+    this._setAttachmenstList(attachmentsList);
+
+    return of(new AttachmentsList(null));
+  }
+
   _handleGetRequestedRoommatesError(): Observable<RequestedRoommateResponse> {
     const roommates: RequestedRoommate[] = [];
     this._setRequestedRoommateState(roommates);
@@ -368,6 +387,10 @@ export class HousingService {
 
   _setInspectionsList(value: Inspections[]): void {
     this._inspectionsStateService.setInspectionList(value);
+  }
+
+  _setAttachmenstList(value: AttachmentsList[]):void{
+    this._attachmentStateService.setAttachmentList(value)
   }
 
   _setInspection(value: Inspection): void {
