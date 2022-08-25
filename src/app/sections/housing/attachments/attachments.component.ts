@@ -18,7 +18,7 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
 
   constructor(
     public _attachmentStateService: AttachmentStateService,
-    private _termService: TermsService
+    public _termService: TermsService
   ) { }
 
   ngOnInit() {
