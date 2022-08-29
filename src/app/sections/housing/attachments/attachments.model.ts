@@ -33,17 +33,13 @@ export class ImageData implements ImageDataOptions {
 
 export interface AttachmentsDetailOptions {
   attachmentTypeKey:number;
-  attachmentTypeName: string;
-  fileName: string;
-  attachmentFile: string;
+  attachmentUrl: string;
   notes: string;
   termKey: number;
 }
 export class AttachmentsDetail implements AttachmentsDetailOptions {
   attachmentTypeKey: number;
-  attachmentTypeName: string;
-  fileName: string;
-  attachmentFile: string;
+  attachmentUrl: string;
   notes: string;
   termKey: number;
   constructor(options: AttachmentsDetailOptions) {
@@ -51,9 +47,7 @@ export class AttachmentsDetail implements AttachmentsDetailOptions {
       options = {} as AttachmentsDetailOptions;
     }
     this.attachmentTypeKey = Number(options.attachmentTypeKey);
-    this.attachmentTypeName = String(options.attachmentTypeName);
-    this.fileName = String(options.fileName);
-    this.attachmentFile = String(options.attachmentFile);
+    this.attachmentUrl = String(options.attachmentUrl);
     this.notes = String(options.notes);
     this.termKey = Number(options.termKey);
   }

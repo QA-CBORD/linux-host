@@ -31,18 +31,28 @@ export class AttachmentsService {
   }
 
 
-  sendAttachmentImage(dataAttachmentsDetail: FormData) {
+  sendAttachmentImage(dataAttachmentsDetail: FormData,attachmentUrl: string) {
+    return this._housingProxyService
+      .post<AttachmentsDetail>(attachmentUrl, dataAttachmentsDetail);
+  }
+
+  sendAttachmentData(dataAttachmentsDetail: AttachmentsDetail) {
     return this._housingProxyService
       .post<AttachmentsDetail>(this.AttachmentApiUrl, dataAttachmentsDetail);
   }
 
   getAttachmentFile(attachmentKey?: number) {
-    const apiUrl = `${this.AttachmentApiUrl}/${attachmentKey}/file/internal`
+    const apiUrl = `${this.AttachmentApiUrl}/${attachmentKey}/file/internal`;
+    return this._housingProxyService.get<string>(apiUrl).pipe(map(res => res));
+  }
+
+  getUrlAttachmentFile() {
+    const apiUrl = `${this.AttachmentApiUrl}/token`;
     return this._housingProxyService.get<string>(apiUrl).pipe(map(res => res));
   }
 
   deleteAttachmentFile(attachmentKey?: number) {
-    const apiUrl = `${this.AttachmentApiUrl}`
+    const apiUrl = `${this.AttachmentApiUrl}`;
     return this._housingProxyService.delete(apiUrl,attachmentKey).pipe(map(res => res));
   }
 }

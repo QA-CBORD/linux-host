@@ -66,9 +66,10 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   file?: ChooserResult;
   isFile: boolean;
   public fileSizeInMB: string;
-  attachmentKey? : number;
-  public attachmentSelected:AttachmentsList;
-  public fileBase64 : string;
+  attachmentKey?: number;
+  public attachmentSelected: AttachmentsList;
+  public fileBase64: string;
+  attachmentUrl: string;
   constructor(
     private _platform: Platform,
     private _loadingService: LoadingService,
@@ -93,15 +94,16 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
+    this.getAttachmentUrl();
     this.attachmentKey = parseInt(this._route.snapshot.paramMap.get('attachmentKey'), 10);
-    if(!this.attachmentKey){
-      this._initTermsSubscription()
-      this.getAttachmentType()
-    }else {
+    if (!this.attachmentKey) {
+      this._initTermsSubscription();
+      this.getAttachmentType();
+    } else {
       this.attachmentSelected = this._attachmentStateService.findAttachment(this.attachmentKey);
       this._attachmentService.getAttachmentFile(this.attachmentSelected.attachmentKey).subscribe(res => this.fileBase64 = res)
     }
-    
+
   }
 
   ngOnDestroy(): void {
@@ -126,34 +128,44 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     }));
   }
 
+  getAttachmentUrl() {
+    this._loadingService.showSpinner();
+    console.log('url respeusta')
+    this._attachmentService.getUrlAttachmentFile().subscribe((res) => {
+      console.log('url respeusta', res)
+      this._loadingService.closeSpinner();
+      this.attachmentUrl = res;
+    });
+  }
+
   async backClicked() {
     await this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard]);
   }
 
   public async submitAttachmentForm() {
 
-    const form: AttachmentsDetail = {
-      attachmentFile: this.file$.value.dataURI.replace(BASE64, ''),
+    const attachmentDetailsData: AttachmentsDetail = {
+      attachmentUrl: this.file$.value.dataURI.replace(BASE64, ''),
       attachmentTypeKey: this.selectedAssetKey,
-      attachmentTypeName: this.file$.value.mediaType,
       notes: this.notes,
-      fileName: this.file$.value.name,
       termKey: this.selectedTermKey
     }
 
     const formData = new FormData();
-    formData.append('attachmentFile',form.attachmentFile)
-    formData.append('attachmentTypeKey',form.attachmentTypeKey.toString())
-    formData.append('attachmentTypeName',form.attachmentTypeName)
-    formData.append('notes',form.notes)
-    formData.append('fileName',form.fileName)
-    formData.append('termKey',form.termKey.toString())
+    formData.append('attachmentFile', this.file$.value.dataURI)
+    formData.append('attachmentTypeKey', attachmentDetailsData.attachmentTypeKey.toString())
+    formData.append('attachmentTypeName', this.file$.value.mediaType)
+    formData.append('notes', attachmentDetailsData.notes)
+    formData.append('fileName', this.file$.value.name)
+    formData.append('termKey', attachmentDetailsData.termKey.toString())
 
-    this._attachmentService.sendAttachmentImage(formData).subscribe(res => {
-      if(res){
-        this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
-        this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
-      }
+    this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl)
+      .pipe( 
+        tap(() => this._attachmentService.sendAttachmentData(attachmentDetailsData))).subscribe(res => {
+        if (res) {
+          this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
+          this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
+        }
     })
   }
 
@@ -168,11 +180,11 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
       })
   }
 
-  getSizeFile(fileDataInt8){
+  getSizeFile(fileDataInt8) {
     this.fileSizeInMB = (fileDataInt8.length / 1_048_576).toFixed(2);
   }
 
-  async deleteAttachment(){
+  async deleteAttachment() {
     const alert = await this._alertController.create({
       header: 'Delete Attachment',
       message: `Deleting this attachment will remove the Attachment Note and attached file.`,
