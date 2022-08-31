@@ -226,19 +226,18 @@ export class VaultIdentityService {
             this.onVaultUnlockSuccess(pin);
             resolve({ pin, biometricUsed: true });
         } catch (error) {
-            this.retryPinUnlock()
+            this.retryPinUnlock(error)
                 .then((session) => resolve(session))
                 .catch((e) => reject(e))
         }
     }
 
-
-
-    async retryPinUnlock(): Promise<VaultSession> {
+    async retryPinUnlock(e): Promise<VaultSession> {
+        const biometricAllowed = !this.isBiometricPermissionDenied(e);
         const { pin, status } = await this.pinAuthenticator.tryUnlock0();
         if (status == PinCloseStatus.LOGIN_SUCCESS) {
             await this.logout();
-            this.login({ pin, biometricUsed: true });
+            this.login({ pin, biometricUsed: biometricAllowed });
             return { pin, biometricUsed: false };
         } else {
             throw {

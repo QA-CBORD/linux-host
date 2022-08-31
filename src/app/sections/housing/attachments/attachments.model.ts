@@ -111,7 +111,7 @@ export class AttachmentsList implements AttachmentsListOptions {
     this.attachmentType = String(options.attachmentType);
     this.fileName = String(options.fileName);
     this.attachmentDate = String(options.attachmentDate);
-    this.comments = String(options.comments);
+    this.comments = options?.comments || '';
   }
 
 }
