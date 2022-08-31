@@ -14,10 +14,10 @@ const InspectionStatus = {
 };
 
 const InspectionColorHex = {
-  0: "#D47B07", // "NEW"
-  1: "#D47B07", // "IN PROGRESS",
-  2: "#41A35E", // "SUBMITTED",
-  3: "#EB6669" // "INCOMPLETE"
+  0: "#D47B07", 
+  1: "#D47B07", 
+  2: "#0B8640", 
+  3: "#EB6669" 
 };
 
 const InspectionColorClass = {
