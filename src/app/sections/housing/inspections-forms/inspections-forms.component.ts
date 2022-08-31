@@ -13,6 +13,20 @@ const InspectionStatus = {
   3: "INCOMPLETE"
 };
 
+const InspectionColorHex = {
+  0: "#D47B07", // "NEW"
+  1: "#D47B07", // "IN PROGRESS",
+  2: "#41A35E", // "SUBMITTED",
+  3: "#EB6669" // "INCOMPLETE"
+};
+
+const InspectionColorClass = {
+  0: "new", 
+  1: "in-progress", 
+  2: "submitted", 
+  3: "incomplete" 
+};
+
 @Component({
   selector: 'st-inspections-forms',
   templateUrl: './inspections-forms.component.html',
@@ -32,6 +46,14 @@ export class InspectionsComponent implements OnInit {
 
   getInspectionStatus(value: Inspections): string {
     return InspectionStatus[value.status];
+  }
+
+  getInspectionColor(value: Inspections): string {
+    return InspectionColorHex[value.status];
+  }
+
+  getInspectionLineColor(value: Inspections): string {
+    return InspectionColorClass[value.status];
   }
 
   getUrlPath(inspection: Inspections): string {

@@ -10,10 +10,10 @@
 
     <ng-container>
       <div #container *ngFor="let inspection of inspectionList">
-        <ion-item lines="none" class="inspections-list__item">
+        <ion-item lines="none" class="inspections-list__item" [ngClass]="getInspectionLineColor(inspection)">
           <ion-label class="inspections-list__wrap">
             <div class="inspections-list__info">
-              <h5 class="inspections-list__status" [ngClass]="">{{ getInspectionStatus(inspection) }}</h5>
+              <h5  class="inspections-list__status" [style.color]="getInspectionColor(inspection)">{{ getInspectionStatus(inspection) }}</h5>
               <div class="inspections-list__date">
                 {{ inspection.remainingItems }} Room{{ inspection.remainingItems == 1 ? '' : 's' }} Left
               </div>

@@ -27,9 +27,6 @@ ion-segment{
   }
 }
 
-
-
-
 .inspections-list__item {
   margin-bottom: 8px;
   --border-width: 1px;
@@ -61,19 +58,15 @@ ion-segment{
   
   .inspections-list__status {
     @include font-nunito-heavy(12px);
-  
-    color: $color-hot-curry;
     text-transform: uppercase;
   }
   
   .inspections-list__date {
     @include font-nunito-heavy(12px);
-  
     color: $color-dusty-gray;
   }
 
-  &::before {
-    background-color: $color-strong-blue;
+  &::after {
     border-radius: 0 0 2px 2px;
     width: 32px;
     height: 4px;
@@ -83,5 +76,21 @@ ion-segment{
     left: 16px;
     z-index: 1;
   }
-
 }
+
+.new:after {
+  background-color:#D47B07;
+}
+
+.in-progress:after {
+  background-color:#D47B07;
+}
+
+.submitted:after {
+  background-color:#41A35E;
+}
+
+.incomplete:after {
+  background-color:#EB6669;
+}
+
