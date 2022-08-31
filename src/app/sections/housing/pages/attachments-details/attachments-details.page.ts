@@ -17,9 +17,7 @@ import {
   Observable,
   Subscription,
 } from 'rxjs';
-import {
-  tap
-} from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
@@ -33,7 +31,6 @@ import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
-import { BASE64 } from '../../../../core/utils/regexp-patterns';
 import { Chooser, ChooserResult } from '@awesome-cordova-plugins/chooser/ngx';
 import { IdentityFacadeService } from '../../../../core/facades/identity/identity.facade.service';
 import { AttachmentStateService } from '@sections/housing/attachments/attachments-state.service';
@@ -70,6 +67,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   public attachmentSelected: AttachmentsList;
   public fileBase64: string;
   attachmentUrl: string;
+  public fileData: File;
   constructor(
     private _platform: Platform,
     private _loadingService: LoadingService,
@@ -130,9 +128,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
   getAttachmentUrl() {
     this._loadingService.showSpinner();
-    console.log('url respeusta')
     this._attachmentService.getUrlAttachmentFile().subscribe((res) => {
-      console.log('url respeusta', res)
       this._loadingService.closeSpinner();
       this.attachmentUrl = res;
     });
@@ -145,27 +141,21 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   public async submitAttachmentForm() {
 
     const attachmentDetailsData: AttachmentsDetail = {
-      attachmentUrl: this.file$.value.dataURI.replace(BASE64, ''),
-      attachmentTypeKey: this.selectedAssetKey,
+      attachmentUrl: this.attachmentUrl,
+      attachmentTypeKey: this._attachmentStateService.attachmentTypes.value.find(type => type.name == this.selectedAssetName).typeKey,
       notes: this.notes,
       termKey: this.selectedTermKey
     }
 
     const formData = new FormData();
-    formData.append('attachmentFile', this.file$.value.dataURI)
-    formData.append('attachmentTypeKey', attachmentDetailsData.attachmentTypeKey.toString())
-    formData.append('attachmentTypeName', this.file$.value.mediaType)
-    formData.append('notes', attachmentDetailsData.notes)
-    formData.append('fileName', this.file$.value.name)
-    formData.append('termKey', attachmentDetailsData.termKey.toString())
-
-    this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl)
-      .pipe( 
-        tap(() => this._attachmentService.sendAttachmentData(attachmentDetailsData))).subscribe(res => {
-        if (res) {
-          this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
-          this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
-        }
+    formData.append('file', this.fileData, this.fileData.name);
+    
+    this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl).subscribe();
+    this._attachmentService.sendAttachmentData(attachmentDetailsData).subscribe(res => {
+      if (res) {
+        this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
+        this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
+      }
     })
   }
 
@@ -173,10 +163,9 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     this.chooser.getFile()
       .then(file => {
         this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
-        this.file$.next(null)
         this.file$.next(file);
-        this.isFile = !!file.mediaType.indexOf('image');
-        this.getSizeFile(file.data);
+        this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
+        this.getSizeFile(file.data.byteLength);
       })
   }
 

@@ -33,7 +33,7 @@ export class AttachmentsService {
 
   sendAttachmentImage(dataAttachmentsDetail: FormData,attachmentUrl: string) {
     return this._housingProxyService
-      .post<AttachmentsDetail>(attachmentUrl, dataAttachmentsDetail);
+      .postAttachment<AttachmentsDetail>(attachmentUrl, dataAttachmentsDetail);
   }
 
   sendAttachmentData(dataAttachmentsDetail: AttachmentsDetail) {
