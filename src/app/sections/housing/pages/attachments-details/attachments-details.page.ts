@@ -38,7 +38,7 @@ import { HousingService } from '@sections/housing/housing.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
-  selector: 'st-work-order-details',
+  selector: 'attachments-details',
   templateUrl: './attachments-details.page.html',
   styleUrls: ['./attachments-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -23,7 +23,7 @@
 
 
     <ng-container class="container__image">
-      <h3 class="form__secondary-header">Add a .PDF, .DOC, .DOCX, OR JPEG file</h3>
+      <h3 class="form__secondary-header">Add a .PDF, .DOC, .DOCX, OR .JPEG file</h3>
       <div class="container__image" >
         <ng-container *ngIf="(file$ | async) as file; else defaultImage" witdh="95%" heigth=95%>
           <ion-img *ngIf="!isFile" class="image" [src]="fileBase64?fileBase64:file.dataURI"></ion-img>

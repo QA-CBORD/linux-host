@@ -52,7 +52,6 @@ export class AttachmentsService {
   }
 
   deleteAttachmentFile(attachmentKey?: number) {
-    const apiUrl = `${this.AttachmentApiUrl}`;
-    return this._housingProxyService.delete(apiUrl,attachmentKey).pipe(map(res => res));
+    return this._housingProxyService.delete(this.AttachmentApiUrl,attachmentKey).pipe(map(res => res));
   }
 }
