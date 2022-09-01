@@ -12,9 +12,7 @@ export class AttachmentStateService  {
   });
   private readonly _defaultStateDetails = new AttachmentsDetail ({
     attachmentTypeKey: 0,
-    attachmentTypeName: null,
-    fileName: null,
-    attachmentFile: null,
+    attachmentUrl: null,
     notes: null,
     termKey: 0
     });

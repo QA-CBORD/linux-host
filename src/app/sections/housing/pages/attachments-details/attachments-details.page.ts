@@ -17,9 +17,7 @@ import {
   Observable,
   Subscription,
 } from 'rxjs';
-import {
-  tap
-} from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
@@ -33,7 +31,6 @@ import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
-import { BASE64 } from '../../../../core/utils/regexp-patterns';
 import { Chooser, ChooserResult } from '@awesome-cordova-plugins/chooser/ngx';
 import { IdentityFacadeService } from '../../../../core/facades/identity/identity.facade.service';
 import { AttachmentStateService } from '@sections/housing/attachments/attachments-state.service';
@@ -41,7 +38,7 @@ import { HousingService } from '@sections/housing/housing.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
-  selector: 'st-work-order-details',
+  selector: 'attachments-details',
   templateUrl: './attachments-details.page.html',
   styleUrls: ['./attachments-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,9 +63,11 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   file?: ChooserResult;
   isFile: boolean;
   public fileSizeInMB: string;
-  attachmentKey? : number;
-  public attachmentSelected:AttachmentsList;
-  public fileBase64 : string;
+  attachmentKey?: number;
+  public attachmentSelected: AttachmentsList;
+  public fileBase64: string;
+  attachmentUrl: string;
+  public fileData: File;
   constructor(
     private _platform: Platform,
     private _loadingService: LoadingService,
@@ -93,15 +92,16 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
+    this.getAttachmentUrl();
     this.attachmentKey = parseInt(this._route.snapshot.paramMap.get('attachmentKey'), 10);
-    if(!this.attachmentKey){
-      this._initTermsSubscription()
-      this.getAttachmentType()
-    }else {
+    if (!this.attachmentKey) {
+      this._initTermsSubscription();
+      this.getAttachmentType();
+    } else {
       this.attachmentSelected = this._attachmentStateService.findAttachment(this.attachmentKey);
       this._attachmentService.getAttachmentFile(this.attachmentSelected.attachmentKey).subscribe(res => this.fileBase64 = res)
     }
-    
+
   }
 
   ngOnDestroy(): void {
@@ -126,31 +126,33 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     }));
   }
 
+  getAttachmentUrl() {
+    this._loadingService.showSpinner();
+    this._attachmentService.getUrlAttachmentFile().subscribe((res) => {
+      this._loadingService.closeSpinner();
+      this.attachmentUrl = res;
+    });
+  }
+
   async backClicked() {
     await this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard]);
   }
 
   public async submitAttachmentForm() {
 
-    const form: AttachmentsDetail = {
-      attachmentFile: this.file$.value.dataURI.replace(BASE64, ''),
-      attachmentTypeKey: this.selectedAssetKey,
-      attachmentTypeName: this.file$.value.mediaType,
+    const attachmentDetailsData: AttachmentsDetail = {
+      attachmentUrl: this.attachmentUrl,
+      attachmentTypeKey: this._attachmentStateService.attachmentTypes.value.find(type => type.name == this.selectedAssetName).typeKey,
       notes: this.notes,
-      fileName: this.file$.value.name,
       termKey: this.selectedTermKey
     }
 
     const formData = new FormData();
-    formData.append('attachmentFile',form.attachmentFile)
-    formData.append('attachmentTypeKey',form.attachmentTypeKey.toString())
-    formData.append('attachmentTypeName',form.attachmentTypeName)
-    formData.append('notes',form.notes)
-    formData.append('fileName',form.fileName)
-    formData.append('termKey',form.termKey.toString())
-
-    this._attachmentService.sendAttachmentImage(formData).subscribe(res => {
-      if(res){
+    formData.append('file', this.fileData, this.fileData.name);
+    
+    this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl).subscribe();
+    this._attachmentService.sendAttachmentData(attachmentDetailsData).subscribe(res => {
+      if (res) {
         this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
         this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
       }
@@ -161,18 +163,17 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     this.chooser.getFile()
       .then(file => {
         this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
-        this.file$.next(null)
         this.file$.next(file);
-        this.isFile = !!file.mediaType.indexOf('image');
-        this.getSizeFile(file.data);
+        this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
+        this.getSizeFile(file.data.byteLength);
       })
   }
 
-  getSizeFile(fileDataInt8){
+  getSizeFile(fileDataInt8) {
     this.fileSizeInMB = (fileDataInt8.length / 1_048_576).toFixed(2);
   }
 
-  async deleteAttachment(){
+  async deleteAttachment() {
     const alert = await this._alertController.create({
       header: 'Delete Attachment',
       message: `Deleting this attachment will remove the Attachment Note and attached file.`,
