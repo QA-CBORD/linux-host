@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { CameraResultType, CameraSource } from '@capacitor/camera';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { Platform } from '@ionic/angular';
 
@@ -16,7 +17,6 @@ describe('CameraService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Platform, useValue: platformStub },
         { provide: IdentityFacadeService, useValue: identityFacadeServiceStub }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -26,5 +26,23 @@ describe('CameraService', () => {
 
   it('should create the service', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should dismiss the camera service', () => {
+    const spy = jest.spyOn(service as any, 'requestCameraPermission');
+    service.getPhoto(null);
+    expect(spy).toBeCalledTimes(0);
+  });
+
+  it('should dismiss the camera service', () => {
+    const spy = jest.spyOn(service as any, 'requestCameraPermission');
+    service.getPhoto({ resultType: CameraResultType.Uri, source: CameraSource.Photos });
+    expect(spy).toBeCalledTimes(1);
+  });
+
+  it('should dismiss the camera service', () => {
+    const spy = jest.spyOn(service as any, 'requestCameraPermission');
+    service.getPhoto({ resultType: CameraResultType.Uri, source: CameraSource.Camera });
+    expect(spy).toBeCalledTimes(1);
   });
 });
