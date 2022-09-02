@@ -34,13 +34,13 @@ describe('CameraService', () => {
     expect(spy).toBeCalledTimes(0);
   });
 
-  it('should dismiss the camera service', () => {
+  it('should request the camera permissions on photo', () => {
     const spy = jest.spyOn(service as any, 'requestCameraPermission');
     service.getPhoto({ resultType: CameraResultType.Uri, source: CameraSource.Photos });
     expect(spy).toBeCalledTimes(1);
   });
 
-  it('should dismiss the camera service', () => {
+  it('should dismiss the camera permissions on camera', () => {
     const spy = jest.spyOn(service as any, 'requestCameraPermission');
     service.getPhoto({ resultType: CameraResultType.Uri, source: CameraSource.Camera });
     expect(spy).toBeCalledTimes(1);
