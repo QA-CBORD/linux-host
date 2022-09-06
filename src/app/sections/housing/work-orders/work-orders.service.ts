@@ -12,13 +12,18 @@ import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
 import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
-import { WorkOrder, WorkOrderDetails, WorkOrdersDetailsList, ImageData, WorkOrdersFields } from './work-orders.model';
+import { WorkOrder, WorkOrderDetails, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
 import { DomSanitizer } from '@angular/platform-browser';
+
+const NOTIFY = {
+  YES: 'Yes',
+  NO: 'No'
+};
 
 const IMAGE_DIR = 'stored-images';
 @Injectable({
@@ -159,7 +164,7 @@ export class WorkOrdersService {
           value = workOrderDetails.workOrderDetails.facilityKey;
           break;
         case WorkOrdersFields.NOTIFY_BY_EMAIL:
-          value = workOrderDetails.workOrderDetails.notify? 'Yes' : 'No';
+          value = workOrderDetails.workOrderDetails.notify? NOTIFY.YES : NOTIFY.NO;
           break;
         case WorkOrdersFields.TYPE:
           value = workOrderDetails.workOrderDetails.typeKey;
@@ -185,7 +190,7 @@ export class WorkOrdersService {
     formValue: FormControl): Observable<boolean> {
     const parsedJson: string[] = parseJsonToArray(form.formDefinition.applicationFormJson);
     const workOrdersControls: string[] = parsedJson.filter((control: any) => control && (<QuestionFormControl>control).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
-    const { body, image }: { body: WorkOrdersDetailsList; image: ImageData; } = this.buildWorkOrderList(workOrdersControls, formValue);
+    const { body, image } = this.buildWorkOrderList(workOrdersControls, formValue);
 
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(() => of(false)),
@@ -297,11 +302,11 @@ export class WorkOrdersService {
   private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
     let image: ImageData;
     let location: number;
-    const controls: { [key: string]: any } = {
+    const controls: { [key: string]: string } = {
       [WorkOrdersFields.PHONE_NUMBER]: "",
       [WorkOrdersFields.DESCRIPTION]: "",
       [WorkOrdersFields.EMAIL]: "",
-      [WorkOrdersFields.NOTIFY_BY_EMAIL]: false,
+      [WorkOrdersFields.NOTIFY_BY_EMAIL]: "",
       [WorkOrdersFields.TYPE]: null,
     };
 
@@ -313,13 +318,12 @@ export class WorkOrdersService {
     
     this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe( res => res && res.studentSubmitted ? image = res: image = null);
     this._workOrderStateService.getSelectedFacility$().pipe(take(1)).subscribe(res => res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
-    
     return { body: {
       notificationPhone:  controls[WorkOrdersFields.PHONE_NUMBER] ? controls[WorkOrdersFields.PHONE_NUMBER] : '',
       notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL]: '',
       typeKey: controls[WorkOrdersFields.TYPE],
       description: controls[WorkOrdersFields.DESCRIPTION],
-      notify: !!controls[WorkOrdersFields.NOTIFY_BY_EMAIL],
+      notify: controls[WorkOrdersFields.NOTIFY_BY_EMAIL] === NOTIFY.YES,
       facilityKey: location,
       key: null,
       status: '',
