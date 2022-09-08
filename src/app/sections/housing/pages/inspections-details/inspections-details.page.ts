@@ -11,7 +11,6 @@ import { ActivatedRoute } from '@angular/router';
 import {
   AlertController,
   Platform,
-  ToastController
 } from '@ionic/angular';
 
 import {
@@ -29,14 +28,10 @@ import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assi
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
-import { TermsService } from '@sections/housing/terms/terms.service';
-import { isMobile } from '@core/utils/platform-helper';
 import { ToastService } from '@core/service/toast/toast.service';
-import { FormGroup } from '@angular/forms';
-import { WorkOrderDetails } from '../../work-orders/work-orders.model';
 import { Inspection } from '../../inspections-forms/inspections-forms.model';
 import { InspectionService } from '../../inspections-forms/inspections-forms.service';
-import { InspectionsStateService } from '../../inspections-forms/inspections-forms-state.service';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 @Component({
   selector: 'st-inspections-details',
   templateUrl: './inspections-details.page.html',
@@ -44,7 +39,6 @@ import { InspectionsStateService } from '../../inspections-forms/inspections-for
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InspectionsDetailsPage implements OnInit, OnDestroy {
-  @ViewChild('content') private content: any;
   @ViewChild(StepperComponent) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
@@ -60,8 +54,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   checkIn: boolean;
   selectedAssetKey: number;
   selectedAssetName: string;
+  isSubmitted: boolean;
   termKey = 0;
-  isSubmitted = false;
   canSubmit = true;
   section = '';
   conditions: any[] = [];
@@ -70,17 +64,15 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _platform: Platform,
     private _alertController: AlertController,
     private _route: ActivatedRoute,
-    private _inspectionStateService: InspectionsStateService,
-    private _toasController: ToastController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _toastService: ToastService,
-    private _termsService: TermsService,
-    private _inspectionService: InspectionService
-  ) { }
+    private _inspectionService: InspectionService,
+    private  nativeProvider: NativeProvider,
+  ) {}
 
   ngOnInit(): void {
-    if (isMobile(this._platform)) {
+    if (this.nativeProvider.isMobile()) {
       this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
@@ -88,14 +80,14 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.residentInspectionKey = parseInt(this._route.snapshot.paramMap.get('residentInspectionKey'), 10);
-    this.contractElementKey = parseInt(this._route.snapshot.paramMap.get('contractElementKey'), 10);
-    this.checkIn = this._route.snapshot.paramMap.get('checkIn')=== 'true'? true: false;
-    this.termKey = parseInt(this._route.snapshot.paramMap.get('termKey'), 10);
+    this.residentInspectionKey = parseInt(this._route.snapshot.params.residentInspectionKey);
+    this.contractElementKey = parseInt(this._route.snapshot.params.contractElementKey);
+    this.checkIn = this._route.snapshot.params.checkIn === 'true';
+    this.termKey = parseInt(this._route.snapshot.params.termKey);
     this._initInspectionDetailsObservable();
   }
 
-  private getPagesInspection(){
+  private getInspectionPages() {
     const result = this._inspectionService.getFormDefinitionInspection().subscribe(res => {
       this.conditions = res.values.filter(x => x.selected)
     })
@@ -107,12 +99,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async submit(workOrderDetails: WorkOrderDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
+  async submit(): Promise<void> {
     this._touch();
-
-    if (!this.isSubmitted && form.invalid) {
-      return;
-    }
   }
 
   private _touch(): void {
@@ -122,75 +110,36 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   private _initInspectionDetailsObservable(): void {
     this._loadingService.showSpinner();
 
-    this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey,this.residentInspectionKey,this.contractElementKey,this.checkIn)
+    this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey, this.residentInspectionKey, this.contractElementKey, this.checkIn)
       .pipe(
         tap((inspectionDetails: Inspection) => {
-          this.getPagesInspection();
+          this.getInspectionPages();
           this.section = inspectionDetails.sections[0].name;
-          this.isSubmitted = false; 
+          this.isSubmitted = inspectionDetails.isSubmitted;
           this._loadingService.closeSpinner();
           return inspectionDetails;
         }),
-        catchError((error: any) => {
+        catchError((error: Error) => {
           this._loadingService.closeSpinner();
           return throwError(error);
         })
       );
   }
 
-  async save(inspectionData:Inspection): Promise<void> {
+  async save(inspectionData: Inspection): Promise<void> {
     inspectionData.residentInspectionKey = inspectionData.residentInspectionKey || null;
-    const alert = await this._alertController.create({
-      header: 'Confirm',
-      message: `Are you sure you want to save this Inspection?`,
-      buttons: [
-        {
-          text: 'NO',
-          role: 'cancel',
-          cssClass: 'button__option_cancel',
-          handler: () => {
-            this.activeAlerts = [];
-            alert.dismiss();
-          },
-        },
-        {
-          text: 'YES',
-          role: 'confirm',
-          cssClass: 'button__option_confirm',
-          handler: () => {
-            this._loadingService.showSpinner();
-            this.activeAlerts = [];
-
-            const createInspectionSubscription =
-              this._inspectionService.submitInspection(inspectionData)
-                .subscribe(status => {
-                  if (status) {
-                    alert.dismiss().then(() => this._housingService.handleSuccess());
-                  } else {
-                    alert.dismiss().then(() => {
-                      this._loadingService.closeSpinner();
-                      console.log('Unable to create Inspection');
-                      this._toastService.showToast({
-                        message: 'The form could not be processed at this time. Try again later',
-                      });
-                    });
-                  }
-                });
-
-            this.subscriptions.add(createInspectionSubscription);
-          },
-        },
-      ],
-    });
-    this.activeAlerts.push(alert);
-    await alert.present();
+    await this.createInspectionAlert(inspectionData, `Are you sure you want to save this Inspection?`);
   }
 
-  async submitInspection(inspectionData:Inspection){
+  async submitInspection(inspectionData: Inspection) {
     inspectionData.isSubmitted = true;
+    await this.createInspectionAlert(inspectionData, `Are you sure you want to submit this Inspection?`);
+  }
+
+  private async createInspectionAlert(inspectionData: Inspection, message: string) {
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: `Are you sure you want to submit this Inspection?`,
+      message: message,
       buttons: [
         {
           text: 'NO',
@@ -208,39 +157,39 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           handler: () => {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
-
-            const createInspectionSubscription =
-              this._inspectionService.submitInspection(inspectionData)
-                .subscribe(status => {
-                  if (status) {
-                    alert.dismiss().then(() => this._housingService.handleSuccess());
-                  } else {
-                    alert.dismiss().then(() => {
-                      this._loadingService.closeSpinner();
-                      console.log('Unable to create Inspection');
-                      this._toastService.showToast({
-                        message: 'The form could not be processed at this time. Try again later',
-                      });
-                    });
-                  }
-                });
-
-            this.subscriptions.add(createInspectionSubscription);
+            this.createInspectionSubscription(inspectionData, alert);
           },
         },
       ],
     });
     this.activeAlerts.push(alert);
     await alert.present();
-
   }
 
-  countItemsLeft(inspectionData:Inspection){
-    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey===0).length > 0).length
+  private createInspectionSubscription(inspectionData: Inspection, alert: HTMLIonAlertElement) {
+    const createInspectionSubscription = this._inspectionService.submitInspection(inspectionData)
+      .subscribe(status => {
+          alert.dismiss().then(() => {
+            if (status) {
+              this._housingService.handleSuccess();
+            } else {
+              this._loadingService.closeSpinner();
+              this._toastService.showToast({
+                message: 'The form could not be processed at this time. Try again later',
+              });
+            }
+          });
+      });
+
+    this.subscriptions.add(createInspectionSubscription);
   }
 
-  getConditionStaff(conditionStaff: number):string{
+  countItemsLeft(inspectionData: Inspection) {
+    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey === 0).length > 0).length
+  }
+
+  getConditionStaff(conditionStaff: number): string {
     const conditionStaffValue = this.conditions.filter(x => x.value === conditionStaff.toString())[0]?.label
-    return conditionStaffValue? conditionStaffValue : 'none';
+    return conditionStaffValue ? conditionStaffValue : 'none';
   }
 }
