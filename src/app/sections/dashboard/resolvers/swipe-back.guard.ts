@@ -6,7 +6,7 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { DashboardPage } from '@sections/dashboard/dashboard.page';
+import { DashboardPage } from '@sections/dashboard/dashboard.component';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 
 @Injectable({ providedIn: 'root' })
