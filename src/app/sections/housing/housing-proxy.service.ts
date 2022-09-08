@@ -70,6 +70,12 @@ export class HousingProxyService {
     );
   }
 
+  postAttachment<T>(apiUrl: string, body: any): Observable<T> {
+    return this.request<T>(apiUrl, (_headers: HttpHeaders, apiUrl: string) =>
+      this._http.post<T>(apiUrl, body),
+    );
+  }
+
   postImage<T>(apiUrl: string, body: any): Observable<T> {
     return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
       this._http.post<T>(apiUrl, body, {

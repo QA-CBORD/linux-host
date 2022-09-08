@@ -9,7 +9,7 @@
   <h2 class="work-order-details__title">Upload a new attachment.</h2>
 
   <div class="work-order-details__card">
-    <ion-select interface="popover" [(ngModel)]="selectedAssetKey"  [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'" [disabled]="attachmentSelected" >
+    <ion-select interface="popover" [(ngModel)]="selectedAssetName"  [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'" [disabled]="attachmentSelected" >
       <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
         {{ option.name }}
       </ion-select-option>
@@ -23,7 +23,7 @@
 
 
     <ng-container class="container__image">
-      <h3 class="form__secondary-header">Add a .PDF, .DOC, .DOCX, OR JPEG file</h3>
+      <h3 class="form__secondary-header">Add a .PDF, .DOC, .DOCX, OR .JPEG file</h3>
       <div class="container__image" >
         <ng-container *ngIf="(file$ | async) as file; else defaultImage" witdh="95%" heigth=95%>
           <ion-img *ngIf="!isFile" class="image" [src]="fileBase64?fileBase64:file.dataURI"></ion-img>

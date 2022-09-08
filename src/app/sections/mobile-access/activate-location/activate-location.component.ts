@@ -75,7 +75,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   get starAriaLabel(): Observable<string> {
-    return this.location$.pipe(map(({ isFavourite }: MMobileLocationInfo) => isFavourite ? `Favorite checked` : 'Favorite unchecked'));
+    return this.location$.pipe(map(({ isFavourite }: MMobileLocationInfo) => isFavourite ? `Favourite checked` : 'Favourite unchecked'));
   }
 
   ngOnInit() {

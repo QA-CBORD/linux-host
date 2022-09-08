@@ -101,7 +101,7 @@ export const buildConversationsFromMessages = (
     }
   }
 
-  if (noPreviousMessages(messages)) {
+  if (noPreviousMessages(messages) && !!groups[0]) {
     const conversation = createConversation(
       institution_id,
       groups[0].name,
