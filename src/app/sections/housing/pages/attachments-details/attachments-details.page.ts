@@ -37,6 +37,7 @@ import { AttachmentStateService } from '@sections/housing/attachments/attachment
 import { HousingService } from '@sections/housing/housing.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
+const BYTES_TO_MB = 1048576;
 @Component({
   selector: 'attachments-details',
   templateUrl: './attachments-details.page.html',
@@ -154,23 +155,22 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     this._attachmentService.sendAttachmentData(attachmentDetailsData).subscribe(res => {
       if (res) {
         this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
-        this.identityFacadeService.updateVaultTimeout({ extendTimeout: false });
       }
     })
   }
 
   selectFile() {
+    this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
     this.chooser.getFile()
       .then(file => {
-        this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
         this.file$.next(file);
         this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
         this.getSizeFile(file.data.byteLength);
-      })
+      }).finally(()=> this.identityFacadeService.updateVaultTimeout({ extendTimeout: false }))
   }
 
   getSizeFile(fileDataInt8) {
-    this.fileSizeInMB = (fileDataInt8.length / 1_048_576).toFixed(2);
+    this.fileSizeInMB = (fileDataInt8.length / BYTES_TO_MB).toFixed(2);
   }
 
   async deleteAttachment() {
