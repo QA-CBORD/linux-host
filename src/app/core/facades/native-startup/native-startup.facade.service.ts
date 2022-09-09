@@ -7,6 +7,8 @@ import { NativeStartupApiService } from '@core/service/native-startup-api/native
 import { buttons } from '@core/utils/buttons.config';
 import { Device } from '@capacitor/device';
 import { App } from '@capacitor/app';
+import { NativeStartupInfo } from '@core/model/native-startup/native-startup-info';
+import { StorageEntity } from '@core/classes/extendable-state-manager';
 
 @Injectable({
   providedIn: 'root',
@@ -38,6 +40,18 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     return this.blockNavStartup;
   }
 
+  isMessageOk(nativeStartupInfo: NativeStartupInfo): boolean {
+    return nativeStartupInfo.showMessage === this.STATUS;
+  }
+
+  isStatusOk(nativeStartupInfo: NativeStartupInfo): boolean {
+    return this.isMessageOk(nativeStartupInfo) && nativeStartupInfo.showOnce === this.STATUS;
+  }
+
+  digessIsOk(cachedDigest: StorageEntity<unknown>, nativeStartupInfo: NativeStartupInfo): boolean {
+    return !cachedDigest || nativeStartupInfo.messageDigest != cachedDigest.value;
+  }
+
   unblockNavigationStartup() {
     this.blockNavStartup = true;
   }
@@ -67,45 +81,43 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
             .pipe(map(response => response.response)),
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
-          map(([NativeStartupInfo, cachedDigest]) => {
-            this.blockNavStartup = NativeStartupInfo.action === 'block';
+          map(([nativeStartupInfo, cachedDigest]) => {
+            this.blockNavStartup = nativeStartupInfo.action === 'block';
             // the service call will return null if there is no Native Startup Message
-            if (NativeStartupInfo === null) {
+            if (nativeStartupInfo === null) {
               return null;
             }
 
-            if (NativeStartupInfo.minSupportedVersionFailure === this.STATUS) {
+            if (nativeStartupInfo.minSupportedVersionFailure === this.STATUS) {
               return this.displayMessageToUser(
-                NativeStartupInfo.minSupportedVersionFailure,
+                nativeStartupInfo.minSupportedVersionFailure,
                 this.blockNavStartup,
-                NativeStartupInfo.messageTitle,
-                NativeStartupInfo.message
+                nativeStartupInfo.messageTitle,
+                nativeStartupInfo.message
               );
             }
 
-            if (NativeStartupInfo.showMessage !== this.STATUS) {
+            if (!this.isMessageOk(nativeStartupInfo)) {
               return null;
             }
 
-            if (NativeStartupInfo.showMessage === this.STATUS && NativeStartupInfo.showOnce === this.STATUS) {
-              if (!cachedDigest || NativeStartupInfo.messageDigest != cachedDigest.value) {
-                this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest);
-                this.resetBlockPopover(); // Show message once
-                return this.displayMessageToUser(
-                  NativeStartupInfo.minSupportedVersionFailure,
-                  this.blockNavStartup,
-                  NativeStartupInfo.messageTitle,
-                  NativeStartupInfo.message
-                );
-              }
+            if (this.isStatusOk(nativeStartupInfo) && this.digessIsOk(cachedDigest, nativeStartupInfo)) {
+              this.storageStateService.updateStateEntity(this.digestKey, nativeStartupInfo.messageDigest);
+              this.resetBlockPopover(); // Show message once
+              return this.displayMessageToUser(
+                nativeStartupInfo.minSupportedVersionFailure,
+                this.blockNavStartup,
+                nativeStartupInfo.messageTitle,
+                nativeStartupInfo.message
+              );
             }
 
-            if (NativeStartupInfo.showMessage === this.STATUS) {
+            if (this.isMessageOk(nativeStartupInfo)) {
               return this.displayMessageToUser(
-                NativeStartupInfo.minSupportedVersionFailure,
+                nativeStartupInfo.minSupportedVersionFailure,
                 this.blockNavStartup,
-                NativeStartupInfo.messageTitle,
-                NativeStartupInfo.message
+                nativeStartupInfo.messageTitle,
+                nativeStartupInfo.message
               );
             }
 
