@@ -16,6 +16,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   private blockGlobalNavigation = false;
   private digestKey = 'get_nativeStartupMessageDigest';
   private blockNavStartup = false;
+  private STATUS = 1;
 
   constructor(
     private readonly nativeStartupApiService: NativeStartupApiService,
@@ -69,38 +70,45 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           map(([NativeStartupInfo, cachedDigest]) => {
             this.blockNavStartup = NativeStartupInfo.action === 'block';
             // the service call will return null if there is no Native Startup Message
-            if (NativeStartupInfo != null) {
-              if (NativeStartupInfo.minSupportedVersionFailure === 1) {
+            if (NativeStartupInfo === null) {
+              return null;
+            }
+
+            if (NativeStartupInfo.minSupportedVersionFailure === this.STATUS) {
+              return this.displayMessageToUser(
+                NativeStartupInfo.minSupportedVersionFailure,
+                this.blockNavStartup,
+                NativeStartupInfo.messageTitle,
+                NativeStartupInfo.message
+              );
+            }
+
+            if (NativeStartupInfo.showMessage !== this.STATUS) {
+              return null;
+            }
+
+            if (NativeStartupInfo.showMessage === this.STATUS && NativeStartupInfo.showOnce === this.STATUS) {
+              if (!cachedDigest || NativeStartupInfo.messageDigest != cachedDigest.value) {
+                this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest);
+                this.resetBlockPopover(); // Show message once
                 return this.displayMessageToUser(
                   NativeStartupInfo.minSupportedVersionFailure,
                   this.blockNavStartup,
                   NativeStartupInfo.messageTitle,
                   NativeStartupInfo.message
                 );
-              } else {
-                if (NativeStartupInfo.showMessage === 1) {
-                  if (NativeStartupInfo.showOnce === 1) {
-                    if (!cachedDigest || NativeStartupInfo.messageDigest != cachedDigest.value) {
-                      this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest);
-                      this.resetBlockPopover(); // Show message once
-                      return this.displayMessageToUser(
-                        NativeStartupInfo.minSupportedVersionFailure,
-                        this.blockNavStartup,
-                        NativeStartupInfo.messageTitle,
-                        NativeStartupInfo.message
-                      );
-                    }
-                  } else {
-                    return this.displayMessageToUser(
-                      NativeStartupInfo.minSupportedVersionFailure,
-                      this.blockNavStartup,
-                      NativeStartupInfo.messageTitle,
-                      NativeStartupInfo.message
-                    );
-                  }
-                }
               }
             }
+
+            if (NativeStartupInfo.showMessage === this.STATUS) {
+              return this.displayMessageToUser(
+                NativeStartupInfo.minSupportedVersionFailure,
+                this.blockNavStartup,
+                NativeStartupInfo.messageTitle,
+                NativeStartupInfo.message
+              );
+            }
+
             return null;
           })
         );
