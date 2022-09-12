@@ -21,7 +21,9 @@ clone:
 
 pipelines:
   branches:
-    feature/4282-sonarquebe: # or the name of your main branch
+    feature/4282-sonarquebe:
+      - step: *build-step
+    release-*: # or the name of your main branch
       - step: *build-step
   pull-requests:
     '**':
