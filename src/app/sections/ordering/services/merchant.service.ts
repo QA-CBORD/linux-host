@@ -126,13 +126,20 @@ export class MerchantService {
 
       timez = tz;
       dateStr = Intl.DateTimeFormat('en-US', dateConfig).format(iosDate());
-      return `${dateStr} (${timez})`;
     } else {
       const [dateTime, minutes] = dateStr.split(/:/);
       dateStr = `${dateTime}:${minutes}`;
-      dateStr = new Date(dateStr).toLocaleString('en-US', dateConfig);
-      return `${dateStr} (${timez})`;
     }
+      dateStr = new Date(dateStr).toLocaleString('en-US', dateConfig);
+      // TODO: Return only time and check for correct format
+      const ios16At = ' at ';
+      if(dateStr.includes(ios16At)){
+        dateStr = dateStr.split(ios16At)[1];
+      } else {
+        dateStr = dateStr.split(/,/)[2];
+      }
+
+      return `${dateStr} (${timez})`;
   }
 
   getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
@@ -215,7 +222,6 @@ export class MerchantService {
       day.hourBlocks = day.hourBlocks.map(hour => {
         hour.periods = hour.timestamps.map(dateStr =>
           this.extractTimeZonedString(dateStr, timeZone)
-            .split(/,/)[2]
             .trim()
         );
         return hour;

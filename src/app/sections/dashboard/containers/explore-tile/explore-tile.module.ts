@@ -7,7 +7,6 @@ import { MerchantMainInfoModule } from '@shared/ui-components/merchant-main-info
 
 const imports = [IonicModule, CommonModule];
 const declarations = [ExploreTileComponent];
-const exports = [ExploreTileComponent];
 
 @NgModule({
   declarations,
@@ -15,6 +14,6 @@ const exports = [ExploreTileComponent];
     imports,
     MerchantMainInfoModule,
   ],
-  exports,
+  exports: [ExploreTileComponent],
 })
 export class ExploreTileModule { }

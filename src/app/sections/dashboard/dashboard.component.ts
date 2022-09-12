@@ -35,8 +35,8 @@ import { Device } from '@capacitor/device';
 
 @Component({
   selector: 'st-dashboard',
-  templateUrl: './dashboard.page.html',
-  styleUrls: ['./dashboard.page.scss'],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
