@@ -13,6 +13,10 @@ export class AppleWalletCredentialState implements MobileCredentialState {
     this.setAppleWalletMessage();
   }
 
+  setStatus(): void {
+    throw new Error('Method not implemented.');
+  }
+
   revoked(): boolean {
     return false;
   }
