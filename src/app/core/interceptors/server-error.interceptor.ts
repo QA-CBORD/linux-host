@@ -32,7 +32,7 @@ export class ServerError implements HttpInterceptor {
 
             console.log('handleServerException res: ', res);
             console.log('handleServerException req: ', req);
-            this.handleServerException(res.body.exception, req.body.method);
+            this.handleServerException(req.body.method, res.body.exception);
           }
         },
         async ({ message, status }: HttpErrorResponse) => {
@@ -51,7 +51,7 @@ export class ServerError implements HttpInterceptor {
     return errorString.search(NUM_DSCRPTN_REGEXP) !== -1;
   }
 
-  private handleServerException(exceptionString = '', method: string): never {
+  private handleServerException(method: string, exceptionString = ''): never {
     if (this.isKnownError(exceptionString)) {
       const errorMessageParts = exceptionString.split('|');
       throw this.determineErrorByCodeAndThrow(errorMessageParts as [string, string], method);

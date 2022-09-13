@@ -85,7 +85,7 @@ export class SessionFacadeService {
   }
 
   async determineAppLoginState(systemSessionId: string): Promise<LoginState> {
-    return await this.determineFromBackgroundLoginState(systemSessionId);
+    return this.determineFromBackgroundLoginState(systemSessionId);
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
@@ -95,7 +95,7 @@ export class SessionFacadeService {
     } else {
       const { data: isPinLoginEnabled } = await this.connectivityFacade.execute(
         {
-          promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionId),
+          promise: () => this.identityFacadeService.isPinEnabled(sessionId, institutionId),
           showLoading: false,
         },
         false
@@ -136,7 +136,7 @@ export class SessionFacadeService {
     }
 
     const { data: isPinLoginEnabled } = await this.connectivityFacade.execute({
-      promise: async () => await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id),
+      promise: () => this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id),
       showLoading: false,
     });
 

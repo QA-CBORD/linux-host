@@ -1,11 +1,10 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { DeviceSecurityType, VaultErrorCodes, VaultType } from '@ionic-enterprise/identity-vault';
+import { DeviceSecurityType, VaultErrorCodes, VaultType, Device } from '@ionic-enterprise/identity-vault';
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { VaultFactory } from './vault-factory.service';
 import { VaultIdentityService } from './vault.identity.service';
 import sinon from 'sinon';
-import { Device } from '@ionic-enterprise/identity-vault';
 import { PinCloseStatus, VaultMigrateResult, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './model.identity';
 import { ModalController } from '@ionic/angular';
 
@@ -50,7 +49,7 @@ describe('VaultIdentityService', () => {
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         });
         service = TestBed.inject(VaultIdentityService);
-        await service.init(<any>vault);
+        await service.init(vault);
     });
 
     it('should create the service', () => {

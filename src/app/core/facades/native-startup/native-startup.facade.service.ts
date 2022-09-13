@@ -130,11 +130,8 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
 
   displayMessageToUser(isMinVersionFailure, isBlocking, title, message) {
     const arrOfBtns = [];
-    const positiveButtonText = isMinVersionFailure
-      ? startupButtons['update']
-      : isBlocking
-      ? startupButtons['closeApp']
-      : startupButtons['ok'];
+    const isMinVersion = isMinVersionFailure ? startupButtons['update'] : isBlocking;
+    const positiveButtonText = isMinVersion ? startupButtons['closeApp'] : startupButtons['ok'];
     const isNegativeButtonVisible = isMinVersionFailure && !isBlocking;
     const negativeButtonText = startupButtons['notNow'];
     arrOfBtns.push(positiveButtonText);

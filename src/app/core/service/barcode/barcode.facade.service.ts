@@ -32,7 +32,7 @@ export class BarcodeFacadeService {
             this.getUserSetting(User.Settings.CASHLESS_KEY),
             this.getSetting(Settings.Setting.SOA_KEY)
         ).pipe(
-            switchMap(([userSetting, setting]) => this.barcodeService.generateBarcode(arg0, userSetting, setting))
+            switchMap(([userSetting, setting]) => this.barcodeService.generateBarcode(userSetting, setting, arg0))
         );
     }
 
