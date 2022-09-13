@@ -84,7 +84,7 @@ export class SessionFacadeService {
     this._deepLinkPath = null;
   }
 
-  async determineAppLoginState(systemSessionId: string): Promise<LoginState> {
+  determineAppLoginState(systemSessionId: string): Promise<LoginState> {
     return this.determineFromBackgroundLoginState(systemSessionId);
   }
 
