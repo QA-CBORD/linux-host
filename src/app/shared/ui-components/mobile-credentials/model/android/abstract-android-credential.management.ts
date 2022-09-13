@@ -25,6 +25,10 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     protected readonly credentialSrvc: AndroidCredentialDataService,
     protected readonly alertCtrl: AlertController
   ) {}
+  
+  onUiIconClicked(): void {
+    throw new Error('Method not implemented.');
+  }
 
 
   async onCredentialStateChanged(): Promise<void> {

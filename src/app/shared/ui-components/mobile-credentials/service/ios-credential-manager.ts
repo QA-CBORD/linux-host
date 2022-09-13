@@ -22,8 +22,19 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
-
   
+  onUiIconClicked(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  onWillLogout(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  onCredentialStateChanged(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   async contentStringAsync(): Promise<AndroidCredentialCsModel> {
     return null;
   }
