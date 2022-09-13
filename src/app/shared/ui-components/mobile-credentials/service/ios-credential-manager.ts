@@ -22,23 +22,15 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
-  
-  
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async onCredentialStateChanged(): Promise<void> {}
 
   
   async contentStringAsync(): Promise<AndroidCredentialCsModel> {
     return null;
   }
 
-
   getService(): MobileCredentialDataService {
      return null; // is not in use for now.
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async onWillLogout(): Promise<void> {}
 
   refresh(): void {
     this.loadCredentials().then(freshCredentials => {
