@@ -175,13 +175,13 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
   async deleteAttachment() {
     const alert = await this._alertController.create({
-      header: 'Delete Attachment',
+      header: 'Delete Attachment?',
       message: `Deleting this attachment will remove the Attachment Note and attached file.`,
       buttons: [
         {
           text: 'Cancel',
           role: 'cancel',
-          cssClass: 'button__option_cancel',
+          cssClass: 'button__option_cancel_attachment',
           handler: () => {
             this.activeAlerts = [];
             alert.dismiss();
@@ -190,7 +190,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
         {
           text: 'Delete',
           role: 'confirm',
-          cssClass: 'button__option_confirm',
+          cssClass: 'button__option_delete_attachment',
           handler: () => {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
