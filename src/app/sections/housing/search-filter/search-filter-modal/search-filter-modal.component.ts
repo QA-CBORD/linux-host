@@ -159,9 +159,6 @@ export class SearchFilterModalComponent implements OnInit {
     return name;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-  sort(control: SortControlComponent): void {}
-
   getId(key: string, index: number): number {
     return Number(key) - index;
   }
