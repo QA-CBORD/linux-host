@@ -6,11 +6,10 @@ import { TileWrapperComponent } from './tile-wrapper.component';
 
 const imports = [IonicModule, CommonModule];
 const declarations = [TileWrapperComponent];
-const exports = [TileWrapperComponent];
 
 @NgModule({
   declarations,
   imports,
-  exports,
+  exports : [TileWrapperComponent],
 })
 export class TileWrapperModule { }

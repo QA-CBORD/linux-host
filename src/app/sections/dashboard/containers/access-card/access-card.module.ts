@@ -7,13 +7,12 @@ import { AccessCardService } from './services/access-card.service';
 const imports = [IonicModule, CommonModule];
 const declarations = [AccessCardComponent];
 const providers = [AccessCardService];
-const exports = [AccessCardComponent];
 
 @NgModule({
   imports,
   providers,
   declarations,
-  exports
+  exports : [AccessCardComponent]
 })
 export class AccessCardModule {
 

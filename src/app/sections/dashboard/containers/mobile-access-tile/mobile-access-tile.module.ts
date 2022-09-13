@@ -7,12 +7,10 @@ import { MobileAccessService } from './services/mobile-access.service';
 
 const imports = [IonicModule, CommonModule];
 const declarations = [MobileAccessTileComponent];
-const exports = [MobileAccessTileComponent];
-
 @NgModule({
   declarations,
   imports,
   providers: [MobileAccessService],
-  exports,
+  exports: [MobileAccessTileComponent],
 })
 export class MobileAccessTileModule { }

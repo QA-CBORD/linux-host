@@ -19,8 +19,8 @@
 
   <div [ngSwitch]="section" class="inspection-details__card">
     <ng-container *ngFor="let room of inspectionDetails.sections">
-      <ng-container *ngSwitchCase="room.name">
-        <ion-card *ngFor="let item of room.items;let i = index;">
+      <ng-container *ngSwitchCase="room.name" >
+        <ion-card *ngFor="let item of room.items;let i = index;" [disabled]="isSubmitted">
           <ion-item lines="none">
             <ion-label>
               <h1>{{item.name}}</h1>
@@ -58,7 +58,7 @@
         type="submit"
         item-right
         (click)="submitInspection(inspectionDetails)"
-        [disabled]="countItemsLeft(inspectionDetails)>0"
+        [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted"
       >
         Submit
       </ion-button>
