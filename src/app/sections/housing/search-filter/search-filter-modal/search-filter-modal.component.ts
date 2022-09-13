@@ -3,7 +3,6 @@ import { ModalController } from '@ionic/angular';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { FilterSortComponent } from '../filter-sort/filter-sort.component';
-import { SortControlComponent } from '../filter-sort/sort-control/sort-control.component';
 
 import { Category } from '../filter-sort/filter-sort.model';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';

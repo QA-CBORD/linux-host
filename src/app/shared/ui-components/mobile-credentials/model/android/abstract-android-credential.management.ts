@@ -134,9 +134,6 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
       .toPromise();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onUiIconClicked(): void {}
-
   getCredential(): MobileCredential {
     return this.mCredential;
   }

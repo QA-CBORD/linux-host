@@ -53,10 +53,6 @@ export class IOSCredentialManager implements MobileCredentialManager {
     this.credentialStateChangeSubscription = credentialStateChangeSubscription;
   }
 
-  onUiIconClicked(): void {
-    // I don't think anything needs to happen here..
-  }
-
   getCredential(): MobileCredential {
     return this.mCredential;
   }

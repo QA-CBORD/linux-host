@@ -178,7 +178,7 @@ export class MobileCredentialFacade {
   }
 
   async onLogout(): Promise<void> {
-    (await this.mobileCredentialManager) && this.mobileCredentialManager.onWillLogout();
+    if(this.mobileCredentialManager) this.mobileCredentialManager.onWillLogout();
     this.mobileCredentialManager = null;
   }
 
