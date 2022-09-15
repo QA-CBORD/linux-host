@@ -49,12 +49,12 @@ export class SecureMessagingApiService {
     );
   }
 
-  postSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
+  postSecureMessage(messageBody: SecureMessageSendBody): Observable<any> {
     return this.apiService.authenticatedHTTPCall(
       RestCallType.post,
       this.serviceUrlSecureMessage,
       HttpResponseType.json,
-      messageInfo,
+      messageBody,
       null,
       this.getHttpHeaders()
     );

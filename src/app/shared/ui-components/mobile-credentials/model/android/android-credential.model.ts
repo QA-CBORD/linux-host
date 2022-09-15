@@ -42,8 +42,6 @@ export interface AndroidCredentialState extends MobileCredentialState {
 }
 
 export class CredentialStateResolver {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
 
   static fromActivePasses(activePasses: ActivePasses): MobileCredentialState {
     if (CredentialStateResolver.hasHidCredential(activePasses)) {

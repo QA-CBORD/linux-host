@@ -23,22 +23,25 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly authFacadeService: AuthFacadeService
   ) {}
   
-  
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async onCredentialStateChanged(): Promise<void> {}
+  onUiIconClicked(): void {
+    throw new Error('Method not implemented.');
+  }
 
-  
+  onWillLogout(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  onCredentialStateChanged(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   async contentStringAsync(): Promise<AndroidCredentialCsModel> {
     return null;
   }
 
-
   getService(): MobileCredentialDataService {
      return null; // is not in use for now.
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async onWillLogout(): Promise<void> {}
 
   refresh(): void {
     this.loadCredentials().then(freshCredentials => {
@@ -51,10 +54,6 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   setCredentialStateChangeListener(credentialStateChangeSubscription: CredentialStateChangeListener): void {
     this.credentialStateChangeSubscription = credentialStateChangeSubscription;
-  }
-
-  onUiIconClicked(): void {
-    // I don't think anything needs to happen here..
   }
 
   getCredential(): MobileCredential {

@@ -28,11 +28,11 @@ export class EditHomePageModalComponent implements OnInit {
     this.tileConfigFacadeService.updateConfigState(config);
   }
 
-  async doReorder({ detail: { from, to }, detail }) {
+  async doReorder({ detail: { from, to }, detail }): Promise<void> {
     const config = await this.homeConfigList$.pipe(take(1)).toPromise();
     const movedElement = config.splice(from, 1)[0];
     config.splice(to, 0, movedElement);
-    await this.tileConfigFacadeService.updateConfigState(config);
+    this.tileConfigFacadeService.updateConfigState(config);
     detail.complete();
   }
 

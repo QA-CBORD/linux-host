@@ -62,6 +62,21 @@ export class StHierarcheTreeDialogComponent {
     // this.loading.dismiss();
   }
 
+  private buildSlides (lookUpItem, _topParentSlide): any {
+    return {
+        id: lookUpItem.id ? lookUpItem.id : lookUpItem.facilityKey, 
+        name: lookUpItem.name ? lookUpItem.name : lookUpItem.facilityFullName, 
+        parentId: null, lookUpItem, 
+        slide: _topParentSlide, 
+        nextSlideIndex: lookUpItem.children.length > 0 ? undefined : null
+      }
+    
+  } 
+
+  private isSlideValid(slideItemSelected, _parentSlideItem, lookUpItem) {
+    return !slideItemSelected && this.selectedItemId && (_parentSlideItem.id === this.selectedItemId || this.isThisLookUpItemHasAnyDescendantSelected(lookUpItem));
+  }
+
   public buildInitialSlide(lookUpsAsTree: LookUpItem[]): Slide[] {
     const slides: Slide[] = [];
 
@@ -77,10 +92,9 @@ export class StHierarcheTreeDialogComponent {
         lookUpItem.children = Object.keys(lookUpItem.children).map(key => {
           return lookUpItem.children[key];
         })
-        const _parentSlideItem: SlideItem = {
-          id: lookUpItem.id ? lookUpItem.id : lookUpItem.facilityKey, name: lookUpItem.name ? lookUpItem.name : lookUpItem.facilityFullName, parentId: null, lookUpItem, slide: _topParentSlide, nextSlideIndex: lookUpItem.children.length > 0 ? undefined : null
-        };
-        if (!slideItemSelected && this.selectedItemId && (_parentSlideItem.id === this.selectedItemId || this.isThisLookUpItemHasAnyDescendantSelected(lookUpItem))) {
+        const _parentSlideItem: SlideItem = this.buildSlides(lookUpItem, _topParentSlide);
+
+        if (this.isSlideValid(slideItemSelected, _parentSlideItem, lookUpItem)) {
           _parentSlideItem.selected = true;
           slideItemSelected = true;
         }

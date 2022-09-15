@@ -13,6 +13,10 @@ export class AppleWalletCredentialState implements MobileCredentialState {
     this.setAppleWalletMessage();
   }
 
+  setStatus(): void {
+    throw new Error('Method not implemented.');
+  }
+
   revoked(): boolean {
     return false;
   }
@@ -20,9 +24,6 @@ export class AppleWalletCredentialState implements MobileCredentialState {
   providedBy(provider: CredentialProviders): boolean {
      return provider == CredentialProviders.APPLE;
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,  @typescript-eslint/no-unused-vars
-  setStatus(status: number): void {}
 
   getUiIconUrl(): string {
     return this.appleWalletMessageImage ? `/assets/images/${this.appleWalletMessageImage}.png` : null;

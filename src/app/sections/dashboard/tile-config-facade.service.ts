@@ -59,7 +59,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
           : allowedConfigFromBE;
       }),
       switchMap((updatedConfig) => this.dashboardService.updateAccountTile(updatedConfig)),
-      tap(async config => await this.updateConfigState(config)),
+      tap(async config => this.updateConfigState(config)),
     );
   }
 
@@ -72,7 +72,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
         ...config,
         buttonConfig: { ...tiles[index]['buttonConfig'], ...config['buttonConfig'] },
       };
-      await this.updateConfigState(tiles);
+      this.updateConfigState(tiles);
     }
   }
 
@@ -103,7 +103,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
     return res;
   }
 
-  updateConfigState(value: TileWrapperConfig[]) {
+  updateConfigState(value: TileWrapperConfig[]): void {
     this.storage.updateStateEntity(this.key, value, { highPriorityKey: true });
   }
 }
