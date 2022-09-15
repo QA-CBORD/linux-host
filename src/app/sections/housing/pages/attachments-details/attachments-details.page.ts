@@ -17,7 +17,7 @@ import {
   Observable,
   Subscription,
 } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
@@ -151,12 +151,13 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('file', this.fileData, this.fileData.name);
     
-    this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl).subscribe();
-    this._attachmentService.sendAttachmentData(attachmentDetailsData).subscribe(res => {
-      if (res) {
-        this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
-      }
-    })
+    this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl).pipe(
+      switchMap(()=> this._attachmentService.sendAttachmentData(attachmentDetailsData))
+      ).subscribe(res => {
+       if (res) {
+           this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
+        }
+      })
   }
 
   selectFile() {
