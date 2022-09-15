@@ -32,7 +32,7 @@
       [label]="getLabel(question)"
       [idd]="question['name']"
       [formControlName]="question['name']"
-      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
+      [isError]="errorValidator"
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <st-control-errors
@@ -44,7 +44,7 @@
   <ng-template #isWorkOrderTextArea>
     <st-textarea-floating-label
     [control]="parentGroup.get(question['name'])"
-    [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
+    [isError]="errorValidator"
     [formControlName]="question['name']"
     class="question__item question__control"
     [idd]="question['name']"
@@ -62,7 +62,7 @@
     <st-textarea-floating-label
       *ngSwitchCase="'textarea'"
       [control]="parentGroup.get(question['name'])"
-      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
+      [isError]="errorValidator"
       [formControlName]="question['name']"
       class="question__item question__control"
       [idd]="question['name']"
@@ -94,7 +94,7 @@
       *ngSwitchCase="'select'"
       [formControlName]="question['name']"
       [control]="parentGroup.get(question['name'])"
-      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
+      [isError]="errorValidator"
       class="question__item question__control"
       interface="action-sheet"
       [interfaceOptions]="customActionSheetOptions"
