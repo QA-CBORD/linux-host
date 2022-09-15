@@ -18,12 +18,12 @@ export class MerchantStateService extends SingleEntityStateManager<MerchantInfo[
     if (Array.isArray(value)) {
       value.forEach((merchant) => this.merchantMap.set(merchant.id, merchant));
     } else {
-      this.merchantMap.set((value as MerchantInfo).id, value as MerchantInfo);
+      this.merchantMap.set(value.id, value);
     }
     this.dispatchStateChanges();
   }
 
-  removeMerchantById(id: string) {
+  removeMerchantById(id: string): void {
     this.merchantMap.delete(id);
     this.dispatchStateChanges();
   }

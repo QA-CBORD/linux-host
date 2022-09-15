@@ -111,7 +111,7 @@ export class NativeProvider {
     return Observable.create((observer: Observer<T>) => {
       this.androidObserver = observer;
       try {
-        this.getAndroidData<T>(methodName) || null;
+        this.getAndroidData<T>(methodName);
       } catch (error) {
         observer.error(error);
         observer.complete();
