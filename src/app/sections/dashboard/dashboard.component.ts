@@ -19,7 +19,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 import { AccountsTileComponent } from './containers/accounts-tile/accounts-tile.component';
 import { TransactionsTileComponent } from './containers/transactions-tile/transactions-tile.component';

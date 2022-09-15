@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 
 import { Observable, Observer } from 'rxjs';
 import { async } from 'rxjs/internal/scheduler/async';

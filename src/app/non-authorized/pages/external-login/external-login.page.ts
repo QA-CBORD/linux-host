@@ -1,5 +1,5 @@
 import { Component, ElementRef, NgZone } from '@angular/core';
-import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { first, map, take } from 'rxjs/operators';

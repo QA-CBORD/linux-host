@@ -10,7 +10,7 @@ import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/fo
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Device } from '@capacitor/device';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';

@@ -8,7 +8,7 @@ import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-form
 import { StDateTimePickerModule } from '../st-date-time-picker';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 
 describe('OrderOptionsActionSheet', () => {

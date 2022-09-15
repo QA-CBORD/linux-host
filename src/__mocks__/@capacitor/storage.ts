@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { MigrateResult } from '@capacitor/storage';
+import { MigrateResult } from '@capacitor/preferences';
 
 export const Storage = {
   async get(data: { key: string }): Promise<{ value: string | undefined }> {

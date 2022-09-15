@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Observable, Observer, fromEvent, merge, of, Subject } from 'rxjs';
 import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
-import { Network } from '@ionic-native/network/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { firstValueFrom } from '@shared/utils';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';

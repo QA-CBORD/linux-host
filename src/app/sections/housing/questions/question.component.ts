@@ -136,7 +136,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
       width: 500,
       allowEditing: false,
       correctOrientation: true,
-      preserveAspectRatio: true,
       direction: CameraDirection.Rear,
       resultType: CameraResultType.Uri,
       source: cameraSource,
