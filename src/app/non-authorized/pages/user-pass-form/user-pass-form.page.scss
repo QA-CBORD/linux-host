@@ -100,8 +100,21 @@
         margin-right: 10px;
       }
     }
+
+    &--control {
+      display: block;
+
+      &-error {
+        margin-bottom: 10px;
+
+        &__input {
+          color: $color-alizarin;
+          @include font-nunito-heavy(12px);
+        }
+      }
+    }
   }
-  
+
   &__LDAP-message {
     color: $color-black;
     background-color: $color-background-divider;
