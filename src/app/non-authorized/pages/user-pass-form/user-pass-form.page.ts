@@ -146,7 +146,7 @@ export class UserPassForm implements OnInit {
   }
 
   onSignup(): void {
-    const { navParams } = this.messageProxy.get();
+    const { navParams } = this.messageProxy.get<any>();
     if (navParams) {
       this.doHostedSignup(navParams);
     } else {

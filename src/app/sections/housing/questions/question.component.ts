@@ -25,7 +25,6 @@ const IMAGE_DIR = 'stored-images';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionComponent implements OnInit, OnDestroy {
-
   @Input() question: QuestionBase;
   @Input() name: string;
   @Input() parentGroup: FormGroup;
@@ -43,7 +42,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     description: 'Describe what needs to be repaired.',
     location: 'Select the location where the repair is needed.',
   };
- 
+
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -71,8 +70,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private cameraService: CameraService,
     private sessionService: SessionFacadeService,
     private photoUploadService: PhotoUploadService,
-    private sanitizer: DomSanitizer,
-  ) { }
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnDestroy(): void {
     this._applicationsStateService.setRequestedRoommates([]);
@@ -150,12 +149,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
   async saveImage(photo: Photo) {
     const base64Data = await this.readAsBase64(photo);
     const fileName = this.date.getTime() + '.PNG';
-    
+
     await Filesystem.writeFile({
       path: `${IMAGE_DIR}/${fileName}`,
       data: base64Data,
       directory: FilesystemDirectory.Data,
-      recursive: true
+      recursive: true,
     });
 
     const image: ImageData = {
@@ -181,7 +180,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      return (<string> await this.convertBlobToBase64(blob));
+      return <string>await this.convertBlobToBase64(blob);
     }
   }
 
@@ -204,7 +203,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       directory: FilesystemDirectory.Data,
     }).then(
       async result => {
-        await this.loadFileData(result.files);
+        await this.loadFileData(result.files.map(file => file.name));
       },
       async () => {
         // Folder does not yet exists!
@@ -327,7 +326,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private sanitizeUrl(photo: Photo, base64Data: string): string {
-    return <string>this.sanitizer.bypassSecurityTrustResourceUrl(this.sessionService.getIsWeb() ? photo.webPath : base64Data);
+    return <string>(
+      this.sanitizer.bypassSecurityTrustResourceUrl(this.sessionService.getIsWeb() ? photo.webPath : base64Data)
+    );
   }
 }
-
