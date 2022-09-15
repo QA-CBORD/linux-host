@@ -56,29 +56,30 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     const source$ = endpoint ? of(endpoint).toPromise() : this.getSavedEndpointState$();
     return from(source$).pipe(
       switchMap((cachedCredential: EndpointState) => {
-        if (cachedCredential.id) {
-          return super.deleteCredential$(cachedCredential.id).pipe(
-            map(() => true),
-            tap(() => (endpoint ? this.deleteLocalCachedEndpoint() : this.deleteAllCachedEndpoint$())),
-            catchError((response: HttpErrorResponse) => {
-              let credentialAlreadyDeletedError = false;
-              if (response.error.detail) {
-                credentialAlreadyDeletedError = response.error.detail.includes(CREDENTIAL_ALREADY_DELETED_ERROR);
-                if (credentialAlreadyDeletedError) {
-                  if (endpoint) {
-                    this.deleteLocalCachedEndpoint();
-                  } else {
-                    this.deleteAllCachedEndpoint$();
-                  }
-                }
-              }
-              return of(credentialAlreadyDeletedError);
-            })
-          );
-        } else {
-          // no credential id found to delete, so will assume it's been deleted in payment system and proceed.
+        if (!cachedCredential.id) {
           return of(true);
         }
+
+        return super.deleteCredential$(cachedCredential.id).pipe(
+          map(() => true),
+          tap(() => (endpoint ? this.deleteLocalCachedEndpoint() : this.deleteAllCachedEndpoint$())),
+          catchError((response: HttpErrorResponse) => {
+
+            if (!response.error.detail) {
+              return of(false);
+            }
+
+            const credentialAlreadyDeletedError = response.error.detail.includes(CREDENTIAL_ALREADY_DELETED_ERROR);
+            
+            if (credentialAlreadyDeletedError && endpoint) {
+              this.deleteLocalCachedEndpoint();
+            } else {
+              this.deleteAllCachedEndpoint$();
+            }
+
+            return of(credentialAlreadyDeletedError); 
+          })
+        );
       }),
       catchError(() => of(false))
     );

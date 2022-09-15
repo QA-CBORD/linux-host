@@ -110,12 +110,6 @@ export class UserApiService {
     return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);
   }
 
-  getPhotoById(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { photoId }, true);
-
-    return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
-  }
-
   saveNotification$(userId: string, notification: UserNotificationInfo): Observable<string> {
     const params = { userId, notification };
     const queryConfig = new RPCQueryConfig('saveNotification', params, true, false);

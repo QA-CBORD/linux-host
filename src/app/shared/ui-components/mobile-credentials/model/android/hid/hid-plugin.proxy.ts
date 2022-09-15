@@ -92,8 +92,6 @@ export class HIDPlugginProxy {
   private static instance: HIDPlugginProxy;
   taskExecutionObs$: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
   private taskExecutor: TaskExecutor;
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
 
   static getInstance(): HIDPlugginProxy {
     if (!this.instance) {

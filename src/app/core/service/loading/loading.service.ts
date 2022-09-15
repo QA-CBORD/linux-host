@@ -50,8 +50,9 @@ export class LoadingService {
     });
   }
 
-  notLoading(): boolean{
-    return this.isLoading == false;
+  notLoading(): boolean {
+    this.isLoading = false;
+    return this.isLoading;
   }
 
   async closeSpinner(): Promise<void> {
@@ -60,7 +61,13 @@ export class LoadingService {
     let topLoader = await this.loadingController.getTop();
 
     while (topLoader) {
-      (await topLoader.dismiss()) ? (topLoader = await this.loadingController.getTop()) : (topLoader = null);
+      const isDimmised = await topLoader.dismiss();
+
+      if (isDimmised) {
+        topLoader = await this.loadingController.getTop();
+      } else {
+        topLoader = null;
+      }
     }
   }
 }

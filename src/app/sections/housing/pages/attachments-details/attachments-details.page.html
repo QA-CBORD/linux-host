@@ -2,13 +2,13 @@
   <div class="work-order-details__actions">
     <ion-button class="btn application-details__page-back" (click)="backClicked()"
       mode="ios" fill="clear">
-      back
+      Back
     </ion-button>
   </div>
 
   <h2 class="work-order-details__title">Upload a new attachment.</h2>
 
-  <div class="work-order-details__card">
+  <div class="work-order-details__card attachment__select">
     <ion-select interface="popover" [(ngModel)]="selectedAssetName"  [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'" [disabled]="attachmentSelected" >
       <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
         {{ option.name }}
@@ -17,7 +17,9 @@
 
     <ng-container>
       <st-textarea-floating-label [(ngModel)]="notes" [disabled]="attachmentSelected" [isError]="isSubmitted"
-        [label]="attachmentSelected? attachmentSelected.comments:'Attachment Notes'" rows="3" [ngClass]="{ 'ng-valid form-control--filled ng-touched ng-dirty':true }">
+        [label]="'Attachment Notes'" rows="3" class="ng-valid ng-dirty ng-touched"
+        [placeholder]="attachmentSelected?.comments"
+        >
       </st-textarea-floating-label>
     </ng-container>
 
@@ -30,17 +32,17 @@
           <div *ngIf="isFile" class="file" ></div>
         </ng-container>
         <ng-template #defaultImage>
-          <div class="label"> File size limited to 5MB</div>
+          <div class="label"> File size limited to 10MB</div>
           <div class="icon" ></div>
         </ng-template>
       </div>
-     File name:{{attachmentSelected? attachmentSelected.fileName : file?.name}}  File size: {{fileSizeInMB}}
+     File name: {{attachmentSelected? attachmentSelected.fileName : file?.name}} <ng-container *ngIf="!attachmentKey">File size: {{fileSizeInMB}}</ng-container> 
     </ng-container>
 
 
     <ion-button [disabled]="!!attachmentKey" color="light" class="btn__image"  (click)="selectFile()">Choose a file </ion-button>
     <ion-button *ngIf="attachmentKey" color="danger" class="btn__image"  (click)="deleteAttachment()">Delete Attachment</ion-button>
-    <ion-button *ngIf="!attachmentKey" color="light" class="btn__image"  (click)="submitAttachmentForm()">Submit</ion-button>
+    <ion-button *ngIf="!attachmentKey" class="btn__image submit"  (click)="submitAttachmentForm()">Submit</ion-button>
 
   </div>
 </ion-content>

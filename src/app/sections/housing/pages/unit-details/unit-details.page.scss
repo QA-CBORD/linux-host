@@ -4,7 +4,7 @@
   margin-right: 8px;
 }
 
-unit__header {
+.unit__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,7 +54,7 @@ unit__header {
   @include font-nunito-heavy(14px);
 }
 
-information__container {
+.information__container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;

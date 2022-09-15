@@ -45,21 +45,18 @@ export class MCache {
   }
 
   getApplicationUUID(): string {
-    if (this.applicationUUID != null) {
-      return this.applicationUUID;
-    } else {
-      this.generateUUID();
-      return this.applicationUUID;
-    }
+    return this.applicationUUID || this.generateUUID();
   }
 
-  private generateUUID() {
+  private generateUUID(): string {
     this.applicationUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(X_Y_REGEXP, function(c) {
       // eslint-disable-next-line no-bitwise
       const r = (Math.random() * 16) | 0,
         v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
+
+    return this.applicationUUID;
   }
 
   addSetting(newSetting: SettingInfo) {
