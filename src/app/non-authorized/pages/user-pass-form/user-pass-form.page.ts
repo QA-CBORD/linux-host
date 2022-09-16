@@ -12,7 +12,6 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Device } from '@capacitor/device';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { AUTHENTICATION_SYSTEM_TYPE, ANONYMOUS_ROUTES } from '../../non-authorized.config';

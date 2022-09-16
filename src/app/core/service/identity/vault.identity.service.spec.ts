@@ -7,12 +7,14 @@ import { VaultIdentityService } from './vault.identity.service';
 import sinon from 'sinon';
 import { PinCloseStatus, VaultMigrateResult, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './model.identity';
 import { ModalController } from '@ionic/angular';
+import { LoadingService } from '../loading/loading.service';
 
 describe('VaultIdentityService', () => {
     let service: VaultIdentityService,
         injector,
         userPreferenceService,
         vault,
+        loadingService,
         modalController;
     beforeEach(async () => {
         vault = {
@@ -49,6 +51,8 @@ describe('VaultIdentityService', () => {
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         });
         service = TestBed.inject(VaultIdentityService);
+        loadingService = TestBed.inject(LoadingService);
+        jest.spyOn(service, 'loadingService', 'get').mockReturnValue(loadingService);
         await service.init(vault);
     });
 

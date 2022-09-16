@@ -24,10 +24,7 @@
         "strict": "off",
         "import/first": "off",
         "lines-around-directive": "off"
-      },
-      "plugins": [
-        "@angular-eslint/template"
-      ]
+      }
     }
   ],
   "rules": {
