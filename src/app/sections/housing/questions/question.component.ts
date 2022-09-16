@@ -337,12 +337,4 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const control = this.parentGroup.get(this.question['name']);
     return !control.valid && control.touched && !control.disabled && !this.isSubmitted;
   }
-<<<<<<< HEAD
-=======
-
-  public get errorValidator() {
-    const control = this.parentGroup.get(this.question['name']);
-    return !control.valid && control.touched && !control.disabled && !this.isSubmitted;
-  }
->>>>>>> 563be40b7fac2ba122316570477c088a74ad2bbc
 }

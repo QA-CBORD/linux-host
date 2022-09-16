@@ -301,12 +301,6 @@ export class UserPassForm implements OnInit {
     await this.toastService.showToast({ message });
   }
 
-  // TODO: Erase
-  private async getIsWeb(): Promise<boolean> {
-    const { operatingSystem } = await Device.getInfo();
-    return !(operatingSystem === 'ios' || operatingSystem === 'android');
-  }
-
   public get defaultBackUrl() {
     return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
   }
