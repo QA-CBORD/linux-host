@@ -1,0 +1,5 @@
+<div class="tabs-container">
+  <div class="tab" [class.selected]="selectedTab === tab.view" *ngFor="let tab of tabs" (click)="select(tab.view)">
+    <span>{{ tab.label | uppercase }}</span>
+  </div>
+</div>
