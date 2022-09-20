@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-import { SelectedHousingTab } from '../housing-dashboard.page';
+import { SelectedHousingTab } from '../housing-dashboard.component';
 
 interface Tab {
   label: string;
@@ -20,7 +20,7 @@ export class HousingTabsComponent {
     { label: 'Room', view: SelectedHousingTab.Rooms },
     { label: 'Contracts', view: SelectedHousingTab.Contracts },
   ];
-  constructor() {}
+  
   select(view: SelectedHousingTab){
     this.onTabSelected.emit(view);
   }
