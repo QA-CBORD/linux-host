@@ -105,7 +105,7 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private pickerClickHandler(dateInfo: any) {
-    const [date, { value }] = Object.values(dateInfo);
+    const [date, { value }] = Object.values(dateInfo) as any[];
     let dateValue, timeStamp;
     if (value === 'asap') {
       dateValue = 'ASAP';

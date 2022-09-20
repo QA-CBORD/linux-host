@@ -8,9 +8,9 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { Network } from '@ionic-native/network/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { IonicModule, Platform } from '@ionic/angular';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';

@@ -13,7 +13,7 @@ log.txt
 npm-debug.log*
 
 .idea/
-package-lock.json
+.angular
 .ionic/
 .sourcemaps/
 .sass-cache/

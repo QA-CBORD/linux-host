@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { ACCOUNT_TYPES } from '@sections/accounts/accounts.config';
 import { iif, Observable } from 'rxjs';
-import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 
 @Pipe({
   name: 'amountLabelControl',
