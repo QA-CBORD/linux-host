@@ -115,7 +115,7 @@ export class MealDonationsComponent implements OnInit {
     this.confirmationDepositPopover({ account, amountValue });
   }
 
-  async confirmationDepositPopover(data: { account: Account; amountValue: number }) {
+  async confirmationDepositPopover(data: { account: UserAccount; amountValue: number }) {
     const popover = await this.popoverCtrl.create({
       component: ConfirmDonatePopoverComponent,
       componentProps: {

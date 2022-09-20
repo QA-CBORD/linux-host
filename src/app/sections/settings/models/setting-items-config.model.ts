@@ -10,7 +10,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { Observable } from 'rxjs';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';

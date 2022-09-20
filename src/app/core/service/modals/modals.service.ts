@@ -8,12 +8,12 @@ export class ModalsService {
   constructor(private readonly modalController: ModalController, private readonly globalNav: GlobalNavService) {}
 
   async create(opts: ModalOptions, handleNavBarState?: boolean): Promise<HTMLIonModalElement> {
-    const modal = await this.modalController.create(opts);
+    const modal = await this.modalController.create({ handle: false, breakpoints: [1], initialBreakpoint: 1, ...opts });
 
     modal.addEventListener('ionModalWillPresent', () => {
       this.globalNav.notifyBackdropShown();
       if (handleNavBarState) {
-         this.globalNav.hideNavBar();
+        this.globalNav.hideNavBar();
       }
     });
     modal.addEventListener('ionModalDidPresent', () => {
@@ -24,7 +24,7 @@ export class ModalsService {
     });
     modal.onWillDismiss().then(() => {
       if (handleNavBarState) {
-         this.globalNav.showNavBar();
+        this.globalNav.showNavBar();
       }
     });
 

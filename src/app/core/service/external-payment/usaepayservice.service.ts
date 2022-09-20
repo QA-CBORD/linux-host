@@ -3,7 +3,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
-import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { forkJoin } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ToastService } from '../toast/toast.service';

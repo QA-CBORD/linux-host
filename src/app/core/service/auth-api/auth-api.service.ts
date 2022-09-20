@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import { DataCache } from '../../utils/data-cache';
-
 import { UserLogin } from '@core/model/user';
 import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
@@ -139,7 +137,6 @@ export class AuthApiService {
   }
 
   setSessionId(sessionId: string): void {
-    DataCache.setSessionId(sessionId);
     this.sessionIdSource.next(sessionId);
   }
 
