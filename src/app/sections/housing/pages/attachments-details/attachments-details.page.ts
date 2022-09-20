@@ -63,7 +63,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   public file$: BehaviorSubject<ChooserResult> = new BehaviorSubject<ChooserResult>(null);
   file?: ChooserResult;
   isFile: boolean;
-  public fileSizeInMB: string;
+  public fileSizeInMB: number;
   attachmentKey?: number;
   public attachmentSelected: AttachmentsList;
   public fileBase64: string;
@@ -165,17 +165,51 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     this.chooser.getFile()
       .then(file => {
         this.file$.next(file);
-        this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
-        this.getSizeFile(file.data.byteLength);
+        this.fileSizeInMB = this.getSizeFile(file.data.byteLength);
+        if(this.fileSizeInMB){
+           this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
+           this.isFile = this.getFileType(file) != 'image';
+        }
+        this.alertAttachmentLimitSize(this.fileSizeInMB)
       }).finally(()=> this.identityFacadeService.updateVaultTimeout({ extendTimeout: false }))
   }
 
+  getFileType(file){
+    return file.mediaType.split('/')[0];
+  }
+
   getSizeFile(fileDataInt8) {
-    this.fileSizeInMB = (fileDataInt8.length / BYTES_TO_MB).toFixed(2);
+    let sizeFile = Number((fileDataInt8 / BYTES_TO_MB).toFixed(2))
+     return sizeFile <= 10? sizeFile: 0;
+  }
+
+  async alertAttachmentLimitSize(FileSize){
+    if(!FileSize){
+      const alert = await this._alertController.create({
+        cssClass: "alert-modal-attachment",
+        header: 'Large File Size',
+        message: `10MB is the maximum file size that can be uploaded as an attachment. Compress or upload a smaller file from your device.`,
+        buttons: [
+          {
+            text: 'OK',
+            role: 'cancel',
+            cssClass: 'button__option_cancel_attachment',
+            handler: () => {
+              this.activeAlerts = [];
+              alert.dismiss();
+              this.file$.next(null);
+            },
+          },
+        ],
+      });
+      this.activeAlerts.push(alert);
+      await alert.present();
+    }
   }
 
   async deleteAttachment() {
     const alert = await this._alertController.create({
+      cssClass: "alert-modal-attachment",
       header: 'Delete Attachment?',
       message: `Deleting this attachment will remove the Attachment Note and attached file.`,
       buttons: [
