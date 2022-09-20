@@ -2,12 +2,8 @@
   <ion-toolbar>
     <ion-title class="housing-title"><h1>Housing</h1></ion-title>
   </ion-toolbar>
-  <st-terms></st-terms>
-  <ion-segment [(ngModel)]="_selectedHousingTab">
-    <ion-segment-button [value]="SelectedHousingTab.Forms">Forms</ion-segment-button>
-    <ion-segment-button [value]="SelectedHousingTab.Rooms">Rooms</ion-segment-button>
-    <ion-segment-button [value]="SelectedHousingTab.Contracts">Contracts</ion-segment-button>
-  </ion-segment>
+  <st-terms ></st-terms>
+  <st-housing-tabs (onTabSelected)="changeView($event)" [selectedTab]="_selectedHousingTab"></st-housing-tabs>
 </ion-header>
 
 <ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Forms">
