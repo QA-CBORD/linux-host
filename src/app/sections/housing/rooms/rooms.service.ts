@@ -20,19 +20,17 @@ import { OccupantAttribute } from '@sections/housing/attributes/attributes.model
   providedIn: 'root',
 })
 export class RoomsService {
-  private _roomSelectUrl = `${
-    this._environment.getHousingAPIURL()
-  }/roomselectproxy/v.1.0/room-selects-proxy`;
+  private _roomSelectUrl = `${this._environment.getHousingAPIURL()}/roomselectproxy/v.1.0/room-selects-proxy`;
 
-  private _filterOptions: CategoryOptions
+  private _filterOptions: CategoryOptions;
 
   constructor(
     private _stateService: RoomsStateService,
     private _proxy: HousingProxyService,
     private _environment: EnvironmentFacadeService
   ) {
-      this._filterOptions = new CategoryOptions();
-    }
+    this._filterOptions = new CategoryOptions();
+  }
 
   public postContractRequest(request: CreateContractRequestOptions): Observable<boolean> {
     const url = `${this._roomSelectUrl}/contracts/self`;
@@ -61,14 +59,13 @@ export class RoomsService {
     const patronOptions: Category[] = [];
     const encounteredOptions: Category[] = [];
     patronAttributes.forEach(attribute => {
-      if(!this._attributeExists(encounteredOptions, attribute)) {
-        const newCategory = this._createFilterCategory(`Patron ${attribute.name}`,
-          attribute.attributeConsumerKey);
+      if (!this._attributeExists(encounteredOptions, attribute)) {
+        const newCategory = this._createFilterCategory(`Patron ${attribute.name}`, attribute.attributeConsumerKey);
         encounteredOptions.push(newCategory);
         patronOptions.push(newCategory);
       }
     });
-    return  patronOptions;
+    return patronOptions;
   }
 
   private _getFacilityAttributeCategories(): Category[] {
@@ -83,8 +80,7 @@ export class RoomsService {
     childrenFacilities.forEach(facility => {
       facility.attributes.forEach(attrib => {
         if (!this._attributeExists(encounteredOptions, attrib) && this._isAttributeAllowedForCategory(attrib)) {
-          const newCategory = this._createFilterCategory(`Facility ${attrib.name}`,
-            attrib.attributeConsumerKey);
+          const newCategory = this._createFilterCategory(`Facility ${attrib.name}`, attrib.attributeConsumerKey);
           encounteredOptions.push(newCategory);
           facilityOptions.push(newCategory);
         }
@@ -93,16 +89,15 @@ export class RoomsService {
     return facilityOptions;
   }
 
-  private _isAttributeAllowedForCategory(attribute: FacilityAttribute):boolean {
-    return hasValue(attribute.name)?
-      (attribute.name !== "Full Name"): false;
+  private _isAttributeAllowedForCategory(attribute: FacilityAttribute): boolean {
+    return hasValue(attribute.name) ? attribute.name !== 'Full Name' : false;
   }
 
   private _attributeExists(encounteredOptions: Category[], attribute: FacilityAttribute | OccupantAttribute): boolean {
     return !!encounteredOptions.find(x => x.attributeKey === attribute.attributeConsumerKey);
   }
 
-  public getFilterOptions(categories: Category[]): {[key: string]: string[]} {
+  public getFilterOptions(categories: Category[]): { [key: string]: string[] } {
     this._createFacilityFilterOptions(categories);
     this._createPatronFilterOptions();
 
@@ -110,10 +105,10 @@ export class RoomsService {
   }
 
   private _createPatronFilterOptions(): void {
-      const patronAttributes = this._stateService.getAllOccupantAttributes();
-      patronAttributes.forEach(attrib => {
-        this._filterOptions.addOption(`Patron ${attrib.name}`, attrib.value);
-      })
+    const patronAttributes = this._stateService.getAllOccupantAttributes();
+    patronAttributes.forEach(attrib => {
+      this._filterOptions.addOption(`Patron ${attrib.name}`, attrib.value);
+    });
   }
 
   private _createFacilityFilterOptions(categories: Category[]): void {
@@ -125,7 +120,7 @@ export class RoomsService {
     this._filterOptions.addBuildingOptions(parentFacilities);
     facilityChildren.forEach((child: Facility) => {
       const filteredAttributes: FacilityAttribute[] = this._filterAttributeCategories(categories, child.attributes);
-      if(filteredAttributes) {
+      if (filteredAttributes) {
         filteredAttributes.forEach(attrib => {
           if (isDefined(attrib.value)) {
             this._filterOptions.addOption(`Facility ${attrib.name}`, attrib.value);
@@ -134,10 +129,8 @@ export class RoomsService {
       }
     });
   }
-  private _filterAttributeCategories(categories:Category[], attributes: FacilityAttribute[]): FacilityAttribute[] {
-    return attributes.filter(
-      attrib => categories.find(
-        (x) => x.attributeKey === attrib.attributeConsumerKey));
+  private _filterAttributeCategories(categories: Category[], attributes: FacilityAttribute[]): FacilityAttribute[] {
+    return attributes.filter(attrib => categories.find(x => x.attributeKey === attrib.attributeConsumerKey));
   }
   public getFilterCategories(): Category[] {
     let filterCategories: Category[] = [];
@@ -166,43 +159,45 @@ export class RoomsService {
     this._filterOptions.updateOptionDetails('', []);
   }
   public filterBuildings(filterOptions: Map<string, string[]>, wasOccupantOptionSelected: boolean): void {
-      const facilities = this._stateService.getAllFacilityChildren();
-      let filteredFacilities = [];
-      let parentKeys = [];
-      if(this._isBuildingFiltered(filterOptions)) {
-        const parenFacilities = this._stateService.getParentFacilities();
-        parentKeys = parenFacilities.filter(x =>
-          filterOptions.get('Buildings')
-            .includes(x.facilityName))
-          .map(y => y.facilityId);
+    const facilities = this._stateService.getAllFacilityChildren();
+    let filteredFacilities = [];
+    let parentKeys = [];
+    if (this._isBuildingFiltered(filterOptions)) {
+      const parenFacilities = this._stateService.getParentFacilities();
+      parentKeys = parenFacilities
+        .filter(x => filterOptions.get('Buildings').includes(x.facilityName))
+        .map(y => y.facilityId);
+    }
+    filterOptions.forEach((options, category) => {
+      if (category === 'Buildings') {
+        return true;
       }
-      filterOptions.forEach((options, category) => {
-        if(category === 'Buildings') {
-          return true;
-        }
-        facilities.forEach(facility => {
-          if(this._matchedFacilityAttributes(category, options, facility) &&
+      facilities.forEach(facility => {
+        if (
+          this._matchedFacilityAttributes(category, options, facility) &&
           !this._hasBuilding(filteredFacilities, facility) &&
-          this._matchedBuildingRequirements(facility, parentKeys)) {
+          this._matchedBuildingRequirements(facility, parentKeys)
+        ) {
+          filteredFacilities.push(facility);
+        }
+        if (wasOccupantOptionSelected && facility.occupantKeys.length > 0) {
+          if (
+            this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
+            !this._hasBuilding(filteredFacilities, facility) &&
+            this._matchedBuildingRequirements(facility, parentKeys)
+          ) {
             filteredFacilities.push(facility);
           }
-          if(wasOccupantOptionSelected && facility.occupantKeys.length > 0) {
-
-            if (this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
-            !this._hasBuilding(filteredFacilities, facility) &&
-            this._matchedBuildingRequirements(facility, parentKeys)) {
-              filteredFacilities.push(facility);
-            }
-          }
-        });
+        }
       });
+    });
 
-      if(this._isMultipleCategories(filterOptions)) {
-        filteredFacilities = filteredFacilities.filter(x => this._matchAllAttributes(filterOptions, x));
-      }
+    if (this._isMultipleCategories(filterOptions)) {
+      filteredFacilities = filteredFacilities.filter(x => this._matchAllAttributes(filterOptions, x));
+    }
 
-      this._updateFilter(filterOptions);
-      this._stateService.updateActiveFilterFacilities(filteredFacilities);
+    this._updateFilter(filterOptions);
+    this._stateService.updateActiveFilterFacilities(filteredFacilities);
   }
   private _isMultipleCategories(filterOptions: Map<string, string[]>): boolean {
     return filterOptions.size > 1;
@@ -212,7 +207,7 @@ export class RoomsService {
     return filterOptions.has('Buildings');
   }
 
-  private _hasBuilding(listOfFacilities: Facility[], building: Facility ): boolean {
+  private _hasBuilding(listOfFacilities: Facility[], building: Facility): boolean {
     return !!listOfFacilities.find(x => x.facilityId === building.facilityId);
   }
 
@@ -221,30 +216,28 @@ export class RoomsService {
     filterOptions.forEach((options, category) => {
       includedCategories.push(category);
       this._filterOptions.updateOptionDetails(category, options);
-    })
+    });
     this._filterOptions.deselectOptionDetails(includedCategories);
   }
   private _matchedBuildingRequirements(facility: Facility, parentKeys: number[]): boolean {
-    return parentKeys.length > 0? parentKeys.includes(facility.topLevelKey): true;
+    return parentKeys.length > 0 ? parentKeys.includes(facility.topLevelKey) : true;
   }
 
   private _matchAllAttributes(filterOptions: Map<string, string[]>, facility: Facility): boolean {
-
     let matchesAll = true;
-    for(const [category, options] of filterOptions) {
-      if(category === 'Buildings') {
+    for (const [category, options] of filterOptions) {
+      if (category === 'Buildings') {
         continue;
       }
-      if(category.includes('Facility ')) {
-
-        if(this._matchedFacilityAttributes(category, options, facility)) {
+      if (category.includes('Facility ')) {
+        if (this._matchedFacilityAttributes(category, options, facility)) {
           continue;
         } else {
           matchesAll = false;
           break;
         }
       } else {
-        if(this._hasOccupants(facility) && this._matchedOccupantsAttributes(category,options,facility.facilityId)) {
+        if (this._hasOccupants(facility) && this._matchedOccupantsAttributes(category, options, facility.facilityId)) {
           continue;
         } else {
           matchesAll = false;
@@ -254,29 +247,27 @@ export class RoomsService {
     }
 
     return matchesAll;
-      }
+  }
 
   private _matchedFacilityAttributes(category: string, options: string[], facility: Facility): boolean {
-    return (facility.hasAttribute(category.replace("Facility ", "")) &&
-      this._valueMatches(options, facility.getAttributeValue(
-        category.replace("Facility ", "")).value));
+    return (
+      facility.hasAttribute(category.replace('Facility ', '')) &&
+      this._valueMatches(options, facility.getAttributeValue(category.replace('Facility ', '')).value)
+    );
   }
 
   private _matchedOccupantsAttributes(category: string, options: string[], facilityId: number): boolean {
     const occupantDetails = this._stateService.getOccupantDetails(facilityId);
-    const occupant = occupantDetails.find(
-      x => x.hasAttribute(category.replace("Patron ", "")));
+    const occupant = occupantDetails.find(x => x.hasAttribute(category.replace('Patron ', '')));
 
-    return (occupant? this._valueMatches(
-      options, occupant.getAttributeValue(category.replace("Patron ", ""))) :
-      false);
+    return occupant ? this._valueMatches(options, occupant.getAttributeValue(category.replace('Patron ', ''))) : false;
   }
 
   private _hasOccupants(facility: Facility): boolean {
-    return (facility.occupantKeys && facility.occupantKeys.length > 0);
+    return facility.occupantKeys && facility.occupantKeys.length > 0;
   }
 
   private _valueMatches(options: string[], value: string): boolean {
-      return options.includes(value);
+    return options.includes(value);
   }
 }

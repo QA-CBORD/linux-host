@@ -14,8 +14,8 @@ export enum SelectedHousingTab {
 
 @Component({
   selector: 'st-housing-dashboard',
-  templateUrl: './housing-dashboard.page.html',
-  styleUrls: ['./housing-dashboard.page.scss'],
+  templateUrl: './housing-dashboard.component.html',
+  styleUrls: ['./housing-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HousingDashboardPage {

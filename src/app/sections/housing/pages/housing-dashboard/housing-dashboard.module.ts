@@ -11,7 +11,7 @@ import { RoomsModule } from '../../rooms/rooms.module';
 import { ContractListModule } from '../../contract-list/contract-list.module'
 import { CheckInOutModule } from '../../check-in-out/check-in-out.module'
 
-import { HousingDashboardPage } from './housing-dashboard.page';
+import { HousingDashboardPage } from './housing-dashboard.component';
 import { NonAssginmentsModule } from '@sections/housing/non-assignments/non-assignments.module';
 import { WaitingListsModule } from '../../waiting-lists/waiting-lists.module'
 import { WorkOrdersModule } from '@sections/housing/work-orders/work-orders.module';

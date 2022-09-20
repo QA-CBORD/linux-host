@@ -6,11 +6,10 @@ import { OrderTileComponent } from './order-tile.component';
 
 const imports = [IonicModule, CommonModule];
 const declarations = [OrderTileComponent];
-const exports = [OrderTileComponent];
 
 @NgModule({
   declarations,
   imports,
-  exports,
+  exports : [OrderTileComponent],
 })
 export class OrderTileModule { }

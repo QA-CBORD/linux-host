@@ -257,8 +257,8 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setProps(response) {
-    const { contentStrings, orderId, total, checkNumber, data, orderPayment, isExistingOrder } = response.data;
+  private async setProps(response) {
+    const { contentStrings, orderId, total, checkNumber, data, orderPayment, isExistingOrder, type } = response.data;
     const { content } = contentStrings;
     this.data = <orderInfo>data;
     this.contentStrings = <CheckingContentCsModel>content;
@@ -272,5 +272,16 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     const res = this.merchant.settings.map[MerchantSettings.addToCartEnabled];
     this.addToCartEnabled = res.value && !!JSON.parse(res.value);
     this.orderPayment = JSON.parse(orderPayment);
+
+    const orderDetailOptions = await firstValueFrom(this.orderDetailOptions$);
+    
+    if(!orderDetailOptions) {
+      this.orderDetailOptions$ = of({
+        orderType: type,
+        address: {} as AddressInfo,
+        dueTime: new Date(this.dueTime),
+        isASAP: false
+      });
+    }
   }
 }

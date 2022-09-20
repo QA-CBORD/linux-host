@@ -20,12 +20,11 @@ const imports = [
 ];
 const declarations = [PhoneEmailComponent];
 const entryComponents = [PhoneEmailComponent];
-const exports = [PhoneEmailComponent];
 
 @NgModule({
   declarations,
   imports,
   entryComponents,
-  exports,
+  exports: [PhoneEmailComponent],
 })
 export class PhoneEmailModule {}

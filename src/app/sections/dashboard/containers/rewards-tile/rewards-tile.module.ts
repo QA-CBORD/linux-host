@@ -9,12 +9,11 @@ import { StProgressBarModule } from '@shared/ui-components/st-progress-bar/st-pr
 
 const imports = [IonicModule, CommonModule, StProgressBarModule];
 const declarations = [RewardsTileComponent];
-const exports = [RewardsTileComponent];
 
 @NgModule({
   declarations,
   imports,
   providers: [RewardsService, RewardsApiService],
-  exports,
+  exports: [RewardsTileComponent],
 })
 export class RewardsTileModule { }

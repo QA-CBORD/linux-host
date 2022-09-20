@@ -9,12 +9,12 @@ import { StConversationItemModule } from '@shared/ui-components';
 
 const imports = [IonicModule, CommonModule, MessageDatePipeModule, StConversationItemModule];
 const declarations = [ConversationsTileComponent];
-const exports = [ConversationsTileComponent];
+
 
 @NgModule({
   declarations,
   imports,
   providers: [SecureMessagingService, SecureMessagingApiService],
-  exports,
+  exports: [ConversationsTileComponent],
 })
 export class ConversationsTileModule {}

@@ -44,10 +44,16 @@
 
   ion-select{
     color: black;
-    font-weight: 400;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 1.2em;
     @include font-family($font-nunito-regular);
-    border: 1px solid #d8d8d8;
+    margin-bottom: 30px;
+    background: #F1F1F1;
+    border-radius: 8px;
+  }
+  
+  ion-button{
+    @include font-family($font-nunito-regular);
   }
 }
 
@@ -102,8 +108,8 @@
   }
 
   .file{
-    width: 200px;
-    height: 175px;
+    width: 4em;
+    height: 100%;
     background: url('/assets/images/housing/file.svg') no-repeat 50% 0 ;
   }
 
@@ -121,8 +127,19 @@
   margin-bottom: 1em;
   margin-top: 0.7em;
   height: 2.4em;
+  font-weight: 700;
+  .submit{
+    background: #0878C8;
+  }
 }
 
 .form__secondary-header {
   margin-top: 30px;
+}
+
+.infoAttachment{
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  @include font-family($font-nunito-regular);
 }

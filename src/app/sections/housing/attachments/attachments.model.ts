@@ -22,10 +22,10 @@ export class ImageData implements ImageDataOptions {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as ImageDataOptions;
     }
-    this.notes = String(options.notes);
-    this.attachmentTypeName = String(options.attachmentTypeName);
-    this.fileName = String(options.fileName);
-    this.attachmentFile = String(options.attachmentFile);
+    this.notes = options.notes;
+    this.attachmentTypeName = options.attachmentTypeName;
+    this.fileName = options.fileName;
+    this.attachmentFile = options.attachmentFile;
     this.attachmentTypeKey = Number(options.attachmentTypeKey);
     this.termKey = Number(options.termKey);
   }
@@ -33,17 +33,13 @@ export class ImageData implements ImageDataOptions {
 
 export interface AttachmentsDetailOptions {
   attachmentTypeKey:number;
-  attachmentTypeName: string;
-  fileName: string;
-  attachmentFile: string;
+  attachmentUrl: string;
   notes: string;
   termKey: number;
 }
 export class AttachmentsDetail implements AttachmentsDetailOptions {
   attachmentTypeKey: number;
-  attachmentTypeName: string;
-  fileName: string;
-  attachmentFile: string;
+  attachmentUrl: string;
   notes: string;
   termKey: number;
   constructor(options: AttachmentsDetailOptions) {
@@ -51,10 +47,8 @@ export class AttachmentsDetail implements AttachmentsDetailOptions {
       options = {} as AttachmentsDetailOptions;
     }
     this.attachmentTypeKey = Number(options.attachmentTypeKey);
-    this.attachmentTypeName = String(options.attachmentTypeName);
-    this.fileName = String(options.fileName);
-    this.attachmentFile = String(options.attachmentFile);
-    this.notes = String(options.notes);
+    this.attachmentUrl = options.attachmentUrl;
+    this.notes = options.notes;
     this.termKey = Number(options.termKey);
   }
 }
@@ -91,7 +85,7 @@ export class AttachmentTypes implements AttachmentTypesOptions{
       options = {} as AttachmentTypesOptions;
     }
     this.typeKey = Number(options.typeKey)
-    this.name = String(options.name);
+    this.name = options.name;
   }
 }
 
@@ -114,9 +108,9 @@ export class AttachmentsList implements AttachmentsListOptions {
       options = {} as AttachmentsListOptions;
     }
     this.attachmentKey = Number(options.attachmentKey);
-    this.attachmentType = String(options.attachmentType);
-    this.fileName = String(options.fileName);
-    this.attachmentDate = String(options.attachmentDate);
+    this.attachmentType = options.attachmentType;
+    this.fileName = options.fileName;
+    this.attachmentDate = options.attachmentDate;
     this.comments = options?.comments || '';
   }
 

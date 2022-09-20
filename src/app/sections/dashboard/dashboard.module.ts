@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { StHeaderModule } from 'src/app/shared/ui-components/st-header/st-header.module';
 import { DashboardRoutingModule } from './dashboard.routing.module';
 
-import { DashboardPage } from './dashboard.page';
+import { DashboardPage } from './dashboard.component';
 
 import { AccessCardModule } from './containers/access-card';
 import { AccountsTileModule } from './containers/accounts-tile';

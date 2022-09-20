@@ -10,7 +10,6 @@ import { TransactionUnitsPipeModule } from '@shared/pipes';
 
 const imports = [IonicModule, CommonModule, TransactionUnitsPipeModule, TransactionActionPipeModule];
 const declarations = [TransactionsTileComponent];
-const exports = [TransactionsTileComponent];
 
 @NgModule({
   declarations,
@@ -20,6 +19,6 @@ const exports = [TransactionsTileComponent];
     TransactionUnitsPipeModule,
   ],
   providers: [TransactionService, AccountService],
-  exports,
+  exports : [TransactionsTileComponent],
 })
 export class TransactionsTileModule { }

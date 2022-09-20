@@ -30,7 +30,10 @@
   </div>
   <div class="login__form-wrapper">
     <form class="login__form" [formGroup]="loginForm">
-      <div class="login__form-content" *ngVar="{ isLDAP: authTypeLDAP$ | async, isInstructions: loginInstructions$ | async } as authInfo">
+      <div
+        class="login__form-content"
+        *ngVar="{ isLDAP: authTypeLDAP$ | async, isInstructions: loginInstructions$ | async } as authInfo"
+      >
         <ion-card *ngIf="authInfo.isLDAP && authInfo.isInstructions" class="login__LDAP-message">
           <ion-card-content>
             <div [innerHTML]="authInfo.isInstructions"></div>
@@ -38,6 +41,7 @@
         </ion-card>
       </div>
       <st-input-floating-label
+        [ngClass]="{'login__form--control-error' : username.invalid && username.touched}"
         [label]="placeholderOfUsername$ | async"
         [formControlName]="controlsNames.username"
         [control]="username"
@@ -47,9 +51,16 @@
         [stFocusNext]="inputPassword"
         tabindex="0"
       >
+        <div
+          class="login__form--control-error__input"
+          *ngIf="username.errors && username.errors['required'] && (username.dirty || username.touched)"
+        >
+          Username is required
+        </div>
       </st-input-floating-label>
       <br />
       <st-input-floating-label
+        [ngClass]="{'login__form--control-error' : password.invalid && password.touched}"
         #inputPassword
         [label]="'Password'"
         [formControlName]="controlsNames.password"
@@ -61,11 +72,22 @@
         (keyup.enter)="authenticateUser(loginForm)"
         tabindex="0"
       >
+        <div
+          class="login__form--control-error__input"
+          *ngIf="password.errors &&
+            password.errors['required'] &&
+            (password.dirty || password.touched)"
+        >
+          Password is required
+        </div>
       </st-input-floating-label>
       <ng-container
         *ngVar="{ isHosted: authTypeHosted$ | async, isSignupEnabled: signupEnabled$ | async, navedAsGuest: navedAsGuest$ | async } as authValues"
       >
-        <div *ngIf="authValues.isHosted && authValues.isSignupEnabled || authValues.navedAsGuest" class="login__form-password">
+        <div
+          *ngIf="authValues.isHosted && authValues.isSignupEnabled || authValues.navedAsGuest"
+          class="login__form-password"
+        >
           <a class="login__form-password-forgot" (click)="redirectToForgotPassword()" tabindex="2">Forgot password?</a>
         </div>
         <div class="login__form-btns">

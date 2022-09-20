@@ -4,13 +4,17 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
-	<key>com.apple.developer.payment-pass-provisioning</key>
-	<true/>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:get.cbord.com</string>
 		<string>applinks:get.ca.cbord.com</string>
 		<string>applinks:get.dev.cbord.com</string>
 	</array>
+	<key>com.apple.developer.pass-type-identifiers</key>
+	<array>
+		<string>$(TeamIdentifierPrefix)*</string>
+	</array>
+	<key>com.apple.developer.payment-pass-provisioning</key>
+	<true/>
 </dict>
 </plist>

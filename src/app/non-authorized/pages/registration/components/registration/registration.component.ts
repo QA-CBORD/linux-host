@@ -41,9 +41,9 @@ export class RegistrationComponent implements OnInit {
     private readonly toastService: ToastService
   ) {}
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     await this.formFieldsetup();
-    const { registrationCs, passwordValidationCs } = await (await this.registrationFacade.getData()).contentString;
+    const { registrationCs, passwordValidationCs } = (await this.registrationFacade.getData()).contentString;
     this.title$ = of(registrationCs.title);
     this.btnText$ = of(registrationCs.submitBtnTxt);
     this.passwordValidators = buildPasswordValidators(passwordValidationCs);
@@ -104,7 +104,7 @@ export class RegistrationComponent implements OnInit {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async onRegistrationSuccess(response): Promise<void> {
     this.modalCtrl.dismiss();
-    const { registrationCs: contentStrings } = await (await this.registrationFacade.getData()).contentString;
+    const { registrationCs: contentStrings } = (await this.registrationFacade.getData()).contentString;
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       componentProps: {
@@ -132,7 +132,7 @@ export class RegistrationComponent implements OnInit {
       ({ response }) => this.onRegistrationSuccess(response),
       async error => {
         const [errorCode] = error.message.split('|');
-        const { registrationCs } = await (await this.registrationFacade.getData()).contentString;
+        const { registrationCs } = (await this.registrationFacade.getData()).contentString;
         const message = registrationCs.fromCodeOrDefaultErrortext(errorCode);
         this.toastService.showToast({ message, duration: 6000 });
         this.loadingService.closeSpinner();

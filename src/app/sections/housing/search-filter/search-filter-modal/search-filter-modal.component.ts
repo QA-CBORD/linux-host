@@ -3,7 +3,6 @@ import { ModalController } from '@ionic/angular';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { FilterSortComponent } from '../filter-sort/filter-sort.component';
-import { SortControlComponent } from '../filter-sort/sort-control/sort-control.component';
 
 import { Category } from '../filter-sort/filter-sort.model';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
@@ -158,9 +157,6 @@ export class SearchFilterModalComponent implements OnInit {
     }
     return name;
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-  sort(control: SortControlComponent): void {}
 
   getId(key: string, index: number): number {
     return Number(key) - index;

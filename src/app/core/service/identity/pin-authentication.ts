@@ -35,7 +35,7 @@ export class PinAuthenticator {
             } catch (error) {
                 if (this.isWrongPin(error)) {
                     this.onPinEvaluated(false);
-                    return await tryIt();
+                    return tryIt();
                 } else {
                     this.onPinEvaluated(false);
                     throw error;
