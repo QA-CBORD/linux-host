@@ -13,6 +13,8 @@ import { PopoverController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Location } from '@angular/common';
+import { SETTINGS_NAVIGATE } from '@sections/settings/settings.config';
+
 @Component({
   selector: 'st-address-edit-page',
   templateUrl: './address-edit.page.html',
@@ -34,20 +36,19 @@ export class AddressEditPage implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly location: Location,
-  ) {}
+    private readonly location: Location) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initContentStrings();
   }
 
-  ionViewWillEnter() {
+  ionViewWillEnter(): void {
     this.buildings$ = this.merchantService.retrieveBuildings();
     this.defaultAddress$ = this.merchantService.getDefaultAddress().pipe(map(({ value }) => value));
     zip(this.buildings$, this.merchantService.selectedAddress$)
       .pipe(
         map(([buildings, address]) => {
-          const activeBuilding = buildings.find(({ addressInfo }) => addressInfo.building === address.building);
+          const activeBuilding = buildings?.find(({ addressInfo }) => addressInfo.building === address?.building);
           return {
             activeBuilding,
             address,
@@ -60,11 +61,11 @@ export class AddressEditPage implements OnInit {
       });
   }
 
-  onBack() {
+  onBack(): void {
     this.location.back();
   }
 
-  onRemove() {
+  onRemove(): void {
     this.presentAlert();
   }
 
@@ -125,7 +126,8 @@ export class AddressEditPage implements OnInit {
       )
       .subscribe(() => {
         this.merchantService.selectedAddress = null;
-        this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses]);
+        const route = this.router.url.includes(PATRON_NAVIGATION.settings) ? [PATRON_NAVIGATION.settings, SETTINGS_NAVIGATE.address] : [PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses];
+        this.router.navigate(route);
         this.addNewAdddressState = !this.addNewAdddressState;
       });
   }
