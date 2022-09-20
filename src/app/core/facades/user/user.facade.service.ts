@@ -123,7 +123,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   getPhotoById(photoId: string): Observable<UserPhotoInfo> {
-    return this.userApiService.getPhotoById(photoId).pipe(
+    return this.userApiService.getUserPhoto(photoId).pipe(
       map(({ response }) => response),
       take(1)
     );

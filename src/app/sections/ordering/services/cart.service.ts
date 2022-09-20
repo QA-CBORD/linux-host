@@ -94,7 +94,7 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
-      filter((orderInfo) => orderInfo && orderInfo.orderItems.length > 0),
+      filter(orderInfo => orderInfo && orderInfo.orderItems.length > 0),
       map(({ orderItems }) => orderItems.reduce((state, { quantity }) => state + quantity, 0))
     );
   }
@@ -137,7 +137,7 @@ export class CartService {
       minute: '2-digit',
     };
 
-    if(/Invalid Date/.test(String(date))) return;
+    if (/Invalid Date/.test(String(date))) return;
 
     if (!timeZone) return Intl.DateTimeFormat('en-US', options).format(date);
     options.timeZone = timeZone;
@@ -186,7 +186,6 @@ export class CartService {
     this.onStateChanged();
   }
 
-
   private async setInitialEmptyOrder(): Promise<void> {
     this._pendingOrderId = null;
     await this.initEmptyOrder().then(order => (this.cart.order = order));
@@ -233,12 +232,20 @@ export class CartService {
     this.onStateChanged();
   }
 
+  getAddress(type: any, addr: any): any {
+    return type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
+  }
+
+  getDate(dueTime: any, locale: string, timeZone: string): any {
+    return dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
+  }
+
   validateOrder(): Observable<OrderInfo> {
     const { orderType: type, dueTime, address: addr } = this.cart.orderDetailsOptions;
     let address = {};
 
     if (addr) {
-      address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
+      address = this.getAddress(type, addr);
     }
 
     return this.userFacadeService.getUserData$().pipe(
@@ -248,31 +255,34 @@ export class CartService {
           ...this.cart.order,
           ...address,
           type,
-          dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime,
+          dueTime: this.getDate(dueTime, locale, timeZone),
         };
-        if (this._pendingOrderId) {
-          return this.merchantService
-            .validatePendingOrder({ orderID: this._pendingOrderId, itemsToAdd: this.cart.order.orderItems }, 
-            this.cart.order.orderPayment[0].accountId)
-            .pipe(
-              map(order => {
-                const allItems = order.orderItems;
-                const newItems = this.cart.order.orderItems;
-                order.orderItems = [];
-                newItems.forEach(({ menuItemId, quantity }) => {
-                  const theFoundItem = allItems.find(i => i.menuItemId == menuItemId && i.quantity == quantity);
-                  if (theFoundItem) {
-                    order.orderItems.push(theFoundItem);
-                  } else {
-                    console.log('Something wrong, item: ', menuItemId, ' Not found');
-                  }
-                });
-                return order;
-              })
-            );
-        } else {
+        
+        if (!this._pendingOrderId) {
           return this.merchantService.validateOrder(this.cart.order);
         }
+
+        return this.merchantService
+          .validatePendingOrder(
+            { orderID: this._pendingOrderId, itemsToAdd: this.cart.order.orderItems },
+            this.cart.order.orderPayment[0].accountId
+          )
+          .pipe(
+            map(order => {
+              const allItems = order.orderItems;
+              const newItems = this.cart.order.orderItems;
+              order.orderItems = [];
+              newItems.forEach(({ menuItemId, quantity }) => {
+                const theFoundItem = allItems.find(i => i.menuItemId == menuItemId && i.quantity == quantity);
+                if (theFoundItem) {
+                  order.orderItems.push(theFoundItem);
+                } else {
+                  console.log('Something wrong, item: ', menuItemId, ' Not found');
+                }
+              });
+              return order;
+            })
+          );
       }),
       tap(updatedOrder => {
         this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
@@ -285,13 +295,14 @@ export class CartService {
 
   submitOrder(accId: string, cvv: string, clientOrderID: string): Observable<OrderInfo> {
     if (this._pendingOrderId) {
-      return this.merchantService.addItemsToOrder({
-        clientAddItemsID: clientOrderID,
-        orderID: this._pendingOrderId,
-        itemsToAdd: this.cart.order.orderItems,
-        cvv,
-      },
-      accId
+      return this.merchantService.addItemsToOrder(
+        {
+          clientAddItemsID: clientOrderID,
+          orderID: this._pendingOrderId,
+          itemsToAdd: this.cart.order.orderItems,
+          cvv,
+        },
+        accId
       );
     }
     if (this.orderIsAsap) this.cart.order.dueTime = undefined;

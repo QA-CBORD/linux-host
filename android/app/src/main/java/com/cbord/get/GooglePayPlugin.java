@@ -33,14 +33,14 @@ public class GooglePayPlugin extends Plugin {
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
-        call.resolve(toJson("success"));
+        call.resolve(HIDToJson("success"));
     }
 
     @PluginMethod()
     public void getGooglePayNonce(PluginCall call) {
         final Task<String> response = tapAndPayClient.getLinkingToken(CLIENT_NAME);
         response.addOnSuccessListener(token -> {
-            call.resolve(toJSON(token));
+            call.resolve(goolePayToJSON(token));
         });
         response.addOnFailureListener(error -> {
              if (isGoogleWalletInactive((ApiException) error)) {
@@ -87,7 +87,7 @@ public class GooglePayPlugin extends Plugin {
         return activities.size() > 0;
     }
 
-    private JSObject toJSON(String value) {
+    private JSObject goolePayToJSON(String value) {
         JSObject jsonObject = new JSObject();
         jsonObject.put(GOOGLE_PAY_NONCE, value);
         return jsonObject;
@@ -97,7 +97,7 @@ public class GooglePayPlugin extends Plugin {
         return error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET;
     }
 
-    private JSObject toJson(Object transactionResult){
+    private JSObject HIDToJson(Object transactionResult){
         JSObject jsonObject = new JSObject();
         jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
         return jsonObject;
