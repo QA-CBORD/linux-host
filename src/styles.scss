@@ -331,34 +331,43 @@ article {
   display: block;
 }
 
-.ios button.alert-button.button__option_delete_attachment {
-  background-color: #DC2F45;
-  color: white;
-  border-radius: 8px;
-  @include font-family($font-nunito-regular);
-  font-weight: 700;
-}
+.alert-modal-attachment{
+  .alert-wrapper {
+    .alert-head {
+      border-bottom: 1px solid #E2E2E2;
+      margin-bottom: 10px;
+    }
+  }
 
-button.alert-button.button__option_delete_attachment {
-  background-color: #DC2F45;
-  color: white;
-  border-radius: 8px;
-  @include font-family($font-nunito-regular);
-  font-weight: 700;
-}
-
-.ios button.alert-button.button__option_cancel_attachment{
-  background: #E2E2E2;
-  border-radius: 8px;
-  padding: 15px 16px;
-  font-weight: 700;
-  color:black;
-}
-
-button.alert-button.button__option_cancel_attachment{
-  background: #E2E2E2;
-  border-radius: 8px;
-  padding: 15px 16px;
-  font-weight: 700;
-  color:black;
+  .ios button.alert-button.button__option_delete_attachment {
+    background-color: #DC2F45;
+    color: white;
+    border-radius: 8px;
+    @include font-family($font-nunito-regular);
+    font-weight: 700;
+  }
+  
+  button.alert-button.button__option_delete_attachment {
+    background-color: #DC2F45;
+    color: white;
+    border-radius: 8px;
+    @include font-family($font-nunito-regular);
+    font-weight: 700;
+  }
+  
+  .ios button.alert-button.button__option_cancel_attachment{
+    background: #E2E2E2;
+    border-radius: 8px;
+    padding: 15px 16px;
+    font-weight: 700;
+    color:black;
+  }
+  
+  button.alert-button.button__option_cancel_attachment{
+    background: #E2E2E2;
+    border-radius: 8px;
+    padding: 15px 16px;
+    font-weight: 700;
+    color:black;
+  }
 }
