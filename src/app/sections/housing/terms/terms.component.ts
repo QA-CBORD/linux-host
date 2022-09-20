@@ -33,11 +33,10 @@ export class TermsComponent implements OnInit {
 
   handleSelectTerm(term: Term): void {
     this.label = term.termName;
-
-    this._termsService.setTermId(term.termId);
+    this._termsService.setTermId(term.key);
   }
 
   trackById(_: number, term: Term): number {
-    return term.termId;
+    return term.key;
   }
 }
