@@ -179,7 +179,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   getSizeFile(fileDataInt8) {
-    let sizeFile = Number((fileDataInt8 / BYTES_TO_MB).toFixed(2))
+    const sizeFile = Number((fileDataInt8 / BYTES_TO_MB).toFixed(2))
      return sizeFile <= 10? sizeFile: 0;
   }
 
