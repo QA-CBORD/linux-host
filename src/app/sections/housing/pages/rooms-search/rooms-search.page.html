@@ -1,32 +1,11 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios" class="rooms-search__toolbar">
-    <ion-buttons slot="start">
-      <st-back-button defaultHref="/housing/dashboard"></st-back-button>
-    </ion-buttons>
-
-    <st-page-title>Rooms</st-page-title>
-
-    <ion-buttons slot="end">
-<!--      Removed until RC 21.1-->
-<!--      <ion-button-->
-<!--        mode="ios"-->
-<!--        color="primary"-->
-<!--        class="btn rooms-search__favorite"-->
-<!--        fill="clear"-->
-<!--        routerLink="/housing/favorites"-->
-<!--      >-->
-<!--        Favorites-->
-<!--      </ion-button>-->
-    </ion-buttons>
-  </ion-toolbar>
-
-  <st-units-switch [units]="units"></st-units-switch>
-
-  <ion-toolbar class="rooms-search__toolbar rooms-search__filters">
-    <st-search-filter slot="end"></st-search-filter>
-  </ion-toolbar>
-</ion-header>
-
+<st-header
+  title="Rooms"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Back'"
+  backButtonIcon="chevron-back"
+  [isToolbarShow]="true"
+></st-header>
+<st-units-switch [units]="units"></st-units-switch>
 <ion-content>
   <ion-router-outlet></ion-router-outlet>
 </ion-content>

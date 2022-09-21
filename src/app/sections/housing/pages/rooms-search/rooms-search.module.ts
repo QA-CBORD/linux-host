@@ -11,6 +11,7 @@ import { UnitsPageModule } from './pages/units/units.module';
 import { RoomsSearchRoutingModule } from './rooms-search.routing.module';
 
 import { RoomsSearchPage } from './rooms-search.page';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
 const imports = [
   CommonModule,
@@ -22,6 +23,7 @@ const imports = [
   BuildingsPageModule,
   UnitsPageModule,
   RoomsSearchRoutingModule,
+  StHeaderModule,
 ];
 const declarations = [RoomsSearchPage];
 
