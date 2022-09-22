@@ -10,6 +10,7 @@ import {
   MerchantSettingInfo,
 } from '../shared/models';
 import { Injectable } from '@angular/core';
+import { format } from 'date-fns'
 
 import { BehaviorSubject, Observable, zip, of, iif } from 'rxjs';
 import { tap, switchMap, map } from 'rxjs/operators';
@@ -106,16 +107,8 @@ export class MerchantService {
 
   extractTimeZonedString(dateStr: string, timeZone: string): string {
     let timez = null;
-    const dateConfig: any = {
-      hour12: true,
-      day: 'numeric',
-      month: 'short',
-      weekday: 'short',
-      hour: 'numeric',
-      minute: '2-digit',
-    };
-
-    const [, , , tz] = new Date(dateStr).toLocaleString('en-US', { timeZone, timeZoneName: 'short' }).split(' ');
+    const dateObj = new Date(dateStr);
+    const [, , , tz] = dateObj.toLocaleString('en-US', { timeZone, timeZoneName: 'short' }).split(' ');
     timez = tz;
 
     if (!timez) {
@@ -125,21 +118,8 @@ export class MerchantService {
         .split(' ');
 
       timez = tz;
-      dateStr = Intl.DateTimeFormat('en-US', dateConfig).format(iosDate());
-    } else {
-      const [dateTime, minutes] = dateStr.split(/:/);
-      dateStr = `${dateTime}:${minutes}`;
-    }
-      dateStr = new Date(dateStr).toLocaleString('en-US', dateConfig);
-      // TODO: Return only time and check for correct format
-      const ios16At = ' at ';
-      if(dateStr.includes(ios16At)){
-        dateStr = dateStr.split(ios16At)[1];
-      } else {
-        dateStr = dateStr.split(/,/)[2];
-      }
-
-      return `${dateStr} (${timez})`;
+    } 
+    return format(dateObj, `h:mm aa '(${timez})'`);
   }
 
   getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
@@ -220,10 +200,7 @@ export class MerchantService {
   private dataTransform(schedule: Schedule, timeZone: string) {
     schedule.days.map(day => {
       day.hourBlocks = day.hourBlocks.map(hour => {
-        hour.periods = hour.timestamps.map(dateStr =>
-          this.extractTimeZonedString(dateStr, timeZone)
-            .trim()
-        );
+        hour.periods = hour.timestamps.map(dateStr => this.extractTimeZonedString(dateStr, timeZone));
         return hour;
       });
       return day;

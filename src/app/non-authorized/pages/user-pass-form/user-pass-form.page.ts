@@ -10,9 +10,8 @@ import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/fo
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Device } from '@capacitor/device';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { AUTHENTICATION_SYSTEM_TYPE, ANONYMOUS_ROUTES } from '../../non-authorized.config';
@@ -146,7 +145,7 @@ export class UserPassForm implements OnInit {
   }
 
   onSignup(): void {
-    const { navParams } = this.messageProxy.get();
+    const { navParams } = this.messageProxy.get<any>();
     if (navParams) {
       this.doHostedSignup(navParams);
     } else {
@@ -299,12 +298,6 @@ export class UserPassForm implements OnInit {
 
   private async presentToast(message: string): Promise<void> {
     await this.toastService.showToast({ message });
-  }
-
-  // TODO: Erase
-  private async getIsWeb(): Promise<boolean> {
-    const { operatingSystem } = await Device.getInfo();
-    return !(operatingSystem === 'ios' || operatingSystem === 'android');
   }
 
   public get defaultBackUrl() {

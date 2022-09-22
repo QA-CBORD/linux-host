@@ -270,7 +270,6 @@ export class PhotoUploadComponent implements OnInit {
       this.cameraService.getPhoto({
         quality: 100,
         correctOrientation: true,
-        preserveAspectRatio: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
         height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
         direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,

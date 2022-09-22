@@ -8,7 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { IonicModule, Platform } from '@ionic/angular';
-import { IonicStorageModule, Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { ApplicationsModule } from '@sections/housing/applications/applications.module';
 import { AttachmentModule } from '@sections/housing/attachments/attachments.module';
 import { CheckInOutModule } from '@sections/housing/check-in-out/check-in-out.module';
@@ -90,7 +90,6 @@ describe('HousingDashboardPage', () => {
         AttachmentModule,
         HttpClientTestingModule,
         RouterTestingModule,
-        IonicStorageModule,
       ],
       providers: [
         { provide: EnvironmentFacadeService, useValue: _environment },

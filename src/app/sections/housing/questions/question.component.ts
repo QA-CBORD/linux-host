@@ -135,7 +135,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
       width: 500,
       allowEditing: false,
       correctOrientation: true,
-      preserveAspectRatio: true,
       direction: CameraDirection.Rear,
       resultType: CameraResultType.Uri,
       source: cameraSource,
@@ -204,7 +203,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       directory: FilesystemDirectory.Data,
     }).then(
       async result => {
-        await this.loadFileData(result.files);
+        await this.loadFileData(result.files.map(file => file.name));
       },
       async () => {
         // Folder does not yet exists!
@@ -328,7 +327,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   private sanitizeUrl(photo: Photo, base64Data: string): string {
     return <string>(
+      (
       this.sanitizer.bypassSecurityTrustResourceUrl(this.sessionService.getIsWeb() ? photo.webPath : base64Data)
+    )
     );
   }
 

@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { map, take, tap, finalize } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { PATRON_NAVIGATION, User } from 'src/app/app.global';
-import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { User } from 'src/app/app.global';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { PopoverController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Location } from '@angular/common';
+import { firstValueFrom } from '@shared/utils';
+
 @Component({
   selector: 'st-address-edit-page',
   templateUrl: './address-edit.page.html',
@@ -26,6 +28,7 @@ export class AddressEditPage implements OnInit {
   buildings$: Observable<any[]>;
   defaultAddress$: Observable<string>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  afterSaveRoute: [];
 
   constructor(
     private readonly router: Router,
@@ -35,19 +38,20 @@ export class AddressEditPage implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly location: Location,
-  ) {}
+    private readonly route: ActivatedRoute) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initContentStrings();
+    this.initRoute();
   }
 
-  ionViewWillEnter() {
+  ionViewWillEnter(): void {
     this.buildings$ = this.merchantService.retrieveBuildings();
     this.defaultAddress$ = this.merchantService.getDefaultAddress().pipe(map(({ value }) => value));
     zip(this.buildings$, this.merchantService.selectedAddress$)
       .pipe(
         map(([buildings, address]) => {
-          const activeBuilding = buildings.find(({ addressInfo }) => addressInfo.building === address.building);
+          const activeBuilding = buildings?.find(({ addressInfo }) => addressInfo.building === address?.building);
           return {
             activeBuilding,
             address,
@@ -60,11 +64,16 @@ export class AddressEditPage implements OnInit {
       });
   }
 
-  onBack() {
+  private async initRoute() {
+    const routeData = await firstValueFrom(this.route.data.pipe(take(1)));
+    this.afterSaveRoute = routeData.afterSaveRoute;
+  } 
+
+  onBack(): void {
     this.location.back();
   }
 
-  onRemove() {
+  onRemove(): void {
     this.presentAlert();
   }
 
@@ -125,7 +134,7 @@ export class AddressEditPage implements OnInit {
       )
       .subscribe(() => {
         this.merchantService.selectedAddress = null;
-        this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses]);
+        this.router.navigate(this.afterSaveRoute);
         this.addNewAdddressState = !this.addNewAdddressState;
       });
   }

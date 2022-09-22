@@ -16,6 +16,7 @@
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_launcher_round" />
 
         <activity
+            android:exported="true"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:name="com.cbord.get.MainActivity"
             android:label="@string/title_activity_main"
@@ -44,7 +45,10 @@
             </intent-filter>
 
         </activity>
-
+        <activity
+            android:name="com.assaabloy.mobilekeys.api.network.NfcTagNetworkReaderActivity"
+            android:exported="true">
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

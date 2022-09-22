@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AndroidPermissionResponse, AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { AndroidPermissionResponse, AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 @Injectable({
   providedIn: 'root',

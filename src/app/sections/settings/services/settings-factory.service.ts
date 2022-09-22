@@ -18,7 +18,7 @@ import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import Setting = Settings.Setting;
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
