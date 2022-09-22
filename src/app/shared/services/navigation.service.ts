@@ -57,8 +57,12 @@ export class NavigationService {
   }
 
   getPreviousTrackedPath(): string {
-    this.history.pop();
-    return this.history.pop() || '';
+    if (this.history.length > 1)  {
+      this.history.pop();
+      return this.history.pop();
+    }
+
+    return '';
   }
 }
 
