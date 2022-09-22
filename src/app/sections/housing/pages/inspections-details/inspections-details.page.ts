@@ -82,7 +82,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     }
     this.residentInspectionKey = parseInt(this._route.snapshot.params.residentInspectionKey);
     this.contractElementKey = parseInt(this._route.snapshot.params.contractElementKey);
-    this.checkIn = this._route.snapshot.params.checkIn === 'true';
+    this.checkIn = JSON.parse(this._route.snapshot.params.checkIn);
     this.termKey = parseInt(this._route.snapshot.params.termKey);
     this._initInspectionDetailsObservable();
   }

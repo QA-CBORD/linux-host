@@ -10,11 +10,13 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
   providedIn: 'root',
 })
 export class NavigationService {
+  private history: string[] = [];
+  private notAllowedPaths = [/rooms\-search\/\d*?[^/]$/, /building\/\d*?[^/]$/];
   constructor(
     private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly ngZone: NgZone
-  ) { }
+  ) {}
 
   async navigate(params: string[], extras?: any): Promise<boolean> {
     const isGuestUser = await this.authFacadeService.isGuestUser().toPromise();
@@ -44,6 +46,19 @@ export class NavigationService {
 
   isRoute(urlChunk: string): boolean {
     return this.getUrl().includes(urlChunk);
+  }
+
+  trackPath(path: string) {
+    if (!this.notAllowedPaths.some(rx => rx.test(path))) {
+      if ((this.history[this.history.length - 1] != path)) {
+        this.history.push(path);
+      }
+    }
+  }
+
+  getPreviousTrackedPath(): string {
+    this.history.pop();
+    return this.history.pop() || '';
   }
 }
 
