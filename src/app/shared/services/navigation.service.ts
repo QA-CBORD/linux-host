@@ -11,7 +11,7 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 })
 export class NavigationService {
   private history: string[] = [];
-  private notAllowedPaths = [/rooms-search\/\d*?[^/]$/, /building\/\d*?[^/]$/];
+  private notAllowedPaths = [/rooms\-search\/\d*?[^/]$/, /building\/\d*?[^/]$/];
   constructor(
     private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
@@ -49,20 +49,24 @@ export class NavigationService {
   }
 
   trackPath(path: string) {
-    if (!this.notAllowedPaths.some(rx => rx.test(path))) {
-      if ((this.history[this.history.length - 1] != path)) {
+    if (this.isPathAllowed(path)) {
         this.history.push(path);
-      }
     }
   }
 
   getPreviousTrackedPath(): string {
     if (this.history.length > 1)  {
       this.history.pop();
-      return this.history.pop();
+      return this.history.pop() || '';
     }
+  }
 
-    return '';
+  private isSamePath(path: string) {
+    return this.history[this.history.length - 1] == path;
+  }
+
+  private isPathAllowed(path: string) {
+    return !this.notAllowedPaths.some(rx => rx.test(path)) && !this.isSamePath(path);
   }
 }
 
