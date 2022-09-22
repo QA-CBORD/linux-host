@@ -71,3 +71,12 @@
     @include floating-label($color-dim-gray);
   }
 }
+
+.textarea__placeholder.attachment_label{
+  @include font-nunito-heavy(14px);
+  color:#747474
+}
+
+.textarea__control.attachment_border{
+  border: 2px solid #747474;
+}

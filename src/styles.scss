@@ -337,6 +337,9 @@ article {
       border-bottom: 1px solid #E2E2E2;
       margin-bottom: 10px;
     }
+    .alert-button-group {
+      justify-content: right;
+    }
   }
 
   .ios button.alert-button.button__option_delete_attachment {
@@ -345,6 +348,8 @@ article {
     border-radius: 8px;
     @include font-family($font-nunito-regular);
     font-weight: 700;
+    min-width: 30%;
+    margin-right: 0 10px 10px 0;
   }
   
   button.alert-button.button__option_delete_attachment {
@@ -361,6 +366,8 @@ article {
     padding: 15px 16px;
     font-weight: 700;
     color:black;
+    min-width: 30%;
+    margin-right: 0 10px 10px 0;
   }
   
   button.alert-button.button__option_cancel_attachment{
