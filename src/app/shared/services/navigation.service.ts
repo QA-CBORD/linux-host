@@ -11,7 +11,7 @@ import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 })
 export class NavigationService {
   private history: string[] = [];
-  private notAllowedPaths = [/rooms\-search\/\d*?[^/]$/, /building\/\d*?[^/]$/];
+  private notAllowedPaths = [/rooms-search\/\d*?[^/]$/, /building\/\d*?[^/]$/];
   constructor(
     private readonly router: Router,
     private readonly authFacadeService: AuthFacadeService,
