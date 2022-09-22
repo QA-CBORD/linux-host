@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.17.2</string>
+	<string>4.17.3</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -38,11 +38,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-<<<<<<< HEAD
-	<string>4.16.33</string>
-=======
-	<string>4.17.2</string>
->>>>>>> 70bb8c528fb10570850f69d525dd09e25720251f
+	<string>4.17.3</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
