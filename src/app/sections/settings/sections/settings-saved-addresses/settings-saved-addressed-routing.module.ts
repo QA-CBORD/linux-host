@@ -17,6 +17,7 @@ const routes: Route[] = [
   {
     path: ORDERING_ROUTING.addressEdit,
     loadChildren: () => import('../../../ordering/pages/address-edit/address-edit.module').then(m => m.AddressEditPageModule),
+    data: { afterSaveRoute: [PATRON_NAVIGATION.settings, SETTINGS_NAVIGATE.address] },
   },
 ];
 
