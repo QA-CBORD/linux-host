@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PopoverController } from '@ionic/angular';
 import { MerchantService } from '@sections/ordering';
@@ -20,6 +20,7 @@ describe('AddressEditPage', () => {
   let settingsFacadeService;
   let location;
   let orderingService;
+  let route;
 
   beforeEach(
     waitForAsync(() => {
@@ -38,6 +39,7 @@ describe('AddressEditPage', () => {
           { provide: SettingsFacadeService, useValue: settingsFacadeService },
           { provide: Location, useValue: location },
           { provide: OrderingService, useValue: orderingService },
+          { provide: ActivatedRoute, useValue: route }
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
       }).compileComponents();
@@ -49,7 +51,8 @@ describe('AddressEditPage', () => {
         popoverCtrl,
         orderingService,
         settingsFacadeService,
-        location
+        location,
+        route
       );
     })
   );
