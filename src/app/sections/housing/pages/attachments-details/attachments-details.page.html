@@ -40,8 +40,8 @@
         </ng-template>
       </div>
       <div class="infoAttachment" *ngIf="(file$| async) as file">
-        <div>File name: {{attachmentSelected? attachmentSelected.fileName : file?.name}}</div>
-        <div *ngIf="!attachmentKey">File size: {{fileSizeInMB}}MB</div>
+        <div>{{attachmentSelected? attachmentSelected.fileName : file?.name}}</div>
+        <div *ngIf="!attachmentKey">File Size: {{fileSizeInMB}}MB</div>
       </div>
     </ng-container>
 

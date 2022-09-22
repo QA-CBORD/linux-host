@@ -93,7 +93,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.getAttachmentUrl();
+
     this.attachmentKey = parseInt(this._route.snapshot.paramMap.get('attachmentKey'), 10);
     if (!this.attachmentKey) {
       this._initTermsSubscription();
@@ -161,6 +161,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   selectFile() {
+    this.getAttachmentUrl()
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
     this.chooser.getFile()
       .then(file => {
