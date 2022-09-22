@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AttachmentsComponent } from './attachments.component'
 import { ActionsModule } from '../actions/actions.module';
+import { SortByDatePipeModule } from '@shared/pipes/sort-by-date-pipe/sort-by-date.module';
 
 const declarations = [
   AttachmentsComponent
@@ -15,6 +16,7 @@ const declarations = [
     IonicModule,
     ActionsModule,
     RouterModule,
+    SortByDatePipeModule
   ],
   exports: declarations
 })

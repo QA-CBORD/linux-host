@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AttachmentsComponent } from './attachments.component';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { SortByDatePipeModule } from '@shared/pipes/sort-by-date-pipe/sort-by-date.module';
 import { ActionsModule } from '../actions/actions.module';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -31,7 +32,8 @@ describe('AttachmentsComponent', () => {
         IonicModule,
         ActionsModule,
         RouterModule,
-        HttpClientModule
+        HttpClientModule,
+        SortByDatePipeModule
       ],
       declarations: [ AttachmentsComponent ],
       providers: [

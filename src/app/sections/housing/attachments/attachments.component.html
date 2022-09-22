@@ -15,7 +15,7 @@
     </ion-grid>
 
     <ng-container>
-      <div #container *ngFor="let attachment of attachmentList ">
+      <div #container *ngFor="let attachment of attachmentList | sort_by_date : 'attachmentDate'">
         <ion-item lines="none" class="attachment-list__item inProcess">
           <ion-label class="attachment-list__wrap">
             <div class="attachment-list__info">

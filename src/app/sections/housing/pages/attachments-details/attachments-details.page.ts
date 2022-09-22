@@ -63,7 +63,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   public file$: BehaviorSubject<ChooserResult> = new BehaviorSubject<ChooserResult>(null);
   file?: ChooserResult;
   isFile: boolean;
-  public fileSizeInMB: string;
+  public fileSizeInMB: number;
   attachmentKey?: number;
   public attachmentSelected: AttachmentsList;
   public fileBase64: string;
@@ -93,7 +93,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.getAttachmentUrl();
+
     this.attachmentKey = parseInt(this._route.snapshot.paramMap.get('attachmentKey'), 10);
     if (!this.attachmentKey) {
       this._initTermsSubscription();
@@ -161,21 +161,56 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   selectFile() {
+    this.getAttachmentUrl()
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
     this.chooser.getFile()
       .then(file => {
         this.file$.next(file);
-        this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
-        this.getSizeFile(file.data.byteLength);
+        this.fileSizeInMB = this.getSizeFile(file.data.byteLength);
+        if(this.fileSizeInMB>0){
+           this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
+           this.isFile = this.getFileType(file) != 'image';
+        }
+        this.alertAttachmentLimitSize(this.fileSizeInMB)
       }).finally(()=> this.identityFacadeService.updateVaultTimeout({ extendTimeout: false }))
   }
 
+  getFileType(file){
+    return file.mediaType.split('/')[0];
+  }
+
   getSizeFile(fileDataInt8) {
-    this.fileSizeInMB = (fileDataInt8.length / BYTES_TO_MB).toFixed(2);
+    const sizeFile = Number((fileDataInt8 / BYTES_TO_MB).toFixed(2))
+     return sizeFile <= 10? sizeFile: 0;
+  }
+
+  async alertAttachmentLimitSize(FileSize){
+    if(!FileSize){
+      const alert = await this._alertController.create({
+        cssClass: "alert-modal-attachment",
+        header: 'Large File Size',
+        message: `Attachment file size cannot exceed 10 MB. Select a smaller file.`,
+        buttons: [
+          {
+            text: 'OK',
+            role: 'cancel',
+            cssClass: 'button__option_cancel_attachment',
+            handler: () => {
+              this.activeAlerts = [];
+              alert.dismiss();
+              this.file$.next(null);
+            },
+          },
+        ],
+      });
+      this.activeAlerts.push(alert);
+      await alert.present();
+    }
   }
 
   async deleteAttachment() {
     const alert = await this._alertController.create({
+      cssClass: "alert-modal-attachment",
       header: 'Delete Attachment?',
       message: `Deleting this attachment will remove the Attachment Note and attached file.`,
       buttons: [

@@ -1,7 +1,7 @@
 export class Term {
-  termId: number;
-  termStartDate: string;
-  termEndDate: string;
+  key: number;
+  termStartDateTime: string;
+  termEndDateTime: string;
   termName: string;
 
   constructor(options: any) {
@@ -9,9 +9,9 @@ export class Term {
       options = {};
     }
 
-    this.termId = Number(options.termId);
-    this.termStartDate = String(options.termStartDate);
-    this.termEndDate = String(options.termEndDate);
+    this.key = Number(options.key);
+    this.termStartDateTime = String(options.termStartDateTime);
+    this.termEndDateTime = String(options.termEndDateTime);
     this.termName = String(options.termName);
   }
 }

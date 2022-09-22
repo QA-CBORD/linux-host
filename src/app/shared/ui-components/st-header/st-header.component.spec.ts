@@ -1,15 +1,27 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { StHeaderComponent } from './st-header.component';
+
+const modalController = {
+  create: jest.fn(),
+};
+
+const popoverCtrl = {};
 
 describe('StHeaderComponent', () => {
   let component: StHeaderComponent;
   let fixture: ComponentFixture<StHeaderComponent>;
-  let compiled: HTMLElement;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       declarations: [StHeaderComponent],
+      providers: [
+        { provide: ModalController, useValue: modalController },
+        { provide: PopoverController, useValue: popoverCtrl },
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   });
@@ -18,15 +30,10 @@ describe('StHeaderComponent', () => {
     fixture = TestBed.createComponent(StHeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    compiled = fixture.nativeElement;
   });
 
   it('should create the about page', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should match the snapshot', () => {
-    expect(compiled).toMatchSnapshot();
   });
 
   it('should dismiss the modal', () => {

@@ -50,6 +50,7 @@
     margin-bottom: 30px;
     background: #F1F1F1;
     border-radius: 8px;
+    --placeholder-opacity:1;
   }
   
   ion-button{
@@ -108,8 +109,8 @@
   }
 
   .file{
-    width: 200px;
-    height: 175px;
+    width: 4em;
+    height: 100%;
     background: url('/assets/images/housing/file.svg') no-repeat 50% 0 ;
   }
 
@@ -135,4 +136,11 @@
 
 .form__secondary-header {
   margin-top: 30px;
+}
+
+.infoAttachment{
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  @include font-family($font-nunito-regular);
 }

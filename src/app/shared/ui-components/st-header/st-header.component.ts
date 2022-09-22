@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { Keyboard } from '@capacitor/keyboard';
+import { NavigationService } from '@shared/services/navigation.service';
 
 @Component({
   selector: 'st-header',
@@ -7,6 +9,7 @@ import { Keyboard } from '@capacitor/keyboard';
   styleUrls: ['./st-header.component.scss'],
 })
 export class StHeaderComponent {
+  @Input() trackedPath: boolean;
   @Input() title: string;
   @Input() placeholder: string;
   @Input() backButtonTitle = 'Back';
@@ -20,6 +23,8 @@ export class StHeaderComponent {
   @Input() isRemoveButtonShow: boolean;
   @Output() onDismiss = new EventEmitter<void>();
   @Output() onRemove = new EventEmitter<void>();
+
+  constructor(private readonly router: Router, private readonly navService: NavigationService) {}
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);
@@ -35,5 +40,11 @@ export class StHeaderComponent {
 
   onRemoveClicked() {
     this.onRemove.emit();
+  }
+
+  async onBack() {
+    if (this.trackedPath) {
+      await this.router.navigate([this.navService.getPreviousTrackedPath()]);
+    }
   }
 }

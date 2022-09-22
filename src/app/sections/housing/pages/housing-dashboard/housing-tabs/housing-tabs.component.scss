@@ -1,0 +1,16 @@
+.tabs-container {
+  display: inline-flex;
+  justify-content: space-around;
+  width: 100%;
+  font-weight: bold;
+  color: var(--ion-color-dark-tint);
+  font-size: small;
+
+  .tab {
+    padding: 7px 20px;
+  }
+  .selected {
+    border-bottom: 2px solid var(--ion-color-primary-tint);
+    color: var(--ion-color-primary-tint);
+  }
+}
