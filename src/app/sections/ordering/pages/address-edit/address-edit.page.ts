@@ -13,6 +13,7 @@ import { PopoverController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Location } from '@angular/common';
+import { firstValueFrom } from '@shared/utils';
 
 @Component({
   selector: 'st-address-edit-page',
@@ -64,7 +65,7 @@ export class AddressEditPage implements OnInit {
   }
 
   private async initRoute() {
-    const routeData = await this.route.data.pipe(take(1)).toPromise();
+    const routeData = await firstValueFrom(this.route.data.pipe(take(1)));
     this.afterSaveRoute = routeData.afterSaveRoute;
   } 
 
