@@ -2,7 +2,7 @@
   <ion-textarea
     class="textarea__control"
     id="{{ idd }}"
-    [ngClass]="{ 'textarea__control--error': isError }"
+    [ngClass]="{ 'textarea__control--error': isError,'attachment_border':isAttachment }"
     rows="{{ rows }}"
     autoGrow="true"
     (ionBlur)="ionBlur($event)"
@@ -15,6 +15,6 @@
   >
   </ion-textarea>
 
-  <label class="textarea__placeholder" [attr.for]="idd">{{ label }}</label>
+  <label class="textarea__placeholder" [ngClass]="{'attachment_label':isAttachment}" [attr.for]="idd">{{ label }}</label>
   <ng-content *ngIf="isError"></ng-content>
 </div>

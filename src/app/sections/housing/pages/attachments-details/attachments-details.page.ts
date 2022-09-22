@@ -93,7 +93,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.getAttachmentUrl();
+
     this.attachmentKey = parseInt(this._route.snapshot.paramMap.get('attachmentKey'), 10);
     if (!this.attachmentKey) {
       this._initTermsSubscription();
@@ -161,12 +161,13 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   selectFile() {
+    this.getAttachmentUrl()
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
     this.chooser.getFile()
       .then(file => {
         this.file$.next(file);
         this.fileSizeInMB = this.getSizeFile(file.data.byteLength);
-        if(this.fileSizeInMB){
+        if(this.fileSizeInMB>0){
            this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
            this.isFile = this.getFileType(file) != 'image';
         }
@@ -188,7 +189,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
       const alert = await this._alertController.create({
         cssClass: "alert-modal-attachment",
         header: 'Large File Size',
-        message: `10MB is the maximum file size that can be uploaded as an attachment. Compress or upload a smaller file from your device.`,
+        message: `Attachment file size cannot exceed 10 MB. Select a smaller file.`,
         buttons: [
           {
             text: 'OK',

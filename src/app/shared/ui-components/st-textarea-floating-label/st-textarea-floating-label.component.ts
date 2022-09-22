@@ -22,6 +22,7 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   @Input() isDisabled: boolean;
   @Input() maxLength = 128;
   @Input() placeholder: string;
+  @Input() isAttachment: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
   innerValue: any = '';
