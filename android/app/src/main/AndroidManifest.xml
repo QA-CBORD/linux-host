@@ -45,7 +45,10 @@
             </intent-filter>
 
         </activity>
-
+        <activity
+            android:name="com.assaabloy.mobilekeys.api.network.NfcTagNetworkReaderActivity"
+            android:exported="true">
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
