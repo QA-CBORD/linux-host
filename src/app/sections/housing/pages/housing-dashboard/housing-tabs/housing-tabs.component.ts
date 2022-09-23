@@ -17,7 +17,7 @@ export class HousingTabsComponent {
   @Output() onTabSelected: EventEmitter<SelectedHousingTab> = new EventEmitter<SelectedHousingTab>()
   tabs: Tab[] = [
     { label: 'Forms', view: SelectedHousingTab.Forms },
-    { label: 'Room', view: SelectedHousingTab.Rooms },
+    { label: 'Rooms', view: SelectedHousingTab.Rooms },
     { label: 'Contracts', view: SelectedHousingTab.Contracts },
   ];
   
