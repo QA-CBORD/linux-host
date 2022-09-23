@@ -14,14 +14,14 @@ interface Tab {
 })
 export class HousingTabsComponent {
   @Input() selectedTab: SelectedHousingTab;
-  @Output() onTabSelected: EventEmitter<SelectedHousingTab> = new EventEmitter<SelectedHousingTab>()
+  @Output() onTabSelected: EventEmitter<SelectedHousingTab> = new EventEmitter<SelectedHousingTab>();
   tabs: Tab[] = [
     { label: 'Forms', view: SelectedHousingTab.Forms },
     { label: 'Rooms', view: SelectedHousingTab.Rooms },
     { label: 'Contracts', view: SelectedHousingTab.Contracts },
   ];
-  
-  select(view: SelectedHousingTab){
+
+  select(view: SelectedHousingTab) {
     this.onTabSelected.emit(view);
   }
 }
