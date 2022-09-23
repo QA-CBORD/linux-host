@@ -13,7 +13,7 @@ import { PopoverController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Location } from '@angular/common';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-address-edit-page',
