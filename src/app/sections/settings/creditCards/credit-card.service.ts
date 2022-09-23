@@ -5,7 +5,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { AccountsService } from '@sections/dashboard/services';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { PaymentSystemType } from 'src/app/app.global';
 
 export interface AccountsConf {

@@ -71,7 +71,7 @@ export class OptInGuard implements CanActivate {
       backdropDismiss: false,
     });
 
-    popover.onDidDismiss().then(() => subject.next());
+    popover.onDidDismiss().then(() => subject.next(null));
 
     return await popover.present();
   }

@@ -11,7 +11,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-access-card',

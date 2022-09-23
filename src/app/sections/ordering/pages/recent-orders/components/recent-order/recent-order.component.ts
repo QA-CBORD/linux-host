@@ -30,7 +30,7 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-recent-order',

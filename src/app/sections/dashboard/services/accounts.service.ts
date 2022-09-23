@@ -8,7 +8,7 @@ import { PaymentSystemType, Settings } from 'src/app/app.global';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AccountsService {

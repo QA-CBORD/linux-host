@@ -8,7 +8,7 @@ import { Capacitor } from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { EnvironmentInfo, ENVIRONMENTS_MAP, EnvironmentType } from '@core/model/environment';
 import { AuthFacadeService } from '../auth/auth.facade.service';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 export { EnvironmentType } from '@core/model/environment';
 @Injectable({
   providedIn: 'root',

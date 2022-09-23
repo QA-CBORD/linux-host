@@ -1,7 +1,7 @@
 import { VaultErrorCodes } from "@ionic-enterprise/identity-vault";
 import { ModalController } from "@ionic/angular";
 import { PinPage } from "@shared/ui-components/pin/pin.page";
-import { firstValueFrom } from "@shared/utils";
+import { firstValueFrom } from 'rxjs'
 import { Subject } from "rxjs";
 import { PinAction, PinCloseStatus, VaultAuthenticator } from "./model.identity";
 

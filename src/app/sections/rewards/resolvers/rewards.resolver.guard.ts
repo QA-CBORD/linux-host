@@ -56,7 +56,7 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
 
     popover.onDidDismiss().then(() => {
       this.loader.showSpinner();
-      subject.next();
+      subject.next(null);
     });
 
     return await popover.present();
