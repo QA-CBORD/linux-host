@@ -9,7 +9,7 @@ import { UserFacadeService } from '../user/user.facade.service';
 import { MerchantFacadeService } from '../merchant/merchant-facade.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { VaultIdentityService } from '@core/service/identity/vault.identity.service';

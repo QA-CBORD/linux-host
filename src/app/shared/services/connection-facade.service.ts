@@ -8,7 +8,7 @@ import { CommonService } from './common.service';
 import { ContentStringApi, ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { ConnectivityScreentDefaultStrings } from '@shared/model/content-strings/default-strings';
 import { ConnectivityErrorType, ConnectivityScreenCsModel } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { ConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/connectivity-screen';
 import { NavigationService } from './navigation.service';
 

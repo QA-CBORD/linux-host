@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { BackgroundTask } from '@robingenz/capacitor-background-task';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 
@@ -23,7 +23,7 @@ export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   private _deepLinkPath: string[];
-  onLogOutObservable$: Subject<any> = new Subject<any>();
+  onLogOutObservable$ = new Subject();
 
   constructor(
     private readonly platform: Platform,
@@ -167,7 +167,7 @@ export class SessionFacadeService {
 
   async logoutUser(navigateToEntry = true): Promise<boolean> {
     if (navigateToEntry) {
-      this.onLogOutObservable$.next();
+      this.onLogOutObservable$.next(null);
     }
     return this.identityFacadeService.logoutUser();
   }

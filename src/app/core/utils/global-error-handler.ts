@@ -1,5 +1,6 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import * as Sentry from '@sentry/angular';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
@@ -10,6 +11,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (chunkFailedMessage.test(err.message)) {
       this.presentAlertConfirm();
     }
+    Sentry.captureException(err);
 
     console.error('Error Handled Global: ', err);
   }

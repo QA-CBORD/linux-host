@@ -20,7 +20,7 @@ import {
 } from '@sections/ordering';
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';

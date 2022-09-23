@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AccountService } from '@sections/accounts/services/accounts.service';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { MockAccountsData, MockAccountsService } from 'src/app/testing/mock-services';
 
 import { RequestFundsResolver } from './request-funds.resolver';

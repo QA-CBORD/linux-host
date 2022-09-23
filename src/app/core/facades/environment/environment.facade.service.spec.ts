@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ENVIRONMENTS_MAP, EnvironmentType } from '@core/model/environment';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthFacadeService } from '../auth/auth.facade.service';
 import { MockAuthService } from 'src/app/testing/mock-services';
