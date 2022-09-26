@@ -234,7 +234,7 @@ export class WorkOrdersService {
             });
 
             this._housingProxyService
-              .post<Response>(workOrderImageURL, body)
+              .post<Response>(workOrderImageURL, body).pipe(take(1))
               .subscribe((response: Response) => {
                   if (isSuccessful(response.status)) {
                     this._workOrderStateService.destroyWorkOrderImageBlob();
