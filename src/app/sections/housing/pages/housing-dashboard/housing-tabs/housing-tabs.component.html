@@ -1,5 +1,5 @@
-<div class="tabs-container">
-  <div class="tab" [class.selected]="selectedTab === tab.view" *ngFor="let tab of tabs" (click)="select(tab.view)">
-    <span>{{ tab.label | uppercase }}</span>
-  </div>
-</div>
+<ion-segment mode="md" (ionChange)="select($event)" [value]="tabs[0].view">
+  <ng-container *ngFor="let tab of tabs">
+    <ion-segment-button [value]="tab.view">{{ tab.label  | uppercase }}</ion-segment-button>
+  </ng-container>
+</ion-segment>

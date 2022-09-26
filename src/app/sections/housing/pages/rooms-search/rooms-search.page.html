@@ -6,7 +6,7 @@
   [isToolbarShow]="true"
   [trackedPath]="true"
 ></st-header>
-<st-units-switch [units]="units"></st-units-switch>
+<st-units-tabs (onTabSelected)="changeView($event)"></st-units-tabs>
 <ion-toolbar class="rooms-search__toolbar rooms-search__filters">
   <st-search-filter slot="end"></st-search-filter>
 </ion-toolbar>
