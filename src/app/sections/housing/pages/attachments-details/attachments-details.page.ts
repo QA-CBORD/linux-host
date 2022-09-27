@@ -150,14 +150,50 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
     const formData = new FormData();
     formData.append('file', this.fileData, this.fileData.name);
-    
-    this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl).pipe(
-      switchMap(()=> this._attachmentService.sendAttachmentData(attachmentDetailsData))
-      ).subscribe(res => {
-       if (res) {
-           this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
-        }
-      })
+
+    const alert = await this._alertController.create({
+      header: 'Confirm',
+      message: `Are you sure you want to submit this attachment?`,
+      buttons: [
+        {
+          text: 'NO',
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            this.activeAlerts = [];
+            alert.dismiss();
+          },
+        },
+        {
+          text: 'YES',
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this._loadingService.showSpinner();
+            this.activeAlerts = [];
+            const createAttachmentSubscription = this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl).pipe(
+              switchMap(() => this._attachmentService.sendAttachmentData(attachmentDetailsData))
+            ).subscribe(res => {
+              alert.dismiss();
+              if (res) {
+                this._housingService.handleSuccess();
+                this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
+                this._loadingService.closeSpinner();
+              } else {
+                this._loadingService.closeSpinner();
+                this._toastService.showToast({
+                  message: 'The form could not be processed at this time. Try again later',
+                });
+              }
+            });
+
+            this.subscriptions.add(createAttachmentSubscription);
+          },
+        },
+      ],
+    });
+    this.activeAlerts.push(alert);
+    await alert.present();
   }
 
   selectFile() {
@@ -232,19 +268,17 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
             this.activeAlerts = [];
             const attachmentSubscription = this._attachmentService
               .deleteAttachmentFile(this.attachmentKey)
-              .subscribe(status => {
-                alert.dismiss().then(() => {
-                  if (status) {
-                    this._housingService.handleSuccess();
-                  } else {
-                    this._loadingService.closeSpinner();
-                    this._toastService.showToast({
-                      message: 'The deleted attachement could not be processed at this time. Try again later',
-                    });
-                  }
-                });
+              .subscribe(async (status) => {
+                await alert.dismiss();
+                if (status) {
+                  this._housingService.handleSuccess();
+                } else {
+                  this._loadingService.closeSpinner();
+                  this._toastService.showToast({
+                    message: 'The deleted attachement could not be processed at this time. Try again later',
+                  });
+                }
               });
-
             this.subscriptions.add(attachmentSubscription);
           },
         },
