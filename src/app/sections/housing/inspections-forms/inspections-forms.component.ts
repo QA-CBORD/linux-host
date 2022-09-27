@@ -10,21 +10,24 @@ const InspectionStatus = {
   0: "NEW",
   1: "IN PROGRESS",
   2: "SUBMITTED",
-  3: "INCOMPLETE"
+  3: "INCOMPLETE",
+  4: "ADMIN COMPLETED",
 };
 
 const InspectionColorHex = {
   0: "#D47B07", 
   1: "#D47B07", 
   2: "#0B8640", 
-  3: "#EB6669" 
+  3: "#EB6669",
+  4: "#3A3B3C"
 };
 
 const InspectionColorClass = {
   0: "new", 
   1: "in-progress", 
   2: "submitted", 
-  3: "incomplete" 
+  3: "incomplete",
+  4: "admin-completed"
 };
 
 @Component({
@@ -69,7 +72,7 @@ export class InspectionsComponent implements OnInit {
   }
 
   private _initTermsSubscription() {
-    this._termService.termId$.pipe(take(1)).subscribe(termId => {
+    this._termService.termId$.subscribe(termId => {
       this.urlEditForm = `/patron/housing/inspections/${termId}/`;
       this.selectedTermKey = termId;
     });
