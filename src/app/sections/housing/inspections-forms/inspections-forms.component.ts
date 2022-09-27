@@ -4,7 +4,6 @@ import { Inspection, Inspections } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
-import { take } from 'rxjs/operators';
 
 const InspectionStatus = {
   0: "NEW",
