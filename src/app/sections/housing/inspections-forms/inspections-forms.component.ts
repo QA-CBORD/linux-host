@@ -1,32 +1,32 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { Inspection, Inspections } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
 
 const InspectionStatus = {
-  0: "NEW",
-  1: "IN PROGRESS",
-  2: "SUBMITTED",
-  3: "INCOMPLETE",
-  4: "ADMIN COMPLETED",
+  0: 'NEW',
+  1: 'IN PROGRESS',
+  2: 'SUBMITTED',
+  3: 'INCOMPLETE',
+  4: 'ADMIN COMPLETED',
 };
 
 const InspectionColorHex = {
-  0: "#D47B07", 
-  1: "#D47B07", 
-  2: "#0B8640", 
-  3: "#EB6669",
-  4: "#3A3B3C"
+  0: '#D47B07',
+  1: '#D47B07',
+  2: '#0B8640',
+  3: '#EB6669',
+  4: '#3A3B3C',
 };
 
 const InspectionColorClass = {
-  0: "new", 
-  1: "in-progress", 
-  2: "submitted", 
-  3: "incomplete",
-  4: "admin-completed"
+  0: 'new',
+  1: 'in-progress',
+  2: 'submitted',
+  3: 'incomplete',
+  4: 'admin-completed',
 };
 
 @Component({
@@ -39,11 +39,16 @@ export class InspectionsComponent implements OnInit {
   private selectedTermKey = 0;
   inspections: Inspection[];
   urlEditForm: string;
+  private subscription: Subscription;
 
   constructor(private _inspectionsStateService: InspectionsStateService, private _termService: TermsService) {}
 
   ngOnInit() {
     this._initTermsSubscription();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   getInspectionStatus(value: Inspections): string {
@@ -60,9 +65,7 @@ export class InspectionsComponent implements OnInit {
 
   getUrlPath(inspection: Inspections): string {
     return inspection.residentInspectionKey
-      ? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${
-          inspection.contractKey
-        }/${inspection.checkIn}`
+      ? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${inspection.contractKey}/${inspection.checkIn}`
       : `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.checkIn}`;
   }
 
@@ -71,7 +74,7 @@ export class InspectionsComponent implements OnInit {
   }
 
   private _initTermsSubscription() {
-    this._termService.termId$.subscribe(termId => {
+    this.subscription = this._termService.termId$.subscribe(termId => {
       this.urlEditForm = `/patron/housing/inspections/${termId}/`;
       this.selectedTermKey = termId;
     });
