@@ -4,6 +4,8 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
 
 android {
+
+    namespace 'com.cbord.get'
     compileSdkVersion rootProject.ext.compileSdkVersion
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -13,8 +15,8 @@ android {
         applicationId "com.cbord.get"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 41703
-        versionName "4.17.3"
+        versionCode 41706
+        versionName "4.17.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
