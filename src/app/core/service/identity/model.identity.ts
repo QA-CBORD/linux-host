@@ -50,11 +50,11 @@ export class VaultAuthenticator {
   private onPinModalClosedCb: (status: PinCloseStatus) => void;
   private pinVerifier: Subject<any> = new Subject();
 
-  registerPinSuppliedCb(cb: (pin: string) => void) {
+  registerPinSuppliedCb(cb: (pin: string) => void): void {
     this.onPinSuppliedCb = cb;
   }
 
-  registerPinModalClosedCb(cb: (status: PinCloseStatus) => void) {
+  registerPinModalClosedCb(cb: (status: PinCloseStatus) => void): void {
     this.onPinModalClosedCb = cb;
   }
 
@@ -75,15 +75,15 @@ export class VaultAuthenticator {
     return new Promise(this.cbPromise);
   }
 
-  onPinClosed(status: PinCloseStatus) {
+  onPinClosed(status: PinCloseStatus): void {
     this.onPinModalClosedCb(status);
   }
 
-  onPinFailed() {
+  onPinFailed(): void {
     this.pinVerifier.next({ success: false });
   }
 
-  onPinSuccess() {
+  onPinSuccess(): void {
     this.pinVerifier.next({ success: true });
   }
 }
