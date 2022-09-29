@@ -28,13 +28,9 @@ export class UnitsTabComponent {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         if (event.url.includes(UnitsType.Rooms)) {
-          if (this.selectedTab != SelectedUnitsTab.Units) {
-            this.selectedTab = SelectedUnitsTab.Units;
-          }
+          this.selectedTab = SelectedUnitsTab.Units;
         } else {
-          if (this.selectedTab != SelectedUnitsTab.Buildings) {
-            this.selectedTab = SelectedUnitsTab.Buildings;
-          }
+          this.selectedTab = SelectedUnitsTab.Buildings;
         }
         this.cdRef.detectChanges();
       });

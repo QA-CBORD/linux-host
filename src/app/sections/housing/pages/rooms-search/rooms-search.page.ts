@@ -58,17 +58,15 @@ export class RoomsSearchPage {
 
   private async goToUnits() {  
     if (!this._router.url.includes(UnitsType.Rooms)) {
-      this._loadingService.showSpinner();
+      await this._loadingService.showSpinner();
       await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, UnitsType.Rooms]);
-      this._loadingService.closeSpinner();
+      await this._loadingService.closeSpinner();
     }
   }
 
   private async goToBuildings() {
-    if (!this._router.url.includes(UnitsType.Buildings)) {
-    this._loadingService.showSpinner();
+    await this._loadingService.showSpinner();
     await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, UnitsType.Buildings]);
-    this._loadingService.closeSpinner();
-    }
+    await this._loadingService.closeSpinner();
   }
 }
