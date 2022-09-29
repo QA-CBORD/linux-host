@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { HousingService } from '../../housing.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -18,59 +18,47 @@ export enum SelectedUnitsTab {
   selector: 'st-rooms-search',
   templateUrl: './rooms-search.page.html',
   styleUrls: ['./rooms-search.page.scss'],
-  //changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomsSearchPage {
   units: Unit[];
   roomSelectKey: number;
   parentFacilities: Facility[];
-
+  private previousTab: SelectedUnitsTab;
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
     private _housingService: HousingService,
     private _facilityStateService: RoomsStateService,
     private _loadingService: LoadingService,
-    private readonly ngZone: NgZone
   ) {
   }
 
   ngOnInit(): void {
-    this.roomSelectKey = parseInt(this._route.snapshot.paramMap.get('roomSelectKey'), 10);
-    this.units = [
-      new Unit('buildings', 'Buildings'),
-      new Unit(`units`, 'Units'),
-    ];
+    this.roomSelectKey = parseInt(this._route.snapshot.params.roomSelectKey);
     this._loadingService.showSpinner();
-    this._housingService.getFacilities(this.roomSelectKey).subscribe(data => {
-      this._facilityStateService.createFacilityDictionary(data);
-      this.parentFacilities = this._facilityStateService.getParentFacilities();
-      this._router.navigate(['buildings'], {relativeTo: this._route});
-      this._loadingService.closeSpinner();
-    }, err => {
-      this._loadingService.closeSpinner();
+    this._housingService.getFacilities(this.roomSelectKey).subscribe({
+      next: async (data) => {
+           this._facilityStateService.createFacilityDictionary(data);
+           this.parentFacilities = this._facilityStateService.getParentFacilities();
+           await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, 'buildings']);
+           this._loadingService.closeSpinner();
+      },
+      error: () => this._loadingService.closeSpinner(),
     });
   }
 
-  public changeView(view: SelectedUnitsTab) {
-    console.log("changeview", view)
-    const buildingKey = 311
+  async changeView(view: SelectedUnitsTab) {
     if (view == SelectedUnitsTab.Buildings) {
-      this.ngZone.run(async() => {
-        const nav = await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/28`, 'buildings']);
-        console.log("nav: ", nav)
-        console.log("building relative: ", this._route)
-      })
-
-    }  else {
-
-      this.ngZone.run(async() => {
-        const nav = await  this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/28`, 'units', buildingKey]);
-        console.log("nav: ", nav)
-        console.log("units relative: ", this._route)
-      })
-      // this._router.navigate(['units', buildingKey], {relativeTo: this._route});
+      console.log("changeView building")
+     // if (!this._router.url.includes("buildings")) {
+        await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, 'buildings']);
+     // }
+    }  else if (view == SelectedUnitsTab.Units){
+      console.log("changeView units")
+      if (!this._router.url.includes("units")) {
+        await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, 'units']);
+      }
     }
-   // this._selectedHousingTab = view;
   }
 }

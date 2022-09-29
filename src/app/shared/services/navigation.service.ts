@@ -49,6 +49,7 @@ export class NavigationService {
   }
 
   trackPath(path: string) {
+    console.log("Path: ", path);
     if (this.isPathAllowed(path)) {
         this.history.push(path);
     }
@@ -67,6 +68,10 @@ export class NavigationService {
 
   private isPathAllowed(path: string) {
     return !this.notAllowedPaths.some(rx => rx.test(path)) && !this.isSamePath(path);
+  }
+
+  getLastPath(): string {
+    return this.history[this.history.length - 2];
   }
 }
 
