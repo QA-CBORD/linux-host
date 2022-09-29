@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { MockAppEventsService } from 'src/app/testing/mock-services';
 import { AppStatesFacadeService } from './app-events.facade.service';
 import { CoreTestingModules } from 'src/app/testing/core-modules';

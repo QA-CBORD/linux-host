@@ -1,5 +1,5 @@
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { of } from 'rxjs';
 import { DEPOSIT_FREQUENCY } from './auto-deposit.config';
 import { AutomaticDepositPageComponent } from './automatic-deposit-page.component';

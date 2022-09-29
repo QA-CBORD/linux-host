@@ -21,7 +21,7 @@ import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { Platform } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { registerPlugin } from '@capacitor/core';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Component({

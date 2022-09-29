@@ -61,7 +61,7 @@ export class NavigationService {
     }
   }
 
-  private isSamePath(path: string) {
+  isSamePath(path: string) {
     return this.history[this.history.length - 1] == path;
   }
 

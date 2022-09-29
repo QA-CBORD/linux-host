@@ -6,7 +6,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { NavigationService } from '@shared/services/navigation.service';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';

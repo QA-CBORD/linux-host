@@ -29,7 +29,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { reduceToObject } from '@shared/model/content-strings/content-string-utils';
 import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
-import { firstValueFrom } from '@shared/utils';
+import { firstValueFrom } from 'rxjs';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',

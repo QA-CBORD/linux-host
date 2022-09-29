@@ -15,6 +15,7 @@ import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-st
 import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { Brightness } from '@ionic-native/brightness/ngx';
 import { VaultIdentityService } from '@core/service/identity/vault.identity.service';
+import * as Sentry from '@sentry/angular';
 
 const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void>) => () => vaultService.init();
 @NgModule({
@@ -34,7 +35,7 @@ const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [VaultIdentityService],
+      deps: [VaultIdentityService, Sentry.TraceService],
       multi: true,
     },
     { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network, Brightness

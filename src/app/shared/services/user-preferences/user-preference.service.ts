@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { StorageStateService } from "@core/states/storage/storage-state.service";
-import { firstValueFrom } from "@shared/utils";
+import { firstValueFrom } from 'rxjs'
 
 @Injectable({
     providedIn: 'root',
