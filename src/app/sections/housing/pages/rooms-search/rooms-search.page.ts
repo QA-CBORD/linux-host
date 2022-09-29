@@ -9,6 +9,7 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
+import { UnitsType } from './pages/buildings/buildings.page';
 
 export enum SelectedUnitsTab {
   Units,
@@ -24,7 +25,6 @@ export class RoomsSearchPage {
   units: Unit[];
   roomSelectKey: number;
   parentFacilities: Facility[];
-  private previousTab: SelectedUnitsTab;
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
@@ -41,7 +41,7 @@ export class RoomsSearchPage {
       next: async (data) => {
            this._facilityStateService.createFacilityDictionary(data);
            this.parentFacilities = this._facilityStateService.getParentFacilities();
-           await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, 'buildings']);
+           this.goToBuildings();
            this._loadingService.closeSpinner();
       },
       error: () => this._loadingService.closeSpinner(),
@@ -50,15 +50,25 @@ export class RoomsSearchPage {
 
   async changeView(view: SelectedUnitsTab) {
     if (view == SelectedUnitsTab.Buildings) {
-      console.log("changeView building")
-     // if (!this._router.url.includes("buildings")) {
-        await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, 'buildings']);
-     // }
+      this.goToBuildings();
     }  else if (view == SelectedUnitsTab.Units){
-      console.log("changeView units")
-      if (!this._router.url.includes("units")) {
-        await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, 'units']);
-      }
+      this.goToUnits();
+    }
+  }
+
+  private async goToUnits() {  
+    if (!this._router.url.includes(UnitsType.Rooms)) {
+      this._loadingService.showSpinner();
+      await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, UnitsType.Rooms]);
+      this._loadingService.closeSpinner();
+    }
+  }
+
+  private async goToBuildings() {
+    if (!this._router.url.includes(UnitsType.Buildings)) {
+    this._loadingService.showSpinner();
+    await this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roomsSearch}/${this.roomSelectKey}`, UnitsType.Buildings]);
+    this._loadingService.closeSpinner();
     }
   }
 }
