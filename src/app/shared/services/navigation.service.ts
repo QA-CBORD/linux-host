@@ -50,8 +50,17 @@ export class NavigationService {
 
   trackPath(path: string) {
     if (this.isUrlAllowed(path)) {
-      this.history.push(path);
+      let url = this.removeParams(path);
+      this.history.push(url);
     }
+  }
+
+  private removeParams(path: string) {
+    let url = path;
+    if (url.includes('?')) {
+      url = url.split('?')[0];
+    }
+    return url;
   }
 
   getPreviousTrackedUrl(): string {
