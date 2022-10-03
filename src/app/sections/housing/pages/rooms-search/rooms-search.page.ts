@@ -35,9 +35,9 @@ export class RoomsSearchPage {
 
   ngOnInit(): void {
     this.roomSelectKey = parseInt(this._route.snapshot.params.roomSelectKey);
-    this._loadingService.showSpinner();
     this._housingService.getFacilities(this.roomSelectKey).subscribe({
-      next: async data => {
+      next: data => {
+        this._loadingService.showSpinner();
         this._facilityStateService.createFacilityDictionary(data);
         this.parentFacilities = this._facilityStateService.getParentFacilities();
         this.goToBuildings();
