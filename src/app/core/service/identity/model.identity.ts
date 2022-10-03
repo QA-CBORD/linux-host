@@ -1,4 +1,4 @@
-import { firstValueFrom, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 5000;
 
@@ -58,22 +58,21 @@ export class VaultAuthenticator {
     this.onPinModalClosedCb = cb;
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  cbPromise = async (resolve, reject): Promise<void> => {
-    const { success } = await firstValueFrom(this.pinVerifier);
-
-    if (success) {
-      resolve(success);
-    } else {
-      reject({ success });
-    }
-  };
-
-  async authenticate(pin: string): Promise<void> {
+  authenticateAndroid(pin: string): Observable<{ success: boolean }> {
     this.onPinSuppliedCb(pin);
 
-    return new Promise(this.cbPromise);
+    return this.pinVerifier;
   }
+
+  async authenticateIos(pin: string): Promise<void> {
+    this.onPinSuppliedCb(pin);
+    return new Promise((resolve, reject) => {
+        const subscription = this.pinVerifier.subscribe({
+            next: ({ success }) => success ? resolve(success) : reject({ success }),
+            complete: () => subscription.unsubscribe()
+        })
+    });
+}
 
   onPinClosed(status: PinCloseStatus): void {
     this.onPinModalClosedCb(status);
