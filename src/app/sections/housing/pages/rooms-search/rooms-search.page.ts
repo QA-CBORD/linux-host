@@ -14,7 +14,7 @@ import { UnitsType } from './pages/buildings/buildings.page';
 export enum SelectedUnitsTab {
   Units,
   Buildings,
-};
+}
 @Component({
   selector: 'st-rooms-search',
   templateUrl: './rooms-search.page.html',

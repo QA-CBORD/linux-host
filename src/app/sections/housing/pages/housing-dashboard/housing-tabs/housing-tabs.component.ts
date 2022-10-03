@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { SelectedUnitsTab } from '../../rooms-search/rooms-search.page';
 import { SelectedHousingTab } from '../housing-dashboard.component';
 
