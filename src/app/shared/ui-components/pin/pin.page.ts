@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -35,7 +35,7 @@ export class PinPage implements OnInit, OnDestroy {
 
   currentLoginAttempts = 0;
   maxLoginAttempts = 3;
-  private authenticator: VaultAuthenticator
+  private authenticator: VaultAuthenticator;
 
   /// temporary solution before content strings added
   private readonly setPinText: string = 'Create a 4 digit PIN to use when biometrics are not available';
@@ -44,6 +44,9 @@ export class PinPage implements OnInit, OnDestroy {
   private readonly currentPinText: string = 'Enter current PIN';
   private readonly newPinText: string = 'Enter your new PIN';
   private readonly confirmNewPinText: string = 'Confirm your new PIN';
+  private readonly maxLoginAttemps: string = 'Maximum login attempts reached - logging you out';
+  private readonly wrongPin: string = 'Incorrect PIN - please try again';
+  private readonly errorOnSetPin: string = 'Error setting your PIN - please try again';
 
   constructor(
     private modalController: ModalController,
@@ -53,9 +56,9 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityFacade: ConnectivityAwareFacadeService
+    private readonly connectivityFacade: ConnectivityAwareFacadeService,
+    private readonly platform: Platform
   ) {}
-
 
   @Input() pinAction: PinAction;
   @Input() showDismiss = true;
@@ -66,7 +69,6 @@ export class PinPage implements OnInit, OnDestroy {
     this.a11yService.readAloud(this.instructionText);
     this.connectivityFacade.setPinModalOpened(true);
   }
-
 
   private setInstructionText(text: string = null) {
     if (text !== null) {
@@ -172,7 +174,7 @@ export class PinPage implements OnInit, OnDestroy {
   onPinSupplied() {
     const pin = this.pinNumber.join('');
     if (this.authenticator) {
-      this.authenticateWithVault(pin)
+      this.authenticateWithVault(pin);
     } else {
       this.loginPin(pin);
     }
@@ -195,7 +197,9 @@ export class PinPage implements OnInit, OnDestroy {
     this.loadingService.closeSpinner();
     try {
       await this.modalController.dismiss(pin, status);
-    } catch (errr) { /**Ignored on purpose */ }
+    } catch (errr) {
+      /**Ignored on purpose */
+    }
   }
 
   back() {
@@ -239,45 +243,80 @@ export class PinPage implements OnInit, OnDestroy {
           } else {
             /// handle error here
             this.cleanLocalState();
-            this.setErrorText('Error setting your PIN - please try again');
+            this.setErrorText(this.errorOnSetPin);
           }
         },
-        (async ({ message, status }) => {
+        async ({ message, status }) => {
           this.cleanLocalState();
           if (this.connectionService.isConnectionIssues({ message, status })) {
             await this.handleConnectionIssues();
           } else {
-            this.setErrorText('Error setting your PIN - please try again');
+            this.setErrorText(this.errorOnSetPin);
           }
         }
-        ));
+      );
   }
 
-  private authenticateWithVault(pin: string) {
-    this.setInstructionText('');
-    this.currentLoginAttempts++;
+  private authenticateIos(pin: string) {
     setTimeout(() => {
-      this.authenticator.authenticate(pin)
+      this.authenticator
+        .authenticateIos(pin)
         .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
         .catch(() => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
-            this.setErrorText('Maximum login attempts reached - logging you out');
+            this.setErrorText(this.maxLoginAttemps);
             setTimeout(() => {
               this.authenticator.onPinClosed(PinCloseStatus.MAX_FAILURE);
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
           } else {
-            this.setErrorText('Incorrect PIN - please try again');
+            this.setErrorText(this.wrongPin);
           }
         });
     }, 100);
   }
 
+  private authenticate(pin: string) {
+    this.authenticator
+      .authenticate(pin)
+      .pipe(take(1))
+      .subscribe(({ success }) => {
+        if (success) {
+          this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS);
+        } else {
+          this.cleanLocalState();
+          if (this.currentLoginAttempts >= this.maxLoginAttempts) {
+            this.setErrorText(this.maxLoginAttemps);
+
+            this.authenticator.onPinClosed(PinCloseStatus.MAX_FAILURE);
+            this.closePage(null, PinCloseStatus.MAX_FAILURE);
+          } else {
+            this.setErrorText(this.wrongPin);
+          }
+        }
+      });
+  }
+
+  private authenticateWithVault(pin: string) {
+    this.setInstructionText('');
+    this.currentLoginAttempts++;
+
+    /**
+     * For some reason for IOS only works if we setTimeouts on calls.
+     */
+    if (this.platform.is('ios')) {
+      this.authenticateIos(pin);
+      return;
+    }
+
+    this.authenticate(pin);
+  }
+
   private async loginPin(pin: string) {
     this.setInstructionText('');
     this.currentLoginAttempts++;
-    await this.loadingService.showSpinner()
+    await this.loadingService.showSpinner();
     this.authFacadeService
       .authenticatePin$(pin)
       .pipe(
@@ -303,10 +342,10 @@ export class PinPage implements OnInit, OnDestroy {
             this.setErrorText('Error logging in - please try again');
           }
         },
-        (async ({ message, status }) => {
+        async ({ message, status }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
-            this.setErrorText('Maximum login attempts reached - logging you out');
+            this.setErrorText(this.maxLoginAttemps);
             setTimeout(() => {
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
@@ -315,10 +354,10 @@ export class PinPage implements OnInit, OnDestroy {
           } else if (this.connectionService.isConnectionIssues({ message, status })) {
             await this.handleConnectionIssues();
           } else {
-            this.setErrorText('Incorrect PIN - please try again');
+            this.setErrorText(this.wrongPin);
           }
         }
-        ));
+      );
     // on success, return the pin so the vault can be unlocked
   }
 
@@ -329,7 +368,7 @@ export class PinPage implements OnInit, OnDestroy {
         const connectionRestored = !(await this.connectionService.deviceOffline());
         await this.loadingService.closeSpinner();
         return connectionRestored;
-      }
+      },
     });
   }
 
@@ -337,4 +376,3 @@ export class PinPage implements OnInit, OnDestroy {
     return this.pinNumber.length < 4 && this.pinNumberCopy.length === 4;
   }
 }
-
