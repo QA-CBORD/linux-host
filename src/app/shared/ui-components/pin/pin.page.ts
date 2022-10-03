@@ -279,7 +279,7 @@ export class PinPage implements OnInit, OnDestroy {
 
   private authenticate(pin: string) {
     this.authenticator
-      .authenticateAndroid(pin)
+      .authenticate(pin)
       .pipe(take(1))
       .subscribe(({ success }) => {
         if (success) {

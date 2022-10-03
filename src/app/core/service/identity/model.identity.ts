@@ -58,7 +58,7 @@ export class VaultAuthenticator {
     this.onPinModalClosedCb = cb;
   }
 
-  authenticateAndroid(pin: string): Observable<{ success: boolean }> {
+  authenticate(pin: string): Observable<{ success: boolean }> {
     this.onPinSuppliedCb(pin);
 
     return this.pinVerifier;
