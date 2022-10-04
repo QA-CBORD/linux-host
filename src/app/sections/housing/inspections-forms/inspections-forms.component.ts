@@ -79,4 +79,8 @@ export class InspectionsComponent implements OnInit {
       this.selectedTermKey = termId;
     });
   }
+
+  canEdit(inspection: Inspections){
+    return inspection.status <= 1
+  }
 }
