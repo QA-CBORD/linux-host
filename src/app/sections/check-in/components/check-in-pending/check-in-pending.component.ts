@@ -115,6 +115,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
   async onCheckingClicked() {
     const modal = await this.popoverCtrl.create({
       component: PickCheckinModeComponent,
+      cssClass: 'sc-popover',
       mode: 'md',
       backdropDismiss: false,
       componentProps: {

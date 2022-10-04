@@ -81,6 +81,7 @@ export class AddressEditPage implements OnInit {
     const addressData = this.addressData.address;
     const address = `${addressData.address1}, ${addressData.city}, ${addressData.state}`;
     const modal = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: ConfirmPopoverComponent,
       componentProps: {
         data: {

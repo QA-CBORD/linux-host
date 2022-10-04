@@ -210,6 +210,7 @@ export class ExternalLoginPage {
     };
 
     const modal = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: StGlobalPopoverComponent,
       componentProps: {
         data: popoverConfig,

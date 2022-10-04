@@ -58,6 +58,7 @@ export class OptInGuard implements CanActivate {
 
   private async modalHandler(subject: Subject<unknown>, userTrackInfo: UserRewardTrackInfo): Promise<void> {
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: RewardsPopoverComponent,
       componentProps: {
         type: PopupTypes.OPT_IN,

@@ -67,6 +67,7 @@ export class ItemDetailComponent implements OnInit {
 
   private async initInfoModal(message: string, cb: () => void): Promise<void> {
     const modal = await this.popoverController.create({
+      cssClass: 'sc-popover',
       component: ItemDetailModalComponent,
       componentProps: { message },
     });

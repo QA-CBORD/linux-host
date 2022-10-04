@@ -310,6 +310,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
 
   async modalHandler(res, cb) {
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: SecureMessagePopoverComponent,
       componentProps: {
         data: res,

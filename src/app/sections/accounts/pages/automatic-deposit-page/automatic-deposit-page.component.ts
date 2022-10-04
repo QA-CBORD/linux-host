@@ -670,6 +670,7 @@ export class AutomaticDepositPageComponent {
 
   private async showModal(): Promise<void> {
     const modal = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: PopoverComponent,
       componentProps: {
         data: { title: this.getModalTitle(), message: this.getModalBodyMessage() },
