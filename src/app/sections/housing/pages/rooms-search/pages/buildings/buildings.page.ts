@@ -5,8 +5,8 @@ import { Building, FacilityToBuildingMapper } from '@sections/housing/building/b
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
 
 export enum UnitsType {
-  Rooms = "units",
-  Buildings = "buildings"
+  Rooms = 'units',
+  Buildings = 'buildings',
 }
 
 @Component({
