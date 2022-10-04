@@ -46,6 +46,7 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
 
   async modalHandler(subject: Subject<any>): Promise<void> {
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: RewardsPopoverComponent,
       componentProps: {
         type: PopupTypes.RETRY,

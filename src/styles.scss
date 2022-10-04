@@ -366,3 +366,7 @@ article {
     max-width: 30%;
   }
 }
+
+ion-popover.sc-popover {
+  --min-width: 300px;
+}

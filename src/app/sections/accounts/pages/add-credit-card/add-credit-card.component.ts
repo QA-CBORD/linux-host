@@ -116,6 +116,7 @@ export class AddCreditCardComponent implements OnInit {
   private async modalHandler() {
     const data = { message: 'Card was successfully added' };
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: SuccessPopoverComponent,
       componentProps: {
         data,

@@ -217,6 +217,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   private async modalHandler({ dueTime, orderType, address, isASAP }) {
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: FullMenuPopoverComponent,
       componentProps: {},
       animated: false,

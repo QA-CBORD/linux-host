@@ -187,6 +187,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   async confirmationDepositPopover(data: any) {
     const { confirmDepositCs: contentString } = this.confirmationCs as DepositCsModel;
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: ConfirmDepositPopoverComponent,
       componentProps: {
         data,

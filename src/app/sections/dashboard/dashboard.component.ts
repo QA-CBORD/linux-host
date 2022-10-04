@@ -147,6 +147,7 @@ export class DashboardPage implements OnInit {
   private async initModal(title, message, buttons, onSuccessCb): Promise<void> {
     this.hideGlobalNavBar(true);
     const modal = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: StNativeStartupPopoverComponent,
       componentProps: {
         data: {
