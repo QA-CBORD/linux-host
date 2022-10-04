@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { SegmentCustomEvent } from '@ionic/angular';
 import { SelectedUnitsTab } from '../../rooms-search/rooms-search.page';
 import { SelectedHousingTab } from '../housing-dashboard.component';
 
@@ -22,8 +23,8 @@ export class HousingTabsComponent {
     { label: 'Contracts', view: SelectedHousingTab.Contracts },
   ];
   
-  select(view: any) {
-    const { detail } = view;
-    this.onTabSelected.emit(detail.value);
+  select(event: SegmentCustomEvent) {
+    const { detail } = event;
+    this.onTabSelected.emit(+detail.value);
   }
 }
