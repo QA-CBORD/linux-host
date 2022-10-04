@@ -22,10 +22,10 @@
             <h2 class="inspections-list__title">{{ inspection.formTitle }}</h2>
           </ion-label>
           <st-actions
-            [showEdit]="!inspection.isSubmitted"
-            [showView]="inspection.isSubmitted"
+            [showEdit]="inspection.status <= 1"
+            [showView]="inspection.status > 1"
             [path]="getUrlPath(inspection)"
-            [edit]="!inspection.isSubmitted"
+            [edit]="inspection.status <= 1"
           >
           </st-actions>
         </ion-item>
