@@ -11,7 +11,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { AlertController, Platform } from '@ionic/angular';
 import { debounceTime, take } from 'rxjs/operators';
-import { isMobile } from '@core/utils/platform-helper';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
@@ -46,15 +45,12 @@ export class UnitDetailsPage implements OnInit, OnDestroy {
       const activeRoomSelect = this._stateService.getActiveRoomSelect();
       this.occupants$ = this._housingService.getOccupantDetails(activeRoomSelect.key, unitKey);
     }
-    console.log(isMobile(this._platform));
-    if (isMobile(this._platform)) {
       this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
           alert.dismiss();
         });
         this.activeAlerts = [];
       });
-    }
   }
 
   ngOnDestroy(): void {

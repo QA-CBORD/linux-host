@@ -9,7 +9,7 @@ import { NavigationService } from '@shared/services/navigation.service';
   styleUrls: ['./st-header.component.scss'],
 })
 export class StHeaderComponent {
-  @Input() trackedPath: boolean;
+  @Input() trackUrls: boolean;
   @Input() title: string;
   @Input() placeholder: string;
   @Input() backButtonTitle = 'Back';
@@ -43,8 +43,8 @@ export class StHeaderComponent {
   }
 
   async onBack() {
-    if (this.trackedPath) {
-      await this.router.navigate([this.navService.getPreviousTrackedPath()]);
+    if (this.trackUrls) {
+      await this.router.navigate([this.navService.getPreviousTrackedUrl()]);
     }
   }
 }
