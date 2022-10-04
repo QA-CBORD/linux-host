@@ -84,6 +84,7 @@ export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageCo
 
   private async showModal(): Promise<boolean> {
     const modal = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: ConfirmUnsavedChangesPopoverComponent,
       animated: false,
       backdropDismiss: false,

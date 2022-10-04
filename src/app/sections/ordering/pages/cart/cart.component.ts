@@ -364,6 +364,7 @@ export class CartComponent implements OnInit, OnDestroy {
     };
 
     const modal = await this.popoverController.create({
+      cssClass: 'sc-popover',
       component: StGlobalPopoverComponent,
       componentProps: {
         data,

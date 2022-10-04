@@ -103,6 +103,7 @@ export class PhotoCropModalComponent {
 
   async showModal() {
     const modal = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: PopoverCropComponent,
     });
     await modal.present();

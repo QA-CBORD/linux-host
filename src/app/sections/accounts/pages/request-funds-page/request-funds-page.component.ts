@@ -145,6 +145,7 @@ export class RequestFundsPageComponent implements OnInit {
 
   private async showModal(): Promise<void> {
     const modal = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: PopoverComponent,
       componentProps: {
         data: { title: 'Request Sent!', message: 'Your request for funds was sent successfully.' },

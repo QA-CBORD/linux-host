@@ -349,6 +349,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   private async initCancelOrderModal(n: number): Promise<void> {
     const modal = await this.popoverController.create({
+      cssClass: 'sc-popover',
       component: ConfirmPopoverComponent,
       componentProps: {
         data: {

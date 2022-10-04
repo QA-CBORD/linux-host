@@ -61,6 +61,7 @@ export class CreditCardMgmtComponent implements OnInit {
     const modal = await this.popoverCtrl.create({
       component: ConfirmModalComponent,
       mode: 'md',
+      cssClass: 'sc-popover',
       backdropDismiss: false,
       componentProps: {
         titleString: `Remove ${cardType}?`,

@@ -93,6 +93,7 @@ export class ListItemComponent {
         data: { ...data },
         type,
       },
+      cssClass: 'sc-popover',
       animated: false,
       backdropDismiss: true,
     });

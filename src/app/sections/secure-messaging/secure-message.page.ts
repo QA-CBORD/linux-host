@@ -80,6 +80,7 @@ export class SecureMessagePage implements OnInit, OnDestroy {
 
   async modalHandler(res, callback) {
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: SecureMessagePopoverComponent,
       componentProps: {
         data: res,
