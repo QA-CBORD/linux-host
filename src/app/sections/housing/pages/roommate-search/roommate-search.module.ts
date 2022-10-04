@@ -9,6 +9,7 @@ import { RoommateSearchPage } from './roommate-search.page';
 import { RoommateSearchRoutingModule } from './roommate-search.routing.module';
 import { SearchResultsPageModule } from './pages/search-results/search-results.module';
 import { SearchByPageModule } from './pages/search-by/search-by.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
 const imports = [
   CommonModule,
@@ -17,7 +18,8 @@ const imports = [
   BackButtonModule,
   SearchByPageModule,
   SearchResultsPageModule,
-  RoommateSearchRoutingModule
+  RoommateSearchRoutingModule,
+  StHeaderModule
 ];
 const declarations = [RoommateSearchPage];
 

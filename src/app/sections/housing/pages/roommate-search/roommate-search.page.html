@@ -1,14 +1,4 @@
-<ion-header mode="md">
-  <ion-toolbar mode="ios" class="rooms-search__toolbar">
-    <ion-buttons slot="start">
-      <st-back-button defaultHref="/housing/dashboard"></st-back-button>
-    </ion-buttons>
-
-    <st-page-title>Roommate Request Search</st-page-title>
-  </ion-toolbar>
-</ion-header>
-
-
+<st-header title="Search roommates" [isTitleShow]="true" [backButtonTitle]="'Back'" [trackedPath]="true" backButtonIcon="chevron-back" [isToolbarShow]="true"></st-header>
 <ion-content>
   <ion-router-outlet></ion-router-outlet>
 </ion-content>
