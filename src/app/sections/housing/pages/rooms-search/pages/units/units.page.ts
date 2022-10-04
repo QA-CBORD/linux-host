@@ -14,19 +14,21 @@ import { map } from 'rxjs/operators';
 export class UnitsPage {
   units$: Observable<Unit[]>;
   private _unitMapper: FacilityToUnitsMapper;
-  constructor(private _facilityStateService: RoomsStateService,
-              private  _activeRoute: ActivatedRoute) {
+  constructor(private _facilityStateService: RoomsStateService, private _activeRoute: ActivatedRoute) {
     this._unitMapper = new FacilityToUnitsMapper();
   }
 
   ngOnInit() {
-    const facilityId = parseInt(this._activeRoute.snapshot.paramMap.get('buildingKey'), 10);
-    if(facilityId) {
+    const facilityId = parseInt(this._activeRoute.snapshot.params.buildingKey);
+    const allUnits = this._activeRoute.snapshot.queryParams.allUnits;
+    if (facilityId) {
       this._facilityStateService.setFacilities$(facilityId);
     }
-      this.units$ = this._facilityStateService.getFacilities$().pipe(map(data => {
-        return  this._unitMapper.map(data);
-      }));
-  }
 
+    if (allUnits) {
+      this._facilityStateService.updateActiveFilterFacilities(this._facilityStateService.getAllFacilityChildren());
+    }
+    
+    this.units$ = this._facilityStateService.getFacilities$().pipe(map(data => this._unitMapper.map(data)));
+  }
 }
