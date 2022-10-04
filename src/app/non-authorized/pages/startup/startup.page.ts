@@ -92,7 +92,7 @@ export class StartupPage {
 
   authenticatePin(pin: string) {
     this.connectionIssueAwarePromiseExecute({
-      promise: () => firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
+      promise: () => firstValueFrom(this.authFacadeService.authenticatePinTotp$(pin)),
       rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message)
     })
       .then(async () => {
