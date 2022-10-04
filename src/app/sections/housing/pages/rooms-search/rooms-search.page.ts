@@ -34,6 +34,7 @@ export class RoomsSearchPage {
   ) {}
 
   ngOnInit(): void {
+    this._loadingService.showSpinner();
     this.roomSelectKey = parseInt(this._route.snapshot.params.roomSelectKey);
     this._housingService.getFacilities(this.roomSelectKey).subscribe({
       next: data => {

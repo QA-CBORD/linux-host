@@ -26,10 +26,9 @@ export class UnitsPage {
     }
 
     if (allUnits) {
-      this._facilityStateService.setFacilities$();
-      this.units$ = of(this._unitMapper.map(this._facilityStateService.getAllFacilityChildren()));
-    } else {
-      this.units$ = this._facilityStateService.getFacilities$().pipe(map(data => this._unitMapper.map(data)));
+      this._facilityStateService.updateActiveFilterFacilities(this._facilityStateService.getAllFacilityChildren());
     }
+    
+    this.units$ = this._facilityStateService.getFacilities$().pipe(map(data => this._unitMapper.map(data)));
   }
 }
