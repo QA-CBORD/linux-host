@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SplashScreen } from '@capacitor/splash-screen';
-import { StatusBar } from '@capacitor/status-bar';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { Platform } from '@ionic/angular';
 @Component({
@@ -24,7 +24,8 @@ export class AppComponent implements OnInit {
     await this.platform.ready();
     SplashScreen.hide();
     if (this.platform.is('android')) {
-      await StatusBar.setOverlaysWebView({ overlay: true });
+      StatusBar.setOverlaysWebView({ overlay: false });
+      StatusBar.setStyle({ style: Style.Light });
     }
     if (this.platform.is('cordova')) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
