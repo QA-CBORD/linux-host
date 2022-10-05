@@ -65,8 +65,8 @@ export class InspectionsComponent implements OnInit {
 
   getUrlPath(inspection: Inspections): string {
     return inspection.residentInspectionKey
-      ? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${inspection.contractKey}/${inspection.checkIn}`
-      : `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.checkIn}`;
+      ? `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.residentInspectionKey}/${inspection.contractKey}/${inspection.status}/${inspection.checkIn}`
+      : `${ROLES.patron}/housing/inspections/${this.selectedTermKey}/${inspection.contractKey}/${inspection.status}/${inspection.checkIn}`;
   }
 
   get inspectionList$(): BehaviorSubject<Inspections[]> {
@@ -78,5 +78,9 @@ export class InspectionsComponent implements OnInit {
       this.urlEditForm = `/patron/housing/inspections/${termId}/`;
       this.selectedTermKey = termId;
     });
+  }
+
+  canEdit(inspection: Inspections){
+    return inspection.status <= 1
   }
 }
