@@ -73,7 +73,7 @@ export class AuthFacadeService extends ServiceStateFacade {
     );
   }
 
-  authenticatePinTotp(pin: string): Observable<boolean> {
+  authenticatePinTotp$(pin: string): Observable<boolean> {
     return this.pingEncoderService.encodePin(pin).pipe(switchMap(encrytedPin => this.authenticatePin$(encrytedPin)));
   }
 

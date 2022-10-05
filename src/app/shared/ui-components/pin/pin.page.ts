@@ -318,7 +318,7 @@ export class PinPage implements OnInit, OnDestroy {
     this.currentLoginAttempts++;
     await this.loadingService.showSpinner();
     this.authFacadeService
-      .authenticatePin$(pin)
+      .authenticatePinTotp$(pin)
       .pipe(
         finalize(() => this.loadingService.closeSpinner()),
         take(1)
