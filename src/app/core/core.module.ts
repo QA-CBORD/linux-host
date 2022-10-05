@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { RouteReuseStrategy } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -21,7 +20,6 @@ const imports = [CommonModule, BrowserModule, HttpClientModule, MobileCredential
 const providers = [
   SelectivePreloadingStrategy,
   StatusBar,
-  SplashScreen,
   ScreenOrientation,
   { provide: HTTP_INTERCEPTORS, useClass: ServerError, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true },
