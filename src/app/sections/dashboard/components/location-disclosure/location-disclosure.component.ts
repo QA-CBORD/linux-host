@@ -39,7 +39,8 @@ export class LocationPermissionModal {
 
   async requestLocationPermissions() {
     await this.loadingService.showSpinner({ keyboardClose: false });
-    await this.appPermissions.requestLocationPermissions();
+    const response = await this.appPermissions.requestLocationPermissions();
+    this.navigationFacade.setPermissionResponse(response);
     await this.modalController.dismiss();
   }
 
