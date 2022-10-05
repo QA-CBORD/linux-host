@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
     if (this.platform.is('android')) {
       StatusBar.setOverlaysWebView({ overlay: false });
       StatusBar.setStyle({ style: Style.Light });
+      StatusBar.setBackgroundColor({ color: '#FFFFFF' });
     }
     if (this.platform.is('cordova')) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
