@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, Platform, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
-import { Observable, zip } from 'rxjs';
+import { firstValueFrom, Observable, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -29,9 +29,10 @@ import { ExploreTileComponent } from './containers/explore-tile/explore-tile.com
 import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
 import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 import { Router } from '@angular/router';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
+import { AndroidPermissionsService } from './services/android-permissions.service';
+import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -69,7 +70,9 @@ export class DashboardPage implements OnInit {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
     private readonly router: Router,
-    private readonly globalNav: GlobalNavService
+    private readonly platform: Platform,
+    private readonly appPermissions: AndroidPermissionsService,
+    private readonly navigationFacade: NavigationFacadeSettingsService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -81,6 +84,7 @@ export class DashboardPage implements OnInit {
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
     this.pushNotificationRegistration();
+    this.initLocationForAndroid();
   }
 
   ngAfterViewInit() {
@@ -190,7 +194,7 @@ export class DashboardPage implements OnInit {
         }
       })
       .catch(() => {
-          // TODO: Properly handle exception
+        // TODO: Properly handle exception
       });
   }
 
@@ -292,6 +296,20 @@ export class DashboardPage implements OnInit {
     const deepLinkPath = this.sessionFacadeService.deepLinkPath;
     if (deepLinkPath && deepLinkPath.length) {
       this.router.navigate(deepLinkPath).then(() => this.sessionFacadeService.navigatedToLinkPath());
+    }
+  }
+
+  private async initLocationForAndroid(): Promise<void> {
+    const permissionRequested = await firstValueFrom(this.navigationFacade.permissionsPrompted$.pipe(take(1)));
+    const permissionAllowed = await firstValueFrom(this.navigationFacade.permissionResponse$.pipe(take(1)));
+    
+    if (this.platform.is('android') && permissionRequested && permissionAllowed) {
+      const { hasPermission } = await this.appPermissions.checkLocationPermission();
+
+      if (!hasPermission) {
+        const response = await this.appPermissions.requestLocationPermissions();
+        this.navigationFacade.setPermissionResponse(response);
+      }
     }
   }
 }
