@@ -35,6 +35,7 @@ import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-d
 import { DashboardPage } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard.routing.module';
 import { TileConfigFacadeService } from './tile-config-facade.service';
+import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 
 const _platform = {
   is: jest.fn(),
@@ -80,6 +81,7 @@ describe('DashboardPage', () => {
         { provide: TileConfigFacadeService, useValue: _tileConfigFacadeService },
         { provide: InstitutionFacadeService, useValue: _institutionFacadeService },
         { provide: UserFacadeService, useValue: _userFacadeService },
+        NavigationFacadeSettingsService,
         AndroidPermissions,
         Network,
         InAppBrowser,
