@@ -111,6 +111,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   async modalHandler(res) {
     const popover = await this.popoverCtrl.create({
+      cssClass: 'sc-popover',
       component: MobileAccessPopoverComponent,
       componentProps: {
         data: res,
