@@ -373,6 +373,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   private async initConfirmModal(onSuccessCb): Promise<void> {
     const message = await firstValueFrom(this.contentStrings.reorderNotAvailableItemMessage);
     const modal = await this.popoverController.create({
+      cssClass: 'sc-popover',
       component: StGlobalPopoverComponent,
       componentProps: {
         data: {
