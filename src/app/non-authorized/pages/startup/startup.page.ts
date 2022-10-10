@@ -13,6 +13,7 @@ import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-aware-facade.service';
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
 import { ModalController } from '@ionic/angular';
+import { PIN_MODAL_ID } from '@core/service/identity/pin-authentication';
 
 @Component({
   selector: 'st-startup',
@@ -176,7 +177,7 @@ export class StartupPage {
 
   async closePinModal(): Promise<void> {
     this.loadingService.closeSpinner();
-    this.modalController.dismiss(null, null, 'pin-modal');
+    this.modalController.dismiss(null, null, PIN_MODAL_ID);
   }
 
   //

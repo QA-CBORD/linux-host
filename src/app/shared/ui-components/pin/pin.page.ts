@@ -35,7 +35,7 @@ export class PinPage implements OnInit, OnDestroy {
 
   currentLoginAttempts = 0;
   maxLoginAttempts = 3;
-  private authenticator: VaultAuthenticator
+  private authenticator: VaultAuthenticator;
 
   /// temporary solution before content strings added
   private readonly setPinText: string = 'Create a 4 digit PIN to use when biometrics are not available';
@@ -56,7 +56,6 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly connectivityFacade: ConnectivityAwareFacadeService
   ) {}
 
-
   @Input() pinAction: PinAction;
   @Input() showDismiss = true;
 
@@ -66,7 +65,6 @@ export class PinPage implements OnInit, OnDestroy {
     this.a11yService.readAloud(this.instructionText);
     this.connectivityFacade.setPinModalOpened(true);
   }
-
 
   private setInstructionText(text: string = null) {
     if (text !== null) {
@@ -172,7 +170,7 @@ export class PinPage implements OnInit, OnDestroy {
   onPinSupplied() {
     const pin = this.pinNumber.join('');
     if (this.authenticator) {
-      this.authenticateWithVault(pin)
+      this.authenticateWithVault(pin);
     } else {
       this.loginPin(pin);
     }
@@ -195,7 +193,9 @@ export class PinPage implements OnInit, OnDestroy {
     this.loadingService.closeSpinner();
     try {
       await this.modalController.dismiss(pin, status);
-    } catch (errr) { /**Ignored on purpose */ }
+    } catch (errr) {
+      /**Ignored on purpose */
+    }
   }
 
   back() {
@@ -242,7 +242,7 @@ export class PinPage implements OnInit, OnDestroy {
             this.setErrorText('Error setting your PIN - please try again');
           }
         },
-        (async ({ message, status }) => {
+        async ({ message, status }) => {
           this.cleanLocalState();
           if (this.connectionService.isConnectionIssues({ message, status })) {
             await this.handleConnectionIssues();
@@ -250,14 +250,15 @@ export class PinPage implements OnInit, OnDestroy {
             this.setErrorText('Error setting your PIN - please try again');
           }
         }
-        ));
+      );
   }
 
   private authenticateWithVault(pin: string) {
     this.setInstructionText('');
     this.currentLoginAttempts++;
     setTimeout(() => {
-      this.authenticator.authenticate(pin)
+      this.authenticator
+        .authenticate(pin)
         .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
         .catch(() => {
           this.cleanLocalState();
@@ -277,9 +278,9 @@ export class PinPage implements OnInit, OnDestroy {
   private async loginPin(pin: string) {
     this.setInstructionText('');
     this.currentLoginAttempts++;
-    await this.loadingService.showSpinner()
+    await this.loadingService.showSpinner();
     this.authFacadeService
-      .authenticatePin$(pin)
+      .authenticatePinTotp$(pin)
       .pipe(
         finalize(() => this.loadingService.closeSpinner()),
         take(1)
@@ -303,7 +304,7 @@ export class PinPage implements OnInit, OnDestroy {
             this.setErrorText('Error logging in - please try again');
           }
         },
-        (async ({ message, status }) => {
+        async ({ message, status }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
@@ -318,7 +319,7 @@ export class PinPage implements OnInit, OnDestroy {
             this.setErrorText('Incorrect PIN - please try again');
           }
         }
-        ));
+      );
     // on success, return the pin so the vault can be unlocked
   }
 
@@ -329,7 +330,7 @@ export class PinPage implements OnInit, OnDestroy {
         const connectionRestored = !(await this.connectionService.deviceOffline());
         await this.loadingService.closeSpinner();
         return connectionRestored;
-      }
+      },
     });
   }
 
@@ -337,4 +338,3 @@ export class PinPage implements OnInit, OnDestroy {
     return this.pinNumber.length < 4 && this.pinNumberCopy.length === 4;
   }
 }
-
