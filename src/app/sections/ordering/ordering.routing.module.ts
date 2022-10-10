@@ -49,7 +49,7 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.addressEdit,
     loadChildren: () => import('./pages/address-edit/address-edit.module').then(m => m.AddressEditPageModule),
-    data: { afterSaveRoute: [PATRON_NAVIGATION.ordering, SETTINGS_NAVIGATE.address] },
+    data: { afterSaveRoute: [PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses] },
   },
   {
     path: LOCAL_ROUTING.checkin,
