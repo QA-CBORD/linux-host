@@ -7,7 +7,6 @@ import { OrderingResolver } from './resolvers';
 import { LOCAL_ROUTING } from './ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { SETTINGS_NAVIGATE } from '@sections/settings/settings.config';
 
 const routes: Route[] = [
   {
