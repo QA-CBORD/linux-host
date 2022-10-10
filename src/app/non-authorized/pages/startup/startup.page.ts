@@ -33,20 +33,19 @@ export class StartupPage {
     private readonly authFacadeService: AuthFacadeService,
     private readonly navigationService: NavigationService,
     private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService,
-    private readonly modalController: ModalController,
-  ) { }
+    private readonly modalController: ModalController
+  ) {}
 
   /// check login on enter
   ionViewDidEnter() {
     this.loadingService.showSpinner();
     const { skipAuthFlow, ...rest } = <any>this.location.getState();
     if (!skipAuthFlow) {
-      this.startAuthFlow(rest)
+      this.startAuthFlow(rest);
     }
   }
 
-
-  startAuthFlow({ skipLoginFlow, biometricEnabled, }) {
+  startAuthFlow({ skipLoginFlow, biometricEnabled }) {
     if (skipLoginFlow) {
       this.unlockVault(biometricEnabled);
     } else {
@@ -66,10 +65,12 @@ export class StartupPage {
     }
     const hasPin = session && session.pin;
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
-    const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute({
-      promise: () => firstValueFrom(this.authFacadeService.getAuthSessionToken$()),
-    }, !hasPin);
-
+    const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute(
+      {
+        promise: () => firstValueFrom(this.authFacadeService.getAuthSessionToken$()),
+      },
+      !hasPin
+    );
 
     if (hasPin) {
       return this.handleVaultLoginSuccess(session);
@@ -96,7 +97,7 @@ export class StartupPage {
   authenticatePin(pin: string) {
     this.connectionIssueAwarePromiseExecute({
       promise: () => firstValueFrom(this.authFacadeService.authenticatePinTotp$(pin)),
-      rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message)
+      rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message),
     })
       .then(async () => {
         // Making sure vault is unlocked before continuing and repeating the flow in case it is.
@@ -105,12 +106,12 @@ export class StartupPage {
           const { biometricEnabled } = <any>this.location.getState();
           return this.unlockVault(biometricEnabled);
         }
-        
+
         return this.navigateToDashboard();
       })
-      .catch((error) => {
+      .catch(error => {
         if (error) {
-          this.navigateAnonymous(ANONYMOUS_ROUTES.entry)
+          this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
         }
       });
   }
@@ -130,8 +131,7 @@ export class StartupPage {
 
   async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: any, clearAll = true) {
     try {
-      return await this.navigationService
-        .navigateAnonymous(where, { ...data });
+      return await this.navigationService.navigateAnonymous(where, { ...data });
     } finally {
       clearAll && this.identityFacadeService.clearAll();
     }
@@ -167,11 +167,11 @@ export class StartupPage {
     this.connectionIssueAwarePromiseExecute({
       promise: () => {
         this.closePinModal();
-      return  this.navigationService.navigate([APP_ROUTES.dashboard], {
+        return this.navigationService.navigate([APP_ROUTES.dashboard], {
           replaceUrl: true,
           queryParams: { skipLoading: true },
         });
-      }
+      },
     });
   }
 
