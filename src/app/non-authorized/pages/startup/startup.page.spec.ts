@@ -7,6 +7,7 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { VaultMigrateResult } from '@core/service/identity/model.identity';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalController } from '@ionic/angular';
 import { NavigationService } from '@shared/services/navigation.service';
 import { ExecStatus } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
@@ -24,7 +25,8 @@ describe('Application Startup Flow', () => {
     identityFacadeService,
     authFacadeService,
     navigationService,
-    connectivityFacade;
+    connectivityFacade,
+    modalControllerService;
   beforeEach(async () => {
 
     elementRef = {};
@@ -57,6 +59,10 @@ describe('Application Startup Flow', () => {
       execute: jest.fn()
     };
 
+    modalControllerService = {
+      dismiss: jest.fn()
+    };
+
     await TestBed.configureTestingModule({
       declarations: [StartupPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -70,6 +76,7 @@ describe('Application Startup Flow', () => {
         { provide: AuthFacadeService, useValue: authFacadeService },
         { provide: NavigationService, useValue: navigationService },
         { provide: ConnectivityAwareFacadeService, useValue: connectivityFacade },
+        { provide: ModalController, useValue: modalControllerService }
       ],
     }).compileComponents();
   });

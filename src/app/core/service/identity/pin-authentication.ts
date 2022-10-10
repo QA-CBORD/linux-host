@@ -5,10 +5,13 @@ import { firstValueFrom } from 'rxjs'
 import { Subject } from "rxjs";
 import { PinAction, PinCloseStatus, VaultAuthenticator } from "./model.identity";
 
+export const PIN_MODAL_ID = 'pin-modal';
+
 export class PinAuthenticator {
     private pinModalOpened = false;
     private authenticator: VaultAuthenticator = new VaultAuthenticator();
     private pinClosedSubject = new Subject<PinCloseStatus>();
+
     constructor(private modalController: ModalController) { }
 
 
@@ -73,6 +76,7 @@ export class PinAuthenticator {
             backdropDismiss: false,
             component: PinPage,
             componentProps,
+            id: PIN_MODAL_ID
         });
 
         await pinModal.present();
