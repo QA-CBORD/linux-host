@@ -1,7 +1,6 @@
 import { Component, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SegmentCustomEvent } from '@ionic/angular';
-import { Tab } from '@sections/housing/pages/housing-dashboard/housing-tabs/housing-tabs.component';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UnitsType } from '../../pages/buildings/buildings.page';
@@ -17,10 +16,6 @@ export class UnitsTabComponent {
   selectedTab: SelectedUnitsTab = SelectedUnitsTab.Buildings;
   subscriber: Subscription;
   @Output() onTabSelected: EventEmitter<SelectedUnitsTab> = new EventEmitter<SelectedUnitsTab>();
-  tabs: Tab[] = [
-    { label: 'Buildings', view: SelectedUnitsTab.Buildings },
-    { label: 'Units', view: SelectedUnitsTab.Units },
-  ];
 
   constructor(private router: Router, private readonly cdRef: ChangeDetectorRef) {}
 
