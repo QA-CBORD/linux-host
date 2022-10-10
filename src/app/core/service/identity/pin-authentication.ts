@@ -73,6 +73,7 @@ export class PinAuthenticator {
             backdropDismiss: false,
             component: PinPage,
             componentProps,
+            id: 'pin-modal'
         });
 
         await pinModal.present();

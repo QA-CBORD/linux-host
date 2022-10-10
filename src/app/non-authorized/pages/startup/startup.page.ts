@@ -12,6 +12,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-aware-facade.service';
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'st-startup',
@@ -30,7 +31,8 @@ export class StartupPage {
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly navigationService: NavigationService,
-    private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService
+    private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService,
+    private readonly modalController: ModalController,
   ) { }
 
   /// check login on enter
@@ -102,7 +104,7 @@ export class StartupPage {
           const { biometricEnabled } = <any>this.location.getState();
           return this.unlockVault(biometricEnabled);
         }
-
+        
         return this.navigateToDashboard();
       })
       .catch((error) => {
@@ -162,12 +164,19 @@ export class StartupPage {
 
   public async navigateToDashboard() {
     this.connectionIssueAwarePromiseExecute({
-      promise: () =>
-        this.navigationService.navigate([APP_ROUTES.dashboard], {
+      promise: () => {
+        this.closePinModal();
+      return  this.navigationService.navigate([APP_ROUTES.dashboard], {
           replaceUrl: true,
           queryParams: { skipLoading: true },
-        }),
+        });
+      }
     });
+  }
+
+  async closePinModal(): Promise<void> {
+    this.loadingService.closeSpinner();
+    this.modalController.dismiss(null, null, 'pin-modal');
   }
 
   //
