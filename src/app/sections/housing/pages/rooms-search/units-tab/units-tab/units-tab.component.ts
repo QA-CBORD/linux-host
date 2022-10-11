@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { SegmentCustomEvent } from '@ionic/angular';
+import { SelectedHousingTab } from '@sections/housing/pages/housing-dashboard/housing-dashboard.component';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UnitsType } from '../../pages/buildings/buildings.page';
@@ -36,8 +36,7 @@ export class UnitsTabComponent {
     this.subscriber.unsubscribe();
   }
 
-  select(event: SegmentCustomEvent) {
-    const { detail } = event;
-    this.onTabSelected.emit(+detail.value);
+  changeView(view: SelectedHousingTab) {
+    this.onTabSelected.emit(+view);
   }
 }
