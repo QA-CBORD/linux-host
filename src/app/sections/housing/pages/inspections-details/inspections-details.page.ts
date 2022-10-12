@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   AlertController,
   Platform,
+  SegmentCustomEvent,
 } from '@ionic/angular';
 
 import {
@@ -194,5 +195,9 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   getConditionStaff(conditionStaff: number): string {
     const conditionStaffValue = this.conditions.filter(x => x.value === conditionStaff.toString())[0]?.label
     return conditionStaffValue ? conditionStaffValue : 'none';
+  }
+
+  changeView(section: string) {
+    this.section = section;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { HousingTabsComponent } from '../housing-tabs.component';
 
 @Component({
@@ -6,10 +6,12 @@ import { HousingTabsComponent } from '../housing-tabs.component';
   templateUrl: './housing-tab.component.html',
   styleUrls: ['./housing-tab.component.scss'],
 })
-export class HousingTabComponent {
+export class HousingTabComponent implements OnInit {
   @Input() tabTitle: string;
 
-  constructor(tabs: HousingTabsComponent) {
-    tabs.addTab(this);
+  constructor(private tabs: HousingTabsComponent) {}
+
+  ngOnInit() {
+    this.tabs.addTab(this);
   }
 }

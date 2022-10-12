@@ -11,11 +11,9 @@
   </div>
 
   <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
-  <ion-segment  [(ngModel)]="section" scrollable>
-    <ion-segment-button [value]="room.name" *ngFor="let room of inspectionDetails.sections">
-      <ion-label>{{room.name}}</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+  <st-housing-tabs (onTabSelected)="changeView($event)" >
+    <st-housing-tab *ngFor="let room of inspectionDetails.sections" [tabTitle]="room.name" ></st-housing-tab>
+  </st-housing-tabs>
 
   <div [ngSwitch]="section" class="inspection-details__card">
     <ng-container *ngFor="let room of inspectionDetails.sections">

@@ -15,7 +15,7 @@ import { SelectedUnitsTab } from '../../rooms-search.page';
 export class UnitsTabComponent {
   selectedTab: SelectedUnitsTab = SelectedUnitsTab.Buildings;
   subscriber: Subscription;
-  @Output() onTabSelected: EventEmitter<SelectedUnitsTab> = new EventEmitter<SelectedUnitsTab>();
+  @Output() onTabSelected: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private router: Router, private readonly cdRef: ChangeDetectorRef) {}
 
@@ -37,6 +37,6 @@ export class UnitsTabComponent {
   }
 
   changeView(view: SelectedHousingTab) {
-    this.onTabSelected.emit(+view);
+    this.onTabSelected.emit(view);
   }
 }

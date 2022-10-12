@@ -1,7 +1,5 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { SegmentCustomEvent } from '@ionic/angular';
-import { SelectedUnitsTab } from '../../rooms-search/rooms-search.page';
-import { SelectedHousingTab } from '../housing-dashboard.component';
 import { HousingTabComponent } from './housing-tab/housing-tab.component';
 
 @Component({
@@ -11,19 +9,19 @@ import { HousingTabComponent } from './housing-tab/housing-tab.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HousingTabsComponent {
-  @Output() onTabSelected: EventEmitter<SelectedHousingTab> = new EventEmitter<SelectedHousingTab>();
-  @Input() selectedTab: SelectedHousingTab | SelectedUnitsTab = SelectedHousingTab.Forms;
+  @Output() onTabSelected: EventEmitter<string> = new EventEmitter<string>();
+  @Input() selectedTab: string;
 
   tabs: HousingTabComponent[] = [];
 
   select(event: SegmentCustomEvent) {
     const { detail } = event;
-    this.onTabSelected.emit(+detail.value);
+    this.onTabSelected.emit(detail.value);
   }
 
   addTab(tab: HousingTabComponent) {
     if (this.tabs.length === 0) {
-      this.selectedTab = this.tabs.length;
+      this.selectedTab = tab.tabTitle;
     }
     this.tabs.push(tab);
   }
