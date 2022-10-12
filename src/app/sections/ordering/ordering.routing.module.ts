@@ -7,7 +7,6 @@ import { OrderingResolver } from './resolvers';
 import { LOCAL_ROUTING } from './ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { SETTINGS_NAVIGATE } from '@sections/settings/settings.config';
 
 const routes: Route[] = [
   {
@@ -49,7 +48,7 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.addressEdit,
     loadChildren: () => import('./pages/address-edit/address-edit.module').then(m => m.AddressEditPageModule),
-    data: { afterSaveRoute: [PATRON_NAVIGATION.ordering, SETTINGS_NAVIGATE.address] },
+    data: { afterSaveRoute: [PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses] },
   },
   {
     path: LOCAL_ROUTING.checkin,
