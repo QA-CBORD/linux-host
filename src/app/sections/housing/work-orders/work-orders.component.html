@@ -30,12 +30,12 @@
           </ion-label>
 
           <st-actions
-            [path]="getPath(workOrder.key)"
-            [edit]="!workOrder?.facilityKey"
-            [showEdit]="!workOrder?.facilityKey"
-            [showView]="workOrder?.facilityKey"
-            [showRemove]="false"
-            [key]="workOrder?.facilityKey">
+            [navigateTo]="getPath(workOrder.key)"
+            [canEdit]="!workOrder?.facilityKey"
+            [showEditOption]="!workOrder?.facilityKey"
+            [showViewOption]="workOrder?.facilityKey"
+            [showRemoveOption]="false"
+            [itemKey]="workOrder?.facilityKey">
           </st-actions>
         </ion-item>
       </div>
