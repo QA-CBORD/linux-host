@@ -12,8 +12,8 @@ import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { UnitsType } from './pages/buildings/buildings.page';
 
 export enum SelectedUnitsTab {
-  Buildings = "Buildings",
-  Units = "Units"
+  Buildings = 'Buildings',
+  Units = 'Units',
 }
 @Component({
   selector: 'st-rooms-search',

@@ -11,7 +11,6 @@ import { ActivatedRoute } from '@angular/router';
 import {
   AlertController,
   Platform,
-  SegmentCustomEvent,
 } from '@ionic/angular';
 
 import {

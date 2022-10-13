@@ -7,9 +7,9 @@ import { HousingService } from '../../housing.service';
 import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
 export enum SelectedHousingTab {
-  Forms = "Forms",
-  Rooms =  "Rooms",
-  Contracts = "Contracts",
+  Forms = 'Forms',
+  Rooms = 'Rooms',
+  Contracts = 'Contracts',
 }
 
 @Component({
