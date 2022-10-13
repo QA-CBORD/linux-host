@@ -7,6 +7,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { Platform } from '@ionic/angular';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
@@ -34,7 +35,8 @@ export class MobileCredentialDataService {
     protected institutionFacadeService: InstitutionFacadeService,
     protected apiService: APIService,
     protected readonly userFacade: UserFacadeService,
-    protected contentStringFacade: ContentStringsFacadeService
+    protected contentStringFacade: ContentStringsFacadeService,
+    protected platform: Platform
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -115,6 +117,9 @@ export class MobileCredentialDataService {
   }
 
   private getActivePasses(): Observable<ActivePasses> {
+
+    if(!this.platform.is('android')) return of({} as ActivePasses);
+
     /**
      * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
      * this data is then used to get a credential for the patron/user.
