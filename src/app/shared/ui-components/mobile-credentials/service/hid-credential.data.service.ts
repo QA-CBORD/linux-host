@@ -18,6 +18,7 @@ import { AndroidCredentialDataService } from '../model/shared/android-credential
 import { APIService } from '@core/service/api-service/api.service';
 import { EndpointStatuses, MobileCredentialStatuses } from '../model/shared/credential-state';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { Platform } from '@ionic/angular';
 
 const api_version = 'v1';
 
@@ -38,7 +39,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     protected readonly contentStringFacade: ContentStringsFacadeService,
     protected readonly apiService: APIService,
     protected readonly http: HttpClient,
-    protected readonly userFacade: UserFacadeService
+    protected readonly userFacade: UserFacadeService,
+    protected readonly platform: Platform
   ) {
     super(
       resourceUrls,
@@ -48,7 +50,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
       institutionFacadeService,
       apiService,
       http,
-      userFacade
+      userFacade,
+      platform
     );
   }
 
