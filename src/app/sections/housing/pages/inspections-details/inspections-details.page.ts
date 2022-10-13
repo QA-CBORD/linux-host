@@ -195,4 +195,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     const conditionStaffValue = this.conditions.filter(x => x.value === conditionStaff.toString())[0]?.label
     return conditionStaffValue ? conditionStaffValue : 'none';
   }
+
+  changeView(section: string) {
+    this.section = section;
+  }
 }

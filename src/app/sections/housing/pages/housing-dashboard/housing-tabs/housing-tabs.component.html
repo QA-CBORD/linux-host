@@ -1,5 +1,3 @@
 <ion-segment mode="md" (ionChange)="select($event)" [value]="selectedTab">
-  <ng-container *ngFor="let tab of tabs">
-    <ion-segment-button [value]="tab.view">{{ tab.label  | uppercase }}</ion-segment-button>
-  </ng-container>
+  <ion-segment-button  *ngFor="let tab of tabs" [value]="tab.tabTitle">{{ tab.tabTitle  | uppercase }}</ion-segment-button>
 </ion-segment>

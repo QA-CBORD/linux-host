@@ -7,9 +7,9 @@ import { HousingService } from '../../housing.service';
 import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
 export enum SelectedHousingTab {
-  Forms,
-  Rooms,
-  Contracts,
+  Forms = 'Forms',
+  Rooms = 'Rooms',
+  Contracts = 'Contracts',
 }
 
 @Component({
@@ -20,7 +20,7 @@ export enum SelectedHousingTab {
 })
 export class HousingDashboardPage {
   SelectedHousingTab = SelectedHousingTab; // needed to reference enum on front-end
-  _selectedHousingTab: SelectedHousingTab = SelectedHousingTab.Forms;
+  _selectedHousingTab: string = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();
 
   isHeaderVisible: boolean;
@@ -92,7 +92,7 @@ export class HousingDashboardPage {
 
     this._loadingService.closeSpinner();
   }
-  public changeView(view: SelectedHousingTab) {
+  public changeView(view: string) {
     this._selectedHousingTab = view;
   }
 }
