@@ -19,12 +19,12 @@
           </ion-label>
 
           <st-actions
-            [path]="urlEditForm+waitingList?.waitListKey"
-            [edit]="!waitingList?.patronWaitingListKey"
-            [showEdit]="!waitingList?.patronWaitingListKey"
-            [showView]="waitingList?.patronWaitingListKey"
-            [showRemove]="true"
-            [key]="waitingList?.patronWaitingListKey"
+            [navigateTo]="urlEditForm+waitingList?.waitListKey"
+            [canEdit]="!waitingList?.patronWaitingListKey"
+            [showEditOption]="!waitingList?.patronWaitingListKey"
+            [showViewOption]="waitingList?.patronWaitingListKey"
+            [showRemoveOption]="true"
+            [itemKey]="waitingList?.patronWaitingListKey"
             (remove)="removePatronWaitingList(waitingList)">
           </st-actions>
         </ion-item>

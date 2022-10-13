@@ -29,12 +29,12 @@
           </ion-label>
 
           <st-actions
-            [path]="getPath(attachment.attachmentKey)"
-            [edit]="!attachment?.attachmentKey"
-            [showEdit]="!attachment?.attachmentKey"
-            [showView]="attachment?.attachmentKey"
-            [showRemove]="false"
-            [key]="attachment?.attachmentKey">
+            [navigateTo]="getPath(attachment.attachmentKey)"
+            [canEdit]="!attachment?.attachmentKey"
+            [showEditOption]="!attachment?.attachmentKey"
+            [showViewOption]="attachment?.attachmentKey"
+            [showRemoveOption]="false"
+            [itemKey]="attachment?.attachmentKey">
           </st-actions>
         </ion-item>
       </div>

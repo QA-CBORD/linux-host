@@ -10,14 +10,14 @@ import { ActionsListComponent } from './actions-list/actions-list.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActionsComponent {
-  @Input() path: string;
-  @Input() edit: boolean;
-  @Input() key = '';
-  @Input() showEdit = true;
-  @Input() showView = true;
-  @Input() showRemove = false;
+  @Input() navigateTo: string;
+  @Input() canEdit: boolean;
+  @Input() itemKey = '';
+  @Input() showEditOption = true;
+  @Input() showViewOption = true;
+  @Input() showRemoveOption = false;
 
-  @Output() remove = new EventEmitter();
+  @Output() onRemove = new EventEmitter();
 
   constructor(private _popoverController: PopoverController) {}
 
@@ -26,13 +26,13 @@ export class ActionsComponent {
       .create({
         component: ActionsListComponent,
         componentProps: {
-          path: this.path,
-          edit: this.edit,
-          key: this.key,
-          showView: this.showView,
-          showEdit: this.showEdit,
-          showRemove: this.showRemove,
-          remove: this.remove
+          navigateTo: this.navigateTo,
+          canEdit: this.canEdit,
+          itemKey: this.itemKey,
+          showViewOption: this.showViewOption,
+          showEditOption: this.showEditOption,
+          showRemoveOption: this.showRemoveOption,
+          onRemove: this.onRemove
         },
         cssClass: 'actions-popover',
         event,
