@@ -370,4 +370,8 @@ article {
 
 ion-popover.sc-popover {
   --min-width: 300px;
+
+  .no-scroll {
+    --overflow: hidden;
+  }
 }

@@ -55,7 +55,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   }
 
   get permissionResponse$(): Observable<boolean> {
-    return this.storage.getStateEntityByKey$<boolean>(this.permissionResponse).pipe(map(data => data.value));
+    return this.storage.getStateEntityByKey$<boolean>(this.permissionResponse).pipe(map(data => data ? data.value : false));
   }
 
   private isConfigInStorage(): boolean {
