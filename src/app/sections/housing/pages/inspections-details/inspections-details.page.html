@@ -18,6 +18,7 @@
       mode="ios"
       fill="clear"
       (click)="save(inspectionDetails)"
+      [disabled]="status > 1"
     >
       Save
     </ion-button>
