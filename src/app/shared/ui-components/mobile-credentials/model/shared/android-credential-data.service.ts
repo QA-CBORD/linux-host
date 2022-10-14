@@ -11,6 +11,7 @@ import { AndroidCredential, CredentialBundle, Persistable } from '../android/and
 import { MobileCredentialDataService } from './mobile-credential-data.service';
 import { AndroidCredentialCsModel } from '../android/android-credential-content-strings.model';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
+import { Platform } from '@ionic/angular';
 
 const api_version = 'v1';
 const resourceUrls = {
@@ -30,7 +31,8 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     protected institutionFacadeService: InstitutionFacadeService,
     protected apiService: APIService,
     protected http: HttpClient,
-    protected userFacade: UserFacadeService
+    protected userFacade: UserFacadeService,
+    protected platform: Platform
   ) {
     super(
       storageStateService,
@@ -38,7 +40,8 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
       institutionFacadeService,
       apiService,
       userFacade,
-      contentStringFacade
+      contentStringFacade,
+      platform
     );
   }
 

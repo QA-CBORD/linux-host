@@ -54,7 +54,7 @@ export class ServerError implements HttpInterceptor {
   private handleServerException(method: string, exceptionString = ''): never {
     if (this.isKnownError(exceptionString)) {
       const errorMessageParts = exceptionString.split('|');
-      throw this.determineErrorByCodeAndThrow(errorMessageParts as [string, string], method);
+      throw this.determineErrorByCodeAndThrow([errorMessageParts[0], errorMessageParts[1]], method);
     } else {
       throw new Error('Unexpected error occurred.');
     }

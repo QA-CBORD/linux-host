@@ -14,6 +14,7 @@ import { AndroidCredentialDataService } from '../model/shared/android-credential
 import { HttpClient } from '@angular/common/http';
 import { map, switchMap } from 'rxjs/operators';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { Platform } from '@ionic/angular';
 
 const major_version = 1,
   minor_version = 0;
@@ -32,7 +33,8 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     protected readonly institutionFacadeService: InstitutionFacadeService,
     protected readonly apiService: APIService,
     protected readonly http: HttpClient,
-    protected userFacade: UserFacadeService
+    protected readonly userFacade: UserFacadeService,
+    protected readonly platform: Platform
   ) {
     super(
       resourceUrls,
@@ -42,7 +44,8 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
       institutionFacadeService,
       apiService,
       http,
-      userFacade
+      userFacade,
+      platform
     );
   }
 
