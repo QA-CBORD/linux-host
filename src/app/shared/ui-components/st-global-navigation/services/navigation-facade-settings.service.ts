@@ -19,7 +19,8 @@ import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private readonly key: string = 'NAVIGATION_SETTINGS';
   private readonly firstNavKey: string = 'NAVIGATION_STARTUP';
-  
+  private readonly permissionResponse: string = 'ANDROID_PERMISSION_RESPONSE';
+
   constructor(
     private readonly storage: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -42,13 +43,19 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   }
 
   get permissionsPrompted$(): Observable<boolean> {
-    return this.storage
-      .getStateEntityByKey$<boolean>(this.firstNavKey)
-      .pipe(map(data => !!data));
+    return this.storage.getStateEntityByKey$<boolean>(this.firstNavKey).pipe(map(data => !!data));
   }
 
   promptPermissionsOnce() {
     this.storage.updateStateEntity(this.firstNavKey, true, { highPriorityKey: true, keepOnLogout: true });
+  }
+
+  setPermissionResponse(response: { hasPermission: boolean }): void {
+    this.storage.updateStateEntity(this.permissionResponse, response.hasPermission, { highPriorityKey: true, keepOnLogout: true });
+  }
+
+  get permissionResponse$(): Observable<boolean> {
+    return this.storage.getStateEntityByKey$<boolean>(this.permissionResponse).pipe(map(data => data ? data.value : false));
   }
 
   private isConfigInStorage(): boolean {
@@ -58,11 +65,13 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private getAllowedSettings(): Observable<NavigationBottomBarElement[]> {
     const GuestSettingObs = this.institutionService.guestSettings;
     const isGuestUserObs = this.authService.isGuestUser();
-    const cachedSettingsObs = this.settingsFacadeService.getCachedSettings(); 
+    const cachedSettingsObs = this.settingsFacadeService.getCachedSettings();
     return zip(cachedSettingsObs, isGuestUserObs, from(GuestSettingObs)).pipe(
       switchMap(async ([settingInfo, guestUser, setting]) => {
         const currentProfile = await this.profileService.determineCurrentProfile(settingInfo);
-        return this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile))
+        return this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(
+          ({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile)
+        );
       })
     );
   }

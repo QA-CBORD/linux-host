@@ -1,17 +1,4 @@
-.tabs-container {
-  display: inline-flex;
-  width: 100%;
-  font-weight: bold;
-  color: var(--ion-color-dark-tint);
-  font-size: small;
-  padding: 0px 5%;
-  .tab {
-    padding: 7px 0px;
+ion-segment-button {
     width: 33.33%;
-    text-align: center;
-  }
-  .selected {
-    border-bottom: 2px solid var(--ion-color-primary-tint);
-    color: var(--ion-color-primary-tint);
-  }
+    min-width: fit-content;
 }

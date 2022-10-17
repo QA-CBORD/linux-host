@@ -2,22 +2,22 @@ import { Injectable } from '@angular/core';
 
 import { Resolve } from '@angular/router';
 
-import { Observable, merge } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
-import { finalize, take } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 @Injectable()
-export class SettingsSavedAddressesResolver implements Resolve<Observable<ContentStringInfo[]>> {
+export class SettingsSavedAddressesResolver implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[]]>> {
   constructor(
     private readonly loadingService: LoadingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService
   ) {}
 
-  resolve(): Observable<ContentStringInfo[]> {
+  resolve(): Observable<[ContentStringInfo[], ContentStringInfo[]]> {
     const orderingContentStrings = this.contentStringsFacadeService.fetchContentStrings$(
       CONTENT_STRINGS_DOMAINS.patronUi,
       CONTENT_STRINGS_CATEGORIES.ordering
@@ -29,9 +29,6 @@ export class SettingsSavedAddressesResolver implements Resolve<Observable<Conten
     );
 
     this.loadingService.showSpinner();
-    return merge(orderingContentStrings, statesStrings).pipe(
-      take(2),
-      finalize(() => this.loadingService.closeSpinner())
-    );
+    return forkJoin([orderingContentStrings, statesStrings]).pipe(finalize(() => this.loadingService.closeSpinner()));
   }
 }

@@ -57,6 +57,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   isSubmitted: boolean;
   termKey = 0;
   canSubmit = true;
+  status = 0;
   section = '';
   conditions: any[] = [];
 
@@ -84,6 +85,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.contractElementKey = parseInt(this._route.snapshot.params.contractElementKey);
     this.checkIn = JSON.parse(this._route.snapshot.params.checkIn);
     this.termKey = parseInt(this._route.snapshot.params.termKey);
+    this.status = parseInt(this._route.snapshot.params.status);
     this._initInspectionDetailsObservable();
   }
 
@@ -116,6 +118,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           this.getInspectionPages();
           this.section = inspectionDetails.sections[0].name;
           this.isSubmitted = inspectionDetails.isSubmitted;
+          
           this._loadingService.closeSpinner();
           return inspectionDetails;
         }),
@@ -191,5 +194,9 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   getConditionStaff(conditionStaff: number): string {
     const conditionStaffValue = this.conditions.filter(x => x.value === conditionStaff.toString())[0]?.label
     return conditionStaffValue ? conditionStaffValue : 'none';
+  }
+
+  changeView(section: string) {
+    this.section = section;
   }
 }

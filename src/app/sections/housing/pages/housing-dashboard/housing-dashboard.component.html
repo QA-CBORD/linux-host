@@ -3,7 +3,11 @@
     <ion-title class="housing-title"><h1>Housing</h1></ion-title>
   </ion-toolbar>
   <st-terms ></st-terms>
-  <st-housing-tabs (onTabSelected)="changeView($event)" [selectedTab]="_selectedHousingTab"></st-housing-tabs>
+  <st-housing-tabs (onTabSelected)="changeView($event)">
+    <st-housing-tab tabTitle="Forms"></st-housing-tab>
+    <st-housing-tab tabTitle="Rooms"></st-housing-tab>
+    <st-housing-tab tabTitle="Contracts"></st-housing-tab>
+  </st-housing-tabs>
 </ion-header>
 
 <ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Forms">

@@ -49,24 +49,32 @@ export class NavigationService {
   }
 
   trackPath(path: string) {
-    if (this.isPathAllowed(path)) {
-        this.history.push(path);
+    if (this.isUrlAllowed(path)) {
+      const url = this.removeParams(path);
+      this.history.push(url);
     }
   }
 
-  getPreviousTrackedPath(): string {
-    if (this.history.length > 1)  {
+  private removeParams(path: string) {
+    if (path.includes('?')) {
+      return path.split('?')[0];
+    }
+    return path;
+  }
+
+  getPreviousTrackedUrl(): string {
+    if (this.history.length > 1) {
       this.history.pop();
       return this.history.pop() || '';
     }
   }
 
-  private isSamePath(path: string) {
+  private isPreviousUrl(path: string): boolean {
     return this.history[this.history.length - 1] == path;
   }
 
-  private isPathAllowed(path: string) {
-    return !this.notAllowedPaths.some(rx => rx.test(path)) && !this.isSamePath(path);
+  private isUrlAllowed(path: string): boolean {
+    return !this.notAllowedPaths.some(rx => rx.test(path)) && !this.isPreviousUrl(path);
   }
 }
 

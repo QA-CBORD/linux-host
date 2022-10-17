@@ -12,6 +12,8 @@ import { APP_ROUTES } from '@sections/section.config';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-aware-facade.service';
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
+import { ModalController } from '@ionic/angular';
+import { PIN_MODAL_ID } from '@core/service/identity/pin-authentication';
 
 @Component({
   selector: 'st-startup',
@@ -30,20 +32,20 @@ export class StartupPage {
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly navigationService: NavigationService,
-    private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService
-  ) { }
+    private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService,
+    private readonly modalController: ModalController
+  ) {}
 
   /// check login on enter
   ionViewDidEnter() {
     this.loadingService.showSpinner();
     const { skipAuthFlow, ...rest } = <any>this.location.getState();
     if (!skipAuthFlow) {
-      this.startAuthFlow(rest)
+      this.startAuthFlow(rest);
     }
   }
 
-
-  startAuthFlow({ skipLoginFlow, biometricEnabled, }) {
+  startAuthFlow({ skipLoginFlow, biometricEnabled }) {
     if (skipLoginFlow) {
       this.unlockVault(biometricEnabled);
     } else {
@@ -63,10 +65,12 @@ export class StartupPage {
     }
     const hasPin = session && session.pin;
     // step 2: Authenticate the app with GetService/Backend. watch for connection issues while doing that.
-    const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute({
-      promise: () => firstValueFrom(this.authFacadeService.getAuthSessionToken$()),
-    }, !hasPin);
-
+    const { data: systemSessionId } = await this.connectionIssueAwarePromiseExecute(
+      {
+        promise: () => firstValueFrom(this.authFacadeService.getAuthSessionToken$()),
+      },
+      !hasPin
+    );
 
     if (hasPin) {
       return this.handleVaultLoginSuccess(session);
@@ -92,8 +96,8 @@ export class StartupPage {
 
   authenticatePin(pin: string) {
     this.connectionIssueAwarePromiseExecute({
-      promise: () => firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
-      rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message)
+      promise: () => firstValueFrom(this.authFacadeService.authenticatePinTotp$(pin)),
+      rejectOnError: ({ message }) => DEVICE_MARKED_LOST.test(message),
     })
       .then(async () => {
         // Making sure vault is unlocked before continuing and repeating the flow in case it is.
@@ -105,9 +109,9 @@ export class StartupPage {
 
         return this.navigateToDashboard();
       })
-      .catch((error) => {
+      .catch(error => {
         if (error) {
-          this.navigateAnonymous(ANONYMOUS_ROUTES.entry)
+          this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
         }
       });
   }
@@ -127,8 +131,7 @@ export class StartupPage {
 
   async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: any, clearAll = true) {
     try {
-      return await this.navigationService
-        .navigateAnonymous(where, { ...data });
+      return await this.navigationService.navigateAnonymous(where, { ...data });
     } finally {
       clearAll && this.identityFacadeService.clearAll();
     }
@@ -162,12 +165,19 @@ export class StartupPage {
 
   public async navigateToDashboard() {
     this.connectionIssueAwarePromiseExecute({
-      promise: () =>
-        this.navigationService.navigate([APP_ROUTES.dashboard], {
+      promise: () => {
+        this.closePinModal();
+        return this.navigationService.navigate([APP_ROUTES.dashboard], {
           replaceUrl: true,
           queryParams: { skipLoading: true },
-        }),
+        });
+      },
     });
+  }
+
+  async closePinModal(): Promise<void> {
+    this.loadingService.closeSpinner();
+    this.modalController.dismiss(null, null, PIN_MODAL_ID);
   }
 
   //

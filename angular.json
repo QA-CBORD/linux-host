@@ -16,7 +16,9 @@
             "allowedCommonJsDependencies": [
               "rxjs",
               "big-integer",
-              "bwip-angular2"
+              "bwip-angular2",
+              "localforage",
+              "localforage-cordovasqlitedriver"
             ],
             "aot": false,
             "outputPath": "www",

@@ -1,5 +1,3 @@
-<div class="tabs-container">
-  <div class="tab" [class.selected]="selectedTab === tab.view" *ngFor="let tab of tabs" (click)="select(tab.view)">
-    <span>{{ tab.label | uppercase }}</span>
-  </div>
-</div>
+<ion-segment mode="md" (ionChange)="select($event)" [value]="selectedTab" scrollable select-on-focus>
+  <ion-segment-button  *ngFor="let tab of tabs" [value]="tab.tabTitle">{{ tab.tabTitle  | uppercase }}</ion-segment-button>
+</ion-segment>

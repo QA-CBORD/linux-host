@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { Platform } from '@ionic/angular';
-import {StatusBar} from '@capacitor/status-bar';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -10,10 +9,8 @@ import {StatusBar} from '@capacitor/status-bar';
   preserveWhitespaces: true,
 })
 export class AppComponent implements OnInit {
-  
   constructor(
     private readonly platform: Platform,
-    private readonly splashScreen: SplashScreen,
     private readonly screenOrientation: ScreenOrientation
   ) {}
 
@@ -23,9 +20,9 @@ export class AppComponent implements OnInit {
 
   private async initializeApp(): Promise<void> {
     await this.platform.ready();
-    this.splashScreen.hide();
     if (this.platform.is('android')) {
-      StatusBar.setOverlaysWebView({ overlay: true });
+      StatusBar.setOverlaysWebView({ overlay: false });
+      StatusBar.setStyle({ style: Style.Light });
       StatusBar.setBackgroundColor({ color: '#FFFFFF' });
     }
     if (this.platform.is('cordova')) {

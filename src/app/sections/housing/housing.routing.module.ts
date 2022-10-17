@@ -43,11 +43,11 @@ const routes: Routes = [
         loadChildren: () => import('./pages/attachments-details/attachments-details.module').then(m => m.AttachmentsDetailsPageModule),
       },
       {
-        path: `${LOCAL_ROUTING.inspections}/:termKey/:residentInspectionKey/:contractElementKey/:checkIn`,
+        path: `${LOCAL_ROUTING.inspections}/:termKey/:residentInspectionKey/:contractElementKey/:status/:checkIn`,
         loadChildren: () => import('./pages/inspections-details/inspections-details.module').then(m => m.InspectionsDetailsPageModule),
       },
       {
-        path: `${LOCAL_ROUTING.inspections}/:termKey/:contractElementKey/:checkIn`,
+        path: `${LOCAL_ROUTING.inspections}/:termKey/:contractElementKey/:status/:checkIn`,
         loadChildren: () => import('./pages/inspections-details/inspections-details.module').then(m => m.InspectionsDetailsPageModule),
       },
       {
