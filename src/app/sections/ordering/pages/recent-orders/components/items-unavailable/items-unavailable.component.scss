@@ -1,0 +1,13 @@
+@import 'tools';
+
+.items-unavailable {
+  &__header {
+    &-item{
+      --padding-start: 0;
+    }
+    &-title {
+      @include font-nunito-regular(18px);
+      font-weight: 700;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<ion-grid class="ion-padding-horizontal">
+  <ion-row>
+    <ion-col class="items-unavailable__header">
+      <ion-item class="ion-no-padding" lines="none">
+        <ion-icon src="/assets/icon/error-alert.svg" color="danger"></ion-icon>
+        <ion-label class="items-unavailable__header-title ion-padding-start">Items Unavailable </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <div>The following item(s) are longer available in this order:</div>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-list>
+        <ion-item lines="none">
+          <ion-badge slot="start" color="light">1</ion-badge>
+          <ion-label>Orange</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="ion-text-end">
+      <ion-button (click)="return()" color="light">Return</ion-button>
+      <ion-button>Continue</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

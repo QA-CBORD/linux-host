@@ -11,13 +11,12 @@ import { OrderDetailsModule } from './shared/ui-components/order-details/order-d
 import { CartResolver } from '@sections/ordering/resolvers/cart.resolver';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
-import { ModalsService } from '@core/service/modals/modals.service';
 import { CheckInModule } from '@sections/check-in/check-in.module';
 import { TypeMessageModule } from './shared/pipes/type-message/type-message.pipe.module';
 
 const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule, StHeaderModule, CheckInModule, TypeMessageModule];
 const declarations = [OrderingPage, MenuOrderingComponent];
-const providers = [OrderingResolver, CartResolver, OrderingService, ModalsService];
+const providers = [OrderingResolver, CartResolver, OrderingService];
 
 @NgModule({
   declarations,

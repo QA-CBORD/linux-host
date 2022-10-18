@@ -125,7 +125,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
     }`;
     const { orderType, address } = await this.orderInfo$.pipe(first()).toPromise();
-    const modal = await this.modalController.create({
+    const modal = await this.modalController.createActionSheet({
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {

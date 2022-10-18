@@ -82,7 +82,7 @@ export class OrderingPage implements OnInit {
     this.merchantService.orderTypes = orderTypes;
     this.cartService.removeOrderDetailsOptions();
 
-    const modal = await this.modalController.create(
+    const modal = await this.modalController.createActionSheet(
       {
         component: OrderOptionsActionSheetComponent,
         cssClass,

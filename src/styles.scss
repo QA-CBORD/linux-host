@@ -375,3 +375,14 @@ ion-popover.sc-popover {
     --overflow: hidden;
   }
 }
+
+ion-modal.sc-modal {
+  --min-width: 300px;
+  --width: fit-content;
+  --height: fit-content;
+  &-alert {
+    padding: 40px;
+    --box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.04), 0px 2px 44px rgba(0, 0, 0, 0.12);
+    --border-radius: 8px;
+  }
+}

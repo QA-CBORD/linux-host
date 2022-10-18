@@ -15,7 +15,6 @@ import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea
 import { AccessibleSelectModule } from '@shared/accessibility/directives/accessible-select.module';
 import { AccountDisplayPipe } from '@sections/accounts/shared/pipes/account-display/account-display.pipe';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
-import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.module';
 
@@ -38,6 +37,6 @@ const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
     TypeMessageModule
   ],
   exports: [OrderDetailsComponent],
-  providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, ModalsService, AccessibilityService],
+  providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, AccessibilityService],
 })
 export class OrderDetailsModule {}

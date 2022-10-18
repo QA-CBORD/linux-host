@@ -342,7 +342,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					504EC3031FED79650016851F = {
 						CreatedOnToolsVersion = 9.2;
@@ -535,6 +535,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
