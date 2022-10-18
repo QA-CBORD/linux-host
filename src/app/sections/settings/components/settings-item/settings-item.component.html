@@ -4,10 +4,16 @@
   [button]="setting.type !== 'toggle'"
   tabindex="0"
   *ngIf="settingLabel$ | async as settingLabel"
+  [disabled]="setting.checkIsDisabled"
 >
-  <img class="item__icon" src="../../../assets/icon/{{ setting.icon }}.svg" />
+  <img class="item__icon" [alt]="setting.icon" src="../../../assets/icon/{{ setting.icon }}.svg" />
   <ion-label class="item__label"
     ><h4>{{ settingLabel }}</h4></ion-label
   >
   <ion-toggle *ngIf="setting.type === 'toggle'" [checked]="setting.checked"></ion-toggle>
 </ion-item>
+
+<div class="message" *ngIf="setting.checkIsDisabled && setting.message">
+  <ion-icon class="message__icon" name="information-circle-outline"></ion-icon>
+  <ion-label class="message__label">{{ setting.message }} </ion-label>
+</div>
