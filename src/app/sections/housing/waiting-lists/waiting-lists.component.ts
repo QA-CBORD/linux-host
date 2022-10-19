@@ -2,14 +2,13 @@ import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/
 import { AlertController, Platform } from '@ionic/angular';
 import { WaitingListStateService } from './waiting-list-state.service';
 import { isMobile } from '@core/utils/platform-helper';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, map, Subscription } from 'rxjs';
 import { ROLES } from '../../../app.global';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../housing.service';
 import { WaitingListsService } from './waiting-lists.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { WaitingList } from './waiting-lists.model';
-
 
 @Component({
   selector: 'st-waiting-lists',
@@ -18,19 +17,19 @@ import { WaitingList } from './waiting-lists.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WaitingListsComponent implements OnInit, OnDestroy {
-
   private subscriptions: Subscription = new Subscription();
   private activeAlerts: HTMLIonAlertElement[] = [];
   public urlEditForm: string;
 
-  constructor(public _waitingListStateService: WaitingListStateService,
+  constructor(
+    public _waitingListStateService: WaitingListStateService,
     private _platform: Platform,
     private _alertController: AlertController,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _waitingService: WaitingListsService,
     private _toastService: ToastService
-  ) { }
+  ) {}
 
   ngOnInit() {
     if (isMobile(this._platform)) {
@@ -41,7 +40,7 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
-    this.urlEditForm = `${ROLES.patron}/housing/waiting-lists/`
+    this.urlEditForm = `${ROLES.patron}/housing/waiting-lists/`;
   }
 
   ngOnDestroy(): void {
@@ -50,7 +49,7 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
 
   getStatus(key: number): string {
     if (key || key !== 0) {
-      return 'Submitted'
+      return 'Submitted';
     }
 
     return 'New';
@@ -78,20 +77,20 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
 
-            const sub =
-              this._waitingService.removeFromWaitingList(waitingList.patronWaitingListKey)
-                .subscribe(status => {
-                  if (status) {
-                    alert.dismiss().then(() => this._housingService.handleSuccess());
-                  } else {
-                    alert.dismiss().then(() => {
-                      this._loadingService.closeSpinner();
-                      this._toastService.showToast({
-                        message: 'Unable to remove. Try again later',
-                      });
+            const sub = this._waitingService
+              .removeFromWaitingList(waitingList.patronWaitingListKey)
+              .subscribe(status => {
+                if (status) {
+                  alert.dismiss().then(() => this._housingService.handleSuccess());
+                } else {
+                  alert.dismiss().then(() => {
+                    this._loadingService.closeSpinner();
+                    this._toastService.showToast({
+                      message: 'Unable to remove. Try again later',
                     });
-                  }
-                });
+                  });
+                }
+              });
 
             this.subscriptions.add(sub);
           },
@@ -100,5 +99,21 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
     });
     this.activeAlerts.push(alert);
     await alert.present();
+  }
+
+  get newItemsAumount() {
+    let newItemsLength;
+    const newItemsAmountSubs = this._waitingListStateService.waitingList$
+      .pipe(
+        map(item => item.filter(x => !x.patronWaitingListKey || x.patronWaitingListKey === 0))
+      )
+      .subscribe({
+        next: newItems => {
+          newItemsLength = newItems.length
+        },
+      });
+
+    this.subscriptions.add(newItemsAmountSubs);
+    return newItemsLength;
   }
 }

@@ -1,34 +1,33 @@
-<section>
-  <ion-list *ngIf="(_waitingListStateService.waitingList$ | async) as waitingLists"
-    class="ion-no-margin bg-transparent">
-    <ion-list-header *ngIf="waitingLists?.length>0" class="ion-no-padding">
-      <h2 class="form__secondary-header">Waiting Lists</h2>
-    </ion-list-header>
-    <ng-container>
-      <div #container *ngFor="let waitingList of waitingLists">
-        <ion-item lines="none" class="waiting-list__item">
-          <ion-label class="waiting-list__wrap">
-            <div class="waiting-list__info">
-              <h5 class="waiting-list__status">{{ getStatus(waitingList.patronWaitingListKey) }}</h5>
-              <div class="waiting-list__date" *ngIf="waitingList?.patronWaitingListKey">
-                Submitted {{ waitingList?.dateAdded | date: 'MM/dd/yyyy' }}
+<section *ngIf="_waitingListStateService.waitingList$ | async as waitingLists">
+  <st-housing-accordion accordionTitle="Waiting Lists" [itemsAmount]="waitingLists.length" [newItemsAmount]="newItemsAumount">
+    <ion-list slot="content" class="ion-no-margin bg-transparent">
+      <ng-container>
+        <div #container *ngFor="let waitingList of waitingLists">
+          <ion-item lines="none" class="waiting-list__item">
+            <ion-label class="waiting-list__wrap">
+              <div class="waiting-list__info">
+                <h5 class="waiting-list__status">{{ getStatus(waitingList.patronWaitingListKey) }}</h5>
+                <div class="waiting-list__date" *ngIf="waitingList?.patronWaitingListKey">
+                  Submitted {{ waitingList?.dateAdded | date: 'MM/dd/yyyy' }}
+                </div>
               </div>
-            </div>
-        
-            <h2 class="waiting-list__title">{{ waitingList.formName }}</h2>
-          </ion-label>
 
-          <st-actions
-            [navigateTo]="urlEditForm+waitingList?.waitListKey"
-            [canEdit]="!waitingList?.patronWaitingListKey"
-            [showEditOption]="!waitingList?.patronWaitingListKey"
-            [showViewOption]="waitingList?.patronWaitingListKey"
-            [showRemoveOption]="true"
-            [itemKey]="waitingList?.patronWaitingListKey"
-            (remove)="removePatronWaitingList(waitingList)">
-          </st-actions>
-        </ion-item>
-      </div>
-    </ng-container>
-  </ion-list>
+              <h2 class="waiting-list__title">{{ waitingList.formName }}</h2>
+            </ion-label>
+
+            <st-actions
+              [navigateTo]="urlEditForm + waitingList?.waitListKey"
+              [canEdit]="!waitingList?.patronWaitingListKey"
+              [showEditOption]="!waitingList?.patronWaitingListKey"
+              [showViewOption]="waitingList?.patronWaitingListKey"
+              [showRemoveOption]="true"
+              [itemKey]="waitingList?.patronWaitingListKey"
+              (remove)="removePatronWaitingList(waitingList)"
+            >
+            </st-actions>
+          </ion-item>
+        </div>
+      </ng-container>
+    </ion-list>
+  </st-housing-accordion>
 </section>

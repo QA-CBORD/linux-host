@@ -5,11 +5,13 @@ import { IonicModule } from '@ionic/angular';
 
 import { CheckInOutComponent } from './check-in-out.component';
 import { CheckInOutItemsComponent } from './check-in-out-items/check-in-out-items.component'
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
 export const imports = [
   CommonModule,
   IonicModule,
-  RouterModule
+  RouterModule,
+  HousingAccordionModule
 ];
 export const declarations = [
   CheckInOutComponent,
