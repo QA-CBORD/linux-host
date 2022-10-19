@@ -1,8 +1,10 @@
 <section>
-<ion-list *ngIf="(contractsStateService.contracts$ | async) as contracts" class="ion-no-padding bg-transparent">
-  <ion-list-header *ngIf="contracts.length > 0" class="ion-no-padding">
-    <h2 class="form__secondary-header">Available Contracts</h2>
-  </ion-list-header>
-  <st-contracts-list [contracts]="contracts"></st-contracts-list>
-</ion-list>
+  <st-housing-accordion *ngIf="contractsStateService.contracts$ | async as contracts"
+  accordionTitle="Contracts"
+  [itemsAmount]="contracts.length"
+  >
+    <ion-list slot="content" class="ion-no-padding bg-transparent">
+      <st-contracts-list [contracts]="contracts"></st-contracts-list>
+    </ion-list>
+  </st-housing-accordion>
 </section>

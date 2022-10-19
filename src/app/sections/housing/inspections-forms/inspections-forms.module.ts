@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { InspectionsComponent } from './inspections-forms.component'
 import { ActionsModule } from '../actions/actions.module';
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
 const declarations = [
   InspectionsComponent
@@ -15,6 +16,7 @@ const declarations = [
     IonicModule,
     ActionsModule,
     RouterModule,
+    HousingAccordionModule
   ],
   exports: declarations
 })

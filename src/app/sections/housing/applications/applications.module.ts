@@ -7,8 +7,9 @@ import { ActionsModule } from '../actions/actions.module';
 
 import { ApplicationsComponent } from './applications.component';
 import { ApplicationsListComponent } from './applications-list/applications-list.component';
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
-const imports = [CommonModule, IonicModule, ActionsModule, RouterModule];
+const imports = [CommonModule, IonicModule, ActionsModule, RouterModule, HousingAccordionModule];
 const declarations = [ApplicationsComponent, ApplicationsListComponent];
 
 @NgModule({

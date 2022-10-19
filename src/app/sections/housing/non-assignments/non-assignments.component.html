@@ -1,10 +1,7 @@
-<section>
-  <ion-list 
-  *ngIf="(nonAssignmentsStateService.nonAssignments$ | async) as nonAssignments" 
-  class="ion-no-padding bg-transparent">
-  <ion-list-header *ngIf="nonAssignments.length > 0" class="ion-no-padding">
-    <h2 class="form__secondary-header">Non-Assignments</h2>
-  </ion-list-header>
-  <st-non-assignments-list [nonAssignments]="nonAssignments"></st-non-assignments-list>
-</ion-list>
+<section *ngIf="nonAssignmentsStateService.nonAssignments$ | async as nonAssignments">
+  <st-housing-accordion accordionTitle="Non-Assignments" [itemsAmount]="nonAssignments.length">
+    <ion-list slot="content" class="ion-no-padding bg-transparent">
+      <st-non-assignments-list [nonAssignments]="nonAssignments" ></st-non-assignments-list>
+    </ion-list>
+  </st-housing-accordion>
 </section>

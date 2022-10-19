@@ -1,8 +1,10 @@
-<section>
-<ion-list *ngIf="(contractListStateService.contractSummaries  | async) as contracts" class="ion-no-margin bg-transparent">
-    <ion-list-header *ngIf="contracts.length > 0" class="ion-no-padding">
-      <h2 class="form__secondary-header">Your Contracts</h2>
-    </ion-list-header>
+<section *ngIf="(contractListStateService.contractSummaries  | async) as contracts">
+  <st-housing-accordion
+  accordionTitle="Your Contracts"
+  [itemsAmount]="contracts.length"
+  >
+  <ion-list slot="content" class="ion-no-margin bg-transparent">
     <st-contract-list-items [contractSummaries]="contracts"></st-contract-list-items>
   </ion-list>
+</st-housing-accordion>
 </section>

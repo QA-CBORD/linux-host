@@ -7,6 +7,7 @@ import { WorkOrder } from './work-orders.model';
 import { WorkOrderStateService } from './work-order-state.service';
 import { TermsService } from '../terms/terms.service';
 import { ROLES } from 'src/app/app.global';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-work-orders',
@@ -21,7 +22,8 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
 
   constructor(private _workOrdersService: WorkOrdersService,
     public _workOrderStateService: WorkOrderStateService,
-    private _termService : TermsService
+    private _termService : TermsService,
+    private router: Router
     ) {}
 
   workOrders: WorkOrder[];
@@ -57,8 +59,8 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
     return 'New';
   }
   
-  createWorkOrderDefault(): string {
-    return `/patron/housing/work-orders/${this.selectedTermKey}/-1`;
+  createWorkOrderDefault(): void {
+    this.router.navigateByUrl(`/patron/housing/work-orders/${this.selectedTermKey}/-1`);
   }
 
   getPath(key: number): string {
