@@ -1,5 +1,5 @@
 <section *ngIf="_waitingListStateService.waitingList$ | async as waitingLists">
-  <st-housing-accordion accordionTitle="Waiting Lists" [itemsAmount]="waitingLists.length" [newItemsAmount]="newItemsAumount">
+  <st-housing-accordion accordionTitle="Waiting Lists" [itemsAmount]="waitingLists.length">
     <ion-list slot="content" class="ion-no-margin bg-transparent">
       <ng-container>
         <div #container *ngFor="let waitingList of waitingLists">

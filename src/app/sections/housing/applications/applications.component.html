@@ -2,7 +2,6 @@
   <st-housing-accordion
     *ngIf="applicationsStateService.applications$ | async as applications"
     [itemsAmount]="applications.length"
-    [newItemsAmount]="newItemsAumount"
     accordionTitle="Applications"
   >
     <st-applications-list slot="content" [applications]="applications"></st-applications-list>

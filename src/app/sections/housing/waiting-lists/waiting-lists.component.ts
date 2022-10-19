@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/
 import { AlertController, Platform } from '@ionic/angular';
 import { WaitingListStateService } from './waiting-list-state.service';
 import { isMobile } from '@core/utils/platform-helper';
-import { map, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { ROLES } from '../../../app.global';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../housing.service';
@@ -101,19 +101,5 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  get newItemsAumount() {
-    let newItemsLength;
-    const newItemsAmountSubs = this._waitingListStateService.waitingList$
-      .pipe(
-        map(item => item.filter(x => !x.patronWaitingListKey || x.patronWaitingListKey === 0))
-      )
-      .subscribe({
-        next: newItems => {
-          newItemsLength = newItems.length
-        },
-      });
-
-    this.subscriptions.add(newItemsAmountSubs);
-    return newItemsLength;
-  }
+ 
 }

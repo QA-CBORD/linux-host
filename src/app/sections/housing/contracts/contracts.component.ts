@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { map } from 'rxjs';
 
 import { ContractsStateService } from './contracts-state.service';
 
@@ -10,16 +9,5 @@ import { ContractsStateService } from './contracts-state.service';
 })
 export class ContractsComponent {
   constructor(public contractsStateService: ContractsStateService) {}
-  get newItemsAmount() {
-    let newContractsLength;
-    this.contractsStateService.contracts$
-      .pipe(map(items => items.filter(x => x.state === 'Active' || x.state === 'Preliminary')))
-      .subscribe({
-        next: newItems => {
-          newContractsLength = newItems.length;
-        },
-      });
-
-    return newContractsLength;
-  }
+  
 }

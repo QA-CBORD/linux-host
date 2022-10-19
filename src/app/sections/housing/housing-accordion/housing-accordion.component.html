@@ -9,9 +9,7 @@
         name="caret-forward-outline"
       ></ion-icon>
       <h2 class="form__secondary-header space-around">{{ itemsAmount }} Items</h2>
-      <ion-badge mode="ios" class="form__secondary-header space-around" *ngIf="newItemsAmount"
-        >{{ newItemsAmount }} New</ion-badge
-      >
+
 
       <span *ngIf="showAddButton" class="add-btn" (click)="emitAddbutton()">+</span>
     </ion-item>
