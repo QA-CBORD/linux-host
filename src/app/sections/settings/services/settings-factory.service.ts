@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import {
-  SettingItemConfig,
-  SettingsSectionConfig,
-  SettingsServices,
-} from '../models/setting-items-config.model';
+import { SettingItemConfig, SettingsSectionConfig, SettingsServices } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG } from '../settings.config';
 import { catchError, map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -42,7 +38,7 @@ export class SettingsFactoryService {
     sessionFacadeService: this.sessionFacadeService,
     profileService: this.profileService,
     accountService: this.accountService,
-    loadingService: this.loadingService
+    loadingService: this.loadingService,
   };
 
   constructor(
@@ -93,9 +89,8 @@ export class SettingsFactoryService {
     return parsedSettings;
   }
 
-  
   private checkDisplayOption(setting: SettingItemConfig): Promise<boolean> {
-    return setting.checkIsEnabled(this.services);
+    return setting.checkIsVisible(this.services);
   }
 
   get photoUploadEnabled$(): Observable<boolean> {
