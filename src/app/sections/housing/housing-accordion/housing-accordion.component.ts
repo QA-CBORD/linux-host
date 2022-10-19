@@ -11,7 +11,7 @@ export class HousingAccordionComponent {
   @Input() accordionTitle: number;
   @Input() showAddButton: number;
   @Output() onAddButtonClicked:EventEmitter<void> = new EventEmitter<void>()
-  constructor() {}
+
 
   emitAddbutton(){
     this.onAddButtonClicked.emit();

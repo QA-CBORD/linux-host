@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/
 import { AlertController, Platform } from '@ionic/angular';
 import { WaitingListStateService } from './waiting-list-state.service';
 import { isMobile } from '@core/utils/platform-helper';
-import { firstValueFrom, map, Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { ROLES } from '../../../app.global';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../housing.service';
