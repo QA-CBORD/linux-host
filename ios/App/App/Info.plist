@@ -38,11 +38,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-<<<<<<< HEAD
-	<string>4.17.19</string>
-=======
-	<string>4.17.20</string>
->>>>>>> release-4.17
+	<string>4.17.21</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
