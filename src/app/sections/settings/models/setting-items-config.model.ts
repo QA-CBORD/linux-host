@@ -40,7 +40,9 @@ export interface SettingItemConfig {
   setToggleStatus?: (services: SettingsServices) => void;
   setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;
-  checkIsEnabled: (args: SettingsServices) => Promise<boolean>,
+  checkIsVisible: (args: SettingsServices) => Promise<boolean>,
+  checkIsDisabled?: boolean,
+  message?: string,
   supportProfiles?: APP_PROFILES[],
 }
 

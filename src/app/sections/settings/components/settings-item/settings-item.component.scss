@@ -9,3 +9,22 @@
     max-height: 28px;
   }
 }
+
+.message {
+  display: flex;
+  justify-content: flex-start;
+  height: 80px;
+  padding: 18px;
+  background-color: $color-background-divider;
+  border-radius: 10px;
+  margin-left: 18px;
+  
+  &__icon {
+    font-size: 30px;
+    margin-right: 10px;
+  }
+
+  &__label {
+    @include font-nunito-regular(16px);
+  }
+}

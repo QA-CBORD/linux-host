@@ -1,4 +1,11 @@
-import { SettingItemConfig, SettingItemValidation, SettingsSectionConfig, SettingsServices, SETTINGS_VALIDATIONS, StatusSettingValidation } from './models/setting-items-config.model';
+import {
+  SettingItemConfig,
+  SettingItemValidation,
+  SettingsSectionConfig,
+  SettingsServices,
+  SETTINGS_VALIDATIONS,
+  StatusSettingValidation,
+} from './models/setting-items-config.model';
 import { PaymentSystemType, Settings } from 'src/app/app.global';
 import {
   handleOpenHTMLModal,
@@ -11,7 +18,7 @@ import {
   getCardStatusValidation,
   contentStringsByCategory,
 } from './helpers/setting-item.helper';
-import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
@@ -56,47 +63,69 @@ export enum SETTINGS_NAVIGATE {
   terms = 'terms-privacy',
 }
 
+export const PHOTO_UPLOAD_MESSAGE = 'The Update Photo option is currently turned off.';
 
 const isGuestUser = async function (services: SettingsServices): Promise<boolean> {
   const authService = services.authService;
   return firstValueFrom(authService.isGuestUser());
-}
+};
 
-const determineIsGuest = async (services: SettingsServices, self: SettingItemConfig, inner: () => Promise<boolean>): Promise<boolean> => {
-  return isGuestUser(services).then(((async isGuest => {
+const determineIsGuest = async (
+  services: SettingsServices,
+  self: SettingItemConfig,
+  inner: () => Promise<boolean>
+): Promise<boolean> => {
+  return isGuestUser(services).then(async isGuest => {
     if (isGuest && self.studentsOnly) return false;
     return await inner();
-  })
-  ));
-}
+  });
+};
 
-const asyncCheckEvery = async function (validations: SettingItemValidation[], services: SettingsServices): Promise<boolean[]> {
+const asyncCheckEvery = async function (
+  validations: SettingItemValidation[],
+  services: SettingsServices
+): Promise<boolean[]> {
   const checks: boolean[] = [];
   for (const validation of validations) {
     const statusValidation = validation.value as StatusSettingValidation;
-    checks.push(await firstValueFrom(statusValidation.getStatusValidation(services).pipe(
-        switchMap(setting => services.settings.getSetting(setting as Settings.Setting).pipe(map(({ value }): boolean => parseInt(value) === 1))),
-        take(1))));
+    checks.push(
+      await firstValueFrom(
+        statusValidation.getStatusValidation(services).pipe(
+          switchMap(setting =>
+            services.settings
+              .getSetting(setting as Settings.Setting)
+              .pipe(map(({ value }): boolean => parseInt(value) === 1))
+          ),
+          take(1)
+        )
+      )
+    );
   }
   return checks;
-}
+};
 
 const asyncCheckEverySetting = async function (validations: SettingItemValidation[], services: SettingsServices) {
   const checks: boolean[] = [];
   for (const validation of validations) {
-    checks.push(await firstValueFrom(services.settings.getSetting(validation.value as Settings.Setting)
-      .pipe(map(({ value }): boolean => parseInt(value) === 1))));
+    checks.push(
+      await firstValueFrom(
+        services.settings
+          .getSetting(validation.value as Settings.Setting)
+          .pipe(map(({ value }): boolean => parseInt(value) === 1))
+      )
+    );
   }
   return checks;
-}
+};
 
 const validateSettingEnabled = async function (services: SettingsServices): Promise<boolean> {
   if ((await isSupportedInCurrentProfile(services))(this)) {
-    return await determineIsGuest(services, this, async () => (await asyncCheckEverySetting(this.validations, services)).every(checkTrue => checkTrue))
+    return await determineIsGuest(services, this, async () =>
+      (await asyncCheckEverySetting(this.validations, services)).every(checkTrue => checkTrue)
+    );
   }
   return false;
-}
-
+};
 
 const isSupportedInCurrentProfile = async function (services: SettingsServices) {
   const currentProfile = await firstValueFrom(services.profileService.determineCurrentProfile$());
@@ -106,8 +135,8 @@ const isSupportedInCurrentProfile = async function (services: SettingsServices) 
       return settingItem.supportProfiles.includes(currentProfile);
     }
     return true;
-  }
-}
+  };
+};
 
 export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
@@ -120,9 +149,26 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'button',
         studentsOnly: true,
         navigate: [SETTINGS_NAVIGATE.updatePhoto],
-        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
         supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest],
-        checkIsEnabled: validateSettingEnabled
+        checkIsVisible: async function (services: SettingsServices) {
+          if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(this)) return false;
+
+          const isDisabledSetting = await firstValueFrom(
+            services.settings.getSetting(Settings.Setting.PHOTO_UPLOAD_ENABLED)
+          );
+          const messageString = await firstValueFrom(
+            services.contentString.fetchContentString$(
+              CONTENT_STRINGS_DOMAINS.get_mobile,
+              CONTENT_STRINGS_CATEGORIES.photoUpload,
+              CONTENT_STRINGS_MESSAGES.PHOTO_UPLOAD_MESSAGE
+            )
+          );
+          
+          this.checkIsDisabled = isDisabledSetting && Number(isDisabledSetting?.value) === 0;
+          this.message = messageString && messageString?.value ? messageString.value : PHOTO_UPLOAD_MESSAGE;
+
+          return true;
+        },
       },
       {
         id: SETTINGS_ID.lostCard,
@@ -143,13 +189,13 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           },
         ],
         supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest],
-        checkIsEnabled: async function (services: SettingsServices) {
+        checkIsVisible: async function (services: SettingsServices) {
           // eslint-disable-next-line @typescript-eslint/no-this-alias
           const self: SettingItemConfig = this;
           // if is guest user return false.
-          if (await isGuestUser(services) || !((await isSupportedInCurrentProfile(services))(self))) return false;
-          return (await asyncCheckEvery(self.validations, services)).every((checkTrue) => checkTrue);
-        }
+          if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(self)) return false;
+          return (await asyncCheckEvery(self.validations, services)).every(checkTrue => checkTrue);
+        },
       },
     ],
   },
@@ -165,7 +211,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           component: PhoneEmailComponent,
         },
-        checkIsEnabled: async () => true
+        checkIsVisible: async () => true,
       },
       {
         id: SETTINGS_ID.password,
@@ -173,25 +219,26 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Change password',
         type: 'button',
         setCallback: openModal,
-        validations: [
-          { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
-        ],
-        checkIsEnabled: async function (services: SettingsServices) {
+        validations: [{ type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' }],
+        checkIsVisible: async function (services: SettingsServices) {
           const sessionFacade = services.sessionFacadeService;
           const loginState = await sessionFacade.determineInstitutionSelectionLoginState();
-          return loginState == LoginState.HOSTED || await isGuestUser(services);
+          return loginState == LoginState.HOSTED || (await isGuestUser(services));
         },
         modalContent: {
           fetchData: async (services: SettingsServices): Promise<any> => {
-            const contentStrings = await contentStringsByCategory(services, [{
-              domain: CONTENT_STRINGS_DOMAINS.patronUi,
-              category: CONTENT_STRINGS_CATEGORIES.passwordValidation,
-              name: null
-            }, {
-              domain: CONTENT_STRINGS_DOMAINS.patronUi,
-              category: CONTENT_STRINGS_CATEGORIES.changePassword,
-            }]);
-            return { contentStrings }
+            const contentStrings = await contentStringsByCategory(services, [
+              {
+                domain: CONTENT_STRINGS_DOMAINS.patronUi,
+                category: CONTENT_STRINGS_CATEGORIES.passwordValidation,
+                name: null,
+              },
+              {
+                domain: CONTENT_STRINGS_DOMAINS.patronUi,
+                category: CONTENT_STRINGS_CATEGORIES.changePassword,
+              },
+            ]);
+            return { contentStrings };
           },
           component: PasswordChangeComponent,
         },
@@ -207,7 +254,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
           { type: SETTINGS_VALIDATIONS.Biometric, value: 'biometric' },
         ],
-        checkIsEnabled: async function (services: SettingsServices) {
+        checkIsVisible: async function (services: SettingsServices) {
           const biometricsEnabled = await services.identity.isBiometricAvailable();
           if (biometricsEnabled) {
             const biometrics = await services.identity.getAvailableBiometricHardware();
@@ -217,7 +264,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           }
 
           return biometricsEnabled;
-        }
+        },
       },
       {
         id: SETTINGS_ID.pin,
@@ -226,7 +273,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'button',
         setCallback: handlePinAccess,
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED }],
-        checkIsEnabled: validateSettingEnabled
+        checkIsVisible: validateSettingEnabled,
       },
       {
         id: SETTINGS_ID.address,
@@ -234,7 +281,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Saved Addresses',
         type: 'button',
         navigate: [SETTINGS_NAVIGATE.address],
-        checkIsEnabled: async () => true
+        checkIsVisible: async () => true,
       },
       {
         id: SETTINGS_ID.creditCard,
@@ -245,7 +292,6 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           component: CreditCardMgmtComponent,
           fetchData: async (services: SettingsServices): Promise<any> => {
-
             await services.loadingService.showSpinner();
 
             const parseAccountData = (account: UserAccount) => {
@@ -254,20 +300,23 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
               const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
               const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
               return { display, account, iconSrc };
-            }
+            };
             let userAccounts = [];
 
-            const contentStringsData = await contentStringsByCategory(services, [{
-              domain: CONTENT_STRINGS_DOMAINS.patronUi,
-              category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
-              name: null
-            }]).then((data) => data.pop())
+            const contentStringsData = await contentStringsByCategory(services, [
+              {
+                domain: CONTENT_STRINGS_DOMAINS.patronUi,
+                category: CONTENT_STRINGS_CATEGORIES.creditCardMgmt,
+                name: null,
+              },
+            ])
+              .then(data => data.pop())
               .catch(() => []);
 
             try {
-              userAccounts = await firstValueFrom(services.accountService
-                .getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]))
-                .then(accounts => accounts.map(acc => parseAccountData(acc)));
+              userAccounts = await firstValueFrom(
+                services.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
+              ).then(accounts => accounts.map(acc => parseAccountData(acc)));
             } catch (ignored) {
               // fallback on empty userAccounts array
             } finally {
@@ -275,13 +324,14 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
             }
 
             return { contentStrings: reduceToObject(contentStringsData, defaultCreditCardMgmtCs), userAccounts };
-          }
-
+          },
         },
-        checkIsEnabled: async (services: SettingsServices) => {
-          const setting =  await firstValueFrom(services.settings.getSetting(Settings.Setting.ENABLE_CREDIT_CARD_PAYMENT));
+        checkIsVisible: async (services: SettingsServices) => {
+          const setting = await firstValueFrom(
+            services.settings.getSetting(Settings.Setting.ENABLE_CREDIT_CARD_PAYMENT)
+          );
           return setting && Number(setting.value) == 1;
-        }
+        },
       },
       {
         id: SETTINGS_ID.mcredential,
@@ -293,11 +343,18 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           component: MobileCredentialMetadata,
         },
-        validations: [{ type: SETTINGS_VALIDATIONS.MobileCredentialEnabled, value: Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED }],
-        checkIsEnabled: async function (services: SettingsServices) {
+        validations: [
+          {
+            type: SETTINGS_VALIDATIONS.MobileCredentialEnabled,
+            value: Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED,
+          },
+        ],
+        checkIsVisible: async function (services: SettingsServices) {
           const mobileCredentialFacade = services.mobileCredentialFacade;
-          return !(await isGuestUser(services)) && (await firstValueFrom(mobileCredentialFacade.showCredentialMetadata()));
-        }
+          return (
+            !(await isGuestUser(services)) && (await firstValueFrom(mobileCredentialFacade.showCredentialMetadata()))
+          );
+        },
       },
     ],
   },
@@ -313,7 +370,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'change_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_CHANGE_PLAN_ENABLED }],
-        checkIsEnabled: validateSettingEnabled
+        checkIsVisible: validateSettingEnabled,
       },
       {
         id: SETTINGS_ID.mealPurchase,
@@ -324,7 +381,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'purchase_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED }],
-        checkIsEnabled: validateSettingEnabled
+        checkIsVisible: validateSettingEnabled,
       },
     ],
   },
@@ -348,7 +405,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           component: EditHomePageModalComponent,
         },
-        checkIsEnabled: async () => true
+        checkIsVisible: async () => true,
       },
       // {
       //   id: SETTINGS_ID.navigate,
@@ -402,7 +459,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           component: HTMLRendererComponent,
         },
         setCallback: handleOpenHTMLModal,
-        checkIsEnabled: async () => true
+        checkIsVisible: async () => true,
       },
       {
         id: SETTINGS_ID.support,
@@ -411,7 +468,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'button',
         setCallback: openSiteURL,
         navigateExternal: { type: 'email', value: Settings.Setting.SUPPORT_EMAIL },
-        checkIsEnabled: async () => true
+        checkIsVisible: async () => true,
       },
       {
         id: SETTINGS_ID.terms,
@@ -419,20 +476,18 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Terms of Use & Privacy Policy',
         type: 'button',
         modalContent: {
-          contentStrings: [{
-            domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
-            category: CONTENT_STRINGS_CATEGORIES.termsScreen,
-            name: 'terms'
-          }],
+          contentStrings: [
+            {
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.termsScreen,
+              name: 'terms',
+            },
+          ],
           component: HTMLRendererComponent,
         },
         setCallback: handleOpenHTMLModal,
-        checkIsEnabled: async () => true
+        checkIsVisible: async () => true,
       },
     ],
   },
 ];
-
-
-
-
