@@ -5,7 +5,7 @@ import { Observable, of, zip } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { MessageResponse, ServiceParameters } from 'src/app/core/model/service/message-response.model';
-import { BuildingInfo, MerchantAccountInfoList, MerchantInfo, OrderInfo } from '../shared';
+import { BuildingInfo, ItemsOrderInfo, MerchantAccountInfoList, MerchantInfo, OrderInfo } from '../shared';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MerchantSearchOptions } from '@sections/ordering';
@@ -72,6 +72,15 @@ export class OrderingApiService {
     return this.http
       .post(this.serviceUrlOrdering, queryConfig)
       .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
+  }
+
+  validateOrderItems(orderInfo: OrderInfo): Observable<ItemsOrderInfo> {
+    const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo), validateOrderResult: true };
+    const queryConfig = new RPCQueryConfig('validateOrderItems', postParams, true);
+
+    return this.http
+      .post(this.serviceUrlOrdering, queryConfig)
+      .pipe(map(({ response }: MessageResponse<ItemsOrderInfo>) => response));
   }
 
   validatePendingOrder(orderInfo: ExistingOrderInfo, accountID: string = null): Observable<OrderInfo> {

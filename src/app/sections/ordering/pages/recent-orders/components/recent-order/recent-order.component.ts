@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
-import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
+import { ItemsOrderInfo, MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
   ORDER_TYPE,
@@ -31,6 +31,7 @@ import { CheckingProcess } from '@sections/check-in/services/check-in-process-bu
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { firstValueFrom } from 'rxjs';
+import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 
 @Component({
   selector: 'st-recent-order',
@@ -260,7 +261,19 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         }
         this.onValidateErrorToast.bind(this);
       })
-      .then(this.redirectToCart.bind(this))
+      .then(async (orderInfo: ItemsOrderInfo) => {
+        if (orderInfo.orderRemovedItems.length) {
+          const t = await this.modalController.createAlert({
+            component: ItemsUnavailableComponent,
+            componentProps: { orderRemovedItems: orderInfo.orderRemovedItems },
+          });
+          t.onDidDismiss().then(({ role }) => {
+            role === BUTTON_TYPE.CONTINUE ? this.navigateByValidatedOrder(orderInfo) : this.cart.clearCart();
+          });
+          return t.present();
+        }
+        this.navigateByValidatedOrder(orderInfo);
+      })
       .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
@@ -415,7 +428,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.merchantService.orderTypes = orderTypes;
     const { deliveryAddressId, type } = await this.order$.pipe(first()).toPromise();
 
-    const modal = await this.modalController.create({
+    const modal = await this.modalController.createActionSheet({
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
@@ -459,6 +472,13 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
+  private navigateByValidatedOrder(orderInfo: ItemsOrderInfo) {
+    if (orderInfo.order.orderItems.length) {
+      return this.redirectToCart();
+    }
+
+    return this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
+  }
   onAddItems() {
     this.orderDetailsOptions$
       .pipe(

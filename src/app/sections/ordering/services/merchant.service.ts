@@ -8,6 +8,7 @@ import {
   MenuItemInfo,
   MerchantOrderTypesInfo,
   MerchantSettingInfo,
+  ItemsOrderInfo,
 } from '../shared/models';
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns'
@@ -150,6 +151,10 @@ export class MerchantService {
 
   validateOrder(order: OrderInfo): Observable<OrderInfo> {
     return this.orderingApiService.validateOrder(order);
+  }
+
+  validateOrderItems(order: OrderInfo): Observable<ItemsOrderInfo> {
+    return this.orderingApiService.validateOrderItems(order);
   }
 
   validatePendingOrder(order: ExistingOrderInfo, accountId: string): Observable<OrderInfo> {

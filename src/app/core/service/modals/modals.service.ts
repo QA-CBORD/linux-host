@@ -15,6 +15,12 @@ export class ModalsService {
     return modal;
   }
 
+  async createAlert(opts: ModalOptions, handleNavBarState?: boolean): Promise<HTMLIonModalElement> {
+    const modal = await this.modalController.create({ handle: false, backdropDismiss: false, cssClass: 'sc-modal sc-modal-alert', ...opts });
+    this.bindModalListeners(modal, handleNavBarState);
+    return modal;
+  }
+
   async createActionSheet(opts: ModalOptions, handleNavBarState?: boolean): Promise<HTMLIonModalElement> {
     const modal = await this.modalController.create({ handle: false, breakpoints: [1], initialBreakpoint: 1, ...opts });
     this.bindModalListeners(modal, handleNavBarState);

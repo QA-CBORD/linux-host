@@ -23,7 +23,6 @@ const imports = [
   OrderDetailsModule,
   OrderOptionsActionSheetModule,
   ConfirmPopoverModule,
-  OrderOptionsActionSheetModule,
   StButtonModule,
   StSpinnerModule,
   TypeMessageModule,
