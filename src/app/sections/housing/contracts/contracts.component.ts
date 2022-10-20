@@ -9,4 +9,5 @@ import { ContractsStateService } from './contracts-state.service';
 })
 export class ContractsComponent {
   constructor(public contractsStateService: ContractsStateService) {}
+  
 }

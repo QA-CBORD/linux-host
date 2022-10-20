@@ -1,11 +1,11 @@
-  <section>
-  <ion-list *ngIf="(roomsStateService.roomSelects$  | async) as selections" class="ion-no-margin bg-transparent">
-    <ion-list-header *ngIf="selections.length > 0" class="ion-no-padding">
-      <h2 class="form__secondary-header">Rooms</h2>
-    </ion-list-header>
-    <st-room-selection-list [roomSelects]="selections"></st-room-selection-list>
-  </ion-list>
-</section>
+  <section *ngIf="(roomsStateService.roomSelects$  | async) as selections" >
+    <st-housing-accordion
+    accordionTitle="Rooms">
+    <ion-list slot="content" class="ion-no-margin bg-transparent">
+      <st-room-selection-list [roomSelects]="selections"></st-room-selection-list>
+    </ion-list>
+  </st-housing-accordion>
+  </section>
   <!-- <h3 class="rooms__title">Rooms</h3>
 
   <div class="rooms__content">

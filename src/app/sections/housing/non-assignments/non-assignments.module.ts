@@ -7,12 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { ActionsModule } from '../actions/actions.module';
 import { NonAssignmentsListComponent } from './non-assignments-list/non-assignments-list.component';
 import { NonAssignmentsComponent } from './non-assignments.component';
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
 const imports = [
   CommonModule,
   IonicModule,
   ActionsModule,
-  RouterModule
+  RouterModule,
+  HousingAccordionModule
 ];
 const declarations = [
   NonAssignmentsComponent,

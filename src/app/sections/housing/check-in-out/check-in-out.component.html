@@ -1,8 +1,7 @@
-<section>
-<ion-list *ngIf="(checkInOutStateService.checkInOuts | async) as checkIns" class="ion-no-margin bg-transparent">
-    <ion-list-header *ngIf="checkIns && checkIns.length > 0" class="ion-no-padding">
-      <h2 class="form__secondary-header">Check In/Out Time Selection</h2>
-    </ion-list-header>
-    <st-check-in-out-items [checkInOuts]="checkIns"></st-check-in-out-items>
-  </ion-list>
+<section *ngIf="checkInOutStateService.checkInOuts | async as checkIns">
+  <st-housing-accordion accordionTitle="Check In/Out Time Selection" [itemsAmount]="checkIns.length">
+    <ion-list slot="content" class="ion-no-margin bg-transparent">
+      <st-check-in-out-items [checkInOuts]="checkIns"></st-check-in-out-items>
+    </ion-list>
+  </st-housing-accordion>
 </section>

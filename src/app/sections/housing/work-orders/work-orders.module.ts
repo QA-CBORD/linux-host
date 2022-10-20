@@ -7,6 +7,7 @@ import { ActionsModule } from '../actions/actions.module';
 import { StHierarcheTreeModule } from '@shared/ui-components/st-hierarchy-tree/st-hierarchy-tree.module';
 import { StHierarcheTreeDialogModule } from '@shared/ui-components/st-hierarchy-tree-dialog/st-hierarchy-tree-dialog.module';
 import { SortByDatePipeModule } from '@shared/pipes/sort-by-date-pipe/sort-by-date.module';
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
 const declarations = [
   WorkOrdersComponent
@@ -20,7 +21,8 @@ const declarations = [
     RouterModule,
     StHierarcheTreeModule,
     StHierarcheTreeDialogModule,
-    SortByDatePipeModule
+    SortByDatePipeModule,
+    HousingAccordionModule
   ],
   exports: declarations
 })

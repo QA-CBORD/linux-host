@@ -1,43 +1,33 @@
 <section *ngIf="_attachmentStateService.getAttachmentList() | async as attachmentList">
-  <ion-list 
-    class="ion-no-margin bg-transparent">
-    <ion-grid >
-      <ion-row class="container-header-work-order">
-        <div class="col-work-order ion-no-padding">
-            <h2 class="form__secondary-header">Uploaded Attachments</h2>
-        </div>
-        <div class="col-work-order ion-no-padding ion-no-margin">
-            <h2 class="form__secondary-header create-btn" [routerLink]="createAttachmentDefault()">+</h2>
-        </div>
-
-      </ion-row>
-      
-    </ion-grid>
-
-    <ng-container>
-      <div #container *ngFor="let attachment of attachmentList | sort_by_date : 'attachmentDate'">
-        <ion-item lines="none" class="attachment-list__item inProcess">
-          <ion-label class="attachment-list__wrap">
-            <div class="attachment-list__info">
-              <h5 class="attachment-list__status inProcess" >{{ 'Submitted' }}</h5>
-              <div class="attachment-list__date" *ngIf="attachment?.attachmentDate">
-                Submitted {{ attachment?.attachmentDate | date: 'MM/dd/yyyy' }}
+  <st-housing-accordion accordionTitle="Attachments" [itemsAmount]="attachmentList.length"
+  [showAddButton]="true" (onAddButtonClicked)="createAttachmentDefault()">
+    <ion-list slot="content" class="ion-no-margin bg-transparent">
+      <ng-container >
+        <div #container *ngFor="let attachment of attachmentList | sort_by_date: 'attachmentDate'">
+          <ion-item lines="none" class="attachment-list__item inProcess">
+            <ion-label class="attachment-list__wrap">
+              <div class="attachment-list__info">
+                <h5 class="attachment-list__status inProcess">{{ 'Submitted' }}</h5>
+                <div class="attachment-list__date" *ngIf="attachment?.attachmentDate">
+                  Submitted {{ attachment?.attachmentDate | date: 'MM/dd/yyyy' }}
+                </div>
               </div>
-            </div>
-        
-            <h2 class="attachment-list__title">{{ attachment.fileName }}</h2>
-          </ion-label>
 
-          <st-actions
-            [navigateTo]="getPath(attachment.attachmentKey)"
-            [canEdit]="!attachment?.attachmentKey"
-            [showEditOption]="!attachment?.attachmentKey"
-            [showViewOption]="attachment?.attachmentKey"
-            [showRemoveOption]="false"
-            [itemKey]="attachment?.attachmentKey">
-          </st-actions>
-        </ion-item>
-      </div>
-    </ng-container>
-  </ion-list>
+              <h2 class="attachment-list__title">{{ attachment.fileName }}</h2>
+            </ion-label>
+
+            <st-actions
+              [navigateTo]="getPath(attachment.attachmentKey)"
+              [canEdit]="!attachment?.attachmentKey"
+              [showEditOption]="!attachment?.attachmentKey"
+              [showViewOption]="attachment?.attachmentKey"
+              [showRemoveOption]="false"
+              [itemKey]="attachment?.attachmentKey"
+            >
+            </st-actions>
+          </ion-item>
+        </div>
+      </ng-container>
+    </ion-list>
+  </st-housing-accordion>
 </section>
