@@ -1,6 +1,6 @@
 export class EnvironmentData {
   public static version = {
-    versionNumber: '4.17.21',
+    versionNumber: '4.17.22',
   };
 }
 
