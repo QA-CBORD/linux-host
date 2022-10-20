@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MerchantInfo, MerchantService } from '@sections/ordering';
 import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -48,16 +48,13 @@ export class OrderTileComponent implements OnInit {
         })
       )
       .subscribe(merchants => {
-        const favMerchants = merchants.filter(({ isFavorite, id }) => isFavorite && !this.hasFavorite(id));
-        
+        this.slides = [];
+        const favMerchants = merchants.filter(({ isFavorite }) => isFavorite);
+
         while (favMerchants.length > 0) {
           this.slides.push(favMerchants.splice(0, this.amountPerSlide));
         }
       });
-  }
-
-  hasFavorite(favoriteId: string): boolean {
-    return this.slides.some((m) => m.some(merchat => merchat.id === favoriteId));
   }
 
   goToMerchant({ id: merchantId }: MerchantInfo) {
