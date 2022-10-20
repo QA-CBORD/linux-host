@@ -39,7 +39,7 @@ describe("HousingTabsComponent", () => {
     });
 
     it('should select first tab as default', () => {
-      let tab = new HousingTabComponent(component);
+      const tab = new HousingTabComponent(component);
       tab.tabTitle = "first";
       component.addTab(tab);
       tab.tabTitle = "second";
