@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MerchantInfo, MerchantService } from '@sections/ordering';
 import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
