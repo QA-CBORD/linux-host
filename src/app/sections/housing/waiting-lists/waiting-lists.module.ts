@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { WaitingListsComponent } from './waiting-lists.component'
 import { ActionsModule } from '../actions/actions.module';
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
 const declarations = [
   WaitingListsComponent
@@ -14,7 +15,8 @@ const declarations = [
     CommonModule,
     IonicModule,
     ActionsModule,
-    RouterModule
+    RouterModule,
+    HousingAccordionModule
   ],
   exports: declarations
 })
