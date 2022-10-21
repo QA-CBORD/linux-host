@@ -1,0 +1,7 @@
+<div *ngIf="orderItem" class="order-item-details__item-header">
+  <div class="order-item-details__item-number">{{ orderItem.quantity }}</div>
+  <div class="order-item-details__item-name">{{ orderItem.name }}</div>
+  <div class="order-item-details__item-price">
+    {{ orderItem.salePrice | priceUnitsResolver: mealBased }}
+  </div>
+</div>

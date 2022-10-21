@@ -9,15 +9,16 @@
   </ion-row>
   <ion-row>
     <ion-col>
-      <div>The following item(s) are longer available in this order:</div>
+      <div>The following item(s) are no longer available in this order:</div>
     </ion-col>
   </ion-row>
   <ion-row>
     <ion-col>
       <ion-list>
-        <ion-item lines="none">
-          <ion-badge slot="start" color="light">1</ion-badge>
-          <ion-label>Orange</ion-label>
+        <ion-item lines="none" *ngFor="let item of orderRemovedItems">
+          <ion-label
+            ><st-order-item-details [mealBased]="mealBased" [orderItem]="item"></st-order-item-details
+          ></ion-label>
         </ion-item>
       </ion-list>
     </ion-col>
@@ -25,7 +26,7 @@
   <ion-row>
     <ion-col class="ion-text-end">
       <ion-button (click)="return()" color="light">Return</ion-button>
-      <ion-button>Continue</ion-button>
+      <ion-button (click)="continue()">Continue</ion-button>
     </ion-col>
   </ion-row>
 </ion-grid>

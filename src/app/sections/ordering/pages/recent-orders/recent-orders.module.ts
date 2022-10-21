@@ -13,6 +13,7 @@ import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.mod
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/type-message.pipe.module';
 import { ItemsUnavailableComponent } from './components/items-unavailable/items-unavailable.component';
+import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 
 const imports = [
   CommonModule,
@@ -26,6 +27,7 @@ const imports = [
   StButtonModule,
   StSpinnerModule,
   TypeMessageModule,
+  OrderItemDetailsModule
 ];
 const declarations = [RecentOrdersComponent, RecentOrderComponent, ItemsUnavailableComponent];
 

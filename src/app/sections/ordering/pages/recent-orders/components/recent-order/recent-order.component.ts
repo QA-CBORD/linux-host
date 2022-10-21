@@ -228,28 +228,30 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
-    const [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder()
-      .pipe(first())
-      .toPromise();
-    if (hasMissedItems) {
-      await this.initConfirmModal(this.reorderOrder.bind(this, availableItems));
-    } else {
-      this.reorderOrder(availableItems);
-    }
+    const orderItems = await firstValueFrom(
+      this.order$.pipe(
+        first(),
+        map(order =>
+          order.orderItems.map(({ menuItemId, name, salePrice, orderItemOptions, quantity, specialInstructions }) => ({
+            menuItemId,
+            salePrice,
+            name,
+            orderItemOptions,
+            quantity,
+            specialInstructions,
+          }))
+        )
+      )
+    );
+    this.reorderOrder(orderItems);
   }
 
-  private async reorderOrder(availableItems) {
-    const order = await this.order$.pipe(take(1)).toPromise();
+  private async reorderOrder(orderItems) {
+    const order = await firstValueFrom(this.order$.pipe(take(1)));
     await this.loadingService.showSpinner();
-    this.cart.addOrderItems(availableItems);
+    this.cart.addOrderItems(orderItems);
     this.cart.updateOrderNote(order.notes);
-    await this.cart
-      .validateOrder()
-      .pipe(
-        first(),
-        handleServerError(ORDER_VALIDATION_ERRORS)
-      )
-      .toPromise()
+    await firstValueFrom(this.cart.validateReOrderItems().pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS)))
       .catch(async error => {
         // Temporary solution:
         if (typeof error === 'object') {
@@ -259,13 +261,14 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           await this.presentPopup(text);
           throw text;
         }
-        this.onValidateErrorToast.bind(this);
+        this.onValidateErrorToast(error, null);
       })
       .then(async (orderInfo: ItemsOrderInfo) => {
+        if(!orderInfo) return;
         if (orderInfo.orderRemovedItems.length) {
           const t = await this.modalController.createAlert({
             component: ItemsUnavailableComponent,
-            componentProps: { orderRemovedItems: orderInfo.orderRemovedItems },
+            componentProps: { orderRemovedItems: orderInfo.orderRemovedItems, mealBased: order.mealBased },
           });
           t.onDidDismiss().then(({ role }) => {
             role === BUTTON_TYPE.CONTINUE ? this.navigateByValidatedOrder(orderInfo) : this.cart.clearCart();

@@ -10,6 +10,8 @@ import { OrderItem } from '@sections/ordering/shared';
 })
 export class ItemsUnavailableComponent {
   @Input() public orderRemovedItems: OrderItem[] = [];
+  @Input() public mealBased: boolean;
+
   constructor(private readonly modalService: ModalsService) {}
 
   return = () => this.modalService.dismiss();

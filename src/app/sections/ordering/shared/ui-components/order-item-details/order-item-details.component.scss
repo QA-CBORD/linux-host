@@ -1,0 +1,47 @@
+@import 'tools';
+
+.order-item-details {
+  &__item {
+    border-radius: 10px;
+  }
+
+  &__item-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  &__item-number {
+    background: rgb(240, 243, 245);
+    border-radius: 4px;
+    height: 24px;
+    width: 24px;
+    color: rgb(81, 81, 81);
+    letter-spacing: 0;
+    text-align: center;
+    margin-right: 15px;
+
+    @include font-nunito-regular(16px);
+  }
+
+  &__item-name {
+    letter-spacing: 0;
+    line-height: 20px;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__item-price {
+    justify-self: flex-end;
+    margin-left: auto;
+    line-height: 18px;
+
+    @include font-nunito-regular(14px);
+  }
+
+  &__item-description {
+    line-height: 18px;
+
+    @include font-nunito-regular(14px);
+  }
+}
