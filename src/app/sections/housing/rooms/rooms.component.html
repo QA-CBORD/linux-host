@@ -1,6 +1,7 @@
   <section *ngIf="(roomsStateService.roomSelects$  | async) as selections" >
     <st-housing-accordion
-    accordionTitle="Rooms">
+    accordionTitle="Rooms"
+    [itemsAmount]="selections.length">
     <ion-list slot="content" class="ion-no-margin bg-transparent">
       <st-room-selection-list [roomSelects]="selections"></st-room-selection-list>
     </ion-list>

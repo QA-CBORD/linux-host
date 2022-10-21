@@ -10,6 +10,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { UnitsType } from './pages/buildings/buildings.page';
+import { Subscription } from 'rxjs';
 
 export enum SelectedUnitsTab {
   Buildings = 'Buildings',
@@ -25,6 +26,7 @@ export class RoomsSearchPage {
   units: Unit[];
   roomSelectKey: number;
   parentFacilities: Facility[];
+  subscriber: Subscription;
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
@@ -36,7 +38,7 @@ export class RoomsSearchPage {
   ngOnInit(): void {
     this._loadingService.showSpinner();
     this.roomSelectKey = parseInt(this._route.snapshot.params.roomSelectKey);
-    this._housingService.getFacilities(this.roomSelectKey).subscribe({
+    this.subscriber = this._housingService.getFacilities(this.roomSelectKey).subscribe({
       next: data => {
         this._loadingService.showSpinner();
         this._facilityStateService.createFacilityDictionary(data);
@@ -76,5 +78,9 @@ export class RoomsSearchPage {
       ]);
       this._loadingService.closeSpinner();
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriber.unsubscribe();
   }
 }
