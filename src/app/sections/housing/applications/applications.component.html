@@ -1,10 +1,9 @@
 <section>
-<ion-list
-  *ngIf="(applicationsStateService.applications$ | async) as applications"
-  class="ion-no-padding bg-transparent">  
-<ion-list-header *ngIf="applications.length > 0" class="ion-no-padding">
-  <h2 class="form__secondary-header">Applications</h2>
-</ion-list-header>
-  <st-applications-list [applications]="applications"></st-applications-list>
-</ion-list>
+  <st-housing-accordion
+    *ngIf="applicationsStateService.applications$ | async as applications"
+    [itemsAmount]="applications.length"
+    accordionTitle="Applications"
+  >
+    <st-applications-list slot="content" [applications]="applications"></st-applications-list>
+  </st-housing-accordion>
 </section>

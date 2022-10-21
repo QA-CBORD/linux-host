@@ -25,7 +25,7 @@ export class UnitsTabComponent {
       .subscribe((event: NavigationEnd) => {
         if (event.url.includes(UnitsType.Rooms)) {
           this.selectedTab = SelectedUnitsTab.Units;
-        } else {
+        } else if (event.url.includes(UnitsType.Buildings)) {
           this.selectedTab = SelectedUnitsTab.Buildings;
         }
         this.cdRef.detectChanges();
