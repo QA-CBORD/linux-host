@@ -1,4 +1,4 @@
-<ion-item fill="outline" mode="md" [disabled]="!isDisabled">
+<ion-item fill="outline" mode="md" [disabled]="isDisabled">
   <ion-label position="floating">{{ label }}</ion-label>
   <ion-input 
     value="{{ value | date: 'dd.MM.yyyy, h:mm a' }}" [id]="label"></ion-input>
