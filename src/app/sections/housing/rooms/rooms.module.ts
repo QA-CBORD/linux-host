@@ -5,8 +5,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { RoomsComponent } from './rooms.component';
 import { RoomSelectionListComponent } from '@sections/housing/rooms/room-selection-list/room-selection-list.component';
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
-export const imports = [CommonModule, IonicModule, RouterModule];
+export const imports = [CommonModule, IonicModule, RouterModule,HousingAccordionModule];
 export const declarations = [RoomsComponent];
 
 @NgModule({

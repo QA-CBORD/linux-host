@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { AttachmentStateService } from './attachments-state.service';
 import { TermsService } from '../terms/terms.service';
 import { statusBarForm } from 'src/app/app.global';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-attachments',
@@ -18,7 +19,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
 
   constructor(
     public _attachmentStateService: AttachmentStateService,
-    public _termService: TermsService
+    public _termService: TermsService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -47,8 +49,8 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
     return statusBarForm.NEW;
   }
 
-  createAttachmentDefault(id?: string): string {
-    return `/patron/housing/attachments/${id}`;
+  createAttachmentDefault(id?: string) {
+    this.router.navigateByUrl(`/patron/housing/attachments/${id}`);
   }
 
   getPath(key: number): string {

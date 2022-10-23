@@ -1,35 +1,37 @@
-<section *ngIf="(inspectionList$ | async) as inspectionList">
-  <ion-list class="ion-no-margin bg-transparent">
-    <ion-grid>
-      <ion-row class="container-header-inspection">
-        <div class="col-inspection ion-no-padding" *ngIf="inspectionList.length > 0">
-          <h2 class="form__secondary-header">INSPECTIONS</h2>
-        </div>
-      </ion-row>
-    </ion-grid>
+<section *ngIf="inspectionList$ | async as inspectionList">
+  <st-housing-accordion accordionTitle="INSPECTIONS" [itemsAmount]="inspectionList.length">
+    <ion-list slot="content" class="ion-no-margin bg-transparent">
+      <ion-grid>
+        <ion-row class="container-header-inspection">
+          <div class="col-inspection ion-no-padding" *ngIf="inspectionList.length > 0"></div>
+        </ion-row>
+      </ion-grid>
 
-    <ng-container>
-      <div #container *ngFor="let inspection of inspectionList">
-        <ion-item lines="none" class="inspections-list__item" [ngClass]="getInspectionLineColor(inspection)">
-          <ion-label class="inspections-list__wrap">
-            <div class="inspections-list__info">
-              <h5  class="inspections-list__status" [style.color]="getInspectionColor(inspection)">{{ getInspectionStatus(inspection) }}</h5>
-              <div class="inspections-list__date">
-                {{ inspection.remainingItems }} Room{{ inspection.remainingItems == 1 ? '' : 's' }} Left
+      <ng-container>
+        <div #container *ngFor="let inspection of inspectionList">
+          <ion-item lines="none" class="inspections-list__item" [ngClass]="getInspectionLineColor(inspection)">
+            <ion-label class="inspections-list__wrap">
+              <div class="inspections-list__info">
+                <h5 class="inspections-list__status" [style.color]="getInspectionColor(inspection)">
+                  {{ getInspectionStatus(inspection) }}
+                </h5>
+                <div class="inspections-list__date">
+                  {{ inspection.remainingItems }} Room{{ inspection.remainingItems == 1 ? '' : 's' }} Left
+                </div>
               </div>
-            </div>
 
-            <h2 class="inspections-list__title">{{ inspection.formTitle }}</h2>
-          </ion-label>
-          <st-actions
-            [showEditOption]="canEdit(inspection)"
-            [showViewOption]="!canEdit(inspection)"
-            [navigateTo]="getUrlPath(inspection)"
-            [canEdit]="canEdit(inspection)"
-          >
-          </st-actions>
-        </ion-item>
-      </div>
-    </ng-container>
-  </ion-list>
+              <h2 class="inspections-list__title">{{ inspection.formTitle }}</h2>
+            </ion-label>
+            <st-actions
+              [showEditOption]="canEdit(inspection)"
+              [showViewOption]="!canEdit(inspection)"
+              [navigateTo]="getUrlPath(inspection)"
+              [canEdit]="canEdit(inspection)"
+            >
+            </st-actions>
+          </ion-item>
+        </div>
+      </ng-container>
+    </ion-list>
+  </st-housing-accordion>
 </section>

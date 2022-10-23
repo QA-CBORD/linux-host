@@ -386,3 +386,11 @@ ion-modal.sc-modal {
     padding: 40px;
   }
 }
+.ion-color-matterhorn {
+	--ion-color-base: var(--ion-color-matterhorn);
+	--ion-color-base-rgb: var(--ion-color-matterhorn-rgb);
+	--ion-color-contrast: var(--ion-color-matterhorn-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-matterhorn-contrast-rgb);
+	--ion-color-shade: var(--ion-color-matterhorn-shade);
+	--ion-color-tint: var(--ion-color-matterhorn-tint);
+}

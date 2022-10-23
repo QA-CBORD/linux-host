@@ -1,6 +1,7 @@
 export enum CONTENT_STRINGS_DOMAINS {
   patronUi = 'patron-ui',
   get_web_gui = 'get_web_gui',
+  get_mobile = 'get_mobile'
 }
 
 
@@ -32,8 +33,13 @@ export enum CONTENT_STRINGS_CATEGORIES {
   scanAndGo = 'scan_and_go',
   lostCardScreen = 'lost_card_screen',
   noConnectivity = 'noConnectivity',
+  photoUpload = 'photo_upload'
 }
 
 export enum CONTENT_STRINGS_LOCALES {
   usa = 'en_US',
+}
+
+export enum CONTENT_STRINGS_MESSAGES {
+  PHOTO_UPLOAD_MESSAGE = 'turned_off_message'
 }

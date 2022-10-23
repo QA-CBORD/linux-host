@@ -1,0 +1,23 @@
+@import 'tools';
+ion-accordion.accordion-expanding ion-icon,
+ion-accordion.accordion-expanded ion-icon {
+  transform: rotate(90deg);
+}
+
+.add-btn{
+    color: $color-matterhorn;
+    font-weight: bold;
+    font-size: 24px;
+    position: fixed;
+    right: 25px;
+    margin-bottom: 10px;
+}
+
+.space-around{
+    margin-left: 2vw;
+    margin-right: 1vw;
+}
+
+ion-icon{
+    margin-bottom: 10px;
+}

@@ -5,9 +5,10 @@ import { IonicModule } from '@ionic/angular';
 
 import { ContractListComponent } from './contract-list.component';
 import { ContractListItemsComponent } from './contract-list-items.component'
+import { HousingAccordionModule } from '../housing-accordion/housing-accordion.module';
 
 
-export const imports = [CommonModule, IonicModule, RouterModule];
+export const imports = [CommonModule, IonicModule, RouterModule, HousingAccordionModule];
 export const declarations = [ContractListComponent];
 
 @NgModule({
