@@ -3,7 +3,7 @@ import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from '
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment } from '../shared/models';
+import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment, ItemsOrderInfo } from '../shared/models';
 import { AddressInfo } from '@core/model/address/address-info';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
@@ -285,6 +285,35 @@ export class CartService {
           );
       }),
       tap(updatedOrder => {
+        this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
+        if (this.orderIsAsap || !this.cart.order.dueTime) {
+          this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };
+        }
+      })
+    );
+  }
+
+  validateReOrderItems(): Observable<ItemsOrderInfo> {
+    const { orderType: type, dueTime, address: addr } = this.cart.orderDetailsOptions;
+    let address = {};
+
+    if (addr) {
+      address = this.getAddress(type, addr);
+    }
+
+    return this.userFacadeService.getUserData$().pipe(
+      first(),
+      switchMap(({ timeZone, locale }) => {
+        this.cart.order = {
+          ...this.cart.order,
+          ...address,
+          type,
+          dueTime: this.getDate(dueTime, locale, timeZone),
+        };
+        
+        return this.merchantService.validateOrderItems(this.cart.order);
+      }),
+      tap(({order: updatedOrder}) => {
         this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
         if (this.orderIsAsap || !this.cart.order.dueTime) {
           this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };

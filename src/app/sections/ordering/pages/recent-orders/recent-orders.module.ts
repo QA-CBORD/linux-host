@@ -12,26 +12,28 @@ import { ConfirmPopoverModule } from '@sections/ordering/shared/ui-components/co
 import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/type-message.pipe.module';
+import { ItemsUnavailableComponent } from './components/items-unavailable/items-unavailable.component';
+import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 
 const imports = [
-    CommonModule,
-    IonicModule,
-    RecentOrdersRoutingModule,
-    StHeaderModule,
-    RecentOrdersListModule,
-    OrderDetailsModule,
-    OrderOptionsActionSheetModule,
-    ConfirmPopoverModule,
-    OrderOptionsActionSheetModule,
-    StButtonModule,
-    StSpinnerModule,
-    TypeMessageModule
+  CommonModule,
+  IonicModule,
+  RecentOrdersRoutingModule,
+  StHeaderModule,
+  RecentOrdersListModule,
+  OrderDetailsModule,
+  OrderOptionsActionSheetModule,
+  ConfirmPopoverModule,
+  StButtonModule,
+  StSpinnerModule,
+  TypeMessageModule,
+  OrderItemDetailsModule
 ];
-const declarations = [RecentOrdersComponent, RecentOrderComponent];
+const declarations = [RecentOrdersComponent, RecentOrderComponent, ItemsUnavailableComponent];
 
 @NgModule({
-    declarations,
-    imports
+  declarations,
+  imports,
+  entryComponents: [ItemsUnavailableComponent],
 })
-export class RecentOrdersModule {
-}
+export class RecentOrdersModule {}

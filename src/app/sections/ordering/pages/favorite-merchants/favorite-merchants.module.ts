@@ -8,11 +8,10 @@ import { FavoriteMerchantsService } from './services/favorite-merchants.service'
 import { MerchantListModule } from '@sections/ordering/components/merchant-list/merchant-list.module';
 import { FavoriteMerchantsComponent } from '@sections/ordering/pages';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
-import { ModalsService } from '@core/service/modals/modals.service';
 
 const imports = [CommonModule, IonicModule, FavoriteMerchantsRoutingModule, StHeaderModule, MerchantListModule, StButtonModule];
 const declarations = [FavoriteMerchantsComponent];
-const providers = [FavoriteMerchantsResolver, FavoriteMerchantsService, ModalsService];
+const providers = [FavoriteMerchantsResolver, FavoriteMerchantsService];
 
 @NgModule({
   declarations,

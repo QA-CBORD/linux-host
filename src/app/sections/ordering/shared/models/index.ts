@@ -15,3 +15,5 @@ export * from './order-notification.model';
 export * from './order-payment.model';
 export * from './order-item.model';
 export * from './order-info.model';
+export * from './order-info.model';
+export * from './order-items-info.model';

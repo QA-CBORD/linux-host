@@ -23,10 +23,6 @@
     .order-ingredient-list {
       margin-top: -10px;
       background-color: $color-white;
-
-      &__ingredient {
-        --ion-item-background: #f3f3f3;
-      }
     }
 
     .total {
@@ -110,14 +106,6 @@
 }
 
 .order-ingredient-list {
-  background: $color-white-smoke;
-
-  &__ingredient {
-    border-radius: 10px;
-    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.04), 0 2px 14px 0 rgba(0, 0, 0, 0.12);
-    margin: 0px auto;
-    width: 95%;
-  }
 
   &__item {
     border-radius: 10px;

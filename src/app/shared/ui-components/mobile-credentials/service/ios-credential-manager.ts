@@ -10,10 +10,9 @@ import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credentia
 import { Injectable } from '@angular/core';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { AndroidCredentialCsModel } from '../model/android/android-credential-content-strings.model';
-const  IOSDevice  = registerPlugin<any>('IOSDevice');
+const IOSDevice = registerPlugin<any>('IOSDevice');
 
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
   private appletWalletEventListener: any;
@@ -22,25 +21,19 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
-  
-  onUiIconClicked(): void {
-    throw new Error('Method not implemented.');
-  }
 
-  onWillLogout(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+  onUiIconClicked = () => Promise.resolve();
 
-  onCredentialStateChanged(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+  onWillLogout = () => Promise.resolve();
+
+  onCredentialStateChanged = () => Promise.resolve();
 
   async contentStringAsync(): Promise<AndroidCredentialCsModel> {
     return null;
   }
 
   getService(): MobileCredentialDataService {
-     return null; // is not in use for now.
+    return null; // is not in use for now.
   }
 
   refresh(): void {
