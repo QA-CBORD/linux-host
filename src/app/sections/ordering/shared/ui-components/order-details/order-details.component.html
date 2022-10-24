@@ -39,13 +39,7 @@
       >
         <ion-item class="order-ingredient-list__item" lines="none" (click)="goToItemDetails(orderItem)">
           <ion-label>
-            <div class="order-ingredient-list__ingredient-header">
-              <div class="order-ingredient-list__ingredient-number">{{ orderItem.quantity }}</div>
-              <div class="order-ingredient-list__ingredient-name">{{ orderItem.name }}</div>
-              <div class="order-ingredient-list__ingredient-price">
-                {{ orderItem.salePrice | priceUnitsResolver: mealBased }}
-              </div>
-            </div>
+            <st-order-item-details [mealBased]="mealBased"  [orderItem]="orderItem"></st-order-item-details>
             <ng-container *ngIf="orderItem.orderItemOptions">
               <p
                 *ngFor="let subIngredient of orderItem.orderItemOptions"

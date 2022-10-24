@@ -18,6 +18,7 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.module';
+import { OrderItemDetailsModule } from '../order-item-details/order-item-details.module';
 
 const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
 
@@ -35,7 +36,8 @@ const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
     StTextareaFloatingLabelModule,
     AccessibleSelectModule,
     StInputFloatingLabelModule,
-    TypeMessageModule
+    TypeMessageModule,
+    OrderItemDetailsModule
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, ModalsService, AccessibilityService],

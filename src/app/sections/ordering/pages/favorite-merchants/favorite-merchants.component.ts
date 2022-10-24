@@ -83,7 +83,7 @@ export class FavoriteMerchantsComponent implements OnInit {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
 
-    const modal = await this.modalController.create({
+    const modal = await this.modalController.createActionSheet({
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
