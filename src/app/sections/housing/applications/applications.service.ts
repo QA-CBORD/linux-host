@@ -211,7 +211,7 @@ export class ApplicationsService {
         buttonText: 'Search Roommate',
         metadata: options,
         action: () => {
-          this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search`]).then(() => {
+          this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search`], { skipLocationChange: true }).then(() => {
             this._applicationsStateService.setRoommateSearchOptions(options);
           });
         },

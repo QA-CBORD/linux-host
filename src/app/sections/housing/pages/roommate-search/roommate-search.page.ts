@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { LOCAL_ROUTING } from '@sections/housing/housing.config';
+import { PATRON_NAVIGATION } from 'src/app/app.global';
 
 @Component({
   selector: 'st-roommate-search',
@@ -8,10 +10,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class RoommateSearchPage implements OnInit {
 
-  constructor(private _route: ActivatedRoute,
-    private _router: Router) { }
+  constructor(private _router: Router) {}
 
   ngOnInit() {
-    this._router.navigate(['search'], {relativeTo: this._route});
+    this._router.navigate([
+      `${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roommates}/search`
+    ], { skipLocationChange: true });  
   }
 }
