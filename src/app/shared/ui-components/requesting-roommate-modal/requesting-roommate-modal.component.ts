@@ -53,9 +53,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
   async onClickedClose() {
     this._subscription.add(
       this._termService.termId$.subscribe(termId => 
-        this._housingService.getRequestedRommate(termId).subscribe())
-        
-        );
+        this._housingService.getRequestedRommate(termId).subscribe()));
 
     await this.modalController.dismiss();
   }
