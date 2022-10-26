@@ -138,7 +138,7 @@ export class SearchByPage implements OnInit, OnDestroy {
 
     this._applicationStateService.setRoommateSearchOptions(data);
 
-    this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search/results`]);
+    this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search/results`], { skipLocationChange: true });
   }
 
   isApplicationSubmitted(){
