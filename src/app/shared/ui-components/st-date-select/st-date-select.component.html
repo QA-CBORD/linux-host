@@ -1,10 +1,10 @@
-<ion-item fill="outline" mode="md" [disabled]="!isDisabled">
+<ion-item fill="outline" mode="md" [disabled]="isDisabled">
   <ion-label position="floating">{{ label }}</ion-label>
   <ion-input [value]="value | date: format" [id]="label"></ion-input>
   <ion-popover [trigger]="label" size="cover">
     <ng-template>
       <ion-datetime presentation="date" [(ngModel)]="value"
-        locale="sl-SI"></ion-datetime>
+       ></ion-datetime>
     </ng-template>
   </ion-popover>
 </ion-item>

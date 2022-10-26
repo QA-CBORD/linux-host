@@ -4,8 +4,10 @@
     [itemsAmount]="workOrderLists.workOrders.length"
     [showAddButton]="true"
     (onAddButtonClicked)="createWorkOrderDefault()"
+    [ignoreValidation]="true"
+    *ngIf="workOrderLists.canSubmit"
   >
-    <ion-list slot="content" *ngIf="workOrderLists.canSubmit" class="ion-no-margin bg-transparent">
+    <ion-list slot="content"  class="ion-no-margin bg-transparent">
       <!-- TODO: Add plus button  -->
       <ng-container>
         <div #container *ngFor="let workOrder of workOrderLists.workOrders | sort_by_date: 'requestedDate'">

@@ -9,6 +9,7 @@ export class HousingAccordionComponent {
   @Input() itemsAmount: number;
   @Input() accordionTitle: number;
   @Input() showAddButton: number;
+  @Input() ignoreValidation?:boolean;
   @Output() onAddButtonClicked:EventEmitter<void> = new EventEmitter<void>()
 
   public amountMap = {
