@@ -15,6 +15,6 @@ export class RoommateSearchPage implements OnInit {
   ngOnInit() {
     this._router.navigate([
       `${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roommates}/search`
-    ], { skipLocationChange: true });  
+    ], { skipLocationChange: true });
   }
 }
