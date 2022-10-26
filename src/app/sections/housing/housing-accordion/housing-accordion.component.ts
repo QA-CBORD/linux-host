@@ -11,6 +11,11 @@ export class HousingAccordionComponent {
   @Input() showAddButton: number;
   @Output() onAddButtonClicked:EventEmitter<void> = new EventEmitter<void>()
 
+  public amountMap = {
+    '=1' : "# Item",
+    other: "# Items"
+  }
+
 
   emitAddbutton(){
     this.onAddButtonClicked.emit();

@@ -1,5 +1,5 @@
 <section *ngIf="_attachmentStateService.getAttachmentList() | async as attachmentList">
-  <st-housing-accordion accordionTitle="Attachments" [itemsAmount]="attachmentList.length"
+  <st-housing-accordion accordionTitle="Uploaded Attachments" [itemsAmount]="attachmentList.length"
   [showAddButton]="true" (onAddButtonClicked)="createAttachmentDefault()">
     <ion-list slot="content" class="ion-no-margin bg-transparent">
       <ng-container >

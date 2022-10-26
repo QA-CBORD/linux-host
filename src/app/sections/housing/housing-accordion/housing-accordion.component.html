@@ -1,5 +1,5 @@
-<ion-accordion-group *ngIf="itemsAmount > 0">
-  <ion-accordion class="ion-no-padding bg-transparent" value="first" toggleIcon="none">
+<ion-accordion-group value="first" *ngIf="itemsAmount > 0">
+  <ion-accordion value="first" class="ion-no-padding bg-transparent" value="first" toggleIcon="none">
     <ion-item color="none" lines="none" slot="header" class="ion-no-padding">
       <h2 class="form__secondary-header">{{ accordionTitle }}</h2>
       <ion-icon
@@ -8,10 +8,10 @@
         class="form__secondary-header space-around"
         name="caret-forward-outline"
       ></ion-icon>
-      <h2 class="form__secondary-header space-around">{{ itemsAmount }} Items</h2>
+      <h2 class="form__secondary-header space-around">{{ itemsAmount | i18nPlural: amountMap }}</h2>
 
 
-      <span *ngIf="showAddButton" class="add-btn" (click)="emitAddbutton()">+</span>
+      <span *ngIf="showAddButton" appClickStopPropagation class="add-btn" (click)="emitAddbutton()">+</span>
     </ion-item>
     <ng-content></ng-content>
   </ion-accordion>
