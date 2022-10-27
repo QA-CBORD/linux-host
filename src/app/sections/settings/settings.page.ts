@@ -52,7 +52,7 @@ export class SettingsPage implements OnInit {
 
   //couldnt get photo upload route to work correctly, still trying to fix
   async navigateToPhotoUpload() {
-    if (!(await this.settingsFactory.photoUploadEnabled$.toPromise()) || (await this.profileService.determineCurrentProfile$().toPromise()) == APP_PROFILES.housing) {
+    if (!(await this.settingsFactory.photoUploadVisible$.toPromise()) || (await this.profileService.determineCurrentProfile$().toPromise()) == APP_PROFILES.housing) {
       return;
     }
     this.router.navigate([PATRON_NAVIGATION.settings, LOCAL_ROUTING.photoUpload]);

@@ -94,6 +94,14 @@ export class SettingsFactoryService {
   }
 
   get photoUploadEnabled$(): Observable<boolean> {
+    return this.settingsFacade.getSetting(Setting.PHOTO_UPLOAD_GRAYEDOUT).pipe(
+      map(setting => Boolean(JSON.parse(setting.value))),
+      take(1),
+      catchError(() => of(false))
+    );
+  }
+
+  get photoUploadVisible$(): Observable<boolean> {
     return this.settingsFacade.getSetting(Setting.PHOTO_UPLOAD_ENABLED).pipe(
       map(setting => Boolean(JSON.parse(setting.value))),
       take(1),
