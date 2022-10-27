@@ -58,7 +58,7 @@ export class SettingsPage implements OnInit {
     const isPhotoVisible = await firstValueFrom(this.settingsFactory.photoUploadVisible$);
     const determineProfile = await firstValueFrom(this.profileService.determineCurrentProfile$());
 
-    if (!isPhotoVisible || determineProfile == APP_PROFILES.housing) {
+    if (!isPhotoVisible || determineProfile === APP_PROFILES.housing) {
       return;
     }
 
