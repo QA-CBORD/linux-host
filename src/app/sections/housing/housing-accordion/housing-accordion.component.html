@@ -1,9 +1,8 @@
-<ion-accordion-group value="first" *ngIf="itemsAmount > 0">
+<ion-accordion-group value="first" *ngIf="itemsAmount > 0 || ignoreValidation">
   <ion-accordion value="first" class="ion-no-padding bg-transparent" value="first" toggleIcon="none">
     <ion-item color="none" lines="none" slot="header" class="ion-no-padding">
       <h2 class="form__secondary-header">{{ accordionTitle }}</h2>
       <ion-icon
-        #arrowIcon
         size="small"
         class="form__secondary-header space-around"
         name="caret-forward-outline"

@@ -13,12 +13,11 @@ export enum ContractStatus {
   Terminated = 6,
   Canceled = 7,
   Suspended = 8, // changed for bitwise math
-
 }
 
 export enum ContractFormStatus {
   New = ContractStatus.Preliminary | ContractStatus.Active,
-  Submitted =  ContractStatus.Completed,
+  Submitted = ContractStatus.Completed,
   Expired = ContractStatus.Expired,
   Suspended = ContractStatus.Suspended,
   Canceled = ContractStatus.Terminated | ContractStatus.Canceled,
@@ -190,21 +189,21 @@ export class ContractInfo implements ContractInfoOptions {
     this.id = Number(options.id);
     this.contractName = String(options.contractName);
     this.term = Number(options.term);
-    this.expectedStartDate = String(options.expectedStartDate);
-    this.expectedEndDate = String(options.expectedEndDate);
+    this.expectedStartDate = options.expectedStartDate;
+    this.expectedEndDate = options.expectedEndDate;
     this.status = String(options.status);
     this.facilityId = Number(options.facilityId);
     this.chargedThroughDate = String(options.chargedThroughDate);
-    this.expirationDate = String(options.expirationDate);
-    this.actualStartDate = String(options.actualStartDate);
-    this.actualEndDate = String(options.actualEndDate);
+    this.expirationDate = options.expirationDate;
+    this.actualStartDate = options.actualStartDate;
+    this.actualEndDate = options.actualEndDate;
     this.depositRequired = Number(options.depositRequired);
     this.depositPaid = Number(options.depositPaid);
     this.gracePeriodBeforeStart = Number(options.gracePeriodBeforeStart);
     this.gracePeriodBeforeEnd = Number(options.gracePeriodBeforeEnd);
     this.contractNumber = String(options.contractNumber);
-    this.checkInDateTime = String(options.checkInDateTime);
-    this.checkOutDateTime = String(options.checkOutDateTime);
+    this.checkInDateTime = options.checkInDateTime;
+    this.checkOutDateTime = options.checkOutDateTime;
     this.linkToSpace = String(options.linkToSpace);
     this.changeRoomIn = Number(options.changeRoomIn);
     this.changeRoomOut = Number(options.changeRoomOut);
@@ -271,7 +270,7 @@ export class ContractDetails implements ContractDetailsOptions {
 
     this.accountCodeKey = Number(options.accountCodeKey);
     this.amount = Number(options.amount);
-    this.formKey = Number(options.formKey)
+    this.formKey = Number(options.formKey);
   }
 }
 
