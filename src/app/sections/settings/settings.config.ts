@@ -154,7 +154,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(this)) return false;
 
           const isDisabledSetting = await firstValueFrom(
-            services.settings.getSetting(Settings.Setting.PHOTO_UPLOAD_ENABLED)
+            services.settings.getSetting(Settings.Setting.PHOTO_UPLOAD_GRAYEDOUT)
           );
           const messageString = await firstValueFrom(
             services.contentString.fetchContentString$(
@@ -166,8 +166,13 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           
           this.checkIsDisabled = isDisabledSetting && Number(isDisabledSetting?.value) === 0;
           this.message = messageString && messageString?.value ? messageString.value : PHOTO_UPLOAD_MESSAGE;
+          
+          
+          const isPhotoVisible = await firstValueFrom(
+            services.settings.getSetting(Settings.Setting.PHOTO_UPLOAD_ENABLED)
+          );
 
-          return true;
+          return isPhotoVisible && isPhotoVisible?.value && Number(isPhotoVisible?.value) != 0;
         },
       },
       {
