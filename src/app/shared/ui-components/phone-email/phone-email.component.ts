@@ -94,7 +94,7 @@ export class PhoneEmailComponent implements OnInit {
       [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
       [this.controlsNames.phone]: [
         '',
-        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(10)],
+        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
       ],
     });
     const user: any = await this.userFacadeService
