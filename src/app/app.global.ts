@@ -100,6 +100,7 @@ export namespace Settings {
     PUSH_NOTIFICATION_ENABLED = 'get.feature.enable_push_notification',
     GOVT_PHOTO_ID_REQUIRED = 'get.feature.government_photo_id_required',
     PHOTO_UPLOAD_ENABLED = 'get.feature.enable_photo_upload',
+    PHOTO_UPLOAD_GRAYEDOUT = 'get.feature.disable_grayedout_message_user_photo',
     REPORT_LOST_CARD_ENABLED = 'get.feature.enable_lost_card',
     REPORT_FOUND_CARD_ENABLED = 'get.feature.enable_found_card',
     STANDARD_REGISTRATION_LINK = 'get.feature.standard_registration_link',

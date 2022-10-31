@@ -8,7 +8,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { SettingItemConfig, SettingsSectionConfig } from './models/setting-items-config.model';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { map, take, switchMap, catchError } from 'rxjs/operators';
-import { from, Observable, of } from 'rxjs';
+import { firstValueFrom, from, Observable, of } from 'rxjs';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserInfo } from '@core/model/user';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -39,7 +39,7 @@ export class SettingsPage implements OnInit {
     private readonly settingsFactory: SettingsFactoryService,
     private readonly route: ActivatedRoute,
     private readonly profileService: ProfileServiceFacade
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.settingSections = this.settingsFactory.getSettings();
@@ -47,14 +47,21 @@ export class SettingsPage implements OnInit {
     this.institutionName$ = this.getInstitutionName$();
     this.userPhoto$ = this.getUserPhoto$();
     this.appVersion$ = this.getAppVersion$();
-    this.authFacadeService.isGuestUser().toPromise().then(isGuest => (this.isGuest = isGuest));
+    this.authFacadeService
+      .isGuestUser()
+      .toPromise()
+      .then(isGuest => (this.isGuest = isGuest));
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
-  async navigateToPhotoUpload() {
-    if (!(await this.settingsFactory.photoUploadEnabled$.toPromise()) || (await this.profileService.determineCurrentProfile$().toPromise()) == APP_PROFILES.housing) {
+  async navigateToPhotoUpload(): Promise<void> {
+    const isPhotoVisible = await firstValueFrom(this.settingsFactory.photoUploadVisible$);
+    const determineProfile = await firstValueFrom(this.profileService.determineCurrentProfile$());
+
+    if (!isPhotoVisible || determineProfile === APP_PROFILES.housing) {
       return;
     }
+
     this.router.navigate([PATRON_NAVIGATION.settings, LOCAL_ROUTING.photoUpload]);
   }
 

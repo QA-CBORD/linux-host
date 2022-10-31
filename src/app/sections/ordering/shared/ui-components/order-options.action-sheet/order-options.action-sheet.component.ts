@@ -2,7 +2,6 @@ import { CartService, MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo } from '../../models';
-import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, of, throwError, zip } from 'rxjs';
@@ -22,6 +21,7 @@ import { DateTimeSelected, StDateTimePickerComponent } from '../st-date-time-pic
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes/address-header-format-pipe';
+import { ModalsService } from '@core/service/modals/modals.service';
 @Component({
   selector: 'st-order-options.action-sheet',
   templateUrl: './order-options.action-sheet.component.html',
@@ -57,7 +57,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   selectedTimeStamp: string | Date;
 
   constructor(
-    private readonly modalController: ModalController,
+    private readonly modalsService: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
@@ -228,7 +228,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       )
       .subscribe(
         () => {
-          this.modalController.dismiss(
+          this.modalsService.dismiss(
             {
               address: this.orderOptionsData.address,
               orderType: this.orderType,
@@ -310,7 +310,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   private async modalWindow() {
     const defaultAddress = this.orderOptionsData.address;
 
-    const modal = await this.modalController.create({
+    const modal = await this.modalsService.create({
       component: DeliveryAddressesModalComponent,
       componentProps: {
         defaultAddress,
@@ -368,7 +368,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   private async onMerchantDateUnavailable() {
     const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
     this.toastService.showToast({ message: noDatesMessage });
-    this.modalController.dismiss();
+    this.modalsService.dismiss();
     return;
   }
 }
