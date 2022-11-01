@@ -214,7 +214,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     const phoneErrors = [
       formControlErrorDecorator(Validators.required, CONTROL_ERROR[FORM_CONTROL_NAMES.phone].required),
       formControlErrorDecorator(Validators.minLength(3), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].min),
-      formControlErrorDecorator(Validators.maxLength(32), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
+      formControlErrorDecorator(Validators.maxLength(22), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
     ];
     this.detailsForm.controls[FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
     this.subscribeOnFormChanges();

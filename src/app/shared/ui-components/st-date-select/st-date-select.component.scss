@@ -6,7 +6,9 @@
   transform: scale(0.75) translateY(-29px);
   opacity: 1;
 }
-
+ion-datetime{
+  background: none;
+}
 :host {
   display: block;
   position: relative;
