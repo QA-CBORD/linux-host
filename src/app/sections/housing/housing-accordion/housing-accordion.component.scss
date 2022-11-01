@@ -16,6 +16,8 @@ ion-accordion.accordion-expanded ion-icon {
   right: 5px;
   margin-bottom: 10px;
   @include font-family($font-nunito-regular);
+  pointer-events:all;
+
 }
 
 .space-around {
