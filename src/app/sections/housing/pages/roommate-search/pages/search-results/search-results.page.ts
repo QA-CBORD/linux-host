@@ -1,30 +1,27 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { isMobile } from '@core/utils/platform-helper';
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RoommateSearchOptions } from '@sections/housing/applications/applications.model';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { RoommateDetails } from '@sections/housing/roommate/roomate.model';
-import { BehaviorSubject, Observable, of, Subscription, throwError } from 'rxjs';
-import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { RoommatePreferences } from '../../../../applications/applications.model';
 
 @Component({
   selector: 'st-search-results',
   templateUrl: './search-results.page.html',
   styleUrls: ['./search-results.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchResultsPage implements OnInit, OnDestroy {
+export class SearchResultsPage implements OnInit {
   roommateSearchOptions$: Observable<RoommateSearchOptions>;
   roommates$: Observable<RoommateDetails[]>;
   stillLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   roommateSelecteds: RoommatePreferences[];
-  private activeAlerts: HTMLIonAlertElement[] = [];
-  private subscriptions: Subscription = new Subscription();
   private maximumPreferences: number;
   options: RoommateSearchOptions;
 
@@ -33,11 +30,10 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _applicationService: ApplicationsService,
     private _applicationStateService: ApplicationsStateService,
-    private _platform: Platform,
     private _alertController: AlertController,
     private _toastService: ToastService,
-    private readonly cdRef: ChangeDetectorRef,
-  ) { }
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds.map(value => {
@@ -67,13 +63,9 @@ export class SearchResultsPage implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
   async selectRoommate(roommate: RoommateDetails): Promise<void> {
-    if(this.isMaximumRoommatePreferencesLength()){
-      const alert = await this._alertController.create({
+    if (this.hasRoommatePreference()) {
+      const selectionAlert = await this._alertController.create({
         header: 'Confirm',
         message: `Are you sure you want to select ${roommate.firstName} ${roommate.lastName} as your roommate?`,
         buttons: [
@@ -82,8 +74,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
             role: 'cancel',
             cssClass: 'button__option_cancel',
             handler: () => {
-              this.activeAlerts = [];
-              alert.dismiss();
+              selectionAlert.dismiss();
             },
           },
           {
@@ -91,37 +82,15 @@ export class SearchResultsPage implements OnInit, OnDestroy {
             role: 'confirm',
             cssClass: 'button__option_confirm',
             handler: () => {
-              this._loadingService.showSpinner();
-              this.activeAlerts = [];
-  
-              const subs =
-                this._applicationService.selectRoommate(roommate)
-                    .subscribe(status => {
-                      if (status) {
-                        alert.dismiss().then(() =>{ 
-                          this._applicationStateService.setSubtractSelectedRoommates();
-                          this._loadingService.closeSpinner()
-                          this.cdRef.detectChanges()
-                        } );
-                      } else {
-                        alert.dismiss().then(() => {
-                          this._loadingService.closeSpinner();
-                          this._toastService.showToast({
-                            message: 'This patron can not be selected as your roommate at the moment.',
-                          });
-                        });
-                      }
-                    });
-  
-              this.subscriptions.add(subs);
+              selectionAlert.dismiss();
+              this.onRoommateSelected(roommate, selectionAlert);
             },
           },
         ],
       });
-      this.activeAlerts.push(alert);
-      await alert.present();
-    }else {
-      const alert2 = await this._alertController.create({
+      await selectionAlert.present();
+    } else {
+      const confirmationAlert = await this._alertController.create({
         header: 'Maximum number of roommates',
         message: `You added the maximum number of roommates`,
         buttons: [
@@ -130,49 +99,62 @@ export class SearchResultsPage implements OnInit, OnDestroy {
             role: 'cancel',
             cssClass: 'button__option_cancel',
             handler: () => {
-              this.activeAlerts = [];
-              alert2.dismiss();
+              confirmationAlert.dismiss();
             },
-          }
+          },
         ],
       });
-      this.activeAlerts.push(alert2);
-      await alert2.present();
+      await confirmationAlert.present();
     }
-  }
-  
-  getRoommatePreferencesSelecteds(): string {
-    let options;
-    this.roommateSearchOptions$.subscribe(res => options = res)
-    const roommates = this.roommateSelecteds.map(res => {
-      if (res.patronKeyRoommate !== 0) {
-        this._applicationStateService.setSubtractSelectedRoommates();  
-      }
-      
-      switch(options.showOptions){
-        case 'preferredNameLast':{
-          if(res.preferredName){
-            return res.preferredName;
-          }
-          return res.firstName;
-        }
-        default:{
-          return res.firstName
-        }
-      }
-    })
-    if(roommates[0] !== undefined  ) {
-      return roommates.join()
-    }
-    return ''
   }
 
-  isMaximumRoommatePreferencesLength(): boolean {
-    return this._applicationStateService.maximumSelectedRoommates>0;
+  getRoommatePreferencesSelecteds(): string {
+    let roommates;
+    this.roommateSearchOptions$.pipe(take(1)).subscribe(options => {
+      roommates = this.roommateSelecteds.map(res => {
+        if (res.patronKeyRoommate > 0) {
+          this._applicationStateService.setSubtractSelectedRoommates();
+        }
+
+        if (options.showOptions == 'preferredNameLast' && res.preferredName) {
+          return res.preferredName;
+        } else {
+          return res.firstName;
+        }
+      });
+    });
+
+    if (roommates[0]) {
+      return roommates.join();
+    }
+  }
+
+  hasRoommatePreference(): boolean {
+    return this._applicationStateService.maximumSelectedRoommates > 0;
   }
 
   private notLoading() {
     this.stillLoading$.next(false);
     this._loadingService.closeSpinner();
+  }
+
+  private onRoommateSelected(roommate: RoommateDetails, selectionAlert: HTMLIonAlertElement) {
+    this._loadingService.showSpinner();
+    this._applicationService
+      .selectRoommate(roommate)
+      .pipe(take(1))
+      .subscribe(status => {
+        selectionAlert.dismiss().then(() => {
+          if (status) {
+            this._applicationStateService.setSubtractSelectedRoommates();
+            this.cdRef.detectChanges();
+          } else {
+            this._toastService.showToast({
+              message: 'This patron can not be selected as your roommate at the moment.',
+            });
+          }
+          this._loadingService.closeSpinner();
+        });
+      });
   }
 }
