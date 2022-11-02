@@ -122,8 +122,8 @@ export class SearchResultsPage implements OnInit {
         }
       });
     });
-
-    if (roommates[0]) {
+    
+    if (roommates && roommates[0]) {
       return roommates.join();
     }
   }
