@@ -45,7 +45,7 @@ export class SearchResultsPage implements OnInit {
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
       tap(roommates => {
-        this.maximumPreferences = roommates.preferences.filter(res => res.hasOwnProperty('selected')).length;
+        this.maximumPreferences = roommates.preferences.filter(res => res?.selected).length;
         this._applicationStateService.setMaximumSelectedRoommates(this.maximumPreferences);
       })
     );
@@ -82,7 +82,6 @@ export class SearchResultsPage implements OnInit {
             role: 'confirm',
             cssClass: 'button__option_confirm',
             handler: () => {
-              selectionAlert.dismiss();
               this.onRoommateSelected(roommate, selectionAlert);
             },
           },
