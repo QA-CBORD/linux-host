@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { isMobile } from '@core/utils/platform-helper';
@@ -8,14 +8,15 @@ import { RoommateSearchOptions } from '@sections/housing/applications/applicatio
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { RoommateDetails } from '@sections/housing/roommate/roomate.model';
-import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subscription, throwError } from 'rxjs';
+import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { RoommatePreferences } from '../../../../applications/applications.model';
 
 @Component({
   selector: 'st-search-results',
   templateUrl: './search-results.page.html',
   styleUrls: ['./search-results.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsPage implements OnInit, OnDestroy {
   roommateSearchOptions$: Observable<RoommateSearchOptions>;
@@ -25,6 +26,7 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   private activeAlerts: HTMLIonAlertElement[] = [];
   private subscriptions: Subscription = new Subscription();
   private maximumPreferences: number;
+  options: RoommateSearchOptions;
 
   constructor(
     private _housingService: HousingService,
@@ -38,41 +40,29 @@ export class SearchResultsPage implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(() => {
-        this.activeAlerts.forEach(alert => {
-          alert.dismiss();
-        });
-        this.activeAlerts = [];
-      });
-    }
-    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds.map((value) => {
-      if (value!=undefined){
-        return value
+    this.roommateSelecteds = this._applicationStateService.roommatePreferencesSelecteds.map(value => {
+      if (value) {
+        return value;
       }
-    } );
+    });
     this._loadingService.showSpinner();
     this.stillLoading$.next(true);
     this.roommateSearchOptions$ = this._applicationStateService.roommateSearchOptions.pipe(
-      tap(data => {
-        // eslint-disable-next-line no-prototype-builtins
-        this.maximumPreferences = data.preferences.filter(res => res.hasOwnProperty('selected')  ).length
-        this._applicationStateService.setMaximumSelectedRoommates(this.maximumPreferences)
-        this.roommates$ = this._housingService.searchRoommates(data.searchOptions, data.searchValue).pipe(
-          tap(() => {
-            this._loadingService.closeSpinner();
-            this.stillLoading$.next(false);
-          }),
-          finalize(() => {
-            this._loadingService.closeSpinner();
-            this.stillLoading$.next(false);
-          })
-        );
+      tap(roommates => {
+        this.maximumPreferences = roommates.preferences.filter(res => res.hasOwnProperty('selected')).length;
+        this._applicationStateService.setMaximumSelectedRoommates(this.maximumPreferences);
+      })
+    );
+
+    this.roommates$ = this.roommateSearchOptions$.pipe(
+      switchMap(roommates => {
+        this.options = roommates;
+        return this._housingService.searchRoommates(roommates.searchOptions, roommates.searchValue);
       }),
-      catchError((error: any) => {
-        this.stillLoading$.next(false);
-        this._loadingService.closeSpinner();
-        return throwError(error);
+      tap(() => this._loadingService.closeSpinner()),
+      catchError(() => {
+        this.notLoading();
+        return of(null);
       })
     );
   }
@@ -179,5 +169,10 @@ export class SearchResultsPage implements OnInit, OnDestroy {
 
   isMaximumRoommatePreferencesLength(): boolean {
     return this._applicationStateService.maximumSelectedRoommates>0;
+  }
+
+  private notLoading() {
+    this.stillLoading$.next(false);
+    this._loadingService.closeSpinner();
   }
 }

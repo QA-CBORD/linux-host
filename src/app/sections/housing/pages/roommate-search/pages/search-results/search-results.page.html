@@ -2,7 +2,7 @@
 <ion-content
   class="ion-padding check-in-out-slots__content"
   #content>
-  <div *ngIf="(roommateSearchOptions$ | async) as options">
+  <div>
     <ng-container *ngIf="(roommates$ | async) as roommates; else noRoommates">
       <div>
         <h4>Your search returned {{ roommates.length }} result(s)</h4>
