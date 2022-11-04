@@ -14,7 +14,8 @@ const declarations = [StHierarcheTreeDialogComponent];
     CommonModule,
     IonicModule,
     SwiperModule,
-    OrderByPipeModule
+    OrderByPipeModule,
+    SwiperModule
   ],
   exports: declarations,
   entryComponents: declarations

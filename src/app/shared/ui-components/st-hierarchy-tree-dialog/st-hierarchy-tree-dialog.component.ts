@@ -2,7 +2,9 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IonSlides, LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { SlideItem, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
-
+import SwiperCore, { Pagination, Swiper } from 'swiper';
+import { IonicSlides } from '@ionic/angular';
+SwiperCore.use([Pagination, IonicSlides]);
 @Component({
   selector: 'st-hierarchy-tree-dialog',
   templateUrl: './st-hierarchy-tree-dialog.component.html',
@@ -10,21 +12,32 @@ import { WorkOrderStateService } from '../../../sections/housing/work-orders/wor
   encapsulation: ViewEncapsulation.None
 })
 export class StHierarcheTreeDialogComponent {
-  public slides: Slide[];
+  public slides: Slide[] = [];
+  public swiperSlides:Swiper;
 
   public selectedItemId: number;
   public lookups: LookUpItem[];
   public allowParent: boolean;
-  public slidesConfig = {autoHeight: true};
+  slideOpts = {
+    initialSlide: 0,
+    spaceBetween: 0,
+    speed: 400,
+    width: 350,
+    autoHeight: true,
+    slidesPerView: 1.01,
+  };
+  itemsPerSlide = 4;
+  isLoading = true;
+  pager = false;
 
-  @ViewChild(IonSlides) public slidesControl: IonSlides;
+  //@ViewChild(SwiperSlide) public slidesControl: IonSlides;
 
   constructor(public loading: LoadingController, 
     private params: NavParams, 
     private viewCtrl: ModalController,
     private readonly _workOrderStateService: WorkOrderStateService,
     ) {
-    this.slides = null;
+    // this.slides = null;
     this.selectedItemId = null;
     this.lookups = null;
     this.allowParent = null;
@@ -55,8 +68,11 @@ export class StHierarcheTreeDialogComponent {
     this.allowParent = allowParent;
 
     this.slides = this.buildInitialSlide(this.lookups);
+    console.log(this.slides)
 
-    this.slidesControl.lockSwipes(true);
+    this.swiperSlides.allowSlideNext = false;
+    this.swiperSlides.allowSlidePrev = false;
+    this.swiperSlides.allowTouchMove = false;
 
     // dismiss the progress UI when the dialog UI is initialized
     // this.loading.dismiss();
@@ -192,6 +208,8 @@ export class StHierarcheTreeDialogComponent {
     } else {
       this.slideTo(item);
     }
+    console.log(item);
+    
   }
 
   public itemSelected(item: SlideItem) {
@@ -221,14 +239,16 @@ export class StHierarcheTreeDialogComponent {
         nextSlideIndex = itemOrIndex as number;
       }
       setTimeout(() => {
-        this.slidesControl.lockSwipes(false);
-        this.slidesControl.slideTo(nextSlideIndex);
-        this.slidesControl.lockSwipes(true);
+        this.swiperSlides.allowSlideNext = true;
+        this.swiperSlides.slideTo(nextSlideIndex);
+        this.swiperSlides.allowSlideNext = false;
       }, 500);
     } else {
       throw new Error(`MultiLevelSelectDialogComponent: itemOrIndex must not be null; itemOrIndex: ${JSON.stringify(itemOrIndex)}`);
     }
   }
-
+  setSwiperInstance(swiper: Swiper) {
+    this.swiperSlides = swiper;
+  }
 
 }
