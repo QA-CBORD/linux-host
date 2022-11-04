@@ -155,5 +155,5 @@ export class SearchResultsPage implements OnInit {
           this._loadingService.closeSpinner();
         });
       });
-  }
+   }
 }
