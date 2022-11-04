@@ -165,3 +165,11 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
   //   },
   // },
 ];
+
+export const DASHBOARD_SLIDE_CONFIG = {
+  initialSlide: 0,
+  spaceBetween: 0,
+  speed: 400,
+  width: 350,
+  autoHeight: true,
+};

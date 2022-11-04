@@ -4,6 +4,10 @@ import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../../../app.global';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { IonicSlides } from '@ionic/angular';
+import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
+import SwiperCore from 'swiper';
+SwiperCore.use([IonicSlides]);
 
 @Component({
   selector: 'st-order-tile',
@@ -12,16 +16,10 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderTileComponent implements OnInit {
-  slideOpts = {
-    initialSlide: 0,
-    spaceBetween: 0,
-    speed: 400,
-    width: 330,
-    autoHeight: true,
-  };
+  slideOpts = { ...DASHBOARD_SLIDE_CONFIG, slidesPerView: 2.01 };
 
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-  amountPerSlide = 2;
+  amountPerSlide = 1;
   slides: MerchantInfo[][] = [];
   skeletonArray: any[] = new Array(this.amountPerSlide);
   isLoading = true;
