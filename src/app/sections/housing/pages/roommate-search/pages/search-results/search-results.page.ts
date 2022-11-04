@@ -108,24 +108,16 @@ export class SearchResultsPage implements OnInit {
   }
 
   getRoommatePreferencesSelecteds(): string {
-    let roommates;
+    let roommates: string[];
     this.roommateSearchOptions$.pipe(take(1)).subscribe(options => {
-      roommates = this.roommateSelecteds.map(res => {
-        if (res.patronKeyRoommate > 0) {
-          this._applicationStateService.setSubtractSelectedRoommates();
-        }
-
-        if (options.showOptions == 'preferredNameLast' && res.preferredName) {
-          return res.preferredName;
-        } else {
-          return res.firstName;
-        }
-      });
+      roommates = this.mapRoommates(options);
     });
-    
-    if (roommates && roommates[0]) {
-      return roommates.join();
+
+    if (roommates && roommates.length > 0) {
+      return roommates.join(', ');
     }
+
+    return '';
   }
 
   hasRoommatePreference(): boolean {
@@ -155,5 +147,21 @@ export class SearchResultsPage implements OnInit {
           this._loadingService.closeSpinner();
         });
       });
-   }
+  }
+
+  private mapRoommates(options: RoommateSearchOptions) {
+    return this.roommateSelecteds
+      .filter(roommate => roommate.preferredName || roommate.firstName)
+      .map(res => {
+        if (res.patronKeyRoommate > 0) {
+          this._applicationStateService.setSubtractSelectedRoommates();
+        }
+
+        if (/preferredNameLast/.test(options.showOptions) && res.preferredName) {
+          return res.preferredName;
+        } else {
+          return res.firstName;
+        }
+      });
+  }
 }
