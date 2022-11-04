@@ -1,19 +1,20 @@
 <div class="accounts" [ngClass]="{ 'accounts--auto-height': !isLoading }">
-  <ion-slides
+  <swiper
     *ngIf="!isLoading && slides.length"
-    class="accounts__slides"
-    [pager]="pager"
+    class="accounts__slides swiper-slides-flex-start"
+    [pagination]="pager"
+    [config]="slideOpts"
     mode="ios"
-    [options]="slideOpts"
   >
-    <ion-slide class="accounts__slide" *ngFor="let accountsByOneSlide of slides">
-      <div class="accounts__item" *ngFor="let account of accountsByOneSlide" (click)="goToAccountHistory(account.id)">
-        <div class="accounts__title">{{ account.accountDisplayName }}</div>
-        <div class="accounts__total">{{ account.balance | transactionUnits: account.accountType }}</div>
+    <ng-template swiperSlide *ngFor="let accountsByOneSlide of slides">
+      <div class="accounts__slide">
+        <div class="accounts__item" *ngFor="let account of accountsByOneSlide" (click)="goToAccountHistory(account.id)">
+          <div class="accounts__title">{{ account.accountDisplayName }}</div>
+          <div class="accounts__total">{{ account.balance | transactionUnits: account.accountType }}</div>
+        </div>
       </div>
-    </ion-slide>
-  </ion-slides>
-
+    </ng-template>
+  </swiper>
   <ion-list *ngIf="isLoading">
     <ion-item lines="none">
       <ion-label>

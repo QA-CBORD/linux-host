@@ -394,3 +394,12 @@ ion-modal.sc-modal {
 	--ion-color-shade: var(--ion-color-matterhorn-shade);
 	--ion-color-tint: var(--ion-color-matterhorn-tint);
 }
+
+.swiper {
+  &.swiper-slides-flex-start {
+    .swiper-slide {
+      justify-content: start;
+      align-items: initial;
+    }
+  }
+}

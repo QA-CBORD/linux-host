@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { UserAccount } from '@core/model/account/account.model';
 import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+import SwiperCore, { Pagination } from 'swiper';
+import { IonicSlides } from '@ionic/angular';
+SwiperCore.use([Pagination, IonicSlides]);
 
 @Component({
   selector: 'st-accounts-tile',
@@ -19,6 +22,7 @@ export class AccountsTileComponent {
     speed: 400,
     width: 350,
     autoHeight: true,
+    slidesPerView: 1.01,
   };
   itemsPerSlide = 4;
   slides: UserAccount[][] = [];
