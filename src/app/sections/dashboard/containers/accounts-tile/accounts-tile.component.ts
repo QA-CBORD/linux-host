@@ -7,6 +7,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import SwiperCore, { Pagination } from 'swiper';
 import { IonicSlides } from '@ionic/angular';
+import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
 SwiperCore.use([Pagination, IonicSlides]);
 
 @Component({
@@ -16,14 +17,7 @@ SwiperCore.use([Pagination, IonicSlides]);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountsTileComponent {
-  slideOpts = {
-    initialSlide: 0,
-    spaceBetween: 0,
-    speed: 400,
-    width: 350,
-    autoHeight: true,
-    slidesPerView: 1.01,
-  };
+  slideOpts = { ...DASHBOARD_SLIDE_CONFIG, slidesPerView: 1.01 };
   itemsPerSlide = 4;
   slides: UserAccount[][] = [];
   isLoading = true;
