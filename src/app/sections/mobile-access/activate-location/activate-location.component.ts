@@ -180,6 +180,6 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private setInstitutionColor() {
     this.institutionColor$ = this.mobileAccessService
       .getInstitutionColor()
-      .pipe(map(v => '#' + JSON.parse(v)['native-header-bg']));
+      .pipe(map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : '')));
   }
 }

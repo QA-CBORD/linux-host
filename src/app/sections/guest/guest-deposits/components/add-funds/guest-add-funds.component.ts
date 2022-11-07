@@ -4,11 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserAccount } from '@core/model/account/account.model';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { handleServerError } from '@core/utils/general-helpers';
 import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
 import { DepositCsModel } from '@sections/accounts/pages/deposit-page/deposit-page.content.string';
@@ -53,7 +54,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly loadingService: LoadingService,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly popoverCtrl: PopoverController,
     private activatedRoute: ActivatedRoute,
     private guestDepositsService: GuestDepositsService,

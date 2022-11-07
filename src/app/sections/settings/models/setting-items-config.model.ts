@@ -4,7 +4,6 @@ import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -18,6 +17,7 @@ import { APP_PROFILES } from '@sections/dashboard/models';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { AccountsService } from '@sections/dashboard/services';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -93,7 +93,7 @@ export interface SettingsServices {
   identity: IdentityFacadeService;
   userService: UserFacadeService;
   globalNav: GlobalNavService;
-  modalController: ModalController;
+  modalController: ModalsService;
   contentString: ContentStringsFacadeService;
   settings: SettingsFacadeService;
   institution: InstitutionFacadeService;

@@ -79,6 +79,7 @@
     "ngx-image-cropper": "3.3.0",
     "rxjs": "~7.5.6",
     "sinon": "^14.0.0",
+    "swiper": "^8.4.4",
     "tslib": "^2.0.0",
     "uuid": "^8.3.2",
     "zone.js": "~0.11.4"
@@ -113,6 +114,7 @@
     "faker": "^4.1.0",
     "jest": "^28.1.0",
     "jest-preset-angular": "^12.0.1",
+    "ng-mocks": "^14.3.2",
     "ngx-spec": "^2.1.5",
     "prettier": "^2.7.1",
     "protractor": "~7.0.0",

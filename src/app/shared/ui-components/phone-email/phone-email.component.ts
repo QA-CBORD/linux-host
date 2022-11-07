@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalsService } from '@core/service/modals/modals.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, switchMap, take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
@@ -33,7 +33,7 @@ export class PhoneEmailComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly toastService: ToastService,
     private readonly cdRef: ChangeDetectorRef
   ) {}
