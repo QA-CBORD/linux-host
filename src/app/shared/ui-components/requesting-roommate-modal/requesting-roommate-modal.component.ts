@@ -6,7 +6,6 @@ import { HousingService } from '../../../sections/housing/housing.service';
 import { TermsService } from '../../../sections/housing/terms/terms.service';
 import { Subscription } from 'rxjs';
 import { isMobile } from '@core/utils/platform-helper';
-import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'requesting-roommate-modal',
@@ -25,9 +24,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
     public _housingService: HousingService,
     private _alertController: AlertController,
     private _platform: Platform,
-    private _loadingService: LoadingService
     ) {
-      this.checkIfLastRequest()
     }
   
   ngOnInit(): void {
@@ -42,7 +39,7 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
     this.checkIfLastRequest()
   }
 
-  @Input() requestingRoommate: RoommatePreferences[];
+  @Input() requestingRoommate: RoommatePreferences[]=[];
 
   @Input() text = 'Back';
 
@@ -79,7 +76,6 @@ export class RequestingRoommateModalComponent implements OnInit, OnDestroy{
             role: 'confirm',
             cssClass: 'button__option_confirm',
             handler: () => {
-              // this._loadingService.showSpinner();
               this.activeAlerts = [];
               this._applicationsStateService.deleteRequestingRoommate(roommate.patronKeyRoommate);
               this._applicationsStateService.addRoommatesPreferences(roommate, true);
