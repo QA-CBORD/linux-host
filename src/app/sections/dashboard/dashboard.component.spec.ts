@@ -17,23 +17,18 @@ import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
-import {  of } from 'rxjs';
+import { of } from 'rxjs';
 import { LocationPermissionModalModule } from './components/location-disclosure/location-disclosure.module';
-import {
-  ConversationsTileModule,
-  ExploreTileModule,
-  MobileAccessTileModule,
-  OrderTileModule,
-  TileWrapperModule,
-  TransactionsTileModule,
-  RewardsTileModule,
-} from './containers';
+import { RewardsTileModule } from './containers/rewards-tile/rewards-tile.module';
+import { TransactionsTileModule } from './containers/transactions-tile/transactions-tile.module';
+import { TileWrapperModule } from './containers/tile-wrapper/tile-wrapper.module';
+import { MobileAccessTileModule } from './containers/mobile-access-tile/mobile-access-tile.module';
+import { ExploreTileModule } from './containers/explore-tile/explore-tile.module';
+import { ConversationsTileModule } from './containers/conversations-tile/conversations-tile.module';
 import { AccessCardModule } from './containers/access-card';
-import { AccountsTileModule } from './containers/accounts-tile';
 import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
 import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-donations-tile.module';
 import { DashboardPage } from './dashboard.component';
-import { DashboardRoutingModule } from './dashboard.routing.module';
 import { TileConfigFacadeService } from './tile-config-facade.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 
@@ -62,8 +57,8 @@ const _institutionFacadeService = {
   cachedInstitutionInfo$: { pipe: jest.fn(() => of(true)) },
 };
 const _userFacadeService = {
-  getUserData$: jest.fn(() => ({  pipe: () => of(true) })),
-  getUser$: jest.fn(() => ({  pipe: () => of(true) })),
+  getUserData$: jest.fn(() => ({ pipe: () => of(true) })),
+  getUser$: jest.fn(() => ({ pipe: () => of(true) })),
 };
 
 describe('DashboardPage', () => {
@@ -72,6 +67,7 @@ describe('DashboardPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      //TODO: Temp fix for Swiper imports, should setup JEST instead
       declarations: [DashboardPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
@@ -89,14 +85,11 @@ describe('DashboardPage', () => {
       imports: [
         CommonModule,
         IonicModule,
-        DashboardRoutingModule,
         StHeaderModule,
         AccessCardModule,
-        AccountsTileModule,
         ConversationsTileModule,
         ExploreTileModule,
         MobileAccessTileModule,
-        OrderTileModule,
         TileWrapperModule,
         TransactionsTileModule,
         RewardsTileModule,
