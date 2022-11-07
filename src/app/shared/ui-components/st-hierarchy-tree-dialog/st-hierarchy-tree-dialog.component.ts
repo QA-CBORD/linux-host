@@ -1,5 +1,5 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { IonSlides, LoadingController, ModalController, NavParams } from '@ionic/angular';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { SlideItem, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 import SwiperCore, { Pagination, Swiper } from 'swiper';
@@ -30,15 +30,12 @@ export class StHierarcheTreeDialogComponent {
   isLoading = true;
   pager = false;
 
-  //@ViewChild(SwiperSlide) public slidesControl: IonSlides;
-
   constructor(
     public loading: LoadingController,
     private params: NavParams,
     private viewCtrl: ModalController,
     private readonly _workOrderStateService: WorkOrderStateService
   ) {
-    // this.slides = null;
     this.selectedItemId = null;
     this.lookups = null;
     this.allowParent = null;
