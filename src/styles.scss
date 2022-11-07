@@ -1,6 +1,7 @@
 @import 'vendor';
 @import 'tools';
 @import 'fonts';
+@import 'toast';
 
 :root {
   .st-header {
@@ -44,7 +45,7 @@
   .large-popover {
     --width: 365px;
   }
-  
+
   .st-nav-tabs {
     &.tabs-wrapper {
       //  Remove ionic bug for ion-router-outlet for Rewards Tabs page:
@@ -117,7 +118,8 @@
       --height: 360px;
     }
 
-    .modal-wrapper, .modal-shadow {
+    .modal-wrapper,
+    .modal-shadow {
       position: absolute;
       bottom: 0;
     }
@@ -331,11 +333,11 @@ article {
   display: block;
 }
 
-.alert-modal-attachment{
+.alert-modal-attachment {
   --min-width: 75%;
   .alert-wrapper {
     .alert-head {
-      border-bottom: 1px solid #E2E2E2;
+      border-bottom: 1px solid #e2e2e2;
       margin-bottom: 10px;
     }
     .alert-button-group {
@@ -344,7 +346,7 @@ article {
   }
 
   button.alert-button.button__option_delete_attachment {
-    background-color: #DC2F45;
+    background-color: #dc2f45;
     color: white;
     border-radius: 8px;
     @include font-nunito-regular(16px);
@@ -354,13 +356,13 @@ article {
     max-width: 30%;
     text-transform: none;
   }
-  
-  button.alert-button.button__option_cancel_attachment{
-    background: #E2E2E2;
+
+  button.alert-button.button__option_cancel_attachment {
+    background: #e2e2e2;
     border-radius: 8px;
     @include font-nunito-regular(16px);
     font-weight: 700;
-    color:black;
+    color: black;
     margin: 0 10px 10px 0;
     min-width: 20%;
     max-width: 30%;
@@ -387,10 +389,11 @@ ion-modal.sc-modal {
   }
 }
 .ion-color-matterhorn {
-	--ion-color-base: var(--ion-color-matterhorn);
-	--ion-color-base-rgb: var(--ion-color-matterhorn-rgb);
-	--ion-color-contrast: var(--ion-color-matterhorn-contrast);
-	--ion-color-contrast-rgb: var(--ion-color-matterhorn-contrast-rgb);
-	--ion-color-shade: var(--ion-color-matterhorn-shade);
-	--ion-color-tint: var(--ion-color-matterhorn-tint);
+  --ion-color-base: var(--ion-color-matterhorn);
+  --ion-color-base-rgb: var(--ion-color-matterhorn-rgb);
+  --ion-color-contrast: var(--ion-color-matterhorn-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-matterhorn-contrast-rgb);
+  --ion-color-shade: var(--ion-color-matterhorn-shade);
+  --ion-color-tint: var(--ion-color-matterhorn-tint);
 }
+
