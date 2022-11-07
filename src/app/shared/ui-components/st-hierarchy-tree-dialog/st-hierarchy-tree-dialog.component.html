@@ -1,6 +1,13 @@
 <ion-content>
-  <ion-slides  id="facility-list" [options]="slidesConfig" [pager]="false">
-    <ion-slide *ngFor="let slide of slides">
+  <swiper
+    *ngIf="slides.length > 0"
+    [pagination]="pager"
+    [config]="slideOpts | json"
+    id="facility-list" 
+    mode="ios"
+    (swiper)="setSwiperInstance($event)"
+  >
+    <ng-template swiperSlide *ngFor="let slide of slides">
       <ion-toolbar mode="ios">
         <ion-buttons slot="start" *ngIf="slide.parentSlide" (click)="slideTo(slide.parentSlide?.slideIndex)">
           <ion-icon size="large" item-right name="arrow-back"></ion-icon>
@@ -25,6 +32,6 @@
           </div>
         </ion-item>
       </ion-list>
-    </ion-slide>
-  </ion-slides>
+    </ng-template>
+  </swiper>
 </ion-content>

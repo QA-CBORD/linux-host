@@ -10,7 +10,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { ModalController } from '@ionic/angular';
+import { ModalsService } from '@core/service/modals/modals.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import Setting = Settings.Setting;
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -51,7 +51,7 @@ export class SettingsFactoryService {
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly globalNav: GlobalNavService,
     private readonly appBrowser: InAppBrowser,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly profileService: ProfileServiceFacade,
