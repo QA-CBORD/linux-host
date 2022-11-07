@@ -23,6 +23,8 @@ import { PIN_MODAL_ID } from '@core/service/identity/pin-authentication';
 export class StartupPage {
   /// startup page used as a backdrop for login, it ensures global navbar is hidden by url route checking
 
+  showLoading = false;
+
   constructor(
     private readonly elementRef: ElementRef,
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -118,6 +120,7 @@ export class StartupPage {
 
   async handleVaultLoginSuccess(session: VaultSession): Promise<void> {
     this.authenticatePin(session.pin);
+    this.showLoading = true;
   }
 
   /**
