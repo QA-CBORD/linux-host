@@ -262,8 +262,7 @@
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ],
-    "analytics": false
+    ]
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

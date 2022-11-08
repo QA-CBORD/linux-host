@@ -41,3 +41,4 @@ capacitor.config.json
 
 ios/App/App/public/
 ios/DerivedData
+angular.json
