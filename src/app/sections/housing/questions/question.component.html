@@ -82,6 +82,20 @@
         [name]="question['name']"
         [label]="question.label"
         [formControlName]="question['name']"
+        [format]="'MMM d, y'"
+      ></st-date-select>
+
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
+    </div>
+
+    <div *ngSwitchCase="'datetime'" class="question__item">
+      <st-date-select
+        [name]="question['name']"
+        [label]="question.label"
+        [formControlName]="question['name']"
         [format]="'MMM d, y h:mm a'"
       ></st-date-select>
 
