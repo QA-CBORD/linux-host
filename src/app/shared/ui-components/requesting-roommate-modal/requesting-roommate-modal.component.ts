@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RoommatePreferences } from '../../../sections/housing/applications/applications.model';
 import { AlertController, ModalController } from '@ionic/angular';
