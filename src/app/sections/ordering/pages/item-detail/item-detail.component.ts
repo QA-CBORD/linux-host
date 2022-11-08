@@ -52,7 +52,8 @@ export class ItemDetailComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
     private readonly navService: NavigationService,
-    private readonly cdRef: ChangeDetectorRef) {}
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.initContentStrings();
@@ -234,10 +235,7 @@ export class ItemDetailComponent implements OnInit {
     await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
-      .pipe(
-        first(),
-        handleServerError(ORDER_VALIDATION_ERRORS)
-      )
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(() => {
         this.cartService.cartsErrorMessage = null;
@@ -249,16 +247,19 @@ export class ItemDetailComponent implements OnInit {
             distinctUntilChanged(),
             take(1)
           )
-          .subscribe(items =>  this.showAddedItemsQuantity(items));
+          .subscribe(items => this.showAddedItemsQuantity(items));
       })
       .catch(async error => {
         // Temporary solution:
-        
         if (Array.isArray(error)) {
           const [code, text] = error;
           if (+code === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
             this.cartService.removeLastOrderItem();
             await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
+            return;
+          } else if (+code === +ORDER_ERROR_CODES.ORDER_ITEM_MAX) {
+            this.cartService.removeLastOrderItem();
+            this.failedValidateOrder('The cart has reached it’s max number of items (5)');
             return;
           } else {
             this.cartService.cartsErrorMessage = text;
@@ -273,32 +274,43 @@ export class ItemDetailComponent implements OnInit {
   }
 
   private async failedValidateOrder(message: string) {
-    await this.toastService.showToast({ message });
+    await this.toastService.showToast({ message, icon: 'warning', cssClass: 'toast-message-warning' });
   }
 
   private initMenuItemOptions() {
     zip(this.activatedRoute.data, this.cartService.orderItems$, this.cartService.merchant$)
       .pipe(take(1))
-      .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems, { settings }]) => {
-        const imageBaseUrl = this.environmentFacadeService.getImageURL();
-        this.menuItem = menuItem.menuItem;
-        this.menuItemImg = this.menuItem.imageReference ? `${imageBaseUrl}${this.menuItem.imageReference}` : '';
-        this.order = { ...this.order, totalPrice: this.menuItem.price };
-        this.allowNotes = !JSON.parse(settings.map[MerchantSettings.disableItemNotes].value);
-        if (orderItemId) {
-          this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
-        }
-        if (this.cartSelectedItem) {
-          this.cartOrderItemOptions = this.cartSelectedItem.orderItemOptions;
-          const optionsPrice = this.cartOrderItemOptions.reduce(
-            (total, item) => (!item ? total : item.salePrice + total),
-            0
-          );
+      .subscribe(
+        ([
+          {
+            data: {
+              menuItem,
+              queryParams: { orderItemId },
+            },
+          },
+          orderItems,
+          { settings },
+        ]) => {
+          const imageBaseUrl = this.environmentFacadeService.getImageURL();
+          this.menuItem = menuItem.menuItem;
+          this.menuItemImg = this.menuItem.imageReference ? `${imageBaseUrl}${this.menuItem.imageReference}` : '';
+          this.order = { ...this.order, totalPrice: this.menuItem.price };
+          this.allowNotes = !JSON.parse(settings.map[MerchantSettings.disableItemNotes].value);
+          if (orderItemId) {
+            this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+          }
+          if (this.cartSelectedItem) {
+            this.cartOrderItemOptions = this.cartSelectedItem.orderItemOptions;
+            const optionsPrice = this.cartOrderItemOptions.reduce(
+              (total, item) => (!item ? total : item.salePrice + total),
+              0
+            );
 
-          this.order = { ...this.order, counter: this.cartSelectedItem.quantity, optionsPrice };
+            this.order = { ...this.order, counter: this.cartSelectedItem.quantity, optionsPrice };
+          }
+          this.initForm();
         }
-        this.initForm();
-      });
+      );
   }
 
   private valueChanges() {
@@ -340,12 +352,12 @@ export class ItemDetailComponent implements OnInit {
 
   showAddedItemsQuantity(items: number): void {
     this.cartService.orderInfo$.pipe(take(1)).subscribe(order => {
-      const itemsQuantity = `${items} ${items > 1 ? 'items' : 'item'}`;
+      const itemsQuantity = `${items} ${items > 1 ? 'items have' : 'item has'}`;
 
-      let message = `${itemsQuantity} currently in your cart.`;
+      let message = `${itemsQuantity} been added to your cart.`;
       message = order.checkNumber ? `${itemsQuantity} added to order #${order.checkNumber} cart. ` : message;
 
-      this.toastService.showToast({ message });
+      this.toastService.showToast({ message, icon: 'checkmark-circle', cssClass: 'toast-message-success' });
     });
   }
 }
