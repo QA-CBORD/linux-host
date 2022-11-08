@@ -202,13 +202,13 @@
         class="form__secondary-header">
         {{ question.label }}
       </h3>
-      <ion-button
+      <st-button
         expand="block"
         color="primary"
         mode="ios"
         (click)="question.action()">
         {{ question.buttonText }}
-      </ion-button>
+      </st-button>
       <!-- TODO: create template to show users -->
       <div *ngIf="(roommateSearchOptions$ | async) as options">
         <div

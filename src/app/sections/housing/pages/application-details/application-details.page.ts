@@ -145,13 +145,10 @@ export class ApplicationDetailsPage implements OnInit {
         this.isSubmitted = applicationDetails.patronApplication?.status === ApplicationStatus.Submitted;
         this.termService.termId$.pipe(switchMap(termId =>
           this.housingService.getRequestedRommate(termId)
-        ), take(1)).subscribe(() => this.loadingService.closeSpinner())
+        ), take(1)).subscribe(() => this.loadingService.closeSpinner());
         if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
-          this.loadingService.closeSpinner();
           return this.requestiongRoomate();
         }
-        
-
       }),
       catchError(error => {
         this.loadingService.closeSpinner();
