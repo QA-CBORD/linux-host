@@ -27,6 +27,7 @@
   &__item-name {
     letter-spacing: 0;
     line-height: 20px;
+    white-space: normal;
 
     @include font-nunito-semibold(16px);
   }
