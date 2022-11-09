@@ -53,10 +53,10 @@
         </div>
       </ng-container>
       <div>
-        <ion-button expand="block" color="primary" mode="ios" (click)="searchRoommates(options)"
-          [disabled]="!searchForm.valid || isApplicationSubmitted()">
+        <st-button expand="block" color="primary" mode="ios" (click)="searchRoommates(options)"
+          [disabled]="searchForm.invalid || isApplicationSubmitted()">
           Search
-        </ion-button>
+        </st-button>
       </div>
     </form>
   </div>

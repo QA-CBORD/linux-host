@@ -2,12 +2,15 @@
 
 .items-unavailable {
   &__header {
-    &-item{
+    &-item {
       --padding-start: 0;
     }
     &-title {
       @include font-nunito-regular(18px);
       font-weight: 700;
     }
+  }
+  &__btn {
+    margin-left: 5px;
   }
 }
