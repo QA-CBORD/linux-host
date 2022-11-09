@@ -205,7 +205,7 @@ export class TransactionService {
 
   getContentStrings(names: string[]) {
     let list = {};
-    names.filter(n => {
+    names.forEach(n => {
       if (this.contentString[n]) {
         list = { ...list, [n]: this.contentString[n] };
       }

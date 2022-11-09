@@ -203,7 +203,7 @@ export class MerchantService {
   }
 
   private dataTransform(schedule: Schedule, timeZone: string) {
-    schedule.days.map(day => {
+    schedule.days.forEach(day => {
       day.hourBlocks = day.hourBlocks.map(hour => {
         hour.periods = hour.timestamps.map(dateStr => this.extractTimeZonedString(dateStr, timeZone));
         return hour;

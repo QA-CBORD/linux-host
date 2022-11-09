@@ -317,7 +317,7 @@ export class ItemDetailComponent implements OnInit {
     const subscription = this.itemOrderForm.valueChanges.subscribe(formValue => {
       const arrayValues: any[] = Object.values(formValue);
       this.order = { ...this.order, optionsPrice: 0 };
-      arrayValues.map(value => {
+      arrayValues.forEach(value => {
         if (!value || typeof value === 'string') {
           return;
         }

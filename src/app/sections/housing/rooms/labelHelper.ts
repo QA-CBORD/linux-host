@@ -25,13 +25,10 @@ export class  LabelHelper {
       switch (type) {
         case DataType.Date:
           return false;
-          break;
         case DataType.Integer:
           return false;
-          break;
         case DataType.YesNo:
           return attrib.value === 'Yes'? true: false;
-          break;
         case DataType.String:
           if(attrib.name !== 'Full Name' &&
             attrib.name !== 'Assignment_Limit') {
@@ -39,7 +36,6 @@ export class  LabelHelper {
           } else {
             return false;
           }
-          break;
       }
     }).map(attrib => {
       return new Label(attrib.name)

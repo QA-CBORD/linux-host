@@ -86,7 +86,7 @@ export class AccountService {
 
   getContentStrings(names: string[]): any {
     let list = {};
-    names.filter(n => {
+    names.forEach(n => {
       if (this.contentString[n]) {
         list = { ...list, [n]: this.contentString[n] };
       }

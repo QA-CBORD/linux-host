@@ -43,8 +43,6 @@ export class RoomsService {
           console.log(response);
           throw new Error(response.status.message);
         }
-
-        return false;
       }),
       catchError(() => of(false))
     );

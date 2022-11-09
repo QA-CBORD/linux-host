@@ -26,7 +26,6 @@ export class ConnectionService {
 
     this.online$ = new Observable(observer => observer.next(true)).pipe(mapTo(true));
     if (this.platform.is('capacitor')) {
-      this.network.downlinkMax
       // on Device
       this.online$ = merge(
         this.network.onConnect().pipe(mapTo(true)),

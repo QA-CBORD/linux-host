@@ -40,7 +40,7 @@ export class ReportCardComponent implements OnInit {
     readonly asynPipe: AsyncPipe
   ) {
     this.isLost =
-      asynPipe.transform(this.userFacadeService.getUserState$()).cashlessMediaStatus === ReportCardStatus.LOST;
+      asynPipe.transform(this.userFacadeService.getUserState$())?.cashlessMediaStatus === ReportCardStatus.LOST;
     this.nextStatusText = this.isLost ? 'Found' : 'Lost';
   }
 

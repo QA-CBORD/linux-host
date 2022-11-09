@@ -2,10 +2,9 @@
   <st-housing-accordion
     accordionTitle="Work Orders"
     [itemsAmount]="workOrderLists.workOrders.length"
-    [showAddButton]="true"
+    [showAddButton]="workOrderLists.canSubmit"
     (onAddButtonClicked)="createWorkOrderDefault()"
     [ignoreValidation]="true"
-    *ngIf="workOrderLists.canSubmit"
   >
     <ion-list slot="content"  class="ion-no-margin bg-transparent">
       <!-- TODO: Add plus button  -->
