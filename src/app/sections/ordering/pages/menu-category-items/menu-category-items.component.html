@@ -54,6 +54,6 @@
     ></st-category-list>
   </ion-content>
 </ng-template>
-<ion-footer mode="ios" class="menu-category__footer" *ngIf="menuItems$ | async">
+<ion-footer mode="ios" class="menu-category__footer" *ngIf="(menuItems$ | async) > 0">
   <st-view-cart *ngIf="(menuItems$ | async) > 0" [menuItemsCount]="menuItems$ | async" (click)="redirectToCart()"></st-view-cart>
 </ion-footer>
