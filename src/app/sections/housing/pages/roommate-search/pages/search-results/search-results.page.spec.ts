@@ -114,7 +114,7 @@ describe('SearchResultsPage', () => {
         birthDate: new Date,
         preferredName: "KJ"
     });
-    expect(spy).toBeCalledTimes(1);;
+    expect(spy).toBeCalledTimes(1);
   });
 
   it('should substract the roommates', () => {
