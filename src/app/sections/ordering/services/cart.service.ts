@@ -94,12 +94,7 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
-      tap(orderInfo => {
-        if(orderInfo && orderInfo.orderItems.length > 0) return orderInfo;
-
-        return [];
-      }),
-      map(({ orderItems }) => orderItems.reduce((state, { quantity }) => state + quantity, 0))
+      map(orderInfo => orderInfo ? orderInfo.orderItems.reduce((state, { quantity }) => state + quantity, 0) : 0)
     );
   }
 
