@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment, ItemsOrderInfo } from '../shared/models';
@@ -94,7 +94,11 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
-      filter(orderInfo => orderInfo && orderInfo.orderItems.length > 0),
+      tap(orderInfo => {
+        if(orderInfo && orderInfo.orderItems.length > 0) return orderInfo;
+
+        return [];
+      }),
       map(({ orderItems }) => orderItems.reduce((state, { quantity }) => state + quantity, 0))
     );
   }
