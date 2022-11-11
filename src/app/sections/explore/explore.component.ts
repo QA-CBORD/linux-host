@@ -9,7 +9,6 @@ import { APP_ROUTES } from '@sections/section.config';
 @Component({
   selector: 'st-explore',
   templateUrl: './explore.component.html',
-  styleUrls: ['./explore.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExploreComponent implements OnInit {
