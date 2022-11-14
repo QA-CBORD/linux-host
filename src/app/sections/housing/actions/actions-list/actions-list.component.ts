@@ -12,7 +12,6 @@ export class ActionsListComponent {
   @Input() showEditOption = true;
   @Input() showViewOption = true;
   @Input() showRemoveOption = false;
-
   @Output() onRemove = new EventEmitter<any>();
 
   constructor(private _popoverController: PopoverController) {}
