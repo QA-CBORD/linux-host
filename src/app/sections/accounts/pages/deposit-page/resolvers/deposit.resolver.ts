@@ -35,7 +35,6 @@ export class DepositResolver implements Resolve<Observable<any>> {
       Settings.Setting.CREDITCARD_AMOUNT_MAX,
     ];
 
-    //const contentStringCall = this.depositService.initContentStringsList();
     const accountsCall = this.depositService.getUserAccounts();
     const settingsCall = this.depositService.getUserSettings(requiredSettings);
     const depositContentStringModel = this.commonService.loadContentString(ContentStringCategory.deposit, {
