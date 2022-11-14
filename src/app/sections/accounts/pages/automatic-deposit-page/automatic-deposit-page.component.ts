@@ -269,7 +269,7 @@ export class AutomaticDepositPageComponent {
   }
 
   private async defineDestAccounts(target: any) {
-    let type = target;
+    let type;
 
     if (target instanceof Object) {
       type = this.isBillMeAccount(target) ? PAYMENT_TYPE.BILLME : PAYMENT_TYPE.CREDIT;

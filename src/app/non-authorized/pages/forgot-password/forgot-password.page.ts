@@ -44,7 +44,7 @@ export class ForgotPasswordPage implements OnInit {
     this.pageContents = this.messageProxy.get<ForgotPasswordCsModel>() || {} as any;
     this.initForm();
     setTimeout(() => {
-      document.getElementById('form__description-text').focus();
+      document.getElementById('form__description-text')?.focus();
     }, TIMEOUTS.A11yFocus);
   }
 

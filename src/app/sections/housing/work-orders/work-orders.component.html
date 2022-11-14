@@ -5,6 +5,7 @@
     [showAddButton]="workOrderLists.canSubmit"
     (onAddButtonClicked)="createWorkOrderDefault()"
     [ignoreValidation]="true"
+    *ngIf="workOrderLists.canSubmit || workOrderLists.workOrders.length > 0"
   >
     <ion-list slot="content"  class="ion-no-margin bg-transparent">
       <!-- TODO: Add plus button  -->
