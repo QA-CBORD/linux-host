@@ -3,20 +3,11 @@
       <ion-item lines="none" class="roomSelect-list__item"  button (click)="goToRoomSelection(room.key)">
         <div class="roomSelect-item-order">
             <div class="roomSelect-list__item-info">
-              <div  class="roomSelect-list__item-start-time">{{room.accessTime | date: 'medium'}}</div>
-              <div  class="roomSelect-list__item-end-time">{{room.accessEnd | date: 'medium'}}</div>
+              <div  class="roomSelect-list__item-start-time">{{room.accessTime | date: 'MMM d, y, h:mm a'}}</div>
+              <div  class="roomSelect-list__item-end-time">{{room.accessEnd | date: 'MMM d, y, h:mm a'}}</div>
             </div>
           <h2  class="roomSelect-list__item-name">{{room.name}}</h2>
         </div>
       </ion-item>
     </div>
   </ng-container>
-<!-- <h3 class="rooms__title">Rooms</h3>
-
-<div class="rooms__content">
-  <div class="rooms__empty">You haven't selected a room yet</div>
-
-  <ion-button class="btn btn--primary rooms__search" shape="round" [routerLink]="['/housing/rooms-search']" mode="ios">
-    Search Rooms
-  </ion-button>
-</div> -->
