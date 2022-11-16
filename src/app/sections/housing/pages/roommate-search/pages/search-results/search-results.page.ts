@@ -143,7 +143,7 @@ export class SearchResultsPage implements OnInit {
           if (status) {
             this._applicationStateService.setSubtractSelectedRoommates();
             this.cdRef.detectChanges();
-            this._router.navigate([this.navService.getPreviousTrackedUrl()]);
+            this.BackToPreviousPage();
           } else {
             this._toastService.showToast({
               message: 'This patron can not be selected as your roommate at the moment.',
@@ -152,6 +152,10 @@ export class SearchResultsPage implements OnInit {
           this._loadingService.closeSpinner();
         });
       });
+  }
+
+  BackToPreviousPage() {
+    this._router.navigate([this.navService.getPreviousTrackedUrl()]);
   }
 
   private mapRoommates(options: RoommateSearchOptions) {
