@@ -1,22 +1,14 @@
 <st-header title="Received Roommate Request" [isTitleShow]="true" backButtonIcon="close" [isBackButtonShow]="false"
-  [isDismissButtonShow]="true" [isToolbarShow]="true" backButtonTitle="" (onDismiss)="onClose()">
+  [isDismissButtonShow]="true" [isToolbarShow]="true" backButtonTitle="" (onDismiss)="onClose()"></st-header>
 
-  <ion-content class="edit-home__content-container">
-    <ion-card *ngFor="let roommate of requestingRoommate; let index = index">
-      <ion-item>
-        <ion-list-header>Roommate Request</ion-list-header>
-      </ion-item>
+<ion-content class="edit-home__content-container">
+    <ion-card no-padding *ngFor="let roommate of requestingRoommate; let index = index">
+      <ion-card-header>
+        <ion-card-title>Roommate Request</ion-card-title>
+      </ion-card-header>
       <div [hidden]="true">{{_applicationsStateService.requestedRoommates | async}}</div>
-      <ion-list class="btns-content">
-        <ion-text class="text-roommate-requesting">{{roommate.firstName}} {{roommate.lastName}} has sent you a Roommate
-          Request. If you deny the request, {{roommate.firstName}} {{roommate.lastName}} will not be notified.
-        </ion-text>
-      </ion-list>
-      <ion-list class="btns-content">
-        <ion-button class="btn-roommate-requesting" (click)="acceptRoommateRequest(roommate)">Accept Roommate
-          Request</ion-button>
-        <ion-button class="btn-roommate-requesting" color="danger" (click)="denyRoommateRequest(index)">Deny Roommate
-          Request</ion-button>
-      </ion-list>
+        <ion-card-content class="text-roommate-requesting">{{roommate.firstName}} {{roommate.lastName}} has sent you a Roommate Request. If you deny the request, {{roommate.firstName}} {{roommate.lastName}} will not be notified.</ion-card-content>
+        <st-button class="btn-roommate-requesting" (click)="acceptRoommateRequest(roommate)">Accept Roommate Request</st-button>
+        <st-button  class="btn-roommate-requesting" color="danger" (click)="denyRoommateRequest(index)" >Deny Roommate Request</st-button>
     </ion-card>
-  </ion-content>
+</ion-content>
