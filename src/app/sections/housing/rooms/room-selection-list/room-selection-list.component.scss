@@ -59,7 +59,7 @@
   .roomSelect-list__item-start-time, .roomSelect-list__item-end-time {
     display: block;
     color: $color-dusty-gray;
-
+    padding: 2.5px;
 }
   &::before {
     background-color: $color-strong-blue;
