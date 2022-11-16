@@ -41,6 +41,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-order-details',
@@ -100,7 +101,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly a11yService: AccessibilityService
+    private readonly a11yService: AccessibilityService,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -225,18 +227,33 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.onOrderTipChanged.emit(value ? Number(value) : 0);
   }
 
+  async onZeroMealsMessage(): Promise<void> {
+    await this.toastService.showToast({
+      message: `Sorry, You Don't Have Enough Meals for This Order`,
+      icon: 'warning',
+      cssClass: 'toast-message-warning',
+    });
+
+    this.detailsForm.get(this.controlsNames.paymentMethod).patchValue('');
+  }
+
   onPaymentChanged(data) {
     const {
       detail: { value },
     } = data;
-    const { id, paymentSystemType } = value;
+    const { id, paymentSystemType, accountType, balance } = value;
+
+    if (AccountType.MEALS === accountType && balance === 0) {
+      this.onZeroMealsMessage();
+      return;
+    }
 
     if (value instanceof Object) {
       this.onOrderPaymentInfoChanged.emit({ accountId: id, paymentSystemType });
     } else {
       this.onOrderPaymentInfoChanged.emit(value);
       this.detailsForm.get(this.controlsNames.paymentMethod).reset();
-      this.detailsForm.setValue({ [this.controlsNames.paymentMethod]: '' });
+      this.detailsForm.patchValue({ [this.controlsNames.paymentMethod]: '' });
     }
 
     if (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {

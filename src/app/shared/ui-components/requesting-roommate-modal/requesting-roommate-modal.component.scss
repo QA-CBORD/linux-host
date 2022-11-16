@@ -11,16 +11,14 @@
   width: 95%;
 }
 
-.requesting-roommate-modal__header-title{
-  padding-left: 10px;
-  padding-right: 30px;
-  font-size: 15px;
+ion-card-title {
+  @include font-nunito-semibold(22px);
+}
+
+ion-card-content {
+  @include font-nunito-regular(16px);
 }
 
 st-button {
   margin: 10px;
-}
-
-ion-card {
-  margin: 8px !important;
 }
