@@ -33,7 +33,7 @@ export class ExploreService {
       this.getFoodSetting()
     ).pipe(
       map(([merchants, favMerchants, menuMerchants, enableFoodSetting]) =>
-        this.updateMerchantInfo(merchants, favMerchants, menuMerchants, enableFoodSetting)
+        this.updateMerchantInfo(enableFoodSetting, merchants, favMerchants, menuMerchants)
       )
     );
   }
@@ -69,10 +69,10 @@ export class ExploreService {
   }
 
   private updateMerchantInfo(
+    foodEnabledSetting: SettingInfo,
     merchants: MerchantInfo[] = [],
     favMerchants: MerchantInfo[] = [],
-    menuMerchants: MerchantInfo[] = [],
-    foodEnabledSetting: SettingInfo
+    menuMerchants: MerchantInfo[] = []
   ): MerchantInfo[] {
     const isFoodEnabled = foodEnabledSetting && Boolean(Number(foodEnabledSetting.value));
     const menuIds = menuMerchants.map(({ id }) => id);

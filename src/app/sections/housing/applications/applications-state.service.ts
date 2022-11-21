@@ -223,18 +223,16 @@ export class ApplicationsStateService {
     return state.applicationDetails;
   }
 
-  isSubmitted(termKey) {
+  isSubmitted(termKey: number) {
     let isSubmitted;
-    this.applications$.subscribe((res) => {
-      isSubmitted = res.find((ApplicationDetails: ApplicationDetails) => {
-        if (ApplicationDetails.applicationDefinition.key == termKey) {
-          if (ApplicationDetails.patronApplication) {
-            return ApplicationDetails.patronApplication.isApplicationSubmitted
-          }
-          return false;
+    this.applications$.subscribe(res => {
+      isSubmitted = res.find((applicationDetails: ApplicationDetails) => {
+        if (applicationDetails.applicationDefinition.key === termKey && applicationDetails.patronApplication) {
+          return applicationDetails.patronApplication.isApplicationSubmitted;
         }
-      })
-    })
+        return false;
+      });
+    });
     return isSubmitted;
   }
 }

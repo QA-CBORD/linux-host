@@ -51,7 +51,7 @@ export class AccountService {
   }
 
   getUserSettings(settings: Settings.Setting[]): Observable<SettingInfo[]> {
-    return this.settingsFacadeService.getSettings(settings).pipe(tap(settings => (this._settings = settings)));
+    return this.settingsFacadeService.getSettings(settings).pipe(tap(settingsInfo => (this._settings = settingsInfo)));
   }
 
   getAccountById(accountId: string): Observable<UserAccount> {

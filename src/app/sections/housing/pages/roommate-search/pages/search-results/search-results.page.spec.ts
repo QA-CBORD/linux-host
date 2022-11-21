@@ -9,6 +9,8 @@ import { ApplicationsService } from '@sections/housing/applications/applications
 import { HousingService } from '@sections/housing/housing.service';
 import { of } from 'rxjs';
 import { SearchResultsPage } from './search-results.page';
+import { Router } from '@angular/router';
+import { NavigationService } from '@shared/services/navigation.service';
 
 
 const OPTIONS = {
@@ -72,6 +74,14 @@ describe('SearchResultsPage', () => {
     detectChanges: jest.fn(),
   };
 
+  const router = {
+    detectChanges: jest.fn(),
+  };
+
+  const navigationService = {
+    detectChanges: jest.fn(),
+  };
+
   const _alertController = {
     create: jest.fn(() => ({
       dismiss: () => ({ then: () => of({ role: BUTTON_TYPE.OKAY }) }),
@@ -91,6 +101,8 @@ describe('SearchResultsPage', () => {
         { provide: AlertController, useValue: _alertController },
         { provide: ToastService, useValue: toastService },
         { provide: ChangeDetectorRef, useValue: cd },
+        { provide: Router, useValue: router},
+        { provide: NavigationService, useValue: navigationService}
       ],
     }).compileComponents();
   });
