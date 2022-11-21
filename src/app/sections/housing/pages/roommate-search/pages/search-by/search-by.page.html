@@ -1,22 +1,22 @@
 <ion-content>
-  <div class="input__wrapper" *ngIf="(searchOptions$ | async) as options">
+  <section class="input__wrapper" *ngIf="(searchOptions$ | async) as options">
     <form [formGroup]="searchForm" novalidate>
       <ng-container [ngSwitch]="options.searchOptions">
         <div *ngSwitchCase="'byExactId'">
           <div class="input__control">
-            <st-input-floating-label label="Search by exact match of ID#" formControlName="input1" [control]="searchForm.get('input1')"
-              type="text" idd="search_1">
+            <st-input-floating-label label="Search by exact match of ID#" [formControlName]="firstInputName"
+              [control]="firstInput" type="text" idd="search_1">
             </st-input-floating-label>
           </div>
         </div>
         <div *ngSwitchCase="'byPartialPreferredFirstLast'">
           <div class="input__control">
-            <st-input-floating-label label="Search by preferred first and last name" formControlName="input1"
-              [control]="searchForm.get('input1')" type="text" idd="search_1">
+            <st-input-floating-label label="Search by preferred first and last name" [formControlName]="firstInputName"
+              [control]="firstInput" type="text" idd="search_1">
             </st-input-floating-label>
           </div>
           <div class="input__control">
-            <st-input-floating-label label="Last Name" formControlName="input2" [control]="searchForm.get('input2')"
+            <st-input-floating-label label="Last Name" [formControlName]="secondInputName" [control]="secondInput"
               type="text" idd="search_2">
             </st-input-floating-label>
           </div>
@@ -24,13 +24,13 @@
         <div *ngSwitchCase="'byPartialLastFirst'">
           <h4 class="serch-by__header">Search by last and first name</h4>
           <div class="input__control">
-            <st-input-floating-label label="Last Name" formControlName="input1" [control]="searchForm.get('input1')"
+            <st-input-floating-label label="Last Name" [formControlName]="firstInputName" [control]="firstInput"
               type="text" idd="search_1">
             </st-input-floating-label>
           </div>
 
           <div class="input__control">
-            <st-input-floating-label label="First Name" formControlName="input2" [control]="searchForm.get('input2')"
+            <st-input-floating-label label="First Name" [formControlName]="secondInputName" [control]="secondInput"
               type="text" idd="search_2">
             </st-input-floating-label>
           </div>
@@ -38,7 +38,7 @@
         <div *ngSwitchCase="'byExactAlternateId'">
           <h4 class="serch-by__header">Search by exact match of alternate ID#</h4>
           <div class="input__control">
-            <st-input-floating-label label="Alternate ID#" formControlName="input1" [control]="searchForm.get('input1')"
+            <st-input-floating-label label="Alternate ID#" [formControlName]="firstInputName" [control]="firstInput"
               type="text" idd="search_1">
             </st-input-floating-label>
           </div>
@@ -46,7 +46,7 @@
         <div *ngSwitchCase="'byPartialEmail'">
           <h4 class="serch-by__header">Search by university email</h4>
           <div class="input__control">
-            <st-input-floating-label label="Email" formControlName="input1" [control]="searchForm.get('input1')"
+            <st-input-floating-label label="Email" [formControlName]="firstInputName" [control]="firstInput"
               type="text" idd="search_1">
             </st-input-floating-label>
           </div>
@@ -54,12 +54,12 @@
       </ng-container>
       <div>
         <st-button expand="block" color="primary" mode="ios" (click)="searchRoommates(options)"
-          [disabled]="searchForm.invalid || isApplicationSubmitted()">
+          [disabled]="!searchForm.valid">
           Search
         </st-button>
       </div>
     </form>
-  </div>
+  </section>
   <div *ngIf="(requestedRoommates$ | async) as requestedRoommates" class="roommate-requested__container">
     <div *ngIf="(searchOptions$ | async) as options">
       <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
@@ -68,31 +68,31 @@
           <ion-card *ngSwitchCase="OptionsName.FullName">
             <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
               roommate.lastName}}</ion-card-content>
-              <ion-footer class="status">
-                <ion-row>
-                  <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-                </ion-row>
-              </ion-footer>
+            <ion-footer class="status">
+              <ion-row>
+                <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+              </ion-row>
+            </ion-footer>
           </ion-card>
 
           <ion-card *ngSwitchCase="OptionsName.PreferredName">
             <ion-card-content>{{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName
               : roommate.preferredName }} {{ roommate.lastName}}</ion-card-content>
-              <ion-footer class="status">
-                <ion-row>
-                  <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-                </ion-row>
-              </ion-footer>
+            <ion-footer class="status">
+              <ion-row>
+                <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+              </ion-row>
+            </ion-footer>
           </ion-card>
 
           <ion-card *ngSwitchCase="OptionsName.FullNameDOB">
             <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
               roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}</ion-card-content>
-              <ion-footer class="status">
-                <ion-row>
-                  <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-                </ion-row>
-              </ion-footer>
+            <ion-footer class="status">
+              <ion-row>
+                <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
+              </ion-row>
+            </ion-footer>
           </ion-card>
         </ng-container>
       </div>
