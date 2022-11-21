@@ -7,7 +7,7 @@ import {
   Input,
   StaticProvider,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl } from '@angular/forms';
 
 import { hasValue } from '@sections/housing/utils';
 
@@ -33,15 +33,17 @@ export class StDateSelectComponent implements ControlValueAccessor {
 
   @Input() format: string;
 
+  @Input() control: AbstractControl = new FormControl();
+
   // @Input() displayFormat = 'MMM DD, YYYY';
 
   @HostBinding('class.date-select__disabled')
   @Input()
   isDisabled = false;
 
-  onChange: (value: any) => void;
+  ionChange: (value: any) => void;
 
-  onTouched: () => void;
+  ionTouched: () => void;
 
   value: string;
 
@@ -53,17 +55,16 @@ export class StDateSelectComponent implements ControlValueAccessor {
 
   handleChange(event: CustomEvent): void {
     const value: string = event.detail.value;
-
-    this.onChange(value);
+    this.writeValue(value);
     this._checkIsFilled(value);
   }
 
   registerOnChange(fn: any): void {
-    this.onChange = fn;
+    this.ionChange = fn;
   }
 
   registerOnTouched(fn: any): void {
-    this.onTouched = fn;
+    this.ionTouched = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {
