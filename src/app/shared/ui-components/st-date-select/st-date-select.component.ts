@@ -41,9 +41,9 @@ export class StDateSelectComponent implements ControlValueAccessor {
   @Input()
   isDisabled = false;
 
-  ionChange: (value: any) => void;
+  onChange: (value: any) => void;
 
-  ionTouched: () => void;
+  onTouched: () => void;
 
   value: string;
 
@@ -60,11 +60,11 @@ export class StDateSelectComponent implements ControlValueAccessor {
   }
 
   registerOnChange(fn: any): void {
-    this.ionChange = fn;
+    this.onChange = fn;
   }
 
   registerOnTouched(fn: any): void {
-    this.ionTouched = fn;
+    this.onTouched = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {
