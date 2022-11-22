@@ -35,8 +35,6 @@ export class StDateSelectComponent implements ControlValueAccessor {
 
   @Input() control: AbstractControl = new FormControl();
 
-  // @Input() displayFormat = 'MMM DD, YYYY';
-
   @HostBinding('class.date-select__disabled')
   @Input()
   isDisabled = false;
