@@ -242,8 +242,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       detail: { value },
     } = data;
     const { id, paymentSystemType, accountType, balance } = value;
+    const { isASAP } = this.orderDetailOptions;
 
-    if (AccountType.MEALS === accountType && balance === 0) {
+    if (AccountType.MEALS === accountType && balance === 0 && isASAP) {
       this.onZeroMealsMessage();
       return;
     }
