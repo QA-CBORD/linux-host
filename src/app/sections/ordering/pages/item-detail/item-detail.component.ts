@@ -8,7 +8,6 @@ import { distinctUntilChanged, filter, first, take } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
-  ORDER_ERROR_CODES,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
@@ -240,37 +239,55 @@ export class ItemDetailComponent implements OnInit {
       .then(() => {
         this.cartService.cartsErrorMessage = null;
         this.onClose();
-
-        this.cartService.menuItems$
-          .pipe(
-            filter((val, index) => !!val || index > 1),
-            distinctUntilChanged(),
-            take(1)
-          )
-          .subscribe(items => this.showAddedItemsQuantity(items));
+        this.addNewItem();
       })
       .catch(async error => {
         // Temporary solution:
         if (Array.isArray(error)) {
           const [code, text] = error;
-          if (+code === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-            this.cartService.removeLastOrderItem();
-            await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
-            return;
-          } else if (+code === +ORDER_ERROR_CODES.ORDER_ITEM_MAX) {
-            this.cartService.removeLastOrderItem();
-            this.failedValidateOrder('The cart has reached it’s max number of items (5)');
-            return;
-          } else {
-            this.cartService.cartsErrorMessage = text;
-            this.onClose();
+
+          const doActionErrorCode = {
+            9017: async () => {
+              this.cartService.removeLastOrderItem();
+              await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
+            },
+            9006: () => {
+              this.cartService.removeLastOrderItem();
+              this.failedValidateOrder(text);
+            },
+            9005: () => {
+              this.cartService.cartsErrorMessage = text;
+              this.onClose();
+              this.addNewItem();
+            },
+          };
+
+          const action = doActionErrorCode[+code];
+
+          if (action) {
+            action();
             return;
           }
+
+          this.cartService.cartsErrorMessage = text;
+          this.onClose();
+          return;
         }
+
         this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })
       .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async addNewItem() {
+    this.cartService.menuItems$
+      .pipe(
+        filter((val, index) => !!val || index > 1),
+        distinctUntilChanged(),
+        take(1)
+      )
+      .subscribe(items => this.showAddedItemsQuantity(items));
   }
 
   private async failedValidateOrder(message: string) {
