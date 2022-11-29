@@ -11,17 +11,21 @@ import { Term } from './terms.model';
 })
 export class TermsService {
   private _termIdSource: ReplaySubject<number> = new ReplaySubject<number>(1);
+  private _termLabelSource: ReplaySubject<string> = new ReplaySubject<string>(1);
 
   termId$: Observable<number> = this._termIdSource.asObservable();
+  termlabel$: Observable<string> = this._termLabelSource.asObservable();
 
   constructor(
-      private _environmentFacadeService: EnvironmentFacadeService,
-      private _housingProxyService: HousingProxyService
-      ) {}
+    private _environmentFacadeService: EnvironmentFacadeService,
+    private _housingProxyService: HousingProxyService
+  ) {
+    this._termLabelSource.next('Select Term');
+  }
 
   getTerms(): Observable<Term[]> {
     const apiUrl = `${
-        this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+      this._environmentFacadeService.getEnvironmentObject().housing_aws_url
     }/patron-applications/v.1.0/patron-terms/patrons/self`;
 
     return this._housingProxyService.get<Term[]>(apiUrl).pipe(
@@ -30,8 +34,8 @@ export class TermsService {
     );
   }
 
-  setTermId(termId: number): void {
-    this._termIdSource.next(termId);
+  setTerm(term: Term): void {
+    this._termIdSource.next(term.key);
+    this._termLabelSource.next(term.termName);
   }
 }
-
