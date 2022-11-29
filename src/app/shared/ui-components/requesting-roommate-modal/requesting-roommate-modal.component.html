@@ -9,6 +9,6 @@
       <div [hidden]="true">{{_applicationsStateService.requestedRoommates | async}}</div>
         <ion-card-content class="text-roommate-requesting">{{roommate.firstName}} {{roommate.lastName}} has sent you a Roommate Request. If you deny the request, {{roommate.firstName}} {{roommate.lastName}} will not be notified.</ion-card-content>
         <st-button class="btn-roommate-requesting" (click)="acceptRoommateRequest(roommate)">Accept Roommate Request</st-button>
-        <st-button  class="btn-roommate-requesting" color="danger" (click)="denyRoommateRequest(index)" >Deny Roommate Request</st-button>
+        <st-button  class="btn-roommate-requesting" color="danger" (click)="denyRoommateRequest(roommate)" >Deny Roommate Request</st-button>
     </ion-card>
 </ion-content>
