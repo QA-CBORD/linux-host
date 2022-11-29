@@ -1,10 +1,18 @@
 <ion-item fill="outline" mode="md" [disabled]="isDisabled">
   <ion-label position="floating">{{ label }}</ion-label>
   <ion-input [value]="value | date: format" [id]="label"></ion-input>
-  <ion-modal [trigger]="label" [initialBreakpoint]="0.50" >
+  <ion-modal #modal [trigger]="label" [initialBreakpoint]="0.50" >
     <ng-template>
-      <ion-datetime presentation="date" [(ngModel)]="value" class="ion-margin"
-       ></ion-datetime>
+      <ion-toolbar>
+        <ion-title>Calendar</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="modal.dismiss(value)">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <ion-datetime presentation="date" (ionChange)="handleChange($event)" class="ion-margin"
+        ></ion-datetime>
+      </ion-content>
     </ng-template>
   </ion-modal>
 </ion-item>
