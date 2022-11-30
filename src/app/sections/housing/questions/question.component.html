@@ -218,6 +218,7 @@
   <ng-container [ngSwitch]="question['dataType']">
     <div *ngSwitchCase="'DateTime'" class="question__item">
       <st-date-select
+        [control]="parentGroup.get(question['name'])"
         [name]="question['name']"
         [label]="question.label"
         [formControlName]="question['name']"
@@ -231,6 +232,7 @@
     </div>
     <div *ngSwitchCase="'Date'" class="question__item">
       <st-date-select
+        [control]="parentGroup.get(question['name'])"
         [name]="question['name']"
         [label]="question.label"
         [formControlName]="question['name']"
