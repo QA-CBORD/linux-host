@@ -96,8 +96,8 @@ export class RequestingRoommateModalComponent implements OnInit {
     }
   }
 
-  denyRoommateRequest(index: number) {
-    this._applicationsStateService.deleteRequestingRoommate(index);
+  denyRoommateRequest(roommate: RoommatePreferences) {
+    this._applicationsStateService.deleteRequestingRoommate(roommate.patronKeyRoommate);
     this.checkIfLastRequest();
   }
 }
