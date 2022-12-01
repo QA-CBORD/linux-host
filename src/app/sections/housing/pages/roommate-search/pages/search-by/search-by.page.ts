@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
@@ -20,6 +20,8 @@ export enum OptionsName {
   FullName = 'fullName',
   FullNameDOB = 'fullNameDOB',
 }
+
+const REGEX_ALPHANUMERIC = `^[a-zA-Z0-9'-]*$`;
 @Component({
   selector: 'st-search-by',
   templateUrl: './search-by.page.html',
@@ -35,6 +37,13 @@ export class SearchByPage implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   firstInputName = 'first';
   secondInputName = 'second';
+
+  errorMessages = {
+    required: 'This field is required',
+    numeric: 'This field should be numeric',
+    integer: 'This field should be integer',
+    string: 'This field should be string',
+  };
   constructor(
     private _router: Router,
     private _applicationStateService: ApplicationsStateService,
@@ -46,11 +55,10 @@ export class SearchByPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.searchForm = this.fb.group({
-      [this.firstInputName]: [''],
-      [this.secondInputName]: [''],
+      [this.firstInputName]: ['',[Validators.required,Validators.pattern(REGEX_ALPHANUMERIC)]],
+      [this.secondInputName]: ['',[Validators.required,Validators.pattern(REGEX_ALPHANUMERIC)]],
     });
 
-    this.searchForm.setValidators(this.atLeastOneFilled());
     this.searchForm.updateValueAndValidity();
     this.searchOptions$ = this._applicationStateService.roommateSearchOptions;
     this._initTermsSubscription();
@@ -157,19 +165,7 @@ export class SearchByPage implements OnInit, OnDestroy {
     return this.searchForm.get(this.secondInputName);
   }
 
-  private atLeastOneFilled = () => {
-    return (controlGroup: FormGroup) => {
-      const controls = controlGroup.controls;
-      if (anyInputFilled()) {
-        return {
-          atLeastOneFilled: true,
-        };
-      }
-      return null;
-
-      function anyInputFilled() {
-        return !Object.keys(controls).some(key => controls[key].value !== '');
-      }
-    };
-  };
+  public errorValidator(control: AbstractControl) {
+    return !control.valid && control.touched && !control.disabled;
+  }
 }

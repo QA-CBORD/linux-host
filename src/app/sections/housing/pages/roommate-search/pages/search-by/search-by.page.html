@@ -25,14 +25,16 @@
           <h4 class="serch-by__header">Search by last and first name</h4>
           <div class="input__control">
             <st-input-floating-label label="Last Name" [formControlName]="firstInputName" [control]="firstInput"
-              type="text" idd="search_1">
+              type="text" idd="search_1" [isError]="errorValidator(firstInput)">
             </st-input-floating-label>
+            <st-control-errors [control]="firstInput" [errorMessages]="errorMessages" ></st-control-errors>
           </div>
 
           <div class="input__control">
             <st-input-floating-label label="First Name" [formControlName]="secondInputName" [control]="secondInput"
-              type="text" idd="search_2">
+              type="text" idd="search_2" [isError]="errorValidator(secondInput)">
             </st-input-floating-label>
+            <st-control-errors [control]="secondInput" [errorMessages]="errorMessages" ></st-control-errors>
           </div>
         </div>
         <div *ngSwitchCase="'byExactAlternateId'">
