@@ -3,8 +3,8 @@
       <ion-item lines="none" class="contract-list__item" >
         <div class="contract-item-order">
             <div class="contract-list__item-info">
-              <div  class="contract-list__item-start-time">{{contract.startDate | date: 'MMM d, y h:mm a'}}</div>
-              <div  class="contract-list__item-end-time">{{contract.endDate | date: 'MMM d, y h:mm a'}}</div>
+              <div  class="contract-list__item-start-time">{{contract.startDate | date: dateFormat}</div>
+              <div  class="contract-list__item-end-time">{{contract.endDate | date: dateFormat}}</div>
             </div>
           <h2  class="contract-list__item-name">{{contract.fullName}}</h2>
         </div>
