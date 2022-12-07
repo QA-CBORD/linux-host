@@ -1,4 +1,4 @@
-import { clearIndexedDB, pause, restartApp, url } from '../helpers';
+import { pause, restartApp, url } from '../helpers';
 
 import Entry from '../pageobjects/entry.page';
 import Institution from '../pageobjects/institutions.page';
@@ -30,7 +30,7 @@ describe('Entry', () => {
     await expect((await $(changeEnvAlert.selector))).not.toBeDisplayed();
   });
 
-  it('Should open intitutions', async () => {
+  it('Should open institutions', async () => {
     const institutionsButton = await Entry.searchInstitutionsButton;
     await institutionsButton.tap();
     await url('/anonymous/institutions');

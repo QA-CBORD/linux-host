@@ -20,8 +20,8 @@ export const config: WebdriverIO.Config = {
     },
   },
   baseUrl: process.env.SERVE_PORT
-  ? `http://localhost:${process.env.SERVE_PORT}/wd/hub/`
-  : 'http://localhost:8085/wd/hub/',
+    ? `http://localhost:${process.env.SERVE_PORT}/wd/hub/`
+    : 'http://localhost:8085/wd/hub/',
   //
   // ====================
   // Runner Configuration
@@ -35,6 +35,14 @@ export const config: WebdriverIO.Config = {
   // ==================
   //
   specs: ['./tests/**/*.spec.ts'],
+  suites: {
+    loginHostedStudent: [
+      './tests/specs/app.entry.spec.ts',
+      './tests/specs/app.institutions.spec.ts',
+      './tests/specs/app.pre-login.spec.ts',
+      './tests/specs/app.login.spec.ts',
+    ]
+  },
   //
   // ============
   // Capabilities
