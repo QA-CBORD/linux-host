@@ -21,11 +21,11 @@ import { RoomsModule } from '@sections/housing/rooms/rooms.module';
 import { TermsModule } from '@sections/housing/terms/terms.module';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { WaitingListsModule } from '@sections/housing/waiting-lists/waiting-lists.module';
-import { WorkOrdersModule } from '@sections/housing/work-orders/work-orders.module';
 import { EMPTY, of } from 'rxjs';
 import { HousingDashboardPage } from './housing-dashboard.component';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
-
+import { MockDeclaration } from 'ng-mocks';
+import { WorkOrdersComponent } from '@sections/housing/work-orders/work-orders.component';
 
 const _loadingService = {
   showSpinner: jest.fn(),
@@ -66,10 +66,10 @@ describe('HousingDashboardPage', () => {
   let component: HousingDashboardPage;
   let fixture: ComponentFixture<HousingDashboardPage>;
 
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HousingDashboardPage],
+      //TODO: Temp fix for Swiper imports, should setup JEST instead
+      declarations: [HousingDashboardPage, MockDeclaration(WorkOrdersComponent)],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [
         CommonModule,
@@ -85,7 +85,6 @@ describe('HousingDashboardPage', () => {
         ContractListModule,
         CheckInOutModule,
         WaitingListsModule,
-        WorkOrdersModule,
         InspectionsModule,
         AttachmentModule,
         HttpClientTestingModule,

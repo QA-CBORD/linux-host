@@ -3,7 +3,7 @@
   class="ion-padding check-in-out-slots__content">
     <ng-container *ngIf="(roommates$ | async) as roommates; else noRoommates">
       <div>
-        <h4>Your search returned {{ roommates.length }} result(s)</h4>
+        <h4>Your search returned {{ roommates.length }} result{{ roommates.length == 1 ? '' : 's' }}</h4>
         <div *ngIf="getRoommatePreferencesSelecteds() != ''">
           <h4>You added {{ getRoommatePreferencesSelecteds() }} as a roommate(s)</h4>
         </div>

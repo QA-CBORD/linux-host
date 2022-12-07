@@ -7,21 +7,18 @@
   --icon-padding-end: 5px;
 }
 
-.btns-content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
-}
-.btn-roommate-requesting{
+.btn-roommate-requesting {
   width: 95%;
 }
 
-.text-roommate-requesting {
-  width: 80%;
+ion-card-title {
+  @include font-nunito-semibold(22px);
 }
 
-.requesting-roommate-modal__header-title{
-  padding-left: 10px;
-  padding-right: 30px;
-  font-size: 15px;
+ion-card-content {
+  @include font-nunito-regular(16px);
+}
+
+st-button {
+  margin: 10px;
 }

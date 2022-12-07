@@ -10,6 +10,8 @@ import { RoommateDetails } from '@sections/housing/roommate/roomate.model';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { RoommatePreferences } from '../../../../applications/applications.model';
+import { Router } from '@angular/router';
+import { NavigationService } from '@shared/services/navigation.service';
 
 @Component({
   selector: 'st-search-results',
@@ -32,7 +34,9 @@ export class SearchResultsPage implements OnInit {
     private _applicationStateService: ApplicationsStateService,
     private _alertController: AlertController,
     private _toastService: ToastService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private _router: Router,
+    private readonly navService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -108,24 +112,16 @@ export class SearchResultsPage implements OnInit {
   }
 
   getRoommatePreferencesSelecteds(): string {
-    let roommates;
+    let roommates: string[];
     this.roommateSearchOptions$.pipe(take(1)).subscribe(options => {
-      roommates = this.roommateSelecteds.map(res => {
-        if (res.patronKeyRoommate > 0) {
-          this._applicationStateService.setSubtractSelectedRoommates();
-        }
-
-        if (options.showOptions == 'preferredNameLast' && res.preferredName) {
-          return res.preferredName;
-        } else {
-          return res.firstName;
-        }
-      });
+      roommates = this.mapRoommates(options);
     });
-    
-    if (roommates && roommates[0]) {
-      return roommates.join();
+
+    if (roommates && roommates.length > 0) {
+      return roommates.join(', ');
     }
+
+    return '';
   }
 
   hasRoommatePreference(): boolean {
@@ -147,6 +143,7 @@ export class SearchResultsPage implements OnInit {
           if (status) {
             this._applicationStateService.setSubtractSelectedRoommates();
             this.cdRef.detectChanges();
+            this.BackToPreviousPage();
           } else {
             this._toastService.showToast({
               message: 'This patron can not be selected as your roommate at the moment.',
@@ -155,5 +152,25 @@ export class SearchResultsPage implements OnInit {
           this._loadingService.closeSpinner();
         });
       });
-   }
+  }
+
+  BackToPreviousPage() {
+    this._router.navigate([this.navService.getPreviousTrackedUrl()]);
+  }
+
+  private mapRoommates(options: RoommateSearchOptions) {
+    return this.roommateSelecteds
+      .filter(roommate => roommate.preferredName || roommate.firstName)
+      .map(res => {
+        if (res.patronKeyRoommate > 0) {
+          this._applicationStateService.setSubtractSelectedRoommates();
+        }
+
+        if (/preferredNameLast/.test(options.showOptions) && res.preferredName) {
+          return res.preferredName;
+        } else {
+          return res.firstName;
+        }
+      });
+  }
 }

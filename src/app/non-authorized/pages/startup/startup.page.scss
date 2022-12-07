@@ -12,4 +12,17 @@
   &__background {
     --ion-background-color: radial-gradient(121.92% 121.92% at 50% 50%, #166dff 0%, #003080 100%), #003080;
   }
+
+  &__loading {
+    position: relative;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    &.show {
+      display: flex;
+    }
+  }
 }

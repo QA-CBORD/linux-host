@@ -57,7 +57,7 @@ export function toggleBiometricStatus(services: SettingsServices) {
   setting.callback = function() {
     return services.identity
       .setBiometricsEnabled(!setting.checked)
-      .then(async () => await setting.setToggleStatus(services));
+      .then(() => setting.setToggleStatus(services));
   };
 }
 

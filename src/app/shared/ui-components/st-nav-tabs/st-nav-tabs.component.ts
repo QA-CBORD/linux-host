@@ -38,6 +38,6 @@ export class StNavTabsComponent  {
   }
 
   setActiveState(route) {
-    this.tabsConfig.tabs.map(item => (item.active = item.route === route));
+    this.tabsConfig.tabs.forEach(item => (item.active = item.route === route));
   }
 }

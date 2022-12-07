@@ -2,8 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'st-housing-tile',
-  templateUrl: './housing-tile.component.html',
-  styleUrls: ['./housing-tile.component.scss'],
+  template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HousingTileComponent {}

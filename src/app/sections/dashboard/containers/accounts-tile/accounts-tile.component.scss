@@ -17,17 +17,17 @@
     }
 
     &__slide {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        margin: 10px 0;
+        width: 100%;
+        display: grid;
+        grid-template: 55px 55px / 1fr 1fr;
+        gap: 10px;
+        padding-right: 10px;
     }
 
     &__item {
         display: flex;
         flex-direction: column;
         text-align: left;
-        width: 160px;
         height: 55px;
         margin: 5px;
         padding: 5px;

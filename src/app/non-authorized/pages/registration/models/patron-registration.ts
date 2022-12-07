@@ -66,7 +66,7 @@ export class PatronRegistration extends UserRegistrationBase implements UserRegi
   register(formData): Observable<any> {
     const data = { ...formData };
     const dynamicLookupFields = this.dynamicFields;
-    dynamicLookupFields.map(field => {
+    dynamicLookupFields.forEach(field => {
       field.value = data[field.lookupFieldId];
       delete data[field.lookupFieldId];
     });

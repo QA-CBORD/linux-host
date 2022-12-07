@@ -218,7 +218,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   private _updateFullName(children: Facility[]): Facility[] {
-    children.map(x => {
+    children.forEach(x => {
       const fullName = x.getAttributeValue('Full Name').value;
       x.facilityName = fullName
     })

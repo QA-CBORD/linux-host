@@ -83,10 +83,12 @@ export class ApplicationDetailsPage implements OnInit {
     this.updateApplicationService(form.value, applicationDetails, UpdateType.SUBMIT);
   }
 
-  async requestiongRoomate() {
+  requestiongRoomate() {
     const requestingRoommate = this.getRequestingRoomate();
     this.applicationsStateService.setRequestingRoommate(requestingRoommate);
-    await this.requestingRoomateModal(requestingRoommate);
+    if(this.applicationsStateService.requestingRoommate.length && requestingRoommate.length ){
+      this.requestingRoomateModal(requestingRoommate);
+    }
   }
 
   private async requestingRoomateModal(requestingRoommate: RoommatePreferences[]) {
@@ -141,14 +143,12 @@ export class ApplicationDetailsPage implements OnInit {
     return this.housingService.getApplicationDetails(this.getApplicationKey()).pipe(
       tap((applicationDetails: ApplicationDetails) => {
         this.isSubmitted = applicationDetails.patronApplication?.status === ApplicationStatus.Submitted;
-        if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
-          this.loadingService.closeSpinner();
-          return this.requestiongRoomate();
-        }
         this.termService.termId$.pipe(switchMap(termId =>
           this.housingService.getRequestedRommate(termId)
-        ), take(1)).subscribe(() => this.loadingService.closeSpinner())
-
+        ), take(1)).subscribe(() => this.loadingService.closeSpinner());
+        if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
+          return this.requestiongRoomate();
+        }
       }),
       catchError(error => {
         this.loadingService.closeSpinner();

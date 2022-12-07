@@ -1,28 +1,35 @@
 <div class="order" [ngClass]="{ 'order--auto-height': !isLoading }">
-  <ion-slides *ngIf="!isLoading && slides.length" mode="ios" [options]="slideOpts" class="order__slides">
-    <ion-slide *ngFor="let merchantSlide of slides" class="order__slide">
-      <div class="order__card" (click)="goToMerchant(merchant)" *ngFor="let merchant of merchantSlide">
-        <img
-          *ngIf="merchant.imageThumbnail"
-          class="order__card-photo"
-          src="{{ awsImageUrl + merchant.imageThumbnail }}"
-          alt="merchant image"
-        />
-        <img
-          *ngIf="!merchant.imageThumbnail"
-          class="order__card-photo"
-          src="/assets/images/dashboard_merchant_image_placeholder.svg"
-          alt="merchant image"
-        />
-        <div class="order__favorite-wrapper">
-          <img class="order__favorite-icon" src="/assets/icon/star-filled.svg" alt="star icon" />
-        </div>
-        <div class="order__card-title-wrapper">
-          <div class="order__card-title">{{ merchant.name }}</div>
+  <swiper
+    *ngIf="!isLoading && slides.length"
+    mode="ios"
+    [config]="slideOpts"
+    class="order__slides swiper-slides-flex-start"
+  >
+    <ng-template swiperSlide *ngFor="let merchantSlide of slides">
+      <div class="order__slide">
+        <div class="order__card" (click)="goToMerchant(merchant)" *ngFor="let merchant of merchantSlide">
+          <img
+            *ngIf="merchant.imageThumbnail"
+            class="order__card-photo"
+            src="{{ awsImageUrl + merchant.imageThumbnail }}"
+            alt="merchant image"
+          />
+          <img
+            *ngIf="!merchant.imageThumbnail"
+            class="order__card-photo"
+            src="/assets/images/dashboard_merchant_image_placeholder.svg"
+            alt="merchant image"
+          />
+          <div class="order__favorite-wrapper">
+            <img class="order__favorite-icon" src="/assets/icon/star-filled.svg" alt="star icon" />
+          </div>
+          <div class="order__card-title-wrapper">
+            <div class="order__card-title">{{ merchant.name }}</div>
+          </div>
         </div>
       </div>
-    </ion-slide>
-  </ion-slides>
+    </ng-template>
+  </swiper>
 
   <ion-list *ngIf="isLoading" class="order__skeleton-list">
     <ion-item *ngFor="let i of skeletonArray" lines="none">

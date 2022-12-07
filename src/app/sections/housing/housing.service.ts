@@ -533,7 +533,7 @@ export class HousingService {
 
     return this.getRequestedRoommates(requestBody).pipe(
       map((data: RequestedRoommateResponse) => {
-        data.requestedRoommates.map(d => {
+        data.requestedRoommates.forEach(d => {
           const roommatePref = applicationDetails.roommatePreferences.find(
             f =>
               f.patronKeyRoommate === d.patronRoommateKey &&
