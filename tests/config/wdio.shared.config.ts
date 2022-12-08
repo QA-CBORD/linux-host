@@ -41,6 +41,12 @@ export const config: WebdriverIO.Config = {
       './tests/specs/app.institutions.spec.ts',
       './tests/specs/app.pre-login.spec.ts',
       './tests/specs/app.login.spec.ts',
+    ],
+    loginHostedGuest: [
+      './tests/specs/app.entry.spec.ts',
+      './tests/specs/app.institutions.spec.ts',
+      './tests/specs/app.pre-loginasguest.spec.ts',
+      './tests/specs/app.loginguest.spec.ts',
     ]
   },
   //

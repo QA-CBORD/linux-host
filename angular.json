@@ -205,11 +205,12 @@
             ]
           }
         },
-        "ionic-cordova-build": {
-          "builder": "@ionic/angular-toolkit:cordova-build",
-          "options": {
-            "browserTarget": "app:build"
-          },
+          "ionic-cordova-build": {
+            "builder": "@ionic/cordova-builders:cordova-build",
+            "options": {
+              "browserTarget": "app:build"
+            },
+  
           "configurations": {
             "production": {
               "browserTarget": "app:build:production"
@@ -262,7 +263,8 @@
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ]
+    ],
+    "analytics": false
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

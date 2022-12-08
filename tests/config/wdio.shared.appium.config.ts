@@ -7,7 +7,7 @@ import { config } from './wdio.shared.config';
 //
 // The server port Appium is running on
 //
-config.port = 4723;
+config.port = 4724;
 
 //
 // ================
