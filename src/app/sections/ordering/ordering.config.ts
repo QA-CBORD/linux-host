@@ -113,7 +113,8 @@ export enum ORDERING_CONTENT_STRINGS {
   orderingDatesUnavailable = 'ordering_dates_unavailable',
   lblBtnAdd2Cart = 'lbl_btn_add2_cart',
   titleEditAddresses = 'title_edit_address',
-  reorderNotAvailableItemMessage = 'not_orders_items_available'
+  reorderNotAvailableItemMessage = 'not_orders_items_available',
+  insufficientBalanceMealsPayment = 'insufficient_balance_meals_payment'
 }
 export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
   manualEntryInstructions = 'manual-entry_instructions'
