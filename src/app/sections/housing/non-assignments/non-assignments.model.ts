@@ -90,9 +90,9 @@ export interface NonAssignmentInfoOptions {
 export class NonAssignmentInfo implements NonAssignmentInfoOptions
 {
 
-    constructor(options: NonAssignmentInfoOptions) {
-        if (!isDefined(options) || typeof options !== 'object') {
-            options = { } as NonAssignmentInfoOptions;
+    constructor(_options: NonAssignmentInfoOptions) {
+        if (!isDefined(_options) || typeof _options !== 'object') {
+            _options = { } as NonAssignmentInfoOptions;
         }
     }
 }
