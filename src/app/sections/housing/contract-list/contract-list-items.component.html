@@ -3,7 +3,7 @@
       <ion-item lines="none" class="contract-list__item" >
         <div class="contract-item-order">
             <div class="contract-list__item-info">
-              <div  class="contract-list__item-start-time">{{contract.startDate | date: dateFormat}</div>
+              <div  class="contract-list__item-start-time">{{contract.startDate | date: dateFormat}}</div>
               <div  class="contract-list__item-end-time">{{contract.endDate | date: dateFormat}}</div>
             </div>
           <h2  class="contract-list__item-name">{{contract.fullName}}</h2>
@@ -11,12 +11,3 @@
       </ion-item>
     </div>
   </ng-container>
-  <!-- <h3 class="rooms__title">Rooms</h3>
-
-  <div class="rooms__content">
-    <div class="rooms__empty">You haven't selected a room yet</div>
-
-    <ion-button class="btn btn--primary rooms__search" shape="round" [routerLink]="['/housing/rooms-search']" mode="ios">
-      Search Rooms
-    </ion-button>
-  </div> -->
