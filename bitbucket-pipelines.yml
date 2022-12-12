@@ -21,7 +21,7 @@ clone:
 
 pipelines:
   branches:
-    sonarqube: # or the name of your main branch
+    release-*: # or the name of your main branch
       - step: *build-step
   pull-requests:
     '**':
