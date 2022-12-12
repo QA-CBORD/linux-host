@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {  CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-//import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -42,7 +41,6 @@ const _housingService = {
   refreshDefinitions: jest.fn(),
 };
 
-
 const _environment = {
   getHousingAPIURL: jest.fn(),
   getEnvironmentObject: jest.fn(),
@@ -59,7 +57,7 @@ const _platform = {
 
 const termService = {
   termId$: EMPTY,
-  getTerms: jest.fn(() => of(true))
+  getTerms: jest.fn(() => of(true)),
 };
 
 describe('HousingDashboardPage', () => {
@@ -101,7 +99,6 @@ describe('HousingDashboardPage', () => {
     }).compileComponents();
   });
 
-
   beforeEach(() => {
     fixture = TestBed.createComponent(HousingDashboardPage);
     component = fixture.componentInstance;
@@ -121,6 +118,5 @@ describe('HousingDashboardPage', () => {
       const spy = jest.spyOn(termService, 'getTerms');
       expect(spy).toHaveBeenCalledTimes(1);
     });
-
   });
 });

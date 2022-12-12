@@ -4,7 +4,6 @@ import { HousingTabsComponent } from '../housing-tabs.component';
 @Component({
   selector: 'st-housing-tab',
   templateUrl: './housing-tab.component.html',
-  styleUrls: ['./housing-tab.component.scss'],
 })
 export class HousingTabComponent implements OnInit {
   @Input() tabTitle: string;

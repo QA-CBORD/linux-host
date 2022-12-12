@@ -9,7 +9,6 @@ import { SelectedUnitsTab } from '../../rooms-search.page';
 @Component({
   selector: 'st-units-tabs',
   templateUrl: './units-tab.component.html',
-  styleUrls: ['./units-tab.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnitsTabComponent {

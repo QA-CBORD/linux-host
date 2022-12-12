@@ -24,7 +24,6 @@ export enum NonAssignmentFormStatus {
 
 export interface NonAssignmentListDetailsOptions {
     id: number;
-    // contractElementId: number;
     status?: string;
     applicationDescription: string;
     applicationFormJson: any;
@@ -74,9 +73,6 @@ export class NonAssignmentListDetails implements NonAssignmentListDetailsOptions
         this.numberOfDaysToExpire = Number(options.numberOfDaysToExpire);
         this.termId = Number(options.termId);
 
-        // if (isDefined(options.acceptedDate)) {
-        //     this.acceptedDate = String(options.acceptedDate);
-        // }
     }
 
     static toNonAssignmentListDetails(nonAssignments: any): NonAssignmentListDetails[] {
@@ -96,7 +92,7 @@ export class NonAssignmentInfo implements NonAssignmentInfoOptions
 
     constructor(options: NonAssignmentInfoOptions) {
         if (!isDefined(options) || typeof options !== 'object') {
-            options = {} as NonAssignmentInfoOptions;
+           
         }
     }
 }
