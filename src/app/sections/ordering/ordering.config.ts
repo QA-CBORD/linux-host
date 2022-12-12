@@ -191,7 +191,8 @@ export const ORDER_ERROR_CODES = {
   TIMEOUT: '9997',
   DUPLICATE_ORDER: '9016', // server duplicate order attempt error code.
   CONNECTION_LOST: '0 Unknown Error', // Client's internet connection lost.
-  CONNECTION_TIMEOUT: 'Timeout' // Client's connection timed out
+  CONNECTION_TIMEOUT: 'Timeout', // Client's connection timed out,
+  INSUFFICIENT_BALANCE: 'get_common.error.insufficient_balance_meals_payment'
 };
 
 export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
