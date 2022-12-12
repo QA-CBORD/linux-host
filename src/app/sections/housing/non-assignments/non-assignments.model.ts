@@ -91,9 +91,7 @@ export class NonAssignmentInfo implements NonAssignmentInfoOptions
 {
 
     constructor(options: NonAssignmentInfoOptions) {
-        if (!isDefined(options) || typeof options !== 'object') {
-           
-        }
+
     }
 }
 
