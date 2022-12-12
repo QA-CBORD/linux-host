@@ -141,7 +141,10 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
    * click listener for backing out of conversation (small UI only)
    */
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onClickBackConversation(): void {}
+  // onClickBackConversation(): void {
+  //   console.log('back clicked');
+    
+  // }
 
   /**
    * Create message body object for sending a new message to a group
