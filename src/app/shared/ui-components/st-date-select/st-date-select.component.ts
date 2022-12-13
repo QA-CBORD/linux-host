@@ -54,6 +54,7 @@ export class StDateSelectComponent implements ControlValueAccessor {
   handleChange(event: CustomEvent): void {
     const value: string = event.detail.value;
     this.writeValue(value);
+    this.onChange(value);
     this._checkIsFilled(value);
   }
 
