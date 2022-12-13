@@ -227,27 +227,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.onOrderTipChanged.emit(value ? Number(value) : 0);
   }
 
-  async onZeroMealsMessage(): Promise<void> {
-    await this.toastService.showToast({
-      message: `Sorry, You Don't Have Enough Meals for This Order`,
-      icon: 'warning',
-      cssClass: 'toast-message-warning',
-    });
-
-    this.detailsForm.get(this.controlsNames.paymentMethod).patchValue('');
-  }
-
   onPaymentChanged(data) {
     const {
       detail: { value },
     } = data;
-    const { id, paymentSystemType, accountType, balance } = value;
-    const { isASAP } = this.orderDetailOptions;
-
-    if (AccountType.MEALS === accountType && balance === 0 && isASAP) {
-      this.onZeroMealsMessage();
-      return;
-    }
+    const { id, paymentSystemType } = value;
 
     if (value instanceof Object) {
       this.onOrderPaymentInfoChanged.emit({ accountId: id, paymentSystemType });
