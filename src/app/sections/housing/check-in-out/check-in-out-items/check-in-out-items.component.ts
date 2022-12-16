@@ -23,7 +23,6 @@ export class CheckInOutItemsComponent {
   @Input() checkInOuts: CheckInOut[]
   dateFormat = monthNameDayYearHour;
 
-  
   constructor(public checkInOutStateService: CheckInOutStateService,
               private _router: Router,
               private _activeRoute: ActivatedRoute,
