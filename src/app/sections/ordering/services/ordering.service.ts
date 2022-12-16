@@ -8,17 +8,18 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
 
 @Injectable()
 export class OrderingService {
-
-  constructor(private readonly contentStringsFacadeService: ContentStringsFacadeService) {
-  }
+  constructor(private readonly contentStringsFacadeService: ContentStringsFacadeService) {}
 
   getContentStringByName(name: ORDERING_CONTENT_STRINGS): Observable<string> {
-    return this.contentStringsFacadeService.getContentString$(
-      CONTENT_STRINGS_DOMAINS.patronUi,
-      CONTENT_STRINGS_CATEGORIES.ordering,
-      name).pipe(
-      map((string: ContentStringInfo) => string ? string.value : ''),
-    );
+    return this.contentStringsFacadeService
+      .getContentString$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.ordering, name)
+      .pipe(map((string: ContentStringInfo) => (string ? string.value : '')));
+  }
+
+  getContentErrorStringByName(name: ORDERING_CONTENT_STRINGS): Observable<string> {
+    return this.contentStringsFacadeService
+      .resolveContentString$(CONTENT_STRINGS_DOMAINS.get_common, CONTENT_STRINGS_CATEGORIES.error, name)
+      .pipe(map((string: ContentStringInfo) => (string ? string.value : '')));
   }
 }
 

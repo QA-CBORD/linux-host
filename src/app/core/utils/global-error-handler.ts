@@ -7,9 +7,13 @@ export class GlobalErrorHandler implements ErrorHandler {
   constructor(private alertController: AlertController) {}
   handleError(err): void {
     const chunkFailedMessage = /Loading chunk [\d]+ failed/;
+    const errText = JSON.stringify(err);
 
     if (chunkFailedMessage.test(err.message)) {
       this.presentAlertConfirm();
+    }
+    if (errText && errText.toLowerCase().includes('Non-Error exception captured with keys'.toLowerCase())) {
+      err = errText;
     }
     Sentry.captureException(err);
 
