@@ -1,7 +1,6 @@
 @import 'tools';
 
 .explore {
-
   &__content {
     padding: 10px 15px;
   }
@@ -14,9 +13,13 @@
   }
 
   &__controls {
-    margin-top: 10px;
+    margin: 10px 0;
     display: flex;
     justify-content: space-between;
+  }
+
+  &__list {
+    margin: 10px 0;
   }
 
   &__start-order {
@@ -33,120 +36,40 @@
     object-fit: cover;
   }
 
-  &__merchant-hours-indicator {
-    @include font-nunito-heavy(14px);
+  &__merchant-info {
+    display: grid;
+    grid-template-columns: -webkit-min-content 1fr;
+    &--top-margin {
+      margin-top: -10px;
+    }
+  }
 
+  &__merchant-text {
+    @include font-nunito-regular(14px);
+    display: block;
+    padding: 10px;
+    text-align: inherit;
+    line-height: 19px;
+
+    &--full {
+      @include font-nunito-regular(14px);
+      margin-left: 35px;
+      padding: 0;
+    }
+    
     &--open {
       color: $color-deep-sea;
+      @include font-nunito-heavy(14px);
     }
 
     &--closed {
       color: $color-cardinal;
-    }
-  }
-
-  &__merchant-address {
-    @extend .merchant-item;
-  }
-
-  &__merchant-hours {
-    @extend .merchant-item;
-
-    &:before {
-      background-position-x: -24px;
-    }
-  }
-
-  &__merchant-email {
-    @extend .merchant-item;
-
-    &:before {
-      background-position-x: -50px;
-    }
-  }
-
-  &__merchant-telephone {
-    @extend .merchant-item;
-
-    &:before {
-      background-position-x: -74px;
-    }
-  }
-
-  &__merchant-website {
-    @extend .merchant-item;
-
-    &:before {
-      background-position-x: -98px;
+      @include font-nunito-heavy(14px);
     }
   }
 
   &__merchant-description {
     margin: 0;
-
     @include font-nunito-regular(14px);
-  }
-
-  &__merchant-payment-notes {
-    @extend .merchant-item;
-
-    &:before {
-      background-position-x: -145px;
-    }
-  }
-
-  &__merchant-fax {
-    @extend .merchant-item;
-
-    &:before {
-      background-position-x: -122px;
-    }
-  }
-
-  &__expand-panel-message {
-    position: relative;
-
-    &:after {
-      transition: transform 0.1s linear;
-      content: '';
-      position: absolute;
-      top: 5px;
-      right: -20px;
-      display: inline-block;
-      width: 15px;
-      height: 15px;
-      background-image: url('/assets/icon/angle-down.svg');
-      background-size: cover;
-    }
-
-    &--opened {
-      &:after {
-        transform: rotateZ(180deg);
-      }
-    }
-  }
-
-  &__expand-panel-description {
-    max-height: 0;
-    transition: max-height .2s linear;
-
-    &--opened {
-      max-height: 150px;
-      overflow: scroll;
-    }
-  }
-}
-
-.merchant-item {
-  @include font-nunito-semibold(16px);
-  padding: 0;
-
-  &:before {
-    content: '';
-    display: block;
-    width: 24px;
-    height: 24px;
-    background-image: url('/assets/icon/merchant_icons.png');
-    margin-right: 10px;
   }
 }
