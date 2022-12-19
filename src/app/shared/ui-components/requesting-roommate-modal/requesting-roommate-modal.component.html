@@ -9,8 +9,8 @@
       <div [hidden]="true">{{_applicationsStateService.requestedRoommates | async}}</div>
         <ion-card-content class="text-roommate-requesting"> Student {{roommate.firstName}} has requested you as a roomate. (If you deny the request, they will not be notified.)</ion-card-content>
         <div class="btns-container">
-          <ion-button md="ios" class="response-btns" (click)="acceptRoommateRequest(roommate)">Accept Request</ion-button>
-          <ion-button md="ios" class="response-btns" (click)="denyRoommateRequest(roommate)" >Deny Request</ion-button>
+          <ion-button mode="ios" class="response-btns" (click)="acceptRoommateRequest(roommate)">Accept Request</ion-button>
+          <ion-button mode="ios" class="response-btns" (click)="denyRoommateRequest(roommate)" >Deny Request</ion-button>
         </div>
     </ion-card>
 </ion-content>
