@@ -19,7 +19,7 @@ describe('Login', () => {
         await expect((await $(PasswordInput.selector))).toBeDisplayed();
         await pause(500);
 
-        await EmailInput.setValue('getauto1@test.cbord.com')
+        await EmailInput.setValue('g2@test.cbord.com')
 
         await pause(500);
 

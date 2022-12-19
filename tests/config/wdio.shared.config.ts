@@ -47,6 +47,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/app.institutions.spec.ts',
       './tests/specs/app.pre-loginasguest.spec.ts',
       './tests/specs/app.loginguest.spec.ts',
+      './tests/specs/app.createandconfirmpin.spec.ts',
     ]
   },
   //
