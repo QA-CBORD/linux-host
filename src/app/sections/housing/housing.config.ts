@@ -11,6 +11,8 @@ export enum LOCAL_ROUTING {
   checkInOut = 'check-in-out',
   checkInOutSpots = 'check-in-out-spots',
   roommates = 'roommates-search',
+  roommatesSearchBy = 'search-by',
+  roommatesSearchResult = 'roommates-search-result',
   waitingLists = 'waiting-lists',
   inspections = 'inspections',
   attachments = 'attachments',

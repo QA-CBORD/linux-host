@@ -35,6 +35,8 @@ export class ShowHideNavbarDirective {
     'inspections',
     'form-payment',
     'attachments',
+    'roommates-search-result',
+    'search-by'
   ];
 
   /**
