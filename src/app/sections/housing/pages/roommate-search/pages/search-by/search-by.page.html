@@ -1,4 +1,5 @@
 <ion-content>
+  <st-header title="Search for a roommate" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back" [isToolbarShow]="true" [trackUrls]="true"></st-header>
   <section class="input__wrapper" *ngIf="(searchOptions$ | async) as options">
     <form [formGroup]="searchForm" novalidate>
       <ng-container [ngSwitch]="options.searchOptions">
