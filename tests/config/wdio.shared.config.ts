@@ -37,17 +37,18 @@ export const config: WebdriverIO.Config = {
   specs: ['./tests/**/*.spec.ts'],
   suites: {
     loginHostedStudent: [
-      './tests/specs/app.entry.spec.ts',
-      './tests/specs/app.institutions.spec.ts',
-      './tests/specs/app.pre-login.spec.ts',
-      './tests/specs/app.login.spec.ts',
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
     ],
     loginHostedGuest: [
-      './tests/specs/app.entry.spec.ts',
-      './tests/specs/app.institutions.spec.ts',
-      './tests/specs/app.pre-loginasguest.spec.ts',
-      './tests/specs/app.loginguest.spec.ts',
-      './tests/specs/app.createandconfirmpin.spec.ts',
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/guest/app.login-guest.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
     ]
   },
   //

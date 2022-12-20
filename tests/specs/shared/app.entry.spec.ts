@@ -1,14 +1,15 @@
-import { pause, restartApp, url } from '../helpers';
+import { pause, restartApp, url } from '../../helpers';
 
-import Entry from '../pageobjects/entry.page';
-import Institution from '../pageobjects/institutions.page';
+import Entry from '../../pageobjects/entry.page';
+import Institution from '../../pageobjects/institutions.page';
+import { AWAIT_TIME } from '../constants';
 
 describe('Entry', () => {
   beforeEach(async () => {
     await restartApp('/anonymous/entry');
     await url('/anonymous/entry');
 
-    await pause(500);
+    await pause(AWAIT_TIME);
   });
 
   it('Should change environment to develop', async () => {
@@ -18,14 +19,14 @@ describe('Entry', () => {
     for (let i = 0; i < 5; i++) {
       await changeEnvButton.tap();
     }
-    await pause(500);
+    await pause(AWAIT_TIME);
     const developOpt = await changeEnvAlert.getOpt('Development');
     await developOpt.click();
-    await pause(500);
+    await pause(AWAIT_TIME);
 
     const okButton = await changeEnvAlert.button('Ok');
     await okButton.click();
-    await pause(500);
+    await pause(AWAIT_TIME);
 
     await expect((await $(changeEnvAlert.selector))).not.toBeDisplayed();
   });
@@ -34,7 +35,7 @@ describe('Entry', () => {
     const institutionsButton = await Entry.searchInstitutionsButton;
     await institutionsButton.tap();
     await url('/anonymous/institutions');
-    await pause(500);
+    await pause(AWAIT_TIME);
     const pageTitle = await Institution.institutionPageTitle;
     await expect(pageTitle).toHaveText('Select Institution');
   });
