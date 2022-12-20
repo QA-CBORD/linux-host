@@ -9,6 +9,7 @@ import {
   RequestedRoommateResponse,
   RoommateSearchOptions,
 } from '@sections/housing/applications/applications.model';
+import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { HousingService } from '@sections/housing/housing.service';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { Observable, Subscription, throwError } from 'rxjs';
@@ -127,7 +128,7 @@ export class SearchByPage implements OnInit, OnDestroy {
     );
   }
 
-  searchRoommates(options: RoommateSearchOptions): void {
+  searchRoommates(options: RoommateSearchOptions) {
     if (!this.searchForm.valid) {
       return;
     }
@@ -143,8 +144,7 @@ export class SearchByPage implements OnInit, OnDestroy {
     };
 
     this._applicationStateService.setRoommateSearchOptions(data);
-
-    this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search/results`], { skipLocationChange: true });
+    this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roommatesSearchResult}`]);
   }
 
   isApplicationSubmitted() {
