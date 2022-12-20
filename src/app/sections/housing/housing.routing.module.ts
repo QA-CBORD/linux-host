@@ -74,8 +74,11 @@ const routes: Routes = [
         path: `${LOCAL_ROUTING.waitingLists}/:waitingListsKey`,
         loadChildren: () => import('./pages/waiting-lists-details/waiting-lists-details.module').then(m => m.WaitingListsDetailsPageModule),
       },{
-        path: `${LOCAL_ROUTING.roommates}`,
-        loadChildren: () => import('./pages/roommate-search/roommate-search.module').then(m => m.RoommateSearchPageModule),
+        path: `${LOCAL_ROUTING.roommatesSearchBy}`,
+        loadChildren: () => import('./pages/roommate-search/pages/search-by/search-by.module').then(m => m.SearchByPageModule),
+      },{
+        path: `${LOCAL_ROUTING.roommatesSearchResult}`,
+        loadChildren: () => import('./pages/roommate-search/pages/search-results/search-results.module').then(m => m.SearchResultsPageModule),
       },
       {
         path: `${LOCAL_ROUTING.formPayment}`,

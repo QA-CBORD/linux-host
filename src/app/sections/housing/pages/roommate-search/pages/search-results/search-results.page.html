@@ -1,4 +1,4 @@
-
+<st-header title="Search for a roommate" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back" [isToolbarShow]="true" [trackUrls]="true"></st-header>
 <ion-content
   class="ion-padding check-in-out-slots__content">
     <ng-container *ngIf="(roommates$ | async) as roommates; else noRoommates">

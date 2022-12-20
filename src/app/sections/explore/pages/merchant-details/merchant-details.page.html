@@ -38,68 +38,59 @@
         <img class="explore__fav-icon" [src]="merchant.isFavorite ? filledStarPath : blankStarPath" alt="Favorite" />
       </st-button>
     </div>
-    <ion-list>
-      <ion-item class="ion-no-padding" *ngIf="merchant.storeAddress as address">
-        <ion-title class="explore__merchant-address">{{ address | addressHeaderFormat }}</ion-title>
+    <ion-list class="explore__list">
+      <ion-item class="ion-no-padding explore__merchant-info" *ngIf="merchant.storeAddress as address">
+        <i class="icon-pin-point"></i>
+        <ion-text class="explore__merchant-text">{{ address | addressHeaderFormat }}</ion-text>
       </ion-item>
-      <ng-container *ngIf="merchant.hoursOfOperation as hours">
-        <ion-item [lines]="isHoursHidden ? '' : 'none'" (click)="toggleHours()" class="ion-no-padding">
-          <ion-title class="explore__merchant-hours">
-            <span
-              *ngIf="merchant.isAbleToOrder"
-              class="explore__merchant-hours-indicator"
-              [ngClass]="{
-           'explore__merchant-hours-indicator--open': merchant.openNow,
-           'explore__merchant-hours-indicator--closed': !merchant.openNow
-            }"
-            >
-              {{merchant.openNow ? 'Open -' : 'Closed -'}}</span
-            >
-            <span
-              class="explore__expand-panel-message"
-              [ngClass]="{'explore__expand-panel-message--opened': !isHoursHidden}"
-              >{{isHoursHidden ? 'View' : 'Hide'}} Hours</span
-            >
-          </ion-title>
-        </ion-item>
-        <ion-item
-          class="explore__expand-panel-description ion-no-padding"
-          [ngClass]="{'explore__expand-panel-description--opened': !isHoursHidden}"
-        >
-          <ion-text>{{ hours }}</ion-text>
-        </ion-item>
-      </ng-container>
 
-      <ng-container *ngIf="merchant.paymentNotes as notes">
-        <ion-item [lines]="isNotesHidden ? '' : 'none'" (click)="toggleNotes()" class="ion-no-padding">
-          <ion-title class="explore__merchant-payment-notes">
-            <span
-              class="explore__expand-panel-message"
-              [ngClass]="{'explore__expand-panel-message--opened': !isNotesHidden}"
-              >{{isNotesHidden ? 'View' : 'Hide'}} Payment</span
-            >
-          </ion-title>
-        </ion-item>
-        <ion-item
-          class="explore__expand-panel-description ion-no-padding"
-          [ngClass]="{'explore__expand-panel-description--opened': !isNotesHidden}"
+      <ion-item
+        [lines]="'none'"
+        class="ion-no-padding explore__merchant-info"
+        *ngIf="merchant.hoursOfOperation as hours"
+      >
+        <i class="icon-clock"></i>
+        <ion-text
+          *ngIf="merchant.isAbleToOrder"
+          class="explore__merchant-text"
+          [ngClass]="{
+          'explore__merchant-text--open': merchant.openNow,
+          'explore__merchant-text--closed': !merchant.openNow
+           }"
         >
-          <ion-text>{{ notes }}</ion-text>
-        </ion-item>
-      </ng-container>
+          {{merchant.openNow ? 'Open' : 'Closed'}}
+        </ion-text>
+      </ion-item>
 
-      <ion-item class="ion-no-padding" *ngIf="merchant.emailCustomerService as email">
-        <ion-title class="explore__merchant-email">{{ email }}</ion-title>
+      <ion-item *ngIf="merchant.hoursOfOperation as hours" class="ion-no-padding explore__merchant-info--top-margin">
+        <ion-text class="explore__merchant-text--full">{{ hours }}</ion-text>
       </ion-item>
-      <ion-item class="ion-no-padding" *ngIf="merchant.phoneCustomerService as telephone">
-        <ion-title class="explore__merchant-telephone">{{ telephone }}</ion-title>
+
+      <ion-item *ngIf="merchant.paymentNotes as notes" class="ion-no-padding explore__merchant-info">
+        <i class="icon-payment"></i>
+        <ion-text class="explore__merchant-text">{{ notes }}</ion-text>
       </ion-item>
-      <ion-item class="ion-no-padding" *ngIf="merchant.faxNumber as fax">
-        <ion-title class="explore__merchant-fax">{{ fax }}</ion-title>
+
+      <ion-item *ngIf="merchant.emailCustomerService as email" class="ion-no-padding explore__merchant-info">
+        <i class="icon-email"></i>
+        <ion-text class="explore__merchant-text">{{ email }}</ion-text>
       </ion-item>
-      <ion-item class="ion-no-padding" *ngIf="merchant.website as website">
-        <ion-title class="explore__merchant-website">{{ website }}</ion-title>
+
+      <ion-item  *ngIf="merchant.phoneCustomerService as telephone" class="ion-no-padding explore__merchant-info">
+        <i class="icon-phone"></i>
+        <ion-text class="explore__merchant-text">{{ telephone }}</ion-text>
       </ion-item>
+
+      <ion-item  *ngIf="merchant.faxNumber as fax" class="ion-no-padding explore__merchant-info">
+        <i class="icon-phone"></i>
+        <ion-text class="explore__merchant-text">{{ fax }}</ion-text>
+      </ion-item>
+
+      <ion-item  *ngIf="merchant.website as website" class="ion-no-padding explore__merchant-info">
+        <i class="icon-globe"></i>
+        <ion-text class="explore__merchant-text">{{ website }}</ion-text>
+      </ion-item>
+
     </ion-list>
     <p class="explore__merchant-description" *ngIf="merchant.description as description">{{ description }}</p>
   </div>

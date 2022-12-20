@@ -30,11 +30,12 @@ export class ShowHideNavbarDirective {
     'favorites',
     'non-assignments',
     'check-in-out-spots',
-    'roommates-search',
     'waiting-lists',
     'inspections',
     'form-payment',
     'attachments',
+    'roommates-search-result',
+    'search-by'
   ];
 
   /**

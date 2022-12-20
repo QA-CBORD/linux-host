@@ -10,6 +10,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl } from '@angular/forms';
 
 import { hasValue } from '@sections/housing/utils';
+import { ViewChild } from '@angular/core';
 
 export const DATE_SELECT_VALUE_ACCESSOR: StaticProvider = {
   provide: NG_VALUE_ACCESSOR,
@@ -39,6 +40,8 @@ export class StDateSelectComponent implements ControlValueAccessor {
   @Input()
   isDisabled = false;
 
+  @ViewChild('dateCalendar') private dateCalendar: any ;
+
   onChange: (value: any) => void;
 
   onTouched: () => void;
@@ -54,6 +57,8 @@ export class StDateSelectComponent implements ControlValueAccessor {
   handleChange(event: CustomEvent): void {
     const value: string = event.detail.value;
     this.writeValue(value);
+    this.onChange(value);
+    this.dateCalendar.confirm(true);
     this._checkIsFilled(value);
   }
 

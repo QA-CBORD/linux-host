@@ -10,7 +10,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <ion-datetime presentation="date" (ionChange)="handleChange($event)" class="ion-margin"
+        <ion-datetime presentation="date" [value]="value" #dateCalendar (ionChange)="handleChange($event)" class="ion-margin"
         ></ion-datetime>
       </ion-content>
     </ng-template>

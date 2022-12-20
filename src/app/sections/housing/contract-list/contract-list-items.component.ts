@@ -3,6 +3,7 @@ import { ContractSummary } from '@sections/housing/contract-list/contractSummary
 import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
+import {monthNameDayYearHour} from '../../../shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-contract-list-items',
@@ -13,6 +14,8 @@ import { ToastService } from '@core/service/toast/toast.service';
 export class ContractListItemsComponent implements AfterViewInit {
   @ViewChild('container') divContainer: ElementRef;
   @Input() contractSummaries: ContractSummary[]
+  dateFormat = monthNameDayYearHour;
+
 
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
