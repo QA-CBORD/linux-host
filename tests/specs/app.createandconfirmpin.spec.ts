@@ -2,18 +2,20 @@ import { pause } from '../helpers';
 
 import createpin from '../pageobjects/createnewpin.page';
 
+const AWAIT_TIME = 500;
+
 describe('Pin', () => {
 
     beforeEach(async () => {
-        await pause(500);
+        await pause(AWAIT_TIME);
     });
 
     it('Should create new four digit pin', async () => {
       
         const newpincontent = await createpin.createnewpintext;
-        await pause(500);
+        await pause(AWAIT_TIME);
         await expect((await $(newpincontent.selector))).toBeDisplayed();
-        await pause(500);
+        await pause(AWAIT_TIME);
         
         const pinnumber = await createpin.pinbutton
         
@@ -26,9 +28,9 @@ describe('Pin', () => {
       it('Should confirm new four digit pin', async () => {
         
          const confirmpincontent = await createpin.confirmnewpintext
-         await pause(500);
+         await pause(AWAIT_TIME);
          await expect((await $(confirmpincontent.selector))).toBeDisplayed();
-         await pause(500);
+         await pause(AWAIT_TIME);
 
          const pinnumber = await createpin.pinbutton
          
