@@ -1,0 +1,16 @@
+@import 'tools';
+
+.roommate-requested__container {
+  h4 {
+    margin: 20px 10px 5px;
+    font-size: 1.10em;
+  }
+
+  .status {
+    padding: 5px 15px;
+
+    .status__text {
+      display: inherit
+    }
+  }
+}

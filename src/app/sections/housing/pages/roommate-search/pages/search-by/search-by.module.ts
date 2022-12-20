@@ -8,6 +8,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { ControlErrorsModule } from '../../../../../../shared/ui-components/control-errors/control-errors.module';
 import { SearchByRoutingModule } from './search-by-routing.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { RequestedRoommatesComponent } from './requested-roommates/requested-roommates.component';
 
 export const imports = [
   CommonModule,
@@ -19,7 +20,7 @@ export const imports = [
   SearchByRoutingModule,
   StHeaderModule
 ];
-export const declarations = [SearchByPage];
+export const declarations = [SearchByPage, RequestedRoommatesComponent];
 
 @NgModule({
   imports,
