@@ -6,7 +6,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, ModalController } from '@ionic/angular';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, throwError } from 'rxjs';
@@ -21,9 +21,9 @@ import { ApplicationsStateService } from '../../applications/applications-state.
 import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { Location } from '@angular/common';
 import { CurrentForm } from '../form-payment/form-payment.component';
 import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
+import { NavigationService } from '@shared/services/navigation.service';
 
 
 enum UpdateType {
@@ -47,14 +47,15 @@ export class ApplicationDetailsPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
     private applicationsService: ApplicationsService,
     private applicationsStateService: ApplicationsStateService,
     private loadingService: LoadingService,
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
-    private formPaymentService: FormPaymentService
+    private formPaymentService: FormPaymentService,
+    private _router: Router,
+    private readonly navService: NavigationService,
   ) {}
 
   async ngOnInit() {
@@ -118,7 +119,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   onBack() {
-    this.location.back();
+    this._router.navigate([this.navService.getPreviousTrackedUrl()]);
   }
 
   private updateQuestions() {

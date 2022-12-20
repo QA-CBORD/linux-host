@@ -45,7 +45,6 @@ export class MerchantDetailsPage implements OnInit {
 
   private retrieveSeletectedMerchant(merchantId: string): Observable<MerchantInfo> {
     return this.exploreService.getMerchantById$(merchantId).pipe(
-      take(1),
       tap(async merchant => {
         const currentUserIsAGuest = await this.authFacadeService.isGuestUser().toPromise();
         if (currentUserIsAGuest) {
