@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -12,8 +12,8 @@ import {
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { HousingService } from '@sections/housing/housing.service';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { Observable, Subscription, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { catchError, map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
 export enum OptionsName {
@@ -45,13 +45,16 @@ export class SearchByPage implements OnInit, OnDestroy {
     integer: 'This field should be integer',
     string: 'This field should be string',
   };
+  options: RoommateSearchOptions;
+  requestedRoommates: RequestedRoommate[];
   constructor(
     private _router: Router,
     private _applicationStateService: ApplicationsStateService,
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _termService: TermsService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly cdRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -61,8 +64,14 @@ export class SearchByPage implements OnInit, OnDestroy {
     });
 
     this.searchForm.updateValueAndValidity();
-    this.searchOptions$ = this._applicationStateService.roommateSearchOptions;
+    this._applicationStateService.roommateSearchOptions.pipe(take(1)).subscribe(options => {
+      this.options = options;
+    });
     this._initTermsSubscription();
+    this._initGetRequestedRoommatesSubscription();
+  }
+ 
+  ionViewWillEnter() {
     this._initGetRequestedRoommatesSubscription();
   }
 
@@ -94,9 +103,9 @@ export class SearchByPage implements OnInit, OnDestroy {
     });
 
     this._loadingService.showSpinner();
-    this.requestedRoommates$ = this._housingService.getRequestedRoommates(requestBody).pipe(
-      map((data: RequestedRoommateResponse) =>
-        data.requestedRoommates.map(d => {
+    this._housingService.getRequestedRoommates(requestBody).pipe(
+      map((data: RequestedRoommateResponse) => {
+        return data.requestedRoommates.map(d => {
           const roommatePref = applicationDetails.roommatePreferences.find(
             f => f.patronKeyRoommate === d.patronRoommateKey && f.preferenceKey === d.preferenceKey
           );
@@ -117,15 +126,17 @@ export class SearchByPage implements OnInit, OnDestroy {
             preferredName: d.preferredName ? d.preferredName : '',
           });
         })
-      ),
-      tap(() => {
+     }),
+      catchError(() => {
         this._loadingService.closeSpinner();
-      }),
-      catchError((error: any) => {
-        this._loadingService.closeSpinner();
-        return throwError(error);
+        return of(null);
       })
-    );
+    ).subscribe((requestedRoommates) => {
+      console.log("requestedRoommates: ", requestedRoommates)
+      this._loadingService.closeSpinner();
+      this.requestedRoommates = requestedRoommates;
+      this.cdRef.detectChanges();
+    });
   }
 
   searchRoommates(options: RoommateSearchOptions) {

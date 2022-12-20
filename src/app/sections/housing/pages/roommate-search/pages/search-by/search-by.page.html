@@ -1,6 +1,6 @@
 <ion-content>
   <st-header title="Search for a roommate" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back" [isToolbarShow]="true" [trackUrls]="true"></st-header>
-  <section class="input__wrapper" *ngIf="(searchOptions$ | async) as options">
+  <section class="input__wrapper" *ngIf="options">
     <form [formGroup]="searchForm" novalidate>
       <ng-container [ngSwitch]="options.searchOptions">
         <div *ngSwitchCase="'byExactId'">
@@ -63,9 +63,9 @@
       </div>
     </form>
   </section>
-  <div *ngIf="(requestedRoommates$ | async) as requestedRoommates" class="roommate-requested__container">
-    <div *ngIf="(searchOptions$ | async) as options">
-      <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
+  <div class="roommate-requested__container">
+    <div *ngIf="options">
+      <h4 *ngIf="requestedRoommates && requestedRoommates.length > 0">Requested roommates</h4>
       <div *ngFor="let roommate of requestedRoommates">
         <ng-container [ngSwitch]="options.showOptions">
           <ion-card *ngSwitchCase="OptionsName.FullName">
