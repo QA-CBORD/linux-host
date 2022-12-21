@@ -1,29 +1,47 @@
 .toast-message-success {
-    &::part(container) {
-      background-color: $color-success-40;
-      border-radius: 10px;
-    }
-    &::part(icon) {
-      font-size: 1.8em;
-      color: $color-white;
-    }
-    &::part(message) {
-      font-size: 14px;
-      color: $color-white;
-    }
+  &::part(container) {
+    background-color: $color-success-40;
+    border-radius: 10px;
+  }
+  &::part(icon) {
+    font-size: 1.8em;
+    color: $color-white;
+  }
+  &::part(message) {
+    font-size: 14px;
+    color: $color-white;
+  }
+}
+
+.toast-message-warning {
+  &::part(container) {
+    background-color: $color-warning-40;
+    border-radius: 10px;
+  }
+  &::part(icon) {
+    font-size: 1.8em;
+    color: $color-white;
+  }
+  &::part(message) {
+    font-size: 14px;
+    color: $color-white;
+  }
+}
+
+.toast-message-error {
+  @include font-nunito-regular(16px);
+
+  &::part(container) {
+    background-color: var(--ion-color-danger);
+    border-radius: 10px;
+  }
+  &::part(icon) {
+    font-size: 1.8em;
+    color: $color-white;
   }
   
-  .toast-message-warning {
-    &::part(container) {
-      background-color: $color-warning-40;
-      border-radius: 10px;
-    }
-    &::part(icon) {
-      font-size: 1.8em;
-      color: $color-white;
-    }
-    &::part(message) {
-      font-size: 14px;
-      color: $color-white;
-    }
+  &::part(message) {
+    @include font-nunito-regular(16px);
+    color: $color-white;
   }
+}
