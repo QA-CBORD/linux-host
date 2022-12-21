@@ -25,7 +25,8 @@ export class SearchByPage implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   firstInputName = 'first';
   secondInputName = 'second';
-
+  searchOption : string;
+  
   errorMessages = {
     required: 'This field is required',
     numeric: 'This field should be numeric',
@@ -43,18 +44,15 @@ export class SearchByPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.searchForm = this.fb.group({
-      [this.firstInputName]: ['',[Validators.required,Validators.pattern(REGEX_ALPHANUMERIC)]],
-      [this.secondInputName]: ['',[Validators.required,Validators.pattern(REGEX_ALPHANUMERIC)]],
-    });
 
+    this.setupFormValidators();
     this._applicationStateService.roommateSearchOptions.pipe(take(1)).subscribe(options => {
       this.options = options;
     });
 
     this.searchForm.updateValueAndValidity();
   }
- 
+
   ionViewWillEnter() {
     this.requestedRoommatesComponent.updateRequestedRoommates();
   }
@@ -98,5 +96,20 @@ export class SearchByPage implements OnInit, OnDestroy {
 
   public errorValidator(control: AbstractControl) {
     return !control.valid && control.touched && !control.disabled;
+  }
+
+  private setupFormValidators() {
+    this._applicationStateService.roommateSearchOptions.subscribe(v => this.searchOption = v.searchOptions);
+
+    if (this.searchOption == 'byPartialLastFirst' || this.searchOption == 'byPartialPreferredFirstLast') {
+      this.searchForm = this.fb.group({
+        [this.firstInputName]: ['', [Validators.required, Validators.pattern(REGEX_ALPHANUMERIC)]],
+        [this.secondInputName]: ['', [Validators.required, Validators.pattern(REGEX_ALPHANUMERIC)]],
+      });
+    } else {
+      this.searchForm = this.fb.group({
+        [this.firstInputName]: ['', [Validators.required]],
+      });
+    }
   }
 }
