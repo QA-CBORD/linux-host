@@ -48,7 +48,7 @@ export class RequestedRoommatesComponent implements OnInit {
     this.getRequestedRoommates();
   }
 
-  get OptionsName(): typeof OptionsName {
+  get optionsName(): typeof OptionsName {
     return OptionsName;
   }
 
