@@ -7,7 +7,7 @@ import {
   RoommateSearchOptions,
 } from '@sections/housing/applications/applications.model';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { RequestedRoommatesComponent } from './requested-roommates/requested-roommates.component';
 
@@ -34,7 +34,7 @@ export class SearchByPage implements OnInit, OnDestroy {
   };
   options: RoommateSearchOptions;
   requestedRoommates: RequestedRoommate[];
-  @ViewChild(RequestedRoommatesComponent, { static: true }) requestedRoommatesComponent: RequestedRoommatesComponent;
+  @ViewChild(RequestedRoommatesComponent, { static: false }) requestedRoommatesComponent: RequestedRoommatesComponent;
  
   constructor(
     private _router: Router,
@@ -48,11 +48,15 @@ export class SearchByPage implements OnInit, OnDestroy {
       [this.secondInputName]: ['',[Validators.required,Validators.pattern(REGEX_ALPHANUMERIC)]],
     });
 
+    this._applicationStateService.roommateSearchOptions.pipe(take(1)).subscribe(options => {
+      this.options = options;
+    });
+
     this.searchForm.updateValueAndValidity();
   }
  
   ionViewWillEnter() {
-    this.requestedRoommatesComponent.ionViewWillEnter();
+    this.requestedRoommatesComponent.updateRequestedRoommates();
   }
 
   ngOnDestroy(): void {

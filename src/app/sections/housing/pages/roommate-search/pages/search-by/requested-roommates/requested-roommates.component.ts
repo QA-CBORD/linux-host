@@ -37,15 +37,14 @@ export class RequestedRoommatesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('ngOnInit');
     this._applicationStateService.roommateSearchOptions.pipe(take(1)).subscribe(options => {
       this.options = options;
     });
     this.getSelectedTerms();
+    this.getRequestedRoommates();
   }
 
-  ionViewWillEnter() {
-    console.log('ionViewWillEnter');
+  updateRequestedRoommates() {
     this.getRequestedRoommates();
   }
 
@@ -61,8 +60,8 @@ export class RequestedRoommatesComponent implements OnInit {
     const applicationDetails = this._applicationStateService.applicationsState.applicationDetails;
     const requestedRoommates = this._applicationStateService.getRequestedRoommate();
 
-    const patronRequests = applicationDetails.roommatePreferences
-      .filter(x => x.patronKeyRoommate !== 0)
+    const patronRequests =applicationDetails && applicationDetails.roommatePreferences
+      .filter(patron => patron.patronKeyRoommate !== 0)
       .map(
         x =>
           new RequestedRoommate({
@@ -82,7 +81,7 @@ export class RequestedRoommatesComponent implements OnInit {
       .pipe(
         map((data: RequestedRoommateResponse) => {
           return data.requestedRoommates.map(d => {
-            const roommatePref = applicationDetails.roommatePreferences.find(
+            const roommatePref = applicationDetails && applicationDetails.roommatePreferences.find(
               f => f.patronKeyRoommate === d.patronRoommateKey && f.preferenceKey === d.preferenceKey
             );
 
@@ -110,7 +109,6 @@ export class RequestedRoommatesComponent implements OnInit {
         })
       )
       .subscribe(requestedRoommates => {
-        console.log('subscribe');
         this._loadingService.closeSpinner();
         this.requestedRoommates = requestedRoommates;
         this.cdRef.detectChanges();

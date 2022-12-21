@@ -3,7 +3,8 @@
 .roommate-requested__container {
   h4 {
     margin: 20px 10px 5px;
-    font-size: 1.10em;
+    @include font-nunito-semibold(20px);
+    color: $color-black;
   }
 
   .status {
