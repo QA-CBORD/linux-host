@@ -8,12 +8,12 @@ import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { registerPlugin } from '@capacitor/core';
 import { zip } from 'rxjs';
-import { ToastService } from '@core/service/toast/toast.service';
 import { OrderInfo } from '@sections/ordering';
-const  IOSDevice  = registerPlugin<any>('IOSDevice');
+const IOSDevice = registerPlugin<any>('IOSDevice');
 
 import { Browser } from '@capacitor/browser';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { ToastController } from '@ionic/angular';
 @Injectable({
   providedIn: 'root',
 })
@@ -23,7 +23,7 @@ export class ExternalPaymentService {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly toastService: ToastService,
+    private readonly toastController: ToastController,
     private readonly accessibilityService: AccessibilityService
   ) {}
 
@@ -40,7 +40,7 @@ export class ExternalPaymentService {
           this.browserListeners(browser, resolve, reject);
         },
         error => {
-          reject({ success: false, errorMessage: `The request failed: ${error}` });
+          reject({ success: false, errorMessage: error });
         }
       );
     });
@@ -58,7 +58,7 @@ export class ExternalPaymentService {
           await this.openApplePayPage(queryParams, handleApplePay, authToken, institutionInfo.shortName);
         },
         error => {
-          reject({ success: false, errorMessage: `The request failed: ${error}` });
+          reject({ success: false, errorMessage: error });
         }
       );
       this.handleApplePayResponse(resolve, reject);
@@ -101,14 +101,17 @@ export class ExternalPaymentService {
         const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <
           Partial<OrderInfo>
         >queryParams;
-        return `${applePayBaseURL}order_total=${total || ''}&session_token=${authToken || ''}&sub_total=${subTotal ||
-          ''}&fee=${useFee || ''}&tax=${tax || '0.00'}&discount=${discount || '0.00'}&pickup_fee=${pickupFee ||
-          ''}&delivery_fee=${deliveryFee || ''}&tip=${tip || ''}&merchantId=${merchantId || ''}`;
+        return `${applePayBaseURL}order_total=${total || ''}&session_token=${authToken || ''}&sub_total=${
+          subTotal || ''
+        }&fee=${useFee || ''}&tax=${tax || '0.00'}&discount=${discount || '0.00'}&pickup_fee=${
+          pickupFee || ''
+        }&delivery_fee=${deliveryFee || ''}&tip=${tip || ''}&merchantId=${merchantId || ''}`;
       }
       case ApplePay.DEPOSITS_WITH_APPLE_PAY: {
         const { depositAmount, accountId } = <DepositInfo>queryParams;
-        return `${applePayBaseURL}amount=${depositAmount || ''}&select_account=${accountId ||
-          ''}&session_token=${authToken || ''}`;
+        return `${applePayBaseURL}amount=${depositAmount || ''}&select_account=${accountId || ''}&session_token=${
+          authToken || ''
+        }`;
       }
       default: {
         return '';
@@ -129,8 +132,8 @@ export class ExternalPaymentService {
           resolve(<USAePayResponse>{ success: true });
         } else if (url.includes('error=')) {
           const errorMessage = new URLSearchParams(url).get('error');
-          this.onUSAePayCallBackRetrieve(`Your request failed: ${errorMessage}. Please try again.`);
-          reject(`Your request failed: ${errorMessage}. Please try again.`);
+          this.onUSAePayCallBackRetrieve(errorMessage);
+          reject(errorMessage);
         }
         browser.close();
       }
@@ -164,10 +167,37 @@ export class ExternalPaymentService {
   }
 
   private async onUSAePayCallBackRetrieve(message: string) {
-    await this.toastService.showToast({ message });
+    const myToast = await this.toastController.create({
+      message,
+      duration: 5000,
+      cssClass: 'toast-message-error',
+      mode: 'ios',
+      position: 'top',
+      buttons: [
+        {
+          icon: '/assets/icon/error.svg',
+          side: 'start',
+          handler: () => myToast.dismiss(false)
+        },
+        {
+          icon: "/assets/icon/divider.svg",
+          handler: () => true,
+        },
+        {
+          icon: "/assets/icon/close-x.svg",
+          handler: () => myToast.dismiss(),
+        }
+      ],
+    });
+    myToast.setAttribute('role', 'alert');
+    await myToast.present();
   }
 
-  private browserListeners(browser: InAppBrowserObject, resolve: (value: USAePayResponse | PromiseLike<USAePayResponse>) => void, reject: (reason?: any) => void) {
+  private browserListeners(
+    browser: InAppBrowserObject,
+    resolve: (value: USAePayResponse | PromiseLike<USAePayResponse>) => void,
+    reject: (reason?: any) => void
+  ) {
     browser.on('loadstart').subscribe(event => {
       this.accessibilityService.hideElementsByClassName();
       this.handleUSAePayResponse(event, resolve, reject, browser);
@@ -176,9 +206,12 @@ export class ExternalPaymentService {
       reject('Your request failed. Please try again.');
       browser.close();
     });
-    browser.on('exit').pipe(take(1)).subscribe(() => {
-      this.accessibilityService.hideElementsByClassName(false);
-    });
+    browser
+      .on('exit')
+      .pipe(take(1))
+      .subscribe(() => {
+        this.accessibilityService.hideElementsByClassName(false);
+      });
   }
 }
 export interface DepositInfo {
