@@ -38,6 +38,7 @@ export class SearchByPage implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   firstInputName = 'first';
   secondInputName = 'second';
+  searchOption : string;
 
   errorMessages = {
     required: 'This field is required',
@@ -55,13 +56,21 @@ export class SearchByPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.searchForm = this.fb.group({
-      [this.firstInputName]: ['',[Validators.required,Validators.pattern(REGEX_ALPHANUMERIC)]],
-      [this.secondInputName]: ['',[Validators.required,Validators.pattern(REGEX_ALPHANUMERIC)]],
-    });
+    this.searchOptions$ = this._applicationStateService.roommateSearchOptions;
+    this.searchOptions$.subscribe(v => this.searchOption = v.searchOptions);
+
+    if(this.searchOption == "byPartialLastFirst" || this.searchOption == "byPartialPreferredFirstLast"){
+      this.searchForm = this.fb.group({
+        [this.firstInputName]: ['',[Validators.required,  Validators.pattern(REGEX_ALPHANUMERIC)]],
+        [this.secondInputName]: ['',[Validators.required, Validators.pattern(REGEX_ALPHANUMERIC)]],
+      });
+    } else {
+      this.searchForm = this.fb.group({
+        [this.firstInputName]: ['',[Validators.required]]
+      });
+    }
 
     this.searchForm.updateValueAndValidity();
-    this.searchOptions$ = this._applicationStateService.roommateSearchOptions;
     this._initTermsSubscription();
     this._initGetRequestedRoommatesSubscription();
   }
