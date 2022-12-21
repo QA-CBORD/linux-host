@@ -4,13 +4,13 @@ import Page from './page';
 
 class createnewpin extends Page {
 
-    get createnewpintext(){
+    get createNewPinText(){
         return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[1]/ion-label[1]');
     }
-    get confirmnewpintext(){
+    get confirmNewPinText(){
         return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[1]/ion-label[1]');
     }
-    get pinbutton(){
+    get pinButton(){
         return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[2]/div[2]/ion-button');
     }
     
