@@ -8,6 +8,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { ControlErrorsModule } from '../../../../../../shared/ui-components/control-errors/control-errors.module';
 import { SearchByRoutingModule } from './search-by-routing.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { RequestedRoommateModule } from './requested-roommates/requested-roommates.module';
 
 export const imports = [
   CommonModule,
@@ -17,7 +18,8 @@ export const imports = [
   StButtonModule,
   ControlErrorsModule,
   SearchByRoutingModule,
-  StHeaderModule
+  StHeaderModule,
+  RequestedRoommateModule
 ];
 export const declarations = [SearchByPage];
 
