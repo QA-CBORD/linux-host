@@ -6,7 +6,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, ModalController } from '@ionic/angular';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, throwError } from 'rxjs';
@@ -21,10 +21,10 @@ import { ApplicationsStateService } from '../../applications/applications-state.
 import { RequestingRoommateModalComponent } from '@shared/ui-components/requesting-roommate-modal/requesting-roommate-modal.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { Location } from '@angular/common';
 import { CurrentForm } from '../form-payment/form-payment.component';
 import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
-
+import { NavigationService } from '@shared/services/navigation.service';
+import { RequestedRoommatesComponent } from '../roommate-search/pages/search-by/requested-roommates/requested-roommates.component';
 
 enum UpdateType {
   SUBMIT = 'submit',
@@ -41,20 +41,22 @@ export class ApplicationDetailsPage implements OnInit {
   @ViewChild('content') private page: IonContent;
   @ViewChild(StepperComponent) private stepper: StepperComponent;
   @ViewChildren(QuestionComponent) private questions: QueryList<QuestionComponent>;
+  @ViewChild(RequestedRoommatesComponent, { static: false }) requestedRoommatesComponent: RequestedRoommatesComponent;
   isSubmitted: boolean;
   applicationDetails$: Observable<ApplicationDetails>;
   pages$: Observable<QuestionsPage[]>;
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
     private applicationsService: ApplicationsService,
     private applicationsStateService: ApplicationsStateService,
     private loadingService: LoadingService,
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
-    private formPaymentService: FormPaymentService
+    private formPaymentService: FormPaymentService,
+    private _router: Router,
+    private readonly navService: NavigationService
   ) {}
 
   async ngOnInit() {
@@ -62,6 +64,9 @@ export class ApplicationDetailsPage implements OnInit {
     this.pages$ = this.getPages$();
   }
 
+  ionViewWillEnter() {
+    this.requestedRoommatesComponent?.updateRequestedRoommates();
+  }
 
   save(applicationDetails: ApplicationDetails) {
     this.updateQuestions();
@@ -118,7 +123,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   onBack() {
-    this.location.back();
+    this._router.navigate([this.navService.getPreviousTrackedUrl()]);
   }
 
   private updateQuestions() {

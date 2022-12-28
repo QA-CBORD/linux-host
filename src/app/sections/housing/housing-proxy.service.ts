@@ -2,19 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-
-import { HousingAuthService } from './housing-auth/housing-auth.service';
-
 import { Response, ResponseStatus } from './housing.model';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HousingProxyService {
-  constructor(private _http: HttpClient, private _housingAuthService: HousingAuthService) {}
+  constructor(private _http: HttpClient, private readonly _authFacadeService: AuthFacadeService) {}
 
   request<T>(apiUrl: string, callback: (headers: HttpHeaders, apiUrl: string) => Observable<T>): Observable<T> {
-    return this._housingAuthService.token$.pipe(
+    return this._authFacadeService.getExternalAuthenticationToken$().pipe(
       switchMap((token: string) => {
         const headers: HttpHeaders = new HttpHeaders({
           Authorization: `Bearer ${token}`,
@@ -31,11 +29,7 @@ export class HousingProxyService {
         .get(apiUrl, {
           headers,
         })
-        .pipe(
-          map((response: Response) => {
-            return response.data;
-          })
-        )
+        .pipe(map((response: Response) => response.data))
     );
   }
 
@@ -47,8 +41,8 @@ export class HousingProxyService {
     );
   }
 
-  putInspection<T>(apiURL: string, body: any): Observable<T> {
-    return this.request<T>(apiURL, (headers: HttpHeaders, apiUrl: string) =>
+  putInspection<T>(apiUrl: string, body: any): Observable<T> {
+    return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
       this._http.put<T>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
       })
@@ -63,8 +57,8 @@ export class HousingProxyService {
     );
   }
 
-  postAttachment<T>(apiURL: string, body: any): Observable<T> {
-    return this.request<T>(apiURL, (_headers: HttpHeaders, apiUrl: string) => this._http.post<T>(apiUrl, body));
+  postAttachment<T>(apiUrl: string, body: any): Observable<T> {
+    return this.request<T>(apiUrl, (_headers: HttpHeaders, apiUrl: string) => this._http.post<T>(apiUrl, body));
   }
 
   postImage<T>(apiURL: string, body: any): Observable<T> {
@@ -75,8 +69,8 @@ export class HousingProxyService {
     );
   }
 
-  delete(apiURL: string, body?: any): Observable<Response> {
-    return this.request<Response>(apiURL, (headers: HttpHeaders, apiUrl: string) => {
+  delete(apiUrl: string, body?: any): Observable<Response> {
+    return this.request<Response>(apiUrl, (headers: HttpHeaders, apiUrl: string) => {
       if (body) {
         return this._http.delete<Response>(apiUrl, {
           params: body,

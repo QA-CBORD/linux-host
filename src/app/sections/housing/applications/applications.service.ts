@@ -42,6 +42,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { RoommatePreferences } from './applications.model';
 import { RoommateDetails } from '../roommate/roomate.model';
 import { CurrentForm } from '../pages/form-payment/form-payment.component';
+import { LOCAL_ROUTING } from '../housing.config';
 
 @Injectable({
   providedIn: 'root',
@@ -211,7 +212,7 @@ export class ApplicationsService {
         buttonText: 'Search Roommate',
         metadata: options,
         action: () => {
-          this._router.navigate([`${PATRON_NAVIGATION.housing}/roommates-search`], { skipLocationChange: true }).then(() => {
+          this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roommatesSearchBy}`]).then(() => {
             this._applicationsStateService.setRoommateSearchOptions(options);
           });
         },

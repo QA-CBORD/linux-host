@@ -1,5 +1,6 @@
 <ion-content>
-  <section class="input__wrapper" *ngIf="(searchOptions$ | async) as options">
+  <st-header title="Search for a roommate" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back" [isToolbarShow]="true" [trackUrls]="true"></st-header>
+  <section class="input__wrapper" *ngIf="options">
     <form [formGroup]="searchForm" novalidate>
       <ng-container [ngSwitch]="options.searchOptions">
         <div *ngSwitchCase="'byExactId'">
@@ -62,42 +63,6 @@
       </div>
     </form>
   </section>
-  <div *ngIf="(requestedRoommates$ | async) as requestedRoommates" class="roommate-requested__container">
-    <div *ngIf="(searchOptions$ | async) as options">
-      <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
-      <div *ngFor="let roommate of requestedRoommates">
-        <ng-container [ngSwitch]="options.showOptions">
-          <ion-card *ngSwitchCase="OptionsName.FullName">
-            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
-              roommate.lastName}}</ion-card-content>
-            <ion-footer class="status">
-              <ion-row>
-                <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-              </ion-row>
-            </ion-footer>
-          </ion-card>
-
-          <ion-card *ngSwitchCase="OptionsName.PreferredName">
-            <ion-card-content>{{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName
-              : roommate.preferredName }} {{ roommate.lastName}}</ion-card-content>
-            <ion-footer class="status">
-              <ion-row>
-                <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-              </ion-row>
-            </ion-footer>
-          </ion-card>
-
-          <ion-card *ngSwitchCase="OptionsName.FullNameDOB">
-            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
-              roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}</ion-card-content>
-            <ion-footer class="status">
-              <ion-row>
-                <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-              </ion-row>
-            </ion-footer>
-          </ion-card>
-        </ng-container>
-      </div>
-    </div>
-  </div>
+  <st-requested-roommates>
+  </st-requested-roommates>
 </ion-content>
