@@ -23,8 +23,8 @@ export class HousingProxyService {
     );
   }
 
-  get<T>(apiUrl: string): Observable<T> {
-    return this.request<T>(apiUrl, (headers, apiUrl) =>
+  get<T>(apiURL: string): Observable<T> {
+    return this.request<T>(apiURL, (headers, apiUrl) =>
       this._http
         .get(apiUrl, {
           headers,
@@ -33,8 +33,8 @@ export class HousingProxyService {
     );
   }
 
-  put(apiUrl: string, body: any): Observable<ResponseStatus> {
-    return this.request<ResponseStatus>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+  put(apiURL: string, body: any): Observable<ResponseStatus> {
+    return this.request<ResponseStatus>(apiURL, (headers: HttpHeaders, apiUrl: string) =>
       this._http.put<ResponseStatus>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
       })
@@ -49,8 +49,8 @@ export class HousingProxyService {
     );
   }
 
-  post<T>(apiUrl: string, body: any): Observable<T> {
-    return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+  post<T>(apiURL: string, body: any): Observable<T> {
+    return this.request<T>(apiURL, (headers: HttpHeaders, apiUrl: string) =>
       this._http.post<T>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
       })
@@ -61,8 +61,8 @@ export class HousingProxyService {
     return this.request<T>(apiUrl, (_headers: HttpHeaders, apiUrl: string) => this._http.post<T>(apiUrl, body));
   }
 
-  postImage<T>(apiUrl: string, body: any): Observable<T> {
-    return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+  postImage<T>(apiURL: string, body: any): Observable<T> {
+    return this.request<T>(apiURL, (headers: HttpHeaders, apiUrl: string) =>
       this._http.post<T>(apiUrl, body, {
         headers,
       })
