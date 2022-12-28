@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { UserLogin } from '@core/model/user';
 import { HttpClient } from '@angular/common/http';
@@ -13,8 +13,6 @@ import { ServiceParameters } from '@core/model/service/message-response.model';
 export class AuthApiService {
   private serviceUrl = '/json/authentication';
 
-  private sessionIdSource: ReplaySubject<string> = new ReplaySubject<string>(1);
-  sessionId$: Observable<string> = this.sessionIdSource.asObservable();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -61,7 +59,6 @@ export class AuthApiService {
 
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
-      tap((sessionId: string) => this.setSessionId(sessionId))
     );
   }
 
@@ -80,7 +77,6 @@ export class AuthApiService {
 
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
-      tap((sessionId: string) => this.setSessionId(sessionId))
     );
   }
 
@@ -116,7 +112,6 @@ export class AuthApiService {
 
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
-      tap((sessionId: string) => this.setSessionId(sessionId))
     );
   }
 
@@ -134,10 +129,6 @@ export class AuthApiService {
     const queryConfig = new RPCQueryConfig('retrieveExternalAuthenticationToken', postParams, true);
 
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
-  }
-
-  setSessionId(sessionId: string): void {
-    this.sessionIdSource.next(sessionId);
   }
 
   retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {
