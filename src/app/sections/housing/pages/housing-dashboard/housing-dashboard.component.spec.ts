@@ -26,6 +26,7 @@ import { HousingDashboardPage } from './housing-dashboard.component';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
 import { MockDeclaration } from 'ng-mocks';
 import { WorkOrdersComponent } from '@sections/housing/work-orders/work-orders.component';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 const _loadingService = {
   showSpinner: jest.fn(),
@@ -57,6 +58,9 @@ const _platform = {
   is: jest.fn(),
 };
 
+const _storageStateService = {
+  initSaveStorageListeners: jest.fn(),
+};
 const termService = {
   termId$: EMPTY,
   getTerms: jest.fn(() => of(true))
@@ -97,6 +101,7 @@ describe('HousingDashboardPage', () => {
         { provide: Storage, useValue: _storage },
         { provide: Platform, useValue: _platform },
         { provide: TermsService, useValue: termService },
+        { provide: StorageStateService, useValue: _storageStateService },
       ],
     }).compileComponents();
   });
