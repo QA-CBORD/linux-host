@@ -6,7 +6,6 @@ import { HousingDashboardPage } from './housing-dashboard.component';
 const routes: Routes = [{ path: '', component: HousingDashboardPage }];
 
 const imports = [RouterModule.forChild(routes)];
-//const exports = [RouterModule];
 
 @NgModule({
   imports,

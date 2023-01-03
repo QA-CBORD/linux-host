@@ -10,7 +10,6 @@ import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { Observable, take } from 'rxjs';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { RequestedRoommatesComponent } from './requested-roommates/requested-roommates.component';
-import { tap } from 'rxjs/operators';
 
 const REGEX_ALPHANUMERIC = `^[a-zA-Z0-9'-]*$`;
 @Component({
@@ -61,9 +60,9 @@ export class SearchByPage implements OnInit {
 
     this.searchForm.updateValueAndValidity();
   }
-
+ 
   ionViewWillEnter() {
-    this.requestedRoommatesComponent?.requestedRoommates;
+    this.requestedRoommatesComponent.updateRequestedRoommates();
   }
 
   searchRoommates(options: RoommateSearchOptions) {

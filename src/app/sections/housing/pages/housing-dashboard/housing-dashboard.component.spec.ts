@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {  CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-//import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -26,6 +25,7 @@ import { HousingDashboardPage } from './housing-dashboard.component';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
 import { MockDeclaration } from 'ng-mocks';
 import { WorkOrdersComponent } from '@sections/housing/work-orders/work-orders.component';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 const _loadingService = {
   showSpinner: jest.fn(),
@@ -42,7 +42,6 @@ const _housingService = {
   refreshDefinitions: jest.fn(),
 };
 
-
 const _environment = {
   getHousingAPIURL: jest.fn(),
   getEnvironmentObject: jest.fn(),
@@ -57,9 +56,12 @@ const _platform = {
   is: jest.fn(),
 };
 
+const _storageStateService = {
+  initSaveStorageListeners: jest.fn(),
+};
 const termService = {
   termId$: EMPTY,
-  getTerms: jest.fn(() => of(true))
+  getTerms: jest.fn(() => of(true)),
 };
 
 describe('HousingDashboardPage', () => {
@@ -97,10 +99,10 @@ describe('HousingDashboardPage', () => {
         { provide: Storage, useValue: _storage },
         { provide: Platform, useValue: _platform },
         { provide: TermsService, useValue: termService },
+        { provide: StorageStateService, useValue: _storageStateService },
       ],
     }).compileComponents();
   });
-
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HousingDashboardPage);
@@ -121,6 +123,5 @@ describe('HousingDashboardPage', () => {
       const spy = jest.spyOn(termService, 'getTerms');
       expect(spy).toHaveBeenCalledTimes(1);
     });
-
   });
 });
