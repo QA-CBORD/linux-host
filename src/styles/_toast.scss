@@ -35,13 +35,19 @@
     background-color: var(--ion-color-danger);
     border-radius: 10px;
   }
+
   &::part(icon) {
     font-size: 1.8em;
     color: $color-white;
   }
-  
+
   &::part(message) {
     @include font-nunito-regular(16px);
     color: $color-white;
+  }
+
+  &::part(button) {
+    border-left: .5px solid $color-very-light-gray;
+    width: 3em;
   }
 }
