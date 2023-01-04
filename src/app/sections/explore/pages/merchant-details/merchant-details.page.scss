@@ -37,8 +37,6 @@
   }
 
   &__merchant-info {
-    display: grid;
-    grid-template-columns: -webkit-min-content 1fr;
     &--top-margin {
       margin-top: -10px;
     }
@@ -47,7 +45,6 @@
   &__merchant-text {
     @include font-nunito-regular(14px);
     display: block;
-    padding: 10px;
     text-align: inherit;
     line-height: 19px;
 
@@ -71,5 +68,41 @@
   &__merchant-description {
     margin: 0;
     @include font-nunito-regular(14px);
+  }
+
+  [class*="icon-pin-point"] {
+    mask-image: url('/assets/icon/pin-point.svg');
+    width: 1.4em;
+    height: 1.6em;
+  }
+
+  [class*="icon-clock"] {
+    mask-image: url('/assets/icon/clock.svg');
+    width: 1.4em;
+    height: 1.8em;
+  }
+
+  [class*="icon-payment"] {
+    mask-image: url('/assets/icon/payment.svg');
+    width: 1.4em;
+    height: 1.6em;
+  }
+
+  [class*="icon-email"] {
+    mask-image: url('/assets/icon/email.svg');
+    width: 1.5em;
+    height: 2em;
+  }
+
+  [class*="icon-phone"] {
+    mask-image: url('/assets/icon/phone.svg');
+    width: 1.5em;
+    height: 1.6em;
+  }
+
+  [class*="icon-globe"] {
+    mask-image: url('/assets/icon/globe.svg');
+    width: 1.5em;
+    height: 2em;
   }
 }
