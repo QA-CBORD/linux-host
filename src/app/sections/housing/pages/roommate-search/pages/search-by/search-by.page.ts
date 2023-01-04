@@ -56,7 +56,7 @@ export class SearchByPage implements OnInit, OnDestroy {
   }
  
   ionViewWillEnter() {
-    this.requestedRoommatesComponent.requestedRoommates();
+    this.requestedRoommatesComponent.updateRequestedRoommates();
   }
 
   ngOnDestroy(): void {
