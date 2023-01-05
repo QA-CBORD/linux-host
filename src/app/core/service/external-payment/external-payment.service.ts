@@ -180,10 +180,6 @@ export class ExternalPaymentService {
           handler: () => myToast.dismiss(false)
         },
         {
-          icon: "/assets/icon/divider.svg",
-          handler: () => true,
-        },
-        {
           icon: "/assets/icon/close-x.svg",
           handler: () => myToast.dismiss(),
         }
