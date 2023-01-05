@@ -52,6 +52,14 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/app.location-disclousure.spec.ts',
     ],
+    forgotPasswordStudent: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.go-to-forgotpassword.spec.ts',
+      './tests/specs/hosted/app.forgotpassword.spec.ts',
+      './tests/specs/hosted/app.emailsent.spec.ts',
+    ],
   },
   //
   // ============

@@ -19,6 +19,9 @@ class Login extends Page {
     get LoginHeaderTitle(){
         return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/user-pass-form/ion-content/div[1]/ion-text');
     }
+    get ForgotPassword(){
+        return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/user-pass-form/ion-content/div[2]/form/div[2]/a');
+    }
 }
 
 export default new Login();
