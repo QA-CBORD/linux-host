@@ -1,0 +1,17 @@
+@import 'tools';
+
+.roommate-requested__container {
+  h4 {
+    margin: 20px 10px 5px;
+    @include font-nunito-semibold(20px);
+    color: $color-black;
+  }
+
+  .status {
+    padding: 5px 15px;
+
+    .status__text {
+      display: inherit
+    }
+  }
+}

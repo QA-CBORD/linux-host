@@ -182,37 +182,7 @@
         {{ question.buttonText }}
       </st-button>
       <!-- TODO: create template to show users -->
-      <div *ngIf="(roommateSearchOptions$ | async) as options">
-        <div
-          *ngIf="( _applicationsStateService.getRequestedRoommate() ) as requestedRoommates"
-          class="roommate-requested__container">
-          <h4 *ngIf="requestedRoommates.length > 0">Requested roommates</h4>
-          <div *ngFor="let roommate of _applicationsStateService.requestedRoommates | async">
-            <ion-card >
-              <ion-list>
-                  <ng-container [ngSwitch]="options.showOptions">
-                    <ion-card-content *ngSwitchCase="'fullName'">
-                      {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}}
-                    </ion-card-content>
-                    
-                    <ion-card-content *ngSwitchCase="'preferredNameLast'">
-                      {{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName }} {{ roommate.lastName}}
-                    </ion-card-content>
-        
-                    <ion-card-content *ngSwitchCase="'fullNameDOB'">
-                      {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}
-                    </ion-card-content>
-                  </ng-container>
-              </ion-list>
-              <ion-footer class="status">
-                <ion-row>
-                  <p class="status__text">{{ roommate.confirmed ? 'Confirmed' : 'Unconfirmed' }}</p>
-                </ion-row>
-              </ion-footer>
-            </ion-card>
-          </div>
-        </div>
-      </div> 
+
     </div>
   </ng-container>
   <ng-container [ngSwitch]="question['dataType']">

@@ -17,42 +17,19 @@
       <ion-item class="ion-no-padding">
         <ion-grid class="ion-no-padding" style="margin: 3px">
           <ion-row class="ion-no-padding" style="padding-bottom: 8px">
-            <ion-col class="ion-no-padding col-sm-4 col-md-3 col-lg-3" style="padding: 0px;padding-top: 5px">
-              <!-- <ion-grid class="ion-no-padding">
-                <ion-row class="ion-no-padding"> -->
+            <ion-col class="ion-no-padding col-sm-4 col-md-3 col-lg-3" style="padding: 0px; padding-top: 5px">
               <ion-label class="facilityNameDisplay" style="padding-bottom: 3px">{{ facility.facilityName }}</ion-label>
               <ion-label style="font-size: 14px; color: gray"
                 ><b>{{ facility.bedCount }}</b> Beds | <b>{{ facility.bathCount }}</b> Baths</ion-label
               >
-              <!-- </ion-row> -->
-              <!-- <ion-row class="ion-padding-top">
-                   <ion-label class="bedAndBathCount">{{facility.bedCount}}</ion-label>&nbsp;
-                  <ion-label style="font-size: 14px">Beds </ion-label>&nbsp;
-                  <ion-label>|</ion-label>&nbsp;
-                  <ion-label class="bedAndBathCount">{{facility.bathCount}}</ion-label>&nbsp;
-                  <ion-label style="font-size: 14px">Baths</ion-label>
-                </ion-row> -->
-              <!-- </ion-grid> -->
             </ion-col>
             <ion-col class="ion-no-padding col-sm-7 col-md-8 col-lg-8 ion-text-right">
-              <!-- <ion-grid class="ion-no-padding">
-                <ion-row style="column-span: 5" class="ion-text-right">
-                  <ion-col class="ion-text-right"> -->
               <ion-note>Starting At</ion-note>
               <p style="font-size: 18px; font-weight: bold; margin: 0px; margin-top: 7px; margin-bottom: 3px">
                 $600/mo
               </p>
-              <!-- </ion-col>
-                </ion-row> -->
-              <!-- <ion-row style="column-span: 5">
-                  <ion-col class="ion-text-right">
-                    <ion-label style="font-size: 18px; font-weight: bold">$600/mo</ion-label>
-                  </ion-col>
-                </ion-row> -->
-              <!-- </ion-grid> -->
             </ion-col>
-            <!-- <ion-col class="ion-text-right col-sm-1 col-md-1 col-lg-1 ion-no-padding"> -->
-            <ion-col style="margin-left:-70px">
+            <ion-col style="margin-left: -70px">
               <ion-button
                 class="col-sm-1 button-small button-clear ion-float-right ion-no-margin ion-no-padding"
                 (click)="toggle(facility)"
@@ -68,48 +45,28 @@
           <ion-grid class="ion-no-padding">
             <ion-row style="column-span: 12">
               <ion-col class="ion-text-left">
-                <ion-note>
-                  Floors
-                </ion-note>
-                <p class="pExpandable">
-                  {{ facility.floors }}
-                </p>
+                <ion-note> Floors </ion-note>
+                <p class="pExpandable">{{ facility.floors }}</p>
               </ion-col>
               <ion-col class="ion-text-right">
-                <ion-note>
-                  Year Built
-                </ion-note>
-                <p class="pExpandable">
-                  {{ facility.builtYear }}
-                </p>
+                <ion-note> Year Built </ion-note>
+                <p class="pExpandable">{{ facility.builtYear }}</p>
               </ion-col>
             </ion-row>
             <ion-row style="column-span: 12">
               <ion-col class="ion-text-left">
-                <ion-note>
-                  Campus
-                </ion-note>
-                <p class="pExpandable">
-                  {{ facility.campus }}
-                </p>
+                <ion-note> Campus </ion-note>
+                <p class="pExpandable">{{ facility.campus }}</p>
               </ion-col>
               <ion-col class="ion-text-right">
-                <ion-note>
-                  Parking
-                </ion-note>
-                <p class="pExpandable">
-                  {{ facility.parking }}
-                </p>
+                <ion-note> Parking </ion-note>
+                <p class="pExpandable">{{ facility.parking }}</p>
               </ion-col>
             </ion-row>
             <ion-row style="column-span: 12">
               <ion-col class="ion-text-left">
-                <ion-note>
-                  # of available units
-                </ion-note>
-                <p class="pExpandable">
-                  {{ facility.availableUnits }}
-                </p>
+                <ion-note> # of available units </ion-note>
+                <p class="pExpandable">{{ facility.availableUnits }}</p>
               </ion-col>
               <ion-col class="ion-text-right"> </ion-col>
             </ion-row>
