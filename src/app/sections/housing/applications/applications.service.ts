@@ -264,7 +264,7 @@ export class ApplicationsService {
   ): FormArray {
     const values: QuestionReorderValue[] = storedValue || question.values;
     const selectedValues: QuestionReorderValue[] = values.filter((value: QuestionReorderValue) => value.selected);
-    const controls: FormControl[] = selectedValues
+    const controls: FormControl[] = [...selectedValues]
       .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
         QuestionReorder.sort(preferences, current, next, selectedValues.length)
       )

@@ -7,40 +7,4 @@ i {
   background: currentColor;
   width: 1em;
   height: 1em;
-
-  &[class*="icon-pin-point"] {
-    mask-image: url('/assets/icon/pin-point.svg');
-    width: 1.5em;
-    height: 2em;
-  }
-
-  &[class*="icon-clock"] {
-    mask-image: url('/assets/icon/clock.svg');
-    width: 1.5em;
-    height: 2em;
-  }
-
-  &[class*="icon-payment"] {
-    mask-image: url('/assets/icon/payment.svg');
-    width: 1.5em;
-    height: 2em;
-  }
-
-  &[class*="icon-email"] {
-    mask-image: url('/assets/icon/email.svg');
-    width: 1.5em;
-    height: 2em;
-  }
-
-  &[class*="icon-phone"] {
-    mask-image: url('/assets/icon/phone.svg');
-    width: 1.5em;
-    height: 2em;
-  }
-
-  &[class*="icon-globe"] {
-    mask-image: url('/assets/icon/globe.svg');
-    width: 1.5em;
-    height: 2em;
-  }
 }

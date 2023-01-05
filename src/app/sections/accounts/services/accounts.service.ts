@@ -19,7 +19,9 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Settings } from '../../../app.global';
 import { MEAL_CONTENT_STRINGS } from '../pages/meal-donations/meal-donation.config';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AccountService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);

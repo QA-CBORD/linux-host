@@ -1,4 +1,3 @@
-
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
     <ion-buttons slot="start" mode="ios">
@@ -20,54 +19,47 @@
         Clear All
       </ion-button>
     </ion-buttons>
-
-
   </ion-toolbar>
 </ion-header>
-  <ion-content class="search-filter-model__content">
-    <div *ngIf="( occupants$ | async) as sample">
-    <section class="search-filter-model__sorting">
-<!--          <st-filter-sort [categories]="categories" (sorted)="sort($event)"></st-filter-sort>-->
-    </section>
-          <form [formGroup]="filtersForm" (ngSubmit)="filter($event)" #filterForm="ngForm">
-            <div *ngFor="let item of categoryOptions | keyvalue ">
-              <st-search-filter-section [title]="item.key" [toggled]="true">
-                <div class="search-filter-model__row" formArrayName="{{item.key}}">
-                  <ion-item
-                    class="ion-no-padding form-checkbox search-filter-model__col"
-                    lines="none"
-                    *ngFor="let option of filtersForm.get(item.key)['controls']; index as i"
-                  >
-                    <ion-checkbox
-                      class="form-checkbox__control"
-                      [formControl]="option"
-                      mode="md"
-                      slot="start"
-                      [value]=""
-                      [id]="getId(item.key,i)"
-                    ></ion-checkbox>
-                    <ion-label class="form-label">{{getLabelInfo(item.key, i)}}</ion-label>
-                  </ion-item>
-                </div>
-              </st-search-filter-section>
-            </div>
-          </form>
-    </div>
-    <ion-footer>
-      <ion-toolbar class="search-filter-model__footer-toolbar">
-        <ion-button
-          class="btn search-filter-model__submit"
-          shape="round"
-          expand="block"
-          type="submit"
-          (click)="filter(filtersForm.value)"
-          mode="md"
-        >
-          Show Units
-        </ion-button>
-      </ion-toolbar>
-    </ion-footer>
-  </ion-content>
-
-
-
+<ion-content class="search-filter-model__content">
+  <div *ngIf="occupants$ | async as sample">
+    <section class="search-filter-model__sorting"></section>
+    <form [formGroup]="filtersForm" (ngSubmit)="filter($event)" #filterForm="ngForm">
+      <div *ngFor="let item of categoryOptions | keyvalue">
+        <st-search-filter-section [title]="item.key" [toggled]="true">
+          <div class="search-filter-model__row" formArrayName="{{ item.key }}">
+            <ion-item
+              class="ion-no-padding form-checkbox search-filter-model__col"
+              lines="none"
+              *ngFor="let option of filtersForm.get(item.key)['controls']; index as i"
+            >
+              <ion-checkbox
+                class="form-checkbox__control"
+                [formControl]="option"
+                mode="md"
+                slot="start"
+                [value]=""
+                [id]="getId(item.key, i)"
+              ></ion-checkbox>
+              <ion-label class="form-label">{{ getLabelInfo(item.key, i) }}</ion-label>
+            </ion-item>
+          </div>
+        </st-search-filter-section>
+      </div>
+    </form>
+  </div>
+  <ion-footer>
+    <ion-toolbar class="search-filter-model__footer-toolbar">
+      <ion-button
+        class="btn search-filter-model__submit"
+        shape="round"
+        expand="block"
+        type="submit"
+        (click)="filter(filtersForm.value)"
+        mode="md"
+      >
+        Show Units
+      </ion-button>
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>

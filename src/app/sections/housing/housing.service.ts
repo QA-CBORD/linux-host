@@ -441,18 +441,18 @@ export class HousingService {
   }
 
   private _patchDefinitionsByStore(response: DefinitionsResponse): Observable<DefinitionsResponse> {
-    const { applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists, workOrders } = response;
+    const { applicationDefinitions:appDef, contractDetails:contractsDet, nonAssignmentDetails, waitingLists:wLists, workOrders } = response;
 
     const patchedApplications: Observable<ApplicationDetails[]> =
-      applicationDefinitions.length > 0
-        ? this._applicationsService.patchApplicationsByStoredStatus(applicationDefinitions)
+    appDef.length > 0
+        ? this._applicationsService.patchApplicationsByStoredStatus(appDef)
         : of([]);
 
     return forkJoin(
       patchedApplications,
-      of(contractDetails),
+      of(contractsDet),
       of(nonAssignmentDetails),
-      of(waitingLists),
+      of(wLists),
       of(workOrders)
     ).pipe(
       map(
