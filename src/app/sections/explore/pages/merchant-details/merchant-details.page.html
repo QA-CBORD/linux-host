@@ -71,7 +71,7 @@
       <ion-item *ngIf="merchant.hoursOfOperation as hours" class="ion-no-padding explore__merchant-info--top-margin">
         <ion-row class="ion-align-items-center">
           <ion-col>
-            <ion-text class="explore__merchant-text--full">{{ hours }}</ion-text>
+            <ion-text class="explore__merchant-text--full" [innerHTML]="hours | lineBreak "></ion-text>
           </ion-col>
         </ion-row>
       </ion-item>
