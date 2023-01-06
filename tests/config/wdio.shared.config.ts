@@ -60,6 +60,21 @@ export const config: WebdriverIO.Config = {
       './tests/specs/hosted/app.forgotpassword.spec.ts',
       './tests/specs/hosted/app.emailsent.spec.ts',
     ],
+    forgotPasswordGuest: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/hosted/app.go-to-forgotpassword.spec.ts',
+      './tests/specs/hosted/app.forgotpassword.spec.ts',
+      './tests/specs/hosted/app.emailsent.spec.ts',
+    ],
+    registrationHostedGuest: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/shared/app.signup.spec.ts',
+      './tests/specs/shared/app.createaccount.spec.ts',
+    ],
   },
   //
   // ============

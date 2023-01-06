@@ -22,6 +22,10 @@ class Login extends Page {
     get ForgotPassword(){
         return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/user-pass-form/ion-content/div[2]/form/div[2]/a');
     }
+
+    get SignupButton(){
+        return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/user-pass-form/ion-content/div[2]/form/div[3]/st-button[1]');
+    }
 }
 
 export default new Login();
