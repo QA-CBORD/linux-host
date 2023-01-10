@@ -48,4 +48,27 @@ export class ToastService {
 
     await toast.present();
   }
+
+  async showError(message: string) {
+    const myToast = await this.toastController.create({
+      message,
+      duration: 5000,
+      cssClass: 'toast-message-error',
+      mode: 'ios',
+      position: 'top',
+      buttons: [
+        {
+          icon: '/assets/icon/error.svg',
+          side: 'start',
+          handler: () => myToast.dismiss(false)
+        },
+        {
+          icon: "/assets/icon/close-x.svg",
+          handler: () => myToast.dismiss(),
+        }
+      ],
+    });
+    myToast.setAttribute('role', 'alert');
+    await myToast.present();
+  }
 }
