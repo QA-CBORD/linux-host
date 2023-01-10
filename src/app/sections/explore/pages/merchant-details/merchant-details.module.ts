@@ -10,7 +10,6 @@ import { MerchantDetailsRouterModule } from '@sections/explore/pages/merchant-de
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { MerchantMainInfoModule } from '@shared/ui-components/merchant-main-info/merchant-main-info.module';
-import { LineBreakPipeModule } from '@shared/pipes/line-break-pipe/line-break.module';
 
 
 
@@ -23,8 +22,7 @@ import { LineBreakPipeModule } from '@shared/pipes/line-break-pipe/line-break.mo
     MerchantDetailsRouterModule,
     MerchantMainInfoModule,
     StButtonModule,
-    AddressHeaderFormatPipeModule,
-    LineBreakPipeModule
+    AddressHeaderFormatPipeModule
   ],
   declarations: [MerchantDetailsPage]
 })
