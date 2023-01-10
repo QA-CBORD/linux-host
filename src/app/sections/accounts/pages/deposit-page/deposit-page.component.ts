@@ -40,8 +40,8 @@ export enum browserState {
 const dropdown = {
   PAYMENT: /payment/,
   ACCOUNT: /account/,
-  DEPOSIT: /deposit/
-}
+  DEPOSIT: /deposit/,
+};
 
 @Component({
   selector: 'st-deposit-page',
@@ -277,8 +277,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         .then((result: ApplePayResponse) => {
           if (result.success) {
             this.finalizeDepositModal(result);
-          } else {
-            this.onErrorRetrieve(result.errorMessage);
           }
         })
         .catch(async () => {
@@ -290,19 +288,17 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     } else {
       iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
         .pipe(
-          switchMap(
-            (sourceAcc): any => {
-              const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
-                sourceAcc.id,
-                selectedAccount.id,
-                amount
-              );
+          switchMap((sourceAcc): any => {
+            const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
+              sourceAcc.id,
+              selectedAccount.id,
+              amount
+            );
 
-              return iif(() => isBillme, of(0), calculateDepositFee).pipe(
-                map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
-              );
-            }
-          ),
+            return iif(() => isBillme, of(0), calculateDepositFee).pipe(
+              map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
+            );
+          }),
           take(1)
         )
         .subscribe(
@@ -352,7 +348,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             }),
             take(1)
           )
-          .subscribe(() => {return;}, message => this.onErrorRetrieve(message), () => this.loadingService.closeSpinner());
+          .subscribe(
+            () => {
+              return;
+            },
+            () => this.loadingService.closeSpinner()
+          );
       }
 
       if (data) {
@@ -531,7 +532,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({ message, duration: 5000 });
+    await this.toastService.showError(message);
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {

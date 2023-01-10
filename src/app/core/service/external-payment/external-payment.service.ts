@@ -13,7 +13,7 @@ const IOSDevice = registerPlugin<any>('IOSDevice');
 
 import { Browser } from '@capacitor/browser';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { ToastController } from '@ionic/angular';
+import { ToastService } from '../toast/toast.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -23,7 +23,7 @@ export class ExternalPaymentService {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly accessibilityService: AccessibilityService
   ) {}
 
@@ -167,26 +167,7 @@ export class ExternalPaymentService {
   }
 
   private async onUSAePayCallBackRetrieve(message: string) {
-    const myToast = await this.toastController.create({
-      message,
-      duration: 5000,
-      cssClass: 'toast-message-error',
-      mode: 'ios',
-      position: 'top',
-      buttons: [
-        {
-          icon: '/assets/icon/error.svg',
-          side: 'start',
-          handler: () => myToast.dismiss(false)
-        },
-        {
-          icon: "/assets/icon/close-x.svg",
-          handler: () => myToast.dismiss(),
-        }
-      ],
-    });
-    myToast.setAttribute('role', 'alert');
-    await myToast.present();
+    await this.toastService.showError(message);
   }
 
   private browserListeners(
