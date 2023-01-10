@@ -49,10 +49,10 @@ export class ToastService {
     await toast.present();
   }
 
-  async showError(message: string) {
+  async showError(message: string, duration = 5000) {
     const myToast = await this.toastController.create({
       message,
-      duration: 5000,
+      duration,
       cssClass: 'toast-message-error',
       mode: 'ios',
       position: 'top',
