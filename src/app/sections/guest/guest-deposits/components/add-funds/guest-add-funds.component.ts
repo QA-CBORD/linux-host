@@ -352,9 +352,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         accounts => {
           this.setSourceAccounts(accounts);
         },
-        message => {
-          this.onErrorRetrieve(message);
-        },
         () => {
           this.loadingService.closeSpinner();
         }
