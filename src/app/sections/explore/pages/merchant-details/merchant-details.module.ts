@@ -22,7 +22,7 @@ import { MerchantMainInfoModule } from '@shared/ui-components/merchant-main-info
     MerchantDetailsRouterModule,
     MerchantMainInfoModule,
     StButtonModule,
-    AddressHeaderFormatPipeModule,
+    AddressHeaderFormatPipeModule
   ],
   declarations: [MerchantDetailsPage]
 })
