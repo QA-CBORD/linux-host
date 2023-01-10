@@ -562,16 +562,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onValidateErrorToast(message: string) {
-    await this.toastService.showToast({
-      message,
-      cssClass: 'toast-message-error',
-      toastButtons: [
-        {
-          icon: 'close',
-          role: 'cancel',
-        },
-      ],
-    });
+    await this.toastService.showError(message);
   }
 
   private async initContentStrings() {
