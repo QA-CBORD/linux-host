@@ -410,11 +410,18 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async handlerCartErrors(error: string | [string, string]): Promise<void> {
-    if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-      //something went wrong in the backend, order did not succeed for sure,
-      this.cartService.changeClientOrderId;
-      await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
-      return;
+    if (Array.isArray(error)) {
+      const errorCode = +error[0];
+      if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+        //something went wrong in the backend, order did not succeed for sure,
+        this.cartService.changeClientOrderId;
+        await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
+        return;
+      }
+      if (errorCode === +ORDER_ERROR_CODES.INVALID_CARD) {
+        await this.onValidateErrorToast(error[1]);
+        return;
+      }
     }
 
     if (error.includes(ORDER_ERROR_CODES.CONNECTION_TIMEOUT)) {
@@ -555,10 +562,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onValidateErrorToast(message: string) {
-    await this.toastService.showToast({
-      message,
-      toastButtons: [{ text: 'Close' }],
-    });
+    await this.toastService.showError(message);
   }
 
   private async initContentStrings() {

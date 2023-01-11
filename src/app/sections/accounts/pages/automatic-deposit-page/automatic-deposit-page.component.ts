@@ -663,7 +663,6 @@ export class AutomaticDepositPageComponent {
           this.paymentMethod.setValue('');
           this.cdRef.detectChanges();
         },
-        err => this.showToast(err),
         () => this.loadingService.closeSpinner()
       );
   }

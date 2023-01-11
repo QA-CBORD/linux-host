@@ -84,7 +84,7 @@ export const handleServerError = <T>(
         }
 
         // Temprorary solution for these codes:
-        if (+code === 9002 || +code === 9005) {
+        if ([9002, 9005, 6001].includes(+code)) {
           return throwError(() => message);
         }
 
