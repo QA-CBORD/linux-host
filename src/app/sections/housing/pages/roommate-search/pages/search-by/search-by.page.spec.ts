@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RoommateSearchOptions } from '@sections/housing/applications/applications.model';
