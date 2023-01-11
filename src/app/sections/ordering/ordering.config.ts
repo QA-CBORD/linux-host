@@ -188,6 +188,7 @@ export const ORDER_ERROR_CODES = {
   ORDER_TIP: '9014',
   ORDER_CAPACITY: '9017',
   INSUFFICIENT_FUNDS: '6112',
+  INVALID_CARD: '6001',
   TIMEOUT: '9997',
   DUPLICATE_ORDER: '9016', // server duplicate order attempt error code.
   CONNECTION_LOST: '0 Unknown Error', // Client's internet connection lost.
