@@ -410,37 +410,59 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async handlerCartErrors(error: string | [string, string]): Promise<void> {
-    if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-      //something went wrong in the backend, order did not succeed for sure,
-      this.cartService.changeClientOrderId;
-      await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
-      return;
+    if (Array.isArray(error)) {
+      const errorCode = +error[0];
+      if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+        //something went wrong in the backend, order did not succeed for sure,
+        this.cartService.changeClientOrderId;
+        await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
+        return;
+      }
+      if (errorCode === +ORDER_ERROR_CODES.INVALID_CARD) {
+        await this.onValidateErrorToast(error[1]);
+        return;
+      }
     }
 
     if (error.includes(ORDER_ERROR_CODES.CONNECTION_TIMEOUT)) {
       // the request timed out...
       await this.onErrorModal(this.orderSubmitErrorMessage.timeout, () => this.onPosibleDuplicateOrder(), 'OK');
-    } else if (error.includes(ORDER_ERROR_CODES.CONNECTION_LOST)) {
+      return;
+    }
+
+    if (error.includes(ORDER_ERROR_CODES.CONNECTION_LOST)) {
       // the internet connection was interrupted
       await this.onErrorModal(this.orderSubmitErrorMessage.connectionLost, () => this.onPosibleDuplicateOrder(), 'OK');
-    } else if (error.includes(ORDER_ERROR_CODES.DUPLICATE_ORDER)) {
+      return;
+    }
+
+    if (error.includes(ORDER_ERROR_CODES.DUPLICATE_ORDER)) {
       await this.onErrorModal(
         this.orderSubmitErrorMessage.duplicateOrdering,
         () => this.onPosibleDuplicateOrder(),
         'OK'
       );
-    } else if (error.includes(ORDER_ERROR_CODES.INSUFFICIENT_BALANCE)) {
+      return;
+    }
+
+    if (error.includes(ORDER_ERROR_CODES.INSUFFICIENT_BALANCE)) {
       const message = await firstValueFrom(this.contentStrings.insufficientBalanceMealsPayment);
       await this.toastService.showToast({
         message,
         icon: 'warning',
         cssClass: 'toast-message-warning',
       });
-    } else {
-      this.cartService.changeClientOrderId;
-      //something went wrong in the backend, order did not succeed for sure,
-      await this.onErrorModal('There was an issue with the transaction, please try again.');
+      return;
     }
+    
+    if (error) {
+      this.onValidateErrorToast(String(error));
+      return;
+    }
+
+    this.cartService.changeClientOrderId;
+    //something went wrong in the backend, order did not succeed for sure,
+    await this.onErrorModal('There was an issue with the transaction, please try again.');
   }
 
   private async onPosibleDuplicateOrder() {
@@ -555,10 +577,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onValidateErrorToast(message: string) {
-    await this.toastService.showToast({
-      message,
-      toastButtons: [{ text: 'Close' }],
-    });
+    await this.toastService.showError(message);
   }
 
   private async initContentStrings() {
