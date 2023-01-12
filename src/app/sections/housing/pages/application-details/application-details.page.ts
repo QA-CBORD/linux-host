@@ -197,7 +197,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   isRoommateSearch(question: string): boolean {
-    return question == 'Search for a roommate';
+    return question === 'Search for a roommate';
   }
 
   private _handleSuccess() {
