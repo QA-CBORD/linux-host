@@ -26,7 +26,7 @@ describe('CreateAccount', () => {
 
         const EmailInput = await Createaccount.EmailInput;
         //Change Email value evrytime before run
-        await EmailInput.setValue('g2@test3.cbord.com')
+        await EmailInput.setValue('g2cas@test1.cbord.com')
         await pause(AWAIT_TIME);
 
         const PhoneNumberInput = await Createaccount.PhoneNumberInput;

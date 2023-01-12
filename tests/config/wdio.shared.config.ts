@@ -52,6 +52,14 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/app.location-disclousure.spec.ts',
     ],
+    loginSSOGuest: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.ssoinstitutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/guest/app.login-guest.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/app.location-disclousure.spec.ts',
+    ],
     forgotPasswordStudent: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
@@ -71,6 +79,13 @@ export const config: WebdriverIO.Config = {
     registrationHostedGuest: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/shared/app.signup.spec.ts',
+      './tests/specs/shared/app.createaccount.spec.ts',
+    ],
+    registrationSSOGuest: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.ssoinstitutions.spec.ts',
       './tests/specs/guest/app.pre-login-as-guest.spec.ts',
       './tests/specs/shared/app.signup.spec.ts',
       './tests/specs/shared/app.createaccount.spec.ts',
