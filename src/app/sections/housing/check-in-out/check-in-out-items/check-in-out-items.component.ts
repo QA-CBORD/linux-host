@@ -10,7 +10,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { CheckInOut } from '../check-in-out.model';
 import { CheckInOutStateService} from '../check-in-out-state.service';
 import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
-import {monthNameDayYearHour} from '../../../../shared/constants/dateFormats.constant'
+import {monthNameDayYear, hourMin} from '../../../../shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-check-in-out-items',
@@ -21,7 +21,8 @@ import {monthNameDayYearHour} from '../../../../shared/constants/dateFormats.con
 export class CheckInOutItemsComponent {
   @ViewChild('container') divContainer: ElementRef;
   @Input() checkInOuts: CheckInOut[]
-  dateFormat = monthNameDayYearHour;
+  dateFormat = monthNameDayYear;
+  timeFormat = hourMin
 
   constructor(public checkInOutStateService: CheckInOutStateService,
               private _router: Router,
