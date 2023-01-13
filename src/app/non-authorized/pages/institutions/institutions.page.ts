@@ -69,6 +69,10 @@ export class InstitutionsPage implements OnInit {
     this.searchString = value;
   }
 
+  public get defaultBackUrl() {
+    return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
+  }
+
   async getInstitutions() {
     this.performInstitutionCleanUp();
     this.authFacadeService
@@ -128,7 +132,7 @@ export class InstitutionsPage implements OnInit {
     const preLoginCs = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
     this.loadingService.closeSpinner();
     this.messageProxy.put(preLoginCs);
-    this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.pre_login]);
+    this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.pre_login], { replaceUrl: true });
   }
 
   private async navigate(loginState: number) {
@@ -136,10 +140,10 @@ export class InstitutionsPage implements OnInit {
     switch (loginState) {
       case LoginState.HOSTED:
         this.messageProxy.put({ navParams: { isGuestUser: false } });
-        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login], { replaceUrl: true });
         break;
       case LoginState.EXTERNAL:
-        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external], { replaceUrl: true });
         break;
     }
   }

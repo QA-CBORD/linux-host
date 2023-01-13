@@ -41,7 +41,7 @@ export class PreLoginComponent implements OnInit {
     private readonly messageProxy: MessageProxy
   ) {}
   async ngOnInit() {
-    const preLoginCs = this.messageProxy.get<PreloginCsModel>() || {} as any;
+    const preLoginCs = this.messageProxy.get<PreloginCsModel>() || ({} as any);
     this.pageContent = preLoginCs;
     this.getInstitutionInfo();
   }
@@ -103,11 +103,11 @@ export class PreLoginComponent implements OnInit {
       case LoginState.HOSTED:
         this.authFacadeService.setIsGuestUser(isGuestUser);
         this.messageProxy.put({ navParams: { isGuestUser } });
-        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login], { replaceUrl: true });
         this.updateGuestSettings();
         break;
       case LoginState.EXTERNAL:
-        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external], { replaceUrl: true });
         break;
     }
   }
