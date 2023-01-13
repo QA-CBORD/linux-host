@@ -73,12 +73,13 @@ export class SearchByPage implements OnInit {
     const secondInput = this.secondInput;
 
     let searchValue = `${firstInput.value}`;
-    searchValue = secondInput?.value !== '' ? `${searchValue},${secondInput?.value}` : searchValue;
+    searchValue = secondInput?.value ? `${searchValue},${secondInput?.value}` : searchValue;
 
     const data: RoommateSearchOptions = {
       ...options,
       searchValue,
     };
+    
 
     this._applicationStateService.setRoommateSearchOptions(data);
     this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roommatesSearchResult}`]);

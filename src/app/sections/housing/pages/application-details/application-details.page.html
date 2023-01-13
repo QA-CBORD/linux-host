@@ -28,7 +28,7 @@
               [class.question--first]="isFirstQuestion"
               [isSubmitted]="isSubmitted"
             ></st-question>
-            <st-requested-roommates *ngIf="question.label === 'Search for a roommate'">
+            <st-requested-roommates *ngIf="isRoommateSearch(question.label)">
             </st-requested-roommates>
           </ng-container>
           <st-stepper-footer>
