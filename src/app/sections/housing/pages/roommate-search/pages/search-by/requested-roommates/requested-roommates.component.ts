@@ -60,15 +60,17 @@ export class RequestedRoommatesComponent implements OnInit {
     const applicationDetails = this._applicationStateService.applicationsState.applicationDetails;
     const requestedRoommates = this._applicationStateService.getRequestedRoommate();
 
-    const patronRequests =applicationDetails && applicationDetails.roommatePreferences
-      .filter(patron => patron.patronKeyRoommate !== 0)
-      .map(
-        x =>
-          new RequestedRoommate({
-            preferenceKey: x.preferenceKey,
-            patronRoommateKey: x.patronKeyRoommate,
-          })
-      );
+    const patronRequests =
+      applicationDetails &&
+      applicationDetails.roommatePreferences
+        .filter(patron => patron.patronKeyRoommate !== 0)
+        .map(
+          x =>
+            new RequestedRoommate({
+              preferenceKey: x.preferenceKey,
+              patronRoommateKey: x.patronKeyRoommate,
+            })
+        );
 
     const requestBody = new RequestedRoommateRequest({
       termKey: this.selectedTermKey,
@@ -81,9 +83,11 @@ export class RequestedRoommatesComponent implements OnInit {
       .pipe(
         map((data: RequestedRoommateResponse) => {
           return data.requestedRoommates.map(d => {
-            const roommatePref = applicationDetails && applicationDetails.roommatePreferences.find(
-              f => f.patronKeyRoommate === d.patronRoommateKey && f.preferenceKey === d.preferenceKey
-            );
+            const roommatePref =
+              applicationDetails &&
+              applicationDetails.roommatePreferences.find(
+                f => f.patronKeyRoommate === d.patronRoommateKey && f.preferenceKey === d.preferenceKey
+              );
 
             return new RequestedRoommate({
               firstName: roommatePref ? roommatePref.firstName : '',
@@ -113,5 +117,9 @@ export class RequestedRoommatesComponent implements OnInit {
         this.requestedRoommates = requestedRoommates;
         this.cdRef.detectChanges();
       });
+  }
+
+  get hasRequestedRoommate() {
+    return this.requestedRoommates && this.requestedRoommates.length > 0;
   }
 }
