@@ -73,25 +73,38 @@ export class ApplicationDetailsPage implements OnInit {
     this.updateApplicationService(this.stepper.selected.stepControl.value, applicationDetails);
   }
 
-  updateApplicationService(formValue: FormControl, applicationDetails: ApplicationDetails, type: UpdateType = UpdateType.SAVE) {
-    this._updateApplicationService(type, { key: this.getApplicationKey(), details: applicationDetails, formValue, isSubmitted: this.isSubmitted, type: FormType.Application }).pipe(take(1)).subscribe({
-      next: () => this._handleSuccess(),
-      error: (error: Error) => this._handleErrors(error),
-    });
+  updateApplicationService(
+    formValue: FormControl,
+    applicationDetails: ApplicationDetails,
+    type: UpdateType = UpdateType.SAVE
+  ) {
+    this._updateApplicationService(type, {
+      key: this.getApplicationKey(),
+      details: applicationDetails,
+      formValue,
+      isSubmitted: this.isSubmitted,
+      type: FormType.Application,
+    })
+      .pipe(take(1))
+      .subscribe({
+        next: () => this._handleSuccess(),
+        error: (error: Error) => this._handleErrors(error),
+      });
   }
 
   async submitForm(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
     this.updateQuestions();
     if (!this.isSubmitted && form.invalid) return;
     if (!isLastPage) return this.nextPage(applicationDetails, form.value);
-    if (this.isPaymentDue(applicationDetails) && !this.isSubmitted) return await this.continueToPayment(applicationDetails, form.value);
+    if (this.isPaymentDue(applicationDetails) && !this.isSubmitted)
+      return await this.continueToPayment(applicationDetails, form.value);
     this.updateApplicationService(form.value, applicationDetails, UpdateType.SUBMIT);
   }
 
   requestiongRoomate() {
     const requestingRoommate = this.getRequestingRoomate();
     this.applicationsStateService.setRequestingRoommate(requestingRoommate);
-    if(this.applicationsStateService.requestingRoommate.length && requestingRoommate.length ){
+    if (this.applicationsStateService.requestingRoommate.length && requestingRoommate.length) {
       this.requestingRoomateModal(requestingRoommate);
     }
   }
@@ -113,9 +126,11 @@ export class ApplicationDetailsPage implements OnInit {
         : null;
     });
     const requestingRoommate = this.applicationsStateService.requestingRoommate.filter(result => {
-      if (this.applicationsStateService.roommatePreferencesSelecteds.find(
-        value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
-      )) {
+      if (
+        this.applicationsStateService.roommatePreferencesSelecteds.find(
+          value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
+        )
+      ) {
         return result;
       }
     });
@@ -130,10 +145,7 @@ export class ApplicationDetailsPage implements OnInit {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }
 
-  private _updateApplicationService(
-    type: string,
-    application: CurrentForm
-  ) {
+  private _updateApplicationService(type: string, application: CurrentForm) {
     this.loadingService.showSpinner();
     if (/save/.test(type)) {
       return this.applicationsService.saveApplication(application);
@@ -148,9 +160,12 @@ export class ApplicationDetailsPage implements OnInit {
     return this.housingService.getApplicationDetails(this.getApplicationKey()).pipe(
       tap((applicationDetails: ApplicationDetails) => {
         this.isSubmitted = applicationDetails.patronApplication?.status === ApplicationStatus.Submitted;
-        this.termService.termId$.pipe(switchMap(termId =>
-          this.housingService.getRequestedRommate(termId)
-        ), take(1)).subscribe(() => this.loadingService.closeSpinner());
+        this.termService.termId$
+          .pipe(
+            switchMap(termId => this.housingService.getRequestedRommate(termId)),
+            take(1)
+          )
+          .subscribe(() => this.loadingService.closeSpinner());
         if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
           return this.requestiongRoomate();
         }
@@ -175,9 +190,14 @@ export class ApplicationDetailsPage implements OnInit {
 
     this.applicationsService
       .next(this.getApplicationKey(), applicationDetails, formValue)
-      .pipe(take(1)).subscribe({
+      .pipe(take(1))
+      .subscribe({
         next: () => this.stepper.next(),
       });
+  }
+
+  isRoommateSearch(question: string): boolean {
+    return question === 'Search for a roommate';
   }
 
   private _handleSuccess() {
@@ -193,7 +213,12 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   private async continueToPayment(appDetails: ApplicationDetails, form: FormControl) {
-    this.formPaymentService.continueToFormPayment( { details: appDetails, formValue: form, key: this.getApplicationKey(), type: FormType.Application });
+    this.formPaymentService.continueToFormPayment({
+      details: appDetails,
+      formValue: form,
+      key: this.getApplicationKey(),
+      type: FormType.Application,
+    });
   }
 
   private isPaymentDue(applicationDetails: ApplicationDetails): boolean {
