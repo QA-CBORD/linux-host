@@ -1,6 +1,6 @@
 <div class="roommate-requested__container">
     <div *ngIf="options">
-      <h4 *ngIf="requestedRoommates && requestedRoommates.length > 0">Requested roommates</h4>
+      <h4 *ngIf="hasRequestedRoommate">Requested roommates</h4>
       <div *ngFor="let roommate of requestedRoommates">
         <ng-container [ngSwitch]="options.showOptions">
           <ion-card *ngSwitchCase="optionsName.FullName">
