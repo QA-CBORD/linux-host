@@ -98,7 +98,6 @@
       <div class="order-details">
         <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
         <ion-select 
-          [disabled]="isExistingOrder && !isApplePayment"
           aria-required="true"
           [formControlName]="controlsNames.paymentMethod"
           class="order-details__value"
