@@ -4,7 +4,7 @@
   #content
 >
   <div class="application-details__actions">
-    <ion-button class="btn application-details__page-back" (click)="onBack()" fill="clear">
+    <ion-button class="btn application-details__page-back" (click)="onCancel()" fill="clear">
       Cancel
     </ion-button>
     <ion-button class="btn application-details__save" fill="clear" (click)="save(applicationDetails)">
@@ -38,7 +38,7 @@
               type="button"
               fill="clear"
               stepperBack
-              (back)="content.scrollToTop()"
+              (back)="onBack(applicationDetails, page.form)"
               >Back</ion-button
             >
 
