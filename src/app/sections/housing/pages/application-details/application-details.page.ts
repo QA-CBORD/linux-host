@@ -140,7 +140,19 @@ export class ApplicationDetailsPage implements OnInit {
 
   onBack(applicationDetails: ApplicationDetails, formValue: FormGroup) {
     this.page.scrollToTop();
+    formValue.valueChanges.pipe(switchMap(() => {
+     return this.applicationsService
+      .next(this.getApplicationKey(), applicationDetails, formValue.value)
+      .pipe(take(1))
+    }), take(1)).subscribe((value)=> {
+      console.log("onBack ---> ",  value);
+    })
     console.log("onBack: ",  applicationDetails, formValue.value);
+
+    // this.applicationsService
+    // .next(this.getApplicationKey(), applicationDetails, formValue.value)
+    // .pipe(take(1))
+    // .subscribe();
   }
 
   private updateQuestions() {
