@@ -16,7 +16,7 @@
     <st-stepper class="stepper--white">
       <st-step
         *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
-        [stepControl]="page.form"
+        [stepControl]="page.form" (stepChanged)="onChange(applicationDetails, page.form)"
       >
         <form [formGroup]="page.form" (ngSubmit)="submitForm(applicationDetails, page.form, isLastPage)">
           <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
@@ -38,7 +38,7 @@
               type="button"
               fill="clear"
               stepperBack
-              (back)="onBack(applicationDetails, page.form)"
+              (back)="onBack()"
               >Back</ion-button
             >
 

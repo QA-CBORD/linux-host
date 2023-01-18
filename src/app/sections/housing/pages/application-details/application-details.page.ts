@@ -92,7 +92,7 @@ export class ApplicationDetailsPage implements OnInit {
   async submitForm(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
     this.updateQuestions();
     if (!this.isSubmitted && form.invalid) return;
-    if (!isLastPage) return this.nextPage(applicationDetails, form.value);
+    if (!isLastPage) return this.nextPage();
     if (this.isPaymentDue(applicationDetails) && !this.isSubmitted)
       return await this.continueToPayment(applicationDetails, form.value);
     this.updateApplicationService(form.value, applicationDetails, UpdateType.SUBMIT);
@@ -132,27 +132,6 @@ export class ApplicationDetailsPage implements OnInit {
       }
     });
     return requestingRoommate;
-  }
-
-  onCancel() {
-    this.housingService.handleSuccess();
-  }
-
-  onBack(applicationDetails: ApplicationDetails, formValue: FormGroup) {
-    this.page.scrollToTop();
-    formValue.valueChanges.pipe(switchMap(() => {
-     return this.applicationsService
-      .next(this.getApplicationKey(), applicationDetails, formValue.value)
-      .pipe(take(1))
-    }), take(1)).subscribe((value)=> {
-      console.log("onBack ---> ",  value);
-    })
-    console.log("onBack: ",  applicationDetails, formValue.value);
-
-    // this.applicationsService
-    // .next(this.getApplicationKey(), applicationDetails, formValue.value)
-    // .pipe(take(1))
-    // .subscribe();
   }
 
   private updateQuestions() {
@@ -195,23 +174,27 @@ export class ApplicationDetailsPage implements OnInit {
     return this.applicationsService.getQuestions(this.getApplicationKey());
   }
 
-  private nextPage(applicationDetails: ApplicationDetails, formValue: FormControl): void {
+  private nextPage(): void {
     this.page.scrollToTop();
-
-    if (this.isSubmitted) {
-      return this.stepper.next();
-    }
-
-    this.applicationsService
-      .next(this.getApplicationKey(), applicationDetails, formValue)
-      .pipe(take(1))
-      .subscribe({
-        next: () => this.stepper.next(),
-      });
+    this.stepper.next();
   }
 
   isRoommateSearch(question: string): boolean {
     return question === 'Search for a roommate';
+  }
+
+  onCancel() {
+    this.housingService.handleSuccess();
+  }
+
+  onChange(applicationDetails: ApplicationDetails, formValue: FormGroup) {
+    this.applicationsService
+    .saveLocally(this.getApplicationKey(), applicationDetails, formValue.value)
+    .pipe(take(1)).subscribe();
+  }
+
+  onBack() {
+    this.page.scrollToTop();
   }
 
   private _handleSuccess() {
