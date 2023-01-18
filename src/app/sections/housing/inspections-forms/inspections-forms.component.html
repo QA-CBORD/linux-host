@@ -16,7 +16,7 @@
                   {{ getInspectionStatus(inspection) }}
                 </h5>
                 <div class="inspections-list__date">
-                  {{ inspection.remainingItems }} Room{{ inspection.remainingItems == 1 ? '' : 's' }} Left
+                  {{ inspection.remainingItems | i18nPlural: roomsMap }}
                 </div>
               </div>
 

@@ -40,6 +40,11 @@ export class InspectionsComponent implements OnInit {
   inspections: Inspection[];
   urlEditForm: string;
   private subscription: Subscription;
+  
+  roomsMap= {
+    '=1' : "# Room Left",
+    other: "# Rooms Left"
+  }
 
   constructor(private _inspectionsStateService: InspectionsStateService, private _termService: TermsService) {}
 
