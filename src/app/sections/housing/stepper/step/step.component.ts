@@ -1,3 +1,4 @@
+import { debounceTime } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import {
   Component,
@@ -27,11 +28,11 @@ export class StepComponent implements OnInit, OnDestroy {
   @Output() stepChanged = new EventEmitter<Event>();
 
   private sub: Subscription;
-  
+
   interacted = false;
 
   ngOnInit(): void {
-    this.sub = this.stepControl.valueChanges.subscribe(() => {
+    this.sub = this.stepControl.valueChanges.pipe(debounceTime(1000)).subscribe(() => {
       this.stepChanged.emit();
     });
   }
