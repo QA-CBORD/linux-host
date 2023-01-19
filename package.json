@@ -22,7 +22,7 @@
     "ionic-e2e:develop": "cross-env TS_NODE_PROJECT=tests/tsconfig.json  wdio tests/config/wdio.web.config.ts --watch",
     "ionic-e2e:run:web": "cross-env TS_NODE_PROJECT=\"tests/tsconfig.json\"  wdio tests/config/wdio.web.config.ts",
     "ionic-e2e:run:ios": "cross-env TS_NODE_PROJECT=tests/tsconfig.json  wdio tests/config/wdio.ios.config.ts",
-    "ionic-e2e:run:android": "cross-env TS_NODE_PROJECT=\"tests/tsconfig.json\"  wdio tests/config/wdio.android.config.ts --suite loginSSOGuest"
+    "ionic-e2e:run:android": "cross-env TS_NODE_PROJECT=\"tests/tsconfig.json\"  wdio tests/config/wdio.android.config.ts --suite $SUITE"
   },
   "private": true,
   "dependencies": {

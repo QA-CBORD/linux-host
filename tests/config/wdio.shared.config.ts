@@ -83,6 +83,13 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.signup.spec.ts',
       './tests/specs/shared/app.createaccount.spec.ts',
     ],
+    registrationBlockDueIncorrectFields:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/shared/app.signup.spec.ts',
+      './tests/specs/shared/app.createaccount-fail.spec.ts',
+    ],
     registrationSSOGuest: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.ssoinstitutions.spec.ts',
