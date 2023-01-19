@@ -117,7 +117,7 @@ export class ApplicationsService {
     );
   }
 
-  next(applicationKey: number, applicationDetails: ApplicationDetails, formValue: any): Observable<any> {
+  saveLocally(applicationKey: number, applicationDetails: ApplicationDetails, formValue: any): Observable<any> {
     const patronApplication: PatronApplication = applicationDetails.patronApplication;
     const status: ApplicationStatus = patronApplication && patronApplication.status;
 

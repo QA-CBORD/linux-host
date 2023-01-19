@@ -4,7 +4,7 @@
   #content
 >
   <div class="application-details__actions">
-    <ion-button class="btn application-details__page-back" (click)="onBack()" fill="clear">
+    <ion-button class="btn application-details__page-back" (click)="onCancel()" fill="clear">
       Cancel
     </ion-button>
     <ion-button class="btn application-details__save" fill="clear" (click)="save(applicationDetails)">
@@ -16,7 +16,7 @@
     <st-stepper class="stepper--white">
       <st-step
         *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
-        [stepControl]="page.form"
+        [stepControl]="page.form" (stepChanged)="onChange(applicationDetails, page.form)"
       >
         <form [formGroup]="page.form" (ngSubmit)="submitForm(applicationDetails, page.form, isLastPage)">
           <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
@@ -38,7 +38,7 @@
               type="button"
               fill="clear"
               stepperBack
-              (back)="content.scrollToTop()"
+              (back)="onBack()"
               >Back</ion-button
             >
 
