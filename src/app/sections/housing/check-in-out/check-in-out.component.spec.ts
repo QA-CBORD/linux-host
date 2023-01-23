@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ContractsListComponent } from './contracts-list.component';
+import { CheckInOutComponent } from './check-in-out.component';
 
-describe('ContractsListComponent', () => {
-  let component: ContractsListComponent;
-  let fixture: ComponentFixture<ContractsListComponent>;
+describe('CheckInOutComponent', () => {
+  let component: CheckInOutComponent;
+  let fixture: ComponentFixture<CheckInOutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ContractsListComponent],
+      declarations: [CheckInOutComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [CommonModule],
       providers: [],
@@ -17,7 +17,7 @@ describe('ContractsListComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ContractsListComponent);
+    fixture = TestBed.createComponent(CheckInOutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -26,8 +26,8 @@ describe('ContractsListComponent', () => {
     jest.clearAllMocks();
   });
 
-  describe('Forms Tab Contracts Item Component', () => {
-    it('Contract List Component should exist', () => {
+  describe('Rooms Tab', () => {
+    it('Check in/out accordeon should exist', () => {
       expect(component).toBeTruthy();
     });
   });

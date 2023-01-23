@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContractsComponent } from './contracts.component';
@@ -8,9 +9,9 @@ describe('ContractsListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [],
+      declarations: [ContractsComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [],
+      imports: [CommonModule],
       providers: [],
     }).compileComponents();
   });
