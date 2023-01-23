@@ -6,7 +6,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { IonContent, ModalController } from '@ionic/angular';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, throwError } from 'rxjs';
@@ -23,7 +23,6 @@ import { TermsService } from '@sections/housing/terms/terms.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CurrentForm } from '../form-payment/form-payment.component';
 import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
-import { NavigationService } from '@shared/services/navigation.service';
 import { RequestedRoommatesComponent } from '../roommate-search/pages/search-by/requested-roommates/requested-roommates.component';
 
 enum UpdateType {
@@ -55,8 +54,6 @@ export class ApplicationDetailsPage implements OnInit {
     private modalController: ModalController,
     private termService: TermsService,
     private formPaymentService: FormPaymentService,
-    private _router: Router,
-    private readonly navService: NavigationService
   ) {}
 
   async ngOnInit() {
@@ -95,21 +92,21 @@ export class ApplicationDetailsPage implements OnInit {
   async submitForm(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
     this.updateQuestions();
     if (!this.isSubmitted && form.invalid) return;
-    if (!isLastPage) return this.nextPage(applicationDetails, form.value);
+    if (!isLastPage) return this.nextPage();
     if (this.isPaymentDue(applicationDetails) && !this.isSubmitted)
       return await this.continueToPayment(applicationDetails, form.value);
     this.updateApplicationService(form.value, applicationDetails, UpdateType.SUBMIT);
   }
 
-  requestiongRoomate() {
-    const requestingRoommate = this.getRequestingRoomate();
+  requestingRoommate() {
+    const requestingRoommate = this.getRequestingRoommate();
     this.applicationsStateService.setRequestingRoommate(requestingRoommate);
     if (this.applicationsStateService.requestingRoommate.length && requestingRoommate.length) {
-      this.requestingRoomateModal(requestingRoommate);
+      this.requestingRoommateModal(requestingRoommate);
     }
   }
 
-  private async requestingRoomateModal(requestingRoommate: RoommatePreferences[]) {
+  private async requestingRoommateModal(requestingRoommate: RoommatePreferences[]) {
     const RequestingRoommateModal = await this.modalController.create({
       component: RequestingRoommateModalComponent,
       componentProps: { requestingRoommate },
@@ -117,7 +114,7 @@ export class ApplicationDetailsPage implements OnInit {
     await RequestingRoommateModal.present();
   }
 
-  private getRequestingRoomate() {
+  private getRequestingRoommate() {
     this.applicationsStateService.requestingRoommate.forEach((restingroommate, index) => {
       return this.applicationsStateService.applicationsState.applicationDetails.roommatePreferences.some(
         requested => requested.patronKeyRoommate === restingroommate.patronKeyRoommate
@@ -135,10 +132,6 @@ export class ApplicationDetailsPage implements OnInit {
       }
     });
     return requestingRoommate;
-  }
-
-  onBack() {
-    this._router.navigate([this.navService.getPreviousTrackedUrl()]);
   }
 
   private updateQuestions() {
@@ -167,7 +160,7 @@ export class ApplicationDetailsPage implements OnInit {
           )
           .subscribe(() => this.loadingService.closeSpinner());
         if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
-          return this.requestiongRoomate();
+          return this.requestingRoommate();
         }
       }),
       catchError(error => {
@@ -181,23 +174,27 @@ export class ApplicationDetailsPage implements OnInit {
     return this.applicationsService.getQuestions(this.getApplicationKey());
   }
 
-  private nextPage(applicationDetails: ApplicationDetails, formValue: FormControl): void {
+  private nextPage(): void {
     this.page.scrollToTop();
-
-    if (this.isSubmitted) {
-      return this.stepper.next();
-    }
-
-    this.applicationsService
-      .next(this.getApplicationKey(), applicationDetails, formValue)
-      .pipe(take(1))
-      .subscribe({
-        next: () => this.stepper.next(),
-      });
+    this.stepper.next();
   }
 
   isRoommateSearch(question: string): boolean {
     return question === 'Search for a roommate';
+  }
+
+  onCancel() {
+    this.housingService.handleSuccess();
+  }
+
+  onChange(applicationDetails: ApplicationDetails, formValue: FormGroup) {
+    this.applicationsService
+    .saveLocally(this.getApplicationKey(), applicationDetails, formValue.value)
+    .pipe(take(1)).subscribe();
+  }
+
+  onBack() {
+    this.page.scrollToTop();
   }
 
   private _handleSuccess() {
