@@ -12,10 +12,8 @@ const routes: Route[] = [
     resolve: { data: ScanCardResolverService },
   },
 ];
-
-const imports = [RouterModule.forChild(routes)];
-const exports = [RouterModule];
-
-@NgModule({ imports, exports })
-export class ScanCardRoutingModule {
-}
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class ScanCardRoutingModule {}
