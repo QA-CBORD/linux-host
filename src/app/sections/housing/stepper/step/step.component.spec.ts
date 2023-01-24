@@ -19,12 +19,10 @@ describe('StepComponent', () => {
 
     const formBuilder = TestBed.inject(FormBuilder);
     component.stepControl = formBuilder.group({
-      recipient: new FormControl(
-        {
-          value: ['test'],
-          disabled: false,
-        },
-      ),
+      recipient: new FormControl({
+        value: ['test'],
+        disabled: false,
+      }),
     });
     fixture.detectChanges();
   });
