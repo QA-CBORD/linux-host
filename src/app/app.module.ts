@@ -13,7 +13,6 @@ import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
 import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { Brightness } from '@ionic-native/brightness/ngx';
 import { VaultIdentityService } from '@core/service/identity/vault.identity.service';
 import * as Sentry from '@sentry/angular';
 
@@ -38,7 +37,7 @@ const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void
       deps: [VaultIdentityService, Sentry.TraceService],
       multi: true,
     },
-    { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network, Brightness
+    { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network
   ],
   bootstrap: [AppComponent],
 })
