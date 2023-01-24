@@ -5,7 +5,7 @@ import {
   Input,
   ViewChild
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CheckInOut } from '../check-in-out.model';
 import { CheckInOutStateService} from '../check-in-out-state.service';
@@ -26,7 +26,6 @@ export class CheckInOutItemsComponent {
 
   constructor(public checkInOutStateService: CheckInOutStateService,
               private _router: Router,
-              private _activeRoute: ActivatedRoute,
               private _toastService: ToastService) { }
 
   openCheckInOutSlots(key: any): void {
