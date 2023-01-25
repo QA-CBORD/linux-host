@@ -4,6 +4,10 @@
 		"classpath": "com.getcapacitor.community.barcodescanner.BarcodeScanner"
 	},
 	{
+		"pkg": "@capacitor-community/screen-brightness",
+		"classpath": "com.elylucas.capscreenbrightness.ScreenBrightnessPlugin"
+	},
+	{
 		"pkg": "@capacitor/app",
 		"classpath": "com.capacitorjs.plugins.app.AppPlugin"
 	},
@@ -64,7 +68,7 @@
 		"classpath": "com.capacitorjs.plugins.statusbar.StatusBarPlugin"
 	},
 	{
-		"pkg": "@robingenz/capacitor-background-task",
-		"classpath": "dev.robingenz.capacitor.backgroundtask.BackgroundTaskPlugin"
+		"pkg": "@capawesome/capacitor-background-task",
+		"classpath": "io.capawesome.capacitorjs.plugins.backgroundtask.BackgroundTaskPlugin"
 	}
 ]

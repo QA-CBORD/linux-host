@@ -3,22 +3,20 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
 import { Observable, of, Subscription } from 'rxjs';
-import bwipjs from 'bwip-angular2';
-
 import { UserInfo } from '@core/model/user';
 import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
-import { getUserFullName } from '@core/utils/general-helpers';
+import { getUserFullName, isEmptyObject } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Settings } from '../../../../app.global';
-import { Brightness } from '@ionic-native/brightness/ngx';
-import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { AppState } from '@capacitor/app';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
 import { ModalController } from '@ionic/angular';
+import { ScreenBrigtnessService } from '@core/service/screen-brightness/screen-brightness.service';
+import bwipjs from 'bwip-angular2';
 
 @Component({
   selector: 'st-scan-card',
@@ -26,7 +24,6 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./scan-card.component.scss'],
 })
 export class ScanCardComponent implements OnInit, OnDestroy {
-
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
@@ -49,15 +46,17 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     private readonly commerceApiService: CommerceApiService,
     private readonly userFacadeService: UserFacadeService,
     private readonly barcodeFacadeService: BarcodeFacadeService,
-    private readonly nativeProvider: NativeProvider,
     private readonly router: Router,
     private readonly appStatesFacadeService: AppStatesFacadeService,
-    private readonly brightness: Brightness,
+    private readonly brightnessService: ScreenBrigtnessService,
     private readonly modalController: ModalController
-  ) { }
+  ) {}
 
   adjustBrignessOnAppState = async (appState: AppState) => {
-    if (appState.isActive && (this.router.url.includes(DASHBOARD_NAVIGATE.scanCard) || this.isOpenedAsModal())) {
+    if (
+      isEmptyObject(appState) ||
+      (appState.isActive && (this.router.url.includes(DASHBOARD_NAVIGATE.scanCard) || this.isOpenedAsModal()))
+    ) {
       this.setFullBrightness();
     } else {
       this.setPreviousBrightness();
@@ -157,15 +156,14 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   private async setFullBrightness() {
-    if (this.nativeProvider.isMobile()) {
-      this.previousBrigness = await this.brightness.getBrightness();
-      await this.brightness.setBrightness(1);
-    }
+    const { brightness } = await this.brightnessService.getBrightness();
+    this.previousBrigness = brightness;
+    await this.brightnessService.setBrightness({ brightness: 1 });
   }
 
   async setPreviousBrightness() {
-    if (this.nativeProvider.isMobile() && this.previousBrigness) {
-      await this.brightness.setBrightness(this.previousBrigness);
+    if (this.previousBrigness) {
+      await this.brightnessService.setBrightness({ brightness: this.previousBrigness });
     }
   }
 
@@ -179,6 +177,6 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   isOpenedAsModal(): boolean {
-    return this.isDismissButtonShow && !(this.isBackButtonShow);
+    return this.isDismissButtonShow && !this.isBackButtonShow;
   }
 }
