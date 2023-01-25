@@ -7,7 +7,7 @@ import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
-import { BackgroundTask } from '@robingenz/capacitor-background-task';
+import { BackgroundTask } from '@capawesome/capacitor-background-task';
 import { firstValueFrom } from 'rxjs';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
