@@ -456,7 +456,7 @@ export class HousingService {
       of(workOrders)
     ).pipe(
       map(
-        ([applicationDefinitions, contractDetails, nonAssignmentDetails, waitingLists]: [
+        ([applicationDefinitions, contractDetails, nonAssignments, waitingLists]: [
           ApplicationDetails[],
           ContractListDetails[],
           NonAssignmentListDetails[],
@@ -466,7 +466,7 @@ export class HousingService {
           new DefinitionsResponse({
             applicationDefinitions,
             contractDetails,
-            nonAssignmentDetails,
+            nonAssignmentDetails: nonAssignments,
             waitingLists,
             workOrders,
           })

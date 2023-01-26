@@ -40,7 +40,6 @@ export class RoomsService {
         if (isSuccessful(response.status)) {
           return true;
         } else {
-          console.log(response);
           throw new Error(response.status.message);
         }
       }),
@@ -171,21 +170,11 @@ export class RoomsService {
         return true;
       }
       facilities.forEach(facility => {
-        if (
-          this._matchedFacilityAttributes(category, options, facility) &&
-          !this._hasBuilding(filteredFacilities, facility) &&
-          this._matchedBuildingRequirements(facility, parentKeys)
-        ) {
+        if (this.matchFacilityAttributes(category, options, facility, filteredFacilities, parentKeys)) {
           filteredFacilities.push(facility);
         }
         if (wasOccupantOptionSelected && facility.occupantKeys.length > 0) {
-          if (
-            this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
-            !this._hasBuilding(filteredFacilities, facility) &&
-            this._matchedBuildingRequirements(facility, parentKeys)
-          ) {
-            filteredFacilities.push(facility);
-          }
+          this.filterFacilityByOccupantsCriteria(category, options, facility, filteredFacilities, parentKeys);
         }
       });
     });
@@ -197,6 +186,47 @@ export class RoomsService {
     this._updateFilter(filterOptions);
     this._stateService.updateActiveFilterFacilities(filteredFacilities);
   }
+
+  private filterFacilityByOccupantsCriteria(
+    category: string,
+    options: string[],
+    facility: Facility,
+    filteredFacilities: any[],
+    parentKeys: any[]
+  ) {
+    if (this.matchOccupantsAttributes(category, options, facility, filteredFacilities, parentKeys)) {
+      filteredFacilities.push(facility);
+    }
+  }
+
+  private matchOccupantsAttributes(
+    category: string,
+    options: string[],
+    facility: Facility,
+    filteredFacilities: any[],
+    parentKeys: any[]
+  ) {
+    return (
+      this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
+      !this._hasBuilding(filteredFacilities, facility) &&
+      this._matchedBuildingRequirements(facility, parentKeys)
+    );
+  }
+
+  private matchFacilityAttributes(
+    category: string,
+    options: string[],
+    facility: Facility,
+    filteredFacilities: any[],
+    parentKeys: any[]
+  ) {
+    return (
+      this._matchedFacilityAttributes(category, options, facility) &&
+      !this._hasBuilding(filteredFacilities, facility) &&
+      this._matchedBuildingRequirements(facility, parentKeys)
+    );
+  }
+
   private _isMultipleCategories(filterOptions: Map<string, string[]>): boolean {
     return filterOptions.size > 1;
   }
