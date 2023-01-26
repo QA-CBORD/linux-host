@@ -96,6 +96,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   };
   user: UserInfoSet;
 
+  paymentMethodErrorMessages = {
+    required: 'A payment method must be selected',
+  };
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly modalController: ModalsService,
@@ -219,6 +223,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       formControlErrorDecorator(Validators.maxLength(22), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
     ];
     this.detailsForm.controls[FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
+   
+    if (!this.isExistingOrder) {
+      this.detailsForm.get(FORM_CONTROL_NAMES.paymentMethod).markAsTouched();
+    }
+    
     this.subscribeOnFormChanges();
   }
 
