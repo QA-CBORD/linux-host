@@ -27,7 +27,7 @@ pipelines:
     '**':
       - step:
           name: Build and test
-          image: atlassian/default-image:3
+          image: node:18-alpine
           script:
             - npm install
             - npm run build-prod
