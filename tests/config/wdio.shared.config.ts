@@ -97,6 +97,14 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.signup.spec.ts',
       './tests/specs/shared/app.createaccount.spec.ts',
     ],
+    navigationFromDashboard:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/swipe-back-in-dashboard.spec.ts',
+    ]
   },
   //
   // ============
