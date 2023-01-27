@@ -3,13 +3,16 @@
     <div class="order-details">
       <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'dueTime' }}</ion-label>
 
-      <p style="margin-bottom: 3px;" class="order-details__value" *ngIf="orderDetailOptions.dueTime || orderDetailOptions.isASAP">
-        {{ orderDetailOptions | modifyPrepTime: orderTypes  }}
+      <p
+        style="margin-bottom: 3px"
+        class="order-details__value"
+        *ngIf="orderDetailOptions.dueTime || orderDetailOptions.isASAP"
+      >
+        {{ orderDetailOptions | modifyPrepTime: orderTypes }}
       </p>
 
-
       <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
-          <small>{{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}</small>
+        <small>{{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}</small>
       </ion-label>
     </div>
 
@@ -39,7 +42,7 @@
       >
         <ion-item class="order-ingredient-list__item" lines="none" (click)="goToItemDetails(orderItem)">
           <ion-label>
-            <st-order-item-details [mealBased]="mealBased"  [orderItem]="orderItem"></st-order-item-details>
+            <st-order-item-details [mealBased]="mealBased" [orderItem]="orderItem"></st-order-item-details>
             <ng-container *ngIf="orderItem.orderItemOptions">
               <p
                 *ngFor="let subIngredient of orderItem.orderItemOptions"
@@ -96,8 +99,15 @@
 
     <ng-template #paymentSelect>
       <div class="order-details">
-        <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
-        <ion-select 
+        <div class="order-details__block">
+          <ion-label
+            [class.order-details__label_error]="paymentFormControl.errors"
+            [class.order-details__label]="!paymentFormControl.errors"
+            >{{ contentStrings.labelPaymentMethod | async }}</ion-label
+          >
+          <ion-icon *ngIf="paymentFormControl.errors" class="order-details__icon" name="warning-outline"></ion-icon>
+        </div>
+        <ion-select
           aria-required="true"
           [formControlName]="controlsNames.paymentMethod"
           class="order-details__value"
@@ -121,12 +131,17 @@
             Add a Credit Card
           </ion-select-option>
         </ion-select>
+        <st-control-errors
+          class="control-hint--no-indent"
+          [control]="paymentFormControl"
+          [errorMessages]="paymentMethodErrorMessages"
+        ></st-control-errors>
       </div>
     </ng-template>
 
     <div class="order-details" *ngIf="showCVVControl">
       <ion-label class="order-details__label">Card Security Code:</ion-label>
-      <ion-input 
+      <ion-input
         required
         class="order-details__value"
         type="tel"
@@ -141,7 +156,7 @@
 
     <div class="order-details" *ngIf="!mealBased && isTipEnabled && !readonly">
       <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
-      <ion-input 
+      <ion-input
         aria-describedby="tipMessage"
         class="order-details__value"
         type="tel"
@@ -160,8 +175,8 @@
 
     <div class="order-details" *ngIf="!readonly">
       <br />
-      <st-input-floating-label 
-        aria-describedby="phoneMessage" 
+      <st-input-floating-label
+        aria-describedby="phoneMessage"
         required
         maxlength="33"
         class="form__control"
@@ -181,7 +196,7 @@
     </div>
 
     <div class="order-details" *ngIf="!readonly">
-      <st-textarea-floating-label 
+      <st-textarea-floating-label
         [control]="detailsForm.get(controlsNames.note)"
         [isError]="false"
         class="order-details__order-note"
