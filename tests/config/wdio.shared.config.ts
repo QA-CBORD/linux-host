@@ -76,6 +76,14 @@ export const config: WebdriverIO.Config = {
       './tests/specs/hosted/app.forgotpassword.spec.ts',
       './tests/specs/hosted/app.emailsent.spec.ts',
     ],
+    forgotPasswordSSOGuest: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.ssoinstitutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/hosted/app.go-to-forgotpassword.spec.ts',
+      './tests/specs/hosted/app.forgotpassword.spec.ts',
+      './tests/specs/hosted/app.emailsent.spec.ts',
+    ],
     registrationHostedGuest: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
@@ -104,7 +112,19 @@ export const config: WebdriverIO.Config = {
       './tests/specs/hosted/app.login.spec.ts',
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/swipe-back-in-dashboard.spec.ts',
-    ]
+    ],
+    invalidloginHostedGuest: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/shared/app.invalidlogin.spec.ts',
+    ],
+    invalidloginHostedStudent: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/shared/app.invalidlogin.spec.ts',
+    ],
   },
   //
   // ============
