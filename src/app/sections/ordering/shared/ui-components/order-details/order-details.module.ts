@@ -19,6 +19,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.module';
 import { OrderItemDetailsModule } from '../order-item-details/order-item-details.module';
+import { ControlErrorsModule } from '@shared/ui-components/control-errors/control-errors.module';
 
 const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
 
@@ -37,7 +38,8 @@ const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
     AccessibleSelectModule,
     StInputFloatingLabelModule,
     TypeMessageModule,
-    OrderItemDetailsModule
+    OrderItemDetailsModule,
+    ControlErrorsModule
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, ModalsService, AccessibilityService],

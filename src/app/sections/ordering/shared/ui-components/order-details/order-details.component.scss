@@ -47,11 +47,23 @@
     border-top: none;
   }
 
+  &__block {
+    display: grid;
+    grid-template-columns: 1fr min-content;
+    align-items: center;
+    color: $color-alizarin;
+  }
+
   &__label {
+    display: block;
     color: $color-dim-gray;
     text-transform: uppercase;
 
     @include font-nunito-semibold(16px);
+
+    &_error {
+      color: $color-alizarin;
+    }
   }
 
   &__value {
