@@ -40,7 +40,7 @@ import { QuestionActionButton, QuestionRoommatePreference } from '../questions/t
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { RoommatePreferences } from './applications.model';
-import { RoommateDetails } from '../roommate/roomate.model';
+import { RoommateDetails } from '../roommate/roommate.model';
 import { CurrentForm } from '../pages/form-payment/form-payment.component';
 import { LOCAL_ROUTING } from '../housing.config';
 
