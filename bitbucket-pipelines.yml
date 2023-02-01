@@ -31,5 +31,14 @@ pipelines:
           script:
             - npm install
             - npm run build-prod
-      
-
+  custom:
+    release-update:
+      - step:
+          name: Release Update
+          image: atlassian/default-image:3
+          script:
+            - apt-get update && apt-get install -y sed
+            - apt-get update && apt-get install -y libplist-utils
+            - cd scripts
+            - chmod +x UpdateRelease.sh
+            - ./UpdateRelease.sh $WEBHOOK_URL
