@@ -52,7 +52,7 @@ export class EntryPage implements OnInit {
   }
 
   redirectTo() {
-    this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions], { replaceUrl: true });
+    this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
   }
 
   checkLocation() {
