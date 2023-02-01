@@ -33,6 +33,6 @@ describe('EntryPage', () => {
 
   it('should navigate to institutions', () => {
     component.redirectTo();
-    expect(routerMock.navigate).toHaveBeenCalledWith([ROLES.anonymous, ANONYMOUS_ROUTES.institutions], {replaceUrl: true});
+    expect(routerMock.navigate).toHaveBeenCalledWith([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
   });
 });
