@@ -2,7 +2,7 @@ import { ApplicationDetails } from './applications/applications.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 import { RoomSelect } from './rooms/rooms.model';
 import { FacilityDetails } from './facilities/facilities.model';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
 import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
 import {ContractSummary} from './contract-list/contractSummary.model'
 import {CheckInOut, CheckInOutSlot} from './check-in-out/check-in-out.model'

@@ -103,11 +103,11 @@ export class PreLoginComponent implements OnInit {
       case LoginState.HOSTED:
         this.authFacadeService.setIsGuestUser(isGuestUser);
         this.messageProxy.put({ navParams: { isGuestUser } });
-        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login], { replaceUrl: true });
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
         this.updateGuestSettings();
         break;
       case LoginState.EXTERNAL:
-        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external], { replaceUrl: true });
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
         break;
     }
   }

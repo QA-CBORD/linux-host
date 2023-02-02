@@ -41,7 +41,6 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
-import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-order-details',
@@ -96,13 +95,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   };
   user: UserInfoSet;
 
+  paymentMethodErrorMessages = {
+    required: 'A payment method must be selected',
+  };
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly a11yService: AccessibilityService,
-    private readonly toastService: ToastService
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ngOnInit() {
@@ -219,6 +221,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       formControlErrorDecorator(Validators.maxLength(22), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
     ];
     this.detailsForm.controls[FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
+   
+    if (!this.isExistingOrder) {
+      this.detailsForm.get(FORM_CONTROL_NAMES.paymentMethod).markAsTouched();
+    }
+    
     this.subscribeOnFormChanges();
   }
 
@@ -282,8 +289,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private subscribeOnFormChanges() {
-    const sub = this.detailsForm.valueChanges.subscribe(data => {
-      this.onFormChange.emit({ data, valid: this.detailsForm.valid });
+    const sub = this.detailsForm.valueChanges.subscribe(() => {
+      this.onFormChange.emit({ data: this.detailsForm.getRawValue(), valid: this.detailsForm.valid });
     });
     this.sourceSub.add(sub);
   }

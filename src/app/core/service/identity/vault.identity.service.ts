@@ -35,7 +35,7 @@ export class VaultIdentityService {
   public state: VaultSession = { biometricUsed: false, pin: null };
   private vault: Vault | BrowserVault;
   private pluginListenerHandle: PluginListenerHandle;
-  private setTimeoutId: number;
+  private setTimeoutId: any;
   pinAuthenticator: PinAuthenticator;
 
   constructor(

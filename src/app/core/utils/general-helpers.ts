@@ -247,3 +247,7 @@ export const validatePasswordDecorator = (
     return fn(control) === null ? null : error;
   };
 };
+
+export const isEmptyObject = (obj): boolean => {
+  return obj && Object.keys(obj).length === 0;
+}
