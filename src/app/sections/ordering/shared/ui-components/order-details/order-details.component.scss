@@ -89,6 +89,25 @@
     }
   }
 
+  ion-select.custom-error::part(icon) {
+    opacity: 1;
+  }
+
+  ion-select.custom-error::part(icon)::before {
+    display: block;
+    content: '';
+    mask-size: contain;
+    mask-position: 50% 50%;
+    mask-repeat: no-repeat;
+    background: $color-alizarin;
+    color: $color-alizarin;
+    mask-image: url('/assets/icon/caution.svg');
+    width: 1.5em;
+    height: 1.5em;
+    opacity: 1;
+    transform: translateX(-140%) translateY(-10%);
+  }
+
   &__order-note {
     display: block;
     margin: 30px;
@@ -118,7 +137,6 @@
 }
 
 .order-ingredient-list {
-
   &__item {
     border-radius: 10px;
   }
