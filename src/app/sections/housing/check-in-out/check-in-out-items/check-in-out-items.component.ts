@@ -37,4 +37,6 @@ export class CheckInOutItemsComponent {
       this._toastService.showToast({message: 'Your access time has not been reached yet.'});
     }
   }
+
+  
 }
