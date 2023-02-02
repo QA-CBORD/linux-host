@@ -1,5 +1,5 @@
 import { FacilityDetails, FacilityDetailsToFacilityMapper } from '@sections/housing/facilities/facilities.model';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 export function generateFacilities(): any[] {
