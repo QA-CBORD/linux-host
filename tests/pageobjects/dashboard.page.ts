@@ -9,6 +9,9 @@ class DashboardPage extends Page {
         return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-dashboard');
     }
 
+    get SettingsIcon(){
+        return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-footer/st-global-navigation/nav/div/ul/li[4]/div');
+    }
 }
 
 export default new DashboardPage();
