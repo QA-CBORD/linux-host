@@ -6,7 +6,7 @@ import {
 } from '@sections/housing/facilities/facilities.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 import { BehaviorSubject } from 'rxjs';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
 
 export class RoomsStateServiceMock implements StateService<number, Facility[]>{
 

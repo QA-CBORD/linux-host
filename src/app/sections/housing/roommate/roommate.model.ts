@@ -75,7 +75,7 @@ export class RoommateDetails implements RoommateDetailsOptions {
     this.firstName = String(options.firstName);
     this.middleName = String(options.middleName);
     this.lastName = String(options.lastName);
-    this.birthDate = new Date(options.birthDate);
+    this.birthDate = options.birthDate && new Date(options.birthDate);
     this.preferredName = String(options.preferredName);
   }
 }

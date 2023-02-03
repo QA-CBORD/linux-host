@@ -345,7 +345,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private isApplePay(): boolean {
-    return this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY;
+    return this.cartFormState.data?.paymentMethod?.accountType === AccountType.APPLEPAY;
   }
 
   private async getAccountIdFromApplePay(): Promise<string> {
@@ -380,7 +380,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private async submitOrder(): Promise<void> {
     await this.loadingService.showSpinner();
-    let accountId = this.cartFormState.data[FORM_CONTROL_NAMES.paymentMethod].id;
+    let accountId = this.cartFormState.data[FORM_CONTROL_NAMES.paymentMethod]?.id;
     this.cartService.updateOrderNote(this.cartFormState.data[FORM_CONTROL_NAMES.note]);
     this.cartService.updateOrderPhone(this.cartFormState.data[FORM_CONTROL_NAMES.phone]);
     /// if Apple Pay Order

@@ -25,7 +25,7 @@ export enum OptionsName {
 })
 export class RequestedRoommatesComponent implements OnInit {
   options: RoommateSearchOptions;
-  requestedRoommates: any;
+  requestedRoommates: RequestedRoommate[];
   selectedTermKey: number;
 
   constructor(
@@ -81,29 +81,24 @@ export class RequestedRoommatesComponent implements OnInit {
     this._housingService
       .getRequestedRoommates(requestBody)
       .pipe(
-        map((data: RequestedRoommateResponse) => {
-          return data.requestedRoommates.map(d => {
+        map((response: RequestedRoommateResponse) => {
+          return response.requestedRoommates.map(roommate => {
             const roommatePref =
               applicationDetails &&
               applicationDetails.roommatePreferences.find(
-                f => f.patronKeyRoommate === d.patronRoommateKey && f.preferenceKey === d.preferenceKey
+                f => f.patronKeyRoommate === roommate.patronRoommateKey && f.preferenceKey === roommate.preferenceKey
               );
 
-            return new RequestedRoommate({
-              firstName: roommatePref ? roommatePref.firstName : '',
-              lastName: roommatePref ? roommatePref.lastName : '',
-              preferenceKey: d.preferenceKey,
-              patronRoommateKey: d.patronRoommateKey,
-              confirmed: requestedRoommates.some(roommate => {
-                if (roommate.patronRoommateKey === d.patronRoommateKey && roommate.confirmed == true) {
-                  return roommate.confirmed;
-                }
-                return d.confirmed;
-              }),
-              middleName: d.middleName ? d.middleName : '',
-              birthDate: d.birthDate,
-              preferredName: d.preferredName ? d.preferredName : '',
-            });
+            return ({
+              firstName: roommatePref?.firstName || '',
+              lastName: roommatePref?.lastName || '',
+              preferenceKey: roommate.preferenceKey,
+              patronRoommateKey: roommate.patronRoommateKey,
+              confirmed: this.isRoommateConfirmed(requestedRoommates, roommate),
+              middleName: roommate?.middleName || '',
+              birthDate: roommate?.birthDate || '',
+              preferredName: roommate?.preferredName || '',
+            } as RequestedRoommate);
           });
         }),
         take(1),
@@ -117,6 +112,15 @@ export class RequestedRoommatesComponent implements OnInit {
         this.requestedRoommates = requestedRoommates;
         this.cdRef.detectChanges();
       });
+  }
+
+  private isRoommateConfirmed(requestedRoommates: RequestedRoommate[], d: RequestedRoommate): boolean {
+    return requestedRoommates.some(roommate => {
+      if (roommate.patronRoommateKey === d.patronRoommateKey && roommate.confirmed) {
+        return roommate.confirmed;
+      }
+      return d.confirmed;
+    });
   }
 
   get hasRequestedRoommate() {

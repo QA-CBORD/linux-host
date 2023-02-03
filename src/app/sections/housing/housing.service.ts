@@ -40,7 +40,7 @@ import {
 } from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
-import { FacilityOccupantDetails, RoommateDetails, RoommateResponse } from '@sections/housing/roommate/roomate.model';
+import { FacilityOccupantDetails, RoommateDetails, RoommateResponse } from '@sections/housing/roommate/roommate.model';
 import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
 import { NonAssignmentsStateService } from './non-assignments/non-assignments-state.service';
 import { WaitingList, WaitingListDetails } from './waiting-lists/waiting-lists.model';
