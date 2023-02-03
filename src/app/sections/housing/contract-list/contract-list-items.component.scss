@@ -6,7 +6,6 @@
   padding: 15px 0px;
 }
 
-
 .contract-list__item {
   margin-bottom: 10px;
   --border-width: 1px;
@@ -34,11 +33,13 @@
     align-items: center;
   }
 
-  .contract-list__item-start-time, .contract-list__item-end-time {
+  .contract-list__item-start-time,
+  .contract-list__item-end-time {
     display: block;
     color: $color-dusty-gray;
-
-}
+    font-size: 11pt;
+    font-family: 'Nunito regular';
+  }
   &::before {
     background-color: $color-strong-blue;
     border-radius: 0 0 2px 2px;
@@ -50,7 +51,6 @@
     left: 16px;
     z-index: 1;
   }
-
 }
 .contract-list__item-name {
   @include font-nunito-heavy(18px);

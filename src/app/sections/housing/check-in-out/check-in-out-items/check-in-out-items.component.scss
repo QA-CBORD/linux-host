@@ -27,9 +27,12 @@
     justify-content: space-between;
     align-items: center;
   }
-  .check-in-out-list__item-start-time, .check-in-out-list__item-end-time {
+  .check-in-out-list__item-start-time,
+  .check-in-out-list__item-end-time {
     display: block;
     color: $color-dusty-gray;
+    font-size: 11pt;
+    font-family: 'Nunito regular';
   }
   .check-in-out__facility-name {
     display: block;

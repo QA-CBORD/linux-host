@@ -56,11 +56,14 @@
     align-items: center;
   }
 
-  .roomSelect-list__item-start-time, .roomSelect-list__item-end-time {
+  .roomSelect-list__item-start-time,
+  .roomSelect-list__item-end-time {
     display: block;
     color: $color-dusty-gray;
-    padding: 2.5px;
-}
+    //padding: 2.5px;
+    font-size: 11pt;
+    font-family: 'Nunito regular';
+  }
   &::before {
     background-color: $color-strong-blue;
     border-radius: 0 0 2px 2px;
@@ -72,7 +75,6 @@
     left: 16px;
     z-index: 1;
   }
-
 }
 .roomSelect-list__item-name {
   @include font-nunito-heavy(18px);
