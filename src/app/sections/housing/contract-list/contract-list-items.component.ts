@@ -3,7 +3,7 @@ import { ContractSummary } from '@sections/housing/contract-list/contractSummary
 import { ContractListStateService } from '@sections/housing/contract-list/contract-list-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
-import {monthNameDayYearHour} from '../../../shared/constants/dateFormats.constant'
+import {monthNameDayYearHour} from '@shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-contract-list-items',

@@ -60,9 +60,8 @@
   .roomSelect-list__item-end-time {
     display: block;
     color: $color-dusty-gray;
-    //padding: 2.5px;
     font-size: 11pt;
-    font-family: 'Nunito regular';
+    @include font-family($font-nunito-regular)
   }
   &::before {
     background-color: $color-strong-blue;

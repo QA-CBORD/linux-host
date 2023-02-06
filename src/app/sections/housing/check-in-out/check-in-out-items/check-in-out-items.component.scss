@@ -32,7 +32,7 @@
     display: block;
     color: $color-dusty-gray;
     font-size: 11pt;
-    font-family: 'Nunito regular';
+    @include font-family($font-nunito-regular);
   }
   .check-in-out__facility-name {
     display: block;

@@ -4,7 +4,7 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
 import { ToastService } from '@core/service/toast/toast.service';
-import {monthNameDayYearHour} from '../../../../shared/constants/dateFormats.constant'
+import {monthNameDayYearHour} from '@shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-room-selection-list',
