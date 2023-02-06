@@ -37,8 +37,7 @@
   .contract-list__item-end-time {
     display: block;
     color: $color-dusty-gray;
-    font-size: 11pt;
-    @include font-family($font-nunito-regular);
+    @include font-nunito-regular(10pt);
   }
   &::before {
     background-color: $color-strong-blue;
