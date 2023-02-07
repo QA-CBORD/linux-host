@@ -43,6 +43,10 @@
     @include font-nunito-semibold(12px);
   }
 
+  &__walkout {
+    @include font-nunito-regular(12px);
+  }
+
   &__main-info {
     display: flex;
     justify-content: space-between;
