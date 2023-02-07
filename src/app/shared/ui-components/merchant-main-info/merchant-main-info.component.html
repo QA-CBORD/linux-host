@@ -23,6 +23,7 @@
       </p>
     </ion-col>
     <ion-col class="ion-no-padding ion-text-right">
+      <p *ngIf="isShowOrderType" class="info-block__order-type">{{ merchant | orderType }}</p>
       <p *ngIf="isWalkOut" class="info-block__walkout">Smart Shopping</p>
     </ion-col>
   </ion-row>
