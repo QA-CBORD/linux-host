@@ -135,6 +135,15 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.dashboardsettings.spec.ts',
       './tests/specs/shared/app.settingsfeedbackandsupporthelp.spec.ts',
     ],
+    checkVersion:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/guest/app.pre-login-as-guest.spec.ts',
+      './tests/specs/guest/app.login-guest.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-configuration.spec.ts',
+      './tests/specs/shared/settings.spec.ts',
+    ]
   },
   //
   // ============
