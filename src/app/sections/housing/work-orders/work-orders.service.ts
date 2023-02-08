@@ -316,8 +316,24 @@ export class WorkOrdersService {
       controls[fieldType] = resultFormValue;
     });
     
-    this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe( res => res && res.studentSubmitted ? image = res: image = null);
-    this._workOrderStateService.getSelectedFacility$().pipe(take(1)).subscribe(res => res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
+    this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe(res => {
+      image = null;
+      if (res && res.studentSubmitted) {
+        image = res;
+      }
+    });
+
+    this._workOrderStateService
+      .getSelectedFacility$()
+      .pipe(take(1))
+      .subscribe(res => {
+        if ((res && res.id) || res.facilityKey) {
+          location = res.id ? res.id : res.facilityKey;
+        } else {
+          location = null;
+        }
+      });
+      
     return { body: {
       notificationPhone:  controls[WorkOrdersFields.PHONE_NUMBER] ? controls[WorkOrdersFields.PHONE_NUMBER] : '',
       notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL]: '',

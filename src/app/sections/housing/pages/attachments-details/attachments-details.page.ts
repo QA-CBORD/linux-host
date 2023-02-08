@@ -10,20 +10,19 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import {
   AlertController,
-  Platform,
 } from '@ionic/angular';
 
 import {
   Observable,
   Subscription,
 } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { isMobile } from '@core/utils/platform-helper';
+
 import { AttachmentTypes, AttachmentsDetail, AttachmentsList } from '../../attachments/attachments.model';
 import { AttachmentsService } from '../../attachments/attachments.service';
 import { BehaviorSubject } from 'rxjs';
@@ -45,7 +44,6 @@ const BYTES_TO_MB = 1048576;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AttachmentsDetailsPage implements OnInit, OnDestroy {
-  @ViewChild('content') private content: any;
   @ViewChild(StepperComponent) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
@@ -70,7 +68,6 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   attachmentUrl: string;
   public fileData: File;
   constructor(
-    private _platform: Platform,
     private _loadingService: LoadingService,
     private _attachmentService: AttachmentsService,
     private _attachmentStateService: AttachmentStateService,
@@ -85,16 +82,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    if (isMobile(this._platform)) {
-      this.subscriptions = this._platform.pause.subscribe(() => {
-        this.activeAlerts.forEach(alert => {
-          alert.dismiss();
-        });
-        this.activeAlerts = [];
-      });
-    }
-
-    this.attachmentKey = parseInt(this._route.snapshot.paramMap.get('attachmentKey'), 10);
+    this.attachmentKey = parseInt(this._route.snapshot.params.attachmentKey);
     if (!this.attachmentKey) {
       this._initTermsSubscription();
       this.getAttachmentType();
@@ -129,7 +117,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
   getAttachmentUrl() {
     this._loadingService.showSpinner();
-    this._attachmentService.getUrlAttachmentFile().subscribe((res) => {
+    this._attachmentService.getUrlAttachmentFile().pipe(take(1)).subscribe((res) => {
       this._loadingService.closeSpinner();
       this.attachmentUrl = res;
     });
@@ -197,7 +185,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   selectFile() {
-    this.getAttachmentUrl()
+    this.getAttachmentUrl();
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
     this.chooser.getFile()
       .then(file => {
