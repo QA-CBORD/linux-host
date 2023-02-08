@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-
-import { RoomSelect } from './rooms.model';
 import { Facility } from '@sections/housing/facilities/facilities.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Unit } from '@sections/housing/unit/unit.model';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 import { hasValue, isDefined } from '@sections/housing/utils';
 import { map } from 'rxjs/operators';
+import { RoomSelect } from './rooms.model';
 
 
 export interface StateService<K, V> {

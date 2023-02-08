@@ -4,10 +4,10 @@
 <ion-content class="edit-home__content-container">
     <ion-card no-padding *ngFor="let roommate of requestingRoommate; let index = index">
       <ion-card-header>
-        <ion-card-title>Student {{roommate.firstName}}</ion-card-title>
+        <ion-card-title>{{studentFullName(roommate)}}</ion-card-title>
       </ion-card-header>
       <div [hidden]="true">{{_applicationsStateService.requestedRoommates | async}}</div>
-        <ion-card-content class="text-roommate-requesting"> Student {{roommate.firstName}} has requested you as a roomate. (If you deny the request, they will not be notified.)</ion-card-content>
+        <ion-card-content class="text-roommate-requesting">{{studentFullName(roommate)}} has requested you as a roommate. (If you deny the request, they will not be notified.)</ion-card-content>
         <div class="btns-container">
           <ion-button mode="ios" class="response-btns" (click)="acceptRoommateRequest(roommate)">Accept Request</ion-button>
           <ion-button mode="ios" class="response-btns" (click)="denyRoommateRequest(roommate)" >Deny Request</ion-button>

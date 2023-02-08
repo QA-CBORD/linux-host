@@ -6,7 +6,7 @@ import { ApplicationsStateService } from '@sections/housing/applications/applica
 import { RoommateSearchOptions } from '@sections/housing/applications/applications.model';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import { HousingService } from '@sections/housing/housing.service';
-import { RoommateDetails } from '@sections/housing/roommate/roomate.model';
+import { RoommateDetails } from '@sections/housing/roommate/roommate.model';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { RoommatePreferences } from '../../../../applications/applications.model';

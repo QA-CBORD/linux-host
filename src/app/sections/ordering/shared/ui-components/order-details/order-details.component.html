@@ -100,16 +100,12 @@
     <ng-template #paymentSelect>
       <div class="order-details">
         <div class="order-details__block">
-          <ion-label
-            [class.order-details__label_error]="paymentFormControl.errors"
-            [class.order-details__label]="!paymentFormControl.errors"
-            >{{ contentStrings.labelPaymentMethod | async }}</ion-label
-          >
-          <ion-icon *ngIf="paymentFormControl.errors" class="order-details__icon" name="warning-outline"></ion-icon>
+          <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
         </div>
         <ion-select
           aria-required="true"
           [formControlName]="controlsNames.paymentMethod"
+          [class.custom-error]="paymentFormControl.errors"
           class="order-details__value"
           [cancelText]="contentStrings.buttonCancel | async"
           mode="md"
