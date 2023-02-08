@@ -369,7 +369,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
     this.toastService.showToast({ message: noDatesMessage });
     this.modalsService.dismiss();
-    return;
   }
 }
 

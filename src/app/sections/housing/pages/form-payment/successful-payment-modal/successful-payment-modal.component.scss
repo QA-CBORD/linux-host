@@ -13,7 +13,9 @@
   &__title-label {
     color: #000000;
     text-align: center;
-
+    margin-top: 25px;
+    margin-bottom: 30px;
+    font-size: 26px;
     @include font-nunito-heavy(32px);
   }
 
@@ -27,6 +29,7 @@
 
   &__img-wrapper {
     text-align: center;
+    margin-top: 40px;
   }
 
   &__info-container {
@@ -119,16 +122,6 @@
 
 .application-details__submit {
   --background: #{$color-dodger-blue};
-}
-
-.success-modal__img-wrapper {
-    margin-top: 40px;
-}
-
-.success-modal__title-label {
-  margin-top: 25px;
-  margin-bottom: 30px;
-  font-size: 26px;
 }
 
 ion-card {
