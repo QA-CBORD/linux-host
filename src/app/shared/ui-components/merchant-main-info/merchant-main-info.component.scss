@@ -44,7 +44,8 @@
   }
 
   &__walkout {
-    @include font-nunito-regular(12px);
+    @include font-nunito-semibold(12px);
+    color: $color-purple-50;
   }
 
   &__main-info {

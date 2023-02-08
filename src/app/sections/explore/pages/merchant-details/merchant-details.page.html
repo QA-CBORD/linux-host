@@ -18,9 +18,18 @@
     <st-merchant-main-info
       [isShowMerchantStatus]="merchant.isAbleToOrder"
       [isWalkOut]="merchant.walkout"
+      [isShowOrderType]="merchant.isAbleToOrder"
       [merchant]="merchant"
     ></st-merchant-main-info>
     <div class="explore__controls">
+      <st-button
+        *ngIf="merchant.isAbleToOrder && guestOrderEnabled && !merchant.walkout"
+        (onClick)="navigateToMerchant(merchant.id)"
+        [isDisabled]="true"
+        class="explore__start-order"
+        buttonModifier="rectangle"
+        >start an order
+      </st-button>
       <st-button
         (onClick)="onFavoriteTrigger(merchant)"
         [isDisabled]="true"
