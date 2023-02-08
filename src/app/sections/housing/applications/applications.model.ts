@@ -296,7 +296,7 @@ export class RequestedRoommate implements RequestedRoommateOptions{
   patronRoommateKey: number;
   confirmed?: boolean;
   middleName: string;
-  birthDate: Date;
+  birthDate?: Date;
   preferredName: string;
 
   constructor(options: RequestedRoommateOptions) {
@@ -310,7 +310,7 @@ export class RequestedRoommate implements RequestedRoommateOptions{
     this.patronRoommateKey = Number(options.patronRoommateKey);
     this.confirmed = Boolean(options.confirmed);
     this.middleName = String(options.middleName);
-    this.birthDate = new Date(options.birthDate);
+    this.birthDate = options.birthDate && new Date(options.birthDate);
     this.preferredName = String(options.preferredName);
   }
 }

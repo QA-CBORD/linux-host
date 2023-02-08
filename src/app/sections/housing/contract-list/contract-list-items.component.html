@@ -4,12 +4,10 @@
         <div class="contract-item-order">
             <div class="contract-list__item-info">
               <div  class="contract-list__item-start-time">
-                {{contract.startDate | date: dateFormat}} <br>
-                {{contract.startDate | date: timeFormat}}
+                <strong>Start:</strong> {{contract.startDate | date: dateFormat}} 
               </div>
               <div  class="contract-list__item-end-time">
-                {{contract.endDate | date: dateFormat}} <br>
-                {{contract.endDate | date: timeFormat}} 
+                <strong>End:</strong> {{contract.endDate | date: dateFormat}} 
               </div>
             </div>
           <h2  class="contract-list__item-name">{{contract.fullName}}</h2>

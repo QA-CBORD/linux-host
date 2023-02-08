@@ -4,6 +4,7 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
 import { ToastService } from '@core/service/toast/toast.service';
+import {monthNameDayYearHour} from '@shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-room-selection-list',
@@ -14,6 +15,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 export class RoomSelectionListComponent implements AfterViewInit {
   @ViewChild('container') divContainer: ElementRef;
   @Input() roomSelects: RoomSelect[]
+  dateFormat = monthNameDayYearHour;
 
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired

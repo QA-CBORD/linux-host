@@ -3,8 +3,8 @@
       <ion-item lines="none" class="roomSelect-list__item"  button (click)="goToRoomSelection(room.key)">
         <div class="roomSelect-item-order">
             <div class="roomSelect-list__item-info">
-              <div  class="roomSelect-list__item-start-time">{{room.accessTime | date: 'MMM d, y, h:mm a'}}</div>
-              <div  class="roomSelect-list__item-end-time">{{room.accessEnd | date: 'MMM d, y, h:mm a'}}</div>
+              <div  class="roomSelect-list__item-start-time"><strong>Start: </strong>{{room.accessTime | date: dateFormat}}</div>
+              <div  class="roomSelect-list__item-end-time"><strong>End: </strong>{{room.accessEnd | date: dateFormat}}</div>
             </div>
           <h2  class="roomSelect-list__item-name">{{room.name}}</h2>
         </div>
