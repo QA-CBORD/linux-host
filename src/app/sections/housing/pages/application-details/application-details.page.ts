@@ -122,7 +122,7 @@ export class ApplicationDetailsPage implements OnInit {
         ? this.applicationsStateService.deleteRequestingRoommate(index)
         : null;
     });
-    const requestingRoommate = this.applicationsStateService.requestingRoommate.filter(result => {
+    return this.applicationsStateService.requestingRoommate.filter(result => {
       if (
         this.applicationsStateService.roommatePreferencesSelecteds.find(
           value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
@@ -131,7 +131,6 @@ export class ApplicationDetailsPage implements OnInit {
         return result;
       }
     });
-    return requestingRoommate;
   }
 
   private updateQuestions() {
