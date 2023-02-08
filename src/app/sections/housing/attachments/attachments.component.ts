@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 export class AttachmentsComponent implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
   public urlEditForm: string;
-  private selectedTermKey = 0;
 
   constructor(
     public _attachmentStateService: AttachmentStateService,
@@ -32,7 +31,6 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
       this._termService.termId$
         .subscribe(termId => {
           this.urlEditForm = `/patron/housing/attachment/${termId}/`;
-          this.selectedTermKey = termId;
         }));
 
   }

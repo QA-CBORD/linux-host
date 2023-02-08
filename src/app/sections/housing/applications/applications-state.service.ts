@@ -62,7 +62,7 @@ export class ApplicationsStateService {
   }
 
   getRequestedRoommate(): RequestedRoommate[] {
-    return this.requestedroommate
+    return this.requestedroommate;
   }
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures

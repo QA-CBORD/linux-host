@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { NonAssignmentsStateService } from '../non-assignments/non-assignments-state.service';
@@ -20,12 +16,9 @@ export class AssetTypeDetailsComponent {
   @Input() parentGroup: FormGroup;
   @Input() isSubmitted: boolean;
 
-  constructor(
-    private _nonAssignmentsStateService: NonAssignmentsStateService) { }
+  constructor(private _nonAssignmentsStateService: NonAssignmentsStateService) {}
 
-  trackByLabel(_: number, assetTypeDetail: AssetTypeDetailValue): string {
-    return assetTypeDetail.label;
-  }
+  trackByLabel = (_: number, assetTypeDetail: AssetTypeDetailValue): string => assetTypeDetail.label;
 
   selectAsset(selectedAsset: AssetTypeDetailValue[]): void {
     this._nonAssignmentsStateService.setSelectedAssetType(selectedAsset);
