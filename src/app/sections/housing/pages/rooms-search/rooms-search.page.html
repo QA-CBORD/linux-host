@@ -4,8 +4,7 @@
   backButtonTitle="Close"
   backButtonIcon="chevron-back"
   [isToolbarShow]="true"
-  [trackUrls]="true"
-  [useClose]="true"
+  [trackUrls]="false"
   (onClose)="goToDashboard()"
 ></st-header>
 <st-units-tabs (onTabSelected)="changeView($event)"></st-units-tabs>
