@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 import { integerValidator, isEmptyOrNullString, numericValidator, parseJsonToArray } from '../utils';
 
@@ -100,7 +100,7 @@ export class QuestionsService {
 
   toQuestionCheckboxControl(storedValue: any, question: QuestionCheckboxGroup): FormArray {
     const values: QuestionCheckboxGroupValue[] = storedValue || question.values;
-    const controls: FormControl[] = values.map((value: QuestionCheckboxGroupValue) => new FormControl(value.selected));
+    const controls: FormControl[] = values.map((value: QuestionCheckboxGroupValue) => new FormControl(value.selected, this.getRequiredValidator(question)));
 
     return new FormArray(controls);
   }
@@ -110,7 +110,7 @@ export class QuestionsService {
     const groups: any = {};
 
     assetTypeGroup.forEach((at: AssetTypeDetailValue[], index: number) => {
-      const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl(detail.value));
+      const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl(detail.value, this.getRequiredValidator(question)));
       groups[`aaa-${index}`] = new FormArray(controls);
     });
 
@@ -264,5 +264,14 @@ export class QuestionsService {
     }
 
     return 0;
+  }
+
+  getRequiredValidator(question: QuestionFormControl): ValidatorFn[] {
+    const validators: ValidatorFn[] = [];
+
+    if (question.required) {
+      validators.push(Validators.required);
+    }
+    return validators;
   }
 }

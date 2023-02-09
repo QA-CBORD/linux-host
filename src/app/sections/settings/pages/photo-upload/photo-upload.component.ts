@@ -421,6 +421,6 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private coverBorderFit(orientation: Orientation): boolean {
-    return !(orientation === Orientation.PORTRAIT);
+    return orientation !== Orientation.PORTRAIT;
   }
 }

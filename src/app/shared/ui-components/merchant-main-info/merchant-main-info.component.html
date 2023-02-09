@@ -5,7 +5,7 @@
     </ion-col>
   </ion-row>
   <ion-row>
-    <ion-col class="ion-no-padding">
+    <ion-col *ngIf="merchant.distanceFromUser" class="ion-no-padding">
       <p class="info-block__distance">{{ merchant.distanceFromUser | merchantDistance }}</p>
     </ion-col>
   </ion-row>
@@ -23,7 +23,8 @@
       </p>
     </ion-col>
     <ion-col class="ion-no-padding ion-text-right">
-      <p *ngIf="isShowOrderType" class="info-block__order-type">{{ merchant | orderType }}</p>
+      <p *ngIf="isShowOrderType && !isWalkOut" class="info-block__order-type">{{ merchant | orderType }}</p>
+      <p *ngIf="isWalkOut" class="info-block__walkout">Smart Shopping</p>
     </ion-col>
   </ion-row>
 </ion-grid>

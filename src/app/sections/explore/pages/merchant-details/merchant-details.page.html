@@ -17,12 +17,13 @@
   <div class="explore__content">
     <st-merchant-main-info
       [isShowMerchantStatus]="merchant.isAbleToOrder"
+      [isWalkOut]="merchant.walkout"
       [isShowOrderType]="merchant.isAbleToOrder"
       [merchant]="merchant"
     ></st-merchant-main-info>
     <div class="explore__controls">
       <st-button
-        *ngIf="merchant.isAbleToOrder && guestOrderEnabled"
+        *ngIf="merchant.isAbleToOrder && guestOrderEnabled && !merchant.walkout"
         (onClick)="navigateToMerchant(merchant.id)"
         [isDisabled]="true"
         class="explore__start-order"
@@ -56,7 +57,7 @@
           <ion-col
             ><ion-text
               *ngIf="merchant.isAbleToOrder"
-              class="explore__merchant-text"
+              class="explore-blue"
               [ngClass]="{
           'explore__merchant-text--open': merchant.openNow,
           'explore__merchant-text--closed': !merchant.openNow

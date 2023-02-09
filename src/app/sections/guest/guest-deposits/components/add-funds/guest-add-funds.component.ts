@@ -208,7 +208,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       }
     });
 
-    return await popover.present();
+    await popover.present();
   }
 
   get hideAccountBalance() {

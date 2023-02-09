@@ -82,7 +82,7 @@ export class FormPaymentComponent implements OnInit {
   async confirmPayment(cardInfo?: AccountsConf) {
     const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.amountDue);
     const popover = await this.confirmPaymentPopover(info);
-    popover.onDidDismiss().then(async ({ role }) => {
+    popover.onDidDismiss().then(({ role }) => {
       this.onConfirmation(role, cardInfo?.account, this.amountDue, info);
     });
     await popover.present();
@@ -107,7 +107,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async confirmPaymentPopover(data: TransactionalData) {
-    return await this.popoverCtrl.create({
+    return this.popoverCtrl.create({
       component: ConfirmPaymentPopover,
       componentProps: {
         data,
