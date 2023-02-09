@@ -9,6 +9,7 @@ import { MerchantInfo } from '@sections/ordering';
 })
 export class MerchantMainInfoComponent {
   @Input() isShowOrderType = true;
+  @Input() isWalkOut = false;
   @Input() isShowMerchantStatus = true;
   @Input() merchant: MerchantInfo;
 

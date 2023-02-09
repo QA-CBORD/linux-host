@@ -55,7 +55,8 @@
         </p>
       </ion-col>
       <ion-col class="ion-align-self-end ion-no-padding">
-        <p class="merchant__merchant-order-types">{{ merchantInfo.orderTypes | orderTypePipe}}</p>
+        <p *ngIf="!merchantInfo.walkout" class="merchant__merchant-order-types">{{ merchantInfo.orderTypes | orderTypePipe}}</p>
+        <p *ngIf="merchantInfo.walkout" class="merchant__merchant-walkout">Smart shopping</p>
       </ion-col>
     </ion-row>
   </ion-grid>

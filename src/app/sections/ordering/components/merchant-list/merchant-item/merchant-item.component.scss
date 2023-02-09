@@ -62,4 +62,12 @@
 
     @include font-nunito-semibold(12px);
   }
+
+  &__merchant-walkout {
+    margin: 0 10px;
+    text-align: right;
+    
+    @include font-nunito-semibold(12px);
+    color: $color-purple-50;
+  }
 }

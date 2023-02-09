@@ -45,4 +45,5 @@ export interface MerchantInfo {
   isFavorite?: boolean;
   isAbleToOrder?: boolean;
   timeZone?: string;
+  walkout?: boolean;
 }
