@@ -1,10 +1,12 @@
 <st-header
   title="Rooms"
   [isTitleShow]="true"
-  [backButtonTitle]="'Back'"
+  backButtonTitle="Close"
   backButtonIcon="chevron-back"
   [isToolbarShow]="true"
   [trackUrls]="true"
+  [useClose]="true"
+  (onClose)="goToDashboard()"
 ></st-header>
 <st-units-tabs (onTabSelected)="changeView($event)"></st-units-tabs>
 <ion-toolbar class="rooms-search__toolbar rooms-search__filters">

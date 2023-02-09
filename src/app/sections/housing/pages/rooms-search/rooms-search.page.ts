@@ -80,6 +80,10 @@ export class RoomsSearchPage {
     }
   }
 
+  goToDashboard(){
+    this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.dashboard}`])
+  }
+
   ngOnDestroy() {
     this.subscriber.unsubscribe();
   }

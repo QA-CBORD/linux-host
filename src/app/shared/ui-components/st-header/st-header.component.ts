@@ -23,6 +23,8 @@ export class StHeaderComponent {
   @Input() isRemoveButtonShow: boolean;
   @Output() onDismiss = new EventEmitter<void>();
   @Output() onRemove = new EventEmitter<void>();
+  @Output() onClose = new EventEmitter<void>();
+  @Input() useClose = false;
 
   constructor(private readonly router: Router, private readonly navService: NavigationService) {}
 
@@ -43,6 +45,10 @@ export class StHeaderComponent {
   }
 
   async onBack() {
+    if (this.useClose) {
+      this.onClose.emit();
+      return;
+    }
     if (this.trackUrls) {
       await this.router.navigate([this.navService.getPreviousTrackedUrl()]);
     }
