@@ -10,11 +10,21 @@
   <ion-item lines="none" class="check-in-out-list__item" button (click)="openCheckInOutSlots(checkInOut.key)">
     <div class="check-in-out-item-order">
       <div class="check-in-out-list__item-info">
-        <div class="check-in-out-list__item-start-time">
-          <strong>Start:</strong> {{ checkInOut.availableStartDate | date: dateFormat }}
+        <div class="dates-container">
+          <strong>Start:</strong>
+          <div class="check-in-out-list__item-start-time">
+            {{ checkInOut.availableStartDate | date : dateFormat }}
+            <br />
+            {{ checkInOut.availableStartDate | date : timeFormat }}
+          </div>
         </div>
-        <div class="check-in-out-list__item-end-time">
-          <strong>End:</strong> {{ checkInOut.availableEndDate | date: dateFormat }}
+        <div class="dates-container">
+          <strong>End:</strong>
+          <div class="check-in-out-list__item-end-time">
+            {{ checkInOut.availableEndDate | date : dateFormat }}
+            <br />
+            {{ checkInOut.availableEndDate | date : timeFormat }}
+          </div>
         </div>
       </div>
       <h2 class="check-in-out-list__item-name">{{ checkInOut.name }}</h2>
@@ -31,7 +41,7 @@
         </div>
       </div>
       <h2 class="check-in-out-list__item-name">
-        {{ checkInOut.selectedSpotDateTime | date: 'EEEE, MMMM d, y, h:mm a' }}
+        {{ checkInOut.selectedSpotDateTime | date : 'EEEE, MMMM d, y, h:mm a' }}
       </h2>
     </div>
   </ion-item>
