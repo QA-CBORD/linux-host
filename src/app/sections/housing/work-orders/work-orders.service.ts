@@ -136,11 +136,8 @@ export class WorkOrdersService {
     let value: any = storedValue;
     const disabled = false;
 
-    const validators: ValidatorFn[] = [];
+    const validators = this._questionsService.getRequiredValidator(question);
 
-    if (question.required) {
-      validators.push(Validators.required);
-    }
     if(question.workOrderFieldKey === 'DESCRIPTION'){
       validators.push(Validators.maxLength(250))
     }
@@ -173,7 +170,7 @@ export class WorkOrdersService {
           this._workOrderStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment)
           break;
       }
-      return new FormControl({ value, disabled:true }, validators);
+      return new FormControl({ value, disabled: true }, validators);
     }
 
     return new FormControl({ value, disabled }, validators);
