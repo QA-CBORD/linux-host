@@ -43,36 +43,19 @@ export abstract class AbstractDepositManager {
     isActive: true,
   };
 
-  onPaymentChanged(_target) {
-    // Left blank intentionally
-  }
-
-  formatAmount(_event) {
-    // Left blank intentionally
-  }
-
-  onAmountChanged(_event) {
-    // Left blank intentionally
-  }
-
-  onSubmitDeposit() {
   // Left blank intentionally
-  }
 
-  setSourceAccounts(guestAccounts: UserAccount[]) {
-     // Left blank intentionally
-  }
-
-  setDestinationAccounts(recipientAccounts: UserAccount[]) {
-     // Left blank intentionally
-  }
-
-  async confirmationDepositPopover(data: any) {}
-
-  async finalizeDepositModal(data): Promise<void> {}
+  onPaymentChanged(_target) {}
+  formatAmount(_event) {}
+  onAmountChanged(_event) {}
+  onSubmitDeposit() {}  
+  setSourceAccounts(guestAccounts: UserAccount[]) {} 
+  setDestinationAccounts(recipientAccounts: UserAccount[]) {}
+  async confirmationDepositPopover(data: any) {} 
+  async finalizeDepositModal(data): Promise<void> {} 
 
   defineDestAccounts(target) {
-    this.setActivePayment(target);
+    this.activePaymentType = this.setActivePayment(target);
   }
 
   filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
@@ -166,8 +149,8 @@ export abstract class AbstractDepositManager {
   }
 
   private setActivePayment(target: any) {
-    if (typeof target === 'object') {
-      this.activePaymentType = PAYMENT_TYPE.CREDIT;
+    if (target instanceof Object) {
+      return PAYMENT_TYPE.CREDIT;
     }
 
     return target === CREDITCARD_STATUS.NEW ? this.activePaymentType : target;
