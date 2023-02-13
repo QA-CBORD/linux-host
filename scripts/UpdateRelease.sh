@@ -48,7 +48,7 @@ git checkout develop
 git pull origin develop
 
 # Pull highest latest release branch
-release_branch=$(git branch -r | grep -E 'release-1*' | sort -n | tail -n 1) || exit 1
+release_branch=$(git branch -r | grep -E 'release-*' | sort -n | tail -n 1) || exit 1
 echo "Current release $release_branch"
 
 git checkout $release_branch
