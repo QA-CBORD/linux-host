@@ -35,7 +35,7 @@ describe('ApplicationDetailsPage', () => {
     const housingServiceStub = () => ({
       getApplicationDetails: () => ({ pipe: () => ({}) }),
       getRequestedRommate: () => ({}),
-      handleSuccess: () => ({}),
+      goToDashboard: () => ({}),
       handleErrors: () => ({}),
     });
     const applicationsStateServiceStub = () => ({
