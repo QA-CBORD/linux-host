@@ -400,7 +400,7 @@ export class HousingService {
   /**
    *  Handles navigation back to dashboard and updates all subscribers w/ new information
    */
-  handleSuccess(): void {
+  goToDashboard(): void {
     this._loadingService.closeSpinner();
     this._router.navigate([`${ROLES.patron}/housing/dashboard`]);
   }
@@ -408,14 +408,14 @@ export class HousingService {
   /**
    * Returns navigation back to dashboard as an observable
    */
-  handleSuccess$(): Observable<any> {
+  goToDashboard$(): Observable<any> {
     this._loadingService.closeSpinner();
     return of(this._router.navigate([`${ROLES.patron}/housing/dashboard`]));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSuccessfulAssignment(contractKey: number): void {
-    this.handleSuccess$().subscribe(() => {
+    this.goToDashboard$().subscribe(() => {
       // TODO goes to contract form based on contract element key & contract form key
     });
   }

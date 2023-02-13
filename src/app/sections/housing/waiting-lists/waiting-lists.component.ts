@@ -81,7 +81,7 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
               .removeFromWaitingList(waitingList.patronWaitingListKey)
               .subscribe(status => {
                 if (status) {
-                  alert.dismiss().then(() => this._housingService.handleSuccess());
+                  alert.dismiss().then(() => this._housingService.goToDashboard());
                 } else {
                   alert.dismiss().then(() => {
                     this._loadingService.closeSpinner();

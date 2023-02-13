@@ -164,7 +164,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
               .subscribe(status => {
                 alert.dismiss().then(() => {
                   if (status) {
-                    this._housingService.handleSuccess();
+                    this._housingService.goToDashboard();
                   } else {
                     this._loadingService.closeSpinner();
                     this._toastService.showToast({

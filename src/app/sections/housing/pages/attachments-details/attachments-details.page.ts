@@ -164,7 +164,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
             ).subscribe(res => {
               alert.dismiss();
               if (res) {
-                this._housingService.handleSuccess();
+                this._housingService.goToDashboard();
                 this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
                 this._loadingService.closeSpinner();
               } else {
@@ -259,7 +259,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
               .subscribe(async (status) => {
                 await alert.dismiss();
                 if (status) {
-                  this._housingService.handleSuccess();
+                  this._housingService.goToDashboard();
                 } else {
                   this._loadingService.closeSpinner();
                   this._toastService.showToast({
