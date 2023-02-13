@@ -32,12 +32,14 @@
     justify-content: space-between;
     align-items: center;
   }
-
+  .dates-container{
+    display: flex;
+    color: $color-dusty-gray;
+    @include font-nunito-regular(10pt);
+  }
   .contract-list__item-start-time,
   .contract-list__item-end-time {
     display: block;
-    color: $color-dusty-gray;
-    @include font-nunito-regular(10pt);
   }
   &::before {
     background-color: $color-strong-blue;

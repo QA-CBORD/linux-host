@@ -25,7 +25,7 @@ import {
   flatMap,
   tap
 } from 'rxjs/operators';
-import {monthNameDayYearHour} from '../../../../shared/constants/dateFormats.constant'
+import {montDayYearHour} from '../../../../shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-check-in-out',
@@ -38,7 +38,7 @@ export class CheckInOutPage implements OnInit {
   availableSlots$: Observable<CheckInOutSpot>;
   checkInOutKey: number;
   stillLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  dateFormat = monthNameDayYearHour;
+  dateFormat = montDayYearHour;
 
   constructor(
     private _route: ActivatedRoute,
