@@ -10,7 +10,7 @@ import { QuestionsStorageService, QuestionsEntries } from '../questions/question
 import { QuestionBase } from '../questions/types/question-base';
 import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
-import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { WorkOrder, WorkOrderDetails, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
