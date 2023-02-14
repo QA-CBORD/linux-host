@@ -283,7 +283,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
-    const data: any = {
+    const data = {
       title: 'Oooops',
       message,
       showClose: !buttonLable,

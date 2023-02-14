@@ -32,7 +32,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   @Input() freshContentStringsLoaded = false;
   @Input() isVaultLocked = true;
   @Input() navBackUrl: string;
-  strings: any;
+  strings = undefined;
 
   isLoading = false;
   config: ConnectivityPageConfig;

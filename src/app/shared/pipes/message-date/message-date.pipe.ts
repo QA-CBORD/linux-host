@@ -10,7 +10,7 @@ import { checkIsYesterday } from '@core/utils/general-helpers';
 export class MessageDatePipe implements PipeTransform {
   constructor(private datePipe: DatePipe) {}
 
-  transform(message: SecureMessageInfo): any {
+  transform(message: SecureMessageInfo): string {
     if (!message?.sent_date) return '';
 
     const today: Date = new Date();

@@ -7,9 +7,9 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpandableComponent {
-  @Input() expandHeight: any;
+  @Input() expandHeight: string;
 
-  @Input() isExpanded: any;
+  @Input() isExpanded: boolean;
 
   currentHeight = 0;
 }

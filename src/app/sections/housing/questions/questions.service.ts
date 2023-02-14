@@ -82,15 +82,15 @@ export class QuestionsService {
   toFormGroup(
     questions: QuestionBase[],
     storedQuestions: QuestionsEntries,
-    iteratee: (group: any, question: QuestionFormControl, questionName: string, storedValue: string) => void
+    iteratee: (group, question: QuestionFormControl, questionName: string, storedValue: string) => void
   ): FormGroup {
-    const group: any = {};
+    const group = {};
 
     questions
       .filter((question: QuestionBase) => question && (question as QuestionFormControl).name)
       .forEach((question: QuestionFormControl) => {
         const questionName: string = question.name;
-        const storedValue: any = storedQuestions && storedQuestions[questionName];
+        const storedValue = storedQuestions && storedQuestions[questionName];
 
         iteratee(group, question, questionName, storedValue);
       });
@@ -98,16 +98,16 @@ export class QuestionsService {
     return new FormGroup(group);
   }
 
-  toQuestionCheckboxControl(storedValue: any, question: QuestionCheckboxGroup): FormArray {
+  toQuestionCheckboxControl(storedValue, question: QuestionCheckboxGroup): FormArray {
     const values: QuestionCheckboxGroupValue[] = storedValue || question.values;
     const controls: FormControl[] = values.map((value: QuestionCheckboxGroupValue) => new FormControl(value.selected, this.getRequiredValidator(question)));
 
     return new FormArray(controls);
   }
 
-  toQuestionAssetTypeDetailsGroup(storedValue: any, question: QuestionAssetTypeDetails): FormGroup {
+  toQuestionAssetTypeDetailsGroup(storedValue, question: QuestionAssetTypeDetails): FormGroup {
     const assetTypeGroup: AssetTypeDetailValue[][] = storedValue || question.assetTypes;
-    const groups: any = {};
+    const groups = {};
 
     assetTypeGroup.forEach((at: AssetTypeDetailValue[], index: number) => {
       const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl(detail.value, this.getRequiredValidator(question)));
@@ -201,9 +201,9 @@ export class QuestionsService {
     return questions;
   }
 
-  private _mapToQuestions(questions: any[]): QuestionBase[] {
+  private _mapToQuestions(questions): QuestionBase[] {
     return questions
-      .map((question: any) => {
+      .map((question) => {
         if (!question || !question.type) {
           return new QuestionBase();
         }

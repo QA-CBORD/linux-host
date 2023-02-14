@@ -137,7 +137,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
           this.isSubmitted = false; //!!nonAssignmentDetails.nonAssignmentInfo.dateTimeSigned;
           this._loadingService.closeSpinner();
         }),
-        catchError((error: any) => {
+        catchError((error: Error) => {
           this._loadingService.closeSpinner();
           return throwError(error);
         })
