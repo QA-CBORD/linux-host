@@ -183,7 +183,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   onCancel() {
-    this.housingService.handleSuccess();
+    this.housingService.goToDashboard();
   }
 
   onChange(applicationDetails: ApplicationDetails, formValue: FormGroup) {
@@ -197,7 +197,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   private _handleSuccess() {
-    this.housingService.handleSuccess();
+    this.housingService.goToDashboard();
   }
 
   private _handleErrors(error: Error) {

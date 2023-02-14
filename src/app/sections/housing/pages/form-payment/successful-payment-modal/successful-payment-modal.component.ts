@@ -20,7 +20,7 @@ export class SuccessfulPaymentModal implements OnInit {
   }
 
   async onDoneClicked() {
-    this.housingService.handleSuccess();
+    this.housingService.goToDashboard();
     await this.modalController.dismiss();
   }
 

@@ -2,7 +2,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { HousingService } from '../../housing.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
-
 import { Unit } from '../../units-switch/units-switch.model';
 import { Facility } from '@sections/housing/facilities/facilities.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
@@ -80,8 +79,8 @@ export class RoomsSearchPage {
     }
   }
 
-  goToDashboard(){
-    this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.dashboard}`])
+  goToDashboard() {
+    this._housingService.goToDashboard();
   }
 
   ngOnDestroy() {

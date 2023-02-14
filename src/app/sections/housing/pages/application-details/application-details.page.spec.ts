@@ -35,7 +35,7 @@ describe('ApplicationDetailsPage', () => {
     const housingServiceStub = () => ({
       getApplicationDetails: () => ({ pipe: () => ({}) }),
       getRequestedRommate: () => ({}),
-      handleSuccess: () => ({}),
+      goToDashboard: () => ({}),
       handleErrors: () => ({}),
     });
     const applicationsStateServiceStub = () => ({
@@ -127,9 +127,9 @@ describe('ApplicationDetailsPage', () => {
   describe('onCancel', () => {
     it('makes expected calls', () => {
       const housingServiceStub: HousingService = fixture.debugElement.injector.get(HousingService);
-      jest.spyOn(housingServiceStub, 'handleSuccess');
+      jest.spyOn(housingServiceStub, 'goToDashboard');
       component.onCancel();
-      expect(housingServiceStub.handleSuccess).toHaveBeenCalled();
+      expect(housingServiceStub.goToDashboard).toHaveBeenCalled();
     });
   });
 });
