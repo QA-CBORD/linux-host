@@ -2,7 +2,7 @@ import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from '@
 import { MenuGroupItemInfo } from '@sections/ordering/shared/models';
 import { AbstractControl, FormControl, NG_VALUE_ACCESSOR, DefaultValueAccessor } from '@angular/forms';
 
-export const CUSTOM_MULTILIST_CONTROL_VALUE_ACCESSOR: any = {
+export const CUSTOM_MULTILIST_CONTROL_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MultiListComponent),
   multi: true,
@@ -25,8 +25,8 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   @Input() isError: boolean;
   @Input() isExistingItemInCart: boolean;
   onTouched: () => void;
-  onChange: (_: any) => void;
-  innerValue: any[] = [];
+  onChange: (_) => void;
+  innerValue = [];
   modifiedOptions: MenuGroupItemInfoChecked[];
   
 
@@ -62,12 +62,12 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   }
 
   //get accessor
-  get value(): any {
+  get value() {
     return this.innerValue;
   }
 
   //set accessor including call the onchange callback
-  set value(v: any) {
+  set value(v) {
     if (v !== this.innerValue) {
       this.writeValue(v);
     }
@@ -81,12 +81,12 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   }
 
   //From ControlValueAccessor interface
-  registerOnChange(fn: any) {
+  registerOnChange(fn) {
     this.onChange = fn;
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn) {
     this.onTouched = fn;
   }
 

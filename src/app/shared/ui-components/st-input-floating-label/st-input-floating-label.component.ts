@@ -3,7 +3,7 @@ import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl }
 import { FocusableElement } from '@core/interfaces/focusable-element.interface';
 import { hasRequiredField } from '@core/utils/general-helpers';
 
-export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
+export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => StInputFloatingLabelComponent),
   multi: true,
@@ -41,7 +41,7 @@ export class StInputFloatingLabelComponent implements AfterViewInit, ControlValu
 
   @ViewChild('input', { static: true }) inputRef: ElementRef<HTMLInputElement>;
   innerValue: string | number = '';
-  private onChange: (v: any) => void;
+  private onChange: (v) => void;
   private onTouched: () => void;
 
   ngAfterViewInit(): void {
@@ -70,12 +70,12 @@ export class StInputFloatingLabelComponent implements AfterViewInit, ControlValu
   }
 
   //get accessor
-  get value(): any {
+  get value() {
     return this.innerValue;
   }
 
   //set accessor including call the onchange callback
-  set value(v: any) {
+  set value(v) {
     if (v !== this.innerValue) {
       this.innerValue = v;
       this.writeValue(this.innerValue);
@@ -83,7 +83,7 @@ export class StInputFloatingLabelComponent implements AfterViewInit, ControlValu
   }
 
   //From ControlValueAccessor interface
-  writeValue(value: any) {
+  writeValue(value) {
     if (this.inputRef.nativeElement.value !== value) {
       this.inputRef.nativeElement.value = value;
     }
@@ -91,12 +91,12 @@ export class StInputFloatingLabelComponent implements AfterViewInit, ControlValu
   }
 
   //From ControlValueAccessor interface
-  registerOnChange(fn: any) {
+  registerOnChange(fn) {
     this.onChange = fn;
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn) {
     this.onTouched = fn;
   }
 

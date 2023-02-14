@@ -12,7 +12,7 @@ export interface CredentialStateChangeListener {
 
 export interface MobileCredentialManager extends MobileCredentialManagerAdapter {
   setCredential(mobileCredential: MobileCredential): void;
-  onUiImageClicked(event?: any): void;
+  onUiImageClicked(event?): void;
   credentialEnabled$(): Observable<boolean>;
   credentialAvailable$(): Observable<boolean>;
   getCredential(): MobileCredential;

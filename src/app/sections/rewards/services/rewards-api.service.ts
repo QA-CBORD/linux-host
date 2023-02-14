@@ -44,7 +44,7 @@ export class RewardsApiService {
     rewardTrackId: string = null,
     startDate: Date = null,
     endDate: Date = null,
-    filters: any = null,
+    filters = null,
   ): Observable<UserFulfillmentActivityInfo[]> {
     const postParams: ServiceParameters = {
       rewardTrackId,

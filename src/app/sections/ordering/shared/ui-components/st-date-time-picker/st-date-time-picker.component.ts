@@ -25,7 +25,7 @@ export interface DateTimeSelected {
 })
 export class StDateTimePickerComponent implements OnInit {
   @Input() schedule: Schedule;
-  @Input() data: { labelTime: string; address: any; isClickble: number };
+  @Input() data: { labelTime: string; address: string; isClickble: number };
   @Input() isTimeDisable: number;
   @Input() merchantInfo: MerchantInfo;
   @Input() dateTimePicker: Date | string;
@@ -140,7 +140,7 @@ export class StDateTimePickerComponent implements OnInit {
     }
   }
 
-  private preparePickerArr(i = 0): any[] {
+  private preparePickerArr(i = 0): [string[], string[]] {
     const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
       (previous, hourBlock) => [
