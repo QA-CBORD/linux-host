@@ -29,7 +29,7 @@ export class TermsService {
     }/patron-applications/v.1.0/patron-terms/patrons/self`;
 
     return this._housingProxyService.get<Term[]>(apiUrl).pipe(
-      map((terms: any[]) => (Array.isArray(terms) ? terms.map((term: any) => new Term(term)) : [])),
+      map((terms: Term[]) => (Array.isArray(terms) ? terms.map((term: Term) => new Term(term)) : [])),
       catchError(() => of([]))
     );
   }

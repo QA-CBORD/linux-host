@@ -2,7 +2,7 @@ import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from '@
 import { MenuGroupItemInfo } from '@sections/ordering/shared/models';
 import { AbstractControl, FormControl, NG_VALUE_ACCESSOR, DefaultValueAccessor } from '@angular/forms';
 
-export const CUSTOM_SINGLELIST_CONTROL_VALUE_ACCESSOR: any = {
+export const CUSTOM_SINGLELIST_CONTROL_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => SingleListComponent),
   multi: true,
@@ -22,8 +22,8 @@ export class SingleListComponent extends DefaultValueAccessor implements OnInit 
   @Input() control: AbstractControl = new FormControl();
   @Input() isError: boolean;
   onTouched: () => void;
-  onChange: (_: any) => void;
-  innerValue: any = '';
+  onChange: (_) => void;
+  innerValue = '';
 
   ngOnInit() {
     this.writeValue(this.control.value);
@@ -36,29 +36,29 @@ export class SingleListComponent extends DefaultValueAccessor implements OnInit 
   }
 
   //get accessor
-  get value(): any {
+  get value() {
     return this.innerValue;
   }
 
   //set accessor including call the onchange callback
-  set value(v: any) {
+  set value(v) {
     if (v !== this.innerValue) {
       this.writeValue(v);
     }
   }
 
   //From ControlValueAccessor interface
-  writeValue(value: any) {
+  writeValue(value) {
     this.innerValue = value;
   }
 
   //From ControlValueAccessor interface
-  registerOnChange(fn: any) {
+  registerOnChange(fn) {
     this.onChange = fn;
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn) {
     this.onTouched = fn;
   }
 

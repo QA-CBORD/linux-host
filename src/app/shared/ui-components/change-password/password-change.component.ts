@@ -25,7 +25,7 @@ export class PasswordChangeComponent implements OnInit {
   changePasswordForm: FormGroup;
   isLoading = false;
   validators: ValidationController[] = [];
-  passwordControl: any = {};
+  passwordControl: { hasError: boolean; control: AbstractControl };
   inputLabel: PasswordChangeCsModel;
 
   constructor(

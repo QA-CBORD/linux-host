@@ -30,7 +30,7 @@ export class RoomSelectionListComponent implements AfterViewInit {
               private _toastService: ToastService) {
   }
 
-  goToRoomSelection(key: any): void {
+  goToRoomSelection(key: number): void {
     const roomSelection: RoomSelect = this.roomSelects.find(x => x.key === key);
     if(hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
     this._router.navigate(['patron/housing/rooms-search', key]).then(() => {

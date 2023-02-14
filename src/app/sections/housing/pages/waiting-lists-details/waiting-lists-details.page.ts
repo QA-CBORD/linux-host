@@ -173,7 +173,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleSuccess(): void {
-    this._housingService.handleSuccess();
+    this._housingService.goToDashboard();
   }
 
   private _handleErrors(error: any): void {

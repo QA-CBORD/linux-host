@@ -10,10 +10,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
-import { IonSelect } from '@ionic/angular';
+import { IonSelect, SelectChangeEventDetail } from '@ionic/angular';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
-export const CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR: any = {
+export const CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => StSelectFloatingLabelComponent),
   multi: true,
@@ -35,12 +35,12 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() isDisabled = false;
   @Input() idd: string;
   @Input() selectedText: string;
-  @Output() focus: EventEmitter<any> = new EventEmitter<any>();
-  @Output() change: EventEmitter<any> = new EventEmitter<any>();
-  innerValue: any = '';
+  @Output() focus: EventEmitter<void> = new EventEmitter<void>();
+  @Output() change: EventEmitter<void> = new EventEmitter<void>();
+  innerValue = '';
 
   @ViewChild('selector', { static: true }) selectRef: IonSelect;
-  private onChange: (v: any) => void;
+  private onChange: (v) => void;
   private onTouched: () => void;
 
   constructor(private readonly cdRef: ChangeDetectorRef, private readonly a11yService: AccessibilityService) {}
@@ -50,31 +50,31 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   }
 
   //get accessor
-  get value(): any {
+  get value() {
     return this.innerValue;
   }
 
   //set accessor including call the onchange callback
   @Input()
-  set value(v: any) {
+  set value(v) {
     if (v !== this.innerValue) {
       this.writeValue(v);
     }
   }
 
   //From ControlValueAccessor interface
-  writeValue(value: any) {
+  writeValue(value) {
     this.innerValue = value;
     this.cdRef.detectChanges();
   }
 
   //From ControlValueAccessor interface
-  registerOnChange(fn: any) {
+  registerOnChange(fn) {
     this.onChange = fn;
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn) {
     this.onTouched = fn;
   }
 
@@ -88,7 +88,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
     this.onTouched();
   }
 
-  onChangeHandler({ detail: { value } }: CustomEvent<any>) {
+  onChangeHandler({ detail: { value } }: CustomEvent<SelectChangeEventDetail>) {
     this.writeValue(value);
     this.onChange(value);
     this.change.emit(value);

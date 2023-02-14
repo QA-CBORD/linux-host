@@ -10,12 +10,13 @@ import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credentia
 import { Injectable } from '@angular/core';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { AndroidCredentialCsModel } from '../model/android/android-credential-content-strings.model';
+import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Injectable({ providedIn: 'root' })
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
-  private appletWalletEventListener: any;
+  private appletWalletEventListener;
   private credentialStateChangeSubscription: CredentialStateChangeListener;
   constructor(
     private readonly userFacadeService: UserFacadeService,
@@ -62,7 +63,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onUiImageClicked(event?: any): void {
+  onUiImageClicked(event?): void {
     this.addToAppleWallet();
   }
 
@@ -107,7 +108,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
       .pipe(
         take(1),
         switchMap(sessionId => from(IOSDevice.getAppleWalletInfo({ sessionId: sessionId }))),
-        map((appleWalletInfo: any) => {
+        map((appleWalletInfo: AppleWalletInfo) => {
           return new AppleWalletCredential(new AppleWalletCredentialState(appleWalletInfo));
         })
       )

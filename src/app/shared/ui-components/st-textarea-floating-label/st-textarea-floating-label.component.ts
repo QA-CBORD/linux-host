@@ -1,7 +1,7 @@
 import { Component, Input, forwardRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
+export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => StTextareaFloatingLabelComponent),
   multi: true,
@@ -24,8 +24,8 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   @Input() placeholder: string;
   @Input() isAttachment: boolean;
   onTouched: () => void;
-  onChange: (_: any) => void;
-  innerValue: any = '';
+  onChange: (_) => void;
+  innerValue = '';
   @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
@@ -36,30 +36,30 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   }
 
   //get accessor
-  get value(): any {
+  get value() {
     return this.innerValue;
   }
 
   //set accessor including call the onchange callback
-  set value(v: any) {
+  set value(v) {
     if (v !== this.innerValue) {
       this.writeValue(v);
     }
   }
 
   //From ControlValueAccessor interface
-  writeValue(value: any) {
+  writeValue(value) {
     // this.inputRef.nativeElement.value = value;
     this.innerValue = value;
   }
 
   //From ControlValueAccessor interface
-  registerOnChange(fn: any) {
+  registerOnChange(fn) {
     this.onChange = fn;
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn) {
     this.onTouched = fn;
   }
 

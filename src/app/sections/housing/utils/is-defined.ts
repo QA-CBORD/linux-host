@@ -5,6 +5,6 @@
  *
  * @returns {Boolean}
  */
-export function isDefined(value: any): boolean {
+export function isDefined(value): boolean {
   return value != null;
 }

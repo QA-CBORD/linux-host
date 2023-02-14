@@ -30,7 +30,7 @@ export class RadioGroupComponent implements ControlValueAccessor {
 
   isDisabled = false;
 
-  onChange: (value: any) => void;
+  onChange: (value) => void;
 
   onTouched: () => void;
 
@@ -44,15 +44,15 @@ export class RadioGroupComponent implements ControlValueAccessor {
     return option.label;
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn): void {
     this.onTouched = fn;
   }
 
-  writeValue(value: any): void {
+  writeValue(value): void {
     if (value !== this.value) {
       this.value = value;
       this._changeDetector.markForCheck();
