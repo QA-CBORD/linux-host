@@ -158,7 +158,7 @@ export class WaitingListsService {
       }
     }
 
-    return new FormControl({ value, disabled });
+    return new FormControl({ value, disabled }, this._questionsService.getRequiredValidator(question));
   }
 
   private _getSelectedWaitingListValue(waitingList: WaitingListDetails): string {

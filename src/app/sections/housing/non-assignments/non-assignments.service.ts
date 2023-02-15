@@ -290,6 +290,6 @@ export class NonAssignmentsService {
       }
     }
 
-    return new FormControl({ value, disabled: question.readonly});
+    return new FormControl({ value, disabled: question.readonly}, this._questionsService.getRequiredValidator(question));
   }
 }

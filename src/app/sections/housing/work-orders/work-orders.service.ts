@@ -10,7 +10,7 @@ import { QuestionsStorageService, QuestionsEntries } from '../questions/question
 import { QuestionBase } from '../questions/types/question-base';
 import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
-import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { WorkOrder, WorkOrderDetails, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
@@ -136,11 +136,8 @@ export class WorkOrdersService {
     let value: any = storedValue;
     const disabled = false;
 
-    const validators: ValidatorFn[] = [];
+    const validators = this._questionsService.getRequiredValidator(question);
 
-    if (question.required) {
-      validators.push(Validators.required);
-    }
     if(question.workOrderFieldKey === 'DESCRIPTION'){
       validators.push(Validators.maxLength(250))
     }
@@ -173,7 +170,7 @@ export class WorkOrdersService {
           this._workOrderStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment)
           break;
       }
-      return new FormControl({ value, disabled:true }, validators);
+      return new FormControl({ value, disabled: true }, validators);
     }
 
     return new FormControl({ value, disabled }, validators);
