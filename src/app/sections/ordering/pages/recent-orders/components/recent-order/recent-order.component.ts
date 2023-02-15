@@ -33,6 +33,13 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { firstValueFrom } from 'rxjs';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 
+interface OrderMenuItem {
+  menuItemId: string;
+  orderItemOptions: OrderMenuItem[];
+  quantity: number;
+  specialInstructions: string;
+}
+
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -92,7 +99,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     await this.initOrderOptionsModal(merchant);
   }
 
-  resolveMenuItemsInOrder(): Observable<any> {
+  resolveMenuItemsInOrder(): Observable<(boolean | any[])[]> {
     return zip(this.cart.menuInfo$, this.order$).pipe(
       map(([menu, orderInfo]) => {
         const existingMenuItems = this.merchantService.extractAllAvailableMenuItemsFromMenu(menu);
@@ -203,7 +210,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getOrderItemInitialObject(orderItem: OrderItem, menuItem: MenuItemInfo) {
+  private getOrderItemInitialObject(orderItem: OrderItem, menuItem: MenuItemInfo): OrderMenuItem {
     return {
       menuItemId: menuItem.id,
       orderItemOptions: orderItem.orderItemOptions.length

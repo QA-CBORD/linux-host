@@ -31,7 +31,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     super();
   }
 
-  get settings$(): Observable<any[]> {
+  get settings$(): Observable<NavigationBottomBarElement[]> {
     if (!this.isConfigInStorage()) this.storage.updateStateEntity(this.key, []);
     return this.initSettings().pipe(switchMap(() => this.config$));
   }

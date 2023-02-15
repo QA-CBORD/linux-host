@@ -16,6 +16,7 @@ import { HIDCredentialManager } from '../model/android/hid/hid-credential-manage
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { registerPlugin } from '@capacitor/core';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const  MobileCredentialStatusPlugin  = registerPlugin<any>('MobileCredentialStatusPlugin');
 
 @Injectable({
@@ -67,6 +68,7 @@ export class MobileCredentialFacade {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   enabledCredentialsSettings(): Observable<any> {
     const iosCredentialSettings = this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
       take(1),

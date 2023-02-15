@@ -11,6 +11,7 @@ import { Injectable } from '@angular/core';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { AndroidCredentialCsModel } from '../model/android/android-credential-content-strings.model';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Injectable({ providedIn: 'root' })

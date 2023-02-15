@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';

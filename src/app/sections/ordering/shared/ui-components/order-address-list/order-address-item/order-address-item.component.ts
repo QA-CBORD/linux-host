@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-order-address-item',
@@ -7,7 +8,7 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderAddressItemComponent implements OnInit {
-  @Input() item: any;
+  @Input() item: AddressInfo;
   @Input() iconAlt: string;
   @Input() isSelected: boolean;
   @Input() iconIsFile: boolean;

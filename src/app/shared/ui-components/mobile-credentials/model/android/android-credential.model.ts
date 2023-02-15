@@ -24,6 +24,7 @@ export interface GooglePayCredentialBundle extends CredentialBundle{
 }
 
 export interface AndroidCredentialAttrs {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   credentialBundle: any;
   credentialState: AndroidCredentialState;
 }

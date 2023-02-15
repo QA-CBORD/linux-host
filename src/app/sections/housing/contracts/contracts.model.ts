@@ -58,7 +58,7 @@ export interface ContractListDetailsOptions {
   contractElementId: number;
   state: string;
   applicationDescription: string;
-  applicationFormJson: any;
+  applicationFormJson: string;
   applicationTitle: string;
   applicationTypeId: number;
   applicationAvailableEndDateTime: string;
@@ -76,7 +76,7 @@ export class ContractListDetails implements ContractListDetailsOptions {
   contractElementId: number;
   state: string;
   applicationDescription: string;
-  applicationFormJson: any;
+  applicationFormJson: string;
   applicationTitle: string;
   applicationTypeId: number;
   applicationAvailableEndDateTime: string;

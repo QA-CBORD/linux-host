@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { CONTENT_STRINGS_CATEGORIES as CATEGORIES } from 'src/app/content-strings';
 import { reduceToObject } from './content-string-utils';
@@ -17,6 +18,7 @@ export interface RawContentStringObject {
 }
 
 export abstract class ContentStringModel {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected params?: any;
   content: RawContentStringObject;
   constructor(config: ContentStringBuilderConfig, defaultContentStrings: RawContentStringObject) {

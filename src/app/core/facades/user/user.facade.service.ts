@@ -237,8 +237,8 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   /// get notification id for update if it already exists in the user notification array
-  private getPushNotificationInfo(userInfo: any, fcmToken: string): UserNotificationInfo {
-    const user: any = { ...userInfo };
+  private getPushNotificationInfo(userInfo: UserInfo, fcmToken: string): UserNotificationInfo {
+    const user = { ...userInfo };
     const pNotifications = user.userNotificationInfoList.filter(
       notif => notif.type === User.NotificationType.PUSH_NOTIFICATION
     );

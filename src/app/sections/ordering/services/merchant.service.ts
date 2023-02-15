@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   MerchantInfo,
   MerchantSearchOption,
@@ -188,7 +189,7 @@ export class MerchantService {
     );
   }
 
-  getMerchantOrderSchedule(merchantId: string, orderType: number, merchantTimeZone: string): Observable<any> {
+  getMerchantOrderSchedule(merchantId: string, orderType: number, merchantTimeZone: string): Observable<Schedule> {
     const orderSchedule1$ = this.orderingApiService
       .getMerchantOrderSchedule(merchantId, orderType)
       .pipe(map(response => this.dataTransform(response, merchantTimeZone)));

@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { NavigationBehaviorOptions, Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
@@ -18,7 +18,7 @@ export class NavigationService {
     private readonly ngZone: NgZone
   ) {}
 
-  async navigate(params: string[], extras?: any): Promise<boolean> {
+  async navigate(params: string[], extras?: Partial<NavigationExtras>): Promise<boolean> {
     const isGuestUser = await this.authFacadeService.isGuestUser().toPromise();
     const [first, second, more] = params;
     const finalPath = (isGuestUser && `${ROLES.guest}/${first}`) || `${ROLES.patron}/${first}`;
@@ -32,11 +32,11 @@ export class NavigationService {
     }
   }
 
-  async navigateAnonymous(path: ANONYMOUS_ROUTES, extras?: any): Promise<boolean> {
+  async navigateAnonymous(path: ANONYMOUS_ROUTES, extras?: Partial<NavigationExtras>): Promise<boolean> {
     return this.ngZone.run(async () => await this.router.navigate([ROLES.anonymous, path], extras));
   }
 
-  navigateByUrl(url: string, extras: NavigationBehaviorOptions = {}): Promise<boolean> {
+  navigateByUrl(url: string, extras: Partial<NavigationExtras> = {}): Promise<boolean> {
     return this.router.navigateByUrl(url, extras);
   }
 
@@ -81,5 +81,6 @@ export class NavigationService {
 export interface NavParams {
   path: APP_ROUTES;
   ext: LOCAL_ROUTING;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
