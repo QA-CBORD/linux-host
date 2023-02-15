@@ -54,7 +54,7 @@ export class ConnectionService {
 
     return await firstValueFrom(this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
       timeout(TIME_OUT_DURATION),
-      map((res) => this.isConnectionIssues(<any>res)),
+      map(res => this.isConnectionIssues({ message: res.statusText, status: res.status })),
       catchError((error) => of(this.isConnectionIssues(error))))
     );
   }

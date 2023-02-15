@@ -1,3 +1,5 @@
+import { UserNotificationInfo } from "./user-notification-info.model";
+
 export interface UserInfo {
   id: string;
   userName: string;
@@ -20,5 +22,5 @@ export interface UserInfo {
   lastUpdatedCashless: Date;
   emailBounceMessage: string;
   emailBounceStatus: string;
-  
+  userNotificationInfoList?: UserNotificationInfo[];
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Observable, from } from 'rxjs';

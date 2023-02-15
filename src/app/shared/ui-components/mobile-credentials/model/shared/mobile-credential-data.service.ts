@@ -111,8 +111,7 @@ export class MobileCredentialDataService {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  activePasses$(args?: any): Observable<MobileCredential> {
+  activePasses$(): Observable<MobileCredential> {
     return this.getActivePasses().pipe(map(activePasses => MobileCredentialFactory.fromActivePasses(activePasses)));
   }
 

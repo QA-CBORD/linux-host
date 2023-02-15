@@ -11,6 +11,7 @@ import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials
   styleUrls: ['./mobile-credential-metadata.page.scss'],
 })
 export class MobileCredentialMetadata implements OnInit {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deviceState: any = {};
   isHid = true;
 

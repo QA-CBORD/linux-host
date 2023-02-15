@@ -191,6 +191,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async openScanCard(): Promise<any> {
     await this.loadingService.showSpinner();
     await this.closeToastIfOpened();

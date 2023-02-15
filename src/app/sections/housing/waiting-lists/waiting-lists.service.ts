@@ -180,7 +180,7 @@ export class WaitingListsService {
     return value;
   }
 
-  next(formValue): Observable<any> {
+  next(formValue): Observable<boolean> {
     if (Object.keys(formValue).find(value => value.includes('attribute-selection')) ||
         Object.keys(formValue).find(value => value.includes('facility-selection'))) {
         this._waitingListState.setFormSelection(formValue);

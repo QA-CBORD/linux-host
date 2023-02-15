@@ -22,6 +22,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../../../app.global';
+import { RadioGroupChangeEventDetail } from '@ionic/angular';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -121,7 +122,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
     return this.addEditAddressesForm.get(this.controlsNames.buildings);
   }
 
-  onCampusChanged({ detail: { value } }: CustomEvent<any>) {
+  onCampusChanged({ detail: { value } }: CustomEvent<RadioGroupChangeEventDetail>) {
     if (value === 'oncampus') {
       this.cleanControls(Object.keys(this.offCampusFormBlock(this.editAddress && this.editAddress.address)));
       this.addControls(this.onCampusFormBlock(this.editAddress && this.editAddress.address));

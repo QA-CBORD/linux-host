@@ -79,7 +79,7 @@ export class SearchFilterModalComponent implements OnInit {
     this._loadingService.closeSpinner();
     this.filtersForm = this._formBuilder.group(builderOptions);
   }
-  filter(data: any) {
+  filter(data) {
     this._loadingService.showSpinner();
 
     const categoriesToFilter = new Map<string, boolean[]>();

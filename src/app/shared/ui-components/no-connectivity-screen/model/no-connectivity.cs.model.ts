@@ -15,6 +15,7 @@ export enum ConnectivityErrorType {
 export interface ConnectivityPageConfig {
     titleIcon: string,
     mainImg: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getContent: (csModel: ConnectivityScreenCsModel) => any
 }
 
