@@ -5,6 +5,7 @@ import { ScanCodeComponent } from '@sections/check-in/components/scan-code/scan-
 import { CartService } from '@sections/ordering';
 import { MerchantSettings } from '@sections/ordering/ordering.config';
 import { ItemManualEntryComponent } from '@sections/ordering/pages/item-manual-entry/item-manual-entry.component';
+import { BarcodeOptionModel } from '@sections/ordering/shared/models/barcode-option.model';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { Observable } from 'rxjs';
@@ -18,7 +19,8 @@ import { MerchantSettingInfo } from '..';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuItemFinderComponent implements OnInit {
-  barcodeOptions$: Observable<any[]>;
+  barcodeOptions$: Observable<BarcodeOptionModel[]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   barCodeCs: any;
   @Output() itemScanned = new EventEmitter<string>();
 
@@ -34,7 +36,7 @@ export class MenuItemFinderComponent implements OnInit {
     this.barcodeOptions$ = this.cartService.merchant$.pipe(
       filter(merchant => !!merchant),
       map(merchant => {
-        const res = [];
+        const res: BarcodeOptionModel[] = [];
         const scanBarcodeEnabled: MerchantSettingInfo = merchant.settings.map[MerchantSettings.scanBarcodeEnabled];
         if (scanBarcodeEnabled && JSON.parse(scanBarcodeEnabled.value)) {
           res.push({

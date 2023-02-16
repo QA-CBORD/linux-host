@@ -218,7 +218,7 @@ export class MerchantService {
     return this.userFacadeService.getUserAddresses$();
   }
 
-  retrievePickupLocations(storeAddress: AddressInfo, info: MerchantSettingInfo): Observable<any> {
+  retrievePickupLocations(storeAddress: AddressInfo, info: MerchantSettingInfo) {
     switch (info?.value) {
       case null:
         return of([]);

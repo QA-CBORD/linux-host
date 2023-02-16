@@ -313,7 +313,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     const address = this.order$.pipe(
       first(),
       switchMap(
-        ({ type, deliveryAddressId }): any =>
+        ({ type, deliveryAddressId }) =>
           iif(() => type === ORDER_TYPE.DELIVERY, this.getDeliveryAddress(deliveryAddressId), this.getPickupAddress())
       )
     );

@@ -5,7 +5,6 @@ import { MerchantInfo } from '@sections/ordering/shared/models';
 @Component({
   selector: 'st-merchant-list',
   templateUrl: './merchant-list.component.html',
-  styleUrls: ['./merchant-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MerchantListComponent {

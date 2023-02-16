@@ -19,7 +19,7 @@ import { FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepComponent implements OnInit, OnDestroy {
-  @ViewChild(TemplateRef, { static: true }) content: TemplateRef<any>;
+  @ViewChild(TemplateRef, { static: true }) content: TemplateRef<Element>;
 
   @Input() stepControl: FormGroup;
 

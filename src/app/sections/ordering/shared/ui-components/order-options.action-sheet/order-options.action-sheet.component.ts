@@ -1,7 +1,7 @@
 import { CartService, MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo } from '../../models';
+import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '../../models';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, of, throwError, zip } from 'rxjs';
@@ -33,7 +33,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() footerButtonName: string;
   @Input() merchantId: string;
   @Input() storeAddress: AddressInfo;
-  @Input() settings: any;
+  @Input() settings: MerchantSettingInfo[];
   @Input() activeDeliveryAddressId: string;
   @Input() activeOrderType: ORDER_TYPE = null;
   @Input() showNavBarOnDestroy = true;
@@ -48,7 +48,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   schedulePickup: Schedule;
   scheduleDelivery: Schedule;
   defaultPickupAddress: AddressInfo | '';
-  pickupLocations: any;
+  pickupLocations: AddressInfo[];
   buildingsForNewAddressForm: BuildingInfo[];
   isTimeDisable: number;
   dateTimePicker: Date | string;

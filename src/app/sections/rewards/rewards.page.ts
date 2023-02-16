@@ -13,7 +13,6 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 @Component({
   selector: 'st-rewards',
   templateUrl: './rewards.page.html',
-  styleUrls: ['./rewards.page.scss'],
 })
 export class RewardsPage implements OnInit {
   optInStatus: OPT_IN_STATUS;

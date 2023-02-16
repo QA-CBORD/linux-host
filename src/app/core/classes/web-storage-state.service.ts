@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExtendableStateManager } from '@core/classes/extendable-state-manager';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';

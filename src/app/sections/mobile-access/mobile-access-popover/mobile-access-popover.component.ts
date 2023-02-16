@@ -5,6 +5,7 @@ import bwipjs from 'bwip-angular2';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
 import { MobileAccessService } from '../service';
 import { buttons } from '../../../core/utils/buttons.config';
+import { MActivateMobileLocationResult } from '@sections/dashboard/models';
 
 @Component({
   selector: 'mobile-access-popover',
@@ -12,7 +13,7 @@ import { buttons } from '../../../core/utils/buttons.config';
   styleUrls: ['./mobile-access-popover.component.scss'],
 })
 export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
-  @Input() data: any;
+  @Input() data: MActivateMobileLocationResult;
 
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };

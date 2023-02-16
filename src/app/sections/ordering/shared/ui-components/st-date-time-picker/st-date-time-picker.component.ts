@@ -80,6 +80,7 @@ export class StDateTimePickerComponent implements OnInit {
       ],
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     picker.addEventListener('ionPickerColChange', async (event: any) => {
       const { detail: data } = event;
       if (data.name === 1) {
@@ -181,7 +182,7 @@ export class StDateTimePickerComponent implements OnInit {
     return columns;
   }
 
-  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday): any[] {
+  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday): string[] {
     const pickerColumns = [];
     const total = columnIndex === 0 ? daysOptions : timeOptions;
     const getColumnText = i => {
