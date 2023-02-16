@@ -13,6 +13,10 @@ class SettingsPage extends Page {
         return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-router-outlet/st-settings/ion-content/ion-list[4]/st-settings-item[1]/ion-item/ion-label/h4');
     }
 
+    get saveAddressLabel(){
+        return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-router-outlet/st-settings/ion-content/ion-list[2]/st-settings-item[4]/ion-item/ion-label/h4');
+    }
+
 }
 
 export default new SettingsPage();
