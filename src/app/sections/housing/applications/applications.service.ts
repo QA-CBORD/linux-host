@@ -73,8 +73,8 @@ export class ApplicationsService {
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
-  
-        return this._getPages(pages, storedQuestions, applicationDetails, isSubmitted);
+        const canEdit = !isSubmitted || applicationDetails.applicationDefinition.canEdit; 
+        return this._getPages(pages, storedQuestions, applicationDetails, canEdit);
       })
     );
   }
@@ -224,10 +224,10 @@ export class ApplicationsService {
     pages: QuestionBase[][],
     storedQuestions: QuestionsEntries,
     applicationDetails: ApplicationDetails,
-    isSubmitted: boolean
+    canEdit: boolean
   ): QuestionsPage[] {
     return pages.map((page: QuestionBase[]) => ({
-      form: this._toFormGroup(page, storedQuestions, applicationDetails, isSubmitted),
+      form: this._toFormGroup(page, storedQuestions, applicationDetails, canEdit),
       questions: page,
     }));
   }
@@ -236,7 +236,7 @@ export class ApplicationsService {
     questions: QuestionBase[],
     storedQuestions: QuestionsEntries,
     applicationDetails: ApplicationDetails,
-    isSubmitted: boolean
+    canEdit: boolean
   ): FormGroup {
     return this._questionsService.toFormGroup(
       questions,
@@ -251,7 +251,7 @@ export class ApplicationsService {
             applicationDetails.patronPreferences
           );
         } else {
-          group[questionName] = this._toFormControl(storedValue, question, applicationDetails, isSubmitted);
+          group[questionName] = this._toFormControl(storedValue, question, applicationDetails, canEdit);
         }
       }
     );
@@ -277,7 +277,7 @@ export class ApplicationsService {
     storedValue: any,
     question: QuestionFormControl,
     applicationDetails: ApplicationDetails,
-    isSubmitted: boolean
+    canEdit: boolean
   ): FormControl {
     let value: any = storedValue;
     if (!isDefined(value) || value == '') {
@@ -294,7 +294,7 @@ export class ApplicationsService {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
-    return new FormControl({ value, disabled: isSubmitted || question.readonly }, validators);
+    return new FormControl({ value, disabled: !canEdit || question.readonly }, validators);
   }
 
   private _updateCreatedDateTime(key: number, patronApplication: PatronApplication): Observable<string> {
