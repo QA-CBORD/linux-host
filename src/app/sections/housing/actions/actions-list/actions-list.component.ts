@@ -6,18 +6,23 @@ import { PopoverController } from '@ionic/angular';
   templateUrl: './actions-list.component.html',
 })
 export class ActionsListComponent {
-  @Input() navigateTo: string;
-  @Input() canEdit: boolean;
-  @Input() itemKey = '';
-  @Input() showEditOption = true;
-  @Input() showViewOption = true;
-  @Input() showRemoveOption = false;
+  showDetailsOption = false;
+  navigateTo: string;
+  canEdit: boolean;
+  itemKey = '';
+  showEditOption = true;
+  showViewOption = true;
+  showRemoveOption = false;
   @Output() onRemove = new EventEmitter<any>();
 
   constructor(private _popoverController: PopoverController) {}
 
   closePopover(): void {
     this._popoverController.dismiss();
+  }
+
+  detailsPopover() {
+    alert("Details");
   }
 
   handleRemove(): void {

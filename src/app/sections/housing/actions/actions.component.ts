@@ -16,7 +16,7 @@ export class ActionsComponent {
   @Input() showEditOption = true;
   @Input() showViewOption = true;
   @Input() showRemoveOption = false;
-
+  @Input() showDetailsOption = false;
   @Output() onRemove = new EventEmitter();
 
   constructor(private _popoverController: PopoverController) {}
@@ -32,6 +32,7 @@ export class ActionsComponent {
           showViewOption: this.showViewOption,
           showEditOption: this.showEditOption,
           showRemoveOption: this.showRemoveOption,
+          showDetailsOption: this.showDetailsOption,
           onRemove: this.onRemove
         },
         cssClass: 'actions-popover',

@@ -13,5 +13,6 @@
   <st-actions
     [canEdit]="!application?.patronApplication?.isApplicationSubmitted || application?.applicationDefinition?.canEdit"
     [navigateTo]="getPath(application.applicationDefinition.key)"
+    [showDetailsOption]="true"
   ></st-actions>
 </ion-item>
