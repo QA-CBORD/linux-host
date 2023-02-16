@@ -12,6 +12,7 @@ export class ConfirmPaymentPopover implements OnInit {
   @Input() data: any;
   @Input() contentString: any;
   @Input() intructions?: any;
+  @Input() showDisclaimer: boolean;
   popoverConfig: PopoverConfig<string | number>;
   disclaimer: string;
 
@@ -32,10 +33,6 @@ export class ConfirmPaymentPopover implements OnInit {
 
   get showDepositInstructions(): string {
     return this.intructions;
-  }
-
-  get showDisclaimer(): string {
-    return this.disclaimer;
   }
 
   private setContentString() {

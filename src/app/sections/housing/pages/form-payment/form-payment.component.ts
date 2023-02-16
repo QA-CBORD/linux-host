@@ -17,10 +17,12 @@ import { SuccessfulPaymentModal } from './successful-payment-modal/successful-pa
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { FormType } from './form-payment.service';
 import { Location } from '@angular/common';
+import { ApplicationDetails } from '@sections/housing/applications/applications.model';
+import { ContractDetails } from '@sections/housing/contracts/contracts.model';
 
 export interface CurrentForm {
   key: number,
-  details: any,
+  details: ApplicationDetails | ContractDetails | any,
   formControl: FormControl,
   isSubmitted?: boolean,
   type: 'application' | 'work-order',
@@ -111,6 +113,7 @@ export class FormPaymentComponent implements OnInit {
       component: ConfirmPaymentPopover,
       componentProps: {
         data,
+        showDisclaimer: this.showDisclaimer()
       },
       cssClass: 'large-popover',
       animated: false,
@@ -188,5 +191,13 @@ export class FormPaymentComponent implements OnInit {
     const control =  new FormControl(this.amountDue);
     control.disable();
     return control;
+  }
+
+  private showDisclaimer(): boolean {
+    if (this.currentForm.type == FormType.Application) {
+       return !this.currentForm.details.applicationDefinition.canEdit;
+    }
+
+    return false;
   }
 }

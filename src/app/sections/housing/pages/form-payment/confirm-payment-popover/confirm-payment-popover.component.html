@@ -33,6 +33,6 @@
       </div>
     </section>
     <br>
-    <ion-label class="cdp__label">{{ showDisclaimer }}</ion-label>
+    <ion-label *ngIf="showDisclaimer" class="cdp__label">{{ disclaimer }}</ion-label>
   </section>
 </st-popover-layout>
