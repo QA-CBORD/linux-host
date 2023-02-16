@@ -12,6 +12,10 @@ import { Observable } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { MerchantSettingInfo } from '..';
 
+interface ItemFindData {
+  scanCodeResult: string;
+  manualEntry: string;
+}
 @Component({
   selector: 'st-menu-item-finder',
   templateUrl: './menu-item-finder.component.html',
@@ -52,7 +56,7 @@ export class MenuItemFinderComponent implements OnInit {
     );
   }
 
-  private getMenuItem(data: any) {
+  private getMenuItem(data: ItemFindData) {
     this.cartService
       .getMenuItemByCode(data.scanCodeResult)
       .pipe(take(1))
@@ -108,7 +112,7 @@ export class MenuItemFinderComponent implements OnInit {
     });
   }
 
-  private async handleResult(data: any) {
+  private async handleResult(data: ItemFindData) {
     if (data) {
       if (data.scanCodeResult) {
         this.getMenuItem(data);

@@ -11,6 +11,7 @@ import { QuestionFormControl, QuestionBase } from '../questions/types';
 export class PatronAttributesService {
   getAttributes(
     patronAttributes: PatronAttribute[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parsedJson: any[],
     questionEntries: QuestionsEntries
   ): PatronAttribute[] {

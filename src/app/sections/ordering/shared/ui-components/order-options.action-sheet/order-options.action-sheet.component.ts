@@ -47,7 +47,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   defaultDeliveryAddress: string;
   schedulePickup: Schedule;
   scheduleDelivery: Schedule;
-  defaultPickupAddress: AddressInfo | '';
+  defaultPickupAddress: AddressInfo;
   pickupLocations: AddressInfo[];
   buildingsForNewAddressForm: BuildingInfo[];
   isTimeDisable: number;
@@ -375,7 +375,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 interface OrderOptions {
   labelTime: string;
   labelAddress: string;
-  address: any;
+  address: AddressInfo;
   isClickble: number;
 }
 

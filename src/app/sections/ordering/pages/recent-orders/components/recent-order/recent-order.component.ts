@@ -332,7 +332,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getPickupAddress(): Observable<any> {
+  private getPickupAddress(): Observable<AddressInfo> {
     return this.order$.pipe(
       take(1),
       switchMap(({ merchantId, pickupAddressId }) => {
@@ -356,14 +356,14 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getDeliveryAddress(deliveryId: string): Observable<any> {
+  private getDeliveryAddress(deliveryId: string): Observable<AddressInfo> {
     return this.merchantService.retrieveUserAddressList().pipe(
       map(addresses => addresses.find(({ id }) => id === deliveryId)),
       map(address => address)
     );
   }
 
-  private cancelOrder(): Observable<any> {
+  private cancelOrder(): Observable<boolean> {
     return this.order$.pipe(
       switchMap(({ id }) => this.merchantService.cancelOrderById(id)),
       handleServerError(ORDER_VALIDATION_ERRORS)

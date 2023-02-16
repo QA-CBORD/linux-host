@@ -9,6 +9,7 @@ import { parseArrayFromString } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../../../app.global';
+import { UserAccount } from '@core/model/account/account.model';
 
 @Injectable()
 export class AutoDepositService {
@@ -37,7 +38,7 @@ export class AutoDepositService {
     );
   }
 
-  getAutoDepositAccountList(): Observable<any> {
+  getAutoDepositAccountList(): Observable<UserAccount[][]> {
     return this.settingsFacadeService.getSetting(Settings.Setting.AUTO_DEPOSIT_PAYMENT_TYPES).pipe(
       map(({ value }) => parseArrayFromString(value)),
       switchMap(array => zip(array.map((type: number) => this.apiService.retrieveAutoDepositAccountList(type))))
