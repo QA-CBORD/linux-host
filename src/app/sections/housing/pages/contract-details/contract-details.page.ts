@@ -78,10 +78,10 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     return contractDetails.amount > 0;
   }
 
-  private async continueToPayment(contractDetails: ContractDetails, form: FormControl) {
+  private async continueToPayment(contractDetails: ContractDetails, formControl: FormControl) {
     this.formPaymentService.continueToFormPayment({
       details: contractDetails,
-      formValue: form,
+      formControl: formControl,
       key: this.contractElementKey,
       type: FormType.WorkOrder,
     });

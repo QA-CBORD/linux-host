@@ -21,7 +21,7 @@ import { Location } from '@angular/common';
 export interface CurrentForm {
   key: number,
   details: any,
-  formValue: FormControl,
+  formControl: FormControl,
   isSubmitted?: boolean,
   type: 'application' | 'work-order',
 }

@@ -92,7 +92,7 @@ export class ApplicationsService {
           createdDateTime,
           submittedDateTime
         );
-        return this._updateApplication(applicationDetails, application.formValue, ApplicationStatus.Submitted);
+        return this._updateApplication(applicationDetails, application.formControl, ApplicationStatus.Submitted);
       })
     );
   }
@@ -109,7 +109,7 @@ export class ApplicationsService {
 
         return this._updateApplication(
           applicationDetails,
-          application.formValue,
+          application.formControl,
           ApplicationStatus.Pending,
           removeQuestions
         );
