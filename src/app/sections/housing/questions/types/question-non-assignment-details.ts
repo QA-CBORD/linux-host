@@ -49,7 +49,7 @@ export class QuestionAssetTypeDetailsBase extends QuestionBase implements Questi
     this.type = 'asset-types-group';
     this.name = String(options.name);
     this.values = Array.isArray(options.values)
-      ? options.values.map((value: any) => new AssetTypeDetailValue(value))
+      ? options.values.map((value) => new AssetTypeDetailValue(value))
       : [];
     this.readonly = Boolean(options.readonly);
     this.consumerKey = Number(options.consumerKey);

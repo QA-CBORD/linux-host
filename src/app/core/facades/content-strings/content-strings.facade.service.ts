@@ -75,6 +75,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
 
   fetchContentStringModel<T extends ContentStringModel>(
     category: ContentStringCategory,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {}
   ): Observable<T> {
     const params = args.data;

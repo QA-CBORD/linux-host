@@ -11,6 +11,7 @@ import { QuestionFormControl, QuestionBase } from '../questions/types';
 export class PatronAttributesService {
   getAttributes(
     patronAttributes: PatronAttribute[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parsedJson: any[],
     questionEntries: QuestionsEntries
   ): PatronAttribute[] {
@@ -28,7 +29,7 @@ export class PatronAttributesService {
         facilityControls.find((control: QuestionFormControl) => control.name === questionName)
       )
       .map((questionName: string) => {
-        const value: any = questionEntries[questionName];
+        const value = questionEntries[questionName];
         const foundFacility: QuestionFormControl = facilityControls.find(
           (control: QuestionFormControl) => control.name === questionName
         );

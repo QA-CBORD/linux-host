@@ -6,7 +6,6 @@ import { buttons } from '@core/utils/buttons.config';
 @Component({
   selector: 'st-item-detail-modal',
   templateUrl: './item-detail-modal.component.html',
-  styleUrls: ['./item-detail-modal.component.scss'],
 })
 export class ItemDetailModalComponent implements OnInit {
   @Input() message: string;

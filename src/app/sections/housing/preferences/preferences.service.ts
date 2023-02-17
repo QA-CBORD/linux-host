@@ -11,7 +11,7 @@ import { QuestionReorder, QuestionBase, QuestionReorderValue } from '../question
 export class PreferencesService {
   getPreferences(
     patronPreferences: PatronPreference[],
-    parsedJson: any[],
+    parsedJson: QuestionReorder[],
     questions: QuestionsEntries
   ): PatronPreference[] {
     const facilityPicker: QuestionReorder = parsedJson.filter(
@@ -25,7 +25,7 @@ export class PreferencesService {
     const facilities: QuestionReorderValue[] = facilityPicker.values
       ? facilityPicker.values.filter((facility: QuestionReorderValue) => facility.selected)
       : [];
-    const foundQuestion: any = questions[facilityPicker.name];
+    const foundQuestion = questions[facilityPicker.name];
 
     return patronPreferences
       .slice(0, facilityPicker.prefRank)

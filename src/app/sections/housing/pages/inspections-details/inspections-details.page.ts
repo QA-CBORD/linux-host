@@ -59,7 +59,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   canSubmit = true;
   status = 0;
   section = '';
-  conditions: any[] = [];
+  conditions = [];
 
   constructor(
     private _platform: Platform,

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from '@angular/core';
+import { RadioGroupCustomEvent } from '@ionic/angular';
 import { DEPOSIT_FREQUENCY } from '../../auto-deposit.config';
 import { UserAutoDepositSettingInfo } from '../../models/auto-deposit-settings';
 
@@ -26,7 +27,7 @@ export class DepositFrequencyComponent {
     return DEPOSIT_FREQUENCY;
   }
 
-  onFrequencyChange({ detail: { value } }: CustomEvent<any>) {
+  onFrequencyChange({ detail: { value } }: RadioGroupCustomEvent) {
     this.onFrequencyChanged.emit(value);
   }
 }

@@ -25,6 +25,7 @@ export class PreLoginComponent implements OnInit {
   institutionPhoto$: Promise<SafeResourceUrl>;
   institutionName$: Promise<string>;
   nativeHeaderBg$: Promise<string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pageContent: PreloginCsModel = {} as any;
   selectedInstitution: Institution;
   sessionId: string;
@@ -41,6 +42,7 @@ export class PreLoginComponent implements OnInit {
     private readonly messageProxy: MessageProxy
   ) {}
   async ngOnInit() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const preLoginCs = this.messageProxy.get<PreloginCsModel>() || ({} as any);
     this.pageContent = preLoginCs;
     this.getInstitutionInfo();

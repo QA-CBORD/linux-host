@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Observable, of } from 'rxjs';

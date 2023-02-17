@@ -1,6 +1,6 @@
 import { Inspection } from './inspections-forms.model';
 
-export function generateWorkOrder(_: any, index: number) {
+export function generateWorkOrder(_, index: number) {
   return {
     id: index,
   };

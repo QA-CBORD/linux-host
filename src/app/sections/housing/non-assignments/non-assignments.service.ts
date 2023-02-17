@@ -77,11 +77,11 @@ export class NonAssignmentsService {
     nonAssignment: NonAssignmentDetails,
     assetTypeKey: number,
     termKey: number,
-    form: any): Observable<boolean> {  
+    form): Observable<boolean> {  
 
     return this._questionsStorageService.updateQuestions(nonAssignmentKey, form, 3).pipe(
       switchMap((storedApplication: StoredApplication) => {
-        const parsedJson: any[] = parseJsonToArray(nonAssignment.formJson);
+        const parsedJson = parseJsonToArray(nonAssignment.formJson);
         const questions = storedApplication.questions;
 
         const patronAttributes: PatronAttribute[] = this._patronAttributesService.getAttributes(

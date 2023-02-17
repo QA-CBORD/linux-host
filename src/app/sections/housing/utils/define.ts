@@ -9,6 +9,6 @@ import { isDefined } from './is-defined';
  *
  * @returns {*}
  */
-export function define<T>(value: any, fallback: any = value): T {
+export function define<T>(value: T, fallback: T = value): T {
   return isDefined(value) ? value : fallback;
 }

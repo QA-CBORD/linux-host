@@ -9,6 +9,19 @@ export interface MMobileLocationInfo extends Favourite {
   score: number;
 }
 
+export interface MMobileLocationParams {
+  locationId: string;
+  latitude: string;
+  longitude: string;
+  tranDate: string;
+  accuracy: string;
+  altitude: string;
+  altitudeAccuracy: string;
+  speed: string;
+  heading: string;
+  sourceInfo: string;
+}
+
 export interface MActivateMobileLocationResult {
   validityTime: number;
   showBarCode: number;

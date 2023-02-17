@@ -62,7 +62,7 @@ export class CheckInOutPage implements OnInit {
       tap(() => {
         this._loadingService.closeSpinner();
       }),
-      catchError((error: any) => {
+      catchError((error: Error) => {
         this.stillLoading$.next(false);
         this._loadingService.closeSpinner();
         return throwError(error);

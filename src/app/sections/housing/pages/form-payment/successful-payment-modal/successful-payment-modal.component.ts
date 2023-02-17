@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { HousingService } from '@sections/housing/housing.service';
+import { TransactionalData } from '../transactional-data.model';
 
 @Component({
   selector: 'st-payment-modal',
@@ -9,7 +10,8 @@ import { HousingService } from '@sections/housing/housing.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SuccessfulPaymentModal implements OnInit {
-  @Input() data: any;
+  @Input() data: TransactionalData;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() contentString: any;
   @Input() title: string;
 

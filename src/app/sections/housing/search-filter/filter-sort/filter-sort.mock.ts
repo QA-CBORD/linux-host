@@ -1,6 +1,6 @@
 import { Category } from './filter-sort.model';
 
-export function generateCategory(_: any, index: number): Category {
+export function generateCategory(_, index: number): Category {
   const name = `Category ${index}`;
 
   return new Category(name, -1);

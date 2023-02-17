@@ -101,7 +101,7 @@ export class AuthFacadeService extends ServiceStateFacade {
     return this.authApiService.getExternalAuthenticationToken(externalSystem);
   }
 
-  retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<any> {
+  retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string) {
     return this.authApiService.retrieveAuthorizationBlob(deviceModel, deviceOSVersion);
   }
 }
