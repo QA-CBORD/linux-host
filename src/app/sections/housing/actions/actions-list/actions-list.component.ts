@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter,  Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
+import { ApplicationDetailsPopover } from '@sections/housing/applications/application-details-popover/application-details-popover.component';
 
 @Component({
   selector: 'st-actions-list',
@@ -22,8 +23,15 @@ export class ActionsListComponent {
     this._popoverController.dismiss();
   }
 
-  detailsPopover() {
-    alert("Details");
+  async detailsPopover() {
+    const appDetails = await this._popoverController.create({
+      cssClass: 'large-popover',
+      component: ApplicationDetailsPopover,
+      animated: false,
+      backdropDismiss: true,
+    });
+    this.closePopover();
+    appDetails.present();
   }
 
   handleRemove(): void {

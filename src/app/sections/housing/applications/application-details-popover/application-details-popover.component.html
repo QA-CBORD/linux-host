@@ -1,0 +1,28 @@
+<st-popover-layout [popoverConfig]="popoverConfig">
+    <div>
+        <ion-label>
+            <h5>Name: </h5>
+            <span [ngClass]="longText(popoverConfig.message['name'].length)">
+                {{ popoverConfig.message['name'] }}
+            </span>
+        </ion-label>
+        <ion-label>
+            <h5>Created On: </h5>
+            <span [ngClass]="longText(popoverConfig.message['created'].length)">
+                {{ popoverConfig.message['created'] }}
+            </span>
+        </ion-label>
+        <ion-label>
+            <h5>First Submitted: </h5>
+            <span [ngClass]="longText(popoverConfig.message['firstSubmitted'].length)">
+                {{ popoverConfig.message['firstSubmitted'] }}
+            </span>
+        </ion-label>
+        <ion-label>
+            <h5>Last Submitted: </h5>
+            <span [ngClass]="longText(popoverConfig.message['lastSubmitted'].length)">
+                {{ popoverConfig.message['lastSubmitted'] }}
+            </span>
+        </ion-label>
+    </div>
+</st-popover-layout>

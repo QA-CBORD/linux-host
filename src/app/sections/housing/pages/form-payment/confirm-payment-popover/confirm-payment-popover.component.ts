@@ -12,7 +12,7 @@ export class ConfirmPaymentPopover implements OnInit {
   @Input() data: any;
   @Input() contentString: any;
   @Input() intructions?: any;
-  @Input() showDisclaimer: boolean;
+  @Input() showDisclaimer = true;
   popoverConfig: PopoverConfig<string | number>;
   disclaimer: string;
 
