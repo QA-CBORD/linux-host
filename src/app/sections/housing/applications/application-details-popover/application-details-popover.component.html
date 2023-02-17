@@ -2,26 +2,26 @@
     <div>
         <ion-label>
             <h5>Name: </h5>
-            <span [ngClass]="longText(popoverConfig.message['name'].length)">
-                {{ popoverConfig.message['name'] }}
+            <span [ngClass]="shrinkName(data.name.length)">
+                {{ data.name }}
             </span>
         </ion-label>
         <ion-label>
             <h5>Created On: </h5>
-            <span [ngClass]="longText(popoverConfig.message['created'].length)">
-                {{ popoverConfig.message['created'] }}
+            <span>
+                {{ data.created | date: 'MM/dd/yyyy' }}
             </span>
         </ion-label>
-        <ion-label>
+        <ion-label *ngIf="data.firstSubmitted">
             <h5>First Submitted: </h5>
-            <span [ngClass]="longText(popoverConfig.message['firstSubmitted'].length)">
-                {{ popoverConfig.message['firstSubmitted'] }}
+            <span>
+                {{ data.firstSubmitted | date: 'MM/dd/yyyy' }}
             </span>
         </ion-label>
         <ion-label>
             <h5>Last Submitted: </h5>
-            <span [ngClass]="longText(popoverConfig.message['lastSubmitted'].length)">
-                {{ popoverConfig.message['lastSubmitted'] }}
+            <span>
+                {{ data.lastSubmitted | date: 'MM/dd/yyyy' }}
             </span>
         </ion-label>
     </div>

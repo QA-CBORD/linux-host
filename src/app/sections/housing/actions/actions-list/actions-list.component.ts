@@ -1,3 +1,4 @@
+import { ApplicationDefinition, PatronApplication } from './../../applications/applications.model';
 import { Component, EventEmitter,  Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ApplicationDetailsPopover } from '@sections/housing/applications/application-details-popover/application-details-popover.component';
@@ -15,6 +16,8 @@ export class ActionsListComponent {
   showEditOption = true;
   showViewOption = true;
   showRemoveOption = false;
+  applicationDefinition: ApplicationDefinition;
+  patronApplication: PatronApplication;
   @Output() onRemove = new EventEmitter<any>();
 
   constructor(private _popoverController: PopoverController) {}
@@ -27,6 +30,14 @@ export class ActionsListComponent {
     const appDetails = await this._popoverController.create({
       cssClass: 'large-popover',
       component: ApplicationDetailsPopover,
+       componentProps: {
+        data: {
+           name: this.applicationDefinition.applicationTitle,
+           created: this.patronApplication.createdDateTime,
+           firstSubmitted: "",
+           lastSubmitted: this.patronApplication.submittedDateTime
+        }
+       },
       animated: false,
       backdropDismiss: true,
     });

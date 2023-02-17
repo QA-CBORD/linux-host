@@ -8,7 +8,7 @@ import { PopoverConfig } from '@core/model/popover/popover.model';
 })
 export class ApplicationDetailsPopover implements OnInit {
   popoverConfig: PopoverConfig<string>;
-
+  @Input() data: any = {};
   constructor() {}
 
   ngOnInit(): void {
@@ -19,18 +19,12 @@ export class ApplicationDetailsPopover implements OnInit {
     this.popoverConfig = {
       title: 'Application Details',
       closeBtn: true,
-      message: {
-        name: 'MXD2 23.1.29 Appl Pmt Roommate',
-        created: '01/28/23',
-        firstSubmitted: '01/29/23',
-        lastSubmitted: '01/30/23',
-      },
       ...this.popoverConfig,
     };
   }
 
-  longText(length: number) {
-    const maxTextLength = 30;
-    return length > maxTextLength ? 'long-font': '';
+  shrinkName(length: number) {
+    const limitLength = 30;
+    return length > limitLength ? 'long-font': '';
   }
 }
