@@ -12,6 +12,18 @@ class DashboardPage extends Page {
     get SettingsIcon(){
         return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-footer/st-global-navigation/nav/div/ul/li[4]/div');
     }
+    get ConfigurationButton(){
+        return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-footer/st-global-navigation/nav/div/ul/li[4]');
+    }
+
+    get MoreButton(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-footer/st-global-navigation/nav/div/ul/li[5]');
+    }
+
+    get InnerConfigurationButton(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-footer/st-global-navigation/nav/st-popup-list/div/div/div/ul/li[2]');
+    }
+
 }
 
 export default new DashboardPage();
