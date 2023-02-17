@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
+import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { forkJoin, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
-import { UserAccount } from '/Users/qismbp5/Projects/gcs-patron-frontend/src/app/core/model/account/account.model';
-import { ContentStringModel } from '/Users/qismbp5/Projects/gcs-patron-frontend/src/app/shared/model/content-strings/content-string-models';
 
 const requiredSettings = [
   Settings.Setting.DEPOSIT_TENDERS,
