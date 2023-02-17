@@ -4,6 +4,7 @@ import { PopoverController } from '@ionic/angular';
 @Component({
   selector: 'st-actions-list',
   templateUrl: './actions-list.component.html',
+  styleUrls: ['./actions-list.component.scss']
 })
 export class ActionsListComponent {
   showDetailsOption = false;

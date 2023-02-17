@@ -91,7 +91,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private onConfirmation(role: string, account: UserAccount, amount: string, info: TransactionalData) {
-    if (role == BUTTON_TYPE.OKAY) {
+    if (role === BUTTON_TYPE.OKAY) {
     this.loadingService.showSpinner();
       this.makePayment(account.id, amount).pipe(take(1)).subscribe(
         () => {
@@ -131,12 +131,12 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    if(this.currentForm.type == FormType.Application) {
+    if(this.currentForm.type === FormType.Application) {
       this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
       }); 
 
-    } else if (this.currentForm.type == FormType.WorkOrder) {
+    } else if (this.currentForm.type === FormType.WorkOrder) {
       this.contractsService.submitContract(this.currentForm.key, this.currentForm.details?.formKey).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
       });
@@ -158,17 +158,17 @@ export class FormPaymentComponent implements OnInit {
   }
 
   get formTitle(): string {
-    if(this.currentForm.type == FormType.Application) {
+    if(this.currentForm.type === FormType.Application) {
       return this.currentForm.details.applicationDefinition.applicationTitle;
-    } else if (this.currentForm.type == FormType.WorkOrder) {
+    } else if (this.currentForm.type === FormType.WorkOrder) {
       return this.currentForm.details.contractInfo.contractName;
     }
   }
 
   get amountDue(): string {
-    if(this.currentForm.type == FormType.Application) {
+    if(this.currentForm.type === FormType.Application) {
       return this.currentForm.details.applicationDefinition.amount.toFixed(2);
-    } else if (this.currentForm.type == FormType.WorkOrder) {
+    } else if (this.currentForm.type === FormType.WorkOrder) {
       return this.currentForm.details.amount.toFixed(2);
     }
   }
@@ -188,13 +188,13 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private initFormControl() {
-    const control =  new FormControl(this.amountDue);
+    const control = new FormControl(this.amountDue);
     control.disable();
     return control;
   }
 
   private showDisclaimer(): boolean {
-    if (this.currentForm.type == FormType.Application) {
+    if (this.currentForm.type === FormType.Application) {
        return !this.currentForm.details.applicationDefinition.canEdit;
     }
 
