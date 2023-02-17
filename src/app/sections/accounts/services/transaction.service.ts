@@ -217,7 +217,7 @@ export class TransactionService {
     return this.contentString[name] || '';
   }
 
-  private getLatestDateInRange(range: TransactionHistory[]): any {
+  private getLatestDateInRange(range: TransactionHistory[]): Date | string {
     if (range && range.length > 0) {
       return new Date(range[range.length - 1].actualDate.toString().replace(TIMEZONE_REGEXP, '$1:$2'));
     }

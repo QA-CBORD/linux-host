@@ -20,7 +20,7 @@ export class FavoriteMerchantsResolver implements Resolve<Observable<MerchantInf
     this.loadingService.showSpinner();
     return zip(this.favoriteMerchantsService.getFavoriteMerchants(), this.merchantService.menuMerchants$).pipe(
       map(
-        ([favoriteMerchants, merchants]) => mergeMatchArrayById(merchants, favoriteMerchants.map(fav => fav.id))
+        ([favoriteMerchants, merchants]) => mergeMatchArrayById<MerchantInfo>(merchants, favoriteMerchants.map(fav => fav.id))
       ),
       finalize(() => this.loadingService.closeSpinner())
     );

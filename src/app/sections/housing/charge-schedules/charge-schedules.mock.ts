@@ -2,7 +2,7 @@ import { date, commerce, random, lorem } from 'faker/locale/en';
 
 import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
 
-export function generateChargeSchedule(_: any, index: number): ChargeSchedule {
+export function generateChargeSchedule(_, index: number): ChargeSchedule {
   const chargeScheduleName: string = commerce.productName();
   const linkedChargeScheduleStartDate: string = date.past();
   const linkedChargeScheduleEndDate: string = date.past();

@@ -8,9 +8,11 @@ import { buttons } from 'src/app/core/utils/buttons.config';
   styleUrls: ['./confirm-deposit-popover.component.scss'],
 })
 export class ConfirmDepositPopoverComponent implements OnInit {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() data: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() contentString: ConfirmDepositCs = {} as any;
-  @Input() intructions?: any;
+  @Input() intructions?: string;
   popoverConfig: PopoverConfig<string | number>;
 
   ngOnInit() {

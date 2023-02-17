@@ -84,7 +84,7 @@ export class InspectionSections implements InspectionSectionsOptions {
     if (!isDefined(options) || typeof options !== 'object') {
       options = {} as InspectionSectionsOptions;
     }
-    this.items = Array.isArray(options.items) ? options.items.map((details: any) => new Items(details)) : [];
+    this.items = Array.isArray(options.items) ? options.items.map((details) => new Items(details)) : [];
     this.name = String(options.name);
 
   }
@@ -138,7 +138,7 @@ export class Inspection implements InspectionOptions {
     this.residentInspectionKey = options.residentInspectionKey? Number(options.residentInspectionKey): null;
     this.termKey = Number(options.termKey)
     this.sections = Array.isArray(options.sections)
-      ? options.sections.map((details: any) => new InspectionSections(details)) : [];
+      ? options.sections.map((details) => new InspectionSections(details)) : [];
     this.staffInspectionKey = Number(options.staffInspectionKey);
     this.checkIn = Boolean(options.checkIn);
   }
@@ -253,6 +253,6 @@ export class InspectionsData implements InspectionsDataOptions {
     if (options == null || typeof options !== 'object') {
       options = {} as InspectionsDataOptions;
     }
-    this.data = Array.isArray(options) ? options.map((detail: any) => new Inspections(detail)): [];
+    this.data = Array.isArray(options) ? options.map((detail) => new Inspections(detail)): [];
   }
 }

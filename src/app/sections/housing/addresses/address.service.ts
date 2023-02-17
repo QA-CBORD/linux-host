@@ -11,11 +11,12 @@ import { PatronAddress, AddressFields } from "./address.model";
 
     getAddresses(
         addresses: PatronAddress[],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         parsedJson: any[],
         questionEntries: QuestionsEntries
     ): PatronAddress[] {
-        const addressTypeControls: any[] = parsedJson.filter(
-            (control: any) => {
+        const addressTypeControls = parsedJson.filter(
+            (control) => {
                 return control 
                     && (control as QuestionFormControl).source === QUESTIONS_SOURCES.ADDRESS_TYPES
                     && control.addressTypeId
@@ -31,7 +32,7 @@ import { PatronAddress, AddressFields } from "./address.model";
         const patronAddresses: PatronAddress[] = [];
 
         const addressQuestions = questions.filter((questionName: string) =>
-            addressTypeControls.find((control: any) =>
+            addressTypeControls.find((control) =>
                 questionName.startsWith(`text-${control.addressTypeId}-`)));
         
         addressTypeControls.forEach((addressType: QuestionAddressTypeGroup) => {

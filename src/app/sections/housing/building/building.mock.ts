@@ -3,7 +3,7 @@ import { generateLabels } from '@shared/ui-components/label/label.mock';
 import { Label } from '@shared/ui-components/label/label.model';
 import { Building } from './building.model';
 
-export function generateBuilding(_: any, index: number): Building {
+export function generateBuilding(_, index: number): Building {
   const title = `Merion Hall ${index}`;
   const isFavorite: boolean = index % 2 !== 0;
   const labels: Label[] = generateLabels();

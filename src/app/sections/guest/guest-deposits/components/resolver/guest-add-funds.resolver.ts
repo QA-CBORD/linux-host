@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
@@ -9,6 +10,8 @@ import { CommonService } from '@shared/services/common.service';
 import { forkJoin, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
+import { UserAccount } from '/Users/qismbp5/Projects/gcs-patron-frontend/src/app/core/model/account/account.model';
+import { ContentStringModel } from '/Users/qismbp5/Projects/gcs-patron-frontend/src/app/shared/model/content-strings/content-string-models';
 
 const requiredSettings = [
   Settings.Setting.DEPOSIT_TENDERS,
@@ -21,7 +24,15 @@ const requiredSettings = [
 ];
 
 @Injectable({ providedIn: 'root' })
-export class GuestAddFundsResolver implements Resolve<Observable<any>> {
+export class GuestAddFundsResolver implements Resolve<Observable<{
+  settings: SettingInfo[];
+  applePayEnabled: boolean;
+  destinationAccounts: UserAccount[];
+  sourceAccounts: UserAccount[];
+  recipientName: string;
+  addFundsCs: ContentStringModel;
+  confirmationCs: ContentStringModel;
+}>> {
   constructor(
     private readonly depositService: DepositService,
     private readonly loadingService: LoadingService,
@@ -30,7 +41,17 @@ export class GuestAddFundsResolver implements Resolve<Observable<any>> {
     private readonly guestDepositsService: GuestDepositsService
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<any> {
+  resolve(
+    route: ActivatedRouteSnapshot
+  ): Observable<{
+    settings: SettingInfo[];
+    applePayEnabled: boolean;
+    destinationAccounts: UserAccount[];
+    sourceAccounts: UserAccount[];
+    recipientName: string;
+    addFundsCs: ContentStringModel;
+    confirmationCs: ContentStringModel;
+  }> {
     const addFundsCs$ = this.commonService.loadContentString(ContentStringCategory.addFunds);
     const confirmationCs$ = this.commonService.loadContentString(ContentStringCategory.guestDeposit);
     const applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();

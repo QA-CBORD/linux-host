@@ -128,11 +128,11 @@ export class ContractsService {
   }
 
   private _toFormControl(
-    storedValue: any,
+    storedValue: string,
     question: QuestionFormControl,
     contractDetails: ContractDetails
   ): FormControl {
-    let value: any = storedValue;
+    let value = storedValue;
 
     if (!isDefined(value)) {
       if (question instanceof QuestionContractDetails) {

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { ToastButton, ToastController } from '@ionic/angular';
 
 export interface ToastConfig {
   message: string;
-  toastButtons?: any[];
+  toastButtons?: ToastButton[];
   position?: 'top' | 'bottom' | 'middle';
   duration?: number;
-  onDismiss?: () => any;
+  onDismiss?: () => void;
   icon?: string;
   cssClass?: string;
 }
