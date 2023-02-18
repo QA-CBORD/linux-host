@@ -3,7 +3,6 @@ import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } 
 @Component({
   selector: 'st-html-renderer',
   templateUrl: './html-renderer.component.html',
-  styleUrls: ['./html-renderer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HTMLRendererComponent implements OnInit {

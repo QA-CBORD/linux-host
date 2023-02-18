@@ -6,9 +6,9 @@
  *
  * @returns {Array}
  */
-export function parseJsonToArray(json: string): any[] {
+export function parseJsonToArray<T>(json: string): T[] {
   try {
-    const parsedArray: any = JSON.parse(json);
+    const parsedArray = JSON.parse(json);
 
     return Array.isArray(parsedArray) ? parsedArray : [];
   } catch (error) {

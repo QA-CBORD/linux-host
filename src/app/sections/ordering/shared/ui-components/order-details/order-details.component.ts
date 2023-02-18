@@ -115,7 +115,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async initAccountSelected(accounts: UserAccount[]) {
-    const payment = this.orderPayment[0] || ({} as any);
+    const payment = this.orderPayment[0] || ({accountId: '', accountName: ''});
     let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
     if (!this.isApplePayment) {

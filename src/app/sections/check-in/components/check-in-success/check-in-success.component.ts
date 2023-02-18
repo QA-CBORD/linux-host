@@ -19,6 +19,7 @@ export class CheckInSuccessComponent implements OnInit {
   orderId: string;
   checkNumber: string;
   contentStrings: CheckingSuccessContentCsModel;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   orderDetailOptions: OrderDetailOptions;
 

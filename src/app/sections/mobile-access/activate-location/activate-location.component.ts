@@ -7,7 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { MobileAccessService } from '../service';
 import { UserInfo } from '@core/model/user';
-import { MMobileLocationInfo } from '../model';
+import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model';
 import { Institution } from '@core/model/institution';
 import { MobileAccessPopoverComponent } from '@sections/mobile-access/mobile-access-popover';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -109,7 +109,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  async modalHandler(res) {
+  async modalHandler(res: MActivateMobileLocationResult) {
     const popover = await this.popoverCtrl.create({
       cssClass: 'sc-popover',
       component: MobileAccessPopoverComponent,

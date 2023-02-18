@@ -313,7 +313,7 @@ export class ApplicationsService {
     const applicationKey: number = applicationDefinition.key;
     return this._questionsStorageService.updateQuestions(applicationKey, form, status).pipe(
       switchMap((storedApplication: StoredApplication) => {
-        const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
+        const parsedJson = parseJsonToArray<QuestionReorder>(applicationDefinition.applicationFormJson);
         const questions = storedApplication.questions;
         const patronAttributes: PatronAttribute[] = this._patronAttributesService.getAttributes(
           applicationDetails.patronAttributes,

@@ -25,7 +25,7 @@ export enum FormTypes {
 export interface ResponseStatusDetails {
   code: string;
   member: string;
-  value: any;
+  value: object;
   message: string;
 }
 

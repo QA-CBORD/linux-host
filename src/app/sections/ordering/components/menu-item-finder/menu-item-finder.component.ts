@@ -5,12 +5,17 @@ import { ScanCodeComponent } from '@sections/check-in/components/scan-code/scan-
 import { CartService } from '@sections/ordering';
 import { MerchantSettings } from '@sections/ordering/ordering.config';
 import { ItemManualEntryComponent } from '@sections/ordering/pages/item-manual-entry/item-manual-entry.component';
+import { BarcodeOptionModel } from '@sections/ordering/shared/models/barcode-option.model';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { Observable } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { MerchantSettingInfo } from '..';
 
+interface ItemFindData {
+  scanCodeResult: string;
+  manualEntry: string;
+}
 @Component({
   selector: 'st-menu-item-finder',
   templateUrl: './menu-item-finder.component.html',
@@ -18,7 +23,8 @@ import { MerchantSettingInfo } from '..';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuItemFinderComponent implements OnInit {
-  barcodeOptions$: Observable<any[]>;
+  barcodeOptions$: Observable<BarcodeOptionModel[]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   barCodeCs: any;
   @Output() itemScanned = new EventEmitter<string>();
 
@@ -34,7 +40,7 @@ export class MenuItemFinderComponent implements OnInit {
     this.barcodeOptions$ = this.cartService.merchant$.pipe(
       filter(merchant => !!merchant),
       map(merchant => {
-        const res = [];
+        const res: BarcodeOptionModel[] = [];
         const scanBarcodeEnabled: MerchantSettingInfo = merchant.settings.map[MerchantSettings.scanBarcodeEnabled];
         if (scanBarcodeEnabled && JSON.parse(scanBarcodeEnabled.value)) {
           res.push({
@@ -50,7 +56,7 @@ export class MenuItemFinderComponent implements OnInit {
     );
   }
 
-  private getMenuItem(data: any) {
+  private getMenuItem(data: ItemFindData) {
     this.cartService
       .getMenuItemByCode(data.scanCodeResult)
       .pipe(take(1))
@@ -106,7 +112,7 @@ export class MenuItemFinderComponent implements OnInit {
     });
   }
 
-  private async handleResult(data: any) {
+  private async handleResult(data: ItemFindData) {
     if (data) {
       if (data.scanCodeResult) {
         this.getMenuItem(data);

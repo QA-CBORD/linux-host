@@ -29,6 +29,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
 
   buildings$: Observable<BuildingInfo[]>;
   addNewAdddressState = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addNewAdddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   errorState = false;
   selectedAddress: AddressInfo;
@@ -65,7 +66,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
       .pipe(
         switchMap(() => this.merchantService.updateUserAddress(this.addNewAdddressForm.value)),
         switchMap(
-          (addedAddress): any =>
+          (addedAddress) =>
             zip(
               iif(
                 () => this.addNewAdddressForm.value.default,
@@ -134,6 +135,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getBuildingData$(isOncampus): Observable<any> {
     if (isOncampus) {
       return zip(this.buildings$, this.contentStrings.labelRoom).pipe(

@@ -118,7 +118,7 @@ class VaultMigration {
     migrationResult: VaultMigrateResult;
     biometricUsed: boolean;
   }> {
-    let migrationResponse: any = { migrationResult: VaultMigrateResult.MIGRATION_FAILED };
+    let migrationResponse = { migrationResult: VaultMigrateResult.MIGRATION_FAILED };
     const migrator = this.initMigrator(() => this.pinAuthenticator.onPasscodeRequested());
     try {
       const { session } = await this.pinAuthenticator.try(() => migrator.exportVault());

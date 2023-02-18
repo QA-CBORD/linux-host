@@ -5,7 +5,6 @@ import { PopupTypes } from '@sections/rewards/rewards.config';
 @Component({
   selector: 'st-confirm-popover',
   templateUrl: './confirm-popover.component.html',
-  styleUrls: ['./confirm-popover.component.scss'],
 })
 export class ConfirmPopoverComponent implements OnInit {
   @Input() data: { [key: string]: string };

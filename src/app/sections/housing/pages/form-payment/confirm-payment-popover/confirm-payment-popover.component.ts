@@ -9,7 +9,8 @@ import { buttons } from '@core/utils/buttons.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmPaymentPopover implements OnInit {
-  @Input() data: any;
+  @Input() data: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() contentString: any;
   @Input() intructions?: any;
   @Input() showDisclaimer = true;

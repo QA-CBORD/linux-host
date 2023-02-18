@@ -74,25 +74,13 @@ export class NonAssignmentListDetails implements NonAssignmentListDetailsOptions
         this.termId = Number(options.termId);
 
     }
-
-    static toNonAssignmentListDetails(nonAssignments: any): NonAssignmentListDetails[] {
-        return Array.isArray(nonAssignments) 
-            ? nonAssignments.map((nonAssignment: any) => new NonAssignmentListDetails(nonAssignment))
-            : [];
-    }
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface NonAssignmentInfoOptions {
-
-}
-
-export class NonAssignmentInfo implements NonAssignmentInfoOptions
+export class NonAssignmentInfo
 {
 
-    constructor(_options: NonAssignmentInfoOptions) {
+    constructor(_options) {
         if (!isDefined(_options) || typeof _options !== 'object') {
-            _options = { } as NonAssignmentInfoOptions;
+            _options = { };
         }
     }
 }

@@ -19,6 +19,7 @@ import { FormType } from './form-payment.service';
 import { Location } from '@angular/common';
 import { ApplicationDetails } from '@sections/housing/applications/applications.model';
 import { ContractDetails } from '@sections/housing/contracts/contracts.model';
+import { TransactionalData } from './transactional-data.model';
 
 export interface CurrentForm {
   key: number,
@@ -26,18 +27,6 @@ export interface CurrentForm {
   formControl: FormControl,
   isSubmitted?: boolean,
   type: 'application' | 'work-order',
-}
-
-interface TransactionalData {
-  sourceAcc: {
-    accountTender: string;
-    lastFour: string;
-  };
-  selectedAccount: {
-    accountDisplayName: string;
-    accountType: number;
-  };
-  amount: string;
 }
 
 @Component({

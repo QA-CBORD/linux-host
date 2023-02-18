@@ -13,7 +13,7 @@ export class AndroidPermissionsService {
     return this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION);
   }
 
-  async requestLocationPermissions(): Promise<any> {
+  async requestLocationPermissions(): Promise<AndroidPermissionResponse> {
     return this.androidPermissions.requestPermissions([
       this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
       this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION,

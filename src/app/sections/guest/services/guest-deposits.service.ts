@@ -44,7 +44,7 @@ export class GuestDepositsService {
     fields: LookupFieldInfo[],
     recipients: Recipient[],
     save = false
-  ): Promise<{ nickname: string; id: any }> {
+  ): Promise<{ nickname: string; id: string }> {
     return this.authFacadeService
       .getAuthSessionToken$()
       .pipe(

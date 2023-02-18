@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import {
   RegistrationApiMethods,
@@ -17,7 +16,7 @@ export class GuestRegistration extends UserRegistrationBase implements UserRegis
     super(backendService);
   }
 
-  register(data): Observable<any> {
+  register(data) {
     const FIRST_NAME = 'firstName';
     const LAST_NAME = 'lastName';
     const registrationFields = {
