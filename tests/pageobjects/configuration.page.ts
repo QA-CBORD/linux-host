@@ -11,6 +11,11 @@ class ConfigurationPage extends Page {
     get VersionText(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-router-outlet/st-settings/ion-content/ion-grid/ion-row[2]');
     }
+
+    get ReportCardAsLost(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[1]/st-settings-item[2]/ion-item');
+    }
+
 }
 
 export default new ConfigurationPage();
