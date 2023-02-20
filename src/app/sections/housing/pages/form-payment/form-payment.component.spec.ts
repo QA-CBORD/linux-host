@@ -13,6 +13,7 @@ import { CreditCardTypePipeModule } from '@sections/accounts/shared/pipes/credit
 import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
 import { DepositModalModule } from '@sections/accounts/shared/ui-components/deposit-modal/deposit-modal.module';
 import { ApplicationsService } from '@sections/housing/applications/applications.service';
+import { ContractDetails } from '@sections/housing/contracts/contracts.model';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { StCreditCardListModule } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.module';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
@@ -188,7 +189,7 @@ describe("FormPaymentComponent", () => {
     it('should call submit contract on success', async () => {
       const spy = jest.spyOn(contractsService, 'submitContract');
       component.currentForm.type = FormType.WorkOrder;
-      component.currentForm.details = {...component.currentForm.details, contractInfo: {contractName: "Test" }}
+      component.currentForm.details = (<ContractDetails>{...component.currentForm.details, contractInfo: {contractName: "Test" }})
       fixture.detectChanges();
       await component['onPaymentSuccess'](cardInfo);
       expect(spy).toHaveBeenCalledTimes(1);

@@ -80,13 +80,13 @@ export class ApplicationsService {
 
   submitApplication(application: CurrentForm): Observable<ResponseStatus> {
     return forkJoin([
-      this._updateCreatedDateTime(application.key, application.details.patronApplication),
+      this._updateCreatedDateTime(application.key, (<ApplicationDetails>application.details).patronApplication),
       this._questionsStorageService.updateSubmittedDateTime(application.key),
     ]).pipe(
       switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
           application.key,
-          application.details,
+          (<ApplicationDetails>application.details),
           ApplicationStatus.Submitted,
           createdDateTime,
           submittedDateTime
@@ -97,11 +97,11 @@ export class ApplicationsService {
   }
 
   saveApplication(application: CurrentForm, removeQuestions = true): Observable<ResponseStatus> {
-    return this._updateCreatedDateTime(application.key, application.details.patronApplication).pipe(
+    return this._updateCreatedDateTime(application.key, (<ApplicationDetails>application.details).patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
           application.key,
-          application.details,
+          (<ApplicationDetails>application.details),
           ApplicationStatus.Pending,
           createdDateTime
         );
