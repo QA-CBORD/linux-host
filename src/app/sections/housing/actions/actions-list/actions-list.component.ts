@@ -1,12 +1,12 @@
-import { ApplicationDefinition, PatronApplication } from './../../applications/applications.model';
-import { Component, EventEmitter,  Output } from '@angular/core';
+import { ApplicationDefinition, ApplicationStatus, PatronApplication } from './../../applications/applications.model';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ApplicationDetailsPopover } from '@sections/housing/applications/application-details-popover/application-details-popover.component';
 
 @Component({
   selector: 'st-actions-list',
   templateUrl: './actions-list.component.html',
-  styleUrls: ['./actions-list.component.scss']
+  styleUrls: ['./actions-list.component.scss'],
 })
 export class ActionsListComponent {
   showDetailsOption = false;
@@ -30,14 +30,15 @@ export class ActionsListComponent {
     const appDetails = await this._popoverController.create({
       cssClass: 'large-popover',
       component: ApplicationDetailsPopover,
-       componentProps: {
-        data: {
-           name: this.applicationDefinition.applicationTitle,
-           created: this.patronApplication.createdDateTime,
-           firstSubmitted: "",
-           lastSubmitted: this.patronApplication.submittedDateTime
-        }
-       },
+      componentProps: {
+        details: {
+          name: this.applicationDefinition?.applicationTitle,
+          created: this.patronApplication?.createdDateTime,
+          isSubmitted: this.patronApplication?.status === ApplicationStatus.Submitted,
+          firstSubmitted: '',
+          lastSubmitted: this.patronApplication?.submittedDateTime,
+        },
+      },
       animated: false,
       backdropDismiss: true,
     });

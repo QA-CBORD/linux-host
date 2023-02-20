@@ -3,25 +3,25 @@
         <ion-label>
             <h5>Name: </h5>
             <span>
-                {{ data.name }}
+                {{ details.name }}
             </span>
         </ion-label>
-        <ion-label>
+        <ion-label *ngIf="details.created">
             <h5>Created On: </h5>
             <span>
-                {{ data.created | date: 'MM/dd/yyyy' }}
+                {{ details.created | date: 'MM/dd/yyyy h:mm a' }}
             </span>
         </ion-label>
-        <ion-label *ngIf="data.firstSubmitted">
+        <ion-label *ngIf="details.isSubmitted && details.firstSubmitted">
             <h5>First Submitted: </h5>
             <span>
-                {{ data.firstSubmitted | date: 'MM/dd/yyyy' }}
+                {{ details.firstSubmitted | date: 'MM/dd/yyyy h:mm a' }}
             </span>
         </ion-label>
-        <ion-label  *ngIf="data.lastSubmitted">
+        <ion-label *ngIf="details.isSubmitted && details.lastSubmitted">
             <h5>Last Submitted: </h5>
             <span>
-                {{ data.lastSubmitted | date: 'MM/dd/yyyy' }}
+                {{ details.lastSubmitted | date: 'MM/dd/yyyy h:mm a' }}
             </span>
         </ion-label>
     </div>
