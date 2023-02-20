@@ -6,6 +6,7 @@ import { Platform, ModalController, PopoverController, ActionSheetController, Al
 import { Observable, Observer, from, of, throwError } from 'rxjs';
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare let androidInterface: any;
 
 export enum NativeData {
@@ -50,8 +51,8 @@ export interface AppleWalletInfo {
   iPhoneProvisioned: boolean;
   watchProvisioned: boolean;
   watchPaired: boolean;
-  iPhoneCredStatus: any;
-  watchCredStatus: any;
+  iPhoneCredStatus: number;
+  watchCredStatus: number;
   isAppleWalletEnabled: boolean;
   canAddPass: boolean;
 }
@@ -106,6 +107,7 @@ export class NativeProvider {
   }
 
   /// get data from native Android in observable form
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private androidObserver: Observer<any>;
   getAndroidDataAsObservable<T>(methodName: NativeData): Observable<T> {
     return Observable.create((observer: Observer<T>) => {
@@ -215,6 +217,7 @@ export class NativeProvider {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getIosData(methodName: NativeData, moreParams?: object): Promise<any> {
     return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later

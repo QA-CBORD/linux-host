@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { UserAccount } from '@core/model/account/account.model';
 import { TransactionUnitsPipe } from '@shared/pipes/transaction-units/transaction-units.pipe';
 
 @Pipe({
@@ -6,7 +7,7 @@ import { TransactionUnitsPipe } from '@shared/pipes/transaction-units/transactio
 })
 export class DestinationAccountDisplayPipe implements PipeTransform {
   constructor(private readonly transactionUnitsPipe: TransactionUnitsPipe) {}
-  transform(account: any, hideBalance?: boolean): any {
+  transform(account: UserAccount, hideBalance?: boolean): string {
     if (!account) return '';
     
     if (hideBalance) {

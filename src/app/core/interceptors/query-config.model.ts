@@ -1,5 +1,6 @@
 interface RPCBodyRequest {
   method: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: { [key: string]: any };
   version?: number;
 }
@@ -7,6 +8,7 @@ interface RPCBodyRequest {
 export class RPCQueryConfig {
   constructor(
     public method: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public params: { [key: string]: any } = {},
     public useSessionId: boolean = false,
     public useInstitutionId: boolean = false,

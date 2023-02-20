@@ -7,7 +7,7 @@ import { PatronAttribute } from '../applications/applications.model';
 import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { FacilityAttribute } from '@sections/housing/facility-attributes/facility-attributes.model';
 
-export function generateContractListDetails(_: any, index: number): ContractListDetails {
+export function generateContractListDetails(_, index: number): ContractListDetails {
   const nowISO: string = new Date().toISOString();
   const id: number = index;
   const contractElementId: number = index + 100;
@@ -49,7 +49,7 @@ export function generateContractsList(amount = 3): ContractListDetails[] {
   return Array.apply(null, Array(amount)).map(generateContractListDetails);
 }
 
-export function generateFacilityAttribute(_: any, index: number): FacilityAttribute {
+export function generateFacilityAttribute(_, index: number): FacilityAttribute {
   const nowISO: string = new Date().toISOString();
   const facilityAttributeKey: number = index;
   const facilityKey: number = index + 100;

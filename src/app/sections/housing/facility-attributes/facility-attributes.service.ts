@@ -11,6 +11,7 @@ import { FacilityAttribute } from './facility-attributes.model';
 export class FacilityAttributesService {
   getAttributes(
     patronAttributes: FacilityAttribute[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parsedJson: any[],
     questionEntries: QuestionsEntries
   ): FacilityAttribute[] {
@@ -28,7 +29,7 @@ export class FacilityAttributesService {
         facilityControls.find((control: QuestionFormControl) => control.name === questionName)
       )
       .map((questionName: string) => {
-        const value: any = questionEntries[questionName];
+        const value = questionEntries[questionName];
         const foundFacility: QuestionFormControl = facilityControls.find(
           (control: QuestionFormControl) => control.name === questionName
         );

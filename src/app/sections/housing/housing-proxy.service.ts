@@ -33,7 +33,7 @@ export class HousingProxyService {
     );
   }
 
-  put(apiURL: string, body: any): Observable<ResponseStatus> {
+  put(apiURL: string, body): Observable<ResponseStatus> {
     return this.request<ResponseStatus>(apiURL, (headers: HttpHeaders, apiUrl: string) =>
       this._http.put<ResponseStatus>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
@@ -41,7 +41,7 @@ export class HousingProxyService {
     );
   }
 
-  putInspection<T>(apiUrl: string, body: any): Observable<T> {
+  putInspection<T>(apiUrl: string, body): Observable<T> {
     return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
       this._http.put<T>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
@@ -49,7 +49,7 @@ export class HousingProxyService {
     );
   }
 
-  post<T>(apiURL: string, body: any): Observable<T> {
+  post<T>(apiURL: string, body): Observable<T> {
     return this.request<T>(apiURL, (headers: HttpHeaders, apiUrl: string) =>
       this._http.post<T>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
@@ -57,11 +57,11 @@ export class HousingProxyService {
     );
   }
 
-  postAttachment<T>(apiUrl: string, body: any): Observable<T> {
+  postAttachment<T>(apiUrl: string, body): Observable<T> {
     return this.request<T>(apiUrl, (_headers: HttpHeaders, apiUrl: string) => this._http.post<T>(apiUrl, body));
   }
 
-  postImage<T>(apiURL: string, body: any): Observable<T> {
+  postImage<T>(apiURL: string, body): Observable<T> {
     return this.request<T>(apiURL, (headers: HttpHeaders, apiUrl: string) =>
       this._http.post<T>(apiUrl, body, {
         headers,
@@ -69,7 +69,7 @@ export class HousingProxyService {
     );
   }
 
-  delete(apiUrl: string, body?: any): Observable<Response> {
+  delete(apiUrl: string, body?): Observable<Response> {
     return this.request<Response>(apiUrl, (headers: HttpHeaders, apiUrl: string) => {
       if (body) {
         return this._http.delete<Response>(apiUrl, {

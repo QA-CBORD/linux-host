@@ -88,7 +88,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     }
 
     if (!isLastPage) {
-      this._next(form.value);
+      this._next();
     } else {
      this._update(workOrderDetails, form.value);
     }
@@ -110,7 +110,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
         this.isSubmitted = false;
         this._loadingService.closeSpinner();
       }),
-      catchError((error: any) => {
+      catchError((error: Error) => {
         this._loadingService.closeSpinner();
         return throwError(error);
       })
@@ -122,8 +122,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     this.subscriptions.add(termSubs);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _next(formValue: any): void {
+  private _next(): void {
     this.content.scrollToTop();
 
     if (this.isSubmitted) {

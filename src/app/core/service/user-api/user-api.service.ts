@@ -94,7 +94,7 @@ export class UserApiService {
     const params = { recipientName, recipientEmail, message, depositToAccountId, requestAmount };
     const queryConfig = new RPCQueryConfig('requestDeposit', params, true);
 
-    return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig);
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
   }
 
   getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
@@ -113,30 +113,30 @@ export class UserApiService {
   saveNotification$(userId: string, notification: UserNotificationInfo): Observable<string> {
     const params = { userId, notification };
     const queryConfig = new RPCQueryConfig('saveNotification', params, true, false);
-    return this.http.post<any>(this.serviceUrl, queryConfig);
+    return this.http.post<string>(this.serviceUrl, queryConfig);
   }
 
   logoutAndRemoveUserNotification$(userId: string, notification: UserNotificationInfo): Observable<boolean> {
     const params = { userId, notification };
     const queryConfig = new RPCQueryConfig('logoutAndRemoveUserNotification', params, true, false);
-    return this.http.post<any>(this.serviceUrl, queryConfig);
+    return this.http.post<boolean>(this.serviceUrl, queryConfig);
   }
 
   updateUserInfo$(user: UserInfo): Observable<string> {
     const params = { user, forceOverwrite: true };
     const queryConfig = new RPCQueryConfig('update', params, true, false);
-    return this.http.post<any>(this.serviceUrl, queryConfig);
+    return this.http.post<string>(this.serviceUrl, queryConfig);
   }
 
   reportCard$(isReportAsLost: boolean): Observable<MessageResponse<string>> {
     const queryConfig = new RPCQueryConfig(isReportAsLost ? 'reportCardLost' : 'reportCardFound', {}, true, false);
-    return this.http.post<any>(this.serviceUrl, queryConfig);
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig);
   }
 
   changePassword$(oldPassword: string, newPassword: string): Observable<boolean> {
     const params = { oldPassword, newPassword };
     const queryConfig = new RPCQueryConfig('changePassword', params, true, false);
-    return this.http.post<any>(this.serviceUrl, queryConfig);
+    return this.http.post<boolean>(this.serviceUrl, queryConfig);
   }
   retrieveUserIdByCashlessFields(institutionId: string, sessionId: string, cashlessData: LookupFieldInfo[]) {
     const queryConfig = new RPCQueryConfig('retrieveUserIdByCashlessFields', {
@@ -146,6 +146,6 @@ export class UserApiService {
         lookupFields: cashlessData,
       },
     });
-    return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 }

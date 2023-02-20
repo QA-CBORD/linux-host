@@ -21,7 +21,7 @@ export class OrderTileComponent implements OnInit {
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
   amountPerSlide = 1;
   slides: MerchantInfo[][] = [];
-  skeletonArray: any[] = new Array(this.amountPerSlide);
+  skeletonArray: number[] = new Array(this.amountPerSlide);
   isLoading = true;
 
   constructor(

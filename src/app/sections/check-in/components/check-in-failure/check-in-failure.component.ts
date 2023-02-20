@@ -14,12 +14,13 @@ const CHECKIN_ERROR_CODES = {
   styleUrls: ['./check-in-failure.component.scss'],
 })
 export class CheckInFailureComponent implements OnInit {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() contentStrings = <any>{};
   @Input() orderId: string;
   @Input() errorMessage: string;
   @Input() checkNumber: number;
   canScanCode: boolean;
-  displayPlayMessage: any;
+  displayPlayMessage: string;
 
   constructor(private readonly modalController: ModalController, private readonly loadingService: LoadingService) {}
 

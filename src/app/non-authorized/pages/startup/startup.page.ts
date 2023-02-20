@@ -14,6 +14,7 @@ import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-awar
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
 import { ModalController } from '@ionic/angular';
 import { PIN_MODAL_ID } from '@core/service/identity/pin-authentication';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'st-startup',
@@ -41,6 +42,7 @@ export class StartupPage {
   /// check login on enter
   ionViewDidEnter() {
     this.loadingService.showSpinner();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { skipAuthFlow, ...rest } = <any>this.location.getState();
     if (!skipAuthFlow) {
       this.startAuthFlow(rest);
@@ -88,10 +90,11 @@ export class StartupPage {
     this.handleAppLoginState(appLoginState);
   }
 
-  handleVaultUnlockFailure(): any {
+  handleVaultUnlockFailure(): void {
     this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async connectionIssueAwarePromiseExecute(options: ExecOptions<any>, isVaultLocked = false) {
     return this.connectivityAwareFacadeService.execute({ shouldNavigate: true, ...options }, isVaultLocked);
   }
@@ -105,6 +108,7 @@ export class StartupPage {
         // Making sure vault is unlocked before continuing and repeating the flow in case it is.
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const { biometricEnabled } = <any>this.location.getState();
           return this.unlockVault(biometricEnabled);
         }
@@ -132,7 +136,7 @@ export class StartupPage {
     return VaultMigrateResult.MIGRATION_FAILED === migrationResult;
   }
 
-  async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: any, clearAll = true) {
+  async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: NavigationExtras, clearAll = true) {
     try {
       return await this.navigationService.navigateAnonymous(where, { ...data });
     } finally {
@@ -184,7 +188,7 @@ export class StartupPage {
   }
 
   //
-  async unlockVault(biometricEnabled: boolean): Promise<any> {
+  async unlockVault(biometricEnabled: boolean): Promise<void> {
     return await this.identityFacadeService
       .unlockVault(biometricEnabled)
       .then(session => this.handleVaultLoginSuccess(session))

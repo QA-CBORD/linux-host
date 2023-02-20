@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
+import { MessageResponse } from '@core/model/service/message-response.model';
 import { InstitutionPhotoInfo } from '@core/model/institution/institution-photo-info.model';
 import { map } from 'rxjs/operators';
-import { Institution } from '@core/model/institution/institution.model';
+import { Institution, InstitutionLookupListItem } from '@core/model/institution/institution.model';
 import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 
@@ -23,15 +23,6 @@ export class InstitutionApiService {
     return this.http
       .post<MessageResponse<Institution>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
-  }
-
-  retrievePickupLocations(): Observable<any> {
-    const postParams: ServiceParameters = { active: true };
-    const queryConfig = new RPCQueryConfig('retrievePickupLocations', postParams, true, true);
-
-    return this.http
-      .post(this.serviceUrl, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response.list));
   }
 
   getInstitutionDataById(institutionId: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
@@ -79,15 +70,16 @@ export class InstitutionApiService {
       .pipe(map(({ response: photoInfo }) => photoInfo));
   }
 
-  retrieveLookupList(systemSessionId): Observable<any> {
+  retrieveLookupList(systemSessionId): Observable<InstitutionLookupListItem[]> {
     const queryConfig = new RPCQueryConfig('retrieveLookupList', { sessionId: systemSessionId });
 
     return this.http
-      .post<MessageResponse<any>>(this.serviceUrl, queryConfig)
+      .post<MessageResponse<{institutions: InstitutionLookupListItem[]}>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response: { institutions } }) => institutions));
   }
-  retrieveAnonymousDepositFields(institutionId: string, sessionId: string): Observable<any> {
+  retrieveAnonymousDepositFields(institutionId: string, sessionId: string) {
     const queryConfig = new RPCQueryConfig('retrieveAnonymousDepositFields', { institutionId, sessionId });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 }

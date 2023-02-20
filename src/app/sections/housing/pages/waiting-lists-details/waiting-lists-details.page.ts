@@ -130,7 +130,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
       formValue
     ).subscribe({
       next: () => this._handleSuccess(),
-      error: (error: any) => this._handleErrors(error),
+      error: (error: Error) => this._handleErrors(error),
     });
 
     this._subscription.add(subscription);
@@ -144,7 +144,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
         this.isSubmitted = true;
         this._loadingService.closeSpinner();
       }),
-      catchError((error: any) => {
+      catchError((error: Error) => {
         this._loadingService.closeSpinner();
 
         return throwError(error);
@@ -157,7 +157,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this.pages$ = this._waitingListService.getQuestions(this.waitingKey);
   }
 
-  private _next(formValue: any): void {
+  private _next(formValue): void {
     this.content.scrollToTop();
 
     if (this.isSubmitted) {
@@ -176,7 +176,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this._housingService.goToDashboard();
   }
 
-  private _handleErrors(error: any): void {
+  private _handleErrors(error: Error): void {
     this._housingService.handleErrors(error);
   }
 }

@@ -51,7 +51,6 @@ export class ApplicationsService {
   private readonly _patronApplicationsUrl: string = `${
     this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
-  selectedRoommate: any[] = [];
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
@@ -117,7 +116,7 @@ export class ApplicationsService {
     );
   }
 
-  saveLocally(applicationKey: number, applicationDetails: ApplicationDetails, formValue: any): Observable<any> {
+  saveLocally(applicationKey: number, applicationDetails: ApplicationDetails, formValue) {
     const patronApplication: PatronApplication = applicationDetails.patronApplication;
     const status: ApplicationStatus = patronApplication && patronApplication.status;
 
@@ -241,7 +240,7 @@ export class ApplicationsService {
     return this._questionsService.toFormGroup(
       questions,
       storedQuestions,
-      (group: any, question: QuestionFormControl, questionName: string, storedValue: string) => {
+      (group: object, question: QuestionFormControl, questionName: string, storedValue: string) => {
         if (question instanceof QuestionCheckboxGroup) {
           group[questionName] = this._questionsService.toQuestionCheckboxControl(storedValue, question);
         } else if (question instanceof QuestionReorder) {
@@ -258,7 +257,7 @@ export class ApplicationsService {
   }
 
   private _toQuestionReorderControl(
-    storedValue: any,
+    storedValue,
     question: QuestionReorder,
     preferences: PatronPreference[]
   ): FormArray {
@@ -274,12 +273,12 @@ export class ApplicationsService {
   }
 
   private _toFormControl(
-    storedValue: any,
+    storedValue,
     question: QuestionFormControl,
     applicationDetails: ApplicationDetails,
     canEdit: boolean
   ): FormControl {
-    let value: any = storedValue;
+    let value = storedValue;
     if (!isDefined(value) || value == '') {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
@@ -305,7 +304,7 @@ export class ApplicationsService {
 
   private _updateApplication(
     applicationDetails: ApplicationDetails,
-    form: any,
+    form: object,
     status: ApplicationStatus,
     removeQuestions = true
   ): Observable<ResponseStatus> {

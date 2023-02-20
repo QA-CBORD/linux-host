@@ -39,7 +39,7 @@ export function generatePatronApplication(applicationDefinitionKey: number): Pat
   });
 }
 
-export function generatePatronAttribute(_: any, index: number): PatronAttribute {
+export function generatePatronAttribute(_, index: number): PatronAttribute {
   const nowDateTime: string = new Date().toISOString();
   const attributeConsumerKey = index + 100;
   const value = `Attribute Value ${index}`;
@@ -63,7 +63,7 @@ export function generatePatronAttributes(amount = 2): PatronAttribute[] {
   return Array.apply(null, Array(amount)).map(generatePatronAttribute);
 }
 
-export function generatePatronPreference(_: any, index: number): PatronPreference {
+export function generatePatronPreference(_, index: number): PatronPreference {
   const key: number = index;
   const preferenceKey: number = index + 9000419;
   const rank: number = index;
@@ -82,7 +82,7 @@ export function generatePatronPreferences(amount = 2): PatronPreference[] {
   return Array.apply(null, Array(amount)).map(generatePatronPreference);
 }
 
-export function generateApplicationDetails(_: any, key: number): ApplicationDetails {
+export function generateApplicationDetails(_, key: number): ApplicationDetails {
   const applicationDefinition: ApplicationDefinition = generateApplicationDefinition(key);
   const patronApplication: PatronApplication = generatePatronApplication(key);
   const patronAttributes: PatronAttribute[] = generatePatronAttributes();

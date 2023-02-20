@@ -17,6 +17,9 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ProminentDisclosureService } from '../services/prominent-disclosure.service';
+import { Institution } from '@core/model/institution';
+import { TileWrapperConfig } from '../models';
+import { UserInfo } from '@core/model/user';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList> | Promise<SettingInfoList>> {
@@ -33,7 +36,6 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
   ) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<SettingInfoList> | Promise<SettingInfoList> {
-
     const showLoading = !(route.queryParams.skipLoading && JSON.parse(route.queryParams.skipLoading));
 
     this.prominentDisclosureService.openProminentDisclosure();
@@ -46,7 +48,9 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
       finalize(() => showLoading && this.loadingService.closeSpinner()));
   }
 
-  private loadAllData(): Observable<any> {
+  private loadAllData(): Observable<
+    [UserInfo, Institution, SettingInfoList, boolean, TileWrapperConfig[], ContentStringInfo[], ...ContentStringInfo[]]
+  > {
     const strings = this.loadContentStrings();
     const user = this.userFacadeService.getUser$();
     const inst = this.institutionService.fetchInstitutionData();

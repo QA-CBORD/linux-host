@@ -10,12 +10,12 @@ export class CheckingService {
   private readonly serviceUrlOrdering: string = '/json/ordering';
   public constructor(private readonly http: HttpClient) {}
 
-  checkInOrder({ orderId, latitude, longitude, checkinBarcode }): Observable<any> {
+  checkInOrder({ orderId, latitude, longitude, checkinBarcode }): Observable<boolean> {
     const postParams: ServiceParameters = { orderId, latitude, longitude, checkinBarcode };
     const queryConfig = new RPCQueryConfig('checkInOrder', postParams, true);
 
     return this.http
       .post(this.serviceUrlOrdering, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response));
+      .pipe(map(({ response }: MessageResponse<boolean>) => response));
   }
 }

@@ -19,7 +19,7 @@ export class CheckInOut implements CheckInOutOptions {
     selectedFacilityName?: string;
     selectedSpotDateTime?: Date;
   
-    constructor(options: any) {
+    constructor(options) {
       if (options == null || typeof options !== 'object') {
         options = {} as CheckInOutOptions;
       }

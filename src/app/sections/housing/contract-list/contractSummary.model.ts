@@ -5,7 +5,7 @@ export class ContractSummary {
     state: number;
     facilityKey: number;
   
-    constructor(options: any) {
+    constructor(options) {
       if (options == null || typeof options !== 'object') {
         options = {};
       }

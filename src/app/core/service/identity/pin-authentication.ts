@@ -1,3 +1,4 @@
+import { PinLoginProps } from "@core/model/authentication/pin-login-props.model";
 import { VaultErrorCodes } from "@ionic-enterprise/identity-vault";
 import { ModalController } from "@ionic/angular";
 import { PinPage } from "@shared/ui-components/pin/pin.page";
@@ -29,6 +30,7 @@ export class PinAuthenticator {
         });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async try(unlockVault: () => Promise<any>): Promise<any> {
         const tryIt = async () => {
             try {
@@ -51,7 +53,7 @@ export class PinAuthenticator {
         });
     }
 
-    async tryUnlock0(): Promise<{ pin: string, status: any }> {
+    async tryUnlock0(): Promise<{ pin: string, status: string }> {
         return this.presentPinModal(PinAction.LOGIN_PIN).then(({ data, role }) => ({ pin: data, status: role }));
     }
 
@@ -60,7 +62,7 @@ export class PinAuthenticator {
         return code == VaultErrorCodes.AuthFailed;
     }
 
-    private async onPinEvaluated(isRightPing: boolean): Promise<any> {
+    private async onPinEvaluated(isRightPing: boolean): Promise<void> {
         if (isRightPing) {
             this.authenticator.onPinSuccess();
         } else {
@@ -68,7 +70,7 @@ export class PinAuthenticator {
         }
     }
 
-    async presentPinModal(pinAction: PinAction, authenticator?: VaultAuthenticator, props?: any): Promise<any> {
+    async presentPinModal(pinAction: PinAction, authenticator?: VaultAuthenticator, props?: PinLoginProps) {
 
         this.pinModalOpened = true;
         const componentProps = { pinAction, authenticator, ...props };

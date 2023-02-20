@@ -7,7 +7,7 @@ import { Institution } from '@core/model/institution';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Subscription } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { PATRON_NAVIGATION, ROLES, Settings } from '../../../app.global';
@@ -237,7 +237,7 @@ export class ExternalLoginPage {
     await modal.present();
   }
 
-  private navigate(route: string[], extras: any = {}) {
+  private navigate(route: string[], extras: Partial<NavigationExtras> = {}) {
     this.ngZone.run(() => {
       this.router.navigate(route, { ...extras, replaceUrl: true });
     });

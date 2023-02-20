@@ -4,7 +4,7 @@ import { MerchantInfo, MerchantSearchOptions } from '@sections/ordering';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { MerchantSearchOptionName } from '@sections/ordering/ordering.config';
-import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
+import { MessageListResponse, MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { Position } from '@capacitor/geolocation';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
@@ -30,7 +30,7 @@ export class MerchantApiService {
 
         return this.http.post(this.serviceUrlMerchant, queryConfig);
       }),
-      map(({ response: { list } }: MessageResponse<any>) => list)
+      map(({ response: { list } }: MessageResponse<MessageListResponse<MerchantInfo>>) => list)
     );
   }
 
@@ -44,7 +44,7 @@ export class MerchantApiService {
         const queryConfig = new RPCQueryConfig('getMenuMerchants', { searchOptions }, true, true);
         return this.http
           .post(this.serviceUrlMerchant, queryConfig)
-          .pipe(map(({ response }: MessageResponse<any>) => response.list));
+          .pipe(map(({ response }: MessageResponse<MessageListResponse<MerchantInfo>>) => response.list));
       })
     );
   }
@@ -73,6 +73,6 @@ export class MerchantApiService {
 
     return this.http
       .post(this.serviceUrlMerchant, queryConfig)
-      .pipe(map(({ response: { list } }: MessageResponse<any>) => list));
+      .pipe(map(({ response: { list } }: MessageResponse<MessageListResponse<MerchantInfo>>) => list));
   }
 }
