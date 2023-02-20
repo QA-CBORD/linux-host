@@ -1,3 +1,4 @@
+import { StButtonModule } from './../st-button/st-button.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StPopoverLayoutComponent } from './st-popover-layout.component';
@@ -9,7 +10,8 @@ const declarations = [StPopoverLayoutComponent];
   declarations,
   imports: [
     CommonModule,
-    IonicModule
+    IonicModule,
+    StButtonModule
   ],
   exports: declarations
 })
