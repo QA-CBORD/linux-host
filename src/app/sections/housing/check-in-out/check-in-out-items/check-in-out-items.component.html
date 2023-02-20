@@ -1,24 +1,33 @@
 <div #container *ngFor="let checkInOut of checkInOuts">
   <ng-container
     [ngTemplateOutlet]="!checkInOut.selectedFacilityName ? hasNotSelectedSpot : hasSelectedSpot"
-    [ngTemplateOutletContext]="{ data: checkInOut }">
+    [ngTemplateOutletContext]="{ data: checkInOut }"
+  >
   </ng-container>
 </div>
 
 <ng-template #hasNotSelectedSpot let-checkInOut="data">
-  <ion-item lines="none" class="check-in-out-list__item" button (click)="openCheckInOutSlots(checkInOut.key)" >
+  <ion-item lines="none" class="check-in-out-list__item" button (click)="openCheckInOutSlots(checkInOut.key)">
     <div class="check-in-out-item-order">
-        <div class="check-in-out-list__item-info">
+      <div class="check-in-out-list__item-info">
+        <div class="dates-container">
+          <strong>Start:</strong>
           <div class="check-in-out-list__item-start-time">
-            {{ checkInOut.availableStartDate | date: dateFormat }} <br>
-            {{ checkInOut.availableStartDate | date: timeFormat }} 
-          </div>
-          <div class="check-in-out-list__item-end-time">
-            {{ checkInOut.availableEndDate | date: dateFormat }} <br>
-            {{ checkInOut.availableEndDate | date: timeFormat }} 
+            {{ checkInOut.availableStartDate | date : dateFormat }}
+            <br />
+            {{ checkInOut.availableStartDate | date : timeFormat }}
           </div>
         </div>
-      <h2  class="check-in-out-list__item-name">{{ checkInOut.name }}</h2>
+        <div class="dates-container">
+          <strong>End:</strong>
+          <div class="check-in-out-list__item-end-time">
+            {{ checkInOut.availableEndDate | date : dateFormat }}
+            <br />
+            {{ checkInOut.availableEndDate | date : timeFormat }}
+          </div>
+        </div>
+      </div>
+      <h2 class="check-in-out-list__item-name">{{ checkInOut.name }}</h2>
     </div>
   </ion-item>
 </ng-template>
@@ -26,10 +35,14 @@
 <ng-template #hasSelectedSpot let-checkInOut="data">
   <ion-item lines="none" class="check-in-out-list__item">
     <div class="check-in-out-item-order">
-        <div class="check-in-out-list__item-info">
-          <div class="check-in-out__facility-name">{{ checkInOut.selectedFacilityName }} - {{ checkInOut.type === 0 ? 'Check In' : 'Check Out'}}</div>
+      <div class="check-in-out-list__item-info">
+        <div class="check-in-out__facility-name">
+          {{ checkInOut.selectedFacilityName }} - {{ checkInOut.type === 0 ? 'Check In' : 'Check Out' }}
         </div>
-      <h2  class="check-in-out-list__item-name">{{ checkInOut.selectedSpotDateTime | date:'EEEE, MMMM d, y, h:mm a' }}</h2>
+      </div>
+      <h2 class="check-in-out-list__item-name">
+        {{ checkInOut.selectedSpotDateTime | date : 'EEEE, MMMM d, y, h:mm a' }}
+      </h2>
     </div>
   </ion-item>
 </ng-template>

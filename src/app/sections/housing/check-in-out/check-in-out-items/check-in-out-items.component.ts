@@ -10,7 +10,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { CheckInOut } from '../check-in-out.model';
 import { CheckInOutStateService} from '../check-in-out-state.service';
 import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
-import {monthNameDayYear, hourMin} from '../../../../shared/constants/dateFormats.constant'
+import {monthDayYear, hourMinTime} from '@shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-check-in-out-items',
@@ -21,8 +21,9 @@ import {monthNameDayYear, hourMin} from '../../../../shared/constants/dateFormat
 export class CheckInOutItemsComponent {
   @ViewChild('container') divContainer: ElementRef;
   @Input() checkInOuts: CheckInOut[]
-  dateFormat = monthNameDayYear;
-  timeFormat = hourMin
+  dateFormat = monthDayYear;
+  timeFormat = hourMinTime;
+
 
   constructor(public checkInOutStateService: CheckInOutStateService,
               private _router: Router,
@@ -37,4 +38,6 @@ export class CheckInOutItemsComponent {
       this._toastService.showToast({message: 'Your access time has not been reached yet.'});
     }
   }
+
+  
 }

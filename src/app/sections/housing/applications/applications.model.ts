@@ -203,18 +203,18 @@ export class ApplicationRequest {
     this.patronApplication = new PatronApplication(options.patronApplication);
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
+      this.patronAttributes = options.patronAttributes.map((attribute) => new PatronAttribute(attribute));
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
+      this.patronPreferences = options.patronPreferences.map((preference) => new PatronPreference(preference));
     }
 
     if (Array.isArray(options.patronAddresses)) {
-      this.patronAddresses = options.patronAddresses.map((address: any) => new PatronAddress(address));
+      this.patronAddresses = options.patronAddresses.map((address) => new PatronAddress(address));
     }
     if (Array.isArray(options.roommatePreferences)) {
-      this.roommatePreferences = options.roommatePreferences.map((roommate: any) => new RoommatePreferences(roommate));
+      this.roommatePreferences = options.roommatePreferences.map((roommate) => new RoommatePreferences(roommate));
     }
   }
 }
@@ -250,22 +250,22 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
     }
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
+      this.patronAttributes = options.patronAttributes.map((attribute) => new PatronAttribute(attribute));
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
+      this.patronPreferences = options.patronPreferences.map((preference) => new PatronPreference(preference));
     }
 
     if (Array.isArray(options.roommatePreferences)) {
-      this.roommatePreferences = options.roommatePreferences.map((roommatePreference: any) => new RoommatePreferences(roommatePreference));
+      this.roommatePreferences = options.roommatePreferences.map((roommatePreference) => new RoommatePreferences(roommatePreference));
     }
     if (Array.isArray(options.requestingRoommates)) {
-      this.requestingRoommates = options.requestingRoommates.map((requestingRoommates: any) => new RoommateRequesting(requestingRoommates));
+      this.requestingRoommates = options.requestingRoommates.map((requestingRoommates) => new RoommateRequesting(requestingRoommates));
     }
 
     this.patronAddresses = Array.isArray(options.patronAddresses)
-        ? options.patronAddresses.map((address: any) => new PatronAddress(address))
+        ? options.patronAddresses.map((address) => new PatronAddress(address))
         : [];
   }
 }
@@ -273,6 +273,7 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
 export interface RoommateSearchOptions {
   searchOptions?: string;
   showOptions?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   preferences?: any[];
   prefRank?: number;
   searchValue?: string;
@@ -296,7 +297,7 @@ export class RequestedRoommate implements RequestedRoommateOptions{
   patronRoommateKey: number;
   confirmed?: boolean;
   middleName: string;
-  birthDate: Date;
+  birthDate?: Date;
   preferredName: string;
 
   constructor(options: RequestedRoommateOptions) {
@@ -310,7 +311,7 @@ export class RequestedRoommate implements RequestedRoommateOptions{
     this.patronRoommateKey = Number(options.patronRoommateKey);
     this.confirmed = Boolean(options.confirmed);
     this.middleName = String(options.middleName);
-    this.birthDate = new Date(options.birthDate);
+    this.birthDate = options.birthDate && new Date(options.birthDate);
     this.preferredName = String(options.preferredName);
   }
 }
@@ -339,13 +340,13 @@ export class RequestedRoommateRequest implements RequestedRoommateRequestOptions
 export class RequestedRoommateResponse {
     requestedRoommates: RequestedRoommate[];
 
-    constructor(options: any) {
+    constructor(options) {
       if (options == null || typeof options !== 'object') {
         options = {} as RequestedRoommateResponse;
       }
   
       this.requestedRoommates = Array.isArray(options)
-      ? options.map((detail: any) => new RequestedRoommate(detail))
+      ? options.map((detail) => new RequestedRoommate(detail))
       : [];
     }
 }

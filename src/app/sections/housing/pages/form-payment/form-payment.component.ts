@@ -17,25 +17,15 @@ import { SuccessfulPaymentModal } from './successful-payment-modal/successful-pa
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { FormType } from './form-payment.service';
 import { Location } from '@angular/common';
+import { TransactionalData } from './transactional-data.model';
 
 export interface CurrentForm {
   key: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   details: any,
   formValue: FormControl,
   isSubmitted?: boolean,
   type: 'application' | 'work-order',
-}
-
-interface TransactionalData {
-  sourceAcc: {
-    accountTender: string;
-    lastFour: string;
-  };
-  selectedAccount: {
-    accountDisplayName: string;
-    accountType: number;
-  };
-  amount: string;
 }
 
 @Component({
@@ -82,7 +72,7 @@ export class FormPaymentComponent implements OnInit {
   async confirmPayment(cardInfo?: AccountsConf) {
     const info: TransactionalData = this.buildTransactionInfo(cardInfo?.account, this.amountDue);
     const popover = await this.confirmPaymentPopover(info);
-    popover.onDidDismiss().then(async ({ role }) => {
+    popover.onDidDismiss().then(({ role }) => {
       this.onConfirmation(role, cardInfo?.account, this.amountDue, info);
     });
     await popover.present();
@@ -107,7 +97,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async confirmPaymentPopover(data: TransactionalData) {
-    return await this.popoverCtrl.create({
+    return this.popoverCtrl.create({
       component: ConfirmPaymentPopover,
       componentProps: {
         data,

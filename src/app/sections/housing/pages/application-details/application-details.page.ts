@@ -122,7 +122,7 @@ export class ApplicationDetailsPage implements OnInit {
         ? this.applicationsStateService.deleteRequestingRoommate(index)
         : null;
     });
-    const requestingRoommate = this.applicationsStateService.requestingRoommate.filter(result => {
+    return this.applicationsStateService.requestingRoommate.filter(result => {
       if (
         this.applicationsStateService.roommatePreferencesSelecteds.find(
           value => result.preferenceKey === value.preferenceKey && value.patronKeyRoommate === 0
@@ -131,7 +131,6 @@ export class ApplicationDetailsPage implements OnInit {
         return result;
       }
     });
-    return requestingRoommate;
   }
 
   private updateQuestions() {
@@ -184,7 +183,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   onCancel() {
-    this.housingService.handleSuccess();
+    this.housingService.goToDashboard();
   }
 
   onChange(applicationDetails: ApplicationDetails, formValue: FormGroup) {
@@ -198,7 +197,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   private _handleSuccess() {
-    this.housingService.handleSuccess();
+    this.housingService.goToDashboard();
   }
 
   private _handleErrors(error: Error) {

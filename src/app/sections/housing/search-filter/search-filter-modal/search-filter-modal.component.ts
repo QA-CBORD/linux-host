@@ -13,6 +13,7 @@ import { map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { convertObjectToMap } from '@sections/housing/utils/convert-object-to-map';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
 
 @Component({
   selector: 'st-search-filter-modal',
@@ -28,7 +29,7 @@ export class SearchFilterModalComponent implements OnInit {
   categoryOptions: { [key: string]: string[] };
 
   filtersForm: FormGroup;
-  occupants$: Observable<any>;
+  occupants$: Observable<FacilityOccupantDetails[]>;
   constructor(
     private _roomsService: RoomsService,
     private _roomStateService: RoomsStateService,
@@ -44,7 +45,7 @@ export class SearchFilterModalComponent implements OnInit {
     const facilityKeys: number[] = this._roomStateService.getOccupiedFacilities().map(x => x.facilityId);
     this.occupants$ = this._initFilter(facilityKeys);
   }
-  private _initFilter(facilityKeys: number[]): Observable<any> {
+  private _initFilter(facilityKeys: number[]): Observable<FacilityOccupantDetails[]> | Observable<null> {
     if (facilityKeys && facilityKeys.length > 0) {
       return this._housingService
         .getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
@@ -57,7 +58,7 @@ export class SearchFilterModalComponent implements OnInit {
           })
         );
     } else {
-      return of(true).pipe(
+      return of(null).pipe(
         tap(() => this._handleFilters()),
         map(data => data)
       );
@@ -78,11 +79,11 @@ export class SearchFilterModalComponent implements OnInit {
     this._loadingService.closeSpinner();
     this.filtersForm = this._formBuilder.group(builderOptions);
   }
-  filter(data: any) {
+  filter(data) {
     this._loadingService.showSpinner();
 
     const categoriesToFilter = new Map<string, boolean[]>();
-    const dataMap = convertObjectToMap(data);
+    const dataMap = convertObjectToMap<boolean[]>(data);
     dataMap.forEach((values, key) => {
       const selected = values.find(x => x);
       if (selected) {

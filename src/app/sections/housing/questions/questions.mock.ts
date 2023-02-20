@@ -1,4 +1,4 @@
-export function generateQuestions(): any[] {
+export function generateQuestions() {
   return [
     {
       type: 'text',

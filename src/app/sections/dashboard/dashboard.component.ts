@@ -141,9 +141,9 @@ export class DashboardPage implements OnInit {
         }),
         take(1)
       )
-      .subscribe(showUpdateProfile => {
+      .subscribe(async showUpdateProfile => {
         if (showUpdateProfile) {
-          this.showUpdateProfileModal();
+          await this.showUpdateProfileModal();
         }
       });
   }
@@ -260,7 +260,7 @@ export class DashboardPage implements OnInit {
 
     modal.onDidDismiss().then(() => this.hideGlobalNavBar(false));
     this.hideGlobalNavBar(true);
-    return await modal.present();
+    return modal.present();
   }
 
   updateTiles() {

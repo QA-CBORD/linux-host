@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Subject } from 'rxjs';
 import { EndpointStatuses } from '../../shared/credential-state';
 import { registerPlugin } from '@capacitor/core';

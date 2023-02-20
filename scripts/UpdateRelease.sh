@@ -48,7 +48,7 @@ git checkout develop
 git pull origin develop
 
 # Pull highest latest release branch
-release_branch=$(git branch -r | grep -E 'release-1*' | sort -n | tail -n 1) || exit 1
+release_branch=$(git branch -r | grep -E 'release-[0-9]+\.[0-9]+' | sort -n | tail -n 1) || exit 1
 echo "Current release $release_branch"
 
 git checkout $release_branch
@@ -62,7 +62,7 @@ new_version="${array[0]}.${array[1]}.$last_segment"
 
 # Checkout patch release branch from release and update from develop
 rc_branch="release/$new_version"
-git show-ref --verify --quite refs/heads/$rc_branch || git branch $rc_branch
+git show-ref --verify --q refs/heads/$rc_branch || git branch $rc_branch
 git checkout $rc_branch
 git pull origin $rc_branch
 

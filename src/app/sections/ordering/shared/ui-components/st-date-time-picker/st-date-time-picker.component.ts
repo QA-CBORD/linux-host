@@ -25,7 +25,7 @@ export interface DateTimeSelected {
 })
 export class StDateTimePickerComponent implements OnInit {
   @Input() schedule: Schedule;
-  @Input() data: { labelTime: string; address: any; isClickble: number };
+  @Input() data: { labelTime: string; address: string; isClickble: number };
   @Input() isTimeDisable: number;
   @Input() merchantInfo: MerchantInfo;
   @Input() dateTimePicker: Date | string;
@@ -80,6 +80,7 @@ export class StDateTimePickerComponent implements OnInit {
       ],
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     picker.addEventListener('ionPickerColChange', async (event: any) => {
       const { detail: data } = event;
       if (data.name === 1) {
@@ -140,7 +141,7 @@ export class StDateTimePickerComponent implements OnInit {
     }
   }
 
-  private preparePickerArr(i = 0): any[] {
+  private preparePickerArr(i = 0): [string[], string[]] {
     const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
       (previous, hourBlock) => [
@@ -181,7 +182,7 @@ export class StDateTimePickerComponent implements OnInit {
     return columns;
   }
 
-  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday): any[] {
+  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday): string[] {
     const pickerColumns = [];
     const total = columnIndex === 0 ? daysOptions : timeOptions;
     const getColumnText = i => {

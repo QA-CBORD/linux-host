@@ -1,3 +1,4 @@
-export const monthNameDayYearHour = 'MMM d, y h:mm a';
-export const monthNameDayYear = 'MMM d, y';
-export const hourMin = 'h:mm a';
+export const montDayYearHour = 'MM/dd/YY h:mm a';
+export const monthDayYear = 'MM/dd/YY';
+export const hourMinTime = 'h:mm a';
+

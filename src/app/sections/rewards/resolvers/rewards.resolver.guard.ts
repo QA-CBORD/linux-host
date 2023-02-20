@@ -32,9 +32,11 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private errorHandler(errors: Observable<any>): Observable<any> {
     return errors.pipe(
       switchMap(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const subject = new Subject<any>();
         this.loader.closeSpinner();
         this.modalHandler(subject);
@@ -44,6 +46,7 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async modalHandler(subject: Subject<any>): Promise<void> {
     const popover = await this.popoverCtrl.create({
       cssClass: 'sc-popover',

@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { Router } from '@angular/router';
-import { BarcodeScanner, SupportedFormat } from '@capacitor-community/barcode-scanner';
+import { BarcodeScanner, CheckPermissionResult, SupportedFormat } from '@capacitor-community/barcode-scanner';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Platform } from '@ionic/angular';
@@ -70,7 +70,7 @@ export class ScanCodeComponent implements OnInit {
     }
   }
 
-  private handleScanner(status: any) {
+  private handleScanner(status: CheckPermissionResult) {
     if (status.granted || status.neverAsked) {
       this.startScanning(this.formats);
     } else {

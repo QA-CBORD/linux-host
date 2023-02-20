@@ -73,7 +73,7 @@ export class StHierarcheTreeDialogComponent {
     // this.loading.dismiss();
   }
 
-  private buildSlides(lookUpItem, _topParentSlide): any {
+  private buildSlides(lookUpItem, _topParentSlide): SlideItem {
     return {
       id: lookUpItem.id ? lookUpItem.id : lookUpItem.facilityKey,
       name: lookUpItem.name ? lookUpItem.name : lookUpItem.facilityFullName,

@@ -12,7 +12,7 @@ export class Unit {
   attributes: FacilityAttribute[]
   occupantKeys: number[];
 
-  constructor(options: any) {
+  constructor(options) {
     this.key = options.facilityKey;
     this.parentKey = options.parentKey;
     this.parentName = options.topLevelName;

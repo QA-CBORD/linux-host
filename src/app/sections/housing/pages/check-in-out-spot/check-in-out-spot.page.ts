@@ -92,7 +92,7 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
                     if (status) {
                       // redirect to housing dashboard (terms page)
                       this._checkInOutStateService.setActiveCheckInOutSlot(null);
-                      alert.dismiss().then(() => this._housingService.handleSuccess());
+                      alert.dismiss().then(() => this._housingService.goToDashboard());
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();

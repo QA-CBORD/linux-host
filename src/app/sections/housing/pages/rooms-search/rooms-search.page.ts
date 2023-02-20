@@ -2,7 +2,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { HousingService } from '../../housing.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
-
 import { Unit } from '../../units-switch/units-switch.model';
 import { Facility } from '@sections/housing/facilities/facilities.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
@@ -78,6 +77,10 @@ export class RoomsSearchPage {
       ]);
       this._loadingService.closeSpinner();
     }
+  }
+
+  goToDashboard() {
+    this._housingService.goToDashboard();
   }
 
   ngOnDestroy() {

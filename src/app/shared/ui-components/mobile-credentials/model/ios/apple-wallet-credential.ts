@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MobileCredentialState } from '../shared/credential-state';
 import { MobileCredential } from '../shared/mobile-credential';
 

@@ -10,8 +10,8 @@ import { QuestionsStorageService, QuestionsEntries } from '../questions/question
 import { QuestionBase } from '../questions/types/question-base';
 import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
-import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
-import { QuestionFormControl } from '../questions/types/question-form-control';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { QuestionFormControl, QuestionFormControlOptions } from '../questions/types/question-form-control';
 import { WorkOrder, WorkOrderDetails, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
@@ -98,7 +98,7 @@ export class WorkOrdersService {
     return this._questionsService.splitByPages(flat(questions));
   }
 
-  private _toWorkOrderListCustomType(question: any, workOrderDetails: WorkOrderDetails){
+  private _toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails){
     let values = [];
 
     if(question.workOrderFieldKey === 'TYPE'){
@@ -129,18 +129,15 @@ export class WorkOrdersService {
   }
 
   private _toFormControl(
-    storedValue: any,
+    storedValue: string,
     question: QuestionFormControl,
     workOrderDetails: WorkOrderDetails
   ): FormControl {
-    let value: any = storedValue;
+    let value: string | number = storedValue;
     const disabled = false;
 
-    const validators: ValidatorFn[] = [];
+    const validators = this._questionsService.getRequiredValidator(question);
 
-    if (question.required) {
-      validators.push(Validators.required);
-    }
     if(question.workOrderFieldKey === 'DESCRIPTION'){
       validators.push(Validators.maxLength(250))
     }
@@ -173,15 +170,14 @@ export class WorkOrdersService {
           this._workOrderStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment)
           break;
       }
-      return new FormControl({ value, disabled:true }, validators);
+      return new FormControl({ value, disabled: true }, validators);
     }
 
     return new FormControl({ value, disabled }, validators);
   }
 
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next(formValue: any): Observable<any> {
+  next(): Observable<boolean> {
     return of(true);
   }
 
@@ -316,8 +312,24 @@ export class WorkOrdersService {
       controls[fieldType] = resultFormValue;
     });
     
-    this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe( res => res && res.studentSubmitted ? image = res: image = null);
-    this._workOrderStateService.getSelectedFacility$().pipe(take(1)).subscribe(res => res && res.id || res.facilityKey ? location = res.id ? res.id: res.facilityKey : location = null);
+    this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe(res => {
+      image = null;
+      if (res && res.studentSubmitted) {
+        image = res;
+      }
+    });
+
+    this._workOrderStateService
+      .getSelectedFacility$()
+      .pipe(take(1))
+      .subscribe(res => {
+        if ((res && res.id) || res.facilityKey) {
+          location = res.id ? res.id : res.facilityKey;
+        } else {
+          location = null;
+        }
+      });
+      
     return { body: {
       notificationPhone:  controls[WorkOrdersFields.PHONE_NUMBER] ? controls[WorkOrdersFields.PHONE_NUMBER] : '',
       notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL]: '',

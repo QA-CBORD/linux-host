@@ -100,4 +100,6 @@ export class RequestingRoommateModalComponent implements OnInit {
     this._applicationsStateService.deleteRequestingRoommate(roommate.patronKeyRoommate);
     this.checkIfLastRequest();
   }
+
+  studentFullName = (roomate:RoommatePreferences) => `${roomate.firstName} ${roomate.lastName}`
 }

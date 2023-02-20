@@ -53,6 +53,7 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     return super.androidCredentialBundle$(reqBody).pipe(map(bundle => bundle as GooglePayCredentialBundle));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateCredential$(mCredential: GoogleCredential): Observable<any> {
     return this.getUserId().pipe(
       switchMap(userId => {

@@ -22,7 +22,7 @@ export class InspectionService {
     ) { }
 
 
-  getFormDefinitionInspection(): Observable<any> {
+  getFormDefinitionInspection() {
     return this._inspectionStateService.getInspectionDetailsForm().pipe(
       map((res=>{
         const body =JSON.parse(res.formDefinition.applicationFormJson) 

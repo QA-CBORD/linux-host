@@ -11,6 +11,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl }
 
 import { hasValue } from '@sections/housing/utils';
 import { ViewChild } from '@angular/core';
+import { IonDatetime } from '@ionic/angular';
 
 export const DATE_SELECT_VALUE_ACCESSOR: StaticProvider = {
   provide: NG_VALUE_ACCESSOR,
@@ -40,9 +41,9 @@ export class StDateSelectComponent implements ControlValueAccessor {
   @Input()
   isDisabled = false;
 
-  @ViewChild('dateCalendar') private dateCalendar: any ;
+  @ViewChild('dateCalendar') private dateCalendar: IonDatetime;
 
-  onChange: (value: any) => void;
+  onChange: (value) => void;
 
   onTouched: () => void;
 
@@ -61,11 +62,11 @@ export class StDateSelectComponent implements ControlValueAccessor {
     this._checkIsFilled(value);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn): void {
     this.onTouched = fn;
   }
 
@@ -74,14 +75,14 @@ export class StDateSelectComponent implements ControlValueAccessor {
     this._changeDetector.markForCheck();
   }
 
-  writeValue(value: any): void {
+  writeValue(value): void {
     if (value !== this.value) {
       this.value = value;
       this._checkIsFilled(value);
     }
   }
 
-  private _checkIsFilled(value: any): void {
+  private _checkIsFilled(value): void {
     this.isFilled = hasValue(value);
     this._changeDetector.markForCheck();
   }

@@ -43,29 +43,19 @@ export abstract class AbstractDepositManager {
     isActive: true,
   };
 
+  // Left blank intentionally
+
   onPaymentChanged(_target) {}
-
   formatAmount(_event) {}
-
   onAmountChanged(_event) {}
-
-  onSubmitDeposit() {}
-
-  setSourceAccounts(guestAccounts: UserAccount[]) {}
-
+  onSubmitDeposit() {}  
+  setSourceAccounts(guestAccounts: UserAccount[]) {} 
   setDestinationAccounts(recipientAccounts: UserAccount[]) {}
-
-  async confirmationDepositPopover(data: any) {}
-
-  async finalizeDepositModal(data): Promise<void> {}
+  async confirmationDepositPopover(data: any) {} 
+  async finalizeDepositModal(data): Promise<void> {} 
 
   defineDestAccounts(target) {
-    this.activePaymentType =
-      target instanceof Object
-        ? PAYMENT_TYPE.CREDIT
-        : target === CREDITCARD_STATUS.NEW
-        ? this.activePaymentType
-        : target;
+    this.activePaymentType = this.setActivePayment(target);
   }
 
   filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
@@ -156,5 +146,13 @@ export abstract class AbstractDepositManager {
 
   trackByAccountId(i: number): string {
     return `${i}-${Math.random()}`;
+  }
+
+  private setActivePayment(target: any) {
+    if (target instanceof Object) {
+      return PAYMENT_TYPE.CREDIT;
+    }
+
+    return target === CREDITCARD_STATUS.NEW ? this.activePaymentType : target;
   }
 }

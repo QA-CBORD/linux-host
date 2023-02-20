@@ -26,7 +26,7 @@ export class WaitingListStateService  {
     this.waitingListDetails.next(selectedSlot);
   }
 
-  setFormSelection(value: any) {
+  setFormSelection(value) {
     this.formSelection.next(value);
   }
 

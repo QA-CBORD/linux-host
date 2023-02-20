@@ -46,7 +46,7 @@ export function generateDetailsResponse(key: number): DetailsResponse {
   });
 }
 
-export function generateLabel(_: any, index: number): Label {
+export function generateLabel(_, index: number): Label {
   return new Label(`Honors Unit ${index}`);
 }
 

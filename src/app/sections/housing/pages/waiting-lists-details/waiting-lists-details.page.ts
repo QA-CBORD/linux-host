@@ -8,7 +8,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { IonContent, ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -35,7 +35,7 @@ import { WaitingListStateService } from '../../waiting-lists/waiting-list-state.
 export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
-  @ViewChild('content') private content: any;
+  @ViewChild('content') private content: IonContent;
   
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
@@ -75,7 +75,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this._touch();
 
     const selectedStep: StepComponent = this.stepper.selected;
-    const formValue: any = selectedStep.stepControl.value;
+    const formValue = selectedStep.stepControl.value;
 
     this._update(this.waitingKey, applicationDetails, formValue);
 
@@ -100,7 +100,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }
 
-  private _update(applicationKey: number, applicationDetails: WaitingListDetails, formValue: any): void {
+  private _update(applicationKey: number, applicationDetails: WaitingListDetails, formValue): void {
     if(applicationDetails.facilities)
       {
         const facilityKey: number = 
@@ -173,7 +173,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleSuccess(): void {
-    this._housingService.handleSuccess();
+    this._housingService.goToDashboard();
   }
 
   private _handleErrors(error: any): void {

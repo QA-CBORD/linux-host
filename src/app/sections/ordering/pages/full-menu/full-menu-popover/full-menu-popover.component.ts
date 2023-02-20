@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { StPopoverComponentDataModel } from '@shared/model/st-popover-data.model';
 import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
 
@@ -8,7 +9,7 @@ import { buttons } from 'src/app/core/utils/buttons.config';
   styleUrls: ['./full-menu-popover.component.scss'],
 })
 export class FullMenuPopoverComponent implements OnInit {
-  @Input() data: any;
+  @Input() data: StPopoverComponentDataModel;
 
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };

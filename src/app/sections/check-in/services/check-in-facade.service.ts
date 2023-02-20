@@ -47,13 +47,11 @@ export class CheckingServiceFacade {
   checkInOrderByBarcode(
     orderId: string,
     checkinBarcode: string,
-    latitude: number = null,
-    longitude: number = null
   ): Observable<boolean> {
     return this.checkingService.checkInOrder({
       orderId,
-      latitude,
-      longitude,
+      latitude: null,
+      longitude: null,
       checkinBarcode,
     });
   }

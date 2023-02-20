@@ -1,6 +1,6 @@
 import { Term } from './terms.model';
 
-export function generateTerm(_: any, index: number): Term {
+export function generateTerm(_, index: number): Term {
   const now: number = Date.now();
   const termId: number = index;
   const termStartDate: string = new Date(now).toISOString();

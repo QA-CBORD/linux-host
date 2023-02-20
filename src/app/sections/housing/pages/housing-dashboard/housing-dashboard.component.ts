@@ -72,7 +72,7 @@ export class HousingDashboardPage {
     this._subscription.add(dashboardSubscription);
   }
 
-  private _handleSuccess(response: any): void {
+  private _handleSuccess(response): void {
     if (response instanceof DefinitionsResponse) {
       this.isHeaderVisible =
         this.isHeaderVisible || response.applicationDefinitions.length > 0 || response.contractDetails.length > 0;

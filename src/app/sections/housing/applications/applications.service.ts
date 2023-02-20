@@ -22,6 +22,7 @@ import {
   ApplicationRequest,
   ApplicationDefinition,
   RoommateSearchOptions,
+  RoommatePreferences,
 } from './applications.model';
 import {
   QuestionCheckboxGroup,
@@ -33,15 +34,14 @@ import {
   QuestionTextbox,
 } from '@sections/housing/questions/questions.model';
 import { QuestionBase } from '@sections/housing/questions/types';
-import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { PatronAddress } from '../addresses/address.model';
 import { PatronAddressService } from '../addresses/address.service';
 import { QuestionActionButton, QuestionRoommatePreference } from '../questions/types/question-roommate-preference';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { RoommatePreferences } from './applications.model';
-import { RoommateDetails } from '../roommate/roommate.model';
 import { CurrentForm } from '../pages/form-payment/form-payment.component';
+import { RoommateDetails } from '../roommate/roommate.model';
 import { LOCAL_ROUTING } from '../housing.config';
 
 @Injectable({
@@ -73,7 +73,7 @@ export class ApplicationsService {
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
-
+  
         return this._getPages(pages, storedQuestions, applicationDetails, isSubmitted);
       })
     );
@@ -268,7 +268,7 @@ export class ApplicationsService {
       .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
         QuestionReorder.sort(preferences, current, next, selectedValues.length)
       )
-      .map((value: QuestionReorderValue) => new FormControl({ value, disabled: question.readonly }));
+      .map((value: QuestionReorderValue) => new FormControl({ value, disabled: question.readonly }, this._questionsService.getRequiredValidator(question)));
 
     return new FormArray(controls);
   }
@@ -280,7 +280,6 @@ export class ApplicationsService {
     isSubmitted: boolean
   ): FormControl {
     let value: any = storedValue;
-
     if (!isDefined(value) || value == '') {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
@@ -289,11 +288,7 @@ export class ApplicationsService {
       }
     }
 
-    const validators: ValidatorFn[] = [];
-
-    if (question.required) {
-      validators.push(Validators.required);
-    }
+    const validators = this._questionsService.getRequiredValidator(question);
 
     if (question instanceof QuestionTextbox) {
       this._questionsService.addDataTypeValidator(question, validators);
@@ -318,7 +313,7 @@ export class ApplicationsService {
     const applicationKey: number = applicationDefinition.key;
     return this._questionsStorageService.updateQuestions(applicationKey, form, status).pipe(
       switchMap((storedApplication: StoredApplication) => {
-        const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
+        const parsedJson = parseJsonToArray<QuestionReorder>(applicationDefinition.applicationFormJson);
         const questions = storedApplication.questions;
         const patronAttributes: PatronAttribute[] = this._patronAttributesService.getAttributes(
           applicationDetails.patronAttributes,

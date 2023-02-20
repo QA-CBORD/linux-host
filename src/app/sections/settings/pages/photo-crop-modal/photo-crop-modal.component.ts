@@ -34,7 +34,6 @@ const ORIGIN = 0;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
-  styleUrls: ['./photo-crop-modal.component.scss'],
 })
 export class PhotoCropModalComponent {
   cropperPosition = { x1: ORIGIN, y1: ORIGIN, x2: ORIGIN, y2: ORIGIN };

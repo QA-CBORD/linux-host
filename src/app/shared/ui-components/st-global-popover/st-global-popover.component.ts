@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons as BUTTONS } from '@core/utils/buttons.config';
+import { PopupButton } from '@core/model/button';
+import { StPopoverComponentDataModel } from '@shared/model/st-popover-data.model';
 
 @Component({
   selector: 'st-global-popover',
@@ -8,7 +10,7 @@ import { buttons as BUTTONS } from '@core/utils/buttons.config';
   styleUrls: ['./st-global-popover.component.scss'],
 })
 export class StGlobalPopoverComponent implements OnInit {
-  @Input() data: any;
+  @Input() data: StPopoverComponentDataModel;
 
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };
@@ -28,7 +30,7 @@ export class StGlobalPopoverComponent implements OnInit {
     };
   }
 
-  resolveButtons(buttons = [], showCancelBtn = true): any[] {
+  resolveButtons(buttons = [], showCancelBtn = true): PopupButton[] {
     if (buttons.length && !showCancelBtn) {
       return buttons;
     }

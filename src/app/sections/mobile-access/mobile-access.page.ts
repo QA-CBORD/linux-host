@@ -10,6 +10,7 @@ import { CONTENT_STRINGS } from './mobile-acces.config';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Keyboard } from '@capacitor/keyboard';
+import { SearchbarCustomEvent } from '@ionic/angular';
 
 @Component({
   selector: 'app-mobile-access',
@@ -71,7 +72,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
       .subscribe();
   }
 
-  onSearchedValue({ target: { value } }: any) {
+  onSearchedValue({ target: { value } }: SearchbarCustomEvent) {
     this.searchString$.next(value);
   }
 
