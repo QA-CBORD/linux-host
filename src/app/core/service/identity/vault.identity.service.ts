@@ -150,6 +150,7 @@ export class VaultIdentityService {
   async presentPinModal(
     pinAction: PinAction,
     pinModalProps?: PinLoginProps
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     return this.pinAuthenticator.presentPinModal(
       pinAction,

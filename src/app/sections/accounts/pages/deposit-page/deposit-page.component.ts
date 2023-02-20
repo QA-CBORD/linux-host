@@ -66,6 +66,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentString: DepositCsModel = {} as any;
   applePayEnabled$: Observable<boolean>;
   customActionSheetOptions = {

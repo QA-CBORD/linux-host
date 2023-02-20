@@ -49,6 +49,7 @@ export interface VaultSession {
 export class VaultAuthenticator {
     private onPinSuppliedCb: (pin: string) => void;
     private onPinModalClosedCb: (status: PinCloseStatus) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private pinVerifier: Subject<any> = new Subject();
 
     registerPinSuppliedCb(cb: (pin: string) => void) {

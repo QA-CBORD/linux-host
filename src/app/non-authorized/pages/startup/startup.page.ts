@@ -188,7 +188,7 @@ export class StartupPage {
   }
 
   //
-  async unlockVault(biometricEnabled: boolean): Promise<any> {
+  async unlockVault(biometricEnabled: boolean): Promise<void> {
     return await this.identityFacadeService
       .unlockVault(biometricEnabled)
       .then(session => this.handleVaultLoginSuccess(session))

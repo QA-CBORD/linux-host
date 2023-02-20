@@ -113,6 +113,7 @@ export class UserPassForm implements OnInit {
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.signupEnabled$ = this.isSignupEnabled$();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = this.messageProxy.get<any>() || {};
     this.navedAsGuest$ = of(data.navParams && data.navParams.isGuestUser);
     this.cdRef.detectChanges();
@@ -145,6 +146,7 @@ export class UserPassForm implements OnInit {
   }
 
   onSignup(): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { navParams } = this.messageProxy.get<any>();
     if (navParams) {
       this.doHostedSignup(navParams);
@@ -292,7 +294,7 @@ export class UserPassForm implements OnInit {
     }
   }
 
-  private async setLocalInstitutionInfo(): Promise<any> {
+  private async setLocalInstitutionInfo(): Promise<void> {
     this.institutionInfo = await this.commonService.getInstitution();
   }
 

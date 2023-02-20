@@ -9,6 +9,7 @@ import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-respo
 import { registerPlugin } from '@capacitor/core';
 import { zip } from 'rxjs';
 import { OrderInfo } from '@sections/ordering';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
 import { Browser } from '@capacitor/browser';
@@ -49,7 +50,9 @@ export class ExternalPaymentService {
   /* Apple Pay */
   /* Safari browser is required by Aople to use Apple Pay */
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async payWithApplePay(handleApplePay: ApplePay, queryParams: Partial<OrderInfo> | DepositInfo): Promise<any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new Promise<any>((resolve, reject) => {
       const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
       const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
@@ -122,6 +125,7 @@ export class ExternalPaymentService {
   private handleUSAePayResponse(
     event,
     resolve: (value?: USAePayResponse | PromiseLike<USAePayResponse>) => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     reject: (reason?: any) => void,
     browser
   ) {
@@ -140,7 +144,9 @@ export class ExternalPaymentService {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handleApplePayResponse(resolve: (value?: any) => void, reject: (reason?: any) => void) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const applePayEvent = IOSDevice.addListener('ApplePayEvent', async (info: any) => {
       if (info.url && info.url.includes('applepay')) {
         if (info.url.includes('status=success')) {
@@ -173,6 +179,7 @@ export class ExternalPaymentService {
   private browserListeners(
     browser: InAppBrowserObject,
     resolve: (value: USAePayResponse | PromiseLike<USAePayResponse>) => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     reject: (reason?: any) => void
   ) {
     browser.on('loadstart').subscribe(event => {

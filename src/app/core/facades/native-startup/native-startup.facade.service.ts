@@ -56,7 +56,8 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     this.blockNavStartup = true;
   }
 
-  fetchNativeStartupInfo(): Observable<any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fetchNativeStartupInfo(): Observable<{ title: string; message: string; arrOfBtns: any[]; }> {
     return from(Device.getInfo()).pipe(
       take(1),
       switchMap(async deviceInfo => {
