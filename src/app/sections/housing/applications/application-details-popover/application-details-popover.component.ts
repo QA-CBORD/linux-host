@@ -12,8 +12,6 @@ export class ApplicationDetailsPopover implements OnInit {
   popoverConfig: PopoverConfig<string>;
   @Input() details: ShortApplicationDetails;
 
-  constructor() {}
-
   ngOnInit(): void {
     this.initPopover();
   }
