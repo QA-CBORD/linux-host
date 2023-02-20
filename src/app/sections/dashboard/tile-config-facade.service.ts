@@ -77,10 +77,10 @@ export class TileConfigFacadeService extends ServiceStateFacade {
   }
 
   async resolveAsyncUpdatingConfig(instructions: {
-      [key in keyof Partial<TileWrapperConfig>]: Observable<any> |
-      { [key in keyof Partial<ButtonConfig>]: Observable<any> }
+      [key in keyof Partial<TileWrapperConfig>]: Observable<string> |
+      { [key in keyof Partial<ButtonConfig>]: Observable<string> }
     }
-    | { [key in keyof Partial<ButtonConfig>]: Observable<any> }): Promise<Partial<TileWrapperConfig>> {
+    | { [key in keyof Partial<ButtonConfig>]: Observable<string> }): Promise<Partial<TileWrapperConfig>> {
     const promises = [];
     let res = {};
 

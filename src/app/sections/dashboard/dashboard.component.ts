@@ -57,6 +57,7 @@ export class DashboardPage implements OnInit {
   explorerTile: ExploreTileComponent;
   mobileAccessTile: MobileAccessTileComponent;
   conversationTile: ConversationsTileComponent;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   disclosureCs: any;
 
   constructor(

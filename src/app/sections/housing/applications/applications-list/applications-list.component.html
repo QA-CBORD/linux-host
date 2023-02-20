@@ -11,7 +11,10 @@
   </ion-label>
 
   <st-actions
-    [canEdit]="!application?.patronApplication?.isApplicationSubmitted"
+    [canEdit]="!application?.patronApplication?.isApplicationSubmitted || application?.applicationDefinition?.canEdit"
     [navigateTo]="getPath(application.applicationDefinition.key)"
+    [showDetailsOption]="true"
+    [applicationDefinition] ="application?.applicationDefinition"
+    [patronApplication]="application?.patronApplication"
   ></st-actions>
 </ion-item>

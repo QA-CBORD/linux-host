@@ -32,6 +32,7 @@ import { CheckingServiceFacade } from '@sections/check-in/services/check-in-faca
 import { AddressInfo } from '@core/model/address/address-info';
 import { firstValueFrom } from 'rxjs';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
+import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-details-options.model';
 
 interface OrderMenuItem {
   menuItemId: string;
@@ -47,7 +48,7 @@ interface OrderMenuItem {
 })
 export class RecentOrderComponent implements OnInit, OnDestroy {
   order$: Observable<OrderInfo>;
-  orderDetailsOptions$: Observable<any>;
+  orderDetailsOptions$: Observable<OrderDetailsOptions>;
   merchant$: Observable<MerchantInfo>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   merchantTimeZoneDisplayingMessage: string;
@@ -99,7 +100,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     await this.initOrderOptionsModal(merchant);
   }
 
-  resolveMenuItemsInOrder(): Observable<(boolean | any[])[]> {
+  resolveMenuItemsInOrder(): Observable<(boolean | OrderMenuItem[])[]> {
     return zip(this.cart.menuInfo$, this.order$).pipe(
       map(([menu, orderInfo]) => {
         const existingMenuItems = this.merchantService.extractAllAvailableMenuItemsFromMenu(menu);

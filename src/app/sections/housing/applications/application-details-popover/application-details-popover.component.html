@@ -1,0 +1,22 @@
+<st-popover-layout [popoverConfig]="popoverConfig">
+    <div>
+        <ion-label>
+            <h5>Name: </h5>
+            <span>
+                {{ details.name }}
+            </span>
+        </ion-label>
+        <ion-label *ngIf="details.isSubmitted && details.firstSubmitted">
+            <h5>First Submitted: </h5>
+            <span>
+                {{ details.firstSubmitted | date: 'MM/dd/yyyy h:mm a' }}
+            </span>
+        </ion-label>
+        <ion-label *ngIf="details.isSubmitted && details.lastSubmitted">
+            <h5>Last Submitted: </h5>
+            <span>
+                {{ details.lastSubmitted | date: 'MM/dd/yyyy h:mm a' }}
+            </span>
+        </ion-label>
+    </div>
+</st-popover-layout>

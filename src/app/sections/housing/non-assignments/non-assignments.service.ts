@@ -124,7 +124,7 @@ export class NonAssignmentsService {
       catchError(() => of(false)));
   }
 
-  next(nonAssignmentKey: number, formValue: any): Observable<any> {
+  next(nonAssignmentKey: number, formValue) {
     return this._questionsStorageService.updateQuestions(nonAssignmentKey, formValue, 1)
   }
 
@@ -276,11 +276,11 @@ export class NonAssignmentsService {
   }
 
   private _toFormControl(
-    storedValue: any,
+    storedValue: string,
     question: QuestionFormControl,
     nonAssignmentDetails: NonAssignmentDetails
   ): FormControl {
-    let value: any = storedValue;
+    let value = storedValue;
 
     if (!isDefined(value)) {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {

@@ -96,7 +96,7 @@ describe('Application Startup Flow', () => {
 
     it('should call "unlockVault" when skipLoginFlow is true', async () => {
       jest.spyOn(location, 'getState').mockReturnValue({ skipLoginFlow: true, biometricEnabled: false });
-      const spy1 = jest.spyOn(component, 'unlockVault').mockResolvedValue(true);
+      const spy1 = jest.spyOn(component, 'unlockVault').mockResolvedValue();
       const spy2 = jest.spyOn(component, 'checkLoginFlow').mockResolvedValue(true);
 
       component.ionViewDidEnter();
@@ -106,7 +106,7 @@ describe('Application Startup Flow', () => {
 
     it('should call "checkLoginFlow" when skipLoginFlow is false', async () => {
       jest.spyOn(location, 'getState').mockReturnValue({ skipLoginFlow: false, biometricEnabled: false });
-      const spy1 = jest.spyOn(component, 'unlockVault').mockResolvedValue(true);
+      const spy1 = jest.spyOn(component, 'unlockVault').mockResolvedValue();
       const spy2 = jest.spyOn(component, 'checkLoginFlow').mockResolvedValue(true);
       component.ionViewDidEnter();
       expect(spy1).not.toBeCalled();

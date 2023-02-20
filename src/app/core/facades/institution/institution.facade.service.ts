@@ -40,7 +40,9 @@ export class InstitutionFacadeService extends ServiceStateFacade {
     return this.storageStateService
       .getStateEntityByKey$<GuestSetting>(this.guestSettingKey)
       .pipe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         map(data => (data && data.value) || <any>{}),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         catchError(() => of(<any>{})),
         take(1)
       )

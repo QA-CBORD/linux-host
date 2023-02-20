@@ -13,6 +13,7 @@ import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { CheckingServiceFacade } from '../services/check-in-facade.service';
 
 @Injectable()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class CheckinPendingResolver implements Resolve<Observable<any>> {
   constructor(
     private readonly merchantService: MerchantService,
@@ -23,6 +24,7 @@ export class CheckinPendingResolver implements Resolve<Observable<any>> {
     public readonly checkinService: CheckingServiceFacade
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
     this.loadingService.showSpinner();
     this.checkInService.getContentStringByName('pickup_info');

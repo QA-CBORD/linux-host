@@ -185,6 +185,7 @@ export class WorkOrdersService {
     form: WorkOrderDetails,
     formValue: FormControl): Observable<boolean> {
     const parsedJson: string[] = parseJsonToArray(form.formDefinition.applicationFormJson);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workOrdersControls: string[] = parsedJson.filter((control: any) => control && (<QuestionFormControl>control).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
     const { body, image } = this.buildWorkOrderList(workOrdersControls, formValue);
 
@@ -262,6 +263,7 @@ export class WorkOrdersService {
     reader.readAsDataURL(blob);
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private calculateSize(img: any, maxWidth: number, maxHeight: number): number[] {
     let width = img.width;
     let height = img.height;
@@ -295,6 +297,7 @@ export class WorkOrdersService {
     return parseJsonToArray(facilityTreeString);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
     let image: ImageData;
     let location: number;

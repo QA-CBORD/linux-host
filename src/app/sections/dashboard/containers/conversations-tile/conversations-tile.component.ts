@@ -13,7 +13,7 @@ import { buildConversationsFromMessages } from '@core/utils/conversations-helper
 export class ConversationsTileComponent implements OnInit {
   lastTwoMessagesArray: SecureMessageConversation[] = [];
   conversationDisplayedAmount = 2;
-  conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
+  conversationSkeletonArray: number[] = new Array(this.conversationDisplayedAmount);
   isLoading = true;
 
   constructor(

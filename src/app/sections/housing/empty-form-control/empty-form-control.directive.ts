@@ -18,7 +18,7 @@ export class EmptyFormControlDirective implements OnInit, OnDestroy {
   isFilled: boolean;
 
   ngOnInit(): void {
-    const valueChangesSubscription: Subscription = this.stEmptyFormControl.valueChanges.subscribe((value: any) =>
+    const valueChangesSubscription: Subscription = this.stEmptyFormControl.valueChanges.subscribe((value) =>
       this._checkIsEmpty(value)
     );
 
@@ -31,7 +31,7 @@ export class EmptyFormControlDirective implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  private _checkIsEmpty(value: any): void {
+  private _checkIsEmpty(value: object | string): void {
     if (value == null || value === '') {
       this.isEmpty = true;
       this.isFilled = false;

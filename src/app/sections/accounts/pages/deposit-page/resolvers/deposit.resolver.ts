@@ -10,16 +10,20 @@ import { CommonService } from '@shared/services/common.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { UserAccount } from '@core/model/account/account.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 
+type DepositResolution = Observable<[SettingInfo[], UserAccount[], ContentStringModel]>;
 @Injectable()
-export class DepositResolver implements Resolve<Observable<any>> {
+export class DepositResolver implements Resolve<DepositResolution> {
   constructor(
     private readonly depositService: DepositService,
     private readonly loadingService: LoadingService,
     private readonly commonService: CommonService
   ) {}
 
-  resolve(): Observable<any> {
+  resolve(): DepositResolution {
     const requiredSettings = [
       Settings.Setting.DEPOSIT_TENDERS,
       Settings.Setting.PAYMENT_TYPES,
@@ -43,7 +47,10 @@ export class DepositResolver implements Resolve<Observable<any>> {
     this.loadingService.showSpinner();
 
     return zip(settingsCall, accountsCall, depositContentStringModel).pipe(
-      tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner())
+      tap(
+        () => this.loadingService.closeSpinner(),
+        () => this.loadingService.closeSpinner()
+      )
     );
   }
 

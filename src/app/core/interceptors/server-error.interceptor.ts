@@ -16,9 +16,11 @@ import { ToastService } from '@core/service/toast/toast.service';
 export class ServerError implements HttpInterceptor {
   constructor(private readonly toastService: ToastService) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       tap(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (res: HttpEvent<any>) => {
           if (
             res instanceof HttpResponse &&
