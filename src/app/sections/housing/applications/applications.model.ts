@@ -17,6 +17,7 @@ export interface ApplicationDefinitionOptions {
   applicationFormJson?: string;
   accountCodeKey?: number;
   amount?: number;
+  canEdit?: boolean;
 }
 
 export class ApplicationDefinition implements ApplicationDefinitionOptions {
@@ -26,6 +27,7 @@ export class ApplicationDefinition implements ApplicationDefinitionOptions {
   applicationFormJson?: string;
   accountCodeKey?: number;
   amount?: number;
+  canEdit?: boolean;
 
   constructor(options: ApplicationDefinitionOptions) {
     if (options == null || typeof options !== 'object') {
@@ -37,7 +39,8 @@ export class ApplicationDefinition implements ApplicationDefinitionOptions {
     this.applicationTitle = String(options.applicationTitle);
     this.accountCodeKey = Number(options.accountCodeKey);
     this.amount = Number(options.amount);
-
+    this.canEdit = Boolean(options.canEdit);
+    
     if (isDefined(options.applicationFormJson)) {
       this.applicationFormJson = String(options.applicationFormJson);
     }

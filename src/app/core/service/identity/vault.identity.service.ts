@@ -1,6 +1,7 @@
 import { Inject, Injectable, Injector, NgZone } from "@angular/core";
 import { App } from "@capacitor/app";
 import { PluginListenerHandle } from "@capacitor/core";
+import { PinLoginProps } from "@core/model/authentication/pin-login-props.model";
 import {
   BrowserVault,
   Device,
@@ -35,7 +36,7 @@ export class VaultIdentityService {
   public state: VaultSession = { biometricUsed: false, pin: null };
   private vault: Vault | BrowserVault;
   private pluginListenerHandle: PluginListenerHandle;
-  private setTimeoutId: any;
+  private setTimeoutId;
   pinAuthenticator: PinAuthenticator;
 
   constructor(
@@ -148,7 +149,8 @@ export class VaultIdentityService {
 
   async presentPinModal(
     pinAction: PinAction,
-    pinModalProps?: any
+    pinModalProps?: PinLoginProps
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     return this.pinAuthenticator.presentPinModal(
       pinAction,

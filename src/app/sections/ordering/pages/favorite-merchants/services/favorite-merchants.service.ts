@@ -18,7 +18,7 @@ export class FavoriteMerchantsService {
     const queryConfig = new RPCQueryConfig('getFavoriteMerchants', postParams, true);
 
     return this.http.post(this.serviceUrlMerchant, queryConfig).pipe(
-      map(({ response }: MessageResponse<any>) => response.list.map(merchant => ({ ...merchant, isFavorite: true }))),
+      map(({ response }: MessageResponse<{list: MerchantInfo[]}>) => response.list.map(merchant => ({ ...merchant, isFavorite: true }))),
     );
   }
 }

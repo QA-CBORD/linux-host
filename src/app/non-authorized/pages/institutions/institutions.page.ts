@@ -18,10 +18,11 @@ import { Institution, InstitutionLookupListItem } from '@core/model/institution'
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-import { Platform } from '@ionic/angular';
+import { Platform, SearchbarCustomEvent } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { registerPlugin } from '@capacitor/core';
 import { firstValueFrom } from 'rxjs';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Component({
@@ -65,7 +66,7 @@ export class InstitutionsPage implements OnInit {
     Keyboard.hide();
   }
 
-  onSearchedValue({ target: { value } }: any) {
+  onSearchedValue({ target: { value } }: SearchbarCustomEvent) {
     this.searchString = value;
   }
 

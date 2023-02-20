@@ -18,6 +18,7 @@ export enum PromiseExecStatus {
 export interface ExecOptions<T> {
     promise: () => Promise<T>,
     showLoading?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rejectOnError?: (error: any) => boolean,
     shouldNavigate?: boolean
 }
@@ -47,6 +48,7 @@ export class ConnectivityAwareFacadeService {
         this.connectionFacadeService.setPinModalOpened(isOpened);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private setOptionsDefaults(options: ExecOptions<any>) {
         options.showLoading = options.showLoading === undefined ? true : options.showLoading;
         options.rejectOnError = options.rejectOnError || (() => false);

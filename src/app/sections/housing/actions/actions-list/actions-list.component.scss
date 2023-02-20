@@ -1,0 +1,5 @@
+@import 'tools';
+
+ion-item {
+   @include font-nunito-regular(16px);
+}

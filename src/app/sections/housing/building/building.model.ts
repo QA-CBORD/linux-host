@@ -8,7 +8,7 @@ export class Building {
   isFavorite: boolean;
   labels: Label[];
 
-  constructor(options: any) {
+  constructor(options) {
     this.key = options.key;
     this.title = options.title;
     this.isFavorite = !!options.isFavorite;

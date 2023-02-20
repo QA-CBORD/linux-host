@@ -59,20 +59,21 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   creditCardDestinationAccounts: Array<UserAccount>;
   billmeDestinationAccounts: Array<UserAccount>;
   destinationAccounts: Array<UserAccount>;
-  billmeMappingArr: any[];
+  billmeMappingArr: BillMeMapping[];
   isDepositing = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentString: DepositCsModel = {} as any;
   applePayEnabled$: Observable<boolean>;
-  customActionSheetOptions: any = {
+  customActionSheetOptions = {
     cssClass: 'custom-deposit-actionSheet',
   };
 
-  customActionSheetPaymentOptions: any = {
+  customActionSheetPaymentOptions = {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
@@ -288,7 +289,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     } else {
       iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
         .pipe(
-          switchMap((sourceAcc): any => {
+          switchMap((sourceAcc) => {
             const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
               sourceAcc.id,
               selectedAccount.id,
@@ -302,7 +303,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           take(1)
         )
         .subscribe(
-          (info: any) => this.confirmationDepositPopover({ ...info }),
+          (info) => this.confirmationDepositPopover({ ...info }),
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');
@@ -406,8 +407,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           const billmeMappingArr = this.getSettingByName(settings, Settings.Setting.BILLME_MAPPING.split('.')[2]);
 
           return {
-            depositTenders: parseArrayFromString(depositTenders),
-            billmeMappingArr: parseArrayFromString(billmeMappingArr),
+            depositTenders: parseArrayFromString<string>(depositTenders),
+            billmeMappingArr: parseArrayFromString<BillMeMapping>(billmeMappingArr),
           };
         }),
         switchMap(({ depositTenders, billmeMappingArr }) =>
@@ -446,7 +447,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       amount && amount.length ? `${submitButtonText} $` + amount : submitButtonText;
   }
 
-  async confirmationDepositPopover(data: any) {
+  async confirmationDepositPopover(data) {
     const { confirmDepositCs: contentString } = this.contentString;
     const popover = await this.popoverCtrl.create({
       cssClass: 'sc-popover',

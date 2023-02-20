@@ -7,22 +7,25 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MealDonationsService } from '../service/meal-donations.service';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { Settings } from '../../../../../app.global';
+import { UserAccount } from '@core/model/account/account.model';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+
+type MealDonationsResolution = Observable<[UserAccount[], SettingInfo[], ContentStringInfo[], ContentStringInfo[]]>;
 
 @Injectable()
-export class MealDonationsResolver implements Resolve<Observable<SettingInfo[]>> {
+export class MealDonationsResolver implements Resolve<MealDonationsResolution> {
   constructor(
     private readonly loadingService: LoadingService,
     private readonly mealDonationsService: MealDonationsService,
-    private readonly accountsService: AccountService,
+    private readonly accountsService: AccountService
   ) {}
-  resolve(): Observable<any> {
 
-
+  resolve(): MealDonationsResolution {
     const requiredSettings: Settings.Setting[] = [
       Settings.Setting.MEAL_DONATIONS_TENDERS,
       Settings.Setting.MEAL_DONATIONS_FREEFORM_ENABLED,
       Settings.Setting.MEAL_DONATIONS_FIXED_DOLLAR_AMOUNTS,
-      Settings.Setting.MEAL_DONATIONS_FIXED_MEAL_AMOUNTS
+      Settings.Setting.MEAL_DONATIONS_FIXED_MEAL_AMOUNTS,
     ];
 
     const accountContentStrings = this.accountsService.initContentStringsList();

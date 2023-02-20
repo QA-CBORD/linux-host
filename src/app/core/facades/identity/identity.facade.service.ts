@@ -50,6 +50,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     biometricEnabled: boolean,
     navigateToDashboard = true,
     pinModalProps?: PinLoginProps
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const { data, role } = await this.identityService.presentPinModal(
       biometricEnabled ? PinAction.SET_BIOMETRIC : PinAction.SET_PIN_ONLY,

@@ -26,7 +26,7 @@ export interface NonAssignmentListDetailsOptions {
     id: number;
     status?: string;
     applicationDescription: string;
-    applicationFormJson: any;
+    applicationFormJson;
     applicationTitle: string;
     applicationTypeId: number;
     applicationAvailableEndDateTime: string;
@@ -42,7 +42,7 @@ export interface NonAssignmentListDetailsOptions {
 export class NonAssignmentListDetails implements NonAssignmentListDetailsOptions {
     id: number;
     applicationDescription: string;
-    applicationFormJson: any;
+    applicationFormJson;
     applicationTitle: string;
     applicationTypeId: number;
     applicationAvailableEndDateTime: string;
@@ -128,7 +128,7 @@ export class AssetType implements AssetTypeOptions {
 
 export interface NonAssignmentDetailsOptions {
     nonAssignmentInfo: NonAssignmentInfo;
-    formJson: any;
+    formJson;
     chargeSchedules: ChargeSchedule[];
     patronAttributes: PatronAttribute[];
     assetTypes: AssetType[];
@@ -137,7 +137,7 @@ export interface NonAssignmentDetailsOptions {
 
 export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
     nonAssignmentInfo: NonAssignmentInfo;
-    formJson: any;
+    formJson;
     chargeSchedules: ChargeSchedule[];
     patronAttributes: PatronAttribute[];
     assetTypes: AssetType[];
@@ -152,19 +152,19 @@ export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
         this.formJson = options.formJson;
 
         this.chargeSchedules = Array.isArray(options.chargeSchedules)
-            ? options.chargeSchedules.map((schedule: any) => new ChargeSchedule(schedule))
+            ? options.chargeSchedules.map((schedule) => new ChargeSchedule(schedule))
             : [];
 
         this.patronAttributes = Array.isArray(options.patronAttributes)
-            ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+            ? options.patronAttributes.map((attribute) => new PatronAttribute(attribute))
             : [];
 
         this.assetTypes = Array.isArray(options.assetTypes)
-            ? options.assetTypes.map((asset: any) => new AssetType(asset))
+            ? options.assetTypes.map((asset) => new AssetType(asset))
             : [];
 
         this.patronAddresses = Array.isArray(options.patronAddresses)
-            ? options.patronAddresses.map((address: any) => new PatronAddress(address))
+            ? options.patronAddresses.map((address) => new PatronAddress(address))
             : [];
     }
 }
@@ -249,11 +249,11 @@ export class NonAssignmentContractRequest implements NonAssignmentContractReques
         this.patronContract = new ContractRequest(options.patronContract);
 
         if (Array.isArray(options.patronAttributes)) {
-        this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
+        this.patronAttributes = options.patronAttributes.map((attribute) => new PatronAttribute(attribute));
         }
 
         if (Array.isArray(options.patronAddresses)) {
-        this.patronAddresses = options.patronAddresses.map((address: any) => new PatronAddress(address));
+        this.patronAddresses = options.patronAddresses.map((address) => new PatronAddress(address));
         }
     }
 }

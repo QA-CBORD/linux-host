@@ -190,6 +190,7 @@ export class ItemDetailComponent implements OnInit {
       return;
     }
     const menuItem = this.configureMenuItem(this.menuItem.id, this.order.counter);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
     arrayOfvalues.forEach(value => {
       if (!value) {
@@ -332,6 +333,7 @@ export class ItemDetailComponent implements OnInit {
 
   private valueChanges() {
     const subscription = this.itemOrderForm.valueChanges.subscribe(formValue => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const arrayValues: any[] = Object.values(formValue);
       this.order = { ...this.order, optionsPrice: 0 };
       arrayValues.forEach(value => {
@@ -380,7 +382,7 @@ export class ItemDetailComponent implements OnInit {
 }
 
 export const validateMinLengthOfArray = (min: number | undefined): ValidationErrors | null => {
-  return (c: AbstractControl): { [key: string]: any } => {
+  return (c: AbstractControl): ValidationErrors | null => {
     if (!min || c.value.length >= min) return null;
 
     return { minLength: { valid: false } };
@@ -388,7 +390,7 @@ export const validateMinLengthOfArray = (min: number | undefined): ValidationErr
 };
 
 export const validateMaxLengthOfArray = (max: number | undefined): ValidationErrors | null => {
-  return (c: AbstractControl): { [key: string]: any } => {
+  return (c: AbstractControl): ValidationErrors | null => {
     if (!max || c.value.length <= max) return null;
 
     return { maxLength: { valid: false } };

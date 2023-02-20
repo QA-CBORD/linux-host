@@ -34,7 +34,7 @@ export class Attribute implements AttributeOptions {
 export class OccupantAttribute extends Attribute {
   name = 'Some Attribute'
 
-  constructor(options: any) {
+  constructor(options) {
     super(options);
 
     if(options == null) {

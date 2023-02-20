@@ -1,5 +1,4 @@
 import { Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { take, map, switchMap } from 'rxjs/operators';
 import {
   Field,
@@ -63,7 +62,7 @@ export class PatronRegistration extends UserRegistrationBase implements UserRegi
     });
   }
 
-  register(formData): Observable<any> {
+  register(formData) {
     const data = { ...formData };
     const dynamicLookupFields = this.dynamicFields;
     dynamicLookupFields.forEach(field => {
