@@ -42,9 +42,9 @@ pipelines:
             - cd scripts
             - chmod +x UpdateRelease.sh
             - ./UpdateRelease.sh $WEBHOOK_URL
-    qa-update:
+    update-from-develop:
       - step:
-          name: QA Automation Update
+          name: Update from develop
           image: atlassian/default-image:3
           script:
             - cd scripts
