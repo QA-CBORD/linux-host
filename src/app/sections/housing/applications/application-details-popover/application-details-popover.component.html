@@ -2,7 +2,7 @@
     <div>
         <ion-label>
             <h5>Name: </h5>
-            <span [ngClass]="shrinkName(data.name.length)">
+            <span>
                 {{ data.name }}
             </span>
         </ion-label>
@@ -18,7 +18,7 @@
                 {{ data.firstSubmitted | date: 'MM/dd/yyyy' }}
             </span>
         </ion-label>
-        <ion-label>
+        <ion-label  *ngIf="data.lastSubmitted">
             <h5>Last Submitted: </h5>
             <span>
                 {{ data.lastSubmitted | date: 'MM/dd/yyyy' }}

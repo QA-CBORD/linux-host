@@ -22,9 +22,4 @@ export class ApplicationDetailsPopover implements OnInit {
       ...this.popoverConfig,
     };
   }
-
-  shrinkName(length: number) {
-    const limitLength = 30;
-    return length > limitLength ? 'long-font': '';
-  }
 }
