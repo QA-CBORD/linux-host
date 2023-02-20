@@ -33,9 +33,7 @@ export class ActionsListComponent {
       componentProps: {
         details: {
           name: this.applicationDefinition?.applicationTitle,
-          created: this.patronApplication?.createdDateTime,
           isSubmitted: this.patronApplication?.status === ApplicationStatus.Submitted,
-          firstSubmitted: '',
           lastSubmitted: this.patronApplication?.submittedDateTime,
         },
       },

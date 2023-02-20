@@ -6,12 +6,6 @@
                 {{ details.name }}
             </span>
         </ion-label>
-        <ion-label *ngIf="details.created">
-            <h5>Created On: </h5>
-            <span>
-                {{ details.created | date: 'MM/dd/yyyy h:mm a' }}
-            </span>
-        </ion-label>
         <ion-label *ngIf="details.isSubmitted && details.firstSubmitted">
             <h5>First Submitted: </h5>
             <span>

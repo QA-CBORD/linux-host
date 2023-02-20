@@ -19,7 +19,6 @@ describe('ApplicationDetailsPopoverComponent', () => {
     component.details = {
       name: "",
       isSubmitted: true,
-      created: date,
       firstSubmitted: date,
       lastSubmitted: date
     };
