@@ -23,7 +23,7 @@ import { TransactionalData } from './transactional-data.model';
 
 export interface CurrentForm {
   key: number,
-  details: ApplicationDetails | ContractDetails | any,
+  details: ApplicationDetails | ContractDetails,
   formControl: FormControl,
   isSubmitted?: boolean,
   type: 'application' | 'work-order',
@@ -126,7 +126,7 @@ export class FormPaymentComponent implements OnInit {
       }); 
 
     } else if (this.currentForm.type === FormType.WorkOrder) {
-      this.contractsService.submitContract(this.currentForm.key, this.currentForm.details?.formKey).pipe(take(1)).subscribe(async () => {
+      this.contractsService.submitContract(this.currentForm.key, (<ContractDetails>this.currentForm.details)?.formKey).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
       });
     }
@@ -148,17 +148,17 @@ export class FormPaymentComponent implements OnInit {
 
   get formTitle(): string {
     if(this.currentForm.type === FormType.Application) {
-      return this.currentForm.details.applicationDefinition.applicationTitle;
+      return (<ApplicationDetails>this.currentForm.details).applicationDefinition.applicationTitle;
     } else if (this.currentForm.type === FormType.WorkOrder) {
-      return this.currentForm.details.contractInfo.contractName;
+      return (<ContractDetails>this.currentForm.details).contractInfo.contractName;
     }
   }
 
   get amountDue(): string {
     if(this.currentForm.type === FormType.Application) {
-      return this.currentForm.details.applicationDefinition.amount.toFixed(2);
+      return (<ApplicationDetails>this.currentForm.details).applicationDefinition.amount.toFixed(2);
     } else if (this.currentForm.type === FormType.WorkOrder) {
-      return this.currentForm.details.amount.toFixed(2);
+      return (<ContractDetails>this.currentForm.details).amount.toFixed(2);
     }
   }
 
@@ -184,7 +184,7 @@ export class FormPaymentComponent implements OnInit {
 
   private showDisclaimer(): boolean {
     if (this.currentForm.type === FormType.Application) {
-       return !this.currentForm.details.applicationDefinition.canEdit;
+       return !(<ApplicationDetails>this.currentForm.details).applicationDefinition.canEdit;
     }
 
     return false;

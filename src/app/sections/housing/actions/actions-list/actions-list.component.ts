@@ -18,7 +18,7 @@ export class ActionsListComponent {
   showRemoveOption = false;
   applicationDefinition: ApplicationDefinition;
   patronApplication: PatronApplication;
-  @Output() onRemove = new EventEmitter<any>();
+  @Output() onRemove = new EventEmitter<void>();
 
   constructor(private _popoverController: PopoverController) {}
 
