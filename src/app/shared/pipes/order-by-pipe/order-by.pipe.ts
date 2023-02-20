@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'order_by',
 })
 export class OrderByPipe implements PipeTransform {
-  transform(value: any, propName: string) {
+  transform(value: object[], propName: string) {
 
     return value.sort((a, b) => {
        if (a[propName] < b[propName]) {

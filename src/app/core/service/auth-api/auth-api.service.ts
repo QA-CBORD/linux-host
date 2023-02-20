@@ -131,7 +131,7 @@ export class AuthApiService {
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
-  retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {
+  retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string) {
     const postParams = {
       deviceModel,
       deviceOSVersion,

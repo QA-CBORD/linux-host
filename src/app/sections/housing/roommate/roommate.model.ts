@@ -11,7 +11,7 @@ export class FacilityOccupantDetails {
   public patronKey: number;
   public attributes: OccupantAttribute[] = null;
 
-  constructor(options: any) {
+  constructor(options) {
     if(options == null || !(options instanceof Object)) {
       options = {} as FacilityOccupantDetailsOptions;
     }
@@ -39,7 +39,7 @@ export interface RoommateResponseOptions {
 export class RoommateResponse implements RoommateResponseOptions {
   roommates: RoommateDetails[];
 
-  constructor(options: any) {
+  constructor(options) {
     if(options == null || !Array.isArray(options)) {
       options = [] as RoommateResponseOptions[];
     }

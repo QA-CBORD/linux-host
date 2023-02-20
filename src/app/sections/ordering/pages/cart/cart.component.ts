@@ -52,7 +52,6 @@ import { CART_ROUTES } from './cart-config';
 @Component({
   selector: 'st-cart',
   templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent implements OnInit, OnDestroy {
@@ -283,7 +282,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
-    const data: any = {
+    const data = {
       title: 'Oooops',
       message,
       showClose: !buttonLable,
@@ -480,7 +479,7 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getDeliveryLocations(): Observable<any> {
+  private getDeliveryLocations() {
     return this.cartService.merchant$.pipe(
       filter(merchant => merchant !== null),
       switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
@@ -488,7 +487,7 @@ export class CartComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getPickupLocations(): Observable<any> {
+  private getPickupLocations() {
     return this.cartService.merchant$.pipe(
       filter(pickupsLocations => pickupsLocations !== null),
       switchMap(({ storeAddress, settings }) =>

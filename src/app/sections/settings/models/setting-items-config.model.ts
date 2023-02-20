@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Settings } from 'src/app/app.global';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
-import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
@@ -82,10 +82,6 @@ export enum SETTINGS_VALIDATIONS {
   StatusSettingEnable = 'status-enable',
   MobileCredentialEnabled = 'mobile-credential',
   ChangePasswordEnabled = 'change-password'
-}
-
-export interface UserInfoSet extends UserInfo {
-  userNotificationInfoList: UserNotificationInfo[];
 }
 
 export interface SettingsServices {

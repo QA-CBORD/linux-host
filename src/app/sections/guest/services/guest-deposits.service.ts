@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { LookupFieldInfo } from '@core/model/institution/institution-lookup-field.model';
 import { UserApiService } from '@core/service/user-api/user-api.service';
-import { of } from 'rxjs';
 import { map, switchMap, withLatestFrom, take, catchError } from 'rxjs/operators';
 import { User } from 'src/app/app.global';
 import { Recipient } from '../model/recipient.model';
@@ -45,7 +44,7 @@ export class GuestDepositsService {
     fields: LookupFieldInfo[],
     recipients: Recipient[],
     save = false
-  ): Promise<{ nickname: string; id: any }> {
+  ): Promise<{ nickname: string; id: string }> {
     return this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
@@ -65,19 +64,14 @@ export class GuestDepositsService {
 
   guestAccounts(): Observable<UserAccount[]> {
     return this.authFacadeService.isGuestUser().pipe(
-      switchMap(isGuest => {
-        if (isGuest) {
-          return this.userFacadeService.getUserData$();
-        }
-        return throwError('You are not logged in as a Guest.');
-      }),
+      switchMap(isGuest => this.handleGuestUser(isGuest)),
       switchMap(({ id: userId }) => {
         return this.commerceApiService.retrieveAccountsByUser(userId).pipe(take(1));
       }),
       handleServerError(ACCOUNTS_VALIDATION_ERRORS),
       catchError(err => {
         this.onErrorRetrieve(err);
-        return throwError(err);
+        return throwError(() => new Error(err));
       })
     );
   }
@@ -87,7 +81,7 @@ export class GuestDepositsService {
       handleServerError(ACCOUNTS_VALIDATION_ERRORS),
       catchError(err => {
         this.onErrorRetrieve(err);
-        return throwError(err);
+        return throwError(() => new Error(err));
       }),
       take(1)
     );
@@ -95,12 +89,7 @@ export class GuestDepositsService {
 
   guestDeposit(fromAccountId: string, toAccountId: string, amount: number): Observable<string> {
     return this.authFacadeService.isGuestUser().pipe(
-      switchMap(isGuest => {
-        if (isGuest) {
-          return this.userFacadeService.getUserData$();
-        }
-        return throwError('You are not logged in as a Guest.');
-      }),
+      switchMap(isGuest => this.handleGuestUser(isGuest)),
       switchMap(({ id: userId }) => {
         return this.commerceApiService.depositForUser(userId, fromAccountId, toAccountId, amount);
       })
@@ -109,5 +98,12 @@ export class GuestDepositsService {
 
   private async onErrorRetrieve(message: any) {
     await this.toastService.showToast({ message, duration: 5000 });
+  }
+
+  private handleGuestUser(isGuest: boolean) {
+    if (isGuest) {
+      return this.userFacadeService.getUserData$();
+    }
+    return throwError(() => new Error('You are not logged in as a Guest.'));
   }
 }

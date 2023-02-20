@@ -55,6 +55,8 @@ export abstract class MobileCredential implements MobileCredentialState {
 
   abstract getId():string;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   abstract getCredentialBundle(): any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   abstract setCredentialBundle(data: any): void;
 }

@@ -22,6 +22,7 @@ export class SavedAddressesComponent implements OnInit {
   buildings$: Observable<BuildingInfo[]>;
   errorState = false;
   addNewAdddressState = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   defaultAddress: string;
@@ -105,6 +106,7 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   //GetBuilding Data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getBuildingData$(isOncampus: number): Observable<any> {
     if (isOncampus) {
       return zip(this.buildings$, this.contentStrings.labelRoom).pipe(

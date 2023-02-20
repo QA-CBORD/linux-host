@@ -3,7 +3,7 @@ import { PopoverController } from '@ionic/angular';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { finalize, map, switchMap, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { RedeemableRewardInfo } from '@sections/rewards/models';
+import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '@sections/rewards/models';
 import { RewardsApiService, RewardsService } from '@sections/rewards/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CLAIM_STATUS, CONTENT_STRINGS, LEVEL_STATUS, PopupTypes } from '@sections/rewards/rewards.config';
@@ -128,7 +128,7 @@ export class ListItemComponent {
     }
   }
 
-  private refreshData(): Observable<any> {
+  private refreshData(): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     this.loadingService.showSpinner();
     return this.rewardsService.getAllData().pipe(
       take(1),

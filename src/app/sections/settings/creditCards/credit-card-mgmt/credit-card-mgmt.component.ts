@@ -56,6 +56,7 @@ export class CreditCardMgmtComponent implements OnInit {
   }
 
    removeAccount = async ({ account, display }): Promise<void> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const strings = this.contentStrings as any;
     const cardType = display.split(' ')[0];
     const modal = await this.popoverCtrl.create({

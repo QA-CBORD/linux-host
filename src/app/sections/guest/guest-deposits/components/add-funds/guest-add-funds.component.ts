@@ -151,7 +151,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       of(paymentMethod)
         .pipe(
           switchMap(
-            (sourceAcc): any => {
+            (sourceAcc) => {
               const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
                 sourceAcc.id,
                 toAccount.id,
@@ -173,8 +173,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
         )
         .subscribe(
           info => {
-            // eslint-disable-next-line @typescript-eslint/ban-types
-            this.confirmationDepositPopover({ ...(info as {}) });
+            this.confirmationDepositPopover({ ...info });
           },
           () => {
             this.loadingService.closeSpinner();
@@ -185,7 +184,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     }
   }
 
-  async confirmationDepositPopover(data: any) {
+  async confirmationDepositPopover(data) {
     const { confirmDepositCs: contentString } = this.confirmationCs as DepositCsModel;
     const popover = await this.popoverCtrl.create({
       cssClass: 'sc-popover',
@@ -208,7 +207,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       }
     });
 
-    return await popover.present();
+    await popover.present();
   }
 
   get hideAccountBalance() {
@@ -298,7 +297,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     return (this.guestDepositForm && this.guestDepositForm.invalid) || this.isDepositing;
   }
 
-  private performDeposit(data: any) {
+  private performDeposit(data) {
     this.guestDepositsService
       .guestDeposit(data.sourceAcc.id, data.selectedAccount.id, data.amount)
       .pipe(
@@ -327,7 +326,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.setSourceAccounts(response.data.sourceAccounts);
   }
 
-  private formatAmountValue(mainInput: any, amountToDeposit: any) {
+  private formatAmountValue(mainInput: string, amountToDeposit: string) {
     let amount = mainInput || amountToDeposit;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     return amount;

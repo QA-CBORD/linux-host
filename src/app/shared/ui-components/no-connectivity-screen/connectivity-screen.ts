@@ -32,7 +32,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   @Input() freshContentStringsLoaded = false;
   @Input() isVaultLocked = true;
   @Input() navBackUrl: string;
-  strings: any;
+  strings = undefined;
 
   isLoading = false;
   config: ConnectivityPageConfig;
@@ -191,6 +191,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async openScanCard(): Promise<any> {
     await this.loadingService.showSpinner();
     await this.closeToastIfOpened();

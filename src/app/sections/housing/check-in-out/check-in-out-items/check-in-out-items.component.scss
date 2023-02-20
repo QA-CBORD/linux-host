@@ -27,9 +27,15 @@
     justify-content: space-between;
     align-items: center;
   }
-  .check-in-out-list__item-start-time, .check-in-out-list__item-end-time {
-    display: block;
+  .dates-container{
+    display: flex;
     color: $color-dusty-gray;
+    @include font-nunito-regular(10pt);
+  }
+  .check-in-out-list__item-start-time,
+  .check-in-out-list__item-end-time {
+    display: block;
+    
   }
   .check-in-out__facility-name {
     display: block;

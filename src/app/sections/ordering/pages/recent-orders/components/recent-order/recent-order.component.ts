@@ -33,6 +33,13 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { firstValueFrom } from 'rxjs';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 
+interface OrderMenuItem {
+  menuItemId: string;
+  orderItemOptions: OrderMenuItem[];
+  quantity: number;
+  specialInstructions: string;
+}
+
 @Component({
   selector: 'st-recent-order',
   templateUrl: './recent-order.component.html',
@@ -92,7 +99,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     await this.initOrderOptionsModal(merchant);
   }
 
-  resolveMenuItemsInOrder(): Observable<any> {
+  resolveMenuItemsInOrder(): Observable<(boolean | any[])[]> {
     return zip(this.cart.menuInfo$, this.order$).pipe(
       map(([menu, orderInfo]) => {
         const existingMenuItems = this.merchantService.extractAllAvailableMenuItemsFromMenu(menu);
@@ -203,7 +210,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getOrderItemInitialObject(orderItem: OrderItem, menuItem: MenuItemInfo) {
+  private getOrderItemInitialObject(orderItem: OrderItem, menuItem: MenuItemInfo): OrderMenuItem {
     return {
       menuItemId: menuItem.id,
       orderItemOptions: orderItem.orderItemOptions.length
@@ -306,7 +313,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     const address = this.order$.pipe(
       first(),
       switchMap(
-        ({ type, deliveryAddressId }): any =>
+        ({ type, deliveryAddressId }) =>
           iif(() => type === ORDER_TYPE.DELIVERY, this.getDeliveryAddress(deliveryAddressId), this.getPickupAddress())
       )
     );
@@ -325,7 +332,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getPickupAddress(): Observable<any> {
+  private getPickupAddress(): Observable<AddressInfo> {
     return this.order$.pipe(
       take(1),
       switchMap(({ merchantId, pickupAddressId }) => {
@@ -349,14 +356,14 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getDeliveryAddress(deliveryId: string): Observable<any> {
+  private getDeliveryAddress(deliveryId: string): Observable<AddressInfo> {
     return this.merchantService.retrieveUserAddressList().pipe(
       map(addresses => addresses.find(({ id }) => id === deliveryId)),
       map(address => address)
     );
   }
 
-  private cancelOrder(): Observable<any> {
+  private cancelOrder(): Observable<boolean> {
     return this.order$.pipe(
       switchMap(({ id }) => this.merchantService.cancelOrderById(id)),
       handleServerError(ORDER_VALIDATION_ERRORS)

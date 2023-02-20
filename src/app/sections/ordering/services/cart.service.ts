@@ -124,10 +124,12 @@ export class CartService {
       try {
         date = new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2'));
       } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         date = <any>dateStr;
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const options: any = {
       day: '2-digit',
       month: 'short',
@@ -231,11 +233,11 @@ export class CartService {
     this.onStateChanged();
   }
 
-  getAddress(type: any, addr: any): any {
+  getAddress(type: ORDER_TYPE, addr) {
     return type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
   }
 
-  getDate(dueTime: any, locale: string, timeZone: string): any {
+  getDate(dueTime, locale: string, timeZone: string) {
     return dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
   }
 

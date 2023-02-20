@@ -141,11 +141,11 @@ export class WaitingListsService {
   }
 
   private _toFormControl(
-    storedValue: any,
+    storedValue,
     question: QuestionFormControl,
     waitingListDetails: WaitingListDetails
   ): FormControl {
-    let value: any = storedValue;
+    let value = storedValue;
     let disabled = false;
 
     if (!isDefined(value)) {
@@ -158,7 +158,7 @@ export class WaitingListsService {
       }
     }
 
-    return new FormControl({ value, disabled });
+    return new FormControl({ value, disabled }, this._questionsService.getRequiredValidator(question));
   }
 
   private _getSelectedWaitingListValue(waitingList: WaitingListDetails): string {
@@ -180,7 +180,7 @@ export class WaitingListsService {
     return value;
   }
 
-  next(formValue: any): Observable<any> {
+  next(formValue): Observable<boolean> {
     if (Object.keys(formValue).find(value => value.includes('attribute-selection')) ||
         Object.keys(formValue).find(value => value.includes('facility-selection'))) {
         this._waitingListState.setFormSelection(formValue);
@@ -191,7 +191,7 @@ export class WaitingListsService {
   
   submitWaitingList(
     waitListKey: number,
-    form: any): Observable<boolean> {
+    form): Observable<boolean> {
       let formQuestions;
       
       if (Object.keys(form).find(value => value.includes('attribute-selection')) ||

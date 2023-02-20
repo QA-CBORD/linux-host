@@ -10,6 +10,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import {
   AlertController,
+  IonContent,
   Platform,
   ToastController
 } from '@ionic/angular';
@@ -44,7 +45,7 @@ import { FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
-  @ViewChild('content') private content: any;
+  @ViewChild('content') private content: IonContent;
   @ViewChild(StepperComponent) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
@@ -137,7 +138,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
           this.isSubmitted = false; //!!nonAssignmentDetails.nonAssignmentInfo.dateTimeSigned;
           this._loadingService.closeSpinner();
         }),
-        catchError((error: any) => {
+        catchError((error: Error) => {
           this._loadingService.closeSpinner();
           return throwError(error);
         })
@@ -149,7 +150,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
     this.subscriptions.add(termSubs);
   }
 
-  private _next(formValue: any): void {
+  private _next(formValue): void {
     this.content.scrollToTop();
 
     if (this.isSubmitted) {
@@ -165,7 +166,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
     this.subscriptions.add(nextSubscription);
   }
 
-  private async _update(nonAssignmentDetails: NonAssignmentDetails, formValue: any): Promise<void> {
+  private async _update(nonAssignmentDetails: NonAssignmentDetails, formValue): Promise<void> {
     const alert = await this._alertController.create({
       header: 'Confirm',
       message: `Are you sure you want to select ${this.selectedAssetName}?`,
@@ -201,7 +202,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
                     if (status) {
                       // redirect to housing dashboard (terms page)
                       this._nonAssignmentsStateService.setSelectedAssetType([]);
-                      alert.dismiss().then(() => this._housingService.handleSuccess());
+                      alert.dismiss().then(() => this._housingService.goToDashboard());
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();

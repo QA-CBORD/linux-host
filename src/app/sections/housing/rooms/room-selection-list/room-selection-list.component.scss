@@ -55,12 +55,16 @@
     justify-content: space-between;
     align-items: center;
   }
-
-  .roomSelect-list__item-start-time, .roomSelect-list__item-end-time {
-    display: block;
+  .dates-container {
+    display: flex;
     color: $color-dusty-gray;
-    padding: 2.5px;
-}
+    @include font-nunito-regular(10pt);
+  }
+
+  .roomSelect-list__item-start-time,
+  .roomSelect-list__item-end-time {
+    display: block;
+  }
   &::before {
     background-color: $color-strong-blue;
     border-radius: 0 0 2px 2px;
@@ -72,7 +76,6 @@
     left: 16px;
     z-index: 1;
   }
-
 }
 .roomSelect-list__item-name {
   @include font-nunito-heavy(18px);

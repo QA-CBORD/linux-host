@@ -66,7 +66,7 @@ export class Attachment implements AttachmentOptions{
     }
     this.canSubmit = Boolean(options.canSubmit)
     this.Attachments = Array.isArray(options.Attachments)
-      ? options.Attachments.map((detail: any) => new AttachmentsDetail(detail))
+      ? options.Attachments.map((detail) => new AttachmentsDetail(detail))
       : [];
   }
   
@@ -125,6 +125,6 @@ export class AttachmentsListData implements AttachmentsListDataOptions {
     if (options == null || typeof options !== 'object') {
       options = {} as AttachmentsListDataOptions;
     }
-    this.data = Array.isArray(options) ? options.map((detail: any) => new AttachmentsList(detail)): [];
+    this.data = Array.isArray(options) ? options.map((detail) => new AttachmentsList(detail)): [];
   }
 }

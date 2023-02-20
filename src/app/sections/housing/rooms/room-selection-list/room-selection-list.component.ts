@@ -4,6 +4,7 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
 import { ToastService } from '@core/service/toast/toast.service';
+import {monthDayYear,hourMinTime} from '@shared/constants/dateFormats.constant'
 
 @Component({
   selector: 'st-room-selection-list',
@@ -14,6 +15,8 @@ import { ToastService } from '@core/service/toast/toast.service';
 export class RoomSelectionListComponent implements AfterViewInit {
   @ViewChild('container') divContainer: ElementRef;
   @Input() roomSelects: RoomSelect[]
+  dateFormat = monthDayYear;
+  timeFormat = hourMinTime;
 
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
@@ -27,7 +30,7 @@ export class RoomSelectionListComponent implements AfterViewInit {
               private _toastService: ToastService) {
   }
 
-  goToRoomSelection(key: any): void {
+  goToRoomSelection(key: number): void {
     const roomSelection: RoomSelect = this.roomSelects.find(x => x.key === key);
     if(hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
     this._router.navigate(['patron/housing/rooms-search', key]).then(() => {

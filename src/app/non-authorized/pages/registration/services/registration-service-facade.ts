@@ -12,6 +12,7 @@ import { RegistrationService } from './registration.service';
   providedIn: 'root',
 })
 export class RegistrationServiceFacade {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private data: RegistrationData = {} as any;
 
   private _registration: UserRegistrationManager;
@@ -37,6 +38,7 @@ export class RegistrationServiceFacade {
     return this.registrationService.getStringModel$(ContentStringCategory.preLogin, { data: { acuteCare } });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   submit(data): Observable<any> {
     return this._registration.register(data);
   }

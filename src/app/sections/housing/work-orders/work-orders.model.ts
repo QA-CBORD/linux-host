@@ -103,7 +103,7 @@ export class WorkOrder implements WorkOrderOptions{
     }
     this.canSubmit = Boolean(options.canSubmit)
     this.workOrders = Array.isArray(options.workOrders)
-      ? options.workOrders.map((detail: any) => new WorkOrdersDetailsList(detail))
+      ? options.workOrders.map((detail) => new WorkOrdersDetailsList(detail))
       : [];
   }
   
@@ -146,10 +146,10 @@ export class WorkOrderDetails implements WorkOrderDetailsOptions{
     this.workOrderDetails = options.workOrderDetails;
     this.formDefinition = options.formDefinition;
     this.workOrderTypes = Array.isArray(options.workOrderTypes)
-    ? options.workOrderTypes.map((detail: any) => new workOrderTypes(detail))
+    ? options.workOrderTypes.map((detail) => new workOrderTypes(detail))
     : [];
     this.facilityTree = Array.isArray(options.facilityTree)
-    ? options.facilityTree.map((detail: any) => new FacilityTree(detail))
+    ? options.facilityTree.map((detail) => new FacilityTree(detail))
     : [];
   }
 
@@ -234,7 +234,7 @@ export class FacilityTreeDetails implements FacilityTreeDetailsOptions{
     this.parentKey = Number(options.parentKey);
     this.facilityType = Number(options.facilityType);
     this.children = Array.isArray(options.parentKey)
-    ? options.children.map((detail: any) => new FacilityTreeDetails(detail))
+    ? options.children.map((detail) => new FacilityTreeDetails(detail))
     : [];
   }
 
@@ -248,7 +248,7 @@ export class FacilityTree implements FacilityTreeOptions{
       options = {} as FacilityTreeOptions;
     }
     this.facilityTree = Array.isArray(options.facilityTree)
-    ? options.facilityTree.map((detail: any) => new FacilityTreeDetails(detail))
+    ? options.facilityTree.map((detail) => new FacilityTreeDetails(detail))
     : [];
   }
 }

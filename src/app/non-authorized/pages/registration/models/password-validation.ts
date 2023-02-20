@@ -1,15 +1,14 @@
-import { ONE_LETTER_MIN } from "@core/utils/regexp-patterns";
+import { ONE_LETTER_MIN } from '@core/utils/regexp-patterns';
 
 export interface InputValidator {
   test: (value) => boolean;
 }
 
 export class SupportedInputValidators {
-
   static nullablePhone(): InputValidator {
     return {
       test: value => {
-        return !value || (/^[0-9]*$/.test(value) && (value.length >= 9 && value.length <= 10));
+        return !value || (/^[0-9]*$/.test(value) && value.length >= 9 && value.length <= 10);
       },
     };
   }
@@ -17,7 +16,7 @@ export class SupportedInputValidators {
   static phoneNumber(): InputValidator {
     return {
       test: value => {
-        return /^[0-9]*$/.test(value) && (value.length >= 10 && value.length <= 11);
+        return /^[0-9]*$/.test(value) && value.length >= 10 && value.length <= 11;
       },
     };
   }
@@ -32,7 +31,7 @@ export class SupportedInputValidators {
 
   static password(): InputValidator {
     return {
-      test: value => value && (value.length >= 8 && value.length <= 12),
+      test: value => value && value.length >= 8 && value.length <= 12,
     };
   }
 

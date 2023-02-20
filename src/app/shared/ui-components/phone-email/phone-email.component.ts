@@ -3,8 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ModalsService } from '@core/service/modals/modals.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, switchMap, take } from 'rxjs/operators';
-import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
-import { UserNotificationInfo } from '@core/model/user';
+import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable, of } from 'rxjs';
@@ -19,7 +18,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 })
 export class PhoneEmailComponent implements OnInit {
   phoneEmailForm: FormGroup;
-  user: UserInfoSet;
+  user: UserInfo;
   isLoading: boolean;
   title = '';
   private readonly titleUpdateContact: string = 'Email & Phone Number';
@@ -49,10 +48,10 @@ export class PhoneEmailComponent implements OnInit {
 
   async saveChanges() {
     this.isLoading = true;
-    const user: UserInfoSet = await this.userFacadeService
+    const user = await this.userFacadeService
       .getUser$()
       .pipe(
-        switchMap( userInfoSet => of(this.updatedUserModel(<UserInfoSet>userInfoSet))),
+        switchMap( userInfoSet => of(this.updatedUserModel(userInfoSet))),
         take(1))
       .toPromise();
     this.userFacadeService.saveUser$(user).subscribe(
@@ -97,7 +96,7 @@ export class PhoneEmailComponent implements OnInit {
         [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
       ],
     });
-    const user: any = await this.userFacadeService
+    const user = await this.userFacadeService
       .getUser$()
       .pipe(take(1))
       .toPromise();
@@ -119,7 +118,7 @@ export class PhoneEmailComponent implements OnInit {
     return this.phoneEmailForm.get(this.controlsNames.phone);
   }
 
-  updatedUserModel(user: UserInfoSet): UserInfoSet {
+  updatedUserModel(user: UserInfo): UserInfo {
     user.phone = this.phone.value;
     user.email = this.email.value;
     user.staleProfile = false;
@@ -145,7 +144,7 @@ export class PhoneEmailComponent implements OnInit {
     return user;
   }
 
-  private setUpdateNotification(type: number, value: string, groupedNotifications: any, notifications: any[]) {
+  private setUpdateNotification(type: number, value: string, groupedNotifications: object, notifications: object[]) {
     const notif = groupedNotifications[type];
     if (notif) {
       notif.value = value;

@@ -97,6 +97,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     return super.androidCredentialBundle$({ referenceIdentifier }).pipe(map(bundle => bundle as HidCredentialBundle));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateCredential$(credential: AndroidCredential<any>): Observable<boolean> {
     const requestBody = {
       referenceIdentifier: credential.getReferenceIdentifier(),

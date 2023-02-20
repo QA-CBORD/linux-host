@@ -59,7 +59,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   canSubmit = true;
   status = 0;
   section = '';
-  conditions: any[] = [];
+  conditions = [];
 
   constructor(
     private _platform: Platform,
@@ -174,7 +174,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
       .subscribe(status => {
           alert.dismiss().then(() => {
             if (status) {
-              this._housingService.handleSuccess();
+              this._housingService.goToDashboard();
             } else {
               this._loadingService.closeSpinner();
               this._toastService.showToast({

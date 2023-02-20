@@ -41,7 +41,7 @@ export class CreditCardService {
 
   async retrieveAccounts(): Promise<AccountsConf[]> {
     this.loadingService.showSpinner();
-    return  await firstValueFrom(
+    return firstValueFrom(
       this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
     )
       .then(accounts => accounts.map(acc => this.buildStr(acc)))
