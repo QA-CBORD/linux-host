@@ -14,4 +14,4 @@ git pull
 
 # switch back to the original branch and merge the changes
 git checkout $CURRENT_BRANCH
-git merge --ff-only develop
+git rebase develop
