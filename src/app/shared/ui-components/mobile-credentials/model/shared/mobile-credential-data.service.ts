@@ -129,16 +129,11 @@ export class MobileCredentialDataService {
       tap(({ passes, credStatus }) => {
         if (!passes.android_hid && !passes.android_nxp && !credStatus.android_hid && !credStatus.android_nxp) {
           // no point in keeping auth_blob in state when mobile credential not enabled.
-          console.log(
-            'called activePasses, mobile credential not enabled. clearing auth_blob from state: ',
-            passes,
-            credStatus
-          );
           this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
         }
       }),
       catchError(error => {
-        console.log('got error from calling activePasses, clearing authblob: ', error);
+        console.error('got error from calling activePasses, clearing authblob: ', error);
         this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
         return throwError(error);
       })
