@@ -3,8 +3,8 @@
   class="ion-padding check-in-out-slots__content">
     <ng-container *ngIf="(roommates$ | async) as roommates; else noRoommates">
       <div>
-        <h4>Your search returned {{ roommates.length }} result{{ roommates.length == 1 ? '' : 's' }}</h4>
-        <div *ngIf="getRoommatePreferencesSelecteds() != ''">
+        <h4>Your search returned {{ roommates.length }} result{{ roommates.length === 1 ? '' : 's' }}</h4>
+        <div *ngIf="getRoommatePreferencesSelecteds() !== ''">
           <h4>You added {{ getRoommatePreferencesSelecteds() }} as a roommate(s)</h4>
         </div>
       </div>
@@ -13,15 +13,15 @@
         <ion-item *ngFor="let roommate of roommates" button (click)="selectRoommate(roommate)">
           <ng-container [ngSwitch]="options.showOptions">
             <ion-label *ngSwitchCase="'fullName'">
-              {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}}
+              {{ roommate.firstName }} {{ roommate.middleName === 'null' ? '' : roommate.middleName }} {{ roommate.lastName}}
             </ion-label>
             
             <ion-label *ngSwitchCase="'preferredNameLast'">
-              {{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName }} {{ roommate.lastName}}
+              {{ roommate.preferredName === 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName }} {{ roommate.lastName}}
             </ion-label>
 
             <ion-label *ngSwitchCase="'fullNameDOB'">
-              {{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{ roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}
+              {{ roommate.firstName }} {{ roommate.middleName === 'null' ? '' : roommate.middleName }} {{ roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}
             </ion-label>
           </ng-container>
         </ion-item>
