@@ -10,6 +10,7 @@ import { DepositSuccessCs } from '@sections/accounts/pages/deposit-page/deposit-
 })
 export class DepositModalComponent {
   @Input() data;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() contentString: DepositSuccessCs = {} as any;
 
   constructor(private readonly modalController: ModalController) {}

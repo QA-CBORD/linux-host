@@ -18,7 +18,7 @@ export class CheckingServiceFacade {
     private readonly coordsService: CoordsService
   ) {}
 
-  checkInOrderByLocation(orderId: string, checkinBarcode: string = null): Observable<any> {
+  checkInOrderByLocation(orderId: string, checkinBarcode: string = null): Observable<boolean> {
     return this.coordsService.getCoords().pipe(
       first(),
       switchMap(({ coords: { latitude, longitude } }) => {

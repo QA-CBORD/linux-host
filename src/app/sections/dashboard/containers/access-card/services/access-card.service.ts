@@ -74,7 +74,7 @@ export class AccessCardService {
   isAppleWalletEnabled(): Observable<boolean> {
     if (this.nativeProvider.isIos()) {
       return from(this.nativeProvider.getIosData(NativeData.APPLE_WALLET_INFO)).pipe(
-        map((data: any) => JSON.parse(data).isAppleWalletEnabled as boolean)
+        map((data) => JSON.parse(data).isAppleWalletEnabled as boolean)
       );
     } else {
       return of(false);

@@ -27,7 +27,7 @@ export class SecureMessagingService {
     return SecureMessagingService.smAuthInfo;
   }
 
-  getInitialData(): any {
+  getInitialData(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
     return this.authFacadeService.getExternalAuthenticationToken$().pipe(
       switchMap((response: string) => {
         SecureMessagingApiService.setJWT(response);
@@ -37,7 +37,7 @@ export class SecureMessagingService {
     );
   }
 
-  sendSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
+  sendSecureMessage(messageInfo: SecureMessageSendBody) {
     return this.secureMessagingService.postSecureMessage(messageInfo);
   }
 

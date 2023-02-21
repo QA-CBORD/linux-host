@@ -51,7 +51,6 @@ export class ApplicationsService {
   private readonly _patronApplicationsUrl: string = `${
     this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
-  selectedRoommate: any[] = [];
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
@@ -73,43 +72,43 @@ export class ApplicationsService {
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
-  
-        return this._getPages(pages, storedQuestions, applicationDetails, isSubmitted);
+        const canEdit = !isSubmitted || applicationDetails.applicationDefinition.canEdit; 
+        return this._getPages(pages, storedQuestions, applicationDetails, canEdit);
       })
     );
   }
 
   submitApplication(application: CurrentForm): Observable<ResponseStatus> {
     return forkJoin([
-      this._updateCreatedDateTime(application.key, application.details.patronApplication),
+      this._updateCreatedDateTime(application.key, (<ApplicationDetails>application.details).patronApplication),
       this._questionsStorageService.updateSubmittedDateTime(application.key),
     ]).pipe(
       switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
           application.key,
-          application.details,
+          (<ApplicationDetails>application.details),
           ApplicationStatus.Submitted,
           createdDateTime,
           submittedDateTime
         );
-        return this._updateApplication(applicationDetails, application.formValue, ApplicationStatus.Submitted);
+        return this._updateApplication(applicationDetails, application.formControl, ApplicationStatus.Submitted);
       })
     );
   }
 
   saveApplication(application: CurrentForm, removeQuestions = true): Observable<ResponseStatus> {
-    return this._updateCreatedDateTime(application.key, application.details.patronApplication).pipe(
+    return this._updateCreatedDateTime(application.key, (<ApplicationDetails>application.details).patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
           application.key,
-          application.details,
+          (<ApplicationDetails>application.details),
           ApplicationStatus.Pending,
           createdDateTime
         );
 
         return this._updateApplication(
           applicationDetails,
-          application.formValue,
+          application.formControl,
           ApplicationStatus.Pending,
           removeQuestions
         );
@@ -117,7 +116,7 @@ export class ApplicationsService {
     );
   }
 
-  saveLocally(applicationKey: number, applicationDetails: ApplicationDetails, formValue: any): Observable<any> {
+  saveLocally(applicationKey: number, applicationDetails: ApplicationDetails, formValue) {
     const patronApplication: PatronApplication = applicationDetails.patronApplication;
     const status: ApplicationStatus = patronApplication && patronApplication.status;
 
@@ -224,10 +223,10 @@ export class ApplicationsService {
     pages: QuestionBase[][],
     storedQuestions: QuestionsEntries,
     applicationDetails: ApplicationDetails,
-    isSubmitted: boolean
+    canEdit: boolean
   ): QuestionsPage[] {
     return pages.map((page: QuestionBase[]) => ({
-      form: this._toFormGroup(page, storedQuestions, applicationDetails, isSubmitted),
+      form: this._toFormGroup(page, storedQuestions, applicationDetails, canEdit),
       questions: page,
     }));
   }
@@ -236,12 +235,12 @@ export class ApplicationsService {
     questions: QuestionBase[],
     storedQuestions: QuestionsEntries,
     applicationDetails: ApplicationDetails,
-    isSubmitted: boolean
+    canEdit: boolean
   ): FormGroup {
     return this._questionsService.toFormGroup(
       questions,
       storedQuestions,
-      (group: any, question: QuestionFormControl, questionName: string, storedValue: string) => {
+      (group: object, question: QuestionFormControl, questionName: string, storedValue: string) => {
         if (question instanceof QuestionCheckboxGroup) {
           group[questionName] = this._questionsService.toQuestionCheckboxControl(storedValue, question);
         } else if (question instanceof QuestionReorder) {
@@ -251,14 +250,14 @@ export class ApplicationsService {
             applicationDetails.patronPreferences
           );
         } else {
-          group[questionName] = this._toFormControl(storedValue, question, applicationDetails, isSubmitted);
+          group[questionName] = this._toFormControl(storedValue, question, applicationDetails, canEdit);
         }
       }
     );
   }
 
   private _toQuestionReorderControl(
-    storedValue: any,
+    storedValue,
     question: QuestionReorder,
     preferences: PatronPreference[]
   ): FormArray {
@@ -274,12 +273,12 @@ export class ApplicationsService {
   }
 
   private _toFormControl(
-    storedValue: any,
+    storedValue,
     question: QuestionFormControl,
     applicationDetails: ApplicationDetails,
-    isSubmitted: boolean
+    canEdit: boolean
   ): FormControl {
-    let value: any = storedValue;
+    let value = storedValue;
     if (!isDefined(value) || value == '') {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
@@ -294,7 +293,7 @@ export class ApplicationsService {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
-    return new FormControl({ value, disabled: isSubmitted || question.readonly }, validators);
+    return new FormControl({ value, disabled: !canEdit || question.readonly }, validators);
   }
 
   private _updateCreatedDateTime(key: number, patronApplication: PatronApplication): Observable<string> {
@@ -305,7 +304,7 @@ export class ApplicationsService {
 
   private _updateApplication(
     applicationDetails: ApplicationDetails,
-    form: any,
+    form: object,
     status: ApplicationStatus,
     removeQuestions = true
   ): Observable<ResponseStatus> {
@@ -313,7 +312,7 @@ export class ApplicationsService {
     const applicationKey: number = applicationDefinition.key;
     return this._questionsStorageService.updateQuestions(applicationKey, form, status).pipe(
       switchMap((storedApplication: StoredApplication) => {
-        const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
+        const parsedJson = parseJsonToArray<QuestionReorder>(applicationDefinition.applicationFormJson);
         const questions = storedApplication.questions;
         const patronAttributes: PatronAttribute[] = this._patronAttributesService.getAttributes(
           applicationDetails.patronAttributes,

@@ -57,6 +57,7 @@ export class SecureMessagingService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sendSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
     return this.secureMessagingService.postSecureMessage(messageInfo);
   }

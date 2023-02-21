@@ -41,6 +41,7 @@ export interface orderInfo {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckInPendingComponent implements OnInit, OnDestroy {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentStrings: any;
   locationPermissionDisabled: boolean;
   locationSubscription: Subscription;
@@ -100,6 +101,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       storeAddress: address,
       merchant,
       isASAP,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } = <any>this.data;
     await this.cart.onAddItems({
       merchant,
@@ -168,7 +170,9 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       backdropDismiss: false,
       componentProps: {
         formats: [SupportedFormat.QR_CODE],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         title: (<any>this.contentStrings).scan_code_title,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         prompt: (<any>this.contentStrings).scan_code_prompt,
       },
     });

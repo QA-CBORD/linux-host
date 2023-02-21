@@ -12,7 +12,7 @@ import { take, finalize } from 'rxjs/operators';
 export class TransactionsTileComponent implements OnInit {
   transactions: TransactionHistory[] = [];
   transactionsAmount = 3;
-  skeletonArray: any[] = new Array(this.transactionsAmount);
+  skeletonArray: number[] = new Array(this.transactionsAmount);
   isLoading = true;
 
   constructor(private readonly transactionService: TransactionService,

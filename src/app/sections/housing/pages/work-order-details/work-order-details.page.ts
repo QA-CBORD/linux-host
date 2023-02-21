@@ -8,7 +8,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController, IonContent, Platform } from '@ionic/angular';
 
 import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -31,7 +31,7 @@ import { WorkOrdersService } from '../../work-orders/work-orders.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkOrderDetailsPage implements OnInit, OnDestroy {
-  @ViewChild('content') private content: any;
+  @ViewChild('content') private content: IonContent;
   @ViewChild(StepperComponent) stepper: StepperComponent;
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
@@ -88,7 +88,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     }
 
     if (!isLastPage) {
-      this._next(form.value);
+      this._next();
     } else {
      this._update(workOrderDetails, form.value);
     }
@@ -110,7 +110,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
         this.isSubmitted = false;
         this._loadingService.closeSpinner();
       }),
-      catchError((error: any) => {
+      catchError((error: Error) => {
         this._loadingService.closeSpinner();
         return throwError(error);
       })
@@ -122,15 +122,14 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     this.subscriptions.add(termSubs);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _next(formValue: any): void {
+  private _next(): void {
     this.content.scrollToTop();
 
     if (this.isSubmitted) {
       return this.stepper.next();
     }
 
-    const nextSubscription: Subscription = this._workOrderService.next(this.workOrderKey).subscribe({
+    const nextSubscription: Subscription = this._workOrderService.next().subscribe({
       next: () => this.stepper.next(),
     });
 

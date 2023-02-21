@@ -9,9 +9,11 @@ import { buttons } from '@core/utils/buttons.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmPaymentPopover implements OnInit {
-  @Input() data: any;
+  @Input() data: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() contentString: any;
-  @Input() intructions?: any;
+  @Input() instructions?: string;
+  @Input() showDisclaimer = true;
   popoverConfig: PopoverConfig<string | number>;
   disclaimer: string;
 
@@ -31,11 +33,7 @@ export class ConfirmPaymentPopover implements OnInit {
   }
 
   get showDepositInstructions(): string {
-    return this.intructions;
-  }
-
-  get showDisclaimer(): string {
-    return this.disclaimer;
+    return this.instructions;
   }
 
   private setContentString() {
@@ -49,7 +47,7 @@ export class ConfirmPaymentPopover implements OnInit {
       account: 'Account',
     };
 
-    this.intructions =
+    this.instructions =
       'Card Policy: As the storage database, USAePay is responsible for the processing of your card information for payment to this institution.';
     this.disclaimer = 'Once your payment is accepted, your Housing Form will be submitted and cannot be edited. ';
   }

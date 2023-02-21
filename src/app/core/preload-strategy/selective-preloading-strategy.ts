@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 export class SelectivePreloadingStrategy implements PreloadingStrategy {
   preloadedModules: string[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   preload(route: Route, load: () => Observable<any>): Observable<any> {
     if (route.data && route.data['preload']) {
       this.preloadedModules.push(route.path);

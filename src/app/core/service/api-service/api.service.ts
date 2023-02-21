@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
@@ -144,7 +145,7 @@ export class APIService {
     let httpCall$;
     switch (callType) {
       case RestCallType.get:
-        httpCall$ = this.get<any>(finalURL, responseType, params, headers);
+        httpCall$ = this.get(finalURL, responseType, params, headers);
         break;
       case RestCallType.post:
         httpCall$ = this.post(finalURL, body, responseType, params, headers);

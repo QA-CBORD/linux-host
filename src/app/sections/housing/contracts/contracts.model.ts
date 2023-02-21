@@ -58,7 +58,7 @@ export interface ContractListDetailsOptions {
   contractElementId: number;
   state: string;
   applicationDescription: string;
-  applicationFormJson: any;
+  applicationFormJson: string;
   applicationTitle: string;
   applicationTypeId: number;
   applicationAvailableEndDateTime: string;
@@ -76,7 +76,7 @@ export class ContractListDetails implements ContractListDetailsOptions {
   contractElementId: number;
   state: string;
   applicationDescription: string;
-  applicationFormJson: any;
+  applicationFormJson: string;
   applicationTitle: string;
   applicationTypeId: number;
   applicationAvailableEndDateTime: string;
@@ -113,8 +113,8 @@ export class ContractListDetails implements ContractListDetailsOptions {
     }
   }
 
-  static toContractListDetails(contracts: any): ContractListDetails[] {
-    return Array.isArray(contracts) ? contracts.map((contract: any) => new ContractListDetails(contract)) : [];
+  static toContractListDetails(contracts): ContractListDetails[] {
+    return Array.isArray(contracts) ? contracts.map((contract) => new ContractListDetails(contract)) : [];
   }
 }
 
@@ -223,7 +223,7 @@ export class ContractInfo implements ContractInfoOptions {
 
 export interface ContractDetailsOptions {
   contractInfo: ContractInfo;
-  formJson: any;
+  formJson;
   chargeSchedules: ChargeSchedule[];
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
@@ -235,7 +235,7 @@ export interface ContractDetailsOptions {
 
 export class ContractDetails implements ContractDetailsOptions {
   contractInfo: ContractInfo;
-  formJson: any;
+  formJson;
   chargeSchedules: ChargeSchedule[];
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
@@ -253,19 +253,19 @@ export class ContractDetails implements ContractDetailsOptions {
     this.formJson = options.formJson;
 
     this.chargeSchedules = Array.isArray(options.chargeSchedules)
-      ? options.chargeSchedules.map((schedule: any) => new ChargeSchedule(schedule))
+      ? options.chargeSchedules.map((schedule) => new ChargeSchedule(schedule))
       : [];
 
     this.patronAttributes = Array.isArray(options.patronAttributes)
-      ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+      ? options.patronAttributes.map((attribute) => new PatronAttribute(attribute))
       : [];
 
     this.facilityAttributes = Array.isArray(options.facilityAttributes)
-      ? options.facilityAttributes.map((attribute: any) => new FacilityAttribute(attribute))
+      ? options.facilityAttributes.map((attribute) => new FacilityAttribute(attribute))
       : [];
 
     this.patronAddresses = Array.isArray(options.patronAddresses)
-      ? options.patronAddresses.map((address: any) => new PatronAddress(address))
+      ? options.patronAddresses.map((address) => new PatronAddress(address))
       : [];
 
     this.accountCodeKey = Number(options.accountCodeKey);

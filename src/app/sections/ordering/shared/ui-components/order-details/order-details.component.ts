@@ -36,7 +36,7 @@ import { AccountType, DisplayName } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
+import { UserInfo } from '@core/model/user';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
@@ -54,7 +54,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
   @Input() orderItems: OrderItem[] = [];
-  @Input() paymentMethod: any = [];
   @Input() tax: number;
   @Input() discount: number;
   @Input() total: number;
@@ -93,7 +92,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
-  user: UserInfoSet;
+  user: UserInfo;
 
   paymentMethodErrorMessages = {
     required: 'A payment method must be selected',
@@ -116,7 +115,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async initAccountSelected(accounts: UserAccount[]) {
-    const payment = this.orderPayment[0] || ({} as any);
+    const payment = this.orderPayment[0] || ({accountId: '', accountName: ''});
     let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
     if (!this.isApplePayment) {

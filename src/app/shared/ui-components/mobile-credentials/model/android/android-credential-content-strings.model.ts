@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ContentStringModel, NullableContent } from '@shared/model/content-strings/content-string-models';
 import { defaultMobileCredentialCs } from '@shared/model/content-strings/default-strings';
 import { MobileCredentialStatuses } from '../shared/credential-state';

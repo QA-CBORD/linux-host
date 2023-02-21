@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Observable, of } from 'rxjs';
 import { finalize, switchMap, take, tap } from 'rxjs/operators';
 

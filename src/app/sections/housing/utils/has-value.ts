@@ -5,8 +5,8 @@
  *
  * @returns {Boolean}
  */
-export function hasValue(value: any): boolean {
+export function hasValue(value): boolean {
   return Array.isArray(value)
-    ? !value.some((item: any) => item == null || item === '')
+    ? !value.some((item) => item == null || item === '')
     : !(value == null || value === '');
 }

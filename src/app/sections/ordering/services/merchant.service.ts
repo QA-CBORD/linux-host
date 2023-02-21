@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   MerchantInfo,
   MerchantSearchOption,
@@ -188,7 +189,7 @@ export class MerchantService {
     );
   }
 
-  getMerchantOrderSchedule(merchantId: string, orderType: number, merchantTimeZone: string): Observable<any> {
+  getMerchantOrderSchedule(merchantId: string, orderType: number, merchantTimeZone: string): Observable<Schedule> {
     const orderSchedule1$ = this.orderingApiService
       .getMerchantOrderSchedule(merchantId, orderType)
       .pipe(map(response => this.dataTransform(response, merchantTimeZone)));
@@ -217,7 +218,7 @@ export class MerchantService {
     return this.userFacadeService.getUserAddresses$();
   }
 
-  retrievePickupLocations(storeAddress: AddressInfo, info: MerchantSettingInfo): Observable<any> {
+  retrievePickupLocations(storeAddress: AddressInfo, info: MerchantSettingInfo) {
     switch (info?.value) {
       case null:
         return of([]);
@@ -349,7 +350,7 @@ export class MerchantService {
     return this.retrieveUserAddressList().pipe(map(addresses => addresses.find(({ id }) => id === deliveryId)));
   }
 
-  removeAddress(addressId: string): Observable<any> {
+  removeAddress(addressId: string): Observable<boolean> {
     return this.orderingApiService.removeAddress(addressId);
   }
 

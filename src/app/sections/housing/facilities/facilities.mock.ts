@@ -1,6 +1,6 @@
 import { Facility } from './facilities.model';
 
-export function generateFacility(_: any, index: number): Facility {
+export function generateFacility(_, index: number): Facility {
   const facilityName = 'Gryffindor';
   const facilityId: number = index;
   const bedCount = '1-4';

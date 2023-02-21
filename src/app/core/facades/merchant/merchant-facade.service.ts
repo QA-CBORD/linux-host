@@ -10,6 +10,7 @@ import { MerchantSearchOptions } from '@sections/ordering/utils/merchant-search-
 import { MerchantInfo } from '@sections/ordering/shared/models/merchant-info.model';
 import { MerchantSettingInfo } from '@sections/ordering/shared/models/merchant-setting.model';
 import { MerchantSearchOption } from '@sections/ordering';
+import { parseArrayFromString } from '@core/utils/general-helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -67,7 +68,7 @@ export class MerchantFacadeService extends ServiceStateFacade {
   isCreditCardSupported(merchant: MerchantInfo) {
     const key = 'merchant.payment.supported_types';
     const setting: MerchantSettingInfo = merchant.settings.map[key];
-    const parsedValue: any[] = JSON.parse(setting.value);
+    const parsedValue = parseArrayFromString(setting.value);
     return parsedValue.some(({ payment_system_type }) => payment_system_type == PAYMENT_SYSTEM_TYPE.USAEPAY);
   }
 

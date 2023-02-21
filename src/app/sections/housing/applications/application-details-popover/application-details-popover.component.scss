@@ -1,0 +1,20 @@
+@import 'tools';
+
+:host {
+  ion-label {
+    display: flex;
+    align-items: baseline;
+
+    h5 {
+      padding-right: 2px;
+      @include font-nunito-semibold(14px);
+    }
+
+    span {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      @include font-nunito-regular(14px);
+    }
+  }
+}

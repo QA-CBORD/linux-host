@@ -73,6 +73,7 @@ export class ConnectionFacadeService {
 
   private async showConnectionIssuePageAsModal(retryHandler: RetryHandler, isVaultLocked: boolean) {
     this.loadingService.showSpinner();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let csModel: ConnectivityScreenCsModel = {} as any;
     let errorType: ConnectivityErrorType;
     let freshContentStringsLoaded = false;
@@ -87,6 +88,7 @@ export class ConnectionFacadeService {
     return this.presentModal({ csModel, freshContentStringsLoaded, errorType, retryHandler, isVaultLocked });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async presentModal(componentProps: any): Promise<any> {
     const modal = await this.modalController.create({
       backdropDismiss: false,

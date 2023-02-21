@@ -44,7 +44,7 @@ export class GuestDepositsService {
     fields: LookupFieldInfo[],
     recipients: Recipient[],
     save = false
-  ): Promise<{ nickname: string; id: any }> {
+  ): Promise<{ nickname: string; id: string }> {
     return this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
@@ -96,7 +96,7 @@ export class GuestDepositsService {
     );
   }
 
-  private async onErrorRetrieve(message: any) {
+  private async onErrorRetrieve(message) {
     await this.toastService.showToast({ message, duration: 5000 });
   }
 

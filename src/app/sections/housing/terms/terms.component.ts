@@ -17,7 +17,7 @@ export class TermsComponent implements OnInit {
   terms$: Observable<Term[]>;
   selectedTermLabel$: Observable<string>;
 
-  customPopoverOptions: any = {
+  customPopoverOptions = {
     mode: 'md',
     showBackdrop: false,
   };

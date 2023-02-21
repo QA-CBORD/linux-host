@@ -32,9 +32,9 @@ export class ConfirmModalComponent {
 
   @Input() secondaryBtnDisabled = false;
 
-  @Output() onPrimaryBtnClicked: EventEmitter<any> = new EventEmitter<Event>();
+  @Output() onPrimaryBtnClicked: EventEmitter<void> = new EventEmitter<void>();
 
-  @Output() onSecondaryBtnClicked: EventEmitter<any> = new EventEmitter<Event>();
+  @Output() onSecondaryBtnClicked: EventEmitter<void> = new EventEmitter<void>();
 
 
   @Input() contentStrings: CheckingContentCsModel;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConnectivityErrorType, ConnectivityScreenCsModel } from "./no-connectivity.cs.model";
 
 export interface RetryHandler {

@@ -4,7 +4,7 @@ export class Term {
   termEndDateTime: string;
   termName: string;
 
-  constructor(options: any) {
+  constructor(options) {
     if (options == null || typeof options !== 'object') {
       options = {};
     }

@@ -1,8 +1,8 @@
-import { FacilityDetails, FacilityDetailsToFacilityMapper } from '@sections/housing/facilities/facilities.model';
+import { Facility, FacilityDetails, FacilityDetailsToFacilityMapper } from '@sections/housing/facilities/facilities.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
-export function generateFacilities(): any[] {
+export function generateFacilities(): Facility[] {
   const facilities = createFacilities();
   const facilityMapper = new FacilityDetailsToFacilityMapper();
   return facilityMapper.map(facilities);

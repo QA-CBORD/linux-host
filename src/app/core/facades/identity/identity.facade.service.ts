@@ -16,6 +16,7 @@ import { VaultIdentityService } from '@core/service/identity/vault.identity.serv
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { VaultSession, VaultMigrateResult, VaultTimeoutOptions, PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
+import { PinLoginProps } from '@core/model/authentication/pin-login-props.model';
 
 export enum LoginState {
   DONE,
@@ -48,7 +49,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
   async pinLoginSetup(
     biometricEnabled: boolean,
     navigateToDashboard = true,
-    pinModalProps?: any
+    pinModalProps?: PinLoginProps
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const { data, role } = await this.identityService.presentPinModal(
       biometricEnabled ? PinAction.SET_BIOMETRIC : PinAction.SET_PIN_ONLY,

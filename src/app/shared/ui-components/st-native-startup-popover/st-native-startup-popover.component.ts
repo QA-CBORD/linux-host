@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { StPopoverComponentDataModel } from '@shared/model/st-popover-data.model';
 import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 
 @Component({
@@ -7,7 +8,7 @@ import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
   styleUrls: ['./st-native-startup-popover.component.scss'],
 })
 export class StNativeStartupPopoverComponent implements OnInit {
-  @Input() data: any;
+  @Input() data: StPopoverComponentDataModel;
 
   popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };

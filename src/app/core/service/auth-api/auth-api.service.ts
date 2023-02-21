@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { UserLogin } from '@core/model/user';
 import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
-import { ServiceParameters } from '@core/model/service/message-response.model';
+import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +30,7 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig('authenticateSystem', postParams);
 
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   /**
@@ -57,7 +57,7 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig(authenticatedUserMethod, postParams);
 
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
     );
   }
@@ -75,7 +75,7 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig('authenticatePIN', postParams);
 
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
     );
   }
@@ -90,7 +90,7 @@ export class AuthApiService {
     const queryConfig = new RPCQueryConfig('getAuthenticationToken', params, true);
 
     // MARK: Remove the token setting from the service
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   /**
@@ -110,7 +110,7 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig('authenticateSessionToken', postParams);
 
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
     );
   }
@@ -128,15 +128,16 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig('retrieveExternalAuthenticationToken', postParams, true);
 
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
-  retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {
+  retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string) {
     const postParams = {
       deviceModel,
       deviceOSVersion,
     };
     const queryConfig = new RPCQueryConfig('retrieveAuthorizationBlob', postParams, true, false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }
 }

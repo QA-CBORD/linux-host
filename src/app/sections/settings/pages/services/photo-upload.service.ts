@@ -174,7 +174,7 @@ export class PhotoUploadService {
     });
   }
 
-  onNewPhoto(photoType: PhotoType, photoData: any) {
+  onNewPhoto(photoType: PhotoType, photoData: string) {
     const newPhotoInfo: UserPhotoInfo = {
       externalId: null,
       userId: null,

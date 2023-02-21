@@ -7,11 +7,11 @@ import { CONTENT_STRINGS, TIME_PERIOD } from '@sections/accounts/accounts.config
 })
 export class TimeRangePipe implements PipeTransform {
 
-  transform(value: DateUtilObject, contentString: any): string {
+  transform(value: DateUtilObject, contentString: { [key: string]: string }): string {
     return this.localGetUniquePeriodName(value, contentString);
   }
 
-  private localGetUniquePeriodName(date: DateUtilObject, contentString: any): string {
+  private localGetUniquePeriodName(date: DateUtilObject, contentString: { [key: string]: string }): string {
     return date.name === TIME_PERIOD.pastSixMonth || date.name === TIME_PERIOD.pastMonth
       ? contentString[CONTENT_STRINGS.pastSixMonthsLabel]
       : `${date.name} ${date.year}`;

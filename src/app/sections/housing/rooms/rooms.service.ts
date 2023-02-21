@@ -158,7 +158,7 @@ export class RoomsService {
   public filterBuildings(filterOptions: Map<string, string[]>, wasOccupantOptionSelected: boolean): void {
     const facilities = this._stateService.getAllFacilityChildren();
     let filteredFacilities = [];
-    let parentKeys = [];
+    let parentKeys: number[] = [];
     if (this._isBuildingFiltered(filterOptions)) {
       const parenFacilities = this._stateService.getParentFacilities();
       parentKeys = parenFacilities
@@ -191,8 +191,8 @@ export class RoomsService {
     category: string,
     options: string[],
     facility: Facility,
-    filteredFacilities: any[],
-    parentKeys: any[]
+    filteredFacilities: Facility[],
+    parentKeys: number[]
   ) {
     if (this.matchOccupantsAttributes(category, options, facility, filteredFacilities, parentKeys)) {
       filteredFacilities.push(facility);
@@ -203,8 +203,8 @@ export class RoomsService {
     category: string,
     options: string[],
     facility: Facility,
-    filteredFacilities: any[],
-    parentKeys: any[]
+    filteredFacilities: Facility[],
+    parentKeys: number[]
   ) {
     return (
       this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
@@ -217,8 +217,8 @@ export class RoomsService {
     category: string,
     options: string[],
     facility: Facility,
-    filteredFacilities: any[],
-    parentKeys: any[]
+    filteredFacilities: Facility[],
+    parentKeys: number[]
   ) {
     return (
       this._matchedFacilityAttributes(category, options, facility) &&

@@ -11,7 +11,7 @@ import { QuestionBase } from '../questions/types/question-base';
 import { QuestionsService } from '../questions/questions.service';
 import { flat } from '../utils/flat';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { QuestionFormControl } from '../questions/types/question-form-control';
+import { QuestionFormControl, QuestionFormControlOptions } from '../questions/types/question-form-control';
 import { WorkOrder, WorkOrderDetails, ImageData, WorkOrdersFields } from './work-orders.model';
 import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
@@ -98,7 +98,7 @@ export class WorkOrdersService {
     return this._questionsService.splitByPages(flat(questions));
   }
 
-  private _toWorkOrderListCustomType(question: any, workOrderDetails: WorkOrderDetails){
+  private _toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails){
     let values = [];
 
     if(question.workOrderFieldKey === 'TYPE'){
@@ -129,11 +129,11 @@ export class WorkOrdersService {
   }
 
   private _toFormControl(
-    storedValue: any,
+    storedValue: string,
     question: QuestionFormControl,
     workOrderDetails: WorkOrderDetails
   ): FormControl {
-    let value: any = storedValue;
+    let value: string | number = storedValue;
     const disabled = false;
 
     const validators = this._questionsService.getRequiredValidator(question);
@@ -177,8 +177,7 @@ export class WorkOrdersService {
   }
 
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next(formValue: any): Observable<any> {
+  next(): Observable<boolean> {
     return of(true);
   }
 
@@ -186,6 +185,7 @@ export class WorkOrdersService {
     form: WorkOrderDetails,
     formValue: FormControl): Observable<boolean> {
     const parsedJson: string[] = parseJsonToArray(form.formDefinition.applicationFormJson);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workOrdersControls: string[] = parsedJson.filter((control: any) => control && (<QuestionFormControl>control).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField);
     const { body, image } = this.buildWorkOrderList(workOrdersControls, formValue);
 
@@ -263,6 +263,7 @@ export class WorkOrdersService {
     reader.readAsDataURL(blob);
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private calculateSize(img: any, maxWidth: number, maxHeight: number): number[] {
     let width = img.width;
     let height = img.height;
@@ -296,6 +297,7 @@ export class WorkOrdersService {
     return parseJsonToArray(facilityTreeString);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
     let image: ImageData;
     let location: number;

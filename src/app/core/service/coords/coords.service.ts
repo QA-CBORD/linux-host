@@ -14,7 +14,7 @@ export class CoordsService {
   private readonly fetchInterval: number = 5000;
   private timestamp = 0;
 
-  private latestPosition: Position | any = {
+  private latestPosition = {
     timestamp: null,
     coords: {
       accuracy: null,
@@ -23,7 +23,7 @@ export class CoordsService {
     },
   };
   private readonly _location$: BehaviorSubject<Position> = new BehaviorSubject<Position>(undefined);
-  private readonly emptyPosition: Position | any = {
+  private readonly emptyPosition = {
     timestamp: null,
     coords: {
       accuracy: null,
@@ -43,7 +43,7 @@ export class CoordsService {
 
   set _latestLocation(position: Position) {
     this.latestPosition = { ...position };
-    this._location$.next(this.latestPosition);
+    this._location$.next(<Position>this.latestPosition);
   }
 
   /// get device coordinates
@@ -96,6 +96,6 @@ export class CoordsService {
 
   private emptyPositions() {
     this.timestamp = 0;
-    this._latestLocation = this.emptyPosition;
+    this._latestLocation = <Position>this.emptyPosition;
   }
 }

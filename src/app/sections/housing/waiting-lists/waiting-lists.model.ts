@@ -1,4 +1,6 @@
 import { PatronAttribute } from '@sections/housing/applications/applications.model';
+import { Attribute } from '../attributes/attributes.model';
+import { FacilityDetailsOptions } from '../facilities/facilities.model';
 import { isDefined } from '../utils';
 
 export interface WaitingListOptions {
@@ -34,10 +36,11 @@ export class WaitingList implements WaitingListOptions{
 }
 
 export interface WaitingListDetailstOptions {
-  facilities: any[];
+  facilities: FacilityDetailsOptions[];
   attributes: PatronAttribute[];
   patronAttributes: PatronAttribute[];
   waitListKey: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formDefinition: any;
   patronWaitingList?: PatronWaitingList;
 }
@@ -67,9 +70,10 @@ export class PatronWaitingList implements PatronWaitingListOptions {
 }
 
 export class WaitingListDetails implements WaitingListDetailstOptions{
-  facilities: any[];
-  attributes: any[];
+  facilities: FacilityDetailsOptions[];
+  attributes: Attribute[];
   patronAttributes: PatronAttribute[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formDefinition: any;
   waitListKey: number;
   patronWaitingList: PatronWaitingList;
@@ -81,13 +85,13 @@ export class WaitingListDetails implements WaitingListDetailstOptions{
 
     this.formDefinition = options.formDefinition;
     this.attributes = Array.isArray(options.patronAttributes)
-    ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+    ? options.patronAttributes.map((attribute) => new PatronAttribute(attribute))
     : [];
     
     this.facilities = options.facilities;
     this.waitListKey = options.waitListKey;
     this.patronAttributes = Array.isArray(options.patronAttributes)
-    ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
+    ? options.patronAttributes.map((attribute) => new PatronAttribute(attribute))
     : [];
     if (isDefined(options.patronWaitingList)) {
       this.patronWaitingList = new PatronWaitingList(options.patronWaitingList);
@@ -114,3 +118,4 @@ export class WaitingListDetailsRequest implements WaitingListDetailstOptionsRequ
     this.attributeValue = options.attributeValue;
   }
 }
+

@@ -25,7 +25,7 @@ export enum FormTypes {
 export interface ResponseStatusDetails {
   code: string;
   member: string;
-  value: any;
+  value: object;
   message: string;
 }
 
@@ -38,7 +38,8 @@ export interface ResponseStatus {
 }
 
 export interface Response {
-  data?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?;
   status: ResponseStatus;
 }
 
@@ -63,19 +64,19 @@ export class DefinitionsResponse {
     }
 
     this.applicationDefinitions = Array.isArray(options.applicationDefinitions)
-      ? options.applicationDefinitions.map((detail: any) => new ApplicationDetails(detail))
+      ? options.applicationDefinitions.map((detail) => new ApplicationDetails(detail))
       : [];
 
     this.contractDetails = Array.isArray(options.contractDetails)
-      ? options.contractDetails.map((detail: any) => new ContractListDetails(detail))
+      ? options.contractDetails.map((detail) => new ContractListDetails(detail))
       : [];
 
     this.nonAssignmentDetails = Array.isArray(options.nonAssignmentDetails)
-      ? options.nonAssignmentDetails.map((detail: any) => new NonAssignmentListDetails(detail))
+      ? options.nonAssignmentDetails.map((detail) => new NonAssignmentListDetails(detail))
       : [];
 
     this.waitingLists = Array.isArray(options.waitingLists)
-      ? options.waitingLists.map((detail: any) => new WaitingList(detail))
+      ? options.waitingLists.map((detail) => new WaitingList(detail))
       : [];
 
     this.workOrders = new WorkOrder(options.workOrders)
@@ -122,7 +123,7 @@ export class RoomSelectResponse implements RoomSelectResponseOptions {
       options = {} as RoomSelectResponseOptions;
     }
     this.roomSelects = Array.isArray(options)
-      ? options.map((detail: any) => new RoomSelect(detail))
+      ? options.map((detail) => new RoomSelect(detail))
       : [];
   }
 }
@@ -138,7 +139,7 @@ export class ContractListResponse implements ContractListResponseOptions{
       options = {} as ContractListResponseOptions;
     }
     this.contractSummaries = Array.isArray(options)
-      ? options.map((detail: any) => new ContractSummary(detail))
+      ? options.map((detail) => new ContractSummary(detail))
       : [];
   }
 }
@@ -155,7 +156,7 @@ export class CheckInOutResponse implements CheckInOutResponseOptions{
       options = {} as CheckInOutResponseOptions;
   }
   this.checkInOuts = Array.isArray(options)
-      ? options.map((detail: any) => new CheckInOut(detail))
+      ? options.map((detail) => new CheckInOut(detail))
       : [];
   }
 }
@@ -173,7 +174,7 @@ export class CheckInOutSlotResponse implements CheckInOutSlotsResponseOptions {
   }
   
   this.slots = Array.isArray(options)
-      ? options.map((detail: any) => new CheckInOutSlot(detail))
+      ? options.map((detail) => new CheckInOutSlot(detail))
       : [];
   this.slots.sort((a,b)=> (a.slotDateTime > b.slotDateTime) ? 1: -1);
   }
@@ -191,7 +192,7 @@ export interface FacilityDetailsResponseOptions {
 
 export class FacilityDetailsResponse implements FacilityDetailsResponseOptions {
   facilityDetails: FacilityDetails[];
-  constructor(options: any) {
+  constructor(options) {
     if (options == null || typeof options !== 'object') {
       options = {} as FacilityDetailsResponseOptions;
     }
@@ -208,7 +209,7 @@ export interface OccupantDetailsResponseOptions {
 export class OccupantDetailsResponse implements OccupantDetailsResponseOptions {
   occupants: FacilityOccupantDetails[];
 
-  constructor(options: any) {
+  constructor(options) {
     if(options ==null || !Array.isArray(options)) {
       options = [] as OccupantDetailsResponseOptions[];
     }

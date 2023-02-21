@@ -85,6 +85,7 @@ export class RewardsApiService {
   }
 
   private onErrorHandler(showToastOnError = true) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (source: Observable<any>) =>
       source.pipe(
         catchError(err => {
@@ -95,6 +96,7 @@ export class RewardsApiService {
   }
 
   private parseResponse() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (source: Observable<any>) =>
       source.pipe(
         map(({ response, exception }) => {

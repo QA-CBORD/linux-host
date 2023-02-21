@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { MActivateMobileLocationResult, MMobileLocationInfo } from '@sections/mobile-access/model';
+import { MActivateMobileLocationResult, MMobileLocationInfo, MMobileLocationParams } from '@sections/mobile-access/model';
 import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { Position } from '@capacitor/geolocation';
 import { CoordsService } from '@core/service/coords/coords.service';
@@ -144,7 +144,7 @@ export class MobileAccessService {
     return Array.isArray(array) ? array : [];
   }
 
-  private createMobileLocationParams(locationId: string, geoData, sourceInfo: string): Position | any {
+  private createMobileLocationParams(locationId: string, geoData, sourceInfo: string): MMobileLocationParams {
     const latitude = !geoData.latitude ? null : geoData.latitude;
     const longitude = !geoData.longitude ? null : geoData.longitude;
     const accuracy = !geoData.accuracy ? null : geoData.accuracy;
