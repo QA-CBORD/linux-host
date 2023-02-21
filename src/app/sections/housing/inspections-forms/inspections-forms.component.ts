@@ -45,6 +45,10 @@ export class InspectionsComponent implements OnInit {
     '=1' : "# Room Left",
     other: "# Rooms Left"
   }
+   inspectionType = {
+    true: 'Move-in',
+    false: 'Move-out'
+   }
 
   constructor(private _inspectionsStateService: InspectionsStateService, private _termService: TermsService) {}
 

@@ -13,7 +13,8 @@
             <ion-label class="inspections-list__wrap">
               <div class="inspections-list__info">
                 <h5 class="inspections-list__status" [style.color]="getInspectionColor(inspection)">
-                  {{ getInspectionStatus(inspection) }}
+                  {{ getInspectionStatus(inspection) }} <br>
+                  <span class="inspections-list__type">{{inspection.checkIn ? 'Move-in' : 'Move-out'}}</span>
                 </h5>
                 <div class="inspections-list__date">
                   {{ inspection.remainingItems | i18nPlural: roomsMap }}
