@@ -11,21 +11,11 @@
 
 <ion-content>
   <st-order-details
-    [tax]="(order$ | async).tax"
-    [tip]="(order$ | async).tip"
-    [subTotal]="(order$ | async).subTotal"
-    [pickupFee]="(order$ | async).pickupFee"
-    [orderTypes]="(merchant$ | async).orderTypes"
-    [discount]="(order$ | async).discount"
-    [deliveryFee]="(order$ | async).deliveryFee"
-    [total]="(order$ | async).total"
+    [orderInfo]="(order$ | async)"
+    [merchant]="merchant$ | async"
     [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
     [checkinInstructionMessage]="checkinInstructionMessage | async"
-    [orderItems]="(order$ | async).orderItems"
-    [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
-    [mealBased]="(order$ | async).mealBased"
     [orderDetailOptions]="orderDetailsOptions$ | async"
-    [merchantSettingsList]="(merchant$ | async).settings.list"
   >
   </st-order-details>
 </ion-content>
@@ -40,7 +30,7 @@
 <ng-template #completed>
   <ion-grid>
     <ion-row>
-      <ion-col class="ion-align-self-center" size="5">
+      <ion-col class="ion-align-self-center">
         <st-button
           color="medium"
           [expand]="'full'"
@@ -53,7 +43,7 @@
           </span></st-button
         >
       </ion-col>
-      <ion-col class="ion-align-self-center" size="7">
+      <ion-col *ngIf="!(merchant$ | async).walkout" class="ion-align-self-center" size="7">
         <st-button (onClick)="onReorderHandler()" class="full-width">
           <span class="ion-text-capitalize">
             {{ contentStrings.buttonReorder | async }}
