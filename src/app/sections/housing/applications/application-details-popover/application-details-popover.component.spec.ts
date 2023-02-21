@@ -1,3 +1,5 @@
+import { StPopoverLayoutModule } from './../../../../shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { IonicModule } from '@ionic/angular';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { now } from '@ionic/core/dist/types/utils/helpers';
 
@@ -9,7 +11,8 @@ describe('ApplicationDetailsPopoverComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ApplicationDetailsPopover ]
+      declarations: [ ApplicationDetailsPopover ],
+      imports: [IonicModule, StPopoverLayoutModule]
     })
     .compileComponents();
 
