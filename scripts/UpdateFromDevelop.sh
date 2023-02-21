@@ -5,6 +5,13 @@ git fetch --all
 git fetch --tags
 git reset --hard
 
-# Get latest from develop
-git pull --ff-only origin develop
-git push
+# get the name of the current branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# switch to the develop branch and update it
+git checkout develop
+git pull
+
+# switch back to the original branch and merge the changes
+git checkout $CURRENT_BRANCH
+git merge --ff-only develop
