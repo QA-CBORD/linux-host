@@ -8,7 +8,7 @@
 ></st-header>
 <ion-content class="container ion-padding-top browser-hidden">
   <div class="section ion-padding-top ion-padding-horizontal">
-    <label class="ion-margin section__title">{{ contentString.subTitle }}</label>
+    <label for="subtitle" class="ion-margin section__title">{{ contentString.subTitle }}</label>
     <ion-radio-group mode="md" [(ngModel)]="selectedRecipient">
       <ion-row class="recipient-row" *ngFor="let recipient of recipients">
         <ion-col size="9">

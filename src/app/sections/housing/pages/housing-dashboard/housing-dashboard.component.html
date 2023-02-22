@@ -10,7 +10,7 @@
   </st-housing-tabs>
 </ion-header>
 
-<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Forms">
+<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab !== SelectedHousingTab.Forms">
     <st-applications></st-applications>
     <st-waiting-lists></st-waiting-lists>
     <st-non-assignments></st-non-assignments>
@@ -19,13 +19,13 @@
     <st-attachments></st-attachments>
 </ion-content>
 
-<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Rooms">
+<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab !== SelectedHousingTab.Rooms">
     <st-check-in-out></st-check-in-out> 
     <st-rooms></st-rooms>
     <st-inspections-forms></st-inspections-forms>
 </ion-content>
 
-<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab != SelectedHousingTab.Contracts">
+<ion-content class="ion-padding housing-content" [hidden]="_selectedHousingTab !== SelectedHousingTab.Contracts">
     <st-contract-list></st-contract-list>
 </ion-content>
 
