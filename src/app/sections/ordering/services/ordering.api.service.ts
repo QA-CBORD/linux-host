@@ -19,6 +19,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
 import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { QueryOrderDateRange } from '@core/model/orders/order-query-date-range.mode';
 
 /** This service should be global */
 @Injectable({
@@ -62,7 +63,16 @@ export class OrderingApiService {
       .pipe(map(({ response }: MessageResponse<MessageListResponse<OrderInfo>>) => response.list));
   }
 
-  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<Schedule> {
+  getSuccessfulOrdersListQuery(orderQuery: QueryOrderDateRange): Observable<OrderInfo[]> {
+    const postParams: ServiceParameters = { ...orderQuery, maxReturn: 0 };
+    const queryConfig = new RPCQueryConfig('retrieveOrderList', postParams, true, true);
+
+    return this.http
+      .post(this.serviceUrlOrdering, queryConfig)
+      .pipe(map(({ response }: MessageResponse<any>) => response.list));
+  }
+
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any> {
     const postParams: ServiceParameters = { merchantId, orderType, startDate: null, endDate: null };
     const queryConfig = new RPCQueryConfig('getMerchantOrderSchedule', postParams, true);
 

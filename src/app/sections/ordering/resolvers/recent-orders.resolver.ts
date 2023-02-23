@@ -11,11 +11,10 @@ export class RecentOrdersResolver implements Resolve<Promise<OrderInfo[]>> {
               private readonly loadingService: LoadingService) {
   }
 
-  async resolve(): Promise<OrderInfo[]> {
+  resolve(): Promise<OrderInfo[]> {
     this.loadingService.showSpinner();
-
     return new Promise<OrderInfo[]>((resolve, reject) =>
-      this.merchantService.getRecentOrders()
+      this.merchantService.getRecentOrdersPeriod()
         .pipe(take(1))
         .subscribe(
           (orders) => this.loadingService.closeSpinner().then(() => resolve(orders)),

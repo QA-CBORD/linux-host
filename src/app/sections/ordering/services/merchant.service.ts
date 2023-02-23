@@ -12,7 +12,7 @@ import {
   ItemsOrderInfo,
 } from '../shared/models';
 import { Injectable } from '@angular/core';
-import { format } from 'date-fns'
+import { format } from 'date-fns';
 
 import { BehaviorSubject, Observable, zip, of, iif } from 'rxjs';
 import { tap, switchMap, map } from 'rxjs/operators';
@@ -35,6 +35,11 @@ import { Schedule } from '../shared/ui-components/order-options.action-sheet/ord
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
+import {
+  ORDERS_PERIOD,
+  ORDERING_STATUS_BY_LABEL,
+} from '../shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { getTimeRangeByPeriod } from '@sections/accounts/shared/ui-components/filter/date-util';
 
 @Injectable({
   providedIn: 'root',
@@ -46,9 +51,12 @@ export class MerchantService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
   private readonly _selectedAddress$: BehaviorSubject<any> = new BehaviorSubject<any>(<any>{});
-  private readonly _orderTypes$: BehaviorSubject<MerchantOrderTypesInfo> = new BehaviorSubject<MerchantOrderTypesInfo>(<
-    MerchantOrderTypesInfo
-  >{});
+  private readonly _orderTypes$: BehaviorSubject<MerchantOrderTypesInfo> = new BehaviorSubject<MerchantOrderTypesInfo>(
+    <MerchantOrderTypesInfo>{}
+  );
+
+  private _period: ORDERS_PERIOD;
+  private _orderStatus: string;
 
   constructor(
     private readonly orderingApiService: OrderingApiService,
@@ -82,6 +90,7 @@ export class MerchantService {
 
   private set _recentOrders(value: OrderInfo[]) {
     this.recentOrders = [...value];
+    this.recentOrders.sort((a, b) => new Date(b.dueTime).getTime() - new Date(a.dueTime).getTime());
     this._recentOrders$.next([...this.recentOrders]);
   }
 
@@ -91,6 +100,19 @@ export class MerchantService {
 
   set selectedAddress(value: any) {
     this._selectedAddress$.next(value);
+  }
+
+  get period(): ORDERS_PERIOD {
+    return this._period;
+  }
+
+  get orderStatus(): string {
+    return this._orderStatus;
+  }
+
+  setOrderPeriodStates(period: ORDERS_PERIOD, orderStatuses: string) {
+    this._period = period;
+    this._orderStatus = orderStatuses;
   }
 
   getMenuMerchants(): Observable<MerchantInfo[]> {
@@ -115,12 +137,10 @@ export class MerchantService {
 
     if (!timez) {
       const iosDate = () => new Date(dateStr.replace(TIMEZONE_REGEXP, '$1:$2'));
-      const [, , , tz] = iosDate()
-        .toLocaleString('en-US', { timeZone, timeZoneName: 'short' })
-        .split(' ');
+      const [, , , tz] = iosDate().toLocaleString('en-US', { timeZone, timeZoneName: 'short' }).split(' ');
 
       timez = tz;
-    } 
+    }
     return format(dateObj, `h:mm aa '(${timez})'`);
   }
 
@@ -185,6 +205,36 @@ export class MerchantService {
             })
         )
       ),
+      tap(recentOrders => (this._recentOrders = recentOrders))
+    );
+  }
+
+  getRecentOrdersPeriod(
+    period: ORDERS_PERIOD = ORDERS_PERIOD.LAST30DAYS,
+    orderStatus = 'All'
+  ): Observable<OrderInfo[]> {
+    const time = getTimeRangeByPeriod(period);
+    return this.userFacadeService.getUserData$().pipe(
+      switchMap(({ id }) =>
+        zip(
+          this.orderingApiService.getSuccessfulOrdersListQuery({
+            ...time,
+            merchantId: '',
+            institutionId: '',
+            orderStatuses: ORDERING_STATUS_BY_LABEL[orderStatus],
+            userId: id,
+          }),
+          this.getMenuMerchants(),
+          (orders, merchants) =>
+            orders.filter(order => {
+              const merchant = merchants.find(({ id }) => id === order.merchantId);
+              const merchantFound = !!merchant;
+              order.merchantName = merchantFound && merchant.name;
+              return merchantFound;
+            })
+        )
+      ),
+      tap(() => this.setOrderPeriodStates(period, orderStatus)),
       tap(recentOrders => (this._recentOrders = recentOrders))
     );
   }
