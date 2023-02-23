@@ -1,7 +1,9 @@
 <div class="content" *ngIf="detailsForm" [ngClass]="{ 'content--disabled': readonly }">
   <form novalidate [formGroup]="detailsForm">
     <div class="order-details">
-      <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'dueTime' }}</ion-label>
+      <ion-label class="order-details__label">{{
+        orderDetailOptions.orderType | typeMessage : 'dueTime' : isWalkoutOrder
+      }}</ion-label>
 
       <p
         style="margin-bottom: 3px"
@@ -17,7 +19,9 @@
     </div>
 
     <div class="order-details" *ngIf="orderDetailOptions.address">
-      <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'address' }}</ion-label>
+      <ion-label class="order-details__label">{{
+        orderDetailOptions.orderType | typeMessage : 'address' : isWalkoutOrder
+      }}</ion-label>
 
       <p *ngIf="readonly && orderDetailOptions.address; else addressEditable" class="order-details__value">
         {{ orderDetailOptions.address | addressHeaderFormat }}

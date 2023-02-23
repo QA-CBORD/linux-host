@@ -19,7 +19,8 @@
                   {{ inspection.remainingItems | i18nPlural: roomsMap }}
                 </div>
               </div>
-
+              
+              <h3 class="inspections-list__type">{{inspection.checkIn ? 'Move-in' : 'Move-out'}}</h3>
               <h2 class="inspections-list__title">{{ inspection.formTitle }}</h2>
             </ion-label>
             <st-actions
