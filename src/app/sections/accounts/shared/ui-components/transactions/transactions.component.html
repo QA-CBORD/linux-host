@@ -4,7 +4,8 @@
       [sticky]="true"
       class="transactions__divider"
       stIsDividerAppear
-      [actualDate]="transaction.actualDate"
+      [date]="transaction.actualDate"
+      [propertyName]="'actualDate'"
       [index]="i"
       [transactions]="transactions"
       *ngIf="dividers"
