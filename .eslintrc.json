@@ -6,12 +6,6 @@
       "parser": "@angular-eslint/template-parser",
       "extends": ["plugin:@angular-eslint/recommended", "plugin:@angular-eslint/template/recommended"],
       "rules": {
-        "@typescript-eslint/dot-notation": "off",
-        "@typescript-eslint/no-implied-eval": "off",
-        "@typescript-eslint/no-throw-literal": "off",
-        "strict": "off",
-        "import/first": "off",
-        "lines-around-directive": "off",
         "@angular-eslint/template/no-negated-async": "off",
         "@angular-eslint/template/accessibility-valid-aria": "error",
         "@angular-eslint/template/accessibility-alt-text": "error",
