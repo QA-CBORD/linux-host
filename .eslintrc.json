@@ -3,8 +3,8 @@
   "overrides": [
     {
       "files": ["*.component.html", "*.page.html", "settings.html", "*-screen.html"],
-      "parser": "@angular-eslint/template-parser",
       "extends": ["plugin:@angular-eslint/recommended", "plugin:@angular-eslint/template/recommended"],
+      "parser": "@angular-eslint/template-parser",
       "rules": {
         "@angular-eslint/template/no-negated-async": "off",
         "@angular-eslint/template/accessibility-valid-aria": "error",
@@ -29,7 +29,6 @@
       "files": ["*.ts"],
       "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
       "parser": "@typescript-eslint/parser",
-      "plugins": ["@typescript-eslint"],
       "rules": {
         "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/no-explicit-any": "error",
