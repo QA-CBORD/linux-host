@@ -16,6 +16,9 @@ class ConfigurationPage extends Page {
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[1]/st-settings-item[2]/ion-item');
     }
 
+    get ReportCardAsFound(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[1]/st-settings-item[2]/ion-item');
+    }
 }
 
 export default new ConfigurationPage();
