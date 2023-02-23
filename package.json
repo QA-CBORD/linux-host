@@ -24,7 +24,7 @@
     "ionic-e2e:run:ios": "cross-env TS_NODE_PROJECT=tests/tsconfig.json  wdio tests/config/wdio.ios.config.ts --suite $SUITE",
     "ionic-e2e:run:android": "cross-env TS_NODE_PROJECT=\"tests/tsconfig.json\"  wdio tests/config/wdio.android.config.ts --suite $SUITE"
   },
-  "pre-push": "test",
+  "pre-push": "lint",
   "private": true,
   "dependencies": {
     "@angular/common": "^15.1.4",

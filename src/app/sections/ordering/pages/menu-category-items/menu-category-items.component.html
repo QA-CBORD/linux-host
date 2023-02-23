@@ -17,7 +17,7 @@
   </ion-header>
   <ion-content class="menu-category" mode="ios">
     <div *ngIf="!filteredMenuCategoryItems.length" class="menu-category__search-wrapper">
-      <img class="menu-category__search-icon" src="/assets/icon/search.svg" />
+      <img class="menu-category__search-icon" src="/assets/icon/search.svg" alt="search image"/>
       <div class="menu-category__search-text">{{ contentStrings.labelEmptySearch | async }}</div>
     </div>
     <st-category-list

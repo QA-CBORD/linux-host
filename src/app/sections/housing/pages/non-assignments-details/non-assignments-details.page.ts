@@ -77,7 +77,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    console.log(isMobile(this._platform));
     if (isMobile(this._platform)) {
       this.subscriptions = this._platform.pause.subscribe(() => {
         this.activeAlerts.forEach(alert => {
@@ -188,8 +187,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
           handler: () => {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
-            
-            console.log('selected asset:', this.selectedAssetKey);
 
             const createContractSubscription =
               this._nonAssignmentsService.submitContract(
@@ -206,7 +203,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
                     } else {
                       alert.dismiss().then(() => {
                         this._loadingService.closeSpinner();
-                        console.log('Unable to create contract for selected asset type');
                         this._toastService.showToast({
                           message: 'The form could not be processed at this time. Try again later',
                         });

@@ -125,7 +125,7 @@ export class SearchFilterModalComponent implements OnInit {
       this._loadingService.closeSpinner();
       this._router
         .navigateByUrl(`patron/housing/rooms-search/${this._roomStateService.getActiveRoomSelect().key}/units`)
-        .catch(err => console.log(err));
+        .catch();
     });
   }
 
