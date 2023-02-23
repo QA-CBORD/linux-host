@@ -71,14 +71,14 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   updateApplicationService(
-    formValue: FormControl,
+    formControl: FormControl,
     applicationDetails: ApplicationDetails,
     type: UpdateType = UpdateType.SAVE
   ) {
     this._updateApplicationService(type, {
       key: this.getApplicationKey(),
       details: applicationDetails,
-      formValue,
+      formControl: formControl,
       isSubmitted: this.isSubmitted,
       type: FormType.Application,
     })
@@ -186,9 +186,9 @@ export class ApplicationDetailsPage implements OnInit {
     this.housingService.goToDashboard();
   }
 
-  onChange(applicationDetails: ApplicationDetails, formValue: FormGroup) {
+  onChange(applicationDetails: ApplicationDetails, formGroup: FormGroup) {
     this.applicationsService
-    .saveLocally(this.getApplicationKey(), applicationDetails, formValue.value)
+    .saveLocally(this.getApplicationKey(), applicationDetails, formGroup.value)
     .pipe(take(1)).subscribe();
   }
 
@@ -208,10 +208,10 @@ export class ApplicationDetailsPage implements OnInit {
     return this.route.snapshot.params.applicationKey;
   }
 
-  private async continueToPayment(appDetails: ApplicationDetails, form: FormControl) {
+  private async continueToPayment(appDetails: ApplicationDetails, formControl: FormControl) {
     this.formPaymentService.continueToFormPayment({
       details: appDetails,
-      formValue: form,
+      formControl: formControl,
       key: this.getApplicationKey(),
       type: FormType.Application,
     });

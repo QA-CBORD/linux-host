@@ -350,7 +350,7 @@ export class MerchantService {
     return this.retrieveUserAddressList().pipe(map(addresses => addresses.find(({ id }) => id === deliveryId)));
   }
 
-  removeAddress(addressId: string): Observable<any> {
+  removeAddress(addressId: string): Observable<boolean> {
     return this.orderingApiService.removeAddress(addressId);
   }
 

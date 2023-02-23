@@ -105,7 +105,9 @@ export class StDateTimePickerComponent implements OnInit {
     }, TIMEOUTS.A11yFocus);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pickerClickHandler(dateInfo: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [date, { value }] = Object.values(dateInfo) as any[];
     let dateValue, timeStamp;
     if (value === 'asap') {

@@ -42,18 +42,21 @@ export class RegistrationService {
 
   callBackend(
     method: RegistrationApiMethods,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params: any = {},
     useSessionId = true,
     useInstitutionId = false
-  ): Observable<any> {
+  ) {
     return this.makeRPCRequest(method, params, useSessionId, useInstitutionId);
   }
 
   private makeRPCRequest(
     method: RegistrationApiMethods,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params: any = {},
     useSessionId,
     useInstitutionId
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Observable<any> {
     return this.paramsObs$().pipe(
       switchMap(([sessionId]) => {
@@ -71,6 +74,7 @@ export class RegistrationService {
     return this.contentStringFacade.fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, category);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getStringModel$<T extends ContentStringModel>(category: ContentStringCategory, args: { data?: any; requests?: ContentStringRequest[] } = {}): Observable<T> {
     return this.contentStringFacade.fetchContentStringModel<T>(category, args);
   }

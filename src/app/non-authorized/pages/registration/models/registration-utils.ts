@@ -17,6 +17,7 @@ export interface RegistrationContentString {
 export interface FormFieldList {
   horizontalAlignedFields: Field[];
   verticalAlignedFields: Field[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   controls: { [key: string]: any };
 }
 export interface RegistrationData {
@@ -25,6 +26,7 @@ export interface RegistrationData {
 }
 
 export interface UserRegistrationManager {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register(formData): Observable<any>;
   getData(): Promise<RegistrationData>;
 }
@@ -55,7 +57,7 @@ export interface formField {
   type: string;
   idd: string;
   cValidator?: InputValidator[];
-  validators?: any[];
+  validators?: [string, ...ValidationErrors[]];
   control?: AbstractControl;
   lookupFieldId?: string;
   separatorUp?: boolean;
@@ -74,9 +76,10 @@ export class Field implements formField {
   name: string;
   type: string;
   idd: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any;
   cValidator?: InputValidator[];
-  validators?: any[];
+  validators?: [string, ...ValidationErrors[]];
   control?: AbstractControl;
   lookupFieldId?: string;
   separatorUp?: boolean;

@@ -7,6 +7,7 @@ import { PopoverController } from '@ionic/angular';
   styleUrls: ['./pick-checkin-mode.component.scss'],
 })
 export class PickCheckinModeComponent {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() contentStrings: any;
   @Input() locationPermissionDisabled: boolean;
 

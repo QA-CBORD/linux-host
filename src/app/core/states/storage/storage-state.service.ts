@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ExtendableStateManager, StorageEntity } from '@core/classes/extendable-state-manager';
 import { BehaviorSubject, Observable } from 'rxjs';

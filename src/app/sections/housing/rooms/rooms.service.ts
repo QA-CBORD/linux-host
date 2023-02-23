@@ -203,8 +203,8 @@ export class RoomsService {
     category: string,
     options: string[],
     facility: Facility,
-    filteredFacilities: any[],
-    parentKeys: any[]
+    filteredFacilities: Facility[],
+    parentKeys: number[]
   ) {
     return (
       this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
@@ -217,8 +217,8 @@ export class RoomsService {
     category: string,
     options: string[],
     facility: Facility,
-    filteredFacilities: any[],
-    parentKeys: any[]
+    filteredFacilities: Facility[],
+    parentKeys: number[]
   ) {
     return (
       this._matchedFacilityAttributes(category, options, facility) &&

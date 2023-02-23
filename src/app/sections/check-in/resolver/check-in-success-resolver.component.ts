@@ -11,13 +11,13 @@ import { map, take, tap } from 'rxjs/operators';
 import { CheckingSuccessContentCsModel } from '../contents-strings/check-in-content-string.model';
 
 @Injectable()
-export class CheckinSuccessResolver implements Resolve<Observable<any>> {
+export class CheckinSuccessResolver implements Resolve<Observable<{ contentString: CheckingSuccessContentCsModel; }>> {
   constructor(
     private readonly commonService: CommonService, 
     private readonly loadingService: LoadingService,
     private readonly merchantService: MerchantService) {}
 
-  resolve(): Observable<any> {
+  resolve(): Observable<{ contentString: CheckingSuccessContentCsModel; }> {
     const checkinSuccess = this.commonService.loadContentString<CheckingSuccessContentCsModel>(
       ContentStringCategory.checkinSuccess
     );

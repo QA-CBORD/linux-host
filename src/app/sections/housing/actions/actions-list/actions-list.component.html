@@ -5,7 +5,10 @@
     </ion-item>
     <ion-item *ngIf="showEditOption" lines="none" mode="md" (click)="closePopover()" [routerLink]="[navigateTo]" [disabled]="!canEdit">
       Edit
-    </ion-item>    
+    </ion-item>  
+    <ion-item *ngIf="showDetailsOption" lines="none" mode="md" (click)="detailsPopover()">
+      Details
+    </ion-item>   
     <ion-item *ngIf="showRemoveOption" lines="none" mode="md" (click)="handleRemove()" [disabled]="!itemKey">
       Remove
     </ion-item>

@@ -409,7 +409,7 @@ export class HousingService {
   /**
    * Returns navigation back to dashboard as an observable
    */
-  goToDashboard$(): Observable<any> {
+  goToDashboard$(): Observable<Promise<boolean>> {
     this._loadingService.closeSpinner();
     return of(this._router.navigate([`${ROLES.patron}/housing/dashboard`]));
   }

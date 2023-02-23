@@ -5,8 +5,12 @@ import { Injectable } from '@angular/core';
 import { Observable, of, zip } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { MessageResponse, ServiceParameters } from 'src/app/core/model/service/message-response.model';
-import { BuildingInfo, ItemsOrderInfo, MerchantAccountInfoList, MerchantInfo, OrderInfo } from '../shared';
+import {
+  MessageResponse,
+  ServiceParameters,
+  MessageListResponse,
+} from 'src/app/core/model/service/message-response.model';
+import { BuildingInfo, ItemsOrderInfo, MenuInfo, MerchantAccountInfoList, MerchantInfo, OrderInfo } from '../shared';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MerchantSearchOptions } from '@sections/ordering';
@@ -14,6 +18,7 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
+import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 /** This service should be global */
 @Injectable({
@@ -54,16 +59,16 @@ export class OrderingApiService {
 
     return this.http
       .post(this.serviceUrlOrdering, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response.list));
+      .pipe(map(({ response }: MessageResponse<MessageListResponse<OrderInfo>>) => response.list));
   }
 
-  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any> {
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<Schedule> {
     const postParams: ServiceParameters = { merchantId, orderType, startDate: null, endDate: null };
     const queryConfig = new RPCQueryConfig('getMerchantOrderSchedule', postParams, true);
 
     return this.http
       .post(this.serviceUrlOrdering, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response));
+      .pipe(map(({ response }: MessageResponse<Schedule>) => response));
   }
 
   validateOrder(orderInfo: OrderInfo): Observable<OrderInfo> {
@@ -119,7 +124,7 @@ export class OrderingApiService {
 
     return this.http
       .post(this.serviceUrlInstitution, queryConfig)
-      .pipe(map(({ response: { list } }: MessageResponse<any>) => list));
+      .pipe(map(({ response: { list } }: MessageResponse<MessageListResponse<BuildingInfo>>) => list));
   }
 
   updateUserAddress({
@@ -176,17 +181,17 @@ export class OrderingApiService {
 
         return this.http.post(this.serviceUrlUser, queryConfig);
       }),
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<AddressInfo>) => response)
     );
   }
 
-  retrievePickupLocations(): Observable<any> {
+  retrievePickupLocations(): Observable<AddressInfo[]> {
     const postParams: ServiceParameters = { active: true };
     const queryConfig = new RPCQueryConfig('retrievePickupLocations', postParams, true, true);
 
     return this.http
       .post(this.serviceUrlInstitution, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response.list));
+      .pipe(map(({ response }: MessageResponse<MessageListResponse<AddressInfo>>) => response.list));
   }
 
   isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {
@@ -208,7 +213,7 @@ export class OrderingApiService {
 
         return this.http.post(this.serviceUrlMerchant, queryConfig);
       }),
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<MerchantAccountInfoList>) => response)
     );
   }
 
@@ -226,20 +231,20 @@ export class OrderingApiService {
     orderType: number,
     locale: string = null,
     depth = 4
-  ): Observable<any> {
+  ): Observable<MenuInfo> {
     const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
     const queryConfig = new RPCQueryConfig('getDisplayMenu', postParams, true);
 
     return this.http
       .post(this.serviceUrlMerchant, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response));
+      .pipe(map(({ response }: MessageResponse<MenuInfo>) => response));
   }
 
-  addressToGeocode(address: AddressInfo): Observable<any> {
+  addressToGeocode(address: AddressInfo): Observable<AddressInfo> {
     const postParams: ServiceParameters = { address };
     const queryConfig = new RPCQueryConfig('addressToGeocode', postParams, true);
 
-    return this.http.post(this.serviceUrlUser, queryConfig).pipe(map(({ response }: MessageResponse<any>) => response));
+    return this.http.post(this.serviceUrlUser, queryConfig).pipe(map(({ response }: MessageResponse<AddressInfo>) => response));
   }
 
   submitOrder(orderInfo: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {
@@ -249,10 +254,10 @@ export class OrderingApiService {
 
     return this.http
       .post(this.serviceUrlOrdering, queryConfig)
-      .pipe(map(({ response }: MessageResponse<any>) => response));
+      .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
   }
 
-  removeAddress(addressId: string): Observable<any> {
+  removeAddress(addressId: string): Observable<boolean> {
     const postParams: ServiceParameters = { addressId };
 
     return this.userFacadeService.getUserData$().pipe(
@@ -261,7 +266,7 @@ export class OrderingApiService {
 
         return this.http.post('/json/user', queryConfig);
       }),
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<boolean>) => response)
     );
   }
 

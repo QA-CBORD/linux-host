@@ -49,6 +49,7 @@ export class SecureMessagingApiService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   postSecureMessage(messageBody: SecureMessageSendBody): Observable<any> {
     return this.apiService.authenticatedHTTPCall(
       RestCallType.post,
@@ -60,6 +61,7 @@ export class SecureMessagingApiService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   replyToSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
     return this.apiService.authenticatedHTTPCall(
       RestCallType.post,
@@ -71,6 +73,7 @@ export class SecureMessagingApiService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deleteSecureMessage(messageID: string): Observable<any> {
     return this.apiService.authenticatedHTTPCall(
       RestCallType.post,

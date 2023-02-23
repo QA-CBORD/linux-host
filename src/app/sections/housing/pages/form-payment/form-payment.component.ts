@@ -17,13 +17,14 @@ import { SuccessfulPaymentModal } from './successful-payment-modal/successful-pa
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { FormType } from './form-payment.service';
 import { Location } from '@angular/common';
+import { ApplicationDetails } from '@sections/housing/applications/applications.model';
+import { ContractDetails } from '@sections/housing/contracts/contracts.model';
 import { TransactionalData } from './transactional-data.model';
 
 export interface CurrentForm {
   key: number,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  details: any,
-  formValue: FormControl,
+  details: ApplicationDetails | ContractDetails,
+  formControl: FormControl,
   isSubmitted?: boolean,
   type: 'application' | 'work-order',
 }
@@ -79,7 +80,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private onConfirmation(role: string, account: UserAccount, amount: string, info: TransactionalData) {
-    if (role == BUTTON_TYPE.OKAY) {
+    if (role === BUTTON_TYPE.OKAY) {
     this.loadingService.showSpinner();
       this.makePayment(account.id, amount).pipe(take(1)).subscribe(
         () => {
@@ -101,6 +102,7 @@ export class FormPaymentComponent implements OnInit {
       component: ConfirmPaymentPopover,
       componentProps: {
         data,
+        showDisclaimer: this.showDisclaimer()
       },
       cssClass: 'large-popover',
       animated: false,
@@ -118,13 +120,13 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    if(this.currentForm.type == FormType.Application) {
+    if(this.currentForm.type === FormType.Application) {
       this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
       }); 
 
-    } else if (this.currentForm.type == FormType.WorkOrder) {
-      this.contractsService.submitContract(this.currentForm.key, this.currentForm.details?.formKey).pipe(take(1)).subscribe(async () => {
+    } else if (this.currentForm.type === FormType.WorkOrder) {
+      this.contractsService.submitContract(this.currentForm.key, (<ContractDetails>this.currentForm.details)?.formKey).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
       });
     }
@@ -145,18 +147,18 @@ export class FormPaymentComponent implements OnInit {
   }
 
   get formTitle(): string {
-    if(this.currentForm.type == FormType.Application) {
-      return this.currentForm.details.applicationDefinition.applicationTitle;
-    } else if (this.currentForm.type == FormType.WorkOrder) {
-      return this.currentForm.details.contractInfo.contractName;
+    if(this.currentForm.type === FormType.Application) {
+      return (<ApplicationDetails>this.currentForm.details).applicationDefinition.applicationTitle;
+    } else if (this.currentForm.type === FormType.WorkOrder) {
+      return (<ContractDetails>this.currentForm.details).contractInfo.contractName;
     }
   }
 
   get amountDue(): string {
-    if(this.currentForm.type == FormType.Application) {
-      return this.currentForm.details.applicationDefinition.amount.toFixed(2);
-    } else if (this.currentForm.type == FormType.WorkOrder) {
-      return this.currentForm.details.amount.toFixed(2);
+    if(this.currentForm.type === FormType.Application) {
+      return (<ApplicationDetails>this.currentForm.details).applicationDefinition.amount.toFixed(2);
+    } else if (this.currentForm.type === FormType.WorkOrder) {
+      return (<ContractDetails>this.currentForm.details).amount.toFixed(2);
     }
   }
 
@@ -175,8 +177,16 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private initFormControl() {
-    const control =  new FormControl(this.amountDue);
+    const control = new FormControl(this.amountDue);
     control.disable();
     return control;
+  }
+
+  private showDisclaimer(): boolean {
+    if (this.currentForm.type === FormType.Application) {
+       return !(<ApplicationDetails>this.currentForm.details).applicationDefinition.canEdit;
+    }
+
+    return false;
   }
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { BehaviorSubject, iif, Observable, of, Subscription, zip, throwError, from } from 'rxjs';
 import {
   AUTO_DEPOSIT_PAYMENT_TYPES,
@@ -268,7 +268,7 @@ export class AutomaticDepositPageComponent {
     }
   }
 
-  private async defineDestAccounts(target: any) {
+  private async defineDestAccounts(target: string | UserAccount | PAYMENT_TYPE) {
     let type;
 
     if (target instanceof Object) {
@@ -462,7 +462,7 @@ export class AutomaticDepositPageComponent {
     await this.setValidators();
   }
 
-  private getControlByActiveState(type: number, frequency: string): { [key: string]: any[] } {
+  private getControlByActiveState(type: number, frequency: string): { [key: string]: object[] } {
     let control;
 
     if (type === this.autoDepositTypes.lowBalance) {
@@ -562,7 +562,9 @@ export class AutomaticDepositPageComponent {
 
   // -------------------- Controls block --------------------------//
 
-  private initPaymentFormBlock(): { [key: string]: any[] } {
+  private initPaymentFormBlock(): {
+    [key: string]: [UserAccount | number | string | PAYMENT_TYPE, ValidationErrors[]?];
+  } {
     const { account, paymentMethod, amountToDeposit } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
     const accountValidators = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[account].required)];
     const paymentMethodValidators = [
@@ -576,7 +578,7 @@ export class AutomaticDepositPageComponent {
     };
   }
 
-  private initTimeBasedBlock(frequency: string): { [key: string]: any[] } {
+  private initTimeBasedBlock(frequency: string): { [key: string]: object[] } {
     const { dayOfMonth, dayOfWeek } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
     let validators;
     let controlName;
@@ -598,7 +600,7 @@ export class AutomaticDepositPageComponent {
     return { [controlName]: [day ? day : '', validators] };
   }
 
-  private initLowBalanceFormBlock(): { [key: string]: any[] } {
+  private initLowBalanceFormBlock(): { [key: string]: number[] } {
     return { [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: [this.autoDepositSettings.lowBalanceAmount] };
   }
 

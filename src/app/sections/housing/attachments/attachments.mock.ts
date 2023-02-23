@@ -1,6 +1,6 @@
 import { Attachment, AttachmentsDetail } from './attachments.model';
 
-export function generateWorkOrder(_: any, index: number) {
+export function generateWorkOrder(_, index: number) {
   return {
     id: index,
   };

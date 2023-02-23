@@ -86,7 +86,7 @@ export class AccountService {
     );
   }
 
-  getContentStrings(names: string[]): any {
+  getContentStrings(names: string[]) {
     let list = {};
     names.forEach(n => {
       if (this.contentString[n]) {

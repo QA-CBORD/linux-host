@@ -16,6 +16,7 @@ export class WaitingListStateService  {
   });
   private waitingList: BehaviorSubject<WaitingList[]> = new BehaviorSubject<WaitingList[]>([]);
   private waitingListDetails: BehaviorSubject<WaitingListDetails> = new BehaviorSubject<WaitingListDetails>(this._defaultState);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private formSelection: BehaviorSubject<any> = new BehaviorSubject<any>({});
 
   setWaitingList(value: WaitingList[]) {
@@ -38,6 +39,7 @@ export class WaitingListStateService  {
     return this.waitingListDetails;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get formSelection$(): Observable<any> {
     return this.formSelection;
   }

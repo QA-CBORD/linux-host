@@ -17,7 +17,7 @@ export class MobileAccessTileComponent implements OnInit {
   accessList$: Observable<MMobileLocationInfo[]>;
   isLoadingData = true;
   maxAmount = 4;
-  skeletonArray: any[] = new Array(this.maxAmount);
+  skeletonArray: number[] = new Array(this.maxAmount);
 
   constructor(
     private readonly mobileAccessService: MobileAccessService,

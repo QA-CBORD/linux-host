@@ -41,6 +41,7 @@ export class ForgotPasswordPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.pageContents = this.messageProxy.get<ForgotPasswordCsModel>() || {} as any;
     this.initForm();
     setTimeout(() => {

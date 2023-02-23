@@ -46,7 +46,7 @@ export const validateInputAmount = ({ value }: AbstractControl): ValidationError
 };
 
 export const validateLessThanOther = (other: number): ValidatorFn => {
-  return ({ value }: AbstractControl): { [key: string]: any } => (value > other ? { incorrect: true } : null);
+  return ({ value }: AbstractControl) => (value > other ? { incorrect: true } : null);
 };
 
 export const validateGreaterOrEqualToZero = ({ value }: AbstractControl): ValidationErrors | null => {
@@ -201,9 +201,9 @@ export function getCashlessStatus(isLost: boolean): number {
   return isLost ? ReportCardStatus.LOST : ReportCardStatus.FOUND;
 }
 
-export function mergeMatchArrayById(sourceArray: any[], matchIds: any[]): any[] {
+export function mergeMatchArrayById<T>(sourceArray: { id: string }[], matchIds: string[] | number[]): T[] {
   const result = [];
-  const sourceDict: { [key: string]: any } = {};
+  const sourceDict: { [key: string]: object } = {};
 
   for (const sourceItem of sourceArray) {
     sourceDict[`${sourceItem.id}`] = sourceItem;

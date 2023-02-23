@@ -22,6 +22,7 @@
 
     &__title {
       @include font-nunito-semibold(20px);
+      color: $color-black;
     }
 
     &__content {

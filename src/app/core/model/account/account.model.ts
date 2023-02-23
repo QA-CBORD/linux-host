@@ -10,8 +10,8 @@ export interface UserAccount {
   readonly id: string;
   readonly institutionId: string;
   readonly isActive: boolean;
-  readonly lastFour: any;
-  readonly nameOnMedia: any;
+  readonly lastFour: string;
+  readonly nameOnMedia: string;
   readonly paymentSystemId: string;
   readonly paymentSystemType: number;
   readonly userId: string;

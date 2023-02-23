@@ -12,14 +12,12 @@
     <ng-content></ng-content>
 </ion-content>
 <ion-footer no-border class="st-popover__footer">
-    <ion-button
+    <st-button
             *ngFor="let button of popoverConfig.buttons"
             fill="{{ button.fill }}"
-            shape="{{ button.shape }}"
-            strong="{{ button.strong }}"
             class="st-popover__footer-btn st-popover__footer-btn--{{ button.class }}"
             (click)="closeModal(button.label, button.type)"
     >
         <span class="st-popover__footer-content">{{ button.label }}</span>
-    </ion-button>
+    </st-button>
 </ion-footer>
