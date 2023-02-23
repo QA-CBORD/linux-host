@@ -66,6 +66,12 @@
     padding-inline-start: 40px;
     padding-inline-end: 40px;
   }
+
+  &__end {
+    display: flex;
+    justify-content: flex-end;
+    padding-inline-end: 10px;
+  }
 }
 
 :host-context(.shadow-header) {
