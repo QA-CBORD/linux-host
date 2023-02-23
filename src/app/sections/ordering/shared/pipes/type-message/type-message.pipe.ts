@@ -1,16 +1,19 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ORDER_TYPE } from "@sections/ordering/ordering.config";
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 
 @Pipe({
-  name: 'typeMessage'
+  name: 'typeMessage',
 })
 export class TypeMessagePipe implements PipeTransform {
+  transform(type: ORDER_TYPE, text: 'dueTime' | 'address' | 'time', isWalkoutOrder = false): string {
+    if (isWalkoutOrder) {
+      const labelMap = { dueTime: 'order time', time: 'order time', address: 'address' };
+      return `Smart Shopping ${labelMap[text]}`;
+    }
 
-  transform(type: ORDER_TYPE, text: string): string {
     const delivery = 'delivery';
     const pickUp = 'pickup';
 
     return `${Number(type) === ORDER_TYPE.PICKUP ? pickUp : delivery} ${text}`;
   }
-
 }

@@ -56,6 +56,7 @@
             (click)="mobileCredentialFacade.onUiIconClicked()"
             class="card__wallet-icon"
             src="{{ imageUrl }}"
+            alt="mobile access, icon"
           />
           <div class="card__student-wallet-text">{{ mobileCredentialFacade.uiText$ | async }}</div>
         </div>
@@ -85,7 +86,7 @@
           class="card__apple-wallet-btn"
           (click)="mobileCredentialFacade.onImageClick()"
         >
-          <img src="{{ image }}" style="height: fit-content"/>
+          <img src="{{ image }}" style="height: fit-content" alt="mobile access"/>
         </ion-button>
       </ion-col>
     </ion-row>

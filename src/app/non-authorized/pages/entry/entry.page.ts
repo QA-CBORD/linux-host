@@ -56,7 +56,7 @@ export class EntryPage implements OnInit {
   }
 
   checkLocation() {
-    console.log('checkLocation');
+    // console.log('checkLocation');
   }
 
   async changeEnv() {
