@@ -112,7 +112,6 @@ export class UnitDetailsPage implements OnInit, OnDestroy {
                   } else {
                     alert.dismiss().then(() => {
                       this._loadingService.closeSpinner();
-                      console.log('Assignment for patron was not successful. This unit might be full.');
                       this._toastService.showToast({
                         message: 'Oops this unit is not available',
                       });

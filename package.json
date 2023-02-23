@@ -18,7 +18,7 @@
     "i-minor": "./IncrementVersionNumber.sh -m",
     "i-major": "./IncrementVersionNumber.sh -p"
   },
-  "pre-push": "test",
+  "pre-push": "lint",
   "private": true,
   "dependencies": {
     "@angular/common": "^15.1.4",

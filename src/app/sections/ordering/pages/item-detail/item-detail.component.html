@@ -104,7 +104,7 @@
 </ion-content>
 <ion-footer class="item-footer" mode="ios">
   <div class="item-footer__counter-btns-container">
-    <ion-button (click)="removeItems()" [disabled]="order.counter == 1" class="item-footer__counter-btn">
+    <ion-button (click)="removeItems()" [disabled]="order.counter === 1" class="item-footer__counter-btn">
       <ion-icon name="remove" aria-label="Decrease Quantity"></ion-icon>
     </ion-button>
     <div>{{ order.counter }}</div>
