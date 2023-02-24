@@ -39,7 +39,8 @@
             "allow": ["error"]
           }
         ],
-        "delta/no-single-letter": "warn"
+        "delta/no-single-letter": "warn",
+        "delta/expire":"error"
       }
     }
   ]
