@@ -14,7 +14,7 @@
     (click)="onNavigateToCheckin.emit(orderInfo)"
     class="ion-no-padding"
     style="margin-top: 10px"
-    *ngIf="orderCheckStatus.isNotCheckedIn(orderInfo.checkinStatus)"
+    *ngIf="orderCheckStatus.isNotCheckedIn(orderInfo.checkinStatus, orderInfo.status)"
   >
     <div class="clickable">
       <st-button fill="clear" buttonModifier="rectangular">

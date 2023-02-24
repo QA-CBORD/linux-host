@@ -7,13 +7,14 @@ export enum CheckinStatuses {
 }
 
 export const OrderCheckinStatus = {
-  isNotCheckedIn: (status: number): boolean => {
-    const isCaceled = ORDERING_STATUS_BY_LABEL.Canceled.includes(status);
+  isNotCheckedIn: (checkInStatus: number, status: number): boolean => {
+    
+    const isPending = ORDERING_STATUS_BY_LABEL.Pending.includes(status);
+    const isCheckInPending = [
+      CheckinStatuses.NOT_CHECKED_IN_REMINDER_SENT,
+      CheckinStatuses.NOT_CHECKED_IN_NO_REMINDER_SENT,
+    ].includes(checkInStatus);
 
-    return (
-      (status == CheckinStatuses.NOT_CHECKED_IN_REMINDER_SENT ||
-        status == CheckinStatuses.NOT_CHECKED_IN_NO_REMINDER_SENT) &&
-        !isCaceled
-    );
+    return isPending && isCheckInPending;
   },
 };

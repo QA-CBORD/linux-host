@@ -80,7 +80,7 @@
         >
       </ion-col>
       <ion-col
-        *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus)"
+        *ngIf="orderCheckStatus.isNotCheckedIn((order$ | async).checkinStatus, (order$ | async).status)"
         class="ion-align-self-center"
         [size]="addToCartEnabled ? '7' : '12'"
       >
