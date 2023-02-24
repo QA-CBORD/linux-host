@@ -39,6 +39,7 @@ export class ActionsListComponent {
       },
       animated: false,
       backdropDismiss: true,
+      showBackdrop: true,
     });
     this.closePopover();
     appDetails.present();
