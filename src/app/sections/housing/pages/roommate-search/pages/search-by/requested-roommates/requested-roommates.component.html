@@ -4,7 +4,7 @@
       <div *ngFor="let roommate of requestedRoommates">
         <ng-container [ngSwitch]="options.showOptions">
           <ion-card *ngSwitchCase="optionsName.FullName">
-            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
+            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName === 'null' ? '' : roommate.middleName }} {{
               roommate.lastName}}</ion-card-content>
             <ion-footer class="status">
               <ion-row>
@@ -14,7 +14,7 @@
           </ion-card>
 
           <ion-card *ngSwitchCase="optionsName.PreferredName">
-            <ion-card-content>{{ roommate.preferredName == 'null' || roommate.preferredName === '' ? roommate.firstName
+            <ion-card-content>{{ roommate.preferredName === 'null' || roommate.preferredName === '' ? roommate.firstName
               : roommate.preferredName }} {{ roommate.lastName}}</ion-card-content>
             <ion-footer class="status">
               <ion-row>
@@ -24,7 +24,7 @@
           </ion-card>
 
           <ion-card *ngSwitchCase="optionsName.FullNameDOB">
-            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName == 'null' ? '' : roommate.middleName }} {{
+            <ion-card-content>{{ roommate.firstName }} {{ roommate.middleName === 'null' ? '' : roommate.middleName }} {{
               roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}</ion-card-content>
             <ion-footer class="status">
               <ion-row>

@@ -278,7 +278,7 @@ export class CartService {
                 if (theFoundItem) {
                   order.orderItems.push(theFoundItem);
                 } else {
-                  console.log('Something wrong, item: ', menuItemId, ' Not found');
+                  console.error('Something wrong, item: ', menuItemId, ' Not found');
                 }
               });
               return order;

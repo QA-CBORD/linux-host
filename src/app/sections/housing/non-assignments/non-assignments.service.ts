@@ -116,7 +116,6 @@ export class NonAssignmentsService {
         if (isSuccessful(response.status)) {
           return true;
         } else {
-          console.log(response);
           throw new Error(response.status.message);
         }
       }
