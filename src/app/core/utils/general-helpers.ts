@@ -253,7 +253,7 @@ export const isEmptyObject = (obj): boolean => {
   return obj && Object.keys(obj).length === 0;
 }
 
-export const isAppearing = (date: string, i: number, transactions: [], propertyName: string): boolean => {
+export const isAppearing = (date: string, i: number, transactions: object[], propertyName: string): boolean => {
   return i === 0 || !isSameDay(
     formatDate(date),
     formatDate(transactions[i - 1][propertyName])
