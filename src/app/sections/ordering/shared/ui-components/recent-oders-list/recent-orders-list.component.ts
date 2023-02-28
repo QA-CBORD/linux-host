@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Input, Output, EventEmitter,
 } from '@angular/core';
-import { isAppearing } from '@core/utils/general-helpers';
 import { OrderInfo } from '../../models';
 
 @Component({
