@@ -8,7 +8,7 @@ export class IsDividerAppearDirective implements OnInit {
   @Input() propertyName: string;
   @Input() date: string;
   @Input() index: number;
-  @Input() transactions: [];
+  @Input() transactions: object[];
 
   constructor(private elem: ElementRef, private renderer: Renderer2) { }
 
