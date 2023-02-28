@@ -1,0 +1,32 @@
+@import 'tools';
+
+.order {
+  &__list {
+    padding-bottom: 0;
+    padding-top: 0;
+  }
+
+  &__divider {
+    background: $color-white-smoke;
+  }
+
+  &__label {
+    width: 100%;
+    text-align: center;
+    margin: 2px 0 2px;
+
+    @include font-nunito-regular(12px);
+  }
+}
+
+:host-context(.disable-touch) {
+  .transactions__item {
+    pointer-events: none;
+  }
+}
+
+hr {
+  margin: 0 10px;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

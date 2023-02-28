@@ -9,6 +9,7 @@ import { OrderInfo } from '../../models';
 @Component({
   selector: 'st-recent-orders-list',
   templateUrl: './recent-orders-list.component.html',
+  styleUrls: ['./recent-orders-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrdersListComponent {
