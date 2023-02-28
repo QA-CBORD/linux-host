@@ -11,11 +11,11 @@
 <ion-content class="browser-hidden">
   <st-order-details
     [readonly]="false"
-    [orderInfo]="(order$ | async)"
+    [isExistingOrder]="isExistingOrder"
+    [orderInfo]="order$ | async"
     [merchant]="merchant$ | async"
     [accounts]="accounts$ | async"
     [accInfoList]="accountInfoList$ | async"
-    [isExistingOrder]="isExistingOrder"
     [orderDetailOptions]="orderDetailOptions$ | async"
     [orderTypes]="orderTypes$ | async"
     [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
@@ -26,7 +26,6 @@
     (onOrderItemClicked)="onOrderItemClicked($event)"
     (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
     (onOrderTipChanged)="onOrderTipChanged($event)"
-    #orderDetails
   >
     <st-button
       (onClick)="onSubmit()"

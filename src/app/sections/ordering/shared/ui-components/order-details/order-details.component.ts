@@ -90,7 +90,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
-  @Input() accounts: UserAccount[] = [];
+  private _accounts: UserAccount[] = [];
+  public get accounts(): UserAccount[] {
+    return this._accounts;
+  }
+  @Input()
+  public set accounts(accounts: UserAccount[]) {
+    this._accounts = accounts;
+    if (this.isExistingOrder) this.initAccountSelected(accounts);
+  }
   @Input() addressModalConfig: AddressModalSettings;
   @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
@@ -153,7 +161,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setPhoneField();
   }
 
-  async initAccountSelected(accounts: UserAccount[]) {
+  private initAccountSelected(accounts: UserAccount[]) {
     const payment = this.orderPayment[0] || { accountId: '', accountName: '' };
     let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
