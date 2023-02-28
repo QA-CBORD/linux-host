@@ -23,8 +23,8 @@ export class OrderFiltersActionSheetComponent {
   constructor(private readonly modalService: ModalsService) {}
 
   reset() {
-    this.selectedPeriod = null;
-    this.selectedStatus = null;
+    this.selectedPeriod = ORDERS_PERIOD.LAST30DAYS;
+    this.selectedStatus = 'All';
   }
 
   onSubmit() {
