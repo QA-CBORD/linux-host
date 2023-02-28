@@ -96,13 +96,19 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly nonCheckingService: NonCheckingService
   ) {
     // Resolved data type: CartResolvedData
-    this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(this.activatedRoute.snapshot.data.data.accounts);
+    this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
+      this.activatedRoute.snapshot.data.data.accounts
+    );
     this.accountInfoList$ = this._accountInfoList$.asObservable();
     this.accounts$ = this.getAvailableAccounts$();
   }
 
   ngOnDestroy(): void {
     this.networkSubcription.unsubscribe();
+  }
+
+  ionViewWillEnter() {
+    this.cdRef.detectChanges();
   }
 
   ngOnInit(): void {
@@ -192,6 +198,7 @@ export class CartComponent implements OnInit, OnDestroy {
       const errMessage = 'something went wrong';
       this.cartService.addPaymentInfoToOrder(selectedValue as Partial<OrderPayment>);
       this.validateOrder(errMessage);
+      this.cdRef.detectChanges();
     }
     if (typeof selectedValue === 'string' && selectedValue === 'addCC') {
       const paymentSystem = await this.definePaymentSystemType();
@@ -550,7 +557,10 @@ export class CartComponent implements OnInit, OnDestroy {
         this.cartService.merchant$
           .pipe(
             switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
-            tap(accounts => this._accountInfoList$.next(accounts)),
+            tap(accounts => {
+              this._accountInfoList$.next(accounts);
+              this.cdRef.detectChanges();
+            }),
             finalize(() => this.loadingService.closeSpinner())
           )
           .subscribe();

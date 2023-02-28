@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -150,6 +151,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
+    private readonly cdRef: ChangeDetectorRef,
     private readonly a11yService: AccessibilityService
   ) {}
 
@@ -304,6 +306,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       this.removeCvvControl();
     }
+    this.cdRef.detectChanges();
   }
 
   get paymentFormControl(): AbstractControl {
