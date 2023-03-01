@@ -1,7 +1,7 @@
 <ion-content class="ion-padding work-order-details__content"
   *ngIf="(workOrderDetails$ | async) as workOrderListDetails" #content>
   <div class="work-order-details__actions">
-    <ion-button class="btn work-order-details__page-back" [routerLink]="['../../../../..']" routerDirection="back"
+    <ion-button class="btn work-order-details__page-back" (click)="onCancel()" 
       mode="ios" fill="clear">
       Cancel
     </ion-button>
