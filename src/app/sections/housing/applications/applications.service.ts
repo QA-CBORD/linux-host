@@ -51,6 +51,8 @@ export class ApplicationsService {
   private readonly _patronApplicationsUrl: string = `${
     this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
+
+  isView: boolean;
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
@@ -63,7 +65,7 @@ export class ApplicationsService {
     private _router: Router
   ) {}
 
-  getQuestions(key: number): Observable<QuestionsPage[]> {
+  getQuestions(key: number, viewing?: boolean): Observable<QuestionsPage[]> {
     return this._questionsStorageService.getQuestions(key).pipe(
       withLatestFrom(this._applicationsStateService.applicationDetails$),
       map(([storedQuestions, applicationDetails]: [QuestionsEntries, ApplicationDetails]) => {
@@ -72,7 +74,10 @@ export class ApplicationsService {
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
-        const canEdit = !isSubmitted || applicationDetails.applicationDefinition.canEdit; 
+        const canEdit = (!isSubmitted || applicationDetails.applicationDefinition.canEdit) && !this.isView; 
+        console.log("viewing: ", !this.isView);
+        console.log("canEdit: ", canEdit);
+        
         return this._getPages(pages, storedQuestions, applicationDetails, canEdit);
       })
     );

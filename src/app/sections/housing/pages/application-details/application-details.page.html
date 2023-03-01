@@ -7,7 +7,7 @@
     <ion-button class="btn application-details__page-back" (click)="onCancel()" fill="clear">
       Cancel
     </ion-button>
-    <ion-button *ngIf="!isSubmitted || applicationDetails.applicationDefinition.canEdit" class="btn application-details__save" fill="clear" (click)="save(applicationDetails)">
+    <ion-button *ngIf="!applicationsService.isView" class="btn application-details__save" fill="clear" (click)="save(applicationDetails)">
       Save
     </ion-button>
   </div>
@@ -56,7 +56,7 @@
               type="submit"
               *ngIf="isLastPage && (!applicationDetails.applicationDefinition.amount || isSubmitted)"
               [class.stepper-footer__button--right]="isFirstPage"
-              [disabled]="isSubmitted && !applicationDetails.applicationDefinition.canEdit"
+              [disabled]="(isSubmitted && !applicationDetails.applicationDefinition.canEdit) || applicationsService.isView"
             >
               Submit
           </st-button>
