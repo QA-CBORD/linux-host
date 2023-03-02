@@ -9,7 +9,7 @@
     <div class="order-filters__title">Date</div>
 
     <ion-list class="order-filters__container">
-      <ion-radio-group [value]="selectedPeriod.name">
+      <ion-radio-group [value]="selectedPeriod.name" class="period-radio-group">
         <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="periodTypeOnChange(period)">
           <ion-label>
             {{ period.name }}
@@ -29,7 +29,7 @@
       <ion-radio-group
         [value]="selectedStatus"
         mode="md"
-        class="order-radio-group"
+        class="status-radio-group"
       >
         <ion-item
           lines="none"
