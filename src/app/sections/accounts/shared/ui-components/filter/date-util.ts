@@ -1,5 +1,5 @@
 import { TIME_PERIOD } from '../../../accounts.config';
-import { ORDERS_PERIOD, ORDERS_PERIOD_LABEL } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { ORDERS_PERIOD_LABEL } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 
 export const MONTH = [];
 MONTH[0] = 'January';

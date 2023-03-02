@@ -38,11 +38,9 @@ import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
 import {
   ORDERING_STATUS_BY_LABEL,
   ORDERING_STATUS_LABEL_LBL,
-  ORDERS_PERIOD,
   ORDERS_PERIOD_LABEL,
 } from '../shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { DateUtilObject, getTimeRange } from '@sections/accounts/shared/ui-components/filter/date-util';
-import { TIME_PERIOD } from '@sections/accounts/accounts.config';
 
 @Injectable({
   providedIn: 'root',

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { finalize, firstValueFrom, Observable, take } from 'rxjs';
+import { finalize, Observable, take } from 'rxjs';
 
 import { CartService, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
