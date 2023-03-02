@@ -53,7 +53,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
-  orderCheckStatus = OrderCheckinStatus;
   addToCartEnabled: boolean;
 
   constructor(
@@ -152,7 +151,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       tap(order => {
         if (!order) return of(null);
 
-        const { checkinStatus } = order;
+        const { checkinStatus, status } = order;
         const map = new Map<string, OrderItem>();
         let count = 0;
         order.orderItems.forEach(item => {
@@ -171,7 +170,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         for (const value of map.values()) {
           order.orderItems.push(value);
         }
-        if (this.orderCheckStatus.isNotCheckedIn(checkinStatus)) {
+        if (OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)) {
           this.checkinInstructionMessage = this.checkinService.getContentStringByName$('pickup_info');
         } else {
           this.checkinInstructionMessage = of(null);
@@ -527,5 +526,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           });
         }
       );
+  }
+
+  get checkAddToCart$(): Observable<OrderInfo> {
+    return this.order$.pipe(tap(({ checkinStatus, status}) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)));
   }
 }

@@ -1,7 +1,26 @@
-<st-recent-orders-list-item
-        (onClicked)="onOrderClicked.emit($event)"
-        (onNavigateToCheckin)="onNavLinkClicked.emit($event)"
-        *ngFor="let orderInfo of orders; trackBy: trackOrdersById"
-        [orderInfo]="orderInfo">
-</st-recent-orders-list-item>
-
+<ion-list class="order__list">
+  <ng-container *ngFor="let orderInfo of orders; let i = index;">
+    <ion-item-divider
+      [sticky]="true"
+      class="order__divider"
+      stIsDividerAppear
+      [date]="orderInfo.dueTime"
+      propertyName="dueTime"
+      [index]="i"
+      [order]="orderInfo"
+      [transactions]="orders"
+    >
+      <ion-label position="'fixed'" class="order__label">
+        {{ orderInfo.dueTime | date : 'EEEE, MMMM d' }}
+      </ion-label>
+    </ion-item-divider>
+    <st-recent-orders-list-item
+      #order
+      (onClicked)="onOrderClicked.emit($event)"
+      (onNavigateToCheckin)="onNavLinkClicked.emit($event)"
+      [orderInfo]="orderInfo"
+    >
+    </st-recent-orders-list-item>
+    <hr />
+  </ng-container>
+</ion-list>
