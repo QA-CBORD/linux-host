@@ -48,13 +48,13 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    public applicationsService: ApplicationsService,
     private applicationsStateService: ApplicationsStateService,
     private loadingService: LoadingService,
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
-    private formPaymentService: FormPaymentService
+    private formPaymentService: FormPaymentService,
+    public applicationsService: ApplicationsService
   ) {}
 
   ngOnDestroy(): void {
