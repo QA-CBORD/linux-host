@@ -8,24 +8,16 @@
 
     <div class="order-filters__title">Date</div>
 
-    <div class="order-filters__container">
-      <ion-radio-group [(ngModel)]="selectedPeriod" mode="md" class="order-radio-group" (ionChange)="periodTypeOnChange($event)">
-        <ion-item lines="none" class="order-filters__container--radio">
-          <ion-label class="radio-label">{{ timePeriodLabel['7'] }}</ion-label>
-          <ion-radio mode="md" slot="start" [value]="timePeriod.LASTWEEK" class="radio-item"></ion-radio>
-        </ion-item>
-
-        <ion-item lines="none" class="order-filters__container--radio">
-          <ion-label class="radio-label">{{ timePeriodLabel['30'] }}</ion-label>
-          <ion-radio mode="md" slot="start" [value]="timePeriod.LAST30DAYS" class="radio-item"></ion-radio>
-        </ion-item>
-
-        <ion-item lines="none" class="order-filters__container--radio">
-          <ion-label class="radio-label">{{ timePeriodLabel['90'] }}</ion-label>
-          <ion-radio mode="md" slot="start" [value]="timePeriod.LAST90DAYS" class="radio-item"></ion-radio>
+    <ion-list class="order-filters__container">
+      <ion-radio-group [value]="selectedPeriod.name">
+        <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="periodTypeOnChange(period)">
+          <ion-label>
+            {{ period.name }}
+          </ion-label>
+          <ion-radio class="filter-menu__radio-btn" slot="start" [value]="period.name" mode="md"> </ion-radio>
         </ion-item>
       </ion-radio-group>
-    </div>
+    </ion-list>
 
     <div class="ion-padding-horizontal">
       <hr />
@@ -34,20 +26,19 @@
     <div class="order-filters__title">Order Status</div>
 
     <div class="order-filters__container">
-      <ion-radio-group [(ngModel)]="selectedStatus" mode="md" class="order-radio-group" (ionChange)="statusTypeOnChange($event)">
-        <ion-item lines="none" class="order-filters__container--radio">
-          <ion-label class="radio-label">Pending</ion-label>
-          <ion-radio mode="md" slot="start" [value]="'Pending'" class="radio-item"></ion-radio>
-        </ion-item>
-
-        <ion-item lines="none" class="order-filters__container--radio">
-          <ion-label class="radio-label">Completed</ion-label>
-          <ion-radio mode="md" slot="start" [value]="'Completed'" class="radio-item"></ion-radio>
-        </ion-item>
-
-        <ion-item lines="none" class="order-filters__container--radio">
-          <ion-label class="radio-label">Canceled</ion-label>
-          <ion-radio mode="md" slot="start" [value]="'Canceled'" class="radio-item"></ion-radio>
+      <ion-radio-group
+        [value]="selectedStatus"
+        mode="md"
+        class="order-radio-group"
+      >
+        <ion-item
+          lines="none"
+          *ngFor="let status of statuses"
+          class="order-filters__container--radio"
+          (click)="statusTypeOnChange(status)"
+        >
+          <ion-label class="radio-label">{{ status }}</ion-label>
+          <ion-radio mode="md" slot="start" [value]="status" class="radio-item"></ion-radio>
         </ion-item>
       </ion-radio-group>
     </div>
@@ -58,6 +49,5 @@
   </div>
 </ion-content>
 <ion-footer mode="ios" class="order-filters__footer ion-padding">
-  <st-button (onClick)="reset()" [isDisabled]="true">Reset </st-button>
-  <st-button (onClick)="onSubmit()">Apply Filters</st-button>
+  <st-button (onClick)="onSubmit()">See Results</st-button>
 </ion-footer>

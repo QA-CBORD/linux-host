@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { finalize, Observable, take } from 'rxjs';
+import { finalize, firstValueFrom, Observable, take } from 'rxjs';
 
 import { CartService, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
@@ -11,7 +11,10 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { OrderFiltersActionSheetComponent } from '@sections/ordering/shared/ui-components/order-filters.action-sheet/order-filters.action-sheet.component';
-import { ORDERS_PERIOD } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import {
+  ORDERING_STATUS_LABEL_LBL, ORDERS_PERIOD_LABEL,
+} from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { DateUtilObject, getAmountOfMonthFromPeriod } from '@sections/accounts/shared/ui-components/filter/date-util';
 
 const renderingDelay = 1000;
 
@@ -102,7 +105,7 @@ export class RecentOrdersComponent implements OnInit {
     this.getOrderByPeriod(period, status);
   }
 
-  getOrderByPeriod(period: ORDERS_PERIOD, status: string) {
+  getOrderByPeriod(period: DateUtilObject, status: string) {
     this.loadingService.showSpinner();
     this.merchantService
       .getRecentOrdersPeriod(period, status)
@@ -121,7 +124,9 @@ export class RecentOrdersComponent implements OnInit {
         componentProps: {
           selectedPeriod: this.merchantService.period,
           selectedStatus: this.merchantService.orderStatus,
-        }
+          periods: this.periods,
+          statuses: this.statuses,
+        },
       },
       true
     );
@@ -132,5 +137,20 @@ export class RecentOrdersComponent implements OnInit {
       }
     });
     await modal.present();
+  }
+
+  get statuses(): string[] {
+    return [
+      ORDERING_STATUS_LABEL_LBL.ALL,
+      ORDERING_STATUS_LABEL_LBL.PENDING,
+      ORDERING_STATUS_LABEL_LBL.COMPLETED,
+      ORDERING_STATUS_LABEL_LBL.CANCELED,
+    ];
+  }
+
+  get periods(): DateUtilObject[] {
+    const arr = getAmountOfMonthFromPeriod(6);
+    arr.unshift({ name: ORDERS_PERIOD_LABEL[0] });
+    return arr;
   }
 }

@@ -36,10 +36,13 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ExistingOrderInfo } from '../shared/models/pending-order-info.model';
 import {
-  ORDERS_PERIOD,
   ORDERING_STATUS_BY_LABEL,
+  ORDERING_STATUS_LABEL_LBL,
+  ORDERS_PERIOD,
+  ORDERS_PERIOD_LABEL,
 } from '../shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { getTimeRangeByPeriod } from '@sections/accounts/shared/ui-components/filter/date-util';
+import { DateUtilObject, getTimeRange } from '@sections/accounts/shared/ui-components/filter/date-util';
+import { TIME_PERIOD } from '@sections/accounts/accounts.config';
 
 @Injectable({
   providedIn: 'root',
@@ -55,7 +58,7 @@ export class MerchantService {
     <MerchantOrderTypesInfo>{}
   );
 
-  private _period: ORDERS_PERIOD;
+  private _period: DateUtilObject;
   private _orderStatus: string;
 
   constructor(
@@ -102,7 +105,7 @@ export class MerchantService {
     this._selectedAddress$.next(value);
   }
 
-  get period(): ORDERS_PERIOD {
+  get period(): DateUtilObject {
     return this._period;
   }
 
@@ -110,7 +113,7 @@ export class MerchantService {
     return this._orderStatus;
   }
 
-  setOrderPeriodStates(period: ORDERS_PERIOD, orderStatuses: string) {
+  setOrderPeriodStates(period: DateUtilObject, orderStatuses: string) {
     this._period = period;
     this._orderStatus = orderStatuses;
   }
@@ -210,10 +213,10 @@ export class MerchantService {
   }
 
   getRecentOrdersPeriod(
-    period: ORDERS_PERIOD = ORDERS_PERIOD.LAST30DAYS,
-    orderStatus = 'All'
+    period: DateUtilObject = { name: ORDERS_PERIOD_LABEL[0] },
+    orderStatus: string = ORDERING_STATUS_LABEL_LBL.ALL
   ): Observable<OrderInfo[]> {
-    const time = getTimeRangeByPeriod(period);
+    const time = getTimeRange(period);
     return this.userFacadeService.getUserData$().pipe(
       switchMap(({ id }) =>
         zip(

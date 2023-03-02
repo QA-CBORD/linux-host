@@ -1,5 +1,5 @@
 import { TIME_PERIOD } from '../../../accounts.config';
-import { ORDERS_PERIOD } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { ORDERS_PERIOD, ORDERS_PERIOD_LABEL } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 
 export const MONTH = [];
 MONTH[0] = 'January';
@@ -78,23 +78,25 @@ export const getTimeRangeOfDate = (date: DateUtilObject): TimeRange => {
   return { startDate: earliestDate, endDate: latestDate };
 };
 
-export const getTimeRangeByPeriod = (period: ORDERS_PERIOD): TimeRange => {
-  const endDate = new Date(new Date().setDate(new Date().getDate())).toISOString();
+export const getTimeRange = (date: DateUtilObject): TimeRange => {
+  let earliestDate;
+  let latestDate;
+  const month = 30;
+  const halfYear = 180;
 
-  return {
-    [ORDERS_PERIOD.LASTWEEK]: {
-      startDate: new Date(new Date().setDate(new Date().getDate() - ORDERS_PERIOD.LASTWEEK - 1)).toISOString(),
-      endDate
-    },
-    [ORDERS_PERIOD.LAST30DAYS]: {
-      startDate: new Date(new Date().setDate(new Date().getDate() - ORDERS_PERIOD.LAST30DAYS - 1)).toISOString(),
-      endDate
-    },
-    [ORDERS_PERIOD.LAST90DAYS]: {
-      startDate:  new Date(new Date().setDate(new Date().getDate() - ORDERS_PERIOD.LAST90DAYS - 1)).toISOString(),
-      endDate
-    },
-  }[period];
+  if (date.name === ORDERS_PERIOD_LABEL[0]) {
+    const daysBack = date.name === TIME_PERIOD.pastMonth ? month : halfYear;
+    earliestDate = new Date(new Date().setDate(new Date().getDate() - daysBack));
+    latestDate = new Date();
+  } else {
+    const nextMonth = new Date(date.year, date.month + 1).valueOf();
+    latestDate = new Date(nextMonth - 1);
+    earliestDate = new Date(date.year, date.month);
+  }
+  earliestDate = earliestDate.toISOString();
+  latestDate = latestDate.toISOString();
+
+  return { startDate: earliestDate, endDate: latestDate };
 };
 
 export const getRangeBetweenDates = (sourceDate: DateUtilObject, targetDate: DateUtilObject): TimeRange => {
@@ -104,7 +106,7 @@ export const getRangeBetweenDates = (sourceDate: DateUtilObject, targetDate: Dat
 };
 
 export const getUniquePeriodName = (date: DateUtilObject): string => {
-  return date.name === TIME_PERIOD.pastSixMonth || date.name === TIME_PERIOD.pastMonth
+  return date.name === TIME_PERIOD.pastSixMonth || date.name === TIME_PERIOD.pastMonth || ORDERS_PERIOD_LABEL[0]
     ? date.name
     : `${date.name} ${date.year}`;
 };

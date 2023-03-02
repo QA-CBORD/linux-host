@@ -1,10 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModalsService } from '@core/service/modals/modals.service';
-import {
-  ORDERS_PERIOD_LABEL,
-  ORDERS_PERIOD,
-  ORDERING_STATUS_BY_LABEL,
-} from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { DateUtilObject, getUniquePeriodName } from '@sections/accounts/shared/ui-components/filter/date-util';
 
 @Component({
   selector: 'st-order-filters.action-sheet',
@@ -13,19 +9,12 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderFiltersActionSheetComponent {
-  @Input() selectedPeriod: number;
+  @Input() statuses: string[];
+  @Input() periods: DateUtilObject[];
+  @Input() selectedPeriod: DateUtilObject;
   @Input() selectedStatus: string;
 
-  timePeriod = ORDERS_PERIOD;
-  timePeriodLabel = ORDERS_PERIOD_LABEL;
-  statusLabel = ORDERING_STATUS_BY_LABEL;
-
   constructor(private readonly modalService: ModalsService) {}
-
-  reset() {
-    this.selectedPeriod = ORDERS_PERIOD.LAST30DAYS;
-    this.selectedStatus = 'All';
-  }
 
   onSubmit() {
     this.modalService.dismiss({
@@ -38,11 +27,15 @@ export class OrderFiltersActionSheetComponent {
     this.modalService.dismiss();
   }
 
-  statusTypeOnChange({ target }) {
-    this.selectedStatus = target.value;
+  statusTypeOnChange(status: string) {
+    this.selectedStatus = status;
   }
 
-  periodTypeOnChange({ target }) {
-    this.selectedPeriod = target.value;
+  periodTypeOnChange(period: DateUtilObject) {
+    this.selectedPeriod = period;
+  }
+
+  trackPeriod(i: number, period: DateUtilObject): string {
+    return getUniquePeriodName(period);
   }
 }

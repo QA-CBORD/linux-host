@@ -7,6 +7,7 @@
     grid-template-columns: min-content 1fr;
     justify-content: center;
     text-align: center;
+    padding-bottom: 0;
 
     &--icon {
       width: 1.5rem;
@@ -45,7 +46,7 @@
 
   &__footer {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     justify-content: center;
     gap: 0.5rem;
   }
