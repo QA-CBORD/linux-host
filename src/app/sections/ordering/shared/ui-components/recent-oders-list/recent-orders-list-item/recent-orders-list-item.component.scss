@@ -1,15 +1,23 @@
-@import "tools";
+@import 'tools';
 
 .order-card {
-  box-shadow: 0 0 4px 0 #0000000a, 0 2px 14px 0 #0000001f;
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin: 15px 10px;
+  box-shadow: none !important;
+  padding: 16px;
+  margin: 0;
 
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  &__status {
+    @include font-nunito-regular(14px);
+    display: grid;
+    justify-content: center;
+    grid-template-columns: min-content min-content;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   &__name {
@@ -35,9 +43,29 @@
 
     @include font-nunito-regular(14px);
   }
-  .clickable{
-    color: #166dff;;
+  .clickable {
+    color: #166dff;
     margin-bottom: 5px;
     font-size: 13px;
+  }
+
+  [class*='icon-completed'] {
+    mask-image: url('/assets/icon/completed.svg');
+    width: 16px;
+    height: 16px;
+    color: $color-success-40;
+  }
+
+  [class*='icon-pending'] {
+    mask-image: url('/assets/icon/pending.svg');
+    width: 16px;
+    height: 16px;
+    color: var(--ion-color-danger);
+  }
+  [class*='icon-canceled'] {
+    mask-image: url('/assets/icon/canceled.svg');
+    width: 16px;
+    height: 16px;
+    color: $color-warning-60;
   }
 }
