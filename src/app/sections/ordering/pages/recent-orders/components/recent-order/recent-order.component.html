@@ -80,7 +80,7 @@
         >
       </ion-col>
       <ion-col
-        *ngIf="checkAddToCart$"
+        *ngIf="checkAddToCart$ | async"
         class="ion-align-self-center"
         [size]="addToCartEnabled ? '7' : '12'"
       >
