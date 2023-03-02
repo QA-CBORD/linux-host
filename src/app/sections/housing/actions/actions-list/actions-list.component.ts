@@ -27,7 +27,7 @@ export class ActionsListComponent {
     this._popoverController.dismiss();
   }
 
-  viewForm(): void {
+  handleView(): void {
     this._applicationService.isView = true;
     this._popoverController.dismiss();
   }

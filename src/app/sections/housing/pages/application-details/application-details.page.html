@@ -56,7 +56,7 @@
               type="submit"
               *ngIf="isLastPage && (!applicationDetails.applicationDefinition.amount || isSubmitted)"
               [class.stepper-footer__button--right]="isFirstPage"
-              [disabled]="(isSubmitted && !applicationDetails.applicationDefinition.canEdit) || applicationsService.isView"
+              [disabled]="applicationsService.isView || (isSubmitted && !applicationDetails.applicationDefinition.canEdit)"
             >
               Submit
           </st-button>
