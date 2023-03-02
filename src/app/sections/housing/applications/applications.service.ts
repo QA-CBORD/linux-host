@@ -65,19 +65,15 @@ export class ApplicationsService {
     private _router: Router
   ) {}
 
-  getQuestions(key: number, viewing?: boolean): Observable<QuestionsPage[]> {
+  getQuestions(key: number): Observable<QuestionsPage[]> {
     return this._questionsStorageService.getQuestions(key).pipe(
       withLatestFrom(this._applicationsStateService.applicationDetails$),
       map(([storedQuestions, applicationDetails]: [QuestionsEntries, ApplicationDetails]) => {
         const pages: QuestionBase[][] = this._getQuestionsPages(applicationDetails);
-
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
-        const canEdit = (!isSubmitted || applicationDetails.applicationDefinition.canEdit) && !this.isView; 
-        console.log("viewing: ", !this.isView);
-        console.log("canEdit: ", canEdit);
-        
+        const canEdit = !this.isView && (!isSubmitted || applicationDetails.applicationDefinition.canEdit);
         return this._getPages(pages, storedQuestions, applicationDetails, canEdit);
       })
     );
