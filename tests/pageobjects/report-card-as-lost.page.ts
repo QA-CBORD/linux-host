@@ -11,6 +11,7 @@ class ReportCardAsLostPage extends Page {
     get ConfirmButton(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-modal/st-report-card/ion-footer/st-button');
     }
+
    
 }
 
