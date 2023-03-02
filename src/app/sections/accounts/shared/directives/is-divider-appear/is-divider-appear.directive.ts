@@ -1,15 +1,14 @@
 import { Directive, OnInit, Input, ElementRef, Renderer2 } from '@angular/core';
-import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
-import { isSameDay } from '@core/utils/date-helper';
-import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { isAppearing } from '@core/utils/general-helpers';
 
 @Directive({
   selector: '[stIsDividerAppear]',
 })
 export class IsDividerAppearDirective implements OnInit {
-  @Input() actualDate: Date;
+  @Input() propertyName: string;
+  @Input() date: string;
   @Input() index: number;
-  @Input() transactions: TransactionHistory[];
+  @Input() transactions: object[];
 
   constructor(private elem: ElementRef, private renderer: Renderer2) { }
 
@@ -17,18 +16,7 @@ export class IsDividerAppearDirective implements OnInit {
     this.renderer.setStyle(
       this.elem.nativeElement,
       'display',
-      this.isDividerAppear(this.actualDate, this.index, this.transactions) ? 'block' : 'none'
+      isAppearing(this.date, this.index, this.transactions, this.propertyName) ? 'block' : 'none'
     );
-  }
-
-  private isDividerAppear(actualDate, i, transactions): boolean {
-    return i === 0 || !isSameDay(
-      this.formatDate(actualDate),
-      this.formatDate(transactions[i - 1].actualDate)
-    );
-  }
-
-  private formatDate(date) {
-    return date.replace(TIMEZONE_REGEXP, "$1:$2");
   }
 }

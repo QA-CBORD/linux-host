@@ -3,6 +3,8 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { OrderInfo } from '@sections/ordering/shared/models/order-info.model';
+import { ORDERING_STATUS_ICON_CLASS, ORDERING_STATUS_LABEL } from './recent-orders.config';
+
 @Component({
   selector: 'st-recent-orders-list-item',
   templateUrl: './recent-orders-list-item.component.html',
@@ -15,12 +17,17 @@ export class RecentOrdersListItemComponent implements OnInit {
   @Output() onNavigateToCheckin: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
   orderCheckStatus = OrderCheckinStatus;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  status: string;
+  iconClass: string;
 
-  constructor(private readonly orderingService: OrderingService
+  constructor(
+    private readonly orderingService: OrderingService
     ) {}
 
   ngOnInit() {
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.needCheckin = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.needCheckin);
+    this.status = ORDERING_STATUS_LABEL[this.orderInfo.status];
+    this.iconClass = ORDERING_STATUS_ICON_CLASS[this.orderInfo.status];
   }
 }

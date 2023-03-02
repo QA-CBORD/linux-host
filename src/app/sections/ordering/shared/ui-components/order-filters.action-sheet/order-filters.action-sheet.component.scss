@@ -1,0 +1,58 @@
+@import 'tools';
+
+.order-filters {
+  &__header {
+    display: grid;
+    align-items: center;
+    grid-template-columns: min-content 1fr;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 0;
+
+    &--icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    &--title {
+      margin-right: 12px;
+      text-align: center;
+      @include font-nunito-semibold(20px);
+      font-weight: 700;
+    }
+  }
+
+  &__title {
+    display: flex;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.6);
+    @include font-nunito-semibold(16px);
+  }
+
+  &__container {
+    ion-label {
+      @include font-nunito-regular(16px);
+      font-weight: 600;
+    }
+
+    ion-item {
+      --min-height: 30px;
+    }
+
+    ion-radio {
+      margin-right: 10px;
+    }
+  }
+
+  &__footer {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
