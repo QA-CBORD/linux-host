@@ -12,7 +12,8 @@ import { CheckingServiceFacade } from '@sections/check-in/services/check-in-faca
 import { ModalsService } from '@core/service/modals/modals.service';
 import { OrderFiltersActionSheetComponent } from '@sections/ordering/shared/ui-components/order-filters.action-sheet/order-filters.action-sheet.component';
 import {
-  ORDERING_STATUS_LABEL_LBL, ORDERS_PERIOD_LABEL,
+  ORDERING_STATUS_LABEL_LBL,
+  ORDERS_PERIOD_LABEL,
 } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { DateUtilObject, getAmountOfMonthFromPeriod } from '@sections/accounts/shared/ui-components/filter/date-util';
 
@@ -152,5 +153,20 @@ export class RecentOrdersComponent implements OnInit {
     const arr = getAmountOfMonthFromPeriod(6);
     arr.unshift({ name: ORDERS_PERIOD_LABEL[0] });
     return arr;
+  }
+
+  get isDefaultFilter() {
+    return (
+      this.merchantService.period.name === ORDERS_PERIOD_LABEL[0] &&
+      this.merchantService.orderStatus === ORDERING_STATUS_LABEL_LBL.ALL
+    );
+  }
+
+  get selectedPeriod () {
+    return this.merchantService.period.name;
+  }
+
+  get selectedStatus () {
+    return this.merchantService.orderStatus;
   }
 }

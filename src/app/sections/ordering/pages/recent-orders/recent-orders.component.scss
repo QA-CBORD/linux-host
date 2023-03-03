@@ -35,6 +35,10 @@
     max-width: 250px;
 
     @include font-nunito-semibold(16px);
+
+    &-bold {
+      color: $color-black;
+    }
   }
 
   &__no-orders-btn-wrapper {
