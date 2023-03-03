@@ -51,6 +51,8 @@ export class ApplicationsService {
   private readonly _patronApplicationsUrl: string = `${
     this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
+
+  isView: boolean;
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
@@ -68,11 +70,10 @@ export class ApplicationsService {
       withLatestFrom(this._applicationsStateService.applicationDetails$),
       map(([storedQuestions, applicationDetails]: [QuestionsEntries, ApplicationDetails]) => {
         const pages: QuestionBase[][] = this._getQuestionsPages(applicationDetails);
-
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
-        const canEdit = !isSubmitted || applicationDetails.applicationDefinition.canEdit; 
+        const canEdit = !this.isView && (!isSubmitted || applicationDetails.applicationDefinition.canEdit);
         return this._getPages(pages, storedQuestions, applicationDetails, canEdit);
       })
     );

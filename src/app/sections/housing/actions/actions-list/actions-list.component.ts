@@ -1,3 +1,4 @@
+import { ApplicationsService } from '@sections/housing/applications/applications.service';
 import { ApplicationDefinition, ApplicationStatus, PatronApplication } from './../../applications/applications.model';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
@@ -20,9 +21,14 @@ export class ActionsListComponent {
   patronApplication: PatronApplication;
   @Output() onRemove = new EventEmitter<void>();
 
-  constructor(private _popoverController: PopoverController) {}
+  constructor(private _popoverController: PopoverController, private _applicationService: ApplicationsService) {}
 
   closePopover(): void {
+    this._popoverController.dismiss();
+  }
+
+  handleView(): void {
+    this._applicationService.isView = true;
     this._popoverController.dismiss();
   }
 
