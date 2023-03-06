@@ -134,7 +134,4 @@ export const USER_REWARD_TRACKINFO_LIST_MOCK: UserRewardTrackInfo[] = [
 
 export class MockRewardsApiService {
   getUserRewardTrackInfo = jest.fn().mockReturnValue(of(USER_REWARD_TRACKINFO_LIST_MOCK[0]));
-  constructor(){
-    // this.getUserRewardTrackInfo.mockReturnValue(of(USER_REWARD_TRACKINFO_LIST_MOCK[0]));
-  }
 }
