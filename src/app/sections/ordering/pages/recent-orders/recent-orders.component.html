@@ -23,12 +23,19 @@
 </ion-content>
 
 <ng-template #empty>
-  <main class="recent-orders__no-orders-block">
+  <main class="recent-orders__no-orders-block" *ngIf="isDefaultFilter; else noResult">
     <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="" />
     <p class="recent-orders__no-orders-message">{{ contentStrings.noRecentOrders | async }}</p>
   </main>
 </ng-template>
 
-<ion-footer class="ion-padding" *ngIf="(filteredOrders$ | async).length === 0">
+<ng-template #noResult>
+  <main class="recent-orders__no-orders-block">
+    <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="" />
+    <p class="recent-orders__no-orders-message">No <span class="recent-orders__no-orders-message-bold">{{ selectedStatus }}</span> orders on <span class="recent-orders__no-orders-message-bold">{{ selectedPeriod }}</span>.</p>
+  </main>
+</ng-template>
+
+<ion-footer class="ion-padding" *ngIf="(filteredOrders$ | async).length === 0 && isDefaultFilter">
   <st-button (onClick)="back()">{{ contentStrings.buttonDashboardStartOrder | async }}</st-button>
 </ion-footer>
