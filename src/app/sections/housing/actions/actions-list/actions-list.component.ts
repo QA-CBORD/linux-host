@@ -3,6 +3,7 @@ import { ApplicationDefinition, ApplicationStatus, PatronApplication } from './.
 import { Component, EventEmitter, Output } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ApplicationDetailsPopover } from '@sections/housing/applications/application-details-popover/application-details-popover.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-actions-list',
@@ -21,15 +22,15 @@ export class ActionsListComponent {
   patronApplication: PatronApplication;
   @Output() onRemove = new EventEmitter<void>();
 
-  constructor(private _popoverController: PopoverController, private _applicationService: ApplicationsService) {}
+  constructor(private _popoverController: PopoverController, private _applicationService: ApplicationsService, private router: Router) {}
 
-  closePopover(): void {
-    this._popoverController.dismiss();
+  handleEdit(): void {
+    this.navigate();
   }
 
   handleView(): void {
     this._applicationService.isView = true;
-    this._popoverController.dismiss();
+    this.navigate();
   }
 
   async detailsPopover() {
@@ -47,12 +48,17 @@ export class ActionsListComponent {
       backdropDismiss: true,
       showBackdrop: true,
     });
-    this.closePopover();
+    this._popoverController.dismiss();
     appDetails.present();
   }
 
   handleRemove(): void {
-    this.closePopover();
+    this._popoverController.dismiss();
     this.onRemove.emit();
+  }
+
+  private navigate() {
+    this._popoverController.dismiss();
+    this.router.navigate([this.navigateTo]);
   }
 }

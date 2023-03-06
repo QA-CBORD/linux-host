@@ -37,4 +37,8 @@ export class UnitsSwitchComponent implements OnInit {
   isUnits(unit: Unit):boolean {
     return unit.title === 'Units';
   }
+
+  goToUnits(unit: Unit) {
+    this._router.navigate([unit.href]);
+  }
 }
