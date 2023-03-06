@@ -15,7 +15,7 @@ export enum ORDERING_STATUS {
 export enum ORDERING_STATUS_LABEL_LBL {
   ALL = 'All',
   PENDING = 'Pending',
-  CANCELED = 'Cancelend',
+  CANCELED = 'Canceled',
   COMPLETED = 'Completed'
 }
 
