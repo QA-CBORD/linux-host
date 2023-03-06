@@ -8,7 +8,7 @@
   &__control {
     width: 100%;
     outline: none;
-    border: 1px solid $color-light-gray;
+    border: 1px solid $color-black;
     border-radius: 8px;
     padding: 0 0 0 10px;
 
@@ -69,6 +69,8 @@
     z-index: 2;
 
     @include floating-label($color-dim-gray);
+    font-weight: 500;
+    color:black;
   }
 }
 
@@ -79,4 +81,17 @@
 
 .textarea__control.attachment_border{
   border: 2px solid #747474;
+}
+
+:host {
+  & .disabled {
+    .input__wrapper .input__control {
+      background-color: transparent;
+      opacity: 0.4;
+
+      & + .input__placeholder {
+        color: rgba($color-black, 0.4);
+      }
+    }
+  }
 }

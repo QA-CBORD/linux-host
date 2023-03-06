@@ -71,6 +71,8 @@
     z-index: 2;
 
     @include floating-label($color-dim-gray);
+    font-weight: 500;
+    color:black;
   }
 
 }

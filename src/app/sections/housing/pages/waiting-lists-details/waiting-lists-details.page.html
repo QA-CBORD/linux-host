@@ -1,10 +1,7 @@
 <ion-content class="ion-padding application-details__content"
   *ngIf="(waitingListDetails$ | async) as waitingListDetails" #content>
   <div class="application-details__actions">
-    <ion-button class="btn application-details__page-back" [routerLink]="['../../../..']" routerDirection="back"
-      mode="ios" fill="clear">
-      Cancel
-    </ion-button>
+    <st-header title="" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back" [isToolbarShow]="true" [trackUrls]="true"></st-header>
 
   </div>
 

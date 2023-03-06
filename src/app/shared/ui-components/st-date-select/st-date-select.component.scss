@@ -9,6 +9,14 @@
 ion-datetime{
   background: none;
 }
+
+ion-item {
+  --border-width: 1px;
+  &::part(native) {
+    border-radius: 8px;
+  }
+}
+
 :host {
   display: block;
   position: relative;
@@ -71,6 +79,7 @@ ion-datetime{
 
     & + .date-select__placeholder {
       @extend %placeholder-transform;
+      font-weight: 500;
     }
   }
 
@@ -86,4 +95,8 @@ ion-datetime{
   pointer-events: none;
   opacity: 0.5;
   z-index: 2;
+}
+
+ion-label{
+  font-weight: 500;
 }
