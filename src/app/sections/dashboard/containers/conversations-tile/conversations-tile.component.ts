@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { SecureMessagingService } from './services/secure-messaging.service';
+
 import { take, finalize } from 'rxjs/operators';
-import { SecureMessageConversation } from '@sections/secure-messaging';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
+import { SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
+import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
 
 @Component({
   selector: 'st-conversations-tile',
@@ -17,17 +18,16 @@ export class ConversationsTileComponent implements OnInit {
   isLoading = true;
 
   constructor(
-    private readonly secureMessagingService: SecureMessagingService,
+    private readonly secureMessagingFacadeService: SecureMessagingFacadeService,
     private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.initializePage();
   }
-
   initializePage() {
-    this.secureMessagingService
-      .getInitialData()
+    this.secureMessagingFacadeService
+      .getInitialData$()
       .pipe(
         take(1),
         finalize(() => {
@@ -39,7 +39,7 @@ export class ConversationsTileComponent implements OnInit {
         this.lastTwoMessagesArray = buildConversationsFromMessages(
           smMessageArray,
           smGroupArray,
-          SecureMessagingService.GetSecureMessagesAuthInfo()
+          SecureMessagingFacadeService.GetSecureMessagesAuthInfo()
         ).slice(0, 2);
       });
   }

@@ -2,15 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { distinctUntilChanged, finalize, first } from 'rxjs/operators';
-
-import { SecureMessagingService } from './service';
 import { LoadingService } from '../../core/service/loading/loading.service';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
-import { SecureMessageConversation } from './models';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../app.global';
+import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
+import { SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
 
 @Component({
   selector: 'st-secure-message',
@@ -23,12 +22,12 @@ export class SecureMessagePage implements OnInit, OnDestroy {
   conversations$: Observable<SecureMessageConversation[]>;
 
   constructor(
-    private readonly secureMessagingService: SecureMessagingService,
+    private readonly secureMessagingFacadeService: SecureMessagingFacadeService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router
   ) {
-    this.conversations$ = this.secureMessagingService.conversationsArray$.pipe(distinctUntilChanged());
+    this.conversations$ = this.secureMessagingFacadeService.conversationsArray$.pipe(distinctUntilChanged());
   }
   ngOnInit(): void {
     this.initializePage();
@@ -45,14 +44,14 @@ export class SecureMessagePage implements OnInit, OnDestroy {
     this.loading.showSpinner({ message: 'Retrieving conversations...' });
     // Perform initialization, trigger first emission
     // and subscribe to fetch interval
-    this.secureMessagingService
-      .getInitialData()
+    this.secureMessagingFacadeService
+      .getInitialData$()
       .pipe(
         first(),
         finalize(() => this.loading.closeSpinner())
       )
       .subscribe(
-        () => this.sourceSubscription.add(this.secureMessagingService.pollForDataInterval().subscribe()),
+        () => this.sourceSubscription.add(this.secureMessagingFacadeService.pollForDataInterval().subscribe()),
         error => {
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
         }
@@ -74,7 +73,7 @@ export class SecureMessagePage implements OnInit, OnDestroy {
    * click listener to selected current conversation to display
    */
   onClickConversation(conversation: SecureMessageConversation) {
-    this.secureMessagingService.setSelectedConversation(conversation);
+    this.secureMessagingFacadeService.setSelectedConversation(conversation);
     this.startConversation();
   }
 
