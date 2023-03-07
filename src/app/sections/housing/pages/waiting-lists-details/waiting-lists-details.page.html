@@ -2,7 +2,6 @@
   *ngIf="(waitingListDetails$ | async) as waitingListDetails" #content>
   <div class="application-details__actions">
     <st-header title="" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back" [isToolbarShow]="true" [trackUrls]="true"></st-header>
-
   </div>
 
   <h2 class="application-details__title">{{ waitingListDetails.formDefinition.applicationTitle }}</h2>

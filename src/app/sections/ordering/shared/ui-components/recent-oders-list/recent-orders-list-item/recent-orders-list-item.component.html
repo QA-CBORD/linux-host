@@ -1,17 +1,20 @@
-<ion-card class="order-card">
+<ion-card class="order-card ion-padding">
   <ion-card-content class="ion-no-padding" (click)="onClicked.emit(orderInfo)">
     <header class="order-card__header">
-      <h6 class="order-card__name">{{ orderInfo.merchantName }}</h6>
+      <div class="order-card__status">
+        <i [class]="iconClass"></i><span>{{ status }}</span>
+      </div>
       <p class="order-card__number">{{ contentStrings.labelOrder | async }} #{{ orderInfo.checkNumber }}</p>
     </header>
+    <h6 class="order-card__name">{{ orderInfo.merchantName }}</h6>
     <p class="order-card__description">{{ orderInfo.orderItems | orderItemsSummary }}</p>
-    <p class="order-card__date">{{ orderInfo.dueTime | date: 'MM/dd/yyyy' }}</p>
+    <p class="order-card__date">{{ orderInfo.dueTime | date : 'MM/dd/yyyy' }}</p>
   </ion-card-content>
   <ion-card-content
     (click)="onNavigateToCheckin.emit(orderInfo)"
     class="ion-no-padding"
     style="margin-top: 10px"
-    *ngIf="orderCheckStatus.isNotCheckedIn(orderInfo.checkinStatus)"
+    *ngIf="orderCheckStatus.isNotCheckedIn(orderInfo.checkinStatus, orderInfo.status)"
   >
     <div class="clickable">
       <st-button fill="clear" buttonModifier="rectangular">
@@ -22,3 +25,4 @@
     </div>
   </ion-card-content>
 </ion-card>
+

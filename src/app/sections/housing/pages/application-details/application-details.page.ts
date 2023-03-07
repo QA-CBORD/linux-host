@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
@@ -36,7 +37,7 @@ enum UpdateType {
   styleUrls: ['./application-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplicationDetailsPage implements OnInit {
+export class ApplicationDetailsPage implements OnInit, OnDestroy {
   @ViewChild('content') private page: IonContent;
   @ViewChild(StepperComponent) private stepper: StepperComponent;
   @ViewChildren(QuestionComponent) private questions: QueryList<QuestionComponent>;
@@ -47,14 +48,18 @@ export class ApplicationDetailsPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private applicationsService: ApplicationsService,
     private applicationsStateService: ApplicationsStateService,
     private loadingService: LoadingService,
     private housingService: HousingService,
     private modalController: ModalController,
     private termService: TermsService,
     private formPaymentService: FormPaymentService,
+    public applicationsService: ApplicationsService
   ) {}
+
+  ngOnDestroy(): void {
+    this.applicationsService.isView = false;
+  }
 
   async ngOnInit() {
     this.applicationDetails$ = this.initApplicationDetails$();
@@ -188,8 +193,9 @@ export class ApplicationDetailsPage implements OnInit {
 
   onChange(applicationDetails: ApplicationDetails, formGroup: FormGroup) {
     this.applicationsService
-    .saveLocally(this.getApplicationKey(), applicationDetails, formGroup.value)
-    .pipe(take(1)).subscribe();
+      .saveLocally(this.getApplicationKey(), applicationDetails, formGroup.value)
+      .pipe(take(1))
+      .subscribe();
   }
 
   onBack() {

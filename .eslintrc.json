@@ -3,15 +3,9 @@
   "overrides": [
     {
       "files": ["*.component.html", "*.page.html", "settings.html", "*-screen.html"],
-      "parser": "@angular-eslint/template-parser",
       "extends": ["plugin:@angular-eslint/recommended", "plugin:@angular-eslint/template/recommended"],
+      "parser": "@angular-eslint/template-parser",
       "rules": {
-        "@typescript-eslint/dot-notation": "off",
-        "@typescript-eslint/no-implied-eval": "off",
-        "@typescript-eslint/no-throw-literal": "off",
-        "strict": "off",
-        "import/first": "off",
-        "lines-around-directive": "off",
         "@angular-eslint/template/no-negated-async": "off",
         "@angular-eslint/template/accessibility-valid-aria": "error",
         "@angular-eslint/template/accessibility-alt-text": "error",
@@ -35,7 +29,7 @@
       "files": ["*.ts"],
       "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
       "parser": "@typescript-eslint/parser",
-      "plugins": ["@typescript-eslint"],
+      "plugins": ["delta"],
       "rules": {
         "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/no-explicit-any": "error",
@@ -44,7 +38,9 @@
           {
             "allow": ["error"]
           }
-        ]
+        ],
+        "delta/no-single-letter": "warn",
+        "delta/expire":"error"
       }
     }
   ]

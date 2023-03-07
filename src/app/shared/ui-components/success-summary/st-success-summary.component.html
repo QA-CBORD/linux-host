@@ -8,14 +8,14 @@
 
   <div class="total">
     <div *ngIf="orderDetailOptions !== null" class="total__item-wrapper">
-      <div class="label">{{ type | typeMessage: 'Time' | uppercase }}</div>
+      <div class="label">{{ type | typeMessage: 'time' | uppercase }}</div>
       <div class="label--bold">
         {{ orderDetailOptions | modifyPrepTime: orderType }}
       </div>
     </div>
 
     <div *ngIf="orderType !== null" class="total__item-wrapper">
-      <div class="label">{{ type | typeMessage: 'Address' | uppercase }}</div>
+      <div class="label">{{ type | typeMessage: 'address' | uppercase }}</div>
       <div class="label--bold">
         <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
         <span>{{ address | addressHeaderFormat }}</span>

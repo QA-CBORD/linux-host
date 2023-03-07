@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
-import { combineLatest, Observable, from, Subscription, zip, of } from 'rxjs';
+import { combineLatest, Observable, from, Subscription, zip, of, BehaviorSubject } from 'rxjs';
 import {
   AddressModalSettings,
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
-  OrderDetailsComponent,
   OrderDetailsFormData,
   OrderInfo,
   OrderPayment,
@@ -61,14 +60,14 @@ export class CartComponent implements OnInit, OnDestroy {
   orderDetailOptions$: Observable<OrderDetailOptions>;
   applePayEnabled$: Observable<boolean>;
   orderTypes$: Observable<MerchantOrderTypesInfo>;
-  accounts$: Promise<UserAccount[]>;
+
+  private readonly _accountInfoList$: BehaviorSubject<MerchantAccountInfoList>;
+  public readonly accounts$: Observable<UserAccount[]>;
   accountInfoList$: Observable<MerchantAccountInfoList>;
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   placingOrder = false;
   isProcessingOrder = false;
-  @ViewChild('orderDetails', { static: true })
-  orderDetail: OrderDetailsComponent;
   merchantTimeZoneDisplayingMessage: string;
   isOnline = true;
   networkSubcription: Subscription;
@@ -95,18 +94,21 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
     private readonly nonCheckingService: NonCheckingService
-  ) {}
-
-  ionViewWillEnter() {
-    this.accounts$ = this.getAvailableAccounts().then(accounts => {
-      if (this.isExistingOrder) this.orderDetail.initAccountSelected(accounts);
-      return accounts;
-    });
-    this.cdRef.detectChanges();
+  ) {
+    // Resolved data type: CartResolvedData
+    this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
+      this.activatedRoute.snapshot.data.data.accounts
+    );
+    this.accountInfoList$ = this._accountInfoList$.asObservable();
+    this.accounts$ = this.getAvailableAccounts$();
   }
 
   ngOnDestroy(): void {
     this.networkSubcription.unsubscribe();
+  }
+
+  ionViewWillEnter() {
+    this.cdRef.detectChanges();
   }
 
   ngOnInit(): void {
@@ -126,7 +128,6 @@ export class CartComponent implements OnInit, OnDestroy {
     );
     this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.addressModalSettings$ = this.initAddressModalConfig();
-    this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
     this.subscribe2NetworkChanges();
@@ -197,6 +198,7 @@ export class CartComponent implements OnInit, OnDestroy {
       const errMessage = 'something went wrong';
       this.cartService.addPaymentInfoToOrder(selectedValue as Partial<OrderPayment>);
       this.validateOrder(errMessage);
+      this.cdRef.detectChanges();
     }
     if (typeof selectedValue === 'string' && selectedValue === 'addCC') {
       const paymentSystem = await this.definePaymentSystemType();
@@ -241,8 +243,9 @@ export class CartComponent implements OnInit, OnDestroy {
     id,
     checkinStatus,
     type,
+    status,
   }: OrderInfo) {
-    if (OrderCheckinStatus.isNotCheckedIn(checkinStatus)) {
+    if (OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)) {
       this.checkinProcess.start(
         {
           id,
@@ -312,6 +315,7 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.cdRef.detectChanges();
     const { orderItems } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (!orderItems.length) {
       this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
@@ -453,7 +457,7 @@ export class CartComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     if (error) {
       this.onValidateErrorToast(String(error));
       return;
@@ -510,15 +514,20 @@ export class CartComponent implements OnInit, OnDestroy {
   private filterMealBasedAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
     return sourceAccounts.filter((account: UserAccount) => isMealsAccount(account));
   }
-
-  private async getAvailableAccounts(): Promise<UserAccount[]> {
-    const accInfo = await this.accountInfoList$.pipe(first()).toPromise();
-    const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
-
-    return mealBased ? this.filterMealBasedAccounts(accInfo.accounts) : this.extractNoneMealsAccounts(accInfo);
+  private getAvailableAccounts$(): Observable<UserAccount[]> {
+    return combineLatest([this.accountInfoList$, this.cartService.menuInfo$]).pipe(
+      map(([accInfo, { mealBased }]) => {
+        if (!accInfo) return [];
+        return mealBased ? this.filterMealBasedAccounts(accInfo.accounts) : this.extractNoneMealsAccounts(accInfo);
+      })
+    );
   }
 
-  private extractNoneMealsAccounts({ cashlessAccepted, accounts, creditAccepted }): UserAccount[] {
+  private extractNoneMealsAccounts({
+    cashlessAccepted,
+    accounts,
+    creditAccepted,
+  }: MerchantAccountInfoList): UserAccount[] {
     let res = [];
     accounts = this.filterNoneMealsAccounts(accounts);
 
@@ -546,12 +555,16 @@ export class CartComponent implements OnInit, OnDestroy {
 
         this.loadingService.showSpinner();
         // Update user accounts for refreshing Credit Card dropdown list
-        this.accountInfoList$ = this.cartService.merchant$.pipe(
-          switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
-          finalize(() => this.loadingService.closeSpinner())
-        );
-        this.accounts$ = this.getAvailableAccounts();
-        this.cdRef.markForCheck();
+        this.cartService.merchant$
+          .pipe(
+            switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
+            tap(accounts => {
+              this._accountInfoList$.next(accounts);
+              this.cdRef.detectChanges();
+            }),
+            finalize(() => this.loadingService.closeSpinner())
+          )
+          .subscribe();
       });
   }
 

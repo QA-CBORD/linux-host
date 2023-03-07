@@ -73,7 +73,7 @@
             </ion-row>
             <ion-row>
               <ion-col style="column-width: 12" class="ion-text-center">
-                <ion-button class="button-outline button-block" [routerLink]="['units', facility.facilityId]"
+                <ion-button class="button-outline button-block" (click)="viewUnits(facility.facilityId)"
                   >View Units</ion-button
                 >
               </ion-col>

@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { RecentOrdersListComponent } from './recent-orders-list.component';
 import { RecentOrdersListItemComponent } from './recent-orders-list-item';
 import { OrderItemsSummaryModule } from '../../pipes/order-items-summary/order-items-summary.module';
+import { IsDividerAppearDirectiveModule } from '@sections/accounts/shared/directives/is-divider-appear/is-divider-appear.module';
 
 const declarations = [RecentOrdersListComponent, RecentOrdersListItemComponent];
 
@@ -12,6 +13,6 @@ const declarations = [RecentOrdersListComponent, RecentOrdersListItemComponent];
   declarations,
   exports: [RecentOrdersListComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, IonicModule, OrderItemsSummaryModule, ],
+  imports: [CommonModule, IonicModule, OrderItemsSummaryModule, IsDividerAppearDirectiveModule ],
 })
 export class RecentOrdersListModule {}

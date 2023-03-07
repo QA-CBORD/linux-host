@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -14,9 +15,11 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import {
   BuildingInfo,
   MerchantAccountInfoList,
+  MerchantInfo,
   MerchantOrderTypesInfo,
   MerchantSettingInfo,
   OrderDetailOptions,
+  OrderInfo,
   OrderItem,
   OrderPayment,
 } from '@sections/ordering';
@@ -49,24 +52,54 @@ import { Keyboard } from '@capacitor/keyboard';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() set orderInfo({
+    tax,
+    deliveryFee,
+    discount,
+    mealBased,
+    notes,
+    orderItems,
+    orderPayment,
+    pickupFee,
+    subTotal,
+    tip,
+    total,
+  }: OrderInfo) {
+    this.tax = tax;
+    this.deliveryFee = deliveryFee;
+    this.discount = discount;
+    this.mealBased = mealBased;
+    this.pickupFee = pickupFee;
+    this.orderItems = orderItems;
+    this.subTotal = subTotal;
+    this.tip = tip;
+    this.total = total;
+    this.orderPayment = orderPayment;
+    this.orderPaymentName = this.orderPayment?.[0]?.accountName || '';
+    if (!this.readonly) {
+      this.notes = notes;
+    }
+  }
+
+  @Input() set merchant(merchant: MerchantInfo) {
+    this.merchantSettingsList = merchant.settings.list;
+    this.orderTypes = merchant.orderTypes;
+    this.isWalkoutOrder = merchant.walkout;
+  }
+
   @Input() orderDetailOptions: OrderDetailOptions;
   @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
-  @Input() orderItems: OrderItem[] = [];
-  @Input() tax: number;
-  @Input() discount: number;
-  @Input() total: number;
-  @Input() notes: string;
-  @Input() orderPaymentName: string;
-  @Input() deliveryFee: number;
-  @Input() pickupFee: number;
-  @Input() subTotal: number;
-  @Input() tip: number;
-  @Input() accountName: string;
-  @Input() mealBased: boolean;
-  @Input() accounts: UserAccount[] = [];
-  @Input() merchantSettingsList: MerchantSettingInfo[] = [];
+  private _accounts: UserAccount[] = [];
+  public get accounts(): UserAccount[] {
+    return this._accounts;
+  }
+  @Input()
+  public set accounts(accounts: UserAccount[]) {
+    this._accounts = accounts;
+    if (this.isExistingOrder) this.initAccountSelected(accounts);
+  }
   @Input() addressModalConfig: AddressModalSettings;
   @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
@@ -80,8 +113,23 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() merchantTimeZoneDisplayingMessage: string;
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
-  @Input() orderPayment: OrderPayment[];
+
+  accountName: string;
+  orderItems: OrderItem[] = [];
+  tax: number;
+  discount: number;
+  total: number;
+  orderPaymentName: string;
+  deliveryFee: number;
+  pickupFee: number;
+  subTotal: number;
+  tip: number;
+  merchantSettingsList: MerchantSettingInfo[] = [];
+  mealBased: boolean;
+  notes: string;
+  orderPayment: OrderPayment[];
   isApplePayment = false;
+  isWalkoutOrder = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -103,6 +151,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
+    private readonly cdRef: ChangeDetectorRef,
     private readonly a11yService: AccessibilityService
   ) {}
 
@@ -114,8 +163,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setPhoneField();
   }
 
-  async initAccountSelected(accounts: UserAccount[]) {
-    const payment = this.orderPayment[0] || ({accountId: '', accountName: ''});
+  private initAccountSelected(accounts: UserAccount[]) {
+    const payment = this.orderPayment[0] || { accountId: '', accountName: '' };
     let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
     if (!this.isApplePayment) {
@@ -220,11 +269,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       formControlErrorDecorator(Validators.maxLength(22), CONTROL_ERROR[FORM_CONTROL_NAMES.phone].max),
     ];
     this.detailsForm.controls[FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
-   
+
     if (!this.isExistingOrder) {
       this.detailsForm.get(FORM_CONTROL_NAMES.paymentMethod).markAsTouched();
     }
-    
+
     this.subscribeOnFormChanges();
   }
 
@@ -257,6 +306,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       this.removeCvvControl();
     }
+    this.cdRef.detectChanges();
   }
 
   get paymentFormControl(): AbstractControl {

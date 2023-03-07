@@ -1,5 +1,6 @@
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MONTH } from '@sections/accounts/shared/ui-components/filter/date-util';
+import { TIMEZONE_REGEXP } from './regexp-patterns';
 
 export const determineDate = (date?: string) => (date ? new Date(date) : new Date());
 
@@ -89,3 +90,7 @@ export const sortContentStringsBySourceArray = (
 
   return res;
 };
+
+export const formatDate = (date: string) => {
+  return date.replace(TIMEZONE_REGEXP, "$1:$2");
+}

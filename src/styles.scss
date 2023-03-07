@@ -119,6 +119,12 @@
       --height: 360px;
     }
 
+    &__filter {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      --height: 100vh;
+    }
+
     .modal-wrapper,
     .modal-shadow {
       position: absolute;
