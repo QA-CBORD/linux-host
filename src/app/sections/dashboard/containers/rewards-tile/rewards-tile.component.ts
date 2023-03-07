@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
-import { finalize, map, take } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { RewardsService } from './services/rewards.service';
 import { UserTrackLevelInfo } from '@sections/rewards';
 import { Observable } from 'rxjs';
@@ -19,30 +19,32 @@ export class RewardsTileComponent implements OnInit {
   nextLvlRequirePoints$: Observable<number | null>;
   userPointsSpent$: Observable<number>;
 
-  constructor(private readonly rewardsService: RewardsService) {
-  }
+  constructor(private readonly rewardsService: RewardsService) {}
 
   ngOnInit() {
-    this.getUserRewardTrackInfo();
+    this.initUserRewardTrackInfo();
   }
 
-  getUserRewardTrackInfo() {
-    this.rewardTrackInfo$ = this.rewardsService.getUserRewardTrackInfo().pipe(
-      take(1),
-      finalize(() => this.isLoadingData = false));
+  initUserRewardTrackInfo() {
+    this.rewardTrackInfo$ = this.rewardsService.rewardTrack$;
 
     this.currentLvlInfo$ = this.rewardTrackInfo$.pipe(
-      map(({ trackLevels, userLevel }) => trackLevels.find(({ level }) => level === userLevel)));
+      map(({ trackLevels, userLevel }) => trackLevels.find(({ level }) => level === userLevel))
+    );
 
-    this.currentLvlInfo$ = this.rewardTrackInfo$.pipe(
-      map(({ trackLevels, userLevel }) => trackLevels.find(({ level }) => level === userLevel)));
 
     this.nextLvlRequirePoints$ = this.rewardTrackInfo$.pipe(
       map(({ trackLevels, userLevel }) => {
         const nextLevel = trackLevels.find(({ level }) => level === userLevel + 1);
         return nextLevel ? nextLevel.requiredPoints : null;
-      }));
+      })
+    );
 
     this.userPointsSpent$ = this.rewardTrackInfo$.pipe(map(({ userExperiencePoints }) => userExperiencePoints));
   }
+  getUserRewardTrackInfo = () =>
+    this.rewardsService
+      .getUserRewardTrackInfo()
+      .pipe(finalize(() => (this.isLoadingData = false)))
+      .subscribe();
 }
