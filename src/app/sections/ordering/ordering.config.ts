@@ -212,3 +212,7 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   6112: 'You dont have enough money',
   9997: 'Timeout error, please try again later'
 };
+
+export const TOAST_MESSAGES = {
+  isWalkOut: 'Ordering is not possible for Smart Shopping merchants. Go to the location to start a Smart Shopping Order'
+}
