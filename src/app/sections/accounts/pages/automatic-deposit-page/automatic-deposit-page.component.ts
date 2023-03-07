@@ -379,7 +379,7 @@ export class AutomaticDepositPageComponent {
     if (this.automaticDepositForm && this.automaticDepositForm.invalid) return;
 
     let predefinedUpdateCall;
-    let autoDepositSettingsValues = {...this.autoDepositSettings};
+    let autoDepositSettingsValues = { ...this.autoDepositSettings };
 
     if (this.automaticDepositForm === null) {
       predefinedUpdateCall = this.autoDepositService.updateAutoDepositSettings({

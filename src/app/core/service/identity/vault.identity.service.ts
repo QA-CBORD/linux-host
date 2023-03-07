@@ -276,7 +276,7 @@ export class VaultIdentityService {
     } else {
       throw {
         code: status,
-      };      
+      };
     }
   }
 

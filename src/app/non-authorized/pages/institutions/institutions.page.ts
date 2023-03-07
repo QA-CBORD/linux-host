@@ -4,10 +4,10 @@ import { take, switchMap, tap, first, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { Observable, of, zip } from 'rxjs';
+import { Observable, of, zip, firstValueFrom } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
@@ -20,8 +20,6 @@ import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { Platform, SearchbarCustomEvent } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
-import { registerPlugin } from '@capacitor/core';
-import { firstValueFrom } from 'rxjs';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IOSDevice = registerPlugin<any>('IOSDevice');
 

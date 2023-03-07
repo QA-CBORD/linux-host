@@ -49,11 +49,11 @@ export abstract class AbstractDepositManager {
   onPaymentChanged(_target) {}
   formatAmount(_event) {}
   onAmountChanged(_event) {}
-  onSubmitDeposit() {}  
-  setSourceAccounts(guestAccounts: UserAccount[]) {} 
+  onSubmitDeposit() {}
+  setSourceAccounts(guestAccounts: UserAccount[]) {}
   setDestinationAccounts(recipientAccounts: UserAccount[]) {}
-  async confirmationDepositPopover(data: any) {} 
-  async finalizeDepositModal(data): Promise<void> {} 
+  async confirmationDepositPopover(data: any) {}
+  async finalizeDepositModal(data): Promise<void> {}
 
   defineDestAccounts(target) {
     this.activePaymentType = this.setActivePayment(target);

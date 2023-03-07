@@ -28,7 +28,7 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   onChange: (_) => void;
   innerValue = [];
   modifiedOptions: MenuGroupItemInfoChecked[];
-  
+
 
   ngOnInit() {
     this.writeValue(this.control.value);

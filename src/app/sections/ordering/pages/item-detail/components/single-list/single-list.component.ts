@@ -30,7 +30,7 @@ export class SingleListComponent extends DefaultValueAccessor implements OnInit 
     this.onChange(this.control.value);
   }
 
-  itemChosen({detail: { value }}: CustomEvent) {
+  itemChosen({ detail: { value } }: CustomEvent) {
     this.writeValue(value);
     this.onChange(value);
   }

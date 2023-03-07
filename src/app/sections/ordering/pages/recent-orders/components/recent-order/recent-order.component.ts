@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
-import { iif, Observable, of, zip } from 'rxjs';
+import { iif, Observable, of, zip, firstValueFrom } from 'rxjs';
 import { ItemsOrderInfo, MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
@@ -30,7 +30,6 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
-import { firstValueFrom } from 'rxjs';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-details-options.model';
 
@@ -529,6 +528,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   get checkAddToCart$(): Observable<OrderInfo> {
-    return this.order$.pipe(tap(({ checkinStatus, status}) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)));
+    return this.order$.pipe(tap(({ checkinStatus, status }) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)));
   }
 }

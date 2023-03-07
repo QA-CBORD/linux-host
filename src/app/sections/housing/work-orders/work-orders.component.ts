@@ -44,7 +44,7 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
             this.urlEditForm = `/patron/housing/work-orders/${termId}/`;
             this.selectedTermKey = termId;
           }));
-    
+
   }
 
   ngOnDestroy(): void {
@@ -58,7 +58,7 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
 
     return 'New';
   }
-  
+
   createWorkOrderDefault(): void {
     this.router.navigateByUrl(`/patron/housing/work-orders/${this.selectedTermKey}/-1`);
   }

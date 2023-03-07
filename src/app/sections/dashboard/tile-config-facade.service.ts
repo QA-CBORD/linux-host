@@ -19,7 +19,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
   }
 
   get tileSettings$(): Observable<TileWrapperConfig[]> {
-    if (!this.isTileConfigInStorage()) this.storage.updateStateEntity(this.key, [], {ttl: Number.MAX_SAFE_INTEGER});
+    if (!this.isTileConfigInStorage()) this.storage.updateStateEntity(this.key, [], { ttl: Number.MAX_SAFE_INTEGER });
     return this.config$;
   }
 
@@ -51,7 +51,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
     return this.makeRequestWithUpdatingStateHandler(configData, this.storage).pipe(
       switchMap(async([config, settings]) => {
         const updatedBaseConfigs = this.dashboardService.getUpdatedTilesBaseConfig(settings);
-        const currentProfile: APP_PROFILES = await this.profileService.determineCurrentProfile(settings.list); 
+        const currentProfile: APP_PROFILES = await this.profileService.determineCurrentProfile(settings.list);
         const allowedConfigFromBE = updatedBaseConfigs.filter(({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile));
 
         return this.isValidConfig(config)

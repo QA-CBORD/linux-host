@@ -9,7 +9,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 @Injectable()
 export class MerchantResolverService implements Resolve<Observable<[MerchantInfo[], MerchantInfo[], MerchantInfo[]]>> {
   constructor(
-    private readonly exploreService: ExploreService, 
+    private readonly exploreService: ExploreService,
     private readonly loadingService: LoadingService,
     ) {}
 

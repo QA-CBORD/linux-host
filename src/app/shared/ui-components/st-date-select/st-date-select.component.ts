@@ -6,11 +6,11 @@ import {
   HostBinding,
   Input,
   StaticProvider,
+  ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl } from '@angular/forms';
 
 import { hasValue } from '@sections/housing/utils';
-import { ViewChild } from '@angular/core';
 import { IonDatetime } from '@ionic/angular';
 
 export const DATE_SELECT_VALUE_ACCESSOR: StaticProvider = {

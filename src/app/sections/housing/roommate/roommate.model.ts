@@ -43,7 +43,7 @@ export class RoommateResponse implements RoommateResponseOptions {
     if(options == null || !Array.isArray(options)) {
       options = [] as RoommateResponseOptions[];
     }
-    this.roommates = Array.isArray(options) 
+    this.roommates = Array.isArray(options)
       ? options.map(x => new RoommateDetails(x))
       : [];
   }

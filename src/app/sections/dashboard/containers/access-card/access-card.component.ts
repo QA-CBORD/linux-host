@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, of, firstValueFrom } from 'rxjs';
 import { catchError, first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
@@ -11,7 +11,6 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-access-card',
@@ -19,7 +18,7 @@ import { firstValueFrom } from 'rxjs';
   styleUrls: ['./access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccessCardComponent implements OnInit, OnDestroy {
+export class AccessCardComponent implements OnInit, OnDestroy, AfterViewInit {
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;

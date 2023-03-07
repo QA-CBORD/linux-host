@@ -258,7 +258,7 @@ export class CartService {
           type,
           dueTime: this.getDate(dueTime, locale, timeZone),
         };
-        
+
         if (!this._pendingOrderId) {
           return this.merchantService.validateOrder(this.cart.order);
         }
@@ -311,10 +311,10 @@ export class CartService {
           type,
           dueTime: this.getDate(dueTime, locale, timeZone),
         };
-        
+
         return this.merchantService.validateOrderItems(this.cart.order);
       }),
-      tap(({order: updatedOrder}) => {
+      tap(({ order: updatedOrder }) => {
         this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
         if (this.orderIsAsap || !this.cart.order.dueTime) {
           this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };

@@ -2,8 +2,7 @@ import { PinLoginProps } from "@core/model/authentication/pin-login-props.model"
 import { VaultErrorCodes } from "@ionic-enterprise/identity-vault";
 import { ModalController } from "@ionic/angular";
 import { PinPage } from "@shared/ui-components/pin/pin.page";
-import { firstValueFrom } from 'rxjs'
-import { Subject } from "rxjs";
+import { firstValueFrom, Subject } from 'rxjs'
 import { PinAction, PinCloseStatus, VaultAuthenticator } from "./model.identity";
 
 export const PIN_MODAL_ID = 'pin-modal';
