@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { StorageEntity } from '@core/classes/extendable-state-manager';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import {
   SecureMessagingAuthInfo,
@@ -11,7 +10,7 @@ import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { SecureMessagingApiService } from '@core/service/secure-messaging/secure-messaging-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
-import { map, Observable, skipWhile, Subject, switchMap, take, tap, timer, zip } from 'rxjs';
+import { map, Observable, skipWhile, Subject, switchMap,  tap, timer, zip } from 'rxjs';
 const REFRESH_TIME = 10000;
 
 @Injectable({
