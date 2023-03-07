@@ -7,7 +7,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
 import { CartService, MerchantService } from '../../services';
 import { OrderOptionsActionSheetComponent } from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
@@ -44,7 +44,12 @@ export class FavoriteMerchantsComponent implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.ordering]);
   }
 
-  async merchantClickHandler(merchantInfo): Promise<void> {
+  async merchantClickHandler(merchantInfo: MerchantInfo): Promise<void> {
+    if (merchantInfo.walkout) {
+      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+      return;
+    }
+
     this.openOrderOptions(merchantInfo);
   }
 
@@ -75,10 +80,22 @@ export class FavoriteMerchantsComponent implements OnInit {
 
   private async openOrderOptions(merchant): Promise<void> {
     await this.cartService.setActiveMerchant(merchant);
-    await this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings,merchant.timeZone);
+    await this.actionSheet(
+      merchant.orderTypes,
+      merchant.id,
+      merchant.storeAddress,
+      merchant.settings,
+      merchant.timeZone
+    );
   }
 
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings,timeZone): Promise<void> {
+  private async actionSheet(
+    orderTypes: MerchantOrderTypesInfo,
+    merchantId,
+    storeAddress,
+    settings,
+    timeZone
+  ): Promise<void> {
     const footerButtonName = 'continue';
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
@@ -92,7 +109,7 @@ export class FavoriteMerchantsComponent implements OnInit {
         merchantId,
         storeAddress,
         settings,
-        timeZone
+        timeZone,
       },
     });
     modal.onDidDismiss().then(({ data }) => {
