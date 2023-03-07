@@ -1,9 +1,9 @@
 <ion-list mode="md">
   <ng-container>
-    <ion-item *ngIf="showViewOption" lines="none" mode="md" (click)="handleView()" [routerLink]="[navigateTo]">
+    <ion-item *ngIf="showViewOption" lines="none" mode="md" (click)="handleView()">
       View
     </ion-item>
-    <ion-item *ngIf="showEditOption" lines="none" mode="md" (click)="closePopover()" [routerLink]="[navigateTo]" [disabled]="!canEdit">
+    <ion-item *ngIf="showEditOption" lines="none" mode="md" (click)="handleEdit()" [disabled]="!canEdit">
       Edit
     </ion-item>  
     <ion-item *ngIf="showDetailsOption" lines="none" mode="md" (click)="detailsPopover()">

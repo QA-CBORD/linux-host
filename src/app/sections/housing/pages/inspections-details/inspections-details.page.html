@@ -6,8 +6,7 @@
   <div class="inspection-details__actions">
     <ion-button
       class="btn inspection-details__page-back"
-      [routerLink]="['/patron/housing/dashboard']"
-      routerDirection="back"
+      (click)="goToDashboard()"
       mode="ios"
       fill="clear"
     >
