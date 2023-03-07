@@ -17,7 +17,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 
 @Injectable()
 export class RewardsService {
-  private readonly rewardTrack$: BehaviorSubject<UserRewardTrackInfo> = new BehaviorSubject<UserRewardTrackInfo>(null);
+  private readonly _rewardTrack$: BehaviorSubject<UserRewardTrackInfo> = new BehaviorSubject<UserRewardTrackInfo>(null);
 
   private rewardTrackInfo: UserRewardTrackInfo;
 
@@ -26,13 +26,13 @@ export class RewardsService {
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
-  get rewardTrack(): Observable<UserRewardTrackInfo> {
-    return this.rewardTrack$.asObservable();
+  get rewardTrack$(): Observable<UserRewardTrackInfo> {
+    return this._rewardTrack$.asObservable();
   }
 
   private set _rewardTrack(rewardTrackInfo: UserRewardTrackInfo) {
     this.rewardTrackInfo = { ...rewardTrackInfo };
-    this.rewardTrack$.next({ ...this.rewardTrackInfo });
+    this._rewardTrack$.next({ ...this.rewardTrackInfo });
   }
 
   getUserRewardTrackInfo(showToastOnError?: boolean): Observable<UserRewardTrackInfo> {
@@ -42,7 +42,7 @@ export class RewardsService {
   }
 
   getUserOptInStatus(): Observable<OPT_IN_STATUS> {
-    return this.rewardTrack.pipe(map(({ userOptInStatus }) => userOptInStatus));
+    return this._rewardTrack$.pipe(map(({ userOptInStatus }) => userOptInStatus));
   }
 
   private getLevelStatus({ level, userClaimableRewards: rewards }: UserTrackLevelInfo, userLevel: number): number {

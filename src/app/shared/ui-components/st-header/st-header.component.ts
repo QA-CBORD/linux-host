@@ -21,9 +21,11 @@ export class StHeaderComponent {
   @Input() isBackButtonShow = true;
   @Input() isDismissButtonShow: boolean;
   @Input() isRemoveButtonShow: boolean;
+  @Input() isFilterButtonShow: boolean;
   @Output() onDismiss = new EventEmitter<void>();
   @Output() onRemove = new EventEmitter<void>();
   @Output() onClose = new EventEmitter<void>();
+  @Output() onFilter = new EventEmitter<void>();
 
   constructor(private readonly router: Router, private readonly navService: NavigationService) {}
 

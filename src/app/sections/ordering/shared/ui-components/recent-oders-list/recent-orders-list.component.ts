@@ -8,6 +8,7 @@ import { OrderInfo } from '../../models';
 @Component({
   selector: 'st-recent-orders-list',
   templateUrl: './recent-orders-list.component.html',
+  styleUrls: ['./recent-orders-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrdersListComponent {
@@ -15,6 +16,8 @@ export class RecentOrdersListComponent {
   @Output() onOrderClicked: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
   @Output() onNavLinkClicked: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
   
+  propertyName = 'dueTime';
+
   trackOrdersById(index: number, { id }: OrderInfo): string {
     return id;
   }
