@@ -95,11 +95,11 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
       this._update(this.waitingKey, waitingListDetails, form.value);
     }
   }
-  
+
   goToDashboard(): void {
     this._housingService.goToDashboard();
   }
-  
+
   private _touch(): void {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }

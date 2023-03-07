@@ -94,11 +94,11 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
-  
+
   goToDashboard(): void {
     this._housingService.goToDashboard();
   }
-  
+
   async submit(nonAssignmentDetails: NonAssignmentDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
     const sub = this._nonAssignmentsService.getSelectedAssetType()
       .subscribe(data => {
