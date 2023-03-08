@@ -38,7 +38,7 @@ export class USAePayService {
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly toastService: ToastService
   ) {}
-  
+
   /* WKWebView is the required webview by Apple  */
 
   addUSAePayCreditCard(): Promise<USAePayResponse> {

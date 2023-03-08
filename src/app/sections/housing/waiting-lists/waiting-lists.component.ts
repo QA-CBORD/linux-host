@@ -102,5 +102,5 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
- 
+
 }

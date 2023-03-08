@@ -26,7 +26,7 @@ export abstract class ContentStringModel {
   }
 
   protected doSetup(config: ContentStringBuilderConfig, defaultContents: any): void {
-    
+
     const reduce = (data: ContentStringInfo[]) => reduceToObject(data);
 
     this.params = config.params;

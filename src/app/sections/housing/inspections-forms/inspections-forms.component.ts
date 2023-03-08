@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Inspection, Inspections } from './inspections-forms.model';
 import { InspectionsStateService } from './inspections-forms-state.service';
@@ -35,12 +35,12 @@ const InspectionColorClass = {
   styleUrls: ['./inspections-forms.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InspectionsComponent implements OnInit {
+export class InspectionsComponent implements OnInit, OnDestroy {
   private selectedTermKey = 0;
   inspections: Inspection[];
   urlEditForm: string;
   private subscription: Subscription;
-  
+
   roomsMap= {
     '=1' : "# Room Left",
     other: "# Rooms Left"

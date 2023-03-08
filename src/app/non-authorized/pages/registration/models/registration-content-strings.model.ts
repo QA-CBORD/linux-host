@@ -2,7 +2,7 @@ import { ContentStringModel, NullableContent } from '@shared/model/content-strin
 import { defaultRegistrationCs } from '@shared/model/content-strings/default-strings';
 
 export class RegistrationCsModel extends ContentStringModel {
-  
+
   constructor(nullable: NullableContent) {
     super(nullable.getConfig(), defaultRegistrationCs);
   }

@@ -360,7 +360,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   }
 
   private setContentString() {
-    this.errorCs = { 
+    this.errorCs = {
       maxAmountError: 'The maximum amount for a deposit is',
       minAmountError: 'The minimum amount for a deposit is',
       amountPatternError: 'Please enter a valid amount.',

@@ -12,7 +12,7 @@ const routes: Route[] = [
     resolve: {
       data: SettingsSavedAddressesResolver,
     },
-    data: {relativeRoute: `${PATRON_NAVIGATION.settings}/${SETTINGS_NAVIGATE.address}`}
+    data: { relativeRoute: `${PATRON_NAVIGATION.settings}/${SETTINGS_NAVIGATE.address}` }
   },
   {
     path: ORDERING_ROUTING.addressEdit,

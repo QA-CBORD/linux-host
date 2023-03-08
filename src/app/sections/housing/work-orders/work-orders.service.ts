@@ -125,7 +125,7 @@ export class WorkOrdersService {
     }else {
       return question;
     }
-    
+
   }
 
   private _toFormControl(
@@ -193,7 +193,7 @@ export class WorkOrdersService {
       catchError(() => of(false)),
       switchMap((response: Response) => {
         if(image) return this.sendWorkOrderImage(response.data, image);
-    
+
         return of(true);
       })
     );
@@ -204,7 +204,7 @@ export class WorkOrdersService {
       const workOrderImageURL = `${this.workOrderListUrl}/attachments`;
 
       const img = new Image();
-      
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       img.onerror = (event) => {
         reject('error load')
@@ -214,13 +214,13 @@ export class WorkOrdersService {
         const canvas = document.createElement("canvas");
         canvas.width = newWidth;
         canvas.height = newHeight;
-        
+
         const context = canvas.getContext("2d");
         context.drawImage(img, 0, 0, newWidth, newHeight);
         canvas.toBlob(
           async (blob) => {
             const data = await this.convertBlobToBase64(blob) as string;
-            
+
             const attachmentFile = data.replace(/^data:(.*,)?/, '')
             const body = new ImageData({
               filename: imageData.filename,
@@ -242,9 +242,9 @@ export class WorkOrdersService {
                     throw new Error(response.status.message);
                   }
                 });
-              
-          }, 
-          this.MIME_TYPE, 
+
+          },
+          this.MIME_TYPE,
           this.QUALITY
         );
 
@@ -267,7 +267,7 @@ export class WorkOrdersService {
   private calculateSize(img: any, maxWidth: number, maxHeight: number): number[] {
     let width = img.width;
     let height = img.height;
-  
+
     // calculate the width and height, constraining the proportions
     if (width > height) {
       if (width > maxWidth) {
@@ -314,7 +314,7 @@ export class WorkOrdersService {
       const fieldType = control.workOrderFieldKey;
       controls[fieldType] = resultFormValue;
     });
-    
+
     this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe(res => {
       image = null;
       if (res && res.studentSubmitted) {
@@ -332,7 +332,7 @@ export class WorkOrdersService {
           location = null;
         }
       });
-      
+
     return { body: {
       notificationPhone:  controls[WorkOrdersFields.PHONE_NUMBER] ? controls[WorkOrdersFields.PHONE_NUMBER] : '',
       notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL]: '',

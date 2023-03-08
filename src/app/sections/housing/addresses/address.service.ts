@@ -17,14 +17,14 @@ import { PatronAddress, AddressFields } from "./address.model";
     ): PatronAddress[] {
         const addressTypeControls = parsedJson.filter(
             (control) => {
-                return control 
+                return control
                     && (control as QuestionFormControl).source === QUESTIONS_SOURCES.ADDRESS_TYPES
                     && control.addressTypeId
             }
         );
-        
+
         const questions: string[] = Object.keys(questionEntries);
-    
+
         if (!addressTypeControls.length || !questions.length) {
             return [];
         }
@@ -34,14 +34,14 @@ import { PatronAddress, AddressFields } from "./address.model";
         const addressQuestions = questions.filter((questionName: string) =>
             addressTypeControls.find((control) =>
                 questionName.startsWith(`text-${control.addressTypeId}-`)));
-        
+
         addressTypeControls.forEach((addressType: QuestionAddressTypeGroup) => {
             let addrName = '', addrLn1 = '', addrLn2 = '', city = '';
             let state = '', country = '', zip = '', addrPhone = '', email = '';
             let addressKey = 0;
             let patronId = 0;
             const addrTypeKey = addressType.addressTypeId;
-            
+
             const foundAddress = addresses.find((addr: PatronAddress) => addr.addrTypeKey === addrTypeKey);
 
             const selectedFields = addressType.values.filter(at => at.selected);
@@ -77,7 +77,7 @@ import { PatronAddress, AddressFields } from "./address.model";
                         break;
                     default:
                       break;
-                  } 
+                  }
             });
 
             if (foundAddress) {

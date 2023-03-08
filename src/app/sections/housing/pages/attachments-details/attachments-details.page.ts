@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AlertController,
 } from '@ionic/angular';
@@ -15,6 +15,7 @@ import {
 import {
   Observable,
   Subscription,
+  BehaviorSubject
 } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -25,8 +26,6 @@ import { TermsService } from '@sections/housing/terms/terms.service';
 
 import { AttachmentTypes, AttachmentsDetail, AttachmentsList } from '../../attachments/attachments.model';
 import { AttachmentsService } from '../../attachments/attachments.service';
-import { BehaviorSubject } from 'rxjs';
-import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 

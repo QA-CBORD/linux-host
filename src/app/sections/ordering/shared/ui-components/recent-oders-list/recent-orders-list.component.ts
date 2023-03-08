@@ -15,7 +15,7 @@ export class RecentOrdersListComponent {
   @Input() orders: OrderInfo[];
   @Output() onOrderClicked: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
   @Output() onNavLinkClicked: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
-  
+
   propertyName = 'dueTime';
 
   trackOrdersById(index: number, { id }: OrderInfo): string {

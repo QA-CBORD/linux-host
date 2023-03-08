@@ -25,7 +25,7 @@ export interface PatronAddressOptions {
     addrPhone: string;
     email: string;
 }
-  
+
 export class PatronAddress implements PatronAddressOptions {
     addressKey: number;
     patronId: number;

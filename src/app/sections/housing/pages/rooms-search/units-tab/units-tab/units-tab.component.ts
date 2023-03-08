@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SelectedHousingTab } from '@sections/housing/pages/housing-dashboard/housing-dashboard.component';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { SelectedUnitsTab } from '../../rooms-search.page';
   templateUrl: './units-tab.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnitsTabComponent {
+export class UnitsTabComponent implements OnInit, OnDestroy {
   selectedTab: SelectedUnitsTab = SelectedUnitsTab.Buildings;
   subscriber: Subscription;
   @Output() onTabSelected: EventEmitter<string> = new EventEmitter<string>();

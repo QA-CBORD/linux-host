@@ -77,7 +77,7 @@ export class NonAssignmentsService {
     nonAssignment: NonAssignmentDetails,
     assetTypeKey: number,
     termKey: number,
-    form): Observable<boolean> {  
+    form): Observable<boolean> {
 
     return this._questionsStorageService.updateQuestions(nonAssignmentKey, form, 3).pipe(
       switchMap((storedApplication: StoredApplication) => {
@@ -89,7 +89,7 @@ export class NonAssignmentsService {
           parsedJson,
           questions
         );
-        
+
         const patronAddresses: PatronAddress[] = this._patronAddressService.getAddresses(
           nonAssignment.patronAddresses,
           parsedJson,
@@ -153,10 +153,10 @@ export class NonAssignmentsService {
     if (!(question instanceof QuestionAssetTypeDetailsBase)) {
       return question;
     }
-  
+
     const assetTypes =
       this._toAssetTypeDetails(question, nonAssignmentDetails.assetTypes);
-    
+
     return new QuestionAssetTypeDetails({
       ...question,
       assetTypes
@@ -169,7 +169,7 @@ export class NonAssignmentsService {
    }
 
     const selectedValues = question.values.filter(p => p.selected);
-    
+
     let nameLabel = '';
     let mealsLabel = '';
     let diningDollarsLabel = '';
@@ -180,7 +180,7 @@ export class NonAssignmentsService {
         case '0':
           nameLabel = isDefined(question.customName) && question.customName !== 'undefined'
             ? question.customName
-            : p.label;  
+            : p.label;
           break;
         case '1':
           mealsLabel = isDefined(question.customMeals) && question.customMeals !== 'undefined'
@@ -200,7 +200,7 @@ export class NonAssignmentsService {
       }
     });
 
-    const availableAssetTypes = assetTypes.map((assetType: AssetType) => 
+    const availableAssetTypes = assetTypes.map((assetType: AssetType) =>
       selectedValues.map(e => {
         let assetTypeValue: AssetTypeDetailValue;
         let label: string;
@@ -289,6 +289,6 @@ export class NonAssignmentsService {
       }
     }
 
-    return new FormControl({ value, disabled: question.readonly}, this._questionsService.getRequiredValidator(question));
+    return new FormControl({ value, disabled: question.readonly }, this._questionsService.getRequiredValidator(question));
   }
 }
