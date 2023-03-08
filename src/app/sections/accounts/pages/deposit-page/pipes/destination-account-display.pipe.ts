@@ -9,7 +9,7 @@ export class DestinationAccountDisplayPipe implements PipeTransform {
   constructor(private readonly transactionUnitsPipe: TransactionUnitsPipe) {}
   transform(account: UserAccount, hideBalance?: boolean): string {
     if (!account) return '';
-    
+
     if (hideBalance) {
       return `${account.accountDisplayName}`;
     }

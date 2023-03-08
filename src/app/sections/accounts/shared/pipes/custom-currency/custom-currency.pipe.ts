@@ -7,7 +7,7 @@ import { COMMA_REGEXP } from '@core/utils/regexp-patterns';
   pure: false,
 })
 export class CustomCurrencyPipe implements PipeTransform {
-  transform({ value }: AbstractControl): string {    
+  transform({ value }: AbstractControl): string {
     if (!value || value.length < 1) {
       return '';
     }

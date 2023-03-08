@@ -139,7 +139,7 @@ export class RegistrationComponent implements OnInit {
       }
     );
   }
-  
+
   private mediaErrorMessage(field: Field) {
     field.control.setValidators(formControlErrorDecorator(Validators.required,
       'Media value is required'));

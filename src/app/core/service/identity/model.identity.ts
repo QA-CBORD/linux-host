@@ -1,4 +1,4 @@
-import { Subject} from "rxjs";
+import { Subject } from "rxjs";
 
 export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 5000;
 

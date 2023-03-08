@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { MerchantOrderTypesInfo } from '@sections/ordering'; 
+import { MerchantOrderTypesInfo } from '@sections/ordering';
 import { CartService } from '@sections/ordering/services';
 
 @Pipe({

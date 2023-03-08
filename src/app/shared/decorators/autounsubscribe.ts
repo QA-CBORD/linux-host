@@ -7,7 +7,7 @@ export function AutoUnsubscribe(blackList = []) {
 			for (const prop in this) {
 				const property = this[prop];
 				if (!blackList.includes(prop)) {
-					if (property && (typeof property.unsubscribe === "function")) {				
+					if (property && (typeof property.unsubscribe === "function")) {
 						property.unsubscribe();
 					}
 				}

@@ -50,7 +50,7 @@ export class BackButtonComponent implements OnDestroy {
       .filter(x => x.patronKeyRoommate !== 0)
       .map(x => new RequestedRoommate({
         preferenceKey: x.preferenceKey,
-        patronRoommateKey: x.patronKeyRoommate 
+        patronRoommateKey: x.patronKeyRoommate
       }));
 
     const requestBody = new RequestedRoommateRequest({
@@ -63,7 +63,7 @@ export class BackButtonComponent implements OnDestroy {
           const roommatePref = applicationDetails.roommatePreferences
                 .find(f => f.patronKeyRoommate === d.patronRoommateKey
                         && f.preferenceKey === d.preferenceKey);
-                        
+
           return new RequestedRoommate({
             firstName: roommatePref ? roommatePref.firstName : '',
             lastName: roommatePref ? roommatePref.lastName : '',

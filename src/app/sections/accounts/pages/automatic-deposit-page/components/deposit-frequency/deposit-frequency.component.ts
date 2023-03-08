@@ -22,7 +22,7 @@ export class DepositFrequencyComponent {
   }
 
   selectedFrequency: string;
- 
+
   get frequency() {
     return DEPOSIT_FREQUENCY;
   }

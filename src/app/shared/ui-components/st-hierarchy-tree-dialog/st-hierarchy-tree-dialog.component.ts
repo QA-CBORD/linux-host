@@ -1,9 +1,8 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { LoadingController, ModalController, NavParams } from '@ionic/angular';
+import { LoadingController, ModalController, NavParams, IonicSlides } from '@ionic/angular';
 import { SlideItem, LookUpItem, Slide } from '../../../sections/housing/work-orders/work-orders.model';
 import { WorkOrderStateService } from '../../../sections/housing/work-orders/work-order-state.service';
 import SwiperCore, { Pagination, Swiper } from 'swiper';
-import { IonicSlides } from '@ionic/angular';
 SwiperCore.use([Pagination, IonicSlides]);
 @Component({
   selector: 'st-hierarchy-tree-dialog',

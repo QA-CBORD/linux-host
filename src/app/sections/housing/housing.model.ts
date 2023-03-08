@@ -4,8 +4,8 @@ import { RoomSelect } from './rooms/rooms.model';
 import { FacilityDetails } from './facilities/facilities.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
 import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
-import {ContractSummary} from './contract-list/contractSummary.model'
-import {CheckInOut, CheckInOutSlot} from './check-in-out/check-in-out.model'
+import { ContractSummary } from './contract-list/contractSummary.model'
+import { CheckInOut, CheckInOutSlot } from './check-in-out/check-in-out.model'
 import { WaitingListDetails, WaitingList } from './waiting-lists/waiting-lists.model';
 import { WorkOrder, WorkOrderDetails } from './work-orders/work-orders.model';
 
@@ -172,7 +172,7 @@ export class CheckInOutSlotResponse implements CheckInOutSlotsResponseOptions {
     if (options == null || typeof options !== 'object') {
       options = {} as CheckInOutSlotsResponseOptions;
   }
-  
+
   this.slots = Array.isArray(options)
       ? options.map((detail) => new CheckInOutSlot(detail))
       : [];

@@ -40,7 +40,7 @@ export class TransactionsResolver implements Resolve<Observable<[ContentStringIn
         ),
       );
     this.loadingService.showSpinner();
-    this.transactionService.clearTransactionHistory();    
+    this.transactionService.clearTransactionHistory();
     return zip(transactionContentStrings,accountContentStrings, historyCall, accountsCall).pipe(
       tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()),
     );

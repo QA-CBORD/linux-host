@@ -19,7 +19,7 @@ export class CheckInOutService {
         private _proxy: HousingProxyService,
         private _environment: EnvironmentFacadeService) { }
 
-    selectSpot(spot: CheckInOutSlot): Observable<boolean> {        
+    selectSpot(spot: CheckInOutSlot): Observable<boolean> {
         return this._proxy.post<Response>(this._checkInOutUrl, spot)
             .pipe(
                 map((response: Response) => {

@@ -9,5 +9,5 @@ import { ApplicationsStateService } from './applications-state.service';
 })
 export class ApplicationsComponent {
   constructor(public applicationsStateService: ApplicationsStateService) {}
- 
+
 }

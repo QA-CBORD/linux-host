@@ -1,5 +1,5 @@
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
@@ -27,7 +27,7 @@ import { APP_ROUTES } from '@sections/section.config';
   styleUrls: ['./item-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ItemDetailComponent implements OnInit {
+export class ItemDetailComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   itemOrderForm: FormGroup;
   order: { counter: number; totalPrice: number; optionsPrice: number } = { counter: 1, totalPrice: 0, optionsPrice: 0 };

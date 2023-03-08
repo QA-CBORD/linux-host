@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MerchantInfo } from '@sections/ordering/shared/models';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
@@ -10,7 +10,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
   styleUrls: ['./merchant-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchantItemComponent {
+export class MerchantItemComponent implements OnInit {
   @Input() merchantInfo: MerchantInfo;
   @Output() merchantClick: EventEmitter<MerchantInfo> = new EventEmitter<MerchantInfo>();
   @Output() addToFav: EventEmitter<{ isFavorite: boolean; id: string }> = new EventEmitter<{

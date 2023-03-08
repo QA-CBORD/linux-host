@@ -20,8 +20,7 @@ import {
 } from '@sections/ordering';
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { firstValueFrom } from 'rxjs';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of, Subscription, firstValueFrom } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
@@ -279,7 +278,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     this.orderPayment = JSON.parse(orderPayment);
 
     const orderDetailOptions = await firstValueFrom(this.orderDetailOptions$);
-    
+
     if(!orderDetailOptions) {
       this.orderDetailOptions$ = of({
         orderType: type,

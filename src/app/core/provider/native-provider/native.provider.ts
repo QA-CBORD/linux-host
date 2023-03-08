@@ -232,7 +232,7 @@ export class NativeProvider {
       }
     });
   }
- 
+
   set setKeepTopModal(value: boolean) {
     this.keepTopModal = value;
   }

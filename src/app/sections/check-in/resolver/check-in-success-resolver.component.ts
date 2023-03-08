@@ -13,7 +13,7 @@ import { CheckingSuccessContentCsModel } from '../contents-strings/check-in-cont
 @Injectable()
 export class CheckinSuccessResolver implements Resolve<Observable<{ contentString: CheckingSuccessContentCsModel; }>> {
   constructor(
-    private readonly commonService: CommonService, 
+    private readonly commonService: CommonService,
     private readonly loadingService: LoadingService,
     private readonly merchantService: MerchantService) {}
 

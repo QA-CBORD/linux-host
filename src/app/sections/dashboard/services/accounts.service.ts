@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 
@@ -8,7 +8,6 @@ import { PaymentSystemType, Settings } from 'src/app/app.global';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AccountsService {

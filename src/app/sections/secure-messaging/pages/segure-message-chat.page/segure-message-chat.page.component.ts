@@ -137,7 +137,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   // onClickBackConversation(): void {
   //   console.log('back clicked');
-    
+
   // }
 
   /**

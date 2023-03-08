@@ -55,7 +55,7 @@ export class NonAssignmentsStateService {
   set nonAssignmentsState(value: NonAssignmentsState) {
     this._nonAssignmentsStateSource.next(value);
   }
-  
+
   get nonAssignmentsState(): NonAssignmentsState {
     return this._nonAssignmentsStateSource.getValue();
   }

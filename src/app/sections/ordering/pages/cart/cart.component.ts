@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
-import { combineLatest, Observable, from, Subscription, zip, of, BehaviorSubject } from 'rxjs';
+import { combineLatest, Observable, from, Subscription, zip, of, BehaviorSubject, firstValueFrom } from 'rxjs';
 import {
   AddressModalSettings,
   FORM_CONTROL_NAMES,
@@ -44,7 +44,6 @@ import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/d
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { Browser } from '@capacitor/browser';
-import { firstValueFrom } from 'rxjs';
 import { NonCheckingService } from './services/non-checking.service';
 import { CART_ROUTES } from './cart-config';
 

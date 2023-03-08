@@ -152,7 +152,7 @@ export class QuestionsService {
           return !isEmptyOrNullString(address.email) ? address.email : '';
         default:
           break;
-      } 
+      }
     } else {
       return '';
     }
@@ -178,7 +178,7 @@ export class QuestionsService {
       label: question.label,
       subtype: 'h3',
     }));
-    
+
     question.values.forEach((field, index) => {
       if (field.selected) {
         questions.push(new QuestionTextbox({

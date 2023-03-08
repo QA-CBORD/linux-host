@@ -59,11 +59,11 @@ export class FormPaymentComponent implements OnInit {
     this.userAccounts = <AccountsConf[]>history.state.userAccounts;
     this.control = this.initFormControl();
   }
-  
+
   ionViewDidEnter() {
     this.loadingService.closeSpinner();
   }
-  
+
   async addCreditCard() {
     await this.creditCardService.addCreditCard();
     this.userAccounts = await this.creditCardService.retrieveAccounts();
@@ -123,7 +123,7 @@ export class FormPaymentComponent implements OnInit {
     if(this.currentForm.type === FormType.Application) {
       this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
-      }); 
+      });
 
     } else if (this.currentForm.type === FormType.WorkOrder) {
       this.contractsService.submitContract(this.currentForm.key, (<ContractDetails>this.currentForm.details)?.formKey).pipe(take(1)).subscribe(async () => {

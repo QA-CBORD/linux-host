@@ -83,7 +83,7 @@ export const handleServerError = <T>(
         if (ignoreCodes && ignoreCodes.includes(code)) {
           return of();
         }
-        
+
         // Temprorary solution for these codes:
         if ([9002, 9005, 9006].includes(+code)) {
           return throwError(() => message);

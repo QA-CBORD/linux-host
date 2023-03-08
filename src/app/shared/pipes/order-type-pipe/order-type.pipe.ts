@@ -6,7 +6,7 @@ import { MerchantInfo } from '@sections/ordering';
 })
 export class OrderTypePipe implements PipeTransform {
 
-  transform({orderTypes}: MerchantInfo): string {
+  transform({ orderTypes }: MerchantInfo): string {
     const pickup = 'Pickup';
     const delivery = 'Delivery';
 

@@ -18,12 +18,12 @@ export class CheckInOut implements CheckInOutOptions {
     type: number;
     selectedFacilityName?: string;
     selectedSpotDateTime?: Date;
-  
+
     constructor(options) {
       if (options == null || typeof options !== 'object') {
         options = {} as CheckInOutOptions;
       }
-  
+
       this.name = String(options.name);
       this.availableStartDate = new Date(options.availableStartDateTime);
       this.availableEndDate = new Date(options.availableEndDateTime);
