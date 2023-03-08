@@ -10,6 +10,7 @@ import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { SecureMessagingApiService } from '@core/service/secure-messaging/secure-messaging-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
+import { StateTimeDuration } from 'src/app/app.global';
 import { map, Observable, skipWhile, Subject, switchMap,  tap, timer, zip } from 'rxjs';
 const REFRESH_TIME = 10000;
 
@@ -17,7 +18,6 @@ const REFRESH_TIME = 10000;
   providedIn: 'root',
 })
 export class SecureMessagingFacadeService extends ServiceStateFacade {
-  private ttl = 600000; // 10min
   private static smAuthInfo: SecureMessagingAuthInfo;
   private readonly ma_type = 'patron';
   private messagesArray: SecureMessageInfo[] = [];
@@ -82,7 +82,7 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
     return zip(this.getSecureMessagesGroups(), this.getSecureMessages()).pipe(
       tap(response => {
         this.storageStateService.updateStateEntity(this.secureMessaginKey, response, {
-          ttl: this.ttl,
+          ttl: StateTimeDuration.TTL,
           highPriorityKey: true,
         });
       })
@@ -140,7 +140,7 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
       tap(() => {
         this.messagesArray.push(messageInfo);
         this.storageStateService.updateStateEntity(this.secureMessaginKey, [this._groupsArray, this.messagesArray], {
-          ttl: this.ttl,
+          ttl: StateTimeDuration.TTL,
           highPriorityKey: true,
         });
       })
@@ -185,7 +185,7 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
       ),
       tap(([smGroupArray, smMessageArray]) => {
         this.storageStateService.updateStateEntity(this.secureMessaginKey, [smGroupArray, smMessageArray], {
-          ttl: this.ttl,
+          ttl: StateTimeDuration.TTL,
           highPriorityKey: true,
         });
         this.buildConversationsFromResponseAndNotify();
