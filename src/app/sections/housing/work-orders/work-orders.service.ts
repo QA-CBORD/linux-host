@@ -91,7 +91,7 @@ export class WorkOrdersService {
     // eslint-disable-next-line no-useless-escape
     const questions: QuestionBase[][] = parseJsonToArray(
       workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) +
-        `,{\"name\": \"image\",\"type\": \"IMAGE\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"IMAGE\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`
+        `,{"name": "image","type": "IMAGE", "label": "Image", "attribute": null, "workOrderFieldKey" : "IMAGE", "requiered": false ,"source":"WORK_ORDER"}]`
     ).map((question: QuestionBase) => {
       const mappedQuestion = this._toWorkOrderListCustomType(question, workOrderDetails);
       return [].concat(mappedQuestion);
@@ -294,7 +294,7 @@ export class WorkOrdersService {
 
   private createFacilityTreeQuestion() {
     // eslint-disable-next-line no-useless-escape
-    const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
+    const facilityTreeString = `[{"name": "image","type": "FACILITY", "label": "Image", "attribute": null, "workOrderFieldKey" : "FACILITY", "requiered": false ,"source":"WORK_ORDER"}]`;
     return parseJsonToArray(facilityTreeString);
   }
 
