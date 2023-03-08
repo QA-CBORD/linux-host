@@ -68,10 +68,6 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     this.suscription.unsubscribe();
   }
 
-  getUrl(url: string) {
-    return `/${url}`;
-  }
-
   isRouteActive(routePath: string) {
     return this.router.isActive(routePath, {
       matrixParams: 'ignored',
