@@ -31,9 +31,9 @@ export class QuestionAddressTypeGroup extends QuestionBase implements QuestionAd
         if (!isDefined(options) || typeof options !== 'object') {
             options = {} as QuestionAddressTypeGroupOptions;
         }
-  
+
         super(options);
-      
+
         this.type = 'address-group';
         this.name = String(options.name);
         this.values = Array.isArray(options.values)

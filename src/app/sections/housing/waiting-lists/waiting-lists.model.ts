@@ -87,7 +87,7 @@ export class WaitingListDetails implements WaitingListDetailstOptions{
     this.attributes = Array.isArray(options.patronAttributes)
     ? options.patronAttributes.map((attribute) => new PatronAttribute(attribute))
     : [];
-    
+
     this.facilities = options.facilities;
     this.waitListKey = options.waitListKey;
     this.patronAttributes = Array.isArray(options.patronAttributes)

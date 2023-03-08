@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { NavController, PopoverController } from '@ionic/angular';
 import { AddCreditCardService } from './services/add-credit-card.service';
@@ -16,7 +16,7 @@ import { ToastService } from '@core/service/toast/toast.service';
   styleUrls: ['./add-credit-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddCreditCardComponent implements OnInit {
+export class AddCreditCardComponent implements OnInit, OnDestroy {
   ccForm: FormGroup;
   cardType = '';
   private inputKeyCode: number;

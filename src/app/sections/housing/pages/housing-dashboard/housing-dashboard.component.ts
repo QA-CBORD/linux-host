@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -18,7 +18,7 @@ export enum SelectedHousingTab {
   styleUrls: ['./housing-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HousingDashboardPage {
+export class HousingDashboardPage implements OnInit, OnDestroy {
   SelectedHousingTab = SelectedHousingTab; // needed to reference enum on front-end
   _selectedHousingTab: string = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();

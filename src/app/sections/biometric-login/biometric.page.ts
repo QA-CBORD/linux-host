@@ -11,7 +11,7 @@ export class BiometricPage implements OnInit {
   loading = false;
   biometricConfig: { type: string; name: string } = null;
   constructor(
-    private readonly identityFacadeService: IdentityFacadeService, 
+    private readonly identityFacadeService: IdentityFacadeService,
     private readonly router: Router) {}
 
   ngOnInit() {

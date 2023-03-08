@@ -196,7 +196,7 @@ export const guestAddFundsDefaultStrings = {
   notice_text: 'You are depositing to the account of {recipient_name}.',
   source_account_text: 'Payment Method',
   destination_account_text: 'To Account',
-  deposit_label: 'Amount To Deposit', 
+  deposit_label: 'Amount To Deposit',
   deposit_button: 'Deposit',
   refund_text: 'Refund Policy'
 }

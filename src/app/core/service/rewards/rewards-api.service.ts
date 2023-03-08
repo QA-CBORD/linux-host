@@ -60,6 +60,6 @@ export class RewardsApiService {
   private async presentToast(): Promise<void> {
     const message = `something went wrong, try again later`;
     const isNativeDevicesEnv = this.isPlatform('android') || this.isPlatform('ios');
-    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }], position: isNativeDevicesEnv ? 'bottom' : 'top'});
+    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }], position: isNativeDevicesEnv ? 'bottom' : 'top' });
   }
 }

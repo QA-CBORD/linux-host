@@ -118,7 +118,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           this.getInspectionPages();
           this.section = inspectionDetails.sections[0].name;
           this.isSubmitted = inspectionDetails.isSubmitted;
-          
+
           this._loadingService.closeSpinner();
           return inspectionDetails;
         }),

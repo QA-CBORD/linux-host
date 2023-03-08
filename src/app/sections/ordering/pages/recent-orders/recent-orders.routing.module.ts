@@ -8,12 +8,12 @@ const routes: Routes = [
   {
     path: '',
     component: RecentOrdersComponent,
-    resolve: {recentOrders: RecentOrdersResolver}
+    resolve: { recentOrders: RecentOrdersResolver }
 
   }, {
     path: ':id',
     component: RecentOrderComponent,
-    resolve: {recentOrders: RecentOrdersResolver}
+    resolve: { recentOrders: RecentOrdersResolver }
   },
 ];
 

@@ -1,6 +1,6 @@
 import { isDefined } from '@sections/housing/utils';
 
-import { 
+import {
   QuestionFormControl,
   QuestionFormControlOptions
 } from './question-form-control';
@@ -76,7 +76,7 @@ export class QuestionAssetTypeDetails extends QuestionFormControl implements Que
     }
 
     super(options);
-    
+
     this.type = 'asset-types-group';
     this.name = `asset-types-group-${counter++}`;
     this.assetTypes = Array.isArray(options.assetTypes)

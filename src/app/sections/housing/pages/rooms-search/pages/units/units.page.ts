@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { FacilityToUnitsMapper, Unit } from '@sections/housing/unit/unit.model';
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './units.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnitsPage {
+export class UnitsPage implements OnInit {
   units$: Observable<Unit[]>;
   private _unitMapper: FacilityToUnitsMapper;
   constructor(private _facilityStateService: RoomsStateService, private _activeRoute: ActivatedRoute) {
@@ -28,7 +28,7 @@ export class UnitsPage {
     if (allUnits) {
       this._facilityStateService.updateActiveFilterFacilities(this._facilityStateService.getAllFacilityChildren());
     }
-    
+
     this.units$ = this._facilityStateService.getFacilities$().pipe(map(data => this._unitMapper.map(data)));
   }
 }

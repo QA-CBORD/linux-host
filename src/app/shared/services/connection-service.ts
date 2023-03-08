@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, fromEvent, merge, of, Subject } from 'rxjs';
+import { Observable, fromEvent, merge, of, Subject, firstValueFrom } from 'rxjs';
 import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { Network } from '@awesome-cordova-plugins/network/ngx';
-import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE, TIME_OUT_DURATION } from '@shared/model/generic-constants';

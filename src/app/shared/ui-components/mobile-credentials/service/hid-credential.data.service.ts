@@ -73,14 +73,14 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
             }
 
             const credentialAlreadyDeletedError = response.error.detail.includes(CREDENTIAL_ALREADY_DELETED_ERROR);
-            
+
             if (credentialAlreadyDeletedError && endpoint) {
               this.deleteLocalCachedEndpoint();
             } else {
               this.deleteAllCachedEndpoint$();
             }
 
-            return of(credentialAlreadyDeletedError); 
+            return of(credentialAlreadyDeletedError);
           })
         );
       }),

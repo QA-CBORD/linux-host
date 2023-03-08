@@ -26,7 +26,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     protected readonly credentialSrvc: AndroidCredentialDataService,
     protected readonly alertCtrl: AlertController
   ) {}
-  
+
   onUiIconClicked(): void {
     throw new Error('Method not implemented.');
   }
@@ -64,7 +64,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   protected async createAlertDialog(header: string, msg: string, buttons: Array<any>, detail = null): Promise<HTMLIonAlertElement> {
     let message = msg;
     if (detail) message = `${msg} <br> <br> Details: ${detail}`;
-    
+
     return await this.alertCtrl.create({
       cssClass: 'alert-dialog',
       backdropDismiss: false,

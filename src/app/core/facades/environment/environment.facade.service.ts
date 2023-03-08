@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, firstValueFrom } from 'rxjs';
 import { first, mergeMap, take, withLatestFrom } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { EnvironmentInfo, ENVIRONMENTS_MAP, EnvironmentType } from '@core/model/environment';
 import { AuthFacadeService } from '../auth/auth.facade.service';
-import { firstValueFrom } from 'rxjs';
 export { EnvironmentType } from '@core/model/environment';
 @Injectable({
   providedIn: 'root',

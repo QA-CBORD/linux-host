@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RoommatePreferences } from './applications.model';
 
 import {
   ApplicationDetails,
   RequestedRoommate,
+  RoommatePreferences,
   RoommateSearchOptions,
 } from './applications.model';
 

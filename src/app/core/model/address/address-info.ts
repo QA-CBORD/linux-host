@@ -1,4 +1,4 @@
-export enum ADDRESS_LOCATION {    
+export enum ADDRESS_LOCATION {
   onCampus = 1,
   offCampus = 0
 }

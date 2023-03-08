@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { SecureMessagePage } from './secure-message.page';
-import { SecureMessagingService } from './service';
-import { SecureMessagingApiService } from './service';
+import { SecureMessagingService, SecureMessagingApiService } from './service';
 import { SecureMessageRoutingModule } from './secure-message-routing.module';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import { SegureMessageChatPageComponent } from './pages/segure-message-chat.page/segure-message-chat.page.component';

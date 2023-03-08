@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { Building, FacilityToBuildingMapper } from '@sections/housing/building/building.model';
@@ -14,7 +14,7 @@ export enum UnitsType {
   templateUrl: './buildings.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BuildingsPage {
+export class BuildingsPage implements OnInit {
   buildings: Building[];
   private _buildingMapper: FacilityToBuildingMapper;
   constructor(

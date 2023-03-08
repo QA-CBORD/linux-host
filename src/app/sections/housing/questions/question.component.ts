@@ -16,7 +16,7 @@ import { CameraService } from '@sections/settings/pages/services/camera.service'
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { PhotoUploadService } from '@sections/settings/pages/services/photo-upload.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import {montDayYearHour} from '../../../shared/constants/dateFormats.constant'
+import { montDayYearHour } from '../../../shared/constants/dateFormats.constant'
 import { hasRequiredField } from '@core/utils/general-helpers';
 
 const IMAGE_DIR = 'stored-images';
