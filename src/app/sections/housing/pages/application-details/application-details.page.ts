@@ -37,7 +37,7 @@ enum UpdateType {
   styleUrls: ['./application-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplicationDetailsPage implements OnInit, OnDestroy {
+export class ApplicationDetailsPage implements OnInit {
   @ViewChild('content') private page: IonContent;
   @ViewChild(StepperComponent) private stepper: StepperComponent;
   @ViewChildren(QuestionComponent) private questions: QueryList<QuestionComponent>;
@@ -57,7 +57,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     public applicationsService: ApplicationsService
   ) {}
 
-  ngOnDestroy(): void {
+  ionViewWillLeave(): void {
     this.applicationsService.isView = false;
   }
 

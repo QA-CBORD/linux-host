@@ -1,0 +1,8 @@
+<div class="application-details__actions">
+    <ion-button class="btn application-details__page-back" (click)="cancel()" fill="clear">
+      Cancel
+    </ion-button>
+    <ion-button *ngIf="showSave" class="btn application-details__save" (click)="save()" fill="clear">
+      Save
+    </ion-button>
+</div>
