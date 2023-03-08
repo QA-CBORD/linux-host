@@ -7,6 +7,8 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { IonicSlides } from '@ionic/angular';
 import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
 import SwiperCore from 'swiper';
+import { TOAST_MESSAGES } from '@sections/ordering/ordering.config';
+import { ToastService } from '@core/service/toast/toast.service';
 SwiperCore.use([IonicSlides]);
 
 @Component({
@@ -28,7 +30,8 @@ export class OrderTileComponent implements OnInit {
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -55,7 +58,12 @@ export class OrderTileComponent implements OnInit {
       });
   }
 
-  goToMerchant({ id: merchantId }: MerchantInfo) {
+  async goToMerchant({ id: merchantId, walkout }: MerchantInfo) {
+    if (walkout) {
+      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+      return;
+    }
+
     this.router.navigate([PATRON_NAVIGATION.ordering], { queryParams: { merchantId } });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { FacilitiesService } from '../../facilities/facilities.service';
@@ -17,7 +17,7 @@ export class FacilityDetailsPage implements OnInit, OnDestroy {
 
   facilities: Facility[];
 
-  constructor(private _route: ActivatedRoute, private _facilitiesService: FacilitiesService) {}
+  constructor(private _route: ActivatedRoute, private _facilitiesService: FacilitiesService, private router: Router) {}
 
   ngOnInit() {
     const applicationKey = parseInt(this._route.snapshot.paramMap.get('applicationKey'), 10);
@@ -40,5 +40,9 @@ export class FacilityDetailsPage implements OnInit, OnDestroy {
 
   trackById(_: number, facility: Facility): number {
     return facility.facilityId;
+  }
+
+  viewUnits(facility: Facility) {
+    this.router.navigate(['units', facility.facilityId]);
   }
 }

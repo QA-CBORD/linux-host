@@ -6,7 +6,7 @@
         [class.active]="!isFacilityActive"
         mode="md"
         [disabled]="isUnits(unit)"
-        [routerLink]="unit.href"
+        (click)="goToUnits(unit)"
         *ngIf="isUnits(unit)"
       >
         {{ unit.title }}
@@ -16,7 +16,7 @@
           class="ion-no-padding ion-no-margin btn units-switch__tab"
           [class.active]="isFacilityActive"
           mode="md"
-          [routerLink]="unit.href"
+          (click)="goToUnits(unit)"
           *ngIf="!isUnits(unit)"
         >
           {{ unit.title }}
