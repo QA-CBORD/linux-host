@@ -16,6 +16,7 @@
     .input__wrapper .input__control {
       background-color: transparent;
       opacity: 0.4;
+      color: $color-night-gray; 
 
       & + .input__placeholder {
         color: rgba($color-black, 0.4);
@@ -92,7 +93,7 @@
 :host-context(.ng-valid.ng-dirty) .input__control {
   & + .input__placeholder {
     z-index: 2;
-    @include floating-label($color-black);
-    font-weight: 600;
+    @include floating-label($color-night-gray);
+    font-weight: 500;
   }
 }

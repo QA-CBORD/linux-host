@@ -8,7 +8,7 @@
   &__control {
     width: 100%;
     outline: none;
-    border: 1px solid $color-black;
+    border: 1px solid $color-night-gray;
     border-radius: 8px;
     padding: 0 0 0 10px;
 
@@ -68,19 +68,18 @@
   & + .textarea__placeholder {
     z-index: 2;
 
-    @include floating-label($color-dim-gray);
+    @include floating-label($color-night-gray);
     font-weight: 500;
-    color:black;
   }
 }
 
 .textarea__placeholder.attachment_label{
   @include font-nunito-heavy(14px);
-  color:#747474
+  color: $color-night-gray;
 }
 
 .textarea__control.attachment_border{
-  border: 2px solid #747474;
+  border: 2px solid $color-night-gray;
 }
 
 :host {
@@ -90,7 +89,7 @@
       opacity: 0.4;
 
       & + .input__placeholder {
-        color: rgba($color-black, 0.4);
+        color: rgba($color-night-gray, 0.4);
       }
     }
   }

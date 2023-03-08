@@ -13,7 +13,7 @@
 
 @mixin empty-control($control, $placeholder) {
   &:not(:focus):not(:focus-within):not(#{$control}--error) {
-    border: 1px solid $color-black !important;
+    border: 1px solid $color-night-gray !important;
 
     & + #{$placeholder} {
       background-color: transparent !important;

@@ -24,7 +24,7 @@ ion-item {
   &.date-select__disabled {
     .date-select__control--filled {
       & + .date-select__placeholder {
-        color: rgba($color-black, 0.4);
+        color: rgba($color-night-gray, 0.4);
       }
     }
   }
@@ -97,6 +97,10 @@ ion-item {
   z-index: 2;
 }
 
+ion-input {
+  color: $color-night-gray ;
+}
 ion-label{
   font-weight: 500;
+  color: $color-night-gray !important;
 }
