@@ -129,10 +129,6 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
       );
   }
 
-  goToDashboard() {
-    this._housingService.goToDashboard();
-  }
-
   async save(inspectionData: Inspection): Promise<void> {
     inspectionData.residentInspectionKey = inspectionData.residentInspectionKey || null;
     await this.createInspectionAlert(inspectionData, `Are you sure you want to save this Inspection?`);

@@ -96,10 +96,6 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  goToDashboard(): void {
-    this._housingService.goToDashboard();
-  }
-
   private _touch(): void {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }

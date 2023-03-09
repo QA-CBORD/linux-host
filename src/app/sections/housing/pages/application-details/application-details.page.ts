@@ -187,10 +187,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     return question === 'Search for a roommate';
   }
 
-  onCancel() {
-    this.housingService.goToDashboard();
-  }
-
   onChange(applicationDetails: ApplicationDetails, formGroup: FormGroup) {
     this.applicationsService
       .saveLocally(this.getApplicationKey(), applicationDetails, formGroup.value)
