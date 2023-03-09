@@ -10,6 +10,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Platform } from '@ionic/angular';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { StateTimeDuration } from 'src/app/app.global';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { ActivePasses } from './credential-utils';
 import { MobileCredential } from './mobile-credential';
@@ -24,7 +25,6 @@ const resourceUrls = {
   providedIn: 'root',
 })
 export class MobileCredentialDataService {
-  protected ttl = 600000;
   protected jwtToken_key = 'jwt_token';
   protected authBlob_key = 'auth_blob';
   protected credential_key = 'mobile_credential';
@@ -43,7 +43,7 @@ export class MobileCredentialDataService {
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<object> {
     return this.authFacadeService.retrieveAuthorizationBlob(deviceModel, osVersion).pipe(
       map(({ response }) => response),
-      tap(response => this.storageStateService.updateStateEntity(this.authBlob_key, response, { ttl: this.ttl }))
+      tap(response => this.storageStateService.updateStateEntity(this.authBlob_key, response, { ttl: StateTimeDuration.TTL }))
     );
   }
 
@@ -77,7 +77,7 @@ export class MobileCredentialDataService {
     return this.authFacadeService
       .getExternalAuthenticationToken$('OmniID')
       .pipe(
-        tap(jwtToken => this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: this.ttl }))
+        tap(jwtToken => this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: StateTimeDuration.TTL }))
       );
   }
 
