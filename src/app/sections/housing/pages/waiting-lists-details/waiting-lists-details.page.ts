@@ -101,24 +101,24 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   }
 
   private _update(applicationKey: number, applicationDetails: WaitingListDetails, formValue): void {
-    if(applicationDetails.facilities)
+    if (applicationDetails.facilities)
       {
         const facilityKey: number =
           parseInt(formValue[Object.keys(formValue).find(value => value.includes('facility-selection'))]) || null;
 
-        if(!facilityKey){
+        if (!facilityKey){
           this._toastService.showToast({
           message: "Select a building to add yourself to the building's waiting list" });
           return null;
         }
       }
 
-    if(Object.keys(formValue).find(value => value.includes('attribute-selection')))
+    if (Object.keys(formValue).find(value => value.includes('attribute-selection')))
     {
       const attributeValue: string =
           formValue[Object.keys(formValue).find(value => value.includes('attribute-selection'))] || null;
 
-        if(!attributeValue){
+        if (!attributeValue){
           this._toastService.showToast({
           message: 'Select a value to add yourself to the waiting list' });
           return null;

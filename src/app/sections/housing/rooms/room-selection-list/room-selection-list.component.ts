@@ -20,7 +20,7 @@ export class RoomSelectionListComponent implements AfterViewInit {
 
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
-   if(this.roomSelects.length > 0)
+   if (this.roomSelects.length > 0)
     this.divContainer.nativeElement.click();
  }
 
@@ -32,7 +32,7 @@ export class RoomSelectionListComponent implements AfterViewInit {
 
   goToRoomSelection(key: number): void {
     const roomSelection: RoomSelect = this.roomSelects.find(x => x.key === key);
-    if(hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
+    if (hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
     this._router.navigate(['patron/housing/rooms-search', key]).then(() => {
       this.roomsStateService.setActiveRoomSelect(key);
     });

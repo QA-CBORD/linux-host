@@ -101,7 +101,7 @@ export class WorkOrdersService {
   private _toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails){
     let values = [];
 
-    if(question.workOrderFieldKey === 'TYPE'){
+    if (question.workOrderFieldKey === 'TYPE'){
       values = workOrderDetails.workOrderTypes.map((v) => {
         return {
           label: v.name,
@@ -120,9 +120,9 @@ export class WorkOrdersService {
         workOrderField: true,
         workOrderFieldKey: question.workOrderFieldKey,
       };
-    }else if(question.workOrderFieldKey === WorkOrdersFields.LOCATION){
+    } else if (question.workOrderFieldKey === WorkOrdersFields.LOCATION){
       return this.createFacilityTreeQuestion();
-    }else {
+    } else {
       return question;
     }
 
@@ -138,7 +138,7 @@ export class WorkOrdersService {
 
     const validators = this._questionsService.getRequiredValidator(question);
 
-    if(question.workOrderFieldKey === 'DESCRIPTION'){
+    if (question.workOrderFieldKey === 'DESCRIPTION'){
       validators.push(Validators.maxLength(250))
     }
 
@@ -146,7 +146,7 @@ export class WorkOrdersService {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
-    if(workOrderDetails.workOrderDetails){
+    if (workOrderDetails.workOrderDetails){
       switch (question.workOrderFieldKey) {
         case WorkOrdersFields.PHONE_NUMBER:
           value = workOrderDetails.workOrderDetails.notificationPhone;
@@ -192,7 +192,7 @@ export class WorkOrdersService {
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(() => of(false)),
       switchMap((response: Response) => {
-        if(image) return this.sendWorkOrderImage(response.data, image);
+        if (image) return this.sendWorkOrderImage(response.data, image);
 
         return of(true);
       })

@@ -95,7 +95,7 @@ export class WaitingListsService {
   }
 
   private _toWaitingListCustomType(question: QuestionBase, waitingListDetails: WaitingListDetails): QuestionBase {
-    if(!(question instanceof QuestionWaitingListRequest)) {
+    if (!(question instanceof QuestionWaitingListRequest)) {
       return question;
     }
 
@@ -117,7 +117,7 @@ export class WaitingListsService {
         });
       }
 
-    }else {
+    } else {
       return new QuestionTextbox({
         name: `attribute-selection-${this.index++}`,
         type: 'text',
