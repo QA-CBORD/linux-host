@@ -90,7 +90,7 @@ export class MenuItemFinderComponent implements OnInit {
     });
     await modal.present();
   }
- 
+
   private async openScanCode() {
     const modal = await this.createScanCodeModal();
     modal.onDidDismiss().then(async ({ data }) => {

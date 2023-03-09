@@ -4,11 +4,10 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { Institution } from '@core/model/institution';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Platform } from '@ionic/angular';
-import { Subject } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
 import { BackgroundTask } from '@capawesome/capacitor-background-task';
-import { firstValueFrom } from 'rxjs';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 

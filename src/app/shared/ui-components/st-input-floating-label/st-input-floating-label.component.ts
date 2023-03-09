@@ -1,4 +1,13 @@
-import { Component, Input, forwardRef, ViewChild, ElementRef, HostBinding, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  forwardRef,
+  ViewChild,
+  ElementRef,
+  HostBinding,
+  AfterViewInit,
+  OnChanges,
+} from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
 import { FocusableElement } from '@core/interfaces/focusable-element.interface';
 import { hasRequiredField } from '@core/utils/general-helpers';
@@ -15,7 +24,7 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR = {
   styleUrls: ['./st-input-floating-label.component.scss'],
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR],
 })
-export class StInputFloatingLabelComponent implements AfterViewInit, ControlValueAccessor, FocusableElement {
+export class StInputFloatingLabelComponent implements AfterViewInit, ControlValueAccessor, FocusableElement, OnChanges {
   @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() type: string;
@@ -45,7 +54,7 @@ export class StInputFloatingLabelComponent implements AfterViewInit, ControlValu
   private onTouched: () => void;
 
   ngAfterViewInit(): void {
-    if(this.type == 'password') {
+    if (this.type == 'password') {
       this.control.valueChanges.subscribe(value => {
         this.passwordFieldDirty = value && (value as string).length > 0;
       });

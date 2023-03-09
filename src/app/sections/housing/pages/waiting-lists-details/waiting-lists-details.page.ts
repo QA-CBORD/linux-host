@@ -36,7 +36,7 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
   @ViewChild('content') private content: IonContent;
-  
+
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -95,36 +95,36 @@ export class WaitingListsDetailsPage implements OnInit, OnDestroy {
       this._update(this.waitingKey, waitingListDetails, form.value);
     }
   }
-  
+
   goToDashboard(): void {
     this._housingService.goToDashboard();
   }
-  
+
   private _touch(): void {
     this.questions.forEach((question: QuestionComponent) => question.touch());
   }
 
   private _update(applicationKey: number, applicationDetails: WaitingListDetails, formValue): void {
-    if(applicationDetails.facilities)
+    if (applicationDetails.facilities)
       {
-        const facilityKey: number = 
+        const facilityKey: number =
           parseInt(formValue[Object.keys(formValue).find(value => value.includes('facility-selection'))]) || null;
-        
-        if(!facilityKey){
+
+        if (!facilityKey){
           this._toastService.showToast({
-          message: "Select a building to add yourself to the building's waiting list"});
+          message: "Select a building to add yourself to the building's waiting list" });
           return null;
         }
       }
-      
-    if(Object.keys(formValue).find(value => value.includes('attribute-selection')))
+
+    if (Object.keys(formValue).find(value => value.includes('attribute-selection')))
     {
-      const attributeValue: string = 
+      const attributeValue: string =
           formValue[Object.keys(formValue).find(value => value.includes('attribute-selection'))] || null;
-        
-        if(!attributeValue){
+
+        if (!attributeValue){
           this._toastService.showToast({
-          message: 'Select a value to add yourself to the waiting list'});
+          message: 'Select a value to add yourself to the waiting list' });
           return null;
         }
     }

@@ -1,10 +1,9 @@
 import { generateApplications, generateApplicationDetails } from '../../../sections/housing/applications/applications.mock';
 import { generateContractsList, generateContractDetails } from '../../../sections/housing/contracts/contracts.mock';
 
-import { DefinitionsResponse, DetailsResponse } from '../../../sections/housing/housing.model';
+import { DefinitionsResponse, DetailsResponse, Label } from '../../../sections/housing/housing.model';
 import { ApplicationDetails } from '../../../sections/housing/applications/applications.model';
 import { ContractListDetails, ContractDetails } from '../../../sections/housing/contracts/contracts.model';
-import { Label } from '../../../sections/housing/housing.model';
 import { generateNonAssignmentDetails, generateNonAssignmentsList } from '@sections/housing/non-assignments/non-assignments.mock';
 import { NonAssignmentDetails, NonAssignmentListDetails } from '@sections/housing/non-assignments/non-assignments.model';
 import { WaitingListDetails, WaitingList } from '../../../sections/housing/waiting-lists/waiting-lists.model';

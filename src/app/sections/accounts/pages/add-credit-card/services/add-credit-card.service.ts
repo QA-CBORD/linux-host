@@ -4,7 +4,7 @@ import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.s
 import { AccountCreationInfo } from '../models/account-creation-info';
 import {
   MASTERCARD_REGEXP, EXPRTN_DATE_1_REGEXP, EXPRTN_DATE_2_REGEXP, EXPRTN_DATE_3_REGEXP, EXPRTN_DATE_4_REGEXP, EXPRTN_DATE_5_REGEXP, EXPRTN_DATE_6_REGEXP, EXPRTN_DATE_7_REGEXP, EXPRTN_DATE_8_REGEXP,
- 
+
 } from '@core/utils/regexp-patterns';
 
 @Injectable()

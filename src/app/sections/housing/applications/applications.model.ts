@@ -40,7 +40,7 @@ export class ApplicationDefinition implements ApplicationDefinitionOptions {
     this.accountCodeKey = Number(options.accountCodeKey);
     this.amount = Number(options.amount);
     this.canEdit = Boolean(options.canEdit);
-    
+
     if (isDefined(options.applicationFormJson)) {
       this.applicationFormJson = String(options.applicationFormJson);
     }
@@ -347,7 +347,7 @@ export class RequestedRoommateResponse {
       if (options == null || typeof options !== 'object') {
         options = {} as RequestedRoommateResponse;
       }
-  
+
       this.requestedRoommates = Array.isArray(options)
       ? options.map((detail) => new RequestedRoommate(detail))
       : [];

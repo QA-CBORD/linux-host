@@ -28,7 +28,7 @@ export class ProminentDisclosureService {
            this.requestPermissionModal();
         }
       });
-    } 
+    }
   }
 
   private async requestPermissionModal(): Promise<void> {

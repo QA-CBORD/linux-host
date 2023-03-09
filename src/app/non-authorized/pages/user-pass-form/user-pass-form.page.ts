@@ -1,6 +1,6 @@
 import { Settings, PATRON_NAVIGATION, ROLES, GUEST_NAVIGATION } from './../../../app.global';
 import { map, take } from 'rxjs/operators';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Router } from '@angular/router';
 import { Institution } from '@core/model/institution';
@@ -34,7 +34,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
   styleUrls: ['./user-pass-form.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserPassForm implements OnInit {
+export class UserPassForm implements OnInit, OnDestroy {
   institutionName$: Promise<string>;
   institutionPhoto$: Promise<SafeResourceUrl>;
   nativeHeaderBg$: Promise<string>;

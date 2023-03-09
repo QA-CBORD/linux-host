@@ -1,11 +1,10 @@
-import { MerchantService } from '@sections/ordering';
+import { MerchantService, MerchantInfo } from '@sections/ordering';
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { map, finalize } from 'rxjs/operators';
 import { FavoriteMerchantsService } from '../services/favorite-merchants.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { MerchantInfo } from '@sections/ordering';
 import { mergeMatchArrayById } from '@core/utils/general-helpers';
 
 @Injectable()

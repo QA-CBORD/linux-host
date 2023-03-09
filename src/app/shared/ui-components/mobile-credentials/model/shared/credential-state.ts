@@ -1,5 +1,5 @@
 import { CredentialProviders } from './credential-utils';
-import { MobileCredentialConfig} from './mobile-credential-configs';
+import { MobileCredentialConfig } from './mobile-credential-configs';
 
 
 export interface MobileCredentialState {

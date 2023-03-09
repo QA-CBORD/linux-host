@@ -82,7 +82,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     const ContentStringBuilder = ContentStringApi[category];
     const extraRequests = args.requests || [];
     const requestList = extraRequests.map(req => this.retrieveContentStringByConfig({ ...req }).pipe(take(1)));
-    
+
     let contentsByCategory$:Observable<ContentStringInfo[]>;
     if (args.save) {
       contentsByCategory$ = this.resolveContentStrings$(

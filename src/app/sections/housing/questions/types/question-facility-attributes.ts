@@ -30,6 +30,6 @@ export class QuestionFacilityAttributes extends QuestionFormControl implements Q
     this.subtype = options.subtype || 'text';
     this.source = String(options.source);
     this.contractId = String(options.contractId);
-    this.values = options.values || []; 
+    this.values = options.values || [];
   }
 }

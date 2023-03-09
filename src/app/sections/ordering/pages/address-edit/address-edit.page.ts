@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { map, take, tap, finalize } from 'rxjs/operators';
-import { iif, Observable, of, zip } from 'rxjs';
+import { iif, Observable, of, zip, firstValueFrom } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { User } from 'src/app/app.global';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
@@ -14,7 +14,6 @@ import { PopoverController } from '@ionic/angular';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Location } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-address-edit-page',
@@ -68,7 +67,7 @@ export class AddressEditPage implements OnInit {
   private async initRoute() {
     const routeData = await firstValueFrom(this.route.data.pipe(take(1)));
     this.afterSaveRoute = routeData.afterSaveRoute;
-  } 
+  }
 
   onBack(): void {
     this.location.back();

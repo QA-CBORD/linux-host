@@ -189,9 +189,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   onDateTimeSelected({ dateTimePicker, timeStamp }: DateTimeSelected): void {
     this.dateTimePicker = dateTimePicker;
     this.selectedTimeStamp = timeStamp;
-   
+
     const element = document.getElementById('time_element');
-    if(element) element.focus();
+    if (element) element.focus();
 
     this.cdRef.detectChanges();
   }

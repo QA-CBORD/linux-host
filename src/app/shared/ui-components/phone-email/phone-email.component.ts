@@ -51,8 +51,9 @@ export class PhoneEmailComponent implements OnInit {
     const user = await this.userFacadeService
       .getUser$()
       .pipe(
-        switchMap( userInfoSet => of(this.updatedUserModel(userInfoSet))),
-        take(1))
+        switchMap(userInfoSet => of(this.updatedUserModel(userInfoSet))),
+        take(1)
+      )
       .toPromise();
     this.userFacadeService.saveUser$(user).subscribe(
       () => {
@@ -96,10 +97,7 @@ export class PhoneEmailComponent implements OnInit {
         [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
       ],
     });
-    const user = await this.userFacadeService
-      .getUser$()
-      .pipe(take(1))
-      .toPromise();
+    const user = await this.userFacadeService.getUser$().pipe(take(1)).toPromise();
     this.user = { ...user };
     this.checkFieldValue(this.email, this.user.email);
     this.checkFieldValue(this.phone, this.user.phone);
@@ -160,7 +158,9 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({ message, toastButtons: [
+    await this.toastService.showToast({
+      message,
+      toastButtons: [
         {
           text: 'Retry',
           handler: () => {
@@ -168,14 +168,15 @@ export class PhoneEmailComponent implements OnInit {
           },
         },
         {
-          text: 'Dismiss'
+          text: 'Dismiss',
         },
-      ]});
+      ],
+    });
   }
 
   private async presentToast(): Promise<void> {
     const message = `Updated successfully.`;
-    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }]});
+    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }] });
   }
 
   private checkFieldValue(field: AbstractControl, value: string) {

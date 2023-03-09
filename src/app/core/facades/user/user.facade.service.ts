@@ -9,7 +9,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { map, switchMap, tap, take, catchError, finalize } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { Settings, User } from 'src/app/app.global';
+import { Settings, StateTimeDuration, User } from 'src/app/app.global';
 import { Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
@@ -24,7 +24,7 @@ import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/pus
   providedIn: 'root',
 })
 export class UserFacadeService extends ServiceStateFacade {
-  private ttl = 600000; // 10min
+
   private userPhoto: UserPhotoInfo = null;
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
@@ -62,7 +62,7 @@ export class UserFacadeService extends ServiceStateFacade {
       .getUser()
       .pipe(
         tap(res =>
-          this.storageStateService.updateStateEntity(this.userKey, res, { ttl: this.ttl, highPriorityKey: true })
+          this.storageStateService.updateStateEntity(this.userKey, res, { ttl: StateTimeDuration.TTL, highPriorityKey: true })
         )
       );
   }
@@ -79,7 +79,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
       .getUserAddresses()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, { ttl: this.ttl })));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, { ttl: StateTimeDuration.TTL })));
   }
 
   createUserPinTotp(pin: string): Observable<boolean> {
@@ -265,7 +265,7 @@ export class UserFacadeService extends ServiceStateFacade {
 
   saveUser$(user: UserInfo): Observable<string> {
     return this.userApiService.updateUserInfo$(user).pipe(
-      tap(() => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
+      tap(() => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: StateTimeDuration.TTL })),
       take(1)
     );
   }
@@ -282,7 +282,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   private setFCMToken(value: string) {
-    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: this.ttl });
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: StateTimeDuration.TTL });
   }
 
   private async clearData(): Promise<void> {

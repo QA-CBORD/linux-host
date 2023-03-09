@@ -69,7 +69,7 @@ export class Attachment implements AttachmentOptions{
       ? options.Attachments.map((detail) => new AttachmentsDetail(detail))
       : [];
   }
-  
+
 }
 
 export interface AttachmentTypesOptions{

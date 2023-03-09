@@ -13,7 +13,7 @@ export class GuestAddFundsCsModel extends ContentStringModel {
     get noticeText() {
         return this.content.notice_text;
     }
-    
+
     get paymentMethod() {
         return this.content.source_account_text;
     }

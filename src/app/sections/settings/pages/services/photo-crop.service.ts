@@ -8,7 +8,7 @@ export class PhotoCropModalService {
   constructor(public modalController: ModalController) {}
 
   async show(imageBase64: string, photoType: PhotoType): Promise<string | null> {
-    const profilePhoto = photoType === PhotoType.GOVT_ID_FRONT || photoType === PhotoType.GOVT_ID_BACK ? false : true; 
+    const profilePhoto = photoType === PhotoType.GOVT_ID_FRONT || photoType === PhotoType.GOVT_ID_BACK ? false : true;
     const modal = await this.modalController.create({
       component: PhotoCropModalComponent,
       componentProps: {
@@ -18,7 +18,7 @@ export class PhotoCropModalService {
     });
 
     await modal.present();
-    
+
     const croppedImaged = await modal.onWillDismiss();
     if (croppedImaged.data && croppedImaged.data.croppedImageBase64) {
       return croppedImaged.data.croppedImageBase64;

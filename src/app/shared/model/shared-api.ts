@@ -1,10 +1,10 @@
 
 /**
- * 
+ *
  * singleton class to share data between components,
  * only suitable for short lived messages,
  * make sure is consumed quick otherwise will be overriden.
- */ 
+ */
 
 export class MutableMessage {
 

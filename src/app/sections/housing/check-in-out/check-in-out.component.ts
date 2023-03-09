@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { CheckInOutStateService} from './check-in-out-state.service';
+import { CheckInOutStateService } from './check-in-out-state.service';
 
 @Component({
   selector: 'st-check-in-out',

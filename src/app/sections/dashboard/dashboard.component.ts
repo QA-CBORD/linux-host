@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren, AfterViewInit } from '@angular/core';
 import { ModalController, Platform, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -40,7 +40,7 @@ import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global
   styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, AfterViewInit {
   @ViewChild(AccessCardComponent, { static: true }) accessCard: AccessCardComponent;
   @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
   @ViewChildren('transactionsTile') transactionsChild: QueryList<TransactionsTileComponent>;
@@ -303,7 +303,7 @@ export class DashboardPage implements OnInit {
   private async initLocationForAndroid(): Promise<void> {
     const permissionRequested = await firstValueFrom(this.navigationFacade.permissionsPrompted$.pipe(take(1)));
     const permissionAllowed = await firstValueFrom(this.navigationFacade.permissionResponse$.pipe(take(1)));
-    
+
     if (this.platform.is('android') && permissionRequested && permissionAllowed) {
       const { hasPermission } = await this.appPermissions.checkLocationPermission();
 

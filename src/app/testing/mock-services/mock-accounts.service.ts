@@ -5,7 +5,7 @@ import { Settings } from 'src/app/app.global';
 
 export const MockAccountsData: { userAccounts: Partial<UserAccount>[]; userSettings: Partial<SettingInfo>[] } = {
   userAccounts: [{ accountDisplayName: 'Unit Test Account' }],
-  userSettings: [{category: "unit.test"}],
+  userSettings: [{ category: "unit.test" }],
 };
 
 export class MockAccountsService {

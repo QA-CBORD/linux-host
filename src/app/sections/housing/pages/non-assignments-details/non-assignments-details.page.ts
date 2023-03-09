@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
-  Component, 
-  OnDestroy, 
+  Component,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
@@ -62,7 +62,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   termKey = 0;
   isSubmitted = false;
   canSubmit = true;
-  
+
   constructor(
     private _platform: Platform,
     private _alertController: AlertController,
@@ -94,11 +94,11 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
-  
+
   goToDashboard(): void {
     this._housingService.goToDashboard();
   }
-  
+
   async submit(nonAssignmentDetails: NonAssignmentDetails, form: FormGroup, isLastPage: boolean): Promise<void> {
     const sub = this._nonAssignmentsService.getSelectedAssetType()
       .subscribe(data => {
@@ -107,7 +107,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
           this.selectedAssetName = data.find(x => x.label === 'Name').value;
         }
     });
-    
+
     this.subscriptions.add(sub);
 
     if (this.isSubmitted) {
@@ -132,7 +132,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
 
   private _initNonAssignmentDetailsObservable(): void {
     this._loadingService.showSpinner();
-    
+
     const queryParams: string[] = [`formTypeKey=${FormTypes.NON_ASSIGNMENTS}`];
 
     this.nonAssignmentDetails$ = this._housingService.getNonAssignmentDetails(this.nonAssignmentKey, queryParams)
@@ -196,7 +196,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
               this._nonAssignmentsService.submitContract(
                                             this.nonAssignmentKey,
                                             nonAssignmentDetails,
-                                            this.selectedAssetKey, 
+                                            this.selectedAssetKey,
                                             this.termKey,
                                             formValue)
                   .subscribe(status => {
