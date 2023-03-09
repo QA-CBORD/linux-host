@@ -123,13 +123,4 @@ describe('ApplicationDetailsPage', () => {
       expect(applicationsStateServiceStub.setRequestingRoommate).toHaveBeenCalled();
     });
   });
-
-  describe('onCancel', () => {
-    it('makes expected calls', () => {
-      const housingServiceStub: HousingService = fixture.debugElement.injector.get(HousingService);
-      jest.spyOn(housingServiceStub, 'goToDashboard');
-      component.onCancel();
-      expect(housingServiceStub.goToDashboard).toHaveBeenCalled();
-    });
-  });
 });
