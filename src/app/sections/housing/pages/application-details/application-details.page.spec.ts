@@ -13,6 +13,13 @@ import { FormPaymentService } from '../form-payment/form-payment.service';
 import { ApplicationDetailsPage } from './application-details.page';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 
+export const housingServiceStub = () => ({
+  getApplicationDetails: () => ({ pipe: () => ({}) }),
+  getRequestedRommate: () => ({}),
+  goToDashboard: () => ({}),
+  handleErrors: () => ({}),
+});
+
 describe('ApplicationDetailsPage', () => {
   let component: ApplicationDetailsPage;
   let fixture: ComponentFixture<ApplicationDetailsPage>;
@@ -31,12 +38,6 @@ describe('ApplicationDetailsPage', () => {
       saveLocally: () => ({
         pipe: () => ({ subscribe: () => ({}) }),
       }),
-    });
-    const housingServiceStub = () => ({
-      getApplicationDetails: () => ({ pipe: () => ({}) }),
-      getRequestedRommate: () => ({}),
-      goToDashboard: () => ({}),
-      handleErrors: () => ({}),
     });
     const applicationsStateServiceStub = () => ({
       setRequestingRoommate: () => ({}),
