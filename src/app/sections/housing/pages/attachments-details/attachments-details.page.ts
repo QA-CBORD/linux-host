@@ -190,7 +190,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
       .then(file => {
         this.file$.next(file);
         this.fileSizeInMB = this.getSizeFile(file.data.byteLength);
-        if(this.fileSizeInMB>0){
+        if (this.fileSizeInMB>0){
            this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
            this.isFile = this.getFileType(file) != 'image';
         }
@@ -208,7 +208,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   async alertAttachmentLimitSize(FileSize){
-    if(!FileSize){
+    if (!FileSize){
       const alert = await this._alertController.create({
         cssClass: "alert-modal-attachment",
         header: 'Large File Size',

@@ -31,7 +31,7 @@ export class CheckInOutItemsComponent {
 
   openCheckInOutSlots(key: number): void {
     const checkInOut: CheckInOut = this.checkInOuts.find(x => x.key === key);
-    if(hasDatePassed(checkInOut.availableStartDate) && !hasDatePassed(checkInOut.availableEndDate)) {
+    if (hasDatePassed(checkInOut.availableStartDate) && !hasDatePassed(checkInOut.availableEndDate)) {
       this._router.navigate(['patron/housing/check-in-out', key]);
     }
     else {

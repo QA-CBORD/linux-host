@@ -33,7 +33,7 @@ export class InspectionService {
   }
 
   submitInspection(inspectionData: Inspection): Observable<boolean> {
-    if(inspectionData.residentInspectionKey){
+    if (inspectionData.residentInspectionKey){
       return this._housingProxyService.putInspection(this.inspectiontUrl, inspectionData).pipe(
         map((response: Response) => {
           if (isSuccessful(response.status)) {

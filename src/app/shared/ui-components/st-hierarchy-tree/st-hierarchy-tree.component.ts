@@ -31,7 +31,7 @@ export class StHierarcheTreeComponent implements OnInit ,OnDestroy  {
   ngOnInit(): void {
     this._subscription.add(
       this._workOrderStateService.getSelectedFacility$().subscribe(res => {
-        if( res?.name ){
+        if ( res?.name ){
           this.form = new FormGroup({
             facilityName: new FormControl(res.name)
          });

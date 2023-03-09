@@ -36,11 +36,11 @@
       "plugins": ["delta", "@typescript-eslint", "@angular-eslint"],
       "rules": {
         "object-curly-spacing": ["error", "always"],
-        "keyword-spacing": "warn",
+        "keyword-spacing": "error",
         "no-trailing-spaces": "error",
         "no-duplicate-imports": "error",
         "computed-property-spacing": "error",
-        "eol-last": "warn",
+        "eol-last": "error",
         "@angular-eslint/use-lifecycle-interface": "error",
         "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
         "@typescript-eslint/no-explicit-any": "error",

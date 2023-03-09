@@ -14,7 +14,7 @@ export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
   const localTimezone = new Date().toLocaleString(locale, { timeZone });
   const greenwichTimezone = new Date().toLocaleString(locale, { timeZone: 'GMT' });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let timeZoneinGMT: any = (<any>new Date(greenwichTimezone) - <any>new Date(localTimezone)) / 1000 / 60 / 60;
+  let timeZoneinGMT: any = (<any> new Date(greenwichTimezone) - <any> new Date(localTimezone)) / 1000 / 60 / 60;
   timeZoneinGMT = timeZoneinGMT * -1;
   const toString = JSON.stringify(timeZoneinGMT);
   timeZoneinGMT = `${toString[0]}${toString[1].length > 1 ? toString[1] : '0' + toString[1]}`;

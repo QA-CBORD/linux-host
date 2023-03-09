@@ -129,7 +129,7 @@ export class SecureMessagingService {
     this.sortGroups();
     this.conversationsArray = buildConversationsFromMessages(this.messagesArray, this.groupsArray, SecureMessagingService.GetSecureMessagesAuthInfo());
     // Update current conversation if got new messages
-    if(this._selectedConversation){
+    if (this._selectedConversation){
       this._selectedConversation.messages = this.conversationsArray.find(convo => convo.groupIdValue === this._selectedConversation.groupIdValue)?.messages || [];
     }
     this.conversationsArraySubject.next(this.conversationsArray);
