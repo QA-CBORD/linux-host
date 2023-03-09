@@ -78,7 +78,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     return contractDetails.amount > 0;
   }
 
-  goToDashboard(): void {
+  private goToDashboard(): void {
     this._housingService.goToDashboard();
   }
 

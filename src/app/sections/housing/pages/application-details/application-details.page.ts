@@ -37,7 +37,7 @@ enum UpdateType {
   styleUrls: ['./application-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplicationDetailsPage implements OnInit {
+export class ApplicationDetailsPage implements OnInit, OnDestroy {
   @ViewChild('content') private page: IonContent;
   @ViewChild(StepperComponent) private stepper: StepperComponent;
   @ViewChildren(QuestionComponent) private questions: QueryList<QuestionComponent>;
@@ -57,7 +57,7 @@ export class ApplicationDetailsPage implements OnInit {
     public applicationsService: ApplicationsService
   ) {}
 
-  ionViewWillLeave(): void {
+  ngOnDestroy(): void {
     this.applicationsService.isView = false;
   }
 
@@ -185,10 +185,6 @@ export class ApplicationDetailsPage implements OnInit {
 
   isRoommateSearch(question: string): boolean {
     return question === 'Search for a roommate';
-  }
-
-  onCancel() {
-    this.housingService.goToDashboard();
   }
 
   onChange(applicationDetails: ApplicationDetails, formGroup: FormGroup) {

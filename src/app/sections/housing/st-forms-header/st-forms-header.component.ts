@@ -1,12 +1,12 @@
-import { HousingService } from './../housing.service';
+import { HousingService } from '../housing.service';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'st-form-details-header',
-  templateUrl: './form-details-header.component.html',
-  styleUrls: ['./form-details-header.component.scss']
+  selector: 'st-forms-header',
+  templateUrl: './st-forms-header.component.html',
+  styleUrls: ['./st-forms-header.component.scss']
 })
-export class FormDetailsHeaderComponent {
+export class StFormsHeaderComponent {
   @Output() onSave = new EventEmitter<Event>();
   @Input() showSave: boolean;
 

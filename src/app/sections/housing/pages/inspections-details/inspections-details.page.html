@@ -3,25 +3,10 @@
   *ngIf="(inspectionDetails$ | async) as inspectionDetails"
   #content
 >
-  <div class="inspection-details__actions">
-    <ion-button
-      class="btn inspection-details__page-back"
-      (click)="goToDashboard()"
-      mode="ios"
-      fill="clear"
-    >
-      Cancel
-    </ion-button>
-    <ion-button
-      class="btn inspection-details__page-back btn-save"
-      mode="ios"
-      fill="clear"
-      (click)="save(inspectionDetails)"
-      [disabled]="status > 1"
-    >
-      Save
-    </ion-button>
-  </div>
+  <st-forms-header [showSave]="!(status > 1)"
+  (onSave)="save(inspectionDetails)"
+  >
+  </st-forms-header>
 
   <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
   <st-housing-tabs (onTabSelected)="changeView($event)">
