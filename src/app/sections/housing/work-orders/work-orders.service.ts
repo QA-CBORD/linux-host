@@ -208,8 +208,7 @@ export class WorkOrdersService {
 
       const img = new Image();
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      img.onerror = event => {
+      img.onerror = () => {
         reject('error load');
       };
       img.onload = async () => {
