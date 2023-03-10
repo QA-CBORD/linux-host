@@ -79,7 +79,7 @@ export class BackButtonComponent implements OnDestroy {
         data.forEach((roommateRequest) => {
           const requestRommateStateService = this._applicationsStateService.getRequestedRoommate();
           const isRequesteRommate = requestRommateStateService.find(request => request.preferenceKey === roommateRequest.preferenceKey );
-          if(!isRequesteRommate){
+          if (!isRequesteRommate){
             this._applicationsStateService.setRequestedRoommate(roommateRequest);
           }
         });

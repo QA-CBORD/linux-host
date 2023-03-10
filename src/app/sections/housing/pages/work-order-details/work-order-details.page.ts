@@ -117,10 +117,6 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
     );
   }
 
-  onCancel() {
-    this._housingService.goToDashboard();
-  }
-
   private _initTermSubscription() {
     const termSubs = this._termsService.termId$.subscribe(termId => (this.termKey = termId));
     this.subscriptions.add(termSubs);

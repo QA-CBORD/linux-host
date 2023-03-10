@@ -331,7 +331,7 @@ export class AutomaticDepositPageComponent {
     this.paymentMethodAccount = settings.fromAccountId && accounts.find(acc => acc.id === settings.fromAccountId);
     if (
       this.paymentMethodAccount &&
-      !this.creditCardSourceAccounts.some(({ id }) => id === (<UserAccount>this.paymentMethodAccount).id)
+      !this.creditCardSourceAccounts.some(({ id }) => id === (<UserAccount> this.paymentMethodAccount).id)
     ) {
       this.paymentMethodAccount = PAYMENT_TYPE.BILLME;
     }

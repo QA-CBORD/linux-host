@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 
 export function isSuccessful(status: ResponseStatus) {
-  if(_isOkay(status.statusCode)) {
+  if (_isOkay(status.statusCode)) {
     return true;
   }
 

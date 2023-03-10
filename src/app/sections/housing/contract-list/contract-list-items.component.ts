@@ -21,7 +21,7 @@ export class ContractListItemsComponent implements AfterViewInit {
 
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
-   if(this.contractSummaries.length > 0)
+   if (this.contractSummaries.length > 0)
     this.divContainer.nativeElement.click();
  }
 

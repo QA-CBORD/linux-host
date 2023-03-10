@@ -13,7 +13,7 @@ export const getSettingInfoObjectArray = (settings: Settings.Setting[]): Setting
 };
 
 export const getSettingName = (setting: Settings.Setting): string => {
-  if(!setting) return 'huh?';
+  if (!setting) return 'huh?';
   return setting.toString().split('.')[2];
 };
 

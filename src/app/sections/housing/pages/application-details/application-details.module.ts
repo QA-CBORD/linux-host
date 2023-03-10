@@ -12,6 +12,7 @@ import { FormPaymentService } from '../form-payment/form-payment.service';
 import { AccountsService } from '@sections/dashboard/services';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { RequestedRoommateModule } from '../roommate-search/pages/search-by/requested-roommates/requested-roommates.module';
+import { StFormsHeaderModule } from '@sections/housing/st-forms-header/st-forms-header.module';
 
 const imports = [
   CommonModule,
@@ -22,7 +23,8 @@ const imports = [
   ApplicationDetailsRoutingModule,
   FormPaymentModule,
   StButtonModule,
-  RequestedRoommateModule
+  RequestedRoommateModule,
+  StFormsHeaderModule
 ];
 const declarations = [ApplicationDetailsPage];
 

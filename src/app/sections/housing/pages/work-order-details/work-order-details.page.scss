@@ -7,13 +7,6 @@
   --padding-end: 8px;
 }
 
-.work-order-details__actions {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  padding-top: var(--ion-safe-area-top, 0);
-}
-
 .work-order-details__title {
   @include font-family($font-nunito-heavy);
 
@@ -22,12 +15,6 @@
   text-align: center;
   margin-top: 0;
   margin-bottom: 10px;
-}
-
-.work-order-details__page-back {
-  @include font-family($font-nunito-regular);
-
-  --color: #{rgba($color-black, 0.9)};
 }
 
 .work-order-details__save {

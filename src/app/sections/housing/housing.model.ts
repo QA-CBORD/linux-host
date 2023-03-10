@@ -210,7 +210,7 @@ export class OccupantDetailsResponse implements OccupantDetailsResponseOptions {
   occupants: FacilityOccupantDetails[];
 
   constructor(options) {
-    if(options ==null || !Array.isArray(options)) {
+    if (options ==null || !Array.isArray(options)) {
       options = [] as OccupantDetailsResponseOptions[];
     }
     this.occupants = Array.isArray(options)? options.map(x => {

@@ -12,7 +12,7 @@ export class FacilityOccupantDetails {
   public attributes: OccupantAttribute[] = null;
 
   constructor(options) {
-    if(options == null || !(options instanceof Object)) {
+    if (options == null || !(options instanceof Object)) {
       options = {} as FacilityOccupantDetailsOptions;
     }
     this.patronKey = options.patronKey;
@@ -40,7 +40,7 @@ export class RoommateResponse implements RoommateResponseOptions {
   roommates: RoommateDetails[];
 
   constructor(options) {
-    if(options == null || !Array.isArray(options)) {
+    if (options == null || !Array.isArray(options)) {
       options = [] as RoommateResponseOptions[];
     }
     this.roommates = Array.isArray(options)
@@ -67,7 +67,7 @@ export class RoommateDetails implements RoommateDetailsOptions {
   preferredName: string;
 
   constructor(options: RoommateDetailsOptions) {
-    if(options == null || !(options instanceof Object)) {
+    if (options == null || !(options instanceof Object)) {
       options = {} as RoommateDetailsOptions;
     }
 
