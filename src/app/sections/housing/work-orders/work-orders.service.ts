@@ -19,6 +19,7 @@ import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { Filesystem, Directory as FilesystemDirectory } from '@capacitor/filesystem';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastController } from '@ionic/angular';
 
 const NOTIFY = {
   YES: 'Yes',
@@ -45,7 +46,8 @@ export class WorkOrdersService {
     private _questionsService: QuestionsService,
     private _housingProxyService: HousingProxyService,
     private _workOrderStateService: WorkOrderStateService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private toastController: ToastController
   ) {}
 
   getWorkOrders(): Observable<WorkOrder> {
@@ -102,8 +104,8 @@ export class WorkOrdersService {
   private _toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails) {
     let values = [];
 
-    if (question.workOrderFieldKey === 'TYPE'){
-      values = workOrderDetails.workOrderTypes.map((v) => {
+    if (question.workOrderFieldKey === 'TYPE') {
+      values = workOrderDetails.workOrderTypes.map(v => {
         return {
           label: v.name,
           value: v.key,
@@ -121,7 +123,7 @@ export class WorkOrdersService {
         workOrderField: true,
         workOrderFieldKey: question.workOrderFieldKey,
       };
-    } else if (question.workOrderFieldKey === WorkOrdersFields.LOCATION){
+    } else if (question.workOrderFieldKey === WorkOrdersFields.LOCATION) {
       return this.createFacilityTreeQuestion();
     } else {
       return question;
@@ -138,15 +140,15 @@ export class WorkOrdersService {
 
     const validators = this._questionsService.getRequiredValidator(question);
 
-    if (question.workOrderFieldKey === 'DESCRIPTION'){
-      validators.push(Validators.maxLength(250))
+    if (question.workOrderFieldKey === 'DESCRIPTION') {
+      validators.push(Validators.maxLength(250));
     }
 
     if (question instanceof QuestionTextbox) {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
-    if (workOrderDetails.workOrderDetails){
+    if (workOrderDetails.workOrderDetails) {
       switch (question.workOrderFieldKey) {
         case WorkOrdersFields.PHONE_NUMBER:
           value = workOrderDetails.workOrderDetails.notificationPhone;
@@ -184,16 +186,17 @@ export class WorkOrdersService {
     const parsedJson: string[] = parseJsonToArray(form.formDefinition.applicationFormJson);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workOrdersControls: string[] = parsedJson.filter(
-      (control: any) =>
-        control && (<QuestionFormControl>control).source === QUESTIONS_SOURCES.WORK_ORDER && control.workOrderField
+      (control: QuestionFormControl | string) =>
+        control && (<QuestionFormControl>control).source === QUESTIONS_SOURCES.WORK_ORDER && (<QuestionFormControl>control).workOrderField
     );
     const { body, image } = this.buildWorkOrderList(workOrdersControls, formValue);
-
     return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
-      catchError(() => of(false)),
+      catchError(() => {
+        this.presentErrorToast();
+        return of(false);
+      }),
       switchMap((response: Response) => {
         if (image) return this.sendWorkOrderImage(response.data, image);
-
         return of(true);
       })
     );
@@ -294,12 +297,12 @@ export class WorkOrdersService {
 
   private createFacilityTreeQuestion() {
     // eslint-disable-next-line no-useless-escape
-    const facilityTreeString = `[{"name": "image","type": "FACILITY", "label": "Image", "attribute": null, "workOrderFieldKey" : "FACILITY", "requiered": false ,"source":"WORK_ORDER"}]`;
+    const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
     return parseJsonToArray(facilityTreeString);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private buildWorkOrderList(workOrdersControls: QuestionFormControl[] | string[], formValue: FormControl) {
+  private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
     let image: ImageData;
     let location: number;
     const controls: { [key: string]: string } = {
@@ -350,5 +353,15 @@ export class WorkOrdersService {
       },
       image,
     };
+  }
+
+  async presentErrorToast() {
+    const toast = await this.toastController.create({
+      message: 'There was a problem with this submission. Try again or contact the Housing office.',
+      duration: 2500,
+      position: 'top',
+    });
+
+    await toast.present();
   }
 }
