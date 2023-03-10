@@ -10,6 +10,7 @@ export interface QuestionFormControlOptions extends QuestionBaseOptions {
   source?: string;
   readonly?: boolean;
   workOrderFieldKey?:string;
+  workOrderField?:string;
 }
 
 export class QuestionFormControl extends QuestionBase implements QuestionFormControlOptions {
@@ -22,6 +23,7 @@ export class QuestionFormControl extends QuestionBase implements QuestionFormCon
   source?: string;
   readonly?: boolean;
   workOrderFieldKey?:string;
+  workOrderField?:string;
 
   constructor(options: QuestionFormControlOptions = {}) {
     super(options);
@@ -33,6 +35,7 @@ export class QuestionFormControl extends QuestionBase implements QuestionFormCon
     this.facilityKey = options.facilityKey >= 0 ? options.facilityKey : null;
     this.readonly = options.readonly;
     this.workOrderFieldKey = options.workOrderFieldKey;
+    this.workOrderField = options.workOrderField;
 
     if (options.dataType) {
       this.dataType = String(options.dataType);
