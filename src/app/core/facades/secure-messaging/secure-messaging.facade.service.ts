@@ -11,7 +11,7 @@ import { SecureMessagingApiService } from '@core/service/secure-messaging/secure
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { StateTimeDuration } from 'src/app/app.global';
-import { map, Observable, skipWhile, Subject, switchMap,  tap, timer, zip } from 'rxjs';
+import { map, Observable, skipWhile, Subject, switchMap, tap, timer, zip } from 'rxjs';
 const REFRESH_TIME = 10000;
 
 @Injectable({
@@ -179,11 +179,12 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
   pollForDataInterval(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
     return timer(REFRESH_TIME, REFRESH_TIME).pipe(
       switchMap(() => zip(this.getSecureMessagesGroups(), this.getSecureMessages())),
-      skipWhile(
-        ([smGroupArray, smMessageArray]) =>
-          this.messagesArray.length === smMessageArray.length || (this._groupsArray.length === smGroupArray.length && !this._selectedConversation)
-      ),
       tap(([smGroupArray, smMessageArray]) => {
+        if (
+          this.messagesArray.length === smMessageArray.length ||
+          (this._groupsArray.length === smGroupArray.length && !this._selectedConversation)
+        )
+          return;
         this.storageStateService.updateStateEntity(this.secureMessaginKey, [smGroupArray, smMessageArray], {
           ttl: StateTimeDuration.TTL,
           highPriorityKey: true,
