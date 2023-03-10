@@ -89,7 +89,7 @@ export const handleServerError = <T>(
           return throwError(() => message);
         }
 
-        if(+code === 9016){
+        if (+code === 9016){
           return throwError(() => `${code}|${text}`);
         }
 

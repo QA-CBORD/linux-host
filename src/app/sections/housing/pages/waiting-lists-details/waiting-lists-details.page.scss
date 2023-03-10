@@ -7,13 +7,6 @@
   --padding-end: 8px;
 }
 
-.application-details__actions {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  padding-top: var(--ion-safe-area-top, 0);
-}
-
 .application-details__title {
   @include font-family($font-nunito-heavy);
 
@@ -24,11 +17,6 @@
   margin-bottom: 10px;
 }
 
-.application-details__page-back {
-  @include font-family($font-nunito-regular);
-
-  --color: #{rgba($color-black, 0.9)};
-}
 
 .application-details__save {
   @include font-family($font-nunito-heavy);

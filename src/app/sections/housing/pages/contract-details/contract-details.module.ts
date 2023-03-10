@@ -13,6 +13,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { FormPaymentService } from '../form-payment/form-payment.service';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { AccountsService } from '@sections/dashboard/services';
+import { StFormsHeaderModule } from '@sections/housing/st-forms-header/st-forms-header.module';
 
 const imports = [
   CommonModule,
@@ -23,6 +24,7 @@ const imports = [
   SignContractModule,
   ContractDetailsRoutingModule,
   StButtonModule,
+  StFormsHeaderModule
 ];
 const declarations = [ContractDetailsPage];
 

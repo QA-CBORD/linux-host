@@ -120,13 +120,13 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async onPaymentSuccess(transaction: TransactionalData) {
-    if(this.currentForm.type === FormType.Application) {
+    if (this.currentForm.type === FormType.Application) {
       this.applicationsService.submitApplication(this.currentForm).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
       });
 
     } else if (this.currentForm.type === FormType.WorkOrder) {
-      this.contractsService.submitContract(this.currentForm.key, (<ContractDetails>this.currentForm.details)?.formKey).pipe(take(1)).subscribe(async () => {
+      this.contractsService.submitContract(this.currentForm.key, (<ContractDetails> this.currentForm.details)?.formKey).pipe(take(1)).subscribe(async () => {
         await this.openPaymentSuccessModal(transaction);
       });
     }
@@ -147,18 +147,18 @@ export class FormPaymentComponent implements OnInit {
   }
 
   get formTitle(): string {
-    if(this.currentForm.type === FormType.Application) {
-      return (<ApplicationDetails>this.currentForm.details).applicationDefinition.applicationTitle;
+    if (this.currentForm.type === FormType.Application) {
+      return (<ApplicationDetails> this.currentForm.details).applicationDefinition.applicationTitle;
     } else if (this.currentForm.type === FormType.WorkOrder) {
-      return (<ContractDetails>this.currentForm.details).contractInfo.contractName;
+      return (<ContractDetails> this.currentForm.details).contractInfo.contractName;
     }
   }
 
   get amountDue(): string {
-    if(this.currentForm.type === FormType.Application) {
-      return (<ApplicationDetails>this.currentForm.details).applicationDefinition.amount.toFixed(2);
+    if (this.currentForm.type === FormType.Application) {
+      return (<ApplicationDetails> this.currentForm.details).applicationDefinition.amount.toFixed(2);
     } else if (this.currentForm.type === FormType.WorkOrder) {
-      return (<ContractDetails>this.currentForm.details).amount.toFixed(2);
+      return (<ContractDetails> this.currentForm.details).amount.toFixed(2);
     }
   }
 
@@ -184,7 +184,7 @@ export class FormPaymentComponent implements OnInit {
 
   private showDisclaimer(): boolean {
     if (this.currentForm.type === FormType.Application) {
-       return !(<ApplicationDetails>this.currentForm.details).applicationDefinition.canEdit;
+       return !(<ApplicationDetails> this.currentForm.details).applicationDefinition.canEdit;
     }
 
     return false;

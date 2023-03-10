@@ -117,7 +117,7 @@ export class MobileCredentialDataService {
 
   private getActivePasses(): Observable<ActivePasses> {
 
-    if(!this.platform.is('android')) return of({} as ActivePasses);
+    if (!this.platform.is('android')) return of({} as ActivePasses);
 
     /**
      * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.

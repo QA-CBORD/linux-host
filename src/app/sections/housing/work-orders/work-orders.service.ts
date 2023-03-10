@@ -102,8 +102,8 @@ export class WorkOrdersService {
   private _toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails) {
     let values = [];
 
-    if (question.workOrderFieldKey === 'TYPE') {
-      values = workOrderDetails.workOrderTypes.map(v => {
+    if (question.workOrderFieldKey === 'TYPE'){
+      values = workOrderDetails.workOrderTypes.map((v) => {
         return {
           label: v.name,
           value: v.key,
@@ -121,7 +121,7 @@ export class WorkOrdersService {
         workOrderField: true,
         workOrderFieldKey: question.workOrderFieldKey,
       };
-    } else if (question.workOrderFieldKey === WorkOrdersFields.LOCATION) {
+    } else if (question.workOrderFieldKey === WorkOrdersFields.LOCATION){
       return this.createFacilityTreeQuestion();
     } else {
       return question;
@@ -138,15 +138,15 @@ export class WorkOrdersService {
 
     const validators = this._questionsService.getRequiredValidator(question);
 
-    if (question.workOrderFieldKey === 'DESCRIPTION') {
-      validators.push(Validators.maxLength(250));
+    if (question.workOrderFieldKey === 'DESCRIPTION'){
+      validators.push(Validators.maxLength(250))
     }
 
     if (question instanceof QuestionTextbox) {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
-    if (workOrderDetails.workOrderDetails) {
+    if (workOrderDetails.workOrderDetails){
       switch (question.workOrderFieldKey) {
         case WorkOrdersFields.PHONE_NUMBER:
           value = workOrderDetails.workOrderDetails.notificationPhone;
@@ -299,7 +299,7 @@ export class WorkOrdersService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
+  private buildWorkOrderList(workOrdersControls: QuestionFormControl[] | string[], formValue: FormControl) {
     let image: ImageData;
     let location: number;
     const controls: { [key: string]: string } = {

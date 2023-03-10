@@ -37,7 +37,7 @@ export class OccupantAttribute extends Attribute {
   constructor(options) {
     super(options);
 
-    if(options == null) {
+    if (options == null) {
       options = {};
     }
     this.name = options.name;

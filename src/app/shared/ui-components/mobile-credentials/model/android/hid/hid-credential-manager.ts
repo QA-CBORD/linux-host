@@ -472,7 +472,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         onErrors: async () => (await this.fetchFromServer$(true)).isProvisioned(),
       });
       if (credentialServerUpdateSuccess) {
-        delete (<HidCredentialBundle>this.mCredential.credentialBundle).invitationCode;
+        delete (<HidCredentialBundle> this.mCredential.credentialBundle).invitationCode;
         this.onCredentialStateChanged();
         setTimeout(() => this.hidSdkManager().doPostInstallWork(), 1000);
       } else {

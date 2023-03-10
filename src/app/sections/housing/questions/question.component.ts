@@ -182,7 +182,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      return <string>await this.convertBlobToBase64(blob);
+      return <string> await this.convertBlobToBase64(blob);
     }
   }
 
