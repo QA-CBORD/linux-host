@@ -104,13 +104,8 @@ export class WorkOrdersService {
   private _toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails) {
     let values = [];
 
-<<<<<<< HEAD
     if (question.workOrderFieldKey === 'TYPE') {
       values = workOrderDetails.workOrderTypes.map(v => {
-=======
-    if (question.workOrderFieldKey === 'TYPE'){
-      values = workOrderDetails.workOrderTypes.map((v) => {
->>>>>>> a0e02c64b4e414b33745af189aed82894fdcb51d
         return {
           label: v.name,
           value: v.key,
@@ -128,11 +123,7 @@ export class WorkOrdersService {
         workOrderField: true,
         workOrderFieldKey: question.workOrderFieldKey,
       };
-<<<<<<< HEAD
     } else if (question.workOrderFieldKey === WorkOrdersFields.LOCATION) {
-=======
-    } else if (question.workOrderFieldKey === WorkOrdersFields.LOCATION){
->>>>>>> a0e02c64b4e414b33745af189aed82894fdcb51d
       return this.createFacilityTreeQuestion();
     } else {
       return question;
@@ -149,24 +140,15 @@ export class WorkOrdersService {
 
     const validators = this._questionsService.getRequiredValidator(question);
 
-<<<<<<< HEAD
     if (question.workOrderFieldKey === 'DESCRIPTION') {
       validators.push(Validators.maxLength(250));
-=======
-    if (question.workOrderFieldKey === 'DESCRIPTION'){
-      validators.push(Validators.maxLength(250))
->>>>>>> a0e02c64b4e414b33745af189aed82894fdcb51d
     }
 
     if (question instanceof QuestionTextbox) {
       this._questionsService.addDataTypeValidator(question, validators);
     }
 
-<<<<<<< HEAD
     if (workOrderDetails.workOrderDetails) {
-=======
-    if (workOrderDetails.workOrderDetails){
->>>>>>> a0e02c64b4e414b33745af189aed82894fdcb51d
       switch (question.workOrderFieldKey) {
         case WorkOrdersFields.PHONE_NUMBER:
           value = workOrderDetails.workOrderDetails.notificationPhone;
@@ -215,10 +197,6 @@ export class WorkOrdersService {
       }),
       switchMap((response: Response) => {
         if (image) return this.sendWorkOrderImage(response.data, image);
-<<<<<<< HEAD
-=======
-
->>>>>>> a0e02c64b4e414b33745af189aed82894fdcb51d
         return of(true);
       })
     );
@@ -376,7 +354,6 @@ export class WorkOrdersService {
       image,
     };
   }
-<<<<<<< HEAD
 
   async presentErrorToast() {
     const toast = await this.toastController.create({
@@ -387,6 +364,4 @@ export class WorkOrdersService {
 
     await toast.present();
   }
-=======
->>>>>>> a0e02c64b4e414b33745af189aed82894fdcb51d
 }
