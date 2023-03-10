@@ -18,7 +18,7 @@
     </ng-container>
     <ng-container *ngSwitchCase="'FACILITY'">
       <div item-content>
-        <st-hierarchy-tree [label]="getLabel(question)" [isDisable]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
+        <st-hierarchy-tree [label]="getLabel(question)" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
       </div>
     </ng-container>
 
@@ -116,7 +116,7 @@
       class="question__section"
       [question]="question"
       [parentForm]="parentGroup"
-      [isDisabled]="isSubmitted"
+      [isDisabled]="(isSubmitted && !canEdit) || isView"
       *ngSwitchCase="'facility-picker'"
     ></st-facility-picker>
 

@@ -21,6 +21,8 @@
               [name]="$any(question).name"
               [class.question--first]="isFirstQuestion"
               [isSubmitted]="isSubmitted"
+              [canEdit]="applicationDetails.applicationDefinition.canEdit"
+              [isView]="applicationsService.isView"
             ></st-question>
             <st-requested-roommates *ngIf="isRoommateSearch(question.label)">
             </st-requested-roommates>
