@@ -181,7 +181,7 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
       switchMap(() => zip(this.getSecureMessagesGroups(), this.getSecureMessages())),
       skipWhile(
         ([smGroupArray, smMessageArray]) =>
-          this.messagesArray.length === smMessageArray.length || this._groupsArray.length === smGroupArray.length
+          this.messagesArray.length === smMessageArray.length || (this._groupsArray.length === smGroupArray.length && !this._selectedConversation)
       ),
       tap(([smGroupArray, smMessageArray]) => {
         this.storageStateService.updateStateEntity(this.secureMessaginKey, [smGroupArray, smMessageArray], {
