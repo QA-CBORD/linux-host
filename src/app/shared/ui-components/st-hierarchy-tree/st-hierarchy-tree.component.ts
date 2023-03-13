@@ -19,7 +19,6 @@ export class StHierarcheTreeComponent implements OnInit ,OnDestroy  {
   @Input() allowParent: boolean;
   @Input() isDisabled: boolean;
   @Input() label: string;
-  
   form: FormGroup;
   constructor(
     public modalCtrl: ModalController,
