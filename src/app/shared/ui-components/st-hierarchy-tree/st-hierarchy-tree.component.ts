@@ -58,5 +58,4 @@ export class StHierarcheTreeComponent implements OnInit ,OnDestroy  {
     });
     multiLevelSelectDialogComponent.present();
   }
-
 }
