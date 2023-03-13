@@ -1,4 +1,4 @@
 [core]
     autobundle = true
 [pull]
-   rebase = true
+    rebase = true
