@@ -19,7 +19,7 @@ get_tickets() {
         occurrence=$(echo $occurrence | tr -d '\r\n\t')
         # Check if the occurrence is not already in the unique_tickets variable
         if [[ ! $unique_tickets =~ $occurrence ]]; then
-            unique_tickets="$unique_tickets $occurrence"
+            unique_tickets="$unique_tickets, $occurrence"
             echo "$hash | $message"
         fi
     done <<< "$commits"
