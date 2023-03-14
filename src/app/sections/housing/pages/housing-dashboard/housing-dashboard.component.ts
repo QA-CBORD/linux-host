@@ -79,15 +79,15 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
     }
     if (response instanceof RoomSelectResponse) {
       this.isHeaderVisible = this.isHeaderVisible || response.roomSelects.length > 0;
-      this.hasRoomSelections = response.roomSelects.length > 0 ? true : false;
+      this.hasRoomSelections = response.roomSelects.length > 0;
     }
     if (response instanceof ContractListResponse) {
       this.isHeaderVisible = this.isHeaderVisible || response.contractSummaries.length > 0;
-      this.hasContracts = response.contractSummaries.length > 0 ? true : false;
+      this.hasContracts = response.contractSummaries.length > 0;
     }
     if (response instanceof CheckInOutResponse) {
       this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
-      this.hasCheckInOuts = response.checkInOuts.length > 0 ? true : false;
+      this.hasCheckInOuts = response.checkInOuts.length > 0;
     }
 
     this._loadingService.closeSpinner();

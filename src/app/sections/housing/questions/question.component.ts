@@ -30,6 +30,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() name: string;
   @Input() parentGroup: FormGroup;
   @Input() isSubmitted: boolean;
+  @Input() canEdit?: boolean;
+  @Input() isView?: boolean;
   dateFormat = montDayYearHour;
 
   facilityTreeData: FacilityTree[];
