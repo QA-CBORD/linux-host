@@ -12,7 +12,7 @@ import { LocationPermissionModal } from '@sections/dashboard/components/location
 
 @NgModule({
   declarations: [GuestDashboard],
-  imports: [  
+  imports: [
     CommonModule,
     IonicModule,
     StButtonModule,

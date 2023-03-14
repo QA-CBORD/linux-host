@@ -85,7 +85,7 @@ export class WorkOrderStateService  {
   destroyWorkOrderImageBlob(){
     this.workOrderImageBlob.next(null);
   }
-  
+
   get WorkOrderImageBlob(){
     return this.workOrderImageBlob;
   }

@@ -78,6 +78,10 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     return contractDetails.amount > 0;
   }
 
+  private goToDashboard(): void {
+    this._housingService.goToDashboard();
+  }
+
   private async continueToPayment(contractDetails: ContractDetails, formControl: FormControl) {
     this.formPaymentService.continueToFormPayment({
       details: contractDetails,
@@ -90,7 +94,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   private _update(contractKey: number): void {
     this._loadingService.showSpinner();
     const subscription: Subscription = this._contractsService.submitContract(contractKey, this.formKey).subscribe({
-      next: () => this._handleSuccess(),
+      next: () => this.goToDashboard(),
       error: (error: Error) => this._handleErrors(error),
     });
     this._subscription.add(subscription);
@@ -121,10 +125,6 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   private _next(): void {
     this.content.scrollToTop();
     this.stepper.next();
-  }
-
-  private _handleSuccess(): void {
-    this._housingService.goToDashboard();
   }
 
   private _handleErrors(error: Error): void {

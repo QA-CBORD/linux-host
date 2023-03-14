@@ -43,7 +43,7 @@ export class ChargeSchedulesService {
   }
 
   getChargeScheduleFieldType(chargeScheduleField): string{
-    switch(chargeScheduleField){
+    switch (chargeScheduleField){
       case ChargeScheduleFields.chargeAmount:
       case ChargeScheduleFields.fullChargeEstimate:
       case ChargeScheduleFields.remainingChargeEstimate:

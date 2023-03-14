@@ -3,14 +3,8 @@
   *ngIf="(applicationDetails$ | async) as applicationDetails"
   #content
 >
-  <div class="application-details__actions">
-    <ion-button class="btn application-details__page-back" (click)="onCancel()" fill="clear">
-      Cancel
-    </ion-button>
-    <ion-button *ngIf="!isSubmitted || applicationDetails.applicationDefinition.canEdit" class="btn application-details__save" fill="clear" (click)="save(applicationDetails)">
-      Save
-    </ion-button>
-  </div>
+  <st-forms-header [showSave]="!applicationsService.isView"
+    (onSave)="save(applicationDetails)"></st-forms-header>
   <ion-label>{{ applicationDetails.applicationDefinition.applicationTitle }}</ion-label>
   <ion-card  no-padding class="application-details__card">
     <st-stepper class="stepper--white">
@@ -27,6 +21,8 @@
               [name]="$any(question).name"
               [class.question--first]="isFirstQuestion"
               [isSubmitted]="isSubmitted"
+              [canEdit]="applicationDetails.applicationDefinition.canEdit"
+              [isView]="applicationsService.isView"
             ></st-question>
             <st-requested-roommates *ngIf="isRoommateSearch(question.label)">
             </st-requested-roommates>
@@ -56,7 +52,7 @@
               type="submit"
               *ngIf="isLastPage && (!applicationDetails.applicationDefinition.amount || isSubmitted)"
               [class.stepper-footer__button--right]="isFirstPage"
-              [disabled]="isSubmitted && !applicationDetails.applicationDefinition.canEdit"
+              [disabled]="applicationsService.isView || (isSubmitted && !applicationDetails.applicationDefinition.canEdit)"
             >
               Submit
           </st-button>

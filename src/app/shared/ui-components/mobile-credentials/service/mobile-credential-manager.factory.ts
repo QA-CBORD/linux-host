@@ -21,7 +21,7 @@ export enum CredentialManagerType {
 })
 export class MobileCredentialManagerFactory {
   constructor(
-    private injector: Injector, 
+    private injector: Injector,
     private readonly platform: Platform) {}
 
   createCredentialManager(credentialManagerType: CredentialManagerType): Observable<MobileCredentialManager> {

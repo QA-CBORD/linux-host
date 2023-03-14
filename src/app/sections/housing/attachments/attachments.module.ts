@@ -17,7 +17,7 @@ const declarations = [
     IonicModule,
     ActionsModule,
     RouterModule,
-    SortByDatePipeModule, 
+    SortByDatePipeModule,
     HousingAccordionModule
   ],
   exports: declarations

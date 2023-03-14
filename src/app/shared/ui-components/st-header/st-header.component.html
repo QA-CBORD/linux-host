@@ -16,6 +16,9 @@
       </ion-button>
     </ion-buttons>
     <ion-title class="st-header__title" *ngIf="isTitleShow">{{ title }}</ion-title>
+    <div class="st-header__end" *ngIf="isFilterButtonShow" >
+      <ion-icon src="/assets/icon/filter.svg" slot="end" mode="ios" size="small" (click)="onFilter.emit()"></ion-icon>
+    </div>
   </ion-toolbar>
 
   <ion-toolbar class="st-header__toolbar" *ngIf="isSubToolbarShow">

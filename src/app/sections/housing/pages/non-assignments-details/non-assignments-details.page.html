@@ -2,16 +2,8 @@
   class="ion-padding non-assignment-details__content"
   *ngIf="(nonAssignmentDetails$ | async) as nonAssignmentDetails"
   #content>
-  <div class="non-assignment-details__actions">
-    <ion-button
-      class="btn non-assignment-details__btn-cancel"
-      routerLink="../../../.."
-      routerDirection="back"
-      mode="ios"
-      fill="clear">
-      Cancel
-    </ion-button>
-  </div>
+  <st-forms-header>
+  </st-forms-header>
 
   <h2 class="non-assignment-details__title">{{ nonAssignmentDetails.applicationTitle }}</h2>
 

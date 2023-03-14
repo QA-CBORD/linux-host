@@ -1,11 +1,12 @@
 <st-header
   title="{{ contentStrings.labelRecentOrders | async }}"
   [isTitleShow]="true"
-  [backButtonTitle]="'Order'"
+  [backButtonTitle]="''"
   backButtonIcon="chevron-back"
   [isToolbarShow]="true"
   class="recent-orders__header"
-  (click)="close()"
+  [isFilterButtonShow]="true"
+  (onFilter)="onFilter()"
 >
 </st-header>
 
@@ -13,37 +14,28 @@
   <ion-refresher slot="fixed" (ionRefresh)="refreshRecentOrders($event)">
     <st-spinner></st-spinner>
   </ion-refresher>
-  <ng-container
-    *ngIf="!(pendingOrders$ | async).length && !(completedOrders$ | async).length"
-    [ngTemplateOutlet]="empty"
-  ></ng-container>
-  <ng-container *ngIf="(pendingOrders$ | async).length" [ngTemplateOutlet]="pending"></ng-container>
-  <ng-container *ngIf="(completedOrders$ | async).length" [ngTemplateOutlet]="completed"></ng-container>
+  <ng-container *ngIf="(filteredOrders$ | async).length; else empty">
+    <st-recent-orders-list
+      (onOrderClicked)="onOrderPicked($event)"
+      [orders]="filteredOrders$ | async"
+    ></st-recent-orders-list>
+  </ng-container>
 </ion-content>
 
-<ng-template #pending>
-  <h2 class="recent-orders__list-title">{{ contentStrings.labelPendingOrders | async }}</h2>
-  <st-recent-orders-list
-    (onOrderClicked)="onOrderPicked($event)"
-    (onNavLinkClicked)="onNavigateToCheckin($event)"
-    [orders]="pendingOrders$ | async"
-  ></st-recent-orders-list>
-</ng-template>
-
 <ng-template #empty>
-  <main class="recent-orders__no-orders-block">
+  <main class="recent-orders__no-orders-block" *ngIf="isDefaultFilter; else noResult">
     <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="" />
     <p class="recent-orders__no-orders-message">{{ contentStrings.noRecentOrders | async }}</p>
-    <div class="recent-orders__no-orders-btn-wrapper">
-      <st-button (onClick)="back()">{{ contentStrings.buttonDashboardStartOrder | async }}</st-button>
-    </div>
   </main>
 </ng-template>
 
-<ng-template #completed>
-  <h2 class="recent-orders__list-title">{{ contentStrings.labelCompletedOrders | async }}</h2>
-  <st-recent-orders-list
-    (onOrderClicked)="onOrderPicked($event)"
-    [orders]="completedOrders$ | async"
-  ></st-recent-orders-list>
+<ng-template #noResult>
+  <main class="recent-orders__no-orders-block">
+    <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="" />
+    <p class="recent-orders__no-orders-message">No <span class="recent-orders__no-orders-message-bold">{{ selectedStatus }}</span> orders on <span class="recent-orders__no-orders-message-bold">{{ selectedPeriod }}</span>.</p>
+  </main>
 </ng-template>
+
+<ion-footer class="ion-padding" *ngIf="(filteredOrders$ | async).length === 0 && isDefaultFilter">
+  <st-button (onClick)="back()">{{ contentStrings.buttonDashboardStartOrder | async }}</st-button>
+</ion-footer>

@@ -82,6 +82,7 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
               .subscribe(status => {
                 if (status) {
                   alert.dismiss().then(() => this._housingService.goToDashboard());
+                  this._housingService.refreshDefinitions();
                 } else {
                   alert.dismiss().then(() => {
                     this._loadingService.closeSpinner();
@@ -101,5 +102,5 @@ export class WaitingListsComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
- 
+
 }

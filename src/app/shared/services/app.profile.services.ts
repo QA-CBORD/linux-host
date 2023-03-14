@@ -3,8 +3,7 @@ import { AuthFacadeService } from "@core/facades/auth/auth.facade.service";
 import { SettingsFacadeService } from "@core/facades/settings/settings-facade.service";
 import { SettingInfo } from "@core/model/configuration/setting-info.model";
 import { APP_PROFILES } from "@sections/dashboard/models";
-import { firstValueFrom } from 'rxjs'
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable } from 'rxjs'
 import { switchMap, take } from "rxjs/operators";
 
 
@@ -12,7 +11,7 @@ import { switchMap, take } from "rxjs/operators";
 @Injectable({ providedIn: "root" })
 export class ProfileServiceFacade {
 
-    constructor(private readonly settingsFacadeService: SettingsFacadeService, 
+    constructor(private readonly settingsFacadeService: SettingsFacadeService,
         private readonly authFacadeService: AuthFacadeService) { }
 
     async determineCurrentProfile(settings: SettingInfo[]): Promise<APP_PROFILES> {

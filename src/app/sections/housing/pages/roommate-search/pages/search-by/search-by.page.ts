@@ -60,7 +60,7 @@ export class SearchByPage implements OnInit {
 
     this.searchForm.updateValueAndValidity();
   }
- 
+
   ionViewWillEnter() {
     this.requestedRoommatesComponent.updateRequestedRoommates();
   }
@@ -79,7 +79,7 @@ export class SearchByPage implements OnInit {
       ...options,
       searchValue,
     };
-    
+
 
     this._applicationStateService.setRoommateSearchOptions(data);
     this._router.navigate([`${PATRON_NAVIGATION.housing}/${LOCAL_ROUTING.roommatesSearchResult}`]);

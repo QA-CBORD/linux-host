@@ -1,4 +1,5 @@
-import { Subject} from "rxjs";
+import { Subject } from "rxjs";
+import { StateTimeDuration } from "src/app/app.global";
 
 export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 5000;
 
@@ -26,7 +27,7 @@ export interface VaultTimeoutOptions {
     keepTimeoutExtendedOnResume?: boolean;
 }
 
-export const TIME_OUT_WITH_EXTRA = 600000; // 10 minutes.
+export const TIME_OUT_WITH_EXTRA = StateTimeDuration.TTL; // 10 minutes.
 
 export interface VaultMessage {
     canLock: boolean;

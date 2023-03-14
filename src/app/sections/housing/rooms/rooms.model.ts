@@ -47,7 +47,7 @@ export  class CreateContractRequest implements  CreateContractRequestOptions {
   termKey: number;
 
   constructor(options: CreateContractRequestOptions) {
-    if(!isDefined(options) || typeof options !== 'object')  {
+    if (!isDefined(options) || typeof options !== 'object')  {
       options = {} as CreateContractRequestOptions;
     }
     this.assetKey = options.assetKey;

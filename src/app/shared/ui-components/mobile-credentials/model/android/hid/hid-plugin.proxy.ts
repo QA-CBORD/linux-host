@@ -173,7 +173,7 @@ export class HIDPlugginProxy {
       if (await isEndpointActiveNow()) {
         if (await startScanningSuccess()) {
           controller.stopTaskExecution(EndpointStatuses.PROVISIONED_ACTIVE); // mobile credential is in a "fine state", whoohoo!!!
-        } 
+        }
       }
     } else if (controller.maxExecutionReached()) {
       controller.stopTaskExecution(EndpointStatuses.PROVISIONED_INACTIVE);

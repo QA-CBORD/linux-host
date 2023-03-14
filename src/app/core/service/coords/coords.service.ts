@@ -43,7 +43,7 @@ export class CoordsService {
 
   set _latestLocation(position: Position) {
     this.latestPosition = { ...position };
-    this._location$.next(<Position>this.latestPosition);
+    this._location$.next(<Position> this.latestPosition);
   }
 
   /// get device coordinates
@@ -96,6 +96,6 @@ export class CoordsService {
 
   private emptyPositions() {
     this.timestamp = 0;
-    this._latestLocation = <Position>this.emptyPosition;
+    this._latestLocation = <Position> this.emptyPosition;
   }
 }

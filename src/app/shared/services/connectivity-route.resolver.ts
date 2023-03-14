@@ -6,8 +6,7 @@ import { ContentStringApi, ContentStringCategory } from "@shared/model/content-s
 import { ConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
 import { ConnectivityPageInfo } from "@shared/ui-components/no-connectivity-screen/model/connectivity-page.model";
 import { ConnectivityErrorType, ConnectivityScreenCsModel } from "@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model";
-import { firstValueFrom } from 'rxjs'
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable } from 'rxjs'
 import { CommonService } from "./common.service";
 import { ConnectionService } from "./connection-service";
 import { Location } from '@angular/common';

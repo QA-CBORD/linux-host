@@ -3,17 +3,8 @@
   *ngIf="(contractDetails$ | async) as contractDetails"
   #content
 >
-  <div class="contract-details__actions">
-    <ion-button
-      class="btn contract-details__page-back"
-      routerLink="../../../../.."
-      routerDirection="back"
-      mode="ios"
-      fill="clear"
-    >
-      Cancel
-    </ion-button>
-  </div>
+<st-forms-header>
+</st-forms-header>
 
   <h2 class="contract-details__title">{{ contractDetails.contractInfo.contractName }}</h2>
 

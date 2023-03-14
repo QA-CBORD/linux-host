@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -18,7 +18,7 @@ export enum SelectedHousingTab {
   styleUrls: ['./housing-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HousingDashboardPage {
+export class HousingDashboardPage implements OnInit, OnDestroy {
   SelectedHousingTab = SelectedHousingTab; // needed to reference enum on front-end
   _selectedHousingTab: string = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();
@@ -79,15 +79,15 @@ export class HousingDashboardPage {
     }
     if (response instanceof RoomSelectResponse) {
       this.isHeaderVisible = this.isHeaderVisible || response.roomSelects.length > 0;
-      this.hasRoomSelections = response.roomSelects.length > 0 ? true : false;
+      this.hasRoomSelections = response.roomSelects.length > 0;
     }
     if (response instanceof ContractListResponse) {
       this.isHeaderVisible = this.isHeaderVisible || response.contractSummaries.length > 0;
-      this.hasContracts = response.contractSummaries.length > 0 ? true : false;
+      this.hasContracts = response.contractSummaries.length > 0;
     }
     if (response instanceof CheckInOutResponse) {
       this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
-      this.hasCheckInOuts = response.checkInOuts.length > 0 ? true : false;
+      this.hasCheckInOuts = response.checkInOuts.length > 0;
     }
 
     this._loadingService.closeSpinner();

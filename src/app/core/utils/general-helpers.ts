@@ -8,6 +8,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { ACCOUNT_TYPES, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { MerchantInfo } from '@sections/ordering';
 import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
+import { formatDate, isSameDay } from './date-helper';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -82,13 +83,13 @@ export const handleServerError = <T>(
         if (ignoreCodes && ignoreCodes.includes(code)) {
           return of();
         }
-        
+
         // Temprorary solution for these codes:
         if ([9002, 9005, 9006].includes(+code)) {
           return throwError(() => message);
         }
 
-        if(+code === 9016){
+        if (+code === 9016){
           return throwError(() => `${code}|${text}`);
         }
 
@@ -250,4 +251,11 @@ export const validatePasswordDecorator = (
 
 export const isEmptyObject = (obj): boolean => {
   return obj && Object.keys(obj).length === 0;
+}
+
+export const isAppearing = (date: string, i: number, transactions: object[], propertyName: string): boolean => {
+  return i === 0 || !isSameDay(
+    formatDate(date),
+    formatDate(transactions[i - 1][propertyName])
+  );
 }

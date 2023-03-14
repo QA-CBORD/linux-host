@@ -20,7 +20,7 @@ export class Facility {
   }
 
   public hasAttribute(name: string): boolean {
-    if(this.attributes && this.attributes.length > 0) {
+    if (this.attributes && this.attributes.length > 0) {
       return !!this.attributes.find(x => x.name === name);
     }
   }

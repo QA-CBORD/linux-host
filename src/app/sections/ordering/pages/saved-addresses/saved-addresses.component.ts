@@ -178,5 +178,5 @@ export class SavedAddressesComponent implements OnInit {
   private async initRelativeRoute() {
     const routeData = await this.route.data.pipe(take(1)).toPromise();
     this.relativeRoute = routeData.relativeRoute;
-  } 
+  }
 }

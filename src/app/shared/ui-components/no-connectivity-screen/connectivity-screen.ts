@@ -7,11 +7,10 @@ import { AccessCardService } from '@sections/dashboard/containers/access-card/se
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { ConnectionService } from '@shared/services/connection-service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { Settings, User } from 'src/app/app.global';
 import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
-import { Subscription } from 'rxjs';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { NavigationService } from '@shared/services/navigation.service';

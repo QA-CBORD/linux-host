@@ -79,6 +79,7 @@
     "cross-env": "^7.0.3",
     "date-fns": "^2.29.3",
     "es6-promise-plugin": "^4.2.2",
+    "eslint-plugin-delta": "^2.0.0",
     "http-status-codes": "^2.1.4",
     "ionic": "5.4.15",
     "memo-decorator": "^1.0.2",

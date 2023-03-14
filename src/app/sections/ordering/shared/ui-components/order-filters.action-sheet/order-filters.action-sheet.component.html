@@ -1,0 +1,53 @@
+<ion-content>
+  <div class="order-filters">
+    <div class="order-filters__header ion-padding">
+      <ion-icon class="order-filters__header--icon" slot="end" mode="ios" icon="close" (click)="close()"></ion-icon>
+      <span class="order-filters__header--title">Filter</span>
+    </div>
+    <hr />
+
+    <div class="order-filters__title">Date</div>
+
+    <ion-list class="order-filters__container">
+      <ion-radio-group [value]="selectedPeriod.name" class="period-radio-group">
+        <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="periodTypeOnChange(period)">
+          <ion-label>
+            {{ period.name }}
+          </ion-label>
+          <ion-radio class="filter-menu__radio-btn" slot="start" [value]="period.name" mode="md"> </ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+
+    <div class="ion-padding-horizontal">
+      <hr />
+    </div>
+
+    <div class="order-filters__title">Order Status</div>
+
+    <div class="order-filters__container">
+      <ion-radio-group
+        [value]="selectedStatus"
+        mode="md"
+        class="status-radio-group"
+      >
+        <ion-item
+          lines="none"
+          *ngFor="let status of statuses"
+          class="order-filters__container--radio"
+          (click)="statusTypeOnChange(status)"
+        >
+          <ion-label class="radio-label">{{ status }}</ion-label>
+          <ion-radio mode="md" slot="start" [value]="status" class="radio-item"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </div>
+
+    <div class="ion-padding-horizontal">
+      <hr />
+    </div>
+  </div>
+</ion-content>
+<ion-footer mode="ios" class="order-filters__footer ion-padding">
+  <st-button (onClick)="onSubmit()">See Results</st-button>
+</ion-footer>

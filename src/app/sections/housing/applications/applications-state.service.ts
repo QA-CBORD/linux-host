@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RoommatePreferences } from './applications.model';
 
 import {
   ApplicationDetails,
   RequestedRoommate,
+  RoommatePreferences,
   RoommateSearchOptions,
 } from './applications.model';
 
@@ -87,7 +87,7 @@ export class ApplicationsStateService {
   }
 
   deleteRoommatePreferencesSelecteds() {
-    if(this.applicationsState.applicationDetails != null){
+    if (this.applicationsState.applicationDetails != null){
       this.applicationsState.applicationDetails.roommatePreferences = [];
     }
   }
@@ -97,14 +97,14 @@ export class ApplicationsStateService {
   }
 
   deleteRequestingRoommate(patronKeyRoommate: number) {
-    if(this.applicationsState.applicationDetails.requestingRoommates.find( value => value.patronKeyRoommate === patronKeyRoommate)){
+    if (this.applicationsState.applicationDetails.requestingRoommates.find( value => value.patronKeyRoommate === patronKeyRoommate)){
       const index = this.applicationsState.applicationDetails.requestingRoommates.findIndex( value => value.patronKeyRoommate === patronKeyRoommate)
       this.applicationsState.applicationDetails.requestingRoommates.splice(index, 1)
     }
   }
 
   deleteLocalRequestedRoommate(preferenceKey: number, patronKeyRoommate: number){
-    if(this.requestedroommate.find( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)){
+    if (this.requestedroommate.find( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)){
       const index = this.requestedroommate.findIndex( value => value.preferenceKey === preferenceKey && value.patronRoommateKey !== patronKeyRoommate)
       this.requestedroommate.splice(index, 1)
     }
@@ -115,7 +115,7 @@ export class ApplicationsStateService {
   }
 
   deleteOverrideRequestingRoommate(preferenceKey: number, patronKeyRoommate: number) {
-    if(this.applicationsState.applicationDetails.roommatePreferences.find(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)){
+    if (this.applicationsState.applicationDetails.roommatePreferences.find(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)){
       const index = this.applicationsState.applicationDetails.roommatePreferences.findIndex(value => value.preferenceKey === preferenceKey && value.patronKeyRoommate != patronKeyRoommate)
       this.applicationsState.applicationDetails.roommatePreferences.splice(index, 1)
     }

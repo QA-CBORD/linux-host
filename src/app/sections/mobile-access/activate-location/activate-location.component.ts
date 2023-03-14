@@ -8,12 +8,11 @@ import { Observable, Subscription } from 'rxjs';
 import { MobileAccessService } from '../service';
 import { UserInfo } from '@core/model/user';
 import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model';
-import { Institution } from '@core/model/institution';
+import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { MobileAccessPopoverComponent } from '@sections/mobile-access/mobile-access-popover';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { InstitutionPhotoInfo } from '@core/model/institution';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
@@ -89,7 +88,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   async activateLocation() {
-    await this.loading.showSpinner({message: this.contentString.activateLocationLoader });
+    await this.loading.showSpinner({ message: this.contentString.activateLocationLoader });
     const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).pipe(
       take(1),
     ).subscribe(

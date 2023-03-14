@@ -35,7 +35,7 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
   private activeAlerts: HTMLIonAlertElement[] = [];
 
   selectedSlot$: Observable<CheckInOutSpot>;
-  
+
   constructor(
     private _platform: Platform,
     private _alertController: AlertController,

@@ -44,7 +44,7 @@ export abstract class MobileCredential implements MobileCredentialState {
   getCredentialState(): MobileCredentialState {
     return this.credentialState;
   }
-  
+
   getUiImageUrl(): string {
     return this.getConfig().uiImageUrl;
   }

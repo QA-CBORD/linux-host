@@ -15,7 +15,7 @@ import { flat } from '../utils/flat';
 import { FormGroup, FormControl } from '@angular/forms';
 import { QuestionFormControl } from '../questions/types/question-form-control';
 import { isDefined } from "../utils";
-import { QuestionDropdown} from '../questions/types/question-dropdown';
+import { QuestionDropdown } from '../questions/types/question-dropdown';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { HttpParams } from "@angular/common/http";
 import { QuestionWaitingListRequest } from "../questions/types/question-waiting-list-request";
@@ -95,7 +95,7 @@ export class WaitingListsService {
   }
 
   private _toWaitingListCustomType(question: QuestionBase, waitingListDetails: WaitingListDetails): QuestionBase {
-    if(!(question instanceof QuestionWaitingListRequest)) {
+    if (!(question instanceof QuestionWaitingListRequest)) {
       return question;
     }
 
@@ -116,8 +116,8 @@ export class WaitingListsService {
           }
         });
       }
-      
-    }else {
+
+    } else {
       return new QuestionTextbox({
         name: `attribute-selection-${this.index++}`,
         type: 'text',
@@ -163,20 +163,20 @@ export class WaitingListsService {
 
   private _getSelectedWaitingListValue(waitingList: WaitingListDetails): string {
     let value = '';
-    
+
     if (waitingList.facilities != null) {
       const item = waitingList.facilities
-        .find(facility => 
+        .find(facility =>
             facility.facilityKey === Number(waitingList.patronWaitingList.selectedValue));
 
       value = item ? item.name : '';
     } else if (waitingList.attributes != null) {
       const item = waitingList.attributes
         .find(attribute => attribute.value === waitingList.patronWaitingList.selectedValue);
-      
+
       value = item ? item.value : '';
     }
-    
+
     return value;
   }
 
@@ -185,15 +185,15 @@ export class WaitingListsService {
         Object.keys(formValue).find(value => value.includes('facility-selection'))) {
         this._waitingListState.setFormSelection(formValue);
     }
-    
+
     return of(true);
   }
-  
+
   submitWaitingList(
     waitListKey: number,
     form): Observable<boolean> {
       let formQuestions;
-      
+
       if (Object.keys(form).find(value => value.includes('attribute-selection')) ||
           Object.keys(form).find(value => value.includes('facility-selection'))) {
         formQuestions = Object.entries(form);

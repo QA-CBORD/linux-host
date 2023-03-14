@@ -52,17 +52,17 @@ export class CategoryOptions {
   }
 
   public deselectOptionDetails(excludedCategories: string[]): void {
-    for(let i = 0; i < this._optionDetails.length; i++) {
-      if(!excludedCategories.includes(this._optionDetails[i].category)) {
+    for (let i = 0; i < this._optionDetails.length; i++) {
+      if (!excludedCategories.includes(this._optionDetails[i].category)) {
         this._optionDetails[i].isSelected = false;
       }
     }
   }
   public updateOptionDetails(category: string, options: string[]): void {
-    if(category.length > 0) {
+    if (category.length > 0) {
       options.forEach(option => {
         const index = this._optionDetails.map(x => x.key).indexOf(`${category}${option}`);
-        if(index !== -1) {
+        if (index !== -1) {
           this._optionDetails[index].isSelected = true;
         }
       })
@@ -73,7 +73,7 @@ export class CategoryOptions {
         this._optionDetails[index].isSelected = false;
       })
     } else {
-      for(let i = 0;i < this._optionDetails.length; i++) {
+      for (let i = 0;i < this._optionDetails.length; i++) {
         this._optionDetails[i].isSelected  = false;
       }
     }

@@ -25,15 +25,15 @@ export class InspectionService {
   getFormDefinitionInspection() {
     return this._inspectionStateService.getInspectionDetailsForm().pipe(
       map((res=>{
-        const body =JSON.parse(res.formDefinition.applicationFormJson) 
+        const body =JSON.parse(res.formDefinition.applicationFormJson)
         return body.filter(value => value.inventoryConditions)[0];
       }))
     )
-  
+
   }
 
   submitInspection(inspectionData: Inspection): Observable<boolean> {
-    if(inspectionData.residentInspectionKey){
+    if (inspectionData.residentInspectionKey){
       return this._housingProxyService.putInspection(this.inspectiontUrl, inspectionData).pipe(
         map((response: Response) => {
           if (isSuccessful(response.status)) {

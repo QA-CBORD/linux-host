@@ -152,7 +152,7 @@ export class QuestionsService {
           return !isEmptyOrNullString(address.email) ? address.email : '';
         default:
           break;
-      } 
+      }
     } else {
       return '';
     }
@@ -178,7 +178,7 @@ export class QuestionsService {
       label: question.label,
       subtype: 'h3',
     }));
-    
+
     question.values.forEach((field, index) => {
       if (field.selected) {
         questions.push(new QuestionTextbox({
@@ -251,7 +251,7 @@ export class QuestionsService {
   private _isSourceFacility(question: QuestionFacilityAttributes): boolean {
     const facilitySources = Object.keys(QUESTIONS_SOURCES).filter(x =>  x.includes("FACILITY"));
     for (let i=0; i < facilitySources.length; i++) {
-      if(question.source === facilitySources[i]) {
+      if (question.source === facilitySources[i]) {
         return true;
       }
     }

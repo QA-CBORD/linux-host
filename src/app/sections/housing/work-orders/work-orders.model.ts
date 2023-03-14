@@ -106,7 +106,7 @@ export class WorkOrder implements WorkOrderOptions{
       ? options.workOrders.map((detail) => new WorkOrdersDetailsList(detail))
       : [];
   }
-  
+
 }
 export interface WorkOrderDetailsOptions {
   workOrderKey: number,

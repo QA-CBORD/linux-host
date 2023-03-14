@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AlertController,
 } from '@ionic/angular';
@@ -15,6 +15,7 @@ import {
 import {
   Observable,
   Subscription,
+  BehaviorSubject
 } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -25,8 +26,6 @@ import { TermsService } from '@sections/housing/terms/terms.service';
 
 import { AttachmentTypes, AttachmentsDetail, AttachmentsList } from '../../attachments/attachments.model';
 import { AttachmentsService } from '../../attachments/attachments.service';
-import { BehaviorSubject } from 'rxjs';
-import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/housing/housing.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
@@ -191,7 +190,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
       .then(file => {
         this.file$.next(file);
         this.fileSizeInMB = this.getSizeFile(file.data.byteLength);
-        if(this.fileSizeInMB>0){
+        if (this.fileSizeInMB>0){
            this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
            this.isFile = this.getFileType(file) != 'image';
         }
@@ -209,7 +208,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   async alertAttachmentLimitSize(FileSize){
-    if(!FileSize){
+    if (!FileSize){
       const alert = await this._alertController.create({
         cssClass: "alert-modal-attachment",
         header: 'Large File Size',

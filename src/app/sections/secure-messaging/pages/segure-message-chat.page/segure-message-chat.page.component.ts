@@ -10,14 +10,6 @@ import {
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { PopoverController } from '@ionic/angular';
-import {
-  SecureMessageInfo,
-  SecureMessageConversation,
-  SecureMessageGroupInfo,
-  SecureMessagingService,
-  SecureMessageSendBody,
-  SecureMessageTypes,
-} from '@sections/secure-messaging';
 import { SecureMessagePopoverComponent } from '@sections/secure-messaging/secure-message-popover';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { UserInfo } from '@core/model/user';
@@ -30,6 +22,8 @@ import {
   getConversationGroupName,
 } from '@core/utils/conversations-helper';
 import { Subscription } from 'rxjs';
+import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
+import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageTypes, SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
 
 @Component({
   selector: 'st-segure-message-chat.page',
@@ -45,15 +39,15 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
 
   // TODO: Implement from store
   get selectedConversation() {
-    return this.secureMessagingService.selectedConversation;
+    return this.secureMessagingFacadeService.selectedConversation;
   }
 
   get groupsArray() {
-    return this.secureMessagingService.groupsArray;
+    return this.secureMessagingFacadeService.groupsArray;
   }
 
   constructor(
-    private readonly secureMessagingService: SecureMessagingService,
+    private readonly secureMessagingFacadeService: SecureMessagingFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly globalNav: GlobalNavService,
     private readonly userService: UserFacadeService,
@@ -63,7 +57,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // TODO: Implement from store
     this.sourceSub.add(
-      this.secureMessagingService.conversationsArray$.subscribe(() => {
+      this.secureMessagingFacadeService.conversationsArray$.subscribe(() => {
         this.changeDetectorRef.detectChanges();
         this.scrollToBottom();
       })
@@ -75,7 +69,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.secureMessagingService.clearSelectedConversation();
+    this.secureMessagingFacadeService.clearSelectedConversation();
     this.sourceSub.unsubscribe();
   }
 
@@ -116,7 +110,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
    * click listener for group in 'new conversation' column
    */
   onClickMakeNewConversation(group: SecureMessageGroupInfo) {
-    this.secureMessagingService.startConversation(group);
+    this.secureMessagingFacadeService.startConversation(group);
     this.changeDetectorRef.detectChanges();
     this.scrollToBottom();
   }
@@ -143,20 +137,20 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   // onClickBackConversation(): void {
   //   console.log('back clicked');
-    
+
   // }
 
   /**
    * Create message body object for sending a new message to a group
    * @param messageBody body of new message
    */
-  private createNewMessageSendBody(messageBody: string, userInfo: UserInfo): SecureMessageSendBody {
+  private createNewMessageSendBody(messageBody: string, userInfo: UserInfo): SecureMessageInfo {
     return {
-      institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
+      institution_id: SecureMessagingFacadeService.GetSecureMessagesAuthInfo().institution_id,
       sender: {
         type: SecureMessageTypes.PATRON,
-        id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
-        id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
+        id_field: SecureMessagingFacadeService.GetSecureMessagesAuthInfo().id_field,
+        id_value: SecureMessagingFacadeService.GetSecureMessagesAuthInfo().id_value,
         name: userInfo.firstName + ' ' + userInfo.lastName,
       },
       recipient: {
@@ -174,9 +168,10 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
    * Send message body to group
    * @param message message body object to send for new message
    */
-  private sendMessage(message: SecureMessageSendBody) {
+  private sendMessage(message: SecureMessageInfo) {
     this.newMessageText = null;
-    this.secureMessagingService
+    //this.secureMessagingFacadeService
+    this.secureMessagingFacadeService
       .sendSecureMessage(message)
       .pipe(first())
       .subscribe(
@@ -191,14 +186,14 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   /**
    * Add sent message to local conversation
    */
-  private addMessageToLocalConversation({ body, sender }: SecureMessageSendBody) {
+  private addMessageToLocalConversation({ body, sender }: SecureMessageInfo) {
     const message: SecureMessageInfo = {
       body,
       created_date: new Date().toLocaleString(),
       description: '',
       id: null,
       importance: null,
-      institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
+      institution_id: SecureMessagingFacadeService.GetSecureMessagesAuthInfo().institution_id,
       read_date: null,
       recipient: {
         created_date: new Date().toISOString(),
@@ -216,8 +211,8 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
         created_date: new Date().toISOString(),
         id: '',
         type: 'patron',
-        id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
-        id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
+        id_field: SecureMessagingFacadeService.GetSecureMessagesAuthInfo().id_field,
+        id_value: SecureMessagingFacadeService.GetSecureMessagesAuthInfo().id_value,
         name: sender.name,
         aux_user_id: null,
         version: 1,

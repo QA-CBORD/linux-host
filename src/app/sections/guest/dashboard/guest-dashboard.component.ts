@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { GuestDashboardSection } from './model/dashboard.item.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
@@ -12,7 +12,7 @@ import { GUEST_DEEP_LINKS } from 'src/app/app.global';
   templateUrl: './guest-dashboard.component.html',
   styleUrls: ['./guest-dashboard.component.scss'],
 })
-export class GuestDashboard implements OnInit {
+export class GuestDashboard implements OnInit, AfterViewInit {
   sections: GuestDashboardSection[] = [];
   institutionName$: Promise<string>;
   institutionPhoto$: Promise<SafeResourceUrl>;

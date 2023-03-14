@@ -1,10 +1,10 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { SecureMessageInfo, SecureMessageGroupInfo } from '@core/model/secure-messaging/secure-messaging.model';
 
 import { Observable } from 'rxjs';
 
 import { APIService, HttpResponseType, RestCallType } from 'src/app/core/service/api-service/api.service';
-import { SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from '../../model/secure-messaging/secure-messaging.model';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +50,7 @@ export class SecureMessagingApiService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  postSecureMessage(messageBody: SecureMessageSendBody): Observable<any> {
+  postSecureMessage(messageBody: SecureMessageInfo): Observable<SecureMessageInfo> {
     return this.apiService.authenticatedHTTPCall(
       RestCallType.post,
       this.serviceUrlSecureMessage,

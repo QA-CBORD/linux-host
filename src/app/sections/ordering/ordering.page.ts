@@ -6,7 +6,7 @@ import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActivatedRoute } from '@angular/router';
-import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS } from './ordering.config';
+import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
@@ -42,11 +42,17 @@ export class OrderingPage implements OnInit {
     await this.loadingService.closeSpinner();
   }
 
-  merchantClickHandler(merchantInfo: MerchantInfo) {
-    if (!this.canOrderFromMerchant(merchantInfo)) {
+  async merchantClickHandler(merchantInfo: MerchantInfo) {
+    if (merchantInfo.walkout) {
+      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+      return;
+    }
+
+    if (!this.isOpen(merchantInfo)) {
       this.onToastDisplayed(`${merchantInfo.name} is currently closed, please try again during operating hours`);
       return;
     }
+
     this.openOrderOptions(merchantInfo);
   }
 
@@ -60,8 +66,10 @@ export class OrderingPage implements OnInit {
         switchMap(() => this.merchantService.getMerchantsWithFavoriteInfo()),
         first()
       )
-      .subscribe(() => this.onToastDisplayed(isFavorite ? removeToFav : addedToFav), null, () =>
-        this.loadingService.closeSpinner()
+      .subscribe(
+        () => this.onToastDisplayed(isFavorite ? removeToFav : addedToFav),
+        null,
+        () => this.loadingService.closeSpinner()
       );
   }
 
@@ -122,7 +130,7 @@ export class OrderingPage implements OnInit {
         this.onToastDisplayed('We were unable to find your merchant - Please try again');
         return;
       }
-      if (!this.canOrderFromMerchant(merchant)) {
+      if (!this.isOpen(merchant)) {
         this.onToastDisplayed(`${merchant.name} is currently closed, please try again during operating hours`);
         return;
       }
@@ -134,7 +142,7 @@ export class OrderingPage implements OnInit {
     await this.toastService.showToast({ message, position: 'bottom', duration: 4000 });
   }
 
-  private canOrderFromMerchant(merchant: MerchantInfo): boolean {
+  private isOpen(merchant: MerchantInfo): boolean {
     return merchant.openNow || parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 

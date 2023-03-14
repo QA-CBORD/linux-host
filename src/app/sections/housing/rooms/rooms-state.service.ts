@@ -56,7 +56,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   setFacilities$(parentKey?: number ): void {
-    if(!parentKey) {
+    if (!parentKey) {
       this._activeFacilities$.next(this.getActiveFilterFacilities());
     } else {
       this._activeFacilities$.next(this.getParentFacilityChildren(parentKey));
@@ -76,10 +76,10 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     this._occupantDictionary.forEach(occupantDetails => {
       occupantDetails.forEach(occupant => {
         occupant.attributes.forEach(attribute => {
-          if(!this._hasAttribute(attributes, attribute)) {
+          if (!this._hasAttribute(attributes, attribute)) {
               attributes.push(attribute)
           } else {
-            if(this._isNewAttributeValue(attributes, attribute)) {
+            if (this._isNewAttributeValue(attributes, attribute)) {
               attributes.push(attribute);
             }
           }
@@ -108,7 +108,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     parentFacilities.forEach(parent => {
         const children =  this.getParentFacilityChildren(parent.facilityId);
         children.forEach(facility => {
-          if(facility.occupantKeys && facility.occupantKeys.length > 0) {
+          if (facility.occupantKeys && facility.occupantKeys.length > 0) {
             occupantFacilities.push(facility);
           }
         })

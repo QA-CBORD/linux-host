@@ -15,15 +15,15 @@ export class CheckingSuccessContentCsModel extends ContentStringModel {
     get title(): string {
       return this.content.title;
     }
-  
+
     get subtitle(): string {
       return this.content.subtitle;
     }
-  
+
     get instructions(): string {
       return this.content.instructions;
     }
-  
+
     get pickUpTimeLbl(): string {
       return this.content.lbl_pickup_time;
     }

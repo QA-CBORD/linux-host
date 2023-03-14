@@ -8,6 +8,7 @@ import { QuestionsModule } from '../../questions/questions.module';
 import { StepperModule } from '../../stepper/stepper.module';
 
 import { WaitingListsDetailsPage } from './waiting-lists-details.page';
+import { StFormsHeaderModule } from '@sections/housing/st-forms-header/st-forms-header.module';
 
 const imports = [
   CommonModule,
@@ -16,6 +17,7 @@ const imports = [
   QuestionsModule,
   StepperModule,
   WaitingListsDetailsRoutingModule,
+  StFormsHeaderModule
 ];
 const declarations = [WaitingListsDetailsPage];
 

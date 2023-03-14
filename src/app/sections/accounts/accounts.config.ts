@@ -31,7 +31,7 @@ export enum PAYMENT_TYPE {
   APPLEPAY = 'applePay'
 }
 
-export enum PAYMENT_TYPE_LABELS { 
+export enum PAYMENT_TYPE_LABELS {
   CREDIT_CARD = 'Credit Card',
   BILLME = 'Bill Me',
   APPLE_PAY = 'Apple Pay'

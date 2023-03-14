@@ -8,8 +8,17 @@ import { WorkOrderDetailsPage } from './work-order-details.page';
 import { ReactiveFormsModule } from '@angular/forms';
 import { QuestionsModule } from '@sections/housing/questions/questions.module';
 import { StepperModule } from '@sections/housing/stepper/stepper.module';
+import { StFormsHeaderModule } from '@sections/housing/st-forms-header/st-forms-header.module';
 
-const imports = [CommonModule, IonicModule, WorkOrderDetailsRoutingModule,ReactiveFormsModule,QuestionsModule,StepperModule];
+const imports = [
+  CommonModule,
+  IonicModule,
+  WorkOrderDetailsRoutingModule,
+  ReactiveFormsModule,
+  QuestionsModule,
+  StepperModule,
+  StFormsHeaderModule,
+];
 const declarations = [WorkOrderDetailsPage];
 
 @NgModule({

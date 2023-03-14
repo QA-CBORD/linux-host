@@ -31,7 +31,7 @@ export class CheckInFailureComponent implements OnInit {
   ionViewDidEnter() {
     this.loadingService.closeSpinner();
   }
-  
+
   async onBack() {
     await this.modalController.dismiss({ scancode: false });
   }

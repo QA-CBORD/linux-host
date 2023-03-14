@@ -1,18 +1,24 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, take, finalize } from 'rxjs/operators';
+import { finalize, Observable, take } from 'rxjs';
 
 import { CartService, MerchantService, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { OrderFiltersActionSheetComponent } from '@sections/ordering/shared/ui-components/order-filters.action-sheet/order-filters.action-sheet.component';
+import {
+  ORDERING_STATUS_LABEL_LBL,
+  ORDERS_PERIOD_LABEL,
+} from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { DateUtilObject, getAmountOfMonthFromPeriod } from '@sections/accounts/shared/ui-components/filter/date-util';
 
 const renderingDelay = 1000;
+
 @Component({
   selector: 'st-recent-orders',
   templateUrl: './recent-orders.component.html',
@@ -20,8 +26,7 @@ const renderingDelay = 1000;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrdersComponent implements OnInit {
-  pendingOrders$: Observable<OrderInfo[]>;
-  completedOrders$: Observable<OrderInfo[]>;
+  filteredOrders$: Observable<OrderInfo[]>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
@@ -32,6 +37,7 @@ export class RecentOrdersComponent implements OnInit {
     private readonly loadingService: LoadingService,
     public readonly checkinService: CheckingServiceFacade,
     private readonly cartService: CartService,
+    private readonly modalController: ModalsService
   ) {}
 
   ngOnInit() {
@@ -47,7 +53,7 @@ export class RecentOrdersComponent implements OnInit {
 
   refreshRecentOrders({ target }) {
     this.merchantService
-      .getRecentOrders()
+      .getRecentOrdersPeriod()
       .pipe(
         take(1),
         finalize(() => target.complete())
@@ -69,16 +75,7 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   private initOrders() {
-    this.pendingOrders$ = this.merchantService.recentOrders$.pipe(map(this.getPendingOrders));
-    this.completedOrders$ = this.merchantService.recentOrders$.pipe(map(this.getCompletedOrders));
-  }
-
-  private getPendingOrders(orders: OrderInfo[]): OrderInfo[] {
-    return orders.filter((order: OrderInfo) => order.status === ORDERING_STATUS.PENDING);
-  }
-
-  private getCompletedOrders(orders: OrderInfo[]): OrderInfo[] {
-    return orders.filter((order: OrderInfo) => order.status !== ORDERING_STATUS.PENDING);
+    this.filteredOrders$ = this.merchantService.recentOrders$;
   }
 
   private async initContentStrings() {
@@ -103,5 +100,73 @@ export class RecentOrdersComponent implements OnInit {
   async close() {
     await this.loadingService.showSpinner();
     await this.router.navigate([PATRON_NAVIGATION.ordering]);
+  }
+
+  filterChange({ period, status }) {
+    this.getOrderByPeriod(period, status);
+  }
+
+  getOrderByPeriod(period: DateUtilObject, status: string) {
+    this.loadingService.showSpinner();
+    this.merchantService
+      .getRecentOrdersPeriod(period, status)
+      .pipe(take(1))
+      .subscribe(
+        () => this.loadingService.closeSpinner(),
+        () => this.loadingService.closeSpinner()
+      );
+  }
+
+  async onFilter() {
+    const modal = await this.modalController.createActionSheet(
+      {
+        component: OrderFiltersActionSheetComponent,
+        cssClass: 'order-options-action-sheet__filter',
+        componentProps: {
+          selectedPeriod: this.merchantService.period,
+          selectedStatus: this.merchantService.orderStatus,
+          periods: this.periods,
+          statuses: this.statuses,
+        },
+      },
+      true
+    );
+
+    modal.onDidDismiss().then(({ data }) => {
+      if (data) {
+        this.filterChange(data);
+      }
+    });
+    await modal.present();
+  }
+
+  get statuses(): string[] {
+    return [
+      ORDERING_STATUS_LABEL_LBL.ALL,
+      ORDERING_STATUS_LABEL_LBL.PENDING,
+      ORDERING_STATUS_LABEL_LBL.COMPLETED,
+      ORDERING_STATUS_LABEL_LBL.CANCELED,
+    ];
+  }
+
+  get periods(): DateUtilObject[] {
+    const arr = getAmountOfMonthFromPeriod(6);
+    arr.unshift({ name: ORDERS_PERIOD_LABEL[0] });
+    return arr;
+  }
+
+  get isDefaultFilter() {
+    return (
+      this.merchantService.period.name === ORDERS_PERIOD_LABEL[0] &&
+      this.merchantService.orderStatus === ORDERING_STATUS_LABEL_LBL.ALL
+    );
+  }
+
+  get selectedPeriod () {
+    return this.merchantService.period.name;
+  }
+
+  get selectedStatus () {
+    return this.merchantService.orderStatus;
   }
 }

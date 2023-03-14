@@ -1,5 +1,6 @@
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MONTH } from '@sections/accounts/shared/ui-components/filter/date-util';
+import { TIMEZONE_REGEXP } from './regexp-patterns';
 
 export const determineDate = (date?: string) => (date ? new Date(date) : new Date());
 
@@ -13,7 +14,7 @@ export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
   const localTimezone = new Date().toLocaleString(locale, { timeZone });
   const greenwichTimezone = new Date().toLocaleString(locale, { timeZone: 'GMT' });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let timeZoneinGMT: any = (<any>new Date(greenwichTimezone) - <any>new Date(localTimezone)) / 1000 / 60 / 60;
+  let timeZoneinGMT: any = (<any> new Date(greenwichTimezone) - <any> new Date(localTimezone)) / 1000 / 60 / 60;
   timeZoneinGMT = timeZoneinGMT * -1;
   const toString = JSON.stringify(timeZoneinGMT);
   timeZoneinGMT = `${toString[0]}${toString[1].length > 1 ? toString[1] : '0' + toString[1]}`;
@@ -89,3 +90,7 @@ export const sortContentStringsBySourceArray = (
 
   return res;
 };
+
+export const formatDate = (date: string) => {
+  return date.replace(TIMEZONE_REGEXP, "$1:$2");
+}

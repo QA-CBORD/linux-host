@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 import { HousingService } from '../../housing.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -21,7 +21,7 @@ export enum SelectedUnitsTab {
   styleUrls: ['./rooms-search.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoomsSearchPage {
+export class RoomsSearchPage implements OnInit, OnDestroy {
   units: Unit[];
   roomSelectKey: number;
   parentFacilities: Facility[];

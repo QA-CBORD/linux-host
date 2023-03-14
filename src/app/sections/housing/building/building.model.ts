@@ -19,8 +19,8 @@ export class Building {
 
 export class FacilityToBuildingMapper implements IMapper {
   map(items: Facility[]): Building[] {
-    return items.map(x => new Building({key: x.facilityId, title: x.facilityName,
-      isFavorite: false, labels: LabelHelper.getLabels(x.attributes)}))
+    return items.map(x => new Building({ key: x.facilityId, title: x.facilityName,
+      isFavorite: false, labels: LabelHelper.getLabels(x.attributes) }))
   }
 
 }

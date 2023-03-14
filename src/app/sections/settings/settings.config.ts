@@ -164,11 +164,10 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
               CONTENT_STRINGS_MESSAGES.PHOTO_UPLOAD_MESSAGE
             )
           );
-          
+
           this.checkIsDisabled = isDisabledSetting && Number(isDisabledSetting?.value) === 0;
           this.message = messageString && messageString?.value ? messageString.value : PHOTO_UPLOAD_MESSAGE;
-          
-          
+
           const isPhotoVisible = await firstValueFrom(
             services.settings.getSetting(Settings.Setting.PHOTO_UPLOAD_ENABLED)
           );
