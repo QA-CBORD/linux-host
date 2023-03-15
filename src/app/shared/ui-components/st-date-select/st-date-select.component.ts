@@ -41,7 +41,6 @@ export class StDateSelectComponent implements ControlValueAccessor {
   @Input()
   isDisabled = false;
 
-  @ViewChild('dateCalendar') private dateCalendar: IonDatetime;
 
   onChange: (value) => void;
 

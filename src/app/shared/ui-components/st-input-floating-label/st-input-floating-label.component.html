@@ -5,10 +5,10 @@
     #input
     (change)="onChangeHandler(input.value)"
     (keyup)="onChangeHandler(input.value)"
-    type="{{ type }}"
+    [type]="type"
     (blur)="onBlur()"
     [attr.maxlength]="maxlength"
-    [ngClass]="{ 'input__control--error': isError }"
+    [class]="{ 'input__control--error': isError }"
     [disabled]="isDisabled"
     [attr.inputmode]="inputmode"
     [attr.enterkeyhint]="enterkeyhint"
