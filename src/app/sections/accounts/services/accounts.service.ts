@@ -4,7 +4,6 @@ import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
-import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
@@ -30,7 +29,6 @@ export class AccountService {
 
   constructor(
     private readonly commerceApiService: CommerceApiService,
-    private readonly contentService: ContentStringsApiService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
   ) {
@@ -69,8 +67,8 @@ export class AccountService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringListByRequest(ContentStringsParamsAccounts),
-      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams),
+      this.contentStringsFacadeService.retrieveContentStringListByRequest(ContentStringsParamsAccounts),
+      this.contentStringsFacadeService.retrieveContentStringListByRequest(GenericContentStringsParams),
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STRINGS_DOMAINS.patronUi,
         CONTENT_STRINGS_CATEGORIES.mealDonation,
