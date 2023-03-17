@@ -20,9 +20,19 @@ export class ActionsListComponent {
   showRemoveOption = false;
   applicationDefinition: ApplicationDefinition;
   patronApplication: PatronApplication;
+  actions = {
+    VIEW: 'View',
+    EDIT: 'Edit',
+    DETAILS: 'Details',
+    REMOVE: 'Remove',
+  };
   @Output() onRemove = new EventEmitter<void>();
 
-  constructor(private _popoverController: PopoverController, private _applicationService: ApplicationsService, private router: Router) {}
+  constructor(
+    private _popoverController: PopoverController,
+    private _applicationService: ApplicationsService,
+    private router: Router
+  ) {}
 
   handleEdit(): void {
     this.navigate();

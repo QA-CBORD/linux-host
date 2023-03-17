@@ -20,6 +20,15 @@ export const housingServiceStub = () => ({
   handleErrors: () => ({}),
 });
 
+export const applicationsServiceStub = () => ({
+  saveApplication: () => ({}),
+  submitApplication: () => ({}),
+  getQuestions: () => ({}),
+  saveLocally: () => ({
+    pipe: () => ({ subscribe: () => ({}) }),
+  }),
+});
+
 describe('ApplicationDetailsPage', () => {
   let component: ApplicationDetailsPage;
   let fixture: ComponentFixture<ApplicationDetailsPage>;
@@ -31,14 +40,7 @@ describe('ApplicationDetailsPage', () => {
     const modalControllerStub = () => ({
       create: () => ({ present: () => ({}) }),
     });
-    const applicationsServiceStub = () => ({
-      saveApplication: () => ({}),
-      submitApplication: () => ({}),
-      getQuestions: () => ({}),
-      saveLocally: () => ({
-        pipe: () => ({ subscribe: () => ({}) }),
-      }),
-    });
+
     const applicationsStateServiceStub = () => ({
       setRequestingRoommate: () => ({}),
       requestingRoommate: {
