@@ -8,13 +8,13 @@ import { MActivateMobileLocationResult, MMobileLocationInfo, MMobileLocationPara
 import { CONTENT_STRINGS, GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
 import { Settings, User } from '../../../app.global';
 import { CoordsService } from '@core/service/coords/coords.service';
-import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { Position } from '@capacitor/geolocation';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 
 @Injectable()
 export class MobileAccessService {
@@ -29,7 +29,7 @@ export class MobileAccessService {
   constructor(
     private readonly http: HttpClient,
     private readonly coords: CoordsService,
-    private readonly contentService: ContentStringsApiService,
+    private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly toastService: ToastService,
     private readonly settingsFacadeService: SettingsFacadeService,
   ) {}
@@ -51,8 +51,8 @@ export class MobileAccessService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringListByRequest(MobileAccessContentStringsParams),
-      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
+      this.contentStringFacadeService.retrieveContentStringListByRequest(MobileAccessContentStringsParams),
+      this.contentStringFacadeService.retrieveContentStringListByRequest(GenericContentStringsParams)
     ).pipe(
       map(([mobileCS, genericCS]) => {
         const finalArray = [...mobileCS, ...genericCS];
@@ -64,7 +64,7 @@ export class MobileAccessService {
   }
 
   initContentStringsListgfas(): Observable<ContentStringInfo[]> {
-    return this.contentService
+    return this.contentStringFacadeService
       .retrieveContentStringListByRequest(GenericContentStringsParams)
       .pipe(tap(res => (this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {}))));
   }
