@@ -39,7 +39,7 @@ describe('ActionsListComponent', () => {
       expect(spy).toBeCalled();
     });
 
-    it('should make for viewable (read-only)', () => {
+    it('should make forms viewable (read-only)', () => {
       clickIonItem(fixture, component.actions.VIEW);
       expect(applicationsService.isView).toBeTruthy();
     });
@@ -57,7 +57,7 @@ describe('ActionsListComponent', () => {
       expect(spy).toBeCalled();
     });
 
-    it('should make for viewable (read-only)', () => {
+    it('should navigate', () => {
       const spy = jest.spyOn(component as any, 'navigate');
       clickIonItem(fixture, component.actions.EDIT);
       expect(spy).toBeCalled();
