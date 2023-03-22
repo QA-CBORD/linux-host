@@ -60,6 +60,7 @@
               type="submit"
               *ngIf="isLastPage && applicationDetails.applicationDefinition.amount && !isSubmitted"
               [class.stepper-footer__button--right]="isFirstPage"
+              [disabled]="applicationsService.isView"
             >
               Continue to payment
             </st-button>
