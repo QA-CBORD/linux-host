@@ -144,8 +144,7 @@ export class ContractsService {
         value = this._questionsService.getAddressValue(contractDetails.patronAddresses, question);
       } else if (question instanceof QuestionDateSigned) {
         value = this._questionsService.getAttributeValue( question,null,contractDetails.contractInfo.dateTimeAccepted);
-      } 
-      else {
+      } else {
         value = this._questionsService.getAttributeValue( question, contractDetails.patronAttributes) || '';
       }
     }
