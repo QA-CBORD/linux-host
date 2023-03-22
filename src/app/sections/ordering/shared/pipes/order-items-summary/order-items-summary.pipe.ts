@@ -12,10 +12,9 @@ export class OrderItemsSummaryPipe implements PipeTransform {
 
     const itemsSummary: string[] = [];
 
-    value.forEach((orderItem, index) => {
+    value.forEach((orderItem) => {
       const quantity = orderItem.quantity > 1 ? ' x' + orderItem.quantity : '';
-      const end = value.length - 1 === index ? '' : ',';
-      itemsSummary.push(`${orderItem.name}${quantity}${end}`);
+      itemsSummary.push(` ${orderItem.name}${quantity}`);
     });
 
     return itemsSummary.toString();
