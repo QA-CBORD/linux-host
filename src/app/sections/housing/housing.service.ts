@@ -147,7 +147,8 @@ export class HousingService {
       .pipe(map((response: DetailsResponse) => response.contractDetails))
       .pipe(
         tap((details: ContractDetails) => {
-          if (details.contractInfo.dateTimeSigned) {
+          const dateTimeAccepted: string = details.contractInfo.dateTimeAccepted;
+          if (JSON.parse(dateTimeAccepted)) {
             this._contractsService.sign(true);
           }
         })

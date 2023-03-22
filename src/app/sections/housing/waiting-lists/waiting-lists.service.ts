@@ -150,7 +150,7 @@ export class WaitingListsService {
 
     if (!isDefined(value)) {
       if (question.consumerKey) {
-        value = this._questionsService.getAttributeValue(waitingListDetails.patronAttributes, question) || '';
+        value = this._questionsService.getAttributeValue( question, waitingListDetails.patronAttributes) || '';
         disabled = true;
       } else if (waitingListDetails.patronWaitingList != null) {
         value = this._getSelectedWaitingListValue(waitingListDetails);

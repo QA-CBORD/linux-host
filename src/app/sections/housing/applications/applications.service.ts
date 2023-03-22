@@ -284,7 +284,7 @@ export class ApplicationsService {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
       } else {
-        value = this._questionsService.getAttributeValue(applicationDetails.patronAttributes, question);
+        value = this._questionsService.getAttributeValue(question, applicationDetails.patronAttributes);
       }
     }
 

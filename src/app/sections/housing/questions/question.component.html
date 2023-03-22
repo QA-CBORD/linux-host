@@ -185,7 +185,7 @@
 
     </div>
   </ng-container>
-  <ng-container [ngSwitch]="question['dataType']">
+  <ng-container *ngIf="showDate$(question) | async" [ngSwitch]="question['dataType']">
     <div *ngSwitchCase="'DateTime'" class="question__item">
       <st-date-select
         [control]="parentGroup.get(question['name'])"

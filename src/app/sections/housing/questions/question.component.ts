@@ -5,7 +5,7 @@ import { QuestionHeader, QUESTIONS_TYPES } from './questions.model';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RequestedRoommate, RoommateSearchOptions } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { Observable, Subscription, BehaviorSubject } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject, tap } from 'rxjs';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
@@ -16,7 +16,8 @@ import { CameraService } from '@sections/settings/pages/services/camera.service'
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { PhotoUploadService } from '@sections/settings/pages/services/photo-upload.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { montDayYearHour } from '../../../shared/constants/dateFormats.constant'
+import { montDayYearHour } from '../../../shared/constants/dateFormats.constant';
+import { ContractsService } from '../contracts/contracts.service';
 
 const IMAGE_DIR = 'stored-images';
 @Component({
@@ -74,7 +75,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private cameraService: CameraService,
     private sessionService: SessionFacadeService,
     private photoUploadService: PhotoUploadService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private _contractService: ContractsService
   ) {}
 
   ngOnDestroy(): void {
@@ -91,6 +93,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._initTermsSubscription();
     this._initGetImage();
     this.setFacility();
+  }
+
+  showDate$(question: QuestionBase) {
+    return this._contractService.isSigned$.pipe(
+      tap(isSigned => question.type !== 'date-signed' || (question.type === 'date-signed' && isSigned))
+    );
   }
 
   createHeader(question: QuestionHeader): string {
@@ -184,7 +192,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      return <string> await this.convertBlobToBase64(blob);
+      return <string>await this.convertBlobToBase64(blob);
     }
   }
 
@@ -331,9 +339,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   private sanitizeUrl(photo: Photo, base64Data: string): string {
     return <string>(
-      (
       this.sanitizer.bypassSecurityTrustResourceUrl(this.sessionService.getIsWeb() ? photo.webPath : base64Data)
-    )
     );
   }
 

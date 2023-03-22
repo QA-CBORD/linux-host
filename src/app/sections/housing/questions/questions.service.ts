@@ -100,7 +100,9 @@ export class QuestionsService {
 
   toQuestionCheckboxControl(storedValue, question: QuestionCheckboxGroup): FormArray {
     const values: QuestionCheckboxGroupValue[] = storedValue || question.values;
-    const controls: FormControl[] = values.map((value: QuestionCheckboxGroupValue) => new FormControl(value.selected, this.getRequiredValidator(question)));
+    const controls: FormControl[] = values.map(
+      (value: QuestionCheckboxGroupValue) => new FormControl(value.selected, this.getRequiredValidator(question))
+    );
 
     return new FormArray(controls);
   }
@@ -110,25 +112,28 @@ export class QuestionsService {
     const groups = {};
 
     assetTypeGroup.forEach((at: AssetTypeDetailValue[], index: number) => {
-      const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl(detail.value, this.getRequiredValidator(question)));
+      const controls: FormControl[] = at.map(
+        (detail: AssetTypeDetailValue) => new FormControl(detail.value, this.getRequiredValidator(question))
+      );
       groups[`aaa-${index}`] = new FormArray(controls);
     });
 
     return new FormGroup(groups);
   }
 
-  getAttributeValue(attributes: Attribute[], question: QuestionFormControl): string {
-    const foundAttribute: Attribute = attributes.find(
-      (attribute: Attribute) => attribute.attributeConsumerKey === question.consumerKey
-    );
+  getAttributeValue(question: QuestionFormControl, attributes: Attribute[], dateAccepted?: string): string {
+    let foundAttribute: Attribute = null;
 
-    return foundAttribute ? foundAttribute.value : '';
+    if (attributes)
+      foundAttribute = attributes.find(
+        (attribute: Attribute) => attribute.attributeConsumerKey === question.consumerKey
+      );
+
+    return foundAttribute ? foundAttribute.value : dateAccepted ? JSON.parse(dateAccepted) : '';
   }
 
   getAddressValue(addresses: PatronAddress[], question: QuestionFormControl): string {
-    const address: PatronAddress = addresses.find(
-      (addr: PatronAddress) => addr.addrTypeKey === question.consumerKey
-    );
+    const address: PatronAddress = addresses.find((addr: PatronAddress) => addr.addrTypeKey === question.consumerKey);
 
     if (address) {
       switch (question.attribute) {
@@ -173,28 +178,32 @@ export class QuestionsService {
     }
 
     const questions: QuestionBase[] = [];
-    questions.push(new QuestionHeader({
-      type: 'header',
-      label: question.label,
-      subtype: 'h3',
-    }));
+    questions.push(
+      new QuestionHeader({
+        type: 'header',
+        label: question.label,
+        subtype: 'h3',
+      })
+    );
 
     question.values.forEach((field, index) => {
       if (field.selected) {
-        questions.push(new QuestionTextbox({
-          name: `text-${question.addressTypeId}-${index}`,
-          required: question.required,
-          type: 'text',
-          attribute: field.label,
-          consumerKey: question.addressTypeId,
-          facilityKey: null,
-          label: field.label,
-          preferenceKey: null,
-          subtype: 'text',
-          readonly: question.readonly,
-          dataType: 'String',
-          source: question.source
-        }));
+        questions.push(
+          new QuestionTextbox({
+            name: `text-${question.addressTypeId}-${index}`,
+            required: question.required,
+            type: 'text',
+            attribute: field.label,
+            consumerKey: question.addressTypeId,
+            facilityKey: null,
+            label: field.label,
+            preferenceKey: null,
+            subtype: 'text',
+            readonly: question.readonly,
+            dataType: 'String',
+            source: question.source,
+          })
+        );
       }
     });
 
@@ -203,7 +212,7 @@ export class QuestionsService {
 
   private _mapToQuestions(questions): QuestionBase[] {
     return questions
-      .map((question) => {
+      .map(question => {
         if (!question || !question.type) {
           return new QuestionBase();
         }
@@ -223,9 +232,11 @@ export class QuestionsService {
           return new QuestionChargeScheduleBase(question);
         } else if ((question as QuestionRoommatePreference).roommateSelection) {
           return new QuestionRoommatePreference(question);
-        } else if ((question as QuestionWaitingListRequest).facilitySelection
-          || (question as QuestionWaitingListRequest).attributeSelection) {
-            return new QuestionWaitingListRequest(question);
+        } else if (
+          (question as QuestionWaitingListRequest).facilitySelection ||
+          (question as QuestionWaitingListRequest).attributeSelection
+        ) {
+          return new QuestionWaitingListRequest(question);
         } else if ((question as QuestionContractDetails).source) {
           if ((question as QuestionContractDetails).source === QUESTIONS_SOURCES.CONTRACT_DETAILS) {
             if ((question as QuestionContractDetails).contractId === CONTRACT_DETAIL_KEYS.DATE_SIGNED) {
@@ -240,8 +251,9 @@ export class QuestionsService {
           }
         } else if (
           (question as QuestionAssetTypeDetailsBase).type === 'checkbox-group' &&
-          (question as QuestionAssetTypeDetailsBase).label.toLowerCase() === 'asset type details') {
-            return new QuestionAssetTypeDetailsBase(question);
+          (question as QuestionAssetTypeDetailsBase).label.toLowerCase() === 'asset type details'
+        ) {
+          return new QuestionAssetTypeDetailsBase(question);
         }
 
         return new QuestionConstructorsMap[question.type](question);
@@ -249,8 +261,8 @@ export class QuestionsService {
       .sort(this._sortByQuestionDateSigned);
   }
   private _isSourceFacility(question: QuestionFacilityAttributes): boolean {
-    const facilitySources = Object.keys(QUESTIONS_SOURCES).filter(x =>  x.includes("FACILITY"));
-    for (let i=0; i < facilitySources.length; i++) {
+    const facilitySources = Object.keys(QUESTIONS_SOURCES).filter(x => x.includes('FACILITY'));
+    for (let i = 0; i < facilitySources.length; i++) {
       if (question.source === facilitySources[i]) {
         return true;
       }
