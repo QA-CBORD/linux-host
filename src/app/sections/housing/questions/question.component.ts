@@ -18,6 +18,7 @@ import { PhotoUploadService } from '@sections/settings/pages/services/photo-uplo
 import { DomSanitizer } from '@angular/platform-browser';
 import { montDayYearHour } from '../../../shared/constants/dateFormats.constant';
 import { ContractsService } from '../contracts/contracts.service';
+import { QuestionTypes } from 'src/app/app.global';
 
 const IMAGE_DIR = 'stored-images';
 @Component({
@@ -95,9 +96,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.setFacility();
   }
 
+  get dateSignedType(){
+    return QuestionTypes.DATE_SIGNED
+  }
+
   showDate$(question: QuestionBase) {
     return this._contractService.isSigned$.pipe(
-      tap(isSigned => question.type !== 'date-signed' || (question.type === 'date-signed' && isSigned))
+      tap(isSigned => question.type !== this.dateSignedType || (question.type === this.dateSignedType && isSigned))
     );
   }
 
