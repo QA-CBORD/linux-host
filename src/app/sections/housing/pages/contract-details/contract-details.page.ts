@@ -108,8 +108,6 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
         this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
         this.canSubmit = !this.isSubmitted && this.isSigned;
         this.formKey = contractDetails.formKey || 0;
-        console.log(contractDetails);
-
         this._loadingService.closeSpinner();
       }),
       catchError((error: Error) => {
@@ -121,7 +119,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initPagesObservable(): void {
-    this.pages$ = this._contractsService.getQuestions(this.contractKey).pipe(tap(console.log));
+    this.pages$ = this._contractsService.getQuestions(this.contractKey);
   }
 
   private _next(): void {
