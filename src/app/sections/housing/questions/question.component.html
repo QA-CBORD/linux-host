@@ -176,9 +176,9 @@
       </h3>
       <st-button
         expand="block"
-        color="primary"
-        mode="ios"
-        (click)="question.action()">
+        (onClick)="question.action()"
+        [disabled]="(isSubmitted && !canEdit) || isView"
+        >
         {{ question.buttonText }}
       </st-button>
       <!-- TODO: create template to show users -->
