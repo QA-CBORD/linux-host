@@ -1,15 +1,26 @@
-<st-header
-        [title]="(contentStrings.labelOrder | async)"
-        [isTitleShow]="true"
-        [isToolbarShow]="true"
-        [isBackButtonShow]="false"
-        class="shadow-header"
-></st-header>
+<ion-header class="header" no-border>
+  <ion-toolbar mode="ios" class="header__nav-toolbar">
+    <ion-title class="header__title">{{ (contentStrings.labelOrder | async) }}</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar class="header__toolbar">
+    <ion-searchbar
+      (ionChange)="onSearchedValue($event)"
+      (keyup.enter)="onEnterKeyClicked()"
+      placeholder="Search..."
+      type="text"
+      debounce="500"
+      mode="ios"
+      class="header__searchbar"
+    ></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content main class="ordering-content-wrapper">
   <st-menu-ordering class="ordering-page__menu"></st-menu-ordering>
 
   <st-merchant-list
-    [merchantList]="merchantList$ | async"
+    [merchantList]="merchantList$ | async | search: searchString"
     (addToFav)="favouriteHandler($event)"
     (locationPin)="locationPinHandler($event)"
     (merchantClick)="merchantClickHandler($event)"

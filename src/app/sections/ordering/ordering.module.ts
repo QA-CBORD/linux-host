@@ -14,9 +14,10 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { CheckInModule } from '@sections/check-in/check-in.module';
 import { TypeMessageModule } from './shared/pipes/type-message/type-message.pipe.module';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { SearchPipe } from '@shared/pipes/search-pipe/search.pipe';
 
 const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule, StHeaderModule, CheckInModule, TypeMessageModule];
-const declarations = [OrderingPage, MenuOrderingComponent];
+const declarations = [OrderingPage, MenuOrderingComponent, SearchPipe];
 const providers = [OrderingResolver, CartResolver, OrderingService, ModalsService];
 
 @NgModule({
