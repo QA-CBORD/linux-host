@@ -5,7 +5,7 @@ import { QuestionHeader, QUESTIONS_TYPES } from './questions.model';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { RequestedRoommate, RoommateSearchOptions } from '../applications/applications.model';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { Observable, Subscription, BehaviorSubject, tap } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { ToastService } from '../../../core/service/toast/toast.service';
 import { WorkOrderStateService } from '../work-orders/work-order-state.service';
 import { ContractListStateService } from '../contract-list/contract-list-state.service';
@@ -191,7 +191,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      return <string>await this.convertBlobToBase64(blob);
+      return <string> await this.convertBlobToBase64(blob);
     }
   }
 
