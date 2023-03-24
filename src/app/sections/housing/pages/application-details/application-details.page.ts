@@ -163,7 +163,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
             take(1)
           )
           .subscribe(() => this.loadingService.closeSpinner());
-        if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
+        if (this.canRequestRoommate(applicationDetails)) {
           return this.requestingRoommate();
         }
       }),
@@ -172,6 +172,10 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
         return throwError(error);
       })
     );
+  }
+
+  private canRequestRoommate(applicationDetails: ApplicationDetails) {
+    return !this.applicationsService.isView && (!this.isSubmitted || applicationDetails.applicationDefinition.canEdit) && this.applicationsStateService.requestingRoommate != null;
   }
 
   private getPages$() {

@@ -17,7 +17,7 @@ export class ContractsListComponent {
 
   trackById = (_: number, contract: ContractListDetails): number => contract.id;
 
-  AllowEdit(contract: ContractListDetails): boolean {
+  allowEdit(contract: ContractListDetails): boolean {
     const allowedStates = [ContractStatus.Active, ContractStatus.Preliminary];
     return !isDefined(contract.acceptedDate) && allowedStates.includes(ContractStatus[contract.state]);
   }
