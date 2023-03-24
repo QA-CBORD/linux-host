@@ -96,14 +96,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.setFacility();
   }
 
-  get dateSignedType(){
-    return QuestionTypes.DATE_SIGNED
-  }
-
-  showDate$(question: QuestionBase) {
-    return this._contractService.isSigned$.pipe(
-      tap(isSigned => question.type !== this.dateSignedType || (question.type === this.dateSignedType && isSigned))
-    );
+  get dateSignedType() {
+    return QuestionTypes.DATE_SIGNED;
   }
 
   createHeader(question: QuestionHeader): string {
@@ -197,7 +191,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       // Fetch the photo, read as a blob, then convert to base64 format
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-      return <string> await this.convertBlobToBase64(blob);
+      return <string>await this.convertBlobToBase64(blob);
     }
   }
 

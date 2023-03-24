@@ -161,7 +161,9 @@ export class NonAssignmentsService {
       assetTypes,
     });
   }
-
+  getName(quetionField: string, p: AssetTypeDetailValue) {
+    return isDefined(quetionField) && quetionField !== 'undefined' ? quetionField : p.label;
+  }
   private _toAssetTypeDetails(
     question: QuestionAssetTypeDetailsBase,
     assetTypes: AssetType[]
@@ -171,31 +173,22 @@ export class NonAssignmentsService {
     }
 
     const selectedValues = question.values.filter(p => p.selected);
-
     let nameLabel = '';
     let mealsLabel = '';
     let diningDollarsLabel = '';
     let costLabel = '';
 
     selectedValues.forEach(p => {
-      switch (p.value) {
-        case '0':
-          nameLabel =
-            isDefined(question.customName) && question.customName !== 'undefined' ? question.customName : p.label;
-          break;
-        case '1':
-          mealsLabel =
-            isDefined(question.customMeals) && question.customMeals !== 'undefined' ? question.customMeals : p.label;
-          break;
-        case '2':
-          diningDollarsLabel =
-            isDefined(question.customDining) && question.customDining !== 'undefined' ? question.customDining : p.label;
-          break;
-        case '3':
-          costLabel =
-            isDefined(question.customCost) && question.customDining !== 'undefined' ? question.customCost : p.label;
-          break;
-      }
+      nameLabel = this.getName(question.customName, p);
+      mealsLabel = this.getName(question.customMeals, p);
+      diningDollarsLabel = this.getName(question.customDining, p);
+      costLabel = this.getName(question.customCost, p);
+      return {
+        '0': nameLabel,
+        '1': mealsLabel,
+        '2': diningDollarsLabel,
+        '3': costLabel,
+      }[p.value];
     });
 
     const availableAssetTypes = assetTypes.map((assetType: AssetType) =>

@@ -129,7 +129,7 @@ export class QuestionsService {
         (attribute: Attribute) => attribute.attributeConsumerKey === question.consumerKey
       );
 
-    return foundAttribute ? foundAttribute.value : dateAccepted ? JSON.parse(dateAccepted) : '';
+    return foundAttribute ? foundAttribute.value : dateAccepted && dateAccepted.length > 4 ? dateAccepted : '';
   }
 
   getAddressValue(addresses: PatronAddress[], question: QuestionFormControl): string {
