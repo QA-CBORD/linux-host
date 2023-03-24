@@ -149,7 +149,6 @@ export class HousingService {
         tap((details: ContractDetails) => {
           const dateTimeAccepted: string = details.contractInfo.dateTimeAccepted;
           const isSigned = dateTimeAccepted.length > 4 ? dateTimeAccepted : JSON.parse(dateTimeAccepted);
-          
           if (isSigned) {
             this._contractsService.sign(true);
           }
