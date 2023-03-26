@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { InstitutionsPage } from './institutions.page';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
-import { SearchPipe } from '@shared/pipes/search-pipe/search.pipe';
+import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 
 const routes: Routes = [
@@ -18,7 +18,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, StHeaderModule, StButtonModule, RouterModule.forChild(routes)],
-  declarations: [InstitutionsPage, SearchPipe],
+  imports: [CommonModule, FormsModule, IonicModule, StHeaderModule, StButtonModule, RouterModule.forChild(routes), SearchPipeModule],
+  declarations: [InstitutionsPage],
 })
 export class InstitutionsPageModule {}
