@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { PATRON_NAVIGATION } from '../../../app.global';
+import { NavigationStart, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { ModalController, NavController, PopoverController } from '@ionic/angular';
 import { GlobalNavService } from './services/global-nav.service';
