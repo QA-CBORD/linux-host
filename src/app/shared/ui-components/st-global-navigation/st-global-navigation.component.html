@@ -28,9 +28,9 @@
 </nav>
 
 <ng-template #navItems let-navElems>
-  <li *ngFor="let item of navElems" (click)="navigate(item.url)"
+  <li *ngFor="let item of navElems" [routerLink]="getLink(item.url)"
       class="global-navigation__list-item"
-      [class.global-navigation__list-item--active]="isRouteActive(item.url)">
+      [routerLinkActive]="'global-navigation__list-item--active'">
     <div class="global-navigation__icon global-navigation__icon--{{item.iconCssPostfix}}"></div>
     {{item.name}}
     <ion-ripple-effect></ion-ripple-effect>
