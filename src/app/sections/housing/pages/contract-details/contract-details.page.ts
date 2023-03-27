@@ -21,6 +21,7 @@ import { ContractDetails } from '../../contracts/contracts.model';
 import { IonContent } from '@ionic/angular';
 import { FormPaymentService, FormType } from '../form-payment/form-payment.service';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ApplicationsService } from '@sections/housing/applications/applications.service';
 
 @Component({
   selector: 'st-contract-details',
@@ -48,7 +49,9 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _housingService: HousingService,
     private _changeDetector: ChangeDetectorRef,
-    private formPaymentService: FormPaymentService
+    private formPaymentService: FormPaymentService,
+    public applicationsService: ApplicationsService
+
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +63,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.applicationsService.isView = false;
     this._contractsService.sign(false);
     this._subscription.unsubscribe();
   }
