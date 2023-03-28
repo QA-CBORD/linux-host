@@ -185,6 +185,8 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
           (this._groupsArray.length === smGroupArray.length && !this._selectedConversation)
         )
           return;
+          this.messagesArray = smMessageArray;
+          this._groupsArray = smGroupArray;
         this.storageStateService.updateStateEntity(this.secureMessaginKey, [smGroupArray, smMessageArray], {
           ttl: StateTimeDuration.TTL,
           highPriorityKey: true,
