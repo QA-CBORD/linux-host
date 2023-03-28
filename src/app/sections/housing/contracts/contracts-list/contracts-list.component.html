@@ -10,5 +10,5 @@
     <h2 class="applications-list__title">{{ contract.applicationTitle }}</h2>
   </ion-label>
 
-  <st-actions [canEdit]="AllowEdit(contract)" [navigateTo]="getPath(contract.id, contract.contractElementId)"></st-actions>
+  <st-actions [showViewOption]="!allowEdit(contract)" [canEdit]="allowEdit(contract)" [navigateTo]="getPath(contract.id, contract.contractElementId)"></st-actions>
 </ion-item>

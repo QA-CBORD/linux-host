@@ -25,30 +25,38 @@ import { FormPaymentComponent } from "./form-payment.component";
 import { FormType } from './form-payment.service';
 import { MockCurrentForm } from './form-payment.service.spec';
 
-const cardInfo = JSON.parse(JSON.stringify({ "sourceAcc": { "accountTender": "4", "lastFour": "2224" }, "selectedAccount": { "accountDisplayName": "R19c08 student", "accountType": 2 }, "amount": "60.00" }));
+const cardInfo = JSON.parse(
+  JSON.stringify({
+    sourceAcc: { accountTender: '4', lastFour: '2224' },
+    selectedAccount: { accountDisplayName: 'R19c08 student', accountType: 2 },
+    amount: '60.00',
+  })
+);
 
-const card = JSON.parse(JSON.stringify({
-  "display": "Visa ending in 2224",
-  "account": {
-    "id": "63e3978c-4804-496b-9b52-e9504b7ea42a",
-    "institutionId": "7b651444-2531-4e77-9daa-0a44087b3472",
-    "paymentSystemId": "8a244198-8aa6-4294-bda9-774c3830ea71",
-    "userId": "1208a4c0-cbe9-4819-a6fe-978c80638f43",
-    "isActive": true,
-    "accountDisplayName": "R19c08 student",
-    "paymentSystemType": 4,
-    "accountTender": "4",
-    "accountType": 2,
-    "depositAccepted": false,
-    "lastFour": "2224",
-    "nameOnMedia": "R19c08 student",
-    "expirationMonth": null,
-    "expirationYear": null,
-    "billingAddressId": "f715a906-8505-4b13-880f-0307c3f9f4fd",
-    "balance": null
-  },
-  "iconSrc": "/assets/icon/visa_dark.svg"
-}));
+const card = JSON.parse(
+  JSON.stringify({
+    display: 'Visa ending in 2224',
+    account: {
+      id: '63e3978c-4804-496b-9b52-e9504b7ea42a',
+      institutionId: '7b651444-2531-4e77-9daa-0a44087b3472',
+      paymentSystemId: '8a244198-8aa6-4294-bda9-774c3830ea71',
+      userId: '1208a4c0-cbe9-4819-a6fe-978c80638f43',
+      isActive: true,
+      accountDisplayName: 'R19c08 student',
+      paymentSystemType: 4,
+      accountTender: '4',
+      accountType: 2,
+      depositAccepted: false,
+      lastFour: '2224',
+      nameOnMedia: 'R19c08 student',
+      expirationMonth: null,
+      expirationYear: null,
+      billingAddressId: 'f715a906-8505-4b13-880f-0307c3f9f4fd',
+      balance: null,
+    },
+    iconSrc: '/assets/icon/visa_dark.svg',
+  })
+);
 
 const cd = {
   detectChanges: jest.fn(),
@@ -68,7 +76,8 @@ const creditCardService = {
   retrieveAccounts: jest.fn(() => of(true))
 };
 
-const applicationsService = {
+export const applicationsService = {
+  isView: {},
   saveApplication: jest.fn(() => of(true)),
   submitApplication: jest.fn(() => of(true))
 };
@@ -77,11 +86,12 @@ const contractsService = {
   submitContract: jest.fn(() => of(true))
 };
 
-const popoverCtrl = {
+export const popoverCtrl = {
   create: jest.fn(() => ({
     onDidDismiss: () => ({ then: () => of({ role: BUTTON_TYPE.OKAY }) }),
     present: () => of(true)
-  }))
+  })),
+  dismiss: jest.fn(),
 };
 
 const modalCtrl = {

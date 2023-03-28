@@ -6,11 +6,12 @@ import { ApplicationsStateService } from '@sections/housing/applications/applica
 import { RoommateSearchOptions } from '@sections/housing/applications/applications.model';
 import { SearchByPage } from './search-by.page';
 
+export  const routerStub = () => ({ navigate: () => ({}) });
+
 describe('SearchByPage', () => {
   let component: SearchByPage;
   let fixture: ComponentFixture<SearchByPage>;
   beforeEach(() => {
-    const routerStub = () => ({ navigate: () => ({}) });
     const applicationsStateServiceStub = () => ({
       roommateSearchOptions: { pipe: () => ({ subscribe: f => f({}) }) },
       setRoommateSearchOptions: () => ({}),

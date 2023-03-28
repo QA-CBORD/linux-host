@@ -3,7 +3,7 @@
   *ngIf="(applicationDetails$ | async) as applicationDetails"
   #content
 >
-  <st-forms-header [showSave]="!applicationsService.isView"
+  <st-forms-header [showSave]="!(applicationsService.isView || isSubmitted)"
     (onSave)="save(applicationDetails)"></st-forms-header>
   <ion-label>{{ applicationDetails.applicationDefinition.applicationTitle }}</ion-label>
   <ion-card  no-padding class="application-details__card">
@@ -60,6 +60,7 @@
               type="submit"
               *ngIf="isLastPage && applicationDetails.applicationDefinition.amount && !isSubmitted"
               [class.stepper-footer__button--right]="isFirstPage"
+              [disabled]="applicationsService.isView"
             >
               Continue to payment
             </st-button>
