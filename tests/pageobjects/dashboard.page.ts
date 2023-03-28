@@ -24,6 +24,10 @@ class DashboardPage extends Page {
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-footer/st-global-navigation/nav/st-popup-list/div/div/div/ul/li[2]');
     }
 
+    get AddFundsButton(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-dashboard/ion-content/st-tile-wrapper[1]/div/ion-item[2]');
+    }
+
 }
 
 export default new DashboardPage();
