@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
 import { NavigationStart, Router } from '@angular/router';
-import { PATRON_NAVIGATION } from '../../../app.global';
 import { Observable, Subscription } from 'rxjs';
 import { ModalController, NavController, PopoverController } from '@ionic/angular';
 import { GlobalNavService } from './services/global-nav.service';
@@ -39,16 +38,15 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly globalNav: GlobalNavService
   ) {
-    this.suscription = this.router.events
-      .pipe(filter(e => e instanceof NavigationStart))
-      .subscribe(async () => {
-        try {
-          await this.popoverController.dismiss();
-          await this.modalController.dismiss();
-        } catch (error) {
-          // TODO: Properly handle exception
-        }
-      });
+    this.suscription = this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe(async () => {
+      try {
+        this.isListShown = false;
+        await this.popoverController.dismiss();
+        await this.modalController.dismiss();
+      } catch (error) {
+        // TODO: Properly handle exception
+      }
+    });
   }
 
   ngOnInit() {
@@ -59,21 +57,11 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     this.isListShown = !this.isListShown;
   }
 
-  async navigate(url: PATRON_NAVIGATION | string): Promise<void> {
-    this.isListShown = false;
-    await this.navCtrl.navigateForward([url]);
-  }
-
   ngOnDestroy(): void {
     this.suscription.unsubscribe();
   }
 
-  isRouteActive(routePath: string) {
-    return this.router.isActive(routePath, {
-      matrixParams: 'ignored',
-      queryParams: 'ignored',
-      paths: 'subset',
-      fragment: 'ignored',
-    });
+  getLink(url: string) {
+    return `/${url}`;
   }
 }

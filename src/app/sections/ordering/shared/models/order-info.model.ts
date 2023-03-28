@@ -4,6 +4,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 export interface OrderInfo {
   id: string;
   merchantName?: string;
+  amountDue: number;
   checkNumber: number;
   checkinStatus: number,
   posCheckNumber: string;

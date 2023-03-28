@@ -14,5 +14,5 @@
     <h2 class="applications-list__title">{{ nonAssignment.applicationTitle }}</h2>
   </ion-label>
 
-  <st-actions [canEdit]="canEdit(nonAssignment)" [navigateTo]="getPath(nonAssignment.id)"></st-actions>
+  <st-actions [showViewOption]="!canEdit(nonAssignment)" [canEdit]="canEdit(nonAssignment)" [navigateTo]="getPath(nonAssignment.id)"></st-actions>
 </ion-item>
