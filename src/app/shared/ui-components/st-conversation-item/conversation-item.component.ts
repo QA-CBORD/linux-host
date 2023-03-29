@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { SecureMessageConversationListItem, SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
 import { generateColorHslFromText } from '@core/utils/colors-helper';
 import { mapConversationToListItem } from '@core/utils/conversations-helper';
-import { SecureMessageConversation, SecureMessageConversationListItem } from '@sections/secure-messaging';
 
 @Component({
   selector: 'st-conversation-item',

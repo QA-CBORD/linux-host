@@ -101,7 +101,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       merchant,
       isASAP,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } = <any>this.data;
+    } = <any> this.data;
     await this.cart.onAddItems({
       merchant,
       orderOptions: { dueTime: new Date(dueTime), orderType, address, isASAP },
@@ -170,9 +170,9 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       componentProps: {
         formats: [SupportedFormat.QR_CODE],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (<any>this.contentStrings).scan_code_title,
+        title: (<any> this.contentStrings).scan_code_title,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        prompt: (<any>this.contentStrings).scan_code_prompt,
+        prompt: (<any> this.contentStrings).scan_code_prompt,
       },
     });
     await modal.present();
@@ -250,7 +250,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   private watchLocationChanges() {
     this.locationSubscription = this.coordsService.location$.subscribe((location) => {
-      if(!location || !location.coords) return of(null);
+      if (!location || !location.coords) return of(null);
       this.locationPermissionDisabled = !(location.coords.latitude && location.coords.longitude);
     });
   }
@@ -279,7 +279,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
     const orderDetailOptions = await firstValueFrom(this.orderDetailOptions$);
 
-    if(!orderDetailOptions) {
+    if (!orderDetailOptions) {
       this.orderDetailOptions$ = of({
         orderType: type,
         address: {} as AddressInfo,

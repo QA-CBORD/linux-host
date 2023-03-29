@@ -95,7 +95,7 @@ export class WaitingListsService {
   }
 
   private _toWaitingListCustomType(question: QuestionBase, waitingListDetails: WaitingListDetails): QuestionBase {
-    if(!(question instanceof QuestionWaitingListRequest)) {
+    if (!(question instanceof QuestionWaitingListRequest)) {
       return question;
     }
 
@@ -117,7 +117,7 @@ export class WaitingListsService {
         });
       }
 
-    }else {
+    } else {
       return new QuestionTextbox({
         name: `attribute-selection-${this.index++}`,
         type: 'text',
@@ -150,7 +150,7 @@ export class WaitingListsService {
 
     if (!isDefined(value)) {
       if (question.consumerKey) {
-        value = this._questionsService.getAttributeValue(waitingListDetails.patronAttributes, question) || '';
+        value = this._questionsService.getAttributeValue( question, waitingListDetails.patronAttributes) || '';
         disabled = true;
       } else if (waitingListDetails.patronWaitingList != null) {
         value = this._getSelectedWaitingListValue(waitingListDetails);

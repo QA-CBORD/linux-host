@@ -1,11 +1,11 @@
 import {
   SecureMessageConversation,
-  SecureMessageConversationListItem,
-  SecureMessageGroupInfo,
   SecureMessageInfo,
   SecureMessageTypes,
+  SecureMessageGroupInfo,
   SecureMessagingAuthInfo,
-} from '@sections/secure-messaging/models';
+  SecureMessageConversationListItem,
+} from '@core/model/secure-messaging/secure-messaging.model';
 
 /**
  * UI helper method to set group name initals

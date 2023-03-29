@@ -13,6 +13,22 @@ import { FormPaymentService } from '../form-payment/form-payment.service';
 import { ApplicationDetailsPage } from './application-details.page';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
 
+export const housingServiceStub = () => ({
+  getApplicationDetails: () => ({ pipe: () => ({}) }),
+  getRequestedRommate: () => ({}),
+  goToDashboard: () => ({}),
+  handleErrors: () => ({}),
+});
+
+export const applicationsServiceStub = () => ({
+  saveApplication: () => ({}),
+  submitApplication: () => ({}),
+  getQuestions: () => ({}),
+  saveLocally: () => ({
+    pipe: () => ({ subscribe: () => ({}) }),
+  }),
+});
+
 describe('ApplicationDetailsPage', () => {
   let component: ApplicationDetailsPage;
   let fixture: ComponentFixture<ApplicationDetailsPage>;
@@ -24,20 +40,7 @@ describe('ApplicationDetailsPage', () => {
     const modalControllerStub = () => ({
       create: () => ({ present: () => ({}) }),
     });
-    const applicationsServiceStub = () => ({
-      saveApplication: () => ({}),
-      submitApplication: () => ({}),
-      getQuestions: () => ({}),
-      saveLocally: () => ({
-        pipe: () => ({ subscribe: () => ({}) }),
-      }),
-    });
-    const housingServiceStub = () => ({
-      getApplicationDetails: () => ({ pipe: () => ({}) }),
-      getRequestedRommate: () => ({}),
-      goToDashboard: () => ({}),
-      handleErrors: () => ({}),
-    });
+
     const applicationsStateServiceStub = () => ({
       setRequestingRoommate: () => ({}),
       requestingRoommate: {
@@ -121,15 +124,6 @@ describe('ApplicationDetailsPage', () => {
       jest.spyOn(applicationsStateServiceStub, 'setRequestingRoommate');
       component.requestingRoommate();
       expect(applicationsStateServiceStub.setRequestingRoommate).toHaveBeenCalled();
-    });
-  });
-
-  describe('onCancel', () => {
-    it('makes expected calls', () => {
-      const housingServiceStub: HousingService = fixture.debugElement.injector.get(HousingService);
-      jest.spyOn(housingServiceStub, 'goToDashboard');
-      component.onCancel();
-      expect(housingServiceStub.goToDashboard).toHaveBeenCalled();
     });
   });
 });

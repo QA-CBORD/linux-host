@@ -24,6 +24,20 @@
     }
   }
 }
+input[type='text'].input__control {
+  border: 1px solid $color-matterhorn;
+  & + .input__placeholder {
+    font-weight: bold;
+  }
+  &:focus,
+  &:focus-within {
+    border: 2px solid $color-dodger-blue;
+
+    & + .input__placeholder {
+      @include floating-label($color-dodger-blue);
+    }
+  }
+}
 .input {
   &__wrapper {
     position: relative;
@@ -82,7 +96,7 @@
     top: 25%;
     right: 5%;
   }
-  
+
   &__transparent_btn {
     position: absolute;
     top: 0%;

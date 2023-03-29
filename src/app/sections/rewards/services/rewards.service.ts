@@ -4,7 +4,6 @@ import { BehaviorSubject, combineLatest, Observable, zip } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
-import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 
 import {
   CLAIM_STATUS,
@@ -18,6 +17,7 @@ import {
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo, UserTrackLevelInfo } from '../models';
 import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 
 @Injectable()
 export class RewardsService {
@@ -30,7 +30,10 @@ export class RewardsService {
 
   private content;
 
-  constructor(private readonly rewardsApi: RewardsApiService, private readonly contentService: ContentStringsApiService) {}
+  constructor(
+    private readonly rewardsApi: RewardsApiService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService
+  ) {}
 
   get rewardTrack(): Observable<UserRewardTrackInfo> {
     return this.rewardTrack$.asObservable();
@@ -62,7 +65,10 @@ export class RewardsService {
   combineAllRewards(): Observable<RedeemableRewardInfo[]> {
     return this.rewardTrack.pipe(
       map(({ trackLevels = [], redeemableRewards = [] }) => {
-        const rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
+        const rewards = trackLevels.reduce(
+          (total, { userClaimableRewards }) => [...total, ...userClaimableRewards],
+          []
+        );
 
         return [...redeemableRewards, ...rewards];
       })
@@ -144,8 +150,8 @@ export class RewardsService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringListByRequest(ContentStringsParams),
-      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
+      this.contentStringsFacadeService.retrieveContentStringListByRequest(ContentStringsParams),
+      this.contentStringsFacadeService.retrieveContentStringListByRequest(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];

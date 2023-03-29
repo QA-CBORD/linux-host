@@ -163,7 +163,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
             take(1)
           )
           .subscribe(() => this.loadingService.closeSpinner());
-        if (!this.isSubmitted && this.applicationsStateService.requestingRoommate != null) {
+        if (this.canRequestRoommate(applicationDetails)) {
           return this.requestingRoommate();
         }
       }),
@@ -172,6 +172,10 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
         return throwError(error);
       })
     );
+  }
+
+  private canRequestRoommate(applicationDetails: ApplicationDetails) {
+    return !this.applicationsService.isView && (!this.isSubmitted || applicationDetails.applicationDefinition.canEdit) && this.applicationsStateService.requestingRoommate != null;
   }
 
   private getPages$() {
@@ -185,10 +189,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
   isRoommateSearch(question: string): boolean {
     return question === 'Search for a roommate';
-  }
-
-  onCancel() {
-    this.housingService.goToDashboard();
   }
 
   onChange(applicationDetails: ApplicationDetails, formGroup: FormGroup) {

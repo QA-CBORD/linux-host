@@ -97,9 +97,36 @@
       </div>
     </div>
 
-    <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
-      {{ contentStrings.labelPaymentMethod | async }}<span>{{ orderPaymentName }}</span>
-    </div>
+    <ng-container *ngIf="readonly; else paymentSelect">
+      <div class="order-details__payment-method" *ngIf="!hasReadonlyPaymentMethodError; else paymentSelectError">
+        {{ contentStrings.labelPaymentMethod | async }}<span>{{ orderPaymentName }}</span>
+      </div>
+      <ng-template #paymentSelectError>
+        <div class="order-details">
+          <div class="order-details__block">
+            <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
+          </div>
+          <ion-select
+            aria-required="true"
+            [formControlName]="controlsNames.paymentMethod"
+            [class.custom-error]="paymentFormControl.errors"
+            class="order-details__value custom-error"
+            mode="md"
+            [selectedText]="paymentMethodError.value | accountTypeResolver : mealBased"
+            #paymentMethodError
+          >
+            <ion-select-option [value]="orderPaymentName">
+              {{ orderPaymentName }}
+            </ion-select-option>
+          </ion-select>
+          <st-control-errors
+            class="control-hint--no-indent"
+            [control]="paymentFormControl"
+            [errorMessages]="paymentMethodErrorMessages"
+          ></st-control-errors>
+        </div>
+      </ng-template>
+    </ng-container>
 
     <ng-template #paymentSelect>
       <div class="order-details">

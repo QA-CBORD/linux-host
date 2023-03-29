@@ -191,7 +191,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.selectedTimeStamp = timeStamp;
 
     const element = document.getElementById('time_element');
-    if(element) element.focus();
+    if (element) element.focus();
 
     this.cdRef.detectChanges();
   }

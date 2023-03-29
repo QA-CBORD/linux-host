@@ -19,6 +19,7 @@ import {
   QuestionChargeScheduleBase,
   QuestionCheckboxGroup,
   QuestionContractDetails,
+  QuestionDateSigned,
   QuestionFormControl,
 } from '@sections/housing/questions/types';
 import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
@@ -138,11 +139,13 @@ export class ContractsService {
       if (question instanceof QuestionContractDetails) {
         value = this._getContractDetailValue(question, contractDetails.contractInfo);
       } else if (question instanceof QuestionFacilityAttributes) {
-        value = this._questionsService.getAttributeValue(contractDetails.facilityAttributes, question);
+        value = this._questionsService.getAttributeValue( question, contractDetails.facilityAttributes);
       } else if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(contractDetails.patronAddresses, question);
+      } else if (question instanceof QuestionDateSigned) {
+        value = this._questionsService.getAttributeValue( question,null,contractDetails.contractInfo.dateTimeAccepted);
       } else {
-        value = this._questionsService.getAttributeValue(contractDetails.patronAttributes, question) || '';
+        value = this._questionsService.getAttributeValue( question, contractDetails.patronAttributes) || '';
       }
     }
 

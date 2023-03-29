@@ -30,7 +30,7 @@ export class  LabelHelper {
         case DataType.YesNo:
           return attrib.value === 'Yes'? true: false;
         case DataType.String:
-          if(attrib.name !== 'Full Name' &&
+          if (attrib.name !== 'Full Name' &&
             attrib.name !== 'Assignment_Limit') {
             return true;
           } else {
@@ -47,11 +47,11 @@ export class  LabelHelper {
    * @param attribute - Any Facility Attribute
    */
   public static findType(attribute: FacilityAttribute) {
-    if(isDate(attribute.value)) {
+    if (isDate(attribute.value)) {
       return DataType.Date
-    } else if(!isNaN(Number.parseInt(attribute.value, 10))) {
+    } else if (!isNaN(Number.parseInt(attribute.value, 10))) {
       return DataType.Integer
-    } else if(attribute.value === "Yes" || attribute.value === "No") {
+    } else if (attribute.value === "Yes" || attribute.value === "No") {
       return DataType.YesNo
     } else {
       return DataType.String

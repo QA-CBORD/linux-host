@@ -1,5 +1,9 @@
 @import 'tools';
 
+form{
+  color: $color-matterhorn;
+}
+
 .application-details__content {
   --background: #{$porcelain};
   --padding-top: 8px;

@@ -36,15 +36,13 @@
       &.sc-ion-popover-md,
       &.sc-ion-popover-ios {
         border-radius: 15px;
-        .popover-viewport.sc-ion-popover-md {
-          overflow: auto;
-        }
       }
     }
   }
 
   .large-popover {
-    --width: 365px;
+    --width: fit-content;
+    --max-width: 80vw;
   }
 
   .st-nav-tabs {
@@ -296,12 +294,6 @@
     --min-width: 115px !important;
     --width: auto;
 
-    .popover-content {
-      &.sc-ion-popover-md,
-      &.sc-ion-popover-ios {
-        border-radius: 8px;
-      }
-    }
   }
 }
 // Multiline content media type:

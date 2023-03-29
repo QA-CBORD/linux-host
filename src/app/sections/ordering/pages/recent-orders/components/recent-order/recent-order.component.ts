@@ -96,7 +96,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   async onReorderHandler(): Promise<void> {
     const merchant = await this.merchant$.pipe(first()).toPromise();
     // Is not possible to reorder a Just Walkout order
-    if(merchant.walkout) return;
+    if (merchant.walkout) return;
     await this.initOrderOptionsModal(merchant);
   }
 
@@ -272,7 +272,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         this.onValidateErrorToast(error, null);
       })
       .then(async (orderInfo: ItemsOrderInfo) => {
-        if(!orderInfo) return;
+        if (!orderInfo) return;
         if (orderInfo.orderRemovedItems.length) {
           const t = await this.modalController.createAlert({
             component: ItemsUnavailableComponent,

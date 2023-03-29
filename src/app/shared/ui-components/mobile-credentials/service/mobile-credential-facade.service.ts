@@ -180,7 +180,7 @@ export class MobileCredentialFacade {
   }
 
   async onLogout(): Promise<void> {
-    if(this.mobileCredentialManager) this.mobileCredentialManager.onWillLogout();
+    if (this.mobileCredentialManager) this.mobileCredentialManager.onWillLogout();
     this.mobileCredentialManager = null;
   }
 

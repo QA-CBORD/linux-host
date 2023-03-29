@@ -1,0 +1,20 @@
+@import 'tools';
+
+.st-forms-header {
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-top: var(--ion-safe-area-top, 0);
+  }
+ 
+  &__cancel {
+    @include font-family($font-nunito-regular);
+    --color: #{rgba($color-black, 0.9)};
+  }
+
+  &__save {
+    @include font-family($font-nunito-heavy);
+    --color: #{$color-dodger-blue};
+  }
+}

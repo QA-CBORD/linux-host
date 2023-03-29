@@ -18,7 +18,7 @@
     </ng-container>
     <ng-container *ngSwitchCase="'FACILITY'">
       <div item-content>
-        <st-hierarchy-tree [label]="getLabel(question, parentGroup.get(question['name']))" [isDisable]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
+        <st-hierarchy-tree [label]="getLabel(question, parentGroup.get(question['name']))" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
       </div>
     </ng-container>
 
@@ -107,7 +107,7 @@
     </st-charge-schedules>
 
     <st-sign-contract
-      *ngSwitchCase="'date-signed'"
+      *ngSwitchCase="dateSignedType"
       [question]="question"
       [isSubmitted]="isSubmitted"
     ></st-sign-contract>
@@ -116,7 +116,7 @@
       class="question__section"
       [question]="question"
       [parentForm]="parentGroup"
-      [isDisabled]="isSubmitted"
+      [isDisabled]="(isSubmitted && !canEdit) || isView"
       *ngSwitchCase="'facility-picker'"
     ></st-facility-picker>
 
@@ -176,15 +176,15 @@
       </h3>
       <st-button
         expand="block"
-        color="primary"
-        mode="ios"
-        (click)="question.action()">
+        (onClick)="question.action()"
+        [disabled]="(isSubmitted && !canEdit) || isView"
+        >
         {{ question.buttonText }}
       </st-button>
 
     </div>
   </ng-container>
-  <ng-container [ngSwitch]="question['dataType']">
+  <ng-container *ngIf="question.type !== dateSignedType || isView" [ngSwitch]="question['dataType']">
     <div *ngSwitchCase="'DateTime'" class="question__item">
       <st-date-select
         [control]="parentGroup.get(question['name'])"

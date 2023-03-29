@@ -6,10 +6,7 @@ import { combineLatest, iif, Observable, of, zip } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { catchError, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from '../../../content-strings';
-import {
-  ContentStringApi,
-  ContentStringCategory,
-} from '@shared/model/content-strings/content-strings-api';
+import { ContentStringApi, ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 
@@ -76,14 +73,14 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
   fetchContentStringModel<T extends ContentStringModel>(
     category: ContentStringCategory,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    args: { data?: any; requests?: ContentStringRequest[], save?:boolean } = {}
+    args: { data?: any; requests?: ContentStringRequest[]; save?: boolean } = {}
   ): Observable<T> {
     const params = args.data;
     const ContentStringBuilder = ContentStringApi[category];
     const extraRequests = args.requests || [];
     const requestList = extraRequests.map(req => this.retrieveContentStringByConfig({ ...req }).pipe(take(1)));
 
-    let contentsByCategory$:Observable<ContentStringInfo[]>;
+    let contentsByCategory$: Observable<ContentStringInfo[]>;
     if (args.save) {
       contentsByCategory$ = this.resolveContentStrings$(
         CONTENT_STRINGS_DOMAINS.patronUi,
@@ -199,5 +196,9 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
 
   removeContentString(domain: CONTENT_STRINGS_DOMAINS, category: CONTENT_STRINGS_CATEGORIES, name: string) {
     this.stateService.removeContentString(domain, category, name);
+  }
+
+  retrieveContentStringListByRequest(config: ContentStringRequest): Observable<ContentStringInfo[] | []> {
+    return this.apiService.retrieveContentStringListByRequest(config);
   }
 }

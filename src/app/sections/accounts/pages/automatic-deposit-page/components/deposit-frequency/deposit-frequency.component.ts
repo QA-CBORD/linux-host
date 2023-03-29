@@ -13,10 +13,10 @@ export class DepositFrequencyComponent {
   @Output() onFrequencyChanged: EventEmitter<string> = new EventEmitter<string>();
   @Input() set autoDepositSettings(autoDepositSettings: UserAutoDepositSettingInfo) {
     this.selectedFrequency = '';
-    if(autoDepositSettings?.dayOfWeek !== 0){
+    if (autoDepositSettings?.dayOfWeek !== 0){
       this.selectedFrequency = DEPOSIT_FREQUENCY.week;
     }
-    if(autoDepositSettings?.dayOfMonth !== 0){
+    if (autoDepositSettings?.dayOfMonth !== 0){
       this.selectedFrequency = DEPOSIT_FREQUENCY.month;
     }
   }

@@ -15,10 +15,10 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class StHierarcheTreeComponent implements OnInit ,OnDestroy  {
   public selectedItem: NamedIdentity;
   private _subscription: Subscription = new Subscription();
-  @Input() public lookups: LookUpItem[];
-  @Input() public allowParent: boolean;
-  @Input() public isDisable: boolean;
-  @Input() public label: string;
+  @Input() lookups: LookUpItem[];
+  @Input() allowParent: boolean;
+  @Input() isDisabled: boolean;
+  @Input() label: string;
   form: FormGroup;
   constructor(
     public modalCtrl: ModalController,
@@ -31,7 +31,7 @@ export class StHierarcheTreeComponent implements OnInit ,OnDestroy  {
   ngOnInit(): void {
     this._subscription.add(
       this._workOrderStateService.getSelectedFacility$().subscribe(res => {
-        if( res?.name ){
+        if ( res?.name ){
           this.form = new FormGroup({
             facilityName: new FormControl(res.name)
          });
@@ -57,5 +57,4 @@ export class StHierarcheTreeComponent implements OnInit ,OnDestroy  {
     });
     multiLevelSelectDialogComponent.present();
   }
-
 }

@@ -257,3 +257,11 @@ export enum statusBarForm {
   NEW = 'New',
   SUBMITTED = 'Submitted'
 }
+
+export enum StateTimeDuration {
+  TTL = 600000
+}
+
+export enum QuestionTypes {
+  DATE_SIGNED = 'date-signed'
+}
