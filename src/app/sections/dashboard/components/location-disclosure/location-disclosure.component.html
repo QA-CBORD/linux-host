@@ -29,12 +29,12 @@
 </ion-content>
 
 <div class="location-access-btn">
-  <st-button (click)="cancel()" isDisabled="true" [buttonModifier]="'black'" class="location-access-btn__cancel">
+  <st-button (onClick)="cancel()" isDisabled="true" [buttonModifier]="'black'" class="location-access-btn__cancel">
     <span class="ion-text-capitalize">
       {{ disclosureCs.cancelBtn }}
     </span>
   </st-button>
-  <st-button (click)="requestLocationPermissions()">
+  <st-button (onClick)="requestLocationPermissions()">
     <span class="ion-text-capitalize">
       {{ disclosureCs.textBtn }}
     </span>
