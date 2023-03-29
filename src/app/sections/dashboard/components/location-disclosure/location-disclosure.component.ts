@@ -44,7 +44,7 @@ export class LocationPermissionModal {
     await this.modalController.dismiss();
   }
 
-  async close() {
+  async cancel() {
     this.appPermissions.permissionDismissed = true;
     await this.modalController.dismiss();
   }
