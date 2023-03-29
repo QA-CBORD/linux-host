@@ -30,7 +30,7 @@
   }
 
   &__sender-info {
-    width: 100%;
+    width: 76vw;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -59,14 +59,14 @@
   }
 
   &__sender-name-time-wrapper {
-    width: 80%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
     align-items: center;
   }
   &__sender-description-unread-icon-wrapper {
-    width: 80%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
@@ -82,7 +82,7 @@
   }
 
   &__sender-recent-message {
-    width: 75%;
+    width: 100%;
     color: rgba($color-black, 0.6);
 
     @include ellipsis;
