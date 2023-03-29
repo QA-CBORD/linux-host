@@ -20,6 +20,7 @@ import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 import { Platform, SearchbarCustomEvent } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IOSDevice = registerPlugin<any>('IOSDevice');
@@ -49,7 +50,8 @@ export class InstitutionsPage implements OnInit {
     private readonly registrationServiceFacade: RegistrationServiceFacade,
     private readonly commonService: CommonService,
     private readonly messageProxy: MessageProxy,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly nativeProvider: NativeProvider,
   ) {}
 
   ngOnInit() {
@@ -61,7 +63,7 @@ export class InstitutionsPage implements OnInit {
     this.performInstitutionCleanUp();
   }
   onEnterKeyClicked() {
-    Keyboard.hide();
+    if (this.nativeProvider.isMobile()) Keyboard.hide();
   }
 
   onSearchedValue({ target: { value } }: SearchbarCustomEvent) {
