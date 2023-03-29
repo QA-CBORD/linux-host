@@ -14,7 +14,7 @@ import {
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 
-import { BehaviorSubject, Observable, zip, of, iif } from 'rxjs';
+import { BehaviorSubject, Observable, zip, of, iif, combineLatest } from 'rxjs';
 import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
@@ -86,7 +86,19 @@ export class MerchantService {
   }
 
   get recentOrders$(): Observable<OrderInfo[]> {
-    return this._recentOrders$.asObservable();
+    return combineLatest([this.menuMerchants$, this._recentOrders$.asObservable()]).pipe(
+      map(([merchants, orders]) => {
+        const merchantsMap: { [key: string]: MerchantInfo } = {};
+        for (const merchant of merchants) {
+          merchantsMap[merchant.id] = merchant;
+        }
+        orders.forEach(order => {
+          const merchant = merchantsMap[order.merchantId];
+          order.isWalkoutOrder = merchant.walkout;
+        });
+        return orders;
+      })
+    );
   }
 
   private set _recentOrders(value: OrderInfo[]) {
