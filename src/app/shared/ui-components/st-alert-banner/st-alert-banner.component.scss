@@ -1,0 +1,21 @@
+@import 'fonts';
+@import 'tools';
+
+ion-card {
+  --ion-color-danger: #ffedeb;
+  color: black;
+  @include font-nunito-regular(14px);
+  border-radius: 8px;
+  box-shadow: none;
+  margin: 8px 0;
+}
+
+.alert-banner {
+  &__content {
+    display: flex;
+    align-items: center;
+  }
+  &__text {
+    margin-left: 10px;
+  }
+}

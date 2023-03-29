@@ -54,6 +54,25 @@
     color: $color-alizarin;
   }
 
+  &__readOnly {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+
+    &--label {
+      text-align: end;
+      display: grid;
+      grid-template-columns: 1fr;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+
+      &__error {
+        grid-template-columns: 1fr min-content;
+      }
+    }
+  }
+
   &__label {
     display: block;
     color: $color-dim-gray;
