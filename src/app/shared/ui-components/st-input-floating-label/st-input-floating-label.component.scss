@@ -37,6 +37,22 @@ input[type='text'].input__control {
       @include floating-label($color-dodger-blue);
     }
   }
+  &--error {
+    border: 2px solid $color-alizarin;
+
+    &:focus,
+    &:focus-within {
+      border: 2px solid $color-alizarin;
+
+      & + .input__placeholder {
+        @include floating-label($color-alizarin);
+      }
+    }
+
+    & + .input__placeholder {
+      @include floating-label($color-alizarin);
+    }
+  }
 }
 .input {
   &__wrapper {

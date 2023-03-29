@@ -9,8 +9,9 @@ ion-item {
   --min-height: 50px;
 
   ion-label {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 90%;
+    color: $color-matterhorn;
   }
 
   ion-input {
@@ -24,5 +25,4 @@ ion-input {
 }
 ion-label{
   font-weight: 500;
-  color: $color-night-gray !important;
 }
