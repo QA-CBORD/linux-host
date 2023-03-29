@@ -44,4 +44,5 @@ export interface OrderInfo {
   orderPayment: OrderPayment[];
   orderNotifications: OrderNotification[];
   allItems?:OrderItem[]
+  isWalkoutOrder: boolean;
 }

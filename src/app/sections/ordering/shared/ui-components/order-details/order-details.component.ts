@@ -44,6 +44,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
+import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
 
 @Component({
   selector: 'st-order-details',
@@ -449,14 +450,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private checkForOrderIssuesOnReadOnly() {
-    if (!this.transactionId && this.amountDue > 0) {
-      const paymentMethodFailedKey: keyof PaymentMethodErrorMessages = 'paymentMethodFailed';
+    if (this.isWalkoutOrder) {
+      if (checkPaymentFailed({ amountDue: this.amountDue, transactionId: this.transactionId })) {
+        const paymentMethodFailedKey: keyof PaymentMethodErrorMessages = 'paymentMethodFailed';
 
-      this.paymentFormControl.disable();
-      this.paymentFormControl.setValue(this.orderPaymentName);
-      this.paymentFormControl.setErrors({ [paymentMethodFailedKey]: true });
-      this.paymentFormControl.markAsTouched();
-      this.hasReadonlyPaymentMethodError = true;
+        this.paymentFormControl.disable();
+        this.paymentFormControl.setValue(this.orderPaymentName);
+        this.paymentFormControl.setErrors({ [paymentMethodFailedKey]: true });
+        this.paymentFormControl.markAsTouched();
+        this.hasReadonlyPaymentMethodError = true;
+      }
     }
   }
 }
