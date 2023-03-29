@@ -1,0 +1,1 @@
+export const AWAIT_TIME = 500;

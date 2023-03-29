@@ -5,6 +5,14 @@ apply plugin: 'maven-publish'
 
 android {
 
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\user\\Keystore\\keystore.jks')
+            storePassword '123456'
+            keyAlias 'key2'
+            keyPassword '123456'
+        }
+    }
     namespace 'com.cbord.get'
     compileSdkVersion rootProject.ext.compileSdkVersion
     compileOptions {
@@ -30,6 +38,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
