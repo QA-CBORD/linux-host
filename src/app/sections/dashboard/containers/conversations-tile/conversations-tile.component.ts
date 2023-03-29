@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
-import { take, finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
 import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
@@ -25,14 +25,17 @@ export class ConversationsTileComponent implements OnInit {
   ngOnInit() {
     this.initializePage();
   }
+  refresh() {
+    this.cdRef.detectChanges();
+  }
   initializePage() {
     this.secureMessagingFacadeService
       .getInitialData$()
       .pipe(
-        take(1),
+        first(),
         finalize(() => {
           this.isLoading = false;
-          this.cdRef.detectChanges();
+          this.refresh();
         })
       )
       .subscribe(([smGroupArray = [], smMessageArray = []]) => {

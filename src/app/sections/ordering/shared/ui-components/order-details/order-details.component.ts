@@ -44,6 +44,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
+import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
 
 @Component({
   selector: 'st-order-details',
@@ -53,6 +54,7 @@ import { Keyboard } from '@capacitor/keyboard';
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() set orderInfo({
+    amountDue,
     tax,
     deliveryFee,
     discount,
@@ -64,8 +66,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     subTotal,
     tip,
     total,
+    transactionId,
   }: OrderInfo) {
+    this.amountDue = amountDue;
     this.tax = tax;
+    this.transactionId = transactionId;
     this.deliveryFee = deliveryFee;
     this.discount = discount;
     this.mealBased = mealBased;
@@ -117,6 +122,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   accountName: string;
   orderItems: OrderItem[] = [];
   tax: number;
+  amountDue: number;
   discount: number;
   total: number;
   orderPaymentName: string;
@@ -128,6 +134,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   mealBased: boolean;
   notes: string;
   orderPayment: OrderPayment[];
+  transactionId: string;
+  hasReadonlyPaymentMethodError = false;
   isApplePayment = false;
   isWalkoutOrder = false;
 
@@ -142,8 +150,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   };
   user: UserInfo;
 
-  paymentMethodErrorMessages = {
+  readonly paymentMethodErrorMessages: PaymentMethodErrorMessages = {
     required: 'A payment method must be selected',
+    paymentMethodFailed:
+      'There was an issue processing the payment for this order. \nContact the merchant to resolve this issue.',
   };
 
   constructor(
@@ -273,7 +283,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (!this.isExistingOrder) {
       this.detailsForm.get(FORM_CONTROL_NAMES.paymentMethod).markAsTouched();
     }
-
+    if (this.readonly) {
+      this.checkForOrderIssuesOnReadOnly();
+    }
     this.subscribeOnFormChanges();
   }
 
@@ -436,6 +448,20 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         this.checkFieldValue(this.phone, user.phone);
       });
   }
+
+  private checkForOrderIssuesOnReadOnly() {
+    if (this.isWalkoutOrder) {
+      if (checkPaymentFailed({ amountDue: this.amountDue, transactionId: this.transactionId })) {
+        const paymentMethodFailedKey: keyof PaymentMethodErrorMessages = 'paymentMethodFailed';
+
+        this.paymentFormControl.disable();
+        this.paymentFormControl.setValue(this.orderPaymentName);
+        this.paymentFormControl.setErrors({ [paymentMethodFailedKey]: true });
+        this.paymentFormControl.markAsTouched();
+        this.hasReadonlyPaymentMethodError = true;
+      }
+    }
+  }
 }
 
 export enum FORM_CONTROL_NAMES {
@@ -479,4 +505,9 @@ export interface OrderDetailsFormData {
     [FORM_CONTROL_NAMES.phone]: string;
   };
   valid: boolean;
+}
+
+interface PaymentMethodErrorMessages {
+  required: string;
+  paymentMethodFailed: string;
 }

@@ -10,7 +10,7 @@
         class="order-details__value"
         *ngIf="orderDetailOptions.dueTime || orderDetailOptions.isASAP"
       >
-        {{ orderDetailOptions | modifyPrepTime: orderTypes }}
+        {{ orderDetailOptions | modifyPrepTime : orderTypes }}
       </p>
 
       <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
@@ -52,7 +52,7 @@
                 *ngFor="let subIngredient of orderItem.orderItemOptions"
                 class="order-ingredient-list__ingredient-description"
               >
-                {{ subIngredient.name }} ({{ subIngredient.salePrice | priceUnitsResolver: mealBased }})
+                {{ subIngredient.name }} ({{ subIngredient.salePrice | priceUnitsResolver : mealBased }})
               </p>
             </ng-container>
           </ion-label>
@@ -69,37 +69,60 @@
     <div class="total">
       <div *ngIf="subTotal" class="total__item">
         {{ contentStrings.labelSubtotal | async
-        }}<span class="total__item-sum">{{ subTotal | priceUnitsResolver: mealBased }}</span>
+        }}<span class="total__item-sum">{{ subTotal | priceUnitsResolver : mealBased }}</span>
       </div>
       <div *ngIf="tax" class="total__item">
         {{ contentStrings.labelTax | async
-        }}<span class="total__item-sum">{{ tax | priceUnitsResolver: mealBased }}</span>
+        }}<span class="total__item-sum">{{ tax | priceUnitsResolver : mealBased }}</span>
       </div>
       <div *ngIf="discount" class="total__item">
         {{ contentStrings.labelDiscount | async
-        }}<span class="total__item-sum">{{ discount | priceUnitsResolver: mealBased }}</span>
+        }}<span class="total__item-sum">{{ discount | priceUnitsResolver : mealBased }}</span>
       </div>
       <div *ngIf="!mealBased && isTipEnabled && !isExistingOrder" class="total__item">
         {{ contentStrings.labelTip | async
-        }}<span class="total__item-sum">{{ tip | priceUnitsResolver: mealBased }}</span>
+        }}<span class="total__item-sum">{{ tip | priceUnitsResolver : mealBased }}</span>
       </div>
       <div *ngIf="deliveryFee && !isExistingOrder" class="total__item">
         {{ contentStrings.labelDeliveryFee | async
-        }}<span class="total__item-sum">{{ deliveryFee | priceUnitsResolver: mealBased }}</span>
+        }}<span class="total__item-sum">{{ deliveryFee | priceUnitsResolver : mealBased }}</span>
       </div>
       <div *ngIf="pickupFee && !isExistingOrder" class="total__item">
         {{ contentStrings.labelPickupFee | async
-        }}<span class="total__item-sum">{{ pickupFee | priceUnitsResolver: mealBased }}</span>
+        }}<span class="total__item-sum">{{ pickupFee | priceUnitsResolver : mealBased }}</span>
       </div>
       <div *ngIf="total" class="total__item total__item--bold">
         {{ contentStrings.labelTotal | async
-        }}<span class="total__item-sum">{{ total | priceUnitsResolver: mealBased }}</span>
+        }}<span class="total__item-sum">{{ total | priceUnitsResolver : mealBased }}</span>
       </div>
     </div>
 
-    <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
-      {{ contentStrings.labelPaymentMethod | async }}<span>{{ orderPaymentName }}</span>
-    </div>
+    <ng-container *ngIf="readonly; else paymentSelect">
+      <div class="order-details">
+        <div class="order-details__readOnly">
+          <span>{{ contentStrings.labelPaymentMethod | async }}</span>
+          <div
+            class="order-details__readOnly--label"
+            [class.order-details__readOnly--label__error]="hasReadonlyPaymentMethodError"
+          >
+            <span> {{ orderPaymentName }}</span>
+            <ion-icon
+              *ngIf="hasReadonlyPaymentMethodError"
+              src="/assets/icon/caution.svg"
+              slot="end"
+              mode="ios"
+              size="small"
+            ></ion-icon>
+          </div>
+        </div>
+        <st-control-errors
+          *ngIf="hasReadonlyPaymentMethodError"
+          class="control-hint--no-indent"
+          [control]="paymentFormControl"
+          [errorMessages]="paymentMethodErrorMessages"
+        ></st-control-errors>
+      </div>
+    </ng-container>
 
     <ng-template #paymentSelect>
       <div class="order-details">
@@ -118,14 +141,14 @@
           (ionChange)="onPaymentChanged($event)"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
           (ionFocus)="openActionSheet()"
-          [selectedText]="paymentMethod.value | accountTypeResolver: mealBased"
+          [selectedText]="paymentMethod.value | accountTypeResolver : mealBased"
           #paymentMethod
         >
           <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
             {{ applePayAccountType | accountTypeResolver }}
           </ion-select-option>
           <ion-select-option [value]="account" *ngFor="let account of accounts; trackBy: trackByAccountId">
-            {{ account | accountTypeResolver: mealBased }}
+            {{ account | accountTypeResolver : mealBased }}
           </ion-select-option>
           <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">
             Add a Credit Card

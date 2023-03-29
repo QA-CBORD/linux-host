@@ -3,7 +3,7 @@ import { ModalController, Platform, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
-import { firstValueFrom, Observable, zip } from 'rxjs';
+import { firstValueFrom, Observable, Subject, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -12,7 +12,7 @@ import { AccessCardComponent } from './containers/access-card/access-card.compon
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { map, take } from 'rxjs/operators';
+import { map, take, takeUntil } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -33,6 +33,8 @@ import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
 import { AndroidPermissionsService } from './services/android-permissions.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
+import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
+import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 
 @Component({
   selector: 'st-dashboard',
@@ -59,6 +61,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
   conversationTile: ConversationsTileComponent;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   disclosureCs: any;
+  destroy$ = new Subject();
+
 
   constructor(
     private readonly modalController: ModalController,
@@ -73,7 +77,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
     private readonly router: Router,
     private readonly platform: Platform,
     private readonly appPermissions: AndroidPermissionsService,
-    private readonly navigationFacade: NavigationFacadeSettingsService
+    private readonly navigationFacade: NavigationFacadeSettingsService,
+    private secureMessagingFacadeService: SecureMessagingFacadeService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -103,7 +108,14 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.accessCard.ionViewWillEnter();
     this.updateTiles();
     this.checkNativeStartup();
+    this.initConvo();
   }
+
+  ionViewWillLeave() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
+
 
   private async checkNativeStartup() {
     this.nativeStartupFacadeService
@@ -312,5 +324,19 @@ export class DashboardPage implements OnInit, AfterViewInit {
         this.navigationFacade.setPermissionResponse(response);
       }
     }
+  }
+
+  initConvo() {
+    this.secureMessagingFacadeService
+      .pollForDataInterval()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([smGroupArray = [], smMessageArray = []]) => {
+        this.conversationTile.lastTwoMessagesArray = buildConversationsFromMessages(
+          smMessageArray,
+          smGroupArray,
+          SecureMessagingFacadeService.GetSecureMessagesAuthInfo()
+        ).slice(0, 2);
+        this.conversationTile.refresh();
+      });
   }
 }
