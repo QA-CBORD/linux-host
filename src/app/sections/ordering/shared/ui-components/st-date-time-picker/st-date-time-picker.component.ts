@@ -100,7 +100,7 @@ export class StDateTimePickerComponent implements OnInit {
     this.pickerColumns = this.createColumns();
     this.pickerButtons = [
       { text: title, role: 'title', cssClass: 'picker-title' },
-      { text: '', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
+      { text: '', role:'secondary', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
     ];
 
     if (this.useBackButton) {
