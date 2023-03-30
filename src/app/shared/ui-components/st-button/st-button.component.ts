@@ -18,7 +18,7 @@ export class StButtonComponent {
   @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
 
   onClickButton(event: Event) {
-    if (!(this.disabled || this.isDisabled)) {
+    if (!this.disabled) {
       this.onClick.emit(event);
     }
   }
