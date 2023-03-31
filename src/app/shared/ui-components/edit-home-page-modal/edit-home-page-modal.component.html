@@ -6,9 +6,6 @@
       </ion-button>
     </ion-buttons>
     <ion-title mode="ios" class="edit-home__header-title">Edit Home Page</ion-title>
-<!--    <ion-buttons slot="end" mode="ios">-->
-<!--      <ion-button mode="ios" class="edit-home__header-done-btn" (click)="onClickedDone()">Done</ion-button>-->
-<!--    </ion-buttons>-->
   </ion-toolbar>
 </ion-header>
 
@@ -31,13 +28,6 @@
         <ion-label class="edit-home__reorder-label">
           {{ tileConfig.title }}
         </ion-label>
-<!--        <ion-toggle-->
-<!--                value="{{ tileConfig.title }}"-->
-<!--                class="edit-home__reorder-toggle"-->
-<!--                (ionChange)="onToggle($event)"-->
-<!--                mode="ios"-->
-<!--                checked="{{ tileConfig.isEnable }}"-->
-<!--        ></ion-toggle>-->
         <ion-reorder>
           <ion-icon class="edit-home__reorder-icon" name="reorder-three" mode="md"></ion-icon>
         </ion-reorder>

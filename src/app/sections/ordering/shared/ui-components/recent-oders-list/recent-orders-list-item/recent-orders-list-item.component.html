@@ -7,6 +7,11 @@
       <p class="order-card__number">{{ contentStrings.labelOrder | async }} #{{ orderInfo.checkNumber }}</p>
     </header>
     <h6 class="order-card__name">{{ orderInfo.merchantName }}</h6>
+    <st-alert-banner
+      *ngIf="isPaymentFailed"
+      color="danger"
+      text="There was a payment processing issue with this order. Review the order for more details."
+    ></st-alert-banner>
     <p class="order-card__description">{{ orderInfo.orderItems | orderItemsSummary }}</p>
     <p class="order-card__date">{{ orderInfo.dueTime | date : 'MM/dd/yyyy' }}</p>
   </ion-card-content>
@@ -25,4 +30,3 @@
     </div>
   </ion-card-content>
 </ion-card>
-

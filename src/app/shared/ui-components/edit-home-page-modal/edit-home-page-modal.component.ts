@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/
 import { ModalController, IonReorderGroup } from '@ionic/angular';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { lastValueFrom, Observable } from 'rxjs';
+import { first, take } from 'rxjs/operators';
 @Component({
   selector: 'st-edit-home-page-modal',
   templateUrl: './edit-home-page-modal.component.html',
@@ -29,11 +29,12 @@ export class EditHomePageModalComponent implements OnInit {
   }
 
   async doReorder({ detail: { from, to }, detail }): Promise<void> {
-    const config = await this.homeConfigList$.pipe(take(1)).toPromise();
+    const config = await lastValueFrom(this.homeConfigList$.pipe(first()));
     const movedElement = config.splice(from, 1)[0];
     config.splice(to, 0, movedElement);
     this.tileConfigFacadeService.updateConfigState(config);
-    detail.complete();
+    // Prevent Ionic from reordering any DOM nodes inside of the reorder group as we already did on splice.
+    detail.complete(false);
   }
 
   async onClickedClose() {
