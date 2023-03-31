@@ -8,8 +8,11 @@ ion-item {
   --color: $color-matterhorn;
   --min-height: 50px;
 
+  &.item-disabled{
+    opacity: 0.6;
+  }
+
   ion-label {
-    font-weight: bold;
     font-size: 90%;
   }
 
