@@ -17,7 +17,7 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { PhotoUploadService } from '@sections/settings/pages/services/photo-upload.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { hasRequiredField } from '@core/utils/general-helpers';
-import { montDayYearHour } from '../../../shared/constants/dateFormats.constant';
+import { montDayYearHour,monthDayYear } from '../../../shared/constants/dateFormats.constant';
 import { ContractsService } from '../contracts/contracts.service';
 import { QuestionTypes } from 'src/app/app.global';
 
@@ -35,7 +35,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() isSubmitted: boolean;
   @Input() canEdit?: boolean;
   @Input() isView?: boolean;
-  dateFormat = montDayYearHour;
+  dateTimeFormat = montDayYearHour;
+  dateFormat = monthDayYear;
 
   facilityTreeData: FacilityTree[];
   facilityFullName: string;
