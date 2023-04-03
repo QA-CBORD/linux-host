@@ -18,7 +18,7 @@
     </ng-container>
     <ng-container *ngSwitchCase="'FACILITY'">
       <div item-content>
-        <st-hierarchy-tree [label]="getLabel(question, parentGroup.get(question['name']))" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
+        <st-hierarchy-tree [label]="getLabel(question, controlName)" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
       </div>
     </ng-container>
 
@@ -29,7 +29,7 @@
       class="question__item question__control"
       type="text"
       [control]="parentGroup.get(question['name'])"
-      [label]="getLabel(question, parentGroup.get(question['name']))  "
+      [label]="getLabel(question, controlName)  "
       [idd]="question['name']"
       [formControlName]="question['name']"
       [isError]="errorValidator"
@@ -48,7 +48,7 @@
     [formControlName]="question['name']"
     class="question__item question__control"
     [idd]="question['name']"
-    [label]="getLabel(question, parentGroup.get(question['name']))"
+    [label]="getLabel(question, controlName)"
     title="Type your message here..."
     rows="3"
     [stEmptyFormControl]="parentGroup.get(question['name'])"
@@ -149,7 +149,7 @@
     </ng-container>
 
     <div *ngSwitchCase="'radio-group'" class="question__section">
-      <h3 class="form__secondary-header">{{ getLabel(question, parentGroup.get(question['name'])) }}</h3>
+      <h3 class="form__secondary-header">{{ getLabel(question, controlName) }}</h3>
 
       <st-control-errors
         class="control-hint--no-indent"
