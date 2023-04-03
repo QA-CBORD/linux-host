@@ -89,22 +89,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() set merchant(merchant: MerchantInfo) {
     this.merchantSettingsList = merchant.settings.list;
     this.orderTypes = merchant.orderTypes;
-    this.isWalkoutOrder = merchant.walkout;
+    this.isWalkoutOrder = !!merchant.walkout;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions;
   @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
-  private _accounts: UserAccount[] = [];
-  public get accounts(): UserAccount[] {
-    return this._accounts;
-  }
-  @Input()
-  public set accounts(accounts: UserAccount[]) {
-    this._accounts = accounts;
-    if (this.isExistingOrder) this.initAccountSelected(accounts);
-  }
+  @Input() accounts: UserAccount[] = [];
   @Input() addressModalConfig: AddressModalSettings;
   @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
@@ -171,9 +163,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
     this.setPhoneField();
+    this.initAccountSelected();
   }
 
-  private initAccountSelected(accounts: UserAccount[]) {
+  private initAccountSelected() {
     const payment = this.orderPayment[0] || { accountId: '', accountName: '' };
     let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
@@ -183,7 +176,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         accountId = 'rollup';
       }
 
-      account = accounts.find(({ id }) => accountId == id);
+      account = this.accounts.find(({ id }) => accountId == id);
       this.detailsForm.patchValue({
         [FORM_CONTROL_NAMES.paymentMethod]: account || '',
       });
