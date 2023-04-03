@@ -280,7 +280,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   getLabel(question, name: string) {
-    let control : AbstractControl = this.parentGroup.get(question[name]);
+    const control : AbstractControl = this.parentGroup.get(question[name]);
     const label = this.checkLabel(question);
     return control && hasRequiredField(control)? label + " (Required)": label;
   }
