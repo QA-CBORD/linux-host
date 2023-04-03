@@ -17,7 +17,7 @@ export enum SelectedHousingTab {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HousingDashboardPage implements OnInit, OnDestroy {
-  HousingTab = SelectedHousingTab; // needed to reference enum on front-end
+  HousingTab = SelectedHousingTab;
   selectedHousingTab: string = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();
 
