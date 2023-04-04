@@ -13,11 +13,20 @@ ion-item {
   }
 
   ion-label {
+    font-weight: 500;
     font-size: 90%;
+    color: $color-matterhorn;
   }
 
   ion-input {
     --padding-bottom: 0px;
     font-size: 95%;
   }
+}
+
+ion-input {
+  color: $color-night-gray ;
+}
+ion-label{
+  font-weight: 500;
 }

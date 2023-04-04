@@ -75,7 +75,8 @@ ion-select::part(icon){
   & + .select__placeholder {
     z-index: 2;
 
-    @include floating-label($color-dim-gray);
+    @include floating-label($color-night-gray);
+    font-weight: 500;
   }
 
 }
