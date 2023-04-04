@@ -8,14 +8,16 @@ class AddFundsPage extends Page {
    get SelectPaymentMethod(){
     return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-deposit-page/ion-content/form/section/div[1]/ion-select');
    }
-   get BillPaymentMethodOption(){
-    return Ionic$.$('/html/body/app-root/ion-app/ion-action-sheet/div[2]/div/div[1]/button[1]');
+   get PaymentMethodOptions(){
+      return Ionic$.$('/html/body/app-root/ion-app/ion-action-sheet/div[2]/div/div[1]');
    }
-
    get SelectToAccount(){
       return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-deposit-page/ion-content/form/section/div[3]/ion-select');
    }
 
+   get InputDeposit(){
+      return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-deposit-page/ion-content/form/section/div[4]/st-input-amount/div/ion-input/input');
+   }
    get AccountOptions(){
       return Ionic$.$('/html/body/app-root/ion-app/ion-action-sheet/div[2]/div/div[1]/button[1]');
    }

@@ -194,13 +194,45 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/verify-payments.spec.ts',
       './tests/specs/shared/delete-credit-cards.spec.ts',
     ],
-    addFundsFromDashboard:[
+    addFundsBillFromDashboard:[
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
       './tests/specs/hosted/app.login.spec.ts',
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
-      './tests/specs/shared/add-funds.spec.ts',
+      './tests/specs/shared/go-to-add-funds-from-dashboard.spec.ts',
+      './tests/specs/shared/add-funds-bill.spec.ts',
+      './tests/specs/shared/confirm-deposit-funds.spec.ts'
+    ],
+    addFundsBillFromAccount:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-add-funds-from-account.spec.ts',
+      './tests/specs/shared/add-funds-bill.spec.ts',
+      './tests/specs/shared/confirm-deposit-funds.spec.ts'
+    ],
+    addFundsCreditCardFromDashboard:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-add-funds-from-dashboard.spec.ts',
+      './tests/specs/shared/add-funds-credit-card.spec.ts',
+      './tests/specs/shared/confirm-deposit-funds.spec.ts'
+    ],
+    addFundsCreditCardFromAccount:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-add-funds-from-account.spec.ts',
+      './tests/specs/shared/add-funds-credit-card.spec.ts',
+      './tests/specs/shared/confirm-deposit-funds.spec.ts'
     ]
   },
   //

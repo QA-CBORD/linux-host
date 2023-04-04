@@ -17,7 +17,7 @@ describe('Entry', () => {
     
     //Button needs to be clicked more than 4 times
     for (let i = 0; i < 5; i++) {
-      await changeEnvButton.tap();
+      await (await changeEnvButton).click();
     }
     await pause(AWAIT_TIME);
     const developOpt = await changeEnvAlert.getOpt('Development');
