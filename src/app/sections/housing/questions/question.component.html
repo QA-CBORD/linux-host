@@ -18,7 +18,7 @@
     </ng-container>
     <ng-container *ngSwitchCase="'FACILITY'">
       <div item-content>
-        <st-hierarchy-tree [label]="getLabel(question)" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
+        <st-hierarchy-tree [label]="getLabel(question, controlName)" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
       </div>
     </ng-container>
 
@@ -29,7 +29,7 @@
       class="question__item question__control"
       type="text"
       [control]="parentGroup.get(question['name'])"
-      [label]="getLabel(question)"
+      [label]="getLabel(question, controlName)  "
       [idd]="question['name']"
       [formControlName]="question['name']"
       [isError]="errorValidator"
@@ -48,7 +48,7 @@
     [formControlName]="question['name']"
     class="question__item question__control"
     [idd]="question['name']"
-    [label]="getLabel(question)"
+    [label]="getLabel(question, controlName)"
     title="Type your message here..."
     rows="3"
     [stEmptyFormControl]="parentGroup.get(question['name'])"
@@ -107,7 +107,7 @@
     </st-charge-schedules>
 
     <st-sign-contract
-      *ngSwitchCase="'date-signed'"
+      *ngSwitchCase="dateSignedType"
       [question]="question"
       [isSubmitted]="isSubmitted"
     ></st-sign-contract>
@@ -149,7 +149,7 @@
     </ng-container>
 
     <div *ngSwitchCase="'radio-group'" class="question__section">
-      <h3 class="form__secondary-header">{{ getLabel(question) }}</h3>
+      <h3 class="form__secondary-header">{{ getLabel(question, controlName) }}</h3>
 
       <st-control-errors
         class="control-hint--no-indent"
@@ -176,23 +176,22 @@
       </h3>
       <st-button
         expand="block"
-        color="primary"
-        mode="ios"
-        (click)="question.action()">
+        (onClick)="question.action()"
+        [disabled]="(isSubmitted && !canEdit) || isView"
+        >
         {{ question.buttonText }}
       </st-button>
-      <!-- TODO: create template to show users -->
 
     </div>
   </ng-container>
-  <ng-container [ngSwitch]="question['dataType']">
+  <ng-container *ngIf="question.type !== dateSignedType || isView" [ngSwitch]="question['dataType']">
     <div *ngSwitchCase="'DateTime'" class="question__item">
       <st-date-select
         [control]="parentGroup.get(question['name'])"
         [name]="question['name']"
         [label]="question.label"
         [formControlName]="question['name']"
-        [format]="dateFormat"
+        [format]="dateTimeFormat"
       ></st-date-select>
 
       <st-control-errors
@@ -206,7 +205,7 @@
         [name]="question['name']"
         [label]="question.label"
         [formControlName]="question['name']"
-        [format]="'MMM d, y'"
+        [format]="dateFormat"
       ></st-date-select>
 
       <st-control-errors

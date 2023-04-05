@@ -4,7 +4,7 @@
   backButtonIcon="close"
   [backButtonTitle]="''"
   [isToolbarShow]="true"
-  (click)="close()"
+  (click)="cancel()"
 ></st-header>
 <ion-content>
   <div appClickStopPropagation>
@@ -29,7 +29,7 @@
 </ion-content>
 
 <div class="location-access-btn">
-  <st-button (onClick)="close()" isDisabled="true" [buttonModifier]="'black'" class="location-access-btn__cancel">
+  <st-button (onClick)="cancel()" color="light" [buttonModifier]="'black'" class="location-access-btn__cancel">
     <span class="ion-text-capitalize">
       {{ disclosureCs.cancelBtn }}
     </span>

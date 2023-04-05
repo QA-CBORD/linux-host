@@ -44,6 +44,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
+import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
 
 @Component({
   selector: 'st-order-details',
@@ -53,6 +54,7 @@ import { Keyboard } from '@capacitor/keyboard';
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() set orderInfo({
+    amountDue,
     tax,
     deliveryFee,
     discount,
@@ -64,8 +66,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     subTotal,
     tip,
     total,
+    transactionId,
   }: OrderInfo) {
+    this.amountDue = amountDue;
     this.tax = tax;
+    this.transactionId = transactionId;
     this.deliveryFee = deliveryFee;
     this.discount = discount;
     this.mealBased = mealBased;
@@ -84,22 +89,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() set merchant(merchant: MerchantInfo) {
     this.merchantSettingsList = merchant.settings.list;
     this.orderTypes = merchant.orderTypes;
-    this.isWalkoutOrder = merchant.walkout;
+    this.isWalkoutOrder = !!merchant.walkout;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions;
   @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
-  private _accounts: UserAccount[] = [];
-  public get accounts(): UserAccount[] {
-    return this._accounts;
-  }
-  @Input()
-  public set accounts(accounts: UserAccount[]) {
-    this._accounts = accounts;
-    if (this.isExistingOrder) this.initAccountSelected(accounts);
-  }
+  @Input() accounts: UserAccount[] = [];
   @Input() addressModalConfig: AddressModalSettings;
   @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
@@ -117,6 +114,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   accountName: string;
   orderItems: OrderItem[] = [];
   tax: number;
+  amountDue: number;
   discount: number;
   total: number;
   orderPaymentName: string;
@@ -128,6 +126,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   mealBased: boolean;
   notes: string;
   orderPayment: OrderPayment[];
+  transactionId: string;
+  hasReadonlyPaymentMethodError = false;
   isApplePayment = false;
   isWalkoutOrder = false;
 
@@ -142,8 +142,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   };
   user: UserInfo;
 
-  paymentMethodErrorMessages = {
+  readonly paymentMethodErrorMessages: PaymentMethodErrorMessages = {
     required: 'A payment method must be selected',
+    paymentMethodFailed:
+      'There was an issue processing the payment for this order. \nContact the merchant to resolve this issue.',
   };
 
   constructor(
@@ -161,9 +163,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
     this.setPhoneField();
+    this.initAccountSelected();
   }
 
-  private initAccountSelected(accounts: UserAccount[]) {
+  private initAccountSelected() {
     const payment = this.orderPayment[0] || { accountId: '', accountName: '' };
     let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
@@ -173,7 +176,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         accountId = 'rollup';
       }
 
-      account = accounts.find(({ id }) => accountId == id);
+      account = this.accounts.find(({ id }) => accountId == id);
       this.detailsForm.patchValue({
         [FORM_CONTROL_NAMES.paymentMethod]: account || '',
       });
@@ -273,7 +276,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (!this.isExistingOrder) {
       this.detailsForm.get(FORM_CONTROL_NAMES.paymentMethod).markAsTouched();
     }
-
+    if (this.readonly) {
+      this.checkForOrderIssuesOnReadOnly();
+    }
     this.subscribeOnFormChanges();
   }
 
@@ -436,6 +441,20 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         this.checkFieldValue(this.phone, user.phone);
       });
   }
+
+  private checkForOrderIssuesOnReadOnly() {
+    if (this.isWalkoutOrder) {
+      if (checkPaymentFailed({ amountDue: this.amountDue, transactionId: this.transactionId })) {
+        const paymentMethodFailedKey: keyof PaymentMethodErrorMessages = 'paymentMethodFailed';
+
+        this.paymentFormControl.disable();
+        this.paymentFormControl.setValue(this.orderPaymentName);
+        this.paymentFormControl.setErrors({ [paymentMethodFailedKey]: true });
+        this.paymentFormControl.markAsTouched();
+        this.hasReadonlyPaymentMethodError = true;
+      }
+    }
+  }
 }
 
 export enum FORM_CONTROL_NAMES {
@@ -479,4 +498,9 @@ export interface OrderDetailsFormData {
     [FORM_CONTROL_NAMES.phone]: string;
   };
   valid: boolean;
+}
+
+interface PaymentMethodErrorMessages {
+  required: string;
+  paymentMethodFailed: string;
 }

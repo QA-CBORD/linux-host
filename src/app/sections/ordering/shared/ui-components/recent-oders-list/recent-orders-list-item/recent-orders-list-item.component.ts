@@ -4,6 +4,7 @@ import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { OrderInfo } from '@sections/ordering/shared/models/order-info.model';
 import { ORDERING_STATUS_ICON_CLASS, ORDERING_STATUS_LABEL } from './recent-orders.config';
+import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
 
 @Component({
   selector: 'st-recent-orders-list-item',
@@ -19,15 +20,15 @@ export class RecentOrdersListItemComponent implements OnInit {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   status: string;
   iconClass: string;
+  isPaymentFailed: boolean;
 
-  constructor(
-    private readonly orderingService: OrderingService
-    ) {}
+  constructor(private readonly orderingService: OrderingService) {}
 
   ngOnInit() {
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.needCheckin = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.needCheckin);
     this.status = ORDERING_STATUS_LABEL[this.orderInfo.status];
     this.iconClass = ORDERING_STATUS_ICON_CLASS[this.orderInfo.status];
+    this.isPaymentFailed = this.orderInfo.isWalkoutOrder && checkPaymentFailed(this.orderInfo);
   }
 }

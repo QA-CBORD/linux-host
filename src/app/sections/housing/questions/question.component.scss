@@ -13,8 +13,6 @@
 
 @mixin empty-control($control, $placeholder) {
   &:not(:focus):not(:focus-within):not(#{$control}--error) {
-    border: 1px solid $color-light-gray !important;
-
     & + #{$placeholder} {
       background-color: transparent !important;
       color: inherit !important;
@@ -23,6 +21,18 @@
       padding: 15px 0 0 10px !important;
       transform: translate3d(0, 0, 0) !important;
       z-index: 1 !important;
+      font-weight: normal;
+    }
+    &.disabled {
+      .input__control {
+        background-color: transparent;
+        opacity: 0.4;
+        color: rgba($color-dim-gray, 0.4);
+  
+        & + .input__placeholder {
+          color: rgba($color-dim-gray, 0.4);
+        }
+      }
     }
   }
 }

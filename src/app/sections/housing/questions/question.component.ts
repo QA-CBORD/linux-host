@@ -16,7 +16,10 @@ import { CameraService } from '@sections/settings/pages/services/camera.service'
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { PhotoUploadService } from '@sections/settings/pages/services/photo-upload.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { montDayYearHour } from '../../../shared/constants/dateFormats.constant'
+import { hasRequiredField } from '@core/utils/general-helpers';
+import { montDayYearHour,monthDayYear } from '../../../shared/constants/dateFormats.constant';
+import { ContractsService } from '../contracts/contracts.service';
+import { QuestionTypes } from 'src/app/app.global';
 
 const IMAGE_DIR = 'stored-images';
 @Component({
@@ -32,7 +35,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() isSubmitted: boolean;
   @Input() canEdit?: boolean;
   @Input() isView?: boolean;
-  dateFormat = montDayYearHour;
+  dateTimeFormat = montDayYearHour;
+  dateFormat = monthDayYear;
+  controlName = 'name';
 
   facilityTreeData: FacilityTree[];
   facilityFullName: string;
@@ -74,7 +79,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private cameraService: CameraService,
     private sessionService: SessionFacadeService,
     private photoUploadService: PhotoUploadService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private _contractService: ContractsService
   ) {}
 
   ngOnDestroy(): void {
@@ -91,6 +97,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._initTermsSubscription();
     this._initGetImage();
     this.setFacility();
+  }
+
+  get dateSignedType() {
+    return QuestionTypes.DATE_SIGNED;
   }
 
   createHeader(question: QuestionHeader): string {
@@ -269,7 +279,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return question.source === 'WORK_ORDER' && question.workOrderFieldKey === 'DESCRIPTION';
   }
 
-  getLabel(question) {
+  getLabel(question, name: string) {
+    const control : AbstractControl = this.parentGroup.get(question[name]);
+    const label = this.checkLabel(question);
+    return control && hasRequiredField(control)? label + " (Required)": label;
+  }
+
+  checkLabel(question){
     if (question.source === 'WORK_ORDER') {
       if (question.workOrderFieldKey === WorkOrdersFields.FACILITY) {
         return this.workOrderFieldsText.location;
@@ -331,9 +347,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   private sanitizeUrl(photo: Photo, base64Data: string): string {
     return <string>(
-      (
       this.sanitizer.bypassSecurityTrustResourceUrl(this.sessionService.getIsWeb() ? photo.webPath : base64Data)
-    )
     );
   }
 

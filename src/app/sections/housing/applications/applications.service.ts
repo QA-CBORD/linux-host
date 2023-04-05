@@ -52,7 +52,7 @@ export class ApplicationsService {
     this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
 
-  isView: boolean;
+  isView = false;
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
@@ -284,7 +284,7 @@ export class ApplicationsService {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
       } else {
-        value = this._questionsService.getAttributeValue(applicationDetails.patronAttributes, question);
+        value = this._questionsService.getAttributeValue(question, applicationDetails.patronAttributes);
       }
     }
 

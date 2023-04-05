@@ -8,9 +8,9 @@ import { ACCOUNT_TYPES, CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/a
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
-import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 
 @Injectable({ providedIn: 'root' })
 export class DepositService {
@@ -20,7 +20,7 @@ export class DepositService {
 
   constructor(
     private readonly commerceApiService: CommerceApiService,
-    private readonly contentService: ContentStringsApiService,
+    private readonly contentServiceFacadeService: ContentStringsFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
@@ -122,12 +122,12 @@ export class DepositService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringByConfig({
+      this.contentServiceFacadeService.retrieveContentStringByConfig({
         domain: CONTENT_STRINGS_DOMAINS.patronUi,
         category: CONTENT_STRINGS_CATEGORIES.accounts,
         name: CONTENT_STRINGS.creditDepositReviewInstructions,
       }),
-      this.contentService.retrieveContentStringByConfig({
+      this.contentServiceFacadeService.retrieveContentStringByConfig({
         domain: CONTENT_STRINGS_DOMAINS.patronUi,
         category: CONTENT_STRINGS_CATEGORIES.accounts,
         name: CONTENT_STRINGS.billMeDepositReviewInstructions,

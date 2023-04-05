@@ -60,12 +60,12 @@
     mask-image: url('/assets/icon/pending.svg');
     width: 16px;
     height: 16px;
-    color: var(--ion-color-danger);
+    color: $color-warning-60;
   }
   [class*='icon-canceled'] {
     mask-image: url('/assets/icon/canceled.svg');
     width: 16px;
     height: 16px;
-    color: $color-warning-60;
+    color: var(--ion-color-danger);
   }
 }

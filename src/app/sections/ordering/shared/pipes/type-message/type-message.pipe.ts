@@ -7,7 +7,7 @@ import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 export class TypeMessagePipe implements PipeTransform {
   transform(type: ORDER_TYPE, text: 'dueTime' | 'address' | 'time', isWalkoutOrder = false): string {
     if (isWalkoutOrder) {
-      const labelMap = { dueTime: 'order time', time: 'order time', address: 'address' };
+      const labelMap = { dueTime: 'exit time', time: 'exit time', address: 'address' };
       return `Smart Shopping ${labelMap[text]}`;
     }
 

@@ -12,6 +12,9 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { Keyboard } from '@capacitor/keyboard';
+import { SearchbarCustomEvent } from '@ionic/angular';
+
 @Component({
   selector: 'st-ordering.page',
   templateUrl: './ordering.page.html',
@@ -21,6 +24,7 @@ import { APP_ROUTES } from '@sections/section.config';
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  searchString = '';
   constructor(
     private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
@@ -156,4 +160,13 @@ export class OrderingPage implements OnInit {
     this.contentStrings.buttonBack = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
   }
+
+  onEnterKeyClicked() {
+    Keyboard.hide();
+  }
+
+  onSearchedValue({ target: { value } }: SearchbarCustomEvent) {
+    this.searchString = value;
+  }
+
 }

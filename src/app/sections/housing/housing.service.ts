@@ -94,7 +94,7 @@ export class HousingService {
     const apiUrl = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
 
     return this._housingProxyService.get<DefinitionsResponse>(apiUrl).pipe(
-      map((response) => new DefinitionsResponse(response)),
+      map(response => new DefinitionsResponse(response)),
       switchMap((response: DefinitionsResponse) => this._patchDefinitionsByStore(response)),
       tap((response: DefinitionsResponse) =>
         this._setState(
@@ -118,7 +118,7 @@ export class HousingService {
     const apiUrl = `${this._applicationDefinitionUrl}/${key}/patron/self${queryString}`;
 
     return this._housingProxyService.get<DetailsResponse>(apiUrl).pipe(
-      map((response) => new DetailsResponse(response)),
+      map(response => new DetailsResponse(response)),
       tap((details: DetailsResponse) => {
         if (details.applicationDetails) {
           this._applicationsStateService.setApplicationDetails(details.applicationDetails);
@@ -147,7 +147,9 @@ export class HousingService {
       .pipe(map((response: DetailsResponse) => response.contractDetails))
       .pipe(
         tap((details: ContractDetails) => {
-          if (details.contractInfo.dateTimeSigned) {
+          const dateTimeAccepted: string = details.contractInfo.dateTimeAccepted;
+          const isSigned = dateTimeAccepted.length > 4 ? dateTimeAccepted : JSON.parse(dateTimeAccepted);
+          if (isSigned) {
             this._contractsService.sign(true);
           }
         })
@@ -161,7 +163,7 @@ export class HousingService {
   getRoomSelects(termId: number) {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
     return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
-      map((response) => new RoomSelectResponse(response)),
+      map(response => new RoomSelectResponse(response)),
       tap((response: RoomSelectResponse) => this._setRoomsState(response.roomSelects)),
       catchError(() => this._handleGetRoomSelectsError())
     );
@@ -170,7 +172,7 @@ export class HousingService {
   getInspections(termId: number) {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy/all?termKey=${termId}`;
     return this._housingProxyService.get<InspectionsData>(apiUrl).pipe(
-      map((response) => new InspectionsData(response)),
+      map(response => new InspectionsData(response)),
       tap((response: InspectionsData) => this._setInspectionsList(response.data)),
       catchError(() => this._handleInspectionListSelectedError())
     );
@@ -179,23 +181,22 @@ export class HousingService {
   getAttachmentsListDetails(termKey?: number) {
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-attachment?termKey=${termKey}`;
     return this._housingProxyService.get<AttachmentsListData>(apiUrl).pipe(
-      map((response ) => new AttachmentsListData(response)),
+      map(response => new AttachmentsListData(response)),
       tap((response: AttachmentsListData) => this._setAttachmenstList(response.data)),
       catchError(() => this._handleAttachmentListSelectedError())
-      );
+    );
   }
 
   getInspectionDetails(termId: number, residentInspectionKey?: number, contractElementKey?: number, checkIn?: boolean) {
     const apiUrl: string = residentInspectionKey
       ? `${
           this._baseUrl
-        }/roomselectproxy/v.1.0/room-inspections-proxy?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn +
-          ''}`
-      : `${
-          this._baseUrl
-        }/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`;
+        }/roomselectproxy/v.1.0/room-inspections-proxy?residentInspectionKey=${residentInspectionKey}&termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${
+          checkIn + ''
+        }`
+      : `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`;
     return this._housingProxyService.get<Inspection>(apiUrl).pipe(
-      map((response) => new Inspection(response)),
+      map(response => new Inspection(response)),
       tap((response: Inspection) => this._setInspection(response)),
       catchError(() => this._handleInspectionSelectedError())
     );
@@ -204,7 +205,7 @@ export class HousingService {
   getRequestedRoommates(request: RequestedRoommateRequest) {
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-preferences/requested`;
     return this._housingProxyService.post<Response>(apiUrl, request).pipe(
-      map((response) => new RequestedRoommateResponse(response.data)),
+      map(response => new RequestedRoommateResponse(response.data)),
       catchError(() => this._handleGetRequestedRoommatesError())
     );
   }
@@ -212,7 +213,7 @@ export class HousingService {
   getPatronContracts(termId: number) {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
     return this._housingProxyService.get<ContractListResponse>(apiUrl).pipe(
-      map((response) => new ContractListResponse(response)),
+      map(response => new ContractListResponse(response)),
       tap((response: ContractListResponse) => this._setContractSummariesState(response.contractSummaries)),
       catchError(() => this._handleGetContractSummariesError())
     );
@@ -221,7 +222,7 @@ export class HousingService {
   getCheckInOuts(termId: number) {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/${termId}`;
     return this._housingProxyService.get<CheckInOutResponse>(apiUrl).pipe(
-      map((response) => new CheckInOutResponse(response)),
+      map(response => new CheckInOutResponse(response)),
       tap((response: CheckInOutResponse) => this._setCheckInOutsState(response.checkInOuts)),
       catchError(() => this._handleGetCheckInOutsError())
     );
@@ -230,7 +231,7 @@ export class HousingService {
   getCheckInOutSlots(checkInOutKey: number): Observable<CheckInOutSlot[]> {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/check-in-out/patron/spot/${checkInOutKey}`;
     return this._housingProxyService.get<CheckInOutSlotsResponseOptions>(apiUrl).pipe(
-      map((response) => new CheckInOutSlotResponse(response).slots),
+      map(response => new CheckInOutSlotResponse(response).slots),
       catchError(err => {
         throw err;
       })
@@ -240,7 +241,7 @@ export class HousingService {
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/facilities/details/${roomSelectKey}`;
     return this._housingProxyService.get<FacilityDetailsResponse>(apiUrl).pipe(
-      map((response) => {
+      map(response => {
         const details = new FacilityDetailsResponse(response);
         return this._facilityMapper.map(details.facilityDetails);
       }),
@@ -306,7 +307,7 @@ export class HousingService {
   getWaitList(key: number): Observable<WaitingListDetails> {
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/patron-waiting-lists/waiting-list/${key}/patron/`;
     return this._housingProxyService.get<WaitingListDetails>(apiUrl).pipe(
-      map((response) => {
+      map(response => {
         this._waitingListStateService.setWaitingListDetails(response);
         return new WaitingListDetails(response);
       })
@@ -317,7 +318,7 @@ export class HousingService {
     //TODO: change url work orders
     const apiUrl = `${this._baseUrl}/patron-applications/v.1.0/work-orders/${termKey}/${workOrderKey}/`;
     return this._housingProxyService.get<WorkOrderDetails>(apiUrl).pipe(
-      map((response) => {
+      map(response => {
         this._workOrderStateService.setWorkOrderDetails(response);
         return new WorkOrderDetails(response);
       })
@@ -390,8 +391,8 @@ export class HousingService {
     this._inspectionsStateService.setInspectionList(value);
   }
 
-  _setAttachmenstList(value: AttachmentsList[]):void{
-    this._attachmentStateService.setAttachmentList(value)
+  _setAttachmenstList(value: AttachmentsList[]): void {
+    this._attachmentStateService.setAttachmentList(value);
   }
 
   _setInspection(value: Inspection): void {
@@ -442,20 +443,18 @@ export class HousingService {
   }
 
   private _patchDefinitionsByStore(response: DefinitionsResponse): Observable<DefinitionsResponse> {
-    const { applicationDefinitions:appDef, contractDetails:contractsDet, nonAssignmentDetails, waitingLists:wLists, workOrders } = response;
+    const {
+      applicationDefinitions: appDef,
+      contractDetails: contractsDet,
+      nonAssignmentDetails,
+      waitingLists: wLists,
+      workOrders,
+    } = response;
 
     const patchedApplications: Observable<ApplicationDetails[]> =
-    appDef.length > 0
-        ? this._applicationsService.patchApplicationsByStoredStatus(appDef)
-        : of([]);
+      appDef.length > 0 ? this._applicationsService.patchApplicationsByStoredStatus(appDef) : of([]);
 
-    return forkJoin(
-      patchedApplications,
-      of(contractsDet),
-      of(nonAssignmentDetails),
-      of(wLists),
-      of(workOrders)
-    ).pipe(
+    return forkJoin(patchedApplications, of(contractsDet), of(nonAssignmentDetails), of(wLists), of(workOrders)).pipe(
       map(
         ([applicationDefinitions, contractDetails, nonAssignments, waitingLists]: [
           ApplicationDetails[],
@@ -575,7 +574,7 @@ export class HousingService {
       patronApplication: {
         termKey: appDetails.applicationDefinition.termKey,
         applicationDefinitionKey: appDetails.applicationDefinition.key,
-        status: 3
+        status: 3,
       },
     };
     return this._housingProxyService

@@ -2,9 +2,7 @@ import { Component, ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/
 import { Subscription, merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { TermsService } from '../../terms/terms.service';
 import { HousingService } from '../../housing.service';
-import { CheckInOutResponse, ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
 export enum SelectedHousingTab {
   Forms = 'Forms',
@@ -19,8 +17,8 @@ export enum SelectedHousingTab {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HousingDashboardPage implements OnInit, OnDestroy {
-  SelectedHousingTab = SelectedHousingTab; // needed to reference enum on front-end
-  _selectedHousingTab: string = SelectedHousingTab.Forms;
+  HousingTab = SelectedHousingTab;
+  selectedHousingTab: string = SelectedHousingTab.Forms;
   private _subscription: Subscription = new Subscription();
 
   isHeaderVisible: boolean;
@@ -29,13 +27,12 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
   hasCheckInOuts: boolean;
 
   constructor(
-    private _termsService: TermsService,
     private _loadingService: LoadingService,
     private _housingService: HousingService
   ) {}
 
   ngOnInit(): void {
-    this._initSubscription();
+    this._retriveAllFormTypes();
   }
 
   ngOnDestroy(): void {
@@ -46,11 +43,8 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
     this._housingService.refreshDefinitions();
   }
 
-  private _initSubscription(): void {
-    const dashboardSubscription: Subscription = merge(
-      this._housingService.refreshDefinitions$,
-      this._termsService.termId$
-    )
+  private _retriveAllFormTypes(): void {
+    this._subscription = this._housingService.refreshDefinitions$
       .pipe(
         switchMap((termId: number) => {
           this._loadingService.showSpinner();
@@ -65,34 +59,12 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (response: DefinitionsResponse) => this._handleSuccess(response),
+        next: () => this._loadingService.closeSpinner(),
         error: () => this._loadingService.closeSpinner(),
       });
-
-    this._subscription.add(dashboardSubscription);
   }
 
-  private _handleSuccess(response): void {
-    if (response instanceof DefinitionsResponse) {
-      this.isHeaderVisible =
-        this.isHeaderVisible || response.applicationDefinitions.length > 0 || response.contractDetails.length > 0;
-    }
-    if (response instanceof RoomSelectResponse) {
-      this.isHeaderVisible = this.isHeaderVisible || response.roomSelects.length > 0;
-      this.hasRoomSelections = response.roomSelects.length > 0;
-    }
-    if (response instanceof ContractListResponse) {
-      this.isHeaderVisible = this.isHeaderVisible || response.contractSummaries.length > 0;
-      this.hasContracts = response.contractSummaries.length > 0;
-    }
-    if (response instanceof CheckInOutResponse) {
-      this.isHeaderVisible = this.isHeaderVisible || response.checkInOuts.length > 0;
-      this.hasCheckInOuts = response.checkInOuts.length > 0;
-    }
-
-    this._loadingService.closeSpinner();
-  }
   public changeView(view: string) {
-    this._selectedHousingTab = view;
+    this.selectedHousingTab = view;
   }
 }

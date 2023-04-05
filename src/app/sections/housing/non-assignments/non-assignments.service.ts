@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  FormControl,
-  FormGroup
-} from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
@@ -11,13 +8,13 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import {
   QuestionsEntries,
   QuestionsStorageService,
-  StoredApplication
+  StoredApplication,
 } from '@sections/housing/questions/questions-storage.service';
 import {
   QuestionAssetTypeDetails,
   QuestionAssetTypeDetailsBase,
   QuestionBase,
-  QuestionFormControl
+  QuestionFormControl,
 } from '@sections/housing/questions/types';
 import { flat, isDefined, parseJsonToArray } from '@sections/housing/utils';
 import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
@@ -30,7 +27,7 @@ import {
   AssetTypeDetailValue,
   ContractRequest,
   NonAssignmentContractRequest,
-  NonAssignmentDetails
+  NonAssignmentDetails,
 } from './non-assignments.model';
 import { Response } from '@sections/housing/housing.model';
 import { isSuccessful } from '../utils/is-successful';
@@ -40,7 +37,7 @@ import { PatronAttributesService } from '../patron-attributes/patron-attributes.
 import { PatronAddressService } from '../addresses/address.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NonAssignmentsService {
   private readonly _patronNonAssignmentsUrl: string = `${
@@ -54,8 +51,8 @@ export class NonAssignmentsService {
     private _questionsService: QuestionsService,
     private _nonAssignmentsStateService: NonAssignmentsStateService,
     private _patronAttributesService: PatronAttributesService,
-    private _patronAddressService: PatronAddressService,
-  ) { }
+    private _patronAddressService: PatronAddressService
+  ) {}
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
     return this._questionsStorageService.getApplication(key).pipe(
@@ -77,8 +74,8 @@ export class NonAssignmentsService {
     nonAssignment: NonAssignmentDetails,
     assetTypeKey: number,
     termKey: number,
-    form): Observable<boolean> {
-
+    form
+  ): Observable<boolean> {
     return this._questionsStorageService.updateQuestions(nonAssignmentKey, form, 3).pipe(
       switchMap((storedApplication: StoredApplication) => {
         const parsedJson = parseJsonToArray(nonAssignment.formJson);
@@ -100,14 +97,14 @@ export class NonAssignmentsService {
           assetKey: assetTypeKey,
           isAsset: true,
           isFacility: false,
-          termKey
+          termKey,
         });
 
         const body = new NonAssignmentContractRequest({
           nonAssignmentKey,
           patronContract,
           patronAttributes,
-          patronAddresses
+          patronAddresses,
         });
 
         return this._housingProxyService.post<Response>(this._patronNonAssignmentsUrl, body);
@@ -118,13 +115,13 @@ export class NonAssignmentsService {
         } else {
           throw new Error(response.status.message);
         }
-      }
-      ),
-      catchError(() => of(false)));
+      }),
+      catchError(() => of(false))
+    );
   }
 
   next(nonAssignmentKey: number, formValue) {
-    return this._questionsStorageService.updateQuestions(nonAssignmentKey, formValue, 1)
+    return this._questionsStorageService.updateQuestions(nonAssignmentKey, formValue, 1);
   }
 
   private _getQuestionsPages(nonAssignmentDetails: NonAssignmentDetails): QuestionBase[][] {
@@ -149,55 +146,49 @@ export class NonAssignmentsService {
     }));
   }
 
-  private _mapToAssetTypeDetailsGroup(question: QuestionBase, nonAssignmentDetails: NonAssignmentDetails): QuestionBase {
+  private _mapToAssetTypeDetailsGroup(
+    question: QuestionBase,
+    nonAssignmentDetails: NonAssignmentDetails
+  ): QuestionBase {
     if (!(question instanceof QuestionAssetTypeDetailsBase)) {
       return question;
     }
 
-    const assetTypes =
-      this._toAssetTypeDetails(question, nonAssignmentDetails.assetTypes);
+    const assetTypes = this._toAssetTypeDetails(question, nonAssignmentDetails.assetTypes);
 
     return new QuestionAssetTypeDetails({
       ...question,
-      assetTypes
+      assetTypes,
     });
   }
-
-  private _toAssetTypeDetails(question: QuestionAssetTypeDetailsBase, assetTypes: AssetType[]): AssetTypeDetailValue[][] {
-   if (!isDefined(assetTypes) || assetTypes.length === 0) {
-     return [];
-   }
+  getName(quetionField: string, p: AssetTypeDetailValue) {
+    return isDefined(quetionField) && quetionField !== 'undefined' ? quetionField : p.label;
+  }
+  private _toAssetTypeDetails(
+    question: QuestionAssetTypeDetailsBase,
+    assetTypes: AssetType[]
+  ): AssetTypeDetailValue[][] {
+    if (!isDefined(assetTypes) || assetTypes.length === 0) {
+      return [];
+    }
 
     const selectedValues = question.values.filter(p => p.selected);
-
     let nameLabel = '';
     let mealsLabel = '';
     let diningDollarsLabel = '';
     let costLabel = '';
 
     selectedValues.forEach(p => {
-      switch (p.value) {
-        case '0':
-          nameLabel = isDefined(question.customName) && question.customName !== 'undefined'
-            ? question.customName
-            : p.label;
-          break;
-        case '1':
-          mealsLabel = isDefined(question.customMeals) && question.customMeals !== 'undefined'
-            ? question.customMeals
-            : p.label;
-          break;
-        case '2':
-          diningDollarsLabel = isDefined(question.customDining) && question.customDining !== 'undefined'
-            ? question.customDining
-            : p.label;
-          break;
-        case '3':
-          costLabel = isDefined(question.customCost) && question.customDining !== 'undefined'
-            ? question.customCost
-            : p.label;
-          break;
-      }
+      nameLabel = this.getName(question.customName, p);
+      mealsLabel = this.getName(question.customMeals, p);
+      diningDollarsLabel = this.getName(question.customDining, p);
+      costLabel = this.getName(question.customCost, p);
+      return {
+        '0': nameLabel,
+        '1': mealsLabel,
+        '2': diningDollarsLabel,
+        '3': costLabel,
+      }[p.value];
     });
 
     const availableAssetTypes = assetTypes.map((assetType: AssetType) =>
@@ -246,12 +237,12 @@ export class NonAssignmentsService {
           label,
           value,
           selected,
-          isCurrency
+          isCurrency,
         });
 
         return assetTypeValue;
-
-      }));
+      })
+    );
 
     return availableAssetTypes;
   }
@@ -285,10 +276,13 @@ export class NonAssignmentsService {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(nonAssignmentDetails.patronAddresses, question) || '';
       } else {
-        value = this._questionsService.getAttributeValue(nonAssignmentDetails.patronAttributes, question) || '';
+        value = this._questionsService.getAttributeValue(question, nonAssignmentDetails.patronAttributes) || '';
       }
     }
 
-    return new FormControl({ value, disabled: question.readonly }, this._questionsService.getRequiredValidator(question));
+    return new FormControl(
+      { value, disabled: question.readonly },
+      this._questionsService.getRequiredValidator(question)
+    );
   }
 }

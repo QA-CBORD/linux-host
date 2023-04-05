@@ -10,8 +10,47 @@
       opacity: 0.4;
 
       & + .input__placeholder {
+        color: rgba($color-dim-gray, 0.4);
+      }
+    }
+    .input__wrapper .input__control {
+      background-color: transparent;
+      opacity: 0.4;
+      color: $color-night-gray; 
+
+      & + .input__placeholder {
         color: rgba($color-black, 0.4);
       }
+    }
+  }
+}
+input[type='text'].input__control {
+  border: 1px solid $color-matterhorn;
+  & + .input__placeholder {
+    font-weight: bold;
+  }
+  &:focus,
+  &:focus-within {
+    border: 2px solid $color-dodger-blue;
+
+    & + .input__placeholder {
+      @include floating-label($color-dodger-blue);
+    }
+  }
+  &--error {
+    border: 2px solid $color-alizarin;
+
+    &:focus,
+    &:focus-within {
+      border: 2px solid $color-alizarin;
+
+      & + .input__placeholder {
+        @include floating-label($color-alizarin);
+      }
+    }
+
+    & + .input__placeholder {
+      @include floating-label($color-alizarin);
     }
   }
 }
@@ -26,7 +65,7 @@
     width: 100%;
     height: 100%;
     outline: none;
-    border: 1px solid $color-light-gray;
+    border: 1px solid $color-dim-gray;
     border-radius: 8px;
     -webkit-appearance: none;
     padding-left: 10px;
@@ -73,7 +112,7 @@
     top: 25%;
     right: 5%;
   }
-  
+
   &__transparent_btn {
     position: absolute;
     top: 0%;
@@ -82,15 +121,9 @@
 }
 
 :host-context(.ng-valid.ng-dirty) .input__control {
-  &:focus-within {
-    & + .input__placeholder {
-      @include floating-label($color-dodger-blue);
-    }
-  }
-
   & + .input__placeholder {
     z-index: 2;
-
-    @include floating-label($color-dim-gray);
+    @include floating-label($color-night-gray);
+    font-weight: 500;
   }
 }

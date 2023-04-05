@@ -5,8 +5,6 @@ import { map, switchMap, tap, take } from 'rxjs/operators';
 
 import { AccountService } from './accounts.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
-import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
-
 import { TransactionHistory } from '../models/transaction-history.model';
 import { TransactionResponse } from '@core/model/account/transaction-response.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
@@ -23,6 +21,7 @@ import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { convertGMTintoLocalTime } from '@core/utils/date-helper';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { Settings } from '../../../app.global';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 
 @Injectable()
 export class TransactionService {
@@ -41,7 +40,7 @@ export class TransactionService {
   constructor(
     private readonly accountsService: AccountService,
     private readonly commerceApiService: CommerceApiService,
-    private readonly contentService: ContentStringsApiService,
+    private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly userFacadeService: UserFacadeService,
   ) { }
 
@@ -191,8 +190,8 @@ export class TransactionService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringListByRequest(ContentStringsParamsTransactions),
-      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
+      this.contentStringFacadeService.retrieveContentStringListByRequest(ContentStringsParamsTransactions),
+      this.contentStringFacadeService.retrieveContentStringListByRequest(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];
