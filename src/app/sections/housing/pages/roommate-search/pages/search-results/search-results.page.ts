@@ -67,6 +67,11 @@ export class SearchResultsPage implements OnInit {
     );
   }
 
+  displayRoomateName(roomate: RoommateDetails){
+
+  }
+
+
   async selectRoommate(roommate: RoommateDetails): Promise<void> {
     if (this.hasRoommatePreference()) {
       const selectionAlert = await this._alertController.create({
