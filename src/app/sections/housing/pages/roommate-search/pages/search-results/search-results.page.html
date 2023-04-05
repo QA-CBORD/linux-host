@@ -12,9 +12,9 @@
       <ion-list>
         <ion-item *ngFor="let roommate of roommates" button (click)="selectRoommate(roommate)">
           <ng-container>
-            <label>
+            <span>
               {{options.showOptions | i18nSelect: displayRoomateName(roommate) }}
-            </label>
+            </span>
           </ng-container>
         </ion-item>
       </ion-list>
