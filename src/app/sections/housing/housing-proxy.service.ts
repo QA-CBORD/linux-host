@@ -1,18 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Response, ResponseStatus } from './housing.model';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { StateTimeDuration } from 'src/app/app.global';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HousingProxyService {
-  constructor(private _http: HttpClient, private readonly _authFacadeService: AuthFacadeService) {}
+  private jwt_key = 'jwt_key';
+
+  constructor(
+    private _http: HttpClient,
+    private readonly _authFacadeService: AuthFacadeService,
+    private readonly storageStateService: StorageStateService
+  ) {}
 
   request<T>(apiUrl: string, callback: (headers: HttpHeaders, apiUrl: string) => Observable<T>): Observable<T> {
-    return this._authFacadeService.getExternalAuthenticationToken$().pipe(
+    return this.jwtToken$().pipe(
       switchMap((token: string) => {
         const headers: HttpHeaders = new HttpHeaders({
           Authorization: `Bearer ${token}`,
@@ -24,12 +32,11 @@ export class HousingProxyService {
   }
 
   get<T>(apiURL: string): Observable<T> {
-    return this.request<T>(apiURL, (headers, apiUrl) =>
-      this._http
-        .get(apiUrl, {
-          headers,
-        })
-        .pipe(map((response: Response) => response.data))
+    return this.jwtToken$().pipe(
+      switchMap(token => {
+        const headers = { Authorization: `Bearer ${token}` };
+        return this._http.get(apiURL, { headers }).pipe(map((response: Response) => response.data));
+      })
     );
   }
 
@@ -82,5 +89,25 @@ export class HousingProxyService {
         headers: headers.set('Content-Type', 'application/json'),
       });
     });
+  }
+
+  private jwtToken$(): Observable<string> {
+    return this.storageStateService.getStateEntityByKey$<string>(this.jwt_key).pipe(
+      switchMap(data => {
+        if (data && data.lastModified + data.timeToLive >= Date.now()) {
+       return of(data.value);
+        } else {
+          return this.retrieveJwtTokenFromServer$();
+        }
+      })
+    );
+  }
+
+  private retrieveJwtTokenFromServer$(): Observable<string> {
+    return this._authFacadeService
+      .getExternalAuthenticationToken$()
+      .pipe(
+        tap(jwt => this.storageStateService.updateStateEntity(this.jwt_key, jwt, { ttl: StateTimeDuration.TTL }))
+      );
   }
 }

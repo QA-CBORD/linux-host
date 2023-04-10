@@ -23,6 +23,17 @@
       z-index: 1 !important;
       font-weight: normal;
     }
+    &.disabled {
+      .input__control {
+        background-color: transparent;
+        opacity: 0.4;
+        color: rgba($color-dim-gray, 0.4);
+  
+        & + .input__placeholder {
+          color: rgba($color-dim-gray, 0.4);
+        }
+      }
+    }
   }
 }
 
