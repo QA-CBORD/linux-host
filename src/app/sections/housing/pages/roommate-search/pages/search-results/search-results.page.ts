@@ -68,8 +68,8 @@ export class SearchResultsPage implements OnInit {
     );
   }
 
-  displayRoomateName(roommate: RoommateDetails){
-    const birthDate = roommate.birthDate ? format(roommate.birthDate , 'MM/dd/yyyy') : null
+  roomateNameMap(roommate: RoommateDetails){
+    const birthDate = roommate.birthDate ? format(roommate.birthDate , 'MM/dd/yyyy') : ''
     return {
       'fullName':` ${roommate.firstName} ${(roommate.middleName === 'null' ? '' : roommate.middleName)} ${roommate.lastName}`,
       'preferredNameLast': `${(roommate.preferredName === 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName)} ${roommate.lastName}`,
