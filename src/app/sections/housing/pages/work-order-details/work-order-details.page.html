@@ -1,42 +1,41 @@
-<ion-content class="ion-padding work-order-details__content"
-  *ngIf="(workOrderDetails$ | async) as workOrderListDetails" #content>
+<ng-container *ngIf="(workOrderDetails$ | async) as workOrderListDetails">
   <st-forms-header>
   </st-forms-header>
-
-  <h2 class="work-order-details__title">{{ workOrderListDetails.formDefinition.applicationTitle }}</h2>
-
-  <div class="work-order-details__card">
-    <st-stepper class="stepper--white">
-      <st-step *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
-        [stepControl]="page.form">
-        <form [formGroup]="page.form" (ngSubmit)="submit(workOrderListDetails, page.form, isLastPage)">
-          <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
-            <st-question *ngIf="question" [parentGroup]="page.form" [question]="question" [name]="$any(question).name"
-              [class.question--first]="isFirstPage" [isSubmitted]="isSubmitted"></st-question>
-          </ng-container>
-
-          <st-stepper-footer>
-            <ion-button *ngIf="!isFirstPage" class="btn work-order-details__back" type="button" fill="clear" mode="ios"
-              stepperBack (back)="content.scrollToTop()">Back</ion-button>
-
-            <ion-button class="btn work-order-details__next" [class.stepper-footer__button--right]="isFirstPage"
-              mode="ios" fill="outline" type="submit" *ngIf="!isLastPage">
-              Next
-            </ion-button>
-
-            <ion-button
-              *ngIf="isLastPage"
-              class="btn work-order-details__submit"
-              mode="ios"
-              type="submit"
-              [class.stepper-footer__button--right]="isFirstPage"
-              [disabled]="workOrderListDetails.workOrderKey"
-              >
-              Submit Work Order
-            </ion-button>
-          </st-stepper-footer>
-        </form>
-      </st-step>
-    </st-stepper>
-  </div>
-</ion-content>
+  <ion-content class="ion-padding work-order-details__content" #content>
+    <h2 class="work-order-details__title">{{ workOrderListDetails.formDefinition.applicationTitle }}</h2>
+    <div class="work-order-details__card">
+      <st-stepper class="stepper--white">
+        <st-step *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
+          [stepControl]="page.form">
+          <form [formGroup]="page.form" (ngSubmit)="submit(workOrderListDetails, page.form, isLastPage)">
+            <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
+              <st-question *ngIf="question" [parentGroup]="page.form" [question]="question" [name]="$any(question).name"
+                [class.question--first]="isFirstPage" [isSubmitted]="isSubmitted"></st-question>
+            </ng-container>
+  
+            <st-stepper-footer>
+              <ion-button *ngIf="!isFirstPage" class="btn work-order-details__back" type="button" fill="clear" mode="ios"
+                stepperBack (back)="content.scrollToTop()">Back</ion-button>
+  
+              <ion-button class="btn work-order-details__next" [class.stepper-footer__button--right]="isFirstPage"
+                mode="ios" fill="outline" type="submit" *ngIf="!isLastPage">
+                Next
+              </ion-button>
+  
+              <ion-button
+                *ngIf="isLastPage"
+                class="btn work-order-details__submit"
+                mode="ios"
+                type="submit"
+                [class.stepper-footer__button--right]="isFirstPage"
+                [disabled]="workOrderListDetails.workOrderKey"
+                >
+                Submit Work Order
+              </ion-button>
+            </st-stepper-footer>
+          </form>
+        </st-step>
+      </st-stepper>
+    </div>
+  </ion-content>
+</ng-container>
