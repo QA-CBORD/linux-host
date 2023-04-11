@@ -1,1 +1,5 @@
 @import 'tools';
+
+span{
+    @include font-family($font-nunito-regular);
+}
