@@ -13,7 +13,7 @@
         <ion-item *ngFor="let roommate of roommates" button (click)="selectRoommate(roommate)">
           <ng-container>
             <span>
-              {{options.showOptions | i18nSelect: displayRoomateName(roommate) }}
+              {{options.showOptions | i18nSelect: roomateNameMap(roommate) }}
             </span>
           </ng-container>
         </ion-item>
