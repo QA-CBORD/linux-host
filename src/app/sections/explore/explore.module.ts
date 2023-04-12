@@ -9,12 +9,13 @@ import { IonicModule } from '@ionic/angular';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { MerchantMainInfoModule } from '@shared/ui-components/merchant-main-info/merchant-main-info.module';
 import { MerchantDetailsResolverService } from '@sections/explore/resolvers/merchant-details-resolver.service';
+import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 
 @NgModule({
   declarations: [
     ExploreComponent,
     MerchantListComponent,
-    MerchantCardComponent,
+    MerchantCardComponent
   ],
   imports: [
     CommonModule,
@@ -22,6 +23,7 @@ import { MerchantDetailsResolverService } from '@sections/explore/resolvers/merc
     IonicModule,
     StHeaderModule,
     MerchantMainInfoModule,
+    SearchPipeModule
   ],
   providers: [MerchantResolverService, MerchantDetailsResolverService],
 })
