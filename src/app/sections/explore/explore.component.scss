@@ -18,8 +18,8 @@
 
   &__title {
     background: $color-white;
-    display: inline;
-    text-align: left;
+    display: contents;
+    text-align: center;
     padding-left: 20px;
     @include font-nunito-heavy(22px);
   }
@@ -34,6 +34,7 @@
     right: 0;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 10px;
   }
 
   &__searchbar {
