@@ -3,9 +3,9 @@ import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
 import { NavigationStart, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { ModalController, NavController, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { GlobalNavService } from './services/global-nav.service';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'st-global-navigation',
@@ -33,7 +33,6 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   constructor(
     private readonly navigationSettingsService: NavigationFacadeSettingsService,
     private readonly router: Router,
-    private readonly navCtrl: NavController,
     private readonly popoverController: PopoverController,
     private readonly modalController: ModalController,
     private readonly globalNav: GlobalNavService
@@ -63,5 +62,11 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
 
   getLink(url: string) {
     return `/${url}`;
+  }
+
+  get isNavBarHidden$(): Observable<boolean> {
+    return this.globalNav.isNavBarShown$.pipe(
+      map(isShown => !isShown || true)
+    );
   }
 }
