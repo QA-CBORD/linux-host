@@ -19,11 +19,11 @@ import {
 } from '@sections/housing/check-in-out/check-in-out.model';
 import { CheckInOutService } from '@sections/housing/check-in-out/check-in-out.service';
 import { HousingService } from '@sections/housing/housing.service';
-import { monthDayYear } from '@shared/constants/dateFormats.constant';
 import {
   Observable,
   Subscription
 } from 'rxjs';
+
 @Component({
   selector: 'st-check-in-out-spot',
   templateUrl: './check-in-out-spot.page.html',
@@ -31,7 +31,6 @@ import {
 })
 export class CheckInOutSpotPage implements OnInit, OnDestroy {
 
-  dateFormat = monthDayYear ;
   private subscriptions: Subscription = new Subscription();
   private activeAlerts: HTMLIonAlertElement[] = [];
 
@@ -68,7 +67,7 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
   async selectSpot(selectedSpot: CheckInOutSlot): Promise<void> {
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: `Are you sure you want to select ${this._datePipe.transform(selectedSpot.slotDateTime, 'MMM d, y h:mm a')}?`,
+      message: `Are you sure you want to select ${this._datePipe.transform(selectedSpot.slotDateTime, 'MMM d, y, h:mm a')}?`,
       buttons: [
         {
           text: 'NO',
