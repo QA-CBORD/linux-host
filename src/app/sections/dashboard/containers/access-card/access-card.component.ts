@@ -46,17 +46,17 @@ export class AccessCardComponent implements OnInit, OnDestroy, AfterViewInit {
     public readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly profileService: ProfileServiceFacade,
     private readonly barcodeFacadeService: BarcodeFacadeService
-  ) { }
+  ) {}
 
   ngOnDestroy(): void {
     this.mobileCredentialFacade.onDestroy();
   }
 
   ngOnInit() {
+    this.setHousingOnlyEnabled();
     this.setInstitutionData();
     this.getFeaturesEnabled();
     this.getUserName();
-    this.setHousingOnlyEnabled();
   }
 
   ngAfterViewInit(): void {
@@ -79,14 +79,13 @@ export class AccessCardComponent implements OnInit, OnDestroy, AfterViewInit {
       .getUserPhoto()
       .pipe(
         first(),
-        catchError(() => of(null)))
-      .subscribe(
-        photo => {
-          this.isLoadingPhoto = false;
-          this.userPhoto = photo;
-          this.changeRef.detectChanges();
-        }
-      );
+        catchError(() => of(null))
+      )
+      .subscribe(photo => {
+        this.isLoadingPhoto = false;
+        this.userPhoto = photo;
+        this.changeRef.detectChanges();
+      });
   }
 
   async loadScanCardInputs() {
@@ -127,15 +126,12 @@ export class AccessCardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userFacadeService
       .getUser$()
       .pipe(take(1))
-      .subscribe(
-        response => {
-          this.userInfo = JSON.stringify(response);
-        }
-      );
+      .subscribe(response => {
+        this.userInfo = JSON.stringify(response);
+      });
   }
 
-
-  private async setHousingOnlyEnabled(){
+  private async setHousingOnlyEnabled() {
     this.housingOnlyEnabled = await this.profileService.housingOnlyEnabled();
   }
 }
