@@ -5,8 +5,6 @@ import { EXPLORE_ROUTING } from '@sections/explore/explore.config';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { Keyboard } from '@capacitor/keyboard';
-import { SearchbarCustomEvent } from '@ionic/angular';
 
 @Component({
   selector: 'st-explore',
@@ -28,11 +26,7 @@ export class ExploreComponent implements OnInit {
     await this.routingService.navigate([APP_ROUTES.explore, EXPLORE_ROUTING.merchantDetails, id]);
   }
 
-  onEnterKeyClicked() {
-    Keyboard.hide();
-  }
-
-  onSearchedValue({ target: { value } }: SearchbarCustomEvent) {
+  onSearchedValue(value: string) {
     this.searchString = value;
   }
 }

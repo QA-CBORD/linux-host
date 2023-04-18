@@ -1,19 +1,9 @@
-<ion-header class="header" no-border>
-  <ion-toolbar mode="ios" class="header__nav-toolbar">
-    <ion-title class="header__title">Explore</ion-title>
-  </ion-toolbar>
-  <ion-toolbar class="header__toolbar">
-    <ion-searchbar
-      (ionChange)="onSearchedValue($event)"
-      (keyup.enter)="onEnterKeyClicked()"
-      placeholder="Search for restaurants"
-      type="text"
-      debounce="500"
-      mode="ios"
-      class="header__searchbar"
-    ></ion-searchbar>
-  </ion-toolbar>
-</ion-header>
+<st-header-search-bar
+  title="Explore"
+  searchPlaceHolder="Search for restaurants"
+  (onSearch)="onSearchedValue($event)"
+></st-header-search-bar>
+
 <ion-content class="merchant-wrapper">
   <st-merchant-list (onMerchantClicked)="onMerchantClicked($event)" [merchants]="merchant$ | async | search: searchString"> </st-merchant-list>
 </ion-content>
