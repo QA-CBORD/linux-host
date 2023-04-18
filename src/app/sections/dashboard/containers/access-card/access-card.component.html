@@ -34,7 +34,7 @@
         <ng-template #campusBackground>
           <img class="card__campus-background" [src]="institutionBackgroundImage$ | async" alt="campus photo" />
         </ng-template>
-        <div class="card__campus-student-avatar-wrapper">
+        <div *ngIf="!housingOnlyEnabled" class="card__campus-student-avatar-wrapper">
           <img *ngIf="!isLoadingPhoto && userPhoto" class="card__campus-student-avatar" [src]="userPhoto" alt="user photo" />
           <img
             *ngIf="isLoadingPhoto || !userPhoto"
