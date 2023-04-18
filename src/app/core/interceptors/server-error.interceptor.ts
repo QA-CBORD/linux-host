@@ -100,7 +100,7 @@ const GENERAL_ERRORS = {
     deposit: 'There was an issue with the transaction',
     sale: 'Your billing information does not match your credit card.',
     getMobileLocations: 'Unable to retrieve mobile locations.',
-    default: 'There was an issue with your transaction. Contact support for more details.',
+    default: 'There was an issue with your transaction. Contact your institution for more details.',
   },
   6113: {
     default: 'There was an issue with the transaction',
