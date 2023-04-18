@@ -1,0 +1,26 @@
+<ion-header class="header" no-border>
+  <ion-toolbar mode="ios" class="header__nav-toolbar">
+    <ion-buttons *ngIf="useBackButton" slot="start">
+      <ion-back-button
+        class="header__back-btn"
+        color="dark"
+        text="Back"
+        icon="chevron-back"
+        mode="ios"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title class="header__title">{{ title }}</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar class="header__toolbar">
+    <ion-searchbar
+      (ionChange)="onInputChanged($event)"
+      (keyup.enter)="onEnterKeyClicked()"
+      [placeholder]="searchPlaceHolder"
+      type="text"
+      debounce="500"
+      mode="ios"
+      class="header__searchbar"
+    ></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
