@@ -27,7 +27,6 @@ export class ProfileServiceFacade {
     }
 
     async housingOnlyEnabled(): Promise<boolean> {
-        return await firstValueFrom(this.determineCurrentProfile$()) == APP_PROFILES.housing;
+        return await firstValueFrom(this.determineCurrentProfile$()) === APP_PROFILES.housing;
     }
-
 }
