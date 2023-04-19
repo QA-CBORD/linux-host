@@ -6,7 +6,7 @@
        context: {$implicit: navElements.slice(visibleAmountOfElements - 1)}"></ng-container>
     </ul>
   </st-popup-list>
-  <div class="global-navigation__main" *ngIf="isNavBarHidden$ | async">
+  <div class="global-navigation__main" *ngIf="isNavBarShown$ | async">
     <ul class="global-navigation__list">
       <ng-container
               *ngTemplateOutlet="navItems;

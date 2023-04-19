@@ -64,9 +64,7 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     return `/${url}`;
   }
 
-  get isNavBarHidden$(): Observable<boolean> {
-    return this.globalNav.isNavBarShown$.pipe(
-      map(isShown => isShown === true)
-    );
+  get isNavBarShown$(): Observable<boolean> {
+    return this.globalNav.isNavBarShown$;
   }
 }
