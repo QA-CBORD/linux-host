@@ -15,8 +15,9 @@ import { CheckInModule } from '@sections/check-in/check-in.module';
 import { TypeMessageModule } from './shared/pipes/type-message/type-message.pipe.module';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
+import { StHeaderSearchBarModule } from '@shared/ui-components/st-header-search-bar/st-header-search-bar.module';
 
-const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule, StHeaderModule, CheckInModule, TypeMessageModule, SearchPipeModule];
+const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule, StHeaderModule, CheckInModule, TypeMessageModule, SearchPipeModule, StHeaderSearchBarModule];
 const declarations = [OrderingPage, MenuOrderingComponent];
 const providers = [OrderingResolver, CartResolver, OrderingService, ModalsService];
 

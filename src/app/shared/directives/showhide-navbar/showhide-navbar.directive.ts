@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Renderer2 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { Keyboard } from '@capacitor/keyboard';
 import { NavigationService } from '@shared/services/navigation.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { filter } from 'rxjs/operators';
@@ -62,7 +63,20 @@ export class ShowHideNavbarDirective {
       this.showHideTabs(e);
       this.navService.trackPath(e.urlAfterRedirects);
     });
+
+    this.initKeyboard();
   }
+
+  initKeyboard() {
+    Keyboard.addListener('keyboardDidShow', () => {
+      this.hideTabs();
+    });
+
+    Keyboard.addListener('keyboardDidHide', () => {
+      this.showTabs();
+    });
+  }
+
 
   private showHideTabs(e: NavigationEnd) {
     const urlNotAllowed = e.url.split('/').some(url => this.notAllowedRoutes.some(route => url && url.includes(route)));
