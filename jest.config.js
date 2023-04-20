@@ -1,6 +1,7 @@
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   "preset": "jest-preset-angular",
+  "coverageReporters": ['html-spa'],
   "setupFilesAfterEnv": [
     "<rootDir>/src/setup.jest.ts"
   ],
