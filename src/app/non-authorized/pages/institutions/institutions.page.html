@@ -1,29 +1,9 @@
-<ion-header class="institutions-header" no-border>
-  <ion-toolbar mode="ios" class="institutions-header__nav-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button
-        class="institutions-header__back-btn"
-        color="dark"
-        text="Back"
-        icon="chevron-back"
-        mode="ios"
-      ></ion-back-button>
-    </ion-buttons>
-    <ion-title class="institutions-header__title">Select Institution</ion-title>
-  </ion-toolbar>
-
-  <ion-toolbar class="institutions-header__toolbar">
-    <ion-searchbar
-      (ionChange)="onSearchedValue($event)"
-      (keyup.enter)="onEnterKeyClicked()"
-      placeholder="Search..."
-      type="text"
-      debounce="500"
-      mode="ios"
-      class="institutions-header__searchbar"
-    ></ion-searchbar>
-  </ion-toolbar>
-</ion-header>
+<st-header-search-bar
+  title="Select Institution"
+  [useBackButton]="true"
+  searchPlaceHolder="Search..."
+  (onSearch)="onSearchedValue($event)"
+></st-header-search-bar>
 
 <ion-content class="search-institutions">
   <ng-container *ngIf="isLoading; then skeleton; else institutionsList"></ng-container>
@@ -42,9 +22,7 @@
   <ion-list class="search-institutions__list" mode="ios">
     <div *ngFor="let item of institutions | search : searchString">
       <ion-item class="search-institutions__item item-stable" lines="none" (click)="onInstitutionSelected(item)">
-        <ion-label class="search-institutions__name">
-          {{ item.name }}
-        </ion-label>
+        <ion-label class="search-institutions__name"> {{ item.name }} </ion-label>
         <ion-icon
           class="search-institutions__item-continue"
           src="/assets/icon/angle-down-select.svg"
