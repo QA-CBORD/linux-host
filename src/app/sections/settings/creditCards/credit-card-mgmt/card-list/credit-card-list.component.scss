@@ -7,7 +7,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 20vh;
       .no-credit-card-block-text {
         @include font-nunito-regular(15px);
         width: 155px;
@@ -60,35 +59,50 @@
     }
   }
 
-  .add-new-cc_item {
-    margin-top: 25px;
-    margin-bottom: 25px;
-  }
-
-  .info-to-user {
+  .info {
     margin: 16px 16px 0px 16px;
     font-weight: 400;
     line-height: 21px;
-    display: flex;
-    div:nth-child(1) {
-      font-size: 30px;
-      .add-icon {
-        font-size: 15px;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: $color-white;
+
+    &__message {
+      display: flex;
+
+      &__icons {
+        font-size: 30px;
+        .add-icon {
+          font-size: 15px;
+        }
+      }
+
+      &__text {
+        width: 80%;
+        margin: auto;
+        @include font-nunito-regular(14px);
+
+        ion-label {
+          @include font-nunito-regular(16px);
+          color: black;
+        }
       }
     }
-    div:nth-child(2) {
-      width: 80%;
-      margin: auto;
-      font-size: 14px;
+
+    &__cards {
+      display: block;
+      width: 100%;
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-columns: min-content;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 12px;
+
+      &__icon {
+        width: 49px;
+        height: 30px;
+      }
     }
   }
-}
-
-.info-to-user-text {
-  @include font-nunito-regular(14px);
-}
-
-.info-to-user-text ion-label {
-  @include font-nunito-regular(16px);
-  color: black;
 }
