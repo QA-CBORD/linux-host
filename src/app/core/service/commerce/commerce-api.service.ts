@@ -136,8 +136,8 @@ export class CommerceApiService {
     return this.http.post<string>(this.serviceUrl, queryConfig);
   }
 
-  getAllowedPaymentsMethods(sessionId: string, paymentSystemId: number): Observable<CreditPaymentMethods[]>  {
-    const params = { sessionId, paymentSystemId };
+  getAllowedPaymentsMethods(sessionId: string, paymentSystemId?: number, userId?: string): Observable<CreditPaymentMethods[]>  {
+    const params = { sessionId, paymentSystemId: paymentSystemId || '', userId };
     const queryConfig = new RPCQueryConfig('retrieveCreditPaymentMethodsByPaymentSystem', params, true, false);
     return this.http
       .post<MessageResponse<{ creditPaymentMethods: CreditPaymentMethods[] }>>(this.serviceUrl, queryConfig)
