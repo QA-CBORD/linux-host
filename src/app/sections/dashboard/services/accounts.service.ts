@@ -8,16 +8,21 @@ import { PaymentSystemType, Settings } from 'src/app/app.global';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
 
 @Injectable()
 export class AccountsService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly authFacadeService: AuthFacadeService
   ) {}
 
   getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Observable<UserAccount[]> {
-    return this.commerceApiService.getUserAccounts().pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
+    return this.commerceApiService
+      .getUserAccounts()
+      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts, defaults)));
   }
 
   removeCreditCardAccount({ id: accountId }: UserAccount): Promise<boolean> {
@@ -34,8 +39,9 @@ export class AccountsService {
     return this.settingsFacadeService.getSetting(Settings.Setting.DISPLAY_TENDERS).pipe(
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-      this.getUserAccounts([PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]
-        ).pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
+        this.getUserAccounts([PaymentSystemType.OPCS, PaymentSystemType.CSGOLD]).pipe(
+          map(accounts => this.filterAccountsByTenders(tenderIds, accounts))
+        )
       )
     );
   }
@@ -53,13 +59,21 @@ export class AccountsService {
     return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
   }
 
-  private filterAccountsByPaymentSystem(accounts: UserAccount[], paymentSistems:number[]): UserAccount[] {
-    return accounts.filter(
-      ({ paymentSystemType: type }) => paymentSistems.includes(type)
-    );
+  private filterAccountsByPaymentSystem(accounts: UserAccount[], paymentSistems: number[]): UserAccount[] {
+    return accounts.filter(({ paymentSystemType: type }) => paymentSistems.includes(type));
   }
 
   getUserSettings(settings: Settings.Setting[]): Observable<SettingInfo[]> {
     return this.settingsFacadeService.getSettings(settings);
+  }
+
+  getAllowedPaymentsMethods(paymentSystemType: number): Observable<CreditPaymentMethods[]> {
+    return this.authFacadeService
+      .getAuthSessionToken$()
+      .pipe(
+        switchMap((sessionId: string) =>
+          this.commerceApiService.getAllowedPaymentsMethods(sessionId, paymentSystemType)
+        )
+      );
   }
 }
