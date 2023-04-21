@@ -20,7 +20,6 @@ export class CreditCardMgmtComponent implements OnInit {
 
   noCreditCardFound = false;
 
-
   constructor(
     private readonly modalControler: ModalController,
     private readonly creditCardService: CreditCardService,
@@ -46,20 +45,24 @@ export class CreditCardMgmtComponent implements OnInit {
     this.modalControler.dismiss();
   }
 
-  async onRemoveConfirmed (account: UserAccount, strings: CardCs): Promise<void> {
+  async onRemoveConfirmed(account: UserAccount, strings: CardCs): Promise<void> {
     this.loadingService.showSpinner();
     try {
       const isSuccess = await this.creditCardService.removeCreditCardAccount(account);
       this.userAccounts = await this.retrieveAccounts();
-      this.showMessage(isSuccess ? strings.remove_success_msg : strings.remove_failure_msg);
+      if (isSuccess) {
+        this.showSuccessMessage(strings.remove_success_msg);
+      } else {
+        this.showErrorMessage(strings.remove_failure_msg);
+      }
     } catch (err) {
-      this.showMessage(strings.remove_failure_msg);
+      this.showErrorMessage(strings.remove_failure_msg);
     } finally {
       this.loadingService.closeSpinner();
     }
   }
 
-   removeAccount = async ({ account, display }): Promise<void> => {
+  removeAccount = async ({ account, display }): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const strings = this.contentStrings as any;
     const cardType = display.split(' ')[0];
@@ -86,14 +89,18 @@ export class CreditCardMgmtComponent implements OnInit {
     });
 
     await modal.present();
-  }
+  };
 
   async addCreditCard(): Promise<void> {
     await this.creditCardService.addCreditCard();
     this.userAccounts = await this.retrieveAccounts();
   }
 
-  private showMessage(message: string, duration = 5000) {
-    this.toastService.showToast({ message, duration });
+  private showSuccessMessage(message: string, duration = 5000) {
+    this.toastService.showToast({ message, duration, icon: 'checkmark-circle', cssClass: 'toast-message-success' });
+  }
+
+  private showErrorMessage(message: string, duration = 5000) {
+    this.toastService.showError(message, duration);
   }
 }
