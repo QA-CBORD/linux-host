@@ -27,8 +27,7 @@ export class ModalsService {
     return modal;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dismiss(data?: any, role?: string, id?: string): Promise<boolean> {
+  dismiss(data?: object, role?: string, id?: string): Promise<boolean> {
     return this.modalController.dismiss(data, role, id);
   }
 
