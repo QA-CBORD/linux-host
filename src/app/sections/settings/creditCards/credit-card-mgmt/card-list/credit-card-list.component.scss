@@ -92,16 +92,13 @@
     &__cards {
       display: block;
       width: 100%;
-      display: grid;
-      grid-auto-flow: column;
-      grid-template-columns: min-content;
-      gap: 16px;
-      justify-content: center;
       margin-top: 12px;
+      text-align: center;
 
       &__icon {
         width: 49px;
         height: 30px;
+        margin-left: 10px;
       }
     }
   }
