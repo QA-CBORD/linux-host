@@ -14,8 +14,10 @@
   <st-credit-card-list
     [contentStrings]="contentStrings"
     [userAccounts]="userAccounts"
+    [allowedPaymentsMethods]="allowedPaymentsMethods"
     [removeIcon]="true"
     (onRemove)="removeAccount($event)"
+    (onAdd)="addCreditCard()"
   ></st-credit-card-list>
 </ion-content>
 
