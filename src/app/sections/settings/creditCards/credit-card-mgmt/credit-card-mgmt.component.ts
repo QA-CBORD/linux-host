@@ -6,6 +6,7 @@ import { AlertController, ModalController, PopoverController } from '@ionic/angu
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
 import { AccountsConf, CreditCardService } from '../credit-card.service';
 import { CardCs } from './card-list/credit-card-list.component';
+import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
 
 @Component({
   selector: 'st-credit-card-mgmt',
@@ -15,7 +16,10 @@ import { CardCs } from './card-list/credit-card-list.component';
 export class CreditCardMgmtComponent implements OnInit {
   @Input() contentStrings: CardCs = {} as CardCs;
   @Input() userAccounts: AccountsConf[] = [];
+  @Input() allowedPaymentsMethods: CreditPaymentMethods[];
+
   noCreditCardFound = false;
+
 
   constructor(
     private readonly modalControler: ModalController,
