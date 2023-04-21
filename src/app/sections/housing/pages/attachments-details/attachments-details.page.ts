@@ -116,15 +116,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
   getAttachmentUrl() {
     this._loadingService.showSpinner();
-    this._attachmentService.getUrlAttachmentFile().pipe(take(1)).subscribe((res) => {
-      this._loadingService.closeSpinner();
-      if (res) {
-        return res;
-      }
-      this._toastService.showToast({
-        message: 'There was a problem submitting the Form. Try again or contact the Housing office.'
-      });
-    });
+    return this._attachmentService.getUrlAttachmentFile();
   }
 
   async backClicked() {
@@ -164,20 +156,18 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
             const createAttachmentSubscription = this._attachmentService.sendAttachmentImage(formData, this.attachmentUrl).pipe(
-              switchMap(() => this._attachmentService.sendAttachmentData(attachmentDetailsData))
-            ).subscribe(res => {
-              alert.dismiss();
-              if (res) {
-                this._housingService.goToDashboard();
-                this.route.navigate([PATRON_NAVIGATION.housing, LOCAL_ROUTING.dashboard])
-                this._loadingService.closeSpinner();
-              } else {
-                this._loadingService.closeSpinner();
-                this._toastService.showToast({
-                  message: 'There was a problem submitting the Form. Try again or contact the Housing office.'
-                });
-              }
-            });
+              switchMap(() => this._attachmentService.sendAttachmentData(attachmentDetailsData)))
+              .subscribe(res => {
+                alert.dismiss();
+                if (res) {
+                  this._housingService.goToDashboard();
+                  this._loadingService.closeSpinner();
+                } else {
+                  this._loadingService.closeSpinner();
+                  this._housingService.goToDashboard();
+                  this.displayToastMessage('There was a problem with this submission. Try again or contact the Housing office.')
+                }
+              });
 
             this.subscriptions.add(createAttachmentSubscription);
           },
@@ -189,31 +179,39 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   selectFile() {
-    this.getAttachmentUrl();
-    this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
-    this.chooser.getFile()
-      .then(file => {
-        this.file$.next(file);
-        this.fileSizeInMB = this.getSizeFile(file.data.byteLength);
-        if (this.fileSizeInMB>0){
-           this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
-           this.isFile = this.getFileType(file) != 'image';
-        }
-        this.alertAttachmentLimitSize(this.fileSizeInMB)
-      }).finally(()=> this.identityFacadeService.updateVaultTimeout({ extendTimeout: false }))
+    this.getAttachmentUrl().pipe(take(1)).subscribe((res) => {
+      this._loadingService.closeSpinner();
+      if (res) {
+        this.attachmentUrl = res;
+        this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, keepTimeoutExtendedOnResume: true });
+        this.chooser.getFile()
+          .then(file => {
+            this.file$.next(file);
+            this.fileSizeInMB = this.getSizeFile(file.data.byteLength);
+            if (this.fileSizeInMB > 0) {
+              this.fileData = new File([new Uint8Array(file.data.buffer, file.data.byteOffset, file.data.length)], file.name, { type: file.mediaType })
+              this.isFile = this.getFileType(file) != 'image';
+            }
+            this.alertAttachmentLimitSize(this.fileSizeInMB)
+          }).finally(() => this.identityFacadeService.updateVaultTimeout({ extendTimeout: false }))
+      }
+      else {
+        this.displayToastMessage('There was a problem with this submission. Try again or contact the Housing office.')
+      }
+    });
   }
 
-  getFileType(file){
+  getFileType(file) {
     return file.mediaType.split('/')[0];
   }
 
   getSizeFile(fileDataInt8) {
     const sizeFile = Number((fileDataInt8 / BYTES_TO_MB).toFixed(2))
-     return sizeFile <= 10? sizeFile: 0;
+    return sizeFile <= 10 ? sizeFile : 0;
   }
 
-  async alertAttachmentLimitSize(FileSize){
-    if (!FileSize){
+  async alertAttachmentLimitSize(FileSize) {
+    if (!FileSize) {
       const alert = await this._alertController.create({
         cssClass: "alert-modal-attachment",
         header: 'Large File Size',
@@ -266,9 +264,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
                   this._housingService.goToDashboard();
                 } else {
                   this._loadingService.closeSpinner();
-                  this._toastService.showToast({
-                    message: 'The deleted attachement could not be processed at this time. Try again later',
-                  });
+                  this.displayToastMessage('The deleted attachement could not be processed at this time. Try again later');
                 }
               });
             this.subscriptions.add(attachmentSubscription);
@@ -278,5 +274,11 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     });
     this.activeAlerts.push(alert);
     await alert.present();
+  }
+
+  displayToastMessage(msg:string){
+    this._toastService.showToast({
+      message: msg,
+    });
   }
 }
