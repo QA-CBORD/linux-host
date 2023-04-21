@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, zip } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 
@@ -10,13 +10,15 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 @Injectable()
 export class AccountsService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly authFacadeService: AuthFacadeService
+    private readonly authFacadeService: AuthFacadeService,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   getUserAccounts(defaults = [PaymentSystemType.OPCS, PaymentSystemType.MONETRA]): Observable<UserAccount[]> {
@@ -68,12 +70,10 @@ export class AccountsService {
   }
 
   getAllowedPaymentsMethods(paymentSystemType: number): Observable<CreditPaymentMethods[]> {
-    return this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(
-        switchMap((sessionId: string) =>
-          this.commerceApiService.getAllowedPaymentsMethods(sessionId, paymentSystemType)
-        )
-      );
+    return zip(this.authFacadeService.getAuthSessionToken$(), this.userFacadeService.getUserData$()).pipe(
+      switchMap(([sessionId, user]) =>
+        this.commerceApiService.getAllowedPaymentsMethods(sessionId, paymentSystemType, user.id)
+      )
+    );
   }
 }
