@@ -33,12 +33,12 @@ export class AttachmentsService {
 
   sendAttachmentImage(dataAttachmentsDetail: FormData, attachmentUrl: string) {
     return this._housingProxyService
-      .postAttachment<AttachmentsDetail>(attachmentUrl, dataAttachmentsDetail).pipe(catchError(() => of(undefined)));
+      .postAttachment<AttachmentsDetail>(attachmentUrl, dataAttachmentsDetail).pipe(catchError(() => of(null)));
   }
 
   sendAttachmentData(dataAttachmentsDetail: AttachmentsDetail): Observable<AttachmentsDetail> {
     return this._housingProxyService
-      .post<AttachmentsDetail>(this.AttachmentApiUrl, dataAttachmentsDetail).pipe(catchError(() => of(undefined)));
+      .post<AttachmentsDetail>(this.AttachmentApiUrl, dataAttachmentsDetail).pipe(catchError(() => of(null)));
   }
 
   getAttachmentFile(attachmentKey?: number) {
@@ -49,7 +49,7 @@ export class AttachmentsService {
   getUrlAttachmentFile() {
     const apiUrl = `${this.AttachmentApiUrl}/token`;
     return this._housingProxyService.get<string>(apiUrl).pipe(
-      catchError(() => of(undefined)),
+      catchError(() => of(null)),
       map(res => res));
   }
 
