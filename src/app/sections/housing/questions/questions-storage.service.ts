@@ -30,7 +30,9 @@ export interface StoredApplication {
 })
 export class QuestionsStorageService {
   private readonly _key: string = `${STORAGE_KEY}-applications`;
-
+  get key() {
+    return this._key;
+  }
   private _observableStorage: ObservableStorage;
 
   constructor(

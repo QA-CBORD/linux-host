@@ -189,6 +189,7 @@ export class ApplicationsService {
         const mappedQuestions = this._questionsService.mapToAddressTypeGroup(question);
         return this._mapQuestions(mappedQuestions);
       });
+console.log(this._questionsService.splitByPages(flat(questions)));
 
     return this._questionsService.splitByPages(flat(questions));
   }
