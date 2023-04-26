@@ -36,6 +36,7 @@ import { HousingService } from '@sections/housing/housing.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
 const BYTES_TO_MB = 1048576;
+const SIZE_LIMIT = 10;
 @Component({
   selector: 'attachments-details',
   templateUrl: './attachments-details.page.html',
@@ -209,7 +210,7 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
 
   getSizeFile(fileDataInt8) {
     const sizeFile = Number((fileDataInt8 / BYTES_TO_MB).toFixed(2))
-     return sizeFile <= 10? sizeFile: 0;
+     return sizeFile <= SIZE_LIMIT? sizeFile: 0;
   }
 
   async alertAttachmentLimitSize(FileSize){
