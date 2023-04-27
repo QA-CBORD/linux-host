@@ -14,7 +14,7 @@ import { SecureMessagePopoverComponent } from '@sections/secure-messaging/secure
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { UserInfo } from '@core/model/user';
 import * as Globals from '../../../../app.global';
-import { first, switchMap, tap } from 'rxjs/operators';
+import { catchError, first, switchMap, tap } from 'rxjs/operators';
 import { generateColorHslFromText } from '@core/utils/colors-helper';
 import {
   getConversationDescription,
@@ -346,15 +346,13 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
         .pipe(
           first(),
           switchMap(() => this.secureMessagingFacadeService.requestForNewMessagesAndGroups$),
-          tap(arg => this.secureMessagingFacadeService.mapToStorage(arg))
-        )
-        .subscribe(
-          () => {},
-          () => {
+          tap(arg => this.secureMessagingFacadeService.mapToStorage(arg)),
+          catchError(() => {
             const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
-            this.modalHandler(error, () => {});
-          }
-        );
+            return this.modalHandler(error, null);
+          })
+        )
+        .subscribe();
     }
   }
   get messagesArr() {

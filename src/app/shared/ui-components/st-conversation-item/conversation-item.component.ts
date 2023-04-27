@@ -23,10 +23,6 @@ export class ConversationItemComponent {
     this.conversationSelected.emit(this.conversationItem.conversation);
   }
   isUnread(message:SecureMessageInfo){
-    console.log(!message.read_date && message.sender.type === SecureMessageTypes.GROUP);
-    console.log(message.description,'read_date');
-    console.log(message.sender.type,'isGroup');
-    
     return !message.read_date && message.sender.type === SecureMessageTypes.GROUP
   }
 }
