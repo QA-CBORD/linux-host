@@ -67,7 +67,7 @@ export class CheckInOutSpotPage implements OnInit, OnDestroy {
   async selectSpot(selectedSpot: CheckInOutSlot): Promise<void> {
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: `Are you sure you want to select ${this._datePipe.transform(selectedSpot.slotDateTime, 'MMM d, y, h:mm a')}?`,
+      message: `Are you sure you want to select ${this._datePipe.transform(selectedSpot.slotDateTime, 'MMM d, y h:mm a')}?`,
       buttons: [
         {
           text: 'NO',

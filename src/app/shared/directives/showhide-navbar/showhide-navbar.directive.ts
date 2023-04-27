@@ -1,5 +1,7 @@
 import { Directive, ElementRef, Renderer2 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { Keyboard } from '@capacitor/keyboard';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NavigationService } from '@shared/services/navigation.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { filter } from 'rxjs/operators';
@@ -35,7 +37,7 @@ export class ShowHideNavbarDirective {
     'form-payment',
     'attachments',
     'roommates-search-result',
-    'search-by'
+    'search-by',
   ];
 
   /**
@@ -56,12 +58,27 @@ export class ShowHideNavbarDirective {
     private elemRef: ElementRef,
     private readonly renderer: Renderer2,
     private readonly globalNav: GlobalNavService,
-    private readonly navService: NavigationService
+    private readonly navService: NavigationService,
+    private readonly nativeProvider: NativeProvider
   ) {
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: NavigationEnd) => {
       this.showHideTabs(e);
       this.navService.trackPath(e.urlAfterRedirects);
     });
+
+    this.initKeyboard();
+  }
+
+  initKeyboard() {
+    if (this.nativeProvider.isMobile()) {
+      Keyboard.addListener('keyboardDidShow', () => {
+        this.hideTabs();
+      });
+
+      Keyboard.addListener('keyboardDidHide', () => {
+        this.showTabs();
+      });
+    }
   }
 
   private showHideTabs(e: NavigationEnd) {

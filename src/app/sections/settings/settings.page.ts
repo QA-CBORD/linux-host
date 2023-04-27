@@ -13,7 +13,6 @@ import { getUserFullName } from '@core/utils/general-helpers';
 import { UserInfo } from '@core/model/user';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
-import { APP_PROFILES } from '@sections/dashboard/models';
 import { App } from '@capacitor/app';
 import { EnvironmentData } from '@environments/environment-data';
 
@@ -29,6 +28,7 @@ export class SettingsPage implements OnInit {
   institutionName$: Observable<string>;
   userPhoto$: Observable<string>;
   isGuest: boolean;
+  isHousingOnly: boolean;
 
   constructor(
     private router: Router,
@@ -41,7 +41,7 @@ export class SettingsPage implements OnInit {
     private readonly profileService: ProfileServiceFacade
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.settingSections = this.settingsFactory.getSettings();
     this.userName$ = this.getUserName$();
     this.institutionName$ = this.getInstitutionName$();
@@ -51,14 +51,14 @@ export class SettingsPage implements OnInit {
       .isGuestUser()
       .toPromise()
       .then(isGuest => (this.isGuest = isGuest));
+    this.isHousingOnly = await this.profileService.housingOnlyEnabled();
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
   async navigateToPhotoUpload(): Promise<void> {
     const isPhotoVisible = await firstValueFrom(this.settingsFactory.photoUploadVisible$);
-    const determineProfile = await firstValueFrom(this.profileService.determineCurrentProfile$());
 
-    if (!isPhotoVisible || determineProfile === APP_PROFILES.housing) {
+    if (!isPhotoVisible || this.isHousingOnly) {
       return;
     }
 

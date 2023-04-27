@@ -12,8 +12,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { Keyboard } from '@capacitor/keyboard';
-import { SearchbarCustomEvent } from '@ionic/angular';
 
 @Component({
   selector: 'st-ordering.page',
@@ -161,12 +159,7 @@ export class OrderingPage implements OnInit {
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
   }
 
-  onEnterKeyClicked() {
-    Keyboard.hide();
-  }
-
-  onSearchedValue({ target: { value } }: SearchbarCustomEvent) {
+  onSearchedValue(value: string) {
     this.searchString = value;
   }
-
 }

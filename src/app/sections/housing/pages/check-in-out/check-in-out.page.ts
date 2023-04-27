@@ -7,7 +7,7 @@ import { CheckInOutSlot, CheckInOutSpot } from '@sections/housing/check-in-out/c
 import { HousingService } from '@sections/housing/housing.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, flatMap, tap } from 'rxjs/operators';
-import { montDayYearHour } from '../../../../shared/constants/dateFormats.constant';
+import { monthDayYear } from '../../../../shared/constants/dateFormats.constant';
 
 @Component({
   selector: 'st-check-in-out',
@@ -20,7 +20,7 @@ export class CheckInOutPage implements OnInit {
   availableSlots$: Observable<CheckInOutSpot>;
   checkInOutKey: number;
   stillLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  dateFormat = montDayYearHour;
+  dateFormat = monthDayYear;
 
   constructor(
     private _route: ActivatedRoute,

@@ -12,3 +12,4 @@ export * from './st-textarea-floating-label';
 export * from './pin';
 export * from './st-hierarchy-tree';
 export * from './st-conversation-item';
+export * from './st-header-search-bar';

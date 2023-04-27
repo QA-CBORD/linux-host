@@ -9,6 +9,7 @@ import { QueryTransactionHistoryCriteria } from '../../model/account/transaction
 import { TransactionResponse } from '../../model/account/transaction-response.model';
 import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
+import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
 
 @Injectable({
   providedIn: 'root',
@@ -130,8 +131,16 @@ export class CommerceApiService {
   }
 
   sale(fromAccountId: string, total: string): Observable<string> {
-    const params = { saleInfo: { fromAccountId, total } };
+    const params = { saleInfo: { fromAccountId, total, comment: 'Housing' } };
     const queryConfig = new RPCQueryConfig('sale', params, true, false);
     return this.http.post<string>(this.serviceUrl, queryConfig);
+  }
+
+  getAllowedPaymentsMethods(sessionId: string, paymentSystemId?: number, userId?: string): Observable<CreditPaymentMethods[]>  {
+    const params = { sessionId, paymentSystemId: paymentSystemId || '', userId };
+    const queryConfig = new RPCQueryConfig('retrieveCreditPaymentMethodsByPaymentSystem', params, true, false);
+    return this.http
+      .post<MessageResponse<{ creditPaymentMethods: CreditPaymentMethods[] }>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response.creditPaymentMethods));
   }
 }

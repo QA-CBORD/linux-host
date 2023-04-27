@@ -1,0 +1,48 @@
+@import 'tools';
+
+.header {
+  position: relative;
+  margin-bottom: 20px;
+
+  &__nav-toolbar {
+    --min-height: 40px;
+
+    @include bp-grid-desktop {
+      display: none;
+    }
+  }
+
+  &__title {
+    background: $color-white;
+    display: contents;
+    text-align: center;
+    padding-left: 20px;
+    @include font-nunito-heavy(22px);
+  }
+
+  &__toolbar {
+    z-index: 99;
+    width: 90%;
+    border-radius: 8px;
+    border: 1px solid #e3e3e3;
+    height: 50px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+  }
+
+  &__back-btn {
+    --margin-start: 10px;
+    --icon-padding-end: 5px;
+    --icon-font-size: 15px;
+
+    @include font-nunito-regular(16px);
+  }
+
+  &__searchbar {
+    --background: $color-white;
+    padding: 0 0 5px 0;
+  }
+}

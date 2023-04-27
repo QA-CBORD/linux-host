@@ -9,20 +9,24 @@ import { APP_ROUTES } from '@sections/section.config';
 @Component({
   selector: 'st-explore',
   templateUrl: './explore.component.html',
+  styleUrls: ['./explore.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExploreComponent implements OnInit {
   merchant$: Observable<MerchantInfo[]>;
-  constructor(
-    private readonly exploreService: ExploreService,
-    private readonly routingService: NavigationService
-  ) {}
+  searchString = '';
+
+  constructor(private readonly exploreService: ExploreService, private readonly routingService: NavigationService) {}
 
   ngOnInit() {
     this.merchant$ = this.exploreService.sortedMerchants$;
   }
 
   async onMerchantClicked(id: string) {
-      await this.routingService.navigate([APP_ROUTES.explore, EXPLORE_ROUTING.merchantDetails, id]);
+    await this.routingService.navigate([APP_ROUTES.explore, EXPLORE_ROUTING.merchantDetails, id]);
+  }
+
+  onSearchedValue(value: string) {
+    this.searchString = value;
   }
 }

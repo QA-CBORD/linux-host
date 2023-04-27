@@ -4,4 +4,8 @@ export * from './define';
 export * from './is-defined';
 export * from './validators';
 export * from './flat';
+export * from './is-date';
+export * from './is-successful';
 export * from './is-null-string';
+export * from './convert-object-to-map';
+export * from './has-date-passed';

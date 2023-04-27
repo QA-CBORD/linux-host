@@ -16,3 +16,9 @@ export interface UserAccount {
   readonly paymentSystemType: number;
   readonly userId: string;
 }
+
+export interface CreditCardAccount {
+  readonly display: string;
+  readonly account: UserAccount;
+  readonly iconSrc: string;
+}
