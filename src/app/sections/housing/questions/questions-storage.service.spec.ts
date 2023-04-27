@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Storage } from '@ionic/storage';
-import { first, firstValueFrom, map, of, switchMap, throwError } from 'rxjs';
+import { first, map, of, switchMap, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { ApplicationStatus } from '../applications/applications.model';
 import { QuestionsStorageService } from './questions-storage.service';
