@@ -14,7 +14,7 @@ import { SecureMessagePopoverComponent } from '@sections/secure-messaging/secure
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { UserInfo } from '@core/model/user';
 import * as Globals from '../../../../app.global';
-import { first } from 'rxjs/operators';
+import { first, switchMap, tap } from 'rxjs/operators';
 import { generateColorHslFromText } from '@core/utils/colors-helper';
 import {
   getConversationDescription,
@@ -23,7 +23,13 @@ import {
 } from '@core/utils/conversations-helper';
 import { Subscription } from 'rxjs';
 import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
-import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageTypes, SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
+import {
+  SecureMessageInfo,
+  SecureMessageGroupInfo,
+  SecureMessageTypes,
+  SecureMessageConversation,
+  MarkAsReadVal,
+} from '@core/model/secure-messaging/secure-messaging.model';
 
 @Component({
   selector: 'st-segure-message-chat.page',
@@ -33,7 +39,7 @@ import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageTypes, SecureMe
 })
 export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   @ViewChild('chatScroll', { read: ElementRef }) chatScroll: ElementRef;
-
+  senderType = SecureMessageTypes;
   newMessageText = '';
   private readonly sourceSub: Subscription = new Subscription();
 
@@ -67,8 +73,11 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.scrollToBottom();
   }
-
+  ionViewWillLeave() {
+    this.sourceSub.add(this.secureMessagingFacadeService.getInitialData$().pipe(first()).subscribe());
+  }
   ngOnDestroy() {
+    this.markAsRead(this.infoToMarkAsRead);
     this.secureMessagingFacadeService.clearSelectedConversation();
     this.sourceSub.unsubscribe();
   }
@@ -328,5 +337,38 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     });
 
     return await popover.present();
+  }
+  markAsRead(body: MarkAsReadVal) {
+    const lastMessage = this.messagesArr[this.messagesArr.length - 1];
+    if (lastMessage.sender.type === SecureMessageTypes.GROUP && !lastMessage.read_date) {
+      this.secureMessagingFacadeService
+        .markAsRead(body)
+        .pipe(
+          first(),
+          switchMap(() => this.secureMessagingFacadeService.requestForNewMessagesAndGroups$),
+          tap(arg => this.secureMessagingFacadeService.mapToStorage(arg))
+        )
+        .subscribe(
+          () => {},
+          () => {
+            const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
+            this.modalHandler(error, () => {});
+          }
+        );
+    }
+  }
+  get messagesArr() {
+    return this.selectedConversation.messages;
+  }
+  private get infoToMarkAsRead(): MarkAsReadVal {
+    const messagesFromRC = this.selectedConversation.messages.filter(
+      msg => msg.sender.type === SecureMessageTypes.GROUP
+    );
+    const lastMessage = messagesFromRC.pop();
+    return {
+      institution_id: lastMessage.institution_id,
+      sender_id: lastMessage.sender.id,
+      sent_date: new Date().toISOString(),
+    };
   }
 }

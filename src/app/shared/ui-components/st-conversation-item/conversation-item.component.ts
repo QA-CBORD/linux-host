@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { SecureMessageConversationListItem, SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
+import { SecureMessageConversationListItem, SecureMessageConversation, SecureMessageTypes, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { generateColorHslFromText } from '@core/utils/colors-helper';
 import { mapConversationToListItem } from '@core/utils/conversations-helper';
-
 @Component({
   selector: 'st-conversation-item',
   templateUrl: './conversation-item.component.html',
@@ -12,7 +11,7 @@ import { mapConversationToListItem } from '@core/utils/conversations-helper';
 export class ConversationItemComponent {
   conversationItem: SecureMessageConversationListItem;
   avatarBackgroundColor: string;
-
+  senderType = SecureMessageTypes;
   @Input('conversation') set _conversationItem(conversation: SecureMessageConversation) {
     this.conversationItem = mapConversationToListItem(conversation);
     this.avatarBackgroundColor = generateColorHslFromText(this.conversationItem.groupName);
@@ -22,5 +21,12 @@ export class ConversationItemComponent {
 
   onConversationSelected() {
     this.conversationSelected.emit(this.conversationItem.conversation);
+  }
+  isUnread(message:SecureMessageInfo){
+    console.log(!message.read_date && message.sender.type === SecureMessageTypes.GROUP);
+    console.log(message.description,'read_date');
+    console.log(message.sender.type,'isGroup');
+    
+    return !message.read_date && message.sender.type === SecureMessageTypes.GROUP
   }
 }

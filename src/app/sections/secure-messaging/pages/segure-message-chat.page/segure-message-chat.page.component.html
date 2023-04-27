@@ -28,7 +28,7 @@
         <ion-grid>
           <div *ngFor="let message of selectedConversation.messages; let i = index; trackBy: trackMessagesByFn">
             <!-- row for group -->
-            <ion-row *ngIf="message.sender.type === 'group'">
+            <ion-row *ngIf="message.sender.type === senderType.GROUP">
               <ion-col
                 size-xs="2"
                 size-sm="2"
@@ -64,7 +64,7 @@
               <ion-col size-xs="1" size-sm="1" size-md="4" size-lg="4" size-xl="4" class="ion-no-padding"> </ion-col>
             </ion-row>
             <!-- row for patron -->
-            <ion-row class="ion-justify-content-end" *ngIf="message.sender.type === 'patron'">
+            <ion-row class="ion-justify-content-end" *ngIf="message.sender.type === senderType.PATRON">
               <ion-col size-xs="1" size-sm="1" size-md="5" size-lg="5" size-xl="5" class="ion-no-padding"> </ion-col>
               <ion-col size-xs="11" size-sm="11" size-md="6" size-lg="6" size-xl="6" size="6" class="ion-no-padding">
                 <ion-item lines="none" class="conversation-container__body-wrapper">
@@ -73,7 +73,7 @@
                   </div>
                 </ion-item>
                 <div
-                  *ngIf="messageShowDate(selectedConversation, i, 'patron')"
+                  *ngIf="messageShowDate(selectedConversation, i, senderType.PATRON)"
                   class="conversation-container__date-wrapper ion-text-end"
                 >
                   <p class="conversation-container__text-date" style="padding-right: 16px;">
