@@ -337,7 +337,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
               const [first] = userAccounts;
               allowedPaymentsMethods = await firstValueFrom(
                 services.accountService.getAllowedPaymentsMethods(first?.account?.paymentSystemId)
-              ).then(creditCards => creditCards.map(cards => parseCreditCards(cards)));
+              ).then(creditCards => creditCards.map(cards => cards.active && parseCreditCards(cards)));
 
             } catch (ignored) {
               // fallback on empty userAccounts array
