@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
 import { AccountsConf } from '../../credit-card.service';
+import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
 
 export interface CardCs {
   screen_title: string;
@@ -17,12 +18,14 @@ export interface CardCs {
   selector: 'st-credit-card-list',
   templateUrl: './credit-card-list.component.html',
   styleUrls: ['./credit-card-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardListComponent {
   @Input() contentStrings: CardCs = {} as CardCs;
   @Input() userAccounts: AccountsConf[] = [];
   @Input() removeIcon: boolean;
   @Input() addItem: boolean;
+  @Input() allowedPaymentsMethods: CreditPaymentMethods[];
   @Output() onRemove: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
   @Output() onClick: EventEmitter<UserAccount> = new EventEmitter<UserAccount>();
   @Output() onAdd: EventEmitter<Event> = new EventEmitter<Event>();

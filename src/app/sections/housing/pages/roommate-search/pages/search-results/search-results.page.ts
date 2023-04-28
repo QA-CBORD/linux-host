@@ -12,6 +12,7 @@ import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { RoommatePreferences } from '../../../../applications/applications.model';
 import { Router } from '@angular/router';
 import { NavigationService } from '@shared/services/navigation.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'st-search-results',
@@ -66,6 +67,16 @@ export class SearchResultsPage implements OnInit {
       })
     );
   }
+
+  roomateNameMap(roommate: RoommateDetails){
+    const birthDate = roommate.birthDate ? format(roommate.birthDate , 'MM/dd/yyyy') : ''
+    return {
+      'fullName':` ${roommate.firstName} ${(roommate.middleName === 'null' ? '' : roommate.middleName)} ${roommate.lastName}`,
+      'preferredNameLast': `${(roommate.preferredName === 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName)} ${roommate.lastName}`,
+      'fullNameDOB': `${roommate.firstName} ${(roommate.middleName === 'null' ? '' : roommate.middleName)} ${roommate.lastName}  ${birthDate}`
+    }
+  }
+
 
   async selectRoommate(roommate: RoommateDetails): Promise<void> {
     if (this.hasRoommatePreference()) {

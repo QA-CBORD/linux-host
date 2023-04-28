@@ -527,7 +527,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       );
   }
 
-  get checkAddToCart$(): Observable<OrderInfo> {
-    return this.order$.pipe(tap(({ checkinStatus, status }) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)));
+  get checkAddToCart$(): Observable<boolean> {
+    return this.order$.pipe(map(({ checkinStatus, status }) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)));
   }
 }

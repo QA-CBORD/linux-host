@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShowHideNavbarDirective } from './showhide-navbar.directive';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 const declarations = [ShowHideNavbarDirective];
 
@@ -9,6 +10,7 @@ const declarations = [ShowHideNavbarDirective];
   imports: [
     CommonModule
   ],
+  providers:[NativeProvider],
   exports: declarations
 })
 export class ShowHideNavbarModule { }

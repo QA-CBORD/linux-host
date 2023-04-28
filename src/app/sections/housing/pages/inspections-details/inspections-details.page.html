@@ -1,13 +1,7 @@
-<ion-content
-  class="ion-padding inspection-details__content"
-  *ngIf="(inspectionDetails$ | async) as inspectionDetails"
-  #content
->
-  <st-forms-header [showSave]="!(status > 1)"
-  (onSave)="save(inspectionDetails)"
-  >
+<ng-container *ngIf="(inspectionDetails$ | async) as inspectionDetails">
+  <st-forms-header [showSave]="!(status > 1)" (onSave)="save(inspectionDetails)">
   </st-forms-header>
-
+  <ion-content class="ion-padding inspection-details__content" #content>
   <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
   <st-housing-tabs (onTabSelected)="changeView($event)">
     <st-housing-tab *ngFor="let room of inspectionDetails.sections" [tabTitle]="room.name"></st-housing-tab>
@@ -63,3 +57,5 @@
     </st-stepper-footer>
   </div>
 </ion-content>
+</ng-container>
+

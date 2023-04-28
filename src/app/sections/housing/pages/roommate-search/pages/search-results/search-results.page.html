@@ -11,18 +11,10 @@
     
       <ion-list>
         <ion-item *ngFor="let roommate of roommates" button (click)="selectRoommate(roommate)">
-          <ng-container [ngSwitch]="options.showOptions">
-            <ion-label *ngSwitchCase="'fullName'">
-              {{ roommate.firstName }} {{ roommate.middleName === 'null' ? '' : roommate.middleName }} {{ roommate.lastName}}
-            </ion-label>
-            
-            <ion-label *ngSwitchCase="'preferredNameLast'">
-              {{ roommate.preferredName === 'null' || roommate.preferredName === '' ? roommate.firstName : roommate.preferredName }} {{ roommate.lastName}}
-            </ion-label>
-
-            <ion-label *ngSwitchCase="'fullNameDOB'">
-              {{ roommate.firstName }} {{ roommate.middleName === 'null' ? '' : roommate.middleName }} {{ roommate.lastName}} {{ roommate.birthDate | date: 'MM/dd/yyyy' }}
-            </ion-label>
+          <ng-container>
+            <span>
+              {{options.showOptions | i18nSelect: roomateNameMap(roommate) }}
+            </span>
           </ng-container>
         </ion-item>
       </ion-list>

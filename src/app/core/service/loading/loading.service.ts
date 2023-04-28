@@ -41,19 +41,13 @@ export class LoadingService {
             cssClass: 'custom-loading',
           };
 
-    await this.loadingController.create(config).then(loader => {
-      loader.present().then(() => {
-        if (!this.isLoading) {
-          this.closeSpinner();
-        }
-      });
-    });
+    const loader = await this.loadingController.create(config);
+    await loader.present();
+    if (!this.isLoading) {
+      this.closeSpinner();
+    }
   }
-
-  notLoading(): boolean {
-    this.isLoading = false;
-    return this.isLoading;
-  }
+  notLoading = (): boolean => !this.isLoading;
 
   async closeSpinner(): Promise<void> {
     this.isLoading = false;

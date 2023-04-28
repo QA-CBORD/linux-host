@@ -120,7 +120,7 @@
     &__filter {
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
-      --height: 100vh;
+      --min-height: 27px;
     }
 
     .modal-wrapper,
@@ -403,4 +403,14 @@ ion-modal.sc-modal {
       align-items: initial;
     }
   }
+}
+
+.screen-reader-only {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 1px;
 }

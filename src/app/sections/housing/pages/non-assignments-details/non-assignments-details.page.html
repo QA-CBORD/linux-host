@@ -1,64 +1,65 @@
-<ion-content
-  class="ion-padding non-assignment-details__content"
-  *ngIf="(nonAssignmentDetails$ | async) as nonAssignmentDetails"
-  #content>
+<ng-container   *ngIf="(nonAssignmentDetails$ | async) as nonAssignmentDetails">
   <st-forms-header>
   </st-forms-header>
+  <ion-content
+    class="ion-padding non-assignment-details__content" 
+    #content>
+    <h2 class="non-assignment-details__title">{{ nonAssignmentDetails.applicationTitle }}</h2>
+  
+    <div class="non-assignment-details__card">
+      <st-stepper class="stepper--white">
+        <st-step
+          *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
+          [stepControl]="page.form">
+          <form
+            [formGroup]="page.form" 
+            (ngSubmit)="submit(nonAssignmentDetails, page.form, isLastPage)">
+            <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
+              <st-question
+                *ngIf="question"
+                [parentGroup]="page.form"
+                [question]="question"
+                [name]="$any(question).name"
+                [class.question--first]="isFirstQuestion"
+                [isSubmitted]="isSubmitted">
+              </st-question>
+            </ng-container>
+  
+            <st-stepper-footer>
+              <ion-button
+                *ngIf="!isFirstPage"
+                class="btn non-assignment-details__btn-back"
+                type="button"
+                fill="clear"
+                mode="ios"
+                stepperBack
+                (back)="content.scrollToTop()">
+                Back
+              </ion-button>
+  
+              <ion-button
+                *ngIf="!isLastPage"
+                class="btn non-assignment-details__btn-next"
+                type="submit"
+                fill="outline"
+                mode="ios"
+                [class.stepper-footer__button-right]="isFirstPage">
+                Next
+              </ion-button>
+  
+              <ion-button
+                *ngIf="isLastPage"
+                class="btn non-assignment-details__submit stepper-footer__button-right"
+                mode="ios"
+                type="submit"
+                [disabled]="true">
+                Submit
+              </ion-button>
+            </st-stepper-footer>
+          </form>
+        </st-step>
+      </st-stepper>
+    </div>
+  </ion-content>
+</ng-container>
 
-  <h2 class="non-assignment-details__title">{{ nonAssignmentDetails.applicationTitle }}</h2>
-
-  <div class="non-assignment-details__card">
-    <st-stepper class="stepper--white">
-      <st-step
-        *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage"
-        [stepControl]="page.form">
-        <form
-          [formGroup]="page.form" 
-          (ngSubmit)="submit(nonAssignmentDetails, page.form, isLastPage)">
-          <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
-            <st-question
-              *ngIf="question"
-              [parentGroup]="page.form"
-              [question]="question"
-              [name]="$any(question).name"
-              [class.question--first]="isFirstQuestion"
-              [isSubmitted]="isSubmitted">
-            </st-question>
-          </ng-container>
-
-          <st-stepper-footer>
-            <ion-button
-              *ngIf="!isFirstPage"
-              class="btn non-assignment-details__btn-back"
-              type="button"
-              fill="clear"
-              mode="ios"
-              stepperBack
-              (back)="content.scrollToTop()">
-              Back
-            </ion-button>
-
-            <ion-button
-              *ngIf="!isLastPage"
-              class="btn non-assignment-details__btn-next"
-              type="submit"
-              fill="outline"
-              mode="ios"
-              [class.stepper-footer__button-right]="isFirstPage">
-              Next
-            </ion-button>
-
-            <ion-button
-              *ngIf="isLastPage"
-              class="btn non-assignment-details__submit stepper-footer__button-right"
-              mode="ios"
-              type="submit"
-              [disabled]="true">
-              Submit
-            </ion-button>
-          </st-stepper-footer>
-        </form>
-      </st-step>
-    </st-stepper>
-  </div>
-</ion-content>

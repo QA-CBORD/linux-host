@@ -33,11 +33,12 @@ import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { APP_PROFILES } from '@sections/dashboard/models';
 import { CreditCardMgmtComponent } from './creditCards/credit-card-mgmt/credit-card-mgmt.component';
-import { UserAccount } from '@core/model/account/account.model';
+import { CreditCardAccount, UserAccount } from '@core/model/account/account.model';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { reduceToObject } from '@shared/model/content-strings/content-string-utils';
 import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
 import { firstValueFrom } from 'rxjs';
+import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -299,14 +300,24 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           fetchData: async (services: SettingsServices): Promise<any> => {
             await services.loadingService.showSpinner();
 
-            const parseAccountData = (account: UserAccount) => {
+            const parseAccountData = (account: UserAccount): CreditCardAccount => {
               const { accountTender, lastFour } = account;
               const creditCardTypeNumber = parseInt(accountTender) - 1;
               const display = `${CREDITCARD_TYPE[creditCardTypeNumber]} ending in ${lastFour}`;
               const iconSrc = CREDITCARD_ICONS[creditCardTypeNumber];
               return { display, account, iconSrc };
             };
+
+            const parseCreditCards = (card: CreditPaymentMethods): CreditPaymentMethods => {
+              const { accountTender } = card;
+              const creditCardTypeNumber = parseInt(accountTender) - 1;
+              const icon = CREDITCARD_ICONS[creditCardTypeNumber];
+
+              return { ...card, icon };
+            };
+
             let userAccounts = [];
+            let allowedPaymentsMethods = [];
 
             const contentStringsData = await contentStringsByCategory(services, [
               {
@@ -322,13 +333,23 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
               userAccounts = await firstValueFrom(
                 services.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
               ).then(accounts => accounts.map(acc => parseAccountData(acc)));
+
+              const [first] = userAccounts;
+              allowedPaymentsMethods = await firstValueFrom(
+                services.accountService.getAllowedPaymentsMethods(first?.account?.paymentSystemId)
+              ).then(creditCards => creditCards.map(cards => parseCreditCards(cards)));
+
             } catch (ignored) {
               // fallback on empty userAccounts array
             } finally {
               await services.loadingService.closeSpinner();
             }
 
-            return { contentStrings: reduceToObject(contentStringsData, defaultCreditCardMgmtCs), userAccounts };
+            return {
+              contentStrings: reduceToObject(contentStringsData, defaultCreditCardMgmtCs),
+              userAccounts,
+              allowedPaymentsMethods,
+            };
           },
         },
         checkIsVisible: async (services: SettingsServices) => {

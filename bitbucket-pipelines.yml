@@ -30,7 +30,8 @@ pipelines:
           image: node:18-alpine
           script:
             - npm install
-            - npm run build-prod
+            - npm run lint
+            - npm run build-appflow
   custom:
     release-update:
       - step:

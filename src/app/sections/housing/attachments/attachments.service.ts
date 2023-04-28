@@ -4,7 +4,7 @@ import { HousingProxyService } from "../housing-proxy.service";
 import { of, Observable } from "rxjs";
 import { Attachment, AttachmentsDetail, AttachmentTypes } from './attachments.model';
 import { generateAttachments } from './attachments.mock';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -21,7 +21,7 @@ export class AttachmentsService {
     private _housingProxyService: HousingProxyService,
   ) { }
 
-  getAttachmentTypes(): Observable<AttachmentTypes[]>{
+  getAttachmentTypes(): Observable<AttachmentTypes[]> {
     const apiUrl = `${this.AttachmentApiUrl}/attachment-types`;
     return this._housingProxyService.get<AttachmentTypes[]>(apiUrl);
   }
@@ -31,14 +31,14 @@ export class AttachmentsService {
   }
 
 
-  sendAttachmentImage(dataAttachmentsDetail: FormData,attachmentUrl: string) {
+  sendAttachmentImage(dataAttachmentsDetail: FormData, attachmentUrl: string) {
     return this._housingProxyService
-      .postAttachment<AttachmentsDetail>(attachmentUrl, dataAttachmentsDetail);
+      .postAttachment<AttachmentsDetail>(attachmentUrl, dataAttachmentsDetail).pipe(catchError(() => of(null)));
   }
 
-  sendAttachmentData(dataAttachmentsDetail: AttachmentsDetail) {
+  sendAttachmentData(dataAttachmentsDetail: AttachmentsDetail): Observable<AttachmentsDetail> {
     return this._housingProxyService
-      .post<AttachmentsDetail>(this.AttachmentApiUrl, dataAttachmentsDetail);
+      .post<AttachmentsDetail>(this.AttachmentApiUrl, dataAttachmentsDetail).pipe(catchError(() => of(null)));
   }
 
   getAttachmentFile(attachmentKey?: number) {
@@ -48,7 +48,9 @@ export class AttachmentsService {
 
   getUrlAttachmentFile() {
     const apiUrl = `${this.AttachmentApiUrl}/token`;
-    return this._housingProxyService.get<string>(apiUrl).pipe(map(res => res));
+    return this._housingProxyService.get<string>(apiUrl).pipe(
+      catchError(() => of(null)),
+      map(res => res));
   }
 
   deleteAttachmentFile(attachmentKey?: number) {

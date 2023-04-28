@@ -167,7 +167,7 @@ export class WorkOrderDetailsPage implements OnInit, OnDestroy {
                   } else {
                     this._loadingService.closeSpinner();
                     this._toastService.showToast({
-                      message: 'The form could not be processed at this time. Try again later',
+                      message: 'There was a problem with this submission. Try again or contact the Housing office.',
                     });
                   }
                 });
