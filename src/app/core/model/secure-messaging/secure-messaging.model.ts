@@ -15,7 +15,11 @@ export interface SecureMessageInfo {
   created_date?: string;
   version?: number;
 }
-
+export interface MarkAsReadVal{
+  sender_id: string;
+  institution_id: string;
+  sent_date:string;
+}
 
 export interface SecureMessageGroupInfo {
   id: string;
