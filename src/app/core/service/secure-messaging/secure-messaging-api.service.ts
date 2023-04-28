@@ -1,6 +1,6 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SecureMessageInfo, SecureMessageGroupInfo } from '@core/model/secure-messaging/secure-messaging.model';
+import { SecureMessageInfo, SecureMessageGroupInfo, MarkAsReadVal } from '@core/model/secure-messaging/secure-messaging.model';
 
 import { Observable } from 'rxjs';
 
@@ -87,5 +87,16 @@ export class SecureMessagingApiService {
 
   private getHttpHeaders(): HttpHeaders {
     return new HttpHeaders().set('Authorization', SecureMessagingApiService.jwt);
+  }
+
+  marAsRead(info: MarkAsReadVal){
+    return this.apiService.authenticatedHTTPCall(
+      RestCallType.put,
+      `${this.serviceUrlSecureMessage}/markAsRead?version=2&mark_read=True`,
+      HttpResponseType.json,
+      info,
+      null,
+      this.getHttpHeaders()
+    );
   }
 }
