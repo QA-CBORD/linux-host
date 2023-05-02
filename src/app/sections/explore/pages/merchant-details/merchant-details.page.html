@@ -88,7 +88,11 @@
         </ion-row>
       </ion-item>
 
-      <ion-item *ngIf="merchant.emailCustomerService as email" class="ion-no-padding explore__merchant-info">
+      <ion-item
+        *ngIf="merchant.emailCustomerService as email"
+        class="ion-no-padding explore__merchant-info"
+        href="mailto:{{ email }}"
+      >
         <ion-row class="ion-align-items-center">
           <ion-col size="auto">
             <i class="icon-email"></i>
@@ -99,7 +103,11 @@
         </ion-row>
       </ion-item>
 
-      <ion-item *ngIf="merchant.phoneCustomerService as telephone" class="ion-no-padding explore__merchant-info">
+      <ion-item
+        *ngIf="merchant.phoneCustomerService as telephone"
+        class="ion-no-padding explore__merchant-info"
+        href="tel:{{ telephone }}"
+      >
         <ion-row class="ion-align-items-center">
           <ion-col size="auto">
             <i class="icon-phone"></i>
@@ -121,7 +129,12 @@
         </ion-row>
       </ion-item>
 
-      <ion-item *ngIf="merchant.website as website" class="ion-no-padding explore__merchant-info">
+      <ion-item
+        *ngIf="merchant.website as website"
+        class="ion-no-padding explore__merchant-info"
+        [href]="website"
+        target="_blank"
+      >
         <ion-row class="ion-align-items-center">
           <ion-col size="auto">
             <i class="icon-globe"></i>
