@@ -76,7 +76,9 @@
       color: $color-dodger-blue;
       text-decoration: underline;
     }
-
+    &--link {
+      text-decoration: underline;
+    }
     &--title {
       @include font-nunito-regular(14px);
     }
@@ -122,9 +124,4 @@
     width: 1.5em;
     height: 2em;
   }
-}
-
-ion-item {
-  // Enable long press
-  -webkit-touch-callout: default;
 }

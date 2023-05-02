@@ -414,3 +414,8 @@ ion-modal.sc-modal {
   overflow: hidden;
   width: 1px;
 }
+
+.enable-longpress-ios {
+  // Enable long press
+  -webkit-touch-callout: default;
+}
