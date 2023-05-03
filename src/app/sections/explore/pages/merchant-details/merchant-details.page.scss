@@ -76,7 +76,9 @@
       color: $color-dodger-blue;
       text-decoration: underline;
     }
-
+    &--link {
+      text-decoration: underline;
+    }
     &--title {
       @include font-nunito-regular(14px);
     }
