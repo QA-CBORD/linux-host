@@ -21,7 +21,7 @@ export class QuestionWaitingListRequest extends QuestionFormControl implements Q
 
         this.type = options.type || 'text';
         this.name = options.name || `text-${counter++}`;
-        this.source = String(options.source);
+        this.source = options.source;
         this.attributeSelection = define(options.attributeSelection, Boolean(options.attributeSelection));
         this.facilitySelection = define(options.facilitySelection, Boolean(options.facilitySelection));
     }

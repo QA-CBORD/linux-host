@@ -88,24 +88,36 @@
         </ion-row>
       </ion-item>
 
-      <ion-item *ngIf="merchant.emailCustomerService as email" class="ion-no-padding explore__merchant-info">
+      <ion-item
+        *ngIf="merchant.emailCustomerService as email"
+        class="ion-no-padding explore__merchant-info enable-longpress-ios"
+        detail="false"
+        href="mailto:{{ email }}"
+      >
         <ion-row class="ion-align-items-center">
           <ion-col size="auto">
             <i class="icon-email"></i>
           </ion-col>
           <ion-col>
-            <ion-text class="explore__merchant-text">{{ email }}</ion-text>
+            <ion-text color="primary" class="explore__merchant-text explore__merchant-text--link">{{ email }}</ion-text>
           </ion-col>
         </ion-row>
       </ion-item>
 
-      <ion-item *ngIf="merchant.phoneCustomerService as telephone" class="ion-no-padding explore__merchant-info">
+      <ion-item
+        *ngIf="merchant.phoneCustomerService as telephone"
+        class="ion-no-padding explore__merchant-info enable-longpress-ios"
+        detail="false"
+        href="tel:{{ telephone }}"
+      >
         <ion-row class="ion-align-items-center">
           <ion-col size="auto">
             <i class="icon-phone"></i>
           </ion-col>
           <ion-col>
-            <ion-text class="explore__merchant-text">{{ telephone }}</ion-text>
+            <ion-text color="primary" class="explore__merchant-text explore__merchant-text--link"
+              >{{ telephone }}</ion-text
+            >
           </ion-col>
         </ion-row>
       </ion-item>
@@ -121,13 +133,21 @@
         </ion-row>
       </ion-item>
 
-      <ion-item *ngIf="merchant.website as website" class="ion-no-padding explore__merchant-info">
+      <ion-item
+        *ngIf="merchant.website as website"
+        class="ion-no-padding explore__merchant-info enable-longpress-ios"
+        detail="false"
+        [href]="website"
+        target="_blank"
+      >
         <ion-row class="ion-align-items-center">
           <ion-col size="auto">
             <i class="icon-globe"></i>
           </ion-col>
           <ion-col>
-            <ion-text class="explore__merchant-text">{{ website }}</ion-text>
+            <ion-text color="primary" class="explore__merchant-text explore__merchant-text--link"
+              >{{ website }}</ion-text
+            >
           </ion-col>
         </ion-row>
       </ion-item>

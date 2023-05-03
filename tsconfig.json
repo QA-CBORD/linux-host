@@ -36,7 +36,8 @@
       ],
       "@environments/*": [
         "src/environments/*"
-      ]
+      ],
+      "swiper_angular": ["node_modules/swiper/angular"]
     },
     "useDefineForClassFields": false
   },

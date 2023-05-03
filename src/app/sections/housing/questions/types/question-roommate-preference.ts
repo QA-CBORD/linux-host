@@ -42,7 +42,7 @@ export class QuestionRoommatePreference extends QuestionFormControl implements Q
 
         this.type = options.type || 'text';
         this.name = options.name || `text-${counter++}`;
-        this.source = String(options.source);
+        this.source = options.source;
         this.roommateSelection = define(options.roommateSelection, Boolean(options.roommateSelection));
         this.values = options.values || [];
         this.prefRank = define(options.prefRank, Number(options.prefRank));
@@ -66,7 +66,7 @@ export class QuestionActionButton extends QuestionFormControl implements Questio
 
         this.type = 'action-button';
         this.name = options.name || `text-${counter++}`;
-        this.source = String(options.source);
+        this.source =options.source;
         this.action = options.action;
         this.metadata = options.metadata || {};
         this.buttonText = String(options.buttonText);
