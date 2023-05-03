@@ -70,7 +70,7 @@
           *ngFor="let card of allowedPaymentsMethods"
           class="info__cards__icon"
           [src]="card.icon"
-          name="credit-card.svg"
+          [name]="card.name"
         ></ion-icon>
       </div>
     </div>
