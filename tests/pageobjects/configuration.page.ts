@@ -26,6 +26,10 @@ class ConfigurationPage extends Page {
     get PaymentsMethods(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[2]/st-settings-item[5]/ion-item');
     }
+
+    get EmailAndPhoneNumber(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[2]/st-settings-item[1]/ion-item');
+    }
 }
 
 export default new ConfigurationPage();
