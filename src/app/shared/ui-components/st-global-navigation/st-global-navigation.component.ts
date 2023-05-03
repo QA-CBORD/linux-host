@@ -5,7 +5,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { GlobalNavService } from './services/global-nav.service';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'st-global-navigation',
@@ -62,11 +62,5 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
 
   getLink(url: string) {
     return `/${url}`;
-  }
-
-  get isNavBarShown$(): Observable<boolean> {
-    return this.globalNav.isNavBarShown$.pipe(
-      map(isShown => isShown)
-    );
   }
 }
