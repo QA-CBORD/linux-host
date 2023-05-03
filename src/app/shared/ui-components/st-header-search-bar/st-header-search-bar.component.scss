@@ -41,6 +41,11 @@
     @include font-nunito-regular(16px);
   }
 
+  ion-back-button {
+    display: block;
+    --icon-font-size: 15px;
+  }
+
   &__searchbar {
     --background: $color-white;
     padding: 0 0 5px 0;
