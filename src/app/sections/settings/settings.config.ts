@@ -338,7 +338,6 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
               allowedPaymentsMethods = await firstValueFrom(
                 services.accountService.getAllowedPaymentsMethods(first?.account?.paymentSystemId)
               ).then(creditCards => creditCards.map(cards => cards.active && parseCreditCards(cards)));
-
             } catch (ignored) {
               // fallback on empty userAccounts array
             } finally {
@@ -348,7 +347,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
             return {
               contentStrings: reduceToObject(contentStringsData, defaultCreditCardMgmtCs),
               userAccounts,
-              allowedPaymentsMethods,
+              allowedPaymentsMethods: allowedPaymentsMethods.filter(Boolean),
             };
           },
         },
