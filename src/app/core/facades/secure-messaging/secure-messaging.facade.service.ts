@@ -14,7 +14,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { StateTimeDuration } from 'src/app/app.global';
 import { map, Observable, Subject, switchMap, tap, timer, zip } from 'rxjs';
-const REFRESH_TIME = 1000000000;
+const REFRESH_TIME = 10000;
 
 @Injectable({
   providedIn: 'root',
