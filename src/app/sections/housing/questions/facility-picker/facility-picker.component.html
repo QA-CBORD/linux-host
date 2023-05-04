@@ -1,7 +1,7 @@
 <ng-container [formGroup]="parentForm">
   <h3 class="form__secondary-header">{{ question.label }}</h3>
 
-  <ion-reorder-group [disabled]="isDisabled" (ionItemReorder)="doReorder($event)" [formArrayName]="question.name">
+  <ion-reorder-group [attr.disabled]="isDisabled" (ionItemReorder)="doReorder($event)" [formArrayName]="question.name">
     <ion-item *ngFor="let facility of facilities; trackBy: trackByValue; index as idx">
       <ion-badge color="primary" slot="start" *ngIf="question.prefRank > idx">{{ idx + 1 }}</ion-badge>
 
