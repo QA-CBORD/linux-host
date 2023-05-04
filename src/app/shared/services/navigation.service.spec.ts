@@ -38,7 +38,9 @@ describe(NavigationService, () => {
     expect(service.navigate([ANONYMOUS_ROUTES.pin])).toBeTruthy();
     expect(service.navigate([ANONYMOUS_ROUTES.external, '1', '2'], { more: '1' } as Partial<NavigationExtras>)).toBeTruthy();
     expect(service.navigate([ANONYMOUS_ROUTES.external, '1', '2'])).toBeTruthy();
-    expect(spy1).toHaveBeenCalledTimes(3);
+    expect(service.navigate([ANONYMOUS_ROUTES.external, '1'])).toBeTruthy();
+
+    expect(spy1).toHaveBeenCalledTimes(4);
   });
 
   it('should navigate to a anonimous route', () => {
