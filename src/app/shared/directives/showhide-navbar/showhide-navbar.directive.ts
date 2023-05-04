@@ -91,12 +91,12 @@ export class ShowHideNavbarDirective {
   }
 
   private hideTabs() {
-    this.renderer.setStyle(this.elemRef.nativeElement, 'display', 'none');
+    this.renderer.setStyle(this.elemRef.nativeElement.parentNode, 'display', 'none');
     this.globalNav.hideNavBar();
   }
 
   private showTabs() {
-    this.renderer.setStyle(this.elemRef.nativeElement, 'display', 'flex');
+    this.renderer.setStyle(this.elemRef.nativeElement.parentNode, 'display', 'block');
     this.globalNav.showNavBar();
   }
 }

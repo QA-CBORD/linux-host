@@ -91,6 +91,7 @@ export enum CREDITCARD_TYPE {
   'Discover',
   'MasterCard',
   'Visa',
+  'Diners',
   'Dindes',
 }
 
@@ -99,7 +100,8 @@ export const CREDITCARD_ICONS = {
   [CREDITCARD_TYPE.Discover]: "/assets/icon/discover.svg",
   [CREDITCARD_TYPE.MasterCard]: "/assets/icon/master_card_dark.svg",
   [CREDITCARD_TYPE.Visa]: "/assets/icon/visa_dark.svg",
-  [CREDITCARD_TYPE.Dindes]: "/assets/icon/unknown.svg"
+  [CREDITCARD_TYPE.Diners]: "/assets/icon/diners.svg",
+  [CREDITCARD_TYPE.Dindes]: "/assets/icon/unknown.svg",
 }
 
 export const ACCOUNTS_VALIDATION_ERRORS: ServerErrorsInfo = {

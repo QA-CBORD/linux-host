@@ -67,7 +67,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   requestedRoommates$: Observable<RequestedRoommate[]>;
   roommateSearchOptions$: Observable<RoommateSearchOptions>;
   image$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  private subscriptions: Subscription = new Subscription();
+  private _subscriptions: Subscription = new Subscription();
 
   constructor(
     private _changeDetector: ChangeDetectorRef,
@@ -89,7 +89,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._applicationsStateService.emptyRequestedRoommate();
     this._applicationsStateService.deleteRoommatePreferencesSelecteds();
     this._workOrderStateService.destroyWorkOrderImage();
-    this.subscriptions.unsubscribe();
+    this._subscriptions.unsubscribe();
   }
 
   ngOnInit() {
@@ -97,6 +97,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this._initTermsSubscription();
     this._initGetImage();
     this.setFacility();
+  }
+
+  get subscriptions(){
+    return this._subscriptions
   }
 
   get dateSignedType() {
@@ -183,7 +187,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.loadFiles();
   }
 
-  private async readAsBase64(photo: Photo) {
+  async readAsBase64(photo: Photo) {
     if (!this.sessionService.getIsWeb()) {
       const file = await Filesystem.readFile({
         path: photo.path,
@@ -325,7 +329,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _initTermsSubscription() {
-    this.subscriptions.add(this._termService.termId$.subscribe());
+    this._subscriptions.add(this._termService.termId$.subscribe());
   }
 
   private _initGetImage() {
@@ -342,10 +346,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subscriptions.add(getImageSub);
+    this._subscriptions.add(getImageSub);
   }
 
-  private sanitizeUrl(photo: Photo, base64Data: string): string {
+  sanitizeUrl(photo: Photo, base64Data: string): string {
     return <string>(
       this.sanitizer.bypassSecurityTrustResourceUrl(this.sessionService.getIsWeb() ? photo.webPath : base64Data)
     );

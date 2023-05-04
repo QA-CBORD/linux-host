@@ -5,13 +5,15 @@ import {
   SecureMessageInfo,
   SecureMessageGroupInfo,
   SecureMessageConversation,
+  MarkAsReadVal,
+  SecureMessageTypes,
 } from '@core/model/secure-messaging/secure-messaging.model';
 import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { SecureMessagingApiService } from '@core/service/secure-messaging/secure-messaging-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { StateTimeDuration } from 'src/app/app.global';
-import { map, Observable,  Subject, switchMap, tap, timer, zip } from 'rxjs';
+import { map, Observable, Subject, switchMap, tap, timer, zip } from 'rxjs';
 const REFRESH_TIME = 10000;
 
 @Injectable({
@@ -178,20 +180,8 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
    */
   pollForDataInterval(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
     return timer(REFRESH_TIME, REFRESH_TIME).pipe(
-      switchMap(() => zip(this.getSecureMessagesGroups(), this.getSecureMessages())),
-      tap(([smGroupArray, smMessageArray]) => {
-        if (
-          this.messagesArray.length === smMessageArray.length
-        )
-          return;
-          this.messagesArray = smMessageArray;
-          this._groupsArray = smGroupArray;
-        this.storageStateService.updateStateEntity(this.secureMessaginKey, [smGroupArray, smMessageArray], {
-          ttl: StateTimeDuration.TTL,
-          highPriorityKey: true,
-        });
-        this.buildConversationsFromResponseAndNotify();
-      })
+      switchMap(() => this.requestForNewMessagesAndGroups$),
+      tap(arg => this.mapToStorage(arg))
     );
   }
 
@@ -208,5 +198,24 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
     }
     this._selectedConversation = null;
     this.buildConversationsFromResponseAndNotify();
+  }
+  markAsRead(info: MarkAsReadVal) {
+    return this.secureMessagingService.marAsRead(info);
+  }
+  mapToStorage([smGroupArray, smMessageArray]) {
+    const RCmessages = smMessageArray.filter(msj => msj.sender.type === SecureMessageTypes.GROUP);
+    const lastRCMessage = [...RCmessages].pop();
+    if (this.messagesArray.length === smMessageArray.length && !lastRCMessage.read_date) return;
+    this.messagesArray = smMessageArray;
+    this._groupsArray = smGroupArray;
+    this.storageStateService.updateStateEntity(this.secureMessaginKey, [smGroupArray, smMessageArray], {
+      ttl: StateTimeDuration.TTL,
+      highPriorityKey: true,
+    });
+    this.buildConversationsFromResponseAndNotify();
+  }
+
+  get requestForNewMessagesAndGroups$() {
+    return zip(this.getSecureMessagesGroups(), this.getSecureMessages());
   }
 }
