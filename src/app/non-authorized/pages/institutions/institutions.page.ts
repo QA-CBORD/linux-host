@@ -18,7 +18,9 @@ import { Institution, InstitutionLookupListItem } from '@core/model/institution'
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-import { Platform } from '@ionic/angular';
+import { Platform, SearchbarCustomEvent } from '@ionic/angular';
+import { Keyboard } from '@capacitor/keyboard';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IOSDevice = registerPlugin<any>('IOSDevice');
 
@@ -58,8 +60,11 @@ export class InstitutionsPage implements OnInit {
   ionViewWillEnter() {
     this.performInstitutionCleanUp();
   }
+  onEnterKeyClicked() {
+    Keyboard.hide();
+  }
 
-  onSearchedValue(value: string) {
+  onSearchedValue({ target: { value } }: SearchbarCustomEvent) {
     this.searchString = value;
   }
 
