@@ -9,7 +9,6 @@ import { ConnectivityErrorType, ConnectivityScreenCsModel } from "@shared/ui-com
 import { firstValueFrom, Observable } from 'rxjs'
 import { CommonService } from "./common.service";
 import { ConnectionService } from "./connection-service";
-import { Location } from '@angular/common';
 
 @Injectable()
 export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
@@ -17,8 +16,7 @@ export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
     constructor(
         private readonly commonService: CommonService,
         private loadingService: LoadingService,
-        private connectionService: ConnectionService,
-        private readonly location: Location) { }
+        private connectionService: ConnectionService) { }
 
 
     resolve(route: ActivatedRouteSnapshot): Observable<ConnectivityPageInfo> | Promise<ConnectivityPageInfo> {
