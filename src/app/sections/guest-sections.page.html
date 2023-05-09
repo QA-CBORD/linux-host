@@ -1,6 +1,6 @@
 <ion-router-outlet
   [attr.aria-hidden]="(isMenuNavBarExpanded$ | async) || (isBackdropShown$ | async)"
-  [class.navigation-bottom-offset]="isNavBarShown$ | async"
+  id="router"
   [swipeGesture]="false"
 ></ion-router-outlet>
 <ion-footer>

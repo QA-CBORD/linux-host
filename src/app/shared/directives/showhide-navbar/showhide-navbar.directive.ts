@@ -90,13 +90,25 @@ export class ShowHideNavbarDirective {
     urlNotAllowed || urlWithParametersNotAllowed ? this.hideTabs() : this.showTabs();
   }
 
+  addOrRemoveRouterClass = (add: boolean) => {
+    const router = document.getElementById('router');
+
+    if (add) {
+      router.classList.add('navigation-bottom-offset');
+    } else {
+      router.classList.remove('navigation-bottom-offset');
+    }
+  };
+
   private hideTabs() {
+    this.addOrRemoveRouterClass(false);
     this.renderer.setStyle(this.elemRef.nativeElement, 'display', 'none');
     this.globalNav.hideNavBar();
   }
 
   private showTabs() {
-    this.renderer.setStyle(this.elemRef.nativeElement, 'display', 'flex');
+    this.addOrRemoveRouterClass(true);
+    this.renderer.setStyle(this.elemRef.nativeElement, 'display', 'block');
     this.globalNav.showNavBar();
   }
 }

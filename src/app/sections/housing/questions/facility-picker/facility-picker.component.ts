@@ -19,6 +19,10 @@ export class FacilityPickerComponent implements OnInit, OnDestroy {
 
   facilities: QuestionReorderValue[];
 
+  get subscription(){
+    return this._subscription
+  }
+
   ngOnInit(): void {
     const facilitiesControl: AbstractControl = this.parentForm.get(this.question.name);
 

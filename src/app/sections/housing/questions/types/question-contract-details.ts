@@ -25,7 +25,7 @@ export class QuestionContractDetails extends QuestionFormControl implements Ques
     this.type = options.type || 'text';
     this.name = options.name || `text-${counter++}`;
     this.subtype = options.subtype || 'text';
-    this.source = String(options.source);
-    this.contractId = String(options.contractId);
+    this.source = options.source;
+    this.contractId = options.contractId;
   }
 }

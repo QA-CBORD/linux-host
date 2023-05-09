@@ -31,12 +31,12 @@ export class QuestionChargeScheduleBase extends QuestionBase implements Question
 
     this.required = Boolean(options.required);
     this.inline = Boolean(options.inline);
-    this.name = String(options.name);
+    this.name = options.name;
     this.other = Boolean(options.other);
     this.values = Array.isArray(options.values)
       ? options.values.map((value) => new ChargeScheduleValue(value))
       : [];
-    this.consumerKey = Number(options.consumerKey);
+    this.consumerKey = options.consumerKey;
     this.chargeSchedule = Boolean(options.chargeSchedule);
   }
 }
