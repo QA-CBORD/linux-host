@@ -31,7 +31,7 @@ describe(ConnectionService, () => {
     };
 
     _platform = {
-      is: jest.fn(() => true),
+      is: jest.fn(() => 'capacitor'),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -49,13 +49,13 @@ describe(ConnectionService, () => {
     _platform.is.mockReset();
   });
 
-  it('should create the service', () => {
-    service.platform.is = jest.fn(() => true); 
+  it('should create the service on mobile', () => {
+    _platform.is = jest.fn().mockImplementationOnce(() => 'capacitor');
     expect(service).toBeTruthy();
   });
 
   it('should continue working on web', () => {
-    service.platform.is = jest.fn(() => false); 
+    _platform.is = jest.fn().mockImplementationOnce(() => 'web');
     expect(service).toBeTruthy();
   });
 
@@ -65,13 +65,12 @@ describe(ConnectionService, () => {
 
   it('should check network status', () => {
     Object.defineProperty(service, 'online$', new Observable(observer => observer.next(true)).pipe(mapTo(true)));
-    const spy1 = jest.spyOn(service as any, 'deviceOffline');
-
     expect(service.networkStatus(300)).toBeTruthy();
     expect(service.networkStatus(400)).toBeTruthy();
   });
 
   it('should check is device is offline', async () => {
+    _platform.is = jest.fn().mockImplementationOnce(() => 'web');
     Object.defineProperty(service, 'navigator', { onLine: false } as Navigator);
     expect(await service.deviceOffline()).toBeTruthy();
   });
