@@ -22,13 +22,12 @@
         <div
           class="conversations__sender-recent-message"
           [class]="{
-            'conversations__sender-recent-message--unread': isUnread(message),
-            'conversations__sender-recent-message--read': !isUnread(message)
+            'conversations__sender-recent-message--unread': !isUnread(message)
           }"
         >
           {{ conversationItem.description }}
         </div>
-       <ion-icon *ngIf="isUnread(message)" color="primary" name="ellipse"></ion-icon>
+       <ion-icon  color="primary" name="ellipse"></ion-icon>
       </div>
     </div>
     <ng-container *ngIf="!message.read_date && message.sender.type !== senderType.PATRON">
