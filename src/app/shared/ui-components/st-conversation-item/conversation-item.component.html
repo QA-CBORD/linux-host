@@ -21,8 +21,9 @@
       <div class="conversations__sender-description-unread-icon-wrapper">
         <div
           class="conversations__sender-recent-message"
-          [ngClass]="{
-            'conversations__sender-recent-message--unread': isUnread(message)
+          [class]="{
+            'conversations__sender-recent-message--unread': isUnread(message),
+            'conversations__sender-recent-message--read': !isUnread(message)
           }"
         >
           {{ conversationItem.description }}

@@ -5,7 +5,7 @@
   transition: 1s ease-out;
 
   &--auto-height {
-      min-height: 0;
+    min-height: 0;
   }
 
   &__sender-list {
@@ -30,7 +30,7 @@
   }
 
   &__sender-info {
-    width: 76vw;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -73,16 +73,15 @@
     align-items: center;
   }
   &__sender-name {
-    max-width: 170px;
+    max-width: 160px;
 
     @include ellipsis;
     @include font-nunito-semibold(16px);
     @include font-nunito-heavy(16px);
-    
   }
 
   &__sender-recent-message {
-    width: 100%;
+    max-width: 66vw;
     color: rgba($color-black, 0.6);
 
     @include ellipsis;
@@ -90,11 +89,14 @@
     &--unread {
       @include font-nunito-heavy(16px);
     }
+    &--read{
+      max-width: 71vw;
+    }
   }
 
   &__sender-recent-time {
     color: rgba($color-black, 0.6);
-
+    max-width: 105px;
     @include font-nunito-regular(12px);
   }
 
@@ -104,7 +106,6 @@
     align-items: flex-end;
     margin-left: 15px;
   }
-
 
   &__skeleton-conversation {
     display: flex;
@@ -140,7 +141,7 @@
     width: 100%;
     height: 12px;
   }
-  &_unread-icon{
+  &_unread-icon {
     margin-right: 3px;
   }
 }
