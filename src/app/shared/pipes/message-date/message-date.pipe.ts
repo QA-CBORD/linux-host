@@ -15,27 +15,21 @@ export class MessageDatePipe implements PipeTransform {
 
     const today: Date = new Date();
     const sentDate: Date = new Date(message.sent_date);
-
-    /// > 1 year (Full timestamp)
-    if (today.getFullYear() > sentDate.getFullYear()) {
-      return this.datePipe.transform(sentDate, 'mediumDate');
-    }
-
     const timeDiff = today.getTime() - sentDate.getTime();
 
-    /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
-    if (timeDiff > 432000000) {
-      return this.datePipe.transform(sentDate, 'MMM d, h:mm a');
+    /// > 6 days (<monthAbbv> <date>, xx:xx AM/PM)
+    if (timeDiff > 518400000) {
+      return this.datePipe.transform(sentDate, 'MM/dd/yy');
     }
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (timeDiff >= 172800000) {
-      return this.datePipe.transform(sentDate, 'E, h:mm a');
+    if (timeDiff >= 172800000|| !checkIsYesterday(sentDate)) {
+      return this.datePipe.transform(sentDate, 'EEEE');
     }
 
     /// > 1 day (Yesterday at xx:xx AM/PM)
     if (timeDiff >= 86400000 || checkIsYesterday(sentDate)) {
-      return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a'");
+      return this.datePipe.transform(sentDate, "'Yesterday'");
     }
 
     /// > 5 minutes (xx:xx AM/PM)
