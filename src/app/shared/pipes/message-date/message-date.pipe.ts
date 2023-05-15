@@ -23,7 +23,7 @@ export class MessageDatePipe implements PipeTransform {
     }
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (timeDiff >= 172800000|| !checkIsYesterday(sentDate)) {
+    if (timeDiff >= 172800000) {
       return this.datePipe.transform(sentDate, 'EEEE');
     }
 

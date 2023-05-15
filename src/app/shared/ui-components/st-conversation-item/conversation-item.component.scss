@@ -73,7 +73,7 @@
     align-items: center;
   }
   &__sender-name {
-    max-width: 160px;
+    max-width: 200px;
 
     @include ellipsis;
     @include font-nunito-semibold(16px);
@@ -96,7 +96,6 @@
 
   &__sender-recent-time {
     color: rgba($color-black, 0.6);
-    max-width: 105px;
     @include font-nunito-regular(12px);
   }
 
