@@ -22,7 +22,7 @@
 
     .order-ingredient-list {
       margin-top: -10px;
-      background-color: $color-white;
+      background-color: #F7F7F7;
     }
 
     .total {
@@ -149,15 +149,20 @@
     padding: 10px 10px 30px 10px;
     margin-bottom: $notch-bottom;
 
-    & > * {
+    &>* {
       flex-grow: 1;
     }
   }
 }
 
 .order-ingredient-list {
+  background-color: #F7F7F7;
+  padding: 10px 0;
   &__item {
-    border-radius: 10px;
+    border-radius: 30px;
+    padding: 0 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
   }
 
   &__ingredient-header {
@@ -196,7 +201,7 @@
 
   &__ingredient-description {
     line-height: 18px;
-
+    color: rgba(0, 0, 0, 0.6);
     @include font-nunito-regular(14px);
   }
 }
