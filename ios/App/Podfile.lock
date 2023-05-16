@@ -116,7 +116,7 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorBackgroundTask (from `../../node_modules/@capawesome/capacitor-background-task`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
-  - Firebase/Messaging (= 10.9.0)
+  - Firebase/Messaging
   - JSONModel
 
 SPEC REPOS:
@@ -209,6 +209,6 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
 
-PODFILE CHECKSUM: 87b8dd8ee3fa8d08721a6b869785c31cf727e517
+PODFILE CHECKSUM: 291a5d681ce9a667a41a0a04f8290a081cf2a526
 
 COCOAPODS: 1.12.1
