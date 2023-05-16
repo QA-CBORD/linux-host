@@ -11,7 +11,7 @@
           <div class="icon"></div>
         </ng-template>
       </div>
-      <ion-button color="light" class="btn__image" (click)="presentPhotoTypeSelection()">Choose image</ion-button>
+      <ion-button color="light" class="btn__image" [attr.disabled]="!!isView" (click)="presentPhotoTypeSelection()">Choose image</ion-button>
     </ng-container>
     <ng-container *ngSwitchCase="'header'">
       <div [innerHTML]="createHeader($any(question))"></div>
