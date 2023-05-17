@@ -6,7 +6,7 @@
     alt="star"
     appClickStopPropagation
     (click)="triggerFavourite()"
-    (keypress)="(this.location.isFavourite)"
+    (keypress)="triggerFavourite()"
     [attr.aria-label]="starAriaLabel"
   />
   <ion-label class="st-label">
