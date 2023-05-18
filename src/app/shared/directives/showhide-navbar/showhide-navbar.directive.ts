@@ -72,19 +72,20 @@ export class ShowHideNavbarDirective {
   initKeyboard() {
     if (this.nativeProvider.isMobile()) {
       Keyboard.addListener('keyboardDidShow', () => {
-        this.hideTabs();
+        this.showHideTabs();
       });
 
       Keyboard.addListener('keyboardDidHide', () => {
-        this.showTabs();
+        this.showHideTabs();
       });
     }
   }
 
-  private showHideTabs(e: NavigationEnd) {
-    const urlNotAllowed = e.url.split('/').some(url => this.notAllowedRoutes.some(route => url && url.includes(route)));
+  private showHideTabs(event?: NavigationEnd) {
+    const url = event?.url || this.router.url;
+    const urlNotAllowed = url.split('/').some(url => this.notAllowedRoutes.some(route => url && url.includes(route)));
     const urlWithParametersNotAllowed = this.notAllowedRoutesWithParameters.some(parameter =>
-      e.url.split(parameter)[1] ? true : false
+      url.split(parameter)[1] ? true : false
     );
 
     urlNotAllowed || urlWithParametersNotAllowed ? this.hideTabs() : this.showTabs();
@@ -92,6 +93,8 @@ export class ShowHideNavbarDirective {
 
   addOrRemoveRouterClass = (add: boolean) => {
     const router = document.getElementById('router');
+
+    if (!router) return;
 
     if (add) {
       router.classList.add('navigation-bottom-offset');
