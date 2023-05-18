@@ -39,9 +39,7 @@ export class StHeaderComponent {
   }
 
   onEnterKeyClicked() {
-    if (this.nativeProvider.isMobile()) {
-      Keyboard.hide();
-    }
+    if (this.nativeProvider.isMobile()) Keyboard.hide();
   }
 
   onDissmissClicked() {
