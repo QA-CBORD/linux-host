@@ -15,6 +15,7 @@ import { Keyboard } from '@capacitor/keyboard';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -39,7 +40,8 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly nav: Router
+    private readonly nav: Router,
+    private readonly nativeProvider: NativeProvider
   ) {}
 
   get email(): AbstractControl {
@@ -158,7 +160,7 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   onFocus() {
-    Keyboard.hide();
+    if (this.nativeProvider.isMobile()) Keyboard.hide();
   }
 }
 
