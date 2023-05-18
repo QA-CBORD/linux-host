@@ -72,7 +72,7 @@ export class ShowHideNavbarDirective {
   initKeyboard() {
     if (this.nativeProvider.isMobile()) {
       Keyboard.addListener('keyboardDidShow', () => {
-        this.showHideTabs();
+        this.hideTabs();
       });
 
       Keyboard.addListener('keyboardDidHide', () => {
