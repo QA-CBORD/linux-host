@@ -1,8 +1,6 @@
-import { StatusCodes } from 'http-status-codes';
 import { PatronAddress } from '../addresses/address.model';
 import {
   ApplicationDefinition,
-  ApplicationDefinitionOptions,
   ApplicationDetails,
   ApplicationRequest,
   ApplicationRequestOptions,
@@ -12,7 +10,6 @@ import {
   PatronAttribute,
   PatronAttributeOptions,
   PatronPreference,
-  PatronPreferenceOptions,
   RequestedRoommate,
   RequestedRoommateRequest,
   RoommatePreferences,
