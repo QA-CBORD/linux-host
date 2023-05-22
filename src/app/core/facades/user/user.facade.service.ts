@@ -88,7 +88,7 @@ export class UserFacadeService extends ServiceStateFacade {
 
   createUserPin(pin: string): Observable<boolean> {
     return from(Device.getId()).pipe(
-      switchMap(({ uuid }) => this.userApiService.createUserPin(pin, uuid)),
+      switchMap(({ identifier }) => this.userApiService.createUserPin(pin, identifier)),
       map(({ response }) => response),
       take(1)
     );

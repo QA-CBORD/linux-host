@@ -6,6 +6,8 @@
     alt="star"
     appClickStopPropagation
     (click)="triggerFavourite()"
+    (keypress)="triggerFavourite()"
+    [attr.aria-label]="starAriaLabel"
   />
   <ion-label class="st-label">
     <h3 class="title">{{ location.locationId }} - {{ location.name }}</h3>

@@ -10,7 +10,7 @@
           <form [formGroup]="page.form" (ngSubmit)="submit(workOrderListDetails, page.form, isLastPage)">
             <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
               <st-question *ngIf="question" [parentGroup]="page.form" [question]="question" [name]="$any(question).name"
-                [class.question--first]="isFirstPage" [isSubmitted]="isSubmitted"></st-question>
+                [class.question--first]="isFirstPage" [isSubmitted]="isSubmitted" [isView]="workOrderListDetails?.workOrderKey"></st-question>
             </ng-container>
   
             <st-stepper-footer>
