@@ -205,7 +205,7 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
   mapToStorage([smGroupArray, smMessageArray]) {
     const RCmessages = smMessageArray.filter(msj => msj.sender.type === SecureMessageTypes.GROUP);
     const lastRCMessage = [...RCmessages].pop();
-    if (this.messagesArray.length === smMessageArray.length && !lastRCMessage.read_date) return;
+    if (this.messagesArray.length === smMessageArray.length && !lastRCMessage?.read_date) return;
     this.messagesArray = smMessageArray;
     this._groupsArray = smGroupArray;
     this.storageStateService.updateStateEntity(this.secureMessaginKey, [smGroupArray, smMessageArray], {
