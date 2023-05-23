@@ -8,8 +8,11 @@ android {
     namespace 'com.cbord.get'
     compileSdkVersion rootProject.ext.compileSdkVersion
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildFeatures {
+        buildConfig true
     }
     defaultConfig {
         applicationId "com.cbord.get"
@@ -113,3 +116,13 @@ try {
 } catch(Exception e) {
     logger.warn("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
 }
+
+ext.postBuildExtras = { 
+    android { 
+        compileOptions { 
+            sourceCompatibility JavaVersion.VERSION_17 
+            targetCompatibility JavaVersion.VERSION_17 
+        } 
+    } 
+} 
+postBuildExtras()

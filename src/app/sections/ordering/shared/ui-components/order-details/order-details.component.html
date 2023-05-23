@@ -28,13 +28,15 @@
       </p>
 
       <ng-template #addressEditable>
-        <p
-          class="order-details__value"
-          [ngClass]="{ 'order-details__value--editable': isAddressClickable }"
-          (click)="isAddressClickable && showAddressListModal()"
-        >
-          {{ orderDetailOptions.address | addressHeaderFormat }}
-        </p>
+        <div class="address-container">
+          <p
+            class="order-details__value"
+            (click)="isAddressClickable && showAddressListModal()"
+          >
+            {{ orderDetailOptions.address | addressHeaderFormat }}
+          </p>
+          <div *ngIf="isAddressClickable" class="order-details__value--editable"></div>
+        </div>
       </ng-template>
     </div>
 
