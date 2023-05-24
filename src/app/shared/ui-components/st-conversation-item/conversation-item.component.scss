@@ -81,7 +81,7 @@
   }
 
   &__sender-recent-message {
-    max-width: 66vw;
+    max-width: 65vw;
     color: rgba($color-black, 0.6);
 
     @include ellipsis;

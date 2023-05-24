@@ -30,7 +30,10 @@
     }
   }
 }
-
+.address-container {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+}
 .order-details {
   border-top: 1px solid $color-whisper;
   border-bottom: 1px solid $color-whisper;

@@ -26,6 +26,10 @@ export class LocationItemComponent {
     return `./assets/icon/${star}.svg`;
   }
 
+  get starAriaLabel(): string {
+    return this.location.isFavourite ? `Favourite checked` : 'Favourite unchecked';
+  }
+
   openLocation() {
     this.nav2.navigateForward(`/${PATRON_NAVIGATION.mobileAccess}/${LOCAL_ROUTING.activate}/${this.location.locationId}`);
   }
