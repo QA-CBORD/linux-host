@@ -26,15 +26,22 @@ export class CreditCardService {
     try {
       const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
       if (success) {
-        this.showMessage('Your credit card has been added successfully.');
+        this.showSuccessMessage('Your credit card has been added successfully.');
       } else {
-        this.showMessage(errorMessage);
+        this.showErrorMessage(errorMessage);
       }
     } finally {
       this.loadingService.closeSpinner();
     }
   }
 
+  private showSuccessMessage(message: string, duration = 5000) {
+    this.toastService.showToast({ message, duration, icon: 'checkmark-circle', cssClass: 'toast-message-success' });
+  }
+
+  private showErrorMessage(message: string, duration = 5000) {
+    this.toastService.showError(message, duration);
+  }
  async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });
   }

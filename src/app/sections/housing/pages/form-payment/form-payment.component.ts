@@ -20,6 +20,7 @@ import { Location } from '@angular/common';
 import { ApplicationDetails } from '@sections/housing/applications/applications.model';
 import { ContractDetails } from '@sections/housing/contracts/contracts.model';
 import { TransactionalData } from './transactional-data.model';
+import { ToastService } from '@core/service/toast/toast.service';
 
 export interface CurrentForm {
   key: number,
@@ -44,6 +45,7 @@ export class FormPaymentComponent implements OnInit {
   constructor(
     private readonly depositService: DepositService,
     private readonly creditCardService: CreditCardService,
+    private readonly toastService:ToastService,
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
     private readonly applicationsService: ApplicationsService,
@@ -115,7 +117,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async showErrorMessage(err: string) {
-    await this.creditCardService.showMessage(err);
+    this.toastService.showError(err, 5000);
     this.loadingService.closeSpinner();
   }
 
