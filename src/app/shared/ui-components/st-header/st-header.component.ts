@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Keyboard } from '@capacitor/keyboard';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NavigationService } from '@shared/services/navigation.service';
 
 @Component({
@@ -27,14 +28,18 @@ export class StHeaderComponent {
   @Output() onClose = new EventEmitter<void>();
   @Output() onFilter = new EventEmitter<void>();
 
-  constructor(private readonly router: Router, private readonly navService: NavigationService) {}
+  constructor(
+    private readonly router: Router,
+    private readonly navService: NavigationService,
+    private readonly nativeProvider: NativeProvider
+  ) {}
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);
   }
 
   onEnterKeyClicked() {
-    Keyboard.hide();
+    if (this.nativeProvider.isMobile()) Keyboard.hide();
   }
 
   onDissmissClicked() {

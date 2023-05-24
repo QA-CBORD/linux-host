@@ -11,6 +11,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Keyboard } from '@capacitor/keyboard';
 import { SearchbarCustomEvent } from '@ionic/angular';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'app-mobile-access',
@@ -28,7 +29,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly mobileAccessService: MobileAccessService,
-    private readonly institutionFacadeService: InstitutionFacadeService
+    private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly nativeProvider: NativeProvider,
   ) {
     this.initComponent();
   }
@@ -48,7 +50,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   onEnterKeyClicked() {
-    Keyboard.hide();
+    if (this.nativeProvider.isMobile()) Keyboard.hide();
   }
 
   refreshLocationList($event) {

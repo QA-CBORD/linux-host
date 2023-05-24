@@ -3,12 +3,15 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { StHeaderComponent } from './st-header.component';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 const modalController = {
   create: jest.fn(),
 };
 
 const popoverCtrl = {};
+
+const nativeProvider = {};
 
 describe('StHeaderComponent', () => {
   let component: StHeaderComponent;
@@ -21,6 +24,7 @@ describe('StHeaderComponent', () => {
       providers: [
         { provide: ModalController, useValue: modalController },
         { provide: PopoverController, useValue: popoverCtrl },
+        { provide: NativeProvider, useValue: nativeProvider },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
