@@ -82,7 +82,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     this.sourceSub.add(this.secureMessagingFacadeService.getInitialData$().pipe(first()).subscribe());
   }
   ngOnDestroy() {
-    if(this.messagesFromRC.length > 0 ) this.markAsRead(this.infoToMarkAsRead);
+    if (this.messagesFromRC.length > 0 ) this.markAsRead(this.infoToMarkAsRead);
     this.secureMessagingFacadeService.clearSelectedConversation();
     this.sourceSub.unsubscribe();
   }
