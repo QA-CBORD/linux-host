@@ -41,7 +41,7 @@
 <ng-template #institutionsList>
   <ion-list class="search-institutions__list" mode="ios">
     <div *ngFor="let item of institutions | search : searchString">
-      <ion-item class="search-institutions__item item-stable" lines="none" button (click)="onInstitutionSelected(item)">
+      <ion-item class="search-institutions__item item-stable" lines="none" detail="true" (click)="onInstitutionSelected(item)">
         <ion-label class="search-institutions__name"> {{ item.name }} </ion-label>
       </ion-item>
     </div>
