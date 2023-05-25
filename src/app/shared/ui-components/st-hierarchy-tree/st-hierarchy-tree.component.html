@@ -1,11 +1,11 @@
 <form [formGroup]="form">
+  <ion-label class="form__secondary-header">{{ label }}</ion-label>
   <st-textarea-floating-label
     formControlName="facilityName"
     [control]="form.get('facilityName')"
     [isError]=""
     class="question__item question__control"
     [idd]=""
-    label=""
     title="Type your message here..."
     rows="3"
     (click)="open()"
