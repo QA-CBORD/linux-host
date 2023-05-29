@@ -4,10 +4,9 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [{ path: '', component: FormPaymentComponent }];
 const imports = [RouterModule.forChild(routes)];
-const exports = [RouterModule];
 
 @NgModule({
   imports,
-  exports,
+  exports: [RouterModule],
 })
 export class FormPaymentRoutingModule { }
