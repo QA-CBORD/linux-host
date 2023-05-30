@@ -31,6 +31,7 @@ import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-d
 import { DashboardPage } from './dashboard.component';
 import { TileConfigFacadeService } from './tile-config-facade.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 const _platform = {
   is: jest.fn(),
@@ -61,6 +62,10 @@ const _userFacadeService = {
   getUser$: jest.fn(() => ({ pipe: () => of(true) })),
 };
 
+const _modalService = {
+  create: jest.fn(),
+};
+
 describe('DashboardPage', () => {
   let component: DashboardPage;
   let fixture: ComponentFixture<DashboardPage>;
@@ -77,6 +82,7 @@ describe('DashboardPage', () => {
         { provide: TileConfigFacadeService, useValue: _tileConfigFacadeService },
         { provide: InstitutionFacadeService, useValue: _institutionFacadeService },
         { provide: UserFacadeService, useValue: _userFacadeService },
+        { provide: ModalsService, useValue: _modalService },
         NavigationFacadeSettingsService,
         AndroidPermissions,
         Network,
@@ -147,6 +153,12 @@ describe('DashboardPage', () => {
       component['checkStaleProfile']();
       expect(spy).toHaveBeenCalledTimes(13);
       expect(spy2).toHaveBeenCalledTimes(1);
+    });
+
+    it('should open editHomePage modal', async () => {
+      const spy = jest.spyOn(_modalService, 'create');
+      component['presentEditHomePageModal']();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -45,3 +45,4 @@ export class EditHomePageModalComponent implements OnInit {
     await this.modalController.dismiss();
   }
 }
+

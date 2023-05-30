@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -21,6 +21,8 @@ export class TermsComponent implements OnInit {
     mode: 'md',
     showBackdrop: false,
   };
+
+  @Input() disabled = false;
 
   constructor(private _termsService: TermsService, private _loadingService: LoadingService) {}
 

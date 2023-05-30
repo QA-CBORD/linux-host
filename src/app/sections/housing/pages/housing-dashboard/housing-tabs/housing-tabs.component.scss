@@ -5,3 +5,7 @@ ion-segment-button {
     min-width: fit-content;
     @include font-nunito-heavy(14px);
 }
+
+ion-segment {
+    overflow-x: hidden;
+}
