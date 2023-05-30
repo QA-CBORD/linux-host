@@ -12,13 +12,6 @@ st-textarea-floating-label{
   margin: 0 0 0.8em;
 }
 
-.inspection-details__actions {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  padding-top: var(--ion-safe-area-top, 0);
-}
-
 .inspection-details__title {
   @include font-family($font-nunito-heavy);
 
@@ -29,25 +22,6 @@ st-textarea-floating-label{
   margin-bottom: 10px;
 }
 
-.inspection-details__page-back {
-  @include font-family($font-nunito-regular);
-
-  --color: #{rgba($color-black, 0.9)};
-}
-
-.btn-save{
-  float:right;
-}
-
-.btn-submit{
-  float:right;
-}
-
-.inspection-details__save {
-  @include font-family($font-nunito-heavy);
-
-  --color: #{$color-dodger-blue};
-}
 
 .inspection-details__card {
   background-color: $color-white;
@@ -58,14 +32,6 @@ st-textarea-floating-label{
   .condition-inspect{
     --background: #d7d8da;
   }
-}
-
-.inspection-details__back {
-  @include font-family($font-nunito-heavy);
-
-  --color: #{$color-dodger-blue};
-
-  min-width: 80px;
 }
 
 .inspection-details__next,
@@ -94,20 +60,6 @@ ion-segment {
 }
 
 
-.textarea {
-  &__wrapper {
-    position: relative;
-  }
-
-  &__control {
-    width: 100%;
-    outline: none;
-    border: 1px solid $color-light-gray;
-    border-radius: 8px;
-    padding: 0 0 0 10px;
-  }
-}
-
 .comments{
   margin-bottom: 10px;
 }
@@ -123,4 +75,9 @@ ion-segment {
 .selectorCondition {
   width: 100%;
   max-width: 100%;
+}
+
+.tabsContainer {
+  background-color: white;
+  margin: 15px 0;
 }
