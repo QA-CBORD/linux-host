@@ -8,6 +8,7 @@ export enum SelectedHousingTab {
   Forms = 'Forms',
   Rooms = 'Rooms',
   Contracts = 'Contracts',
+  Transactions = 'Transactions'
 }
 
 @Component({
