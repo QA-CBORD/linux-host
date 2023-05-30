@@ -18,6 +18,7 @@ import { WorkOrdersModule } from '@sections/housing/work-orders/work-orders.modu
 import { InspectionsModule } from '../../inspections-forms/inspections-forms.module';
 import { AttachmentModule } from '@sections/housing/attachments/attachments.module';
 import { HousingTabsComponentModule } from './housing-tabs/housing-tabs.module';
+import { HousingTransactionsOnlyModule } from '../housing-transactions-only/housing-transactions-only.module';
 
 const imports = [
   CommonModule,
@@ -36,7 +37,8 @@ const imports = [
   WorkOrdersModule,
   InspectionsModule,
   AttachmentModule,
-  HousingTabsComponentModule
+  HousingTabsComponentModule,
+  HousingTransactionsOnlyModule
 ];
 const declarations = [HousingDashboardPage];
 
