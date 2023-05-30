@@ -20,10 +20,6 @@ export class EditHomePageModalComponent implements OnInit {
 
   ngOnInit() {
     this.homeConfigList$ = this.tileConfigFacadeService.tileSettings$;
-
-    setTimeout(() => {
-      document.getElementById('title')?.focus();
-    }, TIMEOUTS.A11yFocus);
   }
 
   async onToggle({ detail: { value, checked } }) {
@@ -50,6 +46,3 @@ export class EditHomePageModalComponent implements OnInit {
   }
 }
 
-const TIMEOUTS = {
-  A11yFocus: 1500,
-};
