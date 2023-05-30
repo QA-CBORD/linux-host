@@ -1,5 +1,5 @@
 <ng-container *ngIf="terms$ | async as terms">
-  <ion-item lines="none" class="terms" *ngIf="terms.length">
+  <ion-item lines="none" class="terms" *ngIf="terms.length && !disabled">
     <ion-label class="ion-margin-end label-container">
       <span class="terms-label">Term: </span><span class="terms-value">{{ selectedTermLabel$ | async }}</span>
     </ion-label>

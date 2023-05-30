@@ -35,6 +35,7 @@ import { AndroidPermissionsService } from './services/android-permissions.servic
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -78,7 +79,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
     private readonly platform: Platform,
     private readonly appPermissions: AndroidPermissionsService,
     private readonly navigationFacade: NavigationFacadeSettingsService,
-    private secureMessagingFacadeService: SecureMessagingFacadeService
+    private secureMessagingFacadeService: SecureMessagingFacadeService,
+    private readonly modalService: ModalsService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -216,7 +218,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   async presentEditHomePageModal(): Promise<void> {
-    const modal = await this.modalController.create({
+    const modal = await this.modalService.create({
       component: EditHomePageModalComponent,
     });
     return await modal.present();

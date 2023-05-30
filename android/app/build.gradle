@@ -4,7 +4,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
 
 android {
-
     namespace 'com.cbord.get'
     compileSdkVersion rootProject.ext.compileSdkVersion
     compileOptions {

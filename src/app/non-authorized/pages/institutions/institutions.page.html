@@ -20,6 +20,7 @@
       type="text"
       debounce="500"
       mode="ios"
+      aria-live="polite"
       class="institutions-header__searchbar"
     ></ion-searchbar>
   </ion-toolbar>
@@ -41,13 +42,8 @@
 <ng-template #institutionsList>
   <ion-list class="search-institutions__list" mode="ios">
     <div *ngFor="let item of institutions | search : searchString">
-      <ion-item class="search-institutions__item item-stable" lines="none" (click)="onInstitutionSelected(item)">
+      <ion-item class="search-institutions__item item-stable" lines="none" detail="true" (click)="onInstitutionSelected(item)">
         <ion-label class="search-institutions__name"> {{ item.name }} </ion-label>
-        <ion-icon
-          class="search-institutions__item-continue"
-          src="/assets/icon/angle-down-select.svg"
-          aria-label="continue"
-        ></ion-icon>
       </ion-item>
     </div>
   </ion-list>

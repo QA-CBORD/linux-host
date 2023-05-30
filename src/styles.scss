@@ -5,6 +5,34 @@
 @import 'icons';
 
 :root {
+  ion-searchbar {
+    &.searchbar-has-value{
+      .searchbar-input-container {
+        button{
+          &.searchbar-clear-button {
+            ion-icon{
+              &.searchbar-clear-icon{
+                color: gray;
+              }
+            }
+          }
+        }
+      }
+    }
+    .searchbar-input-container {
+      button{
+        &.searchbar-clear-button {
+          display: block;
+          ion-icon{
+            &.searchbar-clear-icon{
+              color: lightgray;
+            }
+          }
+        }
+      }
+    }
+  }
+
   .st-header {
     ion-searchbar {
       .searchbar-input-container.sc-ion-searchbar-ios {

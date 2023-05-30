@@ -51,6 +51,11 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
   get groupsArray() {
     return this.secureMessagingFacadeService.groupsArray;
   }
+  get messagesFromRC() {
+    return this.selectedConversation.messages.filter(
+      msg => msg.sender.type === SecureMessageTypes.GROUP
+    )
+  }
 
   constructor(
     private readonly secureMessagingFacadeService: SecureMessagingFacadeService,
@@ -58,7 +63,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     private readonly globalNav: GlobalNavService,
     private readonly userService: UserFacadeService,
     private readonly changeDetectorRef: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // TODO: Implement from store
@@ -77,7 +82,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     this.sourceSub.add(this.secureMessagingFacadeService.getInitialData$().pipe(first()).subscribe());
   }
   ngOnDestroy() {
-    this.markAsRead(this.infoToMarkAsRead);
+    if (this.selectedConversation && this.messagesFromRC.length > 0) this.markAsRead(this.infoToMarkAsRead);
     this.secureMessagingFacadeService.clearSelectedConversation();
     this.sourceSub.unsubscribe();
   }
@@ -299,7 +304,7 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
       //was this message sent within 1 min of the next message:
       const isMessageSentWithinMin: boolean =
         new Date(messages[messageIndex + 1].sent_date).getTime() -
-          new Date(messages[messageIndex].sent_date).getTime() <
+        new Date(messages[messageIndex].sent_date).getTime() <
         60000;
 
       return messages[messageIndex + 1].sender.type === messageType && isMessageSentWithinMin;
@@ -359,10 +364,8 @@ export class SegureMessageChatPageComponent implements OnInit, OnDestroy {
     return this.selectedConversation.messages;
   }
   private get infoToMarkAsRead(): MarkAsReadVal {
-    const messagesFromRC = this.selectedConversation.messages.filter(
-      msg => msg.sender.type === SecureMessageTypes.GROUP
-    );
-    const lastMessage = messagesFromRC.pop();
+
+    const lastMessage = this.messagesFromRC.pop();
     return {
       institution_id: lastMessage.institution_id,
       sender_id: lastMessage.sender.id,

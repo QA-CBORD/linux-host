@@ -32,6 +32,7 @@ import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-mo
 import { LocationPermissionModalModule } from './components/location-disclosure/location-disclosure.module';
 import { LocationPermissionModal } from './components/location-disclosure/location-disclosure.component';
 import { ProminentDisclosureService } from './services/prominent-disclosure.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 const imports = [
   CommonModule,
@@ -54,7 +55,7 @@ const imports = [
   StButtonModule,
   PhoneEmailModule,
   EditHomePageModalModule,
-  LocationPermissionModalModule
+  LocationPermissionModalModule,
 ];
 
 const declarations = [DashboardPage];
@@ -66,7 +67,8 @@ const providers = [
   DashboardPageResolver,
   TileConfigFacadeService,
   GlobalNavService,
-  ProminentDisclosureService
+  ProminentDisclosureService,
+  ModalsService
 ];
 
 @NgModule({
