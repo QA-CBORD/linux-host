@@ -60,6 +60,11 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   status = 0;
   section = '';
   conditions = [];
+  roomsMapping = {
+    '=0': 'No rooms left.', 
+    '=1': '# room left.', 
+    'other': '# rooms left.'
+  }
 
   constructor(
     private _platform: Platform,
@@ -69,8 +74,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _housingService: HousingService,
     private _toastService: ToastService,
     private _inspectionService: InspectionService,
-    private  nativeProvider: NativeProvider,
-  ) {}
+    private nativeProvider: NativeProvider,
+  ) { }
 
   ngOnInit(): void {
     if (this.nativeProvider.isMobile()) {
@@ -172,16 +177,16 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   private createInspectionSubscription(inspectionData: Inspection, alert: HTMLIonAlertElement) {
     const createInspectionSubscription = this._inspectionService.submitInspection(inspectionData)
       .subscribe(status => {
-          alert.dismiss().then(() => {
-            if (status) {
-              this._housingService.goToDashboard();
-            } else {
-              this._loadingService.closeSpinner();
-              this._toastService.showToast({
-                message: 'The form could not be processed at this time. Try again later',
-              });
-            }
-          });
+        alert.dismiss().then(() => {
+          if (status) {
+            this._housingService.goToDashboard();
+          } else {
+            this._loadingService.closeSpinner();
+            this._toastService.showToast({
+              message: 'The form could not be processed at this time. Try again later',
+            });
+          }
+        });
       });
 
     this.subscriptions.add(createInspectionSubscription);
