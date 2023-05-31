@@ -15,7 +15,10 @@
     [attr.tabindex]="tabindex"
     [attr.aria-required]="isRequired"
   />
-  <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
+  <label class="input__placeholder" [attr.for]="idd">
+    {{ label }}
+    <span *ngIf="isRequired" class="showAsterisk">*</span>
+  </label>
   <ng-content *ngIf="isError"></ng-content>
   <div class="input__accesibility_error" *ngIf="isError && !passwordFieldDirty">
     <img src="/assets/icon/input-error.svg" alt="input-accessibility-error" *ngIf="isError" />

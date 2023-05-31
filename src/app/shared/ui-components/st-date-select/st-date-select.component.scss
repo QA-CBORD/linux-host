@@ -30,3 +30,7 @@ ion-input {
 ion-label{
   font-weight: 500;
 }
+
+.showAsterisk {
+  @include show-asterisk
+}
