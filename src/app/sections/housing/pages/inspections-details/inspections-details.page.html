@@ -39,13 +39,13 @@
       </ng-container>
       <st-stepper-footer>
         <div>
-          <h2 class="inspection-details__title">Room Inspections</h2>
+          <h2 class="inspection-details__title">Inspections Incomplete.</h2>
           <ion-label color="medium">
             {{ countItemsLeft(inspectionDetails) | i18nPlural:roomsMapping}}
           </ion-label>
         </div>
         <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
-          [color]="countItemsLeft(inspectionDetails) > 0 || isSubmitted ? 'ligth' : 'primary'"
+        [color]="countItemsLeft(inspectionDetails) > 0 || isSubmitted && 'light'"
           (click)="submitInspection(inspectionDetails)"
           [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted">
           Submit
