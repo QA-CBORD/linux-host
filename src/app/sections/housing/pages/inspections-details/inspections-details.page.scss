@@ -24,9 +24,8 @@ st-textarea-floating-label{
 
   font-size: 20px;
   color: $color-night-rider;
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 10px;
+  margin: 0;
+  max-height: 25px
 }
 
 .inspection-details__page-back {
@@ -41,6 +40,9 @@ st-textarea-floating-label{
 
 .btn-submit{
   float:right;
+  --padding-end:30px;
+  --padding-start:30px;
+
 }
 
 .inspection-details__save {
