@@ -18,6 +18,7 @@ describe(NavigationService, () => {
       url: ANONYMOUS_ROUTES.noConnectivity,
       navigateAnonymous: jest.fn(() => of(true)),
       navigateByUrl: jest.fn(() => of(true)),
+      navigate: jest.fn()
     };
     TestBed.configureTestingModule({
       providers: [
