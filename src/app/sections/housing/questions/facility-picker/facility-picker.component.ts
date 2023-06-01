@@ -17,6 +17,8 @@ export class FacilityPickerComponent implements OnInit, OnDestroy {
 
   @Input() isDisabled = false;
 
+  @Input() isRequired: boolean;
+
   facilities: QuestionReorderValue[];
 
   get subscription(){

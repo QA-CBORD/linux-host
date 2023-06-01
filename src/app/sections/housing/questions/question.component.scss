@@ -62,6 +62,9 @@
   display: block;
   margin: 16px -10px 0;
   padding: 16px 10px 0;
+  .showAsterisk {
+    @include show-asterisk
+  }
 }
 
 .question__item {

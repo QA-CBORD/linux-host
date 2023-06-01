@@ -283,10 +283,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return question.source === 'WORK_ORDER' && question.workOrderFieldKey === 'DESCRIPTION';
   }
 
-  getLabel(question, name: string) {
-    const control : AbstractControl = this.parentGroup.get(question[name]);
-    const label = this.checkLabel(question);
-    return control && hasRequiredField(control)? label + " (Required)": label;
+  getLabel(question) {
+    return this.checkLabel(question);
+  }
+
+  isRequired(question):boolean{
+    return question && hasRequiredField(question);
   }
 
   checkLabel(question){
