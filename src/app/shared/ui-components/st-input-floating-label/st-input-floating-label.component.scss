@@ -20,6 +20,9 @@
 
       & + .input__placeholder {
         color: rgba($color-black, 0.4);
+        .showAsterisk {
+          @include show-asterisk
+        }
       }
     }
   }
@@ -35,6 +38,9 @@ input[type='text'].input__control {
 
     & + .input__placeholder {
       @include floating-label($color-dodger-blue);
+      .showAsterisk {
+        @include show-asterisk
+      }
     }
   }
   &--error {
@@ -76,6 +82,9 @@ input[type='text'].input__control {
 
       & + .input__placeholder {
         @include floating-label($color-dodger-blue);
+        .showAsterisk {
+          @include show-asterisk
+        }
       }
     }
 
@@ -105,6 +114,9 @@ input[type='text'].input__control {
     transition: all 200ms;
     opacity: 0.6;
     z-index: 2;
+    .showAsterisk {
+      @include show-asterisk
+    }
   }
 
   &__accesibility_error {
@@ -123,7 +135,7 @@ input[type='text'].input__control {
 :host-context(.ng-valid.ng-dirty) .input__control {
   & + .input__placeholder {
     z-index: 2;
-    @include floating-label($color-night-gray);
+    @include floating-label($color-night-rider);
     font-weight: 500;
   }
 }
