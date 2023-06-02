@@ -75,6 +75,17 @@ ion-segment {
 .selectorCondition {
   width: 100%;
   max-width: 100%;
+  border: 2px solid $color-night-gray;
+  border-radius: 5px;
+  height: 47px;
+  font-size: 14px;
+  padding-left: 20px;
+  box-shadow: none;
+}
+
+ion-select {
+  --placeholder-color: $color-black;
+  --placeholder-opacity: 1;
 }
 
 .tabsContainer {

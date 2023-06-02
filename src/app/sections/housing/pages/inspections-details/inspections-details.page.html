@@ -19,9 +19,10 @@
             </ion-item>
             <ion-item lines="none">
               <ion-select class="selectorCondition" [(ngModel)]="item.residentConditionKey"
-                placeholder="select a condition">
+                placeholder="Select a condition from the list">
                 <ion-select-option *ngFor="let condition of conditions"
-                  [value]="+condition.value">{{condition.label}}</ion-select-option>
+                  [value]="+condition.value">{{condition.label}}
+                </ion-select-option>
               </ion-select>
             </ion-item>
             <ion-item lines="none" *ngIf="item.staffConditionKey">
