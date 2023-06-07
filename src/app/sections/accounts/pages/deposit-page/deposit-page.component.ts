@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonSelect, ModalController, PopoverController } from '@ionic/angular';
-import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import {
-  ACCOUNTS_VALIDATION_ERRORS,
   ACCOUNT_TYPES,
   LOCAL_ROUTING,
   PAYMENT_SYSTEM_TYPE,
