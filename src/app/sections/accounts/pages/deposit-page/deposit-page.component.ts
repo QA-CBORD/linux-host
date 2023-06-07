@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonSelect, ModalController, PopoverController } from '@ionic/angular';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import {
+  ACCOUNTS_VALIDATION_ERRORS,
   ACCOUNT_TYPES,
   LOCAL_ROUTING,
   PAYMENT_SYSTEM_TYPE,
@@ -466,16 +467,18 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
         this.depositService
         .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-        .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
-        .toPromise()
-        .then(async _ => {
-          this.finalizeDepositModal(data)
-        })
-        .catch(async (error: string) => this.onErrorRetrieve(error || 'Your information could not be verified.')
-        .finally(() => {
-          this.loadingService.closeSpinner();
-          this.isDepositing = false;
-        }));
+        .pipe(
+          handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
+          take(1),
+          finalize(() => {
+            this.loadingService.closeSpinner();
+            this.isDepositing = false;
+          })
+        )
+        .subscribe(
+          () => this.finalizeDepositModal(data),
+          error => this.onErrorRetrieve(error || 'Your information could not be verified.')
+        );
       }
       if (role === BUTTON_TYPE.CANCEL) {
         this.isDepositing = false;
