@@ -32,6 +32,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
+import { ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 
 export enum browserState {
   FINISHED = 'browserFinished',
@@ -463,20 +464,19 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
+
         this.depositService
-          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-          .pipe(
-            handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
-            take(1),
-            finalize(() => {
-              this.loadingService.closeSpinner();
-              this.isDepositing = false;
-            })
-          )
-          .subscribe(
-            () => this.finalizeDepositModal(data),
-            error => this.onErrorRetrieve(error || 'Your information could not be verified.')
-          );
+        .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
+        .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
+        .toPromise()
+        .then(async _ => {
+          this.finalizeDepositModal(data)
+        })
+        .catch(async (error: string) => this.onErrorRetrieve(error || 'Your information could not be verified.')
+        .finally(() => {
+          this.loadingService.closeSpinner();
+          this.isDepositing = false;
+        }));
       }
       if (role === BUTTON_TYPE.CANCEL) {
         this.isDepositing = false;
