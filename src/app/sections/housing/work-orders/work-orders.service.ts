@@ -36,7 +36,6 @@ export class WorkOrdersService {
     private questionsService: QuestionsService,
     private housingProxyService: HousingProxyService,
     private workOrderStateService: WorkOrderStateService,
-    private toastController: ToastController,
     private imageService: ImageService,
     private toastService: ToastService
   ) {
@@ -182,9 +181,7 @@ export class WorkOrdersService {
     return this.housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(() => {
         this.toastService.showToast({
-          message: 'Error submitting work order.',
-          duration: 3000,
-          position: 'top',
+          message: 'Error submitting work order.'
         });
         return of(false);
       }),
