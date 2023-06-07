@@ -18,6 +18,7 @@ import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { ToastController } from '@ionic/angular';
 import ImageService from './image.service';
+import { ToastService } from '@core/service/toast/toast.service';
 const NOTIFY = {
   YES: 'Yes',
   NO: 'No',
@@ -36,7 +37,8 @@ export class WorkOrdersService {
     private housingProxyService: HousingProxyService,
     private workOrderStateService: WorkOrderStateService,
     private toastController: ToastController,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private toastService: ToastService
   ) {
     this.workOrderListUrl = `${this.environment.getHousingAPIURL()}/patron-applications/v.1.0/work-orders`;
   }
@@ -179,7 +181,11 @@ export class WorkOrdersService {
     const { body, image } = this.buildWorkOrderList(workOrdersControls, formValue);
     return this.housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(() => {
-        this.presentErrorToast();
+        this.toastService.showToast({
+          message: 'Error submitting work order.',
+          duration: 3000,
+          position: 'top',
+        });
         return of(false);
       }),
       switchMap((response: Response) => {
@@ -232,13 +238,5 @@ export class WorkOrdersService {
     };
   }
 
-  private presentErrorToast() {
-    const toast = this.toastController.create({
-      message: 'Error submitting work order.',
-      duration: 3000,
-      position: 'top',
-      color: 'danger',
-    });
-    toast.then(t => t.present());
-  }
+
 }
