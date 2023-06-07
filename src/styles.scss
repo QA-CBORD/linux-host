@@ -250,6 +250,10 @@
   text-transform: uppercase;
 }
 
+.showAsterisk {
+  @include show-asterisk
+}
+
 .secondary-header {
   @include font-nunito-semibold(14px);
 

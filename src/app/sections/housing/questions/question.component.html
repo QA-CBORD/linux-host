@@ -2,6 +2,7 @@
   <ng-container [ngSwitch]="question.type">
     <ng-container *ngSwitchCase="'IMAGE'" class="question__section">
       <h3 class="form__secondary-header">Upload a photo</h3>
+      <span *ngIf="isRequired(question)" class="showAsterisk">*</span>
       <div class="container__image">
         <ng-container *ngIf="(image$ | async) as image; else defaultImage" witdh="95%" heigth=95% >
           <ion-img class="image" [src]="image"></ion-img>
@@ -18,7 +19,7 @@
     </ng-container>
     <ng-container *ngSwitchCase="'FACILITY'">
       <div item-content>
-        <st-hierarchy-tree [label]="getLabel(question, controlName)" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true"></st-hierarchy-tree>
+        <st-hierarchy-tree [label]="getLabel(question)" [isDisabled]="isSubmitted" [lookups]="facilityTreeData" [allowParent]="true" ></st-hierarchy-tree>
       </div>
     </ng-container>
 
@@ -29,7 +30,7 @@
       class="question__item question__control"
       type="text"
       [control]="parentGroup.get(question['name'])"
-      [label]="getLabel(question, controlName)  "
+      [label]="getLabel(question)  "
       [idd]="question['name']"
       [formControlName]="question['name']"
       [isError]="errorValidator"
@@ -48,7 +49,7 @@
     [formControlName]="question['name']"
     class="question__item question__control"
     [idd]="question['name']"
-    [label]="getLabel(question, controlName)"
+    [label]="getLabel(question)"
     title="Type your message here..."
     rows="3"
     [stEmptyFormControl]="parentGroup.get(question['name'])"
@@ -118,10 +119,12 @@
       [parentForm]="parentGroup"
       [isDisabled]="(isSubmitted && !canEdit) || isView"
       *ngSwitchCase="'facility-picker'"
+      [isRequired]="question.required"
     ></st-facility-picker>
 
     <ng-container *ngSwitchCase="'checkbox-group'">
       <h3 class="form__secondary-header">{{ question.label }}</h3>
+      <span *ngIf="isRequired(question)" class="showAsterisk">*</span>
 
       <st-control-errors
         class="control-hint--no-indent"
@@ -148,8 +151,10 @@
       </ion-item>
     </ng-container>
 
-    <div *ngSwitchCase="'radio-group'" class="question__item">
-      <h3 class="form__secondary-header">{{ getLabel(question, controlName) }}</h3>
+    <div *ngSwitchCase="'radio-group'" class="question__section">
+      <h3 class="form__secondary-header">{{ getLabel(question) }}
+        <span *ngIf="isRequired(question)" class="showAsterisk">*</span>
+      </h3>
 
       <st-control-errors
         class="control-hint--no-indent"
@@ -173,6 +178,7 @@
         *ngIf="question.label"
         class="form__secondary-header">
         {{ question.label }}
+        <span *ngIf="question.required" class="showAsterisk">*</span>
       </h3>
       <st-button
         expand="block"

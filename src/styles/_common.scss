@@ -165,3 +165,8 @@
   transform: rotate(270deg);
   height: 28px;
 }
+
+@mixin show-asterisk {
+  color:red;
+  font-weight:bold;
+}

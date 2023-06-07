@@ -69,6 +69,9 @@ ion-select::part(icon){
     & + .select__placeholder {
 
       @include floating-label($color-dodger-blue);
+      .showAsterisk {
+        @include show-asterisk
+      }
     }
   }
 
@@ -77,6 +80,9 @@ ion-select::part(icon){
 
     @include floating-label($color-night-gray);
     font-weight: 500;
+    .showAsterisk {
+      @include show-asterisk
+    }
   }
 
 }

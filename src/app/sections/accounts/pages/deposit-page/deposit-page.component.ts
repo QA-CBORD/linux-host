@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonSelect, ModalController, PopoverController } from '@ionic/angular';
-import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
+import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   ACCOUNTS_VALIDATION_ERRORS,
   ACCOUNT_TYPES,
@@ -463,20 +463,21 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
         this.loadingService.showSpinner();
+
         this.depositService
-          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-          .pipe(
-            handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
-            take(1),
-            finalize(() => {
-              this.loadingService.closeSpinner();
-              this.isDepositing = false;
-            })
-          )
-          .subscribe(
-            () => this.finalizeDepositModal(data),
-            error => this.onErrorRetrieve(error || 'Your information could not be verified.')
-          );
+        .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
+        .pipe(
+          handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
+          take(1),
+          finalize(() => {
+            this.loadingService.closeSpinner();
+            this.isDepositing = false;
+          })
+        )
+        .subscribe(
+          () => this.finalizeDepositModal(data),
+          error => this.onErrorRetrieve(error || 'Your information could not be verified.')
+        );
       }
       if (role === BUTTON_TYPE.CANCEL) {
         this.isDepositing = false;

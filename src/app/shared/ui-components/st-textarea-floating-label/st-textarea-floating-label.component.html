@@ -15,6 +15,9 @@
   >
   </ion-textarea>
 
-  <label class="textarea__placeholder" [ngClass]="{'attachment_label':isAttachment}" [attr.for]="idd">{{ label }}</label>
+  <label class="textarea__placeholder" [ngClass]="{'attachment_label':isAttachment}" [attr.for]="idd">
+    {{ label }}
+    <span class="showAsterisk" *ngIf="isRequired" >*</span>
+  </label>
   <ng-content *ngIf="isError"></ng-content>
 </div>
