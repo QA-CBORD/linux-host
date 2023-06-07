@@ -20,11 +20,19 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   public urlEditForm: string;
   private selectedTermKey = 0;
 
+
+  statusClasses = {
+    1: 'open',
+    2: 'inProcess',
+    6: 'close',
+    5: 'toCancel',
+    90: 'cleaning'
+  }
   constructor(private _workOrdersService: WorkOrdersService,
     public _workOrderStateService: WorkOrderStateService,
-    private _termService : TermsService,
+    private _termService: TermsService,
     private router: Router
-    ) {}
+  ) { }
 
   workOrders: WorkOrder[];
 
@@ -40,10 +48,10 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   private _initTermsSubscription() {
     this._subscription.add(
       this._termService.termId$
-          .subscribe(termId => {
-            this.urlEditForm = `/patron/housing/work-orders/${termId}/`;
-            this.selectedTermKey = termId;
-          }));
+        .subscribe(termId => {
+          this.urlEditForm = `/patron/housing/work-orders/${termId}/`;
+          this.selectedTermKey = termId;
+        }));
 
   }
 
@@ -67,19 +75,8 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
     return `${ROLES.patron}/housing/work-orders/${this.selectedTermKey}/${key}`;
   }
 
-  getClass(key: number){
-    if (key === 1){
-      return 'open';
-    } else if (key === 2){
-      return 'inProcess';
-    } else if (key === 6){
-      return 'close';
-    } else if (key === 5){
-      return 'toCancel';
-    } else if (key === 90){
-      return 'cleaning';
-    } else {
-      return 'thinking';
-    }
+  getClass(key: number) {
+    const selectedClass = this.statusClasses[key] ? this.statusClasses[key] : 'thinking'
+    return selectedClass
   }
 }

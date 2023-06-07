@@ -18,7 +18,6 @@ import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
 import { ToastController } from '@ionic/angular';
 import ImageService from './image.service';
-
 const NOTIFY = {
   YES: 'Yes',
   NO: 'No',
@@ -28,81 +27,78 @@ const NOTIFY = {
   providedIn: 'root',
 })
 export class WorkOrdersService {
-  private workOrderListUrl = `${this._environment.getHousingAPIURL()}/patron-applications/v.1.0/work-orders`;
-  workOrders: WorkOrder = generateWorkOrders(5);
-
+  private workOrderListUrl: string;
 
   constructor(
-    private _environment: EnvironmentFacadeService,
-    private _questionsStorageService: QuestionsStorageService,
-    private _questionsService: QuestionsService,
-    private _housingProxyService: HousingProxyService,
-    private _workOrderStateService: WorkOrderStateService,
+    private environment: EnvironmentFacadeService,
+    private questionsStorageService: QuestionsStorageService,
+    private questionsService: QuestionsService,
+    private housingProxyService: HousingProxyService,
+    private workOrderStateService: WorkOrderStateService,
     private toastController: ToastController,
-    private _imageService: ImageService
-  ) { }
+    private imageService: ImageService
+  ) {
+    this.workOrderListUrl = `${this.environment.getHousingAPIURL()}/patron-applications/v.1.0/work-orders`;
+  }
 
   getWorkOrders(): Observable<WorkOrder> {
-    return of(this.workOrders);
+    const workOrders: WorkOrder = generateWorkOrders(5);
+    return of(workOrders);
   }
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
-    return this._questionsStorageService.getQuestions(key).pipe(
-      withLatestFrom(this._workOrderStateService.workOrderDetails),
+    return this.questionsStorageService.getQuestions(key).pipe(
+      withLatestFrom(this.workOrderStateService.workOrderDetails),
       map(([storedQuestions, workOrderDetails]: [QuestionsEntries, WorkOrderDetails]) => {
-        const pages: QuestionBase[][] = this._getQuestionsPages(workOrderDetails);
-        return this._getPages(pages, storedQuestions, workOrderDetails);
+        const pages: QuestionBase[][] = this.getQuestionsPages(workOrderDetails);
+        return this.getPages(pages, storedQuestions, workOrderDetails);
       })
     );
   }
 
-  private _getPages(
+  private getPages(
     pages: QuestionBase[][],
     storedQuestions: QuestionsEntries,
     workOrderDetails: WorkOrderDetails
   ): QuestionsPage[] {
     return pages.map((page: QuestionBase[]) => ({
-      form: this._toFormGroup(page, storedQuestions, workOrderDetails),
+      form: this.toFormGroup(page, storedQuestions, workOrderDetails),
       questions: page,
     }));
   }
 
-  private _toFormGroup(
+  private toFormGroup(
     questions: QuestionBase[],
     storedQuestions: QuestionsEntries,
     workOrderDetails: WorkOrderDetails
   ): FormGroup {
-    return this._questionsService.toFormGroup(
+    return this.questionsService.toFormGroup(
       questions,
       storedQuestions,
       (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
-        group[questionName] = this._toFormControl(storedValue, question, workOrderDetails);
+        group[questionName] = this.toFormControl(storedValue, question, workOrderDetails);
       }
     );
   }
 
-  private _getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-    // eslint-disable-next-line no-useless-escape
-    const questions: QuestionBase[][] = parseJsonToArray(
-      workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) +
-      `,{"name": "image","type": "IMAGE", "label": "Image", "attribute": null, "workOrderFieldKey" : "IMAGE", "requiered": false ,"source":"WORK_ORDER"}]`
-    ).map((question: QuestionBase) => {
-      const mappedQuestion = this._toWorkOrderListCustomType(question, workOrderDetails);
+  private getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
+    const questionJson = workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) +
+      `,{"name": "image","type": "IMAGE", "label": "Image", "attribute": null, "workOrderFieldKey" : "IMAGE", "required": false ,"source":"WORK_ORDER"}]`;
+    const questions: QuestionBase[][] = parseJsonToArray(questionJson).map((question: QuestionBase) => {
+      const mappedQuestion = this.toWorkOrderListCustomType(question, workOrderDetails);
       return [].concat(mappedQuestion);
     });
-    return this._questionsService.splitByPages(flat(questions));
+    return this.questionsService.splitByPages(flat(questions));
   }
 
-  private _toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails) {
+  private toWorkOrderListCustomType(question: QuestionFormControlOptions, workOrderDetails: WorkOrderDetails) {
     let values = [];
 
     if (question.workOrderFieldKey === 'TYPE') {
-      values = workOrderDetails.workOrderTypes.map(v => {
-        return {
-          label: v.name,
-          value: v.key,
-        };
-      });
+      values = workOrderDetails.workOrderTypes.map(v => ({
+        label: v.name,
+        value: v.key,
+      }));
       return {
         label: question.label,
         name: question.name,
@@ -122,7 +118,7 @@ export class WorkOrdersService {
     }
   }
 
-  private _toFormControl(
+  private toFormControl(
     storedValue: string,
     question: QuestionFormControl,
     workOrderDetails: WorkOrderDetails
@@ -130,14 +126,14 @@ export class WorkOrdersService {
     let value: string | number = storedValue;
     const disabled = false;
 
-    const validators = this._questionsService.getRequiredValidator(question);
+    const validators = this.questionsService.getRequiredValidator(question);
 
     if (question.workOrderFieldKey === 'DESCRIPTION') {
       validators.push(Validators.maxLength(250));
     }
 
     if (question instanceof QuestionTextbox) {
-      this._questionsService.addDataTypeValidator(question, validators);
+      this.questionsService.addDataTypeValidator(question, validators);
     }
 
     if (workOrderDetails.workOrderDetails) {
@@ -161,7 +157,7 @@ export class WorkOrdersService {
           value = workOrderDetails.workOrderDetails.typeKey;
           break;
         case WorkOrdersFields.IMAGE:
-          this._workOrderStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment);
+          this.workOrderStateService.setWorkOrderImage(workOrderDetails.workOrderDetails.attachment);
           break;
       }
       return new FormControl({ value, disabled: true }, validators);
@@ -176,34 +172,29 @@ export class WorkOrdersService {
 
   submitWorkOrder(form: WorkOrderDetails, formValue: FormControl): Observable<boolean> {
     const parsedJson: string[] = parseJsonToArray(form.formDefinition.applicationFormJson);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workOrdersControls: string[] = parsedJson.filter(
       (control: QuestionFormControl | string) =>
-        control && (<QuestionFormControl>control).source === QUESTIONS_SOURCES.WORK_ORDER && (<QuestionFormControl>control).workOrderField
+        control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && (control as QuestionFormControl).workOrderField
     );
     const { body, image } = this.buildWorkOrderList(workOrdersControls, formValue);
-    return this._housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
+    return this.housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(() => {
         this.presentErrorToast();
         return of(false);
       }),
       switchMap((response: Response) => {
-        if (image) return this._imageService.sendWorkOrderImage(response.data, image);
+        if (image) return this.imageService.sendWorkOrderImage(response.data, image);
         return of(true);
       })
     );
   }
 
-
-
-  private createFacilityTreeQuestion() {
-    // eslint-disable-next-line no-useless-escape
-    const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"requiered\": false ,\"source\":\"WORK_ORDER\"}]`;
+  private createFacilityTreeQuestion(): QuestionBase[] {
+    const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"required\": false ,\"source\":\"WORK_ORDER\"}]`;
     return parseJsonToArray(facilityTreeString);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private buildWorkOrderList(workOrdersControls: any[], formValue: FormControl) {
+  private buildWorkOrderList(workOrdersControls: QuestionFormControlOptions[] | string[], formValue: FormControl) {
     let image: ImageData;
     let location: number;
     const controls: { [key: string]: string } = {
@@ -220,14 +211,8 @@ export class WorkOrdersService {
       controls[fieldType] = resultFormValue;
     });
 
-    this._workOrderStateService.workOrderImage$.pipe(take(1)).subscribe(res => {
-      image = null;
-      if (res && res.studentSubmitted) {
-        image = res;
-      }
-    });
-
-    this._workOrderStateService
+    this.workOrderStateService.workOrderImage.subscribe((value: ImageData) => (image = value));
+    this.workOrderStateService
       .getSelectedFacility$()
       .pipe(take(1))
       .subscribe(res => {
@@ -237,32 +222,23 @@ export class WorkOrdersService {
           location = null;
         }
       });
-
     return {
       body: {
-        notificationPhone: controls[WorkOrdersFields.PHONE_NUMBER] ? controls[WorkOrdersFields.PHONE_NUMBER] : '',
-        notificationEmail: controls[WorkOrdersFields.EMAIL] ? controls[WorkOrdersFields.EMAIL] : '',
-        typeKey: controls[WorkOrdersFields.TYPE],
-        description: controls[WorkOrdersFields.DESCRIPTION],
+        ...controls,
         notify: controls[WorkOrdersFields.NOTIFY_BY_EMAIL] === NOTIFY.YES,
-        facilityKey: location,
-        key: null,
-        status: '',
-        statusKey: 0,
-        type: '',
-        requestedDate: '',
+        facilityKey: location
       },
       image,
     };
   }
 
-  async presentErrorToast() {
-    const toast = await this.toastController.create({
-      message: 'There was a problem with this submission. Try again or contact the Housing office.',
-      duration: 2500,
+  private presentErrorToast() {
+    const toast = this.toastController.create({
+      message: 'Error submitting work order.',
+      duration: 3000,
       position: 'top',
+      color: 'danger',
     });
-
-    await toast.present();
+    toast.then(t => t.present());
   }
 }
