@@ -5,7 +5,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { Filesystem, FilesystemDirectory } from "@capacitor/filesystem";
 import { take } from "rxjs";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
-import {ImageData} from './work-orders.model'
+import { ImageData } from './work-orders.model'
 import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { Response } from "../housing.model";
 

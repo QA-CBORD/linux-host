@@ -190,7 +190,7 @@ export class WorkOrdersService {
   }
 
   private createFacilityTreeQuestion(): QuestionBase[] {
-    const facilityTreeString = `[{\"name\": \"image\",\"type\": \"FACILITY\", \"label\": \"Image\", \"attribute\": null, \"workOrderFieldKey\" : \"FACILITY\", \"required\": false ,\"source\":\"WORK_ORDER\"}]`;
+    const facilityTreeString = `[{"name": "image","type": "FACILITY", "label": "Image", "attribute": null, "workOrderFieldKey" : "FACILITY", "required": false ,"source":"WORK_ORDER"}]`;
     return parseJsonToArray(facilityTreeString);
   }
 
