@@ -8,6 +8,7 @@ import {
   StaticProvider,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl } from '@angular/forms';
+import { hasRequiredField } from '@core/utils/general-helpers';
 
 import { hasValue } from '@sections/housing/utils';
 
@@ -81,5 +82,9 @@ export class StDateSelectComponent implements ControlValueAccessor {
   private _checkIsFilled(value): void {
     this.isFilled = hasValue(value);
     this._changeDetector.markForCheck();
+  }
+
+  get isRequired(): boolean {
+    return hasRequiredField(this.control);
   }
 }

@@ -60,11 +60,7 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   }
 
   getStatus(key: number): string {
-    if (key || key !== 0) {
-      return 'Submitted'
-    }
-
-    return 'New';
+    return key !== 0 ? 'Submitted' : 'New';
   }
 
   createWorkOrderDefault(): void {
@@ -76,6 +72,6 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   }
 
   getClass(key: number) {
-    return this.statusClasses[key] ? this.statusClasses[key] : 'thinking'
+    return this.statusClasses[key] ? this.statusClasses[key] : 'thinking';
   }
 }

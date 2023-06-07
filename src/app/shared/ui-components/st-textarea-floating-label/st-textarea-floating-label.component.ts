@@ -1,5 +1,6 @@
 import { Component, Input, forwardRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { hasRequiredField } from '@core/utils/general-helpers';
 
 export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -80,5 +81,9 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
 
   ionFocus(event: Event) {
     this.onFocus.emit(event);
+  }
+
+  get isRequired(): boolean {
+    return hasRequiredField(this.control);
   }
 }
