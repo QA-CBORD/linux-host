@@ -76,7 +76,6 @@ export class WorkOrdersComponent implements OnInit, OnDestroy {
   }
 
   getClass(key: number) {
-    const selectedClass = this.statusClasses[key] ? this.statusClasses[key] : 'thinking'
-    return selectedClass
+    return this.statusClasses[key] ? this.statusClasses[key] : 'thinking'
   }
 }
