@@ -32,7 +32,6 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
-import { ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 
 export enum browserState {
   FINISHED = 'browserFinished',
