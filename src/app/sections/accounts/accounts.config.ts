@@ -106,4 +106,5 @@ export const CREDITCARD_ICONS = {
 
 export const ACCOUNTS_VALIDATION_ERRORS: ServerErrorsInfo = {
   6112: 'You have insufficient funds in the selected account',
+  6102: 'The specified card has been reported lost. Contact the card office for more details.'
 };
