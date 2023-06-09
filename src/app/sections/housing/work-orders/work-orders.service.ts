@@ -16,7 +16,6 @@ import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
-import { ToastController } from '@ionic/angular';
 import ImageService from './image.service';
 import { ToastService } from '@core/service/toast/toast.service';
 const NOTIFY = {
