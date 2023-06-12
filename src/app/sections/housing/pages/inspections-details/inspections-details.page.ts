@@ -32,6 +32,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { Inspection } from '../../inspections-forms/inspections-forms.model';
 import { InspectionService } from '../../inspections-forms/inspections-forms.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 @Component({
   selector: 'st-inspections-details',
   templateUrl: './inspections-details.page.html',
@@ -46,9 +47,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   private activeAlerts: HTMLIonAlertElement[] = [];
 
   inspectionDetails$: Observable<Inspection>;
-  pages$: Observable<QuestionsPage[]>;
   selectedAssetType$: Observable<AssetTypeDetailValue[]>;
-
   residentInspectionKey: number;
   contractElementKey: number;
   checkIn: boolean;
@@ -60,6 +59,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   status = 0;
   section = '';
   conditions = [];
+  inspectionForm: FormGroup;
 
   constructor(
     private _platform: Platform,
@@ -70,6 +70,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _toastService: ToastService,
     private _inspectionService: InspectionService,
     private  nativeProvider: NativeProvider,
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -81,6 +82,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
+
     this.residentInspectionKey = parseInt(this._route.snapshot.params.residentInspectionKey);
     this.contractElementKey = parseInt(this._route.snapshot.params.contractElementKey);
     this.checkIn = JSON.parse(this._route.snapshot.params.checkIn);
@@ -89,7 +91,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this._initInspectionDetailsObservable();
   }
 
-  private getInspectionPages() {
+  private getInspectionConditions() {
     const result = this._inspectionService.getFormDefinitionInspection().subscribe(res => {
       this.conditions = res.values.filter(x => x.selected)
     })
@@ -115,7 +117,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey, this.residentInspectionKey, this.contractElementKey, this.checkIn)
       .pipe(
         tap((inspectionDetails: Inspection) => {
-          this.getInspectionPages();
+          this.getInspectionConditions();
           this.section = inspectionDetails.sections[0].name;
           this.isSubmitted = inspectionDetails.isSubmitted;
 
@@ -127,6 +129,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           return throwError(error);
         })
       );
+      this.setSections();
   }
 
   async save(inspectionData: Inspection): Promise<void> {
@@ -135,6 +138,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   async submitInspection(inspectionData: Inspection) {
+    // inspectionData.sections[0].items[0].comments = this.form.value.comments;
     inspectionData.isSubmitted = true;
     await this.createInspectionAlert(inspectionData, `Are you sure you want to submit this Inspection?`);
   }
@@ -198,5 +202,34 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
 
   changeView(section: string) {
     this.section = section;
+  }
+
+  setSections(){
+    let control = <FormArray> this.inspectionForm.controls['sections'];
+    this.inspectionDetails$.subscribe((res)=>{
+      res.sections.forEach((section)=>{
+        control.push(this.fb.group({
+          name: section.name,
+          items: this.setItemsControls(section)
+        }))
+      })
+    });
+    console.log(this.inspectionForm,"TODO: Eraseeee-->>")
+  }
+
+  setItemsControls(sections:any){
+    let arr = new FormArray<FormGroup>([]);
+      sections.items.forEach( (item:any) => {
+        arr.push(this.setItemControl(item))
+    })
+  
+    return arr;
+  }
+
+  setItemControl(item:any){
+    return this.fb.group({ 
+      name: [item.name],
+      comments: [item.comments]
+    });
   }
 }

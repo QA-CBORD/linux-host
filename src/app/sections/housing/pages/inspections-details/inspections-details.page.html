@@ -9,36 +9,57 @@
   </div>
   <ion-content class="ion-padding inspection-details__content" #content>
     <div [ngSwitch]="section" class="inspection-details__card">
-      <ng-container *ngFor="let room of inspectionDetails.sections">
-        <ng-container *ngSwitchCase="room.name">
-          <ion-card *ngFor="let item of room.items;let i = index;" [disabled]="status > 1">
-            <ion-item lines="none">
-              <ion-label>
-                <h1>{{item.name}}</h1>
-              </ion-label>
-            </ion-item>
-            <ion-item lines="none">
-              <ion-select class="selectorCondition" [(ngModel)]="item.residentConditionKey"
-                placeholder="Select a condition from the list">
-                <ion-select-option *ngFor="let condition of conditions"
-                  [value]="+condition.value">{{condition.label}}
-                </ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-item lines="none" *ngIf="item.staffConditionKey">
-              <ion-label class="staffCondition">
-                The staff rated this item’s condition as
-                <span class="__color">{{getConditionStaff(item.staffConditionKey)}}</span>
-              </ion-label>
-            </ion-item>
-            <ion-item class="comments" lines="none">
-              <st-textarea-floating-label class="ng-valid ng-dirty ng-touched" [(ngModel)]="item.comments" type="text"
-                [label]="'Add comments'" [idd]="'comment'" [isAttachment]="true">
-              </st-textarea-floating-label>
-            </ion-item>
-          </ion-card>
-        </ng-container>
-      </ng-container>
+      <form [formGroup]="inspectionForm">
+        <div formArrayName="sections">
+          <ng-container *ngFor="let room of inspectionForm.get('sections')">
+            <ng-container *ngSwitchCase="room.name" formArrayName="items">
+              <ion-card *ngFor="let item of inspectionForm.get('items');let i = index;" [disabled]="status > 1">
+                <ion-item lines="none">
+                  <ion-label>
+                    <h1>{{item.name}}</h1>
+                  </ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-select class="selectorCondition" [(ngModel)]="item.residentConditionKey"
+                    placeholder="Select a condition from the list">
+                    <ion-select-option *ngFor="let condition of conditions"
+                      [value]="+condition.value">{{condition.label}}
+                    </ion-select-option>
+                  </ion-select>
+  
+                  <!-- <st-select-floating-label [formControlName]="form.get('name')"
+                    [control]="form.get('name')" class="selectorCondition" interface="action-sheet"
+                    [interfaceOptions]="" label="Select a condition from the list"
+                    [idd]="form.get('name')">
+                    <ng-container role="options">
+                      <ion-select-option *ngFor="let condition of conditions"
+                        [value]="+condition.value">{{condition.label}}
+                      </ion-select-option>
+                    </ng-container>
+  
+                    <ng-container role="error">
+                      <st-control-errors [control]="form.get(form['name'])"
+                        [errorMessages]="'errorMessages'"></st-control-errors>
+                    </ng-container>
+                  </st-select-floating-label> -->
+                </ion-item>
+                <ion-item lines="none" *ngIf="item.staffConditionKey">
+                  <ion-label class="staffCondition">
+                    The staff rated this item’s condition as
+                    <span class="__color">{{getConditionStaff(item.staffConditionKey)}}</span>
+                  </ion-label>
+                </ion-item>
+                <ion-item class="comments" lines="none">
+                  <st-textarea-floating-label class="ng-valid ng-dirty ng-touched" [control]="inspectionForm.get('comments')"
+                    [formControlName]="inspectionForm.get('comments')" type="text" [label]="'Add comments'" [idd]="inspectionForm.get('comments')"
+                    [isAttachment]="true">
+                  </st-textarea-floating-label>
+                </ion-item>
+              </ion-card>
+            </ng-container>
+          </ng-container>
+        </div>
+      </form>
       <st-stepper-footer>
         <h2 class="inspection-details__title">Room Inspections</h2>
         {{ countItemsLeft(inspectionDetails) }} Room{{countItemsLeft(inspectionDetails) === 1 ? '':'s'}} Left
