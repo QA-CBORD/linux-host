@@ -10,10 +10,10 @@
   <ion-content class="ion-padding inspection-details__content" #content>
     <div [ngSwitch]="section" class="inspection-details__card">
       <form [formGroup]="inspectionForm">
-        <div formArrayName="sections">
-          <ng-container *ngFor="let room of inspectionForm.get('sections')">
-            <ng-container *ngSwitchCase="room.name" formArrayName="items">
-              <ion-card *ngFor="let item of inspectionForm.get('items');let i = index;" [disabled]="status > 1">
+        <div formArrayName="sections" >
+          <ng-container *ngFor="let room of inspectionForm.get('items');">
+            
+              <ion-card *ngFor="let item of room;let i = index;" [disabled]="0 > 1">
                 <ion-item lines="none">
                   <ion-label>
                     <h1>{{item.name}}</h1>
@@ -57,7 +57,7 @@
                 </ion-item>
               </ion-card>
             </ng-container>
-          </ng-container>
+ 
         </div>
       </form>
       <st-stepper-footer>
@@ -71,4 +71,5 @@
       </st-stepper-footer>
     </div>
   </ion-content>
+
 </ng-container>

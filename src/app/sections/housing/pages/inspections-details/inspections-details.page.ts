@@ -26,13 +26,12 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
 import { QuestionComponent } from '@sections/housing/questions/question.component';
-import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
 import { ToastService } from '@core/service/toast/toast.service';
 import { Inspection } from '../../inspections-forms/inspections-forms.model';
 import { InspectionService } from '../../inspections-forms/inspections-forms.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 @Component({
   selector: 'st-inspections-details',
   templateUrl: './inspections-details.page.html',
@@ -71,7 +70,12 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _inspectionService: InspectionService,
     private  nativeProvider: NativeProvider,
     private fb: FormBuilder,
-  ) {}
+  ) {
+    this.inspectionForm = this.fb.group({
+      name: [''],
+      sections: this.fb.array([])
+    });
+  }
 
   ngOnInit(): void {
     if (this.nativeProvider.isMobile()) {
@@ -205,20 +209,19 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   setSections(){
-    let control = <FormArray> this.inspectionForm.controls['sections'];
+    const control = <FormArray> this.inspectionForm.controls.sections;
     this.inspectionDetails$.subscribe((res)=>{
       res.sections.forEach((section)=>{
         control.push(this.fb.group({
-          name: section.name,
-          items: this.setItemsControls(section)
+          name: [section.name, Validators.required],
+          items: [this.setItemsControls(section),Validators.required]
         }))
       })
     });
-    console.log(this.inspectionForm,"TODO: Eraseeee-->>")
   }
 
   setItemsControls(sections:any){
-    let arr = new FormArray<FormGroup>([]);
+    const arr = new FormArray<FormGroup>([]);
       sections.items.forEach( (item:any) => {
         arr.push(this.setItemControl(item))
     })
@@ -231,5 +234,13 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
       name: [item.name],
       comments: [item.comments]
     });
+  }
+
+  get sections(): FormArray{
+    return this.inspectionForm.get("sections") as FormArray
+  }
+
+  get items(): FormArray{
+    return this.inspectionForm.get("items") as FormArray
   }
 }
