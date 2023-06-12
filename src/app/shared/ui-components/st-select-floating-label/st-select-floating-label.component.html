@@ -20,6 +20,8 @@
     <ng-content select="[role=options]"></ng-content>
   </ion-select>
 
-  <label class="select__placeholder" [attr.for]="idd" innerHTML="{{ label }}"></label>
+  <label class="select__placeholder" [attr.for]="idd" >
+    {{label}}<span class="showAsterisk" *ngIf="isRequired" >*</span>
+  </label>
   <ng-content select="[role=error]" *ngIf="isError"></ng-content>
 </div>

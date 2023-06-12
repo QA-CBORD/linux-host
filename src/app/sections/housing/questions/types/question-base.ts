@@ -17,6 +17,7 @@ export class QuestionBase implements QuestionBaseOptions {
   label: string;
   attribute: string;
   buttonText?: string;
+  required?: boolean;
   action?: () => void;
 
   constructor(options: QuestionBaseOptions = {}) {

@@ -10,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
+import { hasRequiredField } from '@core/utils/general-helpers';
 import { IonSelect, SelectChangeEventDetail } from '@ionic/angular';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
@@ -104,5 +105,9 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
         this.selectRef.open();
       }
     });
+  }
+
+  get isRequired(): boolean {
+    return hasRequiredField(this.control);
   }
 }
