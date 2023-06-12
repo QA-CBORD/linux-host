@@ -95,11 +95,13 @@
     @include font-nunito-semibold(16px);
 
     &--editable {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       position: relative;
 
       &:after {
         content: '';
-        position: absolute;
         display: block;
         top: calc(50% - 30px);
         width: 35px;
