@@ -31,7 +31,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { Inspection } from '../../inspections-forms/inspections-forms.model';
 import { InspectionService } from '../../inspections-forms/inspections-forms.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators, AbstractControl } from '@angular/forms';
 @Component({
   selector: 'st-inspections-details',
   templateUrl: './inspections-details.page.html',
@@ -70,12 +70,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _inspectionService: InspectionService,
     private  nativeProvider: NativeProvider,
     private fb: FormBuilder,
-  ) {
-    this.inspectionForm = this.fb.group({
-      name: [''],
-      sections: this.fb.array([])
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     if (this.nativeProvider.isMobile()) {
@@ -93,6 +88,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.termKey = parseInt(this._route.snapshot.params.termKey);
     this.status = parseInt(this._route.snapshot.params.status);
     this._initInspectionDetailsObservable();
+    this.createInspectionForm();
   }
 
   private getInspectionConditions() {
@@ -133,10 +129,10 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           return throwError(error);
         })
       );
-      this.setSections();
   }
 
   async save(inspectionData: Inspection): Promise<void> {
+    inspectionData.sections = this.inspectionForm.value.sections;
     inspectionData.residentInspectionKey = inspectionData.residentInspectionKey || null;
     await this.createInspectionAlert(inspectionData, `Are you sure you want to save this Inspection?`);
   }
@@ -208,39 +204,45 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.section = section;
   }
 
-  setSections(){
-    const control = <FormArray> this.inspectionForm.controls.sections;
+  setSectionsForm(){
     this.inspectionDetails$.subscribe((res)=>{
       res.sections.forEach((section)=>{
-        control.push(this.fb.group({
+        const sectionGroup = this.fb.group({
           name: [section.name, Validators.required],
-          items: [this.setItemsControls(section),Validators.required]
-        }))
+          items: this.fb.array([])
+        });
+
+        section.items.forEach(item => {
+          const itemGroup = this.fb.group({
+            residentInspectionItemKey: [item.residentInspectionItemKey],
+            staffInspectionItemKey: [item.staffInspectionItemKey],
+            inventoryTemplateItemKey: [item.inventoryTemplateItemKey],
+            staffConditionKey: [item.staffConditionKey],
+            residentConditionKey: [item.residentConditionKey],
+            name: [item.name, Validators.required],
+            comments: [item.comments]
+          });
+
+          (sectionGroup.get('items') as FormArray).push(itemGroup);
+        });
+
+        this.sectionsFormArray.push(sectionGroup);
       })
     });
   }
 
-  setItemsControls(sections:any){
-    const arr = new FormArray<FormGroup>([]);
-      sections.items.forEach( (item:any) => {
-        arr.push(this.setItemControl(item))
-    })
-  
-    return arr;
-  }
-
-  setItemControl(item:any){
-    return this.fb.group({ 
-      name: [item.name],
-      comments: [item.comments]
-    });
-  }
-
-  get sections(): FormArray{
+  get sectionsFormArray(): FormArray{
     return this.inspectionForm.get("sections") as FormArray
   }
 
-  get items(): FormArray{
-    return this.inspectionForm.get("items") as FormArray
+  createInspectionForm(){
+    this.inspectionForm = this.fb.group({
+      sections: this.fb.array([])
+    });
+    this.setSectionsForm();
+  }
+
+  getItemsArray(section: AbstractControl): FormArray{
+    return section.get('items') as FormArray
   }
 }
