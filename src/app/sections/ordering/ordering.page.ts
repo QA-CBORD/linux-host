@@ -1,6 +1,6 @@
 import { CartService, MerchantService } from './services';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { iif, Observable } from 'rxjs';
+import { firstValueFrom, iif, Observable } from 'rxjs';
 import { first, map, switchMap, take } from 'rxjs/operators';
 import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -12,6 +12,10 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { Settings } from 'src/app/app.global';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 @Component({
   selector: 'st-ordering.page',
@@ -23,6 +27,9 @@ export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   searchString = '';
+  lockDownMessage: string;
+  lockDownFlag: boolean;
+
   constructor(
     private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
@@ -31,7 +38,9 @@ export class OrderingPage implements OnInit {
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly orderingService: OrderingService,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService
   ) {}
 
   ngOnInit() {
@@ -45,6 +54,11 @@ export class OrderingPage implements OnInit {
   }
 
   async merchantClickHandler(merchantInfo: MerchantInfo) {
+    if (this.lockDownFlag) {
+      await this.toastService.showError(this.lockDownMessage);
+      return;
+    }
+
     if (merchantInfo.walkout) {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
@@ -148,7 +162,7 @@ export class OrderingPage implements OnInit {
     return merchant.openNow || parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
-  private initContentStrings() {
+  private async initContentStrings() {
     this.contentStrings.labelAddedToFavorites = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelAddedToFavorites
     );
@@ -157,6 +171,19 @@ export class OrderingPage implements OnInit {
     );
     this.contentStrings.buttonBack = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
+    this.lockDownMessage = await firstValueFrom(
+      this.contentStringsFacadeService.getContentStringValue$(
+        CONTENT_STRINGS_DOMAINS.get_common,
+        CONTENT_STRINGS_CATEGORIES.error_message,
+        ORDERING_CONTENT_STRINGS.disableOrdering
+      )
+    );
+
+    this.lockDownFlag = await firstValueFrom(
+      this.settingsFacadeService
+        .fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING)
+        .pipe(map(sett => Boolean(sett === '1')))
+    );
   }
 
   onSearchedValue(value: string) {
