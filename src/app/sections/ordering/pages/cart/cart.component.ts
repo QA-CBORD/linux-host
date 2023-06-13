@@ -46,6 +46,8 @@ import { CheckingProcess } from '@sections/check-in/services/check-in-process-bu
 import { Browser } from '@capacitor/browser';
 import { NonCheckingService } from './services/non-checking.service';
 import { CART_ROUTES } from './cart-config';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 @Component({
   selector: 'st-cart',
@@ -59,6 +61,8 @@ export class CartComponent implements OnInit, OnDestroy {
   orderDetailOptions$: Observable<OrderDetailOptions>;
   applePayEnabled$: Observable<boolean>;
   orderTypes$: Observable<MerchantOrderTypesInfo>;
+  lockDownMessage: string;
+  lockDownFlag: boolean;
 
   private readonly _accountInfoList$: BehaviorSubject<MerchantAccountInfoList>;
   public readonly accounts$: Observable<UserAccount[]>;
@@ -92,7 +96,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly nonCheckingService: NonCheckingService
+    private readonly nonCheckingService: NonCheckingService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -213,6 +218,11 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   async onSubmit() {
+    if (this.lockDownFlag) {
+      await this.toastService.showError(this.lockDownMessage);
+      return;
+    }
+
     if (!this.cartFormState.valid || this.placingOrder) return;
     this.placingOrder = true;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
@@ -603,6 +613,20 @@ export class CartComponent implements OnInit, OnDestroy {
       ORDERING_CONTENT_STRINGS.insufficientBalanceMealsPayment
     );
     this.loadOrderingErrorStrings();
+
+    this.lockDownMessage = await firstValueFrom(
+      this.contentStringsFacadeService.getContentStringValue$(
+        CONTENT_STRINGS_DOMAINS.get_common,
+        CONTENT_STRINGS_CATEGORIES.error_message,
+        ORDERING_CONTENT_STRINGS.disableOrdering
+      )
+    );
+
+    this.lockDownFlag = await firstValueFrom(
+      this.settingsFacadeService
+        .fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING)
+        .pipe(map(sett => Boolean(sett === '1')))
+    );
   }
 
   private async loadOrderingErrorStrings(): Promise<void> {
