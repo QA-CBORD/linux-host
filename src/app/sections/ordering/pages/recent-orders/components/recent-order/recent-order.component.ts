@@ -10,7 +10,7 @@ import {
   ORDERING_CONTENT_STRINGS,
   MerchantSettings,
 } from '@sections/ordering/ordering.config';
-import { PATRON_NAVIGATION } from '../../../../../../app.global';
+import { PATRON_NAVIGATION, Settings } from '../../../../../../app.global';
 import { PopoverController, AlertController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
@@ -32,6 +32,9 @@ import { CheckingServiceFacade } from '@sections/check-in/services/check-in-faca
 import { AddressInfo } from '@core/model/address/address-info';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-details-options.model';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 interface OrderMenuItem {
   menuItemId: string;
@@ -53,6 +56,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
+  lockDownMessage: string;
+  lockDownFlag: boolean;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -68,8 +73,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     public readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
     private readonly institutionService: InstitutionFacadeService,
-    private readonly checkinProcess: CheckingProcess
-  ) { }
+    private readonly checkinProcess: CheckingProcess,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService
+  ) {}
 
   ngOnInit(): void {
     this.initData();
@@ -94,6 +101,11 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async onReorderHandler(): Promise<void> {
+    if (this.lockDownFlag) {
+      await this.toastService.showError(this.lockDownMessage);
+      return;
+    }
+
     const merchant = await this.merchant$.pipe(first()).toPromise();
     // Is not possible to reorder a Just Walkout order
     if (merchant.walkout) return;
@@ -313,9 +325,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   private setActiveAddress() {
     const address = this.order$.pipe(
       first(),
-      switchMap(
-        ({ type, deliveryAddressId }) =>
-          iif(() => type === ORDER_TYPE.DELIVERY, this.getDeliveryAddress(deliveryAddressId), this.getPickupAddress())
+      switchMap(({ type, deliveryAddressId }) =>
+        iif(() => type === ORDER_TYPE.DELIVERY, this.getDeliveryAddress(deliveryAddressId), this.getPickupAddress())
       )
     );
     this.orderDetailsOptions$ = zip(address, this.order$, this.userFacadeService.getUserData$(), this.merchant$).pipe(
@@ -379,7 +390,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         data: {
           message: `Are you sure you want to cancel order #${n}`,
           title: 'Cancel order?',
-          buttons: [{ ...buttons.NO, label: 'no' }, { ...buttons.REMOVE, label: 'yes, cancel' }],
+          buttons: [
+            { ...buttons.NO, label: 'no' },
+            { ...buttons.REMOVE, label: 'yes, cancel' },
+          ],
         },
       },
       animated: false,
@@ -389,7 +403,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       role === BUTTON_TYPE.REMOVE &&
         this.cancelOrder()
           .pipe(take(1))
-          .subscribe(response => response && this.back(), msg => this.onValidateErrorToast(msg, this.back.bind(this)));
+          .subscribe(
+            response => response && this.back(),
+            msg => this.onValidateErrorToast(msg, this.back.bind(this))
+          );
     });
     await modal.present();
   }
@@ -403,8 +420,11 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         data: {
           title: 'Warning',
           message,
-          buttons: [{ ...buttons.CLOSE, label: 'RETURN' }, { ...buttons.OKAY, label: 'CONTINUE' }],
-          showClose: false
+          buttons: [
+            { ...buttons.CLOSE, label: 'RETURN' },
+            { ...buttons.OKAY, label: 'CONTINUE' },
+          ],
+          showClose: false,
         },
       },
       animated: false,
@@ -481,6 +501,20 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.reorderNotAvailableItemMessage = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.reorderNotAvailableItemMessage
     );
+
+    this.lockDownMessage = await firstValueFrom(
+      this.contentStringsFacadeService.getContentStringValue$(
+        CONTENT_STRINGS_DOMAINS.get_common,
+        CONTENT_STRINGS_CATEGORIES.error_message,
+        ORDERING_CONTENT_STRINGS.disableOrdering
+      )
+    );
+
+    this.lockDownFlag = await firstValueFrom(
+      this.settingsFacadeService
+        .fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING)
+        .pipe(map(sett => Boolean(sett === '1')))
+    );
   }
 
   private navigateByValidatedOrder(orderInfo: ItemsOrderInfo) {
@@ -491,43 +525,40 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     return this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
   }
   onAddItems() {
-    this.orderDetailsOptions$
-      .pipe(
-        withLatestFrom(this.merchant$, this.order$),
-        take(1)
-      )
-      .subscribe(
-        async ([
-          { dueTime, orderType, address, isASAP },
+    this.orderDetailsOptions$.pipe(withLatestFrom(this.merchant$, this.order$), take(1)).subscribe(
+      async ([
+        { dueTime, orderType, address, isASAP },
+        merchant,
+        {
+          id,
+          orderPayment: [orderPayment],
+        },
+      ]: [
+        {
+          dueTime: Date;
+          orderType: ORDER_TYPE;
+          address: AddressInfo;
+          isASAP?: boolean;
+        },
+        MerchantInfo,
+        OrderInfo
+      ]) => {
+        await this.cart.onAddItems({
           merchant,
-          {
-            id,
-            orderPayment: [orderPayment],
-          },
-        ]: [
-            {
-              dueTime: Date;
-              orderType: ORDER_TYPE;
-              address: AddressInfo;
-              isASAP?: boolean;
-            },
-            MerchantInfo,
-            OrderInfo
-          ]) => {
-          await this.cart.onAddItems({
-            merchant,
-            orderPayment,
-            orderOptions: { dueTime, orderType, address, isASAP },
-            orderId: id,
-          });
-          this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
-            queryParams: { isExistingOrder: true },
-          });
-        }
-      );
+          orderPayment,
+          orderOptions: { dueTime, orderType, address, isASAP },
+          orderId: id,
+        });
+        this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
+          queryParams: { isExistingOrder: true },
+        });
+      }
+    );
   }
 
   get checkAddToCart$(): Observable<boolean> {
-    return this.order$.pipe(map(({ checkinStatus, status }) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)));
+    return this.order$.pipe(
+      map(({ checkinStatus, status }) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status))
+    );
   }
 }
