@@ -1,19 +1,19 @@
 <ng-container *ngIf="(inspectionDetails$ | async) as inspectionDetails">
   <st-forms-header class="inspectionHeader" [showSave]="!(status > 1)" (onSave)="save(inspectionDetails)">
   </st-forms-header>
-  <div class="tabsContainer">
-    <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
-    <st-housing-tabs (onTabSelected)="changeView($event)">
-      <st-housing-tab *ngFor="let room of inspectionDetails.sections" [tabTitle]="room.name"></st-housing-tab>
-    </st-housing-tabs>
-  </div>
-  <ion-content class="ion-padding inspection-details__content" #content>
-    <div [ngSwitch]="section" class="inspection-details__card">
-      <form [formGroup]="inspectionForm" (ngSubmit)="submitInspection(inspectionDetails)">
-        <div formArrayName="sections" >
-          <ng-container *ngFor="let section of sectionsFormArray.controls;let i = index" [formGroupName]="i" >
+    <div class="tabsContainer">
+      <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
+      <st-housing-tabs (onTabSelected)="changeView($event)">
+        <st-housing-tab *ngFor="let room of inspectionDetails.sections" [tabTitle]="room.name"></st-housing-tab>
+      </st-housing-tabs>
+    </div>
+    <ion-content class="ion-padding inspection-details__content" #content>
+      <div [ngSwitch]="section" class="inspection-details__card">
+        <form [formGroup]="inspectionForm" (ngSubmit)="submitInspection(inspectionDetails)">
+          <div formArrayName="sections">
+            <ng-container *ngFor="let section of sectionsFormArray.controls;let i = index" [formGroupName]="i">
               <div formArrayName="items">
-                <ion-card *ngFor="let item of getItemsArray(section).controls;let j = index"  [disabled]="0 > 1">
+                <ion-card *ngFor="let item of getItemsArray(section).controls;let j = index" [disabled]="0 > 1">
                   <div [formGroupName]="j">
                     <ion-item lines="none">
                       <ion-label>
@@ -35,28 +35,29 @@
                       </ion-label>
                     </ion-item>
                     <ion-item class="comments" lines="none">
-                      <st-textarea-floating-label class="ng-valid ng-dirty ng-touched"
-                        formControlName="comments" type="text" [label]="'Add comments'" [idd]="'comments'"
-                        [isAttachment]="true">
+                      <st-textarea-floating-label class="ng-valid ng-dirty ng-touched" formControlName="comments"
+                        type="text" [label]="'Add comments'" [idd]="'comments'" [isAttachment]="true">
                       </st-textarea-floating-label>
                     </ion-item>
                   </div>
-
                 </ion-card>
               </div>
             </ng-container>
- 
-        </div>
-      </form>
-      <st-stepper-footer>
-        <h2 class="inspection-details__title">Room Inspections</h2>
-        {{ countItemsLeft(inspectionDetails) }} Room{{countItemsLeft(inspectionDetails) === 1 ? '':'s'}} Left
-        <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
-          [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted">
-          Submit
-        </ion-button>
-      </st-stepper-footer>
-    </div>
-  </ion-content>
-
+          </div>
+        </form>
+        <st-stepper-footer>
+          <div>
+            <h2 class="inspection-details__title">Room Inspections</h2>
+            <ion-label color="medium">
+              {{ countItemsLeft(inspectionDetails) | i18nPlural:roomsMapping}}
+            </ion-label>
+          </div>
+          <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
+            [color]="countItemsLeft(inspectionDetails) > 0 || isSubmitted && 'light'"
+            [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted">
+            Submit
+          </ion-button>
+        </st-stepper-footer>
+      </div>
+    </ion-content>
 </ng-container>

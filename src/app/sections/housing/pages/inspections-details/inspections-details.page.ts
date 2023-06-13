@@ -59,6 +59,12 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   section = '';
   conditions = [];
   inspectionForm: FormGroup;
+  roomsMapping = {
+    '=0': 'No rooms left.',
+    '=1': '# room left.',
+    'other': '# rooms left.'
+  }
+
 
   constructor(
     private _platform: Platform,
@@ -176,16 +182,16 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   private createInspectionSubscription(inspectionData: Inspection, alert: HTMLIonAlertElement) {
     const createInspectionSubscription = this._inspectionService.submitInspection(inspectionData)
       .subscribe(status => {
-          alert.dismiss().then(() => {
-            if (status) {
-              this._housingService.goToDashboard();
-            } else {
-              this._loadingService.closeSpinner();
-              this._toastService.showToast({
-                message: 'The form could not be processed at this time. Try again later',
-              });
-            }
-          });
+        alert.dismiss().then(() => {
+          if (status) {
+            this._housingService.goToDashboard();
+          } else {
+            this._loadingService.closeSpinner();
+            this._toastService.showToast({
+              message: 'The form could not be processed at this time. Try again later',
+            });
+          }
+        });
       });
 
     this.subscriptions.add(createInspectionSubscription);

@@ -40,10 +40,19 @@
       </st-button>
     </div>
     <ion-list class="explore__list">
-      <ion-item class="ion-no-padding explore__merchant-info" *ngIf="merchant.storeAddress as address">
+      <ion-item
+        class="ion-no-padding explore__merchant-info enable-longpress-ios"
+        *ngIf="merchant.storeAddress as address"
+        [href]="address | addressHeaderFormat | mapsUri"
+        target="_blank"
+      >
         <ion-row class="ion-align-items-start">
           <ion-col size="auto"><i class="icon-pin-point"></i></ion-col>
-          <ion-col><ion-text class="explore__merchant-text">{{ address | addressHeaderFormat }}</ion-text></ion-col>
+          <ion-col
+            ><ion-text color="primary" class="explore__merchant-text explore__merchant-text--link"
+              >{{ address | addressHeaderFormat }}</ion-text
+            ></ion-col
+          >
         </ion-row>
       </ion-item>
 

@@ -7,7 +7,7 @@
   --padding-end: 8px;
 }
 
-st-textarea-floating-label{
+st-textarea-floating-label {
   width: 100%;
   margin: 0 0 0.8em;
 }
@@ -17,19 +17,43 @@ st-textarea-floating-label{
 
   font-size: 20px;
   color: $color-night-rider;
+  margin: 0;
+  max-height: 25px;
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 10px;
 }
 
+.inspection-details__page-back {
+  @include font-family($font-nunito-regular);
+
+  --color: #{rgba($color-black, 0.9)};
+}
+
+.btn-save {
+  float: right;
+}
+
+.btn-submit {
+  float: right;
+  --padding-end: 30px;
+  --padding-start: 30px;
+  height: 40px;
+  margin-top: 10px;
+
+}
+
+.inspection-details__save {
+  @include font-family($font-nunito-heavy);
+
+  --color: #{$color-dodger-blue};
+}
 
 .inspection-details__card {
   background-color: $color-white;
   border-radius: 16px;
   box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
-  padding: 16px;
+  padding: 16px 16px 25px;
 
-  .condition-inspect{
+  .condition-inspect {
     --background: #d7d8da;
   }
 }
@@ -60,15 +84,29 @@ ion-segment {
 }
 
 
-.comments{
+.textarea {
+  &__wrapper {
+    position: relative;
+  }
+
+  &__control {
+    width: 100%;
+    outline: none;
+    border: 1px solid $color-light-gray;
+    border-radius: 8px;
+    padding: 0 0 0 10px;
+  }
+}
+
+.comments {
   margin-bottom: 10px;
 }
 
-.staffCondition{
+.staffCondition {
   font-size: 0.7em;
 }
 
-.__color{
+.__color {
   color: #{$color-dodger-blue};
 }
 
@@ -91,4 +129,10 @@ ion-select {
 .tabsContainer {
   background-color: white;
   margin: 15px 0;
+}
+
+.stepper__footer {
+  &* {
+    padding: 16px 10px 5px;
+  }
 }
