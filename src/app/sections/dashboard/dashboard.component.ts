@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren, AfterViewInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+  QueryList,
+  ViewChildren,
+  AfterViewInit,
+} from '@angular/core';
 import { ModalController, Platform, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -36,6 +44,8 @@ import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global
 import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { Settings } from 'src/app/app.global';
 
 @Component({
   selector: 'st-dashboard',
@@ -64,7 +74,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
   disclosureCs: any;
   destroy$ = new Subject();
 
-
   constructor(
     private readonly modalController: ModalController,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
@@ -80,7 +89,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
     private readonly appPermissions: AndroidPermissionsService,
     private readonly navigationFacade: NavigationFacadeSettingsService,
     private secureMessagingFacadeService: SecureMessagingFacadeService,
-    private readonly modalService: ModalsService
+    private readonly modalService: ModalsService,
+    private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -117,7 +127,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
-
 
   private async checkNativeStartup() {
     this.nativeStartupFacadeService
@@ -254,6 +263,12 @@ export class DashboardPage implements OnInit, AfterViewInit {
         CONTENT_STRINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.labelDashboard
       ),
+      stopNavigationMessage: this.contentStringsFacadeService.getContentStringValue$(
+        CONTENT_STRINGS_DOMAINS.get_common,
+        CONTENT_STRINGS_CATEGORIES.error_message,
+        ORDERING_CONTENT_STRINGS.disableOrdering
+      ),
+      stopNavigation: this.settingsFacadeService.fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING).pipe(map(sett => Boolean(sett === '1'))),
       buttonConfig: {
         title: this.contentStringsFacadeService.getContentStringValue$(
           CONTENT_STRINGS_DOMAINS.patronUi,

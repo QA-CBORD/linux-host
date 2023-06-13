@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MerchantInfo, MerchantService } from '@sections/ordering';
 import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
 import SwiperCore from 'swiper';
 import { TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { ToastService } from '@core/service/toast/toast.service';
+import { TileWrapperConfig } from '@sections/dashboard/models';
 SwiperCore.use([IonicSlides]);
 
 @Component({
@@ -18,6 +19,7 @@ SwiperCore.use([IonicSlides]);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderTileComponent implements OnInit {
+  @Input() wrapperConfig: TileWrapperConfig;
   slideOpts = { ...DASHBOARD_SLIDE_CONFIG, slidesPerView: 2.01 };
 
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
@@ -61,6 +63,11 @@ export class OrderTileComponent implements OnInit {
   async goToMerchant({ id: merchantId, walkout }: MerchantInfo) {
     if (walkout) {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+      return;
+    }
+
+    if (this.wrapperConfig.stopNavigation) {
+      await this.toastService.showError(this.wrapperConfig.stopNavigationMessage);
       return;
     }
 
