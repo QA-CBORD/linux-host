@@ -128,3 +128,9 @@ ion-segment {
   width: 100%;
   max-width: 100%;
 }
+
+.stepper__footer {
+  &* {
+    padding: 16px 10px 5px
+  }
+}
