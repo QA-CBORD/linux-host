@@ -61,8 +61,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   section = '';
   conditions = [];
   roomsMapping = {
-    '=0': 'No rooms left.', 
-    '=1': '# room left.', 
+    '=0': 'No rooms left.',
+    '=1': '# room left.',
     'other': '# rooms left.'
   }
 
