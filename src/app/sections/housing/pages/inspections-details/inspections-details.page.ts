@@ -144,7 +144,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   async submitInspection(inspectionData: Inspection) {
-    // inspectionData.sections[0].items[0].comments = this.form.value.comments;
+    inspectionData.sections = this.inspectionForm.value.sections;
     inspectionData.isSubmitted = true;
     await this.createInspectionAlert(inspectionData, `Are you sure you want to submit this Inspection?`);
   }
