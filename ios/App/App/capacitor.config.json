@@ -1,7 +1,6 @@
 {
 	"appId": "com.cbord.get",
 	"appName": "GET CBORD Student",
-	"bundledWebRuntime": false,
 	"npmClient": "npm",
 	"webDir": "www",
 	"cordova": {
