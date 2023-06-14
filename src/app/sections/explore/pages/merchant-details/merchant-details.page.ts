@@ -1,22 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { MerchantInfo } from '@sections/ordering';
-import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
+import { LockDownService } from '@shared/index';
 import { NavigationService } from '@shared/services/navigation.service';
-import { Observable, firstValueFrom } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
-import { Settings } from 'src/app/app.global';
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { Observable } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',
@@ -32,10 +27,6 @@ export class MerchantDetailsPage implements OnInit {
   guestOrderEnabled = true;
   filledStarPath = '/assets/icon/star-filled.svg';
   blankStarPath = '/assets/icon/star-outline.svg';
-  lockDown: (Observable<boolean> | Observable<ContentStringInfo>)[];
-
-  lockDownMessage: string;
-  lockDownFlag: boolean;
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -47,8 +38,7 @@ export class MerchantDetailsPage implements OnInit {
     private readonly routingService: NavigationService,
     private readonly changeDetector: ChangeDetectorRef,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly contentStringsFacadeService: ContentStringsFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
@@ -57,19 +47,7 @@ export class MerchantDetailsPage implements OnInit {
   }
 
   async loadStringsAndSettings() {
-    this.lockDownMessage = await firstValueFrom(
-      this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STRINGS_DOMAINS.get_common,
-        CONTENT_STRINGS_CATEGORIES.error_message,
-        ORDERING_CONTENT_STRINGS.disableOrdering
-      )
-    );
-
-    this.lockDownFlag = await firstValueFrom(
-      this.settingsFacadeService
-        .fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING)
-        .pipe(map(sett => Boolean(sett === '1')))
-    );
+    this.lockDownService.loadStringsAndSettings();
   }
 
   private retrieveSeletectedMerchant(merchantId: string): Observable<MerchantInfo> {
@@ -93,8 +71,7 @@ export class MerchantDetailsPage implements OnInit {
   }
 
   async navigateToMerchant(merchantId: string) {
-    if (this.lockDownFlag) {
-      await this.toastService.showError(this.lockDownMessage);
+    if (this.lockDownService.isLockDownOn()) {
       return;
     }
 

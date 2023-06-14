@@ -1,21 +1,18 @@
-import { CartService, MerchantService } from './services';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { firstValueFrom, iif, Observable } from 'rxjs';
-import { first, map, switchMap, take } from 'rxjs/operators';
-import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActivatedRoute } from '@angular/router';
-import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { ToastService } from '@core/service/toast/toast.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { NavigationService } from '@shared/services/navigation.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Settings } from 'src/app/app.global';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { LockDownService } from '@shared/index';
+import { NavigationService } from '@shared/services/navigation.service';
+import { Observable, iif } from 'rxjs';
+import { first, map, switchMap, take } from 'rxjs/operators';
+import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
+import { CartService, MerchantService } from './services';
+import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
+import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
   selector: 'st-ordering.page',
@@ -27,8 +24,6 @@ export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   searchString = '';
-  lockDownMessage: string;
-  lockDownFlag: boolean;
 
   constructor(
     private readonly modalController: ModalsService,
@@ -39,8 +34,7 @@ export class OrderingPage implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly orderingService: OrderingService,
     private readonly routingService: NavigationService,
-    private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly contentStringsFacadeService: ContentStringsFacadeService
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
@@ -54,8 +48,7 @@ export class OrderingPage implements OnInit {
   }
 
   async merchantClickHandler(merchantInfo: MerchantInfo) {
-    if (this.lockDownFlag) {
-      await this.toastService.showError(this.lockDownMessage);
+    if (this.lockDownService.isLockDownOn()) {
       return;
     }
 
@@ -171,19 +164,7 @@ export class OrderingPage implements OnInit {
     );
     this.contentStrings.buttonBack = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
-    this.lockDownMessage = await firstValueFrom(
-      this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STRINGS_DOMAINS.get_common,
-        CONTENT_STRINGS_CATEGORIES.error_message,
-        ORDERING_CONTENT_STRINGS.disableOrdering
-      )
-    );
-
-    this.lockDownFlag = await firstValueFrom(
-      this.settingsFacadeService
-        .fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING)
-        .pipe(map(sett => Boolean(sett === '1')))
-    );
+    this.lockDownService.loadStringsAndSettings();
   }
 
   onSearchedValue(value: string) {

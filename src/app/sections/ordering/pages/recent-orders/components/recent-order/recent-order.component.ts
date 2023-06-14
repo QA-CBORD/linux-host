@@ -1,40 +1,38 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
-import { iif, Observable, of, zip, firstValueFrom } from 'rxjs';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { AddressInfo } from '@core/model/address/address-info';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
+import { handleServerError } from '@core/utils/general-helpers';
+import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { AlertController, PopoverController } from '@ionic/angular';
+import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
+import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
+import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { ItemsOrderInfo, MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
+  MerchantSettings,
+  ORDERING_CONTENT_STRINGS,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
-  ORDERING_CONTENT_STRINGS,
-  MerchantSettings,
 } from '@sections/ordering/ordering.config';
-import { PATRON_NAVIGATION, Settings } from '../../../../../../app.global';
-import { PopoverController, AlertController } from '@ionic/angular';
-import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
-import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { CartService } from '@sections/ordering/services/cart.service';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { handleServerError } from '@core/utils/general-helpers';
-import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
-import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { ToastService } from '@core/service/toast/toast.service';
-import { ModalsService } from '@core/service/modals/modals.service';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
-import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
-import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
-import { AddressInfo } from '@core/model/address/address-info';
-import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-details-options.model';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
+import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { LockDownService } from '@shared/services';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { Observable, firstValueFrom, iif, of, zip } from 'rxjs';
+import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { PATRON_NAVIGATION } from '../../../../../../app.global';
+import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 
 interface OrderMenuItem {
   menuItemId: string;
@@ -56,8 +54,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
-  lockDownMessage: string;
-  lockDownFlag: boolean;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -74,8 +70,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly alertController: AlertController,
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly contentStringsFacadeService: ContentStringsFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit(): void {
@@ -101,8 +96,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async onReorderHandler(): Promise<void> {
-    if (this.lockDownFlag) {
-      await this.toastService.showError(this.lockDownMessage);
+    if (this.lockDownService.isLockDownOn()) {
       return;
     }
 
@@ -501,20 +495,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.reorderNotAvailableItemMessage = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.reorderNotAvailableItemMessage
     );
-
-    this.lockDownMessage = await firstValueFrom(
-      this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STRINGS_DOMAINS.get_common,
-        CONTENT_STRINGS_CATEGORIES.error_message,
-        ORDERING_CONTENT_STRINGS.disableOrdering
-      )
-    );
-
-    this.lockDownFlag = await firstValueFrom(
-      this.settingsFacadeService
-        .fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING)
-        .pipe(map(sett => Boolean(sett === '1')))
-    );
+    this.lockDownService.loadStringsAndSettings();
   }
 
   private navigateByValidatedOrder(orderInfo: ItemsOrderInfo) {
