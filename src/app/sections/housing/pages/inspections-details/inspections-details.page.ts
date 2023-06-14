@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  Injectable,
   OnDestroy,
   OnInit,
   QueryList,
@@ -20,6 +21,8 @@ import {
 } from 'rxjs';
 import {
   catchError,
+  first,
+  share,
   tap
 } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -31,12 +34,15 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { Inspection } from '../../inspections-forms/inspections-forms.model';
 import { InspectionService } from '../../inspections-forms/inspections-forms.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { FormGroup, FormBuilder, FormArray, Validators, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 @Component({
   selector: 'st-inspections-details',
   templateUrl: './inspections-details.page.html',
   styleUrls: ['./inspections-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+})
+@Injectable({
+  providedIn: 'root',
 })
 export class InspectionsDetailsPage implements OnInit, OnDestroy {
   @ViewChild(StepperComponent) stepper: StepperComponent;
@@ -122,6 +128,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
 
     this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey, this.residentInspectionKey, this.contractElementKey, this.checkIn)
       .pipe(
+        first(),
+        share(),
         tap((inspectionDetails: Inspection) => {
           this.getInspectionConditions();
           this.section = inspectionDetails.sections[0].name;
@@ -135,6 +143,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
           return throwError(error);
         })
       );
+      this.subscriptions.add(this.inspectionDetails$.subscribe() )
   }
 
   async save(inspectionData: Inspection): Promise<void> {
@@ -214,7 +223,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     this.inspectionDetails$.subscribe((res)=>{
       res.sections.forEach((section)=>{
         const sectionGroup = this.fb.group({
-          name: [section.name, Validators.required],
+          name: [section.name],
           items: this.fb.array([])
         });
 
@@ -225,7 +234,7 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
             inventoryTemplateItemKey: [item.inventoryTemplateItemKey],
             staffConditionKey: [item.staffConditionKey],
             residentConditionKey: [item.residentConditionKey],
-            name: [item.name, Validators.required],
+            name: [item.name],
             comments: [item.comments]
           });
 

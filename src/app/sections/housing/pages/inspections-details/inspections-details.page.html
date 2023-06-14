@@ -1,5 +1,5 @@
 <ng-container *ngIf="(inspectionDetails$ | async) as inspectionDetails">
-  <st-forms-header class="inspectionHeader" [showSave]="!(status > 1)" (onSave)="save(inspectionDetails)">
+  <st-forms-header class="inspectionHeader" [showSave]="status === 0" (onSave)="save(inspectionDetails)">
   </st-forms-header>
     <div class="tabsContainer">
       <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
@@ -9,11 +9,11 @@
     </div>
     <ion-content class="ion-padding inspection-details__content" #content>
       <div [ngSwitch]="section" class="inspection-details__card">
-        <form [formGroup]="inspectionForm" (ngSubmit)="submitInspection(inspectionDetails)">
+        <form [formGroup]="inspectionForm">
           <div formArrayName="sections">
             <ng-container *ngFor="let section of sectionsFormArray.controls;let i = index" [formGroupName]="i">
               <div formArrayName="items">
-                <ion-card *ngFor="let item of getItemsArray(section).controls;let j = index" [disabled]="0 > 1">
+                <ion-card *ngFor="let item of getItemsArray(section).controls;let j = index" [disabled]="status > 1">
                   <div [formGroupName]="j">
                     <ion-item lines="none">
                       <ion-label>
@@ -49,12 +49,13 @@
           <div>
             <h2 class="inspection-details__title">Room Inspections</h2>
             <ion-label color="medium">
-              {{ countItemsLeft(inspectionDetails) | i18nPlural:roomsMapping}}
+              {{ countItemsLeft(inspectionForm.value) | i18nPlural:roomsMapping}}
             </ion-label>
           </div>
           <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
-            [color]="countItemsLeft(inspectionDetails) > 0 || isSubmitted && 'light'"
-            [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted">
+            (click)="submitInspection(inspectionDetails)"
+            [color]="countItemsLeft(inspectionForm.value) > 0 || isSubmitted && 'light'"
+            [disabled]="countItemsLeft(inspectionForm.value) > 0 || isSubmitted">
             Submit
           </ion-button>
         </st-stepper-footer>
