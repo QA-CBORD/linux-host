@@ -16,7 +16,6 @@ import { generateWorkOrders } from './work-orders.mock';
 import { WorkOrderStateService } from './work-order-state.service';
 import { parseJsonToArray } from '@sections/housing/utils';
 import { QuestionTextbox } from '../questions/types/question-textbox';
-import { ToastController } from '@ionic/angular';
 import ImageService from './image.service';
 import { ToastService } from '@core/service/toast/toast.service';
 const NOTIFY = {
@@ -36,7 +35,6 @@ export class WorkOrdersService {
     private questionsService: QuestionsService,
     private housingProxyService: HousingProxyService,
     private workOrderStateService: WorkOrderStateService,
-    private toastController: ToastController,
     private imageService: ImageService,
     private toastService: ToastService
   ) {
@@ -182,9 +180,7 @@ export class WorkOrdersService {
     return this.housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(() => {
         this.toastService.showToast({
-          message: 'Error submitting work order.',
-          duration: 3000,
-          position: 'top',
+          message: 'Error submitting work order.'
         });
         return of(false);
       }),
