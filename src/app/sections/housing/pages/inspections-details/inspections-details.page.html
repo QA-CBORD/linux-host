@@ -44,10 +44,10 @@
             {{ countItemsLeft(inspectionDetails) | i18nPlural:roomsMapping}}
           </ion-label>
         </div>
-        <ion-button class="btn btn-submit" mode="ios" type="submit" item-right color="light"
+        <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
+          [color]="countItemsLeft(inspectionDetails) > 0 || isSubmitted ? 'ligth' : 'primary'"
           (click)="submitInspection(inspectionDetails)"
-          [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted"
-          >
+          [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted">
           Submit
         </ion-button>
       </st-stepper-footer>
