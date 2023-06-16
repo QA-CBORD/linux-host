@@ -68,7 +68,7 @@ describe('DeliveryAddressesModalComponent', () => {
         ModalController
       );
       const addressInfoStub: AddressInfo = <any>{};
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onClickedDone(addressInfoStub);
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -79,7 +79,7 @@ describe('DeliveryAddressesModalComponent', () => {
       const merchantServiceStub: MerchantService = fixture.debugElement.injector.get(
         MerchantService
       );
-      spyOn(merchantServiceStub, 'retrieveBuildings').and.callThrough();
+     jest.spyOn(merchantServiceStub, 'retrieveBuildings');
       component.ngOnInit();
       expect(merchantServiceStub.retrieveBuildings).toHaveBeenCalled();
     });
@@ -99,13 +99,13 @@ describe('DeliveryAddressesModalComponent', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = fixture.debugElement.injector.get(
         SettingsFacadeService
       );
-      spyOn(component, 'resetForm').and.callThrough();
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(merchantServiceStub, 'updateUserAddress').and.callThrough();
-      spyOn(merchantServiceStub, 'filterDeliveryAddresses').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'saveUserSetting').and.callThrough();
+     jest.spyOn(component, 'resetForm');
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(merchantServiceStub, 'updateUserAddress');
+     jest.spyOn(merchantServiceStub, 'filterDeliveryAddresses');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(settingsFacadeServiceStub, 'saveUserSetting');
       component.addAddress();
       expect(component.resetForm).toHaveBeenCalled();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();

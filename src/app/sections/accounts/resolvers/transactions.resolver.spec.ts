@@ -46,17 +46,17 @@ describe('TransactionsResolver', () => {
       );
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
       const accountServiceStub: AccountService = TestBed.inject(AccountService);
-      spyOn(transactionServiceStub, 'initContentStringsList').and.callThrough();
-      spyOn(transactionServiceStub, 'getRecentTransactions').and.callThrough();
-      spyOn(
+     jest.spyOn(transactionServiceStub, 'initContentStringsList');
+     jest.spyOn(transactionServiceStub, 'getRecentTransactions');
+     jest.spyOn(
         transactionServiceStub,
         'clearTransactionHistory'
-      ).and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(accountServiceStub, 'initContentStringsList').and.callThrough();
-      spyOn(accountServiceStub, 'getUserAccounts').and.callThrough();
-      spyOn(accountServiceStub, 'getUserSettings').and.callThrough();
+      );
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(accountServiceStub, 'initContentStringsList');
+     jest.spyOn(accountServiceStub, 'getUserAccounts');
+     jest.spyOn(accountServiceStub, 'getUserSettings');
       service.resolve(activatedRouteSnapshotStub);
       expect(transactionServiceStub.initContentStringsList).toHaveBeenCalled();
       expect(transactionServiceStub.getRecentTransactions).toHaveBeenCalled();

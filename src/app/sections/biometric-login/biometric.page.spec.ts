@@ -44,7 +44,7 @@ describe('BiometricPage', () => {
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'getCurrentNavigation').and.callThrough();
+     jest.spyOn(routerStub, 'getCurrentNavigation');
       component.ngOnInit();
       expect(routerStub.getCurrentNavigation).toHaveBeenCalled();
     });

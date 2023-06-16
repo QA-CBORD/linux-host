@@ -29,7 +29,7 @@ describe('SearchFilterComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'create').and.callThrough();
+     jest.spyOn(modalControllerStub, 'create');
       component.openFilterModal();
       expect(modalControllerStub.create).toHaveBeenCalled();
     });

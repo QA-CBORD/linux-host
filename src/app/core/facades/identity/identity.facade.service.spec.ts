@@ -91,7 +91,7 @@ describe('IdentityFacadeService', () => {
         VaultIdentityService
       );
       const vaultTimeoutOptionsStub: VaultTimeoutOptions = <any>{};
-      spyOn(vaultIdentityServiceStub, 'updateVaultTimeout').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'updateVaultTimeout');
       service.updateVaultTimeout(vaultTimeoutOptionsStub);
       expect(vaultIdentityServiceStub.updateVaultTimeout).toHaveBeenCalled();
     });
@@ -102,7 +102,7 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(vaultIdentityServiceStub, 'migrateIfLegacyVault').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'migrateIfLegacyVault');
       service.migrateIfLegacyVault();
       expect(vaultIdentityServiceStub.migrateIfLegacyVault).toHaveBeenCalled();
     });
@@ -113,7 +113,7 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(vaultIdentityServiceStub, 'unlockVaultIfLocked').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'unlockVaultIfLocked');
       service.unlockVaultIfLocked();
       expect(vaultIdentityServiceStub.unlockVaultIfLocked).toHaveBeenCalled();
     });
@@ -127,8 +127,8 @@ describe('IdentityFacadeService', () => {
       const connectivityAwareFacadeServiceStub: ConnectivityAwareFacadeService = TestBed.inject(
         ConnectivityAwareFacadeService
       );
-      spyOn(navigationServiceStub, 'navigate').and.callThrough();
-      spyOn(connectivityAwareFacadeServiceStub, 'execute').and.callThrough();
+     jest.spyOn(navigationServiceStub, 'navigate');
+     jest.spyOn(connectivityAwareFacadeServiceStub, 'execute');
       service.navigateToDashboard();
       expect(navigationServiceStub.navigate).toHaveBeenCalled();
       expect(connectivityAwareFacadeServiceStub.execute).toHaveBeenCalled();
@@ -140,7 +140,7 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(vaultIdentityServiceStub, 'logout').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'logout');
       service.clearAll();
       expect(vaultIdentityServiceStub.logout).toHaveBeenCalled();
     });
@@ -151,7 +151,7 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(vaultIdentityServiceStub, 'isVaultLocked').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'isVaultLocked');
       service.isVaultLocked();
       expect(vaultIdentityServiceStub.isVaultLocked).toHaveBeenCalled();
     });
@@ -162,7 +162,7 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(vaultIdentityServiceStub, 'isBiometricAvailable').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'isBiometricAvailable');
       service.isBiometricAvailable();
       expect(vaultIdentityServiceStub.isBiometricAvailable).toHaveBeenCalled();
     });
@@ -173,10 +173,10 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(
+     jest.spyOn(
         vaultIdentityServiceStub,
         'getAvailableBiometricHardware'
-      ).and.callThrough();
+      );
       service.getAvailableBiometricHardware();
       expect(
         vaultIdentityServiceStub.getAvailableBiometricHardware
@@ -189,7 +189,7 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(vaultIdentityServiceStub, 'hasStoredSession').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'hasStoredSession');
       service.hasStoredSession();
       expect(vaultIdentityServiceStub.hasStoredSession).toHaveBeenCalled();
     });
@@ -200,7 +200,7 @@ describe('IdentityFacadeService', () => {
       const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
         VaultIdentityService
       );
-      spyOn(vaultIdentityServiceStub, 'lockVault').and.callThrough();
+     jest.spyOn(vaultIdentityServiceStub, 'lockVault');
       service.lockVault();
       expect(vaultIdentityServiceStub.lockVault).toHaveBeenCalled();
     });

@@ -95,7 +95,7 @@ describe('IdentifyRecipientComponent', () => {
         AlertController
       );
       const recipientStub: Recipient = <any>{};
-      spyOn(alertControllerStub, 'create').and.callThrough();
+     jest.spyOn(alertControllerStub, 'create');
       component.presentRemoveConfirm(recipientStub);
       expect(alertControllerStub.create).toHaveBeenCalled();
     });
@@ -103,7 +103,7 @@ describe('IdentifyRecipientComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initComponentData').and.callThrough();
+     jest.spyOn(component, 'initComponentData');
       component.ngOnInit();
       expect(component.initComponentData).toHaveBeenCalled();
     });
@@ -114,7 +114,7 @@ describe('IdentifyRecipientComponent', () => {
       const commonServiceStub: CommonService = fixture.debugElement.injector.get(
         CommonService
       );
-      spyOn(commonServiceStub, 'getString').and.callThrough();
+     jest.spyOn(commonServiceStub, 'getString');
       component.initComponentData();
       expect(commonServiceStub.getString).toHaveBeenCalled();
     });

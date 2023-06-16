@@ -50,7 +50,7 @@ describe('SettingsFacadeService', () => {
       const settingsStateServiceStub: SettingsStateService = TestBed.inject(
         SettingsStateService
       );
-      spyOn(settingsStateServiceStub, 'clearState').and.callThrough();
+     jest.spyOn(settingsStateServiceStub, 'clearState');
       service.cleanCache();
       expect(settingsStateServiceStub.clearState).toHaveBeenCalled();
     });

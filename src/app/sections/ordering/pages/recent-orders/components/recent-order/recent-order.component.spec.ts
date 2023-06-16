@@ -122,7 +122,7 @@ describe('RecentOrderComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initData').and.callThrough();
+     jest.spyOn(component, 'initData');
       component.ngOnInit();
       expect(component.initData).toHaveBeenCalled();
     });
@@ -130,7 +130,7 @@ describe('RecentOrderComponent', () => {
 
   describe('ionViewWillEnter', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initData').and.callThrough();
+     jest.spyOn(component, 'initData');
       component.ionViewWillEnter();
       expect(component.initData).toHaveBeenCalled();
     });
@@ -141,10 +141,10 @@ describe('RecentOrderComponent', () => {
       const merchantServiceStub: MerchantService = fixture.debugElement.injector.get(
         MerchantService
       );
-      spyOn(
+     jest.spyOn(
         merchantServiceStub,
         'extractAllAvailableMenuItemsFromMenu'
-      ).and.callThrough();
+      );
       component.resolveMenuItemsInOrder();
       expect(
         merchantServiceStub.extractAllAvailableMenuItemsFromMenu
@@ -155,7 +155,7 @@ describe('RecentOrderComponent', () => {
   describe('back', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.back();
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -166,7 +166,7 @@ describe('RecentOrderComponent', () => {
       const checkingProcessStub: CheckingProcess = fixture.debugElement.injector.get(
         CheckingProcess
       );
-      spyOn(checkingProcessStub, 'start').and.callThrough();
+     jest.spyOn(checkingProcessStub, 'start');
       component.openChecking();
       expect(checkingProcessStub.start).toHaveBeenCalled();
     });
@@ -174,8 +174,8 @@ describe('RecentOrderComponent', () => {
 
   describe('onClosed', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'openChecking').and.callThrough();
-      spyOn(component, 'back').and.callThrough();
+     jest.spyOn(component, 'openChecking');
+     jest.spyOn(component, 'back');
       component.onClosed();
       expect(component.openChecking).toHaveBeenCalled();
       expect(component.back).toHaveBeenCalled();
@@ -188,8 +188,8 @@ describe('RecentOrderComponent', () => {
       const cartServiceStub: CartService = fixture.debugElement.injector.get(
         CartService
       );
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(cartServiceStub, 'onAddItems').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(cartServiceStub, 'onAddItems');
       component.onAddItems();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(cartServiceStub.onAddItems).toHaveBeenCalled();

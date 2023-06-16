@@ -58,7 +58,7 @@ describe('ReportCardComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.ngOnInit();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
@@ -81,11 +81,11 @@ describe('ReportCardComponent', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = fixture.debugElement.injector.get(
         SettingsFacadeService
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(userFacadeServiceStub, 'reportCard$').and.callThrough();
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'fetchSettingList').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(userFacadeServiceStub, 'reportCard$');
+     jest.spyOn(toastServiceStub, 'showToast');
+     jest.spyOn(modalControllerStub, 'dismiss');
+     jest.spyOn(settingsFacadeServiceStub, 'fetchSettingList');
       component.toggleStatus();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(userFacadeServiceStub.reportCard$).toHaveBeenCalled();
@@ -100,7 +100,7 @@ describe('ReportCardComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.close();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

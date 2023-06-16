@@ -58,11 +58,11 @@ describe('AccountsTileComponent', () => {
       const accountsServiceStub: AccountsService = fixture.debugElement.injector.get(
         AccountsService
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(
         accountsServiceStub,
         'getAccountsFilteredByDisplayTenders'
-      ).and.callThrough();
+      );
       component.getUserAccounts();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(

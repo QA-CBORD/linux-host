@@ -37,8 +37,8 @@ describe('AutoDepositPageResolver', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'getSettings').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(settingsFacadeServiceStub, 'getSettings');
       service.resolve();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(settingsFacadeServiceStub.getSettings).toHaveBeenCalled();

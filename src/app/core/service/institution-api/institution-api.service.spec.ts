@@ -24,11 +24,11 @@ describe('InstitutionApiService', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       service.getInstitutionData().subscribe(res => {
-        expect(res).toEqual();
+        expect(res).toEqual({});
       });
       const req = httpTestingController.expectOne('/json/institution');
       expect(req.request.method).toEqual('POST');
-      req.flush();
+      req.flush([]);
       httpTestingController.verify();
     });
   });

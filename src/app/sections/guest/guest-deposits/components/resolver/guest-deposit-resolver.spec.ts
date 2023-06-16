@@ -40,10 +40,10 @@ describe('GuestDepositResolver', () => {
         GuestDepositsService
       );
       const commonServiceStub: CommonService = TestBed.inject(CommonService);
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(guestDepositsServiceStub, 'getRecipientList').and.callThrough();
-      spyOn(commonServiceStub, 'loadContentString').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(guestDepositsServiceStub, 'getRecipientList');
+     jest.spyOn(commonServiceStub, 'loadContentString');
       service.resolve();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

@@ -43,7 +43,7 @@ describe("ConnectivityAwareFacadeService", () => {
       const connectionFacadeServiceStub: ConnectionFacadeService = TestBed.inject(
         ConnectionFacadeService
       );
-      spyOn(connectionFacadeServiceStub, "isModalOpened").and.callThrough();
+     jest.spyOn(connectionFacadeServiceStub, "isModalOpened");
       service.isModalOpened();
       expect(connectionFacadeServiceStub.isModalOpened).toHaveBeenCalled();
     });

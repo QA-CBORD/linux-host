@@ -77,13 +77,13 @@ describe('WaitingListsComponent', () => {
         ToastService
       );
       const waitingListStub: WaitingList = <any>{};
-      spyOn(alertControllerStub, 'create').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(housingServiceStub, 'goToDashboard').and.callThrough();
-      spyOn(housingServiceStub, 'refreshDefinitions').and.callThrough();
-      spyOn(waitingListsServiceStub, 'removeFromWaitingList').and.callThrough();
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
+     jest.spyOn(alertControllerStub, 'create');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(housingServiceStub, 'goToDashboard');
+     jest.spyOn(housingServiceStub, 'refreshDefinitions');
+     jest.spyOn(waitingListsServiceStub, 'removeFromWaitingList');
+     jest.spyOn(toastServiceStub, 'showToast');
       component.removePatronWaitingList(waitingListStub);
       expect(alertControllerStub.create).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

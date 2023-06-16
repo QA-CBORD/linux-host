@@ -51,7 +51,7 @@ describe('ForgotPasswordPage', () => {
       const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(
         MessageProxy
       );
-      spyOn(messageProxyStub, 'get').and.callThrough();
+     jest.spyOn(messageProxyStub, 'get');
       component.ngOnInit();
       expect(messageProxyStub.get).toHaveBeenCalled();
     });
@@ -60,7 +60,7 @@ describe('ForgotPasswordPage', () => {
   describe('redirect', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.redirect();
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -69,7 +69,7 @@ describe('ForgotPasswordPage', () => {
   describe('redirect2', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.redirect2();
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -80,7 +80,7 @@ describe('ForgotPasswordPage', () => {
       const navControllerStub: NavController = fixture.debugElement.injector.get(
         NavController
       );
-      spyOn(navControllerStub, 'back').and.callThrough();
+     jest.spyOn(navControllerStub, 'back');
       component.back();
       expect(navControllerStub.back).toHaveBeenCalled();
     });
@@ -94,11 +94,11 @@ describe('ForgotPasswordPage', () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-      spyOn(
+     jest.spyOn(
         notificationFacadeServiceStub,
         'resetPasswordRequest'
-      ).and.callThrough();
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
+      );
+     jest.spyOn(toastServiceStub, 'showToast');
       component.submit();
       expect(
         notificationFacadeServiceStub.resetPasswordRequest

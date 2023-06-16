@@ -39,11 +39,10 @@ describe('DepositResolver', () => {
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
       const depositServiceStub: DepositService = TestBed.inject(DepositService);
       const commonServiceStub: CommonService = TestBed.inject(CommonService);
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(depositServiceStub, 'getUserAccounts').and.callThrough();
-      spyOn(depositServiceStub, 'getUserSettings').and.callThrough();
-      spyOn(commonServiceStub, 'loadContentString').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(depositServiceStub, 'getUserAccounts');
+     jest.spyOn(depositServiceStub, 'getUserSettings');
+     jest.spyOn(commonServiceStub, 'loadContentString');
       service.resolve();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

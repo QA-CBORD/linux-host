@@ -40,7 +40,7 @@ describe("AttachmentsService", () => {
         HousingProxyService
       );
       const attachmentsDetailStub: AttachmentsDetail = <any>{};
-      spyOn(housingProxyServiceStub, "post").and.callThrough();
+     jest.spyOn(housingProxyServiceStub, "post");
       service.sendAttachmentData(attachmentsDetailStub);
       expect(housingProxyServiceStub.post).toHaveBeenCalled();
     });
@@ -51,7 +51,7 @@ describe("AttachmentsService", () => {
       const housingProxyServiceStub: HousingProxyService = TestBed.inject(
         HousingProxyService
       );
-      spyOn(housingProxyServiceStub, "get").and.callThrough();
+     jest.spyOn(housingProxyServiceStub, "get");
       service.getAttachmentTypes();
       expect(housingProxyServiceStub.get).toHaveBeenCalled();
     });
@@ -62,7 +62,7 @@ describe("AttachmentsService", () => {
       const housingProxyServiceStub: HousingProxyService = TestBed.inject(
         HousingProxyService
       );
-      spyOn(housingProxyServiceStub, "get").and.callThrough();
+     jest.spyOn(housingProxyServiceStub, "get");
       service.getUrlAttachmentFile();
       expect(housingProxyServiceStub.get).toHaveBeenCalled();
     });

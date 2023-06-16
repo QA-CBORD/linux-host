@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { StepperComponent } from './stepper.component';
 import { StepperNextDirective } from './stepper-buttons';
 import { StepperBackDirective } from './stepper-buttons';
 
@@ -25,7 +24,6 @@ describe('StepperNextDirective', () => {
         StepperNextDirective,
         TestComponent,
         StepperBackDirective,
-        TestComponent
       ]
     });
     fixture = TestBed.createComponent(TestComponent);
@@ -46,13 +44,6 @@ describe('StepperNextDirective', () => {
     expect(elementsWithDirective.length).toBe(1);
   });
 });
-@Component({
-  template: `
-    <div>Without Directive</div>
-    <div utton[stepperBack], ion-button[stepperBack>Default</div>
-  `
-})
-class TestComponent {}
 
 describe('StepperBackDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
@@ -66,7 +57,6 @@ describe('StepperBackDirective', () => {
         StepperNextDirective,
         TestComponent,
         StepperBackDirective,
-        TestComponent
       ]
     });
     fixture = TestBed.createComponent(TestComponent);

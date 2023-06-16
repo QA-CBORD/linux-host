@@ -14,10 +14,10 @@ describe('SettingsStateService', () => {
   });
 
   it(`activeUpdaters has default value`, () => {
-    expect(service.activeUpdaters).toEqual(0);
+    expect(service['activeUpdaters']).toEqual(0);
   });
 
   it(`state has default value`, () => {
-    expect(service.state).toEqual([]);
+    expect(service['state']).toEqual([]);
   });
 });

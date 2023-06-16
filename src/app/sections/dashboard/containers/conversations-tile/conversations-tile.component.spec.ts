@@ -50,7 +50,7 @@ describe('ConversationsTileComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initializePage').and.callThrough();
+     jest.spyOn(component, 'initializePage');
       component.ngOnInit();
       expect(component.initializePage).toHaveBeenCalled();
     });
@@ -61,7 +61,7 @@ describe('ConversationsTileComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.refresh();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
@@ -72,11 +72,11 @@ describe('ConversationsTileComponent', () => {
       const secureMessagingFacadeServiceStub: SecureMessagingFacadeService = fixture.debugElement.injector.get(
         SecureMessagingFacadeService
       );
-      spyOn(component, 'refresh').and.callThrough();
-      spyOn(
+     jest.spyOn(component, 'refresh');
+     jest.spyOn(
         secureMessagingFacadeServiceStub,
         'getInitialData$'
-      ).and.callThrough();
+      );
       component.initializePage();
       expect(component.refresh).toHaveBeenCalled();
       expect(

@@ -30,7 +30,7 @@ describe('InputValidatorComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'subscribe2ControlChanges').and.callThrough();
+     jest.spyOn(component, 'subscribe2ControlChanges');
       component.ngOnInit();
       expect(component.subscribe2ControlChanges).toHaveBeenCalled();
     });

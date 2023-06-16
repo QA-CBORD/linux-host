@@ -39,11 +39,11 @@ describe('TermsService', () => {
       const housingProxyServiceStub: HousingProxyService = TestBed.inject(
         HousingProxyService
       );
-      spyOn(
+     jest.spyOn(
         environmentFacadeServiceStub,
         'getEnvironmentObject'
-      ).and.callThrough();
-      spyOn(housingProxyServiceStub, 'get').and.callThrough();
+      );
+     jest.spyOn(housingProxyServiceStub, 'get');
       service.getTerms();
       expect(
         environmentFacadeServiceStub.getEnvironmentObject

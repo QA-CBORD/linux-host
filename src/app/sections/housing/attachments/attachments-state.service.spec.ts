@@ -3,6 +3,7 @@ import { Attachment } from './attachments.model';
 import { AttachmentsDetail } from './attachments.model';
 import { ImageData } from './attachments.model';
 import { AttachmentStateService } from './attachments-state.service';
+import { BehaviorSubject } from 'rxjs';
 
 describe('AttachmentStateService', () => {
   let service: AttachmentStateService;
@@ -19,9 +20,10 @@ describe('AttachmentStateService', () => {
   describe('setAttachmentDetails', () => {
     it('makes expected calls', () => {
       const attachmentsDetailStub: AttachmentsDetail = <any>{};
-      spyOn(attachmentsDetailStub, 'next').and.callThrough();
+      const attachmentsDetailBehaviorStub = new BehaviorSubject<AttachmentsDetail>({} as AttachmentsDetail);
+      spyOn(attachmentsDetailBehaviorStub, 'next').and.callThrough();
       service.setAttachmentDetails(attachmentsDetailStub);
-      expect(attachmentsDetailStub.next).toHaveBeenCalled();
+      expect(attachmentsDetailBehaviorStub.next).toHaveBeenCalled();
     });
   });
 });

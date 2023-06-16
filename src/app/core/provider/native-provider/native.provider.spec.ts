@@ -53,7 +53,7 @@ describe('NativeProvider', () => {
   describe('isAndroid', () => {
     it('makes expected calls', () => {
       const platformStub: Platform = TestBed.inject(Platform);
-      spyOn(platformStub, 'platforms').and.callThrough();
+     jest.spyOn(platformStub, 'platforms');
       service.isAndroid();
       expect(platformStub.platforms).toHaveBeenCalled();
     });
@@ -62,7 +62,7 @@ describe('NativeProvider', () => {
   describe('isIos', () => {
     it('makes expected calls', () => {
       const platformStub: Platform = TestBed.inject(Platform);
-      spyOn(platformStub, 'platforms').and.callThrough();
+     jest.spyOn(platformStub, 'platforms');
       service.isIos();
       expect(platformStub.platforms).toHaveBeenCalled();
     });
@@ -71,7 +71,7 @@ describe('NativeProvider', () => {
   describe('isWeb', () => {
     it('makes expected calls', () => {
       const platformStub: Platform = TestBed.inject(Platform);
-      spyOn(platformStub, 'is').and.callThrough();
+     jest.spyOn(platformStub, 'is');
       service.isWeb();
       expect(platformStub.is).toHaveBeenCalled();
     });
@@ -80,7 +80,7 @@ describe('NativeProvider', () => {
   describe('isMobile', () => {
     it('makes expected calls', () => {
       const platformStub: Platform = TestBed.inject(Platform);
-      spyOn(platformStub, 'is').and.callThrough();
+     jest.spyOn(platformStub, 'is');
       service.isMobile();
       expect(platformStub.is).toHaveBeenCalled();
     });
@@ -89,8 +89,8 @@ describe('NativeProvider', () => {
   describe('onNativeBackClicked', () => {
     it('makes expected calls', () => {
       const ngZoneStub: NgZone = TestBed.inject(NgZone);
-      spyOn(component, 'dismissTopControllers').and.callThrough();
-      spyOn(ngZoneStub, 'run').and.callThrough();
+     jest.spyOn(service, 'dismissTopControllers');
+     jest.spyOn(ngZoneStub, 'run');
       service.onNativeBackClicked();
       expect(service.dismissTopControllers).toHaveBeenCalled();
       expect(ngZoneStub.run).toHaveBeenCalled();
@@ -99,10 +99,10 @@ describe('NativeProvider', () => {
 
   describe('getPatronBarcode', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'isAndroid').and.callThrough();
-      spyOn(component, 'getAndroidData').and.callThrough();
-      spyOn(component, 'isIos').and.callThrough();
-      spyOn(component, 'getIosData').and.callThrough();
+     jest.spyOn(service, 'isAndroid');
+     jest.spyOn(service, 'getAndroidData');
+     jest.spyOn(service, 'isIos');
+     jest.spyOn(service, 'getIosData');
       service.getPatronBarcode();
       expect(service.isAndroid).toHaveBeenCalled();
       expect(service.getAndroidData).toHaveBeenCalled();

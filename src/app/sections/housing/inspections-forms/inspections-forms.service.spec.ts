@@ -44,8 +44,8 @@ describe("InspectionService", () => {
         HousingProxyService
       );
       const inspectionStub: Inspection = <any>{};
-      spyOn(housingProxyServiceStub, "putInspection").and.callThrough();
-      spyOn(housingProxyServiceStub, "post").and.callThrough();
+     jest.spyOn(housingProxyServiceStub, "putInspection");
+     jest.spyOn(housingProxyServiceStub, "post");
       service.submitInspection(inspectionStub);
       expect(housingProxyServiceStub.putInspection).toHaveBeenCalled();
       expect(housingProxyServiceStub.post).toHaveBeenCalled();
@@ -57,10 +57,10 @@ describe("InspectionService", () => {
       const inspectionsStateServiceStub: InspectionsStateService = TestBed.inject(
         InspectionsStateService
       );
-      spyOn(
+     jest.spyOn(
         inspectionsStateServiceStub,
         "getInspectionDetailsForm"
-      ).and.callThrough();
+      );
       service.getFormDefinitionInspection();
       expect(
         inspectionsStateServiceStub.getInspectionDetailsForm

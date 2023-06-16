@@ -49,7 +49,7 @@ describe('TransactionsTileComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getRecentTransactions').and.callThrough();
+     jest.spyOn(component, 'getRecentTransactions');
       component.ngOnInit();
       expect(component.getRecentTransactions).toHaveBeenCalled();
     });
@@ -63,8 +63,8 @@ describe('TransactionsTileComponent', () => {
       const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
         TransactionService
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(transactionServiceStub, 'getRecentTransactions').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(transactionServiceStub, 'getRecentTransactions');
       component.getRecentTransactions();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(transactionServiceStub.getRecentTransactions).toHaveBeenCalled();

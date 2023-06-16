@@ -23,15 +23,14 @@ describe('MessageDatePipe', () => {
 
   it('transforms X to Y', () => {
     const value: any = 'X';
-    const args: string[] = [];
-    expect(pipe.transform(value, args)).toEqual('Y');
+    expect(pipe.transform(value)).toEqual('Y');
   });
 
   describe('transform', () => {
     it('makes expected calls', () => {
       const datePipeStub: DatePipe = TestBed.inject(DatePipe);
       const secureMessageInfoStub: SecureMessageInfo = <any>{};
-      spyOn(datePipeStub, 'transform').and.callThrough();
+     jest.spyOn(datePipeStub, 'transform');
       pipe.transform(secureMessageInfoStub);
       expect(datePipeStub.transform).toHaveBeenCalled();
     });

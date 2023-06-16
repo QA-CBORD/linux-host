@@ -64,11 +64,11 @@ describe('CartService', () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-      spyOn(component, 'getAddress').and.callThrough();
-      spyOn(component, 'getDate').and.callThrough();
-      spyOn(merchantServiceStub, 'validateOrder').and.callThrough();
-      spyOn(merchantServiceStub, 'validatePendingOrder').and.callThrough();
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
+     jest.spyOn(service, 'getAddress');
+     jest.spyOn(service, 'getDate');
+     jest.spyOn(merchantServiceStub, 'validateOrder');
+     jest.spyOn(merchantServiceStub, 'validatePendingOrder');
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
       service.validateOrder();
       expect(service.getAddress).toHaveBeenCalled();
       expect(service.getDate).toHaveBeenCalled();
@@ -86,10 +86,10 @@ describe('CartService', () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-      spyOn(component, 'getAddress').and.callThrough();
-      spyOn(component, 'getDate').and.callThrough();
-      spyOn(merchantServiceStub, 'validateOrderItems').and.callThrough();
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
+     jest.spyOn(service, 'getAddress');
+     jest.spyOn(service, 'getDate');
+     jest.spyOn(merchantServiceStub, 'validateOrderItems');
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
       service.validateReOrderItems();
       expect(service.getAddress).toHaveBeenCalled();
       expect(service.getDate).toHaveBeenCalled();

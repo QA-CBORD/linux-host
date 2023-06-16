@@ -22,7 +22,7 @@ describe('SafeHtmlPipe', () => {
 
   it('transforms X to Y', () => {
     const value: any = 'X';
-    const args: string[] = [];
-    expect(pipe.transform(value, args)).toEqual('Y');
+    TestBed.compileComponents();
+    expect(pipe.transform(value)).toBe('Y');
   });
 });

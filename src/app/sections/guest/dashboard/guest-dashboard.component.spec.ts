@@ -56,7 +56,7 @@ describe('GuestDashboard', () => {
     it('makes expected calls', () => {
       const guestDashboardSectionStub: GuestDashboardSection = <any>{};
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.onclick(guestDashboardSectionStub);
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -67,7 +67,7 @@ describe('GuestDashboard', () => {
       const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(
         MessageProxy
       );
-      spyOn(messageProxyStub, 'get').and.callThrough();
+     jest.spyOn(messageProxyStub, 'get');
       component.ngOnInit();
       expect(messageProxyStub.get).toHaveBeenCalled();
     });

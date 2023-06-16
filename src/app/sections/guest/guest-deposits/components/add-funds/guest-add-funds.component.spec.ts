@@ -88,7 +88,7 @@ describe('GuestAddFundsComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initForm').and.callThrough();
+     jest.spyOn(component, 'initForm');
       component.ngOnInit();
       expect(component.initForm).toHaveBeenCalled();
     });
@@ -99,8 +99,8 @@ describe('GuestAddFundsComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(component, 'setFormValidators').and.callThrough();
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(component, 'setFormValidators');
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.ionViewWillEnter();
       expect(component.setFormValidators).toHaveBeenCalled();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
@@ -112,7 +112,7 @@ describe('GuestAddFundsComponent', () => {
       const formBuilderStub: FormBuilder = fixture.debugElement.injector.get(
         FormBuilder
       );
-      spyOn(formBuilderStub, 'group').and.callThrough();
+     jest.spyOn(formBuilderStub, 'group');
       component.initForm();
       expect(formBuilderStub.group).toHaveBeenCalled();
     });
@@ -126,9 +126,9 @@ describe('GuestAddFundsComponent', () => {
       const depositServiceStub: DepositService = fixture.debugElement.injector.get(
         DepositService
       );
-      spyOn(component, 'confirmationDepositPopover').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(depositServiceStub, 'calculateDepositFee').and.callThrough();
+     jest.spyOn(component, 'confirmationDepositPopover');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(depositServiceStub, 'calculateDepositFee');
       component.onSubmitDeposit();
       expect(component.confirmationDepositPopover).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

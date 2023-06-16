@@ -41,10 +41,10 @@ describe('BuildingsPage', () => {
       const roomsServiceStub: RoomsService = fixture.debugElement.injector.get(
         RoomsService
       );
-      spyOn(roomsStateServiceStub, 'getParentFacilities').and.callThrough();
-      spyOn(roomsStateServiceStub, 'clearOccupantDetails').and.callThrough();
-      spyOn(roomsServiceStub, 'clearFilter').and.callThrough();
-      spyOn(roomsServiceStub, 'clearFilterCategories').and.callThrough();
+     jest.spyOn(roomsStateServiceStub, 'getParentFacilities');
+     jest.spyOn(roomsStateServiceStub, 'clearOccupantDetails');
+     jest.spyOn(roomsServiceStub, 'clearFilter');
+     jest.spyOn(roomsServiceStub, 'clearFilterCategories');
       component.ngOnInit();
       expect(roomsStateServiceStub.getParentFacilities).toHaveBeenCalled();
       expect(roomsStateServiceStub.clearOccupantDetails).toHaveBeenCalled();

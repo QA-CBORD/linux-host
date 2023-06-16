@@ -3,8 +3,7 @@ import { WorkOrderStateService } from "./work-order-state.service";
 import { HousingProxyService } from "../housing-proxy.service";
 import { DomSanitizer } from "@angular/platform-browser";
 import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
-import { ImageData } from "./work-orders.model";
-import { ImageService } from "./image.service";
+import ImageService from "./image.service";
 
 describe("ImageService", () => {
   let service: ImageService;

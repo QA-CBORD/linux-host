@@ -37,10 +37,10 @@ describe('CoordsService', () => {
       const androidPermissionsServiceStub: AndroidPermissionsService = TestBed.inject(
         AndroidPermissionsService
       );
-      spyOn(
+     jest.spyOn(
         androidPermissionsServiceStub,
         'checkLocationPermission'
-      ).and.callThrough();
+      );
       service.getCoords();
       expect(
         androidPermissionsServiceStub.checkLocationPermission

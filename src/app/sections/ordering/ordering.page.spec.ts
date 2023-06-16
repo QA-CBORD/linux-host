@@ -83,7 +83,7 @@ describe('OrderingPage', () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-      spyOn(toastServiceStub, 'showError').and.callThrough();
+     jest.spyOn(toastServiceStub, 'showError');
       component.merchantClickHandler(merchantInfoStub);
       expect(toastServiceStub.showError).toHaveBeenCalled();
     });

@@ -52,8 +52,8 @@ describe('ItemManualEntryComponent', () => {
       const formBuilderStub: FormBuilder = fixture.debugElement.injector.get(
         FormBuilder
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(formBuilderStub, 'group').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(formBuilderStub, 'group');
       component.ngOnInit();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(formBuilderStub.group).toHaveBeenCalled();
@@ -71,9 +71,9 @@ describe('ItemManualEntryComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(cartServiceStub, 'getMenuItemByCode').and.callThrough();
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(cartServiceStub, 'getMenuItemByCode');
+     jest.spyOn(toastServiceStub, 'showToast');
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.continue();
       expect(cartServiceStub.getMenuItemByCode).toHaveBeenCalled();
       expect(toastServiceStub.showToast).toHaveBeenCalled();
@@ -86,7 +86,7 @@ describe('ItemManualEntryComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.close();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

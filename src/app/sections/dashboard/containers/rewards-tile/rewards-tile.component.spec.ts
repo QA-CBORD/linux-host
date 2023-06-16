@@ -28,7 +28,7 @@ describe('RewardsTileComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initUserRewardTrackInfo').and.callThrough();
+     jest.spyOn(component, 'initUserRewardTrackInfo');
       component.ngOnInit();
       expect(component.initUserRewardTrackInfo).toHaveBeenCalled();
     });

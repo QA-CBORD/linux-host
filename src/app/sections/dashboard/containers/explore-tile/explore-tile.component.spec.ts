@@ -71,7 +71,7 @@ describe('ExploreTileComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getMerchants').and.callThrough();
+     jest.spyOn(component, 'getMerchants');
       component.ngOnInit();
       expect(component.getMerchants).toHaveBeenCalled();
     });
@@ -82,8 +82,8 @@ describe('ExploreTileComponent', () => {
       const exploreServiceStub: ExploreService = fixture.debugElement.injector.get(
         ExploreService
       );
-      spyOn(component, 'getFoodSetting').and.callThrough();
-      spyOn(exploreServiceStub, 'getInitialMerchantData$').and.callThrough();
+     jest.spyOn(component, 'getFoodSetting');
+     jest.spyOn(exploreServiceStub, 'getInitialMerchantData$');
       component.getMerchants();
       expect(component.getFoodSetting).toHaveBeenCalled();
       expect(exploreServiceStub.getInitialMerchantData$).toHaveBeenCalled();
@@ -95,7 +95,7 @@ describe('ExploreTileComponent', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = fixture.debugElement.injector.get(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       component.getFoodSetting();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });

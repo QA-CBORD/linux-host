@@ -39,7 +39,7 @@ describe('RewardsPage', () => {
       const nativeProviderStub: NativeProvider = fixture.debugElement.injector.get(
         NativeProvider
       );
-      spyOn(nativeProviderStub, 'isWeb').and.callThrough();
+     jest.spyOn(nativeProviderStub, 'isWeb');
       component.isShowToolbar();
       expect(nativeProviderStub.isWeb).toHaveBeenCalled();
     });

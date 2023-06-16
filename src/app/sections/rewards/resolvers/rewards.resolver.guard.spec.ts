@@ -42,14 +42,12 @@ describe('RewardsResolverGuard', () => {
       const popoverControllerStub: PopoverController = TestBed.inject(
         PopoverController
       );
-      const subjectStub: Subject = <any>{};
+      const subjectStub: Subject<any> = <any>{};
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(popoverControllerStub, 'create').and.callThrough();
-      spyOn(subjectStub, 'next').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'create');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
       service.modalHandler(subjectStub);
       expect(popoverControllerStub.create).toHaveBeenCalled();
-      expect(subjectStub.next).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
     });
   });

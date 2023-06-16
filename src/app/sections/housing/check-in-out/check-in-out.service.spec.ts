@@ -35,7 +35,7 @@ describe("CheckInOutService", () => {
         HousingProxyService
       );
       const checkInOutSlotStub: CheckInOutSlot = <any>{};
-      spyOn(housingProxyServiceStub, "post").and.callThrough();
+     jest.spyOn(housingProxyServiceStub, "post");
       service.selectSpot(checkInOutSlotStub);
       expect(housingProxyServiceStub.post).toHaveBeenCalled();
     });

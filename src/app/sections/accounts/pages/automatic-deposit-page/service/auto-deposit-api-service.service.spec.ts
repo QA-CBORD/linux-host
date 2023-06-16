@@ -52,14 +52,14 @@ describe('AutoDepositApiService', () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
       service.getUserAutoDepositSettingInfo().subscribe(res => {
-        expect(res).toEqual();
+        expect(res).toEqual({});
       });
       const req = httpTestingController.expectOne('HTTP_ROUTE_GOES_HERE');
       expect(req.request.method).toEqual('POST');
       expect(userFacadeServiceStub.getUserData$).toHaveBeenCalled();
-      req.flush();
+      req.flush([]);
       httpTestingController.verify();
     });
   });

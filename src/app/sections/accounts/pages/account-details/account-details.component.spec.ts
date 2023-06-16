@@ -48,8 +48,8 @@ describe('AccountDetailsComponent', () => {
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(component, 'setContentStrings').and.callThrough();
-      spyOn(routerStub, 'getCurrentNavigation').and.callThrough();
+     jest.spyOn(component, 'setContentStrings');
+     jest.spyOn(routerStub, 'getCurrentNavigation');
       component.ngOnInit();
       expect(component.setContentStrings).toHaveBeenCalled();
       expect(routerStub.getCurrentNavigation).toHaveBeenCalled();
@@ -61,10 +61,10 @@ describe('AccountDetailsComponent', () => {
       const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
         TransactionService
       );
-      spyOn(
+     jest.spyOn(
         transactionServiceStub,
         'getNextTransactionsByAccountId'
-      ).and.callThrough();
+      );
       component.getNextTransactionPackage();
       expect(
         transactionServiceStub.getNextTransactionsByAccountId
@@ -77,7 +77,7 @@ describe('AccountDetailsComponent', () => {
       const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
         TransactionService
       );
-      spyOn(transactionServiceStub, 'getContentStrings').and.callThrough();
+     jest.spyOn(transactionServiceStub, 'getContentStrings');
       component.setContentStrings();
       expect(transactionServiceStub.getContentStrings).toHaveBeenCalled();
     });

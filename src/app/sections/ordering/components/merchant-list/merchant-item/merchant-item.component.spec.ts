@@ -38,7 +38,7 @@ describe('MerchantItemComponent', () => {
       const orderingServiceStub: OrderingService = fixture.debugElement.injector.get(
         OrderingService
       );
-      spyOn(orderingServiceStub, 'getContentStringByName').and.callThrough();
+     jest.spyOn(orderingServiceStub, 'getContentStringByName');
       component.ngOnInit();
       expect(orderingServiceStub.getContentStringByName).toHaveBeenCalled();
     });

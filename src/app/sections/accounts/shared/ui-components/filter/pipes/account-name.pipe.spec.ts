@@ -20,7 +20,7 @@ describe('AccountNamePipe', () => {
         { provide: TransactionService, useFactory: transactionServiceStub }
       ]
     });
-    spyOn(AccountNamePipe.prototype, 'setContentStrings');
+   jest.spyOn(AccountNamePipe.prototype, 'setContentStrings');
     pipe = TestBed.inject(AccountNamePipe);
   });
 
@@ -30,8 +30,7 @@ describe('AccountNamePipe', () => {
 
   it('transforms X to Y', () => {
     const value: any = 'X';
-    const args: string[] = [];
-    expect(pipe.transform(value, args)).toEqual('Y');
+    expect(pipe.transform(value)).toEqual('Y');
   });
 
   describe('constructor', () => {
@@ -45,8 +44,8 @@ describe('AccountNamePipe', () => {
       const transactionServiceStub: TransactionService = TestBed.inject(
         TransactionService
       );
-      spyOn(transactionServiceStub, 'getContentStrings').and.callThrough();
-      (<jasmine.Spy>pipe.setContentStrings).and.callThrough();
+     jest.spyOn(transactionServiceStub, 'getContentStrings');
+      (<jasmine.Spy>pipe.setContentStrings);
       pipe.setContentStrings();
       expect(transactionServiceStub.getContentStrings).toHaveBeenCalled();
     });

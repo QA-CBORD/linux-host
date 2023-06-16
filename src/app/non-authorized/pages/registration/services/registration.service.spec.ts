@@ -23,8 +23,8 @@ describe('RegistrationService', () => {
     });
     const contentStringsFacadeServiceStub = () => ({
       fetchContentStringAfresh: (patronUi, category) => ({}),
-      fetchContentStringModel: (category, args) => ({})
-    });
+      fetchContentStringModel: (() => ({})
+  )});
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
@@ -55,10 +55,10 @@ describe('RegistrationService', () => {
       const cONTENT_STRINGS_CATEGORIESStub: CONTENT_STRINGS_CATEGORIES = <
         any
       >{};
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'fetchContentStringAfresh'
-      ).and.callThrough();
+      );
       service.getString$(cONTENT_STRINGS_CATEGORIESStub);
       expect(
         contentStringsFacadeServiceStub.fetchContentStringAfresh

@@ -21,7 +21,7 @@ describe('SecureMessagePopoverComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initPopover').and.callThrough();
+     jest.spyOn(component, 'initPopover');
       component.ngOnInit();
       expect(component.initPopover).toHaveBeenCalled();
     });
@@ -29,7 +29,7 @@ describe('SecureMessagePopoverComponent', () => {
 
   describe('initPopover', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'configureButtons').and.callThrough();
+     jest.spyOn(component, 'configureButtons');
       component.initPopover();
       expect(component.configureButtons).toHaveBeenCalled();
     });

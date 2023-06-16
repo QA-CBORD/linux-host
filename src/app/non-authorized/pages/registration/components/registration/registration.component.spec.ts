@@ -77,11 +77,11 @@ describe('RegistrationComponent', () => {
       const registrationServiceFacadeStub: RegistrationServiceFacade = fixture.debugElement.injector.get(
         RegistrationServiceFacade
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
-      spyOn(registrationServiceFacadeStub, 'submit').and.callThrough();
-      spyOn(registrationServiceFacadeStub, 'getData').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(toastServiceStub, 'showToast');
+     jest.spyOn(registrationServiceFacadeStub, 'submit');
+     jest.spyOn(registrationServiceFacadeStub, 'getData');
       component.submitRegistration(formGroupStub);
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
@@ -96,7 +96,7 @@ describe('RegistrationComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onDecline();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

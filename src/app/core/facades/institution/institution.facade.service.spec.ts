@@ -67,7 +67,7 @@ describe('InstitutionFacadeService', () => {
         StorageStateService
       );
       const guestSettingStub: GuestSetting = <any>{};
-      spyOn(storageStateServiceStub, 'updateStateEntity').and.callThrough();
+     jest.spyOn(storageStateServiceStub, 'updateStateEntity');
       service.saveGuestSetting(guestSettingStub);
       expect(storageStateServiceStub.updateStateEntity).toHaveBeenCalled();
     });
@@ -78,10 +78,10 @@ describe('InstitutionFacadeService', () => {
       const storageStateServiceStub: StorageStateService = TestBed.inject(
         StorageStateService
       );
-      spyOn(
+     jest.spyOn(
         storageStateServiceStub,
         'deleteStateEntityByKey'
-      ).and.callThrough();
+      );
       service.removeGuestSetting();
       expect(storageStateServiceStub.deleteStateEntityByKey).toHaveBeenCalled();
     });
@@ -95,8 +95,8 @@ describe('InstitutionFacadeService', () => {
       const institutionApiServiceStub: InstitutionApiService = TestBed.inject(
         InstitutionApiService
       );
-      spyOn(storageStateServiceStub, 'updateStateEntity').and.callThrough();
-      spyOn(institutionApiServiceStub, 'getInstitutionData').and.callThrough();
+     jest.spyOn(storageStateServiceStub, 'updateStateEntity');
+     jest.spyOn(institutionApiServiceStub, 'getInstitutionData');
       service.fetchInstitutionData();
       expect(storageStateServiceStub.updateStateEntity).toHaveBeenCalled();
       expect(institutionApiServiceStub.getInstitutionData).toHaveBeenCalled();
@@ -111,11 +111,11 @@ describe('InstitutionFacadeService', () => {
       const authFacadeServiceStub: AuthFacadeService = TestBed.inject(
         AuthFacadeService
       );
-      spyOn(
+     jest.spyOn(
         institutionApiServiceStub,
         'retrieveAnonymousDepositFields'
-      ).and.callThrough();
-      spyOn(authFacadeServiceStub, 'getAuthSessionToken$').and.callThrough();
+      );
+     jest.spyOn(authFacadeServiceStub, 'getAuthSessionToken$');
       service.retrieveAnonymousDepositFields();
       expect(
         institutionApiServiceStub.retrieveAnonymousDepositFields
@@ -129,10 +129,10 @@ describe('InstitutionFacadeService', () => {
       const storageStateServiceStub: StorageStateService = TestBed.inject(
         StorageStateService
       );
-      spyOn(
+     jest.spyOn(
         storageStateServiceStub,
         'deleteStateEntityByKey'
-      ).and.callThrough();
+      );
       service.clearCurrentInstitution();
       expect(storageStateServiceStub.deleteStateEntityByKey).toHaveBeenCalled();
     });

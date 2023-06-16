@@ -73,8 +73,8 @@ describe('SearchFilterModalComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(roomsStateServiceStub, 'getOccupiedFacilities').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
+     jest.spyOn(roomsStateServiceStub, 'getOccupiedFacilities');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
       component.ngOnInit();
       expect(roomsStateServiceStub.getOccupiedFacilities).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
@@ -86,7 +86,7 @@ describe('SearchFilterModalComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.close();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

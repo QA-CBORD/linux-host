@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpHandler } from '@angular/common/http';
-import { HttpRequest } from '@angular/common/http';
+import { HttpHandler, HttpRequest } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -44,8 +43,8 @@ describe('BaseInterceptor', () => {
   describe('intercept', () => {
     it('makes expected calls', () => {
       const httpHandlerStub: HttpHandler = <any>{};
-      const httpRequestStub: HttpRequest = <any>{};
-      spyOn(component, 'resolveRequest').and.callThrough();
+      const httpRequestStub: HttpRequest<any> = <any>{};
+     jest.spyOn(service, 'resolveRequest');
       service.intercept(httpRequestStub, httpHandlerStub);
       expect(service.resolveRequest).toHaveBeenCalled();
     });
@@ -54,16 +53,16 @@ describe('BaseInterceptor', () => {
   describe('resolveRequest', () => {
     it('makes expected calls', () => {
       const httpHandlerStub: HttpHandler = <any>{};
-      const httpRequestStub: HttpRequest = <any>{};
+      const httpRequestStub: HttpRequest<any> = <any>{};
       const environmentFacadeServiceStub: EnvironmentFacadeService = TestBed.inject(
         EnvironmentFacadeService
       );
-      spyOn(httpHandlerStub, 'handle').and.callThrough();
-      spyOn(httpRequestStub, 'clone').and.callThrough();
-      spyOn(
+     jest.spyOn(httpHandlerStub, 'handle');
+     jest.spyOn(httpRequestStub, 'clone');
+     jest.spyOn(
         environmentFacadeServiceStub,
         'getSavedEnvironmentInfo$'
-      ).and.callThrough();
+      );
       service.resolveRequest(httpRequestStub, httpHandlerStub);
       expect(httpHandlerStub.handle).toHaveBeenCalled();
       expect(httpRequestStub.clone).toHaveBeenCalled();

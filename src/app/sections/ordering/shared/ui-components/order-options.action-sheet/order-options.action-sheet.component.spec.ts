@@ -92,7 +92,7 @@ describe('OrderOptionsActionSheetComponent', () => {
         ChangeDetectorRef
       );
       const dateTimeSelectedStub: DateTimeSelected = <any>{};
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.onDateTimeSelected(dateTimeSelectedStub);
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
@@ -103,8 +103,8 @@ describe('OrderOptionsActionSheetComponent', () => {
       const cartServiceStub: CartService = fixture.debugElement.injector.get(
         CartService
       );
-      spyOn(component, 'dispatchingData').and.callThrough();
-      spyOn(cartServiceStub, 'resetClientOrderId').and.callThrough();
+     jest.spyOn(component, 'dispatchingData');
+     jest.spyOn(cartServiceStub, 'resetClientOrderId');
       component.ngOnInit();
       expect(component.dispatchingData).toHaveBeenCalled();
       expect(cartServiceStub.resetClientOrderId).toHaveBeenCalled();
@@ -119,12 +119,12 @@ describe('OrderOptionsActionSheetComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(component, 'defineOrderOptionsData').and.callThrough();
-      spyOn(merchantServiceStub, 'getMerchantOrderSchedule').and.callThrough();
-      spyOn(merchantServiceStub, 'retrievePickupLocations').and.callThrough();
-      spyOn(merchantServiceStub, 'retrieveBuildings').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(component, 'defineOrderOptionsData');
+     jest.spyOn(merchantServiceStub, 'getMerchantOrderSchedule');
+     jest.spyOn(merchantServiceStub, 'retrievePickupLocations');
+     jest.spyOn(merchantServiceStub, 'retrieveBuildings');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.dispatchingData();
       expect(component.defineOrderOptionsData).toHaveBeenCalled();
       expect(merchantServiceStub.getMerchantOrderSchedule).toHaveBeenCalled();

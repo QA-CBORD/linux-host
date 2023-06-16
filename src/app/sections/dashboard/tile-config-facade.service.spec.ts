@@ -41,7 +41,7 @@ describe('TileConfigFacadeService', () => {
       const storageStateServiceStub: StorageStateService = TestBed.inject(
         StorageStateService
       );
-      spyOn(storageStateServiceStub, 'isKeyExistInState').and.callThrough();
+     jest.spyOn(storageStateServiceStub, 'isKeyExistInState');
       service.isTileConfigInStorage();
       expect(storageStateServiceStub.isKeyExistInState).toHaveBeenCalled();
     });
@@ -55,22 +55,22 @@ describe('TileConfigFacadeService', () => {
       const profileServiceFacadeStub: ProfileServiceFacade = TestBed.inject(
         ProfileServiceFacade
       );
-      spyOn(component, 'isValidConfig').and.callThrough();
-      spyOn(component, 'updateConfigState').and.callThrough();
-      spyOn(dashboardServiceStub, 'retrieveSettingsList').and.callThrough();
-      spyOn(
+     jest.spyOn(service, 'isValidConfig');
+     jest.spyOn(service, 'updateConfigState');
+     jest.spyOn(dashboardServiceStub, 'retrieveSettingsList');
+     jest.spyOn(
         dashboardServiceStub,
         'getUpdatedTilesBaseConfig'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         dashboardServiceStub,
         'updateConfigByCashedConfig'
-      ).and.callThrough();
-      spyOn(dashboardServiceStub, 'updateAccountTile').and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(dashboardServiceStub, 'updateAccountTile');
+     jest.spyOn(
         profileServiceFacadeStub,
         'determineCurrentProfile'
-      ).and.callThrough();
+      );
       service.updateTilesConfigBySystemSettings();
       expect(service.isValidConfig).toHaveBeenCalled();
       expect(service.updateConfigState).toHaveBeenCalled();

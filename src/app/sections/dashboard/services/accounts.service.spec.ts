@@ -46,7 +46,7 @@ describe('AccountsService', () => {
         CommerceApiService
       );
       const userAccountStub: UserAccount = <any>{};
-      spyOn(commerceApiServiceStub, 'removeAccount').and.callThrough();
+     jest.spyOn(commerceApiServiceStub, 'removeAccount');
       service.removeCreditCardAccount(userAccountStub);
       expect(commerceApiServiceStub.removeAccount).toHaveBeenCalled();
     });
@@ -57,9 +57,9 @@ describe('AccountsService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(component, 'transformStringToArray').and.callThrough();
-      spyOn(component, 'getUserAccounts').and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(service, 'transformStringToArray');
+     jest.spyOn(service, 'getUserAccounts');
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.getAccountsFilteredByDisplayTenders();
       expect(service.transformStringToArray).toHaveBeenCalled();
       expect(service.getUserAccounts).toHaveBeenCalled();
@@ -72,9 +72,9 @@ describe('AccountsService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(component, 'transformStringToArray').and.callThrough();
-      spyOn(component, 'getUserAccounts').and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(service, 'transformStringToArray');
+     jest.spyOn(service, 'getUserAccounts');
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.getAccountsFilteredByDepositTenders();
       expect(service.transformStringToArray).toHaveBeenCalled();
       expect(service.getUserAccounts).toHaveBeenCalled();

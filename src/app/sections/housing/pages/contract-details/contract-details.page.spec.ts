@@ -77,7 +77,7 @@ describe("ContractDetailsPage", () => {
       const contractsServiceStub: ContractsService = fixture.debugElement.injector.get(
         ContractsService
       );
-      spyOn(contractsServiceStub, "sign").and.callThrough();
+     jest.spyOn(contractsServiceStub, "sign");
       component.ngOnDestroy();
       expect(contractsServiceStub.sign).toHaveBeenCalled();
     });

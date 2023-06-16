@@ -89,7 +89,7 @@ describe("MerchantService", () => {
       const orderingApiServiceStub: OrderingApiService = TestBed.inject(
         OrderingApiService
       );
-      spyOn(orderingApiServiceStub, "validateOrder").and.callThrough();
+     jest.spyOn(orderingApiServiceStub, "validateOrder");
       service.validateOrder(orderInfoStub);
       expect(orderingApiServiceStub.validateOrder).toHaveBeenCalled();
     });
@@ -101,7 +101,7 @@ describe("MerchantService", () => {
       const orderingApiServiceStub: OrderingApiService = TestBed.inject(
         OrderingApiService
       );
-      spyOn(orderingApiServiceStub, "validateOrderItems").and.callThrough();
+     jest.spyOn(orderingApiServiceStub, "validateOrderItems");
       service.validateOrderItems(orderInfoStub);
       expect(orderingApiServiceStub.validateOrderItems).toHaveBeenCalled();
     });
@@ -114,10 +114,10 @@ describe("MerchantService", () => {
         OrderingApiService
       );
       const addressInfoStub: AddressInfo = <any>{};
-      spyOn(
+     jest.spyOn(
         orderingApiServiceStub,
         "retrievePickupLocations"
-      ).and.callThrough();
+      );
       service.retrievePickupLocations(addressInfoStub, merchantSettingInfoStub);
       expect(orderingApiServiceStub.retrievePickupLocations).toHaveBeenCalled();
     });
@@ -128,7 +128,7 @@ describe("MerchantService", () => {
       const orderingApiServiceStub: OrderingApiService = TestBed.inject(
         OrderingApiService
       );
-      spyOn(orderingApiServiceStub, "getMenuMerchants").and.callThrough();
+     jest.spyOn(orderingApiServiceStub, "getMenuMerchants");
       service.getMenuMerchants();
       expect(orderingApiServiceStub.getMenuMerchants).toHaveBeenCalled();
     });
@@ -139,8 +139,8 @@ describe("MerchantService", () => {
       const orderingApiServiceStub: OrderingApiService = TestBed.inject(
         OrderingApiService
       );
-      spyOn(orderingApiServiceStub, "getFavoriteMerchants").and.callThrough();
-      spyOn(orderingApiServiceStub, "getMenuMerchants").and.callThrough();
+     jest.spyOn(orderingApiServiceStub, "getFavoriteMerchants");
+     jest.spyOn(orderingApiServiceStub, "getMenuMerchants");
       service.getMerchantsWithFavoriteInfo();
       expect(orderingApiServiceStub.getFavoriteMerchants).toHaveBeenCalled();
       expect(orderingApiServiceStub.getMenuMerchants).toHaveBeenCalled();
@@ -155,12 +155,12 @@ describe("MerchantService", () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-      spyOn(component, "getMenuMerchants").and.callThrough();
-      spyOn(
+     jest.spyOn(service, "getMenuMerchants");
+     jest.spyOn(
         orderingApiServiceStub,
         "getSuccessfulOrdersList"
-      ).and.callThrough();
-      spyOn(userFacadeServiceStub, "getUserData$").and.callThrough();
+      );
+     jest.spyOn(userFacadeServiceStub, "getUserData$");
       service.getRecentOrders();
       expect(service.getMenuMerchants).toHaveBeenCalled();
       expect(orderingApiServiceStub.getSuccessfulOrdersList).toHaveBeenCalled();
@@ -173,7 +173,7 @@ describe("MerchantService", () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-      spyOn(userFacadeServiceStub, "getUserAddresses$").and.callThrough();
+     jest.spyOn(userFacadeServiceStub, "getUserAddresses$");
       service.retrieveUserAddressList();
       expect(userFacadeServiceStub.getUserAddresses$).toHaveBeenCalled();
     });
@@ -184,7 +184,7 @@ describe("MerchantService", () => {
       const orderingApiServiceStub: OrderingApiService = TestBed.inject(
         OrderingApiService
       );
-      spyOn(orderingApiServiceStub, "retrieveBuildings").and.callThrough();
+     jest.spyOn(orderingApiServiceStub, "retrieveBuildings");
       service.retrieveBuildings();
       expect(orderingApiServiceStub.retrieveBuildings).toHaveBeenCalled();
     });
@@ -195,7 +195,7 @@ describe("MerchantService", () => {
       const commerceApiServiceStub: CommerceApiService = TestBed.inject(
         CommerceApiService
       );
-      spyOn(commerceApiServiceStub, "getUserAccounts").and.callThrough();
+     jest.spyOn(commerceApiServiceStub, "getUserAccounts");
       service.getUserAccounts();
       expect(commerceApiServiceStub.getUserAccounts).toHaveBeenCalled();
     });
@@ -206,7 +206,7 @@ describe("MerchantService", () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, "getUserSetting").and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, "getUserSetting");
       service.getDefaultAddress();
       expect(settingsFacadeServiceStub.getUserSetting).toHaveBeenCalled();
     });

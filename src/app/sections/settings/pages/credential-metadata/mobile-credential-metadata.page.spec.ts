@@ -53,7 +53,7 @@ describe('MobileCredentialMetadata', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.close();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

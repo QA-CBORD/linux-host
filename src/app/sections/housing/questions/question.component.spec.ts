@@ -111,9 +111,9 @@ describe('QuestionComponent', () => {
         WorkOrderStateService
       );
       const photoStub: Photo = <any>{};
-      spyOn(component, 'readAsBase64').and.callThrough();
-      spyOn(component, 'sanitizeUrl').and.callThrough();
-      spyOn(workOrderStateServiceStub, 'setWorkOrderImage').and.callThrough();
+     jest.spyOn(component, 'readAsBase64');
+     jest.spyOn(component, 'sanitizeUrl');
+     jest.spyOn(workOrderStateServiceStub, 'setWorkOrderImage');
       component.saveImage(photoStub);
       expect(component.readAsBase64).toHaveBeenCalled();
       expect(component.sanitizeUrl).toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe('QuestionComponent', () => {
       const sessionFacadeServiceStub: SessionFacadeService = fixture.debugElement.injector.get(
         SessionFacadeService
       );
-      spyOn(sessionFacadeServiceStub, 'getIsWeb').and.callThrough();
+     jest.spyOn(sessionFacadeServiceStub, 'getIsWeb');
       component.readAsBase64(photoStub);
       expect(sessionFacadeServiceStub.getIsWeb).toHaveBeenCalled();
     });
@@ -141,26 +141,26 @@ describe('QuestionComponent', () => {
       const workOrderStateServiceStub: WorkOrderStateService = fixture.debugElement.injector.get(
         WorkOrderStateService
       );
-      spyOn(
+     jest.spyOn(
         applicationsStateServiceStub,
         'setRequestedRoommates'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         applicationsStateServiceStub,
         'setRoommatesPreferences'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         applicationsStateServiceStub,
         'emptyRequestedRoommate'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         applicationsStateServiceStub,
         'deleteRoommatePreferencesSelecteds'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         workOrderStateServiceStub,
         'destroyWorkOrderImage'
-      ).and.callThrough();
+      );
       component.ngOnDestroy();
       expect(
         applicationsStateServiceStub.setRequestedRoommates
@@ -182,7 +182,7 @@ describe('QuestionComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'setFacility').and.callThrough();
+     jest.spyOn(component, 'setFacility');
       component.ngOnInit();
       expect(component.setFacility).toHaveBeenCalled();
     });
@@ -193,7 +193,7 @@ describe('QuestionComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'markForCheck').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'markForCheck');
       component.check();
       expect(changeDetectorRefStub.markForCheck).toHaveBeenCalled();
     });
@@ -201,7 +201,7 @@ describe('QuestionComponent', () => {
 
   describe('touch', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'check').and.callThrough();
+     jest.spyOn(component, 'check');
       component.touch();
       expect(component.check).toHaveBeenCalled();
     });
@@ -212,11 +212,11 @@ describe('QuestionComponent', () => {
       const photoUploadServiceStub: PhotoUploadService = fixture.debugElement.injector.get(
         PhotoUploadService
       );
-      spyOn(component, 'onGetPhoto').and.callThrough();
-      spyOn(
+     jest.spyOn(component, 'onGetPhoto');
+     jest.spyOn(
         photoUploadServiceStub,
         'presentPhotoTypeSelection'
-      ).and.callThrough();
+      );
       component.presentPhotoTypeSelection();
       expect(component.onGetPhoto).toHaveBeenCalled();
       expect(
@@ -233,14 +233,14 @@ describe('QuestionComponent', () => {
       const contractListStateServiceStub: ContractListStateService = fixture.debugElement.injector.get(
         ContractListStateService
       );
-      spyOn(
+     jest.spyOn(
         workOrderStateServiceStub,
         'setSelectedFacilityTree'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         contractListStateServiceStub,
         'getContractDetails'
-      ).and.callThrough();
+      );
       component.setFacility();
       expect(
         workOrderStateServiceStub.setSelectedFacilityTree

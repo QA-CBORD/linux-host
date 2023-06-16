@@ -32,7 +32,7 @@ describe('FilterMenuComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'setContentStrings').and.callThrough();
+     jest.spyOn(component, 'setContentStrings');
       component.ngOnInit();
       expect(component.setContentStrings).toHaveBeenCalled();
     });
@@ -43,7 +43,7 @@ describe('FilterMenuComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onFilterDone();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -51,7 +51,7 @@ describe('FilterMenuComponent', () => {
 
   describe('onAllAccountChosen', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'onAccountChosen').and.callThrough();
+     jest.spyOn(component, 'onAccountChosen');
       component.onAllAccountChosen();
       expect(component.onAccountChosen).toHaveBeenCalled();
     });
@@ -62,7 +62,7 @@ describe('FilterMenuComponent', () => {
       const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
         TransactionService
       );
-      spyOn(transactionServiceStub, 'getContentStrings').and.callThrough();
+     jest.spyOn(transactionServiceStub, 'getContentStrings');
       component.setContentStrings();
       expect(transactionServiceStub.getContentStrings).toHaveBeenCalled();
     });
@@ -73,7 +73,7 @@ describe('FilterMenuComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onClose();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

@@ -123,16 +123,16 @@ describe('InstitutionsPage', () => {
       const commonServiceStub: CommonService = fixture.debugElement.injector.get(
         CommonService
       );
-      spyOn(
+     jest.spyOn(
         component,
         'checkForInstitutionEnvironmentAndOverride'
-      ).and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'cleanCache').and.callThrough();
-      spyOn(commonServiceStub, 'getInstitution').and.callThrough();
-      spyOn(commonServiceStub, 'getInstitutionPhoto').and.callThrough();
-      spyOn(commonServiceStub, 'getInstitutionBgColor').and.callThrough();
+      );
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(settingsFacadeServiceStub, 'cleanCache');
+     jest.spyOn(commonServiceStub, 'getInstitution');
+     jest.spyOn(commonServiceStub, 'getInstitutionPhoto');
+     jest.spyOn(commonServiceStub, 'getInstitutionBgColor');
       component.onInstitutionSelected(institutionLookupListItemStub);
       expect(
         component.checkForInstitutionEnvironmentAndOverride
@@ -158,19 +158,19 @@ describe('InstitutionsPage', () => {
         EnvironmentFacadeService
       );
       const institutionLookupListItemStub: InstitutionLookupListItem = <any>{};
-      spyOn(
+     jest.spyOn(
         institutionFacadeServiceStub,
         'getInstitutionDataByShortName$'
-      ).and.callThrough();
-      spyOn(authFacadeServiceStub, 'authenticateSystem$').and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(authFacadeServiceStub, 'authenticateSystem$');
+     jest.spyOn(
         environmentFacadeServiceStub,
         'overrideEnvironment'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         environmentFacadeServiceStub,
         'resetEnvironmentAndCreateSession'
-      ).and.callThrough();
+      );
       component.checkForInstitutionEnvironmentAndOverride(
         institutionLookupListItemStub
       );
@@ -189,7 +189,7 @@ describe('InstitutionsPage', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'setNativeEnvironment').and.callThrough();
+     jest.spyOn(component, 'setNativeEnvironment');
       component.ngOnInit();
       expect(component.setNativeEnvironment).toHaveBeenCalled();
     });
@@ -197,7 +197,7 @@ describe('InstitutionsPage', () => {
 
   describe('ionViewWillEnter', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'performInstitutionCleanUp').and.callThrough();
+     jest.spyOn(component, 'performInstitutionCleanUp');
       component.ionViewWillEnter();
       expect(component.performInstitutionCleanUp).toHaveBeenCalled();
     });
@@ -208,7 +208,7 @@ describe('InstitutionsPage', () => {
       const nativeProviderStub: NativeProvider = fixture.debugElement.injector.get(
         NativeProvider
       );
-      spyOn(nativeProviderStub, 'isMobile').and.callThrough();
+     jest.spyOn(nativeProviderStub, 'isMobile');
       component.onEnterKeyClicked();
       expect(nativeProviderStub.isMobile).toHaveBeenCalled();
     });
@@ -222,11 +222,11 @@ describe('InstitutionsPage', () => {
       const platformStub: Platform = fixture.debugElement.injector.get(
         Platform
       );
-      spyOn(
+     jest.spyOn(
         environmentFacadeServiceStub,
         'getEnvironmentObject'
-      ).and.callThrough();
-      spyOn(platformStub, 'is').and.callThrough();
+      );
+     jest.spyOn(platformStub, 'is');
       component.setNativeEnvironment();
       expect(
         environmentFacadeServiceStub.getEnvironmentObject
@@ -243,14 +243,14 @@ describe('InstitutionsPage', () => {
       const environmentFacadeServiceStub: EnvironmentFacadeService = fixture.debugElement.injector.get(
         EnvironmentFacadeService
       );
-      spyOn(
+     jest.spyOn(
         institutionFacadeServiceStub,
         'clearCurrentInstitution'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         environmentFacadeServiceStub,
         'resetEnvironmentAndCreateSession'
-      ).and.callThrough();
+      );
       component.performInstitutionCleanUp();
       expect(
         institutionFacadeServiceStub.clearCurrentInstitution

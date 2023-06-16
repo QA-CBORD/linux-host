@@ -53,10 +53,10 @@ describe('CheckinPendingResolver', () => {
         MerchantService
       );
       const commonServiceStub: CommonService = TestBed.inject(CommonService);
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(merchantServiceStub, 'retrievePickupLocations').and.callThrough();
-      spyOn(commonServiceStub, 'loadContentString').and.callThrough();
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(merchantServiceStub, 'retrievePickupLocations');
+     jest.spyOn(commonServiceStub, 'loadContentString');
       service.resolve(activatedRouteSnapshotStub);
       expect(userFacadeServiceStub.getUserData$).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

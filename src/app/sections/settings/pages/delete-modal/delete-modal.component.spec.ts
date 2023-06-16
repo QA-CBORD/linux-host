@@ -24,7 +24,7 @@ describe('DeleteModalComponent', () => {
 
   describe('deletePhoto', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'dismissModal').and.callThrough();
+     jest.spyOn(component, 'dismissModal');
       component.deletePhoto();
       expect(component.dismissModal).toHaveBeenCalled();
     });

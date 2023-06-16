@@ -32,7 +32,7 @@ describe('CheckInFailureComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.ionViewDidEnter();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
     });
@@ -43,7 +43,7 @@ describe('CheckInFailureComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onBack();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -54,7 +54,7 @@ describe('CheckInFailureComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onScanCode();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

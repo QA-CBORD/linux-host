@@ -27,7 +27,7 @@ describe('DepositModalComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onClickedDone();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

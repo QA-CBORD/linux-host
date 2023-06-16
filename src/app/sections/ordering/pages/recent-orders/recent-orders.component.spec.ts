@@ -73,7 +73,7 @@ describe('RecentOrdersComponent', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
       const orderInfoStub: OrderInfo = <any>{};
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.onOrderPicked(orderInfoStub);
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -82,7 +82,7 @@ describe('RecentOrdersComponent', () => {
   describe('back', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.back();
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -94,8 +94,8 @@ describe('RecentOrdersComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
       component.close();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
@@ -107,8 +107,8 @@ describe('RecentOrdersComponent', () => {
       const modalsServiceStub: ModalsService = fixture.debugElement.injector.get(
         ModalsService
       );
-      spyOn(component, 'filterChange').and.callThrough();
-      spyOn(modalsServiceStub, 'createActionSheet').and.callThrough();
+     jest.spyOn(component, 'filterChange');
+     jest.spyOn(modalsServiceStub, 'createActionSheet');
       component.onFilter();
       expect(component.filterChange).toHaveBeenCalled();
       expect(modalsServiceStub.createActionSheet).toHaveBeenCalled();

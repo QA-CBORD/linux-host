@@ -34,7 +34,7 @@ describe('UnitsSwitchComponent', () => {
     it('makes expected calls', () => {
       const unitStub: Unit = <any>{};
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.goToUnits(unitStub);
       expect(routerStub.navigate).toHaveBeenCalled();
     });

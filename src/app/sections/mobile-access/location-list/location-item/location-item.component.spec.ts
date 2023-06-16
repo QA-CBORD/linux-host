@@ -32,7 +32,7 @@ describe('LocationItemComponent', () => {
       const navControllerStub: NavController = fixture.debugElement.injector.get(
         NavController
       );
-      spyOn(navControllerStub, 'navigateForward').and.callThrough();
+     jest.spyOn(navControllerStub, 'navigateForward');
       component.openLocation();
       expect(navControllerStub.navigateForward).toHaveBeenCalled();
     });

@@ -29,7 +29,7 @@ describe('HTMLRendererComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'markForCheck').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'markForCheck');
       component.ngOnInit();
       expect(changeDetectorRefStub.markForCheck).toHaveBeenCalled();
     });

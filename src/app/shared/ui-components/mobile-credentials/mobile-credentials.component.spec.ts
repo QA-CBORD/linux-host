@@ -42,7 +42,7 @@ describe('MobileCredentialsComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onAccept();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -56,8 +56,8 @@ describe('MobileCredentialsComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
-      spyOn(popoverControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
+     jest.spyOn(popoverControllerStub, 'dismiss');
       component.onDecline();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
       expect(popoverControllerStub.dismiss).toHaveBeenCalled();
@@ -69,7 +69,7 @@ describe('MobileCredentialsComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(popoverControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'dismiss');
       component.onButtonClicked();
       expect(popoverControllerStub.dismiss).toHaveBeenCalled();
     });

@@ -30,7 +30,7 @@ describe('MerchantDetailsResolverService', () => {
   describe('resolve', () => {
     it('makes expected calls', () => {
       const exploreServiceStub: ExploreService = TestBed.inject(ExploreService);
-      spyOn(exploreServiceStub, 'getInitialMerchantData$').and.callThrough();
+     jest.spyOn(exploreServiceStub, 'getInitialMerchantData$');
       service.resolve();
       expect(exploreServiceStub.getInitialMerchantData$).toHaveBeenCalled();
     });

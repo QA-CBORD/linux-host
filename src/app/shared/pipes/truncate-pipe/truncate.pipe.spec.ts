@@ -15,7 +15,7 @@ describe('TruncatePipe', () => {
 
   it('transforms X to Y', () => {
     const value: any = 'X';
-    const args: string[] = [];
+    const args = 0;
     expect(pipe.transform(value, args)).toEqual('Y');
   });
 });

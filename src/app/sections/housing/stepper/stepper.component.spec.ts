@@ -29,7 +29,7 @@ describe("StepperComponent", () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, "markForCheck").and.callThrough();
+     jest.spyOn(changeDetectorRefStub, "markForCheck");
       component.ngAfterViewInit();
       expect(changeDetectorRefStub.markForCheck).toHaveBeenCalled();
     });

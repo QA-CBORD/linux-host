@@ -98,9 +98,9 @@ describe("AttachmentsDetailsPage", () => {
       const attachmentStateServiceStub: AttachmentStateService = fixture.debugElement.injector.get(
         AttachmentStateService
       );
-      spyOn(component, "getAttachmentType").and.callThrough();
-      spyOn(attachmentsServiceStub, "getAttachmentFile").and.callThrough();
-      spyOn(attachmentStateServiceStub, "findAttachment").and.callThrough();
+     jest.spyOn(component, "getAttachmentType");
+     jest.spyOn(attachmentsServiceStub, "getAttachmentFile");
+     jest.spyOn(attachmentStateServiceStub, "findAttachment");
       component.ngOnInit();
       expect(component.getAttachmentType).toHaveBeenCalled();
       expect(attachmentsServiceStub.getAttachmentFile).toHaveBeenCalled();
@@ -119,10 +119,10 @@ describe("AttachmentsDetailsPage", () => {
       const attachmentStateServiceStub: AttachmentStateService = fixture.debugElement.injector.get(
         AttachmentStateService
       );
-      spyOn(loadingServiceStub, "showSpinner").and.callThrough();
-      spyOn(loadingServiceStub, "closeSpinner").and.callThrough();
-      spyOn(attachmentsServiceStub, "getAttachmentTypes").and.callThrough();
-      spyOn(attachmentStateServiceStub, "setAttachmentTypes").and.callThrough();
+     jest.spyOn(loadingServiceStub, "showSpinner");
+     jest.spyOn(loadingServiceStub, "closeSpinner");
+     jest.spyOn(attachmentsServiceStub, "getAttachmentTypes");
+     jest.spyOn(attachmentStateServiceStub, "setAttachmentTypes");
       component.getAttachmentType();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
@@ -142,10 +142,10 @@ describe("AttachmentsDetailsPage", () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-      spyOn(loadingServiceStub, "showSpinner").and.callThrough();
-      spyOn(loadingServiceStub, "closeSpinner").and.callThrough();
-      spyOn(attachmentsServiceStub, "getUrlAttachmentFile").and.callThrough();
-      spyOn(toastServiceStub, "showToast").and.callThrough();
+     jest.spyOn(loadingServiceStub, "showSpinner");
+     jest.spyOn(loadingServiceStub, "closeSpinner");
+     jest.spyOn(attachmentsServiceStub, "getUrlAttachmentFile");
+     jest.spyOn(toastServiceStub, "showToast");
       component.getAttachmentUrl();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
@@ -157,7 +157,7 @@ describe("AttachmentsDetailsPage", () => {
   describe("backClicked", () => {
     it("makes expected calls", () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, "navigate").and.callThrough();
+     jest.spyOn(routerStub, "navigate");
       component.backClicked();
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -169,12 +169,12 @@ describe("AttachmentsDetailsPage", () => {
       const identityFacadeServiceStub: IdentityFacadeService = fixture.debugElement.injector.get(
         IdentityFacadeService
       );
-      spyOn(component, "getAttachmentUrl").and.callThrough();
-      spyOn(component, "getSizeFile").and.callThrough();
-      spyOn(component, "getFileType").and.callThrough();
-      spyOn(component, "alertAttachmentLimitSize").and.callThrough();
-      spyOn(chooserStub, "getFile").and.callThrough();
-      spyOn(identityFacadeServiceStub, "updateVaultTimeout").and.callThrough();
+     jest.spyOn(component, "getAttachmentUrl");
+     jest.spyOn(component, "getSizeFile");
+     jest.spyOn(component, "getFileType");
+     jest.spyOn(component, "alertAttachmentLimitSize");
+     jest.spyOn(chooserStub, "getFile");
+     jest.spyOn(identityFacadeServiceStub, "updateVaultTimeout");
       component.selectFile();
       expect(component.getAttachmentUrl).toHaveBeenCalled();
       expect(component.getSizeFile).toHaveBeenCalled();
@@ -202,12 +202,12 @@ describe("AttachmentsDetailsPage", () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-      spyOn(alertControllerStub, "create").and.callThrough();
-      spyOn(loadingServiceStub, "showSpinner").and.callThrough();
-      spyOn(loadingServiceStub, "closeSpinner").and.callThrough();
-      spyOn(attachmentsServiceStub, "deleteAttachmentFile").and.callThrough();
-      spyOn(housingServiceStub, "goToDashboard").and.callThrough();
-      spyOn(toastServiceStub, "showToast").and.callThrough();
+     jest.spyOn(alertControllerStub, "create");
+     jest.spyOn(loadingServiceStub, "showSpinner");
+     jest.spyOn(loadingServiceStub, "closeSpinner");
+     jest.spyOn(attachmentsServiceStub, "deleteAttachmentFile");
+     jest.spyOn(housingServiceStub, "goToDashboard");
+     jest.spyOn(toastServiceStub, "showToast");
       component.deleteAttachment();
       expect(alertControllerStub.create).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

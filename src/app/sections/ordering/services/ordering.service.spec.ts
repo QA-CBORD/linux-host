@@ -33,10 +33,10 @@ describe('OrderingService', () => {
         ContentStringsFacadeService
       );
       const oRDERING_CONTENT_STRINGSStub: ORDERING_CONTENT_STRINGS = <any>{};
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'getContentString$'
-      ).and.callThrough();
+      );
       service.getContentStringByName(oRDERING_CONTENT_STRINGSStub);
       expect(
         contentStringsFacadeServiceStub.getContentString$
@@ -50,10 +50,10 @@ describe('OrderingService', () => {
         ContentStringsFacadeService
       );
       const oRDERING_CONTENT_STRINGSStub: ORDERING_CONTENT_STRINGS = <any>{};
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'resolveContentString$'
-      ).and.callThrough();
+      );
       service.getContentErrorStringByName(oRDERING_CONTENT_STRINGSStub);
       expect(
         contentStringsFacadeServiceStub.resolveContentString$

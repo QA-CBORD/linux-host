@@ -46,8 +46,8 @@ describe('OptInGuard', () => {
   describe('canActivate', () => {
     it('makes expected calls', () => {
       const rewardsServiceStub: RewardsService = TestBed.inject(RewardsService);
-      spyOn(rewardsServiceStub, 'initContentStringsList').and.callThrough();
-      spyOn(rewardsServiceStub, 'getUserRewardTrackInfo').and.callThrough();
+     jest.spyOn(rewardsServiceStub, 'initContentStringsList');
+     jest.spyOn(rewardsServiceStub, 'getUserRewardTrackInfo');
       service.canActivate();
       expect(rewardsServiceStub.initContentStringsList).toHaveBeenCalled();
       expect(rewardsServiceStub.getUserRewardTrackInfo).toHaveBeenCalled();

@@ -40,8 +40,8 @@ describe('MobileAccessService', () => {
 
   describe('getLocations', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getMobileLocations').and.callThrough();
-      spyOn(component, 'getFavouritesLocations').and.callThrough();
+     jest.spyOn(service, 'getMobileLocations');
+     jest.spyOn(service, 'getFavouritesLocations');
       service.getLocations();
       expect(service.getMobileLocations).toHaveBeenCalled();
       expect(service.getFavouritesLocations).toHaveBeenCalled();
@@ -52,7 +52,7 @@ describe('MobileAccessService', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       const coordsServiceStub: CoordsService = TestBed.inject(CoordsService);
-      spyOn(coordsServiceStub, 'getCoords').and.callThrough();
+     jest.spyOn(coordsServiceStub, 'getCoords');
       service.getMobileLocations().subscribe(res => {
         expect(res).toEqual([]);
       });
@@ -69,7 +69,7 @@ describe('MobileAccessService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getUserSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getUserSetting');
       service.getFavouritesLocations();
       expect(settingsFacadeServiceStub.getUserSetting).toHaveBeenCalled();
     });

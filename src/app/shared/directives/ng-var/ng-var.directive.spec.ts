@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { TemplateRef } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { VarDirective } from './ng-var.directive';
 
@@ -17,7 +16,7 @@ describe('VarDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
   let elementsWithDirective: Array<DebugElement>;
   let bareElement: DebugElement;
-
+  const pipe = new VarDirective({} as any, {} as any);
   beforeEach(() => {
     const templateRefStub = () => ({});
     const viewContainerRefStub = () => ({

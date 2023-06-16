@@ -35,9 +35,9 @@ describe('CheckinSuccessResolver', () => {
         MerchantService
       );
       const commonServiceStub: CommonService = TestBed.inject(CommonService);
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(merchantServiceStub, 'getRecentOrders').and.callThrough();
-      spyOn(commonServiceStub, 'loadContentString').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(merchantServiceStub, 'getRecentOrders');
+     jest.spyOn(commonServiceStub, 'loadContentString');
       service.resolve();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
       expect(merchantServiceStub.getRecentOrders).toHaveBeenCalled();

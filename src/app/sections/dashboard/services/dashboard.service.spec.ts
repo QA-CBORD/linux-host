@@ -32,7 +32,7 @@ describe('DashboardService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'fetchSettingList').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'fetchSettingList');
       service.retrieveSettingsList();
       expect(settingsFacadeServiceStub.fetchSettingList).toHaveBeenCalled();
     });
@@ -43,7 +43,7 @@ describe('DashboardService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSettings').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSettings');
       service.isAddFundsButtonEnabled();
       expect(settingsFacadeServiceStub.getSettings).toHaveBeenCalled();
     });

@@ -99,7 +99,7 @@ describe('FullMenuComponent', () => {
       const navigationServiceStub: NavigationService = fixture.debugElement.injector.get(
         NavigationService
       );
-      spyOn(navigationServiceStub, 'navigate').and.callThrough();
+     jest.spyOn(navigationServiceStub, 'navigate');
       component.redirectToCart();
       expect(navigationServiceStub.navigate).toHaveBeenCalled();
     });

@@ -61,7 +61,7 @@ describe('AccessCardService', () => {
   describe('getUserName', () => {
     it('makes expected calls', () => {
       const commonServiceStub: CommonService = TestBed.inject(CommonService);
-      spyOn(commonServiceStub, 'getUserName').and.callThrough();
+     jest.spyOn(commonServiceStub, 'getUserName');
       service.getUserName();
       expect(commonServiceStub.getUserName).toHaveBeenCalled();
     });
@@ -70,7 +70,7 @@ describe('AccessCardService', () => {
   describe('getUserPhoto', () => {
     it('makes expected calls', () => {
       const commonServiceStub: CommonService = TestBed.inject(CommonService);
-      spyOn(commonServiceStub, 'getUserPhoto').and.callThrough();
+     jest.spyOn(commonServiceStub, 'getUserPhoto');
       service.getUserPhoto();
       expect(commonServiceStub.getUserPhoto).toHaveBeenCalled();
     });
@@ -84,11 +84,11 @@ describe('AccessCardService', () => {
       const institutionFacadeServiceStub: InstitutionFacadeService = TestBed.inject(
         InstitutionFacadeService
       );
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
-      spyOn(
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
+     jest.spyOn(
         institutionFacadeServiceStub,
         'getInstitutionInfo$'
-      ).and.callThrough();
+      );
       service.getInstitutionName();
       expect(userFacadeServiceStub.getUserData$).toHaveBeenCalled();
       expect(
@@ -105,11 +105,11 @@ describe('AccessCardService', () => {
       const institutionFacadeServiceStub: InstitutionFacadeService = TestBed.inject(
         InstitutionFacadeService
       );
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
-      spyOn(
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
+     jest.spyOn(
         institutionFacadeServiceStub,
         'getInstitutionPhoto$'
-      ).and.callThrough();
+      );
       service.getInstitutionImage();
       expect(userFacadeServiceStub.getUserData$).toHaveBeenCalled();
       expect(
@@ -123,7 +123,7 @@ describe('AccessCardService', () => {
       const environmentFacadeServiceStub: EnvironmentFacadeService = TestBed.inject(
         EnvironmentFacadeService
       );
-      spyOn(environmentFacadeServiceStub, 'getImageURL').and.callThrough();
+     jest.spyOn(environmentFacadeServiceStub, 'getImageURL');
       service.getInstitutionBackgroundImage();
       expect(environmentFacadeServiceStub.getImageURL).toHaveBeenCalled();
     });
@@ -134,7 +134,7 @@ describe('AccessCardService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.getInstitutionColor();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });
@@ -145,7 +145,7 @@ describe('AccessCardService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.isGETMyCardEnabled();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });
@@ -156,7 +156,7 @@ describe('AccessCardService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.isMobileAccessEnable();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });
@@ -165,8 +165,8 @@ describe('AccessCardService', () => {
   describe('isAppleWalletEnabled', () => {
     it('makes expected calls', () => {
       const nativeProviderStub: NativeProvider = TestBed.inject(NativeProvider);
-      spyOn(nativeProviderStub, 'isIos').and.callThrough();
-      spyOn(nativeProviderStub, 'getIosData').and.callThrough();
+     jest.spyOn(nativeProviderStub, 'isIos');
+     jest.spyOn(nativeProviderStub, 'getIosData');
       service.isAppleWalletEnabled();
       expect(nativeProviderStub.isIos).toHaveBeenCalled();
       expect(nativeProviderStub.getIosData).toHaveBeenCalled();

@@ -29,7 +29,7 @@ describe('HousingTabComponent', () => {
       const housingTabsComponentStub: HousingTabsComponent = fixture.debugElement.injector.get(
         HousingTabsComponent
       );
-      spyOn(housingTabsComponentStub, 'addTab').and.callThrough();
+     jest.spyOn(housingTabsComponentStub, 'addTab');
       component.ngOnInit();
       expect(housingTabsComponentStub.addTab).toHaveBeenCalled();
     });

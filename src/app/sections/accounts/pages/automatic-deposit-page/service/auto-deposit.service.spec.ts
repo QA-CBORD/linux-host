@@ -49,10 +49,10 @@ describe('AutoDepositService', () => {
       const autoDepositApiServiceStub: AutoDepositApiService = TestBed.inject(
         AutoDepositApiService
       );
-      spyOn(
+     jest.spyOn(
         autoDepositApiServiceStub,
         'updateAutoDepositSettings'
-      ).and.callThrough();
+      );
       service.updateAutoDepositSettings(userAutoDepositSettingInfoStub);
       expect(
         autoDepositApiServiceStub.updateAutoDepositSettings
@@ -65,10 +65,10 @@ describe('AutoDepositService', () => {
       const autoDepositApiServiceStub: AutoDepositApiService = TestBed.inject(
         AutoDepositApiService
       );
-      spyOn(
+     jest.spyOn(
         autoDepositApiServiceStub,
         'getUserAutoDepositSettingInfo'
-      ).and.callThrough();
+      );
       service.getUserAutoDepositInfo();
       expect(
         autoDepositApiServiceStub.getUserAutoDepositSettingInfo
@@ -84,11 +84,11 @@ describe('AutoDepositService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         autoDepositApiServiceStub,
         'retrieveAutoDepositAccountList'
-      ).and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+      );
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.getAutoDepositAccountList();
       expect(
         autoDepositApiServiceStub.retrieveAutoDepositAccountList

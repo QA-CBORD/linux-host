@@ -39,7 +39,7 @@ describe('FacilityDetailsPage', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
       const facilityStub: Facility = <any>{};
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.viewUnits(facilityStub);
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -50,7 +50,7 @@ describe('FacilityDetailsPage', () => {
       const facilitiesServiceStub: FacilitiesService = fixture.debugElement.injector.get(
         FacilitiesService
       );
-      spyOn(facilitiesServiceStub, 'getFacilities').and.callThrough();
+     jest.spyOn(facilitiesServiceStub, 'getFacilities');
       component.ngOnInit();
       expect(facilitiesServiceStub.getFacilities).toHaveBeenCalled();
     });

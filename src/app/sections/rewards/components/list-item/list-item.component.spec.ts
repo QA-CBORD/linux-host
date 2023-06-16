@@ -59,11 +59,11 @@ describe('ListItemComponent', () => {
         RewardsService
       );
       const popupTypesStub: PopupTypes = <any>{};
-      spyOn(popoverControllerStub, 'create').and.callThrough();
-      spyOn(
+     jest.spyOn(popoverControllerStub, 'create');
+     jest.spyOn(
         rewardsServiceStub,
         'extractFromHistoryByRewardId'
-      ).and.callThrough();
+      );
       component.openPopover(redeemableRewardInfoStub, popupTypesStub);
       expect(popoverControllerStub.create).toHaveBeenCalled();
       expect(

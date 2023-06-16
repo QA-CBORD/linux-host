@@ -32,9 +32,9 @@ describe('MerchantResolverService', () => {
     it('makes expected calls', () => {
       const exploreServiceStub: ExploreService = TestBed.inject(ExploreService);
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(exploreServiceStub, 'getInitialMerchantData$').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(exploreServiceStub, 'getInitialMerchantData$');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.resolve();
       expect(exploreServiceStub.getInitialMerchantData$).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

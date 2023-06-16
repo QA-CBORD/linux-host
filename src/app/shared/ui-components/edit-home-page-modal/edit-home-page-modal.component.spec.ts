@@ -38,7 +38,7 @@ describe('EditHomePageModalComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onClickedClose();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -49,7 +49,7 @@ describe('EditHomePageModalComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.onClickedDone();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

@@ -51,11 +51,11 @@ describe('SecureMessagingFacadeService', () => {
       const storageStateServiceStub: StorageStateService = TestBed.inject(
         StorageStateService
       );
-      spyOn(
+     jest.spyOn(
         secureMessagingApiServiceStub,
         'postSecureMessage'
-      ).and.callThrough();
-      spyOn(storageStateServiceStub, 'updateStateEntity').and.callThrough();
+      );
+     jest.spyOn(storageStateServiceStub, 'updateStateEntity');
       service.sendSecureMessage(secureMessageInfoStub);
       expect(
         secureMessagingApiServiceStub.postSecureMessage
@@ -67,7 +67,7 @@ describe('SecureMessagingFacadeService', () => {
   describe('startConversation', () => {
     it('makes expected calls', () => {
       const secureMessageGroupInfoStub: SecureMessageGroupInfo = <any>{};
-      spyOn(component, 'setSelectedConversation').and.callThrough();
+     jest.spyOn(service, 'setSelectedConversation');
       service.startConversation(secureMessageGroupInfoStub);
       expect(service.setSelectedConversation).toHaveBeenCalled();
     });
@@ -79,7 +79,7 @@ describe('SecureMessagingFacadeService', () => {
       const secureMessagingApiServiceStub: SecureMessagingApiService = TestBed.inject(
         SecureMessagingApiService
       );
-      spyOn(secureMessagingApiServiceStub, 'marAsRead').and.callThrough();
+     jest.spyOn(secureMessagingApiServiceStub, 'marAsRead');
       service.markAsRead(markAsReadValStub);
       expect(secureMessagingApiServiceStub.marAsRead).toHaveBeenCalled();
     });
@@ -87,7 +87,7 @@ describe('SecureMessagingFacadeService', () => {
 
   describe('getInitialData$', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getInitialDataState$').and.callThrough();
+     jest.spyOn(service, 'getInitialDataState$');
       service.getInitialData$();
       expect(service.getInitialDataState$).toHaveBeenCalled();
     });
@@ -96,11 +96,11 @@ describe('SecureMessagingFacadeService', () => {
   describe('getInitialDataState$', () => {
     it('makes expected calls', () => {
       const authApiServiceStub: AuthApiService = TestBed.inject(AuthApiService);
-      spyOn(component, 'getInitialConvoData$').and.callThrough();
-      spyOn(
+     jest.spyOn(service, 'getInitialConvoData$');
+     jest.spyOn(
         authApiServiceStub,
         'getExternalAuthenticationToken'
-      ).and.callThrough();
+      );
       service.getInitialDataState$();
       expect(service.getInitialConvoData$).toHaveBeenCalled();
       expect(
@@ -114,9 +114,9 @@ describe('SecureMessagingFacadeService', () => {
       const storageStateServiceStub: StorageStateService = TestBed.inject(
         StorageStateService
       );
-      spyOn(component, 'getSecureMessagesGroups').and.callThrough();
-      spyOn(component, 'getSecureMessages').and.callThrough();
-      spyOn(storageStateServiceStub, 'updateStateEntity').and.callThrough();
+     jest.spyOn(service, 'getSecureMessagesGroups');
+     jest.spyOn(service, 'getSecureMessages');
+     jest.spyOn(storageStateServiceStub, 'updateStateEntity');
       service.getInitialConvoData$();
       expect(service.getSecureMessagesGroups).toHaveBeenCalled();
       expect(service.getSecureMessages).toHaveBeenCalled();
@@ -129,10 +129,10 @@ describe('SecureMessagingFacadeService', () => {
       const secureMessagingApiServiceStub: SecureMessagingApiService = TestBed.inject(
         SecureMessagingApiService
       );
-      spyOn(
+     jest.spyOn(
         secureMessagingApiServiceStub,
         'getSecureMessagesGroups'
-      ).and.callThrough();
+      );
       service.getSecureMessagesGroups();
       expect(
         secureMessagingApiServiceStub.getSecureMessagesGroups
@@ -145,10 +145,10 @@ describe('SecureMessagingFacadeService', () => {
       const secureMessagingApiServiceStub: SecureMessagingApiService = TestBed.inject(
         SecureMessagingApiService
       );
-      spyOn(
+     jest.spyOn(
         secureMessagingApiServiceStub,
         'getSecureMessages'
-      ).and.callThrough();
+      );
       service.getSecureMessages();
       expect(
         secureMessagingApiServiceStub.getSecureMessages
@@ -158,7 +158,7 @@ describe('SecureMessagingFacadeService', () => {
 
   describe('pollForDataInterval', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'mapToStorage').and.callThrough();
+     jest.spyOn(service, 'mapToStorage');
       service.pollForDataInterval();
       expect(service.mapToStorage).toHaveBeenCalled();
     });

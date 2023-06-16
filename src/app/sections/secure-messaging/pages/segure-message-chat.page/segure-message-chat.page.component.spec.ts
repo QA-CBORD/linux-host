@@ -5,11 +5,8 @@ import { UserFacadeService } from "@core/facades/user/user.facade.service";
 import { PopoverController } from "@ionic/angular";
 import { GlobalNavService } from "@shared/ui-components/st-global-navigation/services/global-nav.service";
 import { SecureMessagingFacadeService } from "@core/facades/secure-messaging/secure-messaging.facade.service";
-import { SecureMessageInfo } from "@core/model/secure-messaging/secure-messaging.model";
 import { SecureMessageGroupInfo } from "@core/model/secure-messaging/secure-messaging.model";
-import { SecureMessageConversation } from "@core/model/secure-messaging/secure-messaging.model";
 import { MarkAsReadVal } from "@core/model/secure-messaging/secure-messaging.model";
-import { Globals } from "../../../../app.global";
 import { SecureMessageTypes } from "@core/model/secure-messaging/secure-messaging.model";
 import { getConversationGroupInitial } from "@core/utils/conversations-helper";
 import { getConversationGroupName } from "@core/utils/conversations-helper";
@@ -106,11 +103,11 @@ describe("SegureMessageChatPageComponent", () => {
         SecureMessagingFacadeService
       );
       const secureMessageGroupInfoStub: SecureMessageGroupInfo = <any>{};
-      spyOn(changeDetectorRefStub, "detectChanges").and.callThrough();
-      spyOn(
+     jest.spyOn(changeDetectorRefStub, "detectChanges");
+     jest.spyOn(
         secureMessagingFacadeServiceStub,
         "startConversation"
-      ).and.callThrough();
+      );
       component.onClickMakeNewConversation(secureMessageGroupInfoStub);
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(
@@ -125,9 +122,9 @@ describe("SegureMessageChatPageComponent", () => {
         SecureMessagingFacadeService
       );
       const markAsReadValStub: MarkAsReadVal = <any>{};
-      spyOn(component, "modalHandler").and.callThrough();
-      spyOn(secureMessagingFacadeServiceStub, "markAsRead").and.callThrough();
-      spyOn(secureMessagingFacadeServiceStub, "mapToStorage").and.callThrough();
+     jest.spyOn(component, "modalHandler");
+     jest.spyOn(secureMessagingFacadeServiceStub, "markAsRead");
+     jest.spyOn(secureMessagingFacadeServiceStub, "mapToStorage");
       component.markAsRead(markAsReadValStub);
       expect(component.modalHandler).toHaveBeenCalled();
       expect(secureMessagingFacadeServiceStub.markAsRead).toHaveBeenCalled();
@@ -140,7 +137,7 @@ describe("SegureMessageChatPageComponent", () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, "detectChanges").and.callThrough();
+     jest.spyOn(changeDetectorRefStub, "detectChanges");
       component.ngOnInit();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
@@ -151,10 +148,10 @@ describe("SegureMessageChatPageComponent", () => {
       const secureMessagingFacadeServiceStub: SecureMessagingFacadeService = fixture.debugElement.injector.get(
         SecureMessagingFacadeService
       );
-      spyOn(
+     jest.spyOn(
         secureMessagingFacadeServiceStub,
         "getInitialData$"
-      ).and.callThrough();
+      );
       component.ionViewWillLeave();
       expect(
         secureMessagingFacadeServiceStub.getInitialData$
@@ -167,11 +164,11 @@ describe("SegureMessageChatPageComponent", () => {
       const secureMessagingFacadeServiceStub: SecureMessagingFacadeService = fixture.debugElement.injector.get(
         SecureMessagingFacadeService
       );
-      spyOn(component, "markAsRead").and.callThrough();
-      spyOn(
+     jest.spyOn(component, "markAsRead");
+     jest.spyOn(
         secureMessagingFacadeServiceStub,
         "clearSelectedConversation"
-      ).and.callThrough();
+      );
       component.ngOnDestroy();
       expect(component.markAsRead).toHaveBeenCalled();
       expect(
@@ -182,10 +179,10 @@ describe("SegureMessageChatPageComponent", () => {
 
   describe("showCreateNewConversationColumn", () => {
     it("makes expected calls", () => {
-      spyOn(
+     jest.spyOn(
         component,
         "showSelectedConversationContentColumn"
-      ).and.callThrough();
+      );
       component.showCreateNewConversationColumn();
       expect(
         component.showSelectedConversationContentColumn
@@ -198,8 +195,8 @@ describe("SegureMessageChatPageComponent", () => {
       const userFacadeServiceStub: UserFacadeService = fixture.debugElement.injector.get(
         UserFacadeService
       );
-      spyOn(component, "modalHandler").and.callThrough();
-      spyOn(userFacadeServiceStub, "getUserData$").and.callThrough();
+     jest.spyOn(component, "modalHandler");
+     jest.spyOn(userFacadeServiceStub, "getUserData$");
       component.onClickSendButton();
       expect(component.modalHandler).toHaveBeenCalled();
       expect(userFacadeServiceStub.getUserData$).toHaveBeenCalled();

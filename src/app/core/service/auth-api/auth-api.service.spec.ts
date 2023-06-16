@@ -25,11 +25,11 @@ describe('AuthApiService', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       service.authenticateSystem().subscribe(res => {
-        expect(res).toEqual();
+        expect(res).toEqual({});
       });
       const req = httpTestingController.expectOne('/json/authentication');
       expect(req.request.method).toEqual('POST');
-      req.flush();
+      req.flush([]);
       httpTestingController.verify();
     });
   });
@@ -38,11 +38,11 @@ describe('AuthApiService', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       service.getAuthenticationToken().subscribe(res => {
-        expect(res).toEqual();
+        expect(res).toEqual({});
       });
       const req = httpTestingController.expectOne('/json/authentication');
       expect(req.request.method).toEqual('POST');
-      req.flush();
+      req.flush([]);
       httpTestingController.verify();
     });
   });

@@ -33,7 +33,7 @@ describe('AndroidPermissionsService', () => {
       const androidPermissionsStub: AndroidPermissions = TestBed.inject(
         AndroidPermissions
       );
-      spyOn(androidPermissionsStub, 'checkPermission').and.callThrough();
+     jest.spyOn(androidPermissionsStub, 'checkPermission');
       service.checkLocationPermission();
       expect(androidPermissionsStub.checkPermission).toHaveBeenCalled();
     });
@@ -44,7 +44,7 @@ describe('AndroidPermissionsService', () => {
       const androidPermissionsStub: AndroidPermissions = TestBed.inject(
         AndroidPermissions
       );
-      spyOn(androidPermissionsStub, 'requestPermissions').and.callThrough();
+     jest.spyOn(androidPermissionsStub, 'requestPermissions');
       service.requestLocationPermissions();
       expect(androidPermissionsStub.requestPermissions).toHaveBeenCalled();
     });

@@ -25,7 +25,7 @@ describe('UnitComponent', () => {
   describe('goToUnitDetails', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigateByUrl').and.callThrough();
+     jest.spyOn(routerStub, 'navigateByUrl');
       component.goToUnitDetails();
       expect(routerStub.navigateByUrl).toHaveBeenCalled();
     });

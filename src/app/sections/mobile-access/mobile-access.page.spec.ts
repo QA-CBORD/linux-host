@@ -52,7 +52,7 @@ describe('MobileAccessPage', () => {
       const userFacadeServiceStub: UserFacadeService = fixture.debugElement.injector.get(
         UserFacadeService
       );
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
       component.ngOnInit();
       expect(userFacadeServiceStub.getUserData$).toHaveBeenCalled();
     });
@@ -63,7 +63,7 @@ describe('MobileAccessPage', () => {
       const nativeProviderStub: NativeProvider = fixture.debugElement.injector.get(
         NativeProvider
       );
-      spyOn(nativeProviderStub, 'isMobile').and.callThrough();
+     jest.spyOn(nativeProviderStub, 'isMobile');
       component.onEnterKeyClicked();
       expect(nativeProviderStub.isMobile).toHaveBeenCalled();
     });

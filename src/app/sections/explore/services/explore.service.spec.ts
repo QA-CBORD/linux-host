@@ -71,11 +71,11 @@ describe('ExploreService', () => {
       const authFacadeServiceStub: AuthFacadeService = TestBed.inject(
         AuthFacadeService
       );
-      spyOn(
+     jest.spyOn(
         merchantFacadeServiceStub,
         'isCreditCardSupported'
-      ).and.callThrough();
-      spyOn(authFacadeServiceStub, 'isGuestUser').and.callThrough();
+      );
+     jest.spyOn(authFacadeServiceStub, 'isGuestUser');
       service.isGuestOrderEnabled(merchantInfoStub);
       expect(
         merchantFacadeServiceStub.isCreditCardSupported
@@ -89,7 +89,7 @@ describe('ExploreService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.getFoodSetting();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });
@@ -106,15 +106,15 @@ describe('ExploreService', () => {
       const menuMerchantFacadeServiceStub: MenuMerchantFacadeService = TestBed.inject(
         MenuMerchantFacadeService
       );
-      spyOn(merchantFacadeServiceStub, 'fetchMerchants$').and.callThrough();
-      spyOn(
+     jest.spyOn(merchantFacadeServiceStub, 'fetchMerchants$');
+     jest.spyOn(
         favoriteMerchantsFacadeServiceStub,
         'fetchFavoritesMerchants$'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         menuMerchantFacadeServiceStub,
         'fetchMenuMerchant$'
-      ).and.callThrough();
+      );
       service.getInitialMerchantData$();
       expect(merchantFacadeServiceStub.fetchMerchants$).toHaveBeenCalled();
       expect(

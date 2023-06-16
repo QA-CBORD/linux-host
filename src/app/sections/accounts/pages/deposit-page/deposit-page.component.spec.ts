@@ -112,8 +112,8 @@ describe('DepositPageComponent', () => {
       const commonServiceStub: CommonService = fixture.debugElement.injector.get(
         CommonService
       );
-      spyOn(userFacadeServiceStub, 'isApplePayEnabled$').and.callThrough();
-      spyOn(commonServiceStub, 'getString').and.callThrough();
+     jest.spyOn(userFacadeServiceStub, 'isApplePayEnabled$');
+     jest.spyOn(commonServiceStub, 'getString');
       component.ngOnInit();
       expect(userFacadeServiceStub.isApplePayEnabled$).toHaveBeenCalled();
       expect(commonServiceStub.getString).toHaveBeenCalled();
@@ -134,11 +134,11 @@ describe('DepositPageComponent', () => {
       const externalPaymentServiceStub: ExternalPaymentService = fixture.debugElement.injector.get(
         ExternalPaymentService
       );
-      spyOn(component, 'confirmationDepositPopover').and.callThrough();
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(depositServiceStub, 'calculateDepositFee').and.callThrough();
-      spyOn(externalPaymentServiceStub, 'payWithApplePay').and.callThrough();
+     jest.spyOn(component, 'confirmationDepositPopover');
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(depositServiceStub, 'calculateDepositFee');
+     jest.spyOn(externalPaymentServiceStub, 'payWithApplePay');
       component.onFormSubmit();
       expect(component.confirmationDepositPopover).toHaveBeenCalled();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
@@ -160,14 +160,14 @@ describe('DepositPageComponent', () => {
       const externalPaymentServiceStub: ExternalPaymentService = fixture.debugElement.injector.get(
         ExternalPaymentService
       );
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(depositServiceStub, 'getUserAccounts').and.callThrough();
-      spyOn(
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(depositServiceStub, 'getUserAccounts');
+     jest.spyOn(
         externalPaymentServiceStub,
         'addUSAePayCreditCard'
-      ).and.callThrough();
+      );
       component.setFormValidators();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

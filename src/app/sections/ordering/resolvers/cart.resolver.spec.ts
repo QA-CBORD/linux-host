@@ -48,13 +48,13 @@ describe('CartResolver', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(
         merchantServiceStub,
         'getMerchantPaymentAccounts'
-      ).and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'getSettings').and.callThrough();
+      );
+     jest.spyOn(settingsFacadeServiceStub, 'getSettings');
       service.resolve();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

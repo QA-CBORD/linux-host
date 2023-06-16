@@ -50,7 +50,7 @@ describe('CreditCardService', () => {
       const accountsServiceStub: AccountsService = TestBed.inject(
         AccountsService
       );
-      spyOn(accountsServiceStub, 'removeCreditCardAccount').and.callThrough();
+     jest.spyOn(accountsServiceStub, 'removeCreditCardAccount');
       service.removeCreditCardAccount(userAccountStub);
       expect(accountsServiceStub.removeCreditCardAccount).toHaveBeenCalled();
     });
@@ -62,11 +62,11 @@ describe('CreditCardService', () => {
         ExternalPaymentService
       );
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(
+     jest.spyOn(
         externalPaymentServiceStub,
         'addUSAePayCreditCard'
-      ).and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+      );
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.addCreditCard();
       expect(
         externalPaymentServiceStub.addUSAePayCreditCard
@@ -81,9 +81,9 @@ describe('CreditCardService', () => {
       const accountsServiceStub: AccountsService = TestBed.inject(
         AccountsService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(accountsServiceStub, 'getUserAccounts').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(accountsServiceStub, 'getUserAccounts');
       service.retrieveAccounts();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

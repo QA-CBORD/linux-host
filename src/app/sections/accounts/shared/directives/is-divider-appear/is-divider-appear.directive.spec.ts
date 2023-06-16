@@ -47,8 +47,8 @@ describe('IsDividerAppearDirective', () => {
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
       const renderer2Stub: Renderer2 = TestBed.inject(Renderer2);
-      spyOn(renderer2Stub, 'setStyle').and.callThrough();
-      pipe.ngOnInit();
+     jest.spyOn(renderer2Stub, 'setStyle');
+      fixture.detectChanges();
       expect(renderer2Stub.setStyle).toHaveBeenCalled();
     });
   });

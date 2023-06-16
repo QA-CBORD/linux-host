@@ -61,14 +61,14 @@ describe('RoomsSearchPage', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(housingServiceStub, 'getFacilities').and.callThrough();
-      spyOn(
+     jest.spyOn(housingServiceStub, 'getFacilities');
+     jest.spyOn(
         roomsStateServiceStub,
         'createFacilityDictionary'
-      ).and.callThrough();
-      spyOn(roomsStateServiceStub, 'getParentFacilities').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+      );
+     jest.spyOn(roomsStateServiceStub, 'getParentFacilities');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.ngOnInit();
       expect(housingServiceStub.getFacilities).toHaveBeenCalled();
       expect(roomsStateServiceStub.createFacilityDictionary).toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe('RoomsSearchPage', () => {
       const housingServiceStub: HousingService = fixture.debugElement.injector.get(
         HousingService
       );
-      spyOn(housingServiceStub, 'goToDashboard').and.callThrough();
+     jest.spyOn(housingServiceStub, 'goToDashboard');
       component.goToDashboard();
       expect(housingServiceStub.goToDashboard).toHaveBeenCalled();
     });

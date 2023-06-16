@@ -39,13 +39,13 @@ describe('UnitsPage', () => {
       const roomsStateServiceStub: RoomsStateService = fixture.debugElement.injector.get(
         RoomsStateService
       );
-      spyOn(roomsStateServiceStub, 'setFacilities$').and.callThrough();
-      spyOn(
+     jest.spyOn(roomsStateServiceStub, 'setFacilities$');
+     jest.spyOn(
         roomsStateServiceStub,
         'updateActiveFilterFacilities'
-      ).and.callThrough();
-      spyOn(roomsStateServiceStub, 'getAllFacilityChildren').and.callThrough();
-      spyOn(roomsStateServiceStub, 'getFacilities$').and.callThrough();
+      );
+     jest.spyOn(roomsStateServiceStub, 'getAllFacilityChildren');
+     jest.spyOn(roomsStateServiceStub, 'getFacilities$');
       component.ngOnInit();
       expect(roomsStateServiceStub.setFacilities$).toHaveBeenCalled();
       expect(

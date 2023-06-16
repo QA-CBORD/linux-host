@@ -33,7 +33,7 @@ describe('RewardsService', () => {
 
   describe('getHistoryListRewards', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'combineAllRewards').and.callThrough();
+     jest.spyOn(service, 'combineAllRewards');
       service.getHistoryListRewards();
       expect(service.combineAllRewards).toHaveBeenCalled();
     });
@@ -41,7 +41,7 @@ describe('RewardsService', () => {
 
   describe('getRewardsTabsConfig', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getContentValueByName').and.callThrough();
+     jest.spyOn(service, 'getContentValueByName');
       service.getRewardsTabsConfig();
       expect(service.getContentValueByName).toHaveBeenCalled();
     });
@@ -52,10 +52,10 @@ describe('RewardsService', () => {
       const contentStringsFacadeServiceStub: ContentStringsFacadeService = TestBed.inject(
         ContentStringsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'retrieveContentStringListByRequest'
-      ).and.callThrough();
+      );
       service.initContentStringsList();
       expect(
         contentStringsFacadeServiceStub.retrieveContentStringListByRequest

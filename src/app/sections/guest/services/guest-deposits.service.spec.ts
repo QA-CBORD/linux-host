@@ -64,10 +64,10 @@ describe('GuestDepositsService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         settingsFacadeServiceStub,
         'getUserSettingNoCache'
-      ).and.callThrough();
+      );
       service.getRecipientList();
       expect(
         settingsFacadeServiceStub.getUserSettingNoCache
@@ -83,8 +83,8 @@ describe('GuestDepositsService', () => {
       const commerceApiServiceStub: CommerceApiService = TestBed.inject(
         CommerceApiService
       );
-      spyOn(authFacadeServiceStub, 'isGuestUser').and.callThrough();
-      spyOn(commerceApiServiceStub, 'retrieveAccountsByUser').and.callThrough();
+     jest.spyOn(authFacadeServiceStub, 'isGuestUser');
+     jest.spyOn(commerceApiServiceStub, 'retrieveAccountsByUser');
       service.guestAccounts();
       expect(authFacadeServiceStub.isGuestUser).toHaveBeenCalled();
       expect(commerceApiServiceStub.retrieveAccountsByUser).toHaveBeenCalled();

@@ -80,9 +80,9 @@ describe('UnitDetailsPage', () => {
       const housingServiceStub: HousingService = fixture.debugElement.injector.get(
         HousingService
       );
-      spyOn(roomsStateServiceStub, 'getUnitDetails').and.callThrough();
-      spyOn(roomsStateServiceStub, 'getActiveRoomSelect').and.callThrough();
-      spyOn(housingServiceStub, 'getOccupantDetails').and.callThrough();
+     jest.spyOn(roomsStateServiceStub, 'getUnitDetails');
+     jest.spyOn(roomsStateServiceStub, 'getActiveRoomSelect');
+     jest.spyOn(housingServiceStub, 'getOccupantDetails');
       component.ngOnInit();
       expect(roomsStateServiceStub.getUnitDetails).toHaveBeenCalled();
       expect(roomsStateServiceStub.getActiveRoomSelect).toHaveBeenCalled();
@@ -107,12 +107,12 @@ describe('UnitDetailsPage', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(housingServiceStub, 'goToDashboard').and.callThrough();
-      spyOn(roomsServiceStub, 'postContractRequest').and.callThrough();
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
-      spyOn(alertControllerStub, 'create').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(housingServiceStub, 'goToDashboard');
+     jest.spyOn(roomsServiceStub, 'postContractRequest');
+     jest.spyOn(toastServiceStub, 'showToast');
+     jest.spyOn(alertControllerStub, 'create');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.requestRoom();
       expect(housingServiceStub.goToDashboard).toHaveBeenCalled();
       expect(roomsServiceStub.postContractRequest).toHaveBeenCalled();

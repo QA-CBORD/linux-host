@@ -150,7 +150,7 @@ describe('UserPassForm', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.ionViewDidEnter();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
     });
@@ -161,9 +161,9 @@ describe('UserPassForm', () => {
       const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(
         MessageProxy
       );
-      spyOn(component, 'doHostedSignup').and.callThrough();
-      spyOn(component, 'redirectToSignup').and.callThrough();
-      spyOn(messageProxyStub, 'get').and.callThrough();
+     jest.spyOn(component, 'doHostedSignup');
+     jest.spyOn(component, 'redirectToSignup');
+     jest.spyOn(messageProxyStub, 'get');
       component.onSignup();
       expect(component.doHostedSignup).toHaveBeenCalled();
       expect(component.redirectToSignup).toHaveBeenCalled();
@@ -179,8 +179,8 @@ describe('UserPassForm', () => {
       const environmentFacadeServiceStub: EnvironmentFacadeService = fixture.debugElement.injector.get(
         EnvironmentFacadeService
       );
-      spyOn(inAppBrowserStub, 'create').and.callThrough();
-      spyOn(environmentFacadeServiceStub, 'getSitesURL').and.callThrough();
+     jest.spyOn(inAppBrowserStub, 'create');
+     jest.spyOn(environmentFacadeServiceStub, 'getSitesURL');
       component.redirectToSignup();
       expect(inAppBrowserStub.create).toHaveBeenCalled();
       expect(environmentFacadeServiceStub.getSitesURL).toHaveBeenCalled();
@@ -199,14 +199,14 @@ describe('UserPassForm', () => {
       const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(
         MessageProxy
       );
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'fetchContentStringModel'
-      ).and.callThrough();
-      spyOn(messageProxyStub, 'put').and.callThrough();
+      );
+     jest.spyOn(messageProxyStub, 'put');
       component.redirectToForgotPassword();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
@@ -223,7 +223,7 @@ describe('UserPassForm', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = fixture.debugElement.injector.get(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       component.isSignupEnabled$();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });

@@ -46,7 +46,7 @@ describe('ScanCodeComponent', () => {
       const locationStub: Location = fixture.debugElement.injector.get(
         Location
       );
-      spyOn(locationStub, 'back').and.callThrough();
+     jest.spyOn(locationStub, 'back');
       component.ionViewWillLeave();
       expect(locationStub.back).toHaveBeenCalled();
     });
@@ -57,7 +57,7 @@ describe('ScanCodeComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.manualEntry();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });

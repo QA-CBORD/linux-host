@@ -36,7 +36,7 @@ describe('NativeStartupFacadeService', () => {
   describe('isStatusOk', () => {
     it('makes expected calls', () => {
       const nativeStartupInfoStub: NativeStartupInfo = <any>{};
-      spyOn(component, 'isMessageOk').and.callThrough();
+     jest.spyOn(service, 'isMessageOk');
       service.isStatusOk(nativeStartupInfoStub);
       expect(service.isMessageOk).toHaveBeenCalled();
     });
@@ -50,13 +50,13 @@ describe('NativeStartupFacadeService', () => {
       const nativeStartupApiServiceStub: NativeStartupApiService = TestBed.inject(
         NativeStartupApiService
       );
-      spyOn(component, 'displayMessageToUser').and.callThrough();
-      spyOn(component, 'isMessageOk').and.callThrough();
-      spyOn(component, 'isStatusOk').and.callThrough();
-      spyOn(component, 'digessIsOk').and.callThrough();
-      spyOn(storageStateServiceStub, 'getStateEntityByKey$').and.callThrough();
-      spyOn(storageStateServiceStub, 'updateStateEntity').and.callThrough();
-      spyOn(nativeStartupApiServiceStub, 'nativeStartup').and.callThrough();
+     jest.spyOn(service, 'displayMessageToUser');
+     jest.spyOn(service, 'isMessageOk');
+     jest.spyOn(service, 'isStatusOk');
+     jest.spyOn(service, 'digessIsOk');
+     jest.spyOn(storageStateServiceStub, 'getStateEntityByKey$');
+     jest.spyOn(storageStateServiceStub, 'updateStateEntity');
+     jest.spyOn(nativeStartupApiServiceStub, 'nativeStartup');
       service.fetchNativeStartupInfo();
       expect(service.displayMessageToUser).toHaveBeenCalled();
       expect(service.isMessageOk).toHaveBeenCalled();

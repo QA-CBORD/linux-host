@@ -86,17 +86,17 @@ describe('CheckInOutSpotPage', () => {
       const housingServiceStub: HousingService = fixture.debugElement.injector.get(
         HousingService
       );
-      spyOn(datePipeStub, 'transform').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
-      spyOn(alertControllerStub, 'create').and.callThrough();
-      spyOn(
+     jest.spyOn(datePipeStub, 'transform');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(toastServiceStub, 'showToast');
+     jest.spyOn(alertControllerStub, 'create');
+     jest.spyOn(
         checkInOutStateServiceStub,
         'setActiveCheckInOutSlot'
-      ).and.callThrough();
-      spyOn(checkInOutServiceStub, 'selectSpot').and.callThrough();
-      spyOn(housingServiceStub, 'goToDashboard').and.callThrough();
+      );
+     jest.spyOn(checkInOutServiceStub, 'selectSpot');
+     jest.spyOn(housingServiceStub, 'goToDashboard');
       component.selectSpot(checkInOutSlotStub);
       expect(datePipeStub.transform).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
@@ -116,10 +116,10 @@ describe('CheckInOutSpotPage', () => {
       const checkInOutStateServiceStub: CheckInOutStateService = fixture.debugElement.injector.get(
         CheckInOutStateService
       );
-      spyOn(
+     jest.spyOn(
         checkInOutStateServiceStub,
         'getSelectedCheckInOutSlot'
-      ).and.callThrough();
+      );
       component.ngOnInit();
       expect(
         checkInOutStateServiceStub.getSelectedCheckInOutSlot

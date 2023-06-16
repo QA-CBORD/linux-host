@@ -25,7 +25,7 @@ describe('ScreenBrigtnessService', () => {
     it('makes expected calls', () => {
       const nativeProviderStub: NativeProvider = TestBed.inject(NativeProvider);
       const setBrightnessOptionsStub: SetBrightnessOptions = <any>{};
-      spyOn(nativeProviderStub, 'isMobile').and.callThrough();
+     jest.spyOn(nativeProviderStub, 'isMobile');
       service.setBrightness(setBrightnessOptionsStub);
       expect(nativeProviderStub.isMobile).toHaveBeenCalled();
     });
@@ -34,7 +34,7 @@ describe('ScreenBrigtnessService', () => {
   describe('getBrightness', () => {
     it('makes expected calls', () => {
       const nativeProviderStub: NativeProvider = TestBed.inject(NativeProvider);
-      spyOn(nativeProviderStub, 'isMobile').and.callThrough();
+     jest.spyOn(nativeProviderStub, 'isMobile');
       service.getBrightness();
       expect(nativeProviderStub.isMobile).toHaveBeenCalled();
     });

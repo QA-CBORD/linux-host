@@ -34,8 +34,8 @@ describe('AutomaticDepositResolver', () => {
         AutoDepositService
       );
       const depositServiceStub: DepositService = TestBed.inject(DepositService);
-      spyOn(autoDepositServiceStub, 'getUserAutoDepositInfo').and.callThrough();
-      spyOn(depositServiceStub, 'getUserAccounts').and.callThrough();
+     jest.spyOn(autoDepositServiceStub, 'getUserAutoDepositInfo');
+     jest.spyOn(depositServiceStub, 'getUserAccounts');
       service.resolve();
       expect(autoDepositServiceStub.getUserAutoDepositInfo).toHaveBeenCalled();
       expect(depositServiceStub.getUserAccounts).toHaveBeenCalled();

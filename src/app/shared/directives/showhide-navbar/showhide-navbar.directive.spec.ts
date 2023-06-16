@@ -1,12 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { ElementRef } from '@angular/core';
-import { Renderer2 } from '@angular/core';
-import { Router } from '@angular/router';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { NavigationService } from '@shared/services/navigation.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ShowHideNavbarDirective } from './showhide-navbar.directive';
 
 @Component({
@@ -42,7 +37,7 @@ describe('ShowHideNavbarDirective', () => {
     TestBed.configureTestingModule({
       declarations: [ShowHideNavbarDirective, TestComponent]
     });
-    spyOn(ShowHideNavbarDirective.prototype, 'initKeyboard');
+   jest.spyOn(ShowHideNavbarDirective.prototype, 'initKeyboard');
     fixture = TestBed.createComponent(TestComponent);
     fixture.detectChanges();
     elementsWithDirective = fixture.debugElement.queryAll(
@@ -70,10 +65,9 @@ describe('ShowHideNavbarDirective', () => {
   describe('initKeyboard', () => {
     it('makes expected calls', () => {
       const nativeProviderStub: NativeProvider = TestBed.inject(NativeProvider);
-      spyOn(nativeProviderStub, 'isMobile').and.callThrough();
-      (<jasmine.Spy>pipe.initKeyboard).and.callThrough();
-      pipe.initKeyboard();
-      expect(nativeProviderStub.isMobile).toHaveBeenCalled();
+     jest.spyOn(nativeProviderStub, 'isMobile');
+     ShowHideNavbarDirective.prototype.initKeyboard();
+     expect(nativeProviderStub.isMobile).toHaveBeenCalled();
     });
   });
 });

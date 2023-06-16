@@ -77,7 +77,7 @@ describe('SessionFacadeService', () => {
         }
       ]
     });
-    spyOn(SessionFacadeService.prototype, 'addAppStateListeners');
+   jest.spyOn(SessionFacadeService.prototype, 'addAppStateListeners');
     service = TestBed.inject(SessionFacadeService);
   });
 
@@ -99,12 +99,12 @@ describe('SessionFacadeService', () => {
       const connectivityAwareFacadeServiceStub: ConnectivityAwareFacadeService = TestBed.inject(
         ConnectivityAwareFacadeService
       );
-      spyOn(platformStub, 'ready').and.callThrough();
-      spyOn(
+     jest.spyOn(platformStub, 'ready');
+     jest.spyOn(
         connectivityAwareFacadeServiceStub,
         'isModalOpened'
-      ).and.callThrough();
-      (<jasmine.Spy>service.addAppStateListeners).and.callThrough();
+      );
+      (<jasmine.Spy>service.addAppStateListeners);
       service.addAppStateListeners();
       expect(platformStub.ready).toHaveBeenCalled();
       expect(
@@ -118,7 +118,7 @@ describe('SessionFacadeService', () => {
       const identityFacadeServiceStub: IdentityFacadeService = TestBed.inject(
         IdentityFacadeService
       );
-      spyOn(identityFacadeServiceStub, 'isVaultLocked').and.callThrough();
+     jest.spyOn(identityFacadeServiceStub, 'isVaultLocked');
       service.isVaultLocked();
       expect(identityFacadeServiceStub.isVaultLocked).toHaveBeenCalled();
     });
@@ -129,10 +129,10 @@ describe('SessionFacadeService', () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-      spyOn(
+     jest.spyOn(
         userFacadeServiceStub,
         'handlePushNotificationRegistration'
-      ).and.callThrough();
+      );
       service.handlePushNotificationRegistration();
       expect(
         userFacadeServiceStub.handlePushNotificationRegistration
@@ -143,7 +143,7 @@ describe('SessionFacadeService', () => {
   describe('getIsWeb', () => {
     it('makes expected calls', () => {
       const platformStub: Platform = TestBed.inject(Platform);
-      spyOn(platformStub, 'is').and.callThrough();
+     jest.spyOn(platformStub, 'is');
       service.getIsWeb();
       expect(platformStub.is).toHaveBeenCalled();
     });
@@ -154,7 +154,7 @@ describe('SessionFacadeService', () => {
       const identityFacadeServiceStub: IdentityFacadeService = TestBed.inject(
         IdentityFacadeService
       );
-      spyOn(identityFacadeServiceStub, 'lockVault').and.callThrough();
+     jest.spyOn(identityFacadeServiceStub, 'lockVault');
       service.lockVault();
       expect(identityFacadeServiceStub.lockVault).toHaveBeenCalled();
     });

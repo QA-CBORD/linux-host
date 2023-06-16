@@ -107,9 +107,9 @@ describe('ExternalLoginPage', () => {
         LoadingService
       );
       const institutionStub: Institution = <any>{};
-      spyOn(inAppBrowserStub, 'create').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(inAppBrowserStub, 'create');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.initializeInAppBrowser(institutionStub);
       expect(inAppBrowserStub.create).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
@@ -119,7 +119,7 @@ describe('ExternalLoginPage', () => {
 
   describe('ionViewDidEnter', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'loadLoginContent').and.callThrough();
+     jest.spyOn(component, 'loadLoginContent');
       component.ionViewDidEnter();
       expect(component.loadLoginContent).toHaveBeenCalled();
     });
@@ -127,7 +127,7 @@ describe('ExternalLoginPage', () => {
 
   describe('loadLoginContent', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initializeInAppBrowser').and.callThrough();
+     jest.spyOn(component, 'initializeInAppBrowser');
       component.loadLoginContent();
       expect(component.initializeInAppBrowser).toHaveBeenCalled();
     });

@@ -94,8 +94,8 @@ describe('ItemDetailComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(component, 'calculateTotalPrice').and.callThrough();
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(component, 'calculateTotalPrice');
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.ngOnInit();
       expect(component.calculateTotalPrice).toHaveBeenCalled();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
@@ -107,7 +107,7 @@ describe('ItemDetailComponent', () => {
       const navigationServiceStub: NavigationService = fixture.debugElement.injector.get(
         NavigationService
       );
-      spyOn(navigationServiceStub, 'navigate').and.callThrough();
+     jest.spyOn(navigationServiceStub, 'navigate');
       component.navigateToFullMenu();
       expect(navigationServiceStub.navigate).toHaveBeenCalled();
     });
@@ -118,7 +118,7 @@ describe('ItemDetailComponent', () => {
       const navigationServiceStub: NavigationService = fixture.debugElement.injector.get(
         NavigationService
       );
-      spyOn(navigationServiceStub, 'navigate').and.callThrough();
+     jest.spyOn(navigationServiceStub, 'navigate');
       component.onClose();
       expect(navigationServiceStub.navigate).toHaveBeenCalled();
     });
@@ -129,7 +129,7 @@ describe('ItemDetailComponent', () => {
       const formBuilderStub: FormBuilder = fixture.debugElement.injector.get(
         FormBuilder
       );
-      spyOn(formBuilderStub, 'group').and.callThrough();
+     jest.spyOn(formBuilderStub, 'group');
       component.initForm();
       expect(formBuilderStub.group).toHaveBeenCalled();
     });
@@ -137,7 +137,7 @@ describe('ItemDetailComponent', () => {
 
   describe('removeItems', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'calculateTotalPrice').and.callThrough();
+     jest.spyOn(component, 'calculateTotalPrice');
       component.removeItems();
       expect(component.calculateTotalPrice).toHaveBeenCalled();
     });
@@ -145,7 +145,7 @@ describe('ItemDetailComponent', () => {
 
   describe('addItems', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'calculateTotalPrice').and.callThrough();
+     jest.spyOn(component, 'calculateTotalPrice');
       component.addItems();
       expect(component.calculateTotalPrice).toHaveBeenCalled();
     });

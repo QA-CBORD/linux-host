@@ -23,7 +23,7 @@ describe("FilterSortComponent", () => {
   describe("sort", () => {
     it("makes expected calls", () => {
       const sortControlComponentStub: SortControlComponent = <any>{};
-      spyOn(component, "unselectAll").and.callThrough();
+     jest.spyOn(component, "unselectAll");
       component.sort(sortControlComponentStub);
       expect(component.unselectAll).toHaveBeenCalled();
     });

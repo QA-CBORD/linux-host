@@ -66,13 +66,13 @@ describe('FilterComponent', () => {
       const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
         TransactionService
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(
         transactionServiceStub,
         'getTransactionsByAccountId'
-      ).and.callThrough();
+      );
       component.onFilterDone(filterStateStub);
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
@@ -85,7 +85,7 @@ describe('FilterComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'setContentStrings').and.callThrough();
+     jest.spyOn(component, 'setContentStrings');
       component.ngOnInit();
       expect(component.setContentStrings).toHaveBeenCalled();
     });
@@ -96,7 +96,7 @@ describe('FilterComponent', () => {
       const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
         TransactionService
       );
-      spyOn(transactionServiceStub, 'getContentStrings').and.callThrough();
+     jest.spyOn(transactionServiceStub, 'getContentStrings');
       component.setContentStrings();
       expect(transactionServiceStub.getContentStrings).toHaveBeenCalled();
     });

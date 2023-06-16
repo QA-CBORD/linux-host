@@ -79,7 +79,7 @@ describe('PreLoginComponent', () => {
       const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(
         MessageProxy
       );
-      spyOn(messageProxyStub, 'get').and.callThrough();
+     jest.spyOn(messageProxyStub, 'get');
       component.ngOnInit();
       expect(messageProxyStub.get).toHaveBeenCalled();
     });
@@ -90,7 +90,7 @@ describe('PreLoginComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
       component.continueAsNonGuest();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
     });
@@ -101,7 +101,7 @@ describe('PreLoginComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
       component.continueAsGuest();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
     });

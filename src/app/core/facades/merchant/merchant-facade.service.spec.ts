@@ -38,7 +38,7 @@ describe('MerchantFacadeService', () => {
       const merchantApiServiceStub: MerchantApiService = TestBed.inject(
         MerchantApiService
       );
-      spyOn(merchantApiServiceStub, 'getFavoriteMerchants').and.callThrough();
+     jest.spyOn(merchantApiServiceStub, 'getFavoriteMerchants');
       service.fetchFavoriteMerchants();
       expect(merchantApiServiceStub.getFavoriteMerchants).toHaveBeenCalled();
     });

@@ -34,10 +34,10 @@ describe('RecentOrdersResolver', () => {
         MerchantService
       );
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(component, 'resolve').and.callThrough();
-      spyOn(merchantServiceStub, 'getRecentOrdersPeriod').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(service, 'resolve');
+     jest.spyOn(merchantServiceStub, 'getRecentOrdersPeriod');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.resolve();
       expect(service.resolve).toHaveBeenCalled();
       expect(merchantServiceStub.getRecentOrdersPeriod).toHaveBeenCalled();

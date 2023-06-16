@@ -105,8 +105,8 @@ describe('CheckInPendingComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.ionViewWillEnter();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
@@ -118,7 +118,7 @@ describe('CheckInPendingComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(popoverControllerStub, 'create').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'create');
       component.onCheckingClicked();
       expect(popoverControllerStub.create).toHaveBeenCalled();
     });
@@ -130,8 +130,8 @@ describe('CheckInPendingComponent', () => {
       const recentOrdersResolverStub: RecentOrdersResolver = fixture.debugElement.injector.get(
         RecentOrdersResolver
       );
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(recentOrdersResolverStub, 'resolve').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(recentOrdersResolverStub, 'resolve');
       component.onClosed();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(recentOrdersResolverStub.resolve).toHaveBeenCalled();
@@ -144,8 +144,8 @@ describe('CheckInPendingComponent', () => {
       const recentOrdersResolverStub: RecentOrdersResolver = fixture.debugElement.injector.get(
         RecentOrdersResolver
       );
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(recentOrdersResolverStub, 'resolve').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(recentOrdersResolverStub, 'resolve');
       component.goToOrderDetails();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(recentOrdersResolverStub.resolve).toHaveBeenCalled();
@@ -160,11 +160,11 @@ describe('CheckInPendingComponent', () => {
       const checkingServiceFacadeStub: CheckingServiceFacade = fixture.debugElement.injector.get(
         CheckingServiceFacade
       );
-      spyOn(modalControllerStub, 'create').and.callThrough();
-      spyOn(
+     jest.spyOn(modalControllerStub, 'create');
+     jest.spyOn(
         checkingServiceFacadeStub,
         'checkInOrderByBarcode'
-      ).and.callThrough();
+      );
       component.onScanCode();
       expect(modalControllerStub.create).toHaveBeenCalled();
       expect(
@@ -181,11 +181,11 @@ describe('CheckInPendingComponent', () => {
       const checkingServiceFacadeStub: CheckingServiceFacade = fixture.debugElement.injector.get(
         CheckingServiceFacade
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(
         checkingServiceFacadeStub,
         'checkInOrderByLocation'
-      ).and.callThrough();
+      );
       component.onLocationCheckinClicked();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(

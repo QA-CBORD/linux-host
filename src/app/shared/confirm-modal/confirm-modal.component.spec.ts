@@ -37,7 +37,7 @@ describe('ConfirmModalComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(popoverControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'dismiss');
       component.onScanCode();
       expect(popoverControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -48,7 +48,7 @@ describe('ConfirmModalComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(popoverControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'dismiss');
       component.onLocationCheckinClicked();
       expect(popoverControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -59,7 +59,7 @@ describe('ConfirmModalComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(popoverControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'dismiss');
       component.closeMe();
       expect(popoverControllerStub.dismiss).toHaveBeenCalled();
     });

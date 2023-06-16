@@ -50,7 +50,7 @@ describe('RoomsService', () => {
       const createContractRequestOptionsStub: CreateContractRequestOptions = <
         any
       >{};
-      spyOn(housingProxyServiceStub, 'post').and.callThrough();
+     jest.spyOn(housingProxyServiceStub, 'post');
       service.postContractRequest(createContractRequestOptionsStub);
       expect(housingProxyServiceStub.post).toHaveBeenCalled();
     });
@@ -61,10 +61,10 @@ describe('RoomsService', () => {
       const roomsStateServiceStub: RoomsStateService = TestBed.inject(
         RoomsStateService
       );
-      spyOn(
+     jest.spyOn(
         roomsStateServiceStub,
         'updateActiveFilterFacilities'
-      ).and.callThrough();
+      );
       service.clearFilter();
       expect(
         roomsStateServiceStub.updateActiveFilterFacilities

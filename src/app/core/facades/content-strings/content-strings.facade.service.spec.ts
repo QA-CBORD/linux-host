@@ -52,10 +52,10 @@ describe('ContentStringsFacadeService', () => {
         any
       >{};
       const cONTENT_STRINGS_DOMAINSStub: CONTENT_STRINGS_DOMAINS = <any>{};
-      spyOn(
+     jest.spyOn(
         contentStringsStateServiceStub,
         'getContentStrings$'
-      ).and.callThrough();
+      );
       service.getContentStrings$(
         cONTENT_STRINGS_DOMAINSStub,
         cONTENT_STRINGS_CATEGORIESStub
@@ -72,8 +72,8 @@ describe('ContentStringsFacadeService', () => {
         any
       >{};
       const cONTENT_STRINGS_DOMAINSStub: CONTENT_STRINGS_DOMAINS = <any>{};
-      spyOn(component, 'getContentStrings$').and.callThrough();
-      spyOn(component, 'fetchContentStrings$').and.callThrough();
+     jest.spyOn(service, 'getContentStrings$');
+     jest.spyOn(service, 'fetchContentStrings$');
       service.resolveContentStrings$(
         cONTENT_STRINGS_DOMAINSStub,
         cONTENT_STRINGS_CATEGORIESStub
@@ -89,10 +89,10 @@ describe('ContentStringsFacadeService', () => {
         ContentStringsApiService
       );
       const contentStringRequestStub: ContentStringRequest = <any>{};
-      spyOn(
+     jest.spyOn(
         contentStringsApiServiceStub,
         'retrieveContentStringListByRequest'
-      ).and.callThrough();
+      );
       service.retrieveContentStringListByRequest(contentStringRequestStub);
       expect(
         contentStringsApiServiceStub.retrieveContentStringListByRequest
@@ -105,7 +105,7 @@ describe('ContentStringsFacadeService', () => {
       const contentStringsStateServiceStub: ContentStringsStateService = TestBed.inject(
         ContentStringsStateService
       );
-      spyOn(contentStringsStateServiceStub, 'clearState').and.callThrough();
+     jest.spyOn(contentStringsStateServiceStub, 'clearState');
       service.clearState();
       expect(contentStringsStateServiceStub.clearState).toHaveBeenCalled();
     });

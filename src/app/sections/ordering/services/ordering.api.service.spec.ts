@@ -49,7 +49,7 @@ describe('OrderingApiService', () => {
       const merchantFacadeServiceStub: MerchantFacadeService = TestBed.inject(
         MerchantFacadeService
       );
-      spyOn(merchantFacadeServiceStub, 'fetchMenuMerchants').and.callThrough();
+     jest.spyOn(merchantFacadeServiceStub, 'fetchMenuMerchants');
       service.getMenuMerchants(merchantSearchOptionsStub);
       expect(merchantFacadeServiceStub.fetchMenuMerchants).toHaveBeenCalled();
     });
@@ -118,10 +118,10 @@ describe('OrderingApiService', () => {
       const merchantFacadeServiceStub: MerchantFacadeService = TestBed.inject(
         MerchantFacadeService
       );
-      spyOn(
+     jest.spyOn(
         merchantFacadeServiceStub,
         'fetchFavoriteMerchants'
-      ).and.callThrough();
+      );
       service.getFavoriteMerchants();
       expect(
         merchantFacadeServiceStub.fetchFavoriteMerchants

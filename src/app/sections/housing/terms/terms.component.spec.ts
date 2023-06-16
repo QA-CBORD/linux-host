@@ -45,7 +45,7 @@ describe('TermsComponent', () => {
         TermsService
       );
       const termStub: Term = <any>{};
-      spyOn(termsServiceStub, 'setTerm').and.callThrough();
+     jest.spyOn(termsServiceStub, 'setTerm');
       component.handleSelectTerm(termStub);
       expect(termsServiceStub.setTerm).toHaveBeenCalled();
     });
@@ -59,9 +59,9 @@ describe('TermsComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(termsServiceStub, 'getTerms').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(termsServiceStub, 'getTerms');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.ngOnInit();
       expect(termsServiceStub.getTerms).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

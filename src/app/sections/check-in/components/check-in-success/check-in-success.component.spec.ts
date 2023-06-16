@@ -46,7 +46,7 @@ describe('CheckInSuccessComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initContentString').and.callThrough();
+     jest.spyOn(component, 'initContentString');
       component.ngOnInit();
       expect(component.initContentString).toHaveBeenCalled();
     });
@@ -57,7 +57,7 @@ describe('CheckInSuccessComponent', () => {
       const recentOrdersResolverStub: RecentOrdersResolver = fixture.debugElement.injector.get(
         RecentOrdersResolver
       );
-      spyOn(recentOrdersResolverStub, 'resolve').and.callThrough();
+     jest.spyOn(recentOrdersResolverStub, 'resolve');
       component.ionViewWillLeave();
       expect(recentOrdersResolverStub.resolve).toHaveBeenCalled();
     });
@@ -66,7 +66,7 @@ describe('CheckInSuccessComponent', () => {
   describe('goToRecentOrders', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.goToRecentOrders();
       expect(routerStub.navigate).toHaveBeenCalled();
     });

@@ -89,7 +89,7 @@ describe('AccessCardComponent', () => {
       const mobileCredentialFacadeStub: MobileCredentialFacade = fixture.debugElement.injector.get(
         MobileCredentialFacade
       );
-      spyOn(mobileCredentialFacadeStub, 'onDestroy').and.callThrough();
+     jest.spyOn(mobileCredentialFacadeStub, 'onDestroy');
       component.ngOnDestroy();
       expect(mobileCredentialFacadeStub.onDestroy).toHaveBeenCalled();
     });
@@ -100,10 +100,10 @@ describe('AccessCardComponent', () => {
       const mobileCredentialFacadeStub: MobileCredentialFacade = fixture.debugElement.injector.get(
         MobileCredentialFacade
       );
-      spyOn(
+     jest.spyOn(
         mobileCredentialFacadeStub,
         'setCredentialStateChangeListener'
-      ).and.callThrough();
+      );
       component.ngAfterViewInit();
       expect(
         mobileCredentialFacadeStub.setCredentialStateChangeListener
@@ -116,7 +116,7 @@ describe('AccessCardComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.onCredentialStateChanged();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
@@ -127,7 +127,7 @@ describe('AccessCardComponent', () => {
       const mobileCredentialFacadeStub: MobileCredentialFacade = fixture.debugElement.injector.get(
         MobileCredentialFacade
       );
-      spyOn(mobileCredentialFacadeStub, 'refreshCredentials').and.callThrough();
+     jest.spyOn(mobileCredentialFacadeStub, 'refreshCredentials');
       component.ionViewWillEnter();
       expect(mobileCredentialFacadeStub.refreshCredentials).toHaveBeenCalled();
     });

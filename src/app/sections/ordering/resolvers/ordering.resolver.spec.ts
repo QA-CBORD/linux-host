@@ -45,16 +45,16 @@ describe('OrderingResolver', () => {
       const contentStringsFacadeServiceStub: ContentStringsFacadeService = TestBed.inject(
         ContentStringsFacadeService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(
         merchantServiceStub,
         'getMerchantsWithFavoriteInfo'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'fetchContentStrings$'
-      ).and.callThrough();
+      );
       service.resolve();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

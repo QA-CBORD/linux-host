@@ -15,7 +15,7 @@ describe('SearchPipe', () => {
 
   it('transforms X to Y', () => {
     const value: any = 'X';
-    const args: string[] = [];
+    const args = '';
     expect(pipe.transform(value, args)).toEqual('Y');
   });
 });

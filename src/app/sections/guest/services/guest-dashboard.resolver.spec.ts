@@ -55,18 +55,18 @@ describe('GuestDashboardResolver', () => {
       const prominentDisclosureServiceStub: ProminentDisclosureService = TestBed.inject(
         ProminentDisclosureService
       );
-      spyOn(userFacadeServiceStub, 'getUserData$').and.callThrough();
-      spyOn(
+     jest.spyOn(userFacadeServiceStub, 'getUserData$');
+     jest.spyOn(
         guestFacadeServiceStub,
         'configureGuestDashboard'
-      ).and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(messageProxyStub, 'put').and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(messageProxyStub, 'put');
+     jest.spyOn(
         prominentDisclosureServiceStub,
         'openProminentDisclosure'
-      ).and.callThrough();
+      );
       service.resolve();
       expect(userFacadeServiceStub.getUserData$).toHaveBeenCalled();
       expect(guestFacadeServiceStub.configureGuestDashboard).toHaveBeenCalled();

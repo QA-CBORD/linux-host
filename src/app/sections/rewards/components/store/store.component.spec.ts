@@ -32,8 +32,8 @@ describe('StoreComponent', () => {
       const rewardsServiceStub: RewardsService = fixture.debugElement.injector.get(
         RewardsService
       );
-      spyOn(rewardsServiceStub, 'getStoreRewards').and.callThrough();
-      spyOn(rewardsServiceStub, 'getStoreActiveRewards').and.callThrough();
+     jest.spyOn(rewardsServiceStub, 'getStoreRewards');
+     jest.spyOn(rewardsServiceStub, 'getStoreActiveRewards');
       component.ngOnInit();
       expect(rewardsServiceStub.getStoreRewards).toHaveBeenCalled();
       expect(rewardsServiceStub.getStoreActiveRewards).toHaveBeenCalled();

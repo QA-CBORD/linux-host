@@ -30,7 +30,7 @@ describe('HistoryComponent', () => {
       const rewardsServiceStub: RewardsService = fixture.debugElement.injector.get(
         RewardsService
       );
-      spyOn(rewardsServiceStub, 'getHistoryListRewards').and.callThrough();
+     jest.spyOn(rewardsServiceStub, 'getHistoryListRewards');
       component.ngOnInit();
       expect(rewardsServiceStub.getHistoryListRewards).toHaveBeenCalled();
     });

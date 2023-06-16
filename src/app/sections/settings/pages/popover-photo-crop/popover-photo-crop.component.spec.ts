@@ -29,7 +29,7 @@ describe('PopoverCropComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(popoverControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'dismiss');
       component.dismissModal();
       expect(popoverControllerStub.dismiss).toHaveBeenCalled();
     });

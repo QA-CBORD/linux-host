@@ -47,7 +47,7 @@ describe('USAePayService', () => {
       const authFacadeServiceStub: AuthFacadeService = TestBed.inject(
         AuthFacadeService
       );
-      spyOn(authFacadeServiceStub, 'getAuthenticationToken$').and.callThrough();
+     jest.spyOn(authFacadeServiceStub, 'getAuthenticationToken$');
       service.addUSAePayCreditCard();
       expect(authFacadeServiceStub.getAuthenticationToken$).toHaveBeenCalled();
     });

@@ -56,11 +56,11 @@ describe('SecureMessagePage', () => {
         SecureMessagingFacadeService
       );
       const secureMessageConversationStub: SecureMessageConversation = <any>{};
-      spyOn(component, 'startConversation').and.callThrough();
-      spyOn(
+     jest.spyOn(component, 'startConversation');
+     jest.spyOn(
         secureMessagingFacadeServiceStub,
         'setSelectedConversation'
-      ).and.callThrough();
+      );
       component.onClickConversation(secureMessageConversationStub);
       expect(component.startConversation).toHaveBeenCalled();
       expect(
@@ -72,7 +72,7 @@ describe('SecureMessagePage', () => {
   describe('startConversation', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.startConversation();
       expect(routerStub.navigate).toHaveBeenCalled();
     });

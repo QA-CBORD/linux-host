@@ -21,7 +21,7 @@ describe('SingleListComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'writeValue').and.callThrough();
+     jest.spyOn(component, 'writeValue');
       component.ngOnInit();
       expect(component.writeValue).toHaveBeenCalled();
     });

@@ -27,7 +27,7 @@ describe('ScanCardResolverService', () => {
       const barcodeFacadeServiceStub: BarcodeFacadeService = TestBed.inject(
         BarcodeFacadeService
       );
-      spyOn(barcodeFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(barcodeFacadeServiceStub, 'getSetting');
       service.resolve();
       expect(barcodeFacadeServiceStub.getSetting).toHaveBeenCalled();
     });

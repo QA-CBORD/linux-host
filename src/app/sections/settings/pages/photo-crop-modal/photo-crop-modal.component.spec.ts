@@ -52,7 +52,7 @@ describe('PhotoCropModalComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.cropperIsReady(dimensionsStub);
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
     });
@@ -63,7 +63,7 @@ describe('PhotoCropModalComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
       component.ionViewWillEnter();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
     });
@@ -74,7 +74,7 @@ describe('PhotoCropModalComponent', () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-      spyOn(toastServiceStub, 'showToast').and.callThrough();
+     jest.spyOn(toastServiceStub, 'showToast');
       component.loadImageFailed();
       expect(toastServiceStub.showToast).toHaveBeenCalled();
     });
@@ -85,7 +85,7 @@ describe('PhotoCropModalComponent', () => {
       const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
         PopoverController
       );
-      spyOn(popoverControllerStub, 'create').and.callThrough();
+     jest.spyOn(popoverControllerStub, 'create');
       component.showModal();
       expect(popoverControllerStub.create).toHaveBeenCalled();
     });

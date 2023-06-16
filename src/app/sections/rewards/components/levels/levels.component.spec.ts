@@ -30,7 +30,7 @@ describe('LevelsComponent', () => {
       const rewardsServiceStub: RewardsService = fixture.debugElement.injector.get(
         RewardsService
       );
-      spyOn(rewardsServiceStub, 'getTrackLevels').and.callThrough();
+     jest.spyOn(rewardsServiceStub, 'getTrackLevels');
       component.ngOnInit();
       expect(rewardsServiceStub.getTrackLevels).toHaveBeenCalled();
     });

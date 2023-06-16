@@ -171,9 +171,9 @@ describe('CartComponent', () => {
       const nonCheckingServiceStub: NonCheckingService = fixture.debugElement.injector.get(
         NonCheckingService
       );
-      spyOn(navigationServiceStub, 'navigate').and.callThrough();
-      spyOn(checkingProcessStub, 'start').and.callThrough();
-      spyOn(nonCheckingServiceStub, 'setSummary').and.callThrough();
+     jest.spyOn(navigationServiceStub, 'navigate');
+     jest.spyOn(checkingProcessStub, 'start');
+     jest.spyOn(nonCheckingServiceStub, 'setSummary');
       component.showModal(orderInfoStub);
       expect(navigationServiceStub.navigate).toHaveBeenCalled();
       expect(checkingProcessStub.start).toHaveBeenCalled();
@@ -186,7 +186,7 @@ describe('CartComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.ionViewWillEnter();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
@@ -197,9 +197,9 @@ describe('CartComponent', () => {
       const userFacadeServiceStub: UserFacadeService = fixture.debugElement.injector.get(
         UserFacadeService
       );
-      spyOn(component, 'initAddressModalConfig').and.callThrough();
-      spyOn(component, 'subscribe2NetworkChanges').and.callThrough();
-      spyOn(userFacadeServiceStub, 'isApplePayEnabled$').and.callThrough();
+     jest.spyOn(component, 'initAddressModalConfig');
+     jest.spyOn(component, 'subscribe2NetworkChanges');
+     jest.spyOn(userFacadeServiceStub, 'isApplePayEnabled$');
       component.ngOnInit();
       expect(component.initAddressModalConfig).toHaveBeenCalled();
       expect(component.subscribe2NetworkChanges).toHaveBeenCalled();
@@ -212,7 +212,7 @@ describe('CartComponent', () => {
       const connectionServiceStub: ConnectionService = fixture.debugElement.injector.get(
         ConnectionService
       );
-      spyOn(connectionServiceStub, 'networkStatus').and.callThrough();
+     jest.spyOn(connectionServiceStub, 'networkStatus');
       component.subscribe2NetworkChanges();
       expect(connectionServiceStub.networkStatus).toHaveBeenCalled();
     });
@@ -226,9 +226,9 @@ describe('CartComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(merchantServiceStub, 'retrieveBuildings').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(merchantServiceStub, 'retrieveBuildings');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.initAddressModalConfig();
       expect(merchantServiceStub.retrieveBuildings).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

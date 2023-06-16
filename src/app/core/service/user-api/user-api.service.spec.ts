@@ -41,11 +41,11 @@ describe('UserApiService', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       service.getUser().subscribe(res => {
-        expect(res).toEqual();
+        expect(res).toEqual({});
       });
       const req = httpTestingController.expectOne('/json/user');
       expect(req.request.method).toEqual('POST');
-      req.flush();
+      req.flush([]);
       httpTestingController.verify();
     });
   });
@@ -53,14 +53,14 @@ describe('UserApiService', () => {
   describe('getUserAddresses', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
-      spyOn(component, 'getUser').and.callThrough();
+     jest.spyOn(service, 'getUser');
       service.getUserAddresses().subscribe(res => {
-        expect(res).toEqual();
+        expect(res).toEqual({});
       });
       expect(service.getUser).toHaveBeenCalled();
       const req = httpTestingController.expectOne('/json/user');
       expect(req.request.method).toEqual('POST');
-      req.flush();
+      req.flush([]);
       httpTestingController.verify();
     });
   });

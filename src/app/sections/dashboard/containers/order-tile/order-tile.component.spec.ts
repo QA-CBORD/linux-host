@@ -67,8 +67,8 @@ describe('OrderTileComponent', () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(toastServiceStub, 'showError').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(toastServiceStub, 'showError');
       component.goToMerchant(merchantInfoStub);
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(toastServiceStub.showError).toHaveBeenCalled();
@@ -77,7 +77,7 @@ describe('OrderTileComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initMerchantSlides').and.callThrough();
+     jest.spyOn(component, 'initMerchantSlides');
       component.ngOnInit();
       expect(component.initMerchantSlides).toHaveBeenCalled();
     });
@@ -91,11 +91,11 @@ describe('OrderTileComponent', () => {
       const merchantServiceStub: MerchantService = fixture.debugElement.injector.get(
         MerchantService
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(
         merchantServiceStub,
         'getMerchantsWithFavoriteInfo'
-      ).and.callThrough();
+      );
       component.initMerchantSlides();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(

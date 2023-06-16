@@ -65,11 +65,11 @@ describe('CheckInOutPage', () => {
         CheckInOutStateService
       );
       const checkInOutSpotStub: CheckInOutSpot = <any>{};
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(
         checkInOutStateServiceStub,
         'setActiveCheckInOutSlot'
-      ).and.callThrough();
+      );
       component.showAvailableSpots(checkInOutSpotStub);
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(

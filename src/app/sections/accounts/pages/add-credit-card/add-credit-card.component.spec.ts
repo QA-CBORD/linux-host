@@ -68,9 +68,9 @@ describe('AddCreditCardComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(addCreditCardServiceStub, 'createAccount').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(addCreditCardServiceStub, 'createAccount');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.onFormSubmit();
       expect(addCreditCardServiceStub.createAccount).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

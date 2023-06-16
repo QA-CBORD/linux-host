@@ -85,12 +85,12 @@ describe('DashboardPageResolver', () => {
       const prominentDisclosureServiceStub: ProminentDisclosureService = TestBed.inject(
         ProminentDisclosureService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(
         prominentDisclosureServiceStub,
         'openProminentDisclosure'
-      ).and.callThrough();
+      );
       service.resolve(activatedRouteSnapshotStub);
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

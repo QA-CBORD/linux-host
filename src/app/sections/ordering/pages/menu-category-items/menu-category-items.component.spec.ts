@@ -79,7 +79,7 @@ describe('MenuCategoryItemsComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.ionViewWillEnter();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
@@ -90,7 +90,7 @@ describe('MenuCategoryItemsComponent', () => {
       const navigationServiceStub: NavigationService = fixture.debugElement.injector.get(
         NavigationService
       );
-      spyOn(navigationServiceStub, 'navigate').and.callThrough();
+     jest.spyOn(navigationServiceStub, 'navigate');
       component.onBackBtnClicked();
       expect(navigationServiceStub.navigate).toHaveBeenCalled();
     });
@@ -107,10 +107,10 @@ describe('MenuCategoryItemsComponent', () => {
       const navigationServiceStub: NavigationService = fixture.debugElement.injector.get(
         NavigationService
       );
-      spyOn(cartServiceStub, 'validateOrder').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(navigationServiceStub, 'navigate').and.callThrough();
+     jest.spyOn(cartServiceStub, 'validateOrder');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(navigationServiceStub, 'navigate');
       component.redirectToCart();
       expect(cartServiceStub.validateOrder).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();

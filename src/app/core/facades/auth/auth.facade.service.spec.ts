@@ -29,7 +29,7 @@ describe('AuthFacadeService', () => {
       encodePin: pin => ({ pipe: () => ({}) })
     });
     const userFacadeServiceStub = () => ({
-      getUser$: () => ({ pipe: () => ({}) })
+      getUser$: jest.fn(() => ({ pipe: () => ({}) }))
     });
     TestBed.configureTestingModule({
       providers: [
@@ -57,11 +57,11 @@ describe('AuthFacadeService', () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-      spyOn(component, 'isGuestUser').and.callThrough();
-      spyOn(component, 'setIsGuestUser').and.callThrough();
-      spyOn(authApiServiceStub, 'authenticateUser').and.callThrough();
-      spyOn(storageStateServiceStub, 'updateStateEntity').and.callThrough();
-      spyOn(userFacadeServiceStub, 'getUser$').and.callThrough();
+     jest.spyOn(service, 'isGuestUser');
+     jest.spyOn(service, 'setIsGuestUser');
+     jest.spyOn(authApiServiceStub, 'authenticateUser');
+     jest.spyOn(storageStateServiceStub, 'updateStateEntity');
+     jest.spyOn(userFacadeServiceStub, 'getUser$');
       service.authenticateUser$(userLoginStub);
       expect(service.isGuestUser).toHaveBeenCalled();
       expect(service.setIsGuestUser).toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('AuthFacadeService', () => {
 
   describe('getAuthSessionToken$', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'authenticateSystem$').and.callThrough();
+     jest.spyOn(service, 'authenticateSystem$');
       service.getAuthSessionToken$();
       expect(service.authenticateSystem$).toHaveBeenCalled();
     });
@@ -84,7 +84,7 @@ describe('AuthFacadeService', () => {
       const storageStateServiceStub: StorageStateService = TestBed.inject(
         StorageStateService
       );
-      spyOn(storageStateServiceStub, 'getStateEntityByKey$').and.callThrough();
+     jest.spyOn(storageStateServiceStub, 'getStateEntityByKey$');
       service.isGuestUser();
       expect(storageStateServiceStub.getStateEntityByKey$).toHaveBeenCalled();
     });
@@ -93,7 +93,7 @@ describe('AuthFacadeService', () => {
   describe('authenticateSystem$', () => {
     it('makes expected calls', () => {
       const authApiServiceStub: AuthApiService = TestBed.inject(AuthApiService);
-      spyOn(authApiServiceStub, 'authenticateSystem').and.callThrough();
+     jest.spyOn(authApiServiceStub, 'authenticateSystem');
       service.authenticateSystem$();
       expect(authApiServiceStub.authenticateSystem).toHaveBeenCalled();
     });
@@ -102,7 +102,7 @@ describe('AuthFacadeService', () => {
   describe('getAuthenticationToken$', () => {
     it('makes expected calls', () => {
       const authApiServiceStub: AuthApiService = TestBed.inject(AuthApiService);
-      spyOn(authApiServiceStub, 'getAuthenticationToken').and.callThrough();
+     jest.spyOn(authApiServiceStub, 'getAuthenticationToken');
       service.getAuthenticationToken$();
       expect(authApiServiceStub.getAuthenticationToken).toHaveBeenCalled();
     });

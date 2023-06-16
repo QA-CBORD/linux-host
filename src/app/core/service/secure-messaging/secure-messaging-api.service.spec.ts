@@ -28,7 +28,7 @@ describe('SecureMessagingApiService', () => {
     it('makes expected calls', () => {
       const secureMessageInfoStub: SecureMessageInfo = <any>{};
       const aPIServiceStub: APIService = TestBed.inject(APIService);
-      spyOn(aPIServiceStub, 'authenticatedHTTPCall').and.callThrough();
+     jest.spyOn(aPIServiceStub, 'authenticatedHTTPCall');
       service.postSecureMessage(secureMessageInfoStub);
       expect(aPIServiceStub.authenticatedHTTPCall).toHaveBeenCalled();
     });
@@ -38,7 +38,7 @@ describe('SecureMessagingApiService', () => {
     it('makes expected calls', () => {
       const secureMessageInfoStub: SecureMessageInfo = <any>{};
       const aPIServiceStub: APIService = TestBed.inject(APIService);
-      spyOn(aPIServiceStub, 'authenticatedHTTPCall').and.callThrough();
+     jest.spyOn(aPIServiceStub, 'authenticatedHTTPCall');
       service.replyToSecureMessage(secureMessageInfoStub);
       expect(aPIServiceStub.authenticatedHTTPCall).toHaveBeenCalled();
     });
@@ -48,7 +48,7 @@ describe('SecureMessagingApiService', () => {
     it('makes expected calls', () => {
       const markAsReadValStub: MarkAsReadVal = <any>{};
       const aPIServiceStub: APIService = TestBed.inject(APIService);
-      spyOn(aPIServiceStub, 'authenticatedHTTPCall').and.callThrough();
+     jest.spyOn(aPIServiceStub, 'authenticatedHTTPCall');
       service.marAsRead(markAsReadValStub);
       expect(aPIServiceStub.authenticatedHTTPCall).toHaveBeenCalled();
     });

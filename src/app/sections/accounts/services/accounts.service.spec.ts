@@ -44,7 +44,7 @@ describe('AccountService', () => {
       const commerceApiServiceStub: CommerceApiService = TestBed.inject(
         CommerceApiService
       );
-      spyOn(commerceApiServiceStub, 'getUserAccounts').and.callThrough();
+     jest.spyOn(commerceApiServiceStub, 'getUserAccounts');
       service.getUserAccounts();
       expect(commerceApiServiceStub.getUserAccounts).toHaveBeenCalled();
     });
@@ -55,14 +55,14 @@ describe('AccountService', () => {
       const contentStringsFacadeServiceStub: ContentStringsFacadeService = TestBed.inject(
         ContentStringsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'retrieveContentStringListByRequest'
-      ).and.callThrough();
-      spyOn(
+      );
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'fetchContentString$'
-      ).and.callThrough();
+      );
       service.initContentStringsList();
       expect(
         contentStringsFacadeServiceStub.retrieveContentStringListByRequest
@@ -75,8 +75,8 @@ describe('AccountService', () => {
 
   describe('getAccountsFilteredByDisplayTenders', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getSettingByName').and.callThrough();
-      spyOn(component, 'transformStringToArray').and.callThrough();
+     jest.spyOn(service, 'getSettingByName');
+     jest.spyOn(service, 'transformStringToArray');
       service.getAccountsFilteredByDisplayTenders();
       expect(service.getSettingByName).toHaveBeenCalled();
       expect(service.transformStringToArray).toHaveBeenCalled();
@@ -85,8 +85,8 @@ describe('AccountService', () => {
 
   describe('getAccountsFilteredByDepositTenders', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getSettingByName').and.callThrough();
-      spyOn(component, 'transformStringToArray').and.callThrough();
+     jest.spyOn(service, 'getSettingByName');
+     jest.spyOn(service, 'transformStringToArray');
       service.getAccountsFilteredByDepositTenders();
       expect(service.getSettingByName).toHaveBeenCalled();
       expect(service.transformStringToArray).toHaveBeenCalled();

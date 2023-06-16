@@ -34,7 +34,7 @@ describe('ExpandItemComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.closeExpand();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });

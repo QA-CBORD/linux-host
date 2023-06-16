@@ -91,9 +91,9 @@ describe('ActivateLocationComponent', () => {
       const mActivateMobileLocationResultStub: MActivateMobileLocationResult = <
         any
       >{};
-      spyOn(component, 'activateLocation').and.callThrough();
-      spyOn(navControllerStub, 'navigateBack').and.callThrough();
-      spyOn(popoverControllerStub, 'create').and.callThrough();
+     jest.spyOn(component, 'activateLocation');
+     jest.spyOn(navControllerStub, 'navigateBack');
+     jest.spyOn(popoverControllerStub, 'create');
       component.modalHandler(mActivateMobileLocationResultStub);
       expect(component.activateLocation).toHaveBeenCalled();
       expect(navControllerStub.navigateBack).toHaveBeenCalled();
@@ -109,8 +109,8 @@ describe('ActivateLocationComponent', () => {
       const commerceApiServiceStub: CommerceApiService = fixture.debugElement.injector.get(
         CommerceApiService
       );
-      spyOn(mobileAccessServiceStub, 'getLocationById').and.callThrough();
-      spyOn(commerceApiServiceStub, 'getCashlessUserId').and.callThrough();
+     jest.spyOn(mobileAccessServiceStub, 'getLocationById');
+     jest.spyOn(commerceApiServiceStub, 'getCashlessUserId');
       component.ngOnInit();
       expect(mobileAccessServiceStub.getLocationById).toHaveBeenCalled();
       expect(commerceApiServiceStub.getCashlessUserId).toHaveBeenCalled();
@@ -125,14 +125,14 @@ describe('ActivateLocationComponent', () => {
       const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
         LoadingService
       );
-      spyOn(component, 'modalHandler').and.callThrough();
-      spyOn(component, 'presentToast').and.callThrough();
-      spyOn(
+     jest.spyOn(component, 'modalHandler');
+     jest.spyOn(component, 'presentToast');
+     jest.spyOn(
         mobileAccessServiceStub,
         'activateMobileLocation'
-      ).and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+      );
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       component.activateLocation();
       expect(component.modalHandler).toHaveBeenCalled();
       expect(component.presentToast).toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe('ActivateLocationComponent', () => {
       const mobileAccessServiceStub: MobileAccessService = fixture.debugElement.injector.get(
         MobileAccessService
       );
-      spyOn(mobileAccessServiceStub, 'updateFavouritesList').and.callThrough();
+     jest.spyOn(mobileAccessServiceStub, 'updateFavouritesList');
       component.favouriteHandler();
       expect(mobileAccessServiceStub.updateFavouritesList).toHaveBeenCalled();
     });

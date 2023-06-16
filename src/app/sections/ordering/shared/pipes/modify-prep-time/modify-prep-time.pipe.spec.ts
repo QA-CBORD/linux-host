@@ -25,7 +25,7 @@ describe('ModifyPrepTimePipe', () => {
 
   it('transforms X to Y', () => {
     const value: any = 'X';
-    const args: string[] = [];
+    const args = {} as any;
     expect(pipe.transform(value, args)).toEqual('Y');
   });
 });

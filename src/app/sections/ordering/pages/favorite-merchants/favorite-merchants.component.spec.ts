@@ -92,7 +92,7 @@ describe('FavoriteMerchantsComponent', () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-      spyOn(toastServiceStub, 'showError').and.callThrough();
+     jest.spyOn(toastServiceStub, 'showError');
       component.merchantClickHandler(merchantInfoStub);
       expect(toastServiceStub.showError).toHaveBeenCalled();
     });
@@ -101,7 +101,7 @@ describe('FavoriteMerchantsComponent', () => {
   describe('backToOrdering', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.backToOrdering();
       expect(routerStub.navigate).toHaveBeenCalled();
     });

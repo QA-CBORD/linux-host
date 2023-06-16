@@ -45,7 +45,7 @@ describe('DepositService', () => {
       const commerceApiServiceStub: CommerceApiService = TestBed.inject(
         CommerceApiService
       );
-      spyOn(commerceApiServiceStub, 'getUserAccounts').and.callThrough();
+     jest.spyOn(commerceApiServiceStub, 'getUserAccounts');
       service.getUserAccounts();
       expect(commerceApiServiceStub.getUserAccounts).toHaveBeenCalled();
     });
@@ -56,10 +56,10 @@ describe('DepositService', () => {
       const contentStringsFacadeServiceStub: ContentStringsFacadeService = TestBed.inject(
         ContentStringsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'retrieveContentStringByConfig'
-      ).and.callThrough();
+      );
       service.initContentStringsList();
       expect(
         contentStringsFacadeServiceStub.retrieveContentStringByConfig

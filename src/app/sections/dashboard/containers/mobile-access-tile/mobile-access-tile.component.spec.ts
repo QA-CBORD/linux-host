@@ -46,7 +46,7 @@ describe('MobileAccessTileComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getLocations').and.callThrough();
+     jest.spyOn(component, 'getLocations');
       component.ngOnInit();
       expect(component.getLocations).toHaveBeenCalled();
     });
@@ -60,8 +60,8 @@ describe('MobileAccessTileComponent', () => {
       const mobileAccessServiceStub: MobileAccessService = fixture.debugElement.injector.get(
         MobileAccessService
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
-      spyOn(mobileAccessServiceStub, 'getLocations').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
+     jest.spyOn(mobileAccessServiceStub, 'getLocations');
       component.getLocations();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(mobileAccessServiceStub.getLocations).toHaveBeenCalled();

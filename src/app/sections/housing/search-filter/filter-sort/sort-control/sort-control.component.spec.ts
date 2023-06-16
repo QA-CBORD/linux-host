@@ -21,7 +21,7 @@ describe('SortControlComponent', () => {
 
   describe('select', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'isDescend').and.callThrough();
+     jest.spyOn(component, 'isDescend');
       component.select();
       expect(component.isDescend).toHaveBeenCalled();
     });

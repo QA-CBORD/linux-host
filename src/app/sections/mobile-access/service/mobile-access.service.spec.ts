@@ -57,7 +57,7 @@ describe('MobileAccessService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.getInstitutionColor();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });
@@ -68,10 +68,10 @@ describe('MobileAccessService', () => {
       const contentStringsFacadeServiceStub: ContentStringsFacadeService = TestBed.inject(
         ContentStringsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'retrieveContentStringListByRequest'
-      ).and.callThrough();
+      );
       service.initContentStringsList();
       expect(
         contentStringsFacadeServiceStub.retrieveContentStringListByRequest
@@ -84,10 +84,10 @@ describe('MobileAccessService', () => {
       const contentStringsFacadeServiceStub: ContentStringsFacadeService = TestBed.inject(
         ContentStringsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'retrieveContentStringListByRequest'
-      ).and.callThrough();
+      );
       service.initContentStringsListgfas();
       expect(
         contentStringsFacadeServiceStub.retrieveContentStringListByRequest
@@ -99,7 +99,7 @@ describe('MobileAccessService', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       const coordsServiceStub: CoordsService = TestBed.inject(CoordsService);
-      spyOn(coordsServiceStub, 'getCoords').and.callThrough();
+     jest.spyOn(coordsServiceStub, 'getCoords');
       service.getMobileLocations().subscribe(res => {
         expect(res).toEqual([]);
       });
@@ -113,8 +113,8 @@ describe('MobileAccessService', () => {
 
   describe('getLocations', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'getMobileLocations').and.callThrough();
-      spyOn(component, 'getFavouritesLocations').and.callThrough();
+     jest.spyOn(service, 'getMobileLocations');
+     jest.spyOn(service, 'getFavouritesLocations');
       service.getLocations();
       expect(service.getMobileLocations).toHaveBeenCalled();
       expect(service.getFavouritesLocations).toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe('MobileAccessService', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
         SettingsFacadeService
       );
-      spyOn(settingsFacadeServiceStub, 'getUserSetting').and.callThrough();
+     jest.spyOn(settingsFacadeServiceStub, 'getUserSetting');
       service.getFavouritesLocations();
       expect(settingsFacadeServiceStub.getUserSetting).toHaveBeenCalled();
     });

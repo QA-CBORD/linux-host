@@ -43,13 +43,13 @@ describe('AccountsPageResolver', () => {
         TransactionService
       );
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(accountServiceStub, 'initContentStringsList').and.callThrough();
-      spyOn(accountServiceStub, 'getUserAccounts').and.callThrough();
-      spyOn(accountServiceStub, 'getUserSettings').and.callThrough();
-      spyOn(transactionServiceStub, 'initContentStringsList').and.callThrough();
-      spyOn(transactionServiceStub, 'getRecentTransactions').and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(accountServiceStub, 'initContentStringsList');
+     jest.spyOn(accountServiceStub, 'getUserAccounts');
+     jest.spyOn(accountServiceStub, 'getUserSettings');
+     jest.spyOn(transactionServiceStub, 'initContentStringsList');
+     jest.spyOn(transactionServiceStub, 'getRecentTransactions');
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.resolve();
       expect(accountServiceStub.initContentStringsList).toHaveBeenCalled();
       expect(accountServiceStub.getUserAccounts).toHaveBeenCalled();

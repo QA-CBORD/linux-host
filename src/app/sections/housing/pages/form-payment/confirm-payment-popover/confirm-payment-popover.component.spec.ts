@@ -25,7 +25,7 @@ describe('ConfirmPaymentPopover', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'initPopover').and.callThrough();
+     jest.spyOn(component, 'initPopover');
       component.ngOnInit();
       expect(component.initPopover).toHaveBeenCalled();
     });

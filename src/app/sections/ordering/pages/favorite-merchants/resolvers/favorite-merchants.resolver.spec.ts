@@ -40,12 +40,12 @@ describe('FavoriteMerchantsResolver', () => {
         FavoriteMerchantsService
       );
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(
+     jest.spyOn(
         favoriteMerchantsServiceStub,
         'getFavoriteMerchants'
-      ).and.callThrough();
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+      );
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.resolve();
       expect(
         favoriteMerchantsServiceStub.getFavoriteMerchants

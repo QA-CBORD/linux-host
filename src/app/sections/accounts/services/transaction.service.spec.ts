@@ -46,10 +46,10 @@ describe('TransactionService', () => {
       const contentStringsFacadeServiceStub: ContentStringsFacadeService = TestBed.inject(
         ContentStringsFacadeService
       );
-      spyOn(
+     jest.spyOn(
         contentStringsFacadeServiceStub,
         'retrieveContentStringListByRequest'
-      ).and.callThrough();
+      );
       service.initContentStringsList();
       expect(
         contentStringsFacadeServiceStub.retrieveContentStringListByRequest

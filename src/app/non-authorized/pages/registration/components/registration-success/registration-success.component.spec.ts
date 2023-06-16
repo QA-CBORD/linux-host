@@ -27,7 +27,7 @@ describe('RegistrationSuccessComponent', () => {
       const modalControllerStub: ModalController = fixture.debugElement.injector.get(
         ModalController
       );
-      spyOn(modalControllerStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalControllerStub, 'dismiss');
       component.dismiss();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -35,7 +35,7 @@ describe('RegistrationSuccessComponent', () => {
 
   describe('onDecline', () => {
     it('makes expected calls', () => {
-      spyOn(component, 'dismiss').and.callThrough();
+     jest.spyOn(component, 'dismiss');
       component.onDecline();
       expect(component.dismiss).toHaveBeenCalled();
     });

@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { Platform } from '@ionic/angular';
-import { Storage } from '@capacitor/preferences';
 import { StorageStateService } from './storage-state.service';
 
 describe('StorageStateService', () => {
@@ -14,7 +13,7 @@ describe('StorageStateService', () => {
         { provide: Platform, useFactory: platformStub }
       ]
     });
-    spyOn(StorageStateService.prototype, 'initialization');
+   jest.spyOn(StorageStateService.prototype, 'initialization');
     service = TestBed.inject(StorageStateService);
   });
 
@@ -23,7 +22,7 @@ describe('StorageStateService', () => {
   });
 
   it(`activeUpdaters has default value`, () => {
-    expect(service.activeUpdaters).toEqual(0);
+    expect(service['activeUpdaters']).toEqual(0);
   });
 
   describe('constructor', () => {

@@ -35,8 +35,8 @@ describe('MerchantApiService', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       const merchantSearchOptionsStub: MerchantSearchOptions = <any>{};
       const coordsServiceStub: CoordsService = TestBed.inject(CoordsService);
-      spyOn(merchantSearchOptionsStub, 'addSearchOption').and.callThrough();
-      spyOn(coordsServiceStub, 'getCoords').and.callThrough();
+     jest.spyOn(merchantSearchOptionsStub, 'addSearchOption');
+     jest.spyOn(coordsServiceStub, 'getCoords');
       service.getMerchants(merchantSearchOptionsStub).subscribe(res => {
         expect(res).toEqual(merchantSearchOptionsStub);
       });
@@ -54,8 +54,8 @@ describe('MerchantApiService', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);
       const merchantSearchOptionsStub: MerchantSearchOptions = <any>{};
       const coordsServiceStub: CoordsService = TestBed.inject(CoordsService);
-      spyOn(merchantSearchOptionsStub, 'addSearchOption').and.callThrough();
-      spyOn(coordsServiceStub, 'getCoords').and.callThrough();
+     jest.spyOn(merchantSearchOptionsStub, 'addSearchOption');
+     jest.spyOn(coordsServiceStub, 'getCoords');
       service.getMenuMerchants(merchantSearchOptionsStub).subscribe(res => {
         expect(res).toEqual(merchantSearchOptionsStub);
       });

@@ -159,8 +159,8 @@ describe('HousingService', () => {
         HousingProxyService
       );
       const requestedRoommateRequestStub: RequestedRoommateRequest = <any>{};
-      spyOn(component, '_handleGetRequestedRoommatesError').and.callThrough();
-      spyOn(housingProxyServiceStub, 'post').and.callThrough();
+     jest.spyOn(service, '_handleGetRequestedRoommatesError');
+     jest.spyOn(housingProxyServiceStub, 'post');
       service.getRequestedRoommates(requestedRoommateRequestStub);
       expect(service._handleGetRequestedRoommatesError).toHaveBeenCalled();
       expect(housingProxyServiceStub.post).toHaveBeenCalled();
@@ -173,7 +173,7 @@ describe('HousingService', () => {
         InspectionsStateService
       );
       const inspectionStub: Inspection = <any>{};
-      spyOn(inspectionsStateServiceStub, 'setInspectionForm').and.callThrough();
+     jest.spyOn(inspectionsStateServiceStub, 'setInspectionForm');
       service._setInspection(inspectionStub);
       expect(inspectionsStateServiceStub.setInspectionForm).toHaveBeenCalled();
     });
@@ -185,7 +185,7 @@ describe('HousingService', () => {
         HousingProxyService
       );
       const applicationDetailsStub: ApplicationDetails = <any>{};
-      spyOn(housingProxyServiceStub, 'put').and.callThrough();
+     jest.spyOn(housingProxyServiceStub, 'put');
       service.updatePaymentSuccess(applicationDetailsStub);
       expect(housingProxyServiceStub.put).toHaveBeenCalled();
     });
@@ -193,7 +193,7 @@ describe('HousingService', () => {
 
   describe('_handleGetRoomSelectsError', () => {
     it('makes expected calls', () => {
-      spyOn(component, '_setRoomsState').and.callThrough();
+     jest.spyOn(service, '_setRoomsState');
       service._handleGetRoomSelectsError();
       expect(service._setRoomsState).toHaveBeenCalled();
     });
@@ -201,7 +201,7 @@ describe('HousingService', () => {
 
   describe('_handleInspectionSelectedError', () => {
     it('makes expected calls', () => {
-      spyOn(component, '_setInspection').and.callThrough();
+     jest.spyOn(service, '_setInspection');
       service._handleInspectionSelectedError();
       expect(service._setInspection).toHaveBeenCalled();
     });
@@ -209,7 +209,7 @@ describe('HousingService', () => {
 
   describe('_handleInspectionListSelectedError', () => {
     it('makes expected calls', () => {
-      spyOn(component, '_setInspectionsList').and.callThrough();
+     jest.spyOn(service, '_setInspectionsList');
       service._handleInspectionListSelectedError();
       expect(service._setInspectionsList).toHaveBeenCalled();
     });
@@ -217,7 +217,7 @@ describe('HousingService', () => {
 
   describe('_handleAttachmentListSelectedError', () => {
     it('makes expected calls', () => {
-      spyOn(component, '_setAttachmenstList').and.callThrough();
+     jest.spyOn(service, '_setAttachmenstList');
       service._handleAttachmentListSelectedError();
       expect(service._setAttachmenstList).toHaveBeenCalled();
     });
@@ -225,7 +225,7 @@ describe('HousingService', () => {
 
   describe('_handleGetRequestedRoommatesError', () => {
     it('makes expected calls', () => {
-      spyOn(component, '_setRequestedRoommateState').and.callThrough();
+     jest.spyOn(service, '_setRequestedRoommateState');
       service._handleGetRequestedRoommatesError();
       expect(service._setRequestedRoommateState).toHaveBeenCalled();
     });
@@ -233,7 +233,7 @@ describe('HousingService', () => {
 
   describe('_handleGetContractSummariesError', () => {
     it('makes expected calls', () => {
-      spyOn(component, '_setContractSummariesState').and.callThrough();
+     jest.spyOn(service, '_setContractSummariesState');
       service._handleGetContractSummariesError();
       expect(service._setContractSummariesState).toHaveBeenCalled();
     });
@@ -241,7 +241,7 @@ describe('HousingService', () => {
 
   describe('_handleGetCheckInOutsError', () => {
     it('makes expected calls', () => {
-      spyOn(component, '_setCheckInOutsState').and.callThrough();
+     jest.spyOn(service, '_setCheckInOutsState');
       service._handleGetCheckInOutsError();
       expect(service._setCheckInOutsState).toHaveBeenCalled();
     });
@@ -251,8 +251,8 @@ describe('HousingService', () => {
     it('makes expected calls', () => {
       const routerStub: Router = TestBed.inject(Router);
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.goToDashboard();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
@@ -263,8 +263,8 @@ describe('HousingService', () => {
     it('makes expected calls', () => {
       const routerStub: Router = TestBed.inject(Router);
       const loadingServiceStub: LoadingService = TestBed.inject(LoadingService);
-      spyOn(routerStub, 'navigate').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.goToDashboard$();
       expect(routerStub.navigate).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

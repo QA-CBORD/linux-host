@@ -73,7 +73,7 @@ describe('SavedAddressesComponent', () => {
     it('makes expected calls', () => {
       const addressInfoStub: AddressInfo = <any>{};
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-      spyOn(routerStub, 'navigate').and.callThrough();
+     jest.spyOn(routerStub, 'navigate');
       component.onAddressSelected(addressInfoStub);
       expect(routerStub.navigate).toHaveBeenCalled();
     });
@@ -84,7 +84,7 @@ describe('SavedAddressesComponent', () => {
       const merchantServiceStub: MerchantService = fixture.debugElement.injector.get(
         MerchantService
       );
-      spyOn(merchantServiceStub, 'retrieveBuildings').and.callThrough();
+     jest.spyOn(merchantServiceStub, 'retrieveBuildings');
       component.ionViewWillEnter();
       expect(merchantServiceStub.retrieveBuildings).toHaveBeenCalled();
     });
@@ -101,10 +101,10 @@ describe('SavedAddressesComponent', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = fixture.debugElement.injector.get(
         SettingsFacadeService
       );
-      spyOn(loadingServiceStub, 'showSpinner').and.callThrough();
-      spyOn(loadingServiceStub, 'closeSpinner').and.callThrough();
-      spyOn(merchantServiceStub, 'updateUserAddress').and.callThrough();
-      spyOn(settingsFacadeServiceStub, 'saveUserSetting').and.callThrough();
+     jest.spyOn(loadingServiceStub, 'showSpinner');
+     jest.spyOn(loadingServiceStub, 'closeSpinner');
+     jest.spyOn(merchantServiceStub, 'updateUserAddress');
+     jest.spyOn(settingsFacadeServiceStub, 'saveUserSetting');
       component.addAddress();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
       expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();

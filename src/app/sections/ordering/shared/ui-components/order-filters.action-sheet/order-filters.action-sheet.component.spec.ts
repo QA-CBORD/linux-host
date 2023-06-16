@@ -28,7 +28,7 @@ describe('OrderFiltersActionSheetComponent', () => {
       const modalsServiceStub: ModalsService = fixture.debugElement.injector.get(
         ModalsService
       );
-      spyOn(modalsServiceStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalsServiceStub, 'dismiss');
       component.onSubmit();
       expect(modalsServiceStub.dismiss).toHaveBeenCalled();
     });
@@ -39,7 +39,7 @@ describe('OrderFiltersActionSheetComponent', () => {
       const modalsServiceStub: ModalsService = fixture.debugElement.injector.get(
         ModalsService
       );
-      spyOn(modalsServiceStub, 'dismiss').and.callThrough();
+     jest.spyOn(modalsServiceStub, 'dismiss');
       component.close();
       expect(modalsServiceStub.dismiss).toHaveBeenCalled();
     });

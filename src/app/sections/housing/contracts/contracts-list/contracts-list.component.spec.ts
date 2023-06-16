@@ -24,7 +24,7 @@ describe('ContractsListComponent', () => {
   describe('getStatus', () => {
     it('makes expected calls', () => {
       const contractListDetailsStub: ContractListDetails = <any>{};
-      spyOn(component, '__getFormStatus').and.callThrough();
+     jest.spyOn(component, '__getFormStatus');
       component.getStatus(contractListDetailsStub);
       expect(component.__getFormStatus).toHaveBeenCalled();
     });

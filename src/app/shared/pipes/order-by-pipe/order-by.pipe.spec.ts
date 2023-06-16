@@ -15,7 +15,7 @@ describe('OrderByPipe', () => {
 
   it('transforms X to Y', () => {
     const value: any = 'X';
-    const args: string[] = [];
+    const args: string = '';
     expect(pipe.transform(value, args)).toEqual('Y');
   });
 });

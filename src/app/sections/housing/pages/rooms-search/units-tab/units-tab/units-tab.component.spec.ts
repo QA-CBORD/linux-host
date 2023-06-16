@@ -4,6 +4,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { SelectedHousingTab } from '@sections/housing/pages/housing-dashboard/housing-dashboard.component';
 import { UnitsTabComponent } from './units-tab.component';
+import { SelectedUnitsTab } from '../../rooms-search.page';
 
 describe('UnitsTabComponent', () => {
   let component: UnitsTabComponent;
@@ -39,7 +40,7 @@ describe('UnitsTabComponent', () => {
       const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
         ChangeDetectorRef
       );
-      spyOn(changeDetectorRefStub, 'detectChanges').and.callThrough();
+     jest.spyOn(changeDetectorRefStub, 'detectChanges');
       component.ngOnInit();
       expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
     });
