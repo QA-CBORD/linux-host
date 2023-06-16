@@ -1,37 +1,38 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
-import { iif, Observable, of, zip, firstValueFrom } from 'rxjs';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { AddressInfo } from '@core/model/address/address-info';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
+import { handleServerError } from '@core/utils/general-helpers';
+import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { AlertController, PopoverController } from '@ionic/angular';
+import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
+import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
+import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import { ItemsOrderInfo, MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
+  MerchantSettings,
+  ORDERING_CONTENT_STRINGS,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
-  ORDERING_CONTENT_STRINGS,
-  MerchantSettings,
 } from '@sections/ordering/ordering.config';
-import { PATRON_NAVIGATION } from '../../../../../../app.global';
-import { PopoverController, AlertController } from '@ionic/angular';
-import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
-import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { CartService } from '@sections/ordering/services/cart.service';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { handleServerError } from '@core/utils/general-helpers';
-import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
-import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { ToastService } from '@core/service/toast/toast.service';
-import { ModalsService } from '@core/service/modals/modals.service';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
-import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
-import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
-import { AddressInfo } from '@core/model/address/address-info';
-import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-details-options.model';
+import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
+import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { LockDownService } from '@shared/services';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { Observable, firstValueFrom, iif, of, zip } from 'rxjs';
+import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { PATRON_NAVIGATION } from '../../../../../../app.global';
+import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 
 interface OrderMenuItem {
   menuItemId: string;
@@ -68,8 +69,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     public readonly checkinService: CheckingServiceFacade,
     private readonly alertController: AlertController,
     private readonly institutionService: InstitutionFacadeService,
-    private readonly checkinProcess: CheckingProcess
-  ) { }
+    private readonly checkinProcess: CheckingProcess,
+    private readonly lockDownService: LockDownService
+  ) {}
 
   ngOnInit(): void {
     this.initData();
@@ -94,6 +96,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async onReorderHandler(): Promise<void> {
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
+
     const merchant = await this.merchant$.pipe(first()).toPromise();
     // Is not possible to reorder a Just Walkout order
     if (merchant.walkout) return;
@@ -313,9 +319,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   private setActiveAddress() {
     const address = this.order$.pipe(
       first(),
-      switchMap(
-        ({ type, deliveryAddressId }) =>
-          iif(() => type === ORDER_TYPE.DELIVERY, this.getDeliveryAddress(deliveryAddressId), this.getPickupAddress())
+      switchMap(({ type, deliveryAddressId }) =>
+        iif(() => type === ORDER_TYPE.DELIVERY, this.getDeliveryAddress(deliveryAddressId), this.getPickupAddress())
       )
     );
     this.orderDetailsOptions$ = zip(address, this.order$, this.userFacadeService.getUserData$(), this.merchant$).pipe(
@@ -379,7 +384,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         data: {
           message: `Are you sure you want to cancel order #${n}`,
           title: 'Cancel order?',
-          buttons: [{ ...buttons.NO, label: 'no' }, { ...buttons.REMOVE, label: 'yes, cancel' }],
+          buttons: [
+            { ...buttons.NO, label: 'no' },
+            { ...buttons.REMOVE, label: 'yes, cancel' },
+          ],
         },
       },
       animated: false,
@@ -389,7 +397,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       role === BUTTON_TYPE.REMOVE &&
         this.cancelOrder()
           .pipe(take(1))
-          .subscribe(response => response && this.back(), msg => this.onValidateErrorToast(msg, this.back.bind(this)));
+          .subscribe(
+            response => response && this.back(),
+            msg => this.onValidateErrorToast(msg, this.back.bind(this))
+          );
     });
     await modal.present();
   }
@@ -403,8 +414,11 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
         data: {
           title: 'Warning',
           message,
-          buttons: [{ ...buttons.CLOSE, label: 'RETURN' }, { ...buttons.OKAY, label: 'CONTINUE' }],
-          showClose: false
+          buttons: [
+            { ...buttons.CLOSE, label: 'RETURN' },
+            { ...buttons.OKAY, label: 'CONTINUE' },
+          ],
+          showClose: false,
         },
       },
       animated: false,
@@ -481,6 +495,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.reorderNotAvailableItemMessage = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.reorderNotAvailableItemMessage
     );
+    this.lockDownService.loadStringsAndSettings();
   }
 
   private navigateByValidatedOrder(orderInfo: ItemsOrderInfo) {
@@ -491,43 +506,40 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     return this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
   }
   onAddItems() {
-    this.orderDetailsOptions$
-      .pipe(
-        withLatestFrom(this.merchant$, this.order$),
-        take(1)
-      )
-      .subscribe(
-        async ([
-          { dueTime, orderType, address, isASAP },
+    this.orderDetailsOptions$.pipe(withLatestFrom(this.merchant$, this.order$), take(1)).subscribe(
+      async ([
+        { dueTime, orderType, address, isASAP },
+        merchant,
+        {
+          id,
+          orderPayment: [orderPayment],
+        },
+      ]: [
+        {
+          dueTime: Date;
+          orderType: ORDER_TYPE;
+          address: AddressInfo;
+          isASAP?: boolean;
+        },
+        MerchantInfo,
+        OrderInfo
+      ]) => {
+        await this.cart.onAddItems({
           merchant,
-          {
-            id,
-            orderPayment: [orderPayment],
-          },
-        ]: [
-            {
-              dueTime: Date;
-              orderType: ORDER_TYPE;
-              address: AddressInfo;
-              isASAP?: boolean;
-            },
-            MerchantInfo,
-            OrderInfo
-          ]) => {
-          await this.cart.onAddItems({
-            merchant,
-            orderPayment,
-            orderOptions: { dueTime, orderType, address, isASAP },
-            orderId: id,
-          });
-          this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
-            queryParams: { isExistingOrder: true },
-          });
-        }
-      );
+          orderPayment,
+          orderOptions: { dueTime, orderType, address, isASAP },
+          orderId: id,
+        });
+        this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
+          queryParams: { isExistingOrder: true },
+        });
+      }
+    );
   }
 
   get checkAddToCart$(): Observable<boolean> {
-    return this.order$.pipe(map(({ checkinStatus, status }) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status)));
+    return this.order$.pipe(
+      map(({ checkinStatus, status }) => OrderCheckinStatus.isNotCheckedIn(checkinStatus, status))
+    );
   }
 }

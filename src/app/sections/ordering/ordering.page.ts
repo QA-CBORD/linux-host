@@ -1,17 +1,18 @@
-import { CartService, MerchantService } from './services';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { iif, Observable } from 'rxjs';
-import { first, map, switchMap, take } from 'rxjs/operators';
-import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActivatedRoute } from '@angular/router';
-import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { ToastService } from '@core/service/toast/toast.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { NavigationService } from '@shared/services/navigation.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { LockDownService } from '@shared/index';
+import { NavigationService } from '@shared/services/navigation.service';
+import { Observable, iif } from 'rxjs';
+import { first, map, switchMap, take } from 'rxjs/operators';
+import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
+import { CartService, MerchantService } from './services';
+import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
+import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
   selector: 'st-ordering.page',
@@ -23,6 +24,7 @@ export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   searchString = '';
+
   constructor(
     private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
@@ -31,7 +33,8 @@ export class OrderingPage implements OnInit {
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly orderingService: OrderingService,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
@@ -45,6 +48,10 @@ export class OrderingPage implements OnInit {
   }
 
   async merchantClickHandler(merchantInfo: MerchantInfo) {
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
+
     if (merchantInfo.walkout) {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
@@ -148,7 +155,7 @@ export class OrderingPage implements OnInit {
     return merchant.openNow || parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
-  private initContentStrings() {
+  private async initContentStrings() {
     this.contentStrings.labelAddedToFavorites = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelAddedToFavorites
     );
@@ -157,6 +164,7 @@ export class OrderingPage implements OnInit {
     );
     this.contentStrings.buttonBack = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
+    this.lockDownService.loadStringsAndSettings();
   }
 
   onSearchedValue(value: string) {
