@@ -1,6 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
-import { combineLatest, Observable, from, Subscription, zip, of, BehaviorSubject, firstValueFrom } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Browser } from '@capacitor/browser';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UserAccount } from '@core/model/account/account.model';
+import { ApplePay } from '@core/model/add-funds/applepay-response.model';
+import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { buttons as Buttons } from '@core/utils/buttons.config';
+import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
+import { PopoverController } from '@ionic/angular';
+import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
+import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
+import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import {
   AddressModalSettings,
   FORM_CONTROL_NAMES,
@@ -10,42 +24,29 @@ import {
   OrderInfo,
   OrderPayment,
 } from '@sections/ordering';
-import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { catchError, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
+  ORDERING_CONTENT_STRINGS,
   ORDER_ERROR_CODES,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
-  ORDERING_CONTENT_STRINGS,
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { ActivatedRoute } from '@angular/router';
-import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
-import { UserAccount } from '@core/model/account/account.model';
-import { PopoverController } from '@ionic/angular';
-import { AccountType, Settings } from '../../../../app.global';
-import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
-import { ApplePay } from '@core/model/add-funds/applepay-response.model';
-import { ToastService } from '@core/service/toast/toast.service';
-import { NavigationService } from '@shared/services/navigation.service';
+import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { APP_ROUTES } from '@sections/section.config';
-import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
-import { ConnectionService } from '@shared/services/connection-service';
-import { buttons as Buttons } from '@core/utils/buttons.config';
+import { LockDownService } from '@shared/index';
 import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
-import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
-import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
-import { Browser } from '@capacitor/browser';
-import { NonCheckingService } from './services/non-checking.service';
+import { ConnectionService } from '@shared/services/connection-service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, of, zip } from 'rxjs';
+import { catchError, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
+import { NonCheckingService } from './services/non-checking.service';
 
 @Component({
   selector: 'st-cart',
@@ -92,7 +93,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly routingService: NavigationService,
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly nonCheckingService: NonCheckingService
+    private readonly nonCheckingService: NonCheckingService,
+    private readonly lockDownService: LockDownService
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -213,6 +215,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   async onSubmit() {
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
+
     if (!this.cartFormState.valid || this.placingOrder) return;
     this.placingOrder = true;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
@@ -603,6 +609,7 @@ export class CartComponent implements OnInit, OnDestroy {
       ORDERING_CONTENT_STRINGS.insufficientBalanceMealsPayment
     );
     this.loadOrderingErrorStrings();
+    this.lockDownService.loadStringsAndSettings();
   }
 
   private async loadOrderingErrorStrings(): Promise<void> {

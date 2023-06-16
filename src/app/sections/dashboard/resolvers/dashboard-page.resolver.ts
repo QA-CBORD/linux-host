@@ -20,6 +20,7 @@ import { ProminentDisclosureService } from '../services/prominent-disclosure.ser
 import { Institution } from '@core/model/institution';
 import { TileWrapperConfig } from '../models';
 import { UserInfo } from '@core/model/user';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList> | Promise<SettingInfoList>> {
@@ -32,8 +33,8 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly loadingService: LoadingService,
     private readonly mobileCredentialFacade: MobileCredentialFacade,
-    private readonly prominentDisclosureService: ProminentDisclosureService,
-  ) { }
+    private readonly prominentDisclosureService: ProminentDisclosureService
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<SettingInfoList> | Promise<SettingInfoList> {
     const showLoading = !(route.queryParams.skipLoading && JSON.parse(route.queryParams.skipLoading));
@@ -45,11 +46,12 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     return this.loadAllData().pipe(
       take(1),
       map(([, , featureSettingsList]) => featureSettingsList),
-      finalize(() => showLoading && this.loadingService.closeSpinner()));
+      finalize(() => showLoading && this.loadingService.closeSpinner())
+    );
   }
 
   private loadAllData(): Observable<
-    [UserInfo, Institution, SettingInfoList, boolean, TileWrapperConfig[], ContentStringInfo[], ...ContentStringInfo[]]
+    [UserInfo, Institution, SettingInfoList, boolean, TileWrapperConfig[], ContentStringInfo[], SettingInfo, ...ContentStringInfo[]]
   > {
     const strings = this.loadContentStrings();
     const user = this.userFacadeService.getUser$();
@@ -58,7 +60,8 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     const accountContentStrings = this.accountsService.initContentStringsList();
     const mCredential$ = this.mobileCredentialFacade.mobileCredentialEnabled$().pipe(take(1));
     const tilesConfig = this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first());
-    return zip(user, inst, settingList, mCredential$, tilesConfig, accountContentStrings, ...strings);
+    const getLockDown = this.settingsFacadeService.fetchSetting(Settings.Setting.LOCK_DOWN_ORDERING).pipe(take(1));
+    return zip(user, inst, settingList, mCredential$, tilesConfig, accountContentStrings, getLockDown, ...strings);
   }
 
   private loadContentStrings(): Observable<ContentStringInfo>[] {
@@ -82,6 +85,11 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
         CONTENT_STRINGS_DOMAINS.patronUi,
         CONTENT_STRINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
+      ),
+      this.contentStringsFacadeService.fetchContentString$(
+        CONTENT_STRINGS_DOMAINS.get_common,
+        CONTENT_STRINGS_CATEGORIES.error_message,
+        ORDERING_CONTENT_STRINGS.disableOrdering
       ),
     ];
   }

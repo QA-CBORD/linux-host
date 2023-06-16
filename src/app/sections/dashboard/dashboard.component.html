@@ -10,7 +10,7 @@
         <st-rewards-tile  #rewardsTile *ngSwitchCase="tilesIds.rewards"></st-rewards-tile>
         <st-mobile-access-tile  #mobileAccessTile *ngSwitchCase="tilesIds.mobileAccess"></st-mobile-access-tile>
         <st-meal-donations-tile #mealDonationsTile *ngSwitchCase="tilesIds.mealDonations"></st-meal-donations-tile>
-        <st-order-tile #orderTile *ngSwitchCase="tilesIds.order"></st-order-tile>
+        <st-order-tile #orderTile *ngSwitchCase="tilesIds.order" [wrapperConfig]="tile"></st-order-tile>
         <st-explore-tile #exploreTile *ngSwitchCase="tilesIds.explore"></st-explore-tile>
         <st-conversations-tile #conversationsTile *ngSwitchCase="tilesIds.conversations"></st-conversations-tile>
         <st-housing-tile #housingTile *ngSwitchCase="tilesIds.housing"></st-housing-tile>
