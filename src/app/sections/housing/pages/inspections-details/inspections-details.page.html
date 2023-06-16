@@ -45,7 +45,6 @@
           </ion-label>
         </div>
         <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
-        [color]="countItemsLeft(inspectionDetails) > 0 || isSubmitted && 'light'"
           (click)="submitInspection(inspectionDetails)"
           [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted">
           Submit

@@ -35,7 +35,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   lostCardScreen = 'lost_card_screen',
   noConnectivity = 'noConnectivity',
   photoUpload = 'photo_upload',
-  error = 'error'
+  error = 'error',
+  error_message = 'error_message'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

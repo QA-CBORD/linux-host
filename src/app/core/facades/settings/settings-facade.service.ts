@@ -5,7 +5,7 @@ import { SettingsStateService } from '@core/states/settings/settings-state.servi
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsApiService } from '@core/service/settings-api-service/settings-api.service';
 import { UserSettingInfo } from '@core/model/user';
-import { finalize, first, switchMap, tap } from 'rxjs/operators';
+import { finalize, first, map, switchMap, tap } from 'rxjs/operators';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 import { Settings, User } from '../../../app.global';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
@@ -46,6 +46,14 @@ export class SettingsFacadeService extends ServiceStateFacade {
     const call = this.settingsApiService.getSetting(setting, sessionId, institutionId);
     return this.makeRequestWithUpdatingStateHandler<SettingInfo>(call, this.settingsStateService).pipe(
       tap(sett => this.settingsStateService.updateState(sett))
+    );
+  }
+
+  fetchSettingValue$(setting: Settings.Setting, sessionId?: string, institutionId?: string): Observable<string> {
+    const call = this.settingsApiService.getSetting(setting, sessionId, institutionId);
+    return this.makeRequestWithUpdatingStateHandler<SettingInfo>(call, this.settingsStateService).pipe(
+      tap(sett => this.settingsStateService.updateState(sett)),
+      map(sett => sett.value)
     );
   }
 
