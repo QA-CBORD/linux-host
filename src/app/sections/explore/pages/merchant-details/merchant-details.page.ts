@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { ExploreService } from '@sections/explore/services/explore.service';
 import { MerchantInfo } from '@sections/ordering';
+import { APP_ROUTES } from '@sections/section.config';
+import { LockDownService } from '@shared/index';
+import { NavigationService } from '@shared/services/navigation.service';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
-import { ExploreService } from '@sections/explore/services/explore.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { ToastService } from '@core/service/toast/toast.service';
-import { NavigationService } from '@shared/services/navigation.service';
-import { APP_ROUTES } from '@sections/section.config';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 
 @Component({
   selector: 'st-merchant-details',
@@ -36,11 +37,17 @@ export class MerchantDetailsPage implements OnInit {
     private readonly toastService: ToastService,
     private readonly routingService: NavigationService,
     private readonly changeDetector: ChangeDetectorRef,
-    private readonly authFacadeService: AuthFacadeService
+    private readonly authFacadeService: AuthFacadeService,
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
     this.merchant$ = this.retrieveSeletectedMerchant(this.activatedRoute.snapshot.params.id);
+    this.loadStringsAndSettings();
+  }
+
+  async loadStringsAndSettings() {
+    this.lockDownService.loadStringsAndSettings();
   }
 
   private retrieveSeletectedMerchant(merchantId: string): Observable<MerchantInfo> {
@@ -63,7 +70,11 @@ export class MerchantDetailsPage implements OnInit {
     this.isNotesHidden = !this.isNotesHidden;
   }
 
-  navigateToMerchant(merchantId: string) {
+  async navigateToMerchant(merchantId: string) {
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
+
     this.routingService.navigate([APP_ROUTES.ordering], { queryParams: { merchantId } });
   }
 
@@ -72,14 +83,8 @@ export class MerchantDetailsPage implements OnInit {
     const message = `Merchant ${n} was ${isFavorite ? 'removed from' : 'added to'} favorites`;
     await this.loadingService.showSpinner();
     try {
-      await this.merchantIdsFacadeService
-        .resolveFavoriteMerchant(merchant)
-        .pipe(take(1))
-        .toPromise();
-      await this.merchantIdsFacadeService
-        .fetchFavoritesMerchants$()
-        .pipe(take(1))
-        .toPromise();
+      await this.merchantIdsFacadeService.resolveFavoriteMerchant(merchant).pipe(take(1)).toPromise();
+      await this.merchantIdsFacadeService.fetchFavoritesMerchants$().pipe(take(1)).toPromise();
       await this.onToastDisplayed(message);
     } finally {
       await this.loadingService.closeSpinner();

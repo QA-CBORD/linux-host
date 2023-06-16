@@ -36,7 +36,7 @@ st-textarea-floating-label {
   float: right;
   --padding-end: 30px;
   --padding-start: 30px;
-  height: 40px;
+  height: 50px;
   margin-top: 10px;
   background-color: $color-dodger-blue;
   border-radius: 5px;
@@ -130,10 +130,4 @@ ion-select {
 .tabsContainer {
   background-color: white;
   margin: 15px 0;
-}
-
-.stepper__footer {
-  &* {
-    padding: 16px 10px 5px;
-  }
 }

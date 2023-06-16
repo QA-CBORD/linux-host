@@ -25,7 +25,6 @@ import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/pus
 })
 export class UserFacadeService extends ServiceStateFacade {
 
-  private userPhoto: UserPhotoInfo = null;
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
   private fcmTokenKey = 'fcm_token';
@@ -129,14 +128,11 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
-  setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
-    this.userPhoto = acceptedPhoto;
-  }
+
 
   getAcceptedPhoto$(): Observable<UserPhotoInfo> {
     return this.userApiService.getUserPhoto(null).pipe(
       map(response => response.response),
-      tap(userPhoto => this.setAcceptedPhoto(userPhoto))
     );
   }
 
@@ -286,7 +282,6 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   private async clearData(): Promise<void> {
-    this.userPhoto = null;
     this.storageStateService.clearState();
     this.storageStateService.clearStorage();
     this.userSettingStateService.clearState();
