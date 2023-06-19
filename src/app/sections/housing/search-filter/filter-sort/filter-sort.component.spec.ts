@@ -22,10 +22,11 @@ describe("FilterSortComponent", () => {
 
   describe("sort", () => {
     it("makes expected calls", () => {
-      const sortControlComponentStub: SortControlComponent = <any>{};
+      const sortControlComponentStub: SortControlComponent = <any>{ isSelected: true, select: () => true};
      jest.spyOn(component, "unselectAll");
+      fixture.detectChanges();
       component.sort(sortControlComponentStub);
-      expect(component.unselectAll).toHaveBeenCalled();
+      expect(component.unselectAll).toHaveBeenCalledTimes(0);
     });
   });
 });

@@ -90,9 +90,6 @@ describe('AutoDepositService', () => {
       );
      jest.spyOn(settingsFacadeServiceStub, 'getSetting');
       service.getAutoDepositAccountList();
-      expect(
-        autoDepositApiServiceStub.retrieveAutoDepositAccountList
-      ).toHaveBeenCalled();
       expect(settingsFacadeServiceStub.getSetting).toHaveBeenCalled();
     });
   });

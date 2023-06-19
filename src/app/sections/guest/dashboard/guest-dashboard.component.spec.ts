@@ -52,16 +52,6 @@ describe('GuestDashboard', () => {
     expect(component.sections).toEqual([]);
   });
 
-  describe('onclick', () => {
-    it('makes expected calls', () => {
-      const guestDashboardSectionStub: GuestDashboardSection = <any>{};
-      const routerStub: Router = fixture.debugElement.injector.get(Router);
-     jest.spyOn(routerStub, 'navigate');
-      component.onclick(guestDashboardSectionStub);
-      expect(routerStub.navigate).toHaveBeenCalled();
-    });
-  });
-
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
       const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(

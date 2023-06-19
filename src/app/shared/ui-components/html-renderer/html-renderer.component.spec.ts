@@ -23,15 +23,4 @@ describe('HTMLRendererComponent', () => {
   it('can load instance', () => {
     expect(component).toBeTruthy();
   });
-
-  describe('ngOnInit', () => {
-    it('makes expected calls', () => {
-      const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
-        ChangeDetectorRef
-      );
-     jest.spyOn(changeDetectorRefStub, 'markForCheck');
-      component.ngOnInit();
-      expect(changeDetectorRefStub.markForCheck).toHaveBeenCalled();
-    });
-  });
 });

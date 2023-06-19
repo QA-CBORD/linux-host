@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ConfirmPaymentPopover } from './confirm-payment-popover.component';
+import { TransactionUnitsPipeModule } from '@shared/pipes/transaction-units';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ConfirmPaymentPopover', () => {
   let component: ConfirmPaymentPopover;
@@ -9,8 +11,9 @@ describe('ConfirmPaymentPopover', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [ConfirmPaymentPopover]
-    });
+      declarations: [ConfirmPaymentPopover],
+      imports: [TransactionUnitsPipeModule, HttpClientTestingModule]
+    }).compileComponents();
     fixture = TestBed.createComponent(ConfirmPaymentPopover);
     component = fixture.componentInstance;
   });

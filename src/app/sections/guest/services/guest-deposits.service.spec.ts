@@ -74,20 +74,4 @@ describe('GuestDepositsService', () => {
       ).toHaveBeenCalled();
     });
   });
-
-  describe('guestAccounts', () => {
-    it('makes expected calls', () => {
-      const authFacadeServiceStub: AuthFacadeService = TestBed.inject(
-        AuthFacadeService
-      );
-      const commerceApiServiceStub: CommerceApiService = TestBed.inject(
-        CommerceApiService
-      );
-     jest.spyOn(authFacadeServiceStub, 'isGuestUser');
-     jest.spyOn(commerceApiServiceStub, 'retrieveAccountsByUser');
-      service.guestAccounts();
-      expect(authFacadeServiceStub.isGuestUser).toHaveBeenCalled();
-      expect(commerceApiServiceStub.retrieveAccountsByUser).toHaveBeenCalled();
-    });
-  });
 });

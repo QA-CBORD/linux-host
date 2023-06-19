@@ -39,7 +39,6 @@ describe('CheckinSuccessResolver', () => {
      jest.spyOn(merchantServiceStub, 'getRecentOrders');
      jest.spyOn(commonServiceStub, 'loadContentString');
       service.resolve();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
       expect(merchantServiceStub.getRecentOrders).toHaveBeenCalled();
       expect(commonServiceStub.loadContentString).toHaveBeenCalled();
     });

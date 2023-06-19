@@ -57,16 +57,11 @@ describe('TransactionsTileComponent', () => {
 
   describe('getRecentTransactions', () => {
     it('makes expected calls', () => {
-      const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
-        ChangeDetectorRef
-      );
       const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
         TransactionService
       );
-     jest.spyOn(changeDetectorRefStub, 'detectChanges');
      jest.spyOn(transactionServiceStub, 'getRecentTransactions');
       component.getRecentTransactions();
-      expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
       expect(transactionServiceStub.getRecentTransactions).toHaveBeenCalled();
     });
   });

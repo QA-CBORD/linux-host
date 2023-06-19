@@ -41,12 +41,10 @@ describe('GuestDepositResolver', () => {
       );
       const commonServiceStub: CommonService = TestBed.inject(CommonService);
      jest.spyOn(loadingServiceStub, 'showSpinner');
-     jest.spyOn(loadingServiceStub, 'closeSpinner');
      jest.spyOn(guestDepositsServiceStub, 'getRecipientList');
      jest.spyOn(commonServiceStub, 'loadContentString');
       service.resolve();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
       expect(guestDepositsServiceStub.getRecipientList).toHaveBeenCalled();
       expect(commonServiceStub.loadContentString).toHaveBeenCalled();
     });

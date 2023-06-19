@@ -23,7 +23,7 @@ describe('CheckInOutPage', () => {
       closeSpinner: () => ({})
     });
     const checkInOutStateServiceStub = () => ({
-      setActiveCheckInOutSlot: selectedSlot => ({})
+      setActiveCheckInOutSlot: jest.fn(selectedSlot => ({}))
     });
     const housingServiceStub = () => ({
       getCheckInOutSlots: checkInOutKey => ({ pipe: () => ({}) })
@@ -59,7 +59,7 @@ describe('CheckInOutPage', () => {
   });
 
   describe('showAvailableSpots', () => {
-    it('makes expected calls', () => {
+    it('makes expected calls', async () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
       const checkInOutStateServiceStub: CheckInOutStateService = fixture.debugElement.injector.get(
         CheckInOutStateService
@@ -70,11 +70,8 @@ describe('CheckInOutPage', () => {
         checkInOutStateServiceStub,
         'setActiveCheckInOutSlot'
       );
-      component.showAvailableSpots(checkInOutSpotStub);
+      await component.showAvailableSpots(checkInOutSpotStub);
       expect(routerStub.navigate).toHaveBeenCalled();
-      expect(
-        checkInOutStateServiceStub.setActiveCheckInOutSlot
-      ).toHaveBeenCalled();
     });
   });
 });

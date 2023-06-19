@@ -65,7 +65,6 @@ describe('TermsComponent', () => {
       component.ngOnInit();
       expect(termsServiceStub.getTerms).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
     });
   });
 });

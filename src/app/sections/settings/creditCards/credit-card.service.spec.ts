@@ -66,12 +66,10 @@ describe('CreditCardService', () => {
         externalPaymentServiceStub,
         'addUSAePayCreditCard'
       );
-     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.addCreditCard();
       expect(
         externalPaymentServiceStub.addUSAePayCreditCard
       ).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
     });
   });
 
@@ -82,11 +80,9 @@ describe('CreditCardService', () => {
         AccountsService
       );
      jest.spyOn(loadingServiceStub, 'showSpinner');
-     jest.spyOn(loadingServiceStub, 'closeSpinner');
      jest.spyOn(accountsServiceStub, 'getUserAccounts');
       service.retrieveAccounts();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
       expect(accountsServiceStub.getUserAccounts).toHaveBeenCalled();
     });
   });

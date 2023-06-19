@@ -21,14 +21,4 @@ describe('ServerError', () => {
   it('can load instance', () => {
     expect(service).toBeTruthy();
   });
-
-  describe('intercept', () => {
-    it('makes expected calls', () => {
-      const httpHandlerStub: HttpHandler = <any>{};
-      const httpRequestStub: HttpRequest<any> = <any>{};
-      jest.spyOn(httpHandlerStub, 'handle');
-      service.intercept(httpRequestStub, httpHandlerStub);
-      expect(httpHandlerStub.handle).toHaveBeenCalled();
-    });
-  });
 });

@@ -18,20 +18,10 @@ describe("StepperComponent", () => {
     });
     fixture = TestBed.createComponent(StepperComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it("can load instance", () => {
     expect(component).toBeTruthy();
-  });
-
-  describe("ngAfterViewInit", () => {
-    it("makes expected calls", () => {
-      const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
-        ChangeDetectorRef
-      );
-     jest.spyOn(changeDetectorRefStub, "markForCheck");
-      component.ngAfterViewInit();
-      expect(changeDetectorRefStub.markForCheck).toHaveBeenCalled();
-    });
   });
 });

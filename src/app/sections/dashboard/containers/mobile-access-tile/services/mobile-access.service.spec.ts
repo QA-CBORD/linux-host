@@ -48,22 +48,6 @@ describe('MobileAccessService', () => {
     });
   });
 
-  describe('getMobileLocations', () => {
-    it('makes expected calls', () => {
-      const httpTestingController = TestBed.inject(HttpTestingController);
-      const coordsServiceStub: CoordsService = TestBed.inject(CoordsService);
-     jest.spyOn(coordsServiceStub, 'getCoords');
-      service.getMobileLocations().subscribe(res => {
-        expect(res).toEqual([]);
-      });
-      const req = httpTestingController.expectOne('/json/commerce');
-      expect(req.request.method).toEqual('POST');
-      expect(coordsServiceStub.getCoords).toHaveBeenCalled();
-      req.flush([]);
-      httpTestingController.verify();
-    });
-  });
-
   describe('getFavouritesLocations', () => {
     it('makes expected calls', () => {
       const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(

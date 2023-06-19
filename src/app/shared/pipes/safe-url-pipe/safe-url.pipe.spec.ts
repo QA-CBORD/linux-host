@@ -21,10 +21,4 @@ describe('SafeUrlPipe', () => {
   it('can load instance', () => {
     expect(pipe).toBeTruthy();
   });
-
-  it('transforms X to Y', () => {
-    const value: any = 'X';
-    TestBed.compileComponents();
-    expect(pipe.transform(value)).toBe('Y');
-  });
 });

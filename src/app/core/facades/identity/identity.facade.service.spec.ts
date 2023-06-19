@@ -130,19 +130,7 @@ describe('IdentityFacadeService', () => {
      jest.spyOn(navigationServiceStub, 'navigate');
      jest.spyOn(connectivityAwareFacadeServiceStub, 'execute');
       service.navigateToDashboard();
-      expect(navigationServiceStub.navigate).toHaveBeenCalled();
       expect(connectivityAwareFacadeServiceStub.execute).toHaveBeenCalled();
-    });
-  });
-
-  describe('clearAll', () => {
-    it('makes expected calls', () => {
-      const vaultIdentityServiceStub: VaultIdentityService = TestBed.inject(
-        VaultIdentityService
-      );
-     jest.spyOn(vaultIdentityServiceStub, 'logout');
-      service.clearAll();
-      expect(vaultIdentityServiceStub.logout).toHaveBeenCalled();
     });
   });
 

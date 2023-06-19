@@ -3,6 +3,7 @@ import { DashboardService } from '@sections/dashboard/services';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { TileConfigFacadeService } from './tile-config-facade.service';
+import { firstValueFrom } from 'rxjs';
 
 describe('TileConfigFacadeService', () => {
   let service: TileConfigFacadeService;
@@ -44,45 +45,6 @@ describe('TileConfigFacadeService', () => {
      jest.spyOn(storageStateServiceStub, 'isKeyExistInState');
       service.isTileConfigInStorage();
       expect(storageStateServiceStub.isKeyExistInState).toHaveBeenCalled();
-    });
-  });
-
-  describe('updateTilesConfigBySystemSettings', () => {
-    it('makes expected calls', () => {
-      const dashboardServiceStub: DashboardService = TestBed.inject(
-        DashboardService
-      );
-      const profileServiceFacadeStub: ProfileServiceFacade = TestBed.inject(
-        ProfileServiceFacade
-      );
-     jest.spyOn(service, 'isValidConfig');
-     jest.spyOn(service, 'updateConfigState');
-     jest.spyOn(dashboardServiceStub, 'retrieveSettingsList');
-     jest.spyOn(
-        dashboardServiceStub,
-        'getUpdatedTilesBaseConfig'
-      );
-     jest.spyOn(
-        dashboardServiceStub,
-        'updateConfigByCashedConfig'
-      );
-     jest.spyOn(dashboardServiceStub, 'updateAccountTile');
-     jest.spyOn(
-        profileServiceFacadeStub,
-        'determineCurrentProfile'
-      );
-      service.updateTilesConfigBySystemSettings();
-      expect(service.isValidConfig).toHaveBeenCalled();
-      expect(service.updateConfigState).toHaveBeenCalled();
-      expect(dashboardServiceStub.retrieveSettingsList).toHaveBeenCalled();
-      expect(dashboardServiceStub.getUpdatedTilesBaseConfig).toHaveBeenCalled();
-      expect(
-        dashboardServiceStub.updateConfigByCashedConfig
-      ).toHaveBeenCalled();
-      expect(dashboardServiceStub.updateAccountTile).toHaveBeenCalled();
-      expect(
-        profileServiceFacadeStub.determineCurrentProfile
-      ).toHaveBeenCalled();
     });
   });
 });

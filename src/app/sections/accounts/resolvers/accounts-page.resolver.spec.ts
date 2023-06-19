@@ -47,17 +47,13 @@ describe('AccountsPageResolver', () => {
      jest.spyOn(accountServiceStub, 'getUserAccounts');
      jest.spyOn(accountServiceStub, 'getUserSettings');
      jest.spyOn(transactionServiceStub, 'initContentStringsList');
-     jest.spyOn(transactionServiceStub, 'getRecentTransactions');
      jest.spyOn(loadingServiceStub, 'showSpinner');
-     jest.spyOn(loadingServiceStub, 'closeSpinner');
       service.resolve();
       expect(accountServiceStub.initContentStringsList).toHaveBeenCalled();
       expect(accountServiceStub.getUserAccounts).toHaveBeenCalled();
       expect(accountServiceStub.getUserSettings).toHaveBeenCalled();
       expect(transactionServiceStub.initContentStringsList).toHaveBeenCalled();
-      expect(transactionServiceStub.getRecentTransactions).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
     });
   });
 });

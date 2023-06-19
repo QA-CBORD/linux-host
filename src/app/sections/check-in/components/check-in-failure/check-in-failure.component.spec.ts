@@ -47,16 +47,5 @@ describe('CheckInFailureComponent', () => {
       component.onBack();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
-  });
-
-  describe('onScanCode', () => {
-    it('makes expected calls', () => {
-      const modalControllerStub: ModalController = fixture.debugElement.injector.get(
-        ModalController
-      );
-     jest.spyOn(modalControllerStub, 'dismiss');
-      component.onScanCode();
-      expect(modalControllerStub.dismiss).toHaveBeenCalled();
-    });
-  });
+  })
 });

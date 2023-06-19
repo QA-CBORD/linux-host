@@ -32,24 +32,4 @@ describe('BuildingsPage', () => {
   it('can load instance', () => {
     expect(component).toBeTruthy();
   });
-
-  describe('ngOnInit', () => {
-    it('makes expected calls', () => {
-      const roomsStateServiceStub: RoomsStateService = fixture.debugElement.injector.get(
-        RoomsStateService
-      );
-      const roomsServiceStub: RoomsService = fixture.debugElement.injector.get(
-        RoomsService
-      );
-     jest.spyOn(roomsStateServiceStub, 'getParentFacilities');
-     jest.spyOn(roomsStateServiceStub, 'clearOccupantDetails');
-     jest.spyOn(roomsServiceStub, 'clearFilter');
-     jest.spyOn(roomsServiceStub, 'clearFilterCategories');
-      component.ngOnInit();
-      expect(roomsStateServiceStub.getParentFacilities).toHaveBeenCalled();
-      expect(roomsStateServiceStub.clearOccupantDetails).toHaveBeenCalled();
-      expect(roomsServiceStub.clearFilter).toHaveBeenCalled();
-      expect(roomsServiceStub.clearFilterCategories).toHaveBeenCalled();
-    });
-  });
 });

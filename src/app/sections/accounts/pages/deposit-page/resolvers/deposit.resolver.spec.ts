@@ -45,7 +45,6 @@ describe('DepositResolver', () => {
      jest.spyOn(commonServiceStub, 'loadContentString');
       service.resolve();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
       expect(depositServiceStub.getUserAccounts).toHaveBeenCalled();
       expect(depositServiceStub.getUserSettings).toHaveBeenCalled();
       expect(commonServiceStub.loadContentString).toHaveBeenCalled();

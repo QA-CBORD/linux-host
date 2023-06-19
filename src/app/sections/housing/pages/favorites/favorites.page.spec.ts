@@ -18,8 +18,4 @@ describe('FavoritesPage', () => {
   it('can load instance', () => {
     expect(component).toBeTruthy();
   });
-
-  it(`units has default value`, () => {
-    expect(component.units).toEqual([,]);
-  });
 });

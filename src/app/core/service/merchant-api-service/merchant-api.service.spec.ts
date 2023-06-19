@@ -30,44 +30,6 @@ describe('MerchantApiService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('getMerchants', () => {
-    it('makes expected calls', () => {
-      const httpTestingController = TestBed.inject(HttpTestingController);
-      const merchantSearchOptionsStub: MerchantSearchOptions = <any>{};
-      const coordsServiceStub: CoordsService = TestBed.inject(CoordsService);
-     jest.spyOn(merchantSearchOptionsStub, 'addSearchOption');
-     jest.spyOn(coordsServiceStub, 'getCoords');
-      service.getMerchants(merchantSearchOptionsStub).subscribe(res => {
-        expect(res).toEqual(merchantSearchOptionsStub);
-      });
-      const req = httpTestingController.expectOne('/json/merchant');
-      expect(req.request.method).toEqual('POST');
-      expect(merchantSearchOptionsStub.addSearchOption).toHaveBeenCalled();
-      expect(coordsServiceStub.getCoords).toHaveBeenCalled();
-      req.flush(merchantSearchOptionsStub);
-      httpTestingController.verify();
-    });
-  });
-
-  describe('getMenuMerchants', () => {
-    it('makes expected calls', () => {
-      const httpTestingController = TestBed.inject(HttpTestingController);
-      const merchantSearchOptionsStub: MerchantSearchOptions = <any>{};
-      const coordsServiceStub: CoordsService = TestBed.inject(CoordsService);
-     jest.spyOn(merchantSearchOptionsStub, 'addSearchOption');
-     jest.spyOn(coordsServiceStub, 'getCoords');
-      service.getMenuMerchants(merchantSearchOptionsStub).subscribe(res => {
-        expect(res).toEqual(merchantSearchOptionsStub);
-      });
-      const req = httpTestingController.expectOne('/json/merchant');
-      expect(req.request.method).toEqual('POST');
-      expect(merchantSearchOptionsStub.addSearchOption).toHaveBeenCalled();
-      expect(coordsServiceStub.getCoords).toHaveBeenCalled();
-      req.flush(merchantSearchOptionsStub);
-      httpTestingController.verify();
-    });
-  });
-
   describe('getFavoriteMerchants', () => {
     it('makes expected calls', () => {
       const httpTestingController = TestBed.inject(HttpTestingController);

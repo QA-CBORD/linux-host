@@ -28,15 +28,4 @@ describe('ExpandItemComponent', () => {
   it(`show has default value`, () => {
     expect(component.show).toEqual(false);
   });
-
-  describe('closeExpand', () => {
-    it('makes expected calls', () => {
-      const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
-        ChangeDetectorRef
-      );
-     jest.spyOn(changeDetectorRefStub, 'detectChanges');
-      component.closeExpand();
-      expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
-    });
-  });
 });

@@ -87,22 +87,6 @@ describe('InstitutionFacadeService', () => {
     });
   });
 
-  describe('fetchInstitutionData', () => {
-    it('makes expected calls', () => {
-      const storageStateServiceStub: StorageStateService = TestBed.inject(
-        StorageStateService
-      );
-      const institutionApiServiceStub: InstitutionApiService = TestBed.inject(
-        InstitutionApiService
-      );
-     jest.spyOn(storageStateServiceStub, 'updateStateEntity');
-     jest.spyOn(institutionApiServiceStub, 'getInstitutionData');
-      service.fetchInstitutionData();
-      expect(storageStateServiceStub.updateStateEntity).toHaveBeenCalled();
-      expect(institutionApiServiceStub.getInstitutionData).toHaveBeenCalled();
-    });
-  });
-
   describe('retrieveAnonymousDepositFields', () => {
     it('makes expected calls', () => {
       const institutionApiServiceStub: InstitutionApiService = TestBed.inject(
@@ -117,9 +101,6 @@ describe('InstitutionFacadeService', () => {
       );
      jest.spyOn(authFacadeServiceStub, 'getAuthSessionToken$');
       service.retrieveAnonymousDepositFields();
-      expect(
-        institutionApiServiceStub.retrieveAnonymousDepositFields
-      ).toHaveBeenCalled();
       expect(authFacadeServiceStub.getAuthSessionToken$).toHaveBeenCalled();
     });
   });

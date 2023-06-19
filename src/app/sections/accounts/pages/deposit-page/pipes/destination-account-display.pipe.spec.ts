@@ -22,9 +22,4 @@ describe('DestinationAccountDisplayPipe', () => {
   it('can load instance', () => {
     expect(pipe).toBeTruthy();
   });
-
-  it('transforms X to Y', () => {
-    const value: any = 'X';
-    expect(pipe.transform(value)).toEqual('Y');
-  });
 });

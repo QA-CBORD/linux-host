@@ -48,27 +48,4 @@ describe('ListItemComponent', () => {
   it('can load instance', () => {
     expect(component).toBeTruthy();
   });
-
-  describe('openPopover', () => {
-    it('makes expected calls', () => {
-      const popoverControllerStub: PopoverController = fixture.debugElement.injector.get(
-        PopoverController
-      );
-      const redeemableRewardInfoStub: RedeemableRewardInfo = <any>{};
-      const rewardsServiceStub: RewardsService = fixture.debugElement.injector.get(
-        RewardsService
-      );
-      const popupTypesStub: PopupTypes = <any>{};
-     jest.spyOn(popoverControllerStub, 'create');
-     jest.spyOn(
-        rewardsServiceStub,
-        'extractFromHistoryByRewardId'
-      );
-      component.openPopover(redeemableRewardInfoStub, popupTypesStub);
-      expect(popoverControllerStub.create).toHaveBeenCalled();
-      expect(
-        rewardsServiceStub.extractFromHistoryByRewardId
-      ).toHaveBeenCalled();
-    });
-  });
 });

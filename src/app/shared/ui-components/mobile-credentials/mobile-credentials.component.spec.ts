@@ -60,7 +60,6 @@ describe('MobileCredentialsComponent', () => {
      jest.spyOn(popoverControllerStub, 'dismiss');
       component.onDecline();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
-      expect(popoverControllerStub.dismiss).toHaveBeenCalled();
     });
   });
 

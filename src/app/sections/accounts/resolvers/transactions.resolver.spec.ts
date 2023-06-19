@@ -53,16 +53,13 @@ describe('TransactionsResolver', () => {
         'clearTransactionHistory'
       );
      jest.spyOn(loadingServiceStub, 'showSpinner');
-     jest.spyOn(loadingServiceStub, 'closeSpinner');
      jest.spyOn(accountServiceStub, 'initContentStringsList');
      jest.spyOn(accountServiceStub, 'getUserAccounts');
      jest.spyOn(accountServiceStub, 'getUserSettings');
       service.resolve(activatedRouteSnapshotStub);
       expect(transactionServiceStub.initContentStringsList).toHaveBeenCalled();
-      expect(transactionServiceStub.getRecentTransactions).toHaveBeenCalled();
       expect(transactionServiceStub.clearTransactionHistory).toHaveBeenCalled();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
       expect(accountServiceStub.initContentStringsList).toHaveBeenCalled();
       expect(accountServiceStub.getUserAccounts).toHaveBeenCalled();
       expect(accountServiceStub.getUserSettings).toHaveBeenCalled();

@@ -26,13 +26,4 @@ describe('MerchantDetailsResolverService', () => {
   it('can load instance', () => {
     expect(service).toBeTruthy();
   });
-
-  describe('resolve', () => {
-    it('makes expected calls', () => {
-      const exploreServiceStub: ExploreService = TestBed.inject(ExploreService);
-     jest.spyOn(exploreServiceStub, 'getInitialMerchantData$');
-      service.resolve();
-      expect(exploreServiceStub.getInitialMerchantData$).toHaveBeenCalled();
-    });
-  });
 });

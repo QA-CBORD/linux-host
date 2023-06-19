@@ -19,11 +19,11 @@ describe('AttachmentStateService', () => {
 
   describe('setAttachmentDetails', () => {
     it('makes expected calls', () => {
-      const attachmentsDetailStub: AttachmentsDetail = <any>{};
-      const attachmentsDetailBehaviorStub = new BehaviorSubject<AttachmentsDetail>({} as AttachmentsDetail);
-      spyOn(attachmentsDetailBehaviorStub, 'next').and.callThrough();
+      const attachmentsDetailStub: AttachmentsDetail = <AttachmentsDetail>{};
+      service.attachmentDetails = new BehaviorSubject<AttachmentsDetail>(service['_defaultStateDetails']);
+      jest.spyOn( service.attachmentDetails, 'next');
       service.setAttachmentDetails(attachmentsDetailStub);
-      expect(attachmentsDetailBehaviorStub.next).toHaveBeenCalled();
+      expect(service.attachmentDetails.next).toHaveBeenCalled();
     });
   });
 });

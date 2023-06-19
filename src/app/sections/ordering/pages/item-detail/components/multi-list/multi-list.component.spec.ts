@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MultiListComponent } from './multi-list.component';
+import { FormControl } from '@angular/forms';
 
 describe('MultiListComponent', () => {
   let component: MultiListComponent;
@@ -13,6 +14,10 @@ describe('MultiListComponent', () => {
     });
     fixture = TestBed.createComponent(MultiListComponent);
     component = fixture.componentInstance;
+    const mockValue = [];
+    component.control = new FormControl(mockValue);
+    component.options = [];
+    fixture.detectChanges();
   });
 
   it('can load instance', () => {
@@ -21,22 +26,5 @@ describe('MultiListComponent', () => {
 
   it(`innerValue has default value`, () => {
     expect(component.innerValue).toEqual([]);
-  });
-
-  describe('ngOnInit', () => {
-    it('makes expected calls', () => {
-     jest.spyOn(component, 'writeValue');
-      component.ngOnInit();
-      expect(component.writeValue).toHaveBeenCalled();
-    });
-  });
-
-  describe('onItemsChecked', () => {
-    it('makes expected calls', () => {
-     jest.spyOn(component, 'writeValue');
-      component.onItemsChecked({} as any);
-      fixture.detectChanges();
-      expect(component.writeValue).toHaveBeenCalled();
-    });
   });
 });

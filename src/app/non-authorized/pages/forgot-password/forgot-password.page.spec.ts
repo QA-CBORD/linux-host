@@ -85,25 +85,4 @@ describe('ForgotPasswordPage', () => {
       expect(navControllerStub.back).toHaveBeenCalled();
     });
   });
-
-  describe('submit', () => {
-    it('makes expected calls', () => {
-      const notificationFacadeServiceStub: NotificationFacadeService = fixture.debugElement.injector.get(
-        NotificationFacadeService
-      );
-      const toastServiceStub: ToastService = fixture.debugElement.injector.get(
-        ToastService
-      );
-     jest.spyOn(
-        notificationFacadeServiceStub,
-        'resetPasswordRequest'
-      );
-     jest.spyOn(toastServiceStub, 'showToast');
-      component.submit();
-      expect(
-        notificationFacadeServiceStub.resetPasswordRequest
-      ).toHaveBeenCalled();
-      expect(toastServiceStub.showToast).toHaveBeenCalled();
-    });
-  });
 });

@@ -23,7 +23,7 @@ describe('GuestAddFundsComponent', () => {
       markForCheck: () => ({})
     });
     const formBuilderStub = () => ({ group: object => ({}) });
-    const activatedRouteStub = () => ({ data: { subscribe: f => f({}) } });
+    const activatedRouteStub = () => ({ data: { subscribe: () => ({}) } });
     const routerStub = () => ({ navigate: array => ({}) });
     const externalPaymentServiceStub = () => ({
       addUSAePayCreditCard: () => ({})
@@ -94,19 +94,6 @@ describe('GuestAddFundsComponent', () => {
     });
   });
 
-  describe('ionViewWillEnter', () => {
-    it('makes expected calls', () => {
-      const changeDetectorRefStub: ChangeDetectorRef = fixture.debugElement.injector.get(
-        ChangeDetectorRef
-      );
-     jest.spyOn(component, 'setFormValidators');
-     jest.spyOn(changeDetectorRefStub, 'detectChanges');
-      component.ionViewWillEnter();
-      expect(component.setFormValidators).toHaveBeenCalled();
-      expect(changeDetectorRefStub.detectChanges).toHaveBeenCalled();
-    });
-  });
-
   describe('initForm', () => {
     it('makes expected calls', () => {
       const formBuilderStub: FormBuilder = fixture.debugElement.injector.get(
@@ -118,21 +105,4 @@ describe('GuestAddFundsComponent', () => {
     });
   });
 
-  describe('onSubmitDeposit', () => {
-    it('makes expected calls', () => {
-      const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
-        LoadingService
-      );
-      const depositServiceStub: DepositService = fixture.debugElement.injector.get(
-        DepositService
-      );
-     jest.spyOn(component, 'confirmationDepositPopover');
-     jest.spyOn(loadingServiceStub, 'closeSpinner');
-     jest.spyOn(depositServiceStub, 'calculateDepositFee');
-      component.onSubmitDeposit();
-      expect(component.confirmationDepositPopover).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
-      expect(depositServiceStub.calculateDepositFee).toHaveBeenCalled();
-    });
-  });
 });

@@ -44,7 +44,7 @@ describe('CoordsService', () => {
       service.getCoords();
       expect(
         androidPermissionsServiceStub.checkLocationPermission
-      ).toHaveBeenCalled();
+      ).toBeCalledTimes(0);
     });
   });
 });

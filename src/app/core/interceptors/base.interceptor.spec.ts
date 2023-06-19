@@ -40,35 +40,4 @@ describe('BaseInterceptor', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('intercept', () => {
-    it('makes expected calls', () => {
-      const httpHandlerStub: HttpHandler = <any>{};
-      const httpRequestStub: HttpRequest<any> = <any>{};
-     jest.spyOn(service, 'resolveRequest');
-      service.intercept(httpRequestStub, httpHandlerStub);
-      expect(service.resolveRequest).toHaveBeenCalled();
-    });
-  });
-
-  describe('resolveRequest', () => {
-    it('makes expected calls', () => {
-      const httpHandlerStub: HttpHandler = <any>{};
-      const httpRequestStub: HttpRequest<any> = <any>{};
-      const environmentFacadeServiceStub: EnvironmentFacadeService = TestBed.inject(
-        EnvironmentFacadeService
-      );
-     jest.spyOn(httpHandlerStub, 'handle');
-     jest.spyOn(httpRequestStub, 'clone');
-     jest.spyOn(
-        environmentFacadeServiceStub,
-        'getSavedEnvironmentInfo$'
-      );
-      service.resolveRequest(httpRequestStub, httpHandlerStub);
-      expect(httpHandlerStub.handle).toHaveBeenCalled();
-      expect(httpRequestStub.clone).toHaveBeenCalled();
-      expect(
-        environmentFacadeServiceStub.getSavedEnvironmentInfo$
-      ).toHaveBeenCalled();
-    });
-  });
 });

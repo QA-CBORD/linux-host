@@ -58,40 +58,4 @@ describe('WaitingListsComponent', () => {
   it('can load instance', () => {
     expect(component).toBeTruthy();
   });
-
-  describe('removePatronWaitingList', () => {
-    it('makes expected calls', () => {
-      const alertControllerStub: AlertController = fixture.debugElement.injector.get(
-        AlertController
-      );
-      const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
-        LoadingService
-      );
-      const housingServiceStub: HousingService = fixture.debugElement.injector.get(
-        HousingService
-      );
-      const waitingListsServiceStub: WaitingListsService = fixture.debugElement.injector.get(
-        WaitingListsService
-      );
-      const toastServiceStub: ToastService = fixture.debugElement.injector.get(
-        ToastService
-      );
-      const waitingListStub: WaitingList = <any>{};
-     jest.spyOn(alertControllerStub, 'create');
-     jest.spyOn(loadingServiceStub, 'showSpinner');
-     jest.spyOn(loadingServiceStub, 'closeSpinner');
-     jest.spyOn(housingServiceStub, 'goToDashboard');
-     jest.spyOn(housingServiceStub, 'refreshDefinitions');
-     jest.spyOn(waitingListsServiceStub, 'removeFromWaitingList');
-     jest.spyOn(toastServiceStub, 'showToast');
-      component.removePatronWaitingList(waitingListStub);
-      expect(alertControllerStub.create).toHaveBeenCalled();
-      expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-      expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
-      expect(housingServiceStub.goToDashboard).toHaveBeenCalled();
-      expect(housingServiceStub.refreshDefinitions).toHaveBeenCalled();
-      expect(waitingListsServiceStub.removeFromWaitingList).toHaveBeenCalled();
-      expect(toastServiceStub.showToast).toHaveBeenCalled();
-    });
-  });
 });

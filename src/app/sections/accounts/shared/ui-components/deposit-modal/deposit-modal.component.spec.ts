@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { DepositModalComponent } from './deposit-modal.component';
+import { TransactionUnitsPipeModule } from '@shared/pipes/transaction-units';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('DepositModalComponent', () => {
   let component: DepositModalComponent;
@@ -12,7 +14,8 @@ describe('DepositModalComponent', () => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [DepositModalComponent],
-      providers: [{ provide: ModalController, useFactory: modalControllerStub }]
+      providers: [{ provide: ModalController, useFactory: modalControllerStub }],
+      imports: [TransactionUnitsPipeModule, HttpClientTestingModule]
     });
     fixture = TestBed.createComponent(DepositModalComponent);
     component = fixture.componentInstance;

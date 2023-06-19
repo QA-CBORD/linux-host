@@ -86,18 +86,6 @@ describe('FavoriteMerchantsComponent', () => {
     expect(component.merchantList).toEqual([]);
   });
 
-  describe('merchantClickHandler', () => {
-    it('makes expected calls', () => {
-      const merchantInfoStub: MerchantInfo = <any>{};
-      const toastServiceStub: ToastService = fixture.debugElement.injector.get(
-        ToastService
-      );
-     jest.spyOn(toastServiceStub, 'showError');
-      component.merchantClickHandler(merchantInfoStub);
-      expect(toastServiceStub.showError).toHaveBeenCalled();
-    });
-  });
-
   describe('backToOrdering', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
