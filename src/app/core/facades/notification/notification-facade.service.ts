@@ -17,10 +17,10 @@ export class NotificationFacadeService extends ServiceStateFacade {
   }
 
   resetPasswordRequest(username: string): Promise<boolean> {
-    return combineLatest(
+    return combineLatest([
       this.institutionFacadeService.cachedInstitutionInfo$,
-      this.authFacadeService.getAuthSessionToken$()
-    )
+      this.authFacadeService.getAuthSessionToken$(),
+    ])
       .pipe(
         switchMap(([institution, sessionId]) =>
           this.notificationService.resetPasswordNotification(institution.id, username, sessionId)

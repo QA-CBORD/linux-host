@@ -44,6 +44,7 @@
         class="ion-no-padding explore__merchant-info enable-longpress-ios"
         *ngIf="merchant.storeAddress as address"
         [href]="address | addressHeaderFormat | mapsUri"
+        detail="false"
         target="_blank"
       >
         <ion-row class="ion-align-items-start">
