@@ -61,10 +61,10 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   section = '';
   conditions = [];
   roomsMapping = {
-    '=0': 'No rooms left.', 
-    '=1': '# room left.', 
-    'other': '# rooms left.'
-  }
+    '=0': 'No rooms left.',
+    '=1': '# room left.',
+    other: '# rooms left.',
+  };
 
   constructor(
     private _platform: Platform,
@@ -74,8 +74,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
     private _housingService: HousingService,
     private _toastService: ToastService,
     private _inspectionService: InspectionService,
-    private nativeProvider: NativeProvider,
-  ) { }
+    private nativeProvider: NativeProvider
+  ) {}
 
   ngOnInit(): void {
     if (this.nativeProvider.isMobile()) {
@@ -96,8 +96,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
 
   private getInspectionPages() {
     const result = this._inspectionService.getFormDefinitionInspection().subscribe(res => {
-      this.conditions = res.values.filter(x => x.selected)
-    })
+      this.conditions = res.values.filter(x => x.selected);
+    });
     this.subscriptions.add(result);
   }
 
@@ -117,7 +117,8 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   private _initInspectionDetailsObservable(): void {
     this._loadingService.showSpinner();
 
-    this.inspectionDetails$ = this._housingService.getInspectionDetails(this.termKey, this.residentInspectionKey, this.contractElementKey, this.checkIn)
+    this.inspectionDetails$ = this._housingService
+      .getInspectionDetails(this.termKey, this.residentInspectionKey, this.contractElementKey, this.checkIn)
       .pipe(
         tap((inspectionDetails: Inspection) => {
           this.getInspectionPages();
@@ -175,29 +176,28 @@ export class InspectionsDetailsPage implements OnInit, OnDestroy {
   }
 
   private createInspectionSubscription(inspectionData: Inspection, alert: HTMLIonAlertElement) {
-    const createInspectionSubscription = this._inspectionService.submitInspection(inspectionData)
-      .subscribe(status => {
-        alert.dismiss().then(() => {
-          if (status) {
-            this._housingService.goToDashboard();
-          } else {
-            this._loadingService.closeSpinner();
-            this._toastService.showToast({
-              message: 'The form could not be processed at this time. Try again later',
-            });
-          }
-        });
+    const createInspectionSubscription = this._inspectionService.submitInspection(inspectionData).subscribe(status => {
+      alert.dismiss().then(() => {
+        if (status) {
+          this._housingService.goToDashboard();
+        } else {
+          this._loadingService.closeSpinner();
+          this._toastService.showToast({
+            message: 'The form could not be processed at this time. Try again later',
+          });
+        }
       });
+    });
 
     this.subscriptions.add(createInspectionSubscription);
   }
 
   countItemsLeft(inspectionData: Inspection) {
-    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey === 0).length > 0).length
+    return inspectionData.sections.filter(x => x.items.filter(y => y.residentConditionKey === 0).length > 0).length;
   }
 
   getConditionStaff(conditionStaff: number): string {
-    const conditionStaffValue = this.conditions.filter(x => x.value === conditionStaff.toString())[0]?.label
+    const conditionStaffValue = this.conditions.filter(x => x.value === conditionStaff.toString())[0]?.label;
     return conditionStaffValue ? conditionStaffValue : 'none';
   }
 
