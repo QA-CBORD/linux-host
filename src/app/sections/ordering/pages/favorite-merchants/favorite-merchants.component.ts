@@ -11,6 +11,7 @@ import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sectio
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { LockDownService } from '@shared/services';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -32,7 +33,8 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly favoriteMerchantsService: FavoriteMerchantsService,
     private readonly cartService: CartService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
@@ -45,6 +47,10 @@ export class FavoriteMerchantsComponent implements OnInit {
   }
 
   async merchantClickHandler(merchantInfo: MerchantInfo): Promise<void> {
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
+
     if (merchantInfo.walkout) {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
@@ -138,5 +144,6 @@ export class FavoriteMerchantsComponent implements OnInit {
     this.contentStrings.labelRemovedFromFavorites = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites
     );
+    this.lockDownService.loadStringsAndSettings();
   }
 }
