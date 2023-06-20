@@ -42,7 +42,7 @@ st-textarea-floating-label {
   float: right;
   --padding-end: 30px;
   --padding-start: 30px;
-  height: 50px;
+  height: 40px;
   margin-top: 10px;
 
 }
@@ -127,4 +127,10 @@ ion-segment {
 .selectorCondition {
   width: 100%;
   max-width: 100%;
+}
+
+.stepper__footer {
+  &* {
+    padding: 16px 10px 5px
+  }
 }
