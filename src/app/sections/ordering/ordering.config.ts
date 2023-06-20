@@ -115,7 +115,8 @@ export enum ORDERING_CONTENT_STRINGS {
   titleEditAddresses = 'title_edit_address',
   reorderNotAvailableItemMessage = 'not_orders_items_available',
   insufficientBalanceMealsPayment = 'insufficient_balance_meals_payment',
-  disableOrdering = 'disable_ordering'
+  disableOrdering = 'disable_ordering',
+  mediaLostException = 'MediaLostException'
 }
 export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
   manualEntryInstructions = 'manual-entry_instructions'
@@ -212,7 +213,7 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9013: 'Order cannot be canceled due to it has been completed',
   6112: 'You dont have enough money',
   9997: 'Timeout error, please try again later',
-  6102: 'The specified card has been reported lost. Contact the card office for more details.'
+  6102: 'CONTENT_STRING:MediaLostException'
 };
 
 export const TOAST_MESSAGES = {
