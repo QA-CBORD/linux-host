@@ -12,6 +12,7 @@ import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { FavoriteMerchantsComponent } from './favorite-merchants.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('FavoriteMerchantsComponent', () => {
   let component: FavoriteMerchantsComponent;
@@ -72,7 +73,8 @@ describe('FavoriteMerchantsComponent', () => {
         { provide: OrderingService, useFactory: orderingServiceStub },
         { provide: ToastService, useFactory: toastServiceStub },
         { provide: ModalsService, useFactory: modalsServiceStub }
-      ]
+      ],
+      imports: [HttpClientTestingModule]
     });
     fixture = TestBed.createComponent(FavoriteMerchantsComponent);
     component = fixture.componentInstance;
