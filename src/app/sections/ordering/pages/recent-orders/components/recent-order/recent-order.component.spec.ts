@@ -115,7 +115,7 @@ describe(RecentOrderComponent, () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have not add any item to the cart if lockDown flag is on', () => {
+  it('should not have addded any item to the cart if lockDown flag is on', () => {
     const spy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(true);
     component.onAddItems();
     expect(spy).toHaveBeenCalledTimes(1);
