@@ -42,7 +42,7 @@ import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/d
 import { ConnectionService } from '@shared/services/connection-service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, lastValueFrom, of, zip } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, of, zip } from 'rxjs';
 import { catchError, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
@@ -464,15 +464,7 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     if (error) {
-      if (error.includes('CONTENT_STRING')) {
-        const errorMessage = !Array.isArray(error) ? error : error[0];
-        const contentStringKey: ORDERING_CONTENT_STRINGS = errorMessage.split('CONTENT_STRING:')[1] as ORDERING_CONTENT_STRINGS;
-        const message = await lastValueFrom(this.orderingService.getContentErrorStringByName(contentStringKey).pipe(take(1)));
-        this.onValidateErrorToast(message);
-      } else {
-        this.onValidateErrorToast(String(error));
-      }
-
+      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, 'Your information could not be verified.'))
       return;
     }
 

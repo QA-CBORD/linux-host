@@ -10,7 +10,7 @@ import {
   PAYMENT_TYPE,
 } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { iif, Observable, of, Subscription, throwError, from, lastValueFrom } from 'rxjs';
+import { iif, Observable, of, Subscription, throwError, from } from 'rxjs';
 import { UserAccount } from '@core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
@@ -33,7 +33,6 @@ import { ContentStringCategory } from '@shared/model/content-strings/content-str
 import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 
 export enum browserState {
   FINISHED = 'browserFinished',
@@ -478,13 +477,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           .subscribe(
             () => this.finalizeDepositModal(data),
             async (error) => {
-              if (error.includes('CONTENT_STRING')) {
-                const contentStringKey: ORDERING_CONTENT_STRINGS = error.split('CONTENT_STRING:')[1] as ORDERING_CONTENT_STRINGS;
-                const message = await lastValueFrom(this.orderingService.getContentErrorStringByName(contentStringKey).pipe(take(1)));
-                this.onErrorRetrieve(message);
-              } else {
-                this.onErrorRetrieve(error || 'Your information could not be verified.')
-              }
+              this.onErrorRetrieve(await this.orderingService.getContentErrorStringByException(error, 'Your information could not be verified.'))
             }
           );
       }

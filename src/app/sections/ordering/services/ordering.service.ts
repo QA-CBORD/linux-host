@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 @Injectable()
 export class OrderingService {
-  constructor(private readonly contentStringsFacadeService: ContentStringsFacadeService) {}
+  constructor(private readonly contentStringsFacadeService: ContentStringsFacadeService) { }
 
   getContentStringByName(name: ORDERING_CONTENT_STRINGS): Observable<string> {
     return this.contentStringsFacadeService
@@ -20,6 +20,16 @@ export class OrderingService {
     return this.contentStringsFacadeService
       .resolveContentString$(CONTENT_STRINGS_DOMAINS.get_common, CONTENT_STRINGS_CATEGORIES.error, name)
       .pipe(map((string: ContentStringInfo) => (string ? string.value : '')));
+  }
+
+  async getContentErrorStringByException(err: string | [string, string], defaultMessage: string) {
+    if (err && err.includes('CONTENT_STRING')) {
+      const errorMessage = !Array.isArray(err) ? err : err[0];
+      const contentStringKey: ORDERING_CONTENT_STRINGS = errorMessage.split('CONTENT_STRING:')[1] as ORDERING_CONTENT_STRINGS;
+      const message = await lastValueFrom(this.getContentErrorStringByName(contentStringKey).pipe(take(1)));
+      return message;
+    }
+    return defaultMessage;
   }
 }
 
