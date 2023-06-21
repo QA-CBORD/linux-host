@@ -36,7 +36,7 @@ export class LockDownService {
 
   isLockDownOn(): boolean {
     if (this.lockDownFlag) {
-      this.toastService.showError(this.lockDownMessage);
+      this.toastService.showError(this.lockDownMessage, 5000, 'bottom');
       return true;
     }
 
