@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderingService } from './ordering.service';
+import { of } from 'rxjs';
 
 describe('OrderingService', () => {
   let service: OrderingService;
@@ -60,4 +61,29 @@ describe('OrderingService', () => {
       ).toHaveBeenCalled();
     });
   });
+
+  describe('getContentErrorStringByException', () => {
+    it('returns the content error string if the error message includes "CONTENT_STRING"', async () => {
+      const errorMessage = 'Some error message CONTENT_STRING:ERROR_MESSAGE_KEY';
+      const defaultMessage = 'Default error message';
+      const expectedContentString = 'Content error message';
+  
+      const getContentErrorStringByNameSpy = jest.spyOn(service, 'getContentErrorStringByName').mockReturnValue(of(expectedContentString));
+  
+      const result = await service.getContentErrorStringByException(errorMessage, defaultMessage);
+  
+      expect(getContentErrorStringByNameSpy).toHaveBeenCalledWith('ERROR_MESSAGE_KEY');
+      expect(result).toEqual(expectedContentString);
+    });
+  
+    it('returns the default message if the error message does not include "CONTENT_STRING"', async () => {
+      const errorMessage = 'Some error message';
+      const defaultMessage = 'Default error message';
+  
+      const result = await service.getContentErrorStringByException(errorMessage, defaultMessage);
+  
+      expect(result).toEqual(defaultMessage);
+    });
+  });
+  
 });
