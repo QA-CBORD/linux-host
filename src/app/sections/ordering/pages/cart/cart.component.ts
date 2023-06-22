@@ -463,8 +463,8 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (error) {
-      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, 'Your information could not be verified.'))
+    if (error && error.includes('CONTENT_STRING')) {
+      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, ''))
       return;
     }
 
