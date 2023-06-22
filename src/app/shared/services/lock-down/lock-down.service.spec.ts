@@ -61,4 +61,14 @@ describe(LockDownService, () => {
     expect(service.isLockDownOn()).toBeTruthy();
     expect(toastSpy).toHaveBeenCalledTimes(1);
   });
+
+  it('should have a default message defined', async () => {
+    const toastSpy = jest.spyOn(_toastService, 'showError').mockReturnValue('');
+    jest.spyOn(_contentStringsFacadeService, 'getContentStringValue$').mockReturnValue(of(''));
+    jest.spyOn(_settingsFacadeService, 'fetchSettingValue$').mockReturnValue(of('1'));
+    await service.loadStringsAndSettings();
+    expect(service.isLockDownOn()).toBeTruthy();
+    expect(service.defaultMessage).toBeTruthy();
+    expect(toastSpy).toHaveBeenCalledWith(service.defaultMessage, 5000, 'bottom');
+  });
 });

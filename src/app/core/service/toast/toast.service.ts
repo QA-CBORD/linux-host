@@ -49,13 +49,13 @@ export class ToastService {
     await toast.present();
   }
 
-  async showError(message: string, duration = 5000) {
+  async showError(message: string, duration = 5000, position: "top" | "bottom" | "middle" = 'top') {
     const myToast = await this.toastController.create({
       message,
       duration,
       cssClass: 'toast-message-error',
       mode: 'ios',
-      position: 'top',
+      position,
       buttons: [
         {
           icon: '/assets/icon/error.svg',

@@ -506,6 +506,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     return this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu]);
   }
   onAddItems() {
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
+
     this.orderDetailsOptions$.pipe(withLatestFrom(this.merchant$, this.order$), take(1)).subscribe(
       async ([
         { dueTime, orderType, address, isASAP },
