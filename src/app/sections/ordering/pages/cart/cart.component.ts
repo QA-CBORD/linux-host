@@ -117,8 +117,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.merchant$ = this.cartService.merchant$.pipe(
       tap(
         merchant =>
-          (this.merchantTimeZoneDisplayingMessage =
-            merchant?.timeZone && "The time zone reflects the merchant's location")
+        (this.merchantTimeZoneDisplayingMessage =
+          merchant?.timeZone && "The time zone reflects the merchant's location")
       )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
@@ -463,8 +463,8 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (error) {
-      this.onValidateErrorToast(String(error));
+    if (error && error.includes('CONTENT_STRING')) {
+      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, ''))
       return;
     }
 
