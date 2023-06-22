@@ -32,6 +32,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
+import { OrderingService } from '@sections/ordering/services/ordering.service';
 
 export enum browserState {
   FINISHED = 'browserFinished',
@@ -93,8 +94,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
     private readonly a11yService: AccessibilityService,
-    private readonly commonService: CommonService
-  ) {}
+    private readonly commonService: CommonService,
+    private readonly orderingService: OrderingService,
+  ) { }
 
   ngOnInit() {
     this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -103,7 +105,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.contentString = this.commonService.getString(ContentStringCategory.deposit);
   }
-
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
@@ -446,7 +447,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     document.getElementById('depositBtnText').innerHTML =
       amount && amount.length ? `${submitButtonText} $` + amount : submitButtonText;
   }
-
   async confirmationDepositPopover(data) {
     const { confirmDepositCs: contentString } = this.contentString;
     const popover = await this.popoverCtrl.create({
@@ -465,19 +465,21 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.loadingService.showSpinner();
 
         this.depositService
-        .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-        .pipe(
-          handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
-          take(1),
-          finalize(() => {
-            this.loadingService.closeSpinner();
-            this.isDepositing = false;
-          })
-        )
-        .subscribe(
-          () => this.finalizeDepositModal(data),
-          error => this.onErrorRetrieve(error || 'Your information could not be verified.')
-        );
+          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
+          .pipe(
+            handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
+            take(1),
+            finalize(() => {
+              this.loadingService.closeSpinner();
+              this.isDepositing = false;
+            })
+          )
+          .subscribe(
+            () => this.finalizeDepositModal(data),
+            async (error) => {
+              this.onErrorRetrieve(await this.orderingService.getContentErrorStringByException(error, 'Your information could not be verified.'))
+            }
+          );
       }
       if (role === BUTTON_TYPE.CANCEL) {
         this.isDepositing = false;

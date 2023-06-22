@@ -195,7 +195,7 @@ export class HousingService {
           checkIn + ''
         }`
       : `${this._baseUrl}/roomselectproxy/v.1.0/room-inspections-proxy?termKey=${termId}&contractElementKey=${contractElementKey}&checkIn=${checkIn}`;
-    return this._housingProxyService.get<Inspection>(apiUrl).pipe(
+      return this._housingProxyService.get<Inspection>(apiUrl).pipe(
       map(response => new Inspection(response)),
       tap((response: Inspection) => this._setInspection(response)),
       catchError(() => this._handleInspectionSelectedError())
