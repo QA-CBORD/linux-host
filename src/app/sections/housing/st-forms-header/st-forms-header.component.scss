@@ -20,3 +20,10 @@
     --color: #{$color-dodger-blue};
   }
 }
+
+:host.inspectionHeader {
+  background-color: white;
+  .st-forms-header__actions{
+    background-color: white;
+  }
+}
