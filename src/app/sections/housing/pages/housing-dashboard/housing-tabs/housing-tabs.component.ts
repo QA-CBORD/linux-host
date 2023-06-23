@@ -16,7 +16,7 @@ export class HousingTabsComponent {
 
   select(event: SegmentCustomEvent) {
     const { detail } = event;
-    this.onTabSelected.emit(detail.value);
+    this.onTabSelected.emit(detail.value?.toString());
   }
 
   addTab(tab: HousingTabComponent) {
