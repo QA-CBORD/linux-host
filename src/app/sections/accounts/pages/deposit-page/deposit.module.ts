@@ -18,6 +18,7 @@ import { AccessibleSelectModule } from '@shared/accessibility/directives/accessi
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { DestinationAccountDisplayModule } from './pipes/destination-account-display.module';
 import { StInputAmountModule } from './input-amount/input-amount.module';
+import { OrderingService } from '@sections/ordering/services/ordering.service';
 
 const imports = [
   CommonModule,
@@ -38,7 +39,7 @@ const imports = [
   StInputAmountModule
 ];
 const declarations = [DepositPageComponent];
-const providers = [DepositResolver, DepositService, AccessibilityService];
+const providers = [DepositResolver, DepositService, AccessibilityService, OrderingService];
 const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
 
 @NgModule({

@@ -1,56 +1,64 @@
 <ng-container *ngIf="(inspectionDetails$ | async) as inspectionDetails">
-  <st-forms-header [showSave]="!(status > 1)" (onSave)="save(inspectionDetails)">
+  <st-forms-header class="inspectionHeader" [showSave]="status === 0" (onSave)="save(inspectionDetails)">
   </st-forms-header>
-  <ion-content class="ion-padding inspection-details__content" #content>
-    <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
-    <st-housing-tabs (onTabSelected)="changeView($event)">
-      <st-housing-tab *ngFor="let room of inspectionDetails.sections" [tabTitle]="room.name"></st-housing-tab>
-    </st-housing-tabs>
-
-    <div [ngSwitch]="section" class="inspection-details__card">
-      <ng-container *ngFor="let room of inspectionDetails.sections">
-        <ng-container *ngSwitchCase="room.name">
-          <ion-card *ngFor="let item of room.items;let i = index;" [disabled]="status > 1">
-            <ion-item lines="none">
-              <ion-label>
-                <h1>{{item.name}}</h1>
-              </ion-label>
-            </ion-item>
-            <ion-item lines="none">
-              <ion-select class="selectorCondition" [(ngModel)]="item.residentConditionKey"
-                placeholder="select a condition">
-                <ion-select-option *ngFor="let condition of conditions"
-                  [value]="+condition.value">{{condition.label}}</ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-item lines="none" *ngIf="item.staffConditionKey">
-              <ion-label class="staffCondition">
-                The staff rated this item’s condition as
-                <span class="__color">{{getConditionStaff(item.staffConditionKey)}}</span>
-              </ion-label>
-            </ion-item>
-            <ion-item class="comments" lines="none">
-              <ion-label position="stacked">Add comments</ion-label>
-              <ion-textarea (onfocus)="true" class="textarea__control" label="Add comments" [(ngModel)]="item.comments">
-              </ion-textarea>
-            </ion-item>
-          </ion-card>
-        </ng-container>
-      </ng-container>
-      <st-stepper-footer>
-        <div>
-          <h2 class="inspection-details__title">Room Inspections</h2>
-          <ion-label color="medium">
-            {{ countItemsLeft(inspectionDetails) | i18nPlural:roomsMapping}}
-          </ion-label>
-        </div>
-        <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
+    <div class="tabsContainer">
+      <h2 class="inspection-details__title">{{inspectionDetails.formDefinition.applicationTitle}}</h2>
+      <st-housing-tabs (onTabSelected)="changeView($event)">
+        <st-housing-tab *ngFor="let room of inspectionDetails.sections" [tabTitle]="room.name"></st-housing-tab>
+      </st-housing-tabs>
+    </div>
+    <ion-content class="ion-padding inspection-details__content" #content>
+      <div [ngSwitch]="section" class="inspection-details__card">
+        <form [formGroup]="inspectionForm">
+          <div formArrayName="sections">
+            <ng-container *ngFor="let section of sectionsFormArray.controls;let i = index" [formGroupName]="i">
+              <div formArrayName="items">
+                <ion-card *ngFor="let item of getItemsArray(section).controls;let j = index" [disabled]="status > 1">
+                  <div [formGroupName]="j">
+                    <ion-item lines="none">
+                      <ion-label>
+                        <h1>{{item.controls.name.value}}</h1>
+                      </ion-label>
+                    </ion-item>
+                    <ion-item lines="none">
+                      <ion-select class="selectorCondition" formControlName="residentConditionKey"
+                        placeholder="Select a condition from the list">
+                        <ion-select-option *ngFor="let condition of conditions"
+                          [value]="+condition.value">{{condition.label}}
+                        </ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                    <ion-item lines="none" *ngIf="item.controls.staffConditionKey">
+                      <ion-label class="staffCondition">
+                        The staff rated this item’s condition as
+                        <span class="__color">{{getConditionStaff(item.controls.staffConditionKey.value)}}</span>
+                      </ion-label>
+                    </ion-item>
+                    <ion-item class="comments" lines="none">
+                      <st-textarea-floating-label class="ng-valid ng-dirty ng-touched" formControlName="comments"
+                        type="text" [label]="'Add comments'" [idd]="'comments'" [isAttachment]="true">
+                      </st-textarea-floating-label>
+                    </ion-item>
+                  </div>
+                </ion-card>
+              </div>
+            </ng-container>
+          </div>
+        </form>
+        <st-stepper-footer>
+          <div>
+            <h2 class="inspection-details__title">Room Inspections</h2>
+            <ion-label color="medium">
+              {{ countItemsLeft(inspectionForm.value) | i18nPlural:roomsMapping}}
+            </ion-label>
+          </div>
+          <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
           [color]="countItemsLeft(inspectionDetails) > 0 || isSubmitted ? 'ligth' : 'primary'"
           (click)="submitInspection(inspectionDetails)"
           [disabled]="countItemsLeft(inspectionDetails) > 0 || isSubmitted">
           Submit
         </ion-button>
-      </st-stepper-footer>
-    </div>
-  </ion-content>
+        </st-stepper-footer>
+      </div>
+    </ion-content>
 </ng-container>

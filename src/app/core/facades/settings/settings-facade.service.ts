@@ -53,7 +53,7 @@ export class SettingsFacadeService extends ServiceStateFacade {
     const call = this.settingsApiService.getSetting(setting, sessionId, institutionId);
     return this.makeRequestWithUpdatingStateHandler<SettingInfo>(call, this.settingsStateService).pipe(
       tap(sett => this.settingsStateService.updateState(sett)),
-      map(sett => sett.value)
+      map(sett => sett?.value)
     );
   }
 

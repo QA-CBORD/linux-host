@@ -94,10 +94,6 @@ export class NativeProvider {
     return this.platform.is('cordova');
   }
 
-  sendAndroidData<T>(methodName: NativeData, data: T) {
-    androidInterface[methodName](data);
-  }
-
   updatePreviousRoute() {
     this.previousRoute = this.router.url;
   }
@@ -183,17 +179,6 @@ export class NativeProvider {
       return throwError(new Error('This is not a native device'));
     }
   }
-
-  /// used to allow user to add USAePay CC and handle response
-  // addUSAePayCreditCard(): Observable<USAePayResponse> {
-  //   if (this.isAndroid()) {
-  //     return this.getAndroidDataAsObservable<USAePayResponse>(NativeData.ADD_TO_USAEPAY);
-  //   } else if (this.isIos()) {
-  //     return from(this.getIosData(NativeData.ADD_TO_USAEPAY));
-  //   } else {
-  //     return of({ success: false, errorMessage: 'This is not a native device' });
-  //   }
-  // }
 
   /// do not use -- for native devices to call only
   addUSAePayCreditCardComplete(response: USAePayResponse) {
