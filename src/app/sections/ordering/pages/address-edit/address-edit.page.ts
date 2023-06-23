@@ -38,7 +38,8 @@ export class AddressEditPage implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly location: Location,
-    private readonly route: ActivatedRoute) {}
+    private readonly route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.initContentStrings();
@@ -87,7 +88,10 @@ export class AddressEditPage implements OnInit {
         data: {
           message: `Are you sure you want to remove: ${address}`,
           title: 'Remove Address?',
-          buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.REMOVE, label: 'REMOVE' }],
+          buttons: [
+            { ...buttons.CANCEL, label: 'CANCEL' },
+            { ...buttons.REMOVE, label: 'REMOVE' },
+          ],
         },
       },
       animated: false,
@@ -169,6 +173,9 @@ export class AddressEditPage implements OnInit {
 
   private initContentStrings() {
     this.contentStrings.buttonSave = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSave);
-    this.contentStrings.titleEditAddresses = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.titleEditAddresses);
+    this.contentStrings.titleEditAddresses = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.titleEditAddresses
+    );
+    this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
   }
 }

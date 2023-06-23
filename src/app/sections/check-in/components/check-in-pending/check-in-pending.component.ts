@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupportedFormat } from '@capacitor-community/barcode-scanner';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -26,6 +26,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeComponent } from '../scan-code/scan-code.component';
+import { LockDownService } from '@shared/services';
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -39,7 +40,7 @@ export interface orderInfo {
   styleUrls: ['./check-in-pending.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckInPendingComponent implements OnInit, OnDestroy {
+export class CheckInPendingComponent implements OnInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentStrings: any;
   locationPermissionDisabled: boolean;
@@ -71,21 +72,16 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly resolver: RecentOrdersResolver,
     private readonly coordsService: CoordsService,
-    private readonly cart: CartService,
     private readonly cdRef: ChangeDetectorRef,
     private platform: Platform,
     private readonly cartService: CartService,
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
     this.setData();
     this.watchLocationChanges();
     this.hardwareBackButton();
-  }
-
-  ngOnDestroy() {
-    this.locationSubscription.unsubscribe();
-    this.routeSubscription.unsubscribe();
   }
 
   ionViewWillEnter() {
@@ -100,9 +96,14 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
       storeAddress: address,
       merchant,
       isASAP,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } = <any> this.data;
-    await this.cart.onAddItems({
+
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
+
+    await this.cartService.onAddItems({
       merchant,
       orderOptions: { dueTime: new Date(dueTime), orderType, address, isASAP },
       orderId: this.orderId,
@@ -216,7 +217,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         total: this.total,
         checkNumber: this.checkNumber,
         data: JSON.stringify(this.data),
-        orderDetailOptions: JSON.stringify(orderDetailOptions)
+        orderDetailOptions: JSON.stringify(orderDetailOptions),
       },
     });
   }
@@ -241,15 +242,15 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
 
   private setData() {
     this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
-    this.menuInfo$ = this.cart.menuInfo$;
+    this.menuInfo$ = this.cartService.menuInfo$;
     this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === this.orderId)));
-    this.routeSubscription = this.activatedRoute.data.subscribe(response => {
+    this.routeSubscription = this.activatedRoute.data.pipe(take(1)).subscribe(response => {
       this.setProps(response);
     });
   }
 
   private watchLocationChanges() {
-    this.locationSubscription = this.coordsService.location$.subscribe((location) => {
+    this.locationSubscription = this.coordsService.location$.pipe(take(1)).subscribe(location => {
       if (!location || !location.coords) return of(null);
       this.locationPermissionDisabled = !(location.coords.latitude && location.coords.longitude);
     });
@@ -284,7 +285,7 @@ export class CheckInPendingComponent implements OnInit, OnDestroy {
         orderType: type,
         address: {} as AddressInfo,
         dueTime: new Date(this.dueTime),
-        isASAP: false
+        isASAP: false,
       });
     }
   }

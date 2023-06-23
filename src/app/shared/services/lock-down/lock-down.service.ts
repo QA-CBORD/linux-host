@@ -11,6 +11,7 @@ import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/con
 export class LockDownService {
   lockDownMessage: string;
   lockDownFlag: boolean;
+  defaultMessage = `Ordering is currently unavailable. Please contact your institution's admin for more information.`
 
   constructor(
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
@@ -36,7 +37,7 @@ export class LockDownService {
 
   isLockDownOn(): boolean {
     if (this.lockDownFlag) {
-      this.toastService.showError(this.lockDownMessage);
+      this.toastService.showError(this.lockDownMessage || this.defaultMessage , 5000, 'bottom');
       return true;
     }
 
