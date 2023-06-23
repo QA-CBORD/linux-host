@@ -18,8 +18,6 @@ export interface TileWrapperConfig {
     buttonConfig: ButtonConfig
     navigateBack?: PATRON_NAVIGATION | string;
     supportProfiles?: APP_PROFILES[],
-    stopNavigation?: boolean;
-    stopNavigationMessage?: string;
 }
 
 export interface ButtonConfig {
