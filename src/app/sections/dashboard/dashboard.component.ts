@@ -44,8 +44,7 @@ import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global
 import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/secure-messaging.facade.service';
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Settings } from 'src/app/app.global';
+import { LockDownService } from '@shared/services';
 
 @Component({
   selector: 'st-dashboard',
@@ -90,7 +89,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
     private readonly navigationFacade: NavigationFacadeSettingsService,
     private secureMessagingFacadeService: SecureMessagingFacadeService,
     private readonly modalService: ModalsService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly lockDownService: LockDownService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -263,12 +262,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
         CONTENT_STRINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.labelDashboard
       ),
-      stopNavigationMessage: this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STRINGS_DOMAINS.get_common,
-        CONTENT_STRINGS_CATEGORIES.error_message,
-        ORDERING_CONTENT_STRINGS.disableOrdering
-      ),
-      stopNavigation: this.settingsFacadeService.fetchSettingValue$(Settings.Setting.LOCK_DOWN_ORDERING).pipe(map(sett => Boolean(sett === '1'))),
       buttonConfig: {
         title: this.contentStringsFacadeService.getContentStringValue$(
           CONTENT_STRINGS_DOMAINS.patronUi,
@@ -278,6 +271,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
       },
     });
 
+    this.lockDownService.loadStringsAndSettings();
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
 
