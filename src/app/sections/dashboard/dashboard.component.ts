@@ -116,6 +116,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   async ionViewWillEnter() {
+    this.lockDownService.loadStringsAndSettings();
     this.accessCard.ionViewWillEnter();
     this.updateTiles();
     this.checkNativeStartup();
@@ -270,8 +271,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
         ),
       },
     });
-
-    this.lockDownService.loadStringsAndSettings();
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
 

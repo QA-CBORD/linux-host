@@ -148,11 +148,9 @@ describe('DashboardPage', () => {
     it('should update order strings', async () => {
       const spy = jest.spyOn(_tileConfigFacadeService, 'resolveAsyncUpdatingConfig');
       const spy3 = jest.spyOn(_tileConfigFacadeService, 'updateConfigById');
-      const lockDownSpy = jest.spyOn(_lockDownService, 'loadStringsAndSettings');
       await component['updateOrderingStrings']();
       expect(spy).toHaveBeenCalledTimes(11);
       expect(spy3).toHaveBeenCalledTimes(11);
-      expect(lockDownSpy).toHaveBeenCalled();
     });
 
     it('should check stale profile', async () => {
@@ -167,6 +165,12 @@ describe('DashboardPage', () => {
       const spy = jest.spyOn(_modalService, 'create');
       component['presentEditHomePageModal']();
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should get the setting for lockDown', () => {
+      const lockDownSpy = jest.spyOn(_lockDownService, 'loadStringsAndSettings');
+      component.ionViewWillEnter();
+      expect(lockDownSpy).toHaveBeenCalled();
     });
   });
 });
