@@ -468,6 +468,11 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (error) {
+      this.onValidateErrorToast(String(error));
+      return;
+    }
+
     this.cartService.changeClientOrderId;
     //something went wrong in the backend, order did not succeed for sure,
     await this.onErrorModal('There was an issue with the transaction, please try again.');
