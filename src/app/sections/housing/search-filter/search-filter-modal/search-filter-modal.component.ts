@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { convertObjectToMap } from '@sections/housing/utils/convert-object-to-map';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roommate.model';
+import { FilterOptions } from 'src/app/app.global';
 
 @Component({
   selector: 'st-search-filter-modal',
@@ -71,6 +72,8 @@ export class SearchFilterModalComponent implements OnInit {
   private _handleFilters() {
     this.categories = this._roomsService.getFilterCategories();
     this.categoryOptions = this._roomsService.getFilterOptions(this.categories);
+    this.sortAssigmentLimitOption();
+    
     const builderOptions = {};
     for (const item in this.categoryOptions) {
       const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
@@ -79,6 +82,7 @@ export class SearchFilterModalComponent implements OnInit {
     this._loadingService.closeSpinner();
     this.filtersForm = this._formBuilder.group(builderOptions);
   }
+  
   filter(data) {
     this._loadingService.showSpinner();
 
@@ -162,5 +166,10 @@ export class SearchFilterModalComponent implements OnInit {
 
   getId(key: string, index: number): number {
     return Number(key) - index;
+  }
+  sortAssigmentLimitOption(){
+    const options = this.categoryOptions[FilterOptions.FACILITY_ASSIGMENT_LIMIT];
+    options.map(i => parseInt(i));
+    options.sort();
   }
 }
