@@ -172,7 +172,7 @@ export class SearchFilterModalComponent implements OnInit {
   }
   sortAssigmentLimitOption() {
     const options = this.categoryOptions[FilterOptions.FACILITY_ASSIGMENT_LIMIT];
-    options.map(i => parseInt(i));
-    options.sort();
+    const sortedOptions = options.map(i => parseInt(i, 10)).sort((a, b) => a - b);
+    this.categoryOptions[FilterOptions.FACILITY_ASSIGMENT_LIMIT] = sortedOptions.map(String);
   }
 }

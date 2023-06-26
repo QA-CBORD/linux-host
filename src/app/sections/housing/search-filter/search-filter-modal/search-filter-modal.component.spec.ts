@@ -8,6 +8,7 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SearchFilterModalComponent } from './search-filter-modal.component';
+import { FilterOptions } from 'src/app/app.global';
 
 describe('SearchFilterModalComponent', () => {
   let component: SearchFilterModalComponent;
@@ -91,4 +92,17 @@ describe('SearchFilterModalComponent', () => {
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
   });
+
+  describe('sortAssigmentLimitOption', () => {
+    it('should sort the assignment limit options in ascending order', () => {
+      component.categoryOptions = {
+        [FilterOptions.FACILITY_ASSIGMENT_LIMIT]: ['5', '2', '10', '1']
+      };
+      component.sortAssigmentLimitOption();
+      const expectedOptions = ['1', '2', '5', '10'];
+      expect(component.categoryOptions[FilterOptions.FACILITY_ASSIGMENT_LIMIT]).toEqual(expectedOptions);
+    });
+  });
+  
+
 });
