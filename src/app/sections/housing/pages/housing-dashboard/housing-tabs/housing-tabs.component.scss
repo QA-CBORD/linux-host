@@ -2,7 +2,7 @@
 
 ion-segment-button {
     width: 33.33%;
-    min-width: fit-content;
+    max-width: inherit;
     @include font-nunito-heavy(14px);
 }
 

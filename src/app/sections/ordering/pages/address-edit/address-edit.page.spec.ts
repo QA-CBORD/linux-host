@@ -8,6 +8,7 @@ import { AddressEditPage } from '.';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Location } from '@angular/common';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { firstValueFrom, of } from 'rxjs';
 
 describe('AddressEditPage', () => {
   let component: AddressEditPage;
@@ -27,6 +28,10 @@ describe('AddressEditPage', () => {
       
       orderingService = {
         getContentStringByName: jest.fn(),
+      };
+
+      route = {
+        data: of({ afterSaveRoute: '' })
       };
 
       TestBed.configureTestingModule({
@@ -65,5 +70,10 @@ describe('AddressEditPage', () => {
 
   it('should create AddressEditPage component', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should should have an content string labelRoom', async () => {
+    const contentStringSpy =  jest.spyOn(orderingService, 'getContentStringByName').mockResolvedValue(of('hello'));
+    expect(contentStringSpy).toBeCalledTimes(3);
   });
 });
