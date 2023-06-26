@@ -63,12 +63,12 @@ export class OrderTileComponent implements OnInit {
   }
 
   async goToMerchant({ id: merchantId, walkout }: MerchantInfo) {
-    if (walkout) {
-      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+    if (this.lockDownService.isLockDownOn()) {
       return;
     }
 
-    if (this.lockDownService.isLockDownOn()) {
+    if (walkout) {
+      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
 
