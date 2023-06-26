@@ -105,17 +105,19 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     const occupantFacilities: Facility[] = [];
 
     const parentFacilities = this.getParentFacilities();
-    parentFacilities.forEach(parent => {
-      const children = this.getParentFacilityChildren(parent.facilityId);
-      if (children) {
-        children.forEach(facility => {
-          if (facility.occupantKeys && facility.occupantKeys.length > 0) {
-            occupantFacilities.push(facility);
-          }
-        })
-      }
-    })
-    return occupantFacilities;
+    if (parentFacilities) {
+      parentFacilities.forEach(parent => {
+        const children = this.getParentFacilityChildren(parent.facilityId);
+        if (children) {
+          children.forEach(facility => {
+            if (facility.occupantKeys && facility.occupantKeys.length > 0) {
+              occupantFacilities.push(facility);
+            }
+          })
+        }
+      })
+      return occupantFacilities;
+    }
   }
 
   setActiveRoomSelect(roomSelectKey: number): void {

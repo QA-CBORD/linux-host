@@ -39,12 +39,15 @@ export class SearchFilterModalComponent implements OnInit {
     private _loadingService: LoadingService,
     private _router: Router,
     private _formBuilder: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this._loadingService.showSpinner();
-    const facilityKeys: number[] = this._roomStateService.getOccupiedFacilities().map(x => x.facilityId);
-    this.occupants$ = this._initFilter(facilityKeys);
+    const occupiedFacilities = this._roomStateService.getOccupiedFacilities();
+    if (occupiedFacilities) {
+      const facilityKeys: number[] = occupiedFacilities.map(x => x.facilityId);
+      this.occupants$ = this._initFilter(facilityKeys);
+    }
   }
   private _initFilter(facilityKeys: number[]): Observable<FacilityOccupantDetails[]> | Observable<null> {
     if (facilityKeys && facilityKeys.length > 0) {
@@ -73,7 +76,7 @@ export class SearchFilterModalComponent implements OnInit {
     this.categories = this._roomsService.getFilterCategories();
     this.categoryOptions = this._roomsService.getFilterOptions(this.categories);
     this.sortAssigmentLimitOption();
-    
+
     const builderOptions = {};
     for (const item in this.categoryOptions) {
       const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
@@ -82,7 +85,7 @@ export class SearchFilterModalComponent implements OnInit {
     this._loadingService.closeSpinner();
     this.filtersForm = this._formBuilder.group(builderOptions);
   }
-  
+
   filter(data) {
     this._loadingService.showSpinner();
 
@@ -167,7 +170,7 @@ export class SearchFilterModalComponent implements OnInit {
   getId(key: string, index: number): number {
     return Number(key) - index;
   }
-  sortAssigmentLimitOption(){
+  sortAssigmentLimitOption() {
     const options = this.categoryOptions[FilterOptions.FACILITY_ASSIGMENT_LIMIT];
     options.map(i => parseInt(i));
     options.sort();
