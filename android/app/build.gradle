@@ -17,8 +17,8 @@ android {
         applicationId "com.cbord.get"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 42211
-        versionName "4.22.11"
+        versionCode 42212
+        versionName "4.22.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
