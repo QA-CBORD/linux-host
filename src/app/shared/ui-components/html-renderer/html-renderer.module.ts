@@ -9,6 +9,5 @@ import { StHeaderModule } from '../st-header/st-header.module';
   imports: [CommonModule, IonicModule, StButtonModule, StHeaderModule],
   declarations: [HTMLRendererComponent],
   exports: [HTMLRendererComponent],
-  entryComponents: [HTMLRendererComponent],
 })
 export class HTMLRendererModule {}

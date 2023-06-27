@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, Resolve } from "@angular/router";
+import { ActivatedRouteSnapshot } from "@angular/router";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { ContentStringApi, ContentStringCategory } from "@shared/model/content-strings/content-strings-api";
 import { ConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
@@ -11,7 +11,7 @@ import { CommonService } from "./common.service";
 import { ConnectionService } from "./connection-service";
 
 @Injectable()
-export class ConnectivityPageResolver implements Resolve<ConnectivityPageInfo> {
+export class ConnectivityPageResolver {
 
     constructor(
         private readonly commonService: CommonService,

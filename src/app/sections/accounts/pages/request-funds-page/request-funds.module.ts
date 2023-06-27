@@ -35,12 +35,10 @@ const imports = [
   StButtonModule,
   FocusNextModule,
 ];
-const entryComponents = [PopoverComponent];
 const providers = [RequestFundsResolver];
 @NgModule({
   declarations,
   imports,
-  entryComponents,
   providers
 })
 export class RequestFundsModule {}

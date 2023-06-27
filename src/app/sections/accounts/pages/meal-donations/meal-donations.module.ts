@@ -11,10 +11,8 @@ import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-flo
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
-import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { ConfirmDonatePopoverModule } from './components/confirm-donate-popover/confirm-donate-popover.module';
 import { MealDonationsService } from './service/meal-donations.service';
-import { DonateModalComponent } from './components/donate-modal';
 import { DonateModalModule } from './components/donate-modal/donate-modal.module';
 import { AmountLabelControlPipe } from '@sections/accounts/pages/meal-donations/pipes/amount-label-control.pipe';
 
@@ -33,12 +31,10 @@ const imports = [
 ];
 const declarations = [MealDonationsComponent, AmountLabelControlPipe];
 const providers = [MealDonationsResolver, MealDonationsService];
-const entryComponents = [ConfirmDonatePopoverComponent, DonateModalComponent];
 @NgModule({
   declarations,
   imports,
   providers,
-  entryComponents,
 })
 export class MealDonationsModule {
 }

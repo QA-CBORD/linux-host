@@ -10,6 +10,5 @@ import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.c
   imports: [CommonModule, IonicModule, ImageCropperModule],
   declarations: [PhotoCropModalComponent, PopoverCropComponent],
   providers: [PhotoCropModalService],
-  entryComponents: [PhotoCropModalComponent, PopoverCropComponent]
 })
 export class ImageCropModalModule {}

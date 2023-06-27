@@ -26,11 +26,9 @@ import { HousingTileModule } from './containers/housing-tile/housing-tile.module
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { LocationPermissionModalModule } from './components/location-disclosure/location-disclosure.module';
-import { LocationPermissionModal } from './components/location-disclosure/location-disclosure.component';
 import { ProminentDisclosureService } from './services/prominent-disclosure.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 
@@ -75,6 +73,5 @@ const providers = [
   imports,
   declarations,
   providers,
-  entryComponents: [PhoneEmailComponent, LocationPermissionModal],
 })
 export class DashboardPageModule {}

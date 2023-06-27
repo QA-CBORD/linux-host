@@ -9,7 +9,6 @@ import { CreditCardTypePipeModule } from '@sections/accounts/shared/pipes/credit
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
 import { DepositModalModule } from '@sections/accounts/shared/ui-components/deposit-modal/deposit-modal.module';
-import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { SuccessfulPaymentModal } from './successful-payment-modal/successful-payment-modal.component';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StCreditCardListModule } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.module';
@@ -35,12 +34,10 @@ const imports = [
   FormPaymentRoutingModule
 ];
 const declarations = [FormPaymentComponent, ConfirmPaymentPopover, SuccessfulPaymentModal];
-const entryComponents = [FormPaymentComponent, ConfirmPaymentPopover, DepositModalComponent, SuccessfulPaymentModal];
 
 @NgModule({
   imports,
   declarations,
-  entryComponents,
   providers: [AccountService, CreditCardService],
 })
 export class FormPaymentModule {}

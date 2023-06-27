@@ -1,4 +1,3 @@
-import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, zip } from 'rxjs';
 import { AccountService } from '../services/accounts.service';
@@ -12,17 +11,14 @@ import { ContentStringInfo } from 'src/app/core/model/content/content-string-inf
 import { Settings } from '../../../app.global';
 
 @Injectable()
-export class AccountsPageResolver
-  implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
+export class AccountsPageResolver {
   constructor(
     private readonly accountsService: AccountService,
     private readonly transactionService: TransactionService,
-    private readonly loadingService: LoadingService,
-  ) {
-  }
+    private readonly loadingService: LoadingService
+  ) {}
 
   resolve(): Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]> {
-
     const requiredSettings: Settings.Setting[] = [
       Settings.Setting.DISPLAY_TENDERS,
       Settings.Setting.DEPOSIT_TENDERS,
@@ -30,7 +26,7 @@ export class AccountsPageResolver
       Settings.Setting.ONETIME_DEPOSITS_ENABLED,
       Settings.Setting.GUEST_DEPOSIT_ENABLED,
       Settings.Setting.MEAL_DONATIONS_ENABLED,
-      Settings.Setting.LOW_BALANCE_AUTO_DEPOSIT_ENABLED
+      Settings.Setting.LOW_BALANCE_AUTO_DEPOSIT_ENABLED,
     ];
 
     const accountContentStrings = this.accountsService.initContentStringsList();
@@ -40,13 +36,13 @@ export class AccountsPageResolver
       .getUserSettings(requiredSettings)
       .pipe(
         switchMap(() =>
-          this.transactionService.getRecentTransactions(ALL_ACCOUNTS, { name: TIME_PERIOD.pastSixMonth }, 10),
-        ),
+          this.transactionService.getRecentTransactions(ALL_ACCOUNTS, { name: TIME_PERIOD.pastSixMonth }, 10)
+        )
       );
     this.loadingService.showSpinner();
 
     return zip(accountContentStrings, transactionContentStrings, historyCall, accountsCall).pipe(
-      finalize(() => this.loadingService.closeSpinner()),
+      finalize(() => this.loadingService.closeSpinner())
     );
   }
 }

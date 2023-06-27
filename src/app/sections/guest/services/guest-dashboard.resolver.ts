@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { Observable, zip } from 'rxjs';
 import { finalize, map, take } from 'rxjs/operators';
@@ -10,7 +9,7 @@ import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { ProminentDisclosureService } from '@sections/dashboard/services/prominent-disclosure.service';
 
 @Injectable()
-export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
+export class GuestDashboardResolver {
   constructor(
     private readonly guestFacadeService: GuestFacadeService,
     private readonly loadingService: LoadingService,

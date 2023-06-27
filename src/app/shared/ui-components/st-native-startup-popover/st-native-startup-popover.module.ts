@@ -11,7 +11,6 @@ const declarations = [StNativeStartupPopoverComponent];
     CommonModule,
     StPopoverLayoutModule
   ],
-  entryComponents: declarations,
   exports: declarations
 })
 export class StNativeStartupPopoverModule { }

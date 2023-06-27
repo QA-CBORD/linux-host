@@ -11,7 +11,6 @@ const declarations = [DeliveryAddressesModalComponent];
 @NgModule({
   declarations,
   exports: declarations,
-  entryComponents: declarations,
   imports: [CommonModule, IonicModule, AddEditAddressesModule, StButtonModule, AddressHeaderFormatPipeModule],
 })
 export class DeliveryAddressesModalModule {}
