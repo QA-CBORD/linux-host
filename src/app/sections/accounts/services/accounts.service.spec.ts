@@ -3,11 +3,11 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { BehaviorSubject, Observable, firstValueFrom, of } from 'rxjs';
 import { Settings } from '../../../app.global';
 import { AccountService } from './accounts.service';
-import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 describe('AccountService', () => {
   let service: AccountService;

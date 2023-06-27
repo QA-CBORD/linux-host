@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { UserAccount } from '@core/model/account/account.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
+import { firstValueFrom, of } from 'rxjs';
+import { Settings } from 'src/app/app.global';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 import { DepositService } from './deposit.service';
-import { firstValueFrom, of } from 'rxjs';
-import { UserAccount } from '@core/model/account/account.model';
-import { Settings } from 'src/app/app.global';
-import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 describe('DepositService', () => {
   let service: DepositService;

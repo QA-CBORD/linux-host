@@ -3,16 +3,11 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { Observable, firstValueFrom, of } from 'rxjs';
+import { PAYMENT_SYSTEM_TYPE, TIME_PERIOD } from '../accounts.config';
+import { TransactionHistory } from '../models/transaction-history.model';
+import { DateUtilObject } from '../shared/ui-components/filter/date-util';
 import { AccountService } from './accounts.service';
 import { TransactionService } from './transaction.service';
-import { DateUtilObject } from '../shared/ui-components/filter/date-util';
-import { TransactionHistory } from '../models/transaction-history.model';
-import { PAYMENT_SYSTEM_TYPE, TIME_PERIOD } from '../accounts.config';
-import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
-import { Settings } from 'src/app/app.global';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { TransactionResponse } from '@core/model/account/transaction-response.model';
-import { UserInfo } from '@core/model/user/user-info.model';
 
 describe('TransactionService', () => {
   let service: TransactionService;
@@ -209,14 +204,6 @@ describe('TransactionService', () => {
   it('should reset transactionHistory and call the appropriate methods to retrieve transactions for six month period', () => {
     const mockAccountId = '123456';
     const mockPeriod = { name: TIME_PERIOD.pastSixMonth, month: 8, year: 2023 } as DateUtilObject;
-    const mockStartDate = null;
-    const mockEndDate = '2022-12-29T18:48:36.416Z';
-    const mockQueryCriteria = {
-      newestDate: mockStartDate,
-      oldestDate: mockEndDate,
-      accountId: mockAccountId,
-      maxReturnMostRecent: 20,
-    };
 
     jest.spyOn(service as any, 'isDuplicateCall').mockReturnValue(false);
     jest.spyOn(service as any, 'setInitialQueryObject');
