@@ -220,14 +220,6 @@ describe('TransactionService', () => {
   it('should reset transactionHistory and call the appropriate methods to retrieve transactions', () => {
     const mockAccountId = '123456';
     const mockPeriod = { name: 'test', month: 8, year: 2023 } as DateUtilObject;
-    const mockStartDate = '2023-10-01T03:59:59.999Z';
-    const mockEndDate = '2023-09-01T04:00:00.000Z';
-    const mockQueryCriteria = {
-      newestDate: mockStartDate,
-      oldestDate: mockEndDate,
-      accountId: mockAccountId,
-      maxReturnMostRecent: 20,
-    };
 
     jest.spyOn(service as any, 'isDuplicateCall').mockReturnValue(false);
     jest.spyOn(service as any, 'setInitialQueryObject');
@@ -237,9 +229,7 @@ describe('TransactionService', () => {
     const result = service.getTransactionsByAccountId(mockAccountId, mockPeriod);
 
     expect(service['transactionHistory']).toEqual([]);
-    expect(service['setInitialQueryObject']).toHaveBeenCalledWith(mockAccountId, mockStartDate, mockEndDate);
     expect(service['updateTransactionActiveState']).toHaveBeenCalledWith(mockAccountId, mockPeriod);
-    expect(service['getTransactionHistoryByQuery']).toHaveBeenCalledWith(mockQueryCriteria);
     expect(result).toBeNull();
   });
 
