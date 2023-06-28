@@ -166,6 +166,8 @@
     }
 
     .picker-toolbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       .picker-button {
         color: #000;
         @include font-nunito-regular(16px);
