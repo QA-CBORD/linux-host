@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { finalize, first, tap } from 'rxjs/operators';
 import { MerchantInfo } from '@sections/ordering/shared/models';
@@ -12,11 +11,7 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
 import { ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 
 @Injectable()
-export class OrderingResolver
-  implements
-    Resolve<
-      Observable<[ContentStringInfo[], ContentStringInfo[], ContentStringInfo[], ContentStringInfo[], MerchantInfo[]]>
-    > {
+export class OrderingResolver {
   constructor(
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,

@@ -1,19 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { take, map, filter } from 'rxjs/operators';
 import { CartService } from '@sections/ordering/services';
 import { MenuCategoryItemInfo } from '@sections/ordering/shared/models';
 
 @Injectable()
-export class ItemDetailResolver
-  implements
-    Resolve<
-      Observable<{
-        menuItem: MenuCategoryItemInfo;
-        queryParams: QueryParamsModel;
-      }>
-    > {
+export class ItemDetailResolver {
   constructor(private readonly cartService: CartService) {}
   resolve(
     snapshot: ActivatedRouteSnapshot

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { finalize, first, map, skipWhile, switchMap } from 'rxjs/operators';
@@ -10,7 +9,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 type CartResolvedData = Observable<{ accounts: MerchantAccountInfoList }>;
 
 @Injectable()
-export class CartResolver implements Resolve<CartResolvedData> {
+export class CartResolver {
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly loadingService: LoadingService,

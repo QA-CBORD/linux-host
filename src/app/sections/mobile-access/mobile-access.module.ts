@@ -45,12 +45,10 @@ const declarations = [
   MobileAccessPopoverComponent,
 ];
 const providers = [LocationsResolverGuard, MobileAccessService];
-const entryComponents = [MobileAccessPopoverComponent];
 
 @NgModule({
   imports,
   declarations,
   providers,
-  entryComponents,
 })
 export class MobileAccessPageModule {}

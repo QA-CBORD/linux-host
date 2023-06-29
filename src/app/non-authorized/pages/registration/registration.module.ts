@@ -11,7 +11,6 @@ import { PasswordValidationModule } from 'src/app/password-validation/password-v
 
 @NgModule({
   declarations: [RegistrationComponent, RegistrationSuccessComponent],
-  entryComponents: [RegistrationComponent, RegistrationSuccessComponent],
   imports: [
     CommonModule,
     StHeaderModule,

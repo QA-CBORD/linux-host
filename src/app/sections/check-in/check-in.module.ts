@@ -26,8 +26,6 @@ const declarations = [CheckInPendingComponent, PickCheckinModeComponent, CheckIn
 @NgModule({
   declarations,
   providers: [CheckingProcess,  CheckinSuccessResolver, CheckinPendingResolver, RecentOrdersResolver],
-  entryComponents: [CheckInPendingComponent, PickCheckinModeComponent, ScanCodeComponent, CheckInFailureComponent],
-
   imports: [
     CommonModule,
     StHeaderModule,

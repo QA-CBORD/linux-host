@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 
 import { retryWhen, switchMap, finalize, take } from 'rxjs/operators';
 import { PopoverController } from '@ionic/angular';
@@ -12,7 +11,7 @@ import { RewardsPopoverComponent } from '../components/rewards-popover';
 import { PopupTypes } from '../rewards.config';
 
 @Injectable()
-export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]>> {
+export class RewardsResolverGuard {
   constructor(
     private readonly rewardsService: RewardsService,
     private readonly loader: LoadingService,

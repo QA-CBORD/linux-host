@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Recipient } from '@sections/guest/model/recipient.model';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
@@ -9,7 +8,7 @@ import { Observable, zip } from 'rxjs';
 import { finalize, map, take } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
-export class GuestDepositResolver implements Resolve<Observable<{ recipients: Recipient[] }>> {
+export class GuestDepositResolver {
   constructor(
     private readonly loadingService: LoadingService,
     private readonly commonService: CommonService,

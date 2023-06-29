@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
@@ -11,7 +10,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { CheckingSuccessContentCsModel } from '../contents-strings/check-in-content-string.model';
 
 @Injectable()
-export class CheckinSuccessResolver implements Resolve<Observable<{ contentString: CheckingSuccessContentCsModel; }>> {
+export class CheckinSuccessResolver {
   constructor(
     private readonly commonService: CommonService,
     private readonly loadingService: LoadingService,

@@ -19,12 +19,10 @@ const imports = [
 ];
 const declarations = [SavedAddressesComponent];
 const providers = [];
-const entryComponents = [];
 
 @NgModule({
   declarations,
   imports,
   providers,
-  entryComponents,
 })
 export class SavedAddressesModule {}

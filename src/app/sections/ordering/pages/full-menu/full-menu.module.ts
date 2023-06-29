@@ -29,6 +29,5 @@ const declarations = [FullMenuComponent, FullMenuPopoverComponent];
 @NgModule({
   declarations,
   imports,
-  entryComponents: [FullMenuPopoverComponent],
 })
 export class FullMenuModule {}

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { tap } from 'rxjs/operators';
@@ -9,7 +8,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable()
-export class RequestFundsResolver implements Resolve<Observable<[SettingInfo[], UserAccount[]]>> {
+export class RequestFundsResolver  {
   constructor(private readonly accountsService: AccountService, private readonly loadingService: LoadingService) {}
 
   resolve(): Observable<[SettingInfo[], UserAccount[]]> {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -24,15 +24,7 @@ const requiredSettings = [
 ];
 
 @Injectable({ providedIn: 'root' })
-export class GuestAddFundsResolver implements Resolve<Observable<{
-  settings: SettingInfo[];
-  applePayEnabled: boolean;
-  destinationAccounts: UserAccount[];
-  sourceAccounts: UserAccount[];
-  recipientName: string;
-  addFundsCs: ContentStringModel;
-  confirmationCs: ContentStringModel;
-}>> {
+export class GuestAddFundsResolver {
   constructor(
     private readonly depositService: DepositService,
     private readonly loadingService: LoadingService,
@@ -41,9 +33,7 @@ export class GuestAddFundsResolver implements Resolve<Observable<{
     private readonly guestDepositsService: GuestDepositsService
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot
-  ): Observable<{
+  resolve(route: ActivatedRouteSnapshot): Observable<{
     settings: SettingInfo[];
     applePayEnabled: boolean;
     destinationAccounts: UserAccount[];

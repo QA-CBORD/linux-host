@@ -11,7 +11,6 @@ const declarations = [StGlobalPopoverComponent];
     CommonModule,
     StPopoverLayoutModule
   ],
-  entryComponents: declarations,
   exports: declarations
 })
 export class StGlobalPopoverModule { }

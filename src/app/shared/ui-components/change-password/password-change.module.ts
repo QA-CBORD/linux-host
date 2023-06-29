@@ -21,13 +21,11 @@ const imports = [
   PasswordValidationModule
 ];
 const declarations = [PasswordChangeComponent];
-const entryComponents = [PasswordChangeComponent];
 const exports = [PasswordChangeComponent];
 
 @NgModule({
   declarations,
   imports,
-  entryComponents,
   exports,
 })
 export class PasswordChangeModule {}

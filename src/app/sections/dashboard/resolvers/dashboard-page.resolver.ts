@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, zip } from 'rxjs';
 import { finalize, first, map, take } from 'rxjs/operators';
@@ -23,7 +23,7 @@ import { UserInfo } from '@core/model/user';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable()
-export class DashboardPageResolver implements Resolve<Observable<SettingInfoList> | Promise<SettingInfoList>> {
+export class DashboardPageResolver {
   constructor(
     private readonly accountsService: AccountService,
     private readonly userFacadeService: UserFacadeService,

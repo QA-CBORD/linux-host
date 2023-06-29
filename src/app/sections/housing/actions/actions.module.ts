@@ -8,12 +8,10 @@ import { CommonModule } from '@angular/common';
 
 export const imports = [IonicModule, RouterModule,CommonModule];
 export const declarations = [ActionsComponent, ActionsListComponent];
-export const entryComponents = [ActionsListComponent];
 
 @NgModule({
   imports,
   exports: declarations,
   declarations,
-  entryComponents,
 })
 export class ActionsModule {}

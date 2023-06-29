@@ -13,6 +13,5 @@ const declarations = [MobileCredentialsComponent, MobileCredentialMetadata];
   imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild([]), StHeaderModule, StButtonModule],
   declarations: declarations,
   exports: declarations,
-  entryComponents: declarations,
 })
 export class MobileCredentialModule {}

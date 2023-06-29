@@ -22,12 +22,10 @@ export const imports = [
   ShowMoreModule,
 ];
 export const declarations = [SearchFilterComponent, SearchFilterModalComponent, SearchFilterSectionComponent];
-export const entryComponents = [SearchFilterModalComponent];
 
 @NgModule({
   imports,
   exports: declarations,
   declarations,
-  entryComponents,
 })
 export class SearchFilterModule {}
