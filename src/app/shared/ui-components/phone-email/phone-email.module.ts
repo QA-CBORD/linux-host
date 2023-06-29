@@ -19,12 +19,10 @@ const imports = [
   FocusNextModule,
 ];
 const declarations = [PhoneEmailComponent];
-const entryComponents = [PhoneEmailComponent];
 
 @NgModule({
   declarations,
   imports,
-  entryComponents,
   exports: [PhoneEmailComponent],
 })
 export class PhoneEmailModule {}

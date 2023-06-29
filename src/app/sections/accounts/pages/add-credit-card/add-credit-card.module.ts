@@ -26,12 +26,10 @@ const imports = [
   ];
 const declarations = [AddCreditCardComponent, SuccessPopoverComponent];
 const providers = [AddCreditCardService];
-const entryComponents = [SuccessPopoverComponent];
 
 @NgModule({
   declarations,
   imports,
   providers,
-  entryComponents,
 })
 export class AddCreditCardModule {}

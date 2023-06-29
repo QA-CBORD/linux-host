@@ -8,7 +8,6 @@ const declarations = [ViewCartComponent];
 @NgModule({
   declarations,
   exports: [declarations],
-  entryComponents: [declarations],
   imports: [CommonModule, IonicModule],
 })
 export class ViewCartModule {}

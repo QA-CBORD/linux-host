@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { CanActivate } from '@angular/router';
 
 import { Observable, Subject } from 'rxjs';
 import { map, retryWhen, switchMap, tap } from 'rxjs/operators';
@@ -14,7 +13,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 
 @Injectable()
-export class OptInGuard implements CanActivate {
+export class OptInGuard {
   constructor(
     private readonly rewardsService: RewardsService,
     private readonly popoverCtrl: PopoverController,

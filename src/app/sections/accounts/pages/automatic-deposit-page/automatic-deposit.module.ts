@@ -44,13 +44,11 @@ const imports = [
     scrollAssist: true,
   }),
 ];
-const entryComponents = [PopoverComponent, ConfirmUnsavedChangesPopoverComponent];
 const providers = [AutoDepositService, AutoDepositApiService, AutomaticDepositResolver, UnsavedChangesGuard];
 
 @NgModule({
   imports: [imports],
   declarations,
   providers,
-  entryComponents: entryComponents,
 })
 export class AutomaticDepositModule {}

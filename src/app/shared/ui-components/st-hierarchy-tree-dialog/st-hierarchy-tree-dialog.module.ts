@@ -18,6 +18,5 @@ const declarations = [StHierarcheTreeDialogComponent];
     SwiperModule
   ],
   exports: declarations,
-  entryComponents: declarations
 })
 export class StHierarcheTreeDialogModule { }

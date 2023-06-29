@@ -38,6 +38,5 @@ const declarations = [RecentOrdersComponent, RecentOrderComponent, ItemsUnavaila
 @NgModule({
   declarations,
   imports,
-  entryComponents: [ItemsUnavailableComponent],
 })
 export class RecentOrdersModule {}

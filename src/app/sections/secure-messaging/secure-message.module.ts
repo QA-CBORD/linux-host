@@ -32,7 +32,6 @@ const imports = [
   StConversationItemModule
 ];
 
-const entryComponents = [SecureMessagePopoverComponent];
 
-@NgModule({ imports, providers, declarations, entryComponents })
+@NgModule({ imports, providers, declarations })
 export class SecureMessagePageModule {}

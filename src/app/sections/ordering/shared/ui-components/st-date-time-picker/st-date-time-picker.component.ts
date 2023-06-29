@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { PickerController } from '@ionic/angular';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
@@ -11,6 +10,7 @@ import { MerchantInfo } from '@sections/ordering';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { UserInfo } from '@core/model/user/user-info.model';
 import { CartService } from '@sections/ordering/services';
+import { lastValueFrom } from 'rxjs';
 
 export interface DateTimeSelected {
   dateTimePicker: Date;
@@ -21,7 +21,6 @@ export interface DateTimeSelected {
   selector: 'st-date-time-picker',
   templateUrl: './st-date-time-picker.component.html',
   styleUrls: ['./st-date-time-picker.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StDateTimePickerComponent implements OnInit {
   @Input() schedule: Schedule;
@@ -35,18 +34,18 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx = 0;
-  private picker: HTMLIonPickerElement;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   private weekArray: ContentStringInfo[];
   private monthArray: ContentStringInfo[];
   private tomorrowString = 'Tomorrow';
-
+  public isPickerOpen = false;
+  public pickerColumns = [];
+  public pickerButtons = [];
   constructor(
-    private readonly pickerController: PickerController,
     private readonly orderingService: OrderingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly cartService: CartService
-  ) {}
+  ) { }
 
   async ngOnInit(): Promise<void> {
     this.initContentStrings();
@@ -55,49 +54,45 @@ export class StDateTimePickerComponent implements OnInit {
   get isDefaultState(): boolean {
     return typeof this.dateTimePicker === 'string';
   }
+  async confirmPicker(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pickerHiddenConfirmButton = document.querySelector('.picker-hidden-confirm') as any;
+    pickerHiddenConfirmButton.click();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handlePickerChange(event: any) {
+    const { detail: data } = event;
+    if (data.name === 1) {
+      const isValueExist = !data.options[data.selectedIndex].text;
+      const extraProps = isValueExist ? { maxValue: true } : { currentIdx: data.selectedIndex, maxValue: false };
 
+      this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, ...extraProps };
+    } else {
+      this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
+      this.selectedDayIdx = data.selectedIndex;
+    }
+
+    this.pickerColumns = this.createColumns();
+  }
   async openPicker(): Promise<void> {
-    const confirm = await this.contentStrings.buttonConfirm.pipe(take(1)).toPromise();
     const back = await this.contentStrings.buttonBack.pipe(take(1)).toPromise();
     const title = await this.contentStrings.labelSelectTime.pipe(take(1)).toPromise();
-    this.monthArray = await this.contentStringsFacadeService
+    this.monthArray = await lastValueFrom(this.contentStringsFacadeService
       .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
-      .pipe(take(1))
-      .toPromise();
-    this.weekArray = await this.contentStringsFacadeService
+      .pipe(take(1)));
+
+    this.weekArray = await lastValueFrom(this.contentStringsFacadeService
       .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated)
-      .pipe(take(1))
-      .toPromise();
+      .pipe(take(1)));
+    this.pickerColumns = this.createColumns();
+    this.pickerButtons = [
+      { text: back, role: 'cancel', cssClass: 'chevron-back' },
+      { text: title, role: 'title', cssClass: 'picker-title' },
+      { text: '', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
+    ];
+    this.isPickerOpen = true;
 
-    const picker: HTMLIonPickerElement = await this.pickerController.create({
-      columns: this.createColumns(),
-      mode: 'ios',
-      cssClass: 'picker-time-picker order-options-action-sheet order-options-action-sheet-p-d',
-      buttons: [
-        { text: back, role: 'cancel', cssClass: 'chevron-back' },
-        { text: title, role: 'title', cssClass: 'picker-title' },
-        { text: confirm, handler: this.pickerClickHandler.bind(this) },
-      ],
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    picker.addEventListener('ionPickerColChange', async (event: any) => {
-      const { detail: data } = event;
-      if (data.name === 1) {
-        const isValueExist = !data.options[data.selectedIndex].text;
-        const extraProps = isValueExist ? { maxValue: true } : { currentIdx: data.selectedIndex, maxValue: false };
-
-        this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, ...extraProps };
-      } else {
-        this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
-        this.selectedDayIdx = data.selectedIndex;
-      }
-
-      picker.columns = this.createColumns();
-    });
-    this.picker = picker;
     await this.updateAsapOption();
-    await picker.present();
 
     setTimeout(() => {
       const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
@@ -106,7 +101,7 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private pickerClickHandler(dateInfo: any) {
+  public pickerClickHandler(dateInfo: any) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [date, { value }] = Object.values(dateInfo) as any[];
     let dateValue, timeStamp;
@@ -243,13 +238,12 @@ export class StDateTimePickerComponent implements OnInit {
 
   async updateAsapOption(): Promise<void> {
     const asapLabel = await this.contentStrings.labelAsap.pipe(take(1)).toPromise();
-    this.picker &&
-      this.picker.columns.forEach(({ options }) => {
-        const index = options.findIndex(({ value }) => value === 'asap');
-        if (index !== -1) {
-          options[index] = { ...options[index], text: asapLabel };
-        }
-      });
+    this.pickerColumns.forEach(({ options }) => {
+      const index = options.findIndex(({ value }) => value === 'asap');
+      if (index !== -1) {
+        options[index] = { ...options[index], text: asapLabel };
+      }
+    });
   }
 }
 

@@ -8,7 +8,6 @@ import { DashboardService } from '@sections/dashboard/services';
 @NgModule({
   declarations: [EditHomePageModalComponent],
   exports: [EditHomePageModalComponent],
-  entryComponents: [EditHomePageModalComponent],
   providers: [TileConfigFacadeService, DashboardService],
   imports: [CommonModule, IonicModule],
 })

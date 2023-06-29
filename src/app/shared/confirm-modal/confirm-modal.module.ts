@@ -10,6 +10,5 @@ import { ConfirmModalComponent } from "./confirm-modal.component";
         StButtonModule
     ],
     exports: [ConfirmModalComponent],
-    entryComponents:[ConfirmModalComponent]
 })
 export class ConfirmModule { }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 
 import { tap, switchMap } from 'rxjs/operators';
 
@@ -14,13 +14,12 @@ import { TransactionHistory } from '@sections/accounts/models/transaction-histor
 import { Settings } from '../../../app.global';
 
 @Injectable()
-export class TransactionsResolver implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
+export class TransactionsResolver {
   constructor(
     private readonly transactionService: TransactionService,
     private readonly loadingService: LoadingService,
-    private readonly accountsService: AccountService,
-  ) {
-  }
+    private readonly accountsService: AccountService
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]> {
     const requiredSettings = [

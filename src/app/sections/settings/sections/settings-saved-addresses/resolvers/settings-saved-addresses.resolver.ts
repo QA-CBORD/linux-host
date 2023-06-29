@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { Resolve } from '@angular/router';
-
 import { Observable, forkJoin } from 'rxjs';
 
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
@@ -11,7 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 @Injectable()
-export class SettingsSavedAddressesResolver implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[]]>> {
+export class SettingsSavedAddressesResolver {
   constructor(
     private readonly loadingService: LoadingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService

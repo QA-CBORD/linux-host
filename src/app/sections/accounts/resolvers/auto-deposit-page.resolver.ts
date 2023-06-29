@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
@@ -10,12 +9,13 @@ import { Settings } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 
 @Injectable()
-export class AutoDepositPageResolver implements Resolve<Observable<SettingInfo[]>> {
-  constructor(private readonly settingsFacadeService: SettingsFacadeService,
-              private readonly loadingService: LoadingService) {}
+export class AutoDepositPageResolver {
+  constructor(
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly loadingService: LoadingService
+  ) {}
 
   resolve(): Observable<SettingInfo[]> {
-
     const requiredSettings = [
       Settings.Setting.AUTO_DEPOSIT_PAYMENT_TYPES,
       Settings.Setting.PAYMENT_TYPES,

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { CONTENT_STRINGS } from '../../../accounts.config';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
@@ -16,7 +15,7 @@ import { ContentStringModel } from '@shared/model/content-strings/content-string
 
 type DepositResolution = Observable<[SettingInfo[], UserAccount[], ContentStringModel]>;
 @Injectable()
-export class DepositResolver implements Resolve<DepositResolution> {
+export class DepositResolver  {
   constructor(
     private readonly depositService: DepositService,
     private readonly loadingService: LoadingService,

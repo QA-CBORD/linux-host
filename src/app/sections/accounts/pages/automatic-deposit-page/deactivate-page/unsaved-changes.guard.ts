@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { first } from 'rxjs/operators';
 
@@ -16,7 +16,7 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 
 @Injectable()
-export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageComponent> {
+export class UnsavedChangesGuard  {
   private component: AutomaticDepositPageComponent;
   private autoDepositSettings: UserAutoDepositSettingInfo;
 

@@ -37,7 +37,6 @@ const imports = [
     StPopoverLayoutModule,
   ],
   exports: [ItemDetailComponent],
-  entryComponents: [ItemDetailComponent, ItemDetailModalComponent],
   providers: [ItemDetailResolver],
 })
 export class ItemDetailModule {}

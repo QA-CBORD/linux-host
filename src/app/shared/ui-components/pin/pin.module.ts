@@ -10,7 +10,6 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
   imports: [CommonModule, FormsModule, IonicModule, StButtonModule],
   declarations: [PinPage],
   exports: [PinPage],
-  entryComponents: [PinPage],
   providers: [AccessibilityService]
 })
 export class PinModule {}
