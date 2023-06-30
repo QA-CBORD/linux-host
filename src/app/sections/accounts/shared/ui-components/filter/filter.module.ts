@@ -14,7 +14,6 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
     StHeaderModule,
   ],
   declarations: [FilterComponent, FilterMenuComponent, AccountNamePipe, TimeRangePipe],
-  entryComponents: [FilterMenuComponent],
   exports: [FilterComponent]
 })
 export class FilterModule { }

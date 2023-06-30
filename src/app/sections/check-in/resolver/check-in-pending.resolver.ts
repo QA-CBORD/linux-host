@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
@@ -14,7 +14,7 @@ import { CheckingServiceFacade } from '../services/check-in-facade.service';
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class CheckinPendingResolver implements Resolve<Observable<any>> {
+export class CheckinPendingResolver {
   constructor(
     private readonly merchantService: MerchantService,
     private readonly userFacadeService: UserFacadeService,

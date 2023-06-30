@@ -9,7 +9,6 @@ import { StButtonModule } from '@shared/ui-components/st-button/st-button.module
 const declarations = [ReportCardComponent];
 @NgModule({
   declarations,
-  entryComponents: declarations,
   imports: [CommonModule, IonicModule, StHeaderModule, StButtonModule, ReportCardRoutingModule],
 })
 export class ReportCardModule {}

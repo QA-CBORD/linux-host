@@ -55,7 +55,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     return this._activeFacilities$.asObservable();
   }
 
-  setFacilities$(parentKey?: number ): void {
+  setFacilities$(parentKey?: number): void {
     if (!parentKey) {
       this._activeFacilities$.next(this.getActiveFilterFacilities());
     } else {
@@ -66,10 +66,10 @@ export class RoomsStateService implements StateService<number, Facility[]> {
 
 
   getOccupantDetails(facilityKey: number): FacilityOccupantDetails[] {
-    return  this._occupantDictionary.get(facilityKey) || [];
+    return this._occupantDictionary.get(facilityKey) || [];
   }
   getOccupiedFacilities(): Facility[] {
-    return  this._findOccupantFacilities();
+    return this._findOccupantFacilities();
   }
   getAllOccupantAttributes(): OccupantAttribute[] {
     const attributes: OccupantAttribute[] = [];
@@ -77,7 +77,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       occupantDetails.forEach(occupant => {
         occupant.attributes.forEach(attribute => {
           if (!this._hasAttribute(attributes, attribute)) {
-              attributes.push(attribute)
+            attributes.push(attribute)
           } else {
             if (this._isNewAttributeValue(attributes, attribute)) {
               attributes.push(attribute);
@@ -87,7 +87,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       })
     });
 
-    return  attributes;
+    return attributes;
   }
 
   private _isNewAttributeValue(attributes: OccupantAttribute[], attribute: OccupantAttribute): boolean {
@@ -97,23 +97,27 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       && !currentValues.includes(attribute.value));
   }
 
-  private  _hasAttribute(attributes: OccupantAttribute[], attribute: OccupantAttribute): boolean {
-    return !!(attributes.find(x => x.name === attribute.name ))
+  private _hasAttribute(attributes: OccupantAttribute[], attribute: OccupantAttribute): boolean {
+    return !!(attributes.find(x => x.name === attribute.name))
   }
 
   private _findOccupantFacilities(): Facility[] {
     const occupantFacilities: Facility[] = [];
 
     const parentFacilities = this.getParentFacilities();
-    parentFacilities.forEach(parent => {
-        const children =  this.getParentFacilityChildren(parent.facilityId);
-        children.forEach(facility => {
-          if (facility.occupantKeys && facility.occupantKeys.length > 0) {
-            occupantFacilities.push(facility);
-          }
-        })
-    })
-    return occupantFacilities;
+    if (parentFacilities) {
+      parentFacilities.forEach(parent => {
+        const children = this.getParentFacilityChildren(parent.facilityId);
+        if (children) {
+          children.forEach(facility => {
+            if (facility.occupantKeys && facility.occupantKeys.length > 0) {
+              occupantFacilities.push(facility);
+            }
+          })
+        }
+      })
+      return occupantFacilities;
+    }
   }
 
   setActiveRoomSelect(roomSelectKey: number): void {
@@ -127,13 +131,13 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   isFilterActive(): boolean {
-    return  (this._activeFilterFacilities && this._activeFilterFacilities.length > 0);
+    return (this._activeFilterFacilities && this._activeFilterFacilities.length > 0);
   }
 
   updateActiveFilterFacilities(facilities: Facility[]) {
     this._activeFilterFacilities = facilities;
     this.setFacilities$();
-    }
+  }
 
   getActiveFilterFacilities(): Facility[] {
     return this._activeFilterFacilities;
@@ -197,10 +201,10 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   private _addChildrenToDictionary(facilities: Facility[]): void {
     this._parentFacilities.forEach(parent => {
       let children = facilities.filter(facility =>
-        (
-          facility.topLevelKey === parent.facilityId &&
-          !facility.isTopLevel
-        ),
+      (
+        facility.topLevelKey === parent.facilityId &&
+        !facility.isTopLevel
+      ),
       );
       children = this._updateChildren(children, parent.facilityName);
 
@@ -210,7 +214,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     });
   }
 
-  private _updateChildren(children: Facility[], parentName: string):Facility[] {
+  private _updateChildren(children: Facility[], parentName: string): Facility[] {
     const updatedChildren = this._updateTopLevelName(children, parentName);
     const facilityChildren = this._updateFullName(updatedChildren);
     return facilityChildren;
@@ -221,9 +225,9 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       const fullName = x.getAttributeValue('Full Name').value;
       x.facilityName = fullName
     })
-    return  children;
+    return children;
   }
-  private _updateTopLevelName(children: Facility[] , parentName): Facility[] {
+  private _updateTopLevelName(children: Facility[], parentName): Facility[] {
     return children.map(x => {
       x.facilityName = `${parentName} \u{2014} ${x.facilityName}`;
       x.topLevelName = parentName;

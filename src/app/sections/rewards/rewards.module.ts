@@ -44,11 +44,9 @@ const declarations = [
   ExpandItemComponent,
 ];
 const providers = [RewardsApiService, RewardsService, RewardsResolverGuard, OptInGuard];
-const entryComponents = [RewardsPopoverComponent];
 @NgModule({
   imports,
   declarations,
   providers,
-  entryComponents,
 })
 export class RewardsPageModule {}

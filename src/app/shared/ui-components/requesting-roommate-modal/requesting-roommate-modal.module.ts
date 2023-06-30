@@ -13,6 +13,5 @@ export const declarations = [RequestingRoommateModalComponent];
   imports,
   exports: declarations,
   declarations,
-  entryComponents: [RequestingRoommateModalComponent],
 })
 export class RequestingRoommateModalModule {}

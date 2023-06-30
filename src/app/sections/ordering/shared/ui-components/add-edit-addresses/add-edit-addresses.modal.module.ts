@@ -13,7 +13,6 @@ const customModules = [StInputFloatingLabelModule, StSelectFloatingLabelModule, 
 @NgModule({
   declarations,
   exports: [declarations],
-  entryComponents: [declarations],
   imports: [CommonModule, IonicModule, ReactiveFormsModule, ...customModules],
 })
 export class AddEditAddressesModule {}

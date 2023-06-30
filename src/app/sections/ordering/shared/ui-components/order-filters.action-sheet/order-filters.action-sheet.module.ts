@@ -12,7 +12,6 @@ const declarations = [OrderFiltersActionSheetComponent];
 @NgModule({
   declarations,
   exports: [OrderFiltersActionSheetComponent],
-  entryComponents: [OrderFiltersActionSheetComponent],
   imports: [CommonModule, IonicModule, StButtonModule, FormsModule],
   providers: [AccessibilityService, AddressHeaderFormatPipe],
 })

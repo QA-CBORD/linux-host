@@ -4,6 +4,12 @@
 	width: 100%;
 }
 
+.confirm-button {
+	z-index: 100;
+    position: absolute;
+    bottom: 0;
+    padding: 20px;
+}
 .st-date-time-picker {
 	&__label {
 		color: #7e7e7e;

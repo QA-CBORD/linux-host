@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, Resolve } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { catchError, tap, retryWhen, take } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
@@ -10,7 +10,7 @@ import { LoadingService } from '../../../core/service/loading/loading.service';
 import { LOCAL_ROUTING } from '../mobile-acces.config';
 
 @Injectable()
-export class LocationsResolverGuard implements Resolve<Observable<MMobileLocationInfo[] | boolean>> {
+export class LocationsResolverGuard {
   constructor(
     private readonly mobileAccessService: MobileAccessService,
     private readonly router: Router,

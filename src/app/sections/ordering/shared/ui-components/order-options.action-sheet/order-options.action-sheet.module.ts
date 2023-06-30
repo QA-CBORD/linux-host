@@ -14,7 +14,6 @@ const declarations = [OrderOptionsActionSheetComponent];
 @NgModule({
   declarations,
   exports: [OrderOptionsActionSheetComponent],
-  entryComponents: [OrderOptionsActionSheetComponent],
   imports: [CommonModule, IonicModule, DeliveryAddressesModalModule, StDateTimePickerModule, StButtonModule, AddressHeaderFormatPipeModule],
   providers: [AccessibilityService, AddressHeaderFormatPipe]
 })

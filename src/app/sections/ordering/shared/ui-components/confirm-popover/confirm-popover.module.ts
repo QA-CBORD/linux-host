@@ -10,6 +10,5 @@ const declarations = [ConfirmPopoverComponent];
   declarations,
   exports: [ConfirmPopoverComponent],
   imports: [CommonModule, IonicModule, StPopoverLayoutModule],
-  entryComponents: [ConfirmPopoverComponent],
 })
 export class ConfirmPopoverModule {}

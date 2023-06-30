@@ -31,12 +31,10 @@ const imports = [
   CreditCardModule,
 ];
 const declarations = [SettingsPage, SettingsItemComponent];
-const entryComponents = [];
 const providers = [SettingsFactoryService, ModalsService];
 @NgModule({
   declarations,
   imports,
   providers,
-  entryComponents,
 })
 export class SettingsModule {}

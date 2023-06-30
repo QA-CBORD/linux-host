@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 
 import { Observable, zip } from 'rxjs';
 import { map, take, finalize } from 'rxjs/operators';
@@ -11,7 +10,7 @@ import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
 
 type AutomaticDepositResolution = Observable<{ accounts: UserAccount[]; depositSettings: UserAutoDepositSettingInfo }>;
 @Injectable()
-export class AutomaticDepositResolver implements Resolve<AutomaticDepositResolution> {
+export class AutomaticDepositResolver  {
   constructor(
     private readonly autoDepositService: AutoDepositService,
     private readonly loadingService: LoadingService,

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { finalize } from 'rxjs/operators';
@@ -13,7 +12,7 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
 type MealDonationsResolution = Observable<[UserAccount[], SettingInfo[], ContentStringInfo[], ContentStringInfo[]]>;
 
 @Injectable()
-export class MealDonationsResolver implements Resolve<MealDonationsResolution> {
+export class MealDonationsResolver  {
   constructor(
     private readonly loadingService: LoadingService,
     private readonly mealDonationsService: MealDonationsService,

@@ -18,6 +18,5 @@ const declarations = [StHierarcheTreeComponent];
     ReactiveFormsModule
   ],
   exports: declarations,
-  entryComponents: declarations
 })
 export class StHierarcheTreeModule { }

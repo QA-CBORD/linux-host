@@ -12,7 +12,6 @@ import { CreditCardService } from './credit-card.service';
 @NgModule({
   imports: [CommonModule, IonicModule, StHeaderModule, ConfirmModule, StButtonModule, StCreditCardListModule],
   declarations: [CreditCardMgmtComponent],
-  entryComponents: [CreditCardMgmtComponent],
   providers: [AccountsService, CreditCardService],
 })
 export class CreditCardModule {
