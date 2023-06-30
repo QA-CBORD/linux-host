@@ -74,14 +74,17 @@ export class RoomsService {
     parentFacilities.forEach(parent => {
       childrenFacilities = childrenFacilities.concat(this._stateService.getParentFacilityChildren(parent.facilityId));
     });
+
     childrenFacilities.forEach(facility => {
-      facility.attributes.forEach(attrib => {
-        if (!this._attributeExists(encounteredOptions, attrib) && this._isAttributeAllowedForCategory(attrib)) {
-          const newCategory = this._createFilterCategory(`Facility ${attrib.name}`, attrib.attributeConsumerKey);
-          encounteredOptions.push(newCategory);
-          facilityOptions.push(newCategory);
-        }
-      });
+      if (facility) {
+        facility.attributes.forEach(attrib => {
+          if (!this._attributeExists(encounteredOptions, attrib) && this._isAttributeAllowedForCategory(attrib)) {
+            const newCategory = this._createFilterCategory(`Facility ${attrib.name}`, attrib.attributeConsumerKey);
+            encounteredOptions.push(newCategory);
+            facilityOptions.push(newCategory);
+          }
+        });
+      }
     });
     return facilityOptions;
   }
@@ -116,13 +119,15 @@ export class RoomsService {
     });
     this._filterOptions.addBuildingOptions(parentFacilities);
     facilityChildren.forEach((child: Facility) => {
-      const filteredAttributes: FacilityAttribute[] = this._filterAttributeCategories(categories, child.attributes);
-      if (filteredAttributes) {
-        filteredAttributes.forEach(attrib => {
-          if (isDefined(attrib.value)) {
-            this._filterOptions.addOption(`Facility ${attrib.name}`, attrib.value);
-          }
-        });
+      if (child) {
+        const filteredAttributes: FacilityAttribute[] = this._filterAttributeCategories(categories, child.attributes);
+        if (filteredAttributes) {
+          filteredAttributes.forEach(attrib => {
+            if (isDefined(attrib.value)) {
+              this._filterOptions.addOption(`Facility ${attrib.name}`, attrib.value);
+            }
+          });
+        }
       }
     });
   }

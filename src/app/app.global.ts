@@ -266,3 +266,7 @@ export enum StateTimeDuration {
 export enum QuestionTypes {
   DATE_SIGNED = 'date-signed'
 }
+
+export enum FilterOptions {
+  FACILITY_ASSIGMENT_LIMIT = "Facility Assignment_Limit"
+}
