@@ -1,7 +1,6 @@
 @import 'tools';
 
 ion-segment-button {
-    width: 33.33%;
     max-width: inherit;
     @include font-nunito-heavy(14px);
 }

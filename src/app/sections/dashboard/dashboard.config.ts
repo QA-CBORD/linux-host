@@ -61,7 +61,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       navigate: `${PATRON_NAVIGATION.accounts}/${ACCOUNT_ROUTING.accountDetailsM}/${ALL_ACCOUNTS}`,
     },
     navigateBack: PATRON_NAVIGATION.accounts,
-    supportProfiles: [APP_PROFILES.patron]
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.rewards,
