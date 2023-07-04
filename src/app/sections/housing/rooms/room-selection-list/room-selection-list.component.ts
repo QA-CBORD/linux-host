@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
 import { ToastService } from '@core/service/toast/toast.service';
 import { monthDayYear,hourMinTime } from '@shared/constants/dateFormats.constant'
+import { ToastMsg } from '@shared/constants/toastMessages.constant';
+
 
 @Component({
   selector: 'st-room-selection-list',
@@ -38,7 +40,7 @@ export class RoomSelectionListComponent implements AfterViewInit {
     });
     }
     else {
-      this._toastService.showToast({ message: 'Your access time has not been reached yet.' });
+      this._toastService.showToast({ message: ToastMsg.EXPIREDTIME });
     }
 
   }

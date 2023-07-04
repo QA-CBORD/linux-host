@@ -11,6 +11,7 @@ import { CheckInOut } from '../check-in-out.model';
 import { CheckInOutStateService } from '../check-in-out-state.service';
 import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
 import { monthDayYear, hourMinTime } from '@shared/constants/dateFormats.constant'
+import { ToastMsg } from '@shared/constants/toastMessages.constant';
 
 @Component({
   selector: 'st-check-in-out-items',
@@ -35,7 +36,7 @@ export class CheckInOutItemsComponent {
       this._router.navigate(['patron/housing/check-in-out', key]);
     }
     else {
-      this._toastService.showToast({ message: 'Your access time has not been reached yet.' });
+      this._toastService.showToast({ message: ToastMsg.EXPIREDTIME });
     }
   }
 
