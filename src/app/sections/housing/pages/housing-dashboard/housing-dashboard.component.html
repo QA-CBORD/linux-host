@@ -11,7 +11,7 @@
   </st-housing-tabs>
 </ion-header>
 
-<ion-content class="ion-padding housing-content" [hidden]="selectedHousingTab !== HousingTab.Forms">
+<ion-content class="ion-padding housing-content" *ngIf="selectedHousingTab === HousingTab.Forms">
     <st-applications></st-applications>
     <st-waiting-lists></st-waiting-lists>
     <st-non-assignments></st-non-assignments>
@@ -20,17 +20,17 @@
     <st-attachments></st-attachments>
 </ion-content>
 
-<ion-content class="ion-padding housing-content" [hidden]="selectedHousingTab !== HousingTab.Rooms">
+<ion-content class="ion-padding housing-content" *ngIf="selectedHousingTab === HousingTab.Rooms">
     <st-check-in-out></st-check-in-out> 
     <st-rooms></st-rooms>
     <st-inspections-forms></st-inspections-forms>
 </ion-content>
 
-<ion-content class="ion-padding housing-content" [hidden]="selectedHousingTab !== HousingTab.Contracts">
+<ion-content class="ion-padding housing-content" *ngIf="selectedHousingTab === HousingTab.Contracts">
     <st-contract-list></st-contract-list>
 </ion-content>
 
-<ion-content class="ion-padding housing-content" [hidden]="selectedHousingTab !== HousingTab.Transactions">
+<ion-content class="ion-padding housing-content" *ngIf="selectedHousingTab === HousingTab.Transactions">
  <st-housing-transactions-only></st-housing-transactions-only>
 </ion-content>
 
