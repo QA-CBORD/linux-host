@@ -5,13 +5,14 @@
   [isBackButtonShow]="false"
   [isToolbarShow]="true"
   [isTitleShow]="true"
-  [isSubToolbarShow]="true">
+  [isSubToolbarShow]="true"
+>
   <ion-searchbar
-          (ionChange)="onSearchedValue($event)"
-          (keyup.enter)="onEnterKeyClicked()"
-          [placeholder]="contentString.search"
-          mode="ios"
-          class="mobile-access__searchbar"
+    (ionInput)="onSearchedValue($event)"
+    (keyup.enter)="onEnterKeyClicked()"
+    [placeholder]="contentString.search"
+    mode="ios"
+    class="mobile-access__searchbar"
   ></ion-searchbar>
 </st-header>
 

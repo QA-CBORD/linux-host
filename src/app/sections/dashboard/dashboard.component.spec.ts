@@ -32,6 +32,7 @@ import { DashboardPage } from './dashboard.component';
 import { TileConfigFacadeService } from './tile-config-facade.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { LockDownService } from '@shared/services';
 
 const _platform = {
   is: jest.fn(),
@@ -66,6 +67,10 @@ const _modalService = {
   create: jest.fn(),
 };
 
+const _lockDownService = {
+  loadStringsAndSettings: jest.fn(),
+}
+
 describe('DashboardPage', () => {
   let component: DashboardPage;
   let fixture: ComponentFixture<DashboardPage>;
@@ -83,6 +88,7 @@ describe('DashboardPage', () => {
         { provide: InstitutionFacadeService, useValue: _institutionFacadeService },
         { provide: UserFacadeService, useValue: _userFacadeService },
         { provide: ModalsService, useValue: _modalService },
+        { provide: LockDownService,  useValue: _lockDownService},
         NavigationFacadeSettingsService,
         AndroidPermissions,
         Network,
@@ -159,6 +165,12 @@ describe('DashboardPage', () => {
       const spy = jest.spyOn(_modalService, 'create');
       component['presentEditHomePageModal']();
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should get the setting for lockDown', () => {
+      const lockDownSpy = jest.spyOn(_lockDownService, 'loadStringsAndSettings');
+      component.ionViewWillEnter();
+      expect(lockDownSpy).toHaveBeenCalled();
     });
   });
 });

@@ -46,7 +46,6 @@ export class InstitutionsPage implements OnInit {
     private readonly nav: Router,
     private readonly cdRef: ChangeDetectorRef,
     private readonly toastService: ToastService,
-    private readonly route: Router,
     private readonly registrationServiceFacade: RegistrationServiceFacade,
     private readonly commonService: CommonService,
     private readonly messageProxy: MessageProxy,
@@ -158,7 +157,7 @@ export class InstitutionsPage implements OnInit {
         {
           text: 'Back',
           handler: () => {
-            this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
+            this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
           },
         },
       ],
