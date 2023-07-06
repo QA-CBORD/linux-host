@@ -92,7 +92,7 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
   }
   getSecureMessagesGroups(): Observable<SecureMessageGroupInfo[]> {
     const smAuthInfo = SecureMessagingFacadeService.smAuthInfo;
-    return undefined && this.secureMessagingService.getSecureMessagesGroups(smAuthInfo.institution_id);
+    return smAuthInfo && this.secureMessagingService.getSecureMessagesGroups(smAuthInfo.institution_id);
   }
   getSecureMessages(): Observable<SecureMessageInfo[]> {
     return this.secureMessagingService.getSecureMessages(
