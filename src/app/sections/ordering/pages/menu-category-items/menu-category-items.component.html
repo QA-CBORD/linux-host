@@ -8,7 +8,7 @@
         placeholder="{{ contentStrings.labelSearch | async }}"
         mode="ios"
         type="text"
-        debounce="500"
+        [debounce]="500"
         show-cancel-button="always"
         (ionCancel)="onCancelClicked()"
         (ionInput)="onSearchItemFiltered($event)"

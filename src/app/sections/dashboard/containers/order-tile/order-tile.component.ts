@@ -10,6 +10,7 @@ import SwiperCore from 'swiper';
 import { TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
+import { LockDownService } from '@shared/services';
 SwiperCore.use([IonicSlides]);
 
 @Component({
@@ -33,7 +34,8 @@ export class OrderTileComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly router: Router,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
@@ -61,13 +63,12 @@ export class OrderTileComponent implements OnInit {
   }
 
   async goToMerchant({ id: merchantId, walkout }: MerchantInfo) {
-    if (walkout) {
-      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+    if (this.lockDownService.isLockDownOn()) {
       return;
     }
 
-    if (this.wrapperConfig.stopNavigation) {
-      await this.toastService.showError(this.wrapperConfig.stopNavigationMessage);
+    if (walkout) {
+      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
 
