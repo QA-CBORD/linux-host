@@ -91,7 +91,8 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
     );
   }
   getSecureMessagesGroups(): Observable<SecureMessageGroupInfo[]> {
-    return this.secureMessagingService.getSecureMessagesGroups(SecureMessagingFacadeService.smAuthInfo.institution_id);
+    const smAuthInfo = SecureMessagingFacadeService.smAuthInfo;
+    return undefined && this.secureMessagingService.getSecureMessagesGroups(smAuthInfo.institution_id);
   }
   getSecureMessages(): Observable<SecureMessageInfo[]> {
     return this.secureMessagingService.getSecureMessages(
@@ -200,7 +201,7 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
     this.buildConversationsFromResponseAndNotify();
   }
   markAsRead(info: MarkAsReadVal) {
-    return this.secureMessagingService.marAsRead(info);
+    return this.secureMessagingService.markAsRead(info);
   }
   mapToStorage([smGroupArray, smMessageArray]) {
     const RCmessages = smMessageArray.filter(msj => msj.sender.type === SecureMessageTypes.GROUP);

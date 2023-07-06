@@ -89,7 +89,7 @@ export class SecureMessagingApiService {
     return new HttpHeaders().set('Authorization', SecureMessagingApiService.jwt);
   }
 
-  marAsRead(info: MarkAsReadVal){
+  markAsRead(info: MarkAsReadVal){
     return this.apiService.authenticatedHTTPCall(
       RestCallType.put,
       `${this.serviceUrlSecureMessage}/markAsRead?version=2&mark_read=True`,
