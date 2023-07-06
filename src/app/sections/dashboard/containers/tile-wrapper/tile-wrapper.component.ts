@@ -5,6 +5,7 @@ import { TileWrapperConfig } from '@sections/dashboard/models';
 import { PATRON_BACK_TEXT } from 'src/app/app.global';
 import { NavigationState } from '@sections/dashboard/models/navigation-state.model';
 import { LockDownService } from '@shared/services';
+import { TILES_ID } from '@sections/dashboard/dashboard.config';
 
 @Component({
   selector: 'st-tile-wrapper',
@@ -17,8 +18,12 @@ export class TileWrapperComponent {
 
   constructor(private readonly router: Router, private readonly lockDownService: LockDownService) {}
 
+  get isOrderTile ()  {
+    return [TILES_ID.order].includes(this.wrapperConfig.id);
+  }
+
   async navigateTo(path) {
-    if (this.lockDownService.isLockDownOn()) {
+    if (this.isOrderTile && this.lockDownService.isLockDownOn()) {
       return;
     }
 
