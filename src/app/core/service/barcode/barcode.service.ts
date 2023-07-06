@@ -14,7 +14,7 @@ export class BarcodeService {
   private barcodeValue: string = null;
   protected readonly _barcodeValue$: BehaviorSubject<string> = new BehaviorSubject<string>(this.barcodeValue);
 
-  private readonly generationTimer: number = 120000; /// 2 minutes in millis
+  private readonly generationTimer: number = 5000; /// 5 seconds in millis
   private readonly garble: string = 'NTBGQ0RGM0ZFNDIyQTBBNDY5RkU=';
   private readonly DIGITS_POWER: BigInteger[] = [
     bigInt(1),
