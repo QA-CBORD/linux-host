@@ -49,7 +49,7 @@ describe('SecureMessagingApiService', () => {
       const markAsReadValStub: MarkAsReadVal = <any>{};
       const aPIServiceStub: APIService = TestBed.inject(APIService);
      jest.spyOn(aPIServiceStub, 'authenticatedHTTPCall');
-      service.marAsRead(markAsReadValStub);
+      service.markAsRead(markAsReadValStub);
       expect(aPIServiceStub.authenticatedHTTPCall).toHaveBeenCalled();
     });
   });
