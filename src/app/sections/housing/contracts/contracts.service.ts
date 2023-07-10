@@ -1,10 +1,10 @@
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
-import { flat, isDefined } from '@sections/housing/utils';
+import { flat } from '@sections/housing/utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
@@ -12,18 +12,13 @@ import { QuestionsEntries, QuestionsStorageService } from '@sections/housing/que
 import { ContractsStateService } from '@sections/housing/contracts/contracts-state.service';
 
 import { ResponseStatus } from '../housing.model';
-import { CONTRACT_DETAIL_FIELDS, ContractDetails, ContractInfo, ContractRequest } from './contracts.model';
+import { ContractDetails, ContractRequest } from './contracts.model';
 import {
   QuestionBase,
   QuestionChargeSchedule,
-  QuestionChargeScheduleBase,
-  QuestionCheckboxGroup,
-  QuestionContractDetails,
-  QuestionDateSigned,
-  QuestionFormControl,
+  QuestionChargeScheduleBase
 } from '@sections/housing/questions/types';
-import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
-import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
+import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
 
