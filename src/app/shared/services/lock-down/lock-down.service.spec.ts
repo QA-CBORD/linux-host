@@ -4,6 +4,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { ToastService } from '@core/service/toast/toast.service';
 import { of } from 'rxjs';
 import { LockDownService } from './lock-down.service';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 describe(LockDownService, () => {
   let service: LockDownService;
@@ -12,6 +13,7 @@ describe(LockDownService, () => {
   beforeEach(() => {
     _contentStringsFacadeService = {
       getContentStringValue$: jest.fn(),
+      fetchContentString$: jest.fn(),
     };
     _settingsFacadeService = {
       fetchSettingValue$: jest.fn(),
@@ -36,7 +38,11 @@ describe(LockDownService, () => {
   });
 
   it('should load string and setting in the service', async () => {
-    const contentStringsSpy = jest.spyOn(_contentStringsFacadeService, 'getContentStringValue$').mockReturnValue(of('hello world'));
+    const contentStringsSpy = jest.spyOn(_contentStringsFacadeService, 'fetchContentString$').mockReturnValue(
+      of({
+        value: `hello world`,
+      } as ContentStringInfo)
+    );
     const settingStringsSpy = jest.spyOn(_settingsFacadeService, 'fetchSettingValue$').mockReturnValue(of('1'));
     await service.loadStringsAndSettings();
     expect(contentStringsSpy).toHaveBeenCalledTimes(1);
@@ -55,7 +61,11 @@ describe(LockDownService, () => {
 
   it('should return if lockDown is On', async () => {
     const toastSpy = jest.spyOn(_toastService, 'showError').mockReturnValue('');
-    jest.spyOn(_contentStringsFacadeService, 'getContentStringValue$').mockReturnValue(of('hello world'));
+    jest.spyOn(_contentStringsFacadeService, 'fetchContentString$').mockReturnValue(
+      of({
+        value: `hello world`,
+      } as ContentStringInfo)
+    );
     jest.spyOn(_settingsFacadeService, 'fetchSettingValue$').mockReturnValue(of('1'));
     await service.loadStringsAndSettings();
     expect(service.isLockDownOn()).toBeTruthy();
@@ -64,7 +74,7 @@ describe(LockDownService, () => {
 
   it('should have a default message defined', async () => {
     const toastSpy = jest.spyOn(_toastService, 'showError').mockReturnValue('');
-    jest.spyOn(_contentStringsFacadeService, 'getContentStringValue$').mockReturnValue(of(''));
+    jest.spyOn(_contentStringsFacadeService, 'fetchContentString$').mockReturnValue(of(''));
     jest.spyOn(_settingsFacadeService, 'fetchSettingValue$').mockReturnValue(of('1'));
     await service.loadStringsAndSettings();
     expect(service.isLockDownOn()).toBeTruthy();
