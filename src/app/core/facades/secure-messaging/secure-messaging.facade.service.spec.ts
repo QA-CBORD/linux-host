@@ -19,7 +19,7 @@ describe('SecureMessagingFacadeService', () => {
       getSecureMessagesGroups: institution_id => ({}),
       getSecureMessages: (ma_type, id_field, id_value) => ({}),
       postSecureMessage: messageInfo => ({ pipe: () => ({}) }),
-      marAsRead: info => ({})
+      markAsRead: info => ({})
     });
     const storageStateServiceStub = () => ({
       updateStateEntity: (secureMessaginKey, response, object) => ({})
@@ -58,9 +58,16 @@ describe('SecureMessagingFacadeService', () => {
       const secureMessagingApiServiceStub: SecureMessagingApiService = TestBed.inject(
         SecureMessagingApiService
       );
-     jest.spyOn(secureMessagingApiServiceStub, 'marAsRead');
+     jest.spyOn(secureMessagingApiServiceStub, 'markAsRead');
       service.markAsRead(markAsReadValStub);
-      expect(secureMessagingApiServiceStub.marAsRead).toHaveBeenCalled();
+      expect(secureMessagingApiServiceStub.markAsRead).toHaveBeenCalled();
+    });
+  });
+  describe('SecureMessagingFacadeService', () => {
+    it('should return undefined if smAuthInfo is falsy', () => {
+      SecureMessagingFacadeService["smAuthInfo"] = null;
+      service.getSecureMessagesGroups();
+      expect(jest.spyOn(service, 'getSecureMessagesGroups')).toHaveBeenCalledTimes(0);
     });
   });
 });
