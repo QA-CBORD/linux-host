@@ -14,6 +14,7 @@ import {
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BuildingInfo,
+  CartService,
   MerchantAccountInfoList,
   MerchantInfo,
   MerchantOrderTypesInfo,
@@ -45,6 +46,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
+import { OrderOptionsActionSheetComponent } from '../order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
   selector: 'st-order-details',
@@ -90,6 +92,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.merchantSettingsList = merchant.settings.list;
     this.orderTypes = merchant.orderTypes;
     this.isWalkoutOrder = !!merchant.walkout;
+    this._merchat = merchant;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions;
@@ -111,6 +114,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
 
+  _merchat: MerchantInfo;
   accountName: string;
   orderItems: OrderItem[] = [];
   tax: number;
@@ -154,7 +158,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly a11yService: AccessibilityService
+    private readonly a11yService: AccessibilityService,
+    private readonly cartService: CartService
   ) {}
 
   ngOnInit() {
@@ -211,7 +216,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       if (this.orderDetailOptions.dueTime instanceof Date) {
         return this.orderDetailOptions;
       }
-      return { ...this.orderDetailOptions, dueTime: new Date((<string> this.orderDetailOptions.dueTime).slice(0, 19)) };
+      return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
     }
   }
 
@@ -454,6 +459,42 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         this.hasReadonlyPaymentMethodError = true;
       }
     }
+  }
+
+  changeOrderTime() {
+    this.cartService.setActiveMerchant(this._merchat);
+    this.actionSheet(
+      this._merchat.orderTypes,
+      this._merchat.id,
+      this._merchat.storeAddress,
+      this._merchat.settings,
+      this._merchat.timeZone
+    );
+  }
+
+  async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings, timeZone): Promise<void> {
+    const footerButtonName = 'continue';
+    let cssClass = 'order-options-action-sheet';
+    cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
+
+    const modal = await this.modalController.createActionSheet({
+      component: OrderOptionsActionSheetComponent,
+      cssClass,
+      componentProps: {
+        orderTypes,
+        footerButtonName,
+        merchantId,
+        storeAddress,
+        settings,
+        timeZone,
+      },
+    });
+    modal.onDidDismiss().then(({ data }) => {
+      if (data) {
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
+      }
+    });
+    await modal.present();
   }
 }
 

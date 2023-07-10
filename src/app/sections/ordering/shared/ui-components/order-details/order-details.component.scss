@@ -18,6 +18,11 @@
         margin: 0;
         background-color: $color-white-smoke;
       }
+
+      &__time-selection {
+        display: grid;
+        gap: 10px;
+      }
     }
 
     .order-ingredient-list {

@@ -5,13 +5,18 @@
         orderDetailOptions.orderType | typeMessage : 'dueTime' : isWalkoutOrder
       }}</ion-label>
 
-      <p
-        style="margin-bottom: 3px"
-        class="order-details__value"
-        *ngIf="orderDetailOptions.dueTime || orderDetailOptions.isASAP"
-      >
-        {{ orderDetailOptions | modifyPrepTime : orderTypes }}
+      <p *ngIf="orderDetailOptions.isASAP; else timeEditable" class="order-details__value">
+        {{ orderDetailOptions.address | addressHeaderFormat }}
       </p>
+
+      <ng-template  #timeEditable>
+        <div (click)="changeOrderTime()" (keypress)="changeOrderTime()" class="address-container">
+          <p class="order-details__value">
+            {{ orderDetailOptions | modifyPrepTime : orderTypes }}
+          </p>
+          <div class="order-details__value--editable"></div>
+        </div>
+      </ng-template>
 
       <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
         <small>{{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}</small>
@@ -28,10 +33,12 @@
       </p>
 
       <ng-template #addressEditable>
-        <div (click)="isAddressClickable && showAddressListModal()" class="address-container">
-          <p
-            class="order-details__value"
-          >
+        <div
+          (click)="isAddressClickable && showAddressListModal()"
+          (keypress)="isAddressClickable && showAddressListModal()"
+          class="address-container"
+        >
+          <p class="order-details__value">
             {{ orderDetailOptions.address | addressHeaderFormat }}
           </p>
           <div *ngIf="isAddressClickable" class="order-details__value--editable"></div>
