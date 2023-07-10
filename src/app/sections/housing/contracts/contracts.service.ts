@@ -74,6 +74,7 @@ export class ContractsService {
     this._isSigned.next(isSigned);
   }
 
+
   private _getQuestionsPages(contractDetails: ContractDetails): QuestionBase[][] {
     const questions: QuestionBase[][] = this._questionsService
       .getQuestions(contractDetails.formJson)
@@ -101,16 +102,10 @@ export class ContractsService {
     storedQuestions: QuestionsEntries,
     contractDetails: ContractDetails
   ): FormGroup {
-    return this._questionsService.toFormGroup(
+    return this._questionsService.toFormGroupControl(
       questions,
       storedQuestions,
-      (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
-        if (question instanceof QuestionCheckboxGroup) {
-          group[questionName] = this._questionsService.toQuestionCheckboxControl(storedValue, question);
-        } else {
-          group[questionName] = this._toFormControl(storedValue, question, contractDetails);
-        }
-      }
+      contractDetails
     );
   }
 
@@ -126,36 +121,6 @@ export class ContractsService {
 
     question = new QuestionChargeSchedule({ ...question, chargeSchedulesGroup });
     return question;
-  }
-
-  private _toFormControl(
-    storedValue: string,
-    question: QuestionFormControl,
-    contractDetails: ContractDetails
-  ): FormControl {
-    let value = storedValue;
-
-    if (!isDefined(value)) {
-      if (question instanceof QuestionContractDetails) {
-        value = this._getContractDetailValue(question, contractDetails.contractInfo);
-      } else if (question instanceof QuestionFacilityAttributes) {
-        value = this._questionsService.getAttributeValue( question, contractDetails.facilityAttributes);
-      } else if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
-        value = this._questionsService.getAddressValue(contractDetails.patronAddresses, question);
-      } else if (question instanceof QuestionDateSigned) {
-        value = this._questionsService.getAttributeValue( question,null,contractDetails.contractInfo.dateTimeAccepted);
-      } else {
-        value = this._questionsService.getAttributeValue( question, contractDetails.patronAttributes) || '';
-      }
-    }
-
-    return new FormControl({ value, disabled: true });
-  }
-
-  private _getContractDetailValue(question: QuestionContractDetails, contractInfo: ContractInfo): string {
-    const contractKey: string = CONTRACT_DETAIL_FIELDS[question.contractId];
-
-    return contractInfo[contractKey] || '';
   }
 }
 

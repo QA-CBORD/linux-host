@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { HousingProxyService } from '../housing-proxy.service';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
@@ -8,15 +8,9 @@ import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charg
 import { ContractsService } from './contracts.service';
 import {
   QuestionBase,
-  QuestionChargeScheduleBase,
-  QuestionCheckboxGroup,
-  QuestionContractDetails,
-  QuestionDateSigned,
-  QuestionFormControl,
+  QuestionChargeScheduleBase
 } from '../questions/types';
-import { ContractInfo } from './contracts.model';
-import { QuestionFacilityAttributes } from '../questions/types/question-facility-attributes';
-import { QUESTIONS_SOURCES, QuestionsPage } from '../questions/questions.model';
+import { QuestionsPage } from '../questions/questions.model';
 import { first, of } from 'rxjs';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ChargeScheduleValue } from '../charge-schedules/charge-schedules.model';
@@ -49,7 +43,7 @@ describe('ContractsService', () => {
   };
 
   const contractsStateServiceMock = {
-    contractDetails$: jest.fn(),
+    contractDetails$: of(contracts),
   };
 
   const chargeSchedulesServiceMock = {
@@ -57,10 +51,10 @@ describe('ContractsService', () => {
   };
 
   const questionsServiceMock = {
-    getQuestions: jest.fn().mockReturnValue(['Question 1', 'Question 2']),
+    getQuestions: jest.fn().mockReturnValue(['Question a', 'Question b']),
     mapToAddressTypeGroup: mappedQuestion => ({}),
-    splitByPages: arg => ({}),
-    toFormGroup: jest.fn().mockReturnValue(
+    splitByPages: jest.fn().mockReturnValue([]),
+    toFormGroupControl: jest.fn().mockReturnValue(
       new FormGroup({
         test: new FormControl(),
       })
@@ -101,10 +95,6 @@ describe('ContractsService', () => {
     service = TestBed.inject(ContractsService);
   });
 
-  afterEach(() => {
-   jest.useRealTimers();
-  });
-
   it('can load instance', () => {
     expect(service).toBeTruthy();
   });
@@ -115,68 +105,27 @@ describe('ContractsService', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should get contract', () => {
-    const question = <QuestionContractDetails>{};
-    question.contractId = '2';
-    const contractInfo = <ContractInfo>{};
-    expect(service['_getContractDetailValue'](question, contractInfo)).toBeDefined();
-  });
-
-  it('should form control', () => {
-    const constrol = service['_toFormControl']('', <any>{}, contracts);
-    expect(constrol.disabled).toBeTruthy();
-  });
-
-  it('should form control QuestionContractDetails', () => {
-    contracts.contractInfo = <ContractInfo>{};
-    const constrol = service['_toFormControl'](null, new QuestionContractDetails(null), contracts);
-    expect(constrol.disabled).toBeTruthy();
-  });
-
-  it('should form control QuestionFacilityAttributes', () => {
-    contracts.contractInfo = <ContractInfo>{};
-    const constrol = service['_toFormControl'](null, new QuestionFacilityAttributes(null), contracts);
-    expect(constrol.disabled).toBeTruthy();
-  });
-
-  it('should form control QuestionDateSigned', () => {
-    contracts.contractInfo = <ContractInfo>{};
-    const constrol = service['_toFormControl'](null, new QuestionDateSigned(null), contracts);
-    expect(constrol.disabled).toBeTruthy();
-  });
-
-  it('should form control source', () => {
-    const constrol = service['_toFormControl'](null, <any>{ source: QUESTIONS_SOURCES.ADDRESS_TYPES }, contracts);
-    expect(constrol.disabled).toBeTruthy();
-  });
-
-  it('should form control QuestionFormControl', () => {
-    const constrol = service['_toFormControl'](null, new QuestionFormControl(), contracts);
-    expect(constrol.disabled).toBeTruthy();
-  });
-
   it('should sign the contract', () => {
     const spy = jest.spyOn(service['_isSigned'], 'next');
     service.sign(true);
     expect(spy).toBeCalled();
   });
 
-  it('should get the questions', () => {
-    jest.useFakeTimers('legacy');
+  it('should get the questions', fakeAsync(() => {
     const spy_1 = jest.spyOn(service as any, '_getPages');
     const spy_2 = jest.spyOn(service as any, '_getQuestionsPages');
     jest.spyOn(questionsStorageServiceMock, 'getApplication').mockReturnValue(of(storeApplication));
-    jest.spyOn(contractsStateServiceMock, 'contractDetails$').mockReturnValue(of(contracts));
-    service['getQuestions'](5)
+    service.getQuestions(5)
       .pipe(first())
       .subscribe({
         next: () => {
           expect(spy_1).toHaveBeenCalled();
           expect(spy_2).toHaveBeenCalled();
-        },
+        }
       });
+    tick();
     expect(questionsStorageServiceMock.getApplication).toHaveBeenCalled();
-  });
+  }));
 
   it('should get pages', () => {
     const pages: QuestionBase[][] = [
@@ -195,33 +144,6 @@ describe('ContractsService', () => {
     const storedQuestions: QuestionsEntries = {};
     service['_getPages'](pages, storedQuestions, contracts);
     expect(expectedResult).toEqual(expectedResult);
-  });
-
-  it('should call _toFormControl', () => {
-    const spy = jest.spyOn(questionsServiceMock, 'toFormGroup');
-    service['_toFormGroup']([], null, contracts);
-    expect(spy).toBeCalled();
-  });
-
-  it('should call _toFormGroup_', () => {
-    const pages: QuestionBase[] = [{ label: 'question1', type: 'TEXT', attribute: '' }];
-    const result = service['_toFormGroup'](pages, null, contracts);
-    expect(result).toBeInstanceOf(FormGroup);
-  });
-
-  it('should call _toFormGroup', () => {
-    const pages: QuestionBase[] = [
-      new QuestionCheckboxGroup({
-        name: 'hobbies',
-        label: 'Hobbies',
-        values: [
-          { label: 'Reading', value: 'Reading', selected: false },
-          { label: 'Traveling', value: 'Traveling', selected: false },
-        ],
-      }),
-    ];
-    const result = service['_toFormGroup'](pages, null, contracts);
-    expect(result).toBeInstanceOf(FormGroup);
   });
 
   it('should get charges schedule', () => {
