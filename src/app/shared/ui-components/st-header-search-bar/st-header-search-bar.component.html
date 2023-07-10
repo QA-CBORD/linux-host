@@ -14,11 +14,12 @@
 
   <ion-toolbar class="header__toolbar">
     <ion-searchbar
-      (ionChange)="onInputChanged($event)"
+      [debounce]="500"
+      (ionInput)="onInputChanged($event)"
       (keyup.enter)="onEnterKeyClicked()"
       [placeholder]="searchPlaceHolder"
       type="text"
-      debounce="500"
+      [debounce]="500"
       mode="ios"
       class="header__searchbar"
     ></ion-searchbar>

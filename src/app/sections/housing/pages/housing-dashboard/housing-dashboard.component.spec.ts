@@ -6,7 +6,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { IonicModule, Platform } from '@ionic/angular';
+import { IonContent, IonicModule, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ApplicationsModule } from '@sections/housing/applications/applications.module';
 import { AttachmentModule } from '@sections/housing/attachments/attachments.module';
@@ -21,11 +21,12 @@ import { TermsModule } from '@sections/housing/terms/terms.module';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { WaitingListsModule } from '@sections/housing/waiting-lists/waiting-lists.module';
 import { EMPTY, of } from 'rxjs';
-import { HousingDashboardPage } from './housing-dashboard.component';
+import { HousingDashboardPage, SelectedHousingTab } from './housing-dashboard.component';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
 import { MockDeclaration } from 'ng-mocks';
 import { WorkOrdersComponent } from '@sections/housing/work-orders/work-orders.component';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { By } from '@angular/platform-browser';
 
 const _loadingService = {
   showSpinner: jest.fn(),
@@ -107,7 +108,6 @@ describe('HousingDashboardPage', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HousingDashboardPage);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -120,8 +120,56 @@ describe('HousingDashboardPage', () => {
     });
 
     it('should load terms dropdown options', async () => {
+      fixture.detectChanges();
       const spy = jest.spyOn(termService, 'getTerms');
       expect(spy).toHaveBeenCalledTimes(1);
     });
+
+    it('should display forms when selectedHousingTab is HousingTab.Forms', () => {
+      component.selectedHousingTab = SelectedHousingTab.Forms;
+      fixture.detectChanges();
+      const applications = isComponentDisplayed(fixture, 'st-applications');
+      const waitingLists = isComponentDisplayed(fixture, 'st-waiting-lists');
+      const nonAssignments = isComponentDisplayed(fixture, 'st-non-assignments');
+      const contracts = isComponentDisplayed(fixture, 'st-contracts');
+      const workOrders = isComponentDisplayed(fixture, 'st-work-orders');
+      const attachments = isComponentDisplayed(fixture, 'st-attachments');
+      expect(applications).toBeTruthy();
+      expect(waitingLists).toBeTruthy();
+      expect(nonAssignments).toBeTruthy();
+      expect(contracts).toBeTruthy();
+      expect(workOrders).toBeTruthy();
+      expect(attachments).toBeTruthy();
+    });
+
+    it('should display rooms when selectedHousingTab is HousingTab.Rooms', () => {
+      component.selectedHousingTab = SelectedHousingTab.Rooms;
+      fixture.detectChanges();
+      const checkIn = isComponentDisplayed(fixture, 'st-check-in-out');
+      const rooms = isComponentDisplayed(fixture, 'st-rooms');
+      const inspections = isComponentDisplayed(fixture, 'st-inspections-forms');
+      expect(checkIn).toBeTruthy();
+      expect(rooms).toBeTruthy();
+      expect(inspections).toBeTruthy();
+    });
+
+    it('should display contracts when selectedHousingTab is HousingTab.Contracts', () => {
+      component.selectedHousingTab = SelectedHousingTab.Contracts;
+      fixture.detectChanges();
+      const contractList = isComponentDisplayed(fixture, 'st-contract-list');
+      expect(contractList).toBeTruthy();
+    });
+
+    it('should display transactions when selectedHousingTab is HousingTab.Transactions', () => {
+      component.selectedHousingTab = SelectedHousingTab.Transactions;
+      fixture.detectChanges();
+      const transactions = isComponentDisplayed(fixture, 'st-housing-transactions-only');
+      expect(transactions).toBeTruthy();
+    });
   });
 });
+
+function isComponentDisplayed(fixture: ComponentFixture<HousingDashboardPage>, selector: string) {
+  const ionContent = fixture.debugElement.query(By.directive(IonContent));
+  return ionContent.children.find(value => value.name === selector);
+}
