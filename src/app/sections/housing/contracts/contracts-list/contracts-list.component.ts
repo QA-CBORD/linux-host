@@ -13,17 +13,18 @@ import { isDefined } from '@sections/housing/utils';
 export class ContractsListComponent {
   @Input() contracts: ContractListDetails[];
 
-  getPath = (key: number, contractElementKey: number): string => `${ROLES.patron}/housing/contracts/${key}/${contractElementKey}`;
+  getPath = (key: number, contractElementKey: number): string =>
+    `${ROLES.patron}/housing/contracts/${key}/${contractElementKey}`;
 
   trackById = (_: number, contract: ContractListDetails): number => contract.id;
 
   allowEdit(contract: ContractListDetails): boolean {
     const allowedStates = [ContractStatus.Active, ContractStatus.Preliminary];
-    return !isDefined(contract.acceptedDate) && allowedStates.includes(ContractStatus[contract.state]);
+    return !isDefined(contract.acceptedDate) && allowedStates.includes(+contract.state);
   }
 
   getStatus(contract: ContractListDetails): string {
-    const statusValue = this.__getFormStatus(ContractStatus[contract.state]);
+    const statusValue = this.getFormStatus(+contract.state);
     // checks if accepted date exists for an active contract
     const isCompleted =
       ContractStatus[contract.state] == ContractStatus.Active ||
@@ -35,7 +36,7 @@ export class ContractsListComponent {
     return formStatus;
   }
 
-  __getFormStatus(state: ContractStatus): string {
+  getFormStatus(state: number): string {
     let formStatus;
     switch (state) {
       case ContractStatus.Active:

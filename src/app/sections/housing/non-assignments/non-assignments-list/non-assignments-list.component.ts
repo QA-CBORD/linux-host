@@ -40,7 +40,7 @@ export class NonAssignmentsListComponent {
   }
 
   getStatus(nonAssignment: NonAssignmentListDetails): string {
-    const statusValue = this._getFormStatus(NonAssignmentStatus[nonAssignment.status]);
+    const statusValue = this.getFormStatus(NonAssignmentStatus[nonAssignment.status]);
 
     const isCompleted =
       NonAssignmentStatus[nonAssignment.status] == NonAssignmentStatus.Active ||
@@ -53,7 +53,7 @@ export class NonAssignmentsListComponent {
     return formStatus;
   }
 
-  private _getFormStatus(state: NonAssignmentStatus): string {
+  private getFormStatus(state: NonAssignmentStatus): string {
     let formStatus;
     switch (state) {
       case NonAssignmentStatus.Completed:
