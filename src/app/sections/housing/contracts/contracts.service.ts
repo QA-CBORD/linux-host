@@ -1,10 +1,10 @@
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
-import { flat, isDefined } from '@sections/housing/utils';
+import { flat } from '@sections/housing/utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
@@ -12,18 +12,13 @@ import { QuestionsEntries, QuestionsStorageService } from '@sections/housing/que
 import { ContractsStateService } from '@sections/housing/contracts/contracts-state.service';
 
 import { ResponseStatus } from '../housing.model';
-import { CONTRACT_DETAIL_FIELDS, ContractDetails, ContractInfo, ContractRequest } from './contracts.model';
+import { ContractDetails, ContractRequest } from './contracts.model';
 import {
   QuestionBase,
   QuestionChargeSchedule,
-  QuestionChargeScheduleBase,
-  QuestionCheckboxGroup,
-  QuestionContractDetails,
-  QuestionDateSigned,
-  QuestionFormControl,
+  QuestionChargeScheduleBase
 } from '@sections/housing/questions/types';
-import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
-import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
+import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
 
@@ -74,6 +69,7 @@ export class ContractsService {
     this._isSigned.next(isSigned);
   }
 
+
   private _getQuestionsPages(contractDetails: ContractDetails): QuestionBase[][] {
     const questions: QuestionBase[][] = this._questionsService
       .getQuestions(contractDetails.formJson)
@@ -101,16 +97,10 @@ export class ContractsService {
     storedQuestions: QuestionsEntries,
     contractDetails: ContractDetails
   ): FormGroup {
-    return this._questionsService.toFormGroup(
+    return this._questionsService.toFormGroupControl(
       questions,
       storedQuestions,
-      (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
-        if (question instanceof QuestionCheckboxGroup) {
-          group[questionName] = this._questionsService.toQuestionCheckboxControl(storedValue, question);
-        } else {
-          group[questionName] = this._toFormControl(storedValue, question, contractDetails);
-        }
-      }
+      contractDetails
     );
   }
 
@@ -126,36 +116,6 @@ export class ContractsService {
 
     question = new QuestionChargeSchedule({ ...question, chargeSchedulesGroup });
     return question;
-  }
-
-  private _toFormControl(
-    storedValue: string,
-    question: QuestionFormControl,
-    contractDetails: ContractDetails
-  ): FormControl {
-    let value = storedValue;
-
-    if (!isDefined(value)) {
-      if (question instanceof QuestionContractDetails) {
-        value = this._getContractDetailValue(question, contractDetails.contractInfo);
-      } else if (question instanceof QuestionFacilityAttributes) {
-        value = this._questionsService.getAttributeValue( question, contractDetails.facilityAttributes);
-      } else if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
-        value = this._questionsService.getAddressValue(contractDetails.patronAddresses, question);
-      } else if (question instanceof QuestionDateSigned) {
-        value = this._questionsService.getAttributeValue( question,null,contractDetails.contractInfo.dateTimeAccepted);
-      } else {
-        value = this._questionsService.getAttributeValue( question, contractDetails.patronAttributes) || '';
-      }
-    }
-
-    return new FormControl({ value, disabled: true });
-  }
-
-  private _getContractDetailValue(question: QuestionContractDetails, contractInfo: ContractInfo): string {
-    const contractKey: string = CONTRACT_DETAIL_FIELDS[question.contractId];
-
-    return contractInfo[contractKey] || '';
   }
 }
 
