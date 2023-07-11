@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
-import { integerValidator, isEmptyOrNullString, numericValidator, parseJsonToArray } from '../utils';
+import { integerValidator, isDefined, isEmptyOrNullString, numericValidator, parseJsonToArray } from '../utils';
 
 import {
   QuestionAddressTypeGroup,
@@ -28,7 +28,12 @@ import { QuestionFacilityAttributes } from '@sections/housing/questions/types/qu
 import { QuestionBlockquote } from '@sections/housing/questions/types/question-blockquote';
 import { Attribute } from '@sections/housing/attributes/attributes.model';
 import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
-import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
+import {
+  CONTRACT_DETAIL_FIELDS,
+  CONTRACT_DETAIL_KEYS,
+  ContractDetails,
+  ContractInfo,
+} from '@sections/housing/contracts/contracts.model';
 import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
 import { AddressFields, PatronAddress } from '@sections/housing/addresses/address.model';
 import { QuestionRoommatePreference } from './types/question-roommate-preference';
@@ -96,6 +101,24 @@ export class QuestionsService {
       });
 
     return new FormGroup(group);
+  }
+
+  toFormGroupControl(
+    questions: QuestionBase[],
+    storedQuestions: QuestionsEntries,
+    contractDetails: ContractDetails
+  ): FormGroup {
+    return this.toFormGroup(
+      questions,
+      storedQuestions,
+      (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
+        if (question instanceof QuestionCheckboxGroup) {
+          group[questionName] = this.toQuestionCheckboxControl(storedValue, question);
+        } else {
+          group[questionName] = this.toFormControl(storedValue, question, contractDetails);
+        }
+      }
+    );
   }
 
   toQuestionCheckboxControl(storedValue, question: QuestionCheckboxGroup): FormArray {
@@ -210,6 +233,26 @@ export class QuestionsService {
     return questions;
   }
 
+  toFormControl(storedValue: string, question: QuestionFormControl, contractDetails: ContractDetails): FormControl {
+    let value = storedValue;
+
+    if (!isDefined(value)) {
+      if (question instanceof QuestionContractDetails) {
+        value = this._getContractDetailValue(question, contractDetails.contractInfo);
+      } else if (question instanceof QuestionFacilityAttributes) {
+        value = this.getAttributeValue(question, contractDetails.facilityAttributes);
+      } else if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+        value = this.getAddressValue(contractDetails.patronAddresses, question);
+      } else if (question instanceof QuestionDateSigned) {
+        value = this.getAttributeValue(question, null, contractDetails.contractInfo.dateTimeAccepted);
+      } else {
+        value = this.getAttributeValue(question, contractDetails.patronAttributes) || '';
+      }
+    }
+
+    return new FormControl({ value, disabled: true });
+  }
+
   private _mapToQuestions(questions): QuestionBase[] {
     return questions
       .map(question => {
@@ -285,5 +328,11 @@ export class QuestionsService {
       validators.push(Validators.required);
     }
     return validators;
+  }
+
+  private _getContractDetailValue(question: QuestionContractDetails, contractInfo: ContractInfo): string {
+    const contractKey: string = CONTRACT_DETAIL_FIELDS[question.contractId];
+
+    return contractInfo[contractKey] || '';
   }
 }
