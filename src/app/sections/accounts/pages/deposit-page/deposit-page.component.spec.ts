@@ -1,5 +1,7 @@
-import { of } from "rxjs";
+import { firstValueFrom, of } from "rxjs";
 import { DepositPageComponent } from "./deposit-page.component";
+import { SettingInfo } from "@core/model/configuration/setting-info.model";
+import { FormBuilder, FormGroup } from "@angular/forms";
 
 describe('DepositPageComponent', () => {
     let fixture: DepositPageComponent;
@@ -19,12 +21,34 @@ describe('DepositPageComponent', () => {
         orderingService;
 
     beforeEach(() => {
-        (fb = {}),
+        (fb = new FormBuilder()),
             (orderingService = {}),
             (a11yService = {}),
-            (commonService = {}),
-            (depositService = {}),
-            (userFacadeService = {}),
+            (commonService = {
+                getString: jest.fn(()=>{
+                    return 'test'
+                })
+            }),
+            (depositService = {
+                getSettingByName: jest.fn(() => {
+                    return 'test'
+                }),
+                settings$: of([{
+                    name: 'test',
+                    value: '1',
+                    category: 'cat'
+                },
+                {
+                    name: 'test2',
+                    value: '3',
+                    category: 'cat 2'
+                }] as SettingInfo[])
+            }),
+            (userFacadeService = {
+                isApplePayEnabled$: jest.fn(() => {
+                    return of(true)
+                }),
+            }),
             (externalPaymentService = {}),
             (cdRef = {}),
             (modalController = {}),
@@ -50,5 +74,13 @@ describe('DepositPageComponent', () => {
             commonService,
             orderingService
         );
+        fixture.ngOnInit();
+    });
+
+
+    describe('DepositPage', () => {
+        it('Should retreive the list of deposit settings', async () => {
+            expect(fixture.depositSettings.length).toBeGreaterThan(0);
+        });
     });
 });
