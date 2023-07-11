@@ -156,7 +156,7 @@ export class AddCreditCardComponent implements OnInit, OnDestroy {
     this.sourceSubscription.add(subscription);
   }
 
-  public initForm() {
+  private initForm() {
     this.ccForm = this.fb.group({
       cardNumber: ['', [Validators.required, Validators.pattern('[0-9 ]+')]],
       expDate: ['', [Validators.required, Validators.minLength(7)]],

@@ -83,7 +83,7 @@ describe('RequestFundsPageComponent', () => {
 
     describe('showToast', () => {
         it('should show a toast with an error message', async () => {
-            await fixture.showToast();
+            await (fixture as any).showToast();
             expect(toastService.showToast).toHaveBeenCalledWith({ message: 'Something went wrong...' });
         });
     });

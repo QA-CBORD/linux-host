@@ -40,7 +40,7 @@ describe('AddCreditCardComponent', () => {
             loadingService,
             nav
         );
-        fixture.initForm();
+        (fixture as any).initForm();
     });
 
     describe('Initialization', () => {

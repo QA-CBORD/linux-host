@@ -112,7 +112,7 @@ export class RequestFundsPageComponent implements OnInit {
     await this.nav.navigate([PATRON_NAVIGATION.accounts]);
   }
 
-  public initForm() {
+  private initForm() {
     const nameErrors = [
       formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].required),
       formControlErrorDecorator(Validators.minLength(2), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].minlength),
@@ -141,7 +141,7 @@ export class RequestFundsPageComponent implements OnInit {
     });
   }
 
-  public async showToast(): Promise<void> {
+  private async showToast(): Promise<void> {
     await this.toastService.showToast({ message: 'Something went wrong...' });
   }
 

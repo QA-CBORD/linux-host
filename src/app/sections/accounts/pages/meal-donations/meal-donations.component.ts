@@ -181,7 +181,7 @@ export class MealDonationsComponent implements OnInit {
     this.sourceSubscription.add(subscription);
   }
 
-  public setAmountValidators(accountType: number) {
+  private setAmountValidators(accountType: number) {
     const amountError = [
       formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].required),
       formControlErrorDecorator(
