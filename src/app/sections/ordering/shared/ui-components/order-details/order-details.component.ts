@@ -93,6 +93,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.orderTypes = merchant.orderTypes;
     this.isWalkoutOrder = !!merchant.walkout;
     this._merchat = merchant;
+    this.isOrderAhead = parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions;
@@ -134,6 +135,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   hasReadonlyPaymentMethodError = false;
   isApplePayment = false;
   isWalkoutOrder = false;
+  isOrderAhead = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -150,6 +152,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     required: 'A payment method must be selected',
     paymentMethodFailed:
       'There was an issue processing the payment for this order. \nContact the merchant to resolve this issue.',
+  };
+
+  readonly dueTimeErrorMessages: DueTimeErrorMessages = {
+    pickUpTimeNotAvailable: 'This pickup time is not available',
+    deliveryTimeNotAvailable: 'This delivery time is not available',
   };
 
   constructor(
@@ -247,6 +254,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   initForm() {
     this.detailsForm = this.fb.group({
+      [FORM_CONTROL_NAMES.address]: [''],
       [FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [FORM_CONTROL_NAMES.paymentMethod]: [{ value: '', disabled: this.isPaymentMethodDisabled }, Validators.required],
       [FORM_CONTROL_NAMES.note]: [this.notes],
@@ -499,6 +507,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 }
 
 export enum FORM_CONTROL_NAMES {
+  dueTime = 'dueTime',
   address = 'address',
   paymentMethod = 'paymentMethod',
   cvv = 'cvv',
@@ -541,7 +550,12 @@ export interface OrderDetailsFormData {
   valid: boolean;
 }
 
-interface PaymentMethodErrorMessages {
+export interface PaymentMethodErrorMessages {
   required: string;
   paymentMethodFailed: string;
+}
+
+export interface DueTimeErrorMessages {
+  pickUpTimeNotAvailable: string;
+  deliveryTimeNotAvailable: string;
 }

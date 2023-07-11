@@ -5,8 +5,8 @@
         orderDetailOptions.orderType | typeMessage : 'dueTime' : isWalkoutOrder
       }}</ion-label>
 
-      <p *ngIf="orderDetailOptions.isASAP; else timeEditable" class="order-details__value">
-        {{ orderDetailOptions.address | addressHeaderFormat }}
+      <p *ngIf="!isOrderAhead; else timeEditable" class="order-details__value">
+        {{ orderDetailOptions | modifyPrepTime : orderTypes }}
       </p>
 
       <ng-template  #timeEditable>
@@ -238,6 +238,8 @@
       >
       </st-textarea-floating-label>
     </div>
+
+    {{ paymentFormControl.errors | json }}
   </form>
 
   <div class="order-details__buttons">
