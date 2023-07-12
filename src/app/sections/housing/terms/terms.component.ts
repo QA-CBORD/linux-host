@@ -15,7 +15,6 @@ import { Term } from './terms.model';
 })
 export class TermsComponent implements OnInit {
   terms$: Observable<Term[]>;
-  selectedTermLabel$: Observable<string>;
 
   customPopoverOptions = {
     mode: 'md',
@@ -30,8 +29,6 @@ export class TermsComponent implements OnInit {
     this._loadingService.showSpinner();
 
     this.terms$ = this._termsService.getTerms().pipe(tap(() => this._loadingService.closeSpinner()));
-
-    this.selectedTermLabel$ = this._termsService.termlabel$;
   }
 
   handleSelectTerm(term: Term): void {

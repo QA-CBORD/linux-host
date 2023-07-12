@@ -31,14 +31,3 @@
   }
 }
 
-.terms-value
-{
-  @include font-nunito-heavy(16px);
-  color: rgba($color-black, 0.6);
-}
-
-.terms-select {
-  opacity: 0;
-  width: 0;
-  padding: 0;
-}
