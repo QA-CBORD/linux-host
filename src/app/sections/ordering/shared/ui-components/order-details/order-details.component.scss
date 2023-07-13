@@ -37,7 +37,7 @@
 }
 .address-container {
   display: grid;
-  grid-template-columns: 5fr 1fr;
+  grid-template-columns: 1fr auto;
 }
 .order-details {
   border-top: 1px solid $color-whisper;
@@ -93,36 +93,7 @@
     }
   }
 
-  &__value {
-    padding-left: 0;
-    color: $color-black;
-
-    @include font-nunito-semibold(16px);
-
-    &--editable {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-
-      &:after {
-        content: '';
-        display: block;
-        top: calc(50% - 30px);
-        width: 35px;
-        height: 30px;
-        right: 20px;
-        background-image: url('/assets/icon/angle-down-select.svg');
-        background-size: cover;
-      }
-    }
-  }
-
-  ion-select.custom-error::part(icon) {
-    opacity: 1;
-  }
-
-  ion-select.custom-error::part(icon)::before {
+  @mixin caution-icon {
     display: block;
     content: '';
     mask-size: contain;
@@ -135,6 +106,79 @@
     height: 1.5em;
     opacity: 1;
     transform: translateX(-140%) translateY(-10%);
+  }
+
+  @mixin angle-down-icon {
+    content: '';
+    display: block;
+    mask-position: 50% 50%;
+    width: 35px;
+    height: 30px;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-image: url('/assets/icon/angle-down-select.svg');
+    width: 2.5em;
+    height: 2.5em;
+    opacity: 1;
+    background-color: $color-dim-gray;
+  }
+
+  &__value {
+    padding-left: 0;
+    color: $color-black;
+
+    @include font-nunito-semibold(16px);
+
+    &--editable {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+
+      &.error {
+        &:before {
+          @include caution-icon;
+          transform: none;
+        }
+      }
+
+      &:after {
+        @include angle-down-icon;
+      }
+    }
+  }
+
+  ion-select {
+    min-height: 0;
+    margin-top: 15px;
+
+    &.ion-touched.ion-invalid {
+      color: $color-dim-gray;
+    }
+  }
+
+  ion-select.custom-error::part(container) {
+    display: grid;
+    grid-template-columns: 2fr auto;
+    width: 100%;
+  }
+
+  ion-select.custom-error::part(icon) {
+    opacity: 1;
+    color: $color-dim-gray;
+    width: 30px;
+    height: 30px;
+  }
+
+  ion-select.custom-error::part(icon)::before {
+    @include caution-icon;
+    transform: translateX(-2%) translateY(0%);
+  }
+
+  ion-select.custom-error::part(icon)::after {
+    @include angle-down-icon;
+    mask-position: 6% 16%;
+    transform: translateX(112%) translateY(-200%);
   }
 
   &__order-note {
@@ -159,7 +203,7 @@
     padding: 10px 10px 30px 10px;
     margin-bottom: $notch-bottom;
 
-    &>* {
+    & > * {
       flex-grow: 1;
     }
   }
