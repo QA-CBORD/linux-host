@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -10,7 +10,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
-import { PopoverController } from '@ionic/angular';
+import { IonContent, PopoverController } from '@ionic/angular';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
@@ -47,6 +47,7 @@ import { catchError, filter, finalize, first, map, switchMap, take, tap } from '
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
+import { TypeMessagePipe } from '@sections/ordering/shared/pipes/type-message/type-message.pipe';
 
 @Component({
   selector: 'st-cart',
@@ -77,6 +78,8 @@ export class CartComponent implements OnInit, OnDestroy {
     duplicateOrdering: '',
     noConnection: '',
   };
+  dueTimeHasErrors = false;
+  @ViewChild('content') private page: IonContent;
 
   constructor(
     private readonly cartService: CartService,
@@ -94,7 +97,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
     private readonly nonCheckingService: NonCheckingService,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -117,8 +120,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.merchant$ = this.cartService.merchant$.pipe(
       tap(
         merchant =>
-        (this.merchantTimeZoneDisplayingMessage =
-          merchant?.timeZone && "The time zone reflects the merchant's location")
+          (this.merchantTimeZoneDisplayingMessage =
+            merchant?.timeZone && "The time zone reflects the merchant's location")
       )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
@@ -290,6 +293,23 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
+    this.dueTimeHasErrors = false;
+    const isMerchantOrderAhead = await firstValueFrom(
+      this.merchant$.pipe(
+        map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
+      )
+    );
+
+    if (isMerchantOrderAhead) {
+      const options = await firstValueFrom(this.orderDetailOptions$);
+      const orderType = new TypeMessagePipe().transform(options.orderType, 'time');
+      this.toastService.showError(`This ${orderType} is not available. Select a different ${orderType}.`);
+      this.dueTimeHasErrors = true;
+      this.page.scrollToTop();
+      this.cdRef.detectChanges();
+      return;
+    }
+
     const data = {
       title: 'Oooops',
       message,
@@ -464,7 +484,7 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     if (error && error.includes('CONTENT_STRING')) {
-      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, ''))
+      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, ''));
       return;
     }
 

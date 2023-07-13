@@ -24,7 +24,13 @@ import {
   OrderItem,
   OrderPayment,
 } from '@sections/ordering';
-import { MerchantSettings, ORDERING_CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
+import {
+  MerchantSettings,
+  ORDERING_CONTENT_STRINGS,
+  ORDER_TYPE,
+  ORDER_VALIDATION_ERRORS,
+  PAYMENT_SYSTEM_TYPE,
+} from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
@@ -32,13 +38,14 @@ import { Subscription } from 'rxjs';
 import {
   cvvValidationFn,
   formControlErrorDecorator,
+  handleServerError,
   validateCurrency,
   validateGreaterOrEqualToZero,
   validateLessThanOther,
 } from '@core/utils/general-helpers';
 import { AccountType, DisplayName } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { take } from 'rxjs/operators';
+import { first, take } from 'rxjs/operators';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfo } from '@core/model/user';
 import { ModalsService } from '@core/service/modals/modals.service';
@@ -47,6 +54,9 @@ import { IonSelect } from '@ionic/angular';
 import { Keyboard } from '@capacitor/keyboard';
 import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
 import { OrderOptionsActionSheetComponent } from '../order-options.action-sheet/order-options.action-sheet.component';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { IGNORE_ERRORS } from '@sections/ordering/pages/full-menu/full-menu.component';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-order-details',
@@ -93,7 +103,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.orderTypes = merchant.orderTypes;
     this.isWalkoutOrder = !!merchant.walkout;
     this._merchat = merchant;
-    this.isOrderAhead = parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
+    this.isMerchantOrderAhead = parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions;
@@ -114,6 +124,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() merchantTimeZoneDisplayingMessage: string;
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
+  @Input() dueTimeHasErrors: boolean;
 
   _merchat: MerchantInfo;
   accountName: string;
@@ -135,7 +146,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   hasReadonlyPaymentMethodError = false;
   isApplePayment = false;
   isWalkoutOrder = false;
-  isOrderAhead = false;
+  isMerchantOrderAhead = false;
+  dueTimeTypeError: 'pickUpTimeNotAvailable' | 'deliveryTimeNotAvailable';
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -166,7 +178,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly a11yService: AccessibilityService,
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
+    private readonly loadingService: LoadingService,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -200,9 +214,25 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setAccessoryBarVisible(false);
   }
 
-  ngOnChanges({ orderDetailOptions }: SimpleChanges): void {
+  ngOnChanges({ orderDetailOptions, dueTimeHasErrors }: SimpleChanges): void {
     if (orderDetailOptions && orderDetailOptions.currentValue === null) {
       this.orderDetailOptions = {} as OrderDetailOptions;
+    }
+
+    if (dueTimeHasErrors && dueTimeHasErrors.currentValue !== null) {
+      this.markDueTieWithErrors();
+    }
+  }
+
+  markDueTieWithErrors(): void {
+    if (this.dueTimeHasErrors) {
+      this.dueTimeTypeError =
+        this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP ? 'pickUpTimeNotAvailable' : 'deliveryTimeNotAvailable';
+      const dueTimeErrorKey: keyof DueTimeErrorMessages = this.dueTimeTypeError;
+
+      this.dueTimeFormControl.disable();
+      this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: true });
+      this.dueTimeFormControl.markAsTouched();
     }
   }
 
@@ -259,6 +289,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [FORM_CONTROL_NAMES.paymentMethod]: [{ value: '', disabled: this.isPaymentMethodDisabled }, Validators.required],
       [FORM_CONTROL_NAMES.note]: [this.notes],
       [FORM_CONTROL_NAMES.phone]: [''],
+      [FORM_CONTROL_NAMES.dueTime]: [''],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
@@ -341,6 +372,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   get phone(): AbstractControl {
     return this.detailsForm.get(FORM_CONTROL_NAMES.phone);
+  }
+
+  get dueTimeFormControl(): AbstractControl {
+    return this.detailsForm.get(FORM_CONTROL_NAMES.dueTime);
   }
 
   openActionSheet() {
@@ -500,9 +535,38 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
         this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
+        this.validateOrder(() => {
+          const dueTimeErrorKey: keyof DueTimeErrorMessages = this.dueTimeTypeError;
+          this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
+          this.dueTimeHasErrors = false;
+          this.cdRef.detectChanges();
+          this.loadingService.closeSpinner();
+        }, (error) => this.toastService.showError(error));
       }
     });
     await modal.present();
+  }
+
+  private async validateOrder(
+    successCb: FunctionStringCallback,
+    errorCB?: FunctionStringCallback,
+    ignoreCodes?: string[]
+  ): Promise<void> {
+    await this.loadingService.showSpinner();
+    await this.cartService
+      .validateOrder()
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
+      .toPromise()
+      .then(() => {
+        this.cartService.cartsErrorMessage = null;
+        return successCb && successCb(null);
+      })
+      .catch((error: Array<string> | string) => {
+        if (Array.isArray(error) && IGNORE_ERRORS.includes(error[0])) {
+          this.cartService.cartsErrorMessage = error[1];
+        }
+        return errorCB(error[1]);
+      });
   }
 }
 
