@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { Platform } from '@ionic/angular';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -11,11 +13,13 @@ import { Platform } from '@ionic/angular';
 export class AppComponent implements OnInit {
   constructor(
     private readonly platform: Platform,
-    private readonly screenOrientation: ScreenOrientation
+    private readonly screenOrientation: ScreenOrientation,
+    private readonly translateFacadeService: TranslateFacadeService
   ) {}
 
   ngOnInit(): void {
     this.initializeApp();
+    this.translateFacadeService.listenForContentStringStateChanges();
   }
 
   private async initializeApp(): Promise<void> {
