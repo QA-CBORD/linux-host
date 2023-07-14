@@ -17,12 +17,8 @@
           <ion-icon name="information-circle-outline" class="icon"></ion-icon>
         </div>
         <div class="header-message">
-          <div class="key-message">
-            A government issued ID is required to submit a new photo.
-          </div>
-          <div class="secondary-message">
-            e.g., Passport, Driver’s License, State ID
-          </div>
+          <div class="key-message" [innerHTML]="'get_mobile.photo_upload.govtidmessage' | translate"></div>
+          <div class="secondary-message" [innerHTML]="'get_mobile.photo_upload.govtidmessagesmall' | translate"></div>
         </div>
       </div>
     </ion-card-header>
@@ -119,9 +115,7 @@
           <ion-icon name="information-circle-outline" class="icon"></ion-icon>
         </div>
         <div class="header-message">
-          <div class="key-message">
-            New photo is subject to admin approval!
-          </div>
+          <div class="key-message" [innerHTML]="'get_mobile.photo_upload.updatephotomessage' | translate"></div>
         </div>
       </div>
       <ng-template #profileImagePending>
@@ -130,9 +124,10 @@
             <ion-icon name="checkmark-circle" class="icon"></ion-icon>
           </div>
           <div class="header-message">
-            <div class="key-message-submitted">
-              Your photo has been submitted and is now pending admin approval.
-            </div>
+            <div
+              class="key-message-submitted"
+              [innerHTML]="'get_mobile.photo_upload.photosubmittedmessage' | translate"
+            ></div>
           </div>
         </div>
       </ng-template>
