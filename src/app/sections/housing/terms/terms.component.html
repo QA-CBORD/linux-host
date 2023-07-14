@@ -1,12 +1,13 @@
 <ion-list *ngIf="terms$ | async as terms">
   <ion-item lines="none" class="terms" *ngIf="terms.length && !disabled">
     <ion-select
+      justify="start"
       interface="popover"
-      mode="md"
       #termsSelect
       class="terms-label"
+      toggleIcon="none"
       label="Term: "
-      aria-label="Term selection"
+      aria-label="Term selection box"
       placeholder="Select term"
       [interfaceOptions]="customPopoverOptions"
       (ionChange)="handleSelectTerm(termsSelect.value)"
@@ -15,5 +16,6 @@
         {{ term.termName }}
       </ion-select-option>
     </ion-select>
+    <span class="chevron-down"></span>
   </ion-item>
 </ion-list>

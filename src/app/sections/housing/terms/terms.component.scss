@@ -2,32 +2,33 @@
 
 :host {
   display: block;
-  // border-top: 1px solid $color-light-gray;
-  // border-bottom: 1px solid $color-light-gray;
 }
 
 .terms {
   --inner-padding-end: 0;
-  --background: #F1f1f1;
+  --background: #f1f1f1;
   border-radius: 10px;
   margin: 16px;
-}
 
-.label-container {
-  @include chevron-down(0);
-}
-
-
-.terms-label {
-  @include font-nunito-heavy(16px);
-
-  color: rgba($color-black, 1);
-  padding-right: 20px;
-  position: relative;
-
-  &::before {
-    background-color: transparent;
-    transform: translateY(-45%);
+  &-label {
+    @include font-nunito-heavy(16px);
+    color: $color-black;
+    padding-right: 20px;
+    position: relative;
   }
 }
 
+.label-container::part(icon) {
+  opacity: 0;
+  width: 0;
+  padding: 0;
+}
+
+.chevron-down {
+  @include chevron-down(0);
+  margin-right: 15px;
+}
+
+ion-select::part(text) {
+  color: rgba($color-black, 0.6);
+}
