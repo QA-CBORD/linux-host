@@ -174,11 +174,13 @@
       }
 
       .picker-toolbar-cancel .picker-button {
+        text-transform: none;
         padding-left: 30px;
         @include font-nunito-regular(16px);
       }
 
       .picker-toolbar-title .picker-button {
+        text-transform: none;
         color: #161616;
         padding: 0;
 
