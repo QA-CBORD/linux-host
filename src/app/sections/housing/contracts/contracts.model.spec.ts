@@ -47,7 +47,7 @@ describe('Contracts model', () => {
     });
   });
 
-  it('should instantiate a contract details', () => {
+  it('should instantiate a contract detail', () => {
     const contractList = new ContractDetails({
       contractInfo: null,
       formJson: '',
@@ -59,7 +59,7 @@ describe('Contracts model', () => {
     expect(contractList).toBeTruthy();
   });
 
-  it('should instantiate a contract details', () => {
+  it('should instantiate contract details', () => {
     const contractDetails = new ContractDetails(null);
     expect(contractDetails).toBeTruthy();
   });
