@@ -3,6 +3,10 @@
 :host {
 	width: 100%;
 }
+.picker-hidden-confirm {
+	pointer-events: none;
+	display: none;
+}
 
 .confirm-button {
 	z-index: 100;
