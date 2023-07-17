@@ -3,25 +3,33 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { Platform } from '@ionic/angular';
 import { AppComponent } from './app.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const screenOrientationStub = () => ({
       lock: pORTRAIT => ({}),
       ORIENTATIONS: { PORTRAIT: {} }
     });
     const platformStub = () => ({ ready: () => ({}), is: string => ({}) });
-    TestBed.configureTestingModule({
+    const mockTranslateService = {
+      currentLang: 'en',
+      setTranslation: jest.fn(),
+    };
+  
+    await TestBed.configureTestingModule({
+      imports: [TranslateModule],
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [AppComponent],
       providers: [
+        { provide: TranslateService, useValue: mockTranslateService },
         { provide: ScreenOrientation, useFactory: screenOrientationStub },
         { provide: Platform, useFactory: platformStub }
       ]
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
   });

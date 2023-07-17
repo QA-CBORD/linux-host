@@ -113,9 +113,6 @@ export class ContractListDetails implements ContractListDetailsOptions {
     }
   }
 
-  static toContractListDetails(contracts): ContractListDetails[] {
-    return Array.isArray(contracts) ? contracts.map((contract) => new ContractListDetails(contract)) : [];
-  }
 }
 
 export interface ContractInfoOptions {

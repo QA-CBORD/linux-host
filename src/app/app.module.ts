@@ -14,7 +14,15 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
 import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { VaultIdentityService } from '@core/service/identity/vault.identity.service';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
 import * as Sentry from '@sentry/angular';
+import { HttpClient } from '@angular/common/http';
+
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void>) => () => vaultService.init();
 @NgModule({
@@ -27,6 +35,14 @@ const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void
     AppRoutingModule,
     IonicModule.forRoot({ swipeBackEnabled: false }),
     IonicStorageModule.forRoot(),
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+          provide: TranslateLoader,
+          useFactory: (createTranslateLoader),
+          deps: [HttpClient]
+      }
+  }),
     CommonModule,
     PinModule
   ],
