@@ -67,7 +67,7 @@ git checkout $rc_branch
 git pull origin $rc_branch
 
 current_patch_version=$(grep -o -E 'versionNumber:.*' src/environments/environment-data.ts | awk '{print $2}' | tr -d "',")
-git merge develop
+git merge develop -m "Changes to release for V$new_version"
 
 git diff $rc_branch $release_branch > difference.txt || exit 1
 if [ -s difference.txt ] ; then
@@ -88,7 +88,7 @@ if [ -s difference.txt ] ; then
         
         # Commit and push the changes
         git add src/environments/environment-data.ts android/app/build.gradle ios/App/App/Info.plist
-        git commit -m "Increment version to $new_version"
+        git commit -m "Version bump V$new_version"
     fi
 
     git push origin $rc_branch
