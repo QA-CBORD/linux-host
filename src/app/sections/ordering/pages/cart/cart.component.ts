@@ -36,18 +36,26 @@ import {
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { TypeMessagePipe } from '@sections/ordering/shared/pipes/type-message/type-message.pipe';
 import { APP_ROUTES } from '@sections/section.config';
 import { LockDownService } from '@shared/index';
-import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { ConnectionService } from '@shared/services/connection-service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, of, zip } from 'rxjs';
-import { catchError, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, zip } from 'rxjs';
+import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
-import { TypeMessagePipe } from '@sections/ordering/shared/pipes/type-message/type-message.pipe';
+
+interface OrderingErrorContentStringModel {
+  timeout: string;
+  connectionLost: string;
+  duplicateOrdering: string;
+  noConnection: string;
+  pickUpOrderTimeNotAvailable: string;
+  deliveryOrderTimeNotAvailable: string;
+}
 
 @Component({
   selector: 'st-cart',
@@ -72,12 +80,7 @@ export class CartComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   isOnline = true;
   networkSubcription: Subscription;
-  orderSubmitErrorMessage = {
-    timeout: '',
-    connectionLost: '',
-    duplicateOrdering: '',
-    noConnection: '',
-  };
+  orderSubmitErrorMessage: OrderingErrorContentStringModel;
   dueTimeHasErrors = false;
   @ViewChild('content') private page: IonContent;
 
@@ -97,7 +100,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
     private readonly nonCheckingService: NonCheckingService,
-    private readonly lockDownService: LockDownService,
+    private readonly lockDownService: LockDownService
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -644,27 +647,42 @@ export class CartComponent implements OnInit, OnDestroy {
       ORDERING_CONTENT_STRINGS.duplicateOrdering
     );
     const noConnectionError = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.noConnection);
+    const pickUpOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+    );
+    const deliveryOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable
+    );
 
     this.orderSubmitErrorMessage = await zip(
       timeOutError,
       connectionLostError,
       duplicateOrderSubmissionError,
-      noConnectionError
+      noConnectionError,
+      pickUpOrderTimeNotAvailable,
+      deliveryOrderTimeNotAvailable
     )
       .pipe(
         take(1),
-        map(([timeout, connectionLost, duplicateOrdering, noConnection]) => {
-          if (!timeout || !connectionLost) {
-            return defaultOrderSubmitErrorMessages;
-          }
-          return {
+        map(
+          ([
             timeout,
             connectionLost,
             duplicateOrdering,
             noConnection,
-          };
-        }),
-        catchError(() => of(defaultOrderSubmitErrorMessages))
+            pickUpOrderTimeNotAvailable,
+            deliveryOrderTimeNotAvailable,
+          ]) => {
+            return {
+              timeout,
+              connectionLost,
+              duplicateOrdering,
+              noConnection,
+              pickUpOrderTimeNotAvailable,
+              deliveryOrderTimeNotAvailable,
+            };
+          }
+        )
       )
       .toPromise();
   }
