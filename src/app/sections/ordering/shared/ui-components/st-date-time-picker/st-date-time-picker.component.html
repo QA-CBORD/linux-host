@@ -19,5 +19,7 @@
   [buttons]="pickerButtons"
   (didDismiss)="isPickerOpen = false"
 >
-  <st-button class="confirm-button" (onClick)="confirmPicker()">Set Pickup Time</st-button>
+  <st-button class="confirm-button"
+  [buttonModifier]="'normalcase'"
+  (onClick)="confirmPicker()">Set Pickup Time</st-button>
 </ion-picker>

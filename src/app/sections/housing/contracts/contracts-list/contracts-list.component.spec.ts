@@ -7,7 +7,7 @@ describe('ContractsListComponent', () => {
   let component: ContractsListComponent;
   let fixture: ComponentFixture<ContractsListComponent>;
   const contractListDetailsStub: ContractListDetails = <any>{};
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
@@ -60,12 +60,12 @@ describe('ContractsListComponent', () => {
   });
 
   describe('allowEdit', () => {
-    it('should allow edit', () => {
+    it('should allow edit on active state', () => {
       contractListDetailsStub.state = '1';
       expect(component.allowEdit(contractListDetailsStub)).toBeTruthy();
     });
 
-    it('should allow edit', () => {
+    it('should allow editing on preliminary state', () => {
       contractListDetailsStub.state = '2';
       expect(component.allowEdit(contractListDetailsStub)).toBeTruthy();
     });
