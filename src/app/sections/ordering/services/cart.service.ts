@@ -94,7 +94,7 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
-      map(orderInfo => orderInfo ? orderInfo.orderItems.reduce((state, { quantity }) => state + quantity, 0) : 0)
+      map(orderInfo => (orderInfo ? orderInfo.orderItems.reduce((state, { quantity }) => state + quantity, 0) : 0))
     );
   }
 
@@ -175,7 +175,7 @@ export class CartService {
   }
 
   async setActiveMerchantsMenuByOrderOptions(
-    dueTime: Date,
+    dueTime: Date | string,
     orderType: ORDER_TYPE,
     address: AddressInfo,
     isASAP?: boolean
@@ -241,8 +241,9 @@ export class CartService {
     return dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
   }
 
-  validateOrder(): Observable<OrderInfo> {
-    const { orderType: type, dueTime, address: addr } = this.cart.orderDetailsOptions;
+  validateOrder(orderDetailsOptions?: OrderDetailOptions): Observable<OrderInfo> {
+    const options = orderDetailsOptions || this.cart.orderDetailsOptions as OrderDetailOptions;
+    const { orderType: type, dueTime, address: addr } = options;
     let address = {};
 
     if (addr) {
@@ -260,7 +261,12 @@ export class CartService {
         };
 
         if (!this._pendingOrderId) {
-          return this.merchantService.validateOrder(this.cart.order);
+          return this.merchantService.validateOrder(this.cart.order).pipe(
+            first(),
+            tap((order: OrderInfo) => {
+              this.setActiveMerchantsMenuByOrderOptions(order.dueTime, options.orderType, options.address, options.isASAP);
+            })
+          );
         }
 
         return this.merchantService
@@ -375,17 +381,11 @@ export class CartService {
   }
 
   async getMerchantMenu(id: string, dueTime: string | Date, type: number): Promise<MenuInfo> {
-    const { timeZone, locale } = await this.userFacadeService
-      .getUserData$()
-      .pipe(first())
-      .toPromise();
+    const { timeZone, locale } = await this.userFacadeService.getUserData$().pipe(first()).toPromise();
     dueTime = dueTime || new Date();
     const timeInGMT =
       dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, this.merchantTimeZone || timeZone) : dueTime;
-    return this.merchantService
-      .getDisplayMenu(id, timeInGMT, type)
-      .pipe(first())
-      .toPromise();
+    return this.merchantService.getDisplayMenu(id, timeInGMT, type).pipe(first()).toPromise();
   }
 
   private addOrderItem(orderItem: Partial<OrderItem>) {

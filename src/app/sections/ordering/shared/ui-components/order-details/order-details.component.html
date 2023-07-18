@@ -239,6 +239,18 @@
   </div>
 </ng-template>
 
+<st-date-time-picker
+  [useBackButton]="false"
+  [schedule]="orderSchedule$ | async"
+  [isTimeDisable]="false"
+  [data]="orderOptionsData"
+  [dateTimePicker]="orderDetailOptions.dueTime"
+  [merchantInfo]="_merchant"
+  [dateTimeWithTimeZone]="orderDetailOptions.dueTime"
+  [userData]="userData$ | async"
+  (onTimeSelected)="onDateTimeSelected($event)"
+></st-date-time-picker>
+
 <ng-template #addressEditable>
   <div
     (click)="isAddressClickable && showAddressListModal()"
