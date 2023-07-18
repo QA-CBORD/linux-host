@@ -397,7 +397,6 @@ export class CartComponent implements OnInit, OnDestroy {
         if (result.success) {
           accountId = result.accountId;
         } else {
-          debugger;
           this.onErrorModal(result.errorMessage);
         }
       })
