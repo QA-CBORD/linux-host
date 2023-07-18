@@ -111,7 +111,7 @@ describe('ContractsService', () => {
     expect(spy).toBeCalled();
   });
 
-  it('should get the questions', fakeAsync(() => {
+  it('should get the application', fakeAsync(() => {
     const spy_1 = jest.spyOn(service as any, '_getPages');
     const spy_2 = jest.spyOn(service as any, '_getQuestionsPages');
     jest.spyOn(questionsStorageServiceMock, 'getApplication').mockReturnValue(of(storeApplication));
@@ -153,7 +153,7 @@ describe('ContractsService', () => {
     expect(spy).not.toBeCalled();
   });
 
-  it('should form group', () => {
+  it('should get charges schedule', () => {
     const options = {
       required: true,
       inline: false,

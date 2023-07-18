@@ -4,6 +4,9 @@ ion-select::part(icon){
   color: $color-matterhorn;
   opacity: 1;
 }
+ion-select::part(container) {
+  width: 100%;
+}
 .select {
   &__wrapper {
     position: relative;
