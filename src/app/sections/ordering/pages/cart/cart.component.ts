@@ -36,7 +36,6 @@ import {
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
-import { TypeMessagePipe } from '@sections/ordering/shared/pipes/type-message/type-message.pipe';
 import { APP_ROUTES } from '@sections/section.config';
 import { LockDownService } from '@shared/index';
 import { ConnectionService } from '@shared/services/connection-service';
@@ -47,6 +46,7 @@ import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operato
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -100,7 +100,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
     private readonly nonCheckingService: NonCheckingService,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
+    private readonly translateService: TranslateService
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -305,8 +306,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
     if (isMerchantOrderAhead) {
       const options = await firstValueFrom(this.orderDetailOptions$);
-      const orderType = new TypeMessagePipe().transform(options.orderType, 'time');
-      this.toastService.showError(`This ${orderType} is not available. Select a different ${orderType}.`);
+      const errorKey = options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable';
+      const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
+      this.toastService.showError(errorMessage);
       this.dueTimeHasErrors = true;
       this.page.scrollToTop();
       this.cdRef.detectChanges();
@@ -395,6 +397,7 @@ export class CartComponent implements OnInit, OnDestroy {
         if (result.success) {
           accountId = result.accountId;
         } else {
+          debugger;
           this.onErrorModal(result.errorMessage);
         }
       })

@@ -45,11 +45,11 @@ import {
 import {
   MerchantSettings,
   ORDERING_CONTENT_STRINGS,
+  ORDER_ERROR_CODES,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
-import { IGNORE_ERRORS } from '@sections/ordering/pages/full-menu/full-menu.component';
 import { MerchantService } from '@sections/ordering/services';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
@@ -552,43 +552,33 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       isASAP: date.isASAP,
     } as OrderDetailOptions;
 
-    this.validateOrder(
-      options,
-      async () => {
+    await this.loadingService.showSpinner();
+
+    await this.cartService
+      .validateOrder(options)
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
+      .toPromise()
+      .then(() => {
+        this.cartService.cartsErrorMessage = null;
         const dueTimeErrorKey: keyof DueTimeErrorMessages = this.dueTimeTypeError;
         this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
         this.dueTimeHasErrors = false;
         this.cdRef.detectChanges();
-        this.loadingService.closeSpinner();
-      },
-      error => () => {
-        this.toastService.showError(error);
-        this.loadingService.closeSpinner();
-      }
-    );
-  }
-
-  private async validateOrder(
-    defailOptions: OrderDetailOptions,
-    successCb: FunctionStringCallback,
-    errorCB?: FunctionStringCallback,
-    ignoreCodes?: string[]
-  ): Promise<void> {
-    await this.loadingService.showSpinner();
-    await this.cartService
-      .validateOrder(defailOptions)
-      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
-      .toPromise()
-      .then(async () => {
-        this.cartService.cartsErrorMessage = null;
-        return successCb && successCb(null);
       })
-      .catch((error: Array<string> | string) => {
-        if (Array.isArray(error) && IGNORE_ERRORS.includes(error[0])) {
-          this.cartService.cartsErrorMessage = error[1];
+      .catch(error => {
+        if (Array.isArray(error)) {
+          const errorCode = +error[0];
+          if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+            this.cartService.cartsErrorMessage = error[1];
+            this.dueTimeHasErrors = true;
+            const errorKey = options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable';
+            const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
+            this.toastService.showError(errorMessage);
+            this.markDueTieWithErrors();
+          }
         }
-        return errorCB(error[1]);
-      });
+      })
+      .finally(() => this.loadingService.closeSpinner());
   }
 }
 

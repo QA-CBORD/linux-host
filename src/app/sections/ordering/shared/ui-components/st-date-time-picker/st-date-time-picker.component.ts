@@ -37,6 +37,7 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() userData: UserInfo;
   @Input() orderType: number;
   @Input() useBackButton = true;
+  @Input() showLabel = true;
   @Output() onTimeSelected: EventEmitter<DateTimeSelected> = new EventEmitter<DateTimeSelected>();
   @Input() dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
