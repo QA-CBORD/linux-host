@@ -251,12 +251,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  getDueTimeErrorKey () {
+    this.dueTimeTypeError = this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP ? 'pickUpTimeNotAvailable' : 'deliveryTimeNotAvailable';
+    const dueTimeErrorKey: keyof DueTimeErrorMessages = this.dueTimeTypeError;
+    return dueTimeErrorKey;
+  }
+
   markDueTieWithErrors(): void {
     if (this.dueTimeHasErrors) {
-      this.dueTimeTypeError =
-        this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP ? 'pickUpTimeNotAvailable' : 'deliveryTimeNotAvailable';
-      const dueTimeErrorKey: keyof DueTimeErrorMessages = this.dueTimeTypeError;
-
+      const dueTimeErrorKey = this.getDueTimeErrorKey();
       this.dueTimeFormControl.disable();
       this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: true });
       this.dueTimeFormControl.markAsTouched();
@@ -571,7 +574,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
             this.cartService.cartsErrorMessage = error[1];
             this.dueTimeHasErrors = true;
-            const errorKey = options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable';
+            const errorKey = this.getDueTimeErrorKey();
             const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
             this.toastService.showError(errorMessage);
             this.markDueTieWithErrors();
