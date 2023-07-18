@@ -13,8 +13,14 @@ import { CartService } from '@sections/ordering/services';
 import { lastValueFrom } from 'rxjs';
 
 export interface DateTimeSelected {
-  dateTimePicker: Date;
+  dateTimePicker: Date | string;
   timeStamp: string;
+}
+
+export interface TimePickerData {
+  labelTime: string;
+  address: string;
+  isClickble: number;
 }
 
 @Component({
@@ -24,12 +30,13 @@ export interface DateTimeSelected {
 })
 export class StDateTimePickerComponent implements OnInit {
   @Input() schedule: Schedule;
-  @Input() data: { labelTime: string; address: string; isClickble: number };
+  @Input() data: TimePickerData;
   @Input() isTimeDisable: number;
   @Input() merchantInfo: MerchantInfo;
   @Input() dateTimePicker: Date | string;
   @Input() userData: UserInfo;
   @Input() orderType: number;
+  @Input() useBackButton = true;
   @Output() onTimeSelected: EventEmitter<DateTimeSelected> = new EventEmitter<DateTimeSelected>();
   @Input() dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
@@ -41,11 +48,12 @@ export class StDateTimePickerComponent implements OnInit {
   public isPickerOpen = false;
   public pickerColumns = [];
   public pickerButtons = [];
+  public pickerClass = 'picker-time-picker';
   constructor(
     private readonly orderingService: OrderingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly cartService: CartService
-  ) { }
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.initContentStrings();
@@ -77,19 +85,29 @@ export class StDateTimePickerComponent implements OnInit {
   async openPicker(): Promise<void> {
     const back = await this.contentStrings.buttonBack.pipe(take(1)).toPromise();
     const title = await this.contentStrings.labelSelectTime.pipe(take(1)).toPromise();
-    this.monthArray = await lastValueFrom(this.contentStringsFacadeService
-      .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
-      .pipe(take(1)));
+    this.monthArray = await lastValueFrom(
+      this.contentStringsFacadeService
+        .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
+        .pipe(take(1))
+    );
 
-    this.weekArray = await lastValueFrom(this.contentStringsFacadeService
-      .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated)
-      .pipe(take(1)));
+    this.weekArray = await lastValueFrom(
+      this.contentStringsFacadeService
+        .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated)
+        .pipe(take(1))
+    );
     this.pickerColumns = this.createColumns();
     this.pickerButtons = [
-      { text: back, role: 'cancel', cssClass: 'chevron-back' },
       { text: title, role: 'title', cssClass: 'picker-title' },
       { text: '', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
     ];
+
+    if (this.useBackButton) {
+      this.pickerButtons.unshift({ text: back, role: 'cancel', cssClass: 'chevron-back' });
+    } else {
+      this.pickerClass = 'picker-time-picker-one-column';
+    }
+
     this.isPickerOpen = true;
 
     await this.updateAsapOption();

@@ -12,7 +12,8 @@
 <ng-template #dateTime>{{ dateTimeWithTimeZone || dateTimePicker }}</ng-template>
 <ion-picker
   (ionPickerColChange)="handlePickerChange($event)"
-  class="picker-time-picker order-options-action-sheet order-options-action-sheet-p-d"
+  class="order-options-action-sheet order-options-action-sheet-p-d"
+  [ngClass]="pickerClass"
   [isOpen]="isPickerOpen"
   [columns]="pickerColumns"
   [buttons]="pickerButtons"
