@@ -55,7 +55,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, firstValueFrom } from 'rxjs';
 import { first, take } from 'rxjs/operators';
 import { AccountType, DisplayName } from 'src/app/app.global';
 import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
@@ -154,7 +154,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   isApplePayment = false;
   isWalkoutOrder = false;
   isMerchantOrderAhead = false;
-  dueTimeTypeError: 'pickUpTimeNotAvailable' | 'deliveryTimeNotAvailable';
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -177,8 +176,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   };
 
   readonly dueTimeErrorMessages: DueTimeErrorMessages = {
-    pickUpTimeNotAvailable: this.translateService.instant('get_common.error.PickUpOrderTimeNotAvailable'),
-    deliveryTimeNotAvailable: this.translateService.instant('get_common.error.DeliveryOrderTimeNotAvailable'),
+    PickUpOrderTimeNotAvailable: this.translateService.instant('get_common.error.PickUpOrderTimeNotAvailable'),
+    DeliveryOrderTimeNotAvailable: this.translateService.instant('get_common.error.DeliveryOrderTimeNotAvailable'),
   };
 
   constructor(
@@ -251,9 +250,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  getDueTimeErrorKey () {
-    this.dueTimeTypeError = this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP ? 'pickUpTimeNotAvailable' : 'deliveryTimeNotAvailable';
-    const dueTimeErrorKey: keyof DueTimeErrorMessages = this.dueTimeTypeError;
+  getDueTimeErrorKey() {
+    const error =
+      this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
+        ? 'PickUpOrderTimeNotAvailable'
+        : 'DeliveryOrderTimeNotAvailable';
+    const dueTimeErrorKey: keyof DueTimeErrorMessages = error;
     return dueTimeErrorKey;
   }
 
@@ -491,6 +493,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.contentStrings.selectAccount = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.selectAccount
     );
+    this.contentStrings.pickUpOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+    );
+    this.contentStrings.deliveryOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable
+    );
   }
 
   private async updateFormErrorsByContentStrings(): Promise<void> {
@@ -501,6 +509,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal = await this.contentStrings.formErrorTipSubtotal
       .pipe(take(1))
       .toPromise();
+
+    this.dueTimeErrorMessages.PickUpOrderTimeNotAvailable = await firstValueFrom(this.contentStrings.pickUpOrderTimeNotAvailable.pipe(take(1)));
+    this.dueTimeErrorMessages.DeliveryOrderTimeNotAvailable = await firstValueFrom(this.contentStrings.deliveryOrderTimeNotAvailable.pipe(take(1)));
   }
 
   private checkFieldValue(field: AbstractControl, value: string) {
@@ -563,7 +574,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .toPromise()
       .then(() => {
         this.cartService.cartsErrorMessage = null;
-        const dueTimeErrorKey: keyof DueTimeErrorMessages = this.dueTimeTypeError;
+        const dueTimeErrorKey = this.getDueTimeErrorKey();
         this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
         this.dueTimeHasErrors = false;
         this.cdRef.detectChanges();
@@ -574,9 +585,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
             this.cartService.cartsErrorMessage = error[1];
             this.dueTimeHasErrors = true;
-            const errorKey = this.getDueTimeErrorKey();
-            const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
-            this.toastService.showError(errorMessage);
+            const dueTimeErrorKey = this.getDueTimeErrorKey();
+            const message = this.translateService.instant(`get_common.error.${dueTimeErrorKey}`);
+            this.toastService.showError(message);
             this.markDueTieWithErrors();
           }
         }
@@ -635,6 +646,6 @@ export interface PaymentMethodErrorMessages {
 }
 
 export interface DueTimeErrorMessages {
-  pickUpTimeNotAvailable: string;
-  deliveryTimeNotAvailable: string;
+  PickUpOrderTimeNotAvailable: string;
+  DeliveryOrderTimeNotAvailable: string;
 }
