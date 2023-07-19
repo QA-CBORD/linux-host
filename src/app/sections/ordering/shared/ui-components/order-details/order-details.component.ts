@@ -113,7 +113,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.isMerchantOrderAhead = parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
-  @Input() orderDetailOptions: OrderDetailOptions;
+  @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
   @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
