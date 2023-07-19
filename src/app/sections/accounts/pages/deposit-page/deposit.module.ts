@@ -17,6 +17,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { DestinationAccountDisplayModule } from './pipes/destination-account-display.module';
 import { StInputAmountModule } from './input-amount/input-amount.module';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 
 const imports = [
   CommonModule,
@@ -32,6 +33,7 @@ const imports = [
   ConfirmDepositPopoverModule,
   DepositModalModule,
   StButtonModule,
+  StSelectFloatingLabelModule,
   AccessibleSelectModule,
   DestinationAccountDisplayModule,
   StInputAmountModule
