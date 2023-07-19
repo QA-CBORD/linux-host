@@ -118,6 +118,5 @@ describe('OrderDetailsComponent', () => {
     await component.onDateTimeSelected({ dateTimePicker: 'ASAP' } as DateTimeSelected);
     expect(cartServiceSpy).toHaveBeenCalled();
     expect(_cartService.cartsErrorMessage).toBeNull();
-    expect(component.dueTimeHasErrors).toEqual(false);
   });
 });

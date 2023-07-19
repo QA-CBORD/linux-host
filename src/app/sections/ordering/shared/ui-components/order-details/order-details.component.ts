@@ -510,8 +510,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(take(1))
       .toPromise();
 
-    this.dueTimeErrorMessages.PickUpOrderTimeNotAvailable = await firstValueFrom(this.contentStrings.pickUpOrderTimeNotAvailable.pipe(take(1)));
-    this.dueTimeErrorMessages.DeliveryOrderTimeNotAvailable = await firstValueFrom(this.contentStrings.deliveryOrderTimeNotAvailable.pipe(take(1)));
+    this.dueTimeErrorMessages.PickUpOrderTimeNotAvailable = await firstValueFrom(
+      this.contentStrings.pickUpOrderTimeNotAvailable.pipe(take(1))
+    );
+    this.dueTimeErrorMessages.DeliveryOrderTimeNotAvailable = await firstValueFrom(
+      this.contentStrings.deliveryOrderTimeNotAvailable.pipe(take(1))
+    );
   }
 
   private checkFieldValue(field: AbstractControl, value: string) {
@@ -574,10 +578,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .toPromise()
       .then(() => {
         this.cartService.cartsErrorMessage = null;
-        const dueTimeErrorKey = this.getDueTimeErrorKey();
-        this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
-        this.dueTimeHasErrors = false;
-        this.cdRef.detectChanges();
+
+        if (this.dueTimeHasErrors) {
+          const dueTimeErrorKey = this.getDueTimeErrorKey();
+          this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
+          this.dueTimeHasErrors = false;
+          this.cdRef.detectChanges();
+        }
       })
       .catch(error => {
         if (Array.isArray(error)) {
