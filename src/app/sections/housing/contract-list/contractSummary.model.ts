@@ -4,6 +4,7 @@ export class ContractSummary {
     endDate: string;
     state: number;
     facilityKey: number;
+    dateSigned: string;
 
     constructor(options) {
       if (options == null || typeof options !== 'object') {
@@ -15,5 +16,6 @@ export class ContractSummary {
       this.endDate = String(options.endDate);
       this.state = Number(options.state);
       this.facilityKey = Number(options.facilityKey)
+      this.dateSigned = String(options.dateSigned)
     }
   }
