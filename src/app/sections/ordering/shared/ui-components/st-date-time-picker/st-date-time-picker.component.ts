@@ -88,7 +88,7 @@ export class StDateTimePickerComponent implements OnInit {
     this.pickerButtons = [
       { text: back, role: 'cancel', cssClass: 'chevron-back' },
       { text: title, role: 'title', cssClass: 'picker-title' },
-      { text: '', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
+      { text: '', role:'secondary', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
     ];
     this.isPickerOpen = true;
 
