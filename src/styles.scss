@@ -6,12 +6,12 @@
 
 :root {
   ion-searchbar {
-    &.searchbar-has-value{
+    &.searchbar-has-value {
       .searchbar-input-container {
-        button{
+        button {
           &.searchbar-clear-button {
-            ion-icon{
-              &.searchbar-clear-icon{
+            ion-icon {
+              &.searchbar-clear-icon {
                 color: gray;
               }
             }
@@ -20,11 +20,11 @@
       }
     }
     .searchbar-input-container {
-      button{
+      button {
         &.searchbar-clear-button {
           display: block;
-          ion-icon{
-            &.searchbar-clear-icon{
+          ion-icon {
+            &.searchbar-clear-icon {
               color: lightgray;
             }
           }
@@ -158,6 +158,45 @@
     }
   }
 
+  .picker-time-picker-one-column {
+    --border-color: #ebebeb;
+
+    .picker-wrapper {
+      border-radius: 10px 10px 0 0;
+    }
+
+    .picker-col {
+      padding: 0;
+      transform-style: preserve-3d;
+    }
+
+    .picker-toolbar {
+      display: block;
+      padding: 0 16px;
+      .picker-button {
+        color: #000;
+        @include font-nunito-regular(16px);
+      }
+
+      .picker-toolbar-cancel .picker-button {
+        padding-left: 30px;
+        @include font-nunito-regular(16px);
+      }
+
+      .picker-toolbar-title .picker-button {
+        color: #161616;
+        padding: 0;
+
+        @include font-nunito-heavy(20px);
+      }
+    }
+
+    .picker-opt.picker-opt-selected {
+      color: #000;
+      @include font-nunito-heavy(20px);
+    }
+  }
+
   .picker-time-picker {
     --border-color: #ebebeb;
 
@@ -178,7 +217,7 @@
         padding-left: 30px;
         @include font-nunito-regular(16px);
       }
-      .picker-toolbar-button {
+      .picker-toolbar-secondary {
         pointer-events: none;
       }
       .picker-toolbar-title .picker-button {
@@ -258,7 +297,7 @@
 }
 
 .showAsterisk {
-  @include show-asterisk
+  @include show-asterisk;
 }
 
 .secondary-header {
@@ -332,7 +371,6 @@
   .actions-popover {
     --min-width: 115px !important;
     --width: auto;
-
   }
 }
 // Multiline content media type:

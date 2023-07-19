@@ -12,8 +12,27 @@ import {
   ViewChild,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Keyboard } from '@capacitor/keyboard';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UserAccount } from '@core/model/account/account.model';
+import { AddressInfo } from '@core/model/address/address-info';
+import { UserInfo } from '@core/model/user';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import {
+  cvvValidationFn,
+  formControlErrorDecorator,
+  handleServerError,
+  validateCurrency,
+  validateGreaterOrEqualToZero,
+  validateLessThanOther,
+} from '@core/utils/general-helpers';
+import { IonSelect } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import {
   BuildingInfo,
+  CartService,
   MerchantAccountInfoList,
   MerchantInfo,
   MerchantOrderTypesInfo,
@@ -23,28 +42,28 @@ import {
   OrderItem,
   OrderPayment,
 } from '@sections/ordering';
-import { MerchantSettings, ORDERING_CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
-import { AddressInfo } from '@core/model/address/address-info';
-import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
-import { UserAccount } from '@core/model/account/account.model';
-import { Subscription } from 'rxjs';
 import {
-  cvvValidationFn,
-  formControlErrorDecorator,
-  validateCurrency,
-  validateGreaterOrEqualToZero,
-  validateLessThanOther,
-} from '@core/utils/general-helpers';
-import { AccountType, DisplayName } from 'src/app/app.global';
+  MerchantSettings,
+  ORDERING_CONTENT_STRINGS,
+  ORDER_ERROR_CODES,
+  ORDER_TYPE,
+  ORDER_VALIDATION_ERRORS,
+  PAYMENT_SYSTEM_TYPE,
+} from '@sections/ordering/ordering.config';
+import { MerchantService } from '@sections/ordering/services';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { take } from 'rxjs/operators';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { UserInfo } from '@core/model/user';
-import { ModalsService } from '@core/service/modals/modals.service';
-import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { IonSelect } from '@ionic/angular';
-import { Keyboard } from '@capacitor/keyboard';
+import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { Observable, Subscription, firstValueFrom } from 'rxjs';
+import { first, take } from 'rxjs/operators';
+import { AccountType, DisplayName } from 'src/app/app.global';
+import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
+import {
+  DateTimeSelected,
+  StDateTimePickerComponent,
+  TimePickerData,
+} from '../st-date-time-picker/st-date-time-picker.component';
 
 @Component({
   selector: 'st-order-details',
@@ -90,9 +109,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.merchantSettingsList = merchant.settings.list;
     this.orderTypes = merchant.orderTypes;
     this.isWalkoutOrder = !!merchant.walkout;
+    this._merchant = merchant;
+    this.isMerchantOrderAhead = parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
-  @Input() orderDetailOptions: OrderDetailOptions;
+  @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
   @Input() readonly = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
@@ -110,7 +131,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() merchantTimeZoneDisplayingMessage: string;
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
+  @Input() dueTimeHasErrors: boolean;
 
+  _merchant: MerchantInfo;
   accountName: string;
   orderItems: OrderItem[] = [];
   tax: number;
@@ -130,6 +153,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   hasReadonlyPaymentMethodError = false;
   isApplePayment = false;
   isWalkoutOrder = false;
+  isMerchantOrderAhead = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -140,12 +164,20 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
-  user: UserInfo;
+
+  @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
+  orderSchedule$: Observable<Schedule>;
+  orderOptionsData = {} as TimePickerData;
 
   readonly paymentMethodErrorMessages: PaymentMethodErrorMessages = {
     required: 'A payment method must be selected',
     paymentMethodFailed:
       'There was an issue processing the payment for this order. \nContact the merchant to resolve this issue.',
+  };
+
+  readonly dueTimeErrorMessages: DueTimeErrorMessages = {
+    PickUpOrderTimeNotAvailable: this.translateService.instant('get_common.error.PickUpOrderTimeNotAvailable'),
+    DeliveryOrderTimeNotAvailable: this.translateService.instant('get_common.error.DeliveryOrderTimeNotAvailable'),
   };
 
   constructor(
@@ -154,7 +186,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly a11yService: AccessibilityService
+    private readonly a11yService: AccessibilityService,
+    private readonly cartService: CartService,
+    private readonly loadingService: LoadingService,
+    private readonly toastService: ToastService,
+    private readonly translateService: TranslateService,
+    private readonly merchantService: MerchantService
   ) {}
 
   ngOnInit() {
@@ -164,6 +201,21 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setAccessoryBarVisible(true);
     this.setPhoneField();
     this.initAccountSelected();
+    this.initTimePickerData();
+  }
+
+  async initTimePickerData() {
+    this.loadingService.showSpinner();
+    const isPickUp = this.orderDetailOptions.orderType == ORDER_TYPE.PICKUP;
+    this.orderSchedule$ = this.merchantService.getMerchantOrderSchedule(
+      this._merchant.id,
+      isPickUp ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY,
+      this._merchant.timeZone
+    );
+    this.orderOptionsData.labelTime = isPickUp
+      ? this.translateService.instant('label_pickup-time')
+      : this.translateService.instant('label_delivery-time');
+    this.loadingService.closeSpinner();
   }
 
   private initAccountSelected() {
@@ -188,9 +240,31 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setAccessoryBarVisible(false);
   }
 
-  ngOnChanges({ orderDetailOptions }: SimpleChanges): void {
+  ngOnChanges({ orderDetailOptions, dueTimeHasErrors }: SimpleChanges): void {
     if (orderDetailOptions && orderDetailOptions.currentValue === null) {
       this.orderDetailOptions = {} as OrderDetailOptions;
+    }
+
+    if (dueTimeHasErrors && dueTimeHasErrors.currentValue !== null) {
+      this.markDueTieWithErrors();
+    }
+  }
+
+  getDueTimeErrorKey() {
+    const error =
+      this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
+        ? 'PickUpOrderTimeNotAvailable'
+        : 'DeliveryOrderTimeNotAvailable';
+    const dueTimeErrorKey: keyof DueTimeErrorMessages = error;
+    return dueTimeErrorKey;
+  }
+
+  markDueTieWithErrors(): void {
+    if (this.dueTimeHasErrors) {
+      const dueTimeErrorKey = this.getDueTimeErrorKey();
+      this.dueTimeFormControl.disable();
+      this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: true });
+      this.dueTimeFormControl.markAsTouched();
     }
   }
 
@@ -211,7 +285,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       if (this.orderDetailOptions.dueTime instanceof Date) {
         return this.orderDetailOptions;
       }
-      return { ...this.orderDetailOptions, dueTime: new Date((<string> this.orderDetailOptions.dueTime).slice(0, 19)) };
+      return { ...this.orderDetailOptions, dueTime: new Date(String(this.orderDetailOptions.dueTime).slice(0, 19)) };
     }
   }
 
@@ -242,10 +316,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   initForm() {
     this.detailsForm = this.fb.group({
+      [FORM_CONTROL_NAMES.address]: [''],
       [FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [FORM_CONTROL_NAMES.paymentMethod]: [{ value: '', disabled: this.isPaymentMethodDisabled }, Validators.required],
       [FORM_CONTROL_NAMES.note]: [this.notes],
       [FORM_CONTROL_NAMES.phone]: [''],
+      [FORM_CONTROL_NAMES.dueTime]: [''],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
@@ -328,6 +404,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   get phone(): AbstractControl {
     return this.detailsForm.get(FORM_CONTROL_NAMES.phone);
+  }
+
+  get dueTimeFormControl(): AbstractControl {
+    return this.detailsForm.get(FORM_CONTROL_NAMES.dueTime);
   }
 
   openActionSheet() {
@@ -413,6 +493,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.contentStrings.selectAccount = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.selectAccount
     );
+    this.contentStrings.pickUpOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+    );
+    this.contentStrings.deliveryOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable
+    );
   }
 
   private async updateFormErrorsByContentStrings(): Promise<void> {
@@ -423,6 +509,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     CONTROL_ERROR[FORM_CONTROL_NAMES.tip].subtotal = await this.contentStrings.formErrorTipSubtotal
       .pipe(take(1))
       .toPromise();
+
+    this.dueTimeErrorMessages.PickUpOrderTimeNotAvailable = await firstValueFrom(this.contentStrings.pickUpOrderTimeNotAvailable.pipe(take(1)));
+    this.dueTimeErrorMessages.DeliveryOrderTimeNotAvailable = await firstValueFrom(this.contentStrings.deliveryOrderTimeNotAvailable.pipe(take(1)));
   }
 
   private checkFieldValue(field: AbstractControl, value: string) {
@@ -455,9 +544,60 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
   }
+
+  changeOrderTime() {
+    this.cartService.setActiveMerchant(this._merchant);
+    this.child.openPicker();
+  }
+
+  get userData$(): Observable<UserInfo> {
+    return this.userFacadeService.getUserData$();
+  }
+
+  async onDateTimeSelected({ dateTimePicker, timeStamp }: DateTimeSelected): Promise<void> {
+    let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === 'ASAP' };
+    date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
+    this.cartService.orderIsAsap = date.isASAP;
+
+    const options = {
+      dueTime: date.dueTime,
+      orderType: this.orderDetailOptions.orderType,
+      address: this.orderDetailOptions.address,
+      isASAP: date.isASAP,
+    } as OrderDetailOptions;
+
+    await this.loadingService.showSpinner();
+
+    await this.cartService
+      .validateOrder(options)
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
+      .toPromise()
+      .then(() => {
+        this.cartService.cartsErrorMessage = null;
+        const dueTimeErrorKey = this.getDueTimeErrorKey();
+        this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
+        this.dueTimeHasErrors = false;
+        this.cdRef.detectChanges();
+      })
+      .catch(error => {
+        if (Array.isArray(error)) {
+          const errorCode = +error[0];
+          if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+            this.cartService.cartsErrorMessage = error[1];
+            this.dueTimeHasErrors = true;
+            const dueTimeErrorKey = this.getDueTimeErrorKey();
+            const message = this.translateService.instant(`get_common.error.${dueTimeErrorKey}`);
+            this.toastService.showError(message);
+            this.markDueTieWithErrors();
+          }
+        }
+      })
+      .finally(() => this.loadingService.closeSpinner());
+  }
 }
 
 export enum FORM_CONTROL_NAMES {
+  dueTime = 'dueTime',
   address = 'address',
   paymentMethod = 'paymentMethod',
   cvv = 'cvv',
@@ -500,7 +640,12 @@ export interface OrderDetailsFormData {
   valid: boolean;
 }
 
-interface PaymentMethodErrorMessages {
+export interface PaymentMethodErrorMessages {
   required: string;
   paymentMethodFailed: string;
+}
+
+export interface DueTimeErrorMessages {
+  PickUpOrderTimeNotAvailable: string;
+  DeliveryOrderTimeNotAvailable: string;
 }

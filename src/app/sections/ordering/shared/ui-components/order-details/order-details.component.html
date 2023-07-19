@@ -5,17 +5,20 @@
         orderDetailOptions.orderType | typeMessage : 'dueTime' : isWalkoutOrder
       }}</ion-label>
 
-      <p
-        style="margin-bottom: 3px"
-        class="order-details__value"
-        *ngIf="orderDetailOptions.dueTime || orderDetailOptions.isASAP"
-      >
+      <p *ngIf="!isMerchantOrderAhead; else timeEditable" class="order-details__value">
         {{ orderDetailOptions | modifyPrepTime : orderTypes }}
       </p>
 
       <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
         <small>{{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}</small>
       </ion-label>
+
+      <st-control-errors
+        *ngIf="dueTimeHasErrors"
+        class="control-hint--no-indent"
+        [control]="dueTimeFormControl"
+        [errorMessages]="dueTimeErrorMessages"
+      ></st-control-errors>
     </div>
 
     <div class="order-details" *ngIf="orderDetailOptions.address">
@@ -26,17 +29,6 @@
       <p *ngIf="readonly && orderDetailOptions.address; else addressEditable" class="order-details__value">
         {{ orderDetailOptions.address | addressHeaderFormat }}
       </p>
-
-      <ng-template #addressEditable>
-        <div (click)="isAddressClickable && showAddressListModal()" class="address-container">
-          <p
-            class="order-details__value"
-          >
-            {{ orderDetailOptions.address | addressHeaderFormat }}
-          </p>
-          <div *ngIf="isAddressClickable" class="order-details__value--editable"></div>
-        </div>
-      </ng-template>
     </div>
 
     <ion-list class="order-ingredient-list">
@@ -237,3 +229,38 @@
     <ng-content></ng-content>
   </div>
 </div>
+
+<ng-template #timeEditable>
+  <div (click)="changeOrderTime()" (keypress)="changeOrderTime()" class="address-container">
+    <p class="order-details__value">
+      {{ orderDetailOptions | modifyPrepTime : orderTypes }}
+    </p>
+    <div class="order-details__value--editable" [class.error]="dueTimeHasErrors"></div>
+  </div>
+</ng-template>
+
+<st-date-time-picker
+  [showLabel]="false"
+  [useBackButton]="false"
+  [schedule]="orderSchedule$ | async"
+  [isTimeDisable]="false"
+  [data]="orderOptionsData"
+  [dateTimePicker]="orderDetailOptions.dueTime"
+  [merchantInfo]="_merchant"
+  [dateTimeWithTimeZone]="orderDetailOptions.dueTime"
+  [userData]="userData$ | async"
+  (onTimeSelected)="onDateTimeSelected($event)"
+></st-date-time-picker>
+
+<ng-template #addressEditable>
+  <div
+    (click)="isAddressClickable && showAddressListModal()"
+    (keypress)="isAddressClickable && showAddressListModal()"
+    class="address-container"
+  >
+    <p class="order-details__value">
+      {{ orderDetailOptions.address | addressHeaderFormat }}
+    </p>
+    <div *ngIf="isAddressClickable" class="order-details__value--editable"></div>
+  </div>
+</ng-template>

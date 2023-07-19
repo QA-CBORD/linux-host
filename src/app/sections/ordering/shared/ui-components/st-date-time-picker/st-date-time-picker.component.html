@@ -1,4 +1,4 @@
-<div class="st-date-time-picker__container">
+<div class="st-date-time-picker__container" *ngIf="showLabel">
   <div class="st-date-time-picker__label">{{ data?.labelTime }}</div>
   <div class="st-date-time-picker__value">
     <img width="16" src="./assets/icon/time.svg" alt="time" />
@@ -12,7 +12,8 @@
 <ng-template #dateTime>{{ dateTimeWithTimeZone || dateTimePicker }}</ng-template>
 <ion-picker
   (ionPickerColChange)="handlePickerChange($event)"
-  class="picker-time-picker order-options-action-sheet order-options-action-sheet-p-d"
+  class="order-options-action-sheet order-options-action-sheet-p-d"
+  [ngClass]="pickerClass"
   [isOpen]="isPickerOpen"
   [columns]="pickerColumns"
   [buttons]="pickerButtons"

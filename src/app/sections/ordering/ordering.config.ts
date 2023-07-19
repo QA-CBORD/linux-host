@@ -116,7 +116,9 @@ export enum ORDERING_CONTENT_STRINGS {
   reorderNotAvailableItemMessage = 'not_orders_items_available',
   insufficientBalanceMealsPayment = 'insufficient_balance_meals_payment',
   disableOrdering = 'disable_ordering',
-  mediaLostException = 'MediaLostException'
+  mediaLostException = 'MediaLostException',
+  pickUpOrderTimeNotAvailable = 'PickUpOrderTimeNotAvailable',
+  deliveryOrderTimeNotAvailable = 'DeliveryOrderTimeNotAvailable'
 }
 export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
   manualEntryInstructions = 'manual-entry_instructions'
