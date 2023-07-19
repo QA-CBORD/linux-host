@@ -80,7 +80,9 @@
       "UnknownSOAException": "General error encountered. Please try again or contact support.",
       "UserAlreadyRegisteredException": "The specified user has already registered.",
       "UserNotAuthorizedException": "You do not have the necessary permissions to perform the requested operation.",
-      "UserNotConfirmedException": "Your email is not confirmed. To receive another confirmation email, please re-register."
+      "UserNotConfirmedException": "Your email is not confirmed. To receive another confirmation email, please re-register.",
+      "PickUpOrderTimeNotAvailable": "This pickup time is not available",
+      "DeliveryOrderTimeNotAvailable": "This delivery time is not available"
     },
     "error_message": {
       "add_address_failed_to_geocode": "The address could not be mapped to longitude and latitude.",

@@ -7,7 +7,7 @@ describe('ContractsListComponent', () => {
   let component: ContractsListComponent;
   let fixture: ComponentFixture<ContractsListComponent>;
   const contractListDetailsStub: ContractListDetails = <any>{};
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],

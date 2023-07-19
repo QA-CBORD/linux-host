@@ -10,6 +10,9 @@ import { monthDayYear, hourMinTime } from '@shared/constants/dateFormats.constan
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContractListItemsComponent implements AfterViewInit {
+  status = {
+    COMPLETED: "COMPLETED"
+  }
   @ViewChild('container') divContainer: ElementRef;
   @Input() contractSummaries: ContractSummary[];
   dateFormat = monthDayYear;

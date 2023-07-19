@@ -31,11 +31,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    &.date-signed{
+      margin-bottom: 10px;
+    }
   }
   .dates-container{
     display: flex;
     color: $color-dusty-gray;
     @include font-nunito-regular(10pt);
+    .status {
+      color: $color-success-40;
+    }
   }
   .contract-list__item-start-time,
   .contract-list__item-end-time {
