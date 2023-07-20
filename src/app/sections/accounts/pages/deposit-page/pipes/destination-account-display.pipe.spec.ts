@@ -22,4 +22,26 @@ describe('DestinationAccountDisplayPipe', () => {
   it('can load instance', () => {
     expect(pipe).toBeTruthy();
   });
+
+  it('should return an empty string if account is falsy', () => {
+    expect(pipe.transform(undefined)).toEqual('');
+    expect(pipe.transform(null)).toEqual('');
+    expect(pipe.transform('')).toEqual('');
+  });
+
+  it('should return the account string if the account is a string', () => {
+    const account = 'AccountName';
+    expect(pipe.transform(account)).toEqual(account);
+  });
+
+  it('should return the account display name only if hideBalance is true', () => {
+    const account: UserAccount = {
+      accountDisplayName: 'Account Name',
+      balance: 1000,
+      accountType: 1,
+    } as UserAccount;
+
+    const result = pipe.transform(account, true);
+    expect(result).toEqual(account.accountDisplayName);
+  });
 });

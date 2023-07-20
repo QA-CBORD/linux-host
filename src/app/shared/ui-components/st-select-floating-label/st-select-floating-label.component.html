@@ -2,13 +2,15 @@
   <ion-select
     mode="md"
     class="select__control"
+    [fill]="fill"
+    labelPlacement="floating"
     [interfaceOptions]="interfaceOptions"
     [value]="control.value"
     [class]="{ 'select__control--error': isError }"
     (ionChange)="onChangeHandler($event)"
     (ionBlur)="onBlur()"
     (ionFocus)="onFocus(); onDoubleTap()"
-    [interface]= "interface"
+    [interface]="interface"
     [disabled]="isDisabled"
     [id]="idd"
     [placeholder]="control.value"
@@ -18,10 +20,10 @@
     #selector
   >
     <ng-content select="[role=options]"></ng-content>
-  </ion-select>
 
-  <label class="select__placeholder" [attr.for]="idd" >
-    {{label}}<span class="showAsterisk" *ngIf="isRequired" >*</span>
-  </label>
+    <label slot="label" class="select__placeholder" [attr.for]="idd">
+      {{ label }}<span class="showAsterisk" *ngIf="isRequired">*</span>
+    </label>
+  </ion-select>
   <ng-content select="[role=error]" *ngIf="isError"></ng-content>
 </div>
