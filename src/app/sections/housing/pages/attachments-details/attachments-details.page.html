@@ -1,27 +1,27 @@
+<st-header title="Upload a new attachment" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back"
+  [isToolbarShow]="true"></st-header>
 <ion-content class="ion-padding work-order-details__content">
-  <div class="work-order-details__actions">
-    <ion-button class="btn application-details__page-back" (click)="backClicked()" mode="ios" fill="clear">
-      Back
-    </ion-button>
-  </div>
-
-  <h2 class="work-order-details__title">Upload a new attachment.</h2>
-
   <div class="work-order-details__card">
-    <ion-select interface="popover" 
-      [(ngModel)]="selectedAssetName"
-      [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'"
-      [disabled]="attachmentSelected"
-      [interfaceOptions]="{cssClass: 'selector'}"
-      >
-      <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
-        {{ option.name }}
-      </ion-select-option>
-    </ion-select>
+    <ion-list>
+      <ion-item>
+        <ion-select 
+        class="terms-label"
+        interface="popover" 
+        [(ngModel)]="selectedAssetName"
+        justify="start"
+        placeholder="Select file type"
+        [interfaceOptions]="customPopoverOptions">
+        <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
+          {{ option.name }}
+        </ion-select-option>
+      </ion-select>
+      <ion-icon class="chevron-down"></ion-icon>
+      </ion-item>
+    </ion-list>
 
     <ng-container>
       <st-textarea-floating-label [(ngModel)]="notes" [disabled]="attachmentSelected" [isError]="isSubmitted"
-        [label]="'Attachment Notes'" rows="3" class="ng-valid ng-dirty ng-touched"
+        [label]="'Attachment Notes'" rows="3" 
         [placeholder]="attachmentSelected?.comments" [isAttachment]="true">
       </st-textarea-floating-label>
     </ng-container>
@@ -32,25 +32,25 @@
       <div class="container__image">
         <ng-container *ngIf="(file$ | async) as file; else defaultImage" witdh="95%" heigth=95%>
           <ion-img *ngIf="!isFile" class="image" [src]="fileBase64?fileBase64:file.dataURI"></ion-img>
-          <div *ngIf="isFile" class="file"></div>
+          <div *ngIf="isFile" class="format__file"></div>
         </ng-container>
         <ng-template #defaultImage>
-          <div class="label"> File size limited to 10MB</div>
-          <div class="icon"></div>
+          <ion-label class="size_limit"> File size limited to 10MB</ion-label>
+          <div class="format__icon"></div>
         </ng-template>
       </div>
-      <div class="infoAttachment" *ngIf="(file$| async) as file">
+      <div class="attachment_notes" *ngIf="(file$| async) as file">
         <div>{{attachmentSelected? attachmentSelected.fileName : file?.name}}</div>
         <div *ngIf="!attachmentKey">File Size: {{fileSizeInMB}}MB</div>
       </div>
     </ng-container>
 
 
-    <ion-button [disabled]="!!attachmentKey" color="light" class="btn__image" (click)="selectFile()">Choose a file
-    </ion-button>
-    <ion-button *ngIf="attachmentKey" color="danger" class="btn__image" (click)="deleteAttachment()">Delete Attachment
-    </ion-button>
-    <ion-button *ngIf="!attachmentKey" class="btn__image submit" (click)="submitAttachmentForm()">Submit</ion-button>
+    <st-button [disabled]="!!attachmentKey" color="light" (click)="selectFile()">Choose a file
+    </st-button>
+    <st-button *ngIf="attachmentKey" color="danger" (click)="deleteAttachment()">Delete Attachment
+    </st-button>
+    <st-button *ngIf="!attachmentKey" class="btn__image submit" (click)="submitAttachmentForm()">Submit</st-button>
 
   </div>
 </ion-content>

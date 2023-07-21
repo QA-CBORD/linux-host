@@ -81,6 +81,11 @@ export class AttachmentsDetailsPage implements OnInit, OnDestroy {
     private _toastService: ToastService,
   ) { }
 
+  customPopoverOptions = {
+    mode: 'md',
+    showBackdrop: false,
+  };
+
   ngOnInit(): void {
     this.attachmentKey = parseInt(this._route.snapshot.params.attachmentKey);
     if (!this.attachmentKey) {

@@ -4,26 +4,9 @@
 
   &__content {
     --background: #{$porcelain};
-    --padding-top: 8px;
+    --padding-top: 16px;
     --padding-start: 8px;
     --padding-end: 8px;
-  }
-
-  &__actions {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding-top: var(--ion-safe-area-top, 0);
-  }
-
-  &__title {
-    @include font-family($font-nunito-heavy);
-
-    font-size: 20px;
-    color: $color-night-rider;
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 10px;
   }
 
   &__page-back {
@@ -42,16 +25,39 @@
 
   ion-select {
     @include font-family($font-nunito-heavy);
-    margin-bottom: 30px;
-    background:  #{rgba($color-black, 0.1)};
-    border-radius: 8px;
     --placeholder-opacity: 1;
+    --padding-end: 10px;
 
     &::part(icon) {
       opacity: 0;
       width: 0;
       padding: 0;
     }
+
+    &::part(placeholder) {
+      padding-left: 20px;
+    }
+    
+    &::part(text) {
+      padding-left: 20px;
+    }
+  }
+
+  st-button {
+    margin-bottom: 8px;
+  }
+
+  st-textarea-floating-label {
+    margin: 50px;
+  }
+
+  ion-item {
+    padding: 0px;
+    --padding-start: 0px;
+    --padding-end: 0px;
+    --inner-padding-end: 0px;
+    --background:  #{rgba($color-black, 0.1)};
+    --border-radius: 8px;
   }
 
   .container__image {
@@ -66,19 +72,21 @@
 
     .label {
       padding-bottom: 2em;
+      @include font-family($font-nunito-regular);
     }
-
-    .icon {
+      
+     .format {
       width: 4em;
       height: 100%;
-      background: url('/assets/images/housing/image.svg') no-repeat 50% 0;
-    }
 
-    .file {
-      width: 4em;
-      height: 100%;
-      background: url('/assets/images/housing/file.svg') no-repeat 50% 0;
-    }
+      &__icon {
+        background: url('/assets/images/housing/image.svg') no-repeat 50% 0;
+      }
+
+      &__file {
+        background: url('/assets/images/housing/file.svg') no-repeat 50% 0;
+      }
+     }
 
     .image {
       width: 200px;
@@ -101,11 +109,17 @@
 
   .form__secondary-header {
     margin-top: 30px;
+    @include font-family($font-nunito-regular);
   }
 
-  .infoAttachment {
+  .attachment_notes {
     display: flex;
     font-size: 12px;
     justify-content: space-between;
     @include font-family($font-nunito-regular);
+  }
+
+  .chevron-down {
+    @include chevron-down(0);
+    margin-right: 15px;
   }

@@ -11,10 +11,22 @@ import { StepperModule } from '@sections/housing/stepper/stepper.module';
 import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
-const imports = [CommonModule, IonicModule, FormsModule,AttachmentsDetailsRoutingModule,ReactiveFormsModule,QuestionsModule,StepperModule,StTextareaFloatingLabelModule,StButtonModule];
+const imports = [
+  CommonModule,
+  IonicModule,
+  FormsModule,
+  AttachmentsDetailsRoutingModule,
+  ReactiveFormsModule,
+  QuestionsModule,
+  StepperModule,
+  StTextareaFloatingLabelModule,
+  StButtonModule,
+  StHeaderModule
+];
 const declarations = [AttachmentsDetailsPage];
-const providers = [Chooser]
+const providers = [Chooser];
 @NgModule({
   imports,
   declarations,
