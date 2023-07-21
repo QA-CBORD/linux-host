@@ -1,11 +1,10 @@
-<st-header title="Upload a new attachment" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back"
+<st-header title="Upload an attachment" [isTitleShow]="true" [backButtonTitle]="'Back'" backButtonIcon="chevron-back"
   [isToolbarShow]="true"></st-header>
 <ion-content class="ion-padding work-order-details__content">
   <div class="work-order-details__card">
     <ion-list>
       <ion-item>
-        <ion-select 
-        class="terms-label"
+        <ion-select
         interface="popover" 
         [(ngModel)]="selectedAssetName"
         justify="start"
