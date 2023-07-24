@@ -53,7 +53,7 @@ export class PinAuthenticator {
     }
 
     async tryUnlock0(): Promise<{ pin: string, status: string }> {
-        return this.presentPinModal(PinAction.LOGIN_PIN).then(({ data, role }) => ({ pin: data, status: role }));
+        return this.presentPinModal(PinAction.LOGIN_PIN).then(( response ) => ({ pin: response?.data, status: response?.role }));
     }
 
 

@@ -31,7 +31,7 @@ describe('VaultIdentityService', () => {
             unlock: jest.fn()
         };
         modalController = {
-            create: jest.fn()
+            create: jest.fn().mockReturnValue(Promise.resolve({ present: jest.fn(), onDidDismiss: jest.fn().mockReturnValue(Promise.resolve()) }))
         }
         injector = {
             get: jest.fn()
@@ -52,7 +52,9 @@ describe('VaultIdentityService', () => {
         });
         service = TestBed.inject(VaultIdentityService);
         loadingService = TestBed.inject(LoadingService);
+        modalController = TestBed.inject(ModalController);
         jest.spyOn(service, 'loadingService', 'get').mockReturnValue(loadingService);
+        jest.spyOn(service, 'modalController', 'get').mockReturnValue(modalController);
         await service.init(vault);
     });
 
@@ -87,9 +89,9 @@ describe('VaultIdentityService', () => {
         });
 
         it('should result in migrationNotNeeded when no data foud in old-vault', async () => {
-            // migrator.exportVault = () => { throw new Error('no data in legacy vault') };
-            // const migrationResult = await service.migrateIfLegacyVault();
-            // expect(migrationResult).toBe(VaultMigrateResult.MIGRATION_NOT_NEEDED);
+            migrator.exportVault = () => { throw new Error('no data in legacy vault') };
+            const migrationResult = await service.migrateIfLegacyVault();
+            expect(migrationResult).toBe(VaultMigrateResult.MIGRATION_NOT_NEEDED);
         });
 
         it('should allow pin retry on biometric failure when migrating data', async () => {
