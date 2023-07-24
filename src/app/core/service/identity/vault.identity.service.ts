@@ -3,6 +3,7 @@ import { App } from "@capacitor/app";
 import { PluginListenerHandle } from "@capacitor/core";
 import { PinLoginProps } from "@core/model/authentication/pin-login-props.model";
 import {
+  BiometricPermissionState,
   BrowserVault,
   Device,
   DeviceSecurityType,
@@ -78,14 +79,16 @@ export class VaultIdentityService {
     });
   }
 
-  isBiometricPermissionDenied({ code }: { code: VaultErrorCodes }): boolean {
+  async isBiometricPermissionDenied({ code }: { code: VaultErrorCodes }): Promise<boolean> {
+    const biometric = await Device.isBiometricsAllowed();
+
     const userDeniedBiometricPermission = [
       VaultErrorCodes.SecurityNotAvailable,
       VaultErrorCodes.AuthFailed,
       VaultErrorCodes.TooManyFailedAttempts,
     ].includes(code);
 
-    if (userDeniedBiometricPermission)
+    if (userDeniedBiometricPermission && biometric === BiometricPermissionState.Denied)
       this.userPreferenceService.setBiometricPermissionDenied();
     return userDeniedBiometricPermission;
   }
@@ -267,11 +270,12 @@ export class VaultIdentityService {
   }
 
   async retryPinUnlock(e): Promise<VaultSession> {
-    const biometricAllowed = !this.isBiometricPermissionDenied(e);
+    await !this.isBiometricPermissionDenied(e);
+    const biometric = await Device.isBiometricsAllowed();
     const { pin, status } = await this.pinAuthenticator.tryUnlock0();
     if (status == PinCloseStatus.LOGIN_SUCCESS) {
       await this.logout();
-      this.login({ pin, biometricUsed: biometricAllowed });
+      this.login({ pin, biometricUsed: biometric === BiometricPermissionState.Granted });
       return { pin, biometricUsed: false };
     } else {
       throw {
