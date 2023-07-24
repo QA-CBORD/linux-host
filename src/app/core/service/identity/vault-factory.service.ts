@@ -66,9 +66,9 @@ class VaultMigration {
   }
 
   private async userFailedBiometricsAuth(error) {
-    const isDenined = await this.vaultService.isBiometricPermissionDenied(error);
+    const isDenied = await this.vaultService.isBiometricPermissionDenied(error);
     return (
-      (error.code != VaultErrorCodes.AuthFailed && isDenined) ||
+      (error.code != VaultErrorCodes.AuthFailed && isDenied) ||
       error.code === VaultErrorCodes.TooManyFailedAttempts ||
       error.code === VaultErrorCodes.iOSBiometricsLockedOut ||
       error.code === VaultErrorCodes.AndroidBiometricsLockedOut ||
