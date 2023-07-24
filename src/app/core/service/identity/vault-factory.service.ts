@@ -65,9 +65,10 @@ class VaultMigration {
     return !code && /no data in legacy vault/.test(message);
   }
 
-  private userFailedBiometricsAuth(error) {
+  private async userFailedBiometricsAuth(error) {
+    const isDenined = await this.vaultService.isBiometricPermissionDenied(error);
     return (
-      (error.code != VaultErrorCodes.AuthFailed && this.vaultService.isBiometricPermissionDenied(error)) ||
+      (error.code != VaultErrorCodes.AuthFailed && isDenined) ||
       error.code === VaultErrorCodes.TooManyFailedAttempts ||
       error.code === VaultErrorCodes.iOSBiometricsLockedOut ||
       error.code === VaultErrorCodes.AndroidBiometricsLockedOut ||
@@ -99,7 +100,7 @@ class VaultMigration {
       if (this.noDataInLegacyVault(error)) {
         migrationResponse.migrationResult = VaultMigrateResult.MIGRATION_NOT_NEEDED;
       }
-      if (this.userFailedBiometricsAuth(error)) {
+      if (await this.userFailedBiometricsAuth(error)) {
         migrationResponse = await this.handleAuthFailureOnVaultMigration();
       }
     } finally {

@@ -31,7 +31,7 @@ describe('VaultIdentityService', () => {
             unlock: jest.fn()
         };
         modalController = {
-            create: jest.fn().mockReturnValue(Promise.resolve({ present: jest.fn(), onDidDismiss: jest.fn().mockReturnValue(Promise.resolve()) }))
+            create: jest.fn()
         }
         injector = {
             get: jest.fn()
