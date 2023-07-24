@@ -206,6 +206,18 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     };
   }
 
+  get sourceAccount(): AbstractControl {
+    return this.depositForm.get('sourceAccount');
+  }
+
+  get selectedAccount(): AbstractControl {
+    return this.depositForm.get('selectedAccount');
+  }
+
+  get mainSelect(): AbstractControl {
+    return this.depositForm.get('mainSelect');
+  }
+
   get mainFormInput(): AbstractControl {
     return this.depositForm.get('mainInput');
   }
