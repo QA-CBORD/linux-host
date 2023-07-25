@@ -18,7 +18,7 @@ export class ModifyPrepTimePipe implements PipeTransform {
     ): string {
 
     if (isASAP && !isShowTime) return 'ASAP';
-
+    if (!dueTime) return '';
     return this.cartService.extractTimeZonedString(dueTime.toString(), orderTypes.merchantTimeZone, showFullDate);
   }
 }
