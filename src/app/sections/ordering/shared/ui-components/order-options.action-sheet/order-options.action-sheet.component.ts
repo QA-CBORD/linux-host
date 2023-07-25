@@ -238,7 +238,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
             BUTTON_TYPE.CONTINUE
           );
         },
-        err => this.onToastDisplayed(err)
+        err => this.onToastDisplayed(typeof err === 'string' ? err : err.message)
       );
   }
 
