@@ -148,6 +148,10 @@
     }
   }
 
+  ion-select::part(container) {
+    width: 100%;
+  }
+
   ion-select {
     min-height: 0;
     margin-top: 15px;
@@ -160,25 +164,26 @@
   ion-select.custom-error::part(container) {
     display: grid;
     grid-template-columns: 2fr auto;
-    width: 100%;
+  }
+
+  ion-select.custom-error::part(placeholder) {
+    width: calc(100% - 30px);
   }
 
   ion-select.custom-error::part(icon) {
     opacity: 1;
     color: $color-dim-gray;
-    width: 30px;
-    height: 30px;
   }
 
-  ion-select.custom-error::part(icon)::before {
+  ion-select.custom-error::part(container)::before {
     @include caution-icon;
-    transform: translateX(-2%) translateY(0%);
+    position: absolute;
+    right: -5px;
   }
 
   ion-select.custom-error::part(icon)::after {
     @include angle-down-icon;
     mask-position: 6% 16%;
-    transform: translateX(112%) translateY(-200%);
   }
 
   &__order-note {
