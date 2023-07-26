@@ -18,6 +18,7 @@
           interface="action-sheet"
           fill="none"
           [label]="contentString.lblSelectPaymentMethod"
+          placeholder="Please choose"
           [interfaceOptions]="customActionSheetPaymentOptions"
           formControlName="sourceAccount"
           [control]="sourceAccount"
@@ -90,6 +91,7 @@
           formControlName="selectedAccount"
           [control]="selectedAccount"
           [isError]="selectedAccount.invalid && selectedAccount.touched"
+          placeholder="Please choose"
           [label]="contentString.lblSelectAccountForDeposit"
           tabindex="0"
           [selectedText]="toAccount.value | destinationAccountDisplay"
@@ -119,6 +121,7 @@
               [control]="mainSelect"
               [isError]="mainSelect.invalid && mainSelect.touched"
               (ionChange)="onAmountChanged($event)"
+              placeholder="Please choose"
               [label]="contentString.lblSelectAmountForDeposit"
               [selectedText]="toDeposit.value"
               #toDeposit
