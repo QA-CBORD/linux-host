@@ -241,7 +241,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         err => {
           if (typeof err ==='object' && err.message) {
             this.onToastDisplayed(err.message);
-          } else if(typeof err === 'string' && err) {
+          } else if (typeof err === 'string' && err) {
             this.onToastDisplayed(err);
           }
         }
