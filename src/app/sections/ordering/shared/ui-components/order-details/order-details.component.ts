@@ -132,6 +132,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
   @Input() dueTimeHasErrors: boolean;
+  @Input() enableTimeSelection: boolean;
 
   _merchant: MerchantInfo;
   accountName: string;

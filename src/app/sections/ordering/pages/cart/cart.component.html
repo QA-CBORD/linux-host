@@ -22,6 +22,7 @@
     [applePayEnabled]="applePayEnabled$ | async"
     [addressModalConfig]="addressModalSettings$ | async"
     [dueTimeHasErrors]="dueTimeHasErrors"
+    [enableTimeSelection]="true"
     (onFormChange)="onCartStateFormChanged($event)"
     (onOrderItemRemovedId)="removeOrderItem($event)"
     (onOrderItemClicked)="onOrderItemClicked($event)"
