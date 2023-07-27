@@ -13,10 +13,9 @@ ion-footer {
   --padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
-ion-item {
-  ion-label {
-    font-weight: 600;
-  }
+ion-radio,
+ion-checkbox {
+  font-weight: 600;
 }
 
 .section {
@@ -33,7 +32,7 @@ ion-item {
   }
 }
 
-.text-style-inherit{
+.text-style-inherit {
   text-overflow: inherit;
   white-space: inherit;
 }

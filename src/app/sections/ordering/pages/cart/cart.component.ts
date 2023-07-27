@@ -297,6 +297,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
+    /**
+     * This block will be uncommented once time selection flows finished.
+     *
+     *
     this.dueTimeHasErrors = false;
     const isMerchantOrderAhead = await firstValueFrom(
       this.merchant$.pipe(
@@ -314,6 +318,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cdRef.detectChanges();
       return;
     }
+    **/
 
     const data = {
       title: 'Oooops',

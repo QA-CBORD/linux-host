@@ -13,12 +13,13 @@
       <ion-row class="recipient-row" *ngFor="let recipient of recipients">
         <ion-col size="9">
           <ion-item lines="none">
-            <ion-label>{{ recipient.nickname }} </ion-label>
-            <ion-radio slot="start" mode="md" slot="start" [value]="recipient"></ion-radio>
+            <ion-radio justify="start" mode="md" labelPlacement="end" [value]="recipient">{{
+              recipient.nickname
+            }}</ion-radio>
           </ion-item>
         </ion-col>
         <ion-col size="3">
-          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)">{{
+          <ion-button mode="ios" fill="clear" (click)="presentRemoveConfirm(recipient)" class="ion-text-wrap">{{
             contentString.removeText
           }}</ion-button>
         </ion-col>
@@ -26,10 +27,9 @@
       <ion-row *ngIf="recipients.length <= 10" class="recipient-row ion-padding-bottom">
         <ion-col>
           <ion-item lines="none">
-            <ion-label>{{
+            <ion-radio justify="start" mode="md" labelPlacement="end" [value]="someoneElseRecipient">{{
               recipients.length ? someoneElseRecipient.nickname : contentString.addNewRecipientText
-            }}</ion-label>
-            <ion-radio slot="start" mode="md" slot="start" [value]="someoneElseRecipient"></ion-radio>
+            }}</ion-radio>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -41,6 +41,7 @@
             <ion-row>
               <ion-col
                 size="12"
+                class="ion-margin-top"
                 *ngFor="let recipientFormCtrl of newRecipientFields.controls; let i = index; let isLast = last"
               >
                 <st-input-floating-label
@@ -66,13 +67,15 @@
           <ion-col size="12">
             <ion-list>
               <ion-item tabindex="0" class="ion-no-padding" lines="none">
-                <ion-label class="text-style-inherit">{{ contentString.shouldSaveForFuture }}</ion-label>
                 <ion-checkbox
                   class="ion-no-margin new-recipient-form__save-check"
-                  slot="start"
+                  justify="start"
                   mode="md"
+                  labelPlacement="end"
                   [(ngModel)]="saveNewRecipient"
-                ></ion-checkbox>
+                >
+                  {{ contentString.shouldSaveForFuture }}</ion-checkbox
+                >
               </ion-item>
             </ion-list>
           </ion-col>
