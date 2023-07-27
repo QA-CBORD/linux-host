@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, V
 import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '../../models';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { Observable, of, throwError, zip } from 'rxjs';
+import { Observable, lastValueFrom, of, throwError, zip } from 'rxjs';
 import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import {
@@ -268,7 +268,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     type: number
   ): Promise<MenuInfo | never> {
     if (!accountInfoList.accounts.length && !accountInfoList.creditAccepted) {
-      const errorMessage = await this.contentStrings.no_available_tenders.pipe(take(1)).toPromise();
+      const errorMessage = await lastValueFrom(this.contentStrings.noAvailableTenders.pipe(take(1)));
       this.toastService.showError(errorMessage, 5000, 'bottom');
       return Promise.reject();
     }
@@ -368,8 +368,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.contentStrings.orderingDatesUnavailable = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
     );
-    this.contentStrings.no_available_tenders = this.orderingService.getContentErrorStringByName(
-      ORDERING_CONTENT_STRINGS.no_available_tenders
+    this.contentStrings.noAvailableTenders = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.noAvailableTenders
     )
   }
   private isMerchantDateUnavailable(schedule: Schedule) {
