@@ -29,9 +29,9 @@
     <ng-container class="container__image">
       <h3 class="form__secondary-header">Add a .PDF, .DOC, .DOCX, OR .JPEG file</h3>
       <div class="container__image">
-        <ng-container *ngIf="(file$ | async) as file; else defaultImage" witdh="95%" heigth=95%>
-          <ion-img *ngIf="!isFile" class="image" [src]="fileBase64?fileBase64:file.dataURI"></ion-img>
-          <div *ngIf="isFile" class="format__file"></div>
+        <ng-container *ngIf="(file$ | async) as file; else defaultImage">
+          <ion-img *ngIf="isImage" class="image" [src]="fileBase64?fileBase64:file.dataURI"></ion-img>
+          <div *ngIf="!isImage" class="format__file"></div>
         </ng-container>
         <ng-template #defaultImage>
           <ion-label class="size_limit"> File size limited to 10MB</ion-label>
@@ -47,7 +47,7 @@
 
     <st-button [disabled]="!!attachmentKey" color="light" (click)="selectFile()">Choose a file
     </st-button>
-    <st-button *ngIf="attachmentKey" color="danger" (click)="deleteAttachment()">Delete Attachment
+    <st-button *ngIf="attachmentKey" color="danger" (click)="confirmDeletion()">Delete Attachment
     </st-button>
     <st-button *ngIf="!attachmentKey" class="btn__image submit" (click)="submitAttachmentForm()">Submit</st-button>
 
