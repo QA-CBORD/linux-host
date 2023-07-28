@@ -118,7 +118,8 @@ export enum ORDERING_CONTENT_STRINGS {
   disableOrdering = 'disable_ordering',
   mediaLostException = 'MediaLostException',
   pickUpOrderTimeNotAvailable = 'PickUpOrderTimeNotAvailable',
-  deliveryOrderTimeNotAvailable = 'DeliveryOrderTimeNotAvailable'
+  deliveryOrderTimeNotAvailable = 'DeliveryOrderTimeNotAvailable',
+  noAvailableTenders = 'no_available_tenders'
 }
 export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
   manualEntryInstructions = 'manual-entry_instructions'

@@ -7,7 +7,7 @@
   [trackUrls]="true"
   class="browser-hidden"
 ></st-header>
-<ion-content class="browser-hidden" *ngIf="showContent">
+<ion-content class="browser-hidden ion-padding-horizontal" *ngIf="showContent">
   <h1 class="content__header">Automatic Deposit Type</h1>
   <st-deposit-type-nav
     [activeType]="
@@ -240,7 +240,7 @@
 
 <ion-footer class="deposit-form__footer browser-hidden" mode="ios">
   <st-button
-    [isDisabled]="automaticDepositForm && automaticDepositForm.invalid"
+    [disabled]="automaticDepositForm && automaticDepositForm.invalid"
     (onClick)="onSubmit()"
     buttonModifier="entry-no-box-shadow"
   >
