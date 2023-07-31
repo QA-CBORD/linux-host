@@ -129,6 +129,22 @@ export async function openModal(services: SettingsServices) {
   };
 }
 
+export async function openPopover(services: SettingsServices) {
+  const setting: SettingItemConfig = this;
+
+  setting.callback = async function() {
+    let componentData = {};
+    if (setting.modalContent.fetchData) componentData = await setting.modalContent.fetchData(services);
+
+    const settingModal = await services.modalController.createAlert({
+      backdropDismiss: false,
+      component: setting.modalContent.component,
+      componentProps: { ...componentData },
+    });
+    return settingModal.present();
+  };
+}
+
 export async function contentStringsByCategory(
   services: SettingsServices,
   contentStrings: DomainContentString[]

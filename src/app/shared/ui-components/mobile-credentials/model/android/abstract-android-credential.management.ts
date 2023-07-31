@@ -5,7 +5,6 @@ import { Observable, of } from 'rxjs';
 import { catchError, finalize, first, map } from 'rxjs/operators';
 import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
 import { MobileCredential } from '../shared/mobile-credential';
-import { MobileCredentialDataService } from '../shared/mobile-credential-data.service';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
 import { registerPlugin } from '@capacitor/core';
@@ -43,10 +42,6 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
       this.mCredential.setUicString$(contentStrings.credStatuString$);
     }
     return contentStrings;
-  }
-
-  getService(): MobileCredentialDataService {
-    return this.credentialSrvc;
   }
 
   async onWillLogout(): Promise<void> {

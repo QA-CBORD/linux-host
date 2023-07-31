@@ -1,6 +1,7 @@
 export enum SETTINGS_ID {
   updatePhoto = 'update-photo',
   lostCard = 'lost-card',
+  unlinkCredentials = 'unlink-credentials',
   personalData = 'email-pwd',
   password = 'pwd-change',
   biometrics = 'biometrics',

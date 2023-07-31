@@ -71,4 +71,8 @@ export class ToastService {
     myToast.setAttribute('role', 'alert');
     await myToast.present();
   }
+
+  async showSuccessToast(toastConfig: ToastConfig) {
+    this.showToast({ ...toastConfig, icon: 'checkmark-circle', cssClass: 'toast-message-success' });
+  }
 }

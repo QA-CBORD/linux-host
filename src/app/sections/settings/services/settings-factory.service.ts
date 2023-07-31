@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { SettingItemConfig, SettingsSectionConfig, SettingsServices } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG } from '../settings.config';
@@ -39,6 +39,7 @@ export class SettingsFactoryService {
     profileService: this.profileService,
     accountService: this.accountService,
     loadingService: this.loadingService,
+    injector: this.injector
   };
 
   constructor(
@@ -56,6 +57,7 @@ export class SettingsFactoryService {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly profileService: ProfileServiceFacade,
     private readonly accountService: AccountsService,
+    private readonly injector: Injector,
     private readonly loadingService: LoadingService
   ) {}
 

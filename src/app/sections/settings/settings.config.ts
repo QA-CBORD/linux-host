@@ -18,6 +18,7 @@ import {
   setReportCardLabel,
   getCardStatusValidation,
   contentStringsByCategory,
+  openPopover,
 } from './helpers/setting-item.helper';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
@@ -39,6 +40,8 @@ import { reduceToObject } from '@shared/model/content-strings/content-string-uti
 import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
 import { firstValueFrom } from 'rxjs';
 import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
+import { MobileCredentialsUnlinkService } from '@shared/ui-components/mobile-credentials/service/mobile-credentials-unlink.service';
+import { UnlinkCredentialsComponent } from './pages/unlink-credentials/unlink-credentials.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -201,6 +204,26 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           // if is guest user return false.
           if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(self)) return false;
           return (await asyncCheckEvery(self.validations, services)).every(checkTrue => checkTrue);
+        },
+      },
+      {
+        id: SETTINGS_ID.unlinkCredentials,
+        label: 'Unlink Mobile Wallet ID',
+        icon: 'card-lost',
+        type: 'button',
+        studentsOnly: true,
+        setCallback: openPopover,
+        modalContent: {
+          component: UnlinkCredentialsComponent,
+        },
+        supportProfiles: [APP_PROFILES.patron],
+        checkIsVisible: async function (services: SettingsServices) {
+          // eslint-disable-next-line @typescript-eslint/no-this-alias
+          const self: SettingItemConfig = this;
+          // if is guest user return false.
+          if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(self)) return false;
+          const mobileCredentialsUnlinkService = services.injector.get(MobileCredentialsUnlinkService);
+          return await firstValueFrom(mobileCredentialsUnlinkService.displayUnlinkButton$);
         },
       },
     ],

@@ -18,6 +18,7 @@ import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { AccountsService } from '@sections/dashboard/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { Injector } from '@angular/core';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -100,6 +101,7 @@ export interface SettingsServices {
   profileService: ProfileServiceFacade,
   accountService: AccountsService,
   loadingService: LoadingService,
+  injector: Injector
 }
 
 export interface StatusSettingValidation {

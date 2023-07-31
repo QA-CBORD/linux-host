@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { AndroidCredentialCsModel } from '../android/android-credential-content-strings.model';
 import { MobileCredential } from './mobile-credential';
-import { MobileCredentialDataService } from './mobile-credential-data.service';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MobileCredentialManagerAdapter {}
@@ -20,7 +19,6 @@ export interface MobileCredentialManager extends MobileCredentialManagerAdapter 
   setCredentialStateChangeListener(CredentialStateChangeListener: CredentialStateChangeListener): void;
   refresh(): void;
   onWillLogout(): Promise<void>;
-  getService(): MobileCredentialDataService;
   contentStringAsync(udpateUi?: boolean): Promise<AndroidCredentialCsModel>
   onCredentialStateChanged(): Promise<void>
 }

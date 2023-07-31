@@ -18,7 +18,8 @@ import { MobileCredentialFactory } from './mobile-credential-factory';
 
 const api_version = 'v1';
 const resourceUrls = {
-  activePasses: `/android/${api_version}/activePasses`,
+  activePasses: `/partner/${api_version}/activePasses`,
+  unlinkCredentials: `/partner/${api_version}/managePass/referenceIdentifier`,
 };
 
 @Injectable({
@@ -115,10 +116,14 @@ export class MobileCredentialDataService {
     return this.getActivePasses().pipe(map(activePasses => MobileCredentialFactory.fromActivePasses(activePasses)));
   }
 
+  unlinkCredentials$() {
+    return this.getActivePasses().pipe(
+      switchMap(({ referenceIdentifier }) => this.unlinkCredentials(referenceIdentifier)),
+      catchError(() => of(false)),
+    );
+  }
+
   private getActivePasses(): Observable<ActivePasses> {
-
-    if (!this.platform.is('android')) return of({} as ActivePasses);
-
     /**
      * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
      * this data is then used to get a credential for the patron/user.
@@ -163,6 +168,32 @@ export class MobileCredentialDataService {
           resourceUrls.activePasses,
           HttpResponseType.json,
           requestBody,
+          params,
+          headers
+        );
+      })
+    );
+  }
+
+  private unlinkCredentials(referenceIdentifier: string): Observable<ActivePasses> {
+    /**
+     * @params omniIDToken -> jwt token needed to authenticate with partner payments api on aws.
+     * @params authBlob  -> authorization blob that contains ..... ???
+     * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
+     * this data is then used to get a credential for the patron/user.
+     */
+    const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
+    // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
+    return forkJoin([omniIDJwtToken$]).pipe(
+      switchMap(([omniIDJwtToken]) => {
+        const headers = new HttpHeaders({ Authorization: `Bearer ${omniIDJwtToken}`, 'X-API-Key': '5eFeBwKu6x6ihLEgX3YAS678xyvjctZHabO9PyE5' });
+        const params = new HttpParams();
+        // authBlob needs to be sent in request body.
+        return this.apiService.partnerHTTPCall(
+          RestCallType.post,
+          `${resourceUrls.unlinkCredentials}/${referenceIdentifier}/action/getUnlink`,
+          HttpResponseType.json,
+          {},
           params,
           headers
         );
