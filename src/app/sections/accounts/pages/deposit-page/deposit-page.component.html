@@ -25,8 +25,7 @@
           [isError]="sourceAccount.invalid && sourceAccount.touched"
           (ionChange)="onPaymentMethodChanged($event)"
           tabindex="0"
-          [selectedText]="paymentMethod.value | accountDisplay"
-          #paymentMethod
+          
         >
           <ng-container role="options">
             <ion-select-option
@@ -94,8 +93,7 @@
           placeholder="Please choose"
           [label]="contentString.lblSelectAccountForDeposit"
           tabindex="0"
-          [selectedText]="toAccount.value | destinationAccountDisplay"
-          #toAccount
+          
         >
           <ng-container role="options">
             <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
@@ -123,8 +121,6 @@
               (ionChange)="onAmountChanged($event)"
               placeholder="Please choose"
               [label]="contentString.lblSelectAmountForDeposit"
-              [selectedText]="toDeposit.value"
-              #toDeposit
             >
               <ng-container role="options">
                 <ion-select-option [value]="amount" *ngFor="let amount of amountsForSelect$ | async">
