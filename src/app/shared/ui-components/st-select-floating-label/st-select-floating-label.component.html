@@ -1,29 +1,25 @@
-<div class="select__wrapper">
-  <ion-select
-    mode="md"
-    class="select__control"
-    [fill]="fill"
-    [labelPlacement]="labelPlacement"
-    [interfaceOptions]="interfaceOptions"
-    [value]="control.value"
-    [class]="{ 'select__control--error': isError }"
-    (ionChange)="onChangeHandler($event)"
-    (ionBlur)="onBlur()"
-    (ionFocus)="onFocus(); onDoubleTap()"
-    [interface]="interface"
-    [disabled]="isDisabled"
-    [id]="idd"
-    [placeholder]="placeholder || control.value"
-    [selectedText]="selectedText"
-    [attr.a11y-placeholder]="label"
-    tabindex="0"
-    #selector
-  >
-    <ng-content select="[role=options]"></ng-content>
-
-    <label slot="label" class="select__placeholder" [attr.for]="idd">
-      {{ label }}<span class="showAsterisk" *ngIf="isRequired">*</span>
-    </label>
-  </ion-select>
-  <ng-content select="[role=error]" *ngIf="isError"></ng-content>
-</div>
+<ion-select
+  mode="md"
+  label-placement="floating"
+  placeholder-style="floating"
+  [placeholder]="label"
+  fill="outline"
+  [interfaceOptions]="interfaceOptions"
+  [value]="control.value"
+  [class]="{ 'select__control--error': isError }"
+  (ionChange)="onChangeHandler($event)"
+  (ionBlur)="onBlur()"
+  (ionFocus)="onFocus(); onDoubleTap()"
+  [interface]= "interface"
+  [disabled]="isDisabled"
+  [id]="idd"
+  [placeholder]="control.value"
+  [selectedText]="selectedText"
+  [attr.a11y-placeholder]="label"
+  tabindex="0"
+  #selector
+>
+<div slot="label">{{label}} <ion-text *ngIf="isRequired" color="danger">*</ion-text></div>
+  <ng-content select="[role=options]"></ng-content>
+</ion-select>
+<ng-content select="[role=error]" *ngIf="isError"></ng-content>

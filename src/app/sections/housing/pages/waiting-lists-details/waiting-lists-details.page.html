@@ -24,7 +24,7 @@
               Next
             </ion-button>
 
-            <ion-button
+            <st-button
               *ngIf="isLastPage"
               class="btn application-details__submit"
               mode="ios"
@@ -32,7 +32,7 @@
               [class.stepper-footer__button--right]="isFirstPage"
               [disabled]="waitingListDetails.patronWaitingList">
               Submit
-            </ion-button>
+            </st-button>
           </st-stepper-footer>
         </form>
       </st-step>

@@ -1,21 +1,31 @@
 @import 'tools';
 
+ion-datetime {
+  background-color: transparent;
+}
+
 ion-item::part(native) {
   border-radius: 8px;
-  color: $color-matterhorn;
+  color: var(--ion-color-matterhorn);
+  ;
 }
-ion-item {
-  --color: $color-matterhorn;
-  --min-height: 50px;
 
-  &.item-disabled{
+ion-item {
+  --color: var(--ion-color-matterhorn);
+  ;
+  --min-height: 50px;
+  --border-color: var(--ion-color-matterhorn);
+  --border-radius: 8px;
+
+  &.item-disabled {
     opacity: 0.6;
   }
 
   ion-label {
     font-weight: 500;
     font-size: 90%;
-    color: $color-matterhorn;
+    color: var(--ion-color-matterhorn);
+    ;
   }
 
   ion-input {
@@ -25,9 +35,11 @@ ion-item {
 }
 
 ion-input {
-  color: $color-night-gray ;
+  color: var(--ion-color-matterhorn);
+  ;
 }
-ion-label{
+
+ion-label {
   font-weight: 500;
 }
 

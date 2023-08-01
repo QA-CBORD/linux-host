@@ -22,4 +22,8 @@ export class StButtonComponent {
       this.onClick.emit(event);
     }
   }
+
+  get buttonColor(){
+    return this.disabled ? "light" : this.color;
+  }
 }

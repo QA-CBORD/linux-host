@@ -1,11 +1,33 @@
 @import 'tools';
-
-ion-select::part(icon){
-  color: $color-matterhorn;
-  opacity: 1;
+ion-select::part(label)::first-letter {
+  color: red;
 }
-ion-select::part(container) {
-  width: 100%;
+ion-select {
+  // --border: 1px solid ;
+  --border-color: var(--ion-color-matterhorn);
+  --border-radius: 8px;
+  height: 50px;
+
+  &::part(placeholder)::first-letter {
+    color: red;
+
+  }
+
+  &::part(label)::first-letter {
+    color: red;
+  }
+
+  &::part(icon) {
+    color: $color-matterhorn;
+    opacity: 1;
+  }
+
+  &.isRequired {
+    &::part(label)::last-letter {
+      display: inline;
+      color: red;
+    }
+  }
 }
 .select {
   &__wrapper {
@@ -13,32 +35,20 @@ ion-select::part(container) {
   }
 
   &__control {
-    width: 100%;
-    height: 100%;
-    outline: none;
-    --border-radius: 8px;
-
-    &:focus-within {
-      & + .select__placeholder {
-        z-index: 2;
-
-        @include floating-label($color-dodger-blue);
-      }
-    }
 
     &--error {
       &:focus,
       &:focus-within {
         border: 2px solid $color-alizarin;
 
-        & + .select__placeholder {
+        &+.select__placeholder {
           z-index: 2;
 
           @include floating-label($color-alizarin);
         }
       }
 
-      & + .select__placeholder {
+      &+.select__placeholder {
         z-index: 2;
 
         @include floating-label($color-alizarin);
@@ -72,21 +82,25 @@ ion-select::part(container) {
 
 :host-context(.ng-valid) .select__control {
   &:focus-within {
-    & + .select__placeholder {
+    &+.select__placeholder {
+
       @include floating-label($color-dodger-blue);
+
       .showAsterisk {
         @include show-asterisk;
       }
     }
   }
 
-  & + .select__placeholder {
+  &+.select__placeholder {
     z-index: 2;
 
     @include floating-label($color-night-gray);
     font-weight: 500;
+
     .showAsterisk {
       @include show-asterisk;
     }
   }
+
 }

@@ -52,11 +52,11 @@
               {{ countItemsLeft(inspectionForm.value) | i18nPlural:roomsMapping}}
             </ion-label>
           </div>
-          <ion-button class="btn btn-submit" mode="ios" type="submit" item-right
+          <st-button class="btn btn-submit" mode="ios" type="submit" item-right
           (click)="submitInspection(inspectionDetails)"
           [disabled]="countItemsLeft(inspectionForm.value) > 0 || isSubmitted">
           Submit
-        </ion-button>
+        </st-button>
         </st-stepper-footer>
       </div>
     </ion-content>
