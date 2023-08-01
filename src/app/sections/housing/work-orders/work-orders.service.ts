@@ -224,9 +224,10 @@ export class WorkOrdersService {
           location = null;
         }
       });
-    return {
+    return {   
       body: {
         ...controls,
+        typeKey: controls[WorkOrdersFields.TYPE],
         notify: controls[WorkOrdersFields.NOTIFY_BY_EMAIL] === NOTIFY.YES,
         facilityKey: location
       },
