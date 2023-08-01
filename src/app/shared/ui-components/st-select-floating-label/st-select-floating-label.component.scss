@@ -12,12 +12,6 @@ ion-select {
     opacity: 1;
   }
 
-  &.isRequired {
-    &::part(label)::last-letter {
-      display: inline;
-      color: red;
-    }
-  }
 }
 
 ion-select::part(container) {
