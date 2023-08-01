@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { SettingItemConfig, SettingsSectionConfig, SettingsServices } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG } from '../settings.config';
 import { catchError, map, take } from 'rxjs/operators';
@@ -41,6 +41,9 @@ export class SettingsFactoryService {
     loadingService: this.loadingService,
     injector: this.injector
   };
+
+  private readonly settingsSubject = new BehaviorSubject<SettingsSectionConfig[]>([]);
+  public settings$ = this.settingsSubject.asObservable();
 
   constructor(
     private readonly authFacadeService: AuthFacadeService,
@@ -88,6 +91,7 @@ export class SettingsFactoryService {
       section.items = section.items.filter(setting => !hiddenSettings[setting.id]);
       section.items.length === 0 && parsedSettings.splice(sectionIndex, 1) && sectionIndex--;
     }
+    this.settingsSubject.next(parsedSettings);
     return parsedSettings;
   }
 

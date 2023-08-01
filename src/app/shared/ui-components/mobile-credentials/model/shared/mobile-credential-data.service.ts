@@ -119,7 +119,7 @@ export class MobileCredentialDataService {
   unlinkCredentials$() {
     return this.getActivePasses().pipe(
       switchMap(({ referenceIdentifier }) => this.unlinkCredentials(referenceIdentifier)),
-      catchError(() => of(false)),
+      catchError(() => of(false))
     );
   }
 
@@ -175,7 +175,7 @@ export class MobileCredentialDataService {
     );
   }
 
-  private unlinkCredentials(referenceIdentifier: string): Observable<ActivePasses> {
+  private unlinkCredentials(referenceIdentifier: string): Observable<boolean> {
     /**
      * @params omniIDToken -> jwt token needed to authenticate with partner payments api on aws.
      * @params authBlob  -> authorization blob that contains ..... ???
@@ -186,7 +186,10 @@ export class MobileCredentialDataService {
     // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
     return forkJoin([omniIDJwtToken$]).pipe(
       switchMap(([omniIDJwtToken]) => {
-        const headers = new HttpHeaders({ Authorization: `Bearer ${omniIDJwtToken}`, 'X-API-Key': '5eFeBwKu6x6ihLEgX3YAS678xyvjctZHabO9PyE5' });
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${omniIDJwtToken}`,
+          'X-API-Key': '5eFeBwKu6x6ihLEgX3YAS678xyvjctZHabO9PyE5',
+        });
         const params = new HttpParams();
         // authBlob needs to be sent in request body.
         return this.apiService.partnerHTTPCall(
@@ -197,7 +200,8 @@ export class MobileCredentialDataService {
           params,
           headers
         );
-      })
+      }),
+      map(({ responseHeader }) => +responseHeader?.statusCode === 200)
     );
   }
 }

@@ -209,7 +209,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
       {
         id: SETTINGS_ID.unlinkCredentials,
         label: 'Unlink Mobile Wallet ID',
-        icon: 'card-lost',
+        icon: 'unlink',
         type: 'button',
         studentsOnly: true,
         setCallback: openPopover,

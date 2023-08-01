@@ -6,6 +6,7 @@ import { MobileCredentialsUnlinkService } from '@shared/ui-components/mobile-cre
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { ToastService } from '@core/service/toast/toast.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   standalone: true,
@@ -18,12 +19,15 @@ export class UnlinkCredentialsComponent {
   modalsService = inject(ModalsService);
   private readonly translateService = inject(TranslateService);
   private readonly toastService = inject(ToastService);
+  private readonly loadingService = inject(LoadingService);
 
   unlink = async () => {
+    this.loadingService.showSpinner();
     const unlinked = await this.mobileCredentialsUnlinkService.unlinkCredentials();
+    this.loadingService.closeSpinner();
     if (unlinked) {
       this.toastService.showSuccessToast({
-        message: this.translateService.instant('patron-ui.mobile-credential.unlinked_credentials_text'),
+        message: this.translateService.instant('patron-ui.mobile-credential.unlink_credentials_success'),
         position: 'bottom',
       });
       this.modalsService.dismiss();
