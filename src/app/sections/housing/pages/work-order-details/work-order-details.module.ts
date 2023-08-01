@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { QuestionsModule } from '@sections/housing/questions/questions.module';
 import { StepperModule } from '@sections/housing/stepper/stepper.module';
 import { StFormsHeaderModule } from '@sections/housing/st-forms-header/st-forms-header.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const imports = [
   CommonModule,
@@ -18,6 +19,7 @@ const imports = [
   QuestionsModule,
   StepperModule,
   StFormsHeaderModule,
+  StButtonModule
 ];
 const declarations = [WorkOrderDetailsPage];
 

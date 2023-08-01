@@ -9,6 +9,7 @@ import { StepperModule } from '../../stepper/stepper.module';
 
 import { WaitingListsDetailsPage } from './waiting-lists-details.page';
 import { StFormsHeaderModule } from '@sections/housing/st-forms-header/st-forms-header.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const imports = [
   CommonModule,
@@ -17,7 +18,8 @@ const imports = [
   QuestionsModule,
   StepperModule,
   WaitingListsDetailsRoutingModule,
-  StFormsHeaderModule
+  StFormsHeaderModule,
+  StButtonModule
 ];
 const declarations = [WaitingListsDetailsPage];
 
