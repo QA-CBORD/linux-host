@@ -1,21 +1,21 @@
-<ng-container *ngIf="terms$ | async as terms">
+<ion-list *ngIf="terms$ | async as terms">
   <ion-item lines="none" class="terms" *ngIf="terms.length && !disabled">
-    <ion-label class="ion-margin-end label-container">
-      <span class="terms-label">Term: </span><span class="terms-value">{{ selectedTermLabel$ | async }}</span>
-    </ion-label>
-
     <ion-select
-      class="terms-select"
+      justify="start"
       interface="popover"
-      mode="md"
       #termsSelect
+      class="terms-label"
+      toggleIcon="none"
+      label="Term: "
+      aria-label="Term selection box"
+      placeholder="Select term"
       [interfaceOptions]="customPopoverOptions"
       (ionChange)="handleSelectTerm(termsSelect.value)"
-      [selectedText]="termsSelect.value"
     >
       <ion-select-option [value]="term" *ngFor="let term of terms; trackBy: trackById">
         {{ term.termName }}
       </ion-select-option>
     </ion-select>
+    <span class="chevron-down"></span>
   </ion-item>
-</ng-container>
+</ion-list>

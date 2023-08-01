@@ -12,6 +12,7 @@ import { CameraService } from '../services/camera.service';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { PhotoType, PhotoUploadService } from '../services/photo-upload.service';
 import { PhotoUploadComponent } from './photo-upload.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('PhotoUploadComponent', () => {
   let component: PhotoUploadComponent;
@@ -64,10 +65,16 @@ describe('PhotoUploadComponent', () => {
     getPhoto: jest.fn().mockResolvedValue(true),
   };
 
+  const mockTranslateService = {
+    currentLang: 'en',
+    setTranslation: jest.fn(),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PhotoUploadComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [TranslateModule],
       providers: [
         { provide: Router, useValue: router },
         { provide: DomSanitizer, useValue: domSanitizer },
@@ -79,6 +86,7 @@ describe('PhotoUploadComponent', () => {
         { provide: ChangeDetectorRef, useValue: cd },
         { provide: PhotoCropModalService, useValue: photoCropModalService },
         { provide: CameraService, useValue: cameraService },
+        { provide: TranslateService, useValue: mockTranslateService },
       ],
     }).compileComponents();
   });

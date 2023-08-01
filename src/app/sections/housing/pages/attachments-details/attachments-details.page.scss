@@ -1,148 +1,124 @@
 @import 'tools';
 
-.work-order-details__content {
-  --background: #{$porcelain};
-  --padding-top: 8px;
-  --padding-start: 8px;
-  --padding-end: 8px;
-}
+.work-order-details {
 
-.work-order-details__actions {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  padding-top: var(--ion-safe-area-top, 0);
-}
+  &__content {
+    --background: #{$porcelain};
+    --padding-top: 16px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
 
-.work-order-details__title {
-  @include font-family($font-nunito-heavy);
-
-  font-size: 20px;
-  color: $color-night-rider;
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.work-order-details__page-back {
-  @include font-family($font-nunito-regular);
-
-  --color: #{rgba($color-black, 0.9)};
-}
-
-.work-order-details__save {
-  @include font-family($font-nunito-heavy);
-
-  --color: #{$color-dodger-blue};
-}
-
-.work-order-details__card {
-  background-color: $color-white;
-  border-radius: 16px;
-  box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
-  padding: 16px;
-
-  ion-select{
-    color: black;
-    font-weight: 700;
-    font-size: 1.2em;
+  &__page-back {
     @include font-family($font-nunito-regular);
-    margin-bottom: 30px;
-    background: #F1F1F1;
-    border-radius: 8px;
-    --placeholder-opacity:1;
-    &::part(icon){
-      opacity:1;
-      margin-right: 15px;
+    --color: #{rgba($color-black, 0.9)};
+  }
+
+  &__card {
+    background-color: $color-white;
+    border-radius: 16px;
+    box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
+    padding: 16px;
+  }
+}
+
+  ion-select {
+    @include font-family($font-nunito-heavy);
+    --placeholder-opacity: 1;
+    --padding-end: 10px;
+
+    &::part(icon) {
+      opacity: 0;
+      width: 0;
+      padding: 0;
+    }
+
+    &::part(placeholder) {
+      padding-left: 8px;
+    }
+    
+    &::part(text) {
+      padding-left: 8px;
     }
   }
 
-  ion-button{
+  st-button {
+    margin-top: 8px;
+  }
+
+  st-textarea-floating-label {
+    margin: 50px;
+  }
+
+  ion-item {
+    --background:  #{rgba($color-black, 0.1)};
+    --border-radius: 8px;
+  }
+
+  .container__image {
+    height: 200px;
+    border: 1px dashed gray;
+    box-sizing: border-box;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+
+
+    .label {
+      padding-bottom: 2em;
+      @include font-family($font-nunito-regular);
+    }
+
+    .image {
+      width: 200px;
+      height: 175px;
+    }
+  }
+
+  .format {
+    width: 4em;
+    height: 100%;
+
+    &__icon {
+      margin-top: 15px;
+      @extend .format;
+      background: url('/assets/images/housing/image.svg') no-repeat 50% 0;
+    }
+
+    &__file {
+      @extend .format;
+      background: url('/assets/images/housing/file.svg') no-repeat 50% 0;
+    }
+   }
+
+  .btn__image {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 1em;
+    margin-top: 0.7em;
+    height: 2.4em;
+    font-weight: 700;
+
+    .submit {
+      background: #0878C8;
+    }
+  }
+
+  .form__secondary-header {
+    margin-top: 30px;
     @include font-family($font-nunito-regular);
   }
-}
 
-.work-order-details__back {
-  @include font-family($font-nunito-heavy);
-
-  --color: #{$color-dodger-blue};
-
-  min-width: 80px;
-}
-
-.work-order-details__next,
-.work-order-details__submit {
-  @include font-family($font-nunito-heavy);
-
-  --border-radius: 8px;
-  width: 150px;
-  font-size: .7em;
-  text-transform: uppercase;
-}
-
-.work-order-details__next {
-  --background-activated: #{$color-dodger-blue};
-  --border-color: #{$color-dodger-blue};
-  --border-width: 2px;
-  --color: #{$color-dodger-blue};
-}
-
-.work-order-details__submit {
-  --background: #{$color-dodger-blue};
-}
-
-
-.container__image {
-  height: 200px;
-  border: 1px dashed #E2E2E2;
-  box-sizing: border-box;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-
-  .label {
-    padding-bottom: 2em;
+  .attachment_notes {
+    display: flex;
+    font-size: 12px;
+    justify-content: space-between;
+    @include font-family($font-nunito-regular);
   }
 
-  .icon {
-    width: 4em;
-    height: 100%;
-    background: url('/assets/images/housing/image.svg') no-repeat 50% 0 ;
+  .chevron-down {
+    @include chevron-down(0);
+    margin-right: 15px;
   }
-
-  .file{
-    width: 4em;
-    height: 100%;
-    background: url('/assets/images/housing/file.svg') no-repeat 50% 0 ;
-  }
-
-  .image{
-    width: 200px;
-    height: 175px;
-  }
-}
-
-.btn__image{
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 1em;
-  margin-top: 0.7em;
-  height: 2.4em;
-  font-weight: 700;
-  .submit{
-    background: #0878C8;
-  }
-}
-
-.form__secondary-header {
-  margin-top: 30px;
-}
-
-.infoAttachment{
-  display: flex;
-  font-size: 12px;
-  justify-content: space-between;
-  @include font-family($font-nunito-regular);
-}

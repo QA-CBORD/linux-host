@@ -21,11 +21,11 @@ export class LockDownService {
 
   async loadStringsAndSettings(): Promise<void> {
     this.lockDownMessage = await firstValueFrom(
-      this.contentStringsFacadeService.getContentStringValue$(
+      this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STRINGS_DOMAINS.get_common,
         CONTENT_STRINGS_CATEGORIES.error_message,
         ORDERING_CONTENT_STRINGS.disableOrdering
-      )
+      ).pipe(map((content) => content?.value))
     );
 
     this.lockDownFlag = await firstValueFrom(

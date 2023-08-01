@@ -1,21 +1,15 @@
 @import 'tools';
+
 ion-select::part(label)::first-letter {
   color: red;
 }
+.bold{
+  font-weight: bold;
+}
 ion-select {
-  // --border: 1px solid ;
   --border-color: var(--ion-color-matterhorn);
   --border-radius: 8px;
   height: 50px;
-
-  &::part(placeholder)::first-letter {
-    color: red;
-
-  }
-
-  &::part(label)::first-letter {
-    color: red;
-  }
 
   &::part(icon) {
     color: $color-matterhorn;
@@ -30,70 +24,54 @@ ion-select {
   }
 }
 
+ion-select::part(container) {
+  width: 100%;
+}
+
 .select {
   &__wrapper {
     position: relative;
-    height: 50px;
   }
 
   &__control {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    --border-radius: 8px;
+
 
     &--error {
 
+      &:focus,
+      &:focus-within {
+        border: 2px solid $color-alizarin;
+
+      }
+    }
+  }
+
+  &__control--border {
+    border: 1px solid $color-matterhorn;
+    border-radius: 8px;
+
+    &:focus-within {
+      border: 2px solid $color-dodger-blue;
+    }
+
+    &--error {
       border: 2px solid $color-alizarin;
 
       &:focus,
       &:focus-within {
-
         border: 2px solid $color-alizarin;
-
-        &+.select__placeholder {
-          z-index: 2;
-
-          @include floating-label($color-alizarin);
-        }
-      }
-
-      &+.select__placeholder {
-        z-index: 2;
-
-        @include floating-label($color-alizarin);
       }
     }
   }
 
   &__placeholder {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 15px 0 0 13px;
-    transition: all 200ms;
     opacity: 0.6;
     font-weight: bold;
+    font-size: 16px;
   }
 }
 
-:host-context(.ng-valid) .select__control {
-  &:focus-within {
-    &+.select__placeholder {
-
-      @include floating-label($color-dodger-blue);
-
-      .showAsterisk {
-        @include show-asterisk
-      }
-    }
-  }
-
-  &+.select__placeholder {
-    z-index: 2;
-
-    @include floating-label($color-night-gray);
-    font-weight: 500;
-
-    .showAsterisk {
-      @include show-asterisk
-    }
-  }
-
-}

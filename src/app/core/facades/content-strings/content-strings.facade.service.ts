@@ -16,7 +16,7 @@ import { ContentStringRequest } from '@core/model/content/content-string-request
 export class ContentStringsFacadeService extends ServiceStateFacade {
   constructor(
     private readonly stateService: ContentStringsStateService,
-    private readonly apiService: ContentStringsApiService
+    private readonly apiService: ContentStringsApiService,
   ) {
     super();
   }

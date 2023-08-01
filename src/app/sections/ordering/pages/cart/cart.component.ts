@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -10,7 +10,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
-import { PopoverController } from '@ionic/angular';
+import { IonContent, PopoverController } from '@ionic/angular';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
@@ -38,15 +38,24 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { APP_ROUTES } from '@sections/section.config';
 import { LockDownService } from '@shared/index';
-import { defaultOrderSubmitErrorMessages } from '@shared/model/content-strings/default-strings';
 import { ConnectionService } from '@shared/services/connection-service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, of, zip } from 'rxjs';
-import { catchError, filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, zip } from 'rxjs';
+import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
+import { TranslateService } from '@ngx-translate/core';
+
+interface OrderingErrorContentStringModel {
+  timeout: string;
+  connectionLost: string;
+  duplicateOrdering: string;
+  noConnection: string;
+  pickUpOrderTimeNotAvailable: string;
+  deliveryOrderTimeNotAvailable: string;
+}
 
 @Component({
   selector: 'st-cart',
@@ -71,12 +80,9 @@ export class CartComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   isOnline = true;
   networkSubcription: Subscription;
-  orderSubmitErrorMessage = {
-    timeout: '',
-    connectionLost: '',
-    duplicateOrdering: '',
-    noConnection: '',
-  };
+  orderSubmitErrorMessage: OrderingErrorContentStringModel;
+  dueTimeHasErrors = false;
+  @ViewChild('content') private page: IonContent;
 
   constructor(
     private readonly cartService: CartService,
@@ -94,7 +100,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly checkinProcess: CheckingProcess,
     private readonly nonCheckingService: NonCheckingService,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
+    private readonly translateService: TranslateService
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -117,8 +124,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.merchant$ = this.cartService.merchant$.pipe(
       tap(
         merchant =>
-        (this.merchantTimeZoneDisplayingMessage =
-          merchant?.timeZone && "The time zone reflects the merchant's location")
+          (this.merchantTimeZoneDisplayingMessage =
+            merchant?.timeZone && "The time zone reflects the merchant's location")
       )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
@@ -290,6 +297,29 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
+    /**
+     * This block will be uncommented once time selection flows finished.
+     *
+     *
+    this.dueTimeHasErrors = false;
+    const isMerchantOrderAhead = await firstValueFrom(
+      this.merchant$.pipe(
+        map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
+      )
+    );
+
+    if (isMerchantOrderAhead) {
+      const options = await firstValueFrom(this.orderDetailOptions$);
+      const errorKey = options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable';
+      const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
+      this.toastService.showError(errorMessage);
+      this.dueTimeHasErrors = true;
+      this.page.scrollToTop();
+      this.cdRef.detectChanges();
+      return;
+    }
+    **/
+
     const data = {
       title: 'Oooops',
       message,
@@ -464,7 +494,7 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     if (error && error.includes('CONTENT_STRING')) {
-      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, ''))
+      this.onValidateErrorToast(await this.orderingService.getContentErrorStringByException(error, ''));
       return;
     }
 
@@ -624,27 +654,42 @@ export class CartComponent implements OnInit, OnDestroy {
       ORDERING_CONTENT_STRINGS.duplicateOrdering
     );
     const noConnectionError = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.noConnection);
+    const pickUpOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+    );
+    const deliveryOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable
+    );
 
     this.orderSubmitErrorMessage = await zip(
       timeOutError,
       connectionLostError,
       duplicateOrderSubmissionError,
-      noConnectionError
+      noConnectionError,
+      pickUpOrderTimeNotAvailable,
+      deliveryOrderTimeNotAvailable
     )
       .pipe(
         take(1),
-        map(([timeout, connectionLost, duplicateOrdering, noConnection]) => {
-          if (!timeout || !connectionLost) {
-            return defaultOrderSubmitErrorMessages;
-          }
-          return {
+        map(
+          ([
             timeout,
             connectionLost,
             duplicateOrdering,
             noConnection,
-          };
-        }),
-        catchError(() => of(defaultOrderSubmitErrorMessages))
+            pickUpOrderTimeNotAvailable,
+            deliveryOrderTimeNotAvailable,
+          ]) => {
+            return {
+              timeout,
+              connectionLost,
+              duplicateOrdering,
+              noConnection,
+              pickUpOrderTimeNotAvailable,
+              deliveryOrderTimeNotAvailable,
+            };
+          }
+        )
       )
       .toPromise();
   }

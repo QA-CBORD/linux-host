@@ -52,7 +52,9 @@ describe('VaultIdentityService', () => {
         });
         service = TestBed.inject(VaultIdentityService);
         loadingService = TestBed.inject(LoadingService);
+        modalController = TestBed.inject(ModalController);
         jest.spyOn(service, 'loadingService', 'get').mockReturnValue(loadingService);
+        jest.spyOn(service, 'modalController', 'get').mockReturnValue(modalController);
         await service.init(vault);
     });
 
@@ -149,7 +151,7 @@ describe('VaultIdentityService', () => {
         });
 
         it('should retry unlock vault with pin when biometric auth fails', async () => {
-            const session = { pin: '1111', biometricUsed: true };
+            const session = { pin: '1111', biometricUsed: false };
             vault.unlock = async () => { throw new Error('random error') };
             vault.getValue = async () => session.pin;
             jest.spyOn(service, 'closeAllModals').mockResolvedValue();
@@ -157,9 +159,11 @@ describe('VaultIdentityService', () => {
             const logoutSpy = jest.spyOn(service, 'logout').mockResolvedValue();
             const pinModalSpy = jest.spyOn(service.pinAuthenticator, 'tryUnlock0').mockResolvedValue({ pin: session.pin, status: PinCloseStatus.LOGIN_SUCCESS })
             const loginSpy = jest.spyOn(service, 'login').mockResolvedValue();
+            const deviceMock = jest.spyOn(Device, 'isBiometricsEnabled').mockResolvedValue(true);
 
             const unlockResult = await service.unlockVault(true);
-            expect(pinModalSpy).toHaveBeenCalledTimes(1)
+            expect(deviceMock).toHaveBeenCalledTimes(0);
+            expect(pinModalSpy).toHaveBeenCalledTimes(1);
             expect(retryPinSpy).toHaveBeenNthCalledWith(1, new Error('random error'));
             expect(logoutSpy).toHaveBeenCalledTimes(1);
             expect(loginSpy).toHaveBeenCalledTimes(1);
@@ -221,8 +225,8 @@ describe('VaultIdentityService', () => {
             const denyPermissionStub = jest.spyOn(userPreferenceService, 'setBiometricPermissionDenied')
                 .mockImplementation(() => (store.userDeniedBiometricPermission = true));
 
-            const isBiometricDenied1 = service.isBiometricPermissionDenied({ code: VaultErrorCodes.AuthFailed });
-            const isBiometricDenied2 = service.isBiometricPermissionDenied({ code: VaultErrorCodes.SecurityNotAvailable });
+            const isBiometricDenied1 = await service.isBiometricPermissionDenied({ code: VaultErrorCodes.AuthFailed });
+            const isBiometricDenied2 = await service.isBiometricPermissionDenied({ code: VaultErrorCodes.SecurityNotAvailable });
 
             expect(denyPermissionStub).toHaveBeenCalledTimes(2);
             expect(isBiometricDenied1).toBe(true);

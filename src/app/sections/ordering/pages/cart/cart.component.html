@@ -8,7 +8,7 @@
 >
 </st-header>
 
-<ion-content class="browser-hidden">
+<ion-content class="browser-hidden" #content>
   <st-order-details
     [readonly]="false"
     [isExistingOrder]="isExistingOrder"
@@ -21,6 +21,8 @@
     [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
     [applePayEnabled]="applePayEnabled$ | async"
     [addressModalConfig]="addressModalSettings$ | async"
+    [dueTimeHasErrors]="dueTimeHasErrors"
+    [enableTimeSelection]="true"
     (onFormChange)="onCartStateFormChanged($event)"
     (onOrderItemRemovedId)="removeOrderItem($event)"
     (onOrderItemClicked)="onOrderItemClicked($event)"

@@ -7,8 +7,9 @@ import { TransactionUnitsPipe } from '@shared/pipes/transaction-units/transactio
 })
 export class DestinationAccountDisplayPipe implements PipeTransform {
   constructor(private readonly transactionUnitsPipe: TransactionUnitsPipe) {}
-  transform(account: UserAccount, hideBalance?: boolean): string {
+  transform(account: string | UserAccount, hideBalance?: boolean): string {
     if (!account) return '';
+    if (typeof account === 'string') return account;
 
     if (hideBalance) {
       return `${account.accountDisplayName}`;

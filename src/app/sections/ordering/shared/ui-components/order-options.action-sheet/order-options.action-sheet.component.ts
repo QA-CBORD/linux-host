@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, V
 import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '../../models';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { Observable, of, throwError, zip } from 'rxjs';
+import { Observable, lastValueFrom, of, throwError, zip } from 'rxjs';
 import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import {
@@ -238,7 +238,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
             BUTTON_TYPE.CONTINUE
           );
         },
-        err => this.onToastDisplayed(err)
+        err => {
+          if (typeof err ==='object' && err.message) {
+            this.onToastDisplayed(err.message);
+          } else if (typeof err === 'string' && err) {
+            this.onToastDisplayed(err);
+          }
+        }
       );
   }
 
@@ -262,7 +268,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     type: number
   ): Promise<MenuInfo | never> {
     if (!accountInfoList.accounts.length && !accountInfoList.creditAccepted) {
-      return Promise.reject(new Error("You don't have payment accounts"));
+      const errorMessage = await lastValueFrom(this.contentStrings.noAvailableTenders.pipe(take(1)));
+      this.toastService.showError(errorMessage, 5000, 'bottom');
+      return Promise.reject();
     }
 
     return this.cartService.getMerchantMenu(id, dueTime, type);
@@ -360,6 +368,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.contentStrings.orderingDatesUnavailable = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
     );
+    this.contentStrings.noAvailableTenders = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.noAvailableTenders
+    )
   }
   private isMerchantDateUnavailable(schedule: Schedule) {
     return schedule.days.length == 0;

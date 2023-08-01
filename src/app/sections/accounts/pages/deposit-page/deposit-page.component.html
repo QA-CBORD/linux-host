@@ -10,44 +10,45 @@
 ></st-header>
 <ion-content class="browser-hidden">
   <form [formGroup]="depositForm">
-    <section class="deposit__selection-block">
-      <div class="deposit__select-wrapper">
-        <ion-label class="deposit__label-select">{{ contentString.lblSelectPaymentMethod }}</ion-label>
-        <ion-select
-          class="deposit__select"
+    <section class="deposit__selection-block ion-padding">
+      <div>
+        <st-select-floating-label
           cancelText="Cancel"
           mode="md"
           interface="action-sheet"
+          fill="none"
+          [label]="contentString.lblSelectPaymentMethod"
+          placeholder="Please choose"
           [interfaceOptions]="customActionSheetPaymentOptions"
           formControlName="sourceAccount"
+          [control]="sourceAccount"
+          [isError]="sourceAccount.invalid && sourceAccount.touched"
           (ionChange)="onPaymentMethodChanged($event)"
-          (ionFocus)="openWithVoiceOver('payment')"
-          placeholder="{{ contentString.selectPlaceHolderText }}"
           tabindex="0"
-          [selectedText]="paymentMethod.value | accountDisplay"
-          #paymentMethod
+          
         >
-          <ion-select-option
-            *ngIf="(isCreditCardPaymentTypesEnabled && applePayEnabled$ | async)"
-            [value]="applePayAccountType"
-          >
-            {{ applePayAccountType | accountDisplay }}
-          </ion-select-option>
-          <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
+          <ng-container role="options">
             <ion-select-option
-              [value]="account"
-              *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
-              class="test-class"
-              >{{ account | accountDisplay }}
+              *ngIf="isCreditCardPaymentTypesEnabled && applePayEnabled$ | async"
+              [value]="applePayAccountType"
+            >
+              {{ applePayAccountType | accountDisplay }}
+            </ion-select-option>
+            <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
+              <ion-select-option
+                [value]="account"
+                *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
+                >{{ account | accountDisplay }}
+              </ion-select-option>
+            </ng-container>
+            <ion-select-option [value]="paymentTypes.BILLME" *ngIf="isBillMePaymentTypesEnabled">{{
+              paymentTypes.BILLME | accountDisplay
+            }}</ion-select-option>
+            <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled">
+              {{ contentString.newCreditCardText }}
             </ion-select-option>
           </ng-container>
-          <ion-select-option [value]="paymentTypes.BILLME" *ngIf="isBillMePaymentTypesEnabled">{{
-            paymentTypes.BILLME | accountDisplay
-          }}</ion-select-option>
-          <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled">
-            {{ contentString.newCreditCardText }}
-          </ion-select-option>
-        </ion-select>
+        </st-select-floating-label>
       </div>
 
       <div>
@@ -78,50 +79,55 @@
         </div>
       </div>
 
-      <div class="deposit__select-wrapper">
-        <ion-label class="deposit__label-select">{{ contentString.lblSelectAccountForDeposit }}</ion-label>
-        <ion-select
-          class="deposit__select deposit__select-account"
+      <div>
+        <st-select-floating-label
           cancelText="Cancel"
           mode="md"
+          fill="none"
           interface="action-sheet"
+          controlBorder="no-border"
           [interfaceOptions]="customActionSheetOptions"
-          (ionFocus)="openWithVoiceOver('account')"
           formControlName="selectedAccount"
-          placeholder="{{ contentString.selectPlaceHolderText }}"
+          [control]="selectedAccount"
+          [isError]="selectedAccount.invalid && selectedAccount.touched"
+          placeholder="Please choose"
+          [label]="contentString.lblSelectAccountForDeposit"
           tabindex="0"
-          [selectedText]="toAccount.value | destinationAccountDisplay"
-          #toAccount
+          
         >
-          <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
-            {{ account | destinationAccountDisplay }}
-          </ion-select-option>
-        </ion-select>
+          <ng-container role="options">
+            <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
+              {{ account | destinationAccountDisplay }}
+            </ion-select-option>
+          </ng-container>
+        </st-select-floating-label>
       </div>
       <div
         class="deposit__manual-amount"
         [ngClass]="{ 'deposit__manual-amount--preset-amouts': !(isFreeFormEnabled$ | async) }"
       >
         <div class="deposit__main-select-container" *ngIf="!(isFreeFormEnabled$ | async); else mainInput">
-          <div class="deposit__select-wrapper">
-            <ion-label class="deposit__label-select">{{ contentString.lblSelectAmountForDeposit }}</ion-label>
-            <ion-select
-              class="deposit__select deposit__select-account"
+          <div>
+            <st-select-floating-label
               cancelText="Cancel"
               mode="md"
-              placeholder="{{ contentString.selectPlaceHolderText }}"
+              fill="none"
               tabindex="0"
               interface="action-sheet"
               [interfaceOptions]="customActionSheetOptions"
               formControlName="mainSelect"
+              [control]="mainSelect"
+              [isError]="mainSelect.invalid && mainSelect.touched"
               (ionChange)="onAmountChanged($event)"
-              (ionFocus)="openWithVoiceOver('deposit')"
-              #toDeposit
+              placeholder="Please choose"
+              [label]="contentString.lblSelectAmountForDeposit"
             >
-              <ion-select-option [value]="amount" *ngFor="let amount of (amountsForSelect$ | async)">
-                {{ amount | transactionUnits }}
-              </ion-select-option>
-            </ion-select>
+              <ng-container role="options">
+                <ion-select-option [value]="amount" *ngFor="let amount of amountsForSelect$ | async">
+                  {{ amount | transactionUnits }}
+                </ion-select-option>
+              </ng-container>
+            </st-select-floating-label>
           </div>
         </div>
 

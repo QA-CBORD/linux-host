@@ -32,14 +32,17 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() interface: string;
   @Input() interfaceOptions;
   @Input() label: string;
+  @Input() placeholder: string;
   @Input() isError: boolean;
   @Input() isDisabled = false;
   @Input() idd: string;
   @Input() selectedText: string;
+  @Input() fill = 'outline';
+  @Input() fontWeight?: "bold" | "";
   @Output() focus: EventEmitter<void> = new EventEmitter<void>();
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
   innerValue = '';
-
+  labelPlacement: 'end' | 'fixed' | 'floating' | 'stacked' | 'start' | undefined = 'floating';
   @ViewChild('selector', { static: true }) selectRef: IonSelect;
   private onChange: (v) => void;
   private onTouched: () => void;
@@ -48,6 +51,9 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
 
   ngOnInit() {
     this.value = this.control.value;
+    if (this.placeholder) {
+      this.labelPlacement = 'stacked';
+    }
   }
 
   //get accessor
