@@ -82,7 +82,8 @@ export class WorkOrdersService {
   }
 
   private getQuestionsPages(workOrderDetails: WorkOrderDetails): QuestionBase[][] {
-    const questionJson = workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) +
+    const questionJson =
+      workOrderDetails.formDefinition.applicationFormJson.slice(0, -1) +
       `,{"name": "image","type": "IMAGE", "label": "Image", "attribute": null, "workOrderFieldKey" : "IMAGE", "required": false ,"source":"WORK_ORDER"}]`;
     const questions: QuestionBase[][] = parseJsonToArray(questionJson).map((question: QuestionBase) => {
       const mappedQuestion = this.toWorkOrderListCustomType(question, workOrderDetails);
@@ -174,13 +175,15 @@ export class WorkOrdersService {
     const parsedJson: string[] = parseJsonToArray(form.formDefinition.applicationFormJson);
     const workOrdersControls: string[] = parsedJson.filter(
       (control: QuestionFormControl | string) =>
-        control && (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER && (control as QuestionFormControl).workOrderField
+        control &&
+        (control as QuestionFormControl).source === QUESTIONS_SOURCES.WORK_ORDER &&
+        (control as QuestionFormControl).workOrderField
     );
     const { body, image } = this.buildWorkOrderList(workOrdersControls, formValue);
     return this.housingProxyService.post<Response>(this.workOrderListUrl, body).pipe(
       catchError(() => {
         this.toastService.showToast({
-          message: 'Error submitting work order.'
+          message: 'Error submitting work order.',
         });
         return of(false);
       }),
@@ -224,16 +227,14 @@ export class WorkOrdersService {
           location = null;
         }
       });
-    return {   
+    return {
       body: {
         ...controls,
         typeKey: controls[WorkOrdersFields.TYPE],
         notify: controls[WorkOrdersFields.NOTIFY_BY_EMAIL] === NOTIFY.YES,
-        facilityKey: location
+        facilityKey: location,
       },
       image,
     };
   }
-
-
 }
