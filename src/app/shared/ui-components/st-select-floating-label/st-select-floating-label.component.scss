@@ -1,6 +1,6 @@
 @import 'tools';
-ion-select::part(label)::first-letter {
-  color: red;
+.bold{
+  font-weight: bold;
 }
 ion-select {
   // --border: 1px solid ;
