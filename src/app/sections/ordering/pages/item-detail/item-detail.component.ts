@@ -376,7 +376,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       let message = `${itemsQuantity} been added to your cart.`;
       message = order.checkNumber ? `${itemsQuantity} added to order #${order.checkNumber} cart. ` : message;
 
-      this.toastService.showToast({ message, icon: 'checkmark-circle', cssClass: 'toast-message-success' });
+      this.toastService.showSuccessToast({ message });
     });
   }
 }

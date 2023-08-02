@@ -8,7 +8,6 @@ import { AppleWalletCredential } from '../model/ios/apple-wallet-credential';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credential.state';
 import { Injectable } from '@angular/core';
-import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { AndroidCredentialCsModel } from '../model/android/android-credential-content-strings.model';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,10 +31,6 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   async contentStringAsync(): Promise<AndroidCredentialCsModel> {
     return null;
-  }
-
-  getService(): MobileCredentialDataService {
-    return null; // is not in use for now.
   }
 
   refresh(): void {
