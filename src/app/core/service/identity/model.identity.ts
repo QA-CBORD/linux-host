@@ -1,7 +1,7 @@
 import { Subject } from "rxjs";
 import { StateTimeDuration } from "src/app/app.global";
 
-export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 5000;
+export const VAULT_DEFAULT_TIME_OUT_IN_MILLIS = 1800000;
 
 export enum PinCloseStatus {
     SET_SUCCESS = 'set_success',
