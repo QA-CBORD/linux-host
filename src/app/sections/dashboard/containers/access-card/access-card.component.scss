@@ -4,7 +4,8 @@
   margin: 5px 10px 5px;
   border-radius: 15px;
   background: $color-dodger-blue;
-  height: 280px;
+  height: fit-content;
+  padding-bottom: 10px;
 
   &__header {
     height: 45px;
