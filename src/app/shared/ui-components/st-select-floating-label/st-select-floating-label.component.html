@@ -21,7 +21,7 @@
   >
     <ng-content select="[role=options]"></ng-content>
 
-    <label slot="label" class="select__placeholder" [attr.for]="idd">
+    <label slot="label"  [attr.for]="idd" [class]="{'bold': fontWeight === 'bold' }">
       {{ label }}<span class="showAsterisk" *ngIf="isRequired">*</span>
     </label>
   </ion-select>

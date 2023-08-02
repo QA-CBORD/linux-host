@@ -68,8 +68,7 @@ export class MobileCredentialFacade {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  enabledCredentialsSettings(): Observable<any> {
+  enabledCredentialsSettings(): Observable<false | CredentialManagerType> {
     const iosCredentialSettings = this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
       take(1),
       // eslint-disable-next-line no-extra-boolean-cast

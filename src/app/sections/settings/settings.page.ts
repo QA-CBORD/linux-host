@@ -22,7 +22,7 @@ import { EnvironmentData } from '@environments/environment-data';
   styleUrls: ['./settings.scss'],
 })
 export class SettingsPage implements OnInit {
-  settingSections: Promise<SettingsSectionConfig[]>;
+  settingSections$: Promise<SettingsSectionConfig[]>;
   appVersion$: Observable<string>;
   userName$: Observable<string>;
   institutionName$: Observable<string>;
@@ -42,7 +42,7 @@ export class SettingsPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.settingSections = this.settingsFactory.getSettings();
+    this.settingSections$ = this.settingsFactory.getSettings();
     this.userName$ = this.getUserName$();
     this.institutionName$ = this.getInstitutionName$();
     this.userPhoto$ = this.getUserPhoto$();

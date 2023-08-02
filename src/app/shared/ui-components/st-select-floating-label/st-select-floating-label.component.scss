@@ -1,12 +1,23 @@
 @import 'tools';
-
-ion-select::part(icon){
-  color: $color-matterhorn;
-  opacity: 1;
+.bold{
+  font-weight: bold;
 }
+ion-select {
+  --border-color: var(--ion-color-matterhorn);
+  --border-radius: 8px;
+  height: 50px;
+
+  &::part(icon) {
+    color: $color-matterhorn;
+    opacity: 1;
+  }
+
+}
+
 ion-select::part(container) {
   width: 100%;
 }
+
 .select {
   &__wrapper {
     position: relative;
@@ -18,30 +29,13 @@ ion-select::part(container) {
     outline: none;
     --border-radius: 8px;
 
-    &:focus-within {
-      & + .select__placeholder {
-        z-index: 2;
-
-        @include floating-label($color-dodger-blue);
-      }
-    }
 
     &--error {
+
       &:focus,
       &:focus-within {
         border: 2px solid $color-alizarin;
 
-        & + .select__placeholder {
-          z-index: 2;
-
-          @include floating-label($color-alizarin);
-        }
-      }
-
-      & + .select__placeholder {
-        z-index: 2;
-
-        @include floating-label($color-alizarin);
       }
     }
   }
@@ -49,6 +43,7 @@ ion-select::part(container) {
   &__control--border {
     border: 1px solid $color-matterhorn;
     border-radius: 8px;
+
     &:focus-within {
       border: 2px solid $color-dodger-blue;
     }
@@ -70,23 +65,3 @@ ion-select::part(container) {
   }
 }
 
-:host-context(.ng-valid) .select__control {
-  &:focus-within {
-    & + .select__placeholder {
-      @include floating-label($color-dodger-blue);
-      .showAsterisk {
-        @include show-asterisk;
-      }
-    }
-  }
-
-  & + .select__placeholder {
-    z-index: 2;
-
-    @include floating-label($color-night-gray);
-    font-weight: 500;
-    .showAsterisk {
-      @include show-asterisk;
-    }
-  }
-}

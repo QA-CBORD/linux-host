@@ -18,6 +18,7 @@ import {
   setReportCardLabel,
   getCardStatusValidation,
   contentStringsByCategory,
+  openPopover,
 } from './helpers/setting-item.helper';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
@@ -28,7 +29,7 @@ import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-credential-metadata.page';
 import { PasswordChangeComponent } from '@shared/ui-components/change-password/password-change.component';
-import { map, switchMap, take } from 'rxjs/operators';
+import { first, map, switchMap, take } from 'rxjs/operators';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { APP_PROFILES } from '@sections/dashboard/models';
@@ -37,8 +38,10 @@ import { CreditCardAccount, UserAccount } from '@core/model/account/account.mode
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { reduceToObject } from '@shared/model/content-strings/content-string-utils';
 import { defaultCreditCardMgmtCs } from '@shared/model/content-strings/default-strings';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, merge, of } from 'rxjs';
 import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
+import { MobileCredentialsUnlinkService } from '@shared/ui-components/mobile-credentials/service/mobile-credentials-unlink.service';
+import { UnlinkCredentialsComponent } from './pages/unlink-credentials/unlink-credentials.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -201,6 +204,39 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           // if is guest user return false.
           if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(self)) return false;
           return (await asyncCheckEvery(self.validations, services)).every(checkTrue => checkTrue);
+        },
+      },
+      {
+        id: SETTINGS_ID.unlinkCredentials,
+        label: '',
+        icon: 'unlink',
+        type: 'button',
+        studentsOnly: true,
+        setCallback: openPopover,
+        setToggleStatus: function (services: SettingsServices) {
+          // eslint-disable-next-line @typescript-eslint/no-this-alias
+          const setting: SettingItemConfig = this;
+          const mobileCredentialsUnlinkService = services.injector.get(MobileCredentialsUnlinkService);
+          const defaultLabel = 'Unlink Mobile Wallet ID';
+          setting.label = merge(
+            of(defaultLabel),
+            mobileCredentialsUnlinkService.unlinkCredentialsRequested$.pipe(
+              first(),
+              map(unlinked => (unlinked ? '' : defaultLabel))
+            ),
+          );
+        },
+        modalContent: {
+          component: UnlinkCredentialsComponent,
+        },
+        supportProfiles: [APP_PROFILES.patron],
+        checkIsVisible: async function (services: SettingsServices) {
+          // eslint-disable-next-line @typescript-eslint/no-this-alias
+          const self: SettingItemConfig = this;
+          // if is guest user return false.
+          if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(self)) return false;
+          const mobileCredentialsUnlinkService = services.injector.get(MobileCredentialsUnlinkService);
+          return await firstValueFrom(mobileCredentialsUnlinkService.displayUnlinkButton$);
         },
       },
     ],

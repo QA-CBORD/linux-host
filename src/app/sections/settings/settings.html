@@ -17,7 +17,7 @@
   </ion-list>
   <ion-list
     class="ion-margin-bottom ion-padding-end"
-    *ngFor="let section of settingSections | async; let first = first"
+    *ngFor="let section of settingSections$ | async; let first = first"
   >
     <ion-list-header lines="inset">
       <ion-label class="settings__section-header">{{section.label}}</ion-label>
