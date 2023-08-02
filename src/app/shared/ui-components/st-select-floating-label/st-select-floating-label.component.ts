@@ -38,6 +38,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() idd: string;
   @Input() selectedText: string;
   @Input() fill = 'outline';
+  @Input() fontWeight?: "bold" | "";
   @Output() focus: EventEmitter<void> = new EventEmitter<void>();
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
   innerValue = '';
