@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
@@ -11,6 +11,9 @@ import { Schedule } from '@sections/ordering/shared/ui-components/order-options.
 import { UserInfo } from '@core/model/user/user-info.model';
 import { CartService } from '@sections/ordering/services';
 import { lastValueFrom } from 'rxjs';
+import { IonPicker } from '@ionic/angular';
+import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
+
 
 export interface DateTimeSelected {
   dateTimePicker: Date | string;
@@ -50,14 +53,27 @@ export class StDateTimePickerComponent implements OnInit {
   public pickerColumns = [];
   public pickerButtons = [];
   public pickerClass = 'picker-time-picker';
+  @ViewChild('timePicker') timePicker: IonPicker;
+
   constructor(
     private readonly orderingService: OrderingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
+    private readonly appStatesFacadeService: AppStatesFacadeService
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.initContentStrings();
+    this.listenAppChanges();
+  }
+
+  listenAppChanges() {
+    this.appStatesFacadeService.getStateChangeEvent$.subscribe(async ({ isActive }) => {
+      if (!isActive){
+        this.isPickerOpen = false;
+        this.timePicker.dismiss();
+      }
+    });
   }
 
   get isDefaultState(): boolean {
@@ -263,6 +279,11 @@ export class StDateTimePickerComponent implements OnInit {
         options[index] = { ...options[index], text: asapLabel };
       }
     });
+  }
+
+  close () {
+    this.isPickerOpen = false;
+    this.timePicker.dismiss();
   }
 }
 
