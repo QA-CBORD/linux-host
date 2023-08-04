@@ -70,8 +70,7 @@ export class StDateTimePickerComponent implements OnInit {
   listenAppChanges() {
     this.appStatesFacadeService.getStateChangeEvent$.subscribe(async ({ isActive }) => {
       if (!isActive){
-        this.isPickerOpen = false;
-        this.timePicker.dismiss();
+        this.close();
       }
     });
   }
