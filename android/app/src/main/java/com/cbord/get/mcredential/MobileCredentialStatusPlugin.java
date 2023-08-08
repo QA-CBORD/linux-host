@@ -17,7 +17,6 @@ public class MobileCredentialStatusPlugin extends Plugin {
     private final String DEVICE_STATE = "deviceState";
     private final String HID_CREDENTIAL_TYPE = "HID";
     private final String CREDENTIAL_TYPE = "credentialType";
-    private static final String TAG = MobileCredentialStatusPlugin.class.getSimpleName();
 
     @PluginMethod()
     public void deviceNativeState(PluginCall call){

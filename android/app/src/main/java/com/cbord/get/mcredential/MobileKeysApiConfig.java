@@ -30,7 +30,6 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 public class MobileKeysApiConfig extends Application implements OrigoReaderConnectionListener, OrigoHceConnectionListener {
 
     private OrigoMobileKeysApi mobileKeysApi;
-    private static final String TAG = MobileKeysApiConfig.class.getName();
     private static final int LOCK_SERVICE_CODE = 2;
     private static final String APPLICATION_ID = "com.cbord.get";
     private static final String INITIALIZATION_SUCCESS = "success";

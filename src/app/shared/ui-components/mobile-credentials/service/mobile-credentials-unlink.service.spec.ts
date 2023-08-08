@@ -12,6 +12,7 @@ describe('MobileCredentialsUnlinkService', () => {
     credentialController: {
       getCredential: jest.fn(),
     },
+    refreshCredentials: jest.fn(),
   };
 
   const mockMobileCredentialDataService = {

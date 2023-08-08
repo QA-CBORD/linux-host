@@ -161,9 +161,6 @@ export class MobileCredentialFacade {
     }
   }
 
-  onDestroy() {
-   // this.mobileCredentialManager = null;
-  }
 
   get deviceState$(): Promise<DeviceState> {
     const readDeviceState = async () => {
