@@ -782,7 +782,7 @@
       "terms_title": "Terms and Conditions",
       "unlink_wallet_modal_main_button": "Unlink",
       "unlink_wallet_modal_body": "Unlink your Mobile Wallet ID to remove your card from another device or your current device's wallet",
-      "unlink_wallet_toast_message": "You have unlinked your mobile Wallet ID successfully.",
+      "unlink_wallet_toast_message": "Your request to unlink your mobile wallet ID is currently processing.",
       "unlink_credentials_error": "We could not request unlink your mobile Wallet ID. Conctact your institution.",
       "usage_dialog_btn_ok": "OK",
       "usage_dialog_btn_uninstall": "uninstall",
