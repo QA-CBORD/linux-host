@@ -115,7 +115,8 @@ export namespace Settings {
     HOUSING_ENABLE_HOUSING = 'get.housing.enable_housing',
     HOUSING_ENABLE_SECURE_MESSAGING = 'get.housing.enable_secure_messaging',
     ENABLE_CREDIT_CARD_PAYMENT = 'get.feature.enable_credit_card_payments',
-    LOCK_DOWN_ORDERING = 'get.ordering.disable_ordering'
+    LOCK_DOWN_ORDERING = 'get.ordering.disable_ordering',
+    CREDENTIALS_UNLINK_ENABLED = 'get.mobile_credentials.enable_unlink',
   }
 }
 
