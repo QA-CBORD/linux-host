@@ -32,7 +32,7 @@ pipelines:
             - npm install
             - npm run lint
             - npm run test:ci
-            - npm run build-prod
+            - npm run build-appflow
   custom:
     release-update:
       - step:

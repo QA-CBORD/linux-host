@@ -2,11 +2,13 @@ import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { SettingsPage } from '@sections/settings/settings.page';
 import { LOCAL_ROUTING, SETTINGS_NAVIGATE } from '@sections/settings/settings.config';
+import { settingsPageResolver } from './resolvers/settings-page.resolver';
 
 const routes: Route[] = [
   {
     path: '',
     component: SettingsPage,
+    resolve: { data: settingsPageResolver },
   },
   {
     path: LOCAL_ROUTING.photoUpload,

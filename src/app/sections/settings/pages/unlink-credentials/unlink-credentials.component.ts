@@ -27,7 +27,7 @@ export class UnlinkCredentialsComponent {
     this.loadingService.closeSpinner();
     if (unlinked) {
       this.toastService.showSuccessToast({
-        message: this.translateService.instant('patron-ui.mobile-credential.unlink_credentials_success'),
+        message: this.translateService.instant('patron-ui.mobile-credential.unlink_wallet_toast_message'),
         position: 'bottom',
       });
       this.modalsService.dismiss();

@@ -25,7 +25,10 @@ export class MobileCredentialsUnlinkService {
     return firstValueFrom(
       this.mobileCredentialDataService
         .unlinkCredentials$()
-        .pipe(tap(unlinked => this.unlinkCredentialsSubject.next(unlinked)))
+        .pipe(tap(unlinked => {
+          this.mobileCredentialFacade.refreshCredentials();
+          this.unlinkCredentialsSubject.next(unlinked);
+        }))
     );
   }
 }

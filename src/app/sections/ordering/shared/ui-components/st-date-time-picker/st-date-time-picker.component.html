@@ -11,6 +11,7 @@
 <ng-template #placeholder>{{contentStrings.labelAsap | async}}</ng-template>
 <ng-template #dateTime>{{ dateTimeWithTimeZone || dateTimePicker }}</ng-template>
 <ion-picker
+  #timePicker
   (ionPickerColChange)="handlePickerChange($event)"
   class="order-options-action-sheet order-options-action-sheet-p-d"
   [ngClass]="pickerClass"

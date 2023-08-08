@@ -111,7 +111,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Start an order',
       navigate: PATRON_NAVIGATION.ordering,
     },
-    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest]
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.explore,
@@ -124,7 +124,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'Explore All',
       navigate: PATRON_NAVIGATION.explore,
     },
-    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest]
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.guest, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.conversations,

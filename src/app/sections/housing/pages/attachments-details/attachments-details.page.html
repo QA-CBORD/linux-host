@@ -8,7 +8,8 @@
         interface="popover" 
         [(ngModel)]="selectedAssetName"
         justify="start"
-        placeholder="Select file type"
+        [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'"
+        [disabled]="attachmentSelected"
         [interfaceOptions]="customPopoverOptions">
         <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
           {{ option.name }}
@@ -19,9 +20,8 @@
     </ion-list>
 
     <ng-container>
-      <st-textarea-floating-label [(ngModel)]="notes" [disabled]="attachmentSelected" [isError]="isSubmitted"
-        [label]="'Attachment Notes'" rows="3" 
-        [placeholder]="attachmentSelected?.comments" [isAttachment]="true">
+      <st-textarea-floating-label [(ngModel)]="notes" [disabled]="attachmentSelected" [isError]="isSubmitted" rows="3"
+        [label]="attachmentSelected?.comments ? attachmentSelected.comments : 'Attachment Notes'" [isAttachment]="true">
       </st-textarea-floating-label>
     </ng-container>
 
@@ -38,18 +38,18 @@
           <div class="format__icon"></div>
         </ng-template>
       </div>
-      <div class="attachment_notes" *ngIf="(file$| async) as file">
+      <div class="attachment_file" *ngIf="(file$| async) as file">
         <div>{{attachmentSelected? attachmentSelected.fileName : file?.name}}</div>
         <div *ngIf="!attachmentKey">File Size: {{fileSizeInMB}}MB</div>
       </div>
     </ng-container>
 
 
-    <st-button [disabled]="!!attachmentKey" color="light" (click)="selectFile()">Choose a file
+    <st-button [disabled]="attachmentSelected" color="light" (onClick)="selectFile()">Choose a file
     </st-button>
-    <st-button *ngIf="attachmentKey" color="danger" (click)="confirmDeletion()">Delete Attachment
+    <st-button *ngIf="attachmentKey" color="danger" (onClick)="confirmDeletion()">Delete Attachment
     </st-button>
-    <st-button *ngIf="!attachmentKey" class="btn__image submit" (click)="submitAttachmentForm()">Submit</st-button>
+    <st-button *ngIf="!attachmentKey" class="btn__image submit" (onClick)="submitAttachmentForm()">Submit</st-button>
 
   </div>
 </ion-content>
