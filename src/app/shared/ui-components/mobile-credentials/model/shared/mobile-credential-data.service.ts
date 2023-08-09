@@ -186,7 +186,6 @@ export class MobileCredentialDataService {
       switchMap(([omniIDJwtToken]) => {
         const headers = new HttpHeaders({
           Authorization: `Bearer ${omniIDJwtToken}`,
-          'X-API-Key': '5eFeBwKu6x6ihLEgX3YAS678xyvjctZHabO9PyE5',
         });
         const params = new HttpParams();
         // authBlob needs to be sent in request body.
