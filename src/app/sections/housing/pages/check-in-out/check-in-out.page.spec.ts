@@ -17,7 +17,9 @@ describe('CheckInOutPage', () => {
     const activatedRouteStub = () => ({
       snapshot: { paramMap: { get: () => ({}) } }
     });
-    const routerStub = () => ({ navigate: array => ({ then: () => ({}) }) });
+    const _router = {
+      navigate: jest.fn(),
+    };
     const loadingServiceStub = () => ({
       showSpinner: () => ({}),
       closeSpinner: () => ({})
@@ -33,7 +35,7 @@ describe('CheckInOutPage', () => {
       declarations: [CheckInOutPage],
       providers: [
         { provide: ActivatedRoute, useFactory: activatedRouteStub },
-        { provide: Router, useFactory: routerStub },
+        { provide: Router, useValue: _router },
         { provide: LoadingService, useFactory: loadingServiceStub },
         {
           provide: CheckInOutStateService,
@@ -60,18 +62,16 @@ describe('CheckInOutPage', () => {
 
   describe('showAvailableSpots', () => {
     it('makes expected calls', async () => {
-      const routerStub: Router = fixture.debugElement.injector.get(Router);
       const checkInOutStateServiceStub: CheckInOutStateService = fixture.debugElement.injector.get(
         CheckInOutStateService
       );
       const checkInOutSpotStub: CheckInOutSpot = <any>{};
-     jest.spyOn(routerStub, 'navigate');
-     jest.spyOn(
+     const spy = jest.spyOn(
         checkInOutStateServiceStub,
         'setActiveCheckInOutSlot'
       );
       await component.showAvailableSpots(checkInOutSpotStub);
-      expect(routerStub.navigate).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
     });
   });
 });
