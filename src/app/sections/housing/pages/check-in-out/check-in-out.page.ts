@@ -41,10 +41,9 @@ export class CheckInOutPage implements OnInit {
     this.availableSlots$ = this.getAllowedTimes();
   }
 
-  showAvailableSpots(selectedSlot: CheckInOutSpot) {
-    this._router.navigate(['patron/housing/check-in-out-spots/spots']).then(() => {
-      this._checkInOutStateService.setActiveCheckInOutSlot(selectedSlot);
-    });
+  async showAvailableSpots(selectedSlot: CheckInOutSpot) {
+    await this._router.navigate(['patron/housing/check-in-out-spots/spots']);
+    this._checkInOutStateService.setActiveCheckInOutSlot(selectedSlot);
   }
 
   private isAllowedDate(y: CheckInOutSlot, value: CheckInOutSlot): boolean {
