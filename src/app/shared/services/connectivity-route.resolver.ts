@@ -5,7 +5,8 @@ import { LoadingService } from "@core/service/loading/loading.service";
 import { ContentStringApi, ContentStringCategory } from "@shared/model/content-strings/content-strings-api";
 import { ConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
 import { ConnectivityPageInfo } from "@shared/ui-components/no-connectivity-screen/model/connectivity-page.model";
-import { ConnectivityErrorType, ConnectivityScreenCsModel } from "@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model";
+import { ConnectivityScreenCsModel } from "@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model";
+import { ConnectivityErrorType } from "@shared/ui-components/no-connectivity-screen/model/connectivity-error.enum";
 import { firstValueFrom, Observable } from 'rxjs'
 import { CommonService } from "./common.service";
 import { ConnectionService } from "./connection-service";
@@ -25,15 +26,12 @@ export class ConnectivityPageResolver {
 
     private async resolveData(params: { [key: string]: any }): Promise<ConnectivityPageInfo> {
         await this.loadingService.showSpinner();
-        let csModel: ConnectivityScreenCsModel = {} as any;
-        let errorType: ConnectivityErrorType;
+        let csModel: ConnectivityScreenCsModel;
         let freshContentStringsLoaded = false;
-        const isDeviceOffline = await this.connectionService.deviceOffline();
-        if (isDeviceOffline) {
-            errorType = ConnectivityErrorType.DEVICE_CONNECTION;
+        const errorType = await this.connectionService.getOfflineStatus();
+        if (errorType === ConnectivityErrorType.DEVICE_CONNECTION) {
             csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: ConnectivityScreentDefaultStrings });
         } else {
-            errorType = ConnectivityErrorType.SERVER_CONNECTION;
             csModel = await firstValueFrom(this.commonService.loadContentString(ContentStringCategory.noConnectivity));
             freshContentStringsLoaded = true;
         }

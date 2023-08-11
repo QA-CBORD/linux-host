@@ -12,7 +12,6 @@ import { StGlobalNavigationModule } from '@shared/ui-components/st-global-naviga
 import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { VaultIdentityService } from '@core/service/identity/vault.identity.service';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -53,8 +52,9 @@ const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void
       deps: [VaultIdentityService, Sentry.TraceService],
       multi: true,
     },
-    { provide: ErrorHandler, useClass: GlobalErrorHandler }, InAppBrowser, Network
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    InAppBrowser,
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

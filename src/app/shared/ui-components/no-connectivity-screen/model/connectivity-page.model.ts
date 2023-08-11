@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ConnectivityErrorType, ConnectivityScreenCsModel } from "./no-connectivity.cs.model";
+import { ConnectivityErrorType } from "./connectivity-error.enum";
+import { ConnectivityScreenCsModel } from "./no-connectivity.cs.model";
 
 export interface RetryHandler {
     onRetry(args?: any): Promise<boolean>;

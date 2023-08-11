@@ -10,7 +10,6 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { IonicModule, Platform } from '@ionic/angular';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
@@ -93,7 +92,6 @@ describe('DashboardPage', () => {
         { provide: LockDownService,  useValue: _lockDownService},
         NavigationFacadeSettingsService,
         AndroidPermissions,
-        Network,
         InAppBrowser,
       ],
       imports: [

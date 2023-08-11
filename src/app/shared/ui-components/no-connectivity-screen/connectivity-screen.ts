@@ -9,11 +9,13 @@ import { CommonService } from '@shared/services/common.service';
 import { ConnectionService } from '@shared/services/connection-service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { Settings, User } from 'src/app/app.global';
-import { ConnectivityErrorType, ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
+import { ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { NavigationService } from '@shared/services/navigation.service';
+import { ConnectivityErrorType } from './model/connectivity-error.enum';
+
 const EXECUTION_PRIORITY = 9999
 @Component({
   selector: 'st-connectivity-screen',
@@ -220,12 +222,7 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async setConnectionErrorType(): Promise<void> {
-    const isDeviceOffline = await this.connectionService.deviceOffline();
-    if (isDeviceOffline) {
-      this.errorType = ConnectivityErrorType.DEVICE_CONNECTION;
-    } else {
-      this.errorType = ConnectivityErrorType.SERVER_CONNECTION;
-    }
+    this.errorType = await this.connectionService.getOfflineStatus();
   }
 
   async institutionColor() {
