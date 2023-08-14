@@ -99,8 +99,8 @@ export class StDateTimePickerComponent implements OnInit {
     this.pickerColumns = this.createColumns();
   }
   async openPicker(): Promise<void> {
-    const back = await this.contentStrings.buttonBack.pipe(take(1)).toPromise();
-    const title = await this.contentStrings.labelSelectTime.pipe(take(1)).toPromise();
+    const back = await lastValueFrom(this.contentStrings.buttonBack.pipe(take(1)));
+    const title = await lastValueFrom(this.contentStrings.labelSelectTime.pipe(take(1)));
     this.monthArray = await lastValueFrom(
       this.contentStringsFacadeService
         .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
@@ -130,6 +130,9 @@ export class StDateTimePickerComponent implements OnInit {
 
     setTimeout(() => {
       const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
+      const hiddenConfirmButton = document.getElementsByClassName('picker-hidden-confirm')[0] as HTMLElement;
+      pageTitle.setAttribute('aria-hidden', 'true');
+      hiddenConfirmButton.setAttribute('aria-hidden', 'true');
       if (pageTitle) pageTitle.focus();
     }, TIMEOUTS.A11yFocus);
   }
