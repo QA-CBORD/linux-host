@@ -1,0 +1,5 @@
+export enum ConnectivityErrorType {
+  DEVICE_CONNECTION = 'DEVICE_CONNECTION',
+  SERVER_CONNECTION = 'SERVER_CONNECTION',
+  NONE = 'NONE'
+}
