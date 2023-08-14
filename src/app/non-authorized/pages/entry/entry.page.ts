@@ -55,10 +55,6 @@ export class EntryPage implements OnInit {
     this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
   }
 
-  checkLocation() {
-    // console.log('checkLocation');
-  }
-
   async changeEnv() {
     this.changeEnvClicks++;
     if (this.changeEnvClicks > 4) {

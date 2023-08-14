@@ -43,7 +43,7 @@
   @include font-family($font-nunito-heavy);
 
   --border-radius: 8px;
-  width: 150px;
+  width: auto;
   font-size: .7em;
   text-transform: uppercase;
 }

@@ -14,7 +14,6 @@ export class StNativeStartupPopoverComponent implements OnInit {
   contentString: { [key: string]: string };
 
   ngOnInit() {
-    // this.setContentStrings();
     this.initPopover();
   }
 
