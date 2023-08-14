@@ -29,7 +29,7 @@ import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-credential-metadata.page';
 import { PasswordChangeComponent } from '@shared/ui-components/change-password/password-change.component';
-import { first, map, switchMap, take } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take } from 'rxjs/operators';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { APP_PROFILES } from '@sections/dashboard/models';
@@ -114,9 +114,10 @@ const asyncCheckEverySetting = async function (validations: SettingItemValidatio
   for (const validation of validations) {
     checks.push(
       await firstValueFrom(
-        services.settings
-          .getSetting(validation.value as Settings.Setting)
-          .pipe(map(({ value }): boolean => parseInt(value) === 1))
+        services.settings.getSetting(validation.value as Settings.Setting).pipe(
+          map(({ value }): boolean => parseInt(value) === 1),
+          catchError(() => of(false))
+        )
       )
     );
   }
@@ -229,14 +230,15 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           component: UnlinkCredentialsComponent,
         },
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.CREDENTIALS_UNLINK_ENABLED }],
         supportProfiles: [APP_PROFILES.patron],
         checkIsVisible: async function (services: SettingsServices) {
-          // eslint-disable-next-line @typescript-eslint/no-this-alias
-          const self: SettingItemConfig = this;
-          // if is guest user return false.
-          if ((await isGuestUser(services)) || !(await isSupportedInCurrentProfile(services))(self)) return false;
           const mobileCredentialsUnlinkService = services.injector.get(MobileCredentialsUnlinkService);
-          return await firstValueFrom(mobileCredentialsUnlinkService.displayUnlinkButton$);
+          const checks = await Promise.all([
+            validateSettingEnabled.bind(this)(services),
+            firstValueFrom(mobileCredentialsUnlinkService.displayUnlinkButton$),
+          ]);
+          return checks.reduce((isEnabled, currentCheck) => isEnabled && currentCheck, true);
         },
       },
     ],

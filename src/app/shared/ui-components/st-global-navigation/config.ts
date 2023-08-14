@@ -75,7 +75,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.order,
     url: PATRON_NAVIGATION.ordering,
-    supportProfiles: [APP_PROFILES.patron]
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.housing,
@@ -99,7 +99,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     name: TILES_TITLE.explore,
     url: PATRON_NAVIGATION.explore,
-    supportProfiles: [APP_PROFILES.patron]
+    supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
   {
     id: TILES_ID.conversations,

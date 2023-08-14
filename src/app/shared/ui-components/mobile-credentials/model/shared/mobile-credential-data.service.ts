@@ -179,8 +179,6 @@ export class MobileCredentialDataService {
     /**
      * @params omniIDToken -> jwt token needed to authenticate with partner payments api on aws.
      * @params authBlob  -> authorization blob that contains ..... ???
-     * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
-     * this data is then used to get a credential for the patron/user.
      */
     const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
     // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
@@ -188,7 +186,6 @@ export class MobileCredentialDataService {
       switchMap(([omniIDJwtToken]) => {
         const headers = new HttpHeaders({
           Authorization: `Bearer ${omniIDJwtToken}`,
-          'X-API-Key': '5eFeBwKu6x6ihLEgX3YAS678xyvjctZHabO9PyE5',
         });
         const params = new HttpParams();
         // authBlob needs to be sent in request body.

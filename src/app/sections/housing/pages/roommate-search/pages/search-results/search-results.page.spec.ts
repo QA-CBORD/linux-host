@@ -49,6 +49,13 @@ const ROOMMATE = {
     preferenceKey: 60,
 };
 
+export const _alertController = {
+  create: jest.fn(() => ({
+    dismiss: () => ({ then: () => of({ role: BUTTON_TYPE.OKAY }) }),
+    present: jest.fn(() => of(true)),
+  })),
+};
+
 describe('SearchResultsPage', () => {
   let component: SearchResultsPage;
   let fixture: ComponentFixture<SearchResultsPage>;
@@ -80,13 +87,6 @@ describe('SearchResultsPage', () => {
 
   const navigationService = {
     detectChanges: jest.fn(),
-  };
-
-  const _alertController = {
-    create: jest.fn(() => ({
-      dismiss: () => ({ then: () => of({ role: BUTTON_TYPE.OKAY }) }),
-      present: jest.fn(() => of(true)),
-    })),
   };
 
   beforeEach(async () => {

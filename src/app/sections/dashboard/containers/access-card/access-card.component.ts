@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable, of, firstValueFrom } from 'rxjs';
 import { catchError, first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
@@ -18,7 +18,7 @@ import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.servi
   styleUrls: ['./access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccessCardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AccessCardComponent implements OnInit, AfterViewInit {
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
@@ -47,10 +47,6 @@ export class AccessCardComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly profileService: ProfileServiceFacade,
     private readonly barcodeFacadeService: BarcodeFacadeService
   ) {}
-
-  ngOnDestroy(): void {
-    this.mobileCredentialFacade.onDestroy();
-  }
 
   ngOnInit() {
     this.setHousingOnlyEnabled();

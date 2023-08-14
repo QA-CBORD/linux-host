@@ -71,33 +71,27 @@ export class AppleWalletCredentialState implements MobileCredentialState {
         //no watch, only phone
         this.appleWalletMessageImage = 'iphonex';
         this.cardStatusMessage = 'Added to iPhone';
-        // this.appleWalletMessageImageHidden = false;
         this.appleWalletButtonHidden = true;
       } else if (isIPhoneAlreadyProvisioned && isWatchPaired && !isIWatchAlreadyProvisioned) {
         this.appleWalletMessageImage = 'iphonex';
         this.cardStatusMessage = 'Added to iPhone';
-        // this.appleWalletMessageImageHidden =  false;
         this.appleWalletButtonHidden = watchCredStatus == AppleWalletCredentialStatus.Disabled;
       } else if (isWatchPaired && isIWatchAlreadyProvisioned && !isIPhoneAlreadyProvisioned) {
         this.appleWalletMessageImage = 'applewatch';
         this.cardStatusMessage = 'Added to Watch';
-        // this.appleWalletMessageImageHidden = false;
         this.appleWalletButtonHidden = iPhoneCredStatus == AppleWalletCredentialStatus.Disabled;
       } else if (isIPhoneAlreadyProvisioned && isIWatchAlreadyProvisioned && isWatchPaired) {
         this.cardStatusMessage = 'Added to iPhone and Watch';
         this.appleWalletMessageImage = 'iphonex_applewatch';
-        // this.appleWalletMessageImageHidden = false;
         this.appleWalletButtonHidden = true;
       } else {
         this.cardStatusMessage = 'Card not added to Wallet';
         this.appleWalletMessageImage = null;
-        // this.appleWalletMessageImageHidden = true;
         this.appleWalletButtonHidden = false;
       }
     } else {
       this.cardStatusMessage = null;
       this.appleWalletMessageImage = null;
-      // this.appleWalletMessageImageHidden = true;
       this.appleWalletButtonHidden = true;
       this.appleWalletEnabled = false;
     }
