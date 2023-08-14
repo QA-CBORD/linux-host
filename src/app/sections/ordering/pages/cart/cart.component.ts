@@ -41,7 +41,7 @@ import { LockDownService } from '@shared/index';
 import { ConnectionService } from '@shared/services/connection-service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, zip } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, lastValueFrom, zip } from 'rxjs';
 import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
@@ -388,9 +388,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private async getAccountIdFromApplePay(): Promise<string> {
     let accountId: string;
-    const orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
+    const orderData = await lastValueFrom(this.cartService.orderInfo$.pipe(first()));
 
-    Browser.addListener(browserState.FINISHED, () => {
+    Browser.addListener(browserState.FINISHED, async () => {
+      await this.loadingService.closeSpinner();
       this.placingOrder = false;
       this.cdRef.detectChanges();
       Browser.removeAllListeners();
