@@ -65,6 +65,7 @@ describe('UnlinkCredentialsComponent', () => {
     expect(mockToastService.showSuccessToast).toHaveBeenCalledWith({
       message: 'Some translated text',
       position: 'bottom',
+      duration: 5000,
     });
     expect(mockModalsService.dismiss).toHaveBeenCalled();
   });
