@@ -10,8 +10,8 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, ModalController } from '@ionic/angular';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, finalize, switchMap, take, tap } from 'rxjs/operators';
 import { ApplicationsService } from '../../applications/applications.service';
 import { HousingService } from '../../housing.service';
 import { StepperComponent } from '../../stepper/stepper.component';
@@ -55,7 +55,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private termService: TermsService,
     private formPaymentService: FormPaymentService,
     public applicationsService: ApplicationsService
-  ) {}
+  ) { }
 
   ngOnDestroy(): void {
     this.applicationsService.isView = false;
@@ -151,21 +151,25 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       return this.applicationsService.submitApplication(application);
     }
   }
-
-  private initApplicationDetails$() {
+  private initApplicationDetails$(): Observable<ApplicationDetails> {
     this.loadingService.showSpinner();
+
     return this.housingService.getApplicationDetails(this.getApplicationKey()).pipe(
-      tap((applicationDetails: ApplicationDetails) => {
+      switchMap((applicationDetails: ApplicationDetails) => {
         this.isSubmitted = applicationDetails.patronApplication?.status === ApplicationStatus.Submitted;
-        this.termService.termId$
-          .pipe(
-            switchMap(termId => this.housingService.getRequestedRommate(termId)),
-            take(1)
-          )
-          .subscribe(() => this.loadingService.closeSpinner());
-        if (this.canRequestRoommate(applicationDetails)) {
-          return this.requestingRoommate();
-        }
+
+        return this.termService.termId$.pipe(
+          take(1),
+          switchMap((termId) => {
+            this.housingService.getRequestedRommate(termId)
+            return of(applicationDetails)
+          }),
+          catchError(error => {
+            this.loadingService.closeSpinner();
+            return throwError(error);
+          }),
+          finalize(() => this.loadingService.closeSpinner())
+        );
       }),
       catchError(error => {
         this.loadingService.closeSpinner();
@@ -173,6 +177,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       })
     );
   }
+
 
   private canRequestRoommate(applicationDetails: ApplicationDetails) {
     return !this.applicationsService.isView && (!this.isSubmitted || applicationDetails.applicationDefinition.canEdit) && this.applicationsStateService.requestingRoommate != null;

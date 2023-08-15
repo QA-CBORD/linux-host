@@ -5,7 +5,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ApplicationsStateService } from '@sections/housing/applications/applications-state.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { RequestedRoommatesComponent } from './requested-roommates.component';
+import { OptionsName, RequestedRoommatesComponent } from './requested-roommates.component';
 
 describe('RequestedRoommatesComponent', () => {
   let component: RequestedRoommatesComponent;
@@ -57,5 +57,12 @@ describe('RequestedRoommatesComponent', () => {
 
   it('can load instance', () => {
     expect(component).toBeTruthy();
+  });
+  describe('OptionsName enum', () => {
+    it('should match the expected values', () => {
+      expect(OptionsName.PreferredName).toBe('preferredNameLast');
+      expect(OptionsName.FullName).toBe('fullName');
+      expect(OptionsName.FullNameDOB).toBe('fullNameDOB');
+    });
   });
 });

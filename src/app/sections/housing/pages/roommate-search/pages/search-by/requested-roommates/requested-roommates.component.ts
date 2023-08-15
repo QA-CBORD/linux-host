@@ -13,7 +13,7 @@ import { of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
 export enum OptionsName {
-  PreferredName = 'preferredName',
+  PreferredName = 'preferredNameLast',
   FullName = 'fullName',
   FullNameDOB = 'fullNameDOB',
 }
@@ -34,7 +34,7 @@ export class RequestedRoommatesComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private _termService: TermsService,
     private _housingService: HousingService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this._applicationStateService.roommateSearchOptions.pipe(take(1)).subscribe(options => {
