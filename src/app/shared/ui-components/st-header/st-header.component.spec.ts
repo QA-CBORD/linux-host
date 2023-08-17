@@ -4,6 +4,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { StHeaderComponent } from './st-header.component';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { Storage } from '@ionic/storage';
+import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 const modalController = {
   create: jest.fn(),
@@ -25,6 +27,7 @@ describe('StHeaderComponent', () => {
         { provide: ModalController, useValue: modalController },
         { provide: PopoverController, useValue: popoverCtrl },
         { provide: NativeProvider, useValue: nativeProvider },
+        { provide: Storage , useClass: MockStorageService }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

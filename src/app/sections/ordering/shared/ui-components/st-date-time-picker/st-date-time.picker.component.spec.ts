@@ -6,6 +6,9 @@ import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { OrderingService } from "@sections/ordering/services/ordering.service";
 import { AndroidPermissions } from "@awesome-cordova-plugins/android-permissions/ngx";
 import { IonPicker } from "@ionic/angular";
+import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
+import { Storage } from '@ionic/storage';
+
 
 
 describe('StDateTimePicker', () => {
@@ -27,7 +30,10 @@ describe('StDateTimePicker', () => {
                     StButtonModule
                 ],
                 schemas: [CUSTOM_ELEMENTS_SCHEMA],
-                providers: [OrderingService, AndroidPermissions],
+                providers: [
+                    OrderingService, 
+                    AndroidPermissions,
+                    { provide: Storage, useClass: MockStorageService }],
             }).compileComponents();
         })
     );

@@ -10,16 +10,14 @@ import { ROLES } from 'src/app/app.global';
 describe('EntryPage', () => {
   let component: EntryPage;
   let fixture: ComponentFixture<EntryPage>;
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [EntryPage],
-        imports: [...CoreTestingModules, AppRoutingModule],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        providers: [...CoreProviders],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [EntryPage],
+      imports: [...CoreTestingModules, AppRoutingModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [...CoreProviders],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntryPage);

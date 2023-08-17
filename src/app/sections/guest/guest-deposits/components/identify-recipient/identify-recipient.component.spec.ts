@@ -4,7 +4,6 @@ import { IdentifyRecipientComponent } from './identify-recipient.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { imports } from '@sections/housing/actions/actions.module';
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
@@ -12,6 +11,8 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { Storage } from '@ionic/storage';
+import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 describe('IdentifyRecipientComponent', () => {
   let component: IdentifyRecipientComponent;
@@ -33,7 +34,10 @@ describe('IdentifyRecipientComponent', () => {
         StButtonModule,
         FocusNextModule,
       ],
-      providers: [{ provide: ActivatedRoute, useFactory: activatedRouteStub }],
+      providers: [
+        { provide: ActivatedRoute, useFactory: activatedRouteStub },
+        { provide: Storage, useClass: MockStorageService },
+      ],
     }).compileComponents();
   });
 

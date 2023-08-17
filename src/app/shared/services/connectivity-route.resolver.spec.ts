@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ConnectivityPageInfo } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
-import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
 import { of } from 'rxjs';
 import { CommonService } from './common.service';
 import { ConnectionService } from './connection-service';
 import { ConnectivityPageResolver } from './connectivity-route.resolver';
+import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/connectivity-error.enum';
 
 describe(ConnectivityPageResolver, () => {
   let service: ConnectivityPageResolver;

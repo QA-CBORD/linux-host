@@ -15,6 +15,8 @@ import { CreditCardService } from '../credit-card.service';
 import { CardCs } from './card-list/credit-card-list.component';
 import { StCreditCardListModule } from './card-list/credit-card-list.module';
 import { CreditCardMgmtComponent } from './credit-card-mgmt.component';
+import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
+import { Storage } from '@ionic/storage';
 
 describe('CreditCardMgmtComponent', () => {
   let fixture: ComponentFixture<CreditCardMgmtComponent>;
@@ -82,6 +84,7 @@ describe('CreditCardMgmtComponent', () => {
         { provide: ToastService, useValue: toastService },
         { provide: AlertController, useValue: alertCtrl },
         { provide: PopoverController, useValue: popoverCtrl },
+        { provide: Storage, useClass: MockStorageService }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

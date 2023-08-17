@@ -7,6 +7,8 @@ import { AuthFacadeService } from '../auth/auth.facade.service';
 import { MockAuthService } from 'src/app/testing/mock-services';
 import { EnvironmentFacadeService } from './environment.facade.service';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
+import { Storage } from '@ionic/storage';
+import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 describe('EnvironmentFacadeService', () => {
   let service: EnvironmentFacadeService;
@@ -16,6 +18,10 @@ describe('EnvironmentFacadeService', () => {
 
     TestBed.configureTestingModule({
       imports: [...CoreTestingModules],
+      providers: [
+        { provide: Storage , useClass: MockStorageService }
+      ]
+
     });
     service = TestBed.inject(EnvironmentFacadeService);
   });
