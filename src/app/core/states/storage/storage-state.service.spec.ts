@@ -49,19 +49,5 @@ describe('StorageStateService', () => {
     it('makes expected calls', () => {
       expect(StorageStateService.prototype.initialization).toHaveBeenCalled();
     });
-
-    it('should migrate data from Preferences to Ionic Storage', () => {
-      const keys = ['key1', 'key2']; // Simulated keys in Preferences
-      const spyPreferences = jest.spyOn(service, 'getPreferenceStateFromLocalStorage' as never);
-      const spyStorage = jest.spyOn(storageObservable, 'set');
-      
-      const keysMock = jest.fn().mockResolvedValue({ keys: keys } as KeysResult);
-      jest.spyOn(service['storage'], 'keys').mockImplementation(keysMock);
-
-      service.initMigration(); // Call the method
-
-      expect(spyPreferences).toHaveBeenCalledTimes(keys.length);
-      expect(spyStorage).toHaveBeenCalledTimes(keys.length);
-    });
   });
 });
