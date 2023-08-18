@@ -5,7 +5,6 @@ import { AccessCardService } from './services/access-card.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 
 describe("AccessCardComponent", () => {
@@ -21,7 +20,6 @@ describe("AccessCardComponent", () => {
         { provide: PopoverController, useValue: {} },
         MobileCredentialFacade,
         AndroidPermissions,
-        Network,
         AccessCardService
 
       ],

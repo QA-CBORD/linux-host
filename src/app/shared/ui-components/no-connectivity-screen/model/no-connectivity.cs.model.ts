@@ -1,15 +1,11 @@
 import { ContentStringModel, NullableContent } from "@shared/model/content-strings/content-string-models";
 import { ConnectivityScreentDefaultStrings } from "@shared/model/content-strings/default-strings";
+import { ConnectivityErrorType } from "./connectivity-error.enum";
 
 export class ConnectivityScreenCsModel extends ContentStringModel {
     constructor(contentWrapper: NullableContent) {
         super(contentWrapper.getConfig(), ConnectivityScreentDefaultStrings);
     }
-}
-
-export enum ConnectivityErrorType {
-    DEVICE_CONNECTION = 'DEVICE_CONNECTION',
-    SERVER_CONNECTION = 'SERVER_CONNECTION'
 }
 
 export interface ConnectivityPageConfig {
@@ -27,7 +23,12 @@ export const connectivityPageConfigurations: ConfigType = {
         mainImg: '/assets/images/Search_Connection_Undraw.svg',
         getContent: (csModel) => csModel.content
     },
-
+    // Temp entry until we implement handling device or server coming online
+    [ConnectivityErrorType.NONE]: {
+        titleIcon: '/assets/images/wifi-img.svg',
+        mainImg: '/assets/images/Search_Connection_Undraw.svg',
+        getContent: (csModel) => csModel.content
+    },
     [ConnectivityErrorType.SERVER_CONNECTION]: {
         titleIcon: '/assets/images/exclamation.svg',
         mainImg: '/assets/images/server-error.svg',

@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Platform } from '@ionic/angular';
 import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
-import { mapTo, Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { ConnectionService } from './connection-service';
+import { Network } from '@capacitor/network';
 
 describe(ConnectionService, () => {
   let service: ConnectionService;
@@ -59,12 +59,7 @@ describe(ConnectionService, () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get the network type', () => {
-    expect(service.getNetworkType()).toEqual(_network.type);
-  });
-
   it('should check network status', () => {
-    Object.defineProperty(service, 'online$', new Observable(observer => observer.next(true)).pipe(mapTo(true)));
     expect(service.networkStatus(300)).toBeTruthy();
     expect(service.networkStatus(400)).toBeTruthy();
   });

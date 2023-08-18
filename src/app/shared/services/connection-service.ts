@@ -1,65 +1,87 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, fromEvent, merge, of, Subject, firstValueFrom } from 'rxjs';
-import { map, mapTo, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { Observable, of, Subject, firstValueFrom, BehaviorSubject } from 'rxjs';
+import { map, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE, TIME_OUT_DURATION } from '@shared/model/generic-constants';
+import {
+  CONNECTION_TIME_OUT_MESSAGE,
+  NO_INTERNET_STATUS_CODE,
+  TIME_OUT_DURATION,
+} from '@shared/model/generic-constants';
 import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
+import { Network } from '@capacitor/network';
+import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/connectivity-error.enum';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConnectionService {
-
-
   modalRefreshHandle: Subject<boolean> = new Subject();
   retrySubject: Subject<RetryHandler> = new Subject();
-  private online$: Observable<boolean> = undefined;
+  private readonly networkStatusChangeSubject = new BehaviorSubject<boolean>(true);
+  private networkStatusChange$ = this.networkStatusChangeSubject.asObservable();
 
-  constructor(private http: HttpClient,
-    private environmentFacade: EnvironmentFacadeService,
-    private network: Network,
-    public platform: Platform) {
-
-    this.online$ = new Observable(observer => observer.next(true)).pipe(mapTo(true));
-    if (this.platform.is('capacitor')) {
-      // on Device
-      this.online$ = merge(
-        this.network.onConnect().pipe(mapTo(true)),
-        this.network.onDisconnect().pipe(mapTo(false))
-      );
-    } else {
-      // on Browser
-      this.online$ = merge(
-        of(navigator.onLine),
-        fromEvent(window, 'online').pipe(mapTo(true)),
-        fromEvent(window, 'offline').pipe(mapTo(false))
-      );
-    }
+  get online$() {
+    return this.networkStatusChange$;
   }
 
-  public getNetworkType(): string {
-    return this.network.type;
+  constructor(
+    private http: HttpClient,
+    private environmentFacade: EnvironmentFacadeService,
+    public platform: Platform
+  ) {
+    this.initNetworkStatus();
+    Network.addListener('networkStatusChange', status => {
+      this.networkStatusChangeSubject.next(status.connected);
+    });
+  }
+
+  private async initNetworkStatus() {
+    const status = await Network.getStatus();
+    this.networkStatusChangeSubject.next(status.connected);
   }
 
   public networkStatus(time = 300): Observable<boolean> {
-    return this.online$.pipe(debounceTime(time), switchMap(async () => !(await this.deviceOffline())));
+    return this.online$.pipe(
+      debounceTime(time),
+      switchMap(async () => !(await this.deviceOffline()))
+    );
   }
 
   async deviceOffline(): Promise<boolean> {
     if (!navigator.onLine) return true;
 
-    return await firstValueFrom(this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
-      timeout(TIME_OUT_DURATION),
-      map(res => this.isConnectionIssues({ message: res.statusText, status: res.status })),
-      catchError((error) => of(this.isConnectionIssues(error))))
+    return await firstValueFrom(
+      this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
+        timeout(TIME_OUT_DURATION),
+        map(res => this.isConnectionIssues({ message: res.statusText, status: res.status })),
+        catchError(error => of(this.isConnectionIssues(error)))
+      )
     );
   }
 
+  async getOfflineStatus(): Promise<ConnectivityErrorType> {
+    const status = await Network.getStatus();
+    if (!status.connected) {
+      return ConnectivityErrorType.DEVICE_CONNECTION;
+    }
+
+    const servicesOffline = await firstValueFrom(
+      this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
+        timeout(TIME_OUT_DURATION),
+        map(res => this.isConnectionIssues({ message: res.statusText, status: res.status })),
+        catchError(error => of(this.isConnectionIssues(error)))
+      )
+    );
+    if (servicesOffline) {
+      return ConnectivityErrorType.SERVER_CONNECTION;
+    }
+
+    return ConnectivityErrorType.NONE;
+  }
 
   isConnectionIssues({ message, status }): boolean {
-    return (CONNECTION_TIME_OUT_MESSAGE.test(message)) || status !== null && (Number(status) === NO_INTERNET_STATUS_CODE);
+    return CONNECTION_TIME_OUT_MESSAGE.test(message) || (status !== null && Number(status) === NO_INTERNET_STATUS_CODE);
   }
 }

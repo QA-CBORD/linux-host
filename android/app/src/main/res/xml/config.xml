@@ -30,10 +30,6 @@
     <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser"/>
   </feature>
 
-  <feature name="NetworkStatus">
-    <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager"/>
-  </feature>
-
   <feature name="CDVOrientation">
     <param name="android-package" value="cordova.plugins.screenorientation.CDVOrientation"/>
   </feature>

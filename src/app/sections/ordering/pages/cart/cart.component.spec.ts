@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CartComponent } from './cart.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
@@ -17,8 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { of } from 'rxjs';
 import { BuildingInfo, MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from '@sections/ordering/components';
-import { MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { FORM_CONTROL_NAMES, OrderDetailsFormData } from '@sections/ordering/shared';
 import { UserAccount } from '@core/model/account/account.model';
@@ -66,7 +65,9 @@ const _orderingService = {};
 const _userFacadeService = {
   isApplePayEnabled$: jest.fn(),
 };
-const _externalPaymentService = {};
+const _externalPaymentService = {
+  payWithApplePay: jest.fn().mockReturnValue(Promise.resolve({ success: true, amount:'10' })),
+};
 
 const _routingService = {};
 const _connectionService = {
@@ -154,4 +155,11 @@ describe('CartComponent', () => {
     expect(phoneSpy).toHaveBeenCalled();
 
   });
+  it('should call closeSpinner after close apple pay browser', fakeAsync(async () => {
+    const spinnerSpy = jest.spyOn(_loadingService, 'showSpinner');
+
+    await component['getAccountIdFromApplePay']();
+
+    expect(spinnerSpy).toHaveBeenCalled();
+  }));
 });

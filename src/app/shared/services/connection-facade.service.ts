@@ -7,7 +7,8 @@ import { ModalController } from '@ionic/angular';
 import { CommonService } from './common.service';
 import { ContentStringApi, ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { ConnectivityScreentDefaultStrings } from '@shared/model/content-strings/default-strings';
-import { ConnectivityErrorType, ConnectivityScreenCsModel } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
+import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/connectivity-error.enum';
+import { ConnectivityScreenCsModel } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
 import { firstValueFrom } from 'rxjs';
 import { ConnectivityScreen } from '@shared/ui-components/no-connectivity-screen/connectivity-screen';
 import { NavigationService } from './navigation.service';
@@ -73,15 +74,14 @@ export class ConnectionFacadeService {
 
   private async showConnectionIssuePageAsModal(retryHandler: RetryHandler, isVaultLocked: boolean) {
     this.loadingService.showSpinner();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let csModel: ConnectivityScreenCsModel = {} as any;
-    let errorType: ConnectivityErrorType;
+    let csModel: ConnectivityScreenCsModel;
     let freshContentStringsLoaded = false;
-    if ((await this.connectionService.deviceOffline())) {
-      errorType = ConnectivityErrorType.DEVICE_CONNECTION;
-      csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({ params: ConnectivityScreentDefaultStrings });
+    const errorType = await this.connectionService.getOfflineStatus();
+    if (errorType === ConnectivityErrorType.DEVICE_CONNECTION) {
+      csModel = ContentStringApi[ContentStringCategory.noConnectivity].build({
+        params: ConnectivityScreentDefaultStrings,
+      });
     } else {
-      errorType = ConnectivityErrorType.SERVER_CONNECTION;
       csModel = await firstValueFrom(this.commonService.loadContentString(ContentStringCategory.noConnectivity));
       freshContentStringsLoaded = true;
     }
