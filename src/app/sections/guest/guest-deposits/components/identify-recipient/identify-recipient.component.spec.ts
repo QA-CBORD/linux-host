@@ -11,8 +11,6 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 describe('IdentifyRecipientComponent', () => {
   let component: IdentifyRecipientComponent;
@@ -36,7 +34,6 @@ describe('IdentifyRecipientComponent', () => {
       ],
       providers: [
         { provide: ActivatedRoute, useFactory: activatedRouteStub },
-        { provide: Storage, useClass: MockStorageService },
       ],
     }).compileComponents();
   });

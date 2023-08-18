@@ -5,8 +5,6 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { popoverCtrl } from '../pages/form-payment/form-payment.component.spec';
 import { EnvironmentType } from '@core/model/environment';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
-import { Storage } from '@ionic/storage';
 
 const _environmentFacadeService = {
   getHousingAPIURL: jest.fn(),
@@ -33,7 +31,6 @@ describe('RoomsService', () => {
         { provide: ModalController, useValue: modalController },
         { provide: PopoverController, useValue: popoverCtrl },
         { provide: EnvironmentFacadeService, useValue: _environmentFacadeService },
-        { provide: Storage, useClass: MockStorageService },
       ],
     });
     service = TestBed.inject(RoomsService);

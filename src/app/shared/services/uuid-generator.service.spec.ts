@@ -1,21 +1,13 @@
 import * as uuid from 'uuid';
 jest.mock('uuid');
 import { UuidGeneratorService } from './uuid-generator.service';
-import { Storage } from '@ionic/storage';
 import { TestBed } from '@angular/core/testing';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 describe(UuidGeneratorService, () => {
   let service: UuidGeneratorService;
   
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: Storage , useClass: MockStorageService }
-      ]
-
-    });
     service = TestBed.inject(UuidGeneratorService);
   });
 

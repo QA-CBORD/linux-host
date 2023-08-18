@@ -33,8 +33,6 @@ import { TileConfigFacadeService } from './tile-config-facade.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService } from '@shared/services';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 const _platform = {
   is: jest.fn(),
@@ -91,7 +89,6 @@ describe('DashboardPage', () => {
         { provide: UserFacadeService, useValue: _userFacadeService },
         { provide: ModalsService, useValue: _modalService },
         { provide: LockDownService,  useValue: _lockDownService},
-        { provide: Storage, useClass: MockStorageService },
         NavigationFacadeSettingsService,
         AndroidPermissions,
         Network,

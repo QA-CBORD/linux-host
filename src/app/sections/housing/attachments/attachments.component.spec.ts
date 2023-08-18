@@ -9,8 +9,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { statusBarForm } from '../../../../app/app.global';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularDelegate, ModalController, PopoverController } from '@ionic/angular';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 describe('AttachmentsComponent', () => {
   let component: AttachmentsComponent;
@@ -46,8 +44,6 @@ describe('AttachmentsComponent', () => {
             termId$: of('termId1'),
           },
         },
-        { provide: Storage, useClass: MockStorageService },
-
         ModalController,
         AngularDelegate,
         PopoverController,

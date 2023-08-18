@@ -10,8 +10,6 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
-import { Storage } from '@ionic/storage';
 
 describe('OrderOptionsActionSheet', () => {
   let component: OrderOptionsActionSheetComponent;
@@ -29,9 +27,7 @@ describe('OrderOptionsActionSheet', () => {
           AddressHeaderFormatPipeModule,
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        providers: [AccessibilityService, AddressHeaderFormatPipe, AndroidPermissions, OrderingService,
-          { provide: Storage, useClass: MockStorageService }
-        ],
+        providers: [AccessibilityService, AddressHeaderFormatPipe, AndroidPermissions, OrderingService],
       }).compileComponents();
     })
   );

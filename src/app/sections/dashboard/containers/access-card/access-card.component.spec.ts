@@ -7,8 +7,6 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Network } from '@awesome-cordova-plugins/network/ngx';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 describe("AccessCardComponent", () => {
   let component: AccessCardComponent;
@@ -21,7 +19,6 @@ describe("AccessCardComponent", () => {
       providers: [
         { provide: ModalController, useValue: {} },
         { provide: PopoverController, useValue: {} },
-        { provide: Storage , useClass: MockStorageService },
         MobileCredentialFacade,
         AndroidPermissions,
         Network,

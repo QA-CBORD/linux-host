@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state.service.mock';
 
 export let sessionFacadeServiceMock: Partial<SessionFacadeService>;
 export const platformMock: Partial<Platform> = { is: jest.fn(), pause: new Subject() };
@@ -19,6 +17,4 @@ export const CoreProviders = [
   {
     provide: Router,
     useValue: routerMock,
-  },
-  { provide: Storage, useClass: MockStorageService }
-];
+  }];

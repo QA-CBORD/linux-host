@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ExtendableStateManager, StorageEntity } from '@core/classes/extendable-state-manager';
-import { BehaviorSubject, Observable, lastValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map, skipWhile } from 'rxjs/operators';
-import { Platform } from '@ionic/angular';
 import { Preferences as Storage } from '@capacitor/preferences';
-
-import { ObservableStorageService } from '@shared/services';
+import { Platform } from '@ionic/angular';
 @Injectable({
   providedIn: 'root',
 })
@@ -19,25 +17,17 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   private readonly storageKey: string = 'cbord_gcs';
   private readonly storage = Storage;
-
   private isStateInitialized = false;
 
-  constructor(private readonly platform: Platform, private readonly storageObservable: ObservableStorageService) {
+  constructor(private readonly platform: Platform) {
     super();
     this.initialization();
-    this.initMigration(); // <--- TODO: remove this after 4.25 version.
   }
 
   initialization() {
+    Storage.migrate(); //TODO: try to use Storage.removeOld() when all users migrates to newversion.
     this.initState();
     this.initSaveStorageListeners();
-  }
-
-  async initMigration () {
-    const keys  = await this.storage.keys();
-    keys.keys.map(async (key: string) => {
-      this.storageObservable.set(key, await this.getPreferenceStateFromLocalStorage(key));
-    })
   }
 
   getStateEntityByKey$<T>(key: string): Observable<StorageEntity<T>> {
@@ -100,25 +90,13 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   protected async setStateToStorage(): Promise<void> {
-    this.storageObservable.set(this.storageKey, this.convertIntoStr(this.state));
+    const storageObject = { key: this.storageKey, value: this.convertIntoStr(this.state) };
+    await this.storage.set(storageObject);
     this.dispatchStateChanges();
   }
 
-  protected async getPreferenceStateFromLocalStorage(key: string): Promise<WebStorageStateEntity> {
-    const { value } = await this.storage.get({ key });
-    try {
-      const state = this.convertIntoObject(value);
-      if (typeof state === 'object' && state !== null && state.__proto__ === Object.prototype) {
-        return state;
-      }
-      return {};
-    } catch (e) {
-      return {};
-    }
-  }
-
   protected async getStateFromLocalStorage(): Promise<WebStorageStateEntity> {
-    const value = await lastValueFrom(this.storageObservable.get(this.storageKey));
+    const { value } = await this.storage.get({ key: this.storageKey });
     try {
       const state = this.convertIntoObject(value);
       if (typeof state === 'object' && state !== null && state.__proto__ === Object.prototype) {
@@ -134,22 +112,11 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this._state$.next({ ...this.state });
   }
 
-  async clearPreferenceStorage(): Promise<void> {
-    const state = await this.getStateFromLocalStorage();
-    const tempData: Array<{ key: string; data: StorageEntity }> = [];
-    Object.entries(state).forEach(([key, value]) => value.permanent && tempData.push({ key: key, data: value }));
-    await this.storage.clear();
-    tempData.forEach(({ key, data }) =>
-      this.updateStateEntity(key, data.value, { highPriorityKey: true, ttl: data.timeToLive, keepOnLogout: true })
-    );
-  }
-
-
   async clearStorage(): Promise<void> {
     const state = await this.getStateFromLocalStorage();
     const tempData: Array<{ key: string; data: StorageEntity }> = [];
     Object.entries(state).forEach(([key, value]) => value.permanent && tempData.push({ key: key, data: value }));
-    await this.storageObservable.clear();
+    await this.storage.clear();
     tempData.forEach(({ key, data }) =>
       this.updateStateEntity(key, data.value, { highPriorityKey: true, ttl: data.timeToLive, keepOnLogout: true })
     );
