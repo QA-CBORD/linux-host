@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IonContent, ModalController } from '@ionic/angular';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, finalize, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, finalize, switchMap, take } from 'rxjs/operators';
 import { ApplicationsService } from '../../applications/applications.service';
 import { HousingService } from '../../housing.service';
 import { StepperComponent } from '../../stepper/stepper.component';
