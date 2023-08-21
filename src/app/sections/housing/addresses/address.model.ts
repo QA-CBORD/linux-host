@@ -44,18 +44,17 @@ export class PatronAddress implements PatronAddressOptions {
         if (options == null || typeof options !== 'object') {
         options = {} as PatronAddressOptions;
         }
-
-        this.addressKey = Number(options.addressKey);
-        this.patronId = Number(options.patronId);
-        this.addrTypeKey = Number(options.addrTypeKey);
-        this.addrName = String(options.addrName);
-        this.addrLn1 = String(options.addrLn1);
-        this.addrLn2 = String(options.addrLn2);
-        this.city = String(options.city);
-        this.state = String(options.state);
-        this.zip = String(options.zip);
-        this.country = String(options.country);
-        this.addrPhone = String(options.addrPhone);
-        this.email = String(options.email);
+        this.addressKey = Number(options.addressKey || '');
+        this.patronId = Number(options.patronId || '');
+        this.addrTypeKey = Number(options.addrTypeKey || '');
+        this.addrName = String(options.addrName || '');
+        this.addrLn1 = String(options.addrLn1 || '');
+        this.addrLn2 = String(options.addrLn2 || '');
+        this.city = String(options.city || '');
+        this.state = String(options.state || '');
+        this.zip = String(options.zip || '');
+        this.country = String(options.country || '');
+        this.addrPhone = String(options.addrPhone || '');
+        this.email = String(options.email || '');
     }
 }
