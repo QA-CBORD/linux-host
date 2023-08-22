@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ExtendableStateManager, StorageEntity } from '@core/classes/extendable-state-manager';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, lastValueFrom } from 'rxjs';
 import { distinctUntilChanged, map, skipWhile } from 'rxjs/operators';
 import { Preferences as Storage } from '@capacitor/preferences';
 import { Platform } from '@ionic/angular';
+import { ObservableSessionStorageService, ObservableStorage, ObservableStorageService } from '@shared/services';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,9 +19,20 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   private readonly storageKey: string = 'cbord_gcs';
   private readonly storage = Storage;
   private isStateInitialized = false;
+  private _observableStorage: ObservableStorage;
+  private useIonicStorage = true;
 
-  constructor(private readonly platform: Platform) {
+  constructor(
+    private readonly platform: Platform,
+    private _observableStorageService: ObservableStorageService,
+    private _observableSessionStorageService: ObservableSessionStorageService
+  ) {
     super();
+
+    this._observableStorage = this.platform.is('desktop')
+      ? this._observableSessionStorageService
+      : this._observableStorageService;
+
     this.initialization();
   }
 
@@ -79,19 +91,23 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this.dispatchStateChanges();
   }
 
-  protected async getStateFromStorage(): Promise<void> {
-    this.state = await this.getStateFromLocalStorage();
-  }
-
   protected async initState(): Promise<void> {
+    // Uncomment next line after v4.25
+    // this.state = await this.getStateFromIonicStorage();
+    // Remove next line after v4.25
     this.state = await this.getStateFromLocalStorage();
     this.isStateInitialized = true;
     await this.setStateToStorage();
   }
 
   protected async setStateToStorage(): Promise<void> {
-    const storageObject = { key: this.storageKey, value: this.convertIntoStr(this.state) };
-    await this.storage.set(storageObject);
+    if (this.useIonicStorage) {
+      this._observableStorage.set(this.storageKey, this.convertIntoStr(this.state));
+    } else {
+      const storageObject = { key: this.storageKey, value: this.convertIntoStr(this.state) };
+      await this.storage.set(storageObject);
+    }
+
     this.dispatchStateChanges();
   }
 
@@ -108,15 +124,35 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     }
   }
 
+  protected async getStateFromIonicStorage(): Promise<WebStorageStateEntity> {
+    const value = await lastValueFrom(this._observableStorage.get(this.storageKey));
+    try {
+      const state = this.convertIntoObject(value);
+      if (typeof state === 'object' && state !== null && state.__proto__ === Object.prototype) {
+        return state;
+      }
+      return {};
+    } catch (e) {
+      return {};
+    }
+  }
+
   protected dispatchStateChanges(): void {
     this._state$.next({ ...this.state });
   }
 
   async clearStorage(): Promise<void> {
-    const state = await this.getStateFromLocalStorage();
+    const state = this.useIonicStorage ? await this.getStateFromIonicStorage() : await this.getStateFromLocalStorage();
+
     const tempData: Array<{ key: string; data: StorageEntity }> = [];
     Object.entries(state).forEach(([key, value]) => value.permanent && tempData.push({ key: key, data: value }));
-    await this.storage.clear();
+
+    if (this.useIonicStorage) {
+      await lastValueFrom(this._observableStorage.clear());
+    } else {
+      await this.storage.clear();
+    }
+
     tempData.forEach(({ key, data }) =>
       this.updateStateEntity(key, data.value, { highPriorityKey: true, ttl: data.timeToLive, keepOnLogout: true })
     );

@@ -7,6 +7,7 @@ import { AuthFacadeService } from '../auth/auth.facade.service';
 import { MockAuthService } from 'src/app/testing/mock-services';
 import { EnvironmentFacadeService } from './environment.facade.service';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
+import { CoreProviders } from 'src/app/testing/core-providers';
 
 describe('EnvironmentFacadeService', () => {
   let service: EnvironmentFacadeService;
@@ -16,6 +17,7 @@ describe('EnvironmentFacadeService', () => {
 
     TestBed.configureTestingModule({
       imports: [...CoreTestingModules],
+      providers: [...CoreProviders]
     });
     service = TestBed.inject(EnvironmentFacadeService);
   });
