@@ -16,9 +16,11 @@ describe('AttachmentsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CommonModule, HttpClientModule ,RouterTestingModule.withRoutes(
-        [{ path: 'patron/housing/attachments/test', component: AttachmentsComponent }]
-      )],
+      imports: [
+        CommonModule,
+        HttpClientModule,
+        RouterTestingModule.withRoutes([{ path: 'patron/housing/attachments/test', component: AttachmentsComponent }]),
+      ],
       declarations: [AttachmentsComponent],
       providers: [
         {
@@ -26,30 +28,27 @@ describe('AttachmentsComponent', () => {
           useValue: {
             snapshot: {
               params: {
-                checkIn: true
-              }
+                checkIn: true,
+              },
             },
-            navigateByUrl: jest.fn()
-          }
+            navigateByUrl: jest.fn(),
+          },
         },
         {
           provide: AttachmentStateService,
-          userValue: {
-
-          }
+          userValue: {},
         },
         {
           provide: TermsService,
           userValue: {
-            termId$: of("termId1")
-          }
+            termId$: of('termId1'),
+          },
         },
         ModalController,
         AngularDelegate,
-        PopoverController
-      ]
-    })
-      .compileComponents();
+        PopoverController,
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -64,15 +63,15 @@ describe('AttachmentsComponent', () => {
 
   describe('ngOnInit', () => {
     it('should call _initTermsSubscription', () => {
-      const spy = jest.spyOn(component as any, "_initTermsSubscription");
+      const spy = jest.spyOn(component as any, '_initTermsSubscription');
       component.ngOnInit();
       expect(spy).toHaveBeenCalled();
     });
   });
 
   describe('_initTermsSubscription', () => {
-    it('should set urlEditForm', (done) => {
-      component._termService.termId$ = of("test") as any;
+    it('should set urlEditForm', done => {
+      component._termService.termId$ = of('test') as any;
       component['_initTermsSubscription']();
       done();
       expect(component.urlEditForm).toBe(`/patron/housing/attachment/test/`);
@@ -81,7 +80,7 @@ describe('AttachmentsComponent', () => {
 
   describe('ngOnDestroy', () => {
     it('should call destroy', () => {
-      const destroy = jest.spyOn(component['_subscription'], "unsubscribe");
+      const destroy = jest.spyOn(component['_subscription'], 'unsubscribe');
       component.ngOnDestroy();
       expect(destroy).toHaveBeenCalled();
     });
@@ -101,16 +100,16 @@ describe('AttachmentsComponent', () => {
 
   describe('createAttachmentDefault', () => {
     it('should navigate using router', () => {
-      const navigate = jest.spyOn(component['router'], "navigateByUrl");
-      component.createAttachmentDefault("test");
-      expect(navigate).toHaveBeenCalledWith(`/patron/housing/attachments/${"test"}`)
+      const navigate = jest.spyOn(component['router'], 'navigateByUrl');
+      component.createAttachmentDefault('test');
+      expect(navigate).toHaveBeenCalledWith(`/patron/housing/attachments/${'test'}`);
     });
   });
 
   describe('getPath', () => {
     it('should return path', () => {
       const result = component.getPath(10);
-      expect(result).toBe(`/patron/housing/attachments/${10}`)
+      expect(result).toBe(`/patron/housing/attachments/${10}`);
     });
   });
 });

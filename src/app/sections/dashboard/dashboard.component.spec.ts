@@ -32,8 +32,6 @@ import { TileConfigFacadeService } from './tile-config-facade.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService } from '@shared/services';
-import { TILES_ID } from './dashboard.config';
-import { TileWrapperConfig } from './models';
 
 const _platform = {
   is: jest.fn(),

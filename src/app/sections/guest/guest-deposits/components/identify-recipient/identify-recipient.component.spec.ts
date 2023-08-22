@@ -4,7 +4,6 @@ import { IdentifyRecipientComponent } from './identify-recipient.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { imports } from '@sections/housing/actions/actions.module';
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
@@ -33,7 +32,9 @@ describe('IdentifyRecipientComponent', () => {
         StButtonModule,
         FocusNextModule,
       ],
-      providers: [{ provide: ActivatedRoute, useFactory: activatedRouteStub }],
+      providers: [
+        { provide: ActivatedRoute, useFactory: activatedRouteStub },
+      ],
     }).compileComponents();
   });
 

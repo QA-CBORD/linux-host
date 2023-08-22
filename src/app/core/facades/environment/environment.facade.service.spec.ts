@@ -15,7 +15,7 @@ describe('EnvironmentFacadeService', () => {
     TestBed.overrideProvider(AuthFacadeService, { useValue: new MockAuthService() });
 
     TestBed.configureTestingModule({
-      imports: [...CoreTestingModules],
+      imports: [...CoreTestingModules]
     });
     service = TestBed.inject(EnvironmentFacadeService);
   });

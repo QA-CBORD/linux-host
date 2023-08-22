@@ -17,5 +17,4 @@ export const CoreProviders = [
   {
     provide: Router,
     useValue: routerMock,
-  },
-];
+  }];

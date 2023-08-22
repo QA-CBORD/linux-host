@@ -7,7 +7,6 @@ import { OrderingService } from "@sections/ordering/services/ordering.service";
 import { AndroidPermissions } from "@awesome-cordova-plugins/android-permissions/ngx";
 import { IonPicker } from "@ionic/angular";
 
-
 describe('StDateTimePicker', () => {
 
     let component: StDateTimePickerComponent;
@@ -27,7 +26,9 @@ describe('StDateTimePicker', () => {
                     StButtonModule
                 ],
                 schemas: [CUSTOM_ELEMENTS_SCHEMA],
-                providers: [OrderingService, AndroidPermissions],
+                providers: [
+                    OrderingService, 
+                    AndroidPermissions],
             }).compileComponents();
         })
     );
