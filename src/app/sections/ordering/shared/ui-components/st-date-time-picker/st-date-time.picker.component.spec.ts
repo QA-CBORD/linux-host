@@ -8,7 +8,6 @@ import { AndroidPermissions } from "@awesome-cordova-plugins/android-permissions
 import { IonPicker } from "@ionic/angular";
 import { CoreProviders } from "src/app/testing/core-providers";
 
-
 describe('StDateTimePicker', () => {
 
     let component: StDateTimePickerComponent;

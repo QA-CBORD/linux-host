@@ -7,6 +7,7 @@ import { CommonService } from './common.service';
 import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/connectivity-error.enum';
 import { ConnectionService } from './connection-service';
 import { ConnectivityPageResolver } from './connectivity-route.resolver';
+import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/no-connectivity.cs.model';
 
 describe(ConnectivityPageResolver, () => {
   let service: ConnectivityPageResolver;
