@@ -6,6 +6,9 @@ import { CoreProviders, routerMock } from 'src/app/testing/core-providers';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES } from 'src/app/app.global';
+import { Storage } from '@ionic/storage';
+import { MockStorageService } from '@core/states/storage/storage-state-mock.service';
+
 
 describe('EntryPage', () => {
   let component: EntryPage;

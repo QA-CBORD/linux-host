@@ -1,12 +1,14 @@
 import * as uuid from 'uuid';
 jest.mock('uuid');
 import { UuidGeneratorService } from './uuid-generator.service';
+import { TestBed } from '@angular/core/testing';
 
 describe(UuidGeneratorService, () => {
   let service: UuidGeneratorService;
+  
 
   beforeEach(() => {
-    service = new UuidGeneratorService();
+    service = TestBed.inject(UuidGeneratorService);
   });
 
   it('should create the service', () => {

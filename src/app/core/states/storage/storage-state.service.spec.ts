@@ -1,16 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { Platform } from '@ionic/angular';
 import { StorageStateService } from './storage-state.service';
+import { MockStorageService } from './storage-state-mock.service';
+import { Storage } from '@ionic/storage';
 
 describe('StorageStateService', () => {
   let service: StorageStateService;
 
   beforeEach(() => {
-    const platformStub = () => ({ pause: { subscribe: f => f({}) } });
+    const platformStub = () => ({ pause: { subscribe: f => f({}) }, is: jest.fn() });
     TestBed.configureTestingModule({
       providers: [
         StorageStateService,
-        { provide: Platform, useFactory: platformStub }
+        { provide: Platform, useFactory: platformStub },
+        { provide: Storage, useClass: MockStorageService}
       ]
     });
    jest.spyOn(StorageStateService.prototype, 'initialization');
