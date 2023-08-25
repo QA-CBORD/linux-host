@@ -6,6 +6,7 @@ import { ScreenReader } from '@capacitor/screen-reader';
 
 const READ_ALOUD_DELAY = 2000;
 const TAP_TIME_LAPSE = 300;
+const A11Y_FOCUS = 1500;
 
 export enum PLATFORM {
   ios = 'ios',
@@ -79,5 +80,11 @@ export class AccessibilityService {
         }
       }
     }
+  }
+
+  focusElementById(elementId: string) {
+    setTimeout(() => {
+      document.getElementById(elementId)?.focus();
+    }, A11Y_FOCUS);
   }
 }
