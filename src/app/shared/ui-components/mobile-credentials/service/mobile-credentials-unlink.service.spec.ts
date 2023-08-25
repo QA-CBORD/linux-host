@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { MobileCredentialsUnlinkService } from './mobile-credentials-unlink.service';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { MobileCredentialFacade } from './mobile-credential-facade.service';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 
 describe('MobileCredentialsUnlinkService', () => {
   let service: MobileCredentialsUnlinkService;
@@ -19,6 +20,10 @@ describe('MobileCredentialsUnlinkService', () => {
     unlinkCredentials$: jest.fn(),
   };
 
+  const mockSettingsService = {
+    getSetting: jest.fn().mockReturnValue(of('123456')),
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -30,6 +35,10 @@ describe('MobileCredentialsUnlinkService', () => {
         {
           provide: MobileCredentialDataService,
           useValue: mockMobileCredentialDataService,
+        },
+        {
+          provide: SettingsFacadeService,
+          useValue: mockSettingsService,
         },
       ],
     });
