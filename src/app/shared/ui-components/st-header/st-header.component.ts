@@ -12,6 +12,7 @@ import { NavigationService } from '@shared/services/navigation.service';
 export class StHeaderComponent {
   @Input() trackUrls: boolean;
   @Input() title: string;
+  @Input() pathToReturn: string;
   @Input() placeholder: string;
   @Input() backButtonTitle = 'Back';
   @Input() backButtonIcon: string | null = null;
@@ -31,8 +32,9 @@ export class StHeaderComponent {
   constructor(
     private readonly router: Router,
     private readonly navService: NavigationService,
-    private readonly nativeProvider: NativeProvider
-  ) {}
+    private readonly nativeProvider: NativeProvider,
+
+  ) { }
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);
@@ -51,6 +53,12 @@ export class StHeaderComponent {
   }
 
   async onBack() {
+    if (this.pathToReturn) {
+      this.router.navigate([this.pathToReturn]);
+      console.log(this.pathToReturn);
+      
+      return;
+    }
     if (this.trackUrls) {
       await this.router.navigate([this.navService.getPreviousTrackedUrl()]);
     } else {

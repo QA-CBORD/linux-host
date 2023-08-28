@@ -23,6 +23,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { ROLES } from 'src/app/app.global';
 
 @Component({
   selector: 'st-full-menu',
@@ -38,6 +39,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  orderingRoute = `${ROLES.patron}/${APP_ROUTES.ordering}`
   constructor(
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
