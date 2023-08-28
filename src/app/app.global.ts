@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { Injectable } from '@angular/core';
+import { APP_ROUTES } from '@sections/section.config';
 
 export const DEBUG_ON = true;
 
@@ -242,6 +243,7 @@ export enum LoginType {
   WEB = 'WEB',
   LOCAL = 'LOCAL',
 }
+export const orderingRoute = `${ROLES.patron}/${APP_ROUTES.ordering}`;
 
 export const PATRON_BACK_TEXT: { [key: string]: string } = {
   [`/${PATRON_NAVIGATION.dashboard}`]: 'Home',

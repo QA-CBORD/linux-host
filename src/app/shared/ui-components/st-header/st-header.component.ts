@@ -2,7 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Keyboard } from '@capacitor/keyboard';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { NavigationService } from '@shared/services/navigation.service';
+import { orderingRoute } from 'src/app/app.global';
 
 @Component({
   selector: 'st-header',
@@ -33,6 +35,7 @@ export class StHeaderComponent {
     private readonly router: Router,
     private readonly navService: NavigationService,
     private readonly nativeProvider: NativeProvider,
+    private orderActionSheetService: OrderActionSheetService
 
   ) { }
 
@@ -53,10 +56,10 @@ export class StHeaderComponent {
   }
 
   async onBack() {
-    if (this.pathToReturn) {
-      this.router.navigate([this.pathToReturn]);
-      console.log(this.pathToReturn);
-      
+    if (this.pathToReturn === orderingRoute) {
+      this.router.navigate([this.pathToReturn]).then(() => {
+        this.orderActionSheetService.openActionSheet();
+      });
       return;
     }
     if (this.trackUrls) {

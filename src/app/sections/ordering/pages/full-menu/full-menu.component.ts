@@ -23,14 +23,14 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { ROLES } from 'src/app/app.global';
-
+import { orderingRoute } from 'src/app/app.global';
 @Component({
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',
   styleUrls: ['./full-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
@@ -39,7 +39,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-  orderingRoute = `${ROLES.patron}/${APP_ROUTES.ordering}`
+  pathToRedirect = orderingRoute;
   constructor(
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,

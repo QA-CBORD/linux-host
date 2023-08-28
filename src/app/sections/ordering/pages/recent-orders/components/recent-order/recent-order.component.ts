@@ -33,6 +33,7 @@ import { Observable, firstValueFrom, iif, of, zip } from 'rxjs';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
+import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 
 interface OrderMenuItem {
   menuItemId: string;
@@ -70,11 +71,15 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly alertController: AlertController,
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
+    private orderActionSheetService: OrderActionSheetService
   ) {}
 
   ngOnInit(): void {
     this.initData();
+    this.orderActionSheetService.openActionSheet$.subscribe(() => {
+      this.onReorderHandler(); // Implement this method
+    });
   }
 
   initData(): void {
