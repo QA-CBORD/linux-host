@@ -77,11 +77,13 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initData();
+    this.openOrderOptionsActionSheet();
+  }
+  openOrderOptionsActionSheet(){
     this.orderActionSheetService.openActionSheet$.subscribe(() => {
-      this.onReorderHandler(); // Implement this method
+      this.onReorderHandler(); 
     });
   }
-
   initData(): void {
     const orderId = this.activatedRoute.snapshot.params.id;
     this.setActiveOrder(orderId);
