@@ -73,17 +73,19 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly checkinProcess: CheckingProcess,
     private readonly lockDownService: LockDownService,
     private orderActionSheetService: OrderActionSheetService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initData();
     this.openOrderOptionsActionSheet();
   }
+  
   openOrderOptionsActionSheet() {
     this.orderActionSheetService.openActionSheet$.subscribe(() => {
-      this.onReorderHandler(); 
+      this.onReorderHandler();
     });
   }
+
   initData(): void {
     const orderId = this.activatedRoute.snapshot.params.id;
     this.setActiveOrder(orderId);
@@ -526,15 +528,15 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           orderPayment: [orderPayment],
         },
       ]: [
-        {
-          dueTime: Date;
-          orderType: ORDER_TYPE;
-          address: AddressInfo;
-          isASAP?: boolean;
-        },
-        MerchantInfo,
-        OrderInfo
-      ]) => {
+          {
+            dueTime: Date;
+            orderType: ORDER_TYPE;
+            address: AddressInfo;
+            isASAP?: boolean;
+          },
+          MerchantInfo,
+          OrderInfo
+        ]) => {
         await this.cart.onAddItems({
           merchant,
           orderPayment,
