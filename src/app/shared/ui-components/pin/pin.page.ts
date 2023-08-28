@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -58,6 +58,7 @@ export class PinPage implements OnInit, OnDestroy {
 
   @Input() pinAction: PinAction;
   @Input() showDismiss = true;
+  @ViewChild('errorTextRef') errorTextRef: ElementRef<HTMLInputElement>;
 
   ngOnInit() {
     this.retrievePinRetrys();
@@ -222,6 +223,9 @@ export class PinPage implements OnInit, OnDestroy {
 
   private setErrorText(value: string) {
     this.errorText = value;
+    if (value) {
+      this.a11yService.focusElementById('error-text-element');
+    }
   }
 
   private async setPin() {
