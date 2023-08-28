@@ -79,7 +79,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.initData();
     this.openOrderOptionsActionSheet();
   }
-  openOrderOptionsActionSheet(){
+  openOrderOptionsActionSheet() {
     this.orderActionSheetService.openActionSheet$.subscribe(() => {
       this.onReorderHandler(); 
     });
