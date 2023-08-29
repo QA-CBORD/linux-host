@@ -29,10 +29,11 @@ import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-c
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { LockDownService } from '@shared/services';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { Observable, firstValueFrom, iif, of, zip } from 'rxjs';
+import { Observable, Subscription, firstValueFrom, iif, of, zip } from 'rxjs';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
+import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 
 interface OrderMenuItem {
   menuItemId: string;
@@ -54,6 +55,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
+  private openActionSheetSubscription: Subscription;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -70,11 +72,19 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly alertController: AlertController,
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess,
-    private readonly lockDownService: LockDownService
-  ) {}
+    private readonly lockDownService: LockDownService,
+    private orderActionSheetService: OrderActionSheetService
+  ) { }
 
   ngOnInit(): void {
     this.initData();
+    this.openActionSheetSubscription = this.openOrderOptionsActionSheet();
+  }
+
+  openOrderOptionsActionSheet() {
+    return this.orderActionSheetService.openActionSheet$.subscribe(() => {
+      this.onReorderHandler();
+    });
   }
 
   initData(): void {
@@ -92,6 +102,9 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.openActionSheetSubscription) {
+      this.openActionSheetSubscription.unsubscribe();
+    }
     this.checkinService.navedFromCheckin = false;
   }
 
@@ -519,15 +532,15 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           orderPayment: [orderPayment],
         },
       ]: [
-        {
-          dueTime: Date;
-          orderType: ORDER_TYPE;
-          address: AddressInfo;
-          isASAP?: boolean;
-        },
-        MerchantInfo,
-        OrderInfo
-      ]) => {
+          {
+            dueTime: Date;
+            orderType: ORDER_TYPE;
+            address: AddressInfo;
+            isASAP?: boolean;
+          },
+          MerchantInfo,
+          OrderInfo
+        ]) => {
         await this.cart.onAddItems({
           merchant,
           orderPayment,
