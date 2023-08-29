@@ -3,9 +3,6 @@ import android.os.Bundle;
 
 import com.cbord.get.mcredential.MobileCredentialStatusPlugin;
 import com.getcapacitor.BridgeActivity;
-import com.getcapacitor.Plugin;
-
-import java.util.ArrayList;
 import com.getcapacitor.community.barcodescanner.BarcodeScanner;
 
 public class MainActivity extends BridgeActivity {
