@@ -23,7 +23,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
-import { orderingRoute } from 'src/app/app.global';
+import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 @Component({
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',
@@ -39,7 +39,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-  pathToRedirect = orderingRoute;
   constructor(
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
@@ -50,7 +49,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private orderActionSheetService: OrderActionSheetService,
+    
   ) {}
 
   ngOnInit() {
@@ -252,6 +253,13 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.contentStrings.labelDelivery = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelDelivery
     );
+  }
+
+  onOrdersButtonClicked(){
+    this.routingService.navigate([APP_ROUTES.ordering]).then(() => {
+        this.orderActionSheetService.openActionSheet();
+      });
+
   }
 }
 

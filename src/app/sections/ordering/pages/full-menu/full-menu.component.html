@@ -1,7 +1,7 @@
 <st-header
   [title]="contentStrings.labelFullMenu | async"
   [isTitleShow]="true"
-  [pathToReturn]="pathToRedirect"
+  (onClose)="onOrdersButtonClicked()"
   [backButtonTitle]="'Order'"
   backButtonIcon="chevron-back"
   [isToolbarShow]="true"

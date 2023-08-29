@@ -4,7 +4,7 @@ import { Keyboard } from '@capacitor/keyboard';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { NavigationService } from '@shared/services/navigation.service';
-import { orderingRoute } from 'src/app/app.global';
+
 
 @Component({
   selector: 'st-header',
@@ -14,7 +14,6 @@ import { orderingRoute } from 'src/app/app.global';
 export class StHeaderComponent {
   @Input() trackUrls: boolean;
   @Input() title: string;
-  @Input() pathToReturn: string;
   @Input() placeholder: string;
   @Input() backButtonTitle = 'Back';
   @Input() backButtonIcon: string | null = null;
@@ -35,7 +34,6 @@ export class StHeaderComponent {
     private readonly router: Router,
     private readonly navService: NavigationService,
     private readonly nativeProvider: NativeProvider,
-    private orderActionSheetService: OrderActionSheetService
 
   ) { }
 
@@ -56,12 +54,6 @@ export class StHeaderComponent {
   }
 
   async onBack() {
-    if (this.pathToReturn === orderingRoute) {
-      this.router.navigate([this.pathToReturn]).then(() => {
-        this.orderActionSheetService.openActionSheet();
-      });
-      return;
-    }
     if (this.trackUrls) {
       await this.router.navigate([this.navService.getPreviousTrackedUrl()]);
     } else {

@@ -243,7 +243,6 @@ export enum LoginType {
   WEB = 'WEB',
   LOCAL = 'LOCAL',
 }
-export const orderingRoute = `${ROLES.patron}/${APP_ROUTES.ordering}`;
 
 export const PATRON_BACK_TEXT: { [key: string]: string } = {
   [`/${PATRON_NAVIGATION.dashboard}`]: 'Home',
