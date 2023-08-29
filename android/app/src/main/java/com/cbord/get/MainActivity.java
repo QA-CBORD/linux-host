@@ -16,6 +16,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(GooglePayPlugin.class);
         registerPlugin(MobileCredentialStatusPlugin.class);
         registerPlugin(BarcodeScanner.class);
+        registerPlugin(AndroidPermissionsPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }
