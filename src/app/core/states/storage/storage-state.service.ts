@@ -139,7 +139,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   async clearStorage(): Promise<void> {
-    const state = await this.getStateFromLocalStorage();
+    const state = await this.getStateFromIonicStorage();
 
     const tempData: Array<{ key: string; data: StorageEntity }> = [];
     Object.entries(state).forEach(([key, value]) => value.permanent && tempData.push({ key: key, data: value }));
