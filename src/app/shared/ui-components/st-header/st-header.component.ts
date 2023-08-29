@@ -4,7 +4,6 @@ import { Keyboard } from '@capacitor/keyboard';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NavigationService } from '@shared/services/navigation.service';
 
-
 @Component({
   selector: 'st-header',
   templateUrl: './st-header.component.html',
@@ -32,9 +31,8 @@ export class StHeaderComponent {
   constructor(
     private readonly router: Router,
     private readonly navService: NavigationService,
-    private readonly nativeProvider: NativeProvider,
-
-  ) { }
+    private readonly nativeProvider: NativeProvider
+  ) {}
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);
