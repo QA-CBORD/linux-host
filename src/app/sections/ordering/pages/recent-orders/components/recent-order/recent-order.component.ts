@@ -29,7 +29,7 @@ import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-c
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { LockDownService } from '@shared/services';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { Observable, firstValueFrom, iif, of, zip } from 'rxjs';
+import { Observable, Subscription, firstValueFrom, iif, of, zip } from 'rxjs';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
@@ -55,7 +55,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
-
+  subscriptions:Subscription;
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly merchantService: MerchantService,
@@ -81,7 +81,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   openOrderOptionsActionSheet() {
-    this.orderActionSheetService.openActionSheet$.subscribe(() => {
+    this.subscriptions = this.orderActionSheetService.openActionSheet$.subscribe(() => {
       this.onReorderHandler();
     });
   }
@@ -102,6 +102,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.checkinService.navedFromCheckin = false;
+    this.subscriptions.unsubscribe();
   }
 
   async onReorderHandler(): Promise<void> {
