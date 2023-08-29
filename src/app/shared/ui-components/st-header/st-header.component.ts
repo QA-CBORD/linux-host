@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Keyboard } from '@capacitor/keyboard';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { NavigationService } from '@shared/services/navigation.service';
 
 

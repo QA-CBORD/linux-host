@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { Injectable } from '@angular/core';
-import { APP_ROUTES } from '@sections/section.config';
 
 export const DEBUG_ON = true;
 

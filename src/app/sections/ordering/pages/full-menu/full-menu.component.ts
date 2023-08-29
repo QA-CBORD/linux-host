@@ -51,7 +51,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly routingService: NavigationService,
     private orderActionSheetService: OrderActionSheetService,
-    
   ) {}
 
   ngOnInit() {
