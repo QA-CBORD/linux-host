@@ -17,10 +17,9 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   );
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   private readonly storageKey: string = 'cbord_gcs';
-  private readonly storage = Storage;
+  private readonly storage = Storage; // remove this referece after 4.25
   private isStateInitialized = false;
   private _observableStorage: ObservableStorage;
-  private useIonicStorage = true;
 
   constructor(
     private readonly platform: Platform,
@@ -92,22 +91,20 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   protected async initState(): Promise<void> {
-    // Uncomment next line after v4.25
-    // this.state = await this.getStateFromIonicStorage();
-    // Remove next line after v4.25
+    // Remove this line after v4.25
     this.state = await this.getStateFromLocalStorage();
+
+    // Remove this if statement after v4.25 and leave next line only.
+    if (Object.keys(this.state).length === 0) {
+      this.state = await this.getStateFromIonicStorage();
+    }
+
     this.isStateInitialized = true;
     await this.setStateToStorage();
   }
 
   protected async setStateToStorage(): Promise<void> {
-    if (this.useIonicStorage) {
-      this._observableStorage.set(this.storageKey, this.convertIntoStr(this.state));
-    } else {
-      const storageObject = { key: this.storageKey, value: this.convertIntoStr(this.state) };
-      await this.storage.set(storageObject);
-    }
-
+    this._observableStorage.set(this.storageKey, this.convertIntoStr(this.state));
     this.dispatchStateChanges();
   }
 
@@ -142,16 +139,12 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   async clearStorage(): Promise<void> {
-    const state = this.useIonicStorage ? await this.getStateFromIonicStorage() : await this.getStateFromLocalStorage();
+    const state = await this.getStateFromLocalStorage();
 
     const tempData: Array<{ key: string; data: StorageEntity }> = [];
     Object.entries(state).forEach(([key, value]) => value.permanent && tempData.push({ key: key, data: value }));
 
-    if (this.useIonicStorage) {
-      await lastValueFrom(this._observableStorage.clear());
-    } else {
-      await this.storage.clear();
-    }
+    await lastValueFrom(this._observableStorage.clear());
 
     tempData.forEach(({ key, data }) =>
       this.updateStateEntity(key, data.value, { highPriorityKey: true, ttl: data.timeToLive, keepOnLogout: true })
