@@ -17,7 +17,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   );
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   private readonly storageKey: string = 'cbord_gcs';
-  private readonly storage = Storage; // remove this referece after 4.25
+  private readonly storage = Storage; //TODO:  Remove ionic/preferences  after v4.25
   private isStateInitialized = false;
   private _observableStorage: ObservableStorage;
 
@@ -91,12 +91,11 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   protected async initState(): Promise<void> {
-    // Remove this line after v4.25
-    this.state = await this.getStateFromLocalStorage();
+    this.state = await this.getStateFromIonicStorage();
 
-    // Remove this if statement after v4.25 and leave next line only.
+    // Remove this lines after v4.25, we don't need to use ionic/prefereces anymore.
     if (Object.keys(this.state).length === 0) {
-      this.state = await this.getStateFromIonicStorage();
+      this.state = await this.getStateFromLocalStorage();
     }
 
     this.isStateInitialized = true;
@@ -108,6 +107,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this.dispatchStateChanges();
   }
 
+  //TODO:  Remove this method after v4.25, we don't need to use ionic/prefereces anymore.
   protected async getStateFromLocalStorage(): Promise<WebStorageStateEntity> {
     const { value } = await this.storage.get({ key: this.storageKey });
     try {
