@@ -55,7 +55,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   merchantTimeZoneDisplayingMessage: string;
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
-  subscriptions:Subscription;
+  private openActionSheetSubscription: Subscription;
+
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly merchantService: MerchantService,
@@ -77,11 +78,11 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initData();
-    this.openOrderOptionsActionSheet();
+    this.openActionSheetSubscription = this.openOrderOptionsActionSheet();
   }
 
   openOrderOptionsActionSheet() {
-    this.subscriptions = this.orderActionSheetService.openActionSheet$.subscribe(() => {
+    return this.orderActionSheetService.openActionSheet$.subscribe(() => {
       this.onReorderHandler();
     });
   }
@@ -101,8 +102,10 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.openActionSheetSubscription) {
+      this.openActionSheetSubscription.unsubscribe();
+    }
     this.checkinService.navedFromCheckin = false;
-    this.subscriptions.unsubscribe();
   }
 
   async onReorderHandler(): Promise<void> {
