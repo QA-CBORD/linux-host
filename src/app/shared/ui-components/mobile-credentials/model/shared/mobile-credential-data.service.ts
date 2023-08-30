@@ -44,7 +44,9 @@ export class MobileCredentialDataService {
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<object> {
     return this.authFacadeService.retrieveAuthorizationBlob(deviceModel, osVersion).pipe(
       map(({ response }) => response),
-      tap(response => this.storageStateService.updateStateEntity(this.authBlob_key, response, { ttl: StateTimeDuration.TTL }))
+      tap(response =>
+        this.storageStateService.updateStateEntity(this.authBlob_key, response, { ttl: StateTimeDuration.TTL })
+      )
     );
   }
 
@@ -78,7 +80,9 @@ export class MobileCredentialDataService {
     return this.authFacadeService
       .getExternalAuthenticationToken$('OmniID')
       .pipe(
-        tap(jwtToken => this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: StateTimeDuration.TTL }))
+        tap(jwtToken =>
+          this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: StateTimeDuration.TTL })
+        )
       );
   }
 
@@ -116,9 +120,9 @@ export class MobileCredentialDataService {
     return this.getActivePasses().pipe(map(activePasses => MobileCredentialFactory.fromActivePasses(activePasses)));
   }
 
-  unlinkCredentials$() {
+  unlinkCredentials$(apiKey: string) {
     return this.getActivePasses().pipe(
-      switchMap(({ referenceIdentifier }) => this.unlinkCredentials(referenceIdentifier)),
+      switchMap(({ referenceIdentifier }) => this.unlinkCredentials(referenceIdentifier, apiKey)),
       catchError(() => of(false))
     );
   }
@@ -175,7 +179,7 @@ export class MobileCredentialDataService {
     );
   }
 
-  private unlinkCredentials(referenceIdentifier: string): Observable<boolean> {
+  private unlinkCredentials(referenceIdentifier: string, apiKey: string): Observable<boolean> {
     /**
      * @params omniIDToken -> jwt token needed to authenticate with partner payments api on aws.
      * @params authBlob  -> authorization blob that contains ..... ???
@@ -186,6 +190,7 @@ export class MobileCredentialDataService {
       switchMap(([omniIDJwtToken]) => {
         const headers = new HttpHeaders({
           Authorization: `Bearer ${omniIDJwtToken}`,
+          'X-API-Key': apiKey,
         });
         const params = new HttpParams();
         // authBlob needs to be sent in request body.

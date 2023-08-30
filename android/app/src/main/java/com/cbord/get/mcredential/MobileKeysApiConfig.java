@@ -1,9 +1,6 @@
 package com.cbord.get.mcredential;
 
 import android.app.Application;
-import android.util.Log;
-
-import com.assaabloy.mobilekeys.api.MobileKeysApi;
 import com.cbord.get.BuildConfig;
 import com.hid.origo.api.OrigoApiConfiguration;
 import com.hid.origo.api.OrigoMobileKeysApi;
@@ -22,6 +19,8 @@ import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
 import com.hid.origo.api.hce.OrigoHceConnectionCallback;
 import com.hid.origo.api.hce.OrigoHceConnectionListener;
 import com.hid.origo.api.hce.OrigoNfcConfiguration;
+import com.hid.origo.logger.OrigoLogger;
+import org.slf4j.Logger;
 
 /**
  * Application class handling the initialization of the Mobile Keys API
@@ -34,6 +33,7 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
     private static final String APPLICATION_ID = "com.cbord.get";
     private static final String INITIALIZATION_SUCCESS = "success";
     private boolean mobileKeysApiInitialized = false;
+    private Logger LOGGER = OrigoLogger.getLoggerFactory().getLogger(MobileKeysApiConfig.class.getSimpleName());
 
     private void configureOrigoMobileKeysApi(TransactionCompleteCallback callback) {
         try {
@@ -42,7 +42,7 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
                     .setApplicationId(BuildConfig.AAMK_APP_ID)
                     .setApplicationDescription(BuildConfig.AAMK_APP_ID_DESCRIPTION)
                     .setNfcParameters(new OrigoNfcConfiguration.Builder()
-                            .unsafe_setAttemptNfcWithScreenOff(true)
+                            .unsafeSetAttemptNfcWithScreenOff(true)
                             .build())
                     .build();
 
@@ -78,12 +78,14 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
                 if (INITIALIZATION_SUCCESS.equals(transactionResult)) {
                     mobileKeysApi.getMobileKeys().applicationStartup(new OrigoMobileKeysCallback() {
                         public void handleMobileKeysTransactionCompleted() {
+                            LOGGER.debug("handleMobileKeysTransactionCompleted");
                             callback.onCompleted(INITIALIZATION_SUCCESS);
                             registerEventListeners();
                         }
 
-                        public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-                            callback.onCompleted(e.getMessage());
+                        public void handleMobileKeysTransactionFailed(OrigoMobileKeysException mobileKeysException) {
+                            LOGGER.error("handleMobileKeysTransactionFailed failed: " + mobileKeysException.getErrorCode(), mobileKeysException);
+                            callback.onCompleted(mobileKeysException.getMessage());
                         }
                     });
                 } else {
@@ -108,25 +110,31 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
 
     @Override
     public void onReaderConnectionOpened(OrigoReader origoReader, OrigoOpeningType origoOpeningType) {
+        // LOGGER.debug("onReaderConnectionOpened: " + origoReader, origoOpeningType);
     }
 
     @Override
     public void onReaderConnectionClosed(OrigoReader origoReader, OrigoOpeningResult origoOpeningResult) {
+        // LOGGER.debug("onReaderConnectionClosed: " + origoReader, origoOpeningResult);
     }
 
     @Override
     public void onReaderConnectionFailed(OrigoReader origoReader, OrigoOpeningType origoOpeningType, OrigoOpeningStatus origoOpeningStatus) {
+        LOGGER.error("onReaderConnectionFailed failed: " + origoReader.getName() + " reader: " + origoOpeningType.name() + " status: " + origoOpeningStatus);
     }
 
     @Override
     public void onHceSessionOpened() {
+       // LOGGER.debug("onHceSessionOpened");
     }
 
     @Override
     public void onHceSessionClosed(int i) {
+       // LOGGER.debug("onHceSessionClosed");
     }
 
     @Override
     public void onHceSessionInfo(OrigoReaderConnectionInfoType origoReaderConnectionInfoType) {
+       // LOGGER.debug("onHceSessionInfo: " + origoReaderConnectionInfoType);
     }
 }
