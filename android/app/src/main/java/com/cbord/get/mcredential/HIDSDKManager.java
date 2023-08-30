@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.util.Log;
 import androidx.core.content.ContextCompat;
 import com.hid.origo.api.OrigoMobileKey;
 import com.hid.origo.api.OrigoMobileKeys;
@@ -13,17 +12,11 @@ import com.hid.origo.api.OrigoMobileKeysException;
 import com.hid.origo.api.OrigoMobileKeysProgressCallback;
 import com.hid.origo.api.OrigoProgressEvent;
 import com.hid.origo.api.OrigoReaderConnectionController;
-import com.hid.origo.api.OrigoReaderConnectionInfoType;
-import com.hid.origo.api.ble.OrigoOpeningResult;
-import com.hid.origo.api.ble.OrigoOpeningStatus;
-import com.hid.origo.api.ble.OrigoOpeningType;
-import com.hid.origo.api.ble.OrigoReader;
-import com.hid.origo.api.ble.OrigoReaderConnectionCallback;
-import com.hid.origo.api.ble.OrigoReaderConnectionListener;
-import com.hid.origo.api.hce.OrigoHceConnectionCallback;
-import com.hid.origo.api.hce.OrigoHceConnectionListener;
+import com.hid.origo.logger.OrigoLogger;
 
- 
+import org.slf4j.Logger;
+
+
 public class HIDSDKManager  {
     private static final String TAG = HIDSDKManager.class.getSimpleName();
     private static final String TRANSACTION_SUCCESS = "success";
@@ -37,6 +30,7 @@ public class HIDSDKManager  {
     private Context applicationContext;
     private MobileKeysApiConfig mobileKeysApiConfig;
 
+    private Logger LOGGER = OrigoLogger.getLoggerFactory().getLogger(HIDSDKManager.class.getSimpleName());
 
     private HIDSDKManager(Application application) throws IllegalStateException{
         initializeMobileKeysApi(application);
@@ -63,7 +57,9 @@ public class HIDSDKManager  {
     public String getEndpointLastServerSync(){
         try {
             return this.mobileKeys.getEndpointInfo().getLastServerSyncDate().toString();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            LOGGER.error("getEndpointLastServerSync failed: " + e.getMessage(), e);
+        }
         return null;
     }
 
@@ -72,6 +68,7 @@ public class HIDSDKManager  {
     }
 
     private void initializeMobileKeysApi(final Application application, TransactionCompleteCallback transactionCompleteCallback) throws IllegalStateException{
+        // LOGGER.debug("initializeMobileKeysApi");
         this.applicationContext = application.getApplicationContext();
         mobileKeysApiConfig = ((MobileKeysApiConfig) application);
         mobileKeysApiConfig.initializeMobileKeysApi(transactionResult -> {
@@ -102,8 +99,8 @@ public class HIDSDKManager  {
         try {
             OrigoMobileKey mobileKey = getMobileKey();
             return mobileKey == null ? false : mobileKey.isActivated();
-        } catch (Exception ex){
-
+        } catch (Exception e){
+            LOGGER.error("isEndpointActive failed: " + e.getMessage(), e);
         }
 
         return false;
@@ -121,7 +118,7 @@ public class HIDSDKManager  {
     }
 
 
-    public void refreshEndpoint(TransactionCompleteCallback callback){
+    public void refreshEndpoint(TransactionCompleteCallback callback) {
         mobileKeys.endpointUpdate(new HIDTransactionProgressObserver(callback));
     }
 
@@ -162,8 +159,7 @@ public class HIDSDKManager  {
         }
         catch (OrigoMobileKeysException e)
         {
-            Log.e(TAG, "isEndpointSetUpComplete() error", e);
-
+            LOGGER.error("isEndpointSetup failed: " + e.getMessage(), e);
         }
         return isEndpointSetup;
     }
@@ -189,7 +185,8 @@ public class HIDSDKManager  {
                OrigoReaderConnectionController controller = origoMobileKeysApi.getOrigiReaderConnectionController();
                controller.enableHce();
                transactionCompleteCallback.onCompleted(TRANSACTION_SUCCESS);
-           }catch (Exception exception) {
+           } catch (Exception exception) {
+               LOGGER.error("startScanning failed: " + exception.getMessage());
                transactionCompleteCallback.onCompleted(TRANSACTION_FAILED);
            }
     }
@@ -215,6 +212,7 @@ public class HIDSDKManager  {
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
+            LOGGER.error("handleMobileKeysTransactionFailed failed: " + e.getMessage());
             transactionCompleteListener.onCompleted(e.getErrorCode().toString());
         }
     }

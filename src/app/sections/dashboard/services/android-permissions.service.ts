@@ -1,22 +1,20 @@
 import { Injectable } from '@angular/core';
-import { AndroidPermissionResponse, AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { AndroidPermissionResponse } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { registerPlugin } from '@capacitor/core';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const AndroidPermissionsPlugin = registerPlugin<any>('AndroidPermissionsPlugin');
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class AndroidPermissionsService {
   permissionDismissed = false;
-  constructor(private readonly androidPermissions: AndroidPermissions) {}
 
   async checkLocationPermission(): Promise<AndroidPermissionResponse> {
-    return this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION);
+    return <AndroidPermissionResponse>AndroidPermissionsPlugin.checkPermissions();
   }
 
   async requestLocationPermissions(): Promise<AndroidPermissionResponse> {
-    return this.androidPermissions.requestPermissions([
-      this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
-      this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION,
-    ]);
+    return <AndroidPermissionResponse>AndroidPermissionsPlugin.requestPermissions();
   }
 }

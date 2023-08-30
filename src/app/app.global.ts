@@ -117,6 +117,7 @@ export namespace Settings {
     ENABLE_CREDIT_CARD_PAYMENT = 'get.feature.enable_credit_card_payments',
     LOCK_DOWN_ORDERING = 'get.ordering.disable_ordering',
     CREDENTIALS_UNLINK_ENABLED = 'get.mobile_credentials.enable_unlink',
+    CREDENTIALS_UNLINK_API_KEY = 'get.mobile_credentials.unlink_key',
   }
 }
 
