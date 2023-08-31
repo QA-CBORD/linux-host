@@ -7,6 +7,8 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import {
   CONNECTION_TIME_OUT_MESSAGE,
   NO_INTERNET_STATUS_CODE,
+  STATUS_CODE_SUCCESS,
+  STATUS_MESSAGE_SUCCESS,
   TIME_OUT_DURATION,
 } from '@shared/model/generic-constants';
 import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
@@ -82,6 +84,7 @@ export class ConnectionService {
   }
 
   isConnectionIssues({ message, status }): boolean {
-    return CONNECTION_TIME_OUT_MESSAGE.test(message) || (status !== null && Number(status) === NO_INTERNET_STATUS_CODE);
+    const emptyResponse = status && Number(status) === STATUS_CODE_SUCCESS && STATUS_MESSAGE_SUCCESS.test(message);
+    return CONNECTION_TIME_OUT_MESSAGE.test(message) || (status !== null && Number(status) === NO_INTERNET_STATUS_CODE) || emptyResponse;
   }
 }

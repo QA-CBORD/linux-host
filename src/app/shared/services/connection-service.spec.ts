@@ -1,11 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Platform } from '@ionic/angular';
-import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE } from '@shared/model/generic-constants';
+import { CONNECTION_TIME_OUT_MESSAGE, NO_INTERNET_STATUS_CODE, STATUS_CODE_SUCCESS } from '@shared/model/generic-constants';
 import { of } from 'rxjs';
 import { ConnectionService } from './connection-service';
-import { Network } from '@capacitor/network';
+import { ConnectionStatus, Network } from '@capacitor/network';
+import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/connectivity-error.enum';
 
 describe(ConnectionService, () => {
   let service: ConnectionService;
@@ -28,6 +29,7 @@ describe(ConnectionService, () => {
       type: 'Connected',
       onConnect: jest.fn(() => of({})),
       onDisconnect: jest.fn(() => of({})),
+      getStatus: jest.fn()
     };
 
     _platform = {
@@ -77,5 +79,18 @@ describe(ConnectionService, () => {
 
   it('should check device has connection issues', () => {
     expect(service.isConnectionIssues({ message: null, status: NO_INTERNET_STATUS_CODE })).toBeTruthy();
+  });
+
+  it('should return SERVER_CONNECTION when server is reachable or not reachable', async () => {
+    jest.spyOn(_network, 'getStatus').mockResolvedValue({ connectionType: 'wifi', connected: true } as ConnectionStatus);
+
+    const mockResponse = new HttpResponse({ status: STATUS_CODE_SUCCESS, statusText: String(CONNECTION_TIME_OUT_MESSAGE) });
+    jest.spyOn(_httpClient, 'head').mockReturnValue(
+      of(mockResponse)
+    );
+
+    const result = await service.getOfflineStatus();
+
+    expect(result).toBe(ConnectivityErrorType.SERVER_CONNECTION);
   });
 });
