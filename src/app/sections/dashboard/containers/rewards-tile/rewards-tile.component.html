@@ -21,9 +21,10 @@
     </ion-item>
   </ion-list>
   <ng-container *ngIf="(rewardTrackInfo$ | async)?.hasLevels && !isLoadingData">
-    <st-progress-bar [currentPointsSpent]="userPointsSpent$ | async"
-                     [currentLevelInfo]="currentLvlInfo$ | async"
-                     [nextLevelPoints]="nextLvlRequirePoints$ | async"></st-progress-bar>
+    <st-progress-bar [currentPointsSpent]="userPointsSpent$ | async" [currentLevelInfo]="currentLvlInfo$ | async"
+      [nextLevelPoints]="nextLvlRequirePoints$ | async"></st-progress-bar>
+  </ng-container>
+  <ng-container *ngIf="(rewardTrackInfo$ | async)?.hasRedeemableRewards && !isLoadingData">
     <div class="progress__balance-wrapper">
       <p class="progress__balance-title">Your balance</p>
       <div class="progress__balance-points">
