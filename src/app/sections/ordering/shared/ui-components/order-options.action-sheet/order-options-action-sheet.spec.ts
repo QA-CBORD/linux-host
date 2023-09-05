@@ -10,7 +10,6 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { Storage } from '@ionic/storage';
 import { CoreProviders } from 'src/app/testing/core-providers';
 
 describe('OrderOptionsActionSheet', () => {

@@ -67,15 +67,15 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly a11yService: AccessibilityService,
     private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.orderType =
       this.activeOrderType !== null
         ? this.activeOrderType
         : this.orderTypes.pickup
-        ? ORDER_TYPE.PICKUP
-        : ORDER_TYPE.DELIVERY;
+          ? ORDER_TYPE.PICKUP
+          : ORDER_TYPE.DELIVERY;
     this.dispatchingData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
@@ -91,6 +91,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   get userData$(): Observable<UserInfo> {
     return this.userFacadeService.getUserData$();
+  }
+
+  get prepTime() {
+    let time = 0;
+    time = this.orderType === this.enumOrderTypes.DELIVERY ? this.orderTypes.deliveryPrepTime
+      : this.orderType === this.enumOrderTypes.PICKUP ? this.orderTypes.pickupPrepTime : 0
+    return time;
   }
 
   dispatchingData() {
@@ -239,7 +246,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           );
         },
         err => {
-          if (typeof err ==='object' && err.message) {
+          if (typeof err === 'object' && err.message) {
             this.onToastDisplayed(err.message);
           } else if (typeof err === 'string' && err) {
             this.onToastDisplayed(err);
@@ -294,7 +301,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   private async setDefaultTimeSlot(): Promise<void> {
     const { openNow } = await this.activeMerchant$.pipe(take(1)).toPromise();
     if (openNow) {
-      this.dateTimePicker = 'ASAP';
+      this.dateTimePicker = `ASAP (${this.prepTime} min)`;
     } else {
       const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
       if (this.isMerchantDateUnavailable(schedule)) {
