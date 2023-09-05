@@ -72,8 +72,8 @@ export class ConnectionService {
     const servicesOffline = await firstValueFrom(
       this.http.head(this.environmentFacade.getServicesURL(), { observe: 'response' }).pipe(
         timeout(TIME_OUT_DURATION),
-        map(res => this.isConnectionIssues({ message: res.statusText, status: res.status })),
-        catchError(error => of(this.isConnectionIssues(error)))
+        map(res => this.isConnectionIssues({ message: res.statusText, status: res.status }, true)),
+        catchError(error => of(this.isConnectionIssues(error, true)))
       )
     );
     if (servicesOffline) {
@@ -83,8 +83,8 @@ export class ConnectionService {
     return ConnectivityErrorType.NONE;
   }
 
-  isConnectionIssues({ message, status }): boolean {
-    const emptyResponse = status && Number(status) === STATUS_CODE_SUCCESS && STATUS_MESSAGE_SUCCESS.test(message);
+  isConnectionIssues({ message, status }, isError?: boolean): boolean {
+    const emptyResponse = status && Number(status) === STATUS_CODE_SUCCESS && STATUS_MESSAGE_SUCCESS.test(message) && isError;
     return CONNECTION_TIME_OUT_MESSAGE.test(message) || (status !== null && Number(status) === NO_INTERNET_STATUS_CODE) || emptyResponse;
   }
 }
