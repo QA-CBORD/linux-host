@@ -94,10 +94,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   get prepTime() {
-    let time = 0;
-    time = this.orderType === this.enumOrderTypes.DELIVERY ? this.orderTypes.deliveryPrepTime
-      : this.orderType === this.enumOrderTypes.PICKUP ? this.orderTypes.pickupPrepTime : 0
-    return time;
+    return {
+      [this.enumOrderTypes.PICKUP]: this.orderTypes.pickupPrepTime,
+      [this.enumOrderTypes.DELIVERY]: this.orderTypes.deliveryPrepTime,
+    }[this.orderType] || 0;
   }
 
   dispatchingData() {
