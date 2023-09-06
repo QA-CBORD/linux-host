@@ -55,7 +55,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   orderType: number;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   selectedTimeStamp: string | Date;
-  optionsModalAriaHidden: boolean = false;
+  optionsModalAriaHidden = false;
 
   constructor(
     private readonly modalsService: ModalsService,
