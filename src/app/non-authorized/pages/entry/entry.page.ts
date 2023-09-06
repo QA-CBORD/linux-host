@@ -9,6 +9,7 @@ import { App } from '@capacitor/app';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { from, Observable } from 'rxjs';
 import { Platform } from '@ionic/angular';
+import { RateApp } from 'capacitor-rate-app';
 
 @Component({
   selector: 'st-entry',
@@ -17,6 +18,7 @@ import { Platform } from '@ionic/angular';
 })
 export class EntryPage implements OnInit {
   private changeEnvClicks = 0;
+  private rateAppClicks = 0;
   appVersion$: Observable<string>;
 
   constructor(
@@ -38,7 +40,8 @@ export class EntryPage implements OnInit {
   private async initialization() {
     await this.loadingService.showSpinner();
     // Reset services url to current environment after logout and before any other service call
-    this.environmentFacadeService.resetEnvironmentAndCreateSession(true)
+    this.environmentFacadeService
+      .resetEnvironmentAndCreateSession(true)
       .finally(() => this.loadingService.closeSpinner());
   }
 
@@ -55,6 +58,10 @@ export class EntryPage implements OnInit {
     this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
   }
 
+  showRateApp() {
+    if (!this.platform.is('desktop')) RateApp.requestReview();
+  }
+
   async changeEnv() {
     this.changeEnvClicks++;
     if (this.changeEnvClicks > 4) {
@@ -62,6 +69,14 @@ export class EntryPage implements OnInit {
       await this.sessionFacadeService.logoutUser(false);
       await this.environmentFacadeService.changeEnvironment();
       this.initialization();
+    }
+  }
+
+  rateApp() {
+    this.rateAppClicks++;
+    if (this.rateAppClicks > 4) {
+      this.rateAppClicks = 0;
+      this.showRateApp();
     }
   }
 }

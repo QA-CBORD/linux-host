@@ -42,6 +42,19 @@
     outline: none;
   }
 
+  &__rate-button {
+    --background: transparent;
+    --box-shadow: none;
+    position: fixed;
+    top: env(safe-area-inset-top);
+    right: 0;
+    height: 50px;
+    width: 50px;
+
+    --background-activated: transparent;
+    outline: none;
+  }
+
   &__footer {
     position: absolute;
     margin-left: auto;
@@ -54,5 +67,10 @@
     font-size: small;
     margin-bottom: $notch-bottom;
 
+  }
+
+  .entry_container {
+    display: flex;
+    justify-content: space-between;
   }
 }
