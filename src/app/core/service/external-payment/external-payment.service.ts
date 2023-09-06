@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { take } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -33,8 +33,8 @@ export class ExternalPaymentService {
 
   addUSAePayCreditCard(): Promise<USAePayResponse> {
     return new Promise<USAePayResponse>((resolve, reject) => {
-      const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
-      const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
+      const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(first());
+      const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(first());
       zip(authTokenObservable, institutionInfoObservable).subscribe(
         ([authToken, institutionInfo]) => {
           const browser = this.openUSAePayPage(authToken, institutionInfo.shortName);
@@ -54,16 +54,18 @@ export class ExternalPaymentService {
   async payWithApplePay(handleApplePay: ApplePay, queryParams: Partial<OrderInfo> | DepositInfo): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new Promise<any>((resolve, reject) => {
-      const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(take(1));
-      const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
-      zip(authTokenObservable, institutionInfoObservable).subscribe(
-        async ([authToken, institutionInfo]) => {
-          await this.openApplePayPage(queryParams, handleApplePay, authToken, institutionInfo.shortName);
-        },
-        error => {
-          reject({ success: false, errorMessage: error });
-        }
-      );
+      const authTokenObservable = this.authFacadeService.getAuthenticationToken$().pipe(first());
+      const institutionInfoObservable = this.institutionFacadeService.cachedInstitutionInfo$.pipe(first());
+      zip(authTokenObservable, institutionInfoObservable)
+        .pipe(first())
+        .subscribe({
+          next: async ([authToken, institutionInfo]) => {
+            await this.openApplePayPage(queryParams, handleApplePay, authToken, institutionInfo.shortName);
+          },
+          error: error => {
+            reject({ success: false, errorMessage: error });
+          },
+        });
       this.handleApplePayResponse(resolve, reject);
     });
   }
@@ -170,6 +172,9 @@ export class ExternalPaymentService {
         applePayEvent.remove();
       });
     });
+    Browser.addListener('browserFinished', () => {
+      applePayEvent.remove();
+    });
   }
 
   private async onUSAePayCallBackRetrieve(message: string) {
@@ -192,7 +197,7 @@ export class ExternalPaymentService {
     });
     browser
       .on('exit')
-      .pipe(take(1))
+      .pipe(first())
       .subscribe(() => {
         this.accessibilityService.hideElementsByClassName(false);
       });
