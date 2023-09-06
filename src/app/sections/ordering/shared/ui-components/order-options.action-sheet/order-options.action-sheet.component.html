@@ -1,5 +1,5 @@
 <ion-content>
-  <div class="order-options">
+  <div class="order-options" [attr.aria-hidden]="optionsModalAriaHidden">
     <h1 id="modal-mainTitle" tabindex="0" class="order-options__title">
       {{ contentStrings.labelOrderOptions | async }}
     </h1>
