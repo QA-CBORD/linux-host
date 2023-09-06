@@ -70,5 +70,9 @@
 	{
 		"pkg": "@capawesome/capacitor-background-task",
 		"classpath": "io.capawesome.capacitorjs.plugins.backgroundtask.BackgroundTaskPlugin"
+	},
+	{
+		"pkg": "capacitor-rate-app",
+		"classpath": "com.capacitor.rateApp.CapacitorRateAppPlugin"
 	}
 ]
