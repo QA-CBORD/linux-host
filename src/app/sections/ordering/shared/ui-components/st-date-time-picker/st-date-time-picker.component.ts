@@ -33,6 +33,7 @@ export interface TimePickerData {
 })
 export class StDateTimePickerComponent implements OnInit {
   @Input() schedule: Schedule;
+  @Input() prepTime: string;
   @Input() data: TimePickerData;
   @Input() isTimeDisable: number;
   @Input() merchantInfo: MerchantInfo;

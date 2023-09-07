@@ -95,10 +95,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   get prepTime() {
-    return {
+    const time = {
       [this.enumOrderTypes.PICKUP]: this.orderTypes.pickupPrepTime,
       [this.enumOrderTypes.DELIVERY]: this.orderTypes.deliveryPrepTime,
     }[this.orderType] || 0;
+    return `(${time} min)`
+
   }
 
   dispatchingData() {
@@ -305,7 +307,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   private async setDefaultTimeSlot(): Promise<void> {
     const { openNow } = await this.activeMerchant$.pipe(take(1)).toPromise();
     if (openNow) {
-      this.dateTimePicker = `ASAP (${this.prepTime} min)`;
+      this.dateTimePicker = 'ASAP';
     } else {
       const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
       if (this.isMerchantDateUnavailable(schedule)) {
