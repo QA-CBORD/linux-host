@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<ng-template #placeholder>{{dateTimePicker}}</ng-template>
+<ng-template #placeholder>{{contentStrings.labelAsap | async}} {{prepTime}}</ng-template>
 <ng-template #dateTime>{{ dateTimeWithTimeZone || dateTimePicker }}</ng-template>
 <ion-picker
   #timePicker
