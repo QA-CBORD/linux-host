@@ -55,6 +55,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   orderType: number;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   selectedTimeStamp: string | Date;
+  optionsModalAriaHidden = false;
 
   constructor(
     private readonly modalsService: ModalsService,
@@ -189,11 +190,14 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     if (this.child.isTimeDisable) {
       this.child.openPicker();
       const element = document.getElementById('time_element');
+      this.optionsModalAriaHidden = true;
       if (element) element.focus();
     }
   }
 
   onDateTimeSelected({ dateTimePicker, timeStamp }: DateTimeSelected): void {
+    this.optionsModalAriaHidden = false;
+
     this.dateTimePicker = dateTimePicker;
     this.selectedTimeStamp = timeStamp;
 
