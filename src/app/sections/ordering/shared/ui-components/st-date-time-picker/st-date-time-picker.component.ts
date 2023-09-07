@@ -286,7 +286,7 @@ export class StDateTimePickerComponent implements OnInit {
 
   close () {
     this.isPickerOpen = false;
-    this.timePicker.dismiss();
+    this.timePicker && this.timePicker.dismiss();
   }
 }
 
