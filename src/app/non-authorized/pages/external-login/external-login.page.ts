@@ -18,7 +18,6 @@ import { PopupTypes } from '@sections/rewards/rewards.config';
 import { PopoverController } from '@ionic/angular';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
-import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 @Component({
   selector: 'st-external-login',
@@ -41,7 +40,6 @@ export class ExternalLoginPage {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -113,7 +111,7 @@ export class ExternalLoginPage {
 
     const browserEventBack = this.browser.on('exit').subscribe(event => {
       if (event) {
-        this.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
+        this.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
       }
     });
 
