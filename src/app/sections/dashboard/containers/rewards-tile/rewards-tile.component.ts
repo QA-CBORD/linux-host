@@ -40,7 +40,7 @@ export class RewardsTileComponent implements OnInit {
       })
     );
 
-    this.userPointsSpent$ = this.rewardTrackInfo$.pipe(map(({ userExperiencePoints }) => userExperiencePoints));
+    this.userPointsSpent$ = this.rewardTrackInfo$.pipe(map(({ userCurrentPoints }) => userCurrentPoints));
   }
   getUserRewardTrackInfo = () =>
     this.rewardsService
