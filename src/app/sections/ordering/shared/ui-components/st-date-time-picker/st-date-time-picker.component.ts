@@ -132,7 +132,7 @@ export class StDateTimePickerComponent implements OnInit {
     setTimeout(() => {
       const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
       const newLabel = document.createElement('label');
-      newLabel.textContent = pageTitle.textContent; 
+      newLabel.textContent = pageTitle.textContent;
       pageTitle.parentNode.replaceChild(newLabel, pageTitle);
     }, 50);
 
