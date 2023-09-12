@@ -182,7 +182,11 @@
         padding-left: 30px;
         @include font-nunito-regular(16px);
       }
-
+      .picker-toolbar-title label {
+        font-size: 18px;
+        color: #161616;
+        font-weight: bold;
+      }
       .picker-toolbar-title .picker-button {
         color: #161616;
         padding: 0;
@@ -219,6 +223,11 @@
       }
       .picker-toolbar-secondary {
         pointer-events: none;
+      }
+      .picker-toolbar-title label {
+        font-size: 18px;
+        color: #161616;
+        font-weight: bold;
       }
       .picker-toolbar-title .picker-button {
         pointer-events: none;
