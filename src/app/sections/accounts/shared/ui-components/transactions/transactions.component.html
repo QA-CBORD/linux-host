@@ -14,7 +14,7 @@
         {{ transaction.actualDate | date: 'EEEE, MMMM d' }}
       </ion-label>
     </ion-item-divider>
-    <ion-item [button]="true" lines="full" class="transactions__item">
+    <ion-item lines="full" class="transactions__item">
       <st-transaction-item [transaction]="transaction"></st-transaction-item>
     </ion-item>
   </ng-container>
