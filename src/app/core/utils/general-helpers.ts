@@ -137,7 +137,7 @@ export const isFormInvalid = (formGroup: FormGroup): boolean => {
     if (control instanceof FormControl) {
       if (control.validator) {
         const validators = control.validator({} as AbstractControl);
-        if (validators && validators.required) {
+        if (validators && validators.errorMsg) {
           // Check if the control has a required validator
           if (control.value === '' || control.value === null) {
             control.markAsTouched({ onlySelf: true });
