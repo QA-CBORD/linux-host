@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { ChangeDetectorRef } from "@angular/core";
-import { SimpleChanges } from "@angular/core";
-import { FormBuilder } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { MerchantService } from "@sections/ordering/services";
 import { LoadingService } from "@core/service/loading/loading.service";
 import { OrderingService } from "@sections/ordering/services/ordering.service";
@@ -52,9 +51,22 @@ describe("AddEditAddressesComponent", () => {
     });
     fixture = TestBed.createComponent(AddEditAddressesComponent);
     component = fixture.componentInstance;
+
+    component.addEditAddressesForm = new FormGroup({
+      campus: new FormControl(''),
+      address1: new FormControl(''),
+    });
   });
 
   it("can load instance", () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call updateValueAndValidity with specific parameters', () => {
+    const spy = jest.spyOn(component.addEditAddressesForm, 'updateValueAndValidity');
+
+    component['onChanges'](); 
+
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
