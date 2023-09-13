@@ -165,6 +165,10 @@
   </form>
 </div>
 
+<st-button *ngIf="isEditAddress" (onClick)="saveAddress()">
+  {{ saveLabel }}
+</st-button>
+
 <ng-template #optionalPlaceholder>
   <div class="addresses__control-optional">
     {{ contentStrings.labelOptional | async }}

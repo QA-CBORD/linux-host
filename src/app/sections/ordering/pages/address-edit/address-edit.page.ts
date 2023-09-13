@@ -112,13 +112,6 @@ export class AddressEditPage implements OnInit {
   }
 
   addAddress() {
-    if (this.addNewAddressForm && this.addNewAddressForm.value && !this.addNewAddressForm.valid) {
-      return;
-    }
-    if (this.addNewAddressForm && !this.addNewAddressForm.value && !this.addNewAddressForm.valid) {
-      this.onBack();
-      return;
-    }
     this.loadingService.showSpinner();
     this.getBuildingData$(parseInt(this.addNewAddressForm.value.campus))
       .pipe(

@@ -6,9 +6,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const declarations = [AddEditAddressesComponent];
-const customModules = [StInputFloatingLabelModule, StSelectFloatingLabelModule, FocusNextModule];
+const customModules = [StInputFloatingLabelModule, StSelectFloatingLabelModule, FocusNextModule, StButtonModule];
 
 @NgModule({
   declarations,

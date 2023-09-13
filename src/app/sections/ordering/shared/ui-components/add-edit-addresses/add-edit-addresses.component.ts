@@ -12,13 +12,12 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { debounceTime, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
-import { MerchantService } from '@sections/ordering/services';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { formControlErrorDecorator, sortAlphabetically } from '@core/utils/general-helpers';
+import { formControlErrorDecorator, isFormInvalid, sortAlphabetically } from '@core/utils/general-helpers';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -36,7 +35,10 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   @Input() editAddress: any;
   @Input() isError: boolean;
   @Input() defaultAddress: string;
+  @Input() saveLabel: string;
+  @Input() isEditAddress: boolean;
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onSaveAddress: EventEmitter<void> = new EventEmitter<void>();
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   addEditAddressesForm: FormGroup;
@@ -50,7 +52,6 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loader: LoadingService,
     private readonly orderingService: OrderingService,
@@ -179,7 +180,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private onChanges() {
-    const subscription = this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
+    const subscription = this.addEditAddressesForm.valueChanges.pipe().subscribe(value => {
       const id = this.editAddress && this.editAddress.address ? this.editAddress.address.id : null;
       this.onFormChanged.emit({
         value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0', id },
@@ -234,14 +235,12 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       campus = selectedAddress.onCampus ? 'oncampus' : 'offcampus';
     }
 
+    const buildingValue = this.editAddress?.activeBuilding?.addressInfo?.building || '';
+    const building = selectedAddress && selectedAddress.building !== null ? buildingValue : '';
+
     return {
       [this.controlsNames.campus]: [campus || 'oncampus'],
-      [this.controlsNames.buildings]: [
-        selectedAddress && selectedAddress.building !== null
-          ? this.editAddress.activeBuilding.addressInfo.building
-          : '',
-        buildingsErrors,
-      ],
+      [this.controlsNames.buildings]: [building, buildingsErrors],
       [this.controlsNames.room]: [
         selectedAddress && selectedAddress.room !== null ? selectedAddress.room : '',
         roomErrors,
@@ -338,6 +337,16 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
     CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.state].required = await this.contentStrings.formErrorState
       .pipe(take(1))
       .toPromise();
+  }
+
+  saveAddress() {
+    const isInvalid = isFormInvalid(this.addEditAddressesForm);
+
+    if (!this.addEditAddressesForm.valid || isInvalid) {
+      return;
+    }
+
+    this.onSaveAddress.emit();
   }
 }
 

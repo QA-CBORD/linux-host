@@ -17,11 +17,10 @@
         [buildingsOnCampus]="buildings$ | async"
         [defaultAddress]="defaultAddress$ | async"
         (onFormChanged)="onAddressFormChanged($event)"
+        (onSaveAddress)="addAddress()"
+        [saveLabel]="contentStrings.buttonSave | async"
+        [isEditAddress]="true"
       ></st-add-edit-addresses>
     </ng-container>
-
-    <st-button (onClick)="addAddress()">
-      {{contentStrings.buttonSave | async}}
-    </st-button>
   </div>
 </ion-content>
