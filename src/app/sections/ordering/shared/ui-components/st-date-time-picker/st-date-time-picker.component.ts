@@ -101,7 +101,7 @@ export class StDateTimePickerComponent implements OnInit {
 
     this.pickerColumns = this.createColumns();
   }
- 
+  
   async openPicker(): Promise<void> {
     const back = await lastValueFrom(this.contentStrings.buttonBack.pipe(take(1)));
     this.monthArray = await lastValueFrom(
