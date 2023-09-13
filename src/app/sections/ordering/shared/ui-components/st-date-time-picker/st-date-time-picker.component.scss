@@ -3,6 +3,16 @@
 :host {
 	width: 100%;
 }
+.title {
+	z-index: 100;
+    position: absolute;
+	bottom: 325px;
+	left: 50%;
+    transform: translateX(-50%);
+	font-size: 18px;
+	color: #161616;
+	font-weight: bold;
+}
 .picker-hidden-confirm {
 	pointer-events: none;
 	display: none;
