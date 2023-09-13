@@ -19,7 +19,10 @@
   [columns]="pickerColumns"
   [buttons]="pickerButtons"
   (didDismiss)="isPickerOpen = false"
+  (ionPickerWillDismiss)="showTitle = false"
+  (didPresent)="showTitle = true"
 >
+  <span *ngIf="showTitle" class="title">{{ titleString }}</span>
   <st-button class="confirm-button"
   [buttonModifier]="'normalcase'"
   (onClick)="confirmPicker()">Set Pickup Time</st-button>

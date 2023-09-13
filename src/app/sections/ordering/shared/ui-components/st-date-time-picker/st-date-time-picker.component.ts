@@ -50,7 +50,9 @@ export class StDateTimePickerComponent implements OnInit {
   private weekArray: ContentStringInfo[];
   private monthArray: ContentStringInfo[];
   private tomorrowString = 'Tomorrow';
+  public titleString = '';
   public isPickerOpen = false;
+  public showTitle = false;
   public pickerColumns = [];
   public pickerButtons = [];
   public pickerClass = 'picker-time-picker';
@@ -99,9 +101,9 @@ export class StDateTimePickerComponent implements OnInit {
 
     this.pickerColumns = this.createColumns();
   }
+
   async openPicker(): Promise<void> {
     const back = await lastValueFrom(this.contentStrings.buttonBack.pipe(take(1)));
-    const title = await lastValueFrom(this.contentStrings.labelSelectTime.pipe(take(1)));
     this.monthArray = await lastValueFrom(
       this.contentStringsFacadeService
         .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
@@ -115,7 +117,6 @@ export class StDateTimePickerComponent implements OnInit {
     );
     this.pickerColumns = this.createColumns();
     this.pickerButtons = [
-      { text: title, role: 'title', cssClass: 'picker-title' },
       { text: '', role:'secondary', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
     ];
 
@@ -128,11 +129,9 @@ export class StDateTimePickerComponent implements OnInit {
     this.isPickerOpen = true;
 
     await this.updateAsapOption();
-
     setTimeout(() => {
-      const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
+      const pageTitle = document.getElementsByClassName('title')[0] as HTMLElement;
       const hiddenConfirmButton = document.getElementsByClassName('picker-hidden-confirm')[0] as HTMLElement;
-      pageTitle.setAttribute('aria-hidden', 'true');
       hiddenConfirmButton.setAttribute('aria-hidden', 'true');
       if (pageTitle) pageTitle.focus();
     }, TIMEOUTS.A11yFocus);
@@ -272,6 +271,8 @@ export class StDateTimePickerComponent implements OnInit {
       .getContentStringByName(ORDERING_CONTENT_STRINGS.labelTomorrow)
       .pipe(take(1))
       .toPromise();
+    this.titleString = await lastValueFrom(this.contentStrings.labelSelectTime.pipe(take(1)));
+
   }
 
   async updateAsapOption(): Promise<void> {
