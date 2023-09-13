@@ -74,7 +74,8 @@ export const handleServerError = <T>(
   ignoreCodes?: string[]
 ): MonoTypeOperatorFunction<T> => {
   return (source: Observable<T>) =>
-    source.pipe(catchError(({ message = '' }) => {
+    source.pipe(
+      catchError(({ message = '' }) => {
         message = message.split('|');
 
         if (message.length <= 1) return throwError(message[0]);
@@ -89,7 +90,7 @@ export const handleServerError = <T>(
           return throwError(() => message);
         }
 
-        if (+code === 9016){
+        if (+code === 9016) {
           return throwError(() => `${code}|${text}`);
         }
 
@@ -102,12 +103,12 @@ export const handleServerError = <T>(
           return throwError(() => text);
         }
 
-        return throwError(() => serverError[code] ? serverError[code] : text);
+        return throwError(() => (serverError[code] ? serverError[code] : text));
       })
     );
 };
 
-export const cvvValidationFn: ValidatorFn = function({ value }) {
+export const cvvValidationFn: ValidatorFn = function ({ value }) {
   if (isNaN(value)) return { error: true };
   if (!Number.isInteger(Number(value))) return { error: true };
 
@@ -132,10 +133,21 @@ export const validateAllFormFields = (formGroup: FormGroup) => {
 export const isFormInvalid = (formGroup: FormGroup): boolean => {
   return Object.keys(formGroup.controls).some(field => {
     const control: AbstractControl = formGroup.get(field);
-    if (control instanceof FormControl && formGroup.controls[field]?.value === '' || formGroup.controls[field]?.value === null) {
-      control.markAsTouched({ onlySelf: true });
-      return true;
+
+    if (control instanceof FormControl) {
+      if (control.validator) {
+        const validators = control.validator({} as AbstractControl);
+        if (validators && validators.required) {
+          // Check if the control has a required validator
+          if (control.value === '' || control.value === null) {
+            control.markAsTouched({ onlySelf: true });
+            return true;
+          }
+        }
+      }
     }
+
+    return false;
   });
 };
 
@@ -196,9 +208,11 @@ export function sortAlphabetically(a, b) {
   return 0;
 }
 
-export function configureBiometricsConfig(
-  supportedBiometricType: string[]
-): { type: string; name: string; icon: string } {
+export function configureBiometricsConfig(supportedBiometricType: string[]): {
+  type: string;
+  name: string;
+  icon: string;
+} {
   if (supportedBiometricType.includes('fingerprint')) {
     return { type: 'fingerprint', name: 'Fingerprint', icon: 'fingerprint' };
   } else if (supportedBiometricType.includes('face')) {
@@ -252,7 +266,8 @@ export function checkIsYesterday(currentDate: Date) {
 }
 
 export const validatePasswordDecorator = (
-  fn: ValidatorFn, error: ValidationErrors
+  fn: ValidatorFn,
+  error: ValidationErrors
 ): ((control: AbstractControl) => ValidationErrors | null) => {
   return control => {
     return fn(control) === null ? null : error;
@@ -261,11 +276,8 @@ export const validatePasswordDecorator = (
 
 export const isEmptyObject = (obj): boolean => {
   return obj && Object.keys(obj).length === 0;
-}
+};
 
 export const isAppearing = (date: string, i: number, transactions: object[], propertyName: string): boolean => {
-  return i === 0 || !isSameDay(
-    formatDate(date),
-    formatDate(transactions[i - 1][propertyName])
-  );
-}
+  return i === 0 || !isSameDay(formatDate(date), formatDate(transactions[i - 1][propertyName]));
+};
