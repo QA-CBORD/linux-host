@@ -129,6 +129,16 @@ export const validateAllFormFields = (formGroup: FormGroup) => {
   });
 };
 
+export const isFormInvalid = (formGroup: FormGroup): boolean => {
+  return Object.keys(formGroup.controls).some(field => {
+    const control: AbstractControl = formGroup.get(field);
+    if (control instanceof FormControl && formGroup.controls[field]?.value === '' || formGroup.controls[field]?.value === null) {
+      control.markAsTouched({ onlySelf: true });
+      return true;
+    }
+  });
+};
+
 export const isCreditCardAccount = ({ paymentSystemType }: UserAccount): boolean => {
   return paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY;
 };
