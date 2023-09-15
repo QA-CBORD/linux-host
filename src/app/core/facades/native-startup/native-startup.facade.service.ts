@@ -9,6 +9,7 @@ import { Device } from '@capacitor/device';
 import { App } from '@capacitor/app';
 import { NativeStartupInfo } from '@core/model/native-startup/native-startup-info';
 import { StorageEntity } from '@core/classes/extendable-state-manager';
+import { Settings } from 'src/app/app.global';
 
 @Injectable({
   providedIn: 'root',
@@ -83,6 +84,10 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
           map(([nativeStartupInfo, cachedDigest]) => {
+            this.storageStateService.updateStateEntity(
+              Settings.Setting.OFFLINE_BARCODE_ENABLED,
+              nativeStartupInfo.enableOfflineBarcodeGeneration
+            );
             this.blockNavStartup = nativeStartupInfo.action === 'block';
             // the service call will return null if there is no Native Startup Message
             if (nativeStartupInfo === null) {
