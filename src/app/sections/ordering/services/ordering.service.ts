@@ -24,7 +24,7 @@ export class OrderingService {
 
   async getContentErrorStringByException(err: string | [string, string], defaultMessage: string): Promise<string> {
 
-    const errorMessage = !Array.isArray(err) ? err : err[0];
+    const errorMessage = Array.isArray(err) ? err[0] : err;
 
     if (err && err.includes('CONTENT_STRING')) {
       const contentStringKey: ORDERING_CONTENT_STRINGS = errorMessage.split('CONTENT_STRING:')[1] as ORDERING_CONTENT_STRINGS;
