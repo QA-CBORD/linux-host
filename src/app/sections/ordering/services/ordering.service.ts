@@ -22,14 +22,17 @@ export class OrderingService {
       .pipe(map((string: ContentStringInfo) => (string ? string.value : '')));
   }
 
-  async getContentErrorStringByException(err: string | [string, string], defaultMessage: string) {
+  async getContentErrorStringByException(err: string | [string, string], defaultMessage: string): Promise<string> {
+
+    const errorMessage = !Array.isArray(err) ? err : err[0];
+
     if (err && err.includes('CONTENT_STRING')) {
-      const errorMessage = !Array.isArray(err) ? err : err[0];
       const contentStringKey: ORDERING_CONTENT_STRINGS = errorMessage.split('CONTENT_STRING:')[1] as ORDERING_CONTENT_STRINGS;
       const message = await lastValueFrom(this.getContentErrorStringByName(contentStringKey).pipe(take(1)));
       return message;
     }
-    return defaultMessage;
+
+    return  errorMessage || defaultMessage;
   }
 }
 
