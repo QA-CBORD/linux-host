@@ -92,12 +92,11 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
           )
       );
       return (
-        (offlineBarcodeEnabled && isVaultUnlocked && isServerError && cashlessKeyInCache) ||
-        (isVaultUnlocked && cashlessKeyInCache)
+        offlineBarcodeEnabled &&
+        ((isVaultUnlocked && isServerError && cashlessKeyInCache) || (isVaultUnlocked && cashlessKeyInCache))
       );
     })();
   }
-
 
   private getVaultIsLocked(data: ConnectivityPageInfo): boolean {
     if (data) {
