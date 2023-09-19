@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
@@ -50,15 +50,14 @@ export class StDateTimePickerComponent implements OnInit {
   private weekArray: ContentStringInfo[];
   private monthArray: ContentStringInfo[];
   private tomorrowString = 'Tomorrow';
-  public titleString = '';
   public isPickerOpen = false;
-  public showTitle = false;
   public pickerColumns = [];
   public pickerButtons = [];
   public pickerClass = 'picker-time-picker';
   @ViewChild('timePicker') timePicker: IonPicker;
 
   constructor(
+    private readonly renderer: Renderer2,
     private readonly orderingService: OrderingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly cartService: CartService,
@@ -104,6 +103,7 @@ export class StDateTimePickerComponent implements OnInit {
 
   async openPicker(): Promise<void> {
     const back = await lastValueFrom(this.contentStrings.buttonBack.pipe(take(1)));
+    const title = await lastValueFrom(this.contentStrings.labelSelectTime.pipe(take(1)));
     this.monthArray = await lastValueFrom(
       this.contentStringsFacadeService
         .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
@@ -117,6 +117,7 @@ export class StDateTimePickerComponent implements OnInit {
     );
     this.pickerColumns = this.createColumns();
     this.pickerButtons = [
+      { text: title, role: 'title', cssClass: 'picker-title' },
       { text: '', role:'secondary', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
     ];
 
@@ -129,8 +130,17 @@ export class StDateTimePickerComponent implements OnInit {
     this.isPickerOpen = true;
 
     await this.updateAsapOption();
+
     setTimeout(() => {
-      const pageTitle = document.getElementsByClassName('title')[0] as HTMLElement;
+      const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
+      const newH1 = this.renderer.createElement('h1');
+      this.renderer.setProperty(newH1, 'textContent', title);
+      this.renderer.addClass(newH1, 'picker-title');
+      this.renderer.appendChild(pageTitle.parentNode, newH1);
+      this.renderer.removeChild(pageTitle.parentNode, pageTitle);
+    }, 50);
+    setTimeout(() => {
+      const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
       const hiddenConfirmButton = document.getElementsByClassName('picker-hidden-confirm')[0] as HTMLElement;
       hiddenConfirmButton.setAttribute('aria-hidden', 'true');
       if (pageTitle) pageTitle.focus();
@@ -271,8 +281,6 @@ export class StDateTimePickerComponent implements OnInit {
       .getContentStringByName(ORDERING_CONTENT_STRINGS.labelTomorrow)
       .pipe(take(1))
       .toPromise();
-    this.titleString = await lastValueFrom(this.contentStrings.labelSelectTime.pipe(take(1)));
-
   }
 
   async updateAsapOption(): Promise<void> {

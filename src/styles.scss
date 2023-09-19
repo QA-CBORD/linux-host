@@ -177,7 +177,15 @@
         color: #000;
         @include font-nunito-regular(16px);
       }
-
+      .picker-toolbar-title {
+        display: flex;
+        justify-content: center;
+      }
+      .picker-toolbar-title h1 {
+        font-size: 18px;
+        color: #161616;
+        font-weight: bold;
+      }
       .picker-toolbar-cancel .picker-button {
         padding-left: 30px;
         @include font-nunito-regular(16px);
@@ -205,7 +213,7 @@
 
     .picker-toolbar {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 2fr 1fr;
       .picker-button {
         color: #000;
         @include font-nunito-regular(16px);
@@ -218,6 +226,15 @@
       }
       .picker-toolbar-secondary {
         pointer-events: none;
+      }
+      .picker-toolbar-title {
+        display: flex;
+        justify-content: center;
+      }
+      .picker-toolbar-title h1 {
+        font-size: 18px;
+        color: #161616;
+        font-weight: bold;
       }
       .picker-toolbar-title .picker-button {
         pointer-events: none;
