@@ -69,8 +69,17 @@ public class HIDPlugin extends Plugin {
     }
 
     @PluginMethod
-    public void isEndpointSetup(PluginCall call){
-        call.resolve(toJson(hidsdkManager.isEndpointSetup()));
+    public void isEndpointSetup(PluginCall call) {
+        try {
+            if (hidsdkManager != null) {
+                call.resolve(toJson(hidsdkManager.isEndpointSetup()));
+            } else {
+                call.resolve(toJson(false));
+            }
+
+        } catch (Exception e) {
+            call.resolve(toJson(false));
+        }
     }
 
     @PluginMethod

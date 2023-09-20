@@ -76,13 +76,13 @@ describe('OrderingService', () => {
       expect(result).toEqual(expectedContentString);
     });
   
-    it('returns the default message if the error message does not include "CONTENT_STRING"', async () => {
+    it('returns the message if the error message does not include "CONTENT_STRING"', async () => {
       const errorMessage = 'Some error message';
       const defaultMessage = 'Default error message';
   
       const result = await service.getContentErrorStringByException(errorMessage, defaultMessage);
   
-      expect(result).toEqual(defaultMessage);
+      expect(result).toEqual(errorMessage);
     });
   });
   
