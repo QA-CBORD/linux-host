@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
@@ -57,7 +57,6 @@ export class StDateTimePickerComponent implements OnInit {
   @ViewChild('timePicker') timePicker: IonPicker;
 
   constructor(
-    private readonly renderer: Renderer2,
     private readonly orderingService: OrderingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly cartService: CartService,
@@ -133,14 +132,8 @@ export class StDateTimePickerComponent implements OnInit {
 
     setTimeout(() => {
       const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
-      const newH1 = this.renderer.createElement('h1');
-      this.renderer.setProperty(newH1, 'textContent', title);
-      this.renderer.addClass(newH1, 'picker-title');
-      this.renderer.appendChild(pageTitle.parentNode, newH1);
-      this.renderer.removeChild(pageTitle.parentNode, pageTitle);
-    }, 50);
-    setTimeout(() => {
-      const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
+      pageTitle.setAttribute('aria-label', title);
+      pageTitle.setAttribute('role','heading');
       const hiddenConfirmButton = document.getElementsByClassName('picker-hidden-confirm')[0] as HTMLElement;
       hiddenConfirmButton.setAttribute('aria-hidden', 'true');
       if (pageTitle) pageTitle.focus();

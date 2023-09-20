@@ -182,12 +182,6 @@
         justify-content: center;
         align-items: center;
       }
-      .picker-toolbar-title h1 {
-        font-size: 18px;
-        color: #161616;
-        font-weight: bold;
-        margin-top: 0;
-      }
       .picker-toolbar-cancel .picker-button {
         padding-left: 30px;
         @include font-nunito-regular(16px);
@@ -233,12 +227,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-      }
-      .picker-toolbar-title h1 {
-        font-size: 18px;
-        color: #161616;
-        font-weight: bold;
-        margin-top: 0;
       }
       .picker-toolbar-title .picker-button {
         pointer-events: none;
