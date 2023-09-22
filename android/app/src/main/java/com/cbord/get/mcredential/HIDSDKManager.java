@@ -95,24 +95,19 @@ public class HIDSDKManager  {
         }
     }
 
-    public boolean isEndpointActive(){
-        try {
-            OrigoMobileKey mobileKey = getMobileKey();
-            return mobileKey == null ? false : mobileKey.isActivated();
-        } catch (Exception e){
-            LOGGER.error("isEndpointActive failed: " + e.getMessage(), e);
-        }
-
-        return false;
+    public boolean isEndpointActive() {
+        OrigoMobileKey mobileKey = getMobileKey();
+        return mobileKey == null ? false : mobileKey.isActivated();
     }
 
 
-    private OrigoMobileKey getMobileKey() throws Exception{
+    private OrigoMobileKey getMobileKey() {
         OrigoMobileKey mKey = null;
-        try{
+        try {
             mKey = mobileKeys.listMobileKeys().get(0);
-        }catch (Exception ex){
-            throw ex;
+        } catch (OrigoMobileKeysException ex) {
+            LOGGER.error("listMobileKeys: " + ex.getCauseMessage());
+        } catch (Exception e) {
         }
         return mKey;
     }
@@ -212,7 +207,7 @@ public class HIDSDKManager  {
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-            LOGGER.error("handleMobileKeysTransactionFailed failed: " + e.getMessage());
+            LOGGER.error("handleMobileKeysTransactionFailed: " + e.getCauseMessage());
             transactionCompleteListener.onCompleted(e.getErrorCode().toString());
         }
     }

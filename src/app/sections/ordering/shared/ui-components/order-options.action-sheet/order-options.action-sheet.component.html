@@ -71,6 +71,6 @@
     </ion-list>
   </div>
 </ion-content>
-<ion-footer mode="ios" class="order-options__footer">
+<ion-footer mode="ios" class="order-options__footer" [attr.aria-hidden]="optionsModalAriaHidden">
   <st-button (onClick)="onSubmit()">{{ footerButtonName }}</st-button>
 </ion-footer>
