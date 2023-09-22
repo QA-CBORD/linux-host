@@ -3,6 +3,7 @@ import { SettingsFacadeService } from "@core/facades/settings/settings-facade.se
 import { StorageStateService } from "@core/states/storage/storage-state.service";
 import { BarcodeService } from "./barcode.service";
 import { BarcodeFacadeService } from "./barcode.facade.service";
+import { AuthFacadeService } from "@core/facades/auth/auth.facade.service";
 
 describe("BarcodeFacadeService", () => {
   let service: BarcodeFacadeService;
@@ -19,6 +20,9 @@ describe("BarcodeFacadeService", () => {
     const barcodeServiceStub = () => ({
       generateBarcode: (userSetting, setting, arg0) => ({})
     });
+    const authFacadeMock = {
+      generateBarcodeFromServer: jest.fn().mockReturnValue('123456'),
+    };
     TestBed.configureTestingModule({
       providers: [
         BarcodeFacadeService,
@@ -26,6 +30,7 @@ describe("BarcodeFacadeService", () => {
           provide: SettingsFacadeService,
           useFactory: settingsFacadeServiceStub
         },
+        { provide: AuthFacadeService, useValue: authFacadeMock },
         { provide: StorageStateService, useFactory: storageStateServiceStub },
         { provide: BarcodeService, useFactory: barcodeServiceStub }
       ]
