@@ -4,24 +4,21 @@
   <div class="work-order-details__card">
     <ion-list>
       <ion-item>
-        <ion-select
-        interface="popover" 
-        [(ngModel)]="selectedAssetName"
-        justify="start"
-        [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'"
-        [disabled]="attachmentSelected"
-        [interfaceOptions]="customPopoverOptions">
-        <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
-          {{ option.name }}
-        </ion-select-option>
-      </ion-select>
-      <ion-icon class="chevron-down"></ion-icon>
+        <ion-select interface="popover" [(ngModel)]="selectedAssetName" justify="start"
+          [placeholder]="attachmentSelected ? attachmentSelected.attachmentType :  'Select file type'"
+          [disabled]="attachmentSelected" [interfaceOptions]="customPopoverOptions">
+          <ion-select-option *ngFor="let option of (attachmentTypes$ | async)" [value]="option.name">
+            {{ option.name }}
+          </ion-select-option>
+        </ion-select>
+        <ion-icon class="chevron-down"></ion-icon>
       </ion-item>
     </ion-list>
 
     <ng-container>
       <st-textarea-floating-label [(ngModel)]="notes" [disabled]="attachmentSelected" [isError]="isSubmitted" rows="3"
-        [label]="attachmentSelected?.comments ? attachmentSelected.comments : 'Attachment Notes'" [isAttachment]="true">
+        [maxLength]="128" [label]="attachmentSelected?.comments ? attachmentSelected.comments : 'Attachment Notes'"
+        [isAttachment]="true">
       </st-textarea-floating-label>
     </ng-container>
 

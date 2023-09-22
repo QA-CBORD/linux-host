@@ -7,7 +7,7 @@ import { AccessCardService } from '@sections/dashboard/containers/access-card/se
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { CommonService } from '@shared/services/common.service';
 import { ConnectionService } from '@shared/services/connection-service';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { firstValueFrom, map, Subscription } from 'rxjs';
 import { Settings, User } from 'src/app/app.global';
 import { ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
@@ -83,10 +83,22 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
       const isVaultUnlocked = !this.isVaultLocked;
       const isServerError = this.errorType === ConnectivityErrorType.SERVER_CONNECTION;
       const cashlessKeyInCache = !!(await firstValueFrom(this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)));
-      return isVaultUnlocked && isServerError && cashlessKeyInCache || isVaultUnlocked && cashlessKeyInCache;
+      const offlineBarcodeEnabled = await firstValueFrom(
+        this.barcodeFacadeService
+          .getInStorage<boolean>(Settings.Setting.OFFLINE_BARCODE_ENABLED)
+          .pipe(
+            map(
+              offlineBarcodeGenerationEnabled =>
+                offlineBarcodeGenerationEnabled === null || offlineBarcodeGenerationEnabled
+            )
+          )
+      );
+      return (
+        offlineBarcodeEnabled &&
+        ((isVaultUnlocked && isServerError && cashlessKeyInCache) || (isVaultUnlocked && cashlessKeyInCache))
+      );
     })();
   }
-
 
   private getVaultIsLocked(data: ConnectivityPageInfo): boolean {
     if (data) {
