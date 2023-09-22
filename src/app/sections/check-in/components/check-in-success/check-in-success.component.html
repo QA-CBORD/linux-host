@@ -13,7 +13,7 @@
 
 <ion-content>
   <st-success-summary
-    *ngIf="(order$ | async) as order"
+    *ngIf="order$ | async as order"
     [mealBased]="order.mealBased"
     [labelOrderPlacedTitle]="contentStrings.subtitle"
     [labelOrderPlacedDescription]="contentStrings.instructions"

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  AfterViewChecked,
+  AfterViewInit,
+  AfterContentChecked,
+} from '@angular/core';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { NavigationService } from '@shared/services/navigation.service';
@@ -29,15 +36,22 @@ export class NonCheckingSuccessComponent implements OnInit, AfterViewChecked, Af
     this.initContentStrings();
   }
 
+  focusTitle() {
+    const element = document.getElementById('modal-mainTitle');
+    if (element) {
+      element.focus();
+    }
+  }
+
   ngAfterContentChecked(): void {
-    document.getElementById('modal-mainTitle')?.focus();
+    this.focusTitle();
   }
   ngAfterViewChecked(): void {
-    document.getElementById('modal-mainTitle')?.focus();
+    this.focusTitle();
   }
 
   ngAfterViewInit(): void {
-    document.getElementById('modal-mainTitle')?.focus();
+    this.focusTitle();
   }
 
   onClosed() {

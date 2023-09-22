@@ -35,15 +35,22 @@ export class CheckInSuccessComponent implements OnInit, AfterViewChecked, AfterV
     this.contentStrings = this.activatedRoute.snapshot.data.data.contentString as CheckingSuccessContentCsModel;
   }
 
+  focusTitle() {
+    const element = document.getElementById('modal-mainTitle');
+    if (element) {
+      element.focus();
+    }
+  }
+
   ngAfterContentChecked(): void {
-    document.getElementById('modal-mainTitle')?.focus();
+    this.focusTitle();
   }
   ngAfterViewChecked(): void {
-    document.getElementById('modal-mainTitle')?.focus();
+    this.focusTitle();
   }
 
   ngAfterViewInit(): void {
-    document.getElementById('modal-mainTitle')?.focus();
+    this.focusTitle();
   }
 
   ngOnInit() {

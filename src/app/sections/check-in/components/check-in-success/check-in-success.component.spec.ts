@@ -64,18 +64,21 @@ describe('CheckInSuccessComponent', () => {
 
 
   it('ngAfterViewInit should focus on modal-mainTitle', () => {
+    component.checkNumber = '123';
     const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
     component.ngAfterViewInit();
     expect(focusSpy).toHaveBeenCalled();
   });
 
   it('ngAfterViewChecked should focus on modal-mainTitle', () => {
+    component.checkNumber = '123';
     const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
     component.ngAfterViewChecked();
     expect(focusSpy).toHaveBeenCalled();
   });
   
   it('ngAfterContentChecked should focus on modal-mainTitle', () => {
+    component.checkNumber = '123';
     const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
     component.ngAfterContentChecked();
     expect(focusSpy).toHaveBeenCalled();

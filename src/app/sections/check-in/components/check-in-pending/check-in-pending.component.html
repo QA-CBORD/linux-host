@@ -25,17 +25,19 @@
   </div>
   <div class="pending-checkin__colored-bg">
     <div class="padded" *ngIf="orderDetailOptions$ | async as orderDetailOptions">
-      <div class="title-lbl faded">{{ orderDetailOptions.orderType | typeMessage: 'dueTime' | uppercase }}</div>
-      <span class="text-dark">{{ data.pickupTime | modifyPrepTime: data.orderTypes }}</span>
+      <div class="title-lbl faded">{{ orderDetailOptions.orderType | typeMessage : 'dueTime' | uppercase }}</div>
+      <span class="text-dark">{{ data.pickupTime | modifyPrepTime : data.orderTypes }}</span>
       <div class="small-content faded">{{ contentStrings.pickup_info }}</div>
-      <div class="title-lbl faded">{{ orderDetailOptions.orderType | typeMessage: 'address' | uppercase }}</div>
+      <div class="title-lbl faded">{{ orderDetailOptions.orderType | typeMessage : 'address' | uppercase }}</div>
       <div class="text-dark address">
         <img width="18" src="./assets/icon/location-pin.svg" alt="pin" />
         <span>{{ data.storeAddress | addressHeaderFormat }}</span>
       </div>
       <div class="section-divided">
         <span class="text-dark"> {{ contentStrings.lbl_total }} </span>
-        <span class="text-dark"> {{ total | priceUnitsResolver: (menuInfo$ | async)?.mealBased || (order$ | async)?.mealBased }}</span>
+        <span class="text-dark">
+          {{ total | priceUnitsResolver : (menuInfo$ | async)?.mealBased || (order$ | async)?.mealBased }}</span
+        >
       </div>
       <div class="btn_no-bg">
         <st-button (onClick)="goToOrderDetails()" fill="clear" buttonModifier="rectangular">
