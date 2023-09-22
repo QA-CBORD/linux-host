@@ -1,4 +1,10 @@
-import { AfterContentChecked, AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupportedFormat } from '@capacitor-community/barcode-scanner';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -20,6 +26,7 @@ import {
 } from '@sections/ordering';
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { LockDownService } from '@shared/services';
 import { Observable, Subscription, firstValueFrom, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
@@ -27,6 +34,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeComponent } from '../scan-code/scan-code.component';
+
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -40,7 +48,7 @@ export interface orderInfo {
   styleUrls: ['./check-in-pending.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckInPendingComponent implements OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked {
+export class CheckInPendingComponent implements OnInit, AfterViewInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentStrings: any;
   locationPermissionDisabled: boolean;
@@ -61,7 +69,6 @@ export class CheckInPendingComponent implements OnInit, AfterViewChecked, AfterV
   orderPayment: OrderPayment;
   order$: Observable<OrderInfo>;
 
-
   constructor(
     private readonly loadingService: LoadingService,
     private readonly checkInService: CheckingServiceFacade,
@@ -77,6 +84,7 @@ export class CheckInPendingComponent implements OnInit, AfterViewChecked, AfterV
     private platform: Platform,
     private readonly cartService: CartService,
     private readonly lockDownService: LockDownService,
+    private readonly accessibilityService: AccessibilityService
   ) {}
 
   ngOnInit() {
@@ -91,17 +99,7 @@ export class CheckInPendingComponent implements OnInit, AfterViewChecked, AfterV
   }
 
   focusTitle() {
-    const element = document.getElementById('modal-mainTitle');
-    if (element) {
-      element.focus();
-    }
-  }
-
-  ngAfterContentChecked(): void {
-    this.focusTitle();
-  }
-  ngAfterViewChecked(): void {
-    this.focusTitle();
+    this.accessibilityService.focusElementById('modal-mainTitle');
   }
 
   ngAfterViewInit(): void {

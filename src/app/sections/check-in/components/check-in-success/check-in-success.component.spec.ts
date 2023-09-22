@@ -7,12 +7,13 @@ import { of } from 'rxjs';
 import { CheckInSuccessComponent } from './check-in-success.component';
 import { HttpClientModule } from '@angular/common/http';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 describe('CheckInSuccessComponent', () => {
   let component: CheckInSuccessComponent;
   let fixture: ComponentFixture<CheckInSuccessComponent>;
 
-  let router, merchantService, resolver, activatedRoute, storage, storageStateService;
+  let router, merchantService, resolver, activatedRoute, storage, storageStateService, accesibilityService;
 
   beforeEach(() => {
     router = {
@@ -37,9 +38,10 @@ describe('CheckInSuccessComponent', () => {
     resolver = {
       resolver: jest.fn(),
     };
-    storageStateService = {
-
-    }
+    storageStateService = {};
+    accesibilityService = {
+      focusElementById: jest.fn()
+    };
 
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
@@ -51,6 +53,7 @@ describe('CheckInSuccessComponent', () => {
         { provide: Router, useValue: router },
         { provide: Storage, useValue: storage },
         { provide: StorageStateService, useValue: storageStateService },
+        { provide: AccessibilityService, useValue: accesibilityService}
       ],
       imports: [HttpClientModule],
     });
@@ -64,23 +67,8 @@ describe('CheckInSuccessComponent', () => {
 
 
   it('ngAfterViewInit should focus on modal-mainTitle', () => {
-    component.checkNumber = '123';
-    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
+    const focusSpy = jest.spyOn(accesibilityService, 'focusElementById');
     component.ngAfterViewInit();
-    expect(focusSpy).toHaveBeenCalled();
-  });
-
-  it('ngAfterViewChecked should focus on modal-mainTitle', () => {
-    component.checkNumber = '123';
-    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
-    component.ngAfterViewChecked();
-    expect(focusSpy).toHaveBeenCalled();
-  });
-  
-  it('ngAfterContentChecked should focus on modal-mainTitle', () => {
-    component.checkNumber = '123';
-    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
-    component.ngAfterContentChecked();
     expect(focusSpy).toHaveBeenCalled();
   });
 });

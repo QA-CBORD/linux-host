@@ -10,7 +10,7 @@ import { CartService, MerchantService } from '@sections/ordering/services';
 import { LockDownService } from '@shared/services';
 import { CheckInPendingComponent } from './check-in-pending.component';
 import { of } from 'rxjs';
-import { OrderInfo } from '@sections/ordering';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 describe('CheckInPendingComponent', () => {
   let component: CheckInPendingComponent;
@@ -29,7 +29,8 @@ describe('CheckInPendingComponent', () => {
     cdRef,
     platform,
     cartService,
-    lockDownService;
+    lockDownService,
+    accesibilityService;
 
   beforeEach(() => {
     loadingService = {
@@ -82,6 +83,10 @@ describe('CheckInPendingComponent', () => {
       isLockDownOn: jest.fn(),
     };
 
+    accesibilityService = {
+      focusElementById: jest.fn()
+    };
+
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [CheckInPendingComponent],
@@ -100,6 +105,7 @@ describe('CheckInPendingComponent', () => {
         { provide: AlertController, useValue: alertCtrl },
         { provide: ChangeDetectorRef, useValue: cdRef },
         { provide: Platform, useValue: platform },
+        { provide: AccessibilityService, useValue: accesibilityService}
       ],
     });
     fixture = TestBed.createComponent(CheckInPendingComponent);
@@ -124,19 +130,8 @@ describe('CheckInPendingComponent', () => {
   });
 
   it('ngAfterViewInit should focus on modal-mainTitle', () => {
-    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
+    const focusSpy = jest.spyOn(accesibilityService, 'focusElementById');
     component.ngAfterViewInit();
-    expect(focusSpy).toHaveBeenCalled();
-  });
-
-  it('ngAfterViewChecked should focus on modal-mainTitle', () => {
-    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
-    component.ngAfterViewChecked();
-    expect(focusSpy).toHaveBeenCalled();
-  });
-  it('ngAfterContentChecked should focus on modal-mainTitle', () => {
-    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
-    component.ngAfterContentChecked();
     expect(focusSpy).toHaveBeenCalled();
   });
 });

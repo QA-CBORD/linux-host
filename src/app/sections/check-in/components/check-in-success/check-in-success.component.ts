@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentChecked } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
 import { MerchantService, OrderDetailOptions, OrderInfo } from '@sections/ordering';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -14,7 +15,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
   styleUrls: ['./check-in-success.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckInSuccessComponent implements OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked {
+export class CheckInSuccessComponent implements OnInit, AfterViewInit {
   order$: Observable<OrderInfo>;
   orderId: string;
   checkNumber: string;
@@ -29,6 +30,7 @@ export class CheckInSuccessComponent implements OnInit, AfterViewChecked, AfterV
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly accessibilityService: AccessibilityService
   ) {}
 
   initContentString() {
@@ -36,17 +38,7 @@ export class CheckInSuccessComponent implements OnInit, AfterViewChecked, AfterV
   }
 
   focusTitle() {
-    const element = document.getElementById('modal-mainTitle');
-    if (element) {
-      element.focus();
-    }
-  }
-
-  ngAfterContentChecked(): void {
-    this.focusTitle();
-  }
-  ngAfterViewChecked(): void {
-    this.focusTitle();
+    this.accessibilityService.focusElementById('modal-mainTitle');
   }
 
   ngAfterViewInit(): void {

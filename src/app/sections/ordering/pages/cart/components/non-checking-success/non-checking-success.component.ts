@@ -1,18 +1,17 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  OnInit,
-  AfterViewChecked,
-  AfterViewInit,
-  AfterContentChecked,
+  OnInit
 } from '@angular/core';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { NavigationService } from '@shared/services/navigation.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { NavigationService } from '@shared/services/navigation.service';
+import { Observable } from 'rxjs';
 import { NonCheckingSummary } from '../../models/success-summary.model';
 import { NonCheckingService } from '../../services/non-checking.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'st-non-checking-success',
@@ -20,14 +19,15 @@ import { Observable } from 'rxjs';
   styleUrls: ['./non-checking-success.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NonCheckingSuccessComponent implements OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked {
+export class NonCheckingSuccessComponent implements OnInit, AfterViewInit {
   summary$: Observable<NonCheckingSummary>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly routingService: NavigationService,
     private readonly orderingService: OrderingService,
-    private readonly nonCheckingService: NonCheckingService
+    private readonly nonCheckingService: NonCheckingService,
+    private readonly accessibilityService: AccessibilityService
   ) {
     this.summary$ = this.nonCheckingService.summary$;
   }
@@ -37,17 +37,7 @@ export class NonCheckingSuccessComponent implements OnInit, AfterViewChecked, Af
   }
 
   focusTitle() {
-    const element = document.getElementById('modal-mainTitle');
-    if (element) {
-      element.focus();
-    }
-  }
-
-  ngAfterContentChecked(): void {
-    this.focusTitle();
-  }
-  ngAfterViewChecked(): void {
-    this.focusTitle();
+    this.accessibilityService.focusElementById('modal-mainTitle');
   }
 
   ngAfterViewInit(): void {

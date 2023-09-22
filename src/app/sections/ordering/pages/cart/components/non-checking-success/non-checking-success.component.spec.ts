@@ -1,45 +1,114 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { NavigationService } from '@shared/services/navigation.service';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/index';
+import { of } from 'rxjs';
+import { CartComponent } from '../../cart.component';
 import { NonCheckingService } from '../../services/non-checking.service';
 import { NonCheckingSuccessComponent } from './non-checking-success.component';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 describe('NonCheckingSuccessComponent', () => {
   let component: NonCheckingSuccessComponent;
   let fixture: ComponentFixture<NonCheckingSuccessComponent>;
 
-  beforeEach(() => {
-    const orderingServiceStub = () => ({
-      getContentStringByName: buttonDone => ({})
-    });
-    const navigationServiceStub = () => ({ navigate: array => ({}) });
-    const nonCheckingServiceStub = () => ({ summary$: {} });
+  let routerServiceMock, orderingServiceMock,nonCheckingServiceMock,  accesibilityService;
+
+  beforeEach(waitForAsync(() => {
+    routerServiceMock = {
+      navigate: jest.fn(),
+    };
+
+    orderingServiceMock = {
+      getContentStringByName: jest.fn(),
+    };
+    nonCheckingServiceMock = {
+      summary$: jest.fn(() => {
+        return of({
+          tax: 1,
+          discount: 1,
+          checkNumber: 12345,
+          total: 100,
+          accountName: 'Points',
+          deliveryFee: 1,
+          pickupFee: 0,
+          subTotal: 1,
+          tip: 1,
+          mealBased: true,
+          orderType: {
+            merchantId: 'Appetizer',
+            pickup: true,
+            delivery: false,
+            dineIn: false,
+            pickupPrepTime: 30,
+            deliveryPrepTime: 45,
+            dineInPrepTime: 30,
+            pickupInstructions: '',
+            deliveryInstructions: '',
+            dineInInstructions: '',
+            merchantTimeZone: '',
+          },
+          dueTime: '11:45 DST',
+          type: 0,
+          orderDetailOptions: {
+            address: {
+              address1: 'Winton AV',
+            },
+            dueTime: new Date(),
+            orderType: 0,
+            isASAP: false,
+          },
+        });
+      }),
+    };
+
+    accesibilityService = {
+      focusElementById: jest.fn()
+    };
+  }));
+
+  beforeEach(async () => {
     TestBed.configureTestingModule({
-      schemas: [NO_ERRORS_SCHEMA],
-      declarations: [NonCheckingSuccessComponent],
       providers: [
-        { provide: OrderingService, useFactory: orderingServiceStub },
-        { provide: NavigationService, useFactory: navigationServiceStub },
-        { provide: NonCheckingService, useFactory: nonCheckingServiceStub }
-      ]
-    });
+        { provide: NavigationService, useValue: routerServiceMock },
+        { provide: OrderingService, useValue: orderingServiceMock },
+        { provide: NonCheckingService, useValue: nonCheckingServiceMock },
+        { provide: AccessibilityService, useValue: accesibilityService },
+      ],
+      declarations: [NonCheckingSuccessComponent, CartComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    }).compileComponents();
     fixture = TestBed.createComponent(NonCheckingSuccessComponent);
     component = fixture.componentInstance;
   });
 
-  it('can load instance', () => {
+  it('should create component', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('onClosed', () => {
-    it('makes expected calls', () => {
-      const navigationServiceStub: NavigationService = fixture.debugElement.injector.get(
-        NavigationService
-      );
-     jest.spyOn(navigationServiceStub, 'navigate');
-      component.onClosed();
-      expect(navigationServiceStub.navigate).toHaveBeenCalled();
-    });
+  it('should call initContentStrings OnInit', () => {
+    const initContentStringsSpy = jest.spyOn(component, 'initContentStrings' as any);
+    component.ngOnInit();
+
+    expect(initContentStringsSpy).toBeCalled();
+  });
+
+  it('should have summary$ object defined', () => {
+    expect(component.summary$).toBeDefined();
+  });
+
+  it('should navigate to ordering page', () => {
+    const onCloseSpy = jest.spyOn(component, 'onClosed');
+    component.onClosed();
+
+    expect(onCloseSpy).toBeCalled();
+    expect(routerServiceMock.navigate).toBeCalledWith([APP_ROUTES.ordering]);
+  });
+
+  it('ngAfterViewInit should focus on modal-mainTitle', () => {
+    const focusSpy = jest.spyOn(accesibilityService, 'focusElementById');
+    component.ngAfterViewInit();
+    expect(focusSpy).toHaveBeenCalled();
   });
 });
