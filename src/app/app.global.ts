@@ -59,6 +59,7 @@ export namespace Settings {
     SUPPORT_EMAIL = 'soa.email.get_support_email',
     PATRON_DISPLAY_MEDIA_TYPE = 'get.feature.mobile_patron_cashless_display_media_type',
     MY_CARD_ENABLED = 'get.feature.enable_get_my_card',
+    OFFLINE_BARCODE_ENABLED = 'get.feature.enable_offline_barcode_generation',
     MOBILE_ACCESS_ENABLED = 'get.feature.enable_open_my_door',
     SECURE_MESSAGING_ENABLED = 'get.feature.enable_secure_messaging',
     REWARDS_ENABLED = 'get.feature.enable_rewards',

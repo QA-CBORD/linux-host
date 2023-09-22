@@ -13,7 +13,6 @@ import { MessageResponse, ServiceParameters } from '@core/model/service/message-
 export class AuthApiService {
   private serviceUrl = '/json/authentication';
 
-
   constructor(private readonly http: HttpClient) {}
 
   /**
@@ -57,9 +56,7 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig(authenticatedUserMethod, postParams);
 
-    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(
-      map(({ response }) => response),
-    );
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   authenticatePin(pin: string, deviceId: string): Observable<string> {
@@ -75,9 +72,7 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig('authenticatePIN', postParams);
 
-    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(
-      map(({ response }) => response),
-    );
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   /**
@@ -110,9 +105,17 @@ export class AuthApiService {
 
     const queryConfig = new RPCQueryConfig('authenticateSessionToken', postParams);
 
-    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(
-      map(({ response }) => response),
-    );
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+  }
+
+  retrievePatronBarcodePayload(sessionId: string): Observable<string> {
+    const postParams = {
+      sessionId,
+    };
+
+    const queryConfig = new RPCQueryConfig('retrievePatronBarcodePayload', postParams);
+
+    return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   /**

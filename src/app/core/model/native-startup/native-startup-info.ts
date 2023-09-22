@@ -7,4 +7,5 @@ export interface NativeStartupInfo {
   showOnce: number; 					/// only show message one time (use messageDigest)
   action: string ; 					/// 'none' - no action | 'store' - ? | 'block' - block user from proceding
   minSupportedVersion: string; 		/// minimum app supported version
+  enableOfflineBarcodeGeneration: string;
 }

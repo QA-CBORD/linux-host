@@ -104,4 +104,10 @@ export class AuthFacadeService extends ServiceStateFacade {
   retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string) {
     return this.authApiService.retrieveAuthorizationBlob(deviceModel, deviceOSVersion);
   }
+
+  generateBarcodeFromServer(): Observable<string> {
+    return this.cachedAuthSessionToken$.pipe(
+      switchMap(sessionId => this.authApiService.retrievePatronBarcodePayload(sessionId))
+    );
+  }
 }
