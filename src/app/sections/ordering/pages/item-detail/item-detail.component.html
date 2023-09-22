@@ -71,6 +71,7 @@
                                   class="order-detail__order-message"
                                   formControlName="message"
                                   idd="message"
+                                  [maxLength]="128"
                                   [label]="contentStrings.labelItemNote | async"
                                   rows="3">
       </st-textarea-floating-label>

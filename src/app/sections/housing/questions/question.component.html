@@ -44,6 +44,7 @@
   </ng-container>
   <ng-template #isWorkOrderTextArea>
     <st-textarea-floating-label
+    [maxLength]="128"
     [control]="parentGroup.get(question['name'])"
     [isError]="errorValidator"
     [formControlName]="question['name']"
@@ -60,7 +61,7 @@
     ></st-control-errors>
   </st-textarea-floating-label>
   </ng-template>
-    <st-textarea-floating-label
+    <st-textarea-floating-label    
       *ngSwitchCase="'textarea'"
       [control]="parentGroup.get(question['name'])"
       [isError]="errorValidator"
@@ -70,6 +71,7 @@
       [label]="question.label"
       title="Type your message here..."
       rows="3"
+      [maxLength]="128"
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <st-control-errors

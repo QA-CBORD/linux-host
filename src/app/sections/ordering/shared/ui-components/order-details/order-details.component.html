@@ -218,6 +218,7 @@
         class="order-details__order-note"
         [formControlName]="controlsNames.note"
         [idd]="controlsNames.note"
+        [maxLength]="128"
         rows="3"
         [placeholder]="contentStrings.labelOrderNotes | async"
       >
