@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentChecked } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { CheckingSuccessContentCsModel } from '@sections/check-in/contents-strings/check-in-content-string.model';
@@ -14,7 +14,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
   styleUrls: ['./check-in-success.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckInSuccessComponent implements OnInit {
+export class CheckInSuccessComponent implements OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked {
   order$: Observable<OrderInfo>;
   orderId: string;
   checkNumber: string;
@@ -28,11 +28,22 @@ export class CheckInSuccessComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly resolver: RecentOrdersResolver,
-    private readonly activatedRoute: ActivatedRoute
+    private readonly activatedRoute: ActivatedRoute,
   ) {}
 
   initContentString() {
     this.contentStrings = this.activatedRoute.snapshot.data.data.contentString as CheckingSuccessContentCsModel;
+  }
+
+  ngAfterContentChecked(): void {
+    document.getElementById('modal-mainTitle')?.focus();
+  }
+  ngAfterViewChecked(): void {
+    document.getElementById('modal-mainTitle')?.focus();
+  }
+
+  ngAfterViewInit(): void {
+    document.getElementById('modal-mainTitle')?.focus();
   }
 
   ngOnInit() {
@@ -62,7 +73,7 @@ export class CheckInSuccessComponent implements OnInit {
       this.checkNumber = checkNumber;
       this.order$ = this.merchantService.recentOrders$.pipe(map(orders => orders.find(({ id }) => id === orderId)));
       this.data = JSON.parse(data);
-      this.orderDetailOptions =  JSON.parse(orderDetailOptions);
+      this.orderDetailOptions = JSON.parse(orderDetailOptions);
     });
   }
 }

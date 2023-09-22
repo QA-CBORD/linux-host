@@ -117,5 +117,24 @@ describe('NonCheckingSuccessComponent', () => {
     expect(onCloseSpy).toBeCalled();
     expect(routerServiceMock.navigate).toBeCalledWith([APP_ROUTES.ordering]);
   });
+
+
+  it('ngAfterViewInit should focus on modal-mainTitle', () => {
+    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
+    component.ngAfterViewInit();
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('ngAfterViewChecked should focus on modal-mainTitle', () => {
+    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
+    component.ngAfterViewChecked();
+    expect(focusSpy).toHaveBeenCalled();
+  });
+  
+  it('ngAfterContentChecked should focus on modal-mainTitle', () => {
+    const focusSpy = jest.spyOn(document.getElementById('modal-mainTitle'), 'focus');
+    component.ngAfterContentChecked();
+    expect(focusSpy).toHaveBeenCalled();
+  });
 });
 

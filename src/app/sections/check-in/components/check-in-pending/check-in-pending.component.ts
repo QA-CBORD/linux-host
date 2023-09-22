@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterContentChecked, AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupportedFormat } from '@capacitor-community/barcode-scanner';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -20,13 +20,13 @@ import {
 } from '@sections/ordering';
 import { LOCAL_ROUTING, MerchantSettings } from '@sections/ordering/ordering.config';
 import { RecentOrdersResolver } from '@sections/ordering/resolvers/recent-orders.resolver';
-import { Observable, of, Subscription, firstValueFrom } from 'rxjs';
+import { LockDownService } from '@shared/services';
+import { Observable, Subscription, firstValueFrom, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeComponent } from '../scan-code/scan-code.component';
-import { LockDownService } from '@shared/services';
 export interface orderInfo {
   pickupTime: {
     dueTime: string;
@@ -40,7 +40,7 @@ export interface orderInfo {
   styleUrls: ['./check-in-pending.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckInPendingComponent implements OnInit {
+export class CheckInPendingComponent implements OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentStrings: any;
   locationPermissionDisabled: boolean;
@@ -61,6 +61,7 @@ export class CheckInPendingComponent implements OnInit {
   orderPayment: OrderPayment;
   order$: Observable<OrderInfo>;
 
+
   constructor(
     private readonly loadingService: LoadingService,
     private readonly checkInService: CheckingServiceFacade,
@@ -75,7 +76,7 @@ export class CheckInPendingComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private platform: Platform,
     private readonly cartService: CartService,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
   ) {}
 
   ngOnInit() {
@@ -87,6 +88,17 @@ export class CheckInPendingComponent implements OnInit {
   ionViewWillEnter() {
     this.loadingService.closeSpinner();
     this.cdRef.detectChanges();
+  }
+
+  ngAfterContentChecked(): void {
+    document.getElementById('modal-mainTitle')?.focus();
+  }
+  ngAfterViewChecked(): void {
+    document.getElementById('modal-mainTitle')?.focus();
+  }
+
+  ngAfterViewInit(): void {
+    document.getElementById('modal-mainTitle')?.focus();
   }
 
   async onAddItems() {

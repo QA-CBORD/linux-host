@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked } from '@angular/core';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { NavigationService } from '@shared/services/navigation.service';
@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./non-checking-success.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NonCheckingSuccessComponent implements OnInit {
+export class NonCheckingSuccessComponent implements OnInit, AfterViewChecked, AfterViewInit, AfterContentChecked {
   summary$: Observable<NonCheckingSummary>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
@@ -27,6 +27,17 @@ export class NonCheckingSuccessComponent implements OnInit {
 
   ngOnInit() {
     this.initContentStrings();
+  }
+
+  ngAfterContentChecked(): void {
+    document.getElementById('modal-mainTitle')?.focus();
+  }
+  ngAfterViewChecked(): void {
+    document.getElementById('modal-mainTitle')?.focus();
+  }
+
+  ngAfterViewInit(): void {
+    document.getElementById('modal-mainTitle')?.focus();
   }
 
   onClosed() {
