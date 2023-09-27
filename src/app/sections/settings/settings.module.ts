@@ -15,6 +15,8 @@ import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials
 import { PasswordChangeModule } from '@shared/ui-components/change-password/password-change.module';
 import { CreditCardModule } from './creditCards/credit-card.module';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { SettingsMessagesComponent } from './components/settings-messages/settings-messages.component';
+
 
 const imports = [
   CommonModule,
@@ -30,7 +32,7 @@ const imports = [
   PasswordChangeModule,
   CreditCardModule,
 ];
-const declarations = [SettingsPage, SettingsItemComponent];
+const declarations = [SettingsPage, SettingsItemComponent, SettingsMessagesComponent];
 const providers = [SettingsFactoryService, ModalsService];
 @NgModule({
   declarations,
