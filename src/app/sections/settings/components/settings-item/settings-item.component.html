@@ -21,7 +21,7 @@
 <div class="customMessage" *ngIf="setting.customMessage">
   <ion-list>
     <ion-item
-      *ngFor="let message of setting.customMessage.data"
+      *ngFor="let message of setting?.customMessage?.data?.slice(0, 4)"
       class="ion-no-padding enable-longpress-ios"
       [href]="getHref(message)"
       detail="false"
