@@ -1,7 +1,7 @@
 <ion-item
   [lines]="lines"
   (click)="settingTap(setting)"
-  [button]="setting.type !== 'toggle'"
+  [button]="setting.type === 'button'"
   tabindex="0"
   *ngIf="settingLabel$ | async as settingLabel"
   [disabled]="setting.checkIsDisabled"
@@ -16,4 +16,26 @@
 <div class="message" *ngIf="setting.checkIsDisabled && setting.message">
   <ion-icon class="message__icon" name="information-circle-outline"></ion-icon>
   <ion-label class="message__label">{{ setting.message }} </ion-label>
+</div>
+
+<div class="customMessage" *ngIf="setting.customMessage">
+  <ion-list>
+    <ion-item
+      *ngFor="let message of setting.customMessage.data"
+      class="ion-no-padding enable-longpress-ios"
+      [href]="getHref(message)"
+      detail="false"
+      [target]="getTarget(message)"
+      lines="none"
+    >
+      <ion-row class="ion-align-items-start">
+        <ion-col size="12" >{{ message.title }}</ion-col>
+        <ion-col size="12">
+            <ion-text color="primary">
+              {{ message.value }}
+            </ion-text>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+  </ion-list>
 </div>
