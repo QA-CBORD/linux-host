@@ -224,7 +224,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
             mobileCredentialsUnlinkService.unlinkCredentialsRequested$.pipe(
               first(),
               map(unlinked => (unlinked ? '' : defaultLabel))
-            ),
+            )
           );
         },
         modalContent: {
@@ -550,6 +550,40 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         },
         setCallback: handleOpenHTMLModal,
         checkIsVisible: async () => true,
+      },
+      {
+        id: SETTINGS_ID.hotLineHelp,
+        icon: 'heart',
+        label: 'Help is available',
+        type: '',
+        navigate: [],
+        checkIsVisible: async function (services: SettingsServices) {
+          const label = await firstValueFrom(
+            services.contentString.fetchContentString$(
+              CONTENT_STRINGS_DOMAINS.get_mobile,
+              CONTENT_STRINGS_CATEGORIES.settingsScreen,
+              CONTENT_STRINGS_MESSAGES.hotlineHelpTitle
+            )
+          );
+          const message = await firstValueFrom(
+            services.contentString.fetchContentString$(
+              CONTENT_STRINGS_DOMAINS.get_mobile,
+              CONTENT_STRINGS_CATEGORIES.settingsScreen,
+              CONTENT_STRINGS_MESSAGES.hotlineInfo
+            )
+          );
+
+          try {
+            this.customMessage = message.value ? JSON.parse(message.value) : '';
+          } catch (error) {
+            this.customMessage = null;
+          }
+
+          this.label = label.value;
+          this.checkIsDisabled = false;
+
+          return true;
+        },
       },
     ],
   },

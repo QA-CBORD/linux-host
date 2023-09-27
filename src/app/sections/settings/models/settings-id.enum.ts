@@ -20,5 +20,6 @@ export enum SETTINGS_ID {
   help = 'help',
   support = 'email-support',
   terms = 'terms-privacy',
-  creditCard = 'credit-card'
+  creditCard = 'credit-card',
+  hotLineHelp = 'hot-line-help'
 }
