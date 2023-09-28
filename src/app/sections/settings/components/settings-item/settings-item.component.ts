@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { SettingItemConfig } from '@sections/settings/models/setting-items-config.model';
+import { DataMessage, DataMessageType, SettingItemConfig } from '@sections/settings/models/setting-items-config.model';
 import { Observable, of } from 'rxjs';
 
 @Component({
@@ -26,5 +26,20 @@ export class SettingsItemComponent implements OnInit {
     } else {
       this.settingLabel$ = this.setting.label as Observable<string>;
     }
+  }
+
+  getHref(message: DataMessage) {
+    return {
+      [DataMessageType.TELEPHONE]: `tel:${message.value}`,
+      [DataMessageType.EMAIL]: `mailto:${message.value}`,
+      [DataMessageType.URL]: message.value,
+      [DataMessageType.SMS]: `sms:${message.value}`
+    }[message.type]
+  }
+
+  getTarget(message: DataMessage) {
+    return {
+      [DataMessageType.URL]: '_blank'
+    }[message.type] || '';
   }
 }

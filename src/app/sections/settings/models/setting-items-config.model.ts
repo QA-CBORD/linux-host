@@ -42,6 +42,7 @@ export interface SettingItemConfig {
   setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;
   checkIsVisible: (args: SettingsServices) => Promise<boolean>,
+  customMessage?: CustomMessage;
   checkIsDisabled?: boolean,
   message?: string,
   supportProfiles?: APP_PROFILES[],
@@ -70,6 +71,24 @@ export interface HTMLContentString {
   appendStrings?: string[];
   component: any;
   fetchData?: (services: SettingsServices) => Promise<{ [key: string]: any }>
+}
+
+export interface CustomMessage {
+  data: DataMessage[]
+}
+
+export interface DataMessage {
+  title: string;
+  label: string;
+  value: string;
+  type: string;
+}
+
+export enum DataMessageType {
+  TELEPHONE = 'tel',
+  SMS = 'sms',
+  EMAIL = 'email',
+  URL = 'url'
 }
 
 export interface DomainContentString {

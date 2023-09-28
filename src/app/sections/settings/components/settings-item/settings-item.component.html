@@ -1,7 +1,7 @@
 <ion-item
   [lines]="lines"
   (click)="settingTap(setting)"
-  [button]="setting.type !== 'toggle'"
+  [button]="setting.type === 'button'"
   tabindex="0"
   *ngIf="settingLabel$ | async as settingLabel"
   [disabled]="setting.checkIsDisabled"
@@ -16,4 +16,8 @@
 <div class="message" *ngIf="setting.checkIsDisabled && setting.message">
   <ion-icon class="message__icon" name="information-circle-outline"></ion-icon>
   <ion-label class="message__label">{{ setting.message }} </ion-label>
+</div>
+
+<div class="customMessage" *ngIf="setting?.customMessage">
+  <st-settings-messages [messages]="setting?.customMessage?.data"></st-settings-messages>
 </div>

@@ -36,7 +36,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   noConnectivity = 'noConnectivity',
   photoUpload = 'photo_upload',
   error = 'error',
-  error_message = 'error_message'
+  error_message = 'error_message',
+  settingsScreen = 'settings_screen',
 }
 
 export enum CONTENT_STRINGS_LOCALES {
@@ -44,5 +45,7 @@ export enum CONTENT_STRINGS_LOCALES {
 }
 
 export enum CONTENT_STRINGS_MESSAGES {
-  PHOTO_UPLOAD_MESSAGE = 'turned_off_message'
+  PHOTO_UPLOAD_MESSAGE = 'turned_off_message',
+  hotlineHelpTitle = 'hotlinehelptitle',
+  hotlineInfo = 'hotlineinfo'
 }
