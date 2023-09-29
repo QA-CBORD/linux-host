@@ -9,6 +9,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 export class StButtonComponent {
   @Input() buttonModifier = '';
   @Input() type = 'button';
+  @Input() voiceOverText = '';
   // TODO: Refactor areas that expect the button to emit even when disabled.
   @Input() isDisabled = false;
   @Input() disabled = false;

@@ -47,6 +47,7 @@ import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
 import { TranslateService } from '@ngx-translate/core';
+import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -69,7 +70,10 @@ export class CartComponent implements OnInit, OnDestroy {
   orderDetailOptions$: Observable<OrderDetailOptions>;
   applePayEnabled$: Observable<boolean>;
   orderTypes$: Observable<MerchantOrderTypesInfo>;
-
+  public showButton = true;
+  public lastCartFormValid = false;
+  public voiceOverErrorMessage = '';
+  
   private readonly _accountInfoList$: BehaviorSubject<MerchantAccountInfoList>;
   public readonly accounts$: Observable<UserAccount[]>;
   accountInfoList$: Observable<MerchantAccountInfoList>;
@@ -101,7 +105,8 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly checkinProcess: CheckingProcess,
     private readonly nonCheckingService: NonCheckingService,
     private readonly lockDownService: LockDownService,
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    private readonly priceUnitsResolverPipe: PriceUnitsResolverPipe
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -144,6 +149,34 @@ export class CartComponent implements OnInit, OnDestroy {
   subscribe2NetworkChanges() {
     this.networkSubcription = this.connectionService.networkStatus().subscribe(isOnline => (this.isOnline = isOnline));
   }
+
+  getButtonText(): Observable<string> {
+    return combineLatest([
+      this.isOrderASAP,
+      this.contentStrings.buttonPlaceOrder,
+      this.contentStrings.buttonScheduleOrder,
+      this.order$
+    ]).pipe(
+      map(([isOrderAsap, buttonPlaceOrder, buttonScheduleOrder, order]) => {
+        const orderTotal = this.priceUnitsResolverPipe.transform(order.total, order.mealBased);
+        return `${isOrderAsap ? buttonPlaceOrder : buttonScheduleOrder} ${orderTotal}`;
+      })
+    );
+  }
+
+  get buttonAriaLabel(): Observable<string> {
+    return combineLatest([
+      this.getButtonText()
+    ]).pipe(
+      map(([buttonText]) => {
+        if (this.cartFormState.valid || this.isExistingOrder) {
+          return buttonText;
+        }
+        return this.voiceOverErrorMessage;
+      })
+    );
+  }
+  
 
   get isOrderASAP(): Observable<boolean> {
     return this.cartService.orderDetailsOptions$.pipe(
@@ -192,7 +225,17 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
+  
   onCartStateFormChanged(state) {
+    if (this.lastCartFormValid !== this.cartFormState.valid) {
+      this.voiceOverErrorMessage = state.voiceOverError;
+      this.showButton = false;
+      setTimeout(()=>{
+        this.showButton=true;
+        this.cdRef.detectChanges();
+      }, 100)
+    }
+    this.lastCartFormValid = this.cartFormState.valid;
     this.cartService.updateOrderAddress(state.data[FORM_CONTROL_NAMES.address]);
     this.cartFormState = state;
   }

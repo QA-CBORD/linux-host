@@ -29,15 +29,15 @@
     (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
     (onOrderTipChanged)="onOrderTipChanged($event)"
   >
-    <st-button
-      (onClick)="onSubmit()"
-      [disabled]="placingOrder"
-      [isDisabled]="!cartFormState?.valid && !isExistingOrder"
-    >
-      {{
-        (isOrderASAP | async) ? (contentStrings.buttonPlaceOrder | async) : (contentStrings.buttonScheduleOrder | async)
-      }}
-      {{ (order$ | async).total | priceUnitsResolver: (order$ | async).mealBased }}
-    </st-button>
+    <ng-container *ngIf="showButton">
+      <st-button
+        (onClick)="onSubmit()"
+        [disabled]="placingOrder"
+        [voiceOverText]="buttonAriaLabel | async"
+        [isDisabled]="!cartFormState?.valid && !isExistingOrder"
+        >
+        {{ getButtonText() | async }}
+      </st-button>
+    </ng-container>
   </st-order-details>
 </ion-content>

@@ -7,6 +7,7 @@
   [color]="buttonColor"
   (click)="onClickButton($event)"
   [disabled]='disabled'
+  [attr.aria-label]="voiceOverText"
   [attr.aria-disabled]='disabled'
   mode="md"
 >
