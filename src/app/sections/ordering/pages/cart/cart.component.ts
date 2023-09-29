@@ -73,7 +73,6 @@ export class CartComponent implements OnInit, OnDestroy {
   public showButton = true;
   public lastCartFormValid = false;
   public voiceOverErrorMessage = '';
-  
   private readonly _accountInfoList$: BehaviorSubject<MerchantAccountInfoList>;
   public readonly accounts$: Observable<UserAccount[]>;
   accountInfoList$: Observable<MerchantAccountInfoList>;
@@ -177,7 +176,6 @@ export class CartComponent implements OnInit, OnDestroy {
     );
   }
   
-
   get isOrderASAP(): Observable<boolean> {
     return this.cartService.orderDetailsOptions$.pipe(
       filter(orderDetailOptions => orderDetailOptions !== null),
@@ -225,7 +223,6 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
-  
   onCartStateFormChanged(state) {
     if (this.lastCartFormValid !== this.cartFormState.valid) {
       this.voiceOverErrorMessage = state.voiceOverError;

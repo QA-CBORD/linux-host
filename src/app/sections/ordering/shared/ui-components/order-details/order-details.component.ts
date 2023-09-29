@@ -428,7 +428,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [FORM_CONTROL_NAMES.paymentMethod]: 'Button is disabled, please select a payment method.',
       [FORM_CONTROL_NAMES.phone]: 'Button is disabled, phone number is invalid.',
     };
-  
     for (const controlName of Object.keys(errorMessages)) {
       if (!detailsForm.controls[controlName].valid) {
         return errorMessages[controlName];
@@ -439,7 +438,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscribeOnFormChanges() {
     const sub = this.detailsForm.valueChanges.subscribe(() => {
-      
       this.onFormChange.emit({ data: this.detailsForm.getRawValue(), valid: this.detailsForm.valid, voiceOverError: this.getVoiceOverInvalidText(this.detailsForm) });
     });
     this.sourceSub.add(sub);
