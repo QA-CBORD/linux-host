@@ -175,7 +175,6 @@ export class CartComponent implements OnInit, OnDestroy {
       })
     );
   }
-  
   get isOrderASAP(): Observable<boolean> {
     return this.cartService.orderDetailsOptions$.pipe(
       filter(orderDetailOptions => orderDetailOptions !== null),
