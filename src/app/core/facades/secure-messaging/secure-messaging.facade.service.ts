@@ -91,14 +91,15 @@ export class SecureMessagingFacadeService extends ServiceStateFacade {
     );
   }
   getSecureMessagesGroups(): Observable<SecureMessageGroupInfo[]> {
-    const smAuthInfo = SecureMessagingFacadeService.smAuthInfo;
-    return smAuthInfo && this.secureMessagingService.getSecureMessagesGroups(smAuthInfo.institution_id);
+    const { institution_id: institutionId } = SecureMessagingFacadeService.smAuthInfo ?? {};
+    return institutionId && this.secureMessagingService.getSecureMessagesGroups(institutionId);
   }
   getSecureMessages(): Observable<SecureMessageInfo[]> {
+    const { id_field: idField, id_value: idValue } = SecureMessagingFacadeService.smAuthInfo ?? {};
     return this.secureMessagingService.getSecureMessages(
       this.ma_type,
-      SecureMessagingFacadeService.smAuthInfo.id_field,
-      SecureMessagingFacadeService.smAuthInfo.id_value
+      idField,
+      idValue
     );
   }
 
