@@ -1,0 +1,19 @@
+<ion-list>
+  <ion-item
+    *ngFor="let message of messages.slice(0, count)"
+    class="ion-no-padding enable-longpress-ios"
+    [href]="getHref(message)"
+    detail="false"
+    [target]="getTarget(message)"
+    lines="none"
+  >
+    <ion-row class="ion-align-items-start">
+      <ion-col size="12">{{ message.title }}</ion-col>
+      <ion-col size="12">
+        <ion-text color="primary">
+          {{ message.label }}
+        </ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-item>
+</ion-list>
