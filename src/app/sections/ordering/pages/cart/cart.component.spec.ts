@@ -22,6 +22,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { FORM_CONTROL_NAMES, OrderDetailsFormData } from '@sections/ordering/shared';
 import { UserAccount } from '@core/model/account/account.model';
 import { AccountType } from 'src/app/app.global';
+import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 
 const mockData = {
   data: {
@@ -79,6 +80,7 @@ const _lockDownService = {
   isLockDownOn: jest.fn(),
 };
 const _translateService = {};
+const _priceUnitsResolverPipe = {};
 
 describe('CartComponent', () => {
   let component: CartComponent;
@@ -105,6 +107,7 @@ describe('CartComponent', () => {
         { provide: NonCheckingService, useValue: _nonCheckingService },
         { provide: LockDownService, useValue: _lockDownService },
         { provide: TranslateService, useValue: _translateService },
+        { provide: PriceUnitsResolverPipe, useValue: _priceUnitsResolverPipe },
       ],
       imports: [PriceUnitsResolverModule],
     }).compileComponents();
