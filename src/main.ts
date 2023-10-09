@@ -4,11 +4,13 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from '@environments/environment';
 import * as Sentry from '@sentry/angular';
+import { EnvironmentData } from '@environments/environment-data';
 
 if (environment.production) {
   enableProdMode();
   Sentry.init({
-    dsn: 'https://ff4bd36ce77f48328763d7dfc546466d@o1422282.ingest.sentry.io/6769039'
+    dsn: "https://bff607c85207d1045f7e872594a3eb7d@o4505981022568448.ingest.sentry.io/4506004113457152",
+    release: "get-mobile@" + EnvironmentData.version.versionNumber,
   });
 }
 
