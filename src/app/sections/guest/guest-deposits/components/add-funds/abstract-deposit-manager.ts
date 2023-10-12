@@ -28,7 +28,7 @@ export abstract class AbstractDepositManager {
     protected toastService: ToastService
   ) {}
 
-  private activePaymentType: PAYMENT_TYPE;
+  public activePaymentType: PAYMENT_TYPE;
   depositButtonText: string;
   isDepositing = false;
   applePayEnabled: boolean;
