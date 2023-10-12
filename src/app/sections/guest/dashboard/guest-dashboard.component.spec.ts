@@ -62,4 +62,22 @@ describe('GuestDashboard', () => {
       expect(messageProxyStub.get).toHaveBeenCalled();
     });
   });
+
+  describe('onClick', () => {
+    it('clicks on a section', () => {
+      const routerStub: Router = fixture.debugElement.injector.get(
+        Router
+      );
+     jest.spyOn(routerStub, 'navigate');
+
+      component.onclick({
+        title:'title',
+        imageUrl:'',
+        url:'/private/url',
+        willNavigate:true,
+        visibilityOn: (settings ) => true
+      });
+      expect(routerStub.navigate).toHaveBeenCalled();
+    });
+  });
 });
