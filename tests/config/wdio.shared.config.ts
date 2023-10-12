@@ -146,6 +146,16 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.settings-editaddress.spec.ts',
       './tests/specs/shared/app.settings-deleteaddress.spec.ts',
     ],
+    settingsuploadphoto: [
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/app.location-disclousure.spec.ts',
+      './tests/specs/shared/go-configuration-through-more.spec.ts',
+      './tests/specs/patron/update-photo.spec.ts',
+    ],
     checkVersion:[
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',

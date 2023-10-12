@@ -30,6 +30,12 @@ class ConfigurationPage extends Page {
     get EmailAndPhoneNumber(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[2]/st-settings-item[1]/ion-item');
     }
+
+    get UpdatePhoto() {
+        return Ionic$.$(
+          '/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[1]/st-settings-item[1]/ion-item'
+        );
+      }
 }
 
 export default new ConfigurationPage();
