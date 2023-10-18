@@ -11,19 +11,19 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { IonContent, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import {
   AddressModalSettings,
-  DueTimeErrorMessages,
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
   OrderDetailsFormData,
   OrderInfo,
-  OrderPayment,
+  OrderPayment
 } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
@@ -37,6 +37,7 @@ import {
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { APP_ROUTES } from '@sections/section.config';
 import { LockDownService } from '@shared/index';
 import { ConnectionService } from '@shared/services/connection-service';
@@ -56,8 +57,6 @@ import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operato
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
-import { TranslateService } from '@ngx-translate/core';
-import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -344,6 +343,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
+    /**
+     * This block will be uncommented once time selection flows finished.
+     *
+     *
     this.dueTimeHasErrors = false;
     const isMerchantOrderAhead = await firstValueFrom(
       this.merchant$.pipe(
@@ -366,7 +369,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cdRef.detectChanges();
       return;
     }
-
+**/
     const data = {
       title: 'Oooops',
       message,
