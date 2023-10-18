@@ -14,6 +14,7 @@
     "test:coverage": "jest --coverage",
     "build-prod": "npm run test && ng build --configuration production",
     "build-appflow": "ng build --configuration production",
+    "build:appflow-sentry": "npm run build-appflow -- --source-map && npm run sentry:sourcemaps",
     "lint": "ng lint app --quiet",
     "e2e": "ng e2e",
     "i-patch": "./IncrementVersionNumber.sh",
@@ -24,7 +25,8 @@
     "ionic-e2e:develop": "cross-env TS_NODE_PROJECT=tests/tsconfig.json  wdio tests/config/wdio.web.config.ts --watch",
     "ionic-e2e:run:web": "cross-env TS_NODE_PROJECT=\"tests/tsconfig.json\"  wdio tests/config/wdio.web.config.ts",
     "ionic-e2e:run:ios": "cross-env TS_NODE_PROJECT=tests/tsconfig.json  wdio tests/config/wdio.ios.config.ts --suite $SUITE",
-    "ionic-e2e:run:android": "cross-env TS_NODE_PROJECT=\"tests/tsconfig.json\"  wdio tests/config/wdio.android.config.ts --suite $SUITE"
+    "ionic-e2e:run:android": "cross-env TS_NODE_PROJECT=\"tests/tsconfig.json\"  wdio tests/config/wdio.android.config.ts --suite $SUITE",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org cbordhorizon --project get-mobile ./www && sentry-cli sourcemaps upload --org cbordhorizon --project get-mobile ./www"
   },
   "pre-push": "lint",
   "private": true,
@@ -110,6 +112,7 @@
     "@capacitor/cli": "^5.0.0",
     "@ionic/angular-toolkit": "9.0.0",
     "@ionic/cli": "6.20.1",
+    "@sentry/cli": "^2.21.2",
     "@types/faker": "^4.1.12",
     "@types/jest": "^27.4.1",
     "@types/node": "^12.11.1",

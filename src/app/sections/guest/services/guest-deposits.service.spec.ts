@@ -74,4 +74,88 @@ describe('GuestDepositsService', () => {
       ).toHaveBeenCalled();
     });
   });
+
+  describe('saveRecipientList', () => {
+    it('makes expected calls', () => {
+      const settingsFacadeServiceStub: SettingsFacadeService = TestBed.inject(
+        SettingsFacadeService
+      );
+     jest.spyOn(
+        settingsFacadeServiceStub,
+        'saveUserSetting'
+      );
+      service.saveRecipientList([]);
+      expect(
+        settingsFacadeServiceStub.saveUserSetting
+      ).toHaveBeenCalled();
+    });
+  });
+
+  describe('retrieveAndSaveRecipientByCashlessFields', () => {
+    it('makes expected calls', () => {
+      const authFacadeServiceStub: AuthFacadeService = TestBed.inject(
+        AuthFacadeService
+      );
+     jest.spyOn(
+      authFacadeServiceStub,
+        'getAuthSessionToken$'
+      );
+
+      service.retrieveAndSaveRecipientByCashlessFields('',[],[], false);
+      expect(
+        authFacadeServiceStub.getAuthSessionToken$
+      ).toHaveBeenCalled();
+    });
+  });
+
+  describe('guestAccounts', () => {
+    it('makes expected calls', () => {
+      const authFacadeServiceStub: AuthFacadeService = TestBed.inject(
+        AuthFacadeService
+      );
+     jest.spyOn(
+      authFacadeServiceStub,
+        'isGuestUser'
+      );
+
+      service.guestAccounts();
+      expect(
+        authFacadeServiceStub.isGuestUser
+      ).toHaveBeenCalled();
+    });
+  });
+
+  describe('recipientAccounts', () => {
+    it('makes expected calls', () => {
+      const commerceApiServiceStub: CommerceApiService = TestBed.inject(
+        CommerceApiService
+      );
+     jest.spyOn(
+      commerceApiServiceStub,
+        'retrieveDepositAccountsByUser'
+      );
+
+      service.recipientAccounts('');
+      expect(
+        commerceApiServiceStub.retrieveDepositAccountsByUser
+      ).toHaveBeenCalled();
+    });
+  });
+
+  describe('guestDeposit', () => {
+    it('makes expected calls', () => {
+      const authFacadeServiceStub: AuthFacadeService = TestBed.inject(
+        AuthFacadeService
+      );
+     jest.spyOn(
+      authFacadeServiceStub,
+        'isGuestUser'
+      );
+
+      service.guestDeposit('','',0);
+      expect(
+        authFacadeServiceStub.isGuestUser
+      ).toHaveBeenCalled();
+    });
+  });
 });

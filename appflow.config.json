@@ -2,7 +2,7 @@
   "apps": [
     {
       "appId": "ce5a556b",
-      "webBuildCommand": "npm run build-appflow"
+      "webBuildCommand": "npm run build:appflow-sentry && npm run sentry:sourcemaps && rm ./www/*.map"
     }
   ]
 }
