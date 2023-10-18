@@ -19,6 +19,70 @@ class AutoDepositPage extends Page {
     get TimeBasedOption() {
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/st-deposit-type-nav/ion-radio-group/ion-item[3]');
     }
+    get Form() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form');
+    }
+    get FrecuencyRadioGroup() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-deposit-frequency');
+    }
+    get OncePerWeekOption() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-deposit-frequency/ion-list/ion-radio-group/ion-item[1]');
+    }
+    get OncePerMonthOption() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-deposit-frequency/ion-list/ion-radio-group/ion-item[2]');
+    }
+    get DayOfTheWeekSelect() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[1]/div/ion-select');
+    }
+    get MondayOption() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[1]/div/ion-select/ion-select-option[2]');
+    }
+    get DayOfTheMonthInput() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-input-floating-label[1]/div/input');
+    }
+    get PaymentSelectLowBalance() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[1]/div/ion-select');
+    }
+    get PaymentSelectTimeBased() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[2]/div/ion-select');
+    }
+    get AccountSelectTimeBased() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[3]/div/ion-select');
+    }
+    get AccountSelectLowBalance() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[2]/div/ion-select');
+    }
+    get AmountInputLowBalance() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-input-floating-label[1]/div/input');
+    }
+    get AmountInputTimeBased() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-input-floating-label[2]/div/input');
+    }
+    get BalanceLimitInput() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-input-floating-label[2]/div/input');
+    }
+    get SaveButton() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-footer/st-button/ion-button');
+    }
+    get BilmeOptionLowBalance() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[1]/div/ion-select/ion-select-option[2]');
+    }
+    get BilmeOptionTimeBased() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[2]/div/ion-select/ion-select-option[2]');
+    }
+    get DiningDolarsOptionTimeBased() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[3]/div/ion-select/ion-select-option[1]');
+    }
+    get DiningDolarsOptionLowBalance() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-select-floating-label[2]/div/ion-select/ion-select-option[1]');
+    }
+    get SavedDialogTitle() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-popover/st-popover/st-popover-layout/ion-content');
+    }
+    get SavedDialogButton() {
+        return Ionic$.$('/html/body/app-root/ion-app/ion-popover/st-popover/st-popover-layout/ion-footer/st-button/ion-button');
+    }
+
 }
 
 export default new AutoDepositPage();
