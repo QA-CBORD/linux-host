@@ -165,7 +165,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   async saveImage(photo: Photo) {
-    const base64Data = await this.readAsBase64(photo);
+    const base64Data = await this.readAsBase64(photo) as string;
     const fileName = this.date.getTime() + '.PNG';
 
     await Filesystem.writeFile({
@@ -247,7 +247,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         path: filePath,
         data: `${readFile.data}`,
       });
-      this.startUpload(this.images[0], readFile.data);
+      this.startUpload(this.images[0], readFile.data as string);
     }
   }
 
