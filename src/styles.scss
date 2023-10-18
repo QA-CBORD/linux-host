@@ -509,6 +509,9 @@ ion-modal.sc-modal {
   @include font-nunito-heavy(16px);
 
   .alert-wrapper {
+    .alert-head {
+      display: none;
+    }
     .alert-message {
       display: flex;
       justify-content: start;
@@ -518,8 +521,10 @@ ion-modal.sc-modal {
     }
 
     .alert-button-group {
+      display: grid;
+      grid-template-columns: auto auto;
       justify-content: end;
-      padding: 10px;
+      padding: 15px;
     }
 
     button.alert-button.button__option_cancel {
@@ -528,8 +533,6 @@ ion-modal.sc-modal {
       @include font-nunito-heavy(16px);
       color: black;
       margin: 0 10px 0 0;
-      min-width: 20%;
-      max-width: 30%;
       text-transform: none;
     }
   
@@ -538,7 +541,7 @@ ion-modal.sc-modal {
       color: white;
       border-radius: 8px;
       @include font-nunito-heavy(16px);
-      max-width: 15px;
+      width: auto;
       text-transform: none;
     }
   }
