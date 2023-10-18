@@ -41,7 +41,6 @@
 		EE4B662F249905A0000F6878 /* Notification+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4B662E249905A0000F6878 /* Notification+Ext.swift */; };
 		EE4B663124993E96000F6878 /* Plugin+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4B663024993E96000F6878 /* Plugin+Ext.swift */; };
 		EE5251DA24BE34D1008CD822 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */; };
-		EE7198E4249BD37C0018FDFB /* AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7198E3249BD37C0018FDFB /* AppUITests.swift */; };
 		EE7CE763246ECE9E002EF737 /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7CE762246ECE9E002EF737 /* PassKit.framework */; };
 		EE7CE765246ED937002EF737 /* Data+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7CE764246ED937002EF737 /* Data+Ext.swift */; };
 		EEBD6854246ACA1200193F97 /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBD6853246ACA1200193F97 /* Plugin.swift */; };
@@ -113,8 +112,6 @@
 		EE4B662E249905A0000F6878 /* Notification+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Ext.swift"; sourceTree = "<group>"; };
 		EE4B663024993E96000F6878 /* Plugin+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Plugin+Ext.swift"; sourceTree = "<group>"; };
 		EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		EE7198E1249BD37C0018FDFB /* AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE7198E3249BD37C0018FDFB /* AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUITests.swift; sourceTree = "<group>"; };
 		EE7198E5249BD37C0018FDFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE7CE761246ECE9E002EF737 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		EE7CE762246ECE9E002EF737 /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
@@ -158,7 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				504EC3061FED79650016851F /* App */,
-				EE7198E2249BD37C0018FDFB /* AppUITests */,
 				504EC3051FED79650016851F /* Products */,
 				7F8756D8B27F46E3366F6CEA /* Pods */,
 				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
@@ -169,7 +165,6 @@
 			isa = PBXGroup;
 			children = (
 				504EC3041FED79650016851F /* GET&#x2009;Mobile.app */,
-				EE7198E1249BD37C0018FDFB /* AppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -286,15 +281,6 @@
 			path = Managers;
 			sourceTree = "<group>";
 		};
-		EE7198E2249BD37C0018FDFB /* AppUITests */ = {
-			isa = PBXGroup;
-			children = (
-				EE7198E3249BD37C0018FDFB /* AppUITests.swift */,
-				EE7198E5249BD37C0018FDFB /* Info.plist */,
-			);
-			path = AppUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -316,24 +302,6 @@
 			productName = App;
 			productReference = 504EC3041FED79650016851F /* GET&#x2009;Mobile.app */;
 			productType = "com.apple.product-type.application";
-		};
-		EE7198E0249BD37C0018FDFB /* AppUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EE7198EC249BD37C0018FDFB /* Build configuration list for PBXNativeTarget "AppUITests" */;
-			buildPhases = (
-				EE7198DD249BD37C0018FDFB /* Sources */,
-				EE7198DE249BD37C0018FDFB /* Frameworks */,
-				EE7198DF249BD37C0018FDFB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				EE7198E7249BD37C0018FDFB /* PBXTargetDependency */,
-			);
-			name = AppUITests;
-			productName = AppUITests;
-			productReference = EE7198E1249BD37C0018FDFB /* AppUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -370,7 +338,6 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
-				EE7198E0249BD37C0018FDFB /* AppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -472,14 +439,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EE7198DD249BD37C0018FDFB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EE7198E4249BD37C0018FDFB /* AppUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -510,6 +469,63 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		504EC3141FED79650016851F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
 		504EC3151FED79650016851F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -524,7 +540,6 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -532,10 +547,8 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -594,23 +607,25 @@
 			};
 			name = Release;
 		};
-		EE7198EB249BD37C0018FDFB /* Release */ = {
+		504EC3171FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = AppUITests/Info.plist;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sample.objective.c.AppUITests;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.get;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = App;
 			};
-			name = Release;
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -618,6 +633,7 @@
 		504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
+				504EC3141FED79650016851F /* Debug */,
 				504EC3151FED79650016851F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -626,15 +642,8 @@
 		504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
+				504EC3171FED79650016851F /* Debug */,
 				504EC3181FED79650016851F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EE7198EC249BD37C0018FDFB /* Build configuration list for PBXNativeTarget "AppUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EE7198EB249BD37C0018FDFB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
