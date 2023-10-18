@@ -7,7 +7,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { ORDER_ERROR_CODES, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { MerchantInfo, MerchantOrderTypesInfo, OrderDetailsComponent, OrderInfo, OrderPayment } from '@sections/ordering/shared';
@@ -18,6 +18,7 @@ import { ModifyPrepTimeModule } from '../../pipes/modify-prep-time';
 import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.module';
 import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
 import { DateTimeSelected, TimePickerData } from '../st-date-time-picker/st-date-time-picker.component';
+import { NavigationService } from '@shared/index';
 
 const _modalController = {};
 const _orderingService = {
@@ -49,6 +50,10 @@ const _merchantService = {
   getMerchantOrderSchedule: jest.fn()
 };
 
+const _navigationService = {
+  navigate: jest.fn()
+}
+
 describe('OrderDetailsComponent', () => {
   let component: OrderDetailsComponent;
   let fixture: ComponentFixture<OrderDetailsComponent>;
@@ -67,6 +72,7 @@ describe('OrderDetailsComponent', () => {
         { provide: ToastService, useValue: _toastService },
         { provide: TranslateService, useValue: _translateService },
         { provide: MerchantService, useValue: _merchantService },
+        { provide: NavigationService, useValue: _navigationService }
       ],
       imports: [TypeMessageModule, ModifyPrepTimeModule, AddressHeaderFormatPipeModule],
     }).compileComponents();
@@ -74,8 +80,7 @@ describe('OrderDetailsComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(OrderDetailsComponent);
-    component = fixture.componentInstance;
-    component.orderDetailOptions = {
+    component = fixture.componentInstance;component.orderDetailOptions = {
       dueTime: new Date(),
       isASAP: false,
       address: {} as AddressInfo,
@@ -109,8 +114,31 @@ describe('OrderDetailsComponent', () => {
     expect(loaderCloseSpy).toHaveBeenCalled();
   });
 
-  it('should return  Due Time Error Key', () => {
+  it('should return Pickup Due Time Error Key', () => {
+    component.orderDetailOptions = {
+      dueTime: new Date(),
+      isASAP: false,
+      address: {} as AddressInfo,
+      orderType: ORDER_TYPE.PICKUP,
+    } as OrderDetailOptions;
+    component.errorCode = Number(ORDER_ERROR_CODES.ORDER_CAPACITY);
     expect(component.getDueTimeErrorKey()).toEqual('PickUpOrderTimeNotAvailable');
+  });
+
+  it('should return Delivery Due Time Error Key', () => {
+    component.orderDetailOptions = {
+      dueTime: new Date(),
+      isASAP: false,
+      address: {} as AddressInfo,
+      orderType: ORDER_TYPE.DELIVERY,
+    } as OrderDetailOptions;
+    component.errorCode = Number(ORDER_ERROR_CODES.ORDER_CAPACITY);
+    expect(component.getDueTimeErrorKey()).toEqual('DeliveryOrderTimeNotAvailable');
+  });
+
+  it('should return Items Not Available Error Key', () => {
+    component.errorCode = Number(ORDER_ERROR_CODES.INVALID_ORDER);
+    expect(component.getDueTimeErrorKey()).toEqual('ItemsNotAvailable');
   });
 
   it('should validate order when date time selected', async () => {
@@ -118,5 +146,6 @@ describe('OrderDetailsComponent', () => {
     await component.onDateTimeSelected({ dateTimePicker: 'ASAP' } as DateTimeSelected);
     expect(cartServiceSpy).toHaveBeenCalled();
     expect(_cartService.cartsErrorMessage).toBeNull();
+    expect(component.cartOptions.isASAP).toBeTruthy();
   });
 });

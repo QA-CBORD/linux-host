@@ -81,8 +81,10 @@
       "UserAlreadyRegisteredException": "The specified user has already registered.",
       "UserNotAuthorizedException": "You do not have the necessary permissions to perform the requested operation.",
       "UserNotConfirmedException": "Your email is not confirmed. To receive another confirmation email, please re-register.",
-      "PickUpOrderTimeNotAvailable": "This pickup time is not available",
-      "DeliveryOrderTimeNotAvailable": "This delivery time is not available"
+      "PickUpOrderTimeNotAvailable": "This pickup time is not available.",
+      "DeliveryOrderTimeNotAvailable": "This delivery time is not available.",
+      "ItemsNotAvailable": "Items in the cart are not available at this time.",
+      "ItemsNotAvailableEmptyYourCart": "Items in the cart are not available at this time. Would you like to empty your cart?."
     },
     "error_message": {
       "add_address_failed_to_geocode": "The address could not be mapped to longitude and latitude.",
@@ -545,7 +547,11 @@
       "cart_heading": "My Order",
       "check_out": "Checkout",
       "my_shopping_cart": "My Cart",
-      "shopping_cart_empty_msg": "Your shopping cart is empty"
+      "shopping_cart_empty_msg": "Your shopping cart is empty",
+      "empty_cart": "Empty Cart",
+      "remove_message": "Are you sure you want remove all items from your cart?",
+      "cancel": "Cancel",
+      "remove_items": "Remove Items"
     },
     "terms_screen": { "title": "Terms of Use and Privacy Policy" },
     "update_profile_screen": {

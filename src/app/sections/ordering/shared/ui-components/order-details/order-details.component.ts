@@ -28,7 +28,7 @@ import {
   validateGreaterOrEqualToZero,
   validateLessThanOther,
 } from '@core/utils/general-helpers';
-import { IonSelect } from '@ionic/angular';
+import { IonSelect, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BuildingInfo,
@@ -43,6 +43,7 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import {
+  LOCAL_ROUTING,
   MerchantSettings,
   ORDERING_CONTENT_STRINGS,
   ORDER_ERROR_CODES,
@@ -64,6 +65,8 @@ import {
   StDateTimePickerComponent,
   TimePickerData,
 } from '../st-date-time-picker/st-date-time-picker.component';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/services';
 
 @Component({
   selector: 'st-order-details',
@@ -155,6 +158,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   isApplePayment = false;
   isWalkoutOrder = false;
   isMerchantOrderAhead = false;
+  errorCode = 0;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -165,6 +169,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
+  cartOptions: OrderDetailOptions;
 
   @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   orderSchedule$: Observable<Schedule>;
@@ -179,6 +184,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   readonly dueTimeErrorMessages: DueTimeErrorMessages = {
     PickUpOrderTimeNotAvailable: this.translateService.instant('get_common.error.PickUpOrderTimeNotAvailable'),
     DeliveryOrderTimeNotAvailable: this.translateService.instant('get_common.error.DeliveryOrderTimeNotAvailable'),
+    ItemsNotAvailable: this.translateService.instant('get_common.error.ItemsNotAvailable'),
   };
 
   constructor(
@@ -192,7 +198,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly translateService: TranslateService,
-    private readonly merchantService: MerchantService
+    private readonly merchantService: MerchantService,
+    private readonly alertController: AlertController,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -252,12 +260,18 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getDueTimeErrorKey() {
-    const error =
-      this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
-        ? 'PickUpOrderTimeNotAvailable'
-        : 'DeliveryOrderTimeNotAvailable';
-    const dueTimeErrorKey: keyof DueTimeErrorMessages = error;
-    return dueTimeErrorKey;
+    const error = {
+      [+ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+      [+ORDER_ERROR_CODES.ORDER_CAPACITY]:
+        this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
+          ? 'PickUpOrderTimeNotAvailable'
+          : 'DeliveryOrderTimeNotAvailable',
+    }[this.errorCode] as keyof DueTimeErrorMessages;
+    return error;
+  }
+
+  get hasInvalidItems() {
+    return this.dueTimeHasErrors && this.errorCode === +ORDER_ERROR_CODES.INVALID_ORDER;
   }
 
   markDueTieWithErrors(): void {
@@ -423,7 +437,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return this.detailsForm.get(FORM_CONTROL_NAMES.address);
   }
 
-  private getVoiceOverInvalidText(detailsForm){
+  private getVoiceOverInvalidText(detailsForm) {
     const errorMessages = {
       [FORM_CONTROL_NAMES.paymentMethod]: 'Button is disabled, please select a payment method.',
       [FORM_CONTROL_NAMES.phone]: 'Button is disabled, phone number is invalid.',
@@ -438,7 +452,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscribeOnFormChanges() {
     const sub = this.detailsForm.valueChanges.subscribe(() => {
-      this.onFormChange.emit({ data: this.detailsForm.getRawValue(), valid: this.detailsForm.valid, voiceOverError: this.getVoiceOverInvalidText(this.detailsForm) });
+      this.onFormChange.emit({
+        data: this.detailsForm.getRawValue(),
+        valid: this.detailsForm.valid,
+        voiceOverError: this.getVoiceOverInvalidText(this.detailsForm),
+      });
     });
     this.sourceSub.add(sub);
   }
@@ -513,6 +531,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.contentStrings.deliveryOrderTimeNotAvailable = this.orderingService.getContentErrorStringByName(
       ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable
     );
+    this.contentStrings.itemsNotAvailable = this.orderingService.getContentErrorStringByName(
+      ORDERING_CONTENT_STRINGS.itemsNotAvailable
+    );
   }
 
   private async updateFormErrorsByContentStrings(): Promise<void> {
@@ -568,6 +589,40 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.child.openPicker();
   }
 
+  async emptyCart() {
+    const alert = await this.alertController.create({
+      cssClass: 'alert_cart',
+      message: this.translateService.instant('get_web_gui.shopping_cart.remove_message'),
+      buttons: [
+        {
+          text: this.translateService.instant('get_web_gui.shopping_cart.cancel'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
+        },
+        {
+          text: this.translateService.instant('get_web_gui.shopping_cart.remove_items'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this.cartService.clearActiveOrder();
+            this.cartService.setActiveMerchantsMenuByOrderOptions(
+              this.cartOptions.dueTime,
+              this.cartOptions.orderType,
+              this.cartOptions.address,
+              this.cartOptions.isASAP
+            );
+            this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   get userData$(): Observable<UserInfo> {
     return this.userFacadeService.getUserData$();
   }
@@ -577,7 +632,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
     this.cartService.orderIsAsap = date.isASAP;
 
-    const options = {
+    this.cartOptions = {
       dueTime: date.dueTime,
       orderType: this.orderDetailOptions.orderType,
       address: this.orderDetailOptions.address,
@@ -587,30 +642,28 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     await this.loadingService.showSpinner();
 
     await this.cartService
-      .validateOrder(options)
+      .validateOrder(this.cartOptions)
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(() => {
         this.cartService.cartsErrorMessage = null;
-
         if (this.dueTimeHasErrors) {
           const dueTimeErrorKey = this.getDueTimeErrorKey();
           this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
+          this.errorCode = null;
           this.dueTimeHasErrors = false;
           this.cdRef.detectChanges();
         }
       })
       .catch(error => {
         if (Array.isArray(error)) {
-          const errorCode = +error[0];
-          if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-            this.cartService.cartsErrorMessage = error[1];
-            this.dueTimeHasErrors = true;
-            const dueTimeErrorKey = this.getDueTimeErrorKey();
-            const message = this.translateService.instant(`get_common.error.${dueTimeErrorKey}`);
-            this.toastService.showError(message);
-            this.markDueTieWithErrors();
-          }
+          this.errorCode = +error[0];
+          const errorKey = this.getDueTimeErrorKey();
+          this.cartService.cartsErrorMessage = error[1];
+          this.dueTimeHasErrors = true;
+          const message = this.translateService.instant(`get_common.error.${errorKey}`);
+          this.toastService.showError(message);
+          this.markDueTieWithErrors();
         }
       })
       .finally(() => this.loadingService.closeSpinner());
@@ -670,4 +723,5 @@ export interface PaymentMethodErrorMessages {
 export interface DueTimeErrorMessages {
   PickUpOrderTimeNotAvailable: string;
   DeliveryOrderTimeNotAvailable: string;
+  ItemsNotAvailable: string;
 }
