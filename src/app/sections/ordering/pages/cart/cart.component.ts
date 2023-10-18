@@ -17,6 +17,7 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import {
   AddressModalSettings,
+  DueTimeErrorMessages,
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
@@ -41,7 +42,16 @@ import { LockDownService } from '@shared/index';
 import { ConnectionService } from '@shared/services/connection-service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, lastValueFrom, zip } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  combineLatest,
+  firstValueFrom,
+  from,
+  lastValueFrom,
+  zip,
+} from 'rxjs';
 import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
@@ -154,7 +164,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.isOrderASAP,
       this.contentStrings.buttonPlaceOrder,
       this.contentStrings.buttonScheduleOrder,
-      this.order$
+      this.order$,
     ]).pipe(
       map(([isOrderAsap, buttonPlaceOrder, buttonScheduleOrder, order]) => {
         const orderTotal = this.priceUnitsResolverPipe.transform(order.total, order.mealBased);
@@ -164,9 +174,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   get buttonAriaLabel(): Observable<string> {
-    return combineLatest([
-      this.getButtonText()
-    ]).pipe(
+    return combineLatest([this.getButtonText()]).pipe(
       map(([buttonText]) => {
         if (this.cartFormState.valid || this.isExistingOrder) {
           return buttonText;
@@ -226,10 +234,10 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.lastCartFormValid !== this.cartFormState.valid) {
       this.voiceOverErrorMessage = state.voiceOverError;
       this.showButton = false;
-      setTimeout(()=>{
-        this.showButton=true;
+      setTimeout(() => {
+        this.showButton = true;
         this.cdRef.detectChanges();
-      }, 100)
+      }, 100);
     }
     this.lastCartFormValid = this.cartFormState.valid;
     this.cartService.updateOrderAddress(state.data[FORM_CONTROL_NAMES.address]);
@@ -336,10 +344,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
-    /**
-     * This block will be uncommented once time selection flows finished.
-     *
-     *
     this.dueTimeHasErrors = false;
     const isMerchantOrderAhead = await firstValueFrom(
       this.merchant$.pipe(
@@ -347,9 +351,13 @@ export class CartComponent implements OnInit, OnDestroy {
       )
     );
 
-    if (isMerchantOrderAhead) {
+    if (isMerchantOrderAhead && message) {
+      const error = message.split('|')[0];
       const options = await firstValueFrom(this.orderDetailOptions$);
-      const errorKey = options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable';
+      const errorKey = {
+        9010: 'ItemsNotAvailable',
+        9017: options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
+      }[error] as keyof DueTimeErrorMessages;
       const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
       this.toastService.showError(errorMessage);
       this.dueTimeHasErrors = true;
@@ -357,7 +365,6 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cdRef.detectChanges();
       return;
     }
-    **/
 
     const data = {
       title: 'Oooops',
