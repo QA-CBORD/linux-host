@@ -352,12 +352,13 @@ export class CartComponent implements OnInit, OnDestroy {
     );
 
     if (isMerchantOrderAhead && message) {
-      const error = message.split('|')[0];
+      const error = message.split('|');
+      const key = error && error[0];
       const options = await firstValueFrom(this.orderDetailOptions$);
       const errorKey = {
-        9010: 'ItemsNotAvailable',
-        9017: options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
-      }[error] as keyof DueTimeErrorMessages;
+        [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+        [ORDER_ERROR_CODES.ORDER_CAPACITY]: options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
+      }[key] as keyof DueTimeErrorMessages;
       const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
       this.toastService.showError(errorMessage);
       this.dueTimeHasErrors = true;
