@@ -25,7 +25,6 @@
           [isError]="sourceAccount.invalid && sourceAccount.touched"
           (ionChange)="onPaymentMethodChanged($event)"
           tabindex="0"
-          
         >
           <ng-container role="options">
             <ion-select-option
@@ -93,7 +92,6 @@
           placeholder="Please choose"
           [label]="contentString.lblSelectAccountForDeposit"
           tabindex="0"
-          
         >
           <ng-container role="options">
             <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
@@ -145,7 +143,7 @@
   </form>
 </ion-content>
 <ion-footer class="deposit__footer browser-hidden" mode="ios">
-  <st-button (onClick)="onFormSubmit()" tabindex="0" [isDisabled]="!depositForm.valid" [disabled]="isDepositing">
+  <st-button (onClick)="onFormSubmit()" tabindex="0" [disabled]="!depositForm.valid || isDepositing">
     <div id="depositBtnText">{{ contentString.submitButtonText }}</div>
   </st-button>
 </ion-footer>
