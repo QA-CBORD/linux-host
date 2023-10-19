@@ -11,6 +11,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { IonContent, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
@@ -22,7 +23,7 @@ import {
   MerchantService,
   OrderDetailsFormData,
   OrderInfo,
-  OrderPayment,
+  OrderPayment
 } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
@@ -36,18 +37,26 @@ import {
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { APP_ROUTES } from '@sections/section.config';
 import { LockDownService } from '@shared/index';
 import { ConnectionService } from '@shared/services/connection-service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BehaviorSubject, Observable, Subscription, combineLatest, firstValueFrom, from, lastValueFrom, zip } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  combineLatest,
+  firstValueFrom,
+  from,
+  lastValueFrom,
+  zip,
+} from 'rxjs';
 import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
-import { TranslateService } from '@ngx-translate/core';
-import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -154,7 +163,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.isOrderASAP,
       this.contentStrings.buttonPlaceOrder,
       this.contentStrings.buttonScheduleOrder,
-      this.order$
+      this.order$,
     ]).pipe(
       map(([isOrderAsap, buttonPlaceOrder, buttonScheduleOrder, order]) => {
         const orderTotal = this.priceUnitsResolverPipe.transform(order.total, order.mealBased);
@@ -164,9 +173,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   get buttonAriaLabel(): Observable<string> {
-    return combineLatest([
-      this.getButtonText()
-    ]).pipe(
+    return combineLatest([this.getButtonText()]).pipe(
       map(([buttonText]) => {
         if (this.cartFormState.valid || this.isExistingOrder) {
           return buttonText;
@@ -226,10 +233,10 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.lastCartFormValid !== this.cartFormState.valid) {
       this.voiceOverErrorMessage = state.voiceOverError;
       this.showButton = false;
-      setTimeout(()=>{
-        this.showButton=true;
+      setTimeout(() => {
+        this.showButton = true;
         this.cdRef.detectChanges();
-      }, 100)
+      }, 100);
     }
     this.lastCartFormValid = this.cartFormState.valid;
     this.cartService.updateOrderAddress(state.data[FORM_CONTROL_NAMES.address]);
@@ -347,9 +354,14 @@ export class CartComponent implements OnInit, OnDestroy {
       )
     );
 
-    if (isMerchantOrderAhead) {
+    if (isMerchantOrderAhead && message) {
+      const error = message.split('|');
+      const key = error && error[0];
       const options = await firstValueFrom(this.orderDetailOptions$);
-      const errorKey = options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable';
+      const errorKey = {
+        [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+        [ORDER_ERROR_CODES.ORDER_CAPACITY]: options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
+      }[key] as keyof DueTimeErrorMessages;
       const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
       this.toastService.showError(errorMessage);
       this.dueTimeHasErrors = true;
@@ -357,8 +369,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cdRef.detectChanges();
       return;
     }
-    **/
-
+**/
     const data = {
       title: 'Oooops',
       message,

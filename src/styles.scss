@@ -504,3 +504,45 @@ ion-modal.sc-modal {
   // Enable long press
   -webkit-touch-callout: default;
 }
+
+.alert_cart {
+  @include font-nunito-heavy(16px);
+
+  .alert-wrapper {
+    .alert-head {
+      display: none;
+    }
+    .alert-message {
+      display: flex;
+      justify-content: start;
+      text-align: left;
+      @include font-nunito-heavy(17px);
+      padding: 15px;
+    }
+
+    .alert-button-group {
+      display: grid;
+      grid-template-columns: auto auto;
+      justify-content: end;
+      padding: 15px;
+    }
+
+    button.alert-button.button__option_cancel {
+      background: $color-whisper;
+      border-radius: 8px;
+      @include font-nunito-heavy(16px);
+      color: black;
+      margin: 0 10px 0 0;
+      text-transform: none;
+    }
+  
+    button.alert-button.button__option_confirm {
+      background-color: $color-cardinal;
+      color: white;
+      border-radius: 8px;
+      @include font-nunito-heavy(16px);
+      width: auto;
+      text-transform: none;
+    }
+  }
+}

@@ -280,3 +280,43 @@
     }
   }
 }
+
+.banner {
+  padding: 1rem .5rem;
+
+  &__content {
+    display: grid;
+    grid-template-rows: 1fr min-content;
+    gap: 0;
+    padding: 1rem 1rem 0 1rem;
+    background-color: $color-pastel-yellow;
+    border-radius: 10px;
+
+    &--info {
+      display: grid;
+      grid-template-columns: min-content 1fr;
+      gap: 1rem;
+      &-icon {
+        width: 24px;
+        height: 24px;
+        color: $color-warning-40;
+      }
+
+      &-message {
+        @include font-nunito-semibold(16px);
+      }
+    }
+
+    &--actions {
+      color: $color-warning-40;
+      justify-self: end;
+
+      ion-button {
+        @include font-nunito-heavy(16px);
+        --color: $color-warning-40;
+        --padding-top: 0;
+        --padding-bottom: 0;
+      }
+    }
+  }
+}

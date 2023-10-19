@@ -20,6 +20,7 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.module';
 import { OrderItemDetailsModule } from '../order-item-details/order-item-details.module';
 import { ControlErrorsModule } from '@shared/ui-components/control-errors/control-errors.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
 
@@ -39,7 +40,8 @@ const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
     StInputFloatingLabelModule,
     TypeMessageModule,
     OrderItemDetailsModule,
-    ControlErrorsModule
+    ControlErrorsModule,
+    TranslateModule
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, ModalsService, AccessibilityService],

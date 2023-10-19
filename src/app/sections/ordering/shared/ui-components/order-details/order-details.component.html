@@ -31,6 +31,22 @@
       </p>
     </div>
 
+    <div *ngIf="hasInvalidItems" class="banner">
+      <div class="banner__content">
+        <div class="banner__content--info">
+          <ion-icon size="large" slot="icon-only" name="warning-outline" class="banner__content--info-icon"></ion-icon>
+          <div class="banner__content--info-message">
+            {{ 'get_common.error.ItemsNotAvailableEmptyYourCart' | translate }}
+          </div>
+        </div>
+        <div class="banner__content--actions">
+          <ion-button fill="clear" (click)="emptyCart()">
+            {{ 'get_web_gui.shopping_cart.empty_cart' | translate }}
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
     <ion-list class="order-ingredient-list">
       <ion-item-sliding
         [disabled]="readonly"
