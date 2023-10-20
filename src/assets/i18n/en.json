@@ -84,7 +84,7 @@
       "PickUpOrderTimeNotAvailable": "This pickup time is not available.",
       "DeliveryOrderTimeNotAvailable": "This delivery time is not available.",
       "ItemsNotAvailable": "Items in the cart are not available at this time.",
-      "ItemsNotAvailableEmptyYourCart": "Items in the cart are not available at this time. Would you like to empty your cart?."
+      "ItemsNotAvailableEmptyYourCart": "Items in the cart are not available at this time. Would you like to empty your cart?"
     },
     "error_message": {
       "add_address_failed_to_geocode": "The address could not be mapped to longitude and latitude.",

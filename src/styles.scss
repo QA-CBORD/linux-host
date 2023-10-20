@@ -509,15 +509,14 @@ ion-modal.sc-modal {
   @include font-nunito-heavy(16px);
 
   .alert-wrapper {
-    .alert-head {
-      display: none;
-    }
+    border-radius: 5px;
+
     .alert-message {
       display: flex;
       justify-content: start;
       text-align: left;
       @include font-nunito-heavy(17px);
-      padding: 15px;
+      padding: 0 15px 15px 15px;
     }
 
     .alert-button-group {
@@ -534,6 +533,8 @@ ion-modal.sc-modal {
       color: black;
       margin: 0 10px 0 0;
       text-transform: none;
+      min-width: 70px;
+      max-width: 30%;
     }
   
     button.alert-button.button__option_confirm {
@@ -543,6 +544,9 @@ ion-modal.sc-modal {
       @include font-nunito-heavy(16px);
       width: auto;
       text-transform: none;
+      min-width: 130px;
+      max-width: 30%;
+      margin: 0;
     }
   }
 }
