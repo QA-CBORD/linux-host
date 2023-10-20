@@ -5,7 +5,7 @@
         orderDetailOptions.orderType | typeMessage : 'dueTime' : isWalkoutOrder
       }}</ion-label>
 
-      <p *ngIf="!isMerchantOrderAhead; else timeEditable" class="order-details__value">
+      <p *ngIf="!isMerchantOrderAhead" class="order-details__value">
         {{ orderDetailOptions | modifyPrepTime : orderTypes }}
       </p>
 

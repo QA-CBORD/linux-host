@@ -18,7 +18,6 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import {
   AddressModalSettings,
-  DueTimeErrorMessages,
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
@@ -341,6 +340,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
+    /**
+     *
+     * TODO: Order time selections
+     *
     this.dueTimeHasErrors = false;
     const isMerchantOrderAhead = await firstValueFrom(
       this.merchant$.pipe(
@@ -362,7 +365,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.page.scrollToTop();
       this.cdRef.detectChanges();
       return;
-    }
+    }**/
 
     const data = {
       title: 'Oooops',
