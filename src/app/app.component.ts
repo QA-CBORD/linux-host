@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { Platform } from '@ionic/angular';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 
@@ -13,7 +12,6 @@ import { TranslateFacadeService } from '@core/facades/translate/translate.facade
 export class AppComponent implements OnInit {
   constructor(
     private readonly platform: Platform,
-    private readonly screenOrientation: ScreenOrientation,
     private readonly translateFacadeService: TranslateFacadeService
   ) {}
 
@@ -28,9 +26,6 @@ export class AppComponent implements OnInit {
       StatusBar.setOverlaysWebView({ overlay: false });
       StatusBar.setStyle({ style: Style.Light });
       StatusBar.setBackgroundColor({ color: '#FFFFFF' });
-    }
-    if (this.platform.is('cordova')) {
-      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
   }
 }
