@@ -5,16 +5,12 @@ import Institution from '../../pageobjects/institutions.page';
 import { AWAIT_TIME } from '../constants';
 
 describe('Entry', () => {
-  beforeEach(async () => {
+  it('Should change environment to develop', async () => {
     await restartApp('/anonymous/entry');
     await url('/anonymous/entry');
 
     await pause(AWAIT_TIME);
-  });
-
-  it('Should change environment to develop', async () => {
-    const {changeEnvButton, changeEnvAlert} = await Entry;
-    
+    const { changeEnvButton, changeEnvAlert } = await Entry;
     //Button needs to be clicked more than 4 times
     for (let i = 0; i < 5; i++) {
       await (await changeEnvButton).click();
@@ -28,13 +24,12 @@ describe('Entry', () => {
     await okButton.click();
     await pause(AWAIT_TIME);
 
-    await expect((await $(changeEnvAlert.selector))).not.toBeDisplayed();
+    await expect(await $(changeEnvAlert.selector)).not.toBeDisplayed();
   });
 
   it('Should open institutions', async () => {
     const institutionsButton = await Entry.searchInstitutionsButton;
     await institutionsButton.tap();
-    await url('/anonymous/institutions');
     await pause(AWAIT_TIME);
     const pageTitle = await Institution.institutionPageTitle;
     await expect(pageTitle).toHaveText('Select Institution');
