@@ -32,8 +32,8 @@
     <ng-container *ngIf="showButton">
       <st-button
         (onClick)="onSubmit()"
-        [disabled]="placingOrder"
         [voiceOverText]="buttonAriaLabel | async"
+        [disabled]="!cartFormState?.valid && !isExistingOrder"
         [isDisabled]="!cartFormState?.valid && !isExistingOrder"
         >
         {{ getButtonText() | async }}

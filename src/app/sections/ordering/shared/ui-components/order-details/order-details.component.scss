@@ -312,6 +312,7 @@
       justify-self: end;
 
       ion-button {
+        text-transform: capitalize;
         @include font-nunito-heavy(16px);
         --color: $color-warning-40;
         --padding-top: 0;

@@ -87,7 +87,6 @@ export class CartComponent implements OnInit, OnDestroy {
   accountInfoList$: Observable<MerchantAccountInfoList>;
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-  placingOrder = false;
   isProcessingOrder = false;
   merchantTimeZoneDisplayingMessage: string;
   isOnline = true;
@@ -272,12 +271,10 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.cartFormState.valid || this.placingOrder) return;
-    this.placingOrder = true;
+    if (!this.cartFormState.valid) return;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (type === ORDER_TYPE.DELIVERY && (await this.isDeliveryAddressOutOfRange())) {
       await this.onValidateErrorToast('Delivery location is out of delivery range, please choose another location');
-      this.placingOrder = false;
       return;
     }
 
@@ -344,8 +341,8 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
     /**
-     * This block will be uncommented once time selection flows finished.
      *
+     * TODO: Order time selections
      *
     this.dueTimeHasErrors = false;
     const isMerchantOrderAhead = await firstValueFrom(
@@ -368,8 +365,8 @@ export class CartComponent implements OnInit, OnDestroy {
       this.page.scrollToTop();
       this.cdRef.detectChanges();
       return;
-    }
-**/
+    }**/
+
     const data = {
       title: 'Oooops',
       message,
@@ -442,7 +439,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
     Browser.addListener(browserState.FINISHED, async () => {
       await this.loadingService.closeSpinner();
-      this.placingOrder = false;
       this.cdRef.detectChanges();
       Browser.removeAllListeners();
     });
@@ -457,11 +453,7 @@ export class CartComponent implements OnInit, OnDestroy {
         }
       })
       .catch(async () => {
-        this.placingOrder = false;
         return await this.onErrorModal('Something went wrong, please try again...');
-      })
-      .finally(() => {
-        this.placingOrder = false;
       });
 
     return accountId;
@@ -494,7 +486,6 @@ export class CartComponent implements OnInit, OnDestroy {
       .finally(() => {
         this.isProcessingOrder = false;
         this.loadingService.closeSpinner();
-        this.placingOrder = false;
       });
   }
 

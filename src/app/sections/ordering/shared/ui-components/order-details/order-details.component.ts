@@ -200,7 +200,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly translateService: TranslateService,
     private readonly merchantService: MerchantService,
     private readonly alertController: AlertController,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
   ) {}
 
   ngOnInit() {
@@ -277,7 +277,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   markDueTieWithErrors(): void {
     if (this.dueTimeHasErrors) {
       const dueTimeErrorKey = this.getDueTimeErrorKey();
-      this.dueTimeFormControl.disable();
+      this.dueTimeFormControl.setValue('');
       this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: true });
       this.dueTimeFormControl.markAsTouched();
     }
@@ -331,12 +331,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   initForm() {
     this.detailsForm = this.fb.group({
-      [FORM_CONTROL_NAMES.address]: [''],
       [FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [FORM_CONTROL_NAMES.paymentMethod]: [{ value: '', disabled: this.isPaymentMethodDisabled }, Validators.required],
       [FORM_CONTROL_NAMES.note]: [this.notes],
       [FORM_CONTROL_NAMES.phone]: [''],
-      [FORM_CONTROL_NAMES.dueTime]: [''],
+      [FORM_CONTROL_NAMES.dueTime]: [this.orderDetailOptions.dueTime, Validators.required],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
@@ -403,6 +402,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.removeCvvControl();
     }
     this.cdRef.detectChanges();
+    this.markDueTieWithErrors();
   }
 
   get paymentFormControl(): AbstractControl {
@@ -652,7 +652,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
           this.errorCode = null;
           this.dueTimeHasErrors = false;
-          this.cdRef.detectChanges();
+          this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
         }
       })
       .catch(error => {
