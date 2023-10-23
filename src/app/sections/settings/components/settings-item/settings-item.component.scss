@@ -5,9 +5,6 @@
     margin-left: 13px;
     @include font-nunito-semibold(16px);
   }
-  &__icon {
-    max-height: 28px;
-  }
 }
 
 .message {
@@ -30,7 +27,7 @@
 }
 
 .customMessage {
-  padding: 18px;
+  padding: 0 18px 20px 18px;
   color: $color-black;
   display: flex;
   flex-direction: column;
