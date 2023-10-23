@@ -261,7 +261,51 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-configuration-through-more.spec.ts',
       './tests/specs/shared/change-email.spec.ts'
-    ]
+    ],
+    goToAccountsThroughTile:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-accounts-through-tile.spec.ts',
+    ],
+    goToAccountsThroughTab:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
+    ],
+    fulfillLowBalanceAutoDeposit:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
+      './tests/specs/shared/fulfill-low-balance-auto-deposit.spec.ts',
+    ],
+    fulfillTimeBasedWeeklyAutoDeposit:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
+      './tests/specs/shared/fulfill-time-based-weekly-auto-deposit.spec.ts',
+    ],
+    fulfillTimeBasedMonthlyAutoDeposit:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
+      './tests/specs/shared/fulfill-time-based-monthly-auto-deposit.spec.ts',
+    ],
+    
   },
   //
   // ============

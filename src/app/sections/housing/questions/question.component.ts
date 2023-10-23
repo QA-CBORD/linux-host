@@ -177,9 +177,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
     const image: ImageData = {
       comments: '',
-      photoUrl: this.sanitizeUrl(photo, base64Data),
+      photoUrl: this.sanitizeUrl(photo, base64Data.toString()),
       filename: fileName,
-      contents: base64Data,
+      contents: base64Data.toString(),
       studentSubmitted: true,
       workOrderKey: 0,
     };
