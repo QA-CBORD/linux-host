@@ -31,6 +31,12 @@ class DashboardPage extends Page {
     get AccountsIcon(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-footer/st-global-navigation/nav/div/ul/li[2]');
     }
+    get AccountsTileHeader(){
+        return Ionic$.$('html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-dashboard/ion-content/st-tile-wrapper/div/ion-item/button')
+    }
+    get HomeIcon(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-footer/st-global-navigation/nav/div/ul/li[1]');
+    }
 
 }
 
