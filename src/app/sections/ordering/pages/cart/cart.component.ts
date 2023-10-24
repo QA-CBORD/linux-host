@@ -18,7 +18,6 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import {
   AddressModalSettings,
-  DueTimeErrorMessages,
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
@@ -474,36 +473,39 @@ export class CartComponent implements OnInit, OnDestroy {
     if (Array.isArray(error)) {
       this.cartService.changeClientOrderId;
 
-      this.dueTimeHasErrors = false;
-      const isMerchantOrderAhead = await firstValueFrom(
-        this.merchant$.pipe(
-          map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
-        )
-      );
+      /**
+       * For Time selection flow.
+       */
+      // this.dueTimeHasErrors = false;
+      // const isMerchantOrderAhead = await firstValueFrom(
+      //   this.merchant$.pipe(
+      //     map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
+      //   )
+      // );
 
-      if (isMerchantOrderAhead && error) {
-        const key = error && error[0];
-        const options = await firstValueFrom(this.orderDetailOptions$);
-        const errorKey = {
-          [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
-          [ORDER_ERROR_CODES.ORDER_CAPACITY]:
-            options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
-        }[key] as keyof DueTimeErrorMessages;
-        const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
-        this.toastService.showError(errorMessage);
-        this.dueTimeHasErrors = true;
-        this.errorCode = key;
-        this.page.scrollToTop();
-        this.cdRef.detectChanges();
-        return;
-      }
-
-      const errorCode = +error[0];
-      // if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-      //   this.cartService.changeClientOrderId;
-      //   await this.onErrorModal(error[0], this.navigateToFullMenu.bind(this));
+      // if (isMerchantOrderAhead && error) {
+      //   const key = error && error[0];
+      //   const options = await firstValueFrom(this.orderDetailOptions$);
+      //   const errorKey = {
+      //     [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+      //     [ORDER_ERROR_CODES.ORDER_CAPACITY]:
+      //       options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
+      //   }[key] as keyof DueTimeErrorMessages;
+      //   const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
+      //   this.toastService.showError(errorMessage);
+      //   this.dueTimeHasErrors = true;
+      //   this.errorCode = key;
+      //   this.page.scrollToTop();
+      //   this.cdRef.detectChanges();
       //   return;
       // }
+
+      const errorCode = +error[0];
+      if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+        this.cartService.changeClientOrderId;
+        await this.onErrorModal(error[0], this.navigateToFullMenu.bind(this));
+        return;
+      }
 
       if (errorCode === +ORDER_ERROR_CODES.INVALID_CARD) {
         await this.onValidateErrorToast(error[1]);
