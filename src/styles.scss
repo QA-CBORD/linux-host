@@ -550,3 +550,13 @@ ion-modal.sc-modal {
     }
   }
 }
+
+
+.alert_full_menu {
+  @extend .alert_cart;
+  .alert-wrapper {
+    .alert-message {
+      @include font-nunito-regular(15px);
+    }
+  }
+}
