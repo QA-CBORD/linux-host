@@ -15,8 +15,6 @@ import { AlertController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
-import { FullMenuPopoverComponent } from './full-menu-popover';
-import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { OverlayEventDetail } from '@ionic/core';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -24,13 +22,13 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',
   styleUrls: ['./full-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
@@ -51,6 +49,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly routingService: NavigationService,
     private orderActionSheetService: OrderActionSheetService,
+    private readonly translateService: TranslateService
   ) {}
 
   ngOnInit() {
@@ -195,10 +194,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
-      .pipe(
-        first(),
-        handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes)
-      )
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
       .toPromise()
       .then(() => {
         this.cartService.cartsErrorMessage = null;
@@ -217,27 +213,32 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     await this.toastService.showToast({ message });
   }
 
-  private async modalHandler({ dueTime, orderType, address, isASAP }) {
-    const popover = await this.popoverCtrl.create({
-      cssClass: 'sc-popover',
-      component: FullMenuPopoverComponent,
-      componentProps: {},
-      animated: false,
-      backdropDismiss: true,
+  async modalHandler({ dueTime, orderType, address, isASAP }) {
+    const alert = await this.alertController.create({
+      cssClass: 'alert_full_menu',
+      header: this.translateService.instant('patron-ui.ordering.new_menu_detected_title'),
+      message: this.translateService.instant('patron-ui.ordering.new_menu_detected_message'),
+      buttons: [
+        {
+          text: this.translateService.instant('patron-ui.ordering.new_menu_detected_cancelbutton'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
+          },
+        },
+        {
+          text: this.translateService.instant('patron-ui.ordering.new_menu_detected_changemenubutton'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this.cartService.removeLastOrderItem();
+          },
+        },
+      ],
     });
 
-    popover.onDidDismiss().then(({ role }) => {
-      switch (role) {
-        case BUTTON_TYPE.CLOSE:
-          this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
-          break;
-        case BUTTON_TYPE.OKAY:
-          this.cartService.removeLastOrderItem();
-          break;
-      }
-    });
-
-    return await popover.present();
+    await alert.present();
   }
 
   private initContentStrings() {
@@ -254,11 +255,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     );
   }
 
-  onOrdersButtonClicked(){
+  onOrdersButtonClicked() {
     this.routingService.navigate([APP_ROUTES.ordering]).then(() => {
-        this.orderActionSheetService.openActionSheet();
-      });
-
+      this.orderActionSheetService.openActionSheet();
+    });
   }
 }
 
