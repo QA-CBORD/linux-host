@@ -192,6 +192,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   private async validateOrder(successCb, errorCB, ignoreCodes?: string[]): Promise<void> {
     await this.loadingService.showSpinner();
+    errorCB('');
     await this.cartService
       .validateOrder()
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
