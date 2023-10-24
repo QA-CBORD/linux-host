@@ -18,12 +18,13 @@ import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
 import {
   AddressModalSettings,
+  DueTimeErrorMessages,
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
   OrderDetailsFormData,
   OrderInfo,
-  OrderPayment
+  OrderPayment,
 } from '@sections/ordering';
 import {
   LOCAL_ROUTING,
@@ -93,6 +94,7 @@ export class CartComponent implements OnInit, OnDestroy {
   networkSubcription: Subscription;
   orderSubmitErrorMessage: OrderingErrorContentStringModel;
   dueTimeHasErrors = false;
+  errorCode = null;
   @ViewChild('content') private page: IonContent;
 
   constructor(
@@ -271,10 +273,13 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.cartFormState.valid) return;
+    if (!this.cartFormState.valid || this.isProcessingOrder) return;
+
+    this.isProcessingOrder = true;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (type === ORDER_TYPE.DELIVERY && (await this.isDeliveryAddressOutOfRange())) {
       await this.onValidateErrorToast('Delivery location is out of delivery range, please choose another location');
+      this.isProcessingOrder = false;
       return;
     }
 
@@ -340,33 +345,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorModal(message: string, cb?: () => void, buttonLable?: string) {
-    /**
-     *
-     * TODO: Order time selections
-     *
-    this.dueTimeHasErrors = false;
-    const isMerchantOrderAhead = await firstValueFrom(
-      this.merchant$.pipe(
-        map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
-      )
-    );
-
-    if (isMerchantOrderAhead && message) {
-      const error = message.split('|');
-      const key = error && error[0];
-      const options = await firstValueFrom(this.orderDetailOptions$);
-      const errorKey = {
-        [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
-        [ORDER_ERROR_CODES.ORDER_CAPACITY]: options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
-      }[key] as keyof DueTimeErrorMessages;
-      const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
-      this.toastService.showError(errorMessage);
-      this.dueTimeHasErrors = true;
-      this.page.scrollToTop();
-      this.cdRef.detectChanges();
-      return;
-    }**/
-
     const data = {
       title: 'Oooops',
       message,
@@ -453,7 +431,10 @@ export class CartComponent implements OnInit, OnDestroy {
         }
       })
       .catch(async () => {
+        this.isProcessingOrder = false;
         return await this.onErrorModal('Something went wrong, please try again...');
+      }).finally(() => {
+        this.isProcessingOrder = false;
       });
 
     return accountId;
@@ -491,13 +472,39 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private async handlerCartErrors(error: string | [string, string]): Promise<void> {
     if (Array.isArray(error)) {
-      const errorCode = +error[0];
-      if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-        //something went wrong in the backend, order did not succeed for sure,
-        this.cartService.changeClientOrderId;
-        await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
+      this.cartService.changeClientOrderId;
+
+      this.dueTimeHasErrors = false;
+      const isMerchantOrderAhead = await firstValueFrom(
+        this.merchant$.pipe(
+          map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
+        )
+      );
+
+      if (isMerchantOrderAhead && error) {
+        const key = error && error[0];
+        const options = await firstValueFrom(this.orderDetailOptions$);
+        const errorKey = {
+          [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+          [ORDER_ERROR_CODES.ORDER_CAPACITY]:
+            options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
+        }[key] as keyof DueTimeErrorMessages;
+        const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
+        this.toastService.showError(errorMessage);
+        this.dueTimeHasErrors = true;
+        this.errorCode = key;
+        this.page.scrollToTop();
+        this.cdRef.detectChanges();
         return;
       }
+
+      const errorCode = +error[0];
+      // if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+      //   this.cartService.changeClientOrderId;
+      //   await this.onErrorModal(error[0], this.navigateToFullMenu.bind(this));
+      //   return;
+      // }
+
       if (errorCode === +ORDER_ERROR_CODES.INVALID_CARD) {
         await this.onValidateErrorToast(error[1]);
         return;
@@ -741,5 +748,10 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.orderIsAsap = false;
     this.cartService.checkNumber = order.checkNumber;
     this.cartService.currentOrderId = order.id;
+  }
+
+  cleanDueTimeErrors() {
+    this.errorCode = null;
+    this.dueTimeHasErrors = false;
   }
 }
