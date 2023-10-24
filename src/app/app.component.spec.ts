@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { Platform } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -10,10 +9,6 @@ describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
 
   beforeEach(async () => {
-    const screenOrientationStub = () => ({
-      lock: pORTRAIT => ({}),
-      ORIENTATIONS: { PORTRAIT: {} }
-    });
     const platformStub = () => ({ ready: () => ({}), is: string => ({}) });
     const mockTranslateService = {
       currentLang: 'en',
@@ -26,7 +21,6 @@ describe('AppComponent', () => {
       declarations: [AppComponent],
       providers: [
         { provide: TranslateService, useValue: mockTranslateService },
-        { provide: ScreenOrientation, useFactory: screenOrientationStub },
         { provide: Platform, useFactory: platformStub }
       ]
     }).compileComponents();
