@@ -371,6 +371,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (this.readonly) {
       this.checkForOrderIssuesOnReadOnly();
     }
+    this.cartOptions = this.orderDetailOptions;
     this.subscribeOnFormChanges();
   }
 
@@ -636,7 +637,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === 'ASAP' };
     date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
     this.cartService.orderIsAsap = date.isASAP;
-
+    this.cartService.cartsErrorMessage = null;
     this.cartOptions = {
       dueTime: date.dueTime,
       orderType: this.orderDetailOptions.orderType,
@@ -645,6 +646,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     } as OrderDetailOptions;
 
     await this.loadingService.showSpinner();
+    this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
 
     await this.cartService
       .validateOrder(this.cartOptions)
@@ -653,12 +655,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .then(() => {
         this.cartService.cartsErrorMessage = null;
         if (this.dueTimeHasErrors) {
-          const dueTimeErrorKey = this.getDueTimeErrorKey();
-          this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
-          this.onDueTimeErrorClean.emit();
-          this.errorCode = null;
-          this.dueTimeHasErrors = false;
-          this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
+          this.cleanDueTimeErrors();
         }
       })
       .catch(error => {
@@ -673,6 +670,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         }
       })
       .finally(() => this.loadingService.closeSpinner());
+  }
+
+  cleanDueTimeErrors () {
+    const dueTimeErrorKey = this.getDueTimeErrorKey();
+    this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
+    this.onDueTimeErrorClean.emit();
+    this.errorCode = null;
+    this.dueTimeHasErrors = false;
   }
 }
 
