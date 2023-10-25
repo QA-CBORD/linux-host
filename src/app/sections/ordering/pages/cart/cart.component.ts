@@ -503,7 +503,7 @@ export class CartComponent implements OnInit, OnDestroy {
       const errorCode = +error[0];
       if (errorCode === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
         this.cartService.changeClientOrderId;
-        await this.onErrorModal(error[0], this.navigateToFullMenu.bind(this));
+        await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
         return;
       }
 
