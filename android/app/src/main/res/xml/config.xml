@@ -30,10 +30,6 @@
     <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser"/>
   </feature>
 
-  <feature name="CDVOrientation">
-    <param name="android-package" value="cordova.plugins.screenorientation.CDVOrientation"/>
-  </feature>
-
   
   <preference name="ScrollEnabled" value="true" />
   <preference name="android-minSdkVersion" value="19" />
