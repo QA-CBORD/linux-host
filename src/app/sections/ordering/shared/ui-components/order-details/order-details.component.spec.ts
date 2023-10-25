@@ -121,7 +121,7 @@ describe('OrderDetailsComponent', () => {
       address: {} as AddressInfo,
       orderType: ORDER_TYPE.PICKUP,
     } as OrderDetailOptions;
-    component.errorCode = Number(ORDER_ERROR_CODES.ORDER_CAPACITY);
+    component.errorCode = ORDER_ERROR_CODES.ORDER_CAPACITY;
     expect(component.getDueTimeErrorKey()).toEqual('PickUpOrderTimeNotAvailable');
   });
 
@@ -132,12 +132,12 @@ describe('OrderDetailsComponent', () => {
       address: {} as AddressInfo,
       orderType: ORDER_TYPE.DELIVERY,
     } as OrderDetailOptions;
-    component.errorCode = Number(ORDER_ERROR_CODES.ORDER_CAPACITY);
+    component.errorCode = ORDER_ERROR_CODES.ORDER_CAPACITY;
     expect(component.getDueTimeErrorKey()).toEqual('DeliveryOrderTimeNotAvailable');
   });
 
   it('should return Items Not Available Error Key', () => {
-    component.errorCode = Number(ORDER_ERROR_CODES.INVALID_ORDER);
+    component.errorCode = ORDER_ERROR_CODES.INVALID_ORDER;
     expect(component.getDueTimeErrorKey()).toEqual('ItemsNotAvailable');
   });
 
@@ -147,5 +147,11 @@ describe('OrderDetailsComponent', () => {
     expect(cartServiceSpy).toHaveBeenCalled();
     expect(_cartService.cartsErrorMessage).toBeNull();
     expect(component.cartOptions.isASAP).toBeTruthy();
+  });
+
+  it('should init data for time picker', async () => {
+    const timePickerDataInit = jest.spyOn(component, 'initTimePickerData');
+    await component.changeOrderTime();
+    expect(timePickerDataInit).toHaveBeenCalled();
   });
 });
