@@ -32,7 +32,6 @@ class AutoDepositPage extends Page {
       '/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-automatic-deposit-page/ion-content/form/st-deposit-frequency/ion-list/ion-radio-group/ion-item[2]'
     );
   }
-
   get SavedDialogTitle() {
     return Ionic$.$('/html/body/app-root/ion-app/ion-popover/st-popover/st-popover-layout/ion-content');
   }
