@@ -247,11 +247,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         path: filePath,
         data: `${readFile.data}`,
       });
-<<<<<<< HEAD
       this.startUpload(this.images[0], readFile.data as string);
-=======
-      this.startUpload(this.images[0], readFile.data.toString());
->>>>>>> 3a8a7f682 (Finishing first test case)
     }
   }
 
