@@ -262,12 +262,17 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-configuration-through-more.spec.ts',
       './tests/specs/shared/change-email.spec.ts'
     ],
+<<<<<<< HEAD
     goToAccountsThroughTile:[
+=======
+    goToAccountsThroughtTile:[
+>>>>>>> 808fe6c11 (Finishing first test case)
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
       './tests/specs/hosted/app.login.spec.ts',
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+<<<<<<< HEAD
       './tests/specs/shared/go-to-accounts-through-tile.spec.ts',
     ],
     goToAccountsThroughTab:[
@@ -314,6 +319,10 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
       './tests/specs/shared/auto-deposit.spec.ts',
     ]
+=======
+      './tests/specs/shared/go-to-accounts-throught-tile.spec.ts',
+    ],
+>>>>>>> 808fe6c11 (Finishing first test case)
     
   },
   //
