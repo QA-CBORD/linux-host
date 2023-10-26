@@ -26,7 +26,9 @@ describe('GoToAccountsThroughTile', () => {
         accountsTileHeader.click();
         await pause(AWAIT_TIME);
         const accountPage = await accountsPage.AddFundsButton;
+        await pause(AWAIT_TIME);
         expect((await $(accountPage.selector))).toBeDisplayed();
+        await pause(AWAIT_TIME);
 
     });
 });
