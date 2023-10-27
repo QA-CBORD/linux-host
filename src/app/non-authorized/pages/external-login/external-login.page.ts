@@ -18,6 +18,7 @@ import { PopupTypes } from '@sections/rewards/rewards.config';
 import { PopoverController } from '@ionic/angular';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'st-external-login',
@@ -94,8 +95,11 @@ export class ExternalLoginPage {
       location: 'no',
       hidenavigationbuttons: 'yes',
       toolbarcolor: '#ffffff',
-      hidden: 'yes',
     };
+
+    if (Capacitor.getPlatform() === 'ios') {
+      options['hidden'] = 'yes';
+    }
 
     this.browser = this.appBrowser.create(url, target, options);
 
