@@ -665,7 +665,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
-          this.toastService.showError(message);
+          this.toastService.showError(message, 5000, 'bottom');
           this.markDueTieWithErrors();
         }
       })

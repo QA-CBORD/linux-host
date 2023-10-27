@@ -492,7 +492,7 @@ export class CartComponent implements OnInit, OnDestroy {
       //       options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
       //   }[key] as keyof DueTimeErrorMessages;
       //   const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
-      //   this.toastService.showError(errorMessage);
+      //   this.toastService.showError(errorMessage, 5000, 'bottom');
       //   this.dueTimeHasErrors = true;
       //   this.errorCode = key;
       //   this.page.scrollToTop();
