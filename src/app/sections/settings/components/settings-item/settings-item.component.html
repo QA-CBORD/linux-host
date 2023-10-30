@@ -6,7 +6,7 @@
   *ngIf="settingLabel$ | async as settingLabel"
   [disabled]="setting.checkIsDisabled"
 >
-  <img class="item__icon" [alt]="setting.icon" src="../../../assets/icon/{{ setting.icon }}.svg" />
+  <ion-icon class="item__icon" [attr.alt]="setting.icon" src="../../../assets/icon/{{ setting.icon }}.svg" />
   <ion-label class="item__label"
     ><h4>{{ settingLabel }}</h4></ion-label
   >
