@@ -66,11 +66,11 @@ describe('TimeBasedAutoDeposit', () => {
     });
 
     it('should select payment method', async () => {
-      const paymentSelect = await autoDepositPage.PaymentSelectTimeBased;
+      const paymentSelect = await autoDepositPage.PaymentSelect;
       await pause(AWAIT_TIME);
       await paymentSelect.click();
       await pause(AWAIT_TIME);
-      const billMeOption = await autoDepositPage.BilmeOptionTimeBased;
+      const billMeOption = await autoDepositPage.BilmeOption;
       await pause(AWAIT_TIME);
       expect(await $(billMeOption.selector)).toBeDisplayed();
       await billMeOption.click();
@@ -78,8 +78,7 @@ describe('TimeBasedAutoDeposit', () => {
     });
 
     it('should select account', async () => {
-      const accountSelect = await autoDepositPage.AccountSelectTimeBased;
-      driver.executeScript('arguments[0].scrollIntoView(true);', [accountSelect]);
+      const accountSelect = await autoDepositPage.AccountSelect;
       await pause(AWAIT_TIME);
       expect(await $(accountSelect.selector)).toBeDisplayed();
       await accountSelect.click();
@@ -89,17 +88,18 @@ describe('TimeBasedAutoDeposit', () => {
     });
 
     it('should insert amount value', async () => {
-      const amountInput = await autoDepositPage.AmountInputTimeBased;
-      driver.executeScript('arguments[0].scrollIntoView(true);', [amountInput]);
+      const amountInput = await autoDepositPage.AmountInput;
+      const amountSelect = await autoDepositPage.AmountSelect;
       await pause(AWAIT_TIME);
-      const amountInputTag = await amountInput.getTagName();
-      expect(await $(amountInput.selector)).toBeDisplayed();
       // if its free form
-      if (amountInputTag === 'input') {
+      if (!amountInput.error) {
+        expect(await $(amountInput.selector)).toBeDisplayed();
         await amountInput.setValue(7);
         blur(amountInput.selector);
-      } else if (amountInputTag === 'ion-select') {
-        await amountInput.click();
+      }
+      if (!amountSelect.error) {
+        expect(await $(amountSelect.selector)).toBeDisplayed();
+        await amountSelect.click();
         await pause(AWAIT_TIME);
         $$('.custom-deposit-actionSheet .action-sheet-button')[0].click();
       }

@@ -32,7 +32,7 @@ class DashboardPage extends Page {
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-footer/st-global-navigation/nav/div/ul/li[2]');
     }
     get AccountsTileHeader(){
-        return Ionic$.$('html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-dashboard/ion-content/st-tile-wrapper/div/ion-item/button')
+        return Ionic$.$('//body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-dashboard/ion-content/st-tile-wrapper/div/ion-item')
     }
     get HomeIcon(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-footer/st-global-navigation/nav/div/ul/li[1]');

@@ -67,7 +67,7 @@ import {
 } from '../st-date-time-picker/st-date-time-picker.component';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
-import { A11_TIMEOUTS } from '@shared/model/generic-constants';
+import { A11_TIMEOUTS, TOAST_DURATION } from '@shared/model/generic-constants';
 
 @Component({
   selector: 'st-order-details',
@@ -665,7 +665,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
-          this.toastService.showError(message);
+          this.toastService.showError(message, TOAST_DURATION, 'bottom');
           this.markDueTieWithErrors();
         }
       })

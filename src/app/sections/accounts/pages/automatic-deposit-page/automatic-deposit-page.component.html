@@ -32,7 +32,7 @@
         class="deposit-form__label"
         type="number"
         inputmode="decimal"
-        idd="lowBalanceAmount"
+        idd="lowBalanceInput"
         label="When my balance drops to"
       >
         <p class="deposit-form__control-error-msg">
@@ -50,7 +50,7 @@
           interface="action-sheet"
           title="Choose amount from a dropdown list below"
           label="When my balance drops to"
-          idd="lowBalanceAmount"
+          idd="lowBalanceSelect"
         >
           <ng-container role="options">
             <ion-select-option *ngFor="let amount of (lowBalanceValues$ | async)" [value]="parseFloat(amount)"
@@ -101,7 +101,7 @@
           title="Choose day of week from a dropdown list below"
           label="Day of Week"
           class="deposit-form__label"
-          idd="lowBalanceAmount"
+          idd="dayOfWeekSelect"
         >
           <ng-container role="options">
             <ion-select-option *ngFor="let day of weekArray; let i = index" [value]="i + 1"
@@ -127,7 +127,7 @@
       interface="action-sheet"
       title="Choose an account from a dropdown list below"
       label="Payment Method"
-      idd="lowBalanceAmount"
+      idd="balanceAmountSelect"
       class="deposit-form__label"
     >
       <ng-container role="options">
@@ -197,7 +197,7 @@
         title="Choose amount to deposit from a dropdown list below"
         label="Amount to deposit"
         class="deposit-form__label"
-        idd="amountToDeposit"
+        idd="amountToDepositSelect"
       >
         <ng-container role="options">
           <ion-select-option *ngFor="let amount of (amountsForSelect$ | async)" [value]="parseFloat(amount)">{{
@@ -222,7 +222,7 @@
         class="deposit-form__label"
         type="number"
         inputmode="decimal"
-        idd="amountToDeposit"
+        idd="amountToDepositInput"
         label="Amount to deposit"
       >
         <p class="deposit-form__control-error-msg">
