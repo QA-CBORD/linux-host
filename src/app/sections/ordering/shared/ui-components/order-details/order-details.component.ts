@@ -67,6 +67,7 @@ import {
 } from '../st-date-time-picker/st-date-time-picker.component';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
+import { A11_TIMEOUTS, TOAST_DURATION } from '@shared/model/generic-constants';
 
 @Component({
   selector: 'st-order-details',
@@ -134,8 +135,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() merchantTimeZoneDisplayingMessage: string;
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
-  @Input() dueTimeHasErrors: boolean;
   @Input() enableTimeSelection: boolean;
+  @Input() dueTimeHasErrors: boolean;
+  @Input() errorCode: string;
+  @Output() onDueTimeErrorClean: EventEmitter<void> = new EventEmitter<void>();
 
   _merchant: MerchantInfo;
   accountName: string;
@@ -158,7 +161,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   isApplePayment = false;
   isWalkoutOrder = false;
   isMerchantOrderAhead = false;
-  errorCode = 0;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -200,7 +202,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly translateService: TranslateService,
     private readonly merchantService: MerchantService,
     private readonly alertController: AlertController,
-    private readonly routingService: NavigationService,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -261,8 +263,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   getDueTimeErrorKey() {
     const error = {
-      [+ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
-      [+ORDER_ERROR_CODES.ORDER_CAPACITY]:
+      [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+      [ORDER_ERROR_CODES.ORDER_CAPACITY]:
         this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
           ? 'PickUpOrderTimeNotAvailable'
           : 'DeliveryOrderTimeNotAvailable',
@@ -271,7 +273,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get hasInvalidItems() {
-    return this.dueTimeHasErrors && this.errorCode === +ORDER_ERROR_CODES.INVALID_ORDER;
+    return this.dueTimeHasErrors && this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER;
   }
 
   markDueTieWithErrors(): void {
@@ -369,6 +371,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (this.readonly) {
       this.checkForOrderIssuesOnReadOnly();
     }
+    this.cartOptions = this.orderDetailOptions;
     this.subscribeOnFormChanges();
   }
 
@@ -584,9 +587,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  changeOrderTime() {
-    this.cartService.setActiveMerchant(this._merchant);
-    this.child.openPicker();
+  async changeOrderTime() {
+    await this.initTimePickerData();
+    setTimeout(async () => {
+      await this.cartService.setActiveMerchant(this._merchant);
+      await this.child.openPicker();
+    }, A11_TIMEOUTS);
   }
 
   async emptyCart() {
@@ -631,7 +637,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === 'ASAP' };
     date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
     this.cartService.orderIsAsap = date.isASAP;
-
+    this.cartService.cartsErrorMessage = null;
     this.cartOptions = {
       dueTime: date.dueTime,
       orderType: this.orderDetailOptions.orderType,
@@ -640,6 +646,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     } as OrderDetailOptions;
 
     await this.loadingService.showSpinner();
+    this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
 
     await this.cartService
       .validateOrder(this.cartOptions)
@@ -648,25 +655,29 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .then(() => {
         this.cartService.cartsErrorMessage = null;
         if (this.dueTimeHasErrors) {
-          const dueTimeErrorKey = this.getDueTimeErrorKey();
-          this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
-          this.errorCode = null;
-          this.dueTimeHasErrors = false;
-          this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
+          this.cleanDueTimeErrors();
         }
       })
       .catch(error => {
         if (Array.isArray(error)) {
-          this.errorCode = +error[0];
+          this.errorCode = error[0];
           const errorKey = this.getDueTimeErrorKey();
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
-          this.toastService.showError(message);
+          this.toastService.showError(message, TOAST_DURATION, 'bottom');
           this.markDueTieWithErrors();
         }
       })
       .finally(() => this.loadingService.closeSpinner());
+  }
+
+  cleanDueTimeErrors () {
+    const dueTimeErrorKey = this.getDueTimeErrorKey();
+    this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
+    this.onDueTimeErrorClean.emit();
+    this.errorCode = null;
+    this.dueTimeHasErrors = false;
   }
 }
 

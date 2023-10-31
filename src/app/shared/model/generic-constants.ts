@@ -5,5 +5,7 @@ export const TIME_OUT_DURATION = 3000;
 export const BARDCODE_GENERATION_TIMER = 5000;
 export const NO_INTERNET_STATUS_CODE = 0;
 export const STATUS_CODE_SUCCESS = 200;
+export const A11_TIMEOUTS = 1500;
+export const TOAST_DURATION = 5000;
 
 

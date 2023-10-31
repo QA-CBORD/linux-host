@@ -5,12 +5,12 @@ import { pause } from '../../helpers';
 import dashboardPage from '../../pageobjects/dashboard.page';
 import { AWAIT_TIME } from '../constants';
 
-describe('GoToAccountsThroughTile', () => {
+describe('GoToAccountsThroughtTile', () => {
 
     beforeEach(async () => {
         await pause(AWAIT_TIME);
     });
-    it('should validate that we are on dashboard', async () => {
+    it('Should validate that we are on dashboard', async () => {
 
         const dashboardContainer = await dashboardPage.DashboardHeaderCover;
         await pause(AWAIT_TIME);
@@ -18,7 +18,7 @@ describe('GoToAccountsThroughTile', () => {
         await pause(AWAIT_TIME);
     });
 
-    it('should go to accounts through tile', async () => {
+    it('Should go to accounts throught tile', async () => {
         const accountsTileHeader = await dashboardPage.AccountsTileHeader;
         await pause(AWAIT_TIME);
         expect((await $(accountsTileHeader.selector))).toBeDisplayed();
@@ -26,9 +26,7 @@ describe('GoToAccountsThroughTile', () => {
         accountsTileHeader.click();
         await pause(AWAIT_TIME);
         const accountPage = await accountsPage.AddFundsButton;
-        await pause(AWAIT_TIME);
         expect((await $(accountPage.selector))).toBeDisplayed();
-        await pause(AWAIT_TIME);
 
     });
 });

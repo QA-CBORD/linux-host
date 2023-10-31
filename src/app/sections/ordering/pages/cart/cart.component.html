@@ -22,7 +22,9 @@
     [applePayEnabled]="applePayEnabled$ | async"
     [addressModalConfig]="addressModalSettings$ | async"
     [dueTimeHasErrors]="dueTimeHasErrors"
+    [errorCode]="errorCode"
     [enableTimeSelection]="true"
+    (onDueTimeErrorClean)="cleanDueTimeErrors()"
     (onFormChange)="onCartStateFormChanged($event)"
     (onOrderItemRemovedId)="removeOrderItem($event)"
     (onOrderItemClicked)="onOrderItemClicked($event)"
@@ -33,8 +35,8 @@
       <st-button
         (onClick)="onSubmit()"
         [voiceOverText]="buttonAriaLabel | async"
-        [disabled]="!cartFormState?.valid && !isExistingOrder"
-        [isDisabled]="!cartFormState?.valid && !isExistingOrder"
+        [disabled]="(!cartFormState?.valid && !isExistingOrder) || isProcessingOrder"
+        [isDisabled]="(!cartFormState?.valid && !isExistingOrder) || isProcessingOrder"
         >
         {{ getButtonText() | async }}
       </st-button>
