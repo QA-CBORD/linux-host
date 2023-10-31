@@ -32,7 +32,7 @@ const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void
     StGlobalNavigationModule,
     CoreModule,
     AppRoutingModule,
-    IonicModule.forRoot({ swipeBackEnabled: false }),
+    IonicModule.forRoot({ swipeBackEnabled: false,innerHTMLTemplatesEnabled: true }),
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       defaultLanguage: 'en',
