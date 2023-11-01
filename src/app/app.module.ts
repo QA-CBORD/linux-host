@@ -23,7 +23,10 @@ export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
-const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void>) => () => vaultService.init();
+const appInitFactory =
+  (vaultService: VaultIdentityService): (() => Promise<void>) =>
+  () =>
+    vaultService.init();
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -32,18 +35,21 @@ const appInitFactory = (vaultService: VaultIdentityService): (() => Promise<void
     StGlobalNavigationModule,
     CoreModule,
     AppRoutingModule,
-    IonicModule.forRoot({ swipeBackEnabled: false,innerHTMLTemplatesEnabled: true }),
+    IonicModule.forRoot({
+       swipeBackEnabled: false, 
+       innerHTMLTemplatesEnabled: true 
+      }),
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
-          provide: TranslateLoader,
-          useFactory: (createTranslateLoader),
-          deps: [HttpClient]
-      }
-  }),
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient],
+      },
+    }),
     CommonModule,
-    PinModule
+    PinModule,
   ],
   providers: [
     {
