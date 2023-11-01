@@ -536,7 +536,7 @@ ion-modal.sc-modal {
       min-width: 70px;
       max-width: 30%;
     }
-  
+
     button.alert-button.button__option_confirm {
       background-color: $color-cardinal;
       color: white;
@@ -551,12 +551,20 @@ ion-modal.sc-modal {
   }
 }
 
-
 .alert_full_menu {
   @extend .alert_cart;
   .alert-wrapper {
+    .alert-head.sc-ion-alert-md {
+      padding-left: 15px;
+      padding-bottom: 10px;
+    }
     .alert-message {
       @include font-nunito-regular(15px);
+      color: #000;
+      padding: 0 15px 0 15px;
+      p {
+        margin: 0;
+      }
     }
   }
 }

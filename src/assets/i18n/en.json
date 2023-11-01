@@ -938,7 +938,7 @@
       "need_checkin": "You still need to check in",
       "new_menu_detected_cancelbutton":"Cancel",
       "new_menu_detected_changemenubutton":"Change Menu",
-      "new_menu_detected_message":"The selected time requires a different menu. Changing the menu will remove all items from your cart.",
+      "new_menu_detected_message":"<p>The selected time requires a different menu. Changing the menu will <strong>remove all items</strong> from your cart.</p>",
       "new_menu_detected_title":"Change the menu?",
       "not_orders_items_available": "Some of the order items aren't available for picked date.",
       "ordering_connection_lost": "Your internet connection was interrupted, however your order may have been submitted, please review your recent order history",

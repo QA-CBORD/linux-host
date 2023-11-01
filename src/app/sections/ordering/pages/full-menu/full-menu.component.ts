@@ -11,7 +11,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController, IonicSafeString, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -217,7 +217,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     const alert = await this.alertController.create({
       cssClass: 'alert_full_menu',
       header: this.translateService.instant('patron-ui.ordering.new_menu_detected_title'),
-      message: this.translateService.instant('patron-ui.ordering.new_menu_detected_message'),
+      message: new IonicSafeString(this.translateService.instant('patron-ui.ordering.new_menu_detected_message')),
       buttons: [
         {
           text: this.translateService.instant('patron-ui.ordering.new_menu_detected_cancelbutton'),
