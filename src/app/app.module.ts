@@ -36,9 +36,9 @@ const appInitFactory =
     CoreModule,
     AppRoutingModule,
     IonicModule.forRoot({
-       swipeBackEnabled: false, 
-       innerHTMLTemplatesEnabled: true 
-      }),
+      swipeBackEnabled: false,
+      innerHTMLTemplatesEnabled: true,
+    }),
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       defaultLanguage: 'en',
