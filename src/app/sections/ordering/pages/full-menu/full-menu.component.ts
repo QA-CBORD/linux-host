@@ -218,6 +218,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       cssClass: 'alert_full_menu',
       header: this.translateService.instant('patron-ui.ordering.new_menu_detected_title'),
       message: new IonicSafeString(this.translateService.instant('patron-ui.ordering.new_menu_detected_message')),
+      mode:"md",
       buttons: [
         {
           text: this.translateService.instant('patron-ui.ordering.new_menu_detected_cancelbutton'),
