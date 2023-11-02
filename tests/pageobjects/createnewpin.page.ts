@@ -10,8 +10,14 @@ class createnewpin extends Page {
     get confirmNewPinText(){
         return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[1]/ion-label[1]');
     }
-    get pinButton(){
+    get pinButton2(){
         return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[2]/div[2]/ion-button');
+    }
+    get pinButton3(){
+        return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[2]/div[3]/ion-button');
+    }
+    get pinPageTitle(){
+        return Ionic$.$('ion-label.pin__info')
     }
     
 }

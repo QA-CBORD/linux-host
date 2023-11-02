@@ -3,7 +3,7 @@ import Page from './page';
 
 class ConfigurationPage extends Page {
     get Titlte(){
-        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-router-outlet/st-settings/st-header/ion-header/ion-toolbar/ion-title');
+        return Ionic$.$('ion-title.st-header__title');
     }
     get TargetScroll(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-guest-sections/ion-router-outlet/st-settings/ion-content/ion-list[3]/st-settings-item');
@@ -29,6 +29,9 @@ class ConfigurationPage extends Page {
 
     get EmailAndPhoneNumber(){
         return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[2]/st-settings-item[1]/ion-item');
+    }
+    get ChangePIN(){
+        return Ionic$.$('/html/body/app-root/ion-app/ion-router-outlet/st-sections/ion-router-outlet/st-settings/ion-content/ion-list[2]/st-settings-item[3]/ion-item');
     }
 
     get UpdatePhoto() {

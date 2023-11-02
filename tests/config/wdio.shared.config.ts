@@ -313,6 +313,15 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
       './tests/specs/shared/auto-deposit.spec.ts',
+    ],
+    changePIN:[
+      './tests/specs/shared/app.entry.spec.ts',
+      './tests/specs/shared/app.institutions.spec.ts',
+      './tests/specs/hosted/app.pre-login.spec.ts',
+      './tests/specs/hosted/app.login.spec.ts',
+      './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
+      './tests/specs/shared/go-configuration-through-more.spec.ts',
+      './tests/specs/shared/change-pin.spec.ts',
     ]
     
   },
