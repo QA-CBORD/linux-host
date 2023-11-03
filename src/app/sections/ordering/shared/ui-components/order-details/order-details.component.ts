@@ -652,8 +652,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .validateOrder(this.cartOptions)
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
-      .then(() => {
+      .then(validatedOrder => {
         this.cartService.cartsErrorMessage = null;
+        if (this.cartOptions.isASAP) {
+          this.cartOptions = { ...this.cartOptions, dueTime: new Date(validatedOrder.dueTime) };
+          this.dueTimeFormControl.setValue(validatedOrder.dueTime);
+        }
         if (this.dueTimeHasErrors) {
           this.cleanDueTimeErrors();
         }

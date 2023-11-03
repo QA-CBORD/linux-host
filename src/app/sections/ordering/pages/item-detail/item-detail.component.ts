@@ -170,7 +170,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
 
   calculateTotalPrice(): void {
     const price = isNaN(this.order.optionsPrice) ? 0 : this.order.optionsPrice;
-    const calcValue = (this.menuItem.price + price) * this.order.counter;
+    const menuItemPrice = isNaN(+this.menuItem?.price) ? 0 : this.menuItem.price;
+    const calcValue = (menuItemPrice + price) * this.order.counter;
     this.order = { ...this.order, totalPrice: Number(calcValue.toFixed(2)) };
   }
 
