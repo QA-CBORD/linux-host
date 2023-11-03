@@ -16,7 +16,7 @@ describe('Pin', () => {
     await expect((await $(newpincontent.selector))).toBeDisplayed();
     await pause(AWAIT_TIME);
 
-    const pinnumber = await createpin.pinButton
+    const pinnumber = await createpin.pinButton2
 
     //Button needs to be clicked 4 time when entering  new pin
     for (let i = 0; i < 4; i++) {
@@ -31,7 +31,7 @@ describe('Pin', () => {
     await expect((await $(confirmpincontent.selector))).toBeDisplayed();
     await pause(AWAIT_TIME);
 
-    const pinnumber = await createpin.pinButton
+    const pinnumber = await createpin.pinButton2
 
     //Button needs to be clicked 4 time when confirming new pin
     for (let i = 0; i < 4; i++) {
