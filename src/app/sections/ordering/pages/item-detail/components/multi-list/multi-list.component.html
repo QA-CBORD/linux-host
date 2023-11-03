@@ -25,7 +25,7 @@
                       mode="md">
         </ion-checkbox>
         <ion-label class="multi-list__toppings-label">
-          <div class="multi-list__topping-title">{{ option.menuItem.name  }}</div>
+          <div class="multi-list__topping-title">{{ option.menuItem?.name }}</div>
           <div *ngIf="option.menuItem.price"
                class="multi-list__topping-price">+{{ option.menuItem?.price | priceUnitsResolver: mealBased }}</div>
         </ion-label>
