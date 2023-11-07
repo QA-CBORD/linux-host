@@ -15,3 +15,7 @@ export const setPinWithNumber3 = async () => {
     const pinnumber = await createpin.pinButton3;
     setPin(pinnumber)
   };
+  export const setPinWithNumber1 = async () => {
+    const pinnumber = await createpin.pinButton1;
+    setPin(pinnumber)
+  };

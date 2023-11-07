@@ -91,7 +91,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.signup.spec.ts',
       './tests/specs/shared/app.createaccount.spec.ts',
     ],
-    registrationBlockDueIncorrectFields:[
+    registrationBlockDueIncorrectFields: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/guest/app.pre-login-as-guest.spec.ts',
@@ -105,7 +105,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.signup.spec.ts',
       './tests/specs/shared/app.createaccount.spec.ts',
     ],
-    navigationFromDashboard:[
+    navigationFromDashboard: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -156,7 +156,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-configuration-through-more.spec.ts',
       './tests/specs/patron/update-photo.spec.ts',
     ],
-    checkVersion:[
+    checkVersion: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/guest/app.pre-login-as-guest.spec.ts',
@@ -165,7 +165,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-configuration.spec.ts',
       './tests/specs/shared/settings.spec.ts',
     ],
-    reportCardAsLost:[
+    reportCardAsLost: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -175,7 +175,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/report-card-as-lost.spec.ts',
       './tests/specs/shared/confirm-report-card-as-lost.spec.ts',
     ],
-    reportCardAsFound:[
+    reportCardAsFound: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -185,16 +185,16 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/report-card-as-found.spec.ts',
       './tests/specs/shared/confirm-report-card-as-found.spec.ts',
     ],
-    validatePayments:[
+    validatePayments: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
       './tests/specs/hosted/app.login.spec.ts',
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-configuration-through-more.spec.ts',
-      './tests/specs/shared/verify-payments.spec.ts'
+      './tests/specs/shared/verify-payments.spec.ts',
     ],
-    removeCreditCards:[
+    removeCreditCards: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -204,7 +204,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/verify-payments.spec.ts',
       './tests/specs/shared/delete-credit-cards.spec.ts',
     ],
-    addFundsBillFromDashboard:[
+    addFundsBillFromDashboard: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -212,9 +212,9 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-to-add-funds-from-dashboard.spec.ts',
       './tests/specs/shared/add-funds-bill.spec.ts',
-      './tests/specs/shared/confirm-deposit-funds.spec.ts'
+      './tests/specs/shared/confirm-deposit-funds.spec.ts',
     ],
-    addFundsBillFromAccount:[
+    addFundsBillFromAccount: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -222,9 +222,9 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-to-add-funds-from-account.spec.ts',
       './tests/specs/shared/add-funds-bill.spec.ts',
-      './tests/specs/shared/confirm-deposit-funds.spec.ts'
+      './tests/specs/shared/confirm-deposit-funds.spec.ts',
     ],
-    addFundsCreditCardFromDashboard:[
+    addFundsCreditCardFromDashboard: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -232,9 +232,9 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-to-add-funds-from-dashboard.spec.ts',
       './tests/specs/shared/add-funds-credit-card.spec.ts',
-      './tests/specs/shared/confirm-deposit-funds.spec.ts'
+      './tests/specs/shared/confirm-deposit-funds.spec.ts',
     ],
-    addFundsCreditCardFromAccount:[
+    addFundsCreditCardFromAccount: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -242,27 +242,27 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-to-add-funds-from-account.spec.ts',
       './tests/specs/shared/add-funds-credit-card.spec.ts',
-      './tests/specs/shared/confirm-deposit-funds.spec.ts'
+      './tests/specs/shared/confirm-deposit-funds.spec.ts',
     ],
-    editPhoneNumber:[
+    editPhoneNumber: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
       './tests/specs/hosted/app.login.spec.ts',
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-configuration-through-more.spec.ts',
-      './tests/specs/shared/change-phone-number.spec.ts'
+      './tests/specs/shared/change-phone-number.spec.ts',
     ],
-    editEmail:[
+    editEmail: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
       './tests/specs/hosted/app.login.spec.ts',
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-configuration-through-more.spec.ts',
-      './tests/specs/shared/change-email.spec.ts'
+      './tests/specs/shared/change-email.spec.ts',
     ],
-    goToAccountsThroughTile:[
+    goToAccountsThroughTile: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -270,7 +270,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-to-accounts-through-tile.spec.ts',
     ],
-    goToAccountsThroughTab:[
+    goToAccountsThroughTab: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -278,7 +278,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
     ],
-    fulfillLowBalanceAutoDeposit:[
+    fulfillLowBalanceAutoDeposit: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -287,7 +287,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
       './tests/specs/shared/fulfill-low-balance-auto-deposit.spec.ts',
     ],
-    fulfillTimeBasedWeeklyAutoDeposit:[
+    fulfillTimeBasedWeeklyAutoDeposit: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -296,7 +296,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
       './tests/specs/shared/fulfill-time-based-weekly-auto-deposit.spec.ts',
     ],
-    fulfillTimeBasedMonthlyAutoDeposit:[
+    fulfillTimeBasedMonthlyAutoDeposit: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -305,7 +305,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
       './tests/specs/shared/fulfill-time-based-monthly-auto-deposit.spec.ts',
     ],
-    setAutoDepositOption:[
+    setAutoDepositOption: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -314,7 +314,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/go-to-accounts-through-tab.spec.ts',
       './tests/specs/shared/auto-deposit.spec.ts',
     ],
-    changePIN:[
+    changePIN: [
       './tests/specs/shared/app.entry.spec.ts',
       './tests/specs/shared/app.institutions.spec.ts',
       './tests/specs/hosted/app.pre-login.spec.ts',
@@ -322,8 +322,7 @@ export const config: WebdriverIO.Config = {
       './tests/specs/shared/app.create-and-confirm-pin.spec.ts',
       './tests/specs/shared/go-configuration-through-more.spec.ts',
       './tests/specs/shared/change-pin.spec.ts',
-    ]
-    
+    ],
   },
   //
   // ============
