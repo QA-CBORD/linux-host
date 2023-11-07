@@ -3,7 +3,7 @@ import configurationPage from '../../pageobjects/configuration.page';
 import emailAndPhoneNumberEditPage from '../../pageobjects/email-phone-number-edit.page';
 import changePIN from '../../pageobjects/createnewpin.page';
 import { AWAIT_TIME } from '../constants';
-import { setPinWithNumber2, setPinWithNumber3 } from 'tests/helpers/shared.functions';
+import { setPinWithNumber1, setPinWithNumber2, setPinWithNumber3 } from 'tests/helpers/shared.functions';
 import dashboardPage from '../../pageobjects/dashboard.page';
 
 describe('ChangePIN', () => {
@@ -63,6 +63,61 @@ describe('ChangePIN', () => {
     await expect(await $(pinButton.selector)).toBeDisplayed();
     await pause(AWAIT_TIME);
     setPinWithNumber3();
+  });
+
+  it('should redirect to settings page', async () => {
+    const title = await configurationPage.Titlte;
+    await pause(AWAIT_TIME);
+    await expect(await $(title.selector)).toBeDisplayed();
+  });
+
+  it('should old PIN not work', async () => {
+    await pause(AWAIT_TIME);
+    const changePINButton = await configurationPage.ChangePIN;
+    const pinErrorMessage = await changePIN.pinErrorMessage;
+    await pause(AWAIT_TIME);
+    await expect(await $(changePINButton.selector)).toBeDisplayed();
+    await pause(AWAIT_TIME);
+    changePINButton.click();
+    await pause(AWAIT_TIME);
+    setPinWithNumber2();
+    await expect(await $(pinErrorMessage.selector)).toBeDisplayed();
+  });
+
+  it('should new PIN work', async () => {
+    await pause(AWAIT_TIME);
+    const pinErrorMessage = await changePIN.pinErrorMessage;
+    await pause(AWAIT_TIME);
+    setPinWithNumber3();
+    await expect(await $(pinErrorMessage.selector)).not.toBeDisplayed();
+  });
+  it('should show create new pin title', async () => {
+    const title = await changePIN.pinPageTitle;
+    await pause(AWAIT_TIME);
+    await expect(await $(title.selector)).toBeDisplayed();
+    await expect(await $(title.selector)).toHaveTextContaining('Create a 4 digit PIN');
+  });
+  it('should insert new PIN', async () => {
+    const pinButton = await changePIN.pinButton1;
+    await pause(AWAIT_TIME);
+    await expect(await $(pinButton.selector)).toBeDisplayed();
+    await pause(AWAIT_TIME);
+    setPinWithNumber1();
+  });
+
+  it('should show confirm new pin title', async () => {
+    const title = await changePIN.pinPageTitle;
+    await pause(AWAIT_TIME);
+    await expect(await $(title.selector)).toBeDisplayed();
+    await expect(await $(title.selector)).toHaveText('Confirm your new PIN');
+  });
+
+  it('should insert new PIN', async () => {
+    const pinButton = await changePIN.pinButton1;
+    await pause(AWAIT_TIME);
+    await expect(await $(pinButton.selector)).toBeDisplayed();
+    await pause(AWAIT_TIME);
+    setPinWithNumber1();
   });
   it('should redirect to settings page', async () => {
     const title = await configurationPage.Titlte;

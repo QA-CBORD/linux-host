@@ -10,6 +10,9 @@ class createnewpin extends Page {
     get confirmNewPinText(){
         return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[1]/ion-label[1]');
     }
+    get pinButton1(){
+        return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[2]/div[1]/ion-button');
+    }
     get pinButton2(){
         return Ionic$.$('//*[@id="pin-modal"]/st-pin/ion-content/div/div[2]/div[2]/ion-button');
     }
@@ -18,6 +21,9 @@ class createnewpin extends Page {
     }
     get pinPageTitle(){
         return Ionic$.$('ion-label.pin__info')
+    }
+    get pinErrorMessage(){
+        return Ionic$.$('.pin__error-info')
     }
     
 }
