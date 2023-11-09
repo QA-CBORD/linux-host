@@ -132,6 +132,16 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
   }
 
+  onErrorsDetected(val:boolean){
+    this.dueTimeHasErrors = val;
+  }
+
+  onCloseButton(){
+    if (this.dueTimeHasErrors){
+      this.cartService.closeButtonClicked();
+    }
+  }
+
   ngOnInit(): void {
     this.order$ = this.cartService.orderInfo$;
     this.merchant$ = this.cartService.merchant$.pipe(

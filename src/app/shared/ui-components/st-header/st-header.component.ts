@@ -27,7 +27,7 @@ export class StHeaderComponent {
   @Output() onRemove = new EventEmitter<void>();
   @Output() onClose = new EventEmitter<void>();
   @Output() onFilter = new EventEmitter<void>();
-
+  @Input() isCustomBackButtonShow: boolean;
   constructor(
     private readonly router: Router,
     private readonly navService: NavigationService,
