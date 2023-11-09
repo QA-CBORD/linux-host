@@ -34,7 +34,8 @@ const _cartService = {
   orderIsAsap: false,
   cartsErrorMessage: '',
   extractTimeZonedString: jest.fn(),
-  validateOrder: jest.fn(() => of({} as OrderInfo))
+  validateOrder: jest.fn(() => of({} as OrderInfo)),
+  setActiveMerchantsMenuByOrderOptions: jest.fn()
 };
 const _loadingService = {
   showSpinner: jest.fn(),
