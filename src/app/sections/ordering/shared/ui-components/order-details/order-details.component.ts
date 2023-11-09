@@ -255,7 +255,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
-
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
     this.setAccessoryBarVisible(false);
@@ -285,8 +284,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   get hasInvalidItems() {
     return this.dueTimeHasErrors && this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER;
   }
-
-
 
   markDueTieWithErrors(): void {
     if (this.dueTimeHasErrors) {
@@ -473,7 +470,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         voiceOverError: this.getVoiceOverInvalidText(this.detailsForm),
       });
     });
-    this.sourceSub.add(sub);    
+    this.sourceSub.add(sub);
   }
 
   private addCvvControl() {
@@ -683,13 +680,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
           this.toastService.showError(message, TOAST_DURATION, 'bottom');
           this.markDueTieWithErrors();
-          this.onErrorsDetected.emit(this.dueTimeHasErrors || this.hasInvalidItems)
+          this.onErrorsDetected.emit(this.dueTimeHasErrors || this.hasInvalidItems);
         }
       })
       .finally(() => this.loadingService.closeSpinner());
   }
 
-  cleanDueTimeErrors () {
+  cleanDueTimeErrors() {
     const dueTimeErrorKey = this.getDueTimeErrorKey();
     this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
     this.onDueTimeErrorClean.emit();
