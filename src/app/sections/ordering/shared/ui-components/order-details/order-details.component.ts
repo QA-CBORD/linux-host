@@ -473,8 +473,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         voiceOverError: this.getVoiceOverInvalidText(this.detailsForm),
       });
     });
-    this.sourceSub.add(sub);
-    
+    this.sourceSub.add(sub);    
   }
 
   private addCvvControl() {

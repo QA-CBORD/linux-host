@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment, ItemsOrderInfo } from '../shared/models';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -11,7 +11,6 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
-import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/index';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class CartService {
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
-  // temporary cachedError for the cart:
+  // temporary cachedError for the cart: 
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
