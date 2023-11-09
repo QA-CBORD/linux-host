@@ -67,7 +67,7 @@ import {
 } from '../st-date-time-picker/st-date-time-picker.component';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
-import { A11_TIMEOUTS, TOAST_DURATION } from '@shared/model/generic-constants';
+import { A11_TIMEOUTS, ASAP_LABEL, TOAST_DURATION } from '@shared/model/generic-constants';
 
 @Component({
   selector: 'st-order-details',
@@ -176,6 +176,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   orderSchedule$: Observable<Schedule>;
   orderOptionsData = {} as TimePickerData;
+  isValidatingOrder = false;
 
   readonly paymentMethodErrorMessages: PaymentMethodErrorMessages = {
     required: 'A payment method must be selected',
@@ -379,6 +380,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return this.isExistingOrder && !this.isApplePayment;
   }
 
+  get showASAP(): boolean {
+    return this.dueTimeHasErrors && this.cartOptions.isASAP ? false : true;
+  }
+
   onTipChanged({ detail: { value } }) {
     if (!this.tipFormControl.valid) return;
     this.onOrderTipChanged.emit(value ? Number(value) : 0);
@@ -454,14 +459,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private subscribeOnFormChanges() {
-    const sub = this.detailsForm.valueChanges.subscribe(() => {
-      this.onFormChange.emit({
-        data: this.detailsForm.getRawValue(),
-        valid: this.detailsForm.valid,
-        voiceOverError: this.getVoiceOverInvalidText(this.detailsForm),
-      });
-    });
+    const sub = this.detailsForm.valueChanges.subscribe(() => this.emitForm());
     this.sourceSub.add(sub);
+  }
+
+   private emitForm () {
+    this.onFormChange.emit({
+      data: this.detailsForm.getRawValue(),
+      valid: this.detailsForm.valid,
+      voiceOverError: this.getVoiceOverInvalidText(this.detailsForm),
+    });
   }
 
   private addCvvControl() {
@@ -634,30 +641,38 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async onDateTimeSelected({ dateTimePicker, timeStamp }: DateTimeSelected): Promise<void> {
-    let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === 'ASAP' };
+    let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === ASAP_LABEL };
     date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
     this.cartService.orderIsAsap = date.isASAP;
     this.cartService.cartsErrorMessage = null;
+    this.isValidatingOrder = true;
     this.cartOptions = {
       dueTime: date.dueTime,
       orderType: this.orderDetailOptions.orderType,
       address: this.orderDetailOptions.address,
       isASAP: date.isASAP,
     } as OrderDetailOptions;
-
-    await this.loadingService.showSpinner();
+    await this.cartService.setActiveMerchantsMenuByOrderOptions(
+      this.cartOptions.dueTime,
+      this.cartOptions.orderType,
+      this.cartOptions.address,
+      this.cartOptions.isASAP
+    );
     this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
+    await this.loadingService.showSpinner();
 
     await this.cartService
       .validateOrder(this.cartOptions)
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
-      .then(validatedOrder => {
+      .then((validatedOrder) => {
         this.cartService.cartsErrorMessage = null;
+
         if (this.cartOptions.isASAP) {
           this.cartOptions = { ...this.cartOptions, dueTime: new Date(validatedOrder.dueTime) };
           this.dueTimeFormControl.setValue(validatedOrder.dueTime);
         }
+
         if (this.dueTimeHasErrors) {
           this.cleanDueTimeErrors();
         }
@@ -673,7 +688,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           this.markDueTieWithErrors();
         }
       })
-      .finally(() => this.loadingService.closeSpinner());
+      .finally(() => {
+        this.loadingService.closeSpinner();
+        this.isValidatingOrder = false;
+      });
   }
 
   cleanDueTimeErrors () {
