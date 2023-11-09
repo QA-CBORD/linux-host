@@ -38,6 +38,7 @@
 .address-container {
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: center;
 }
 .order-details {
   border-top: 1px solid $color-whisper;
