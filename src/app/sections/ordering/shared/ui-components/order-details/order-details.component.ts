@@ -250,7 +250,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   private initSubscription() {
     this.sourceSub.add(
       this.cartService.emptyOnClose$.subscribe(() => {
-        this.emptyCart();
+        this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
       })
     );
   }
@@ -604,10 +604,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }, A11_TIMEOUTS);
   }
 
-  async emptyCart() {
+  onEmptyCart() {
+    this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.remove_message'));
+  }
+
+  async emptyCart(message: string) {
     const alert = await this.alertController.create({
       cssClass: 'alert_cart',
-      message: this.translateService.instant('get_web_gui.shopping_cart.remove_message'),
+      message,
       buttons: [
         {
           text: this.translateService.instant('get_web_gui.shopping_cart.cancel'),
