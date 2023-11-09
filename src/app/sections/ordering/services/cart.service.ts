@@ -36,9 +36,6 @@ export class CartService {
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
-    private readonly alertController: AlertController,
-    private readonly routingService: NavigationService,
-    private readonly translateService: TranslateService
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
