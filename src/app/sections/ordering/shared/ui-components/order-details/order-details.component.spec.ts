@@ -155,4 +155,10 @@ describe('OrderDetailsComponent', () => {
     await component.changeOrderTime();
     expect(timePickerDataInit).toHaveBeenCalled();
   });
+
+  it('should emit changes on PaymentMethod change', async () => {
+    const formEmitSpy = jest.spyOn(component, 'onPaymentChanged');
+    await component.onPaymentChanged({ detail: { value: {id: '12345', paymentSystemType: 1 }}});
+    expect(formEmitSpy).toHaveBeenCalled();
+  });
 });
