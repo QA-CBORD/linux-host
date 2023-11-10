@@ -249,11 +249,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
   private initSubscription() {
-    this.sourceSub.add(
-      this.cartService.emptyOnClose$.subscribe(() => {
-        this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
-      })
-    );
+    const onCloseEvent$ = this.cartService.emptyOnClose$;
+    if (onCloseEvent$) {
+      this.sourceSub.add(
+        this.cartService.emptyOnClose$.subscribe(() => {
+          this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
+        })
+      );
+    }
   }
 
   ngOnDestroy() {
@@ -473,7 +476,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.sourceSub.add(sub);
   }
 
-   private emitForm () {
+  private emitForm() {
     this.onFormChange.emit({
       data: this.detailsForm.getRawValue(),
       valid: this.detailsForm.valid,
@@ -679,7 +682,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .validateOrder(this.cartOptions)
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
-      .then((validatedOrder) => {
+      .then(validatedOrder => {
         this.cartService.cartsErrorMessage = null;
 
         if (this.cartOptions.isASAP) {
