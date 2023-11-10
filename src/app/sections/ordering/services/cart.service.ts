@@ -11,7 +11,6 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
-import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/index';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';

@@ -471,9 +471,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private subscribeOnFormChanges() {
-    const sub = this.detailsForm.valueChanges.subscribe(() => this.emitForm());
-    this.sourceSub.add(sub);
-    
+    const sub = this.detailsForm.valueChanges.subscribe(() => {
+      this.onFormChange.emit({
+        data: this.detailsForm.getRawValue(),
+        valid: this.detailsForm.valid,
+        voiceOverError: this.getVoiceOverInvalidText(this.detailsForm),
+      });
+    });
+    this.sourceSub.add(sub);    
   }
 
    private emitForm () {
