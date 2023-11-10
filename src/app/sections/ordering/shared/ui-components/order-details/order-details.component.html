@@ -5,9 +5,13 @@
         orderDetailOptions.orderType | typeMessage : 'dueTime' : isWalkoutOrder
       }}</ion-label>
 
+      <!-- <p class="order-details__value"> {{ cartOptions | modifyPrepTime : orderTypes }}</p> -->
+
+      <!-- For time selection Flow -->
       <p *ngIf="!isMerchantOrderAhead; else timeEditable" class="order-details__value">
         {{ cartOptions | modifyPrepTime : orderTypes }}
       </p>
+
 
       <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
         <small>{{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}</small>
