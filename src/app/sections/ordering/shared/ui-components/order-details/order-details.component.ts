@@ -331,6 +331,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   goToItemDetails(orderItem) {
+    if (this.dueTimeHasErrors) {
+      return;
+    }
     this.onOrderItemClicked.emit(orderItem);
   }
 
