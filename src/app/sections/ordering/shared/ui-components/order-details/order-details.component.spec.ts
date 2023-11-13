@@ -152,8 +152,15 @@ describe('OrderDetailsComponent', () => {
 
   it('should init data for time picker', async () => {
     const timePickerDataInit = jest.spyOn(component, 'initTimePickerData');
+    component.enableTimeSelection = true;
     await component.changeOrderTime();
     expect(timePickerDataInit).toHaveBeenCalled();
+  });
+
+  it('should not init data for time picker', async () => {
+    const timePickerDataInit = jest.spyOn(component, 'initTimePickerData');
+    await component.changeOrderTime();
+    expect(timePickerDataInit).toBeCalledTimes(0);
   });
 
   it('should emit onOrderItemClicked when dueTimeHasErrors is false', () => {

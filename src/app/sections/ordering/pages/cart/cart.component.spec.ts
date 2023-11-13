@@ -136,7 +136,6 @@ describe('CartComponent', () => {
         [FORM_CONTROL_NAMES.phone]: '1111111111',
       },
     } as OrderDetailsFormData;
-    component.placingOrder = false;
 
     const lockDownSpy = jest.spyOn(_lockDownService, 'isLockDownOn').mockImplementation(() => false);
     const merchantSpy = jest
