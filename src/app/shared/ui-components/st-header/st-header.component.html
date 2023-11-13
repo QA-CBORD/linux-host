@@ -1,8 +1,14 @@
 <ion-header class="st-header" no-border>
   <ion-toolbar mode="ios" class="st-header__nav-toolbar" *ngIf="isToolbarShow">
     <ion-buttons slot="start" *ngIf="isBackButtonShow">
-      <ion-back-button class="st-header__back-btn st-header__back-btn__icon-{{ backButtonIcon }}" color="dark"
+      <ion-back-button  class="st-header__back-btn st-header__back-btn__icon-{{ backButtonIcon }}" color="dark"
         [text]="backButtonTitle" [icon]="backButtonIcon" mode="ios" (click)="onBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="start" *ngIf="isCustomBackButtonShow">
+      <ion-button  class="st-header__back-btn st-header__back-btn__icon-{{ backButtonIcon }}" color="dark"
+         mode="ios" (click)="onBack()">{{backButtonTitle}}
+      <ion-icon [name]="backButtonIcon" slot="start"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-buttons slot="start" *ngIf="isDismissButtonShow">
       <ion-button color="dark" mode="ios" [ngClass]="{'st-header__dissmiss-btn': !backButtonTitle, 'st-header__back-btn': backButtonTitle }" (click)="onDissmissClicked()">

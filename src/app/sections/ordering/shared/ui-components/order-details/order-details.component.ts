@@ -126,6 +126,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
+  @Output() onErrorsDetected: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
   @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string> = new EventEmitter<
     Partial<OrderPayment> | string
@@ -214,6 +215,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setPhoneField();
     this.initAccountSelected();
     this.initTimePickerData();
+    this.initSubscription();
   }
 
   async initTimePickerData() {
@@ -244,6 +246,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.detailsForm.patchValue({
         [FORM_CONTROL_NAMES.paymentMethod]: account || '',
       });
+    }
+  }
+  private initSubscription() {
+    const onCloseEvent$ = this.cartService.emptyOnClose$;
+    if (onCloseEvent$) {
+      this.sourceSub.add(
+        this.cartService.emptyOnClose$.subscribe(() => {
+          this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
+        })
+      );
     }
   }
 
@@ -606,10 +618,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }, A11_TIMEOUTS);
   }
 
-  async emptyCart() {
+  onEmptyCart() {
+    this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.remove_message'));
+  }
+
+  async emptyCart(message: string) {
     const alert = await this.alertController.create({
       cssClass: 'alert_cart',
-      message: this.translateService.instant('get_web_gui.shopping_cart.remove_message'),
+      message,
       buttons: [
         {
           text: this.translateService.instant('get_web_gui.shopping_cart.cancel'),
@@ -684,6 +700,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
           this.toastService.showError(message, TOAST_DURATION, 'bottom');
           this.markDueTieWithErrors();
+          this.onErrorsDetected.emit(this.dueTimeHasErrors || this.hasInvalidItems);
         }
       })
       .finally(() => {
