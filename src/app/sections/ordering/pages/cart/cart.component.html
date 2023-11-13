@@ -5,6 +5,10 @@
   backButtonIcon="close"
   [isToolbarShow]="true"
   class="browser-hidden"
+  (onClose)="onCloseButton()"
+  [trackUrls]="!dueTimeHasErrors"
+  [isBackButtonShow]="!dueTimeHasErrors"
+  [isCustomBackButtonShow]="dueTimeHasErrors"
 >
 </st-header>
 
@@ -30,6 +34,7 @@
     (onOrderItemClicked)="onOrderItemClicked($event)"
     (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
     (onOrderTipChanged)="onOrderTipChanged($event)"
+    (onErrorsDetected)="onErrorsDetected($event)"
   >
     <ng-container *ngIf="showButton">
       <st-button

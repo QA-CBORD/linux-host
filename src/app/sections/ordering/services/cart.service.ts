@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment, ItemsOrderInfo } from '../shared/models';
@@ -18,7 +18,6 @@ import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 export class CartService {
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
-  // temporary cachedError for the cart:
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -26,13 +25,14 @@ export class CartService {
   checkNumber: number;
   currentOrderId: string;
   merchantTimeZone: string;
+  emptyCartOnClose = new Subject();
 
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
-    private readonly institutionFacade: InstitutionFacadeService
+    private readonly institutionFacade: InstitutionFacadeService,
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -242,7 +242,7 @@ export class CartService {
   }
 
   validateOrder(orderDetailsOptions?: OrderDetailOptions): Observable<OrderInfo> {
-    const options = orderDetailsOptions || this.cart.orderDetailsOptions as OrderDetailOptions;
+    const options = orderDetailsOptions || (this.cart.orderDetailsOptions as OrderDetailOptions);
     const { orderType: type, dueTime, address: addr } = options;
     let address = {};
 
@@ -264,7 +264,12 @@ export class CartService {
           return this.merchantService.validateOrder(this.cart.order).pipe(
             first(),
             tap((order: OrderInfo) => {
-              this.setActiveMerchantsMenuByOrderOptions(order.dueTime, options.orderType, options.address, options.isASAP);
+              this.setActiveMerchantsMenuByOrderOptions(
+                order.dueTime,
+                options.orderType,
+                options.address,
+                options.isASAP
+              );
             })
           );
         }
@@ -431,6 +436,13 @@ export class CartService {
     this.cart.orderDetailsOptions = null;
     this.cart.menu = null;
     await this.setInitialEmptyOrder();
+  }
+
+  closeButtonClicked() {
+    this.emptyCartOnClose.next({});
+  }
+  get emptyOnClose$() {
+    return this.emptyCartOnClose.asObservable();
   }
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//

@@ -550,6 +550,7 @@
       "shopping_cart_empty_msg": "Your shopping cart is empty",
       "empty_cart": "Empty Cart",
       "remove_message": "Are you sure you want remove all items from your cart?",
+      "exit_confirmation": "Exiting will cause you to lose the items in your cart. Are you sure you want to remove all items from your cart?",
       "cancel": "Cancel",
       "remove_items": "Remove Items"
     },
