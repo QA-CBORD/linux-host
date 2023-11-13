@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ORDER_ERROR_CODES, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { MerchantInfo, MerchantOrderTypesInfo, OrderDetailsComponent, OrderInfo, OrderPayment } from '@sections/ordering/shared';
+import { MerchantInfo, MerchantOrderTypesInfo, OrderDetailsComponent, OrderInfo, OrderItem, OrderPayment } from '@sections/ordering/shared';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { of } from 'rxjs';
@@ -154,6 +154,25 @@ describe('OrderDetailsComponent', () => {
     const timePickerDataInit = jest.spyOn(component, 'initTimePickerData');
     await component.changeOrderTime();
     expect(timePickerDataInit).toHaveBeenCalled();
+  });
+
+  it('should emit onOrderItemClicked when dueTimeHasErrors is false', () => {
+    jest.spyOn(component.onOrderItemClicked, 'emit');
+
+    const orderItem = {} as OrderItem;
+    component.goToItemDetails(orderItem);
+
+    expect(component.onOrderItemClicked.emit).toHaveBeenCalledWith(orderItem);
+  });
+
+  it('should not emit onOrderItemClicked when dueTimeHasErrors is true', () => {
+    jest.spyOn(component.onOrderItemClicked, 'emit');
+    component.dueTimeHasErrors = true;
+
+    const orderItem = {} as OrderItem;
+    component.goToItemDetails(orderItem);
+
+    expect(component.onOrderItemClicked.emit).not.toHaveBeenCalled();
   });
 
   it('should emit changes on PaymentMethod change', async () => {

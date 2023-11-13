@@ -319,6 +319,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   goToItemDetails(orderItem) {
+    if (this.dueTimeHasErrors) {
+      return;
+    }
     this.onOrderItemClicked.emit(orderItem);
   }
 
@@ -464,7 +467,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.sourceSub.add(sub);
   }
 
-   private emitForm () {
+  private emitForm() {
     this.onFormChange.emit({
       data: this.detailsForm.getRawValue(),
       valid: this.detailsForm.valid,
@@ -660,7 +663,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .validateOrder(this.cartOptions)
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
-      .then((validatedOrder) => {
+      .then(validatedOrder => {
         this.cartService.cartsErrorMessage = null;
 
         if (this.cartOptions.isASAP) {
@@ -689,7 +692,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       });
   }
 
-  cleanDueTimeErrors () {
+  cleanDueTimeErrors() {
     const dueTimeErrorKey = this.getDueTimeErrorKey();
     this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
     this.onDueTimeErrorClean.emit();
