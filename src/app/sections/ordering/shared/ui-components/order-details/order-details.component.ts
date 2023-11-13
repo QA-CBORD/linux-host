@@ -669,12 +669,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       address: this.orderDetailOptions.address,
       isASAP: date.isASAP,
     } as OrderDetailOptions;
-    await this.cartService.setActiveMerchantsMenuByOrderOptions(
-      this.cartOptions.dueTime,
-      this.cartOptions.orderType,
-      this.cartOptions.address,
-      this.cartOptions.isASAP
-    );
     this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
     await this.loadingService.showSpinner();
 
