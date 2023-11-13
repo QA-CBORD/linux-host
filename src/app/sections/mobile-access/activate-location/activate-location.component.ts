@@ -171,6 +171,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   private setUserPhoto() {
     this.userPhoto$ = this.userFacadeService.getAcceptedPhoto$().pipe(
+      skipWhile(userPhoto => !userPhoto || userPhoto === null),
       map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
       take(1)
     );
