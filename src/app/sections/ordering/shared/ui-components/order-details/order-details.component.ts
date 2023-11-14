@@ -331,6 +331,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   goToItemDetails(orderItem) {
+    if (this.dueTimeHasErrors) {
+      return;
+    }
     this.onOrderItemClicked.emit(orderItem);
   }
 
@@ -504,6 +507,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async showAddressListModal(): Promise<void> {
+    if (!this.isAddressClickable) return;
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
       componentProps: this.addressModalConfig,
@@ -617,6 +621,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   async changeOrderTime() {
+    if (!this.enableTimeSelection) return;
     await this.initTimePickerData();
     setTimeout(async () => {
       await this.cartService.setActiveMerchant(this._merchant);
