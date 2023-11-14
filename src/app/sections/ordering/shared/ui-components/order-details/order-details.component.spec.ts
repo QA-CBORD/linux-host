@@ -91,6 +91,8 @@ describe('OrderDetailsComponent', () => {
       labelTime: ''
     } as TimePickerData;
     component.orderTypes = {
+      pickupPrepTime: 30,
+      deliveryPrepTime: 15,
       merchantTimeZone: 'Americas/New York'
     } as MerchantOrderTypesInfo;
     component.orderPayment = [{ accountId: '', accountName: '' }] as OrderPayment[];
@@ -186,5 +188,14 @@ describe('OrderDetailsComponent', () => {
     const formEmitSpy = jest.spyOn(component, 'onPaymentChanged');
     await component.onPaymentChanged({ detail: { value: {id: '12345', paymentSystemType: 1 }}});
     expect(formEmitSpy).toHaveBeenCalled();
+  });
+
+  it('should get the prep time for pickup', async () => {
+    component.orderDetailOptions.orderType = ORDER_TYPE.PICKUP;
+    expect(component.prepTime).toEqual(`(${component.orderTypes.pickupPrepTime} min)`);
+  });
+  it('should get the prep time for delivery', async () => {
+    component.orderDetailOptions.orderType = ORDER_TYPE.DELIVERY;
+    expect(component.prepTime).toEqual(`(${component.orderTypes.deliveryPrepTime} min)`);
   });
 });

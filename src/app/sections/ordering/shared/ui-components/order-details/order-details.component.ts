@@ -399,6 +399,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return this.dueTimeHasErrors && this.cartOptions.isASAP ? false : true;
   }
 
+  get prepTime() {
+    const time =
+      {
+        [ORDER_TYPE.PICKUP]: this.orderTypes.pickupPrepTime,
+        [ORDER_TYPE.DELIVERY]: this.orderTypes.deliveryPrepTime,
+      }[this.orderDetailOptions.orderType] || 0;
+    return `(${time} min)`;
+  }
+
   onTipChanged({ detail: { value } }) {
     if (!this.tipFormControl.valid) return;
     this.onOrderTipChanged.emit(value ? Number(value) : 0);

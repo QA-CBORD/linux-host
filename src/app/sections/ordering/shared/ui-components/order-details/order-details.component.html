@@ -251,7 +251,7 @@
   <div (click)="changeOrderTime()" (keypress)="changeOrderTime()" class="address-container">
     <div class="order-details__value">
       <ion-skeleton-text *ngIf="isValidatingOrder" animated style="width: 100%;"></ion-skeleton-text>
-      <p *ngIf="!isValidatingOrder">{{ cartOptions | modifyPrepTime : orderTypes: showASAP }}</p>
+      <p *ngIf="!isValidatingOrder">{{ cartOptions | modifyPrepTime : orderTypes: showASAP }} <span *ngIf="!showASAP && dueTimeHasErrors">{{ prepTime }}</span></p>
     </div>
     <div class="order-details__value--editable" [class.error]="dueTimeHasErrors"></div>
   </div>
