@@ -267,7 +267,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges({ orderDetailOptions, dueTimeHasErrors }: SimpleChanges): void {
     if (orderDetailOptions && orderDetailOptions.currentValue === null) {
       this.orderDetailOptions = {} as OrderDetailOptions;
-    } else {
+    } else if (!this.cartOptions?.dueTime) {
       this.cartOptions = this.orderDetailOptions;
     }
 
