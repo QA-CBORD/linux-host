@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Platform } from '@ionic/angular';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +13,17 @@ import { TranslateFacadeService } from '@core/facades/translate/translate.facade
 export class AppComponent implements OnInit {
   constructor(
     private readonly platform: Platform,
-    private readonly translateFacadeService: TranslateFacadeService
+    private readonly translateFacadeService: TranslateFacadeService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit(): void {
     this.initializeApp();
     this.translateFacadeService.listenForContentStringStateChanges();
+  }
+
+  get isBackdropShown$() {
+    return this.globalNav.isBackdropShown$;
   }
 
   private async initializeApp(): Promise<void> {
