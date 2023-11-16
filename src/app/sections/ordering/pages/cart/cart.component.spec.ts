@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { CartComponent } from './cart.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
@@ -6,7 +6,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ActivatedRoute } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
-import { PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
@@ -23,6 +23,7 @@ import { FORM_CONTROL_NAMES, OrderDetailsFormData } from '@sections/ordering/sha
 import { UserAccount } from '@core/model/account/account.model';
 import { AccountType } from 'src/app/app.global';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
+import { Location } from '@angular/common';
 
 const mockData = {
   data: {
@@ -37,7 +38,8 @@ const _cartService = {
   orderDetailsOptions$: of({} as OrderDetailOptions),
   updateOrderNote: jest.fn(),
   updateOrderPhone: jest.fn(),
-  submitOrder: jest.fn(() => of({} as OrderInfo))
+  submitOrder: jest.fn(() => of({} as OrderInfo)),
+  closeButtonClicked: jest.fn(),
 };
 
 const _merchantService = {
@@ -67,7 +69,7 @@ const _userFacadeService = {
   isApplePayEnabled$: jest.fn(),
 };
 const _externalPaymentService = {
-  payWithApplePay: jest.fn().mockReturnValue(Promise.resolve({ success: true, amount:'10' })),
+  payWithApplePay: jest.fn().mockReturnValue(Promise.resolve({ success: true, amount: '10' })),
 };
 
 const _routingService = {};
@@ -81,6 +83,15 @@ const _lockDownService = {
 };
 const _translateService = {};
 const _priceUnitsResolverPipe = {};
+
+const _platform = {
+  backButton: {
+    subscribeWithPriority: jest.fn(),
+  },
+};
+const _location = {
+  back: jest.fn(),
+};
 
 describe('CartComponent', () => {
   let component: CartComponent;
@@ -108,6 +119,8 @@ describe('CartComponent', () => {
         { provide: LockDownService, useValue: _lockDownService },
         { provide: TranslateService, useValue: _translateService },
         { provide: PriceUnitsResolverPipe, useValue: _priceUnitsResolverPipe },
+        { provide: Platform, useValue: _platform },
+        { provide: Location, useValue: _location },
       ],
       imports: [PriceUnitsResolverModule],
     }).compileComponents();
@@ -146,7 +159,6 @@ describe('CartComponent', () => {
     const noteSpy = jest.spyOn(_cartService, 'updateOrderNote');
     const phoneSpy = jest.spyOn(_cartService, 'updateOrderPhone');
 
-
     await component.onSubmit();
 
     expect(lockDownSpy).toHaveBeenCalled();
@@ -155,13 +167,37 @@ describe('CartComponent', () => {
     expect(spinnerSpy).toHaveBeenCalled();
     expect(noteSpy).toHaveBeenCalled();
     expect(phoneSpy).toHaveBeenCalled();
-
   });
-  it('should call closeSpinner after close apple pay browser', fakeAsync(async () => {
-    const spinnerSpy = jest.spyOn(_loadingService, 'showSpinner');
 
-    await component['getAccountIdFromApplePay']();
+  it('should not call location.back() when backButton is pressed and dueTimeHasErrors is true', async () => {
+    component.dueTimeHasErrors = true;
 
-    expect(spinnerSpy).toHaveBeenCalled();
-  }));
+    await component.ionViewDidEnter();
+    const spyLocation = jest.spyOn(_location, 'back');
+    const spySusbcribe = jest.spyOn(_platform.backButton, 'subscribeWithPriority');
+    const backButtonCallback = (_platform.backButton.subscribeWithPriority as jest.Mock).mock.calls[0][1];
+    backButtonCallback(); // Simulate back button press
+
+
+    fixture.whenStable().then(() => {
+      expect(spySusbcribe).toHaveBeenCalled();
+      expect(spyLocation).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should call location.back() when backButton is pressed and dueTimeHasErrors is false', async () => {
+    component.dueTimeHasErrors = false;
+    component.ionViewDidEnter();
+
+    const spySubscribe = jest.spyOn(_platform.backButton, 'subscribeWithPriority');
+    const spyLocation = jest.spyOn(_location, 'back');
+
+    const backButtonCallback = (_platform.backButton.subscribeWithPriority as jest.Mock).mock.calls[0][1];
+    backButtonCallback(); 
+
+    fixture.whenStable().then(() => {
+      expect(spySubscribe).toHaveBeenCalled();
+      expect(spyLocation).toHaveBeenCalled();
+    });
+  });
 });
