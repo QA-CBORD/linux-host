@@ -85,9 +85,11 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   }
 
   async loadScanCardInputs() {
-    firstValueFrom(this.barcodeFacadeService.getUserSetting(User.Settings.CASHLESS_KEY));
-    firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.SOA_KEY));
-    firstValueFrom(this.barcodeFacadeService.getSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE));
+    await Promise.all([
+      firstValueFrom(this.barcodeFacadeService.fetchUserSetting(User.Settings.CASHLESS_KEY)),
+      firstValueFrom(this.barcodeFacadeService.fetchSetting(Settings.Setting.SOA_KEY)),
+      firstValueFrom(this.barcodeFacadeService.fetchSetting(Settings.Setting.PATRON_DISPLAY_MEDIA_TYPE)),
+    ]);
   }
 
   private setInstitutionData() {

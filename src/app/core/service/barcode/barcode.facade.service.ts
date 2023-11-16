@@ -49,12 +49,12 @@ export class BarcodeFacadeService {
     );
   }
 
-    private fetchUserSetting(setting: User.Settings): Observable<UserSettingInfo> {
+    public fetchUserSetting(setting: User.Settings): Observable<UserSettingInfo> {
         return this.settingFacadeService.getUserSetting(setting)
             .pipe(tap((s) => this.storageStateService.updateStateEntity(setting, s, { highPriorityKey: true })))
     }
 
-    private fetchSetting(setting: Settings.Setting) {
+    public fetchSetting(setting: Settings.Setting): Observable<SettingInfo> {
         return this.settingFacadeService.getSetting(setting)
             .pipe(tap((s) => this.storageStateService.updateStateEntity(setting, s, { highPriorityKey: true })));
     }

@@ -96,6 +96,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     this.userFacadeService
       .getAcceptedPhoto$()
       .pipe(
+        skipWhile(acceptedPhoto => !acceptedPhoto || acceptedPhoto === null),
         map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
         take(1)
       )
