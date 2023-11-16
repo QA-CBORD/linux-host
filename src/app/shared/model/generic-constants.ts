@@ -8,5 +8,6 @@ export const STATUS_CODE_SUCCESS = 200;
 export const A11_TIMEOUTS = 1500;
 export const TOAST_DURATION = 5000;
 export const ASAP_LABEL = 'ASAP';
+export const EXECUTION_PRIORITY = 9999;
 
 
