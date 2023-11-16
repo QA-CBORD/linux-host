@@ -10,7 +10,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
-import { IonContent, PopoverController } from '@ionic/angular';
+import { IonContent, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
@@ -58,7 +58,8 @@ import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operato
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
-import { TOAST_DURATION } from '@shared/model/generic-constants';
+import { EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/generic-constants';
+import { Location } from '@angular/common';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -97,6 +98,7 @@ export class CartComponent implements OnInit, OnDestroy {
   dueTimeHasErrors = false;
   errorCode = null;
   @ViewChild('content') private page: IonContent;
+  platformBackButtonClickSubscription: Subscription;
 
   constructor(
     private readonly cartService: CartService,
@@ -116,7 +118,9 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly nonCheckingService: NonCheckingService,
     private readonly lockDownService: LockDownService,
     private readonly translateService: TranslateService,
-    private readonly priceUnitsResolverPipe: PriceUnitsResolverPipe
+    private readonly priceUnitsResolverPipe: PriceUnitsResolverPipe,
+    private platform: Platform,
+    private location: Location
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -124,6 +128,21 @@ export class CartComponent implements OnInit, OnDestroy {
     );
     this.accountInfoList$ = this._accountInfoList$.asObservable();
     this.accounts$ = this.getAvailableAccounts$();
+  }
+
+  ionViewDidEnter() {
+    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(EXECUTION_PRIORITY, async () => {
+      if (this.dueTimeHasErrors){
+        this.onCloseButton();
+        return;
+      }
+
+      this.location.back();
+    });
+  }
+
+  ionViewWillLeave() {
+    this.platformBackButtonClickSubscription.unsubscribe();
   }
 
   ngOnDestroy(): void {
@@ -134,12 +153,12 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
   }
 
-  onErrorsDetected(val:boolean){
+  onErrorsDetected(val: boolean) {
     this.dueTimeHasErrors = val;
   }
 
-  onCloseButton(){
-    if (this.dueTimeHasErrors){
+  onCloseButton() {
+    if (this.dueTimeHasErrors) {
       this.cartService.closeButtonClicked();
     }
   }
@@ -444,7 +463,8 @@ export class CartComponent implements OnInit, OnDestroy {
       .catch(async () => {
         this.isProcessingOrder = false;
         return await this.onErrorModal('Something went wrong, please try again...');
-      }).finally(() => {
+      })
+      .finally(() => {
         this.isProcessingOrder = false;
       });
 
