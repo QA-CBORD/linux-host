@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CartComponent } from './cart.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
