@@ -77,6 +77,10 @@ export class CartService {
     return !!this._pendingOrderId;
   }
 
+  get _orderOption(): OrderDetailOptions  {
+    return this.cart.orderDetailsOptions;
+  }
+
   resetClientOrderId(): void {
     this._clientOrderId = null;
   }
@@ -112,6 +116,11 @@ export class CartService {
 
   set _order(orderInfo: OrderInfo) {
     this.cart.order = { ...orderInfo };
+    this.onStateChanged();
+  }
+
+  set orderOption(orderOptions: OrderDetailOptions) {
+    this.cart.orderDetailsOptions = { ...orderOptions };
     this.onStateChanged();
   }
 
