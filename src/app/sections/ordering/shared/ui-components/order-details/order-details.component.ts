@@ -23,12 +23,11 @@ import { ToastService } from '@core/service/toast/toast.service';
 import {
   cvvValidationFn,
   formControlErrorDecorator,
-  handleServerError,
   validateCurrency,
   validateGreaterOrEqualToZero,
   validateLessThanOther,
 } from '@core/utils/general-helpers';
-import { IonSelect, AlertController } from '@ionic/angular';
+import { AlertController, IonSelect } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BuildingInfo,
@@ -48,16 +47,18 @@ import {
   ORDERING_CONTENT_STRINGS,
   ORDER_ERROR_CODES,
   ORDER_TYPE,
-  ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
 import { MerchantService } from '@sections/ordering/services';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { checkPaymentFailed } from '@sections/ordering/utils/transaction-check';
+import { APP_ROUTES } from '@sections/section.config';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { A11_TIMEOUTS } from '@shared/model/generic-constants';
+import { NavigationService } from '@shared/services';
 import { Observable, Subscription, firstValueFrom } from 'rxjs';
-import { first, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { AccountType, DisplayName } from 'src/app/app.global';
 import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
 import {
@@ -65,9 +66,6 @@ import {
   StDateTimePickerComponent,
   TimePickerData,
 } from '../st-date-time-picker/st-date-time-picker.component';
-import { APP_ROUTES } from '@sections/section.config';
-import { NavigationService } from '@shared/services';
-import { A11_TIMEOUTS, ASAP_LABEL, TOAST_DURATION } from '@shared/model/generic-constants';
 
 @Component({
   selector: 'st-order-details',
@@ -139,7 +137,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() enableTimeSelection: boolean;
   @Input() dueTimeHasErrors: boolean;
   @Input() errorCode: string;
+  @Input() isValidatingDueTime: boolean;
   @Output() onDueTimeErrorClean: EventEmitter<void> = new EventEmitter<void>();
+  @Output() onOrderTimeChange: EventEmitter<DateTimeSelected> = new EventEmitter<DateTimeSelected>();
 
   _merchant: MerchantInfo;
   accountName: string;
@@ -172,12 +172,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
-  cartOptions: OrderDetailOptions;
 
   @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
   orderSchedule$: Observable<Schedule>;
   orderOptionsData = {} as TimePickerData;
-  isValidatingOrder = false;
 
   readonly paymentMethodErrorMessages: PaymentMethodErrorMessages = {
     required: 'A payment method must be selected',
@@ -267,8 +265,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges({ orderDetailOptions, dueTimeHasErrors }: SimpleChanges): void {
     if (orderDetailOptions && orderDetailOptions.currentValue === null) {
       this.orderDetailOptions = {} as OrderDetailOptions;
-    } else if (!this.cartOptions?.dueTime) {
-      this.cartOptions = this.orderDetailOptions;
     }
 
     if (dueTimeHasErrors && dueTimeHasErrors.currentValue !== null) {
@@ -297,6 +293,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.dueTimeFormControl.setValue('');
       this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: true });
       this.dueTimeFormControl.markAsTouched();
+    } else {
+      this.errorCode = null;
+      this.dueTimeHasErrors = false;
     }
   }
 
@@ -389,7 +388,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (this.readonly) {
       this.checkForOrderIssuesOnReadOnly();
     }
-    this.cartOptions = this.orderDetailOptions;
     this.subscribeOnFormChanges();
   }
 
@@ -398,7 +396,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get showASAP(): boolean {
-    return this.dueTimeHasErrors && this.cartOptions.isASAP ? false : true;
+    return this.dueTimeHasErrors && this.orderDetailOptions.isASAP ? false : true;
   }
 
   get prepTime() {
@@ -655,10 +653,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
           handler: () => {
             this.cartService.clearActiveOrder();
             this.cartService.setActiveMerchantsMenuByOrderOptions(
-              this.cartOptions.dueTime,
-              this.cartOptions.orderType,
-              this.cartOptions.address,
-              this.cartOptions.isASAP
+              this.orderDetailOptions.dueTime,
+              this.orderDetailOptions.orderType,
+              this.orderDetailOptions.address,
+              this.orderDetailOptions.isASAP
             );
             this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
           },
@@ -673,53 +671,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return this.userFacadeService.getUserData$();
   }
 
-  async onDateTimeSelected({ dateTimePicker, timeStamp }: DateTimeSelected): Promise<void> {
-    let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === ASAP_LABEL };
-    date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
-    this.cartService.orderIsAsap = date.isASAP;
-    this.cartService.cartsErrorMessage = null;
-    this.isValidatingOrder = true;
-    this.cartOptions = {
-      dueTime: date.dueTime,
-      orderType: this.orderDetailOptions.orderType,
-      address: this.orderDetailOptions.address,
-      isASAP: date.isASAP,
-    } as OrderDetailOptions;
-    this.dueTimeFormControl.setValue(this.cartOptions.dueTime);
-    await this.loadingService.showSpinner();
-
-    await this.cartService
-      .validateOrder(this.cartOptions)
-      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
-      .toPromise()
-      .then(validatedOrder => {
-        this.cartService.cartsErrorMessage = null;
-
-        if (this.cartOptions.isASAP) {
-          this.cartOptions = { ...this.cartOptions, dueTime: new Date(validatedOrder.dueTime) };
-          this.dueTimeFormControl.setValue(validatedOrder.dueTime);
-        }
-
-        if (this.dueTimeHasErrors) {
-          this.cleanDueTimeErrors();
-        }
-      })
-      .catch(error => {
-        if (Array.isArray(error)) {
-          this.errorCode = error[0];
-          const errorKey = this.getDueTimeErrorKey();
-          this.cartService.cartsErrorMessage = error[1];
-          this.dueTimeHasErrors = true;
-          const message = this.translateService.instant(`get_common.error.${errorKey}`);
-          this.toastService.showError(message, TOAST_DURATION, 'bottom');
-          this.markDueTieWithErrors();
-          this.onErrorsDetected.emit(this.dueTimeHasErrors || this.hasInvalidItems);
-        }
-      })
-      .finally(() => {
-        this.loadingService.closeSpinner();
-        this.isValidatingOrder = false;
-      });
+  async onDateTimeSelected(dateTime: DateTimeSelected): Promise<void> {
+    this.onOrderTimeChange.emit(dateTime);
   }
 
   cleanDueTimeErrors() {
