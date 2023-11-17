@@ -6,7 +6,7 @@
       }}</ion-label>
 
       <p *ngIf="!(isMerchantOrderAhead && enableTimeSelection); else timeEditable" class="order-details__value">
-        {{ cartOptions | modifyPrepTime : orderTypes }}
+        {{ orderDetailOptions | modifyPrepTime : orderTypes }}
       </p>
 
       <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
@@ -250,8 +250,13 @@
 <ng-template #timeEditable>
   <div (click)="changeOrderTime()" (keypress)="changeOrderTime()" class="address-container">
     <div class="order-details__value">
-      <ion-skeleton-text *ngIf="isValidatingOrder" animated style="width: 100%;"></ion-skeleton-text>
-      <p *ngIf="!isValidatingOrder">{{ cartOptions | modifyPrepTime : orderTypes: showASAP }} <span *ngIf="!showASAP && dueTimeHasErrors">{{ prepTime }}</span></p>
+      <!-- We need to show an skeleton in case we are validating time and takes too loong -->
+      <ion-skeleton-text *ngIf="isValidatingDueTime" animated style="width: 100%"></ion-skeleton-text>
+      <!-- In case is ASAP and we have due time errors we need to show ASAP label with prep time, otherwhise is dueTime only -->
+      <p *ngIf="!isValidatingDueTime">
+        {{ orderDetailOptions | modifyPrepTime : orderTypes : showASAP }}
+        <span *ngIf="!showASAP">{{ prepTime }}</span>
+      </p>
     </div>
     <div class="order-details__value--editable" [class.error]="dueTimeHasErrors"></div>
   </div>
@@ -271,11 +276,7 @@
 ></st-date-time-picker>
 
 <ng-template #addressEditable>
-  <div
-    (click)="showAddressListModal()"
-    (keypress)="showAddressListModal()"
-    class="address-container"
-  >
+  <div (click)="showAddressListModal()" (keypress)="showAddressListModal()" class="address-container">
     <p class="order-details__value">
       {{ orderDetailOptions.address | addressHeaderFormat }}
     </p>

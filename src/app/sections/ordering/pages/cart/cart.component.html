@@ -28,6 +28,7 @@
     [dueTimeHasErrors]="dueTimeHasErrors"
     [errorCode]="errorCode"
     [enableTimeSelection]="true"
+    [isValidatingDueTime]="isValidatingDueTime"
     (onDueTimeErrorClean)="cleanDueTimeErrors()"
     (onFormChange)="onCartStateFormChanged($event)"
     (onOrderItemRemovedId)="removeOrderItem($event)"
@@ -35,6 +36,7 @@
     (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
     (onOrderTipChanged)="onOrderTipChanged($event)"
     (onErrorsDetected)="onErrorsDetected($event)"
+    (onOrderTimeChange)="onOrderTimeChange($event)"
   >
     <ng-container *ngIf="showButton">
       <st-button

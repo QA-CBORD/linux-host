@@ -144,12 +144,13 @@ describe('OrderDetailsComponent', () => {
     expect(component.getDueTimeErrorKey()).toEqual('ItemsNotAvailable');
   });
 
-  it('should validate order when date time selected', async () => {
-    const cartServiceSpy = jest.spyOn(_cartService, 'validateOrder').mockReturnValue(of({} as OrderInfo));
-    await component.onDateTimeSelected({ dateTimePicker: 'ASAP' } as DateTimeSelected);
-    expect(cartServiceSpy).toHaveBeenCalled();
-    expect(_cartService.cartsErrorMessage).toBeNull();
-    expect(component.cartOptions.isASAP).toBeTruthy();
+  it('should emit onOrderTimeChange when onDateTimeSelected is called', async () => {
+    jest.spyOn(component.onOrderTimeChange, 'emit');
+
+    const dateTime: DateTimeSelected = {} as DateTimeSelected;
+    await component.onDateTimeSelected(dateTime);
+    
+    expect(component.onOrderTimeChange.emit).toHaveBeenCalledWith(dateTime);
   });
 
   it('should init data for time picker', async () => {

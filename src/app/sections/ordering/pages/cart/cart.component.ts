@@ -58,8 +58,9 @@ import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operato
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
-import { EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/generic-constants';
+import { ASAP_LABEL, EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/generic-constants';
 import { Location } from '@angular/common';
+import { DateTimeSelected } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.component';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -99,6 +100,7 @@ export class CartComponent implements OnInit, OnDestroy {
   errorCode = null;
   @ViewChild('content') private page: IonContent;
   platformBackButtonClickSubscription: Subscription;
+  isValidatingDueTime = false;
 
   constructor(
     private readonly cartService: CartService,
@@ -131,14 +133,17 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(EXECUTION_PRIORITY, async () => {
-      if (this.dueTimeHasErrors){
-        this.onCloseButton();
-        return;
-      }
+    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(
+      EXECUTION_PRIORITY,
+      async () => {
+        if (this.dueTimeHasErrors) {
+          this.onCloseButton();
+          return;
+        }
 
-      this.location.back();
-    });
+        this.location.back();
+      }
+    );
   }
 
   ionViewWillLeave() {
@@ -258,6 +263,68 @@ export class CartComponent implements OnInit, OnDestroy {
         isExistingOrder: this.isExistingOrder,
       },
     });
+  }
+
+  async onOrderTimeChange({ dateTimePicker, timeStamp }: DateTimeSelected) {
+    let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === ASAP_LABEL };
+    date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
+
+    this.isValidatingDueTime = true;
+    this.cartService.orderIsAsap = date.isASAP;
+    this.cartService.cartsErrorMessage = null;
+    this.cartService.orderOption = {
+      dueTime: date.dueTime,
+      orderType: this.cartService._orderOption.orderType,
+      address: this.cartService._orderOption.address,
+      isASAP: date.isASAP,
+    } as OrderDetailOptions;
+    await this.loadingService.showSpinner();
+
+    /*
+      TODO: We have different implementation of the same validate order method in this class,
+      we need to move try to reuse the same validateOrder always, make sure that toast message should
+      only appear when dueTime has error not when validating something else,
+      for example paymentMethods validations should not fire dueTImeError toast messages.
+     */
+    await this.cartService
+      .validateOrder(this.cartService.orderOption)
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
+      .toPromise()
+      .then(validatedOrder => {
+        this.cartService.cartsErrorMessage = null;
+        this.isValidatingDueTime = false;
+
+        if (this.cartService._orderOption.isASAP) {
+          this.cartService.orderOption = {
+            ...this.cartService._orderOption,
+            dueTime: new Date(validatedOrder.dueTime),
+          };
+        }
+
+        if (this.dueTimeHasErrors) {
+          this.cleanDueTimeErrors();
+        }
+
+        this.cdRef.detectChanges();
+      })
+      .catch(error => {
+        if (Array.isArray(error)) {
+          this.errorCode = error[0];
+          const errorKey =
+            this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
+              ? 'PickUpOrderTimeNotAvailable'
+              : 'DeliveryOrderTimeNotAvailable';
+          this.cartService.cartsErrorMessage = error[1];
+          this.dueTimeHasErrors = true;
+          const message = this.translateService.instant(`get_common.error.${errorKey}`);
+          this.toastService.showError(message, TOAST_DURATION, 'bottom');
+          this.isValidatingDueTime = false;
+          this.cdRef.detectChanges();
+        }
+      })
+      .finally(() => {
+        this.loadingService.closeSpinner();
+      });
   }
 
   onCartStateFormChanged(state) {
@@ -408,6 +475,13 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
     const { orderItems } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (!orderItems.length) {
+      this.cartService.clearActiveOrder();
+      this.cartService.setActiveMerchantsMenuByOrderOptions(
+        this.cartService._orderOption.dueTime,
+        this.cartService._orderOption.orderType,
+        this.cartService._orderOption.address,
+        this.cartService._orderOption.isASAP
+      );
       this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
       return;
     }
