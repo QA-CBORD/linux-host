@@ -113,7 +113,7 @@ export class AccountService {
     return this.settings$.pipe(
       map(settings => {
         const settingInfo = this.getSettingByName(settings, Settings.Setting.DISPLAY_TENDERS.split('.')[2]);
-        return this.transformStringToArray(settingInfo.value);
+        return this.transformStringToArray(settingInfo?.value);
       }),
       switchMap((tendersId: Array<string>) =>
         this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts))),
