@@ -21,13 +21,13 @@ export class CartService {
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
+  private emptyCartOnClose = new Subject();
+  private emptyCartOnClose$ = this.emptyCartOnClose.asObservable();
   public orderIsAsap = false;
   checkNumber: number;
   currentOrderId: string;
   merchantTimeZone: string;
-  emptyCartOnClose = new Subject();
-
-  constructor(
+ constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService,
@@ -450,8 +450,9 @@ export class CartService {
   closeButtonClicked() {
     this.emptyCartOnClose.next({});
   }
+
   get emptyOnClose$() {
-    return this.emptyCartOnClose.asObservable();
+    return this.emptyCartOnClose$;
   }
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
