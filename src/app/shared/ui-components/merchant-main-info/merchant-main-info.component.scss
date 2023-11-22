@@ -5,16 +5,13 @@
   width: 100%;
   min-width: 0;
 }
-.info-block p {
-  margin: 0;
-}
 .info-block {
   flex-basis: 60%;
   flex-grow: 1;
 
   &__merchant-name {
     @include ellipsis;
-    @include font-nunito-semibold(16px);
+    @include font-nunito-semibold(20px);
   }
 
   &__distance {
@@ -27,7 +24,8 @@
 
   &__access-state {
     @include font-nunito-heavy(12px);
-
+    display: inline-block;
+    margin-right: 10px;
     &--open {
       color: $color-deep-sea;
     }

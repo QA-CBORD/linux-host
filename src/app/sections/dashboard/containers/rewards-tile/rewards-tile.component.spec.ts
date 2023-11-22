@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RewardsTileComponent } from './rewards-tile.component';
 import { RewardsService } from './services/rewards.service';
 import { of } from 'rxjs';
+import { IonicModule } from '@ionic/angular';
 
 class MockRewardsService {
   rewardTrack$ = of("");
@@ -17,6 +18,7 @@ describe('RewardsTileComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [RewardsTileComponent],
       providers: [{ provide: RewardsService, useClass: MockRewardsService }],
+      imports: [IonicModule]
     }).compileComponents();
   });
 

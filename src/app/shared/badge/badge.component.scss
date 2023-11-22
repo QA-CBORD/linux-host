@@ -1,0 +1,10 @@
+@import 'tools';
+
+.badge-container {
+  color: $color-success-40;
+  background-color: #e8f4ea;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  @include font-nunito-regular(12px);
+}

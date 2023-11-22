@@ -34,6 +34,10 @@ export class MerchantFacadeService extends ServiceStateFacade {
     return this.authFacadeService.isGuestUser().pipe(
       switchMap(isGuestUser => {
         if (!isGuestUser) {
+          options.addSearchOption({
+            key: MerchantSearchOptionName.INCLUDE_SETTINGS,
+            value: 1,
+          });
           const call = this.apiService.getMerchants(options);
           return this.makeRequestWithUpdatingStateHandler<MerchantInfo[]>(call, this.stateManager).pipe(
             tap((data: MerchantInfo[]) => this.updateState(data))

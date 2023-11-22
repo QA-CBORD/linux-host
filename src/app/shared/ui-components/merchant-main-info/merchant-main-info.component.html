@@ -10,7 +10,7 @@
     </ion-col>
   </ion-row>
   <ion-row class="info-block__main-info">
-    <ion-col class="ion-no-padding ">
+    <ion-col class="ion-align-items-start" size="7">
       <p
         *ngIf="isShowMerchantStatus"
         class="info-block__access-state"
@@ -21,8 +21,9 @@
       >
         {{ merchant.openNow ? 'Open' : 'Closed' }}
       </p>
+      <st-order-ahead-badge [merchant]="merchant"></st-order-ahead-badge>
     </ion-col>
-    <ion-col class="ion-no-padding ion-text-right">
+    <ion-col class="ion-text-right">
       <p *ngIf="isShowOrderType && !isWalkOut" class="info-block__order-type">{{ merchant | orderType }}</p>
       <p *ngIf="isWalkOut" class="info-block__walkout">Smart Shopping</p>
     </ion-col>

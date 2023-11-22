@@ -42,9 +42,9 @@
         <p class="merchant__merchant-distance">{{ merchantInfo.distanceFromUser | merchantDistance }}</p>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-no-padding">
+    <ion-row class="ion-padding-bottom">
       <!-- Times and order options -->
-      <ion-col class="align-self-start ion-no-padding">
+      <ion-col class="align-self-start" size="8">
         <p
           class="merchant__merchant-hours"
           [ngClass]="{
@@ -53,6 +53,7 @@
         >
           {{ merchantInfo.openNow ? (contentStrings.labelOpen | async) : (contentStrings.labelClosed | async) }}
         </p>
+        <st-order-ahead-badge [merchant]="merchantInfo"></st-order-ahead-badge>
       </ion-col>
       <ion-col class="ion-align-self-end ion-no-padding">
         <p *ngIf="!merchantInfo.walkout" class="merchant__merchant-order-types">{{ merchantInfo.orderTypes | orderTypePipe}}</p>
