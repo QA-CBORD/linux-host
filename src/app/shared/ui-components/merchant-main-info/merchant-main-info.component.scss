@@ -11,6 +11,10 @@
 
   &__merchant-name {
     @include ellipsis;
+    @include font-nunito-semibold(16px);
+  }
+
+  &__merchant-name--title {
     @include font-nunito-semibold(20px);
   }
 

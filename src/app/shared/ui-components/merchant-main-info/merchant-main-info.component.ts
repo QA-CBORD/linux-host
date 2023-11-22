@@ -12,5 +12,5 @@ export class MerchantMainInfoComponent {
   @Input() isWalkOut = false;
   @Input() isShowMerchantStatus = true;
   @Input() merchant: MerchantInfo;
-
+  @Input() headingMode: 'card' | 'title' = 'card';
 }

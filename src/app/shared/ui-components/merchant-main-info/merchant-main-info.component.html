@@ -1,12 +1,12 @@
 <ion-grid class="ion-no-padding info-block" fixed>
   <ion-row>
     <ion-col class="ion-no-padding">
-      <h3 class="info-block__merchant-name">{{ merchant.name }}</h3>
+      <h3 class="info-block__merchant-name info-block__merchant-name--{{headingMode}}">{{ merchant.name }}</h3>
     </ion-col>
   </ion-row>
   <ion-row>
     <ion-col *ngIf="merchant.distanceFromUser" class="ion-no-padding">
-      <p class="info-block__distance">{{ merchant.distanceFromUser | merchantDistance }}</p>
+      <p class="info-block__distance ion-no-margin">{{ merchant.distanceFromUser | merchantDistance }}</p>
     </ion-col>
   </ion-row>
   <ion-row class="info-block__main-info">
