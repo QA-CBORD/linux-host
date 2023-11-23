@@ -673,6 +673,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   async onDateTimeSelected(dateTime: DateTimeSelected): Promise<void> {
     this.onOrderTimeChange.emit(dateTime);
+    this.detailsForm.controls[FORM_CONTROL_NAMES.dueTime].setValue(this.orderDetailOptions.dueTime);
+    this.emitForm();
   }
 
   cleanDueTimeErrors() {
