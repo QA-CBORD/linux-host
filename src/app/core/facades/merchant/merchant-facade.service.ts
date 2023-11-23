@@ -33,17 +33,13 @@ export class MerchantFacadeService extends ServiceStateFacade {
   fetchMerchants$(options: MerchantSearchOptions = new MerchantSearchOptions(), noGuestFiltering?: boolean) {
     return this.authFacadeService.isGuestUser().pipe(
       switchMap(isGuestUser => {
+        options = this.addRequiredOption(options);
         if (!isGuestUser) {
-          options.addSearchOption({
-            key: MerchantSearchOptionName.INCLUDE_SETTINGS,
-            value: 1,
-          });
           const call = this.apiService.getMerchants(options);
           return this.makeRequestWithUpdatingStateHandler<MerchantInfo[]>(call, this.stateManager).pipe(
             tap((data: MerchantInfo[]) => this.updateState(data))
           );
         }
-        options = this.addRequiredOption(options);
         const call = this.apiService.getMerchants(options);
         return this.makeRequestWithUpdatingStateHandler<MerchantInfo[]>(call, this.stateManager).pipe(
           map(data => (noGuestFiltering && data) || this.filterMerchantList(data)),
