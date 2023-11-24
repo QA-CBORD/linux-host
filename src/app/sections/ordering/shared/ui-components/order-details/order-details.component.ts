@@ -213,7 +213,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setPhoneField();
     this.initAccountSelected();
     this.initTimePickerData();
-    this.initSubscription();
+    this.showEmptyCartAlertOnce();
   }
 
   async initTimePickerData() {
@@ -244,16 +244,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.detailsForm.patchValue({
         [FORM_CONTROL_NAMES.paymentMethod]: account || '',
       });
-    }
-  }
-  private initSubscription() {
-    const onCloseEvent$ = this.cartService.emptyOnClose$;
-    if (onCloseEvent$) {
-      this.sourceSub.add(
-        this.cartService.emptyOnClose$.subscribe(() => {
-          this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
-        })
-      );
     }
   }
 
@@ -620,6 +610,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  private showEmptyCartAlertOnce() {
+    let dismissed = false;
+    this.sourceSub.add(
+      this.cartService.emptyOnClose$.subscribe(async() => {
+        if (!dismissed) {
+          dismissed = true;
+            await this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
+            dismissed = false;
+        }
+      })
+    );
+  }
+
   async changeOrderTime() {
     if (!this.enableTimeSelection) return;
     await this.initTimePickerData();
@@ -665,6 +668,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     });
 
     await alert.present();
+    return alert.onDidDismiss();
   }
 
   get userData$(): Observable<UserInfo> {

@@ -35,7 +35,8 @@ const _cartService = {
   cartsErrorMessage: '',
   extractTimeZonedString: jest.fn(),
   validateOrder: jest.fn(() => of({} as OrderInfo)),
-  setActiveMerchantsMenuByOrderOptions: jest.fn()
+  setActiveMerchantsMenuByOrderOptions: jest.fn(),
+  emptyOnClose$: of({})
 };
 const _loadingService = {
   showSpinner: jest.fn(),
