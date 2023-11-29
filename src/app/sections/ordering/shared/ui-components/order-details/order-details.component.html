@@ -148,6 +148,8 @@
           [placeholder]="contentStrings.selectAccount | async"
           interface="action-sheet"
           (ionChange)="onPaymentChanged($event)"
+          (click)="onSelectClick()"
+          (ionDismiss)="onModalDismiss()"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
           (ionFocus)="openActionSheet()"
           [selectedText]="paymentMethod.value | accountTypeResolver : mealBased"

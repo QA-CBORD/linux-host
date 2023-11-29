@@ -66,6 +66,7 @@ import {
   StDateTimePickerComponent,
   TimePickerData,
 } from '../st-date-time-picker/st-date-time-picker.component';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-order-details',
@@ -202,7 +203,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly translateService: TranslateService,
     private readonly merchantService: MerchantService,
     private readonly alertController: AlertController,
-    private readonly routingService: NavigationService
+    private readonly routingService: NavigationService,
+    private readonly globalNavService: GlobalNavService
   ) {}
 
   ngOnInit() {
@@ -613,11 +615,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   private showEmptyCartAlertOnce() {
     let dismissed = false;
     this.sourceSub.add(
-      this.cartService.emptyOnClose$.subscribe(async() => {
+      this.cartService.emptyOnClose$.subscribe(async () => {
         if (!dismissed) {
           dismissed = true;
-            await this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
-            dismissed = false;
+          await this.emptyCart(this.translateService.instant('get_web_gui.shopping_cart.exit_confirmation'));
+          dismissed = false;
         }
       })
     );
@@ -687,6 +689,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.onDueTimeErrorClean.emit();
     this.errorCode = null;
     this.dueTimeHasErrors = false;
+  }
+
+  onSelectClick() {
+    this.globalNavService.notifyBackdropShown();
+  }
+
+  onModalDismiss() {
+    this.globalNavService.notifyBackdropHidden();
   }
 }
 
