@@ -136,12 +136,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(
       EXECUTION_PRIORITY,
       async () => {
-        if (this.dueTimeHasErrors) {
-          this.onCloseButton();
-          return;
-        }
-
-        this.location.back();
+        this.onCloseButton();
       }
     );
   }
@@ -163,8 +158,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onCloseButton() {
-    if (this.dueTimeHasErrors) {
+    if (this.canShowRemoveItemsAlert()) {
       this.cartService.closeButtonClicked();
+    } else {
+      this.location.back();
     }
   }
 
@@ -847,6 +844,10 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.orderIsAsap = false;
     this.cartService.checkNumber = order.checkNumber;
     this.cartService.currentOrderId = order.id;
+  }
+
+  private canShowRemoveItemsAlert() {
+    return this.dueTimeHasErrors && this.errorCode !== ORDER_ERROR_CODES.ORDER_CAPACITY;
   }
 
   cleanDueTimeErrors() {
