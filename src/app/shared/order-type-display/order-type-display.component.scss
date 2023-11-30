@@ -1,0 +1,13 @@
+@import 'tools';
+
+.order-type {
+  &__main {
+    color: $color-dodger-blue;
+    @include font-nunito-semibold(12px);
+  }
+
+  &__walkout {
+    @include font-nunito-semibold(12px);
+    color: $color-purple-50;
+  }
+}

@@ -67,8 +67,13 @@
   &__merchant-walkout {
     margin: 0 10px;
     text-align: right;
-    
+
     @include font-nunito-semibold(12px);
     color: $color-purple-50;
+  }
+
+  &__options-block {
+    margin-top: 5px;
+    padding-bottom: 10px;
   }
 }

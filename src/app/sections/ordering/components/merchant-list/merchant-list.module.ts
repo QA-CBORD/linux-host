@@ -9,6 +9,7 @@ import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-
 import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
 import { OrderTypePipeModule } from '@sections/ordering/shared/pipes/order-type/order-type.module';
 import { OrderAheadBadgeComponent } from '@shared/order-ahead-badge/order-ahead-badge.component';
+import { OrderTypeDisplayComponent } from '@shared/order-type-display/order-type-display.component';
 
 const declarations = [MerchantListComponent, MerchantItemComponent];
 
@@ -23,6 +24,7 @@ const declarations = [MerchantListComponent, MerchantItemComponent];
     StopPropagationModule,
     OrderTypePipeModule,
     OrderAheadBadgeComponent,
+    OrderTypeDisplayComponent,
   ],
 })
 export class MerchantListModule {}

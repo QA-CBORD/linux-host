@@ -39,20 +39,10 @@
     }
   }
 
-  &__order-type {
-    color: $color-dodger-blue;
-
-    @include font-nunito-semibold(12px);
-  }
-
-  &__walkout {
-    @include font-nunito-semibold(12px);
-    color: $color-purple-50;
-  }
-
   &__main-info {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-top: 5px;
   }
 }

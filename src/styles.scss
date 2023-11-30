@@ -568,3 +568,12 @@ ion-modal.sc-modal {
     }
   }
 }
+
+.st-margin {
+  &-start {
+    margin-left: 10px;
+  }
+  &-end {
+    margin-right: 10px;
+  }
+}

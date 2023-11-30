@@ -1,16 +1,19 @@
 <ion-grid class="ion-no-padding info-block" fixed>
   <ion-row>
     <ion-col class="ion-no-padding">
-      <h3 class="info-block__merchant-name info-block__merchant-name--{{headingMode}}">{{ merchant.name }}</h3>
+      <h3 class="info-block__merchant-name info-block__merchant-name--{{ headingMode }}">{{ merchant.name }}</h3>
     </ion-col>
   </ion-row>
   <ion-row>
-    <ion-col *ngIf="merchant.distanceFromUser" class="ion-no-padding">
-      <p class="info-block__distance ion-no-margin">{{ merchant.distanceFromUser | merchantDistance }}</p>
+    <ion-col class="ion-no-padding">
+      <span *ngIf="merchant.distanceFromUser" class="info-block__distance st-margin-end">
+        {{ merchant.distanceFromUser | merchantDistance }}
+      </span>
+      <st-order-type-display [merchant]="merchant"></st-order-type-display>
     </ion-col>
   </ion-row>
   <ion-row class="info-block__main-info">
-    <ion-col class="ion-align-items-start" size="7">
+    <ion-col class="ion-align-items-start">
       <p
         *ngIf="isShowMerchantStatus"
         class="info-block__access-state"
@@ -22,10 +25,6 @@
         {{ merchant.openNow ? 'Open' : 'Closed' }}
       </p>
       <st-order-ahead-badge [merchant]="merchant"></st-order-ahead-badge>
-    </ion-col>
-    <ion-col class="ion-text-right">
-      <p *ngIf="isShowOrderType && !isWalkOut" class="info-block__order-type">{{ merchant | orderType }}</p>
-      <p *ngIf="isWalkOut" class="info-block__walkout">Smart Shopping</p>
     </ion-col>
   </ion-row>
 </ion-grid>
