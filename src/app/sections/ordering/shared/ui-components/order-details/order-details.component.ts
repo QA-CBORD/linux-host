@@ -456,7 +456,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         if (val) {
           this.onModalDismiss();
         }
-      })
+      });
     }
   }
 
