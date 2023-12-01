@@ -451,11 +451,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openActionSheet() {
-    this.a11yService.isVoiceOverClick$.then(value => {
-      if (value) {
-        this.selectRef.open();
-      }
-    });
+    if (this.paymentFormControl.value) {
+      this.a11yService.isVoiceOverEnabled$.then(val => {
+        if (val) {
+          this.onModalDismiss();
+        }
+      })
+    }
   }
 
   private get addressInfoFormControl(): AbstractControl {
