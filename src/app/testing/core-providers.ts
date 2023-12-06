@@ -2,14 +2,16 @@ import { APP_BASE_HREF } from '@angular/common';
 import { Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { Platform } from '@ionic/angular';
-import { Subject } from 'rxjs';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state-mock.service';
+import { Subject, of } from 'rxjs';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 export let sessionFacadeServiceMock: Partial<SessionFacadeService>;
 export const platformMock: Partial<Platform> = { is: jest.fn(), pause: new Subject() };
 export const routerMock: Partial<Router> = {
   navigate: jest.fn(),
+};
+export const mockStorageStateService = {
+  getStateEntityByKey$: jest.fn().mockReturnValue(of({})),
 };
 
 export const CoreProviders = [
@@ -20,5 +22,5 @@ export const CoreProviders = [
     provide: Router,
     useValue: routerMock,
   },
-  { provide: Storage , useClass: MockStorageService }
+  { provide: StorageStateService, useValue: mockStorageStateService },
 ];

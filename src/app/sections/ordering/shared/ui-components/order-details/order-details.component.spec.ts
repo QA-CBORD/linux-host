@@ -10,7 +10,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { ORDER_ERROR_CODES, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { MerchantInfo, MerchantOrderTypesInfo, OrderDetailsComponent, OrderInfo, OrderItem, OrderPayment } from '@sections/ordering/shared';
+import {
+  MerchantInfo,
+  MerchantOrderTypesInfo,
+  OrderDetailsComponent,
+  OrderInfo,
+  OrderItem,
+  OrderPayment,
+} from '@sections/ordering/shared';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { of } from 'rxjs';
@@ -19,6 +26,8 @@ import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.mo
 import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
 import { DateTimeSelected, TimePickerData } from '../st-date-time-picker/st-date-time-picker.component';
 import { NavigationService } from '@shared/index';
+import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 
 const _modalController = {};
 const _orderingService = {
@@ -36,25 +45,25 @@ const _cartService = {
   extractTimeZonedString: jest.fn(),
   validateOrder: jest.fn(() => of({} as OrderInfo)),
   setActiveMerchantsMenuByOrderOptions: jest.fn(),
-  emptyOnClose$: of({})
+  emptyOnClose$: of({}),
 };
 const _loadingService = {
   showSpinner: jest.fn(),
-  closeSpinner: jest.fn()
+  closeSpinner: jest.fn(),
 };
 const _toastService = {
-  showError: jest.fn()
+  showError: jest.fn(),
 };
 const _translateService = {
   instant: jest.fn(),
 };
 const _merchantService = {
-  getMerchantOrderSchedule: jest.fn()
+  getMerchantOrderSchedule: jest.fn(),
 };
 
 const _navigationService = {
-  navigate: jest.fn()
-}
+  navigate: jest.fn(),
+};
 
 describe('OrderDetailsComponent', () => {
   let component: OrderDetailsComponent;
@@ -74,30 +83,31 @@ describe('OrderDetailsComponent', () => {
         { provide: ToastService, useValue: _toastService },
         { provide: TranslateService, useValue: _translateService },
         { provide: MerchantService, useValue: _merchantService },
-        { provide: NavigationService, useValue: _navigationService }
+        { provide: NavigationService, useValue: _navigationService },
       ],
-      imports: [TypeMessageModule, ModifyPrepTimeModule, AddressHeaderFormatPipeModule],
+      imports: [TypeMessageModule, ModifyPrepTimeModule, AddressHeaderFormatPipeModule, BrowserModule, FormsModule],
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(OrderDetailsComponent);
-    component = fixture.componentInstance;component.orderDetailOptions = {
+    component = fixture.componentInstance;
+    component.orderDetailOptions = {
       dueTime: new Date(),
       isASAP: false,
       address: {} as AddressInfo,
       orderType: ORDER_TYPE.PICKUP,
     } as OrderDetailOptions;
     component.orderOptionsData = {
-      labelTime: ''
+      labelTime: '',
     } as TimePickerData;
     component.orderTypes = {
       pickupPrepTime: 30,
       deliveryPrepTime: 15,
-      merchantTimeZone: 'Americas/New York'
+      merchantTimeZone: 'Americas/New York',
     } as MerchantOrderTypesInfo;
     component.orderPayment = [{ accountId: '', accountName: '' }] as OrderPayment[];
-    component._merchant = { id: '1', timeZone: 'Americas/New York'} as MerchantInfo
+    component._merchant = { id: '1', timeZone: 'Americas/New York' } as MerchantInfo;
     fixture.detectChanges();
   });
 
@@ -110,7 +120,9 @@ describe('OrderDetailsComponent', () => {
     const loaderCloseSpy = jest.spyOn(_loadingService, 'closeSpinner');
     const translateSpy = jest.spyOn(_translateService, 'instant').mockImplementation(() => 'Test');
 
-    const merchantSpy = jest.spyOn(_merchantService, 'getMerchantOrderSchedule').mockImplementation(()=> of({} as Schedule));
+    const merchantSpy = jest
+      .spyOn(_merchantService, 'getMerchantOrderSchedule')
+      .mockImplementation(() => of({} as Schedule));
     component.initTimePickerData();
     expect(loaderShowSpy).toHaveBeenCalled();
     expect(merchantSpy).toHaveBeenCalled();
@@ -150,7 +162,7 @@ describe('OrderDetailsComponent', () => {
 
     const dateTime: DateTimeSelected = {} as DateTimeSelected;
     await component.onDateTimeSelected(dateTime);
-    
+
     expect(component.onOrderTimeChange.emit).toHaveBeenCalledWith(dateTime);
   });
 
@@ -188,7 +200,7 @@ describe('OrderDetailsComponent', () => {
 
   it('should emit changes on PaymentMethod change', async () => {
     const formEmitSpy = jest.spyOn(component, 'onPaymentChanged');
-    await component.onPaymentChanged({ detail: { value: {id: '12345', paymentSystemType: 1 }}});
+    await component.onPaymentChanged({ detail: { value: { id: '12345', paymentSystemType: 1 } } });
     expect(formEmitSpy).toHaveBeenCalled();
   });
 

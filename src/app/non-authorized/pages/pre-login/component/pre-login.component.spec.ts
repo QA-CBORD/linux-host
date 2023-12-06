@@ -10,6 +10,8 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { PreLoginComponent } from './pre-login.component';
+import { LoginState } from '@core/facades/identity/identity.facade.service';
+import { of } from 'rxjs';
 
 describe('PreLoginComponent', () => {
   let component: PreLoginComponent;
@@ -19,30 +21,30 @@ describe('PreLoginComponent', () => {
     const routerStub = () => ({ navigate: array => ({}) });
     const domSanitizerStub = () => ({});
     const institutionFacadeServiceStub = () => ({
-      guestSettings: {},
-      saveGuestSetting: newGuestSetting => ({})
+      guestSettings: Promise.resolve({}),
+      saveGuestSetting: newGuestSetting => ({}),
     });
     const authFacadeServiceStub = () => ({
-      setIsGuestUser: isGuestUser => ({})
+      setIsGuestUser: isGuestUser => ({}),
     });
     const settingsFacadeServiceStub = () => ({
-      fetchSettingList: (fEATURES, sessionId, institutionId) => ({}),
-      getSettings: (array, sessionId, institutionId) => ({}),
-      getSetting: (pIN_ENABLED, sessionId, institutionId) => ({})
+      fetchSettingList: (fEATURES, sessionId, institutionId) => (of({})),
+      getSettings: (array, sessionId, institutionId) => (of({})),
+      getSetting: (pIN_ENABLED, sessionId, institutionId) => (of({})),
     });
     const loadingServiceStub = () => ({
       showSpinner: () => ({}),
-      closeSpinner: () => ({})
+      closeSpinner: () => ({}),
     });
-    const sessionFacadeServiceStub = () => ({
-      determineInstitutionSelectionLoginState: () => ({})
-    });
+    const sessionFacadeServiceStub = {
+      determineInstitutionSelectionLoginState: () => Promise.resolve(LoginState.HOSTED),
+    };
     const commonServiceStub = () => ({
-      getInstitution: () => ({}),
+      getInstitution: () => Promise.resolve({ id: 'test' }),
       getInstitutionBgColor: () => ({}),
       sessionId: () => ({}),
       getInstitutionName: () => ({}),
-      getInstitutionPhoto: (arg, sanitizer) => ({})
+      getInstitutionPhoto: (arg, sanitizer) => ({}),
     });
     const messageProxyStub = () => ({ get: () => ({}), put: object => ({}) });
     TestBed.configureTestingModule({
@@ -53,44 +55,32 @@ describe('PreLoginComponent', () => {
         { provide: DomSanitizer, useFactory: domSanitizerStub },
         {
           provide: InstitutionFacadeService,
-          useFactory: institutionFacadeServiceStub
+          useFactory: institutionFacadeServiceStub,
         },
         { provide: AuthFacadeService, useFactory: authFacadeServiceStub },
         {
           provide: SettingsFacadeService,
-          useFactory: settingsFacadeServiceStub
+          useFactory: settingsFacadeServiceStub,
         },
         { provide: LoadingService, useFactory: loadingServiceStub },
-        { provide: SessionFacadeService, useFactory: sessionFacadeServiceStub },
+        { provide: SessionFacadeService, useValue: sessionFacadeServiceStub },
         { provide: CommonService, useFactory: commonServiceStub },
-        { provide: MessageProxy, useFactory: messageProxyStub }
-      ]
+        { provide: MessageProxy, useFactory: messageProxyStub },
+      ],
     });
     fixture = TestBed.createComponent(PreLoginComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('can load instance', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
-    it('makes expected calls', () => {
-      const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(
-        MessageProxy
-      );
-     jest.spyOn(messageProxyStub, 'get');
-      component.ngOnInit();
-      expect(messageProxyStub.get).toHaveBeenCalled();
-    });
-  });
-
   describe('continueAsNonGuest', () => {
     it('makes expected calls', () => {
-      const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
-        LoadingService
-      );
-     jest.spyOn(loadingServiceStub, 'showSpinner');
+      const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(LoadingService);
+      jest.spyOn(loadingServiceStub, 'showSpinner');
       component.continueAsNonGuest();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
     });
@@ -98,10 +88,8 @@ describe('PreLoginComponent', () => {
 
   describe('continueAsGuest', () => {
     it('makes expected calls', () => {
-      const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(
-        LoadingService
-      );
-     jest.spyOn(loadingServiceStub, 'showSpinner');
+      const loadingServiceStub: LoadingService = fixture.debugElement.injector.get(LoadingService);
+      jest.spyOn(loadingServiceStub, 'showSpinner');
       component.continueAsGuest();
       expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
     });

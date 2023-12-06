@@ -6,6 +6,10 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { GuestDashboard } from './guest-dashboard.component';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { mockStorageStateService } from 'src/app/testing/core-providers';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { of } from 'rxjs';
 
 describe('GuestDashboard', () => {
   let component: GuestDashboard;
@@ -15,7 +19,9 @@ describe('GuestDashboard', () => {
   let domSanitizer: any;
   let messageProxy: any;
   let sessionFacadeService: any;
-
+  let environmentFacadeService = {
+    getStateEntityByKey$: jest.fn().mockReturnValue(of(null)),
+  };
   beforeEach(waitForAsync(() => {
     commonService = {
       getInstitutionPhoto: jest.fn(),
@@ -43,6 +49,8 @@ describe('GuestDashboard', () => {
         { provide: Router, useValue: router },
         { provide: MessageProxy, useValue: messageProxy },
         { provide: SessionFacadeService, useValue: sessionFacadeService },
+        { provide: StorageStateService, useValue: mockStorageStateService },
+        { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

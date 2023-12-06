@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class MockStorageService {
   private data: { [key: string]: any } = {};
+  create = () => Promise.resolve({});
   set(key: string, value: any): Promise<any> {
     this.data[key] = value;
     return Promise.resolve();

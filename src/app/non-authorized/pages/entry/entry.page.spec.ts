@@ -6,23 +6,22 @@ import { CoreProviders, routerMock } from 'src/app/testing/core-providers';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES } from 'src/app/app.global';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state-mock.service';
-
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 describe('EntryPage', () => {
   let component: EntryPage;
   let fixture: ComponentFixture<EntryPage>;
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [EntryPage],
-        imports: [...CoreTestingModules, AppRoutingModule],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        providers: [...CoreProviders],
-      }).compileComponents();
-    })
-  );
+  let environmentFacadeService = {
+    resetEnvironmentAndCreateSession: jest.fn(),
+  };
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [EntryPage],
+      imports: [...CoreTestingModules, AppRoutingModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [...CoreProviders, { provide: EnvironmentFacadeService, useValue: environmentFacadeService }],
+    }).compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntryPage);

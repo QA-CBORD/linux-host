@@ -16,22 +16,26 @@ describe('OrderOptionsActionSheet', () => {
   let component: OrderOptionsActionSheetComponent;
   let fixture: ComponentFixture<OrderOptionsActionSheetComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [OrderOptionsActionSheetComponent],
-        imports: [
-          ...CoreTestingModules,
-          DeliveryAddressesModalModule,
-          StDateTimePickerModule,
-          StButtonModule,
-          AddressHeaderFormatPipeModule,
-        ],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        providers: [AccessibilityService, AddressHeaderFormatPipe, AndroidPermissions, OrderingService, ...CoreProviders],
-      }).compileComponents();
-    })
-  );
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [OrderOptionsActionSheetComponent],
+      imports: [
+        ...CoreTestingModules,
+        DeliveryAddressesModalModule,
+        StDateTimePickerModule,
+        StButtonModule,
+        AddressHeaderFormatPipeModule,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        AccessibilityService,
+        AddressHeaderFormatPipe,
+        AndroidPermissions,
+        OrderingService,
+        ...CoreProviders,
+      ],
+    }).compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(OrderOptionsActionSheetComponent);

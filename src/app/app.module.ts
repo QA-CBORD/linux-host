@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from '@core/core.module';
 import { IonicModule } from '@ionic/angular';
-import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage-angular';
 import { StGlobalPopoverModule } from '@shared/ui-components/st-global-popover/st-global-popover.module';
 import { GlobalErrorHandler } from '@core/utils/global-error-handler';
 import { PinModule } from './shared';
@@ -16,7 +16,7 @@ import { VaultIdentityService } from '@core/service/identity/vault.identity.serv
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import * as Sentry from '@sentry/angular';
+import * as Sentry from '@sentry/angular-ivy';
 import { HttpClient } from '@angular/common/http';
 
 export function createTranslateLoader(http: HttpClient) {
