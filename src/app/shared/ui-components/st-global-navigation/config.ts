@@ -117,4 +117,12 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     url: PATRON_NAVIGATION.settings,
     supportProfiles: [APP_PROFILES.patron, APP_PROFILES.housing]
   },
+  {
+    id: TILES_ID.notificationBell,
+    iconCssPostfix: 'rewards',
+    isEnable: false,
+    name: TILES_TITLE.notificationBell,
+    url: PATRON_NAVIGATION.rewards,
+    supportProfiles: [APP_PROFILES.patron]
+  },
 ];

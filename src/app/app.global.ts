@@ -65,6 +65,7 @@ export namespace Settings {
     REWARDS_ENABLED = 'get.feature.enable_rewards',
     FOOD_ENABLED = 'get.feature.enable_food',
     PLACES_ENABLED = 'get.feature.enable_merchants',
+    NOTIFICATION_BELL_ENABLED = 'get.feature.notificationbell_enabled',
     ONETIME_DEPOSITS_ENABLED = 'get.deposit.enable_onetime_deposits',
     AUTO_DEPOSIT_ENABLED = 'get.feature.enable_auto_deposits',
     DEPOSIT_TENDERS = 'get.feature.deposit_tenders',

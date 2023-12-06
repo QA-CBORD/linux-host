@@ -19,8 +19,10 @@ export const TILES_ID = {
   explore: getSettingName(Settings.Setting.PLACES_ENABLED),
   conversations: getSettingName(Settings.Setting.SECURE_MESSAGING_ENABLED),
   housing: getSettingName(Settings.Setting.HOUSING_ENABLED),
+  notificationBell: getSettingName(Settings.Setting.NOTIFICATION_BELL_ENABLED),
 };
 
+// TODO: Move to translate
 export enum TILES_TITLE {
   home = 'Home',
   settings = 'Settings',
@@ -33,6 +35,7 @@ export enum TILES_TITLE {
   explore = 'Explore',
   conversations = 'Conversations',
   housing = 'Housing',
+  notificationBell = 'Notifications'
 }
 
 export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
