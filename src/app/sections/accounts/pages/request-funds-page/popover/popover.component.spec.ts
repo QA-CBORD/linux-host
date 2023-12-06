@@ -4,6 +4,9 @@ import { PopoverComponent } from './popover.component';
 import { PopoverConfig } from '@core/model/popover/popover.model';
 import { PopupTypes } from '@sections/rewards/rewards.config';
 import { buttons } from '@core/utils/buttons.config';
+import { IonicModule } from '@ionic/angular';
+import { BrowserModule } from '@angular/platform-browser';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 
 @Component({ selector: 'st-icon', template: '' }) // Mocking st-icon component
 class MockIconComponent {
@@ -17,6 +20,7 @@ describe('PopoverComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PopoverComponent, MockIconComponent],
+      imports: [IonicModule, BrowserModule, StPopoverLayoutModule]
     }).compileComponents();
   });
 

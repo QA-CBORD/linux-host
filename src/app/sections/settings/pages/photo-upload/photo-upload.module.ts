@@ -8,14 +8,18 @@ import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/dele
 import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
 
-const imports = [CommonModule, StHeaderModule, IonicModule, PhotoUploadRoutingModule, ImageCropModalModule, TranslateModule];
+const imports = [
+  CommonModule,
+  StHeaderModule,
+  IonicModule,
+  PhotoUploadRoutingModule,
+  ImageCropModalModule,
+  TranslateModule,
+];
 const declarations = [PhotoUploadComponent, DeleteModalComponent];
-const entryComponents = [DeleteModalComponent];
 
 @NgModule({
   declarations,
   imports,
-  entryComponents
 })
-export class PhotoUploadModule {
-}
+export class PhotoUploadModule {}

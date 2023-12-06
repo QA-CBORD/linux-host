@@ -122,6 +122,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   protected async getStateFromIonicStorage(): Promise<WebStorageStateEntity> {
+    await this._observableStorage.init();
     const value = await lastValueFrom(this._observableStorage.get(this.storageKey));
     try {
       const state = this.convertIntoObject(value);

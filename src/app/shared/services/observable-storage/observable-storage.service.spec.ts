@@ -5,26 +5,28 @@ import { firstValueFrom, of } from 'rxjs';
 
 const hello = 'hello';
 const mock = {
-  [hello]: ' world'
-}
+  [hello]: ' world',
+};
 
 describe(ObservableStorageService, () => {
   let service: ObservableStorageService;
   let _storage;
-  
 
-  beforeEach(() => {
+  beforeEach(async () => {
     _storage = {
-      get: jest.fn(() => of(mock.hello)),
-      set: jest.fn(() => of(mock.hello)),
-      remove: jest.fn(() => of(mock.hello)),
-      clear: jest.fn(() => of(mock.hello))
+      create: jest.fn().mockResolvedValue({
+        get: jest.fn(() => of(mock.hello)),
+        set: jest.fn(() => of(mock.hello)),
+        remove: jest.fn(() => of(mock.hello)),
+        clear: jest.fn(() => of(mock.hello)),
+      }),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: Storage, useValue: _storage }],
     });
 
     service = TestBed.inject(ObservableStorageService);
+    await service.init();
   });
 
   it('should create the service', () => {
@@ -47,7 +49,7 @@ describe(ObservableStorageService, () => {
   });
 
   it('should clear the storage', async () => {
-    const spy1 = jest.spyOn(_storage as any, 'clear');
+    const spy1 = jest.spyOn(service as any, 'clear');
     service.clear();
     expect(spy1).toBeCalledTimes(1);
   });

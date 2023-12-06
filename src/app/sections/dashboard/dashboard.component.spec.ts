@@ -10,7 +10,7 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { IonicModule, Platform } from '@ionic/angular';
+import { IonicModule, Platform, PopoverController } from '@ionic/angular';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
@@ -32,8 +32,9 @@ import { TileConfigFacadeService } from './tile-config-facade.service';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService } from '@shared/services';
-import { Storage } from '@ionic/storage';
-import { MockStorageService } from '@core/states/storage/storage-state-mock.service';
+import { mockStorageStateService } from 'src/app/testing/core-providers';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 const _platform = {
   is: jest.fn(),
@@ -65,17 +66,23 @@ const _userFacadeService = {
 };
 
 const _modalService = {
-  create: jest.fn(),
+  create: jest.fn().mockResolvedValue({ present: () => Promise.resolve() }),
 };
 
 const _lockDownService = {
   loadStringsAndSettings: jest.fn(),
-}
+};
+
+const _popoverController = {
+  create: jest.fn().mockResolvedValue({ onDidDismiss: () => Promise.resolve(), present: () => Promise.resolve() }),
+};
 
 describe('DashboardPage', () => {
   let component: DashboardPage;
   let fixture: ComponentFixture<DashboardPage>;
-
+  let environmentFacadeService = {
+    getStateEntityByKey$: jest.fn().mockReturnValue(of(null)),
+  };
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       //TODO: Temp fix for Swiper imports, should setup JEST instead
@@ -89,8 +96,10 @@ describe('DashboardPage', () => {
         { provide: InstitutionFacadeService, useValue: _institutionFacadeService },
         { provide: UserFacadeService, useValue: _userFacadeService },
         { provide: ModalsService, useValue: _modalService },
-        { provide: LockDownService,  useValue: _lockDownService},
-        { provide: Storage , useClass: MockStorageService },
+        { provide: LockDownService, useValue: _lockDownService },
+        { provide: StorageStateService, useValue: mockStorageStateService },
+        { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
+        { provide: PopoverController, useValue: _popoverController },
         NavigationFacadeSettingsService,
         AndroidPermissions,
         InAppBrowser,

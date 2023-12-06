@@ -1,23 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ENVIRONMENTS_MAP, EnvironmentType } from '@core/model/environment';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 
 import { AuthFacadeService } from '../auth/auth.facade.service';
 import { MockAuthService } from 'src/app/testing/mock-services';
 import { EnvironmentFacadeService } from './environment.facade.service';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
 import { CoreProviders } from 'src/app/testing/core-providers';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 describe('EnvironmentFacadeService', () => {
   let service: EnvironmentFacadeService;
-
+  const mockStorageStateService = {
+    getStateEntityByKey$: jest.fn().mockReturnValue(of(null)),
+    updateStateEntity: jest.fn(),
+    deleteStateEntityByKey: jest.fn()
+  };
   beforeEach(() => {
     TestBed.overrideProvider(AuthFacadeService, { useValue: new MockAuthService() });
 
     TestBed.configureTestingModule({
       imports: [...CoreTestingModules],
-      providers: [...CoreProviders]
+      providers: [...CoreProviders, { provide: StorageStateService, useValue: mockStorageStateService }],
     });
     service = TestBed.inject(EnvironmentFacadeService);
   });
