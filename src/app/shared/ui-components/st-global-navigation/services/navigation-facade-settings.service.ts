@@ -14,6 +14,8 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { GuestSetting } from '@sections/guest/model/guest-settings';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
+import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
+import { TILES_ID } from '@sections/dashboard/dashboard.config';
 
 @Injectable()
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
@@ -21,19 +23,28 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private readonly firstNavKey: string = 'NAVIGATION_STARTUP';
   private readonly permissionResponse: string = 'ANDROID_PERMISSION_RESPONSE';
 
+  private readonly navigationBottomBarElementCountMap = new Map<string, Observable<string>>([
+    [TILES_ID.notificationBell, this.userNotificationsFacadeService.unreadNotificationsCount$],
+  ]);
+
   constructor(
     private readonly storage: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly authService: AuthFacadeService,
     private readonly institutionService: InstitutionFacadeService,
-    private readonly profileService: ProfileServiceFacade
+    private readonly profileService: ProfileServiceFacade,
+    private readonly userNotificationsFacadeService: UserNotificationsFacadeService
   ) {
     super();
   }
 
   get settings$(): Observable<NavigationBottomBarElement[]> {
     if (!this.isConfigInStorage()) this.storage.updateStateEntity(this.key, []);
-    return this.initSettings().pipe(switchMap(() => this.config$));
+    return this.initSettings().pipe(
+      switchMap(() => this.config$),
+      map(settings => this.updateReactiveProperties([...settings])),
+      tap(() => this.dispatchNavigationElementsIndicatorRequests())
+    );
   }
 
   private get config$(): Observable<NavigationBottomBarElement[]> {
@@ -51,11 +62,16 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   }
 
   setPermissionResponse(response: { hasPermission: boolean }): void {
-    this.storage.updateStateEntity(this.permissionResponse, response.hasPermission, { highPriorityKey: true, keepOnLogout: true });
+    this.storage.updateStateEntity(this.permissionResponse, response.hasPermission, {
+      highPriorityKey: true,
+      keepOnLogout: true,
+    });
   }
 
   get permissionResponse$(): Observable<boolean> {
-    return this.storage.getStateEntityByKey$<boolean>(this.permissionResponse).pipe(map(data => data ? data.value : false));
+    return this.storage
+      .getStateEntityByKey$<boolean>(this.permissionResponse)
+      .pipe(map(data => (data ? data.value : false)));
   }
 
   private isConfigInStorage(): boolean {
@@ -121,5 +137,17 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       }
     }
     return [...cached.filter(Boolean), ...newConfig];
+  }
+
+  private updateReactiveProperties(settings: NavigationBottomBarElement[]) {
+    return settings.map(setting => {
+      if (this.navigationBottomBarElementCountMap.has(setting.id)) {
+        setting.indicatorValue$ = this.navigationBottomBarElementCountMap.get(setting.id);
+      }
+      return setting;
+    });
+  }
+  private dispatchNavigationElementsIndicatorRequests() {
+    this.userNotificationsFacadeService.fetchNotificationsCount();
   }
 }

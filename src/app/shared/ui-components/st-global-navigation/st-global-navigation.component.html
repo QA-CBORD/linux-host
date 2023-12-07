@@ -1,26 +1,35 @@
-<nav class="global-navigation" *ngIf="(navElements$ | async) as navElements">
-  <st-popup-list *ngIf="isListShown && navElements.length > visibleAmountOfElements"
-                 (onBackdropClicked)="toggleListAppearance()">
+<nav class="global-navigation" *ngIf="navElements$ | async as navElements">
+  <st-popup-list
+    *ngIf="isListShown && navElements.length > visibleAmountOfElements"
+    (onBackdropClicked)="toggleListAppearance()"
+  >
     <ul class="global-navigation__vertical-list">
-      <ng-container *ngTemplateOutlet="navItems;
-       context: {$implicit: navElements.slice(visibleAmountOfElements - 1)}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="navItems; context: { $implicit: navElements.slice(visibleAmountOfElements - 1) }"
+      ></ng-container>
     </ul>
   </st-popup-list>
   <div class="global-navigation__main">
     <ul class="global-navigation__list">
       <ng-container
-              *ngTemplateOutlet="navItems;
-              context: {$implicit: navElements | mainNavItems: visibleAmountOfElements}"></ng-container>
-      <li *ngIf="navElements.length > visibleAmountOfElements"
-          (click)="toggleListAppearance()"
-          [ngClass]="{'global-navigation__list-item--active': navElements | isActiveRouteInList: visibleAmountOfElements | async}"
-          class="global-navigation__list-item">
-        <div class="global-navigation__icon"
-             [ngClass]="{
-             'global-navigation__icon--close': isListShown,
-             'global-navigation__icon--more': !isListShown
-             }"></div>
-        {{!isListShown ? 'more' : 'close'}}
+        *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
+      ></ng-container>
+      <li
+        *ngIf="navElements.length > visibleAmountOfElements"
+        (click)="toggleListAppearance()"
+        [ngClass]="{
+          'global-navigation__list-item--active': navElements | isActiveRouteInList : visibleAmountOfElements | async
+        }"
+        class="global-navigation__list-item"
+      >
+        <div
+          class="global-navigation__icon"
+          [ngClass]="{
+            'global-navigation__icon--close': isListShown,
+            'global-navigation__icon--more': !isListShown
+          }"
+        ></div>
+        {{ !isListShown ? 'more' : 'close' }}
         <ion-ripple-effect></ion-ripple-effect>
       </li>
     </ul>
@@ -28,11 +37,23 @@
 </nav>
 
 <ng-template #navItems let-navElems>
-  <li *ngFor="let item of navElems" [routerLink]="getLink(item.url)"
-      class="global-navigation__list-item"
-      [routerLinkActive]="'global-navigation__list-item--active'">
-    <div class="global-navigation__icon global-navigation__icon--{{item.iconCssPostfix}}"></div>
-    {{item.name}}
+  <li
+    *ngFor="let item of navElems"
+    [routerLink]="getLink(item.url)"
+    class="global-navigation__list-item"
+    [routerLinkActive]="'global-navigation__list-item--active'"
+  >
+    <div class="global-navigation__icon global-navigation__icon--{{ item.iconCssPostfix }}">
+        <!-- TODO: Add dynamic aria label -->
+      <div
+        *ngIf="item.indicatorValue$ | async as indicatorValue"
+        [attr.aria-label]="indicatorValue + ' notifications'"
+        class="global-navigation__icon--indicator"
+      >
+        {{ indicatorValue }}
+      </div>
+    </div>
+    {{ item.name }}
     <ion-ripple-effect></ion-ripple-effect>
   </li>
 </ng-template>

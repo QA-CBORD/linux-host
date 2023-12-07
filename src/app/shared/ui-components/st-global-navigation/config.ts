@@ -119,7 +119,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
   },
   {
     id: TILES_ID.notificationBell,
-    iconCssPostfix: 'rewards',
+    iconCssPostfix: 'notifications',
     isEnable: false,
     name: TILES_TITLE.notificationBell,
     url: PATRON_NAVIGATION.rewards,

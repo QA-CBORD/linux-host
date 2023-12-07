@@ -51,7 +51,7 @@
     align-items: center;
     flex-direction: column;
 
-    @include font-nunito-regular(10px);
+    @include font-nunito-regular(12px);
 
     &--active {
       border-top: 2px solid $color-dodger-blue;
@@ -62,11 +62,26 @@
   }
 
   &__icon {
+    position: relative;
     height: 27px;
     width: 27px;
     background-repeat: no-repeat;
     background-image: url('/assets/icon/bottom_navigation_icons.svg');
-    
+
+    &--indicator {
+      @include font-nunito-semibold(14px);
+      background-color: $color-red-alert;
+      height: 18px;
+      width: 18px;
+      border-radius: 90px;
+      position: absolute;
+      right: -3px;
+      top: -3px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
     .global-navigation__list-item--active & {
       background-position-y: -27px;
@@ -93,7 +108,7 @@
     }
 
     &--more {
-      background-position-x: -252px;
+      background-position-x: -280px;
     }
 
     &--housing {
@@ -116,8 +131,11 @@
       background-position-x: -224px;
     }
 
+    &--notifications {
+      background-position-x: -252px;
+    }
     &--close {
-      background-position-x: -280px;
+      background-position-x: -308px;
     }
   }
 }

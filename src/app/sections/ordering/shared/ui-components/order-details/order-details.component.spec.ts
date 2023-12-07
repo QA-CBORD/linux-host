@@ -26,7 +26,7 @@ import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.mo
 import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
 import { DateTimeSelected, TimePickerData } from '../st-date-time-picker/st-date-time-picker.component';
 import { NavigationService } from '@shared/index';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 const _modalController = {};
@@ -85,7 +85,7 @@ describe('OrderDetailsComponent', () => {
         { provide: MerchantService, useValue: _merchantService },
         { provide: NavigationService, useValue: _navigationService },
       ],
-      imports: [TypeMessageModule, ModifyPrepTimeModule, AddressHeaderFormatPipeModule, BrowserModule, FormsModule],
+      imports: [TypeMessageModule, ModifyPrepTimeModule, AddressHeaderFormatPipeModule, BrowserModule, ReactiveFormsModule],
     }).compileComponents();
   });
 
