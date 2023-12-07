@@ -29,7 +29,7 @@
             'global-navigation__icon--more': !isListShown
           }"
         ></div>
-        {{ !isListShown ? 'more' : 'close' }}
+        {{ (!isListShown ? 'patron-ui.core-ui.label_more' : 'patron-ui.core-ui.label_close') | translate }}
         <ion-ripple-effect></ion-ripple-effect>
       </li>
     </ul>

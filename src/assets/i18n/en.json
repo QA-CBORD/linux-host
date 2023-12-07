@@ -621,7 +621,9 @@
       "button_done": "Done",
       "button_ok": "OK",
       "button_retry": "RETRY",
-      "dialog_header_retry": "Retry"
+      "dialog_header_retry": "Retry",
+      "label_more": "more",
+      "label_close": "close"
     },
     "creditCardMgmt": {
       "added_success_msg": "Your credit card has been added successfully.",

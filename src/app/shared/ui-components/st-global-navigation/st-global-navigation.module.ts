@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { IsActiveRouteInListPipe } from './pipe/is-active-route-in-list.pipe';
 import { MainNavItemsPipe } from '@shared/ui-components/st-global-navigation/pipe/main-nav-items.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 const declarations = [StGlobalNavigationComponent, PopupListComponent, MainNavItemsPipe, IsActiveRouteInListPipe];
 
@@ -18,6 +19,7 @@ const declarations = [StGlobalNavigationComponent, PopupListComponent, MainNavIt
     RouterModule,
     IonicModule,
     StopPropagationModule,
+    TranslateModule
   ],
   exports: declarations,
   providers: [NavigationFacadeSettingsService],
