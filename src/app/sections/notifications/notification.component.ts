@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { InfiniteScrollCustomEvent } from '@ionic/angular';
 
 @Component({
-  selector: 'st-notification-list',
-  templateUrl: './notification-list.component.html',
-  styleUrls: ['./notification-list.component.scss']
+  selector: 'st-notification',
+  templateUrl: './notification.component.html',
+  styleUrls: ['./notification.component.scss']
 })
-export class NotificationsComponent {
+export class NotificationsComponent implements OnInit {
   items = [];
 
   ngOnInit() {

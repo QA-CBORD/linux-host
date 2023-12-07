@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NotificationsComponent } from './notification-list.component';
+import { NotificationsComponent } from './notification.component';
 
 describe('NotificationListComponent', () => {
   let component: NotificationsComponent;
