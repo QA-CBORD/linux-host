@@ -309,10 +309,10 @@ export class CartComponent implements OnInit, OnDestroy {
           this.errorCode = error[0];
           const errorKey =
             this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER
-              ? 'ItemsNotAvailableEmptyYourCart'
+              ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
               : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
-              ? 'PickUpOrderTimeNotAvailable'
-              : 'DeliveryOrderTimeNotAvailable';
+              ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+              : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
