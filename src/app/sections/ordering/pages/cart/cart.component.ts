@@ -308,7 +308,9 @@ export class CartComponent implements OnInit, OnDestroy {
         if (Array.isArray(error)) {
           this.errorCode = error[0];
           const errorKey =
-            this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
+            this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER
+              ? 'ItemsNotAvailableEmptyYourCart'
+              : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
               ? 'PickUpOrderTimeNotAvailable'
               : 'DeliveryOrderTimeNotAvailable';
           this.cartService.cartsErrorMessage = error[1];
