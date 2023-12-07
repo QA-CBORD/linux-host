@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 export interface NavigationBottomBarElement {
   url: PATRON_NAVIGATION | string;
-  isEnable: boolean;
+  isEnabled: boolean;
   iconCssPostfix: string;
   name: string;
   id: string;

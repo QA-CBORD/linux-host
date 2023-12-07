@@ -86,7 +86,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       switchMap(async ([settingInfo, guestUser, setting]) => {
         const currentProfile = await this.profileService.determineCurrentProfile(settingInfo);
         return this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(
-          ({ isEnable, supportProfiles }) => isEnable && supportProfiles.includes(currentProfile)
+          ({ isEnabled, supportProfiles }) => isEnabled && supportProfiles.includes(currentProfile)
         );
       })
     );
@@ -112,18 +112,13 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   ): NavigationBottomBarElement[] {
     if (args.guestUser) {
       return GUEST_NAVIGATION_BASE_CONFIG.filter(setting => {
-        if (setting.visibilityOn) {
-          setting.isEnable = setting.visibilityOn(args.setting);
-        } else {
-          const s = settings.find(({ name }) => name === setting.id);
-          setting.isEnable = !!Number(s?.value);
-        }
-        return setting.isEnable;
+        setting.isEnabled = setting.visibilityOn(args.setting);
+        return setting.isEnabled;
       });
     }
     return NAVIGATION_BASE_CONFIG.map(setting => {
       const s = settings.find(({ name }) => name === setting.id);
-      return s ? { ...setting, isEnable: !!Number(s.value) } : setting;
+      return s ? { ...setting, isEnabled: !!Number(s.value) } : setting;
     });
   }
 

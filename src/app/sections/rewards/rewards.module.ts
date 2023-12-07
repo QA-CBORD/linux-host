@@ -26,7 +26,6 @@ const imports = [
   FormsModule,
   IonicModule,
   RewardsRoutingModule,
-  RewardsRoutingModule,
   StPopoverLayoutModule,
   StHeaderModule,
   StNavTabsModule,
