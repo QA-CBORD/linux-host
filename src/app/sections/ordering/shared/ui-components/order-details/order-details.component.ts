@@ -266,11 +266,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   getDueTimeErrorKey() {
     const error = {
-      [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+      [ORDER_ERROR_CODES.INVALID_ORDER]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
       [ORDER_ERROR_CODES.ORDER_CAPACITY]:
         this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
-          ? 'PickUpOrderTimeNotAvailable'
-          : 'DeliveryOrderTimeNotAvailable',
+          ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+          : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable,
     }[this.errorCode] as keyof DueTimeErrorMessages;
     return error;
   }
