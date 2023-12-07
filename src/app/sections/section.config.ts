@@ -12,6 +12,7 @@ export enum PATRON_ROUTES {
   explore = 'explore',
   biometric = 'biometric',
   settings = 'settings',
+  notifications = "notifications"
 }
 
 

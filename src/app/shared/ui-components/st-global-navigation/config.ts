@@ -131,7 +131,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     isEnable: false,
     indicatorAriaLabel: 'a11y.bottom_navigation.notifications',
     name: TILES_TITLE.notificationBell,
-    url: PATRON_NAVIGATION.rewards,
+    url: PATRON_NAVIGATION.notifications,
     supportProfiles: [APP_PROFILES.patron]
   },
 ];

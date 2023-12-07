@@ -46,6 +46,10 @@ const routes: Route[] = [
         path: PATRON_ROUTES.settings,
         loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule),
       },
+      {
+        path: PATRON_ROUTES.notifications,
+        loadChildren: () => import('./notifications/notifications.module').then(m => m.NotificationsModule),
+      },
     ]
   },
   {

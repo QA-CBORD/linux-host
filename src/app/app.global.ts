@@ -226,6 +226,7 @@ export enum PATRON_NAVIGATION {
   explore = 'patron/explore',
   biometric = 'patron/biometric',
   settings = 'patron/settings',
+  notifications = 'patron/notifications'
 }
 
 export enum GUEST_NAVIGATION {
