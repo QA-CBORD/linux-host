@@ -26,6 +26,7 @@
         [resizeToHeight]="saveHeight"
         [maintainAspectRatio]="maintainAspectRatio"
         format="jpeg"
+        output="base64"
         (cropperReady)="cropperIsReady($event)"
         (imageCropped)="imageCropped($event)"
         (loadImageFailed)="loadImageFailed()"
