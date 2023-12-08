@@ -64,7 +64,10 @@ const _toastService = {
 const _popoverController = {
   create: jest.fn().mockReturnValue(Promise.resolve({ onDidDismiss: () => Promise.resolve() })),
 };
-const _orderingService = {};
+const _orderingService = {
+  getContentStringByName: jest.fn().mockReturnValue(of('')),
+  getContentErrorStringByName: jest.fn().mockReturnValue(of('')),
+};
 const _userFacadeService = {
   isApplePayEnabled$: jest.fn(),
 };
@@ -80,6 +83,7 @@ const _checkinProcess = {};
 const _nonCheckingService = {};
 const _lockDownService = {
   isLockDownOn: jest.fn(),
+  loadStringsAndSettings: jest.fn()
 };
 const _translateService = {};
 const _priceUnitsResolverPipe = {};

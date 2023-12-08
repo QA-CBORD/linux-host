@@ -5,6 +5,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccountsService } from '@sections/dashboard/services';
 import { CreditCardService } from './credit-card.service';
+import { of } from 'rxjs';
 
 describe('CreditCardService', () => {
   let service: CreditCardService;
@@ -22,7 +23,7 @@ describe('CreditCardService', () => {
       showError: (message, duration) => ({})
     });
     const accountsServiceStub = () => ({
-      getUserAccounts: array => ({}),
+      getUserAccounts: array => (of([{ accountTender: 'test', lastFour: 4444 }])),
       removeCreditCardAccount: userAccount => ({})
     });
     TestBed.configureTestingModule({

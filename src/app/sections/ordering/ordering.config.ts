@@ -119,6 +119,7 @@ export enum ORDERING_CONTENT_STRINGS {
   mediaLostException = 'MediaLostException',
   pickUpOrderTimeNotAvailable = 'PickUpOrderTimeNotAvailable',
   deliveryOrderTimeNotAvailable = 'DeliveryOrderTimeNotAvailable',
+  menuItemsNotAvailable = 'ItemsNotAvailable',
   itemsNotAvailable = 'not_orders_items_available',
   noAvailableTenders = 'no_available_tenders'
 }

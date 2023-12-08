@@ -46,4 +46,8 @@ export class ObservableSessionStorageService implements ObservableStorage {
       subscriber.complete();
     });
   }
+
+  async init() {
+    await Promise.resolve(true);
+  }
 }

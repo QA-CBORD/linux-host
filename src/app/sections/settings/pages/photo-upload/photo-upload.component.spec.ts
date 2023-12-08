@@ -68,13 +68,15 @@ describe('PhotoUploadComponent', () => {
   const mockTranslateService = {
     currentLang: 'en',
     setTranslation: jest.fn(),
+    get: jest.fn().mockReturnValue(of('')),
+    translate: jest.fn().mockReturnValue(of('')),
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PhotoUploadComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [TranslateModule],
+      imports: [TranslateModule.forRoot()],
       providers: [
         { provide: Router, useValue: router },
         { provide: DomSanitizer, useValue: domSanitizer },
@@ -86,7 +88,6 @@ describe('PhotoUploadComponent', () => {
         { provide: ChangeDetectorRef, useValue: cd },
         { provide: PhotoCropModalService, useValue: photoCropModalService },
         { provide: CameraService, useValue: cameraService },
-        { provide: TranslateService, useValue: mockTranslateService },
       ],
     }).compileComponents();
   });

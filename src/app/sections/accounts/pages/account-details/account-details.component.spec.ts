@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { TransactionService } from '../../services/transaction.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccountDetailsComponent } from './account-details.component';
+import { of } from 'rxjs';
+import { BrowserModule } from '@angular/platform-browser';
 
 describe('AccountDetailsComponent', () => {
   let component: AccountDetailsComponent;
@@ -14,31 +16,34 @@ describe('AccountDetailsComponent', () => {
     const activatedRouteStub = () => ({ snapshot: { params: { id: {} } } });
     const routerStub = () => ({
       getCurrentNavigation: () => ({
-        extras: { state: { backButtonText: {} } }
-      })
+        extras: { state: { backButtonText: {} } },
+      }),
     });
     const transactionServiceStub = () => ({
-      transactions$: {},
+      transactions$: of([]),
       getNextTransactionsByAccountId: currentAccountId => ({
-        pipe: () => ({ subscribe: f => f({}) })
+        pipe: () => ({ subscribe: f => f({}) }),
       }),
       activeAccountId: {},
       activeTimeRange: { name: {} },
-      getContentStrings: transactionStringNames => ({})
+      getContentStrings: transactionStringNames => ({}),
     });
     const toastServiceStub = () => ({ showToast: object => ({}) });
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
+      imports: [BrowserModule],
       declarations: [AccountDetailsComponent],
       providers: [
         { provide: ActivatedRoute, useFactory: activatedRouteStub },
         { provide: Router, useFactory: routerStub },
         { provide: TransactionService, useFactory: transactionServiceStub },
-        { provide: ToastService, useFactory: toastServiceStub }
-      ]
+        { provide: ToastService, useFactory: toastServiceStub },
+      ],
     });
     fixture = TestBed.createComponent(AccountDetailsComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
+    (component as any).lazy = {};
   });
 
   it('can load instance', () => {
@@ -48,8 +53,8 @@ describe('AccountDetailsComponent', () => {
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
       const routerStub: Router = fixture.debugElement.injector.get(Router);
-     jest.spyOn(component, 'setContentStrings');
-     jest.spyOn(routerStub, 'getCurrentNavigation');
+      jest.spyOn(component, 'setContentStrings');
+      jest.spyOn(routerStub, 'getCurrentNavigation');
       component.ngOnInit();
       expect(component.setContentStrings).toHaveBeenCalled();
       expect(routerStub.getCurrentNavigation).toHaveBeenCalled();
@@ -58,26 +63,17 @@ describe('AccountDetailsComponent', () => {
 
   describe('getNextTransactionPackage', () => {
     it('makes expected calls', () => {
-      const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
-        TransactionService
-      );
-     jest.spyOn(
-        transactionServiceStub,
-        'getNextTransactionsByAccountId'
-      );
+      const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(TransactionService);
+      jest.spyOn(transactionServiceStub, 'getNextTransactionsByAccountId');
       component.getNextTransactionPackage();
-      expect(
-        transactionServiceStub.getNextTransactionsByAccountId
-      ).toHaveBeenCalled();
+      expect(transactionServiceStub.getNextTransactionsByAccountId).toHaveBeenCalled();
     });
   });
 
   describe('setContentStrings', () => {
     it('makes expected calls', () => {
-      const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(
-        TransactionService
-      );
-     jest.spyOn(transactionServiceStub, 'getContentStrings');
+      const transactionServiceStub: TransactionService = fixture.debugElement.injector.get(TransactionService);
+      jest.spyOn(transactionServiceStub, 'getContentStrings');
       component.setContentStrings();
       expect(transactionServiceStub.getContentStrings).toHaveBeenCalled();
     });

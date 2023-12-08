@@ -1,32 +1,43 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { InstitutionsPage } from "./institutions.page";
-import { IonSearchbar, Platform } from "@ionic/angular";
-import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from "@angular/core";
-import { InstitutionFacadeService } from "@core/facades/institution/institution.facade.service";
-import { SettingsFacadeService } from "@core/facades/settings/settings-facade.service";
-import { EnvironmentFacadeService } from "@core/facades/environment/environment.facade.service";
-import { AuthFacadeService } from "@core/facades/auth/auth.facade.service";
-import { LoadingService } from "@core/service/loading/loading.service";
-import { SessionFacadeService } from "@core/facades/session/session.facade.service";
-import { Router } from "@angular/router";
-import { ToastService } from "@core/service/toast/toast.service";
-import { RegistrationServiceFacade } from "../registration/services/registration-service-facade";
-import { CommonService, MessageProxy } from "@shared/services";
-import { NativeProvider } from "@core/provider/native-provider/native.provider";
-import { By } from "@angular/platform-browser";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { InstitutionsPage } from './institutions.page';
+import { IonSearchbar, Platform } from '@ionic/angular';
+import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { Router } from '@angular/router';
+import { ToastService } from '@core/service/toast/toast.service';
+import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
+import { CommonService, MessageProxy } from '@shared/services';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { By } from '@angular/platform-browser';
+import { of } from 'rxjs';
+import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 
 describe('InstitutionPage', () => {
   let component: InstitutionsPage;
   let fixture: ComponentFixture<InstitutionsPage>;
   let searchbar: DebugElement;
-  let institutionFacadeService;
+  let institutionFacadeService = {
+    clearCurrentInstitution: jest.fn(),
+    retrieveLookupList$: jest.fn().mockReturnValue(of([])),
+  };
   let settingsFacadeService;
-  let environmentFacadeService;
-  let authFacadeService;
+  let environmentFacadeService = {
+    resetEnvironmentAndCreateSession: jest.fn(),
+  };
+  let authFacadeService = {
+    getAuthSessionToken$: jest.fn().mockReturnValue(of('')),
+  };
   let loadingService;
   let sessionFacadeService;
   let nav;
-  let toastService;
+  let toastService = {
+    showToast: jest.fn(),
+  };
   let registrationServiceFacade;
   let commonService;
   let messageProxy;
@@ -50,9 +61,9 @@ describe('InstitutionPage', () => {
         { provide: CommonService, useValue: commonService },
         { provide: MessageProxy, useValue: messageProxy },
         { provide: Platform, useValue: platform },
-        { provide: NativeProvider, useValue: nativeProvider }
+        { provide: NativeProvider, useValue: nativeProvider },
       ],
-      imports: [],
+      imports: [SearchPipeModule],
     }).compileComponents();
   });
 

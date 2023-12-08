@@ -9,8 +9,6 @@ import { ApplicationDetails, ApplicationRequest, ApplicationStatus, PatronApplic
 import { ApplicationsService } from './applications.service';
 import { ResponseStatus } from '../housing.model';
 import { CurrentForm, FormPaymentComponent } from '../pages/form-payment/form-payment.component';
-import { applicationsService, popoverCtrl } from '../pages/form-payment/form-payment.component.spec';
-import { FormType } from '../pages/form-payment/form-payment.service';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
 import { FormPaymentModule } from '../pages/form-payment/form-payment.module';
 import { QuestionsEntries, QuestionsStorageService } from '../questions/questions-storage.service';
@@ -18,7 +16,6 @@ import { HousingProxyService } from '../housing-proxy.service';
 import { ApplicationsStateService } from './applications-state.service';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { QuestionsService } from '../questions/questions.service';
-import { RoommateDetails } from '../roommate/roommate.model';
 const mockQuestionsStorageService = {
   updateCreatedDateTime: jest.fn().mockReturnValue(of()),
   getQuestions: jest.fn(() => of()),
@@ -123,7 +120,7 @@ describe('ApplicationsService', () => {
       providers: [
         ApplicationsService,
         { provide: ModalController, useValue: modalControler },
-        { provide: PopoverController, useValue: popoverCtrl },
+        { provide: PopoverController, useValue: {} },
         { provide: Storage, useValue: _storage },
         { provide: EnvironmentFacadeService, useValue: _environmentFacadeService },
         { provide: CreditCardService, useValue: _creditCardService },

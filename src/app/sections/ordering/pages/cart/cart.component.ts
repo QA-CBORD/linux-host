@@ -308,9 +308,11 @@ export class CartComponent implements OnInit, OnDestroy {
         if (Array.isArray(error)) {
           this.errorCode = error[0];
           const errorKey =
-            this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
-              ? 'PickUpOrderTimeNotAvailable'
-              : 'DeliveryOrderTimeNotAvailable';
+            this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER
+              ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
+              : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
+              ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+              : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
@@ -590,9 +592,11 @@ export class CartComponent implements OnInit, OnDestroy {
         const key = error && error[0];
         const options = await firstValueFrom(this.orderDetailOptions$);
         const errorKey = {
-          [ORDER_ERROR_CODES.INVALID_ORDER]: 'ItemsNotAvailable',
+          [ORDER_ERROR_CODES.INVALID_ORDER]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
           [ORDER_ERROR_CODES.ORDER_CAPACITY]:
-            options.orderType === ORDER_TYPE.PICKUP ? 'PickUpOrderTimeNotAvailable' : 'DeliveryOrderTimeNotAvailable',
+            options.orderType === ORDER_TYPE.PICKUP
+              ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+              : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable,
         }[key] as keyof DueTimeErrorMessages;
         const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
         this.toastService.showError(errorMessage, TOAST_DURATION, 'bottom');

@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { RoomsService } from './rooms.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ModalController, PopoverController } from '@ionic/angular';
-import { popoverCtrl } from '../pages/form-payment/form-payment.component.spec';
 import { EnvironmentType } from '@core/model/environment';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Storage } from '@ionic/storage';
@@ -31,7 +30,7 @@ describe('RoomsService', () => {
       imports: [HttpClientTestingModule],
       providers: [
         { provide: ModalController, useValue: modalController },
-        { provide: PopoverController, useValue: popoverCtrl },
+        { provide: PopoverController, useValue: {} },
         { provide: EnvironmentFacadeService, useValue: _environmentFacadeService },
         { provide: Storage, useClass: MockStorageService },
       ],

@@ -1,6 +1,6 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import * as Sentry from '@sentry/angular';
+import * as Sentry from '@sentry/angular-ivy';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {

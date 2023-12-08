@@ -18,7 +18,9 @@ describe('OptInGuard', () => {
       getContentValueByName: jest.fn(),
     };
     mockPopoverController = {
-      create: jest.fn(() => Promise.resolve({ onDidDismiss: jest.fn(() => Promise.resolve()) })),
+      create: jest.fn(() =>
+        Promise.resolve({ onDidDismiss: jest.fn().mockResolvedValue({}), present: jest.fn().mockResolvedValue({}) })
+      ),
     };
     mockApiService = {
       optUserIntoRewardTrack: jest.fn(),
@@ -52,7 +54,7 @@ describe('OptInGuard', () => {
     const mockUserRewardTrackInfo = { userOptInStatus: 'yes' };
     mockRewardsService.getUserRewardTrackInfo.mockReturnValueOnce(of(mockUserRewardTrackInfo));
 
-    guard.canActivate().subscribe((result) => {
+    guard.canActivate().subscribe(result => {
       expect(result).toBe(true);
     });
   });
@@ -62,7 +64,7 @@ describe('OptInGuard', () => {
     mockRewardsService.getUserRewardTrackInfo.mockReturnValueOnce(of(mockUserRewardTrackInfo));
 
     guard.canActivate().subscribe({
-      error: (error) => {
+      error: error => {
         expect(error).toEqual(mockUserRewardTrackInfo);
       },
     });
@@ -70,7 +72,7 @@ describe('OptInGuard', () => {
   it('should handle error from rewardTrackInfo', () => {
     const mockError = new Error('An error occurred');
     guard['errorHandler'](throwError(mockError)).subscribe({
-      error: (error) => {
+      error: error => {
         expect(error).toBe(mockError);
       },
     });
@@ -88,14 +90,13 @@ describe('OptInGuard', () => {
     const subject = new Subject();
     jest.spyOn(guard as any, 'modalHandler').mockResolvedValue({});
     jest.spyOn(guard as any, 'callForOptIn').mockReturnValue(of(true));
-  
+
     guard['errorHandler'](of(mockRewardTrackInfo)).subscribe(() => {
       expect(guard['modalHandler']).toHaveBeenCalledWith(subject, mockRewardTrackInfo);
       expect(guard['callForOptIn']).toHaveBeenCalledWith(mockRewardTrackInfo.trackID);
     });
-  
+
     subject.next(null);
     subject.complete();
   });
-
 });
