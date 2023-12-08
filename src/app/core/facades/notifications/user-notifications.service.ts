@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { UserNotificationApiService } from '@core/service/user-notification/user-notification-api.service';
 import { BehaviorSubject, Observable, first, firstValueFrom } from 'rxjs';
 
-@Injectable({
+const MAXIMUN_NOTIFICATION_COUNT = 9;
+@
+Injectable({
   providedIn: 'root',
 })
 export class UserNotificationsFacadeService {
@@ -16,6 +18,6 @@ export class UserNotificationsFacadeService {
 
   public async fetchNotificationsCount() {
     const count = await firstValueFrom(this._userNotificationApiService.getUnreadCount().pipe(first()));
-    this._unreadNotificationsCount$.next(count > 9 ? '9+' : String(count));
+    this._unreadNotificationsCount$.next(count > MAXIMUN_NOTIFICATION_COUNT ? `${MAXIMUN_NOTIFICATION_COUNT}+` : String(count || ''));
   }
 }
