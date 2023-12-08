@@ -1,0 +1,18 @@
+<st-header title="Notifications" [isTitleShow]="true" backButtonIcon="close" backButtonTitle=""
+  [isToolbarShow]="true"></st-header>
+<ion-content>
+  <ion-list *ngFor="let group of notificationGroups">
+    <ion-item-divider>
+      {{ group.date }}
+    </ion-item-divider>
+    <ion-item *ngFor="let notification of group.notifications; index as i">
+      <ion-avatar slot="start">
+        <img [src]="'https://picsum.photos/80/80?random=' + i" alt="avatar" />
+      </ion-avatar>
+      <ion-label> {{ notification.message }}</ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

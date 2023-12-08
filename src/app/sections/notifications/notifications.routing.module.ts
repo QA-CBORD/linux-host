@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { NotificationsComponent } from './notification.component';
+import { NotificationsComponent } from './notifications.component';
 
 const routes: Route[] = [
   {
