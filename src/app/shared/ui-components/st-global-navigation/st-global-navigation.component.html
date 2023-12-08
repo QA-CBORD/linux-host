@@ -44,10 +44,9 @@
     [routerLinkActive]="'global-navigation__list-item--active'"
   >
     <div class="global-navigation__icon global-navigation__icon--{{ item.iconCssPostfix }}">
-        <!-- TODO: Add dynamic aria label -->
       <div
         *ngIf="item.indicatorValue$ | async as indicatorValue"
-        [attr.aria-label]="indicatorValue + ' notifications'"
+        [attr.aria-label]="item.indicatorAriaLabel | translate : { count: indicatorValue }"
         class="global-navigation__icon--indicator"
       >
         {{ indicatorValue }}

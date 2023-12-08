@@ -71,9 +71,9 @@
     &--indicator {
       @include font-nunito-semibold(14px);
       background-color: $color-red-alert;
-      height: 18px;
-      width: 18px;
-      border-radius: 90px;
+      height: 20px;
+      width: 20px;
+      border-radius: 20px;
       position: absolute;
       right: -3px;
       top: -3px;

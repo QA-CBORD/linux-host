@@ -1,4 +1,9 @@
 {
+  "a11y": {
+    "bottom_navigation": {
+      "notifications": "{{count}} unread notifications"
+    }
+  },
   "check-in-ui": {
     "scan-screen": {
       "instructions": "<p>Follow these <u>3</u> simple steps for your order:</p> <ol>   <li>     Scan the QR Code to <b>Check-In</b> to let us know you&apos;re here. We&apos;ll start     preparing your order.   </li>   <li>Check your phone notifications to know when your order is ready.</li>   <li>Approach the counter to receive your order. Enjoy!</li> </ol>"
@@ -623,7 +628,21 @@
       "button_retry": "RETRY",
       "dialog_header_retry": "Retry",
       "label_more": "more",
-      "label_close": "close"
+      "label_close": "close",
+      "bottom_navigation": {
+        "home": "Home",
+        "settings": "Settings",
+        "accounts": "Accounts",
+        "transactions": "Transactions",
+        "rewards": "Rewards",
+        "mobile_access": "Mobile Access",
+        "meal_donations": "Meal Donations",
+        "order": "Order",
+        "explore": "Explore",
+        "conversations": "Conversations",
+        "housing": "Housing",
+        "notification_bell": "Notifications"
+      }
     },
     "creditCardMgmt": {
       "added_success_msg": "Your credit card has been added successfully.",
@@ -939,10 +958,10 @@
       "lbl_btn_checkin": "CHECK IN",
       "manual-entry_instructions": "Enter the barcode to add the item to your cart.",
       "need_checkin": "You still need to check in",
-      "new_menu_detected_cancelbutton":"Cancel",
-      "new_menu_detected_changemenubutton":"Change Menu",
-      "new_menu_detected_message":"<p>The selected time requires a different menu. Changing the menu will <strong>remove all items</strong> from your cart.</p>",
-      "new_menu_detected_title":"Change the menu?",
+      "new_menu_detected_cancelbutton": "Cancel",
+      "new_menu_detected_changemenubutton": "Change Menu",
+      "new_menu_detected_message": "<p>The selected time requires a different menu. Changing the menu will <strong>remove all items</strong> from your cart.</p>",
+      "new_menu_detected_title": "Change the menu?",
       "not_orders_items_available": "Some of the order items aren't available for picked date.",
       "ordering_connection_lost": "Your internet connection was interrupted, however your order may have been submitted, please review your recent order history",
       "ordering_dates_unavailable": "The merchant does not have dates available. Please contact customer service.",

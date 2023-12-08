@@ -12,4 +12,5 @@ export interface NavigationBottomBarElement {
   visibilityOn?: (settings: GuestSetting) => boolean;
   supportProfiles: APP_PROFILES[];
   indicatorValue$?: Observable<string>;
+  indicatorAriaLabel?: string;
 }

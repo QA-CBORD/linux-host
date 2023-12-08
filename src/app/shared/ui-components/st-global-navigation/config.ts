@@ -42,6 +42,14 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     visibilityOn: () => true,
     supportProfiles: [APP_PROFILES.guest]
   },
+  {
+    id: TILES_ID.notificationBell,
+    iconCssPostfix: 'notifications',
+    isEnable: false,
+    name: TILES_TITLE.notificationBell,
+    url: PATRON_NAVIGATION.rewards,
+    supportProfiles: [APP_PROFILES.guest]
+  },
 ];
 
 export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> = [
@@ -121,6 +129,7 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     id: TILES_ID.notificationBell,
     iconCssPostfix: 'notifications',
     isEnable: false,
+    indicatorAriaLabel: 'a11y.bottom_navigation.notifications',
     name: TILES_TITLE.notificationBell,
     url: PATRON_NAVIGATION.rewards,
     supportProfiles: [APP_PROFILES.patron]
