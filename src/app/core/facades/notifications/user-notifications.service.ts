@@ -3,8 +3,7 @@ import { UserNotificationApiService } from '@core/service/user-notification/user
 import { BehaviorSubject, Observable, first, firstValueFrom } from 'rxjs';
 
 const MAXIMUN_NOTIFICATION_COUNT = 9;
-@
-Injectable({
+@Injectable({
   providedIn: 'root',
 })
 export class UserNotificationsFacadeService {
