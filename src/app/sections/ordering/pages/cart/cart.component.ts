@@ -551,7 +551,10 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.updateOrderPhone(this.cartFormState.data[FORM_CONTROL_NAMES.phone]);
     /// if Apple Pay Order
 
-    if (this.isApplePay()) accountId = await this.getAccountIdFromApplePay();
+    if (this.isApplePay()) {
+      this.isProcessingOrder = false;
+      accountId = await this.getAccountIdFromApplePay();
+    }
 
     if (!this.isOnline) {
       this.onErrorModal(this.orderSubmitErrorMessage.noConnection);
