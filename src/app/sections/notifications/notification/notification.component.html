@@ -1,0 +1,6 @@
+<ion-item *ngFor="let notification of group; index as i">
+    <ion-avatar slot="start">
+      <img [src]="'https://picsum.photos/80/80?random=' + i" alt="avatar" />
+    </ion-avatar>
+    <ion-label> {{ notification.message }}</ion-label>
+  </ion-item>
