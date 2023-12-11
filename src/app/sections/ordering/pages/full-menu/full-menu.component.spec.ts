@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FullMenuComponent } from './full-menu.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Storage } from '@ionic/storage';
-import { CoreTestingModules } from 'src/app/testing/core-modules';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -13,10 +12,18 @@ import { of } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
 describe('FullMenuComponent', () => {
   let component: FullMenuComponent;
   let fixture: ComponentFixture<FullMenuComponent>;
+
+  const modalSpy = {
+    onDidDismiss: jest.fn(() => Promise.resolve({ role: BUTTON_TYPE.CONTINUE })),
+    present: jest.fn(),
+  };
+  
   const storage = {
     clear: jest.fn(),
     ready: jest.fn(),
@@ -25,7 +32,9 @@ describe('FullMenuComponent', () => {
   const orderingService = {
     getContentStringByName: jest.fn(async labelSavedAddresses => ({})),
   };
-  const _translateService = {};
+  const _translateService = {
+    instant: jest.fn(),
+  };
   const modalControllerMock = {
     getTop: jest.fn(),
     dismiss: jest.fn(),
@@ -36,15 +45,24 @@ describe('FullMenuComponent', () => {
   };
   const cartService = {
     menuItems$: of(null),
+    clearActiveOrder: jest.fn(),
+    setActiveMerchantsMenuByOrderOptions: jest.fn()
   };
   const merchantService = {
     menuInfo$: of(null),
     merchant$: of(null),
   };
-  let loadingService;
-  let toastService;
-  let alertController;
-  let orderActionSheetService;
+  let loadingService = {
+    showSpinner: jest.fn(),
+    closeSpinner: jest.fn()
+  };
+  let toastService = {
+    showToast: jest.fn()
+  };
+  let alertController = { create: jest.fn(() => Promise.resolve(modalSpy)), present: jest.fn(() => Promise.resolve(true)) };
+  let orderActionSheetService = {
+    openActionSheet: jest.fn()
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -72,9 +90,48 @@ describe('FullMenuComponent', () => {
     component = fixture.componentInstance;
   });
 
-  describe('Component', () => {
+  describe('FullMenuComponent', () => {
     it('should exist', () => {
       expect(component).toBeTruthy();
+    });
+
+    it('should call setActiveMerchantsMenuByOrderOptions on cancel button click', async () => {
+      const dueTime = "01-01-2023";
+      const orderType = ORDER_TYPE.DELIVERY;
+      const address = 'Address example';
+      const isASAP = true;
+
+      await component.modalHandler({ dueTime, orderType, address, isASAP });
+
+      const cancelButtonHandler = (component as any).alertController.create.mock.calls[0][0].buttons[0].handler;
+      cancelButtonHandler();
+
+      expect((component as any).cartService.setActiveMerchantsMenuByOrderOptions).toHaveBeenCalledWith(
+        dueTime,
+        orderType,
+        address,
+        isASAP
+      );
+    });
+
+    it('should call clearActiveOrder and setActiveMerchantsMenuByOrderOptions on confirm button click', async () => {
+      const dueTime = "01-01-2023";
+      const orderType = ORDER_TYPE.DELIVERY;
+      const address = 'Address example';
+      const isASAP = true;
+
+      await component.modalHandler({ dueTime, orderType, address, isASAP });
+
+      const confirmButtonHandler = (component as any).alertController.create.mock.calls[0][0].buttons[1].handler;
+      confirmButtonHandler();
+
+      expect((component as any).cartService.clearActiveOrder).toHaveBeenCalled();
+      expect((component as any).cartService.setActiveMerchantsMenuByOrderOptions).toHaveBeenCalledWith(
+        dueTime,
+        orderType,
+        address,
+        isASAP
+      );
     });
   });
 });
