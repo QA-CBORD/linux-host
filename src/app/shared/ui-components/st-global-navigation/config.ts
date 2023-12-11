@@ -47,7 +47,7 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     iconCssPostfix: 'notifications',
     isEnabled: false,
     name: TILES_TITLE.notificationBell,
-    url: PATRON_NAVIGATION.rewards,
+    url: PATRON_NAVIGATION.notifications,
     supportProfiles: [APP_PROFILES.guest]
   },
 ];

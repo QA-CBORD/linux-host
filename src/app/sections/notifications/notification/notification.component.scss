@@ -1,0 +1,39 @@
+@import "tools";
+
+ion-item {
+  padding-top: 1.5%;
+}
+
+ion-text {
+  @include font-nunito-heavy(16px);
+}
+
+ion-icon {
+  background-color: red;
+  position: absolute;
+  right: 5%;
+  transform: translateX(50%);
+  justify-content: center;
+  align-items: center;
+}
+
+ion-row ion-label {
+  @include font-nunito-regular(12px);
+}
+
+.avatar {
+  width: 70%;
+  height: 70%;
+
+  &-wrapper {
+    background: rgba($color-black, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.padding-bottom {
+  padding-bottom: 3%;
+}

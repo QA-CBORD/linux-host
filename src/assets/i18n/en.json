@@ -1086,6 +1086,15 @@
       "west-verginia": "West Virginia",
       "wisconsin": "Wisconsin",
       "wyoming": "Wyoming"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "period": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "pastWeek": "Past Week",
+        "pastMonth": "Past Month"
+      }
     }
   }
 }

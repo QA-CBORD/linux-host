@@ -1,8 +1,8 @@
-<st-header title="Notifications" [isTitleShow]="true" backButtonIcon="close" backButtonTitle=""
+<st-header [title]="notificationTitle" [isTitleShow]="true" backButtonIcon="close" backButtonTitle=""
   [isToolbarShow]="true" [trackUrls]="true"></st-header>
 <ion-content>
   <ion-list *ngFor="let group of notificationGroups">
-    <ion-item-divider *ngIf="group.notifications.length > 0">
+    <ion-item-divider *ngIf="canShowPeriod(group.notifications)">
       {{ group.date }}
     </ion-item-divider>
    <st-notification [group]="group.notifications"></st-notification>
