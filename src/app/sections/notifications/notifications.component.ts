@@ -15,35 +15,39 @@ export class NotificationsComponent implements OnInit {
     pastMonth: this.translateService.instant('patron-ui.notifications.period.pastMonth'),
   };
 
+  //  with Rewards! See what is available to redeem within the Rewards tab.
+   
+  // ly changed to Dining Cash
   notifications: Notification[] = [
-    { message: 'Notification 1', date: new Date(), icon: NotificationIcon.order },
-    { message: 'Notification 2', date: new Date(), icon: NotificationIcon.reward },
-    { message: 'Notification 3', date: new Date(Date.now() - 24 * 60 * 60 * 1000), icon: NotificationIcon.meal },
-    { message: 'Notification 4', date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), icon: NotificationIcon.order },
+    { title: 'Breakfast Express', message: 'Order #23424', date: new Date(), icon: NotificationIcon.order, status: true },
+    { title: 'Reward Claimed', message: 'Contratulations you have reached level 5.', date: new Date(), icon: NotificationIcon.reward, status: true },
+    { title: 'Meal Plan', message: 'Your meal plan Meal Account has been succesful.', date: new Date(Date.now() - 24 * 60 * 60 * 1000), icon: NotificationIcon.meal },
+    { title: 'Breakfast Express', message: 'It is going great', date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), icon: NotificationIcon.order },
     {
-      message: 'Notification 5',
+      title: 'Photo upload',
       date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      icon: NotificationIcon.photoUpload,
+      icon: NotificationIcon.photoUpload, message: 'Your uploaded photo has been rejected.'
+      
     },
     {
-      message: 'Notification 6',
+      title: 'Automatic Deposit',
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
-      icon: NotificationIcon.automaticDeposit,
+      icon: NotificationIcon.automaticDeposit, message: '$100 has been added to your Dining Dollars account.'
     },
     {
-      message: 'Notification 7',
+      title: 'Guest Deposit Successful',
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
-      icon: NotificationIcon.guestDeposit,
+      icon: NotificationIcon.guestDeposit, message: 'A guest deposit of $100 was completed.'
     },
     {
-      message: 'Notification 8',
+      title: 'Low Balance',
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
-      icon: NotificationIcon.lowBalance,
+      icon: NotificationIcon.lowBalance, message: 'Your Dinig Dollars account has low balance'
     },
     {
-      message: 'Notification 9',
+      title: 'Breakfast Express',
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
-      icon: NotificationIcon.order,
+      icon: NotificationIcon.walkOut, message: 'Order Number #334224'
     },
   ];
 
@@ -111,9 +115,11 @@ enum NotificationIcon {
 }
 
 interface Notification {
+  title: string;
   message: string;
   date: Date;
   icon?: NotificationIcon;
+  status?: boolean;
 }
 
 interface NotificationGroup {

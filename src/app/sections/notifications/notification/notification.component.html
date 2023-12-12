@@ -3,13 +3,13 @@
     <img src='/assets/icon/{{notification.icon}}-notification.svg' class="avatar" alt="avatar" />
   </ion-avatar>
   <ion-grid class="padding-bottom">
-    <ion-text> {{ notification.message }}</ion-text>
+    <ion-text> {{ notification.title }}</ion-text>
     <ion-row class="ion-align-items-center">
       <ion-label> {{ notification.message }}</ion-label>
-        <ion-icon icon="close"></ion-icon>
+      <ion-icon *ngIf="notification.status" src="/assets/icon/status-notification.svg"></ion-icon>
     </ion-row>
     <ion-row>
-      <ion-label> {{ notification.message }}</ion-label>
+      <ion-label> {{ notification.date | date: 'MM/dd/yyyy, h:mm a' }}</ion-label>
     </ion-row>
   </ion-grid>
 </ion-item>
