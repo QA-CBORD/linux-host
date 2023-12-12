@@ -1,7 +1,7 @@
-<div class="pop-up" role='dialog' aria-label="Popup list">
-  <div (click)="onBackdropClicked.emit(true)" class="pop-up__backdrop">
-    <div appClickStopPropagation class="pop-up__content">
-      <ng-content></ng-content>
-    </div>
+<div class="pop-up" role="dialog" aria-modal="true" tabindex="0" aria-labelledby="dialogTitle" #verticalList>
+  <div id="dialogTitle" hidden>More options expanded</div>
+  <div aria-hidden="true" (click)="onBackdropClicked.emit(true)" class="pop-up__backdrop"></div>
+  <div appClickStopPropagation class="pop-up__content">
+    <ng-content></ng-content>
   </div>
 </div>

@@ -15,6 +15,7 @@
         *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
       ></ng-container>
       <li
+        tabindex="0"
         *ngIf="navElements.length > visibleAmountOfElements"
         (click)="toggleListAppearance()"
         [ngClass]="{
