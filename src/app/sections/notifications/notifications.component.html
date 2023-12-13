@@ -1,10 +1,13 @@
 <st-header [title]="notificationTitle" [isTitleShow]="true" backButtonIcon="close" backButtonTitle=""
   [isToolbarShow]="true" [trackUrls]="true"></st-header>
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refreshNotifications($event)">
+    <st-spinner></st-spinner>
+  </ion-refresher>
   <ion-list *ngFor="let group of notificationGroups">
-    <ion-item-divider *ngIf="canShowPeriod(group.notifications)">
+    <ion-item-divider *ngIf="hasPeriod(group.notifications)">
       {{ group.date }}
     </ion-item-divider>
-   <st-notification [group]="group.notifications"></st-notification>
+    <st-notification [group]="group.notifications"></st-notification>
   </ion-list>
 </ion-content>

@@ -6,7 +6,7 @@ import { UserInfo } from '@core/model/user/user-info.model';
 import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { map, switchMap, tap, take, catchError, finalize } from 'rxjs/operators';
+import { map, switchMap, tap, take, catchError, finalize, first } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings, StateTimeDuration, User } from 'src/app/app.global';
@@ -19,6 +19,7 @@ import { Platform } from '@ionic/angular';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Device } from '@capacitor/device';
 import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
+import { UserNotificationsFacadeService } from '../notifications/user-notifications.service';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +37,8 @@ export class UserFacadeService extends ServiceStateFacade {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userSettingStateService: UserSettingsStateService,
     private readonly pingEncoderService: BarcodeService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
   ) {
     super();
   }
@@ -177,12 +179,13 @@ export class UserFacadeService extends ServiceStateFacade {
             of({ granted: false })
           );
         }),
-        take(1)
+        first()
       )
       .subscribe(result => {
         if (result) {
           PushNotifications.removeAllListeners();
           PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+            this.userNotificationsFacadeService.refreshNotifications();
             if (Capacitor.getPlatform() === PLATFORM.android) {
               LocalNotifications.schedule({
                 notifications: [

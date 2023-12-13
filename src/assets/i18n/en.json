@@ -1094,7 +1094,9 @@
         "yesterday": "Yesterday",
         "pastWeek": "Past Week",
         "pastMonth": "Past Month"
-      }
+      },
+      "delete": "Delete",
+      "pin": "Pin"
     }
   }
 }

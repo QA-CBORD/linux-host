@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
-import { UserNotificationApiService } from '@core/service/user-notification/user-notification-api.service';
-import { BehaviorSubject, Observable, first, firstValueFrom } from 'rxjs';
-
+import { UserNotificationApiService, Notification } from '@core/service/user-notification/user-notification-api.service';
+import { BehaviorSubject, Observable, Subject, first, firstValueFrom } from 'rxjs';
 const MAXIMUN_NOTIFICATION_COUNT = 9;
 @Injectable({
   providedIn: 'root',
 })
 export class UserNotificationsFacadeService {
   private readonly _unreadNotificationsCount$ = new BehaviorSubject<string>('');
+  private readonly _unreadNotifications$ = new Subject<Notification[]>();
+  private readonly _unreadNotificationsSubject$ = this._unreadNotifications$.asObservable();
 
   get unreadNotificationsCount$(): Observable<string> {
     return this._unreadNotificationsCount$.asObservable();
+  }
+
+  get allNotifications$(): Observable<Notification[]> {
+    return this._unreadNotificationsSubject$;
   }
 
   constructor(private readonly _userNotificationApiService: UserNotificationApiService) {}
@@ -18,5 +23,10 @@ export class UserNotificationsFacadeService {
   public async fetchNotificationsCount() {
     const count = await firstValueFrom(this._userNotificationApiService.getUnreadCount().pipe(first()));
     this._unreadNotificationsCount$.next(count > MAXIMUN_NOTIFICATION_COUNT ? `${MAXIMUN_NOTIFICATION_COUNT}+` : String(count || ''));
+  }
+
+  public async refreshNotifications() {
+    const notifications = await firstValueFrom(this._userNotificationApiService.retrieveAll().pipe(first()));
+    this._unreadNotifications$.next(notifications);
   }
 }

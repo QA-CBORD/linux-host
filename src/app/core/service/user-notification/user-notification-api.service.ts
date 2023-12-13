@@ -4,23 +4,25 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { Observable, map } from 'rxjs';
 
-export interface UserNotificationLog {
+export interface Notification {
+  id: string;
   institutionId: string;
   userId: string;
   title: string;
+  subtitle?: string;
   content: string;
   domain: string;
-  category: UserNotificationLogCategory;
+  category: NotificationCategory;
   viewedDate: Date;
   dismissedDate: Date;
   insertTime: Date;
 }
 
-export interface UserNotificationLogList {
-  list: UserNotificationLog[];
+export interface NotificationList {
+  list: Notification[];
 }
 
-export enum UserNotificationLogCategory {
+export enum NotificationCategory {
   ORDERING = 1,
   ACCOUNT = 2,
   ADMIN_NOTICE = 3,
@@ -34,7 +36,7 @@ export class UserNotificationApiService {
 
   constructor(private readonly http: HttpClient) {}
 
-  createNotification(notification: Partial<UserNotificationLog>): Observable<UserNotificationLog> {
+  createNotification(notification: Partial<Notification>): Observable<Notification> {
     const postParams = {
       title: notification.title,
       content: notification.content,
@@ -43,32 +45,32 @@ export class UserNotificationApiService {
     };
     const queryConfig = new RPCQueryConfig('createUserNotificationLog', postParams, true, true);
     return this.http
-      .post<MessageResponse<UserNotificationLog>>(this.serviceUrl, queryConfig)
+      .post<MessageResponse<Notification>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
   }
 
-  retrieveAll(): Observable<UserNotificationLogList> {
+  retrieveAll(): Observable<Notification[]> {
     const queryConfig = new RPCQueryConfig('retrieveAll', { includeViewed: false, includeDismissed: false }, true);
     return this.http
-      .post<MessageResponse<UserNotificationLogList>>(this.serviceUrl, queryConfig)
-      .pipe(map(({ response }) => response));
+      .post<MessageResponse<NotificationList>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response.list));
   }
 
-  retrive(userNotificationLogId: string): Observable<UserNotificationLog> {
+  retrive(userNotificationLogId: string): Observable<Notification> {
     const queryConfig = new RPCQueryConfig('retrive', { userNotificationLogId }, true);
     return this.http
-      .post<MessageResponse<UserNotificationLog>>(this.serviceUrl, queryConfig)
+      .post<MessageResponse<Notification>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
   }
 
-  markAsViewed(userNotificationLogId: string): Observable<Boolean> {
+  markAsViewed(userNotificationLogId: string): Observable<boolean> {
     const queryConfig = new RPCQueryConfig('markUserNotificationLogAsViewed', { userNotificationLogId }, true);
-    return this.http.post<MessageResponse<Boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
-  markAsDismissed(userNotificationLogId: string): Observable<Boolean> {
+  markAsDismissed(userNotificationLogId: string): Observable<boolean> {
     const queryConfig = new RPCQueryConfig('markUserNotificationLogAsDismissed', { userNotificationLogId }, true);
-    return this.http.post<MessageResponse<Boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   getUnreadCount(): Observable<number> {
