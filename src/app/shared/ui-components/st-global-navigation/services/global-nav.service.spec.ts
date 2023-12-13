@@ -32,7 +32,7 @@ describe('GlobalNavService', () => {
     it('should expand', async () => {
       service.expandNavBarMenu();
       const isExpanded = await firstValueFrom(
-        combineLatest([service.isNavBarMenuExpanded$, service.isBackdropShown$]).pipe(
+        combineLatest([service.isNavBarMenuExpanded$]).pipe(
           map(state => state.reduce((acc, stateItem) => acc && stateItem, true))
         )
       );
