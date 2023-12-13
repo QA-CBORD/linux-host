@@ -9,19 +9,18 @@
       ></ng-container>
     </ul>
   </st-popup-list>
-  <div class="global-navigation__main">
-    <ul class="global-navigation__list">
+  <div class="global-navigation__main" *ngIf="navElements.length > visibleAmountOfElements">
+    <ul class="global-navigation__list" >
       <ng-container
         *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
       ></ng-container>
       <li
-        tabindex="0"
-        *ngIf="navElements.length > visibleAmountOfElements"
         (click)="toggleListAppearance()"
         [ngClass]="{
           'global-navigation__list-item--active': navElements | isActiveRouteInList : visibleAmountOfElements | async
         }"
         class="global-navigation__list-item"
+        tabindex="0"
       >
         <div
           class="global-navigation__icon"
@@ -43,6 +42,8 @@
     [routerLink]="getLink(item.url)"
     class="global-navigation__list-item"
     [routerLinkActive]="'global-navigation__list-item--active'"
+    tabindex="0"
+
   >
     <div class="global-navigation__icon global-navigation__icon--{{ item.iconCssPostfix }}">
       <div
