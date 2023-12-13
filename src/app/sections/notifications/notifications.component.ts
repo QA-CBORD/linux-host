@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   UserNotificationApiService,
@@ -32,6 +33,8 @@ export class NotificationsComponent implements OnInit {
       .pipe(first())
       .subscribe(notifications => {
         this.groupNotifications(notifications.list);
+
+        // console.log('list: ', notifications.list);
       });
   }
 
@@ -43,39 +46,44 @@ export class NotificationsComponent implements OnInit {
     return this.translateService.instant('patron-ui.notifications.title');
   }
 
-  private groupNotifications(notification: UserNotificationLog[]) {
-    const today = new Date().setHours(0, 0, 0, 0);
-    const todayDate: Date = new Date();
-    const yesterday = new Date(today - 24 * 60 * 60 * 1000);
-    const pastWeek = new Date(today - 7 * 24 * 60 * 60 * 1000);
-    const pastMonth = new Date(todayDate.getFullYear(), todayDate.getMonth() - 1, todayDate.getDate());
+  private groupNotifications(notifications: UserNotificationLog[]) {
+    const today = this.formatDate(new Date());
+    const yesterday = this.formatDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
+    const pastWeek = this.formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    const pastMonth = this.formatDate(
+      new Date(new Date().getFullYear(), new Date().getMonth() - 1, new Date().getDate())
+    );
 
-    this.notificationGroups = [
-      {
-        date: this.notificationPeriod.today,
-        notifications: notification.filter(notification => notification.insertTime),
-      },
-      {
-        date: this.notificationPeriod.yesterday,
-        notifications: notification.filter(
-          notification => notification.insertTime >= yesterday && +notification.insertTime < today
-        ),
-      },
-      {
-        date: this.notificationPeriod.pastWeek,
-        notifications: notification.filter(
-          notification => notification.insertTime >= pastWeek && notification.insertTime < yesterday
-        ),
-      },
-      {
-        date: this.notificationPeriod.pastMonth,
-        notifications: notification.filter(
-          notification => notification.insertTime >= pastMonth && notification.insertTime < pastWeek
-        ),
-      },
-    ];
+    const groupedNotifications: { [key: string]: UserNotificationLog[] } = {};
 
-    console.log("groups: ", this.notificationGroups)
+    for (const notification of notifications) {
+      let key = this.notificationPeriod.today;
+      const notificationDate = this.formatDate(notification.insertTime);
+
+      if (notificationDate === today) {
+        key = this.notificationPeriod.today;
+      } else if (notificationDate === yesterday) {
+        key = this.notificationPeriod.yesterday;
+      } else if (notificationDate >= pastWeek) {
+        key = this.notificationPeriod.pastWeek;
+      } else if (notificationDate >= pastMonth) {
+        key = this.notificationPeriod.pastMonth;
+      }
+
+      if (!groupedNotifications[key]) {
+        groupedNotifications[key] = [];
+      }
+      groupedNotifications[key].push(notification);
+    }
+
+    this.notificationGroups = Object.keys(groupedNotifications).map(date => ({
+      date,
+      notifications: groupedNotifications[date],
+    }));
+  }
+
+  private formatDate(date: Date): string {
+    return formatDate(date, 'yyyy-MM-dd', 'en-US');
   }
 }
 
