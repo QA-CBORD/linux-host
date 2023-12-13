@@ -10,9 +10,14 @@ export interface UserNotificationLog {
   title: string;
   content: string;
   domain: string;
-  category: UserNotificationLogCategory | number;
+  category: UserNotificationLogCategory;
   viewedDate: Date;
   dismissedDate: Date;
+  insertTime: Date;
+}
+
+export interface UserNotificationLogList {
+  list: UserNotificationLog[];
 }
 
 export enum UserNotificationLogCategory {
@@ -42,10 +47,10 @@ export class UserNotificationApiService {
       .pipe(map(({ response }) => response));
   }
 
-  retrieveAll(): Observable<UserNotificationLog[]> {
+  retrieveAll(): Observable<UserNotificationLogList> {
     const queryConfig = new RPCQueryConfig('retrieveAll', { includeViewed: false, includeDismissed: false }, true);
     return this.http
-      .post<MessageResponse<UserNotificationLog[]>>(this.serviceUrl, queryConfig)
+      .post<MessageResponse<UserNotificationLogList>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
   }
 

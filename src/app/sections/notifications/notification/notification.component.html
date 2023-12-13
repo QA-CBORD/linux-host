@@ -1,6 +1,6 @@
 <ion-item lines="full" *ngFor="let notification of group;">
   <ion-avatar slot="start" class="avatar-wrapper">
-    <img src='/assets/icon/{{notification.icon}}-notification.svg' class="avatar" alt="avatar" />
+    <img src='/assets/icon/{{notification.domain}}-notification.svg' class="avatar" alt="avatar" />
   </ion-avatar>
   <ion-grid class="padding-bottom">
     <ion-text> {{ notification.title }}</ion-text>
@@ -9,7 +9,7 @@
       <ion-icon *ngIf="notification.status" src="/assets/icon/status-notification.svg"></ion-icon>
     </ion-row>
     <ion-row>
-      <ion-label> {{ notification.date | date: 'MM/dd/yyyy, h:mm a' }}</ion-label>
+      <ion-label> {{ notification.insertTime | date: 'MM/dd/yyyy, h:mm a' }}</ion-label>
     </ion-row>
   </ion-grid>
 </ion-item>
