@@ -1,10 +1,23 @@
 @import 'tools';
 
+ion-popover {
+  --offset-x: 12px;
+  --offset-y: 59px;
+  --width: 100%;
+  &::part(content){
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+  }
+  
+}
 .global-navigation {
   &__vertical-list {
     list-style: none;
     margin: 0;
     padding: 0;
+    overflow-y: scroll;
+    height: 299px;
+    
 
     & .global-navigation__icon {
       margin: 0 10px;

@@ -1,27 +1,7 @@
-<ng-container *ngIf="isIos(); else popupMd">
-  <div
-    class="pop-up"
-    role="dialog"
-    aria-hidden="true"
-    tabindex="0"
-    aria-modal="true"
-    aria-labelledby="dialogTitle"
-    #verticalList
-  >
-    <ng-container *ngTemplateOutlet="popupContent"></ng-container>
+<div class="pop-up" role='dialog' aria-label="Popup list">
+  <div (click)="onBackdropClicked.emit(true)" class="pop-up__backdrop">
+    <div appClickStopPropagation class="pop-up__content">
+      <ng-content></ng-content>
+    </div>
   </div>
-</ng-container>
-
-<ng-template #popupMd>
-  <div class="pop-up" role="dialog" tabindex="0" aria-modal="true" aria-labelledby="dialogTitle" #verticalList>
-    <ng-container *ngTemplateOutlet="popupContent"></ng-container>
-  </div>
-</ng-template>
-
-<ng-template #popupContent>
-  <div id="dialogTitle" hidden>{{ 'patron-ui.core-ui.popup-list-title' | translate }}</div>
-  <div aria-hidden="true" (click)="onBackdropClicked.emit(true)" class="pop-up__backdrop"></div>
-  <div appClickStopPropagation class="pop-up__content">
-    <ng-content></ng-content>
-  </div>
-</ng-template>
+</div>

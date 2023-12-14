@@ -1,39 +1,45 @@
 <nav class="global-navigation" *ngIf="navElements$ | async as navElements">
-  <st-popup-list
-    *ngIf="isListShown && navElements.length > visibleAmountOfElements"
-    (onBackdropClicked)="toggleListAppearance()"
-  >
-    <ul class="global-navigation__vertical-list">
-      <ng-container
-        *ngTemplateOutlet="navItems; context: { $implicit: navElements.slice(visibleAmountOfElements - 1) }"
-      ></ng-container>
-    </ul>
-  </st-popup-list>
-  <div class="global-navigation__main" *ngIf="navElements.length > visibleAmountOfElements">
-    <ul class="global-navigation__list" >
-      <ng-container
-        *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
-      ></ng-container>
-      <li
-        (click)="toggleListAppearance()"
-        [ngClass]="{
-          'global-navigation__list-item--active': navElements | isActiveRouteInList : visibleAmountOfElements | async
-        }"
-        class="global-navigation__list-item"
-        tabindex="0"
-      >
-        <div
-          class="global-navigation__icon"
+  <ion-popover [animated]="false" trigger="click-trigger" triggerAction="click" (didDismiss)="onDismissPopup()" [isOpen]="isListShown && navElements.length > visibleAmountOfElements">
+    <ng-template>
+      <ul class="global-navigation__vertical-list">
+        <ng-container
+          *ngTemplateOutlet="navItems; context: { $implicit: navElements.slice(visibleAmountOfElements - 1) }"
+        ></ng-container>
+      </ul>
+      <ng-container *ngTemplateOutlet="navMenu"></ng-container>
+    </ng-template>
+  </ion-popover>
+
+  <ng-container *ngTemplateOutlet="navMenu"></ng-container>
+  <ng-template #navMenu>
+    <div class="global-navigation__main">
+      <ul class="global-navigation__list">
+        <ng-container
+          *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
+        ></ng-container>
+        <li
+          tabindex="0"
+          *ngIf="navElements.length > visibleAmountOfElements"
+          id="click-trigger"
           [ngClass]="{
-            'global-navigation__icon--close': isListShown,
-            'global-navigation__icon--more': !isListShown
+            'global-navigation__list-item--active': navElements | isActiveRouteInList : visibleAmountOfElements | async
           }"
-        ></div>
-        {{ (!isListShown ? 'patron-ui.core-ui.label_more' : 'patron-ui.core-ui.label_close') | translate }}
-        <ion-ripple-effect></ion-ripple-effect>
-      </li>
-    </ul>
-  </div>
+          class="global-navigation__list-item"
+          (click)="toggleListAppearance()"
+        >
+          <div
+            class="global-navigation__icon"
+            [ngClass]="{
+              'global-navigation__icon--close': isListShown,
+              'global-navigation__icon--more': !isListShown
+            }"
+          ></div>
+          {{ (!isListShown ? 'patron-ui.core-ui.label_more' : 'patron-ui.core-ui.label_close') | translate }}
+          <ion-ripple-effect></ion-ripple-effect>
+        </li>
+      </ul>
+    </div>
+  </ng-template>
 </nav>
 
 <ng-template #navItems let-navElems>
@@ -42,8 +48,6 @@
     [routerLink]="getLink(item.url)"
     class="global-navigation__list-item"
     [routerLinkActive]="'global-navigation__list-item--active'"
-    tabindex="0"
-
   >
     <div class="global-navigation__icon global-navigation__icon--{{ item.iconCssPostfix }}">
       <div
