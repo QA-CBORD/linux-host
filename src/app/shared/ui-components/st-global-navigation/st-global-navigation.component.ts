@@ -11,6 +11,7 @@ import { filter } from 'rxjs/operators';
   selector: 'st-global-navigation',
   templateUrl: './st-global-navigation.component.html',
   styleUrls: ['./st-global-navigation.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   _isListShown = false;
