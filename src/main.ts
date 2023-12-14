@@ -13,7 +13,7 @@ if (environment.production) {
     release: 'get-mobile@' + EnvironmentData.version.versionNumber,
     integrations: [new Sentry.Replay()],
     tracesSampleRate: 0.2,
-    replaysOnErrorSampleRate: 1.0,
+    replaysOnErrorSampleRate: 0.3,
   });
 }
 
