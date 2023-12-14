@@ -23,8 +23,8 @@ export class GlobalNavService {
   }
 
   get isBackdropShown$(): Observable<boolean> {
-    return combineLatest([this._isBackdropShown$]).pipe(
-      map(([isBackdropShown]) => isBackdropShown),
+    return combineLatest([this._isBackdropShown$, this.isNavBarMenuExpanded$]).pipe(
+      map(([isBackdropShown, isNavBarMenuExpanded]) => isBackdropShown || isNavBarMenuExpanded),
       distinctUntilChanged()
     );
   }
