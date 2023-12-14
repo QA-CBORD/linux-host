@@ -1,5 +1,12 @@
 <nav class="global-navigation" *ngIf="navElements$ | async as navElements">
-  <ion-popover [animated]="false" trigger="click-trigger" triggerAction="click" (didDismiss)="onDismissPopup()" [isOpen]="isListShown && navElements.length > visibleAmountOfElements">
+  <ion-popover
+    [animated]="false"
+    trigger="click-trigger"
+    (didDismiss)="onDismissPopup()"
+    [isOpen]="isListShown && navElements.length > visibleAmountOfElements"
+    className="pop-up-list"
+    size="cover"
+  >
     <ng-template>
       <ul class="global-navigation__vertical-list">
         <ng-container
@@ -12,7 +19,7 @@
 
   <ng-container *ngTemplateOutlet="navMenu"></ng-container>
   <ng-template #navMenu>
-    <div class="global-navigation__main">
+    <div class="global-navigation__main" id="click-trigger">
       <ul class="global-navigation__list">
         <ng-container
           *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
@@ -20,7 +27,6 @@
         <li
           tabindex="0"
           *ngIf="navElements.length > visibleAmountOfElements"
-          id="click-trigger"
           [ngClass]="{
             'global-navigation__list-item--active': navElements | isActiveRouteInList : visibleAmountOfElements | async
           }"

@@ -1,9 +1,7 @@
 @import 'tools';
 
 ion-popover {
-  --offset-x: 12px;
   --offset-y: 59px;
-  --width: 100%;
   &::part(content){
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;

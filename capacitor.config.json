@@ -23,6 +23,9 @@
         "alert"
       ]
     }
+  },
+  "ios": {
+    "webContentsDebuggingEnabled": true
   }
 }
 
