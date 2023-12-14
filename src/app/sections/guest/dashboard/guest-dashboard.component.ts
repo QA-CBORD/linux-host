@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { GUEST_DEEP_LINKS } from 'src/app/app.global';
+import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'st-guest-dashboard',
@@ -18,14 +20,15 @@ export class GuestDashboard implements OnInit, AfterViewInit {
   institutionPhoto$: Promise<SafeResourceUrl>;
   userName$: Promise<string>;
   institutionColor$: Promise<string>;
-  institutionBackgroundImage$: Promise<string>;
+  institutionBackgroundImage$: Observable<string>;
 
   constructor(
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
     private readonly messageProxy: MessageProxy,
-    private readonly sessionFacadeService: SessionFacadeService
+    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly accessCardService: AccessCardService
   ) {}
 
   ngOnInit() {
@@ -39,7 +42,7 @@ export class GuestDashboard implements OnInit, AfterViewInit {
 
   private async loadInfo(): Promise<void> {
     this.institutionPhoto$ = this.commonService.getInstitutionPhoto(true, this.sanitizer);
-    this.institutionBackgroundImage$ = this.commonService.getInstitutionBackgroundImage();
+    this.institutionBackgroundImage$ = this.accessCardService.getInstitutionBackgroundImage();
     this.userName$ = this.commonService.getUserName();
     this.institutionName$ = this.commonService.getInstitutionName();
     this.institutionColor$ = this.commonService.getInstitutionBgColor();

@@ -10,6 +10,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { mockStorageStateService } from 'src/app/testing/core-providers';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { of } from 'rxjs';
+import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
 
 describe('GuestDashboard', () => {
   let component: GuestDashboard;
@@ -22,6 +23,8 @@ describe('GuestDashboard', () => {
   let environmentFacadeService = {
     getStateEntityByKey$: jest.fn().mockReturnValue(of(null)),
   };
+  let accessCardService;
+
   beforeEach(waitForAsync(() => {
     commonService = {
       getInstitutionPhoto: jest.fn(),
@@ -40,6 +43,9 @@ describe('GuestDashboard', () => {
       get: jest.fn(),
     };
     sessionFacadeService = {};
+    accessCardService = {
+      getInstitutionBackgroundImage: jest.fn()
+    };
 
     TestBed.configureTestingModule({
       declarations: [GuestDashboard],
@@ -51,6 +57,7 @@ describe('GuestDashboard', () => {
         { provide: SessionFacadeService, useValue: sessionFacadeService },
         { provide: StorageStateService, useValue: mockStorageStateService },
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
+        { provide: AccessCardService, useValue: accessCardService}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
