@@ -1,16 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { GuestDashboardSection } from './model/dashboard.item.model';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
 import { Router } from '@angular/router';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { GuestDashboard } from './guest-dashboard.component';
+import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
 
 describe('GuestDashboard', () => {
   let component: GuestDashboard;
   let fixture: ComponentFixture<GuestDashboard>;
+  let accessCardService;
 
   beforeEach(() => {
     const domSanitizerStub = () => ({});
@@ -29,6 +30,9 @@ describe('GuestDashboard', () => {
       deepLinkPath: { length: {}, join: () => ({}) },
       navigatedToLinkPath: () => ({})
     });
+    accessCardService = {
+      getInstitutionBackgroundImage: jest.fn()
+    }
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [GuestDashboard],
@@ -37,7 +41,8 @@ describe('GuestDashboard', () => {
         { provide: CommonService, useFactory: commonServiceStub },
         { provide: Router, useFactory: routerStub },
         { provide: MessageProxy, useFactory: messageProxyStub },
-        { provide: SessionFacadeService, useFactory: sessionFacadeServiceStub }
+        { provide: SessionFacadeService, useFactory: sessionFacadeServiceStub },
+        { provide: AccessCardService, useValue: accessCardService}
       ]
     });
     fixture = TestBed.createComponent(GuestDashboard);
@@ -50,6 +55,12 @@ describe('GuestDashboard', () => {
 
   it(`sections has default value`, () => {
     expect(component.sections).toEqual([]);
+  });
+
+  it(`should call loadInfo and  get institution's image on component Init `, () => {
+    const loadImageSpy = jest.spyOn(accessCardService, 'getInstitutionBackgroundImage').mockResolvedValue('/test');
+    component.ngOnInit();
+    expect(loadImageSpy).toHaveBeenCalledTimes(1);
   });
 
   describe('ngOnInit', () => {
