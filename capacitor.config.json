@@ -23,9 +23,6 @@
         "alert"
       ]
     }
-  },
-  "ios": {
-    "webContentsDebuggingEnabled": true
   }
 }
 
