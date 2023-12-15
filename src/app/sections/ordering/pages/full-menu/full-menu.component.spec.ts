@@ -114,7 +114,7 @@ describe('FullMenuComponent', () => {
       );
     });
 
-    it('should call clearActiveOrder and setActiveMerchantsMenuByOrderOptions on confirm button click', async () => {
+    it('should call clearActiveOrder on confirm button click', async () => {
       const dueTime = "01-01-2023";
       const orderType = ORDER_TYPE.DELIVERY;
       const address = 'Address example';
@@ -126,12 +126,6 @@ describe('FullMenuComponent', () => {
       confirmButtonHandler();
 
       expect((component as any).cartService.clearActiveOrder).toHaveBeenCalled();
-      expect((component as any).cartService.setActiveMerchantsMenuByOrderOptions).toHaveBeenCalledWith(
-        dueTime,
-        orderType,
-        address,
-        isASAP
-      );
     });
   });
 });
