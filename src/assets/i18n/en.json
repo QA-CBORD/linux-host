@@ -629,6 +629,7 @@
       "dialog_header_retry": "Retry",
       "label_more": "more",
       "label_close": "close",
+      "popup-list-title": "More options expanded",
       "bottom_navigation": {
         "home": "Home",
         "settings": "Settings",

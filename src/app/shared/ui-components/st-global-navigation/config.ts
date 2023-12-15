@@ -48,7 +48,6 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     isEnable: false,
     name: TILES_TITLE.notificationBell,
     url: PATRON_NAVIGATION.rewards,
-    visibilityOn: () => true,
     supportProfiles: [APP_PROFILES.guest]
   },
 ];
