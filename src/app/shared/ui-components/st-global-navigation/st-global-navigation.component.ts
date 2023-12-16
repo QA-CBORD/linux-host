@@ -26,7 +26,7 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   }
 
   navElements$: Observable<NavigationBottomBarElement[]>;
-  visibleAmountOfElements = 5;
+  visibleAmountOfElements = 7;
   suscription: Subscription;
 
   constructor(

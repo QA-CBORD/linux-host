@@ -14,7 +14,8 @@ ion-popover {
     margin: 0;
     padding: 0;
     overflow-y: scroll;
-    height: 299px;
+    max-height: 299px;
+    margin-bottom: 59px;
     
 
     & .global-navigation__icon {

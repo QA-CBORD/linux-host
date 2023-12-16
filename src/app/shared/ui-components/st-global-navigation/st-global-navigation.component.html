@@ -2,6 +2,7 @@
   <ion-popover
     [animated]="false"
     trigger="click-trigger"
+    triggerAction="context-menu"
     (didDismiss)="onDismissPopup()"
     [isOpen]="isListShown && navElements.length > visibleAmountOfElements"
     className="pop-up-list"
@@ -19,7 +20,9 @@
 
   <ng-container *ngTemplateOutlet="navMenu"></ng-container>
   <ng-template #navMenu>
-    <div class="global-navigation__main" id="click-trigger">
+    <div class="global-navigation__main" 
+    id="click-trigger"
+    >
       <ul class="global-navigation__list">
         <ng-container
           *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
