@@ -234,12 +234,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
           cssClass: 'button__option_confirm',
           handler: () => {
             this.cartService.clearActiveOrder();
-            this.cartService.setActiveMerchantsMenuByOrderOptions(
-              dueTime,
-              orderType,
-              address,
-              isASAP
-            );
           },
         },
       ],
