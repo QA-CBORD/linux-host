@@ -1,11 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NotificationsComponent, aDayAgo, aWeekAgo } from './notifications.component';
+import { NotificationsComponent, aDayAgo } from './notifications.component';
 import {
-  UserNotificationApiService,
   Notification,
 } from '@core/service/user-notification/user-notification-api.service';
-import { TranslateService, TranslateStore } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { of } from 'rxjs';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
@@ -298,21 +297,17 @@ describe('NotificationListComponent', () => {
   it('should group the notifications by periods', () => {
     component.received.today = 'Today';
     component.received.yesterday = 'Yesterday';
-    component.received.pastWeek = 'Past Week';
-    component.received.pastMonth = 'Past Month';
+    component.received.previous = 'Previous';
 
     const today = component['formatDate'](new Date());
     const yesterday = component['formatDate'](new Date(Date.now() - aDayAgo));
-    const pastWeek = component['formatDate'](new Date(Date.now() - aWeekAgo));
-    const pastMonth = component['formatDate'](
-      new Date(new Date().getFullYear(), new Date().getMonth() - 1, new Date().getDate())
-    );
+    const pastWeek = component['formatDate'](new Date(Date.now() - aDayAgo*7));
+
     notifications[0].insertTime = today;
     notifications[1].insertTime = yesterday;
     notifications[2].insertTime = pastWeek;
-    notifications[3].insertTime = pastMonth;
     
     component['groupNotificationsByPeriod'](<Notification[]>(<unknown>notifications));
-    expect(component.notificationGroups.length).toEqual(4);
+    expect(component.notificationGroups.length).toEqual(3);
   });
 });

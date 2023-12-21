@@ -1,41 +1,64 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { Notification } from '@core/service/user-notification/user-notification-api.service';
-import { RefresherCustomEvent, RefresherEventDetail } from '@ionic/angular';
+import { Platform, RefresherCustomEvent } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { monthDayYear } from '@shared/constants/dateFormats.constant';
-import { finalize, first } from 'rxjs';
+import { Subscription, first } from 'rxjs';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 export const aDayAgo = 24 * 60 * 60 * 1000;
-export const aWeekAgo = 7 * aDayAgo;
 
 @Component({
   selector: 'st-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
   received = {
-    today: this.translateService.instant('patron-ui.notifications.period.today'),
-    yesterday: this.translateService.instant('patron-ui.notifications.period.yesterday'),
-    pastWeek: this.translateService.instant('patron-ui.notifications.period.pastWeek'),
-    pastMonth: this.translateService.instant('patron-ui.notifications.period.pastMonth'),
+    today: this.translateService.instant('patron-ui.notifications.period_today'),
+    yesterday: this.translateService.instant('patron-ui.notifications.period_yesterday'),
+    previous: this.translateService.instant('patron-ui.notifications.period_previous'),
   };
 
   notificationGroups: NotificationGroup[] = [];
+  private subs: Subscription = new Subscription();
 
   constructor(
     private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
-    private readonly contentStringsFacadeService: ContentStringsFacadeService
+    private readonly contentStringsFacadeService: ContentStringsFacadeService,
+    private readonly platform: Platform,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {}
 
   ngOnInit() {
     this.fetchContentStrings();
-    this.refreshNotifications();
+    this.subs.add(this.refreshPage());
+    this.subs.add(this.refreshPageOnResume());
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
+  ionViewWillLeave() {
+    // 1 - markNotificationAsViewed
+  }
+
+  markNotificationAsViewed(event: RefresherCustomEvent) {
+    alert(event)
+    // 1 - markNotificationAsViewed
+    //   .pipe(
+    //     first(),
+    //     finalize(() => event.target.complete())
+    //   )
+    //   .subscribe();
+
+    this.userNotificationsFacadeService.fetchNotifications();
   }
 
   hasPeriod(notifications: Notification[]) {
@@ -49,26 +72,19 @@ export class NotificationsComponent implements OnInit {
   private groupNotificationsByPeriod(notifications: Notification[]) {
     const today = this.formatDate(new Date());
     const yesterday = this.formatDate(new Date(Date.now() - aDayAgo));
-    const pastWeek = this.formatDate(new Date(Date.now() - aWeekAgo));
-    const pastMonth = this.formatDate(
-      new Date(new Date().getFullYear(), new Date().getMonth() - 1, new Date().getDate())
-    );
-
     const groupedNotifications: { [key: string]: Notification[] } = {};
 
     notifications.forEach(notification => {
       let period = this.received.today;
       const notificationDate = this.formatDate(notification.insertTime);
 
-      if (this.isWithin90Days(notificationDate)) {
+      if (this.isDateAllowed(notificationDate)) {
         if (notificationDate === today) {
           period = this.received.today;
         } else if (notificationDate === yesterday) {
           period = this.received.yesterday;
-        } else if (notificationDate >= pastWeek) {
-          period = this.received.pastWeek;
-        } else if (notificationDate >= pastMonth) {
-          period = this.received.pastMonth;
+        } else {
+          period = this.received.previous;
         }
 
         if (!groupedNotifications[period]) {
@@ -77,20 +93,23 @@ export class NotificationsComponent implements OnInit {
         groupedNotifications[period].push(notification);
       }
     });
-
-    this.notificationGroups = Object.keys(groupedNotifications).map(date => ({
-      date,
-      notifications: groupedNotifications[date],
-    }));
+    this.zone.run(() => {
+      this.notificationGroups = Object.keys(groupedNotifications).map(date => ({
+        date,
+        notifications: groupedNotifications[date],
+      }));
+      this.cdr.detectChanges();
+    });
   }
 
   private formatDate(date: Date): string {
     return formatDate(date, monthDayYear, 'en-US', 'UTC');
   }
 
-  private isWithin90Days(date: string): boolean {
+  private isDateAllowed(date: string): boolean {
+    const days = 90;
     const currentDate = new Date();
-    const ninetyDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - 90));
+    const ninetyDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - days));
     return date >= this.formatDate(ninetyDaysAgo);
   }
 
@@ -101,28 +120,18 @@ export class NotificationsComponent implements OnInit {
       .subscribe();
   }
 
-  refreshNotifications(event?: RefresherCustomEvent) {
-    this.userNotificationsFacadeService.refreshNotifications();
-    this.userNotificationsFacadeService.allNotifications$
-      .pipe(
-        first(),
-        finalize(() => event.target?.complete())
-      )
-      .subscribe(notifications => {
-        this.groupNotificationsByPeriod(notifications);
-      });
+  private refreshPage() {
+    this.userNotificationsFacadeService.fetchNotifications();
+    return this.userNotificationsFacadeService.allNotifications$.subscribe(notifications => {
+      this.groupNotificationsByPeriod(notifications);
+    });
   }
-}
 
-export enum NotificationType {
-  order = 'order',
-  meal = 'meal',
-  reward = 'reward',
-  photoUpload = 'photo-upload',
-  automaticDeposit = 'automatic-deposit',
-  lowBalance = 'low-balance',
-  guestDeposit = 'guest-deposit',
-  walkOut = 'walk-out',
+  private refreshPageOnResume() {
+    return this.platform.resume.subscribe(() => {
+      this.userNotificationsFacadeService.fetchNotifications();
+    });
+  }
 }
 
 interface NotificationGroup {

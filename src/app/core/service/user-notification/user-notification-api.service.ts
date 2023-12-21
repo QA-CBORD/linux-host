@@ -4,6 +4,18 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { Observable, map } from 'rxjs';
 
+export enum NotificationCategory {
+  order = 1,
+  account,
+  adminNotice,
+  meal,
+  reward,
+  photoUpload,
+  automaticDeposit,
+  lowBalance,
+  guestDeposit,
+  walkOut,
+}
 export interface Notification {
   id: string;
   institutionId: string;
@@ -18,14 +30,8 @@ export interface Notification {
   insertTime: Date;
 }
 
-export interface NotificationList {
+interface NotificationList {
   list: Notification[];
-}
-
-export enum NotificationCategory {
-  ORDERING = 1,
-  ACCOUNT = 2,
-  ADMIN_NOTICE = 3,
 }
 
 @Injectable({

@@ -1089,12 +1089,9 @@
     },
     "notifications": {
       "title": "Notifications",
-      "period": {
-        "today": "Today",
-        "yesterday": "Yesterday",
-        "pastWeek": "Past Week",
-        "pastMonth": "Past Month"
-      },
+      "period_today": "Today",
+      "period_yesterday": "Yesterday",
+      "period_previous": "Previous",
       "delete": "Delete",
       "pin": "Pin"
     }

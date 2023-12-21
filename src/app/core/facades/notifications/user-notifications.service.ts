@@ -25,7 +25,7 @@ export class UserNotificationsFacadeService {
     this._unreadNotificationsCount$.next(count > MAXIMUN_NOTIFICATION_COUNT ? `${MAXIMUN_NOTIFICATION_COUNT}+` : String(count || ''));
   }
 
-  public async refreshNotifications() {
+  public async fetchNotifications() {
     const notifications = await firstValueFrom(this._userNotificationApiService.retrieveAll().pipe(first()));
     this._unreadNotifications$.next(notifications);
   }

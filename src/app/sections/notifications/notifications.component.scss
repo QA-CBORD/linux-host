@@ -1,5 +1,10 @@
 @import "tools";
 
+
+ion-list {
+    padding: 0%;
+}
+
 ion-item-divider {
     background-color: rgba($color-black, 0.1);
     @include font-nunito-heavy(16px);

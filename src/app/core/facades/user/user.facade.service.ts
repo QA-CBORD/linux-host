@@ -185,7 +185,7 @@ export class UserFacadeService extends ServiceStateFacade {
         if (result) {
           PushNotifications.removeAllListeners();
           PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-            this.userNotificationsFacadeService.refreshNotifications();
+            this.userNotificationsFacadeService.fetchNotifications();
             if (Capacitor.getPlatform() === PLATFORM.android) {
               LocalNotifications.schedule({
                 notifications: [

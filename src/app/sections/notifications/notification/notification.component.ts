@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Notification } from '@core/service/user-notification/user-notification-api.service';
+import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { monthDayYear, hourMinTime } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
 
@@ -10,9 +10,22 @@ import { DatePipe, formatDate } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationComponent {
-  @Input() group: Notification[];
+  @Input() notifications: Notification[];
   dateFormat = monthDayYear;
   timeFormat = hourMinTime;
+
+  notificationIcon: { [key: number]: string } = {
+    [NotificationCategory.order]: 'order',
+    [NotificationCategory.account]: 'account',
+    [NotificationCategory.adminNotice]: 'admin-notice',
+    [NotificationCategory.meal]: 'meal',
+    [NotificationCategory.reward]: 'reward',
+    [NotificationCategory.photoUpload]: 'photo-upload',
+    [NotificationCategory.automaticDeposit]: 'automatic-deposit',
+    [NotificationCategory.lowBalance]: 'low-balance',
+    [NotificationCategory.guestDeposit]: 'guest-deposit',
+    [NotificationCategory.walkOut]: 'walk-out',
+  };
 
   constructor(private datePipe: DatePipe) {}
 
@@ -23,11 +36,19 @@ export class NotificationComponent {
   }
 
   hasSubtitle(notification: Notification) {
-      return notification.subtitle && notification.category === 1;
+    return notification.subtitle && notification.category === NotificationCategory.order;
+  }
+
+  getAvatar(category: NotificationCategory) {
+    return this.notificationIcon[category];
   }
 
   private isToday(date: Date): boolean {
     const today = new Date();
-    return formatDate(date, monthDayYear, 'en-US', 'UTC') === formatDate(today, monthDayYear, 'en-US', 'UTC');
+    return this.formatDate(date) === this.formatDate(today);
+  }
+
+  private formatDate(today: Date) {
+    return formatDate(today, monthDayYear, 'en-US', 'UTC');
   }
 }
