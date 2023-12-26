@@ -12,4 +12,8 @@ describe('SearchPipe', () => {
   it('can load instance', () => {
     expect(pipe).toBeTruthy();
   });
+
+  it('should check for falsy values', () => {
+    expect(pipe.transform(null, '').length).toBe(0);
+  });
 });
