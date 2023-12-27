@@ -2,14 +2,15 @@ import { formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { Notification } from '@core/service/user-notification/user-notification-api.service';
 import { Platform, RefresherCustomEvent } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { monthDayYear } from '@shared/constants/dateFormats.constant';
-import { Subscription, first } from 'rxjs';
+import { Subscription, finalize, first } from 'rxjs';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
-export const aDayAgo = 24 * 60 * 60 * 1000;
+export const A_DAY_AGO = 24 * 60 * 60 * 1000;
 
 @Component({
   selector: 'st-notifications',
@@ -30,8 +31,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
+    public readonly loadingService: LoadingService,
     private readonly platform: Platform,
-    private cdr: ChangeDetectorRef,
+    private cdRef: ChangeDetectorRef,
     private zone: NgZone
   ) {}
 
@@ -43,37 +45,49 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
-  }
-
-  ionViewWillLeave() {
-    // 1 - markNotificationAsViewed
+    this.userNotificationsFacadeService.markAllNotificationsAsViewed().subscribe();
   }
 
   markNotificationAsViewed(event: RefresherCustomEvent) {
-    alert(event)
-    // 1 - markNotificationAsViewed
-    //   .pipe(
-    //     first(),
-    //     finalize(() => event.target.complete())
-    //   )
-    //   .subscribe();
-
-    this.userNotificationsFacadeService.fetchNotifications();
+    this.userNotificationsFacadeService
+      .markAllNotificationsAsViewed()
+      .pipe(finalize(() => event.target.complete()))
+      .subscribe(() => this.userNotificationsFacadeService.fetchNotifications());
   }
 
   hasPeriod(notifications: Notification[]) {
     return notifications.length > 0;
   }
 
+  trackByFn(index: number) {
+    return index;
+  }
+
   get notificationTitle() {
     return this.translateService.instant('patron-ui.notifications.title');
   }
 
-  private groupNotificationsByPeriod(notifications: Notification[]) {
+  private groupNotifications(notifications: Notification[]) {
     const today = this.formatDate(new Date());
-    const yesterday = this.formatDate(new Date(Date.now() - aDayAgo));
+    const yesterday = this.formatDate(new Date(Date.now() - A_DAY_AGO));
     const groupedNotifications: { [key: string]: Notification[] } = {};
 
+    this.groupNotificationsByPeriods(notifications, today, yesterday, groupedNotifications);
+    this.zone.run(() => {
+      this.notificationGroups = Object.keys(groupedNotifications).map(date => ({
+        date,
+        notifications: groupedNotifications[date],
+      }));
+      this.cdRef.detectChanges();
+    });
+  }
+
+  private groupNotificationsByPeriods(
+    notifications: Notification[],
+    today: string,
+    yesterday: string,
+    groupedNotifications: { [key: string]: Notification[] }
+  ) {
     notifications.forEach(notification => {
       let period = this.received.today;
       const notificationDate = this.formatDate(notification.insertTime);
@@ -93,13 +107,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         groupedNotifications[period].push(notification);
       }
     });
-    this.zone.run(() => {
-      this.notificationGroups = Object.keys(groupedNotifications).map(date => ({
-        date,
-        notifications: groupedNotifications[date],
-      }));
-      this.cdr.detectChanges();
-    });
   }
 
   private formatDate(date: Date): string {
@@ -107,9 +114,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private isDateAllowed(date: string): boolean {
-    const days = 90;
+    const numberOfdays = 90;
     const currentDate = new Date();
-    const ninetyDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - days));
+    const ninetyDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - numberOfdays));
     return date >= this.formatDate(ninetyDaysAgo);
   }
 
@@ -121,16 +128,22 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private refreshPage() {
-    this.userNotificationsFacadeService.fetchNotifications();
+    this.fetchNotifications();
     return this.userNotificationsFacadeService.allNotifications$.subscribe(notifications => {
-      this.groupNotificationsByPeriod(notifications);
+      this.groupNotifications(notifications);
+      this.loadingService.closeSpinner();
     });
   }
 
   private refreshPageOnResume() {
     return this.platform.resume.subscribe(() => {
-      this.userNotificationsFacadeService.fetchNotifications();
+      this.fetchNotifications();
     });
+  }
+
+  private fetchNotifications() {
+    this.loadingService.showSpinner();
+    this.userNotificationsFacadeService.fetchNotifications();
   }
 }
 

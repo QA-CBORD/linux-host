@@ -29,4 +29,8 @@ export class UserNotificationsFacadeService {
     const notifications = await firstValueFrom(this._userNotificationApiService.retrieveAll().pipe(first()));
     this._unreadNotifications$.next(notifications);
   }
+
+  public markAllNotificationsAsViewed() {
+    return this._userNotificationApiService.markAllUserNotificationLogAsViewed().pipe(first());
+  }
 }

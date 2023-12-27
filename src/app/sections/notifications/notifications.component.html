@@ -4,10 +4,12 @@
   <ion-refresher slot="fixed" (ionRefresh)="markNotificationAsViewed($event)">
     <st-spinner></st-spinner>
   </ion-refresher>
-  <ion-list *ngFor="let group of notificationGroups">
+  <ion-list *ngFor="let group of notificationGroups; trackBy: trackByFn">
     <ion-item-divider *ngIf="hasPeriod(group.notifications)">
       {{ group.date }}
     </ion-item-divider>
     <st-notification [notifications]="group.notifications"></st-notification>
   </ion-list>
+  <ion-img *ngIf="loadingService.notLoading() && !notificationGroups.length" src="assets/icon/no-notifications.svg"
+    alt="Empty notifications list"></ion-img>
 </ion-content>

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NotificationsComponent, aDayAgo } from './notifications.component';
+import { NotificationsComponent, A_DAY_AGO } from './notifications.component';
 import {
   Notification,
 } from '@core/service/user-notification/user-notification-api.service';
@@ -300,8 +300,8 @@ describe('NotificationListComponent', () => {
     component.received.previous = 'Previous';
 
     const today = component['formatDate'](new Date());
-    const yesterday = component['formatDate'](new Date(Date.now() - aDayAgo));
-    const pastWeek = component['formatDate'](new Date(Date.now() - aDayAgo*7));
+    const yesterday = component['formatDate'](new Date(Date.now() - A_DAY_AGO));
+    const pastWeek = component['formatDate'](new Date(Date.now() - A_DAY_AGO*7));
 
     notifications[0].insertTime = today;
     notifications[1].insertTime = yesterday;

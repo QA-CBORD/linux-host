@@ -1,6 +1,6 @@
-<ion-item lines="full" *ngFor="let notification of notifications">
+<ion-item lines="full" *ngFor="let notification of notifications; trackBy: trackById">
   <ion-avatar slot="start" class="avatar-wrapper">
-    <img src='/assets/icon/{{getAvatar(notification.category)}}-notification.svg' class="avatar" alt="avatar" />
+    <ion-img src='/assets/icon/{{getAvatar(notification.category)}}-notification.svg' class="avatar" alt="avatar"></ion-img>
   </ion-avatar>
   <ion-grid>
     <ion-row class="ion-align-items-center">

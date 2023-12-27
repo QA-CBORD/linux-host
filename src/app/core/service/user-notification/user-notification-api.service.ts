@@ -56,36 +56,42 @@ export class UserNotificationApiService {
   }
 
   retrieveAll(): Observable<Notification[]> {
-    const queryConfig = new RPCQueryConfig('retrieveAll', { includeViewed: false, includeDismissed: false }, true);
+    const postParams = { includeViewed: true, includeDismissed: true, includePinned: true };
+    const queryConfig = new RPCQueryConfig('retrieveAll', postParams, true);
     return this.http
       .post<MessageResponse<NotificationList>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response.list));
   }
 
   retrive(userNotificationLogId: string): Observable<Notification> {
-    const queryConfig = new RPCQueryConfig('retrive', { userNotificationLogId }, true);
+    const postParams = { userNotificationLogId };
+    const queryConfig = new RPCQueryConfig('retrive', postParams, true);
     return this.http
       .post<MessageResponse<Notification>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
   }
 
   markAsViewed(userNotificationLogId: string): Observable<boolean> {
-    const queryConfig = new RPCQueryConfig('markUserNotificationLogAsViewed', { userNotificationLogId }, true);
+    const postParams = { userNotificationLogId };
+    const queryConfig = new RPCQueryConfig('markUserNotificationLogAsViewed', postParams, true);
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   markAsDismissed(userNotificationLogId: string): Observable<boolean> {
-    const queryConfig = new RPCQueryConfig('markUserNotificationLogAsDismissed', { userNotificationLogId }, true);
+    const postParams = { userNotificationLogId };
+    const queryConfig = new RPCQueryConfig('markUserNotificationLogAsDismissed', postParams, true);
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
   getUnreadCount(): Observable<number> {
-    const queryConfig = new RPCQueryConfig(
-      'getNotificationLogCount',
-      { includeViewed: false, includeDismissed: false },
-      true
-    );
+    const postParams = { includeViewed: false, includeDismissed: false };
+    const queryConfig = new RPCQueryConfig('getNotificationLogCount', postParams, true);
 
     return this.http.post<MessageResponse<number>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+  }
+
+  markAllUserNotificationLogAsViewed() {
+    const queryConfig = new RPCQueryConfig('markAllUserNotificationLogAsViewed', {}, true);
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 }
