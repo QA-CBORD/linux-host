@@ -112,7 +112,12 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   ): NavigationBottomBarElement[] {
     if (args.guestUser) {
       return GUEST_NAVIGATION_BASE_CONFIG.filter(setting => {
-        setting.isEnabled = setting.visibilityOn(args.setting);
+        if (setting.visibilityOn) {
+          setting.isEnabled = setting.visibilityOn(args.setting);
+        } else {
+          const s = settings.find(({ name }) => name === setting.id);
+          setting.isEnabled = !!Number(s?.value);
+        }
         return setting.isEnabled;
       });
     }

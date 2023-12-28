@@ -46,6 +46,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subs.unsubscribe();
     this.userNotificationsFacadeService.markAllNotificationsAsViewed().subscribe();
+    this.userNotificationsFacadeService.fetchNotificationsCount();
   }
 
   markNotificationAsViewed(event: RefresherCustomEvent) {

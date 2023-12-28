@@ -47,7 +47,7 @@ export class NotificationComponent {
     return this.notificationIcon[category];
   }
 
-  trackById(index: number, user: Notification): string {
+  trackById(user: Notification): string {
     return user.id;
   }
 
