@@ -1,14 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotificationsComponent, A_DAY_AGO } from './notifications.component';
-import {
-  Notification,
-} from '@core/service/user-notification/user-notification-api.service';
-import { TranslateService } from '@ngx-translate/core';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Notification } from '@core/service/user-notification/user-notification-api.service';
+import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { ChangeDetectorRef, NO_ERRORS_SCHEMA, NgZone } from '@angular/core';
 import { of } from 'rxjs';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { Platform } from '@ionic/angular';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 const notifications = [
   {
@@ -264,6 +265,8 @@ describe('NotificationListComponent', () => {
   const mockUserNotificationService = {
     allNotifications$: of(notifications),
     refreshNotifications: jest.fn(),
+    markAllNotificationsAsViewed: jest.fn().mockReturnValue(of(true)),
+    fetchNotificationsCount: jest.fn(),
   };
 
   const mockUserContentStringsFacadeService = {
@@ -272,15 +275,20 @@ describe('NotificationListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [NO_ERRORS_SCHEMA],
       declarations: [NotificationsComponent],
+      imports: [HttpClientTestingModule],
       providers: [
-        { provide: TranslateService, useValue: mockTranslateService },
         { provide: UserNotificationsFacadeService, useValue: mockUserNotificationService },
         { provide: ContentStringsFacadeService, useValue: mockUserContentStringsFacadeService },
+        { provide: TranslateService, useValue: mockTranslateService },
+        LoadingService,
+        Platform,
       ],
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(NotificationsComponent);
     component = fixture.componentInstance;
   });
@@ -290,7 +298,7 @@ describe('NotificationListComponent', () => {
   });
 
   it('should group the notifications by a period', () => {
-    component['groupNotificationsByPeriod'](<Notification[]>(<unknown>notifications));
+    component['groupNotifications'](<Notification[]>(<unknown>notifications));
     expect(component.notificationGroups.length).toEqual(1);
   });
 
@@ -301,13 +309,13 @@ describe('NotificationListComponent', () => {
 
     const today = component['formatDate'](new Date());
     const yesterday = component['formatDate'](new Date(Date.now() - A_DAY_AGO));
-    const pastWeek = component['formatDate'](new Date(Date.now() - A_DAY_AGO*7));
+    const pastWeek = component['formatDate'](new Date(Date.now() - A_DAY_AGO * 7));
 
     notifications[0].insertTime = today;
     notifications[1].insertTime = yesterday;
     notifications[2].insertTime = pastWeek;
-    
-    component['groupNotificationsByPeriod'](<Notification[]>(<unknown>notifications));
+
+    component['groupNotifications'](<Notification[]>(<unknown>notifications));
     expect(component.notificationGroups.length).toEqual(3);
   });
 });

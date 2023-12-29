@@ -39,10 +39,6 @@ export class NotificationComponent {
       : this.datePipe.transform(insertTime, monthDayYear + ', ' + hourMinTime);
   }
 
-  hasSubtitle(notification: Notification) {
-    return notification.subtitle && notification.category === NotificationCategory.order;
-  }
-
   getAvatar(category: NotificationCategory) {
     return this.notificationIcon[category];
   }

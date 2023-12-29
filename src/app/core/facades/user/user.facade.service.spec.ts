@@ -9,6 +9,7 @@ import { Platform } from '@ionic/angular';
 import { of, zip, from } from 'rxjs';
 import { UserFacadeService } from './user.facade.service';
 import { UserInfo } from '@core/model/user';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('UserFacadeService', () => {
   let service: UserFacadeService;
@@ -76,6 +77,7 @@ describe('UserFacadeService', () => {
         { provide: BarcodeService, useValue: mockBarcodeService },
         { provide: Platform, useValue: mockPlatform },
       ],
+      imports: [HttpClientTestingModule],
     });
 
     service = TestBed.inject(UserFacadeService);

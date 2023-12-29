@@ -43,8 +43,11 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.subs.add(this.refreshPageOnResume());
   }
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
+  ngOnDestroy() {
+   this.subs.unsubscribe();
+  }
+
+  ionViewWillLeave() {
     this.userNotificationsFacadeService.markAllNotificationsAsViewed().subscribe();
     this.userNotificationsFacadeService.fetchNotificationsCount();
   }
@@ -130,9 +133,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   private refreshPage() {
     this.fetchNotifications();
-    return this.userNotificationsFacadeService.allNotifications$.subscribe(notifications => {
+    return this.userNotificationsFacadeService.allNotifications$.subscribe(async notifications => {
       this.groupNotifications(notifications);
-      this.loadingService.closeSpinner();
+      await this.loadingService.closeSpinner();
     });
   }
 
@@ -142,8 +145,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private fetchNotifications() {
-    this.loadingService.showSpinner();
+  private async fetchNotifications() {
+    await this.loadingService.showSpinner();
     this.userNotificationsFacadeService.fetchNotifications();
   }
 }
