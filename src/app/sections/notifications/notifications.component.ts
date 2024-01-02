@@ -18,20 +18,19 @@ export const A_DAY_AGO = 24 * 60 * 60 * 1000;
   styleUrls: ['./notifications.component.scss'],
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
-  received = {
+  notificationGroups: NotificationGroup[] = [];
+  private subs: Subscription = new Subscription();
+  private received = {
     today: this.translateService.instant('patron-ui.notifications.period_today'),
     yesterday: this.translateService.instant('patron-ui.notifications.period_yesterday'),
     previous: this.translateService.instant('patron-ui.notifications.period_previous'),
   };
 
-  notificationGroups: NotificationGroup[] = [];
-  private subs: Subscription = new Subscription();
-
   constructor(
+    public readonly loadingService: LoadingService,
     private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
-    public readonly loadingService: LoadingService,
     private readonly platform: Platform,
     private cdRef: ChangeDetectorRef,
     private zone: NgZone
@@ -44,12 +43,13 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-   this.subs.unsubscribe();
+    this.subs.unsubscribe();
   }
 
   ionViewWillLeave() {
-    this.userNotificationsFacadeService.markAllNotificationsAsViewed().subscribe();
-    this.userNotificationsFacadeService.fetchNotificationsCount();
+    this.userNotificationsFacadeService
+      .markAllNotificationsAsViewed()
+      .subscribe(() => this.userNotificationsFacadeService.fetchNotificationsCount());
   }
 
   markNotificationAsViewed(event: RefresherCustomEvent) {
@@ -95,33 +95,23 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     notifications.forEach(notification => {
       let period = this.received.today;
       const notificationDate = this.formatDate(notification.insertTime);
-
-      if (this.isDateAllowed(notificationDate)) {
-        if (notificationDate === today) {
-          period = this.received.today;
-        } else if (notificationDate === yesterday) {
-          period = this.received.yesterday;
-        } else {
-          period = this.received.previous;
-        }
-
-        if (!groupedNotifications[period]) {
-          groupedNotifications[period] = [];
-        }
-        groupedNotifications[period].push(notification);
+      if (notificationDate === today) {
+        period = this.received.today;
+      } else if (notificationDate === yesterday) {
+        period = this.received.yesterday;
+      } else {
+        period = this.received.previous;
       }
+
+      if (!groupedNotifications[period]) {
+        groupedNotifications[period] = [];
+      }
+      groupedNotifications[period].push(notification);
     });
   }
 
   private formatDate(date: Date): string {
     return formatDate(date, monthDayYear, 'en-US', 'UTC');
-  }
-
-  private isDateAllowed(date: string): boolean {
-    const numberOfdays = 90;
-    const currentDate = new Date();
-    const ninetyDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - numberOfdays));
-    return date >= this.formatDate(ninetyDaysAgo);
   }
 
   private fetchContentStrings() {

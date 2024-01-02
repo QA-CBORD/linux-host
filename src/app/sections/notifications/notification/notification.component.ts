@@ -31,12 +31,13 @@ export class NotificationComponent {
 
   constructor(private datePipe: DatePipe, private readonly translateService: TranslateService) {}
 
-  formattedDate(insertTime: Date): string {
-    return this.isToday(insertTime)
-      ? this.datePipe.transform(insertTime, hourMinTime)
-      : this.isYesterday(insertTime)
-      ? this.translateService.instant('patron-ui.notifications.period_yesterday')
-      : this.datePipe.transform(insertTime, monthDayYear + ', ' + hourMinTime);
+  get notificationsFormatted() {
+    return this.notifications.map(notification => {
+      return {
+        ...notification,
+        insertTime: this.formattedDate(notification.insertTime),
+      };
+    });
   }
 
   getAvatar(category: NotificationCategory) {
@@ -55,6 +56,14 @@ export class NotificationComponent {
   private isYesterday(date: Date): boolean {
     const yesterday = new Date(Date.now() - A_DAY_AGO);
     return this.formatDate(date) === this.formatDate(yesterday);
+  }
+
+  private formattedDate(insertTime: Date): string {
+    return this.isToday(insertTime)
+      ? this.datePipe.transform(insertTime, hourMinTime)
+      : this.isYesterday(insertTime)
+      ? this.translateService.instant('patron-ui.notifications.period_yesterday')
+      : this.datePipe.transform(insertTime, monthDayYear + ', ' + hourMinTime);
   }
 
   private formatDate(today: Date) {

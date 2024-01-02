@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotificationsComponent, A_DAY_AGO } from './notifications.component';
 import { Notification } from '@core/service/user-notification/user-notification-api.service';
-import { TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
-import { ChangeDetectorRef, NO_ERRORS_SCHEMA, NgZone } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import {  NO_ERRORS_SCHEMA } from '@angular/core';
 import { of } from 'rxjs';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -11,7 +11,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { Platform } from '@ionic/angular';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-const notifications = [
+export const notifications = [
   {
     id: '',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
@@ -303,9 +303,9 @@ describe('NotificationListComponent', () => {
   });
 
   it('should group the notifications by periods', () => {
-    component.received.today = 'Today';
-    component.received.yesterday = 'Yesterday';
-    component.received.previous = 'Previous';
+    component['received'].today = 'Today';
+    component['received'].yesterday = 'Yesterday';
+    component['received'].previous = 'Previous';
 
     const today = component['formatDate'](new Date());
     const yesterday = component['formatDate'](new Date(Date.now() - A_DAY_AGO));
