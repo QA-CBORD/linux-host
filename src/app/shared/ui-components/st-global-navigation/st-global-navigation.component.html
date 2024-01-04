@@ -9,11 +9,11 @@
     size="cover"
   >
     <ng-template>
-      <ul class="global-navigation__vertical-list">
+      <div class="global-navigation__vertical-list">
         <ng-container
           *ngTemplateOutlet="navItems; context: { $implicit: navElements.slice(visibleAmountOfElements - 1) }"
         ></ng-container>
-      </ul>
+      </div>
       <ng-container *ngTemplateOutlet="navMenu"></ng-container>
     </ng-template>
   </ion-popover>
@@ -23,11 +23,11 @@
     <div class="global-navigation__main" 
     id="click-trigger"
     >
-      <ul class="global-navigation__list">
+      <div class="global-navigation__list">
         <ng-container
           *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
         ></ng-container>
-        <li
+        <div
           tabindex="0"
           *ngIf="navElements.length > visibleAmountOfElements"
           [ngClass]="{
@@ -45,14 +45,14 @@
           ></div>
           {{ (!isListShown ? 'patron-ui.core-ui.label_more' : 'patron-ui.core-ui.label_close') | translate }}
           <ion-ripple-effect></ion-ripple-effect>
-        </li>
-      </ul>
+          </div>
+      </div>
     </div>
   </ng-template>
 </nav>
 
 <ng-template #navItems let-navElems>
-  <li
+  <div
     *ngFor="let item of navElems"
     [routerLink]="getLink(item.url)"
     class="global-navigation__list-item"
@@ -69,5 +69,5 @@
     </div>
     {{ item.name }}
     <ion-ripple-effect></ion-ripple-effect>
-  </li>
+  </div>
 </ng-template>
