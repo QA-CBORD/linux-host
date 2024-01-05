@@ -77,6 +77,16 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    
+    func application(_ application: UIApplication,
+         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        print("Remote: ",  userInfo["isSilent"] as? String)
+   
+        completionHandler(.noData)
+    }
+    
      func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
          NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
      }
