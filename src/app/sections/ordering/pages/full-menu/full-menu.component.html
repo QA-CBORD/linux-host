@@ -10,12 +10,12 @@
 
 <ion-content>
   <ion-list class="full-menu__address-info-list">
-    <ion-item lines="full" (click)="merchantInfoState = !merchantInfoState">
+    <ion-item lines="full" (click)="toggleMerchantInfo()">
       <div class="full-menu__address-container">
         <div style="width: 92%;">
           <div class="full-menu__address-title">{{ (merchantInfo$ | async).name }}</div>
           <ng-container *ngIf="merchantInfoState">
-            <div aria-live="polite" class="full-menu__address-description">
+            <div aria-live="polite" class="full-menu__address-description" aria-labelledby="collapsed-tittle">
               {{ (merchantInfo$ | async).description }}
             </div>
           </ng-container>
@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">
-          <img src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg" alt="arrow" />
+          <img src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg" [alt]="merchantInfoState ? 'expanded' : 'collapsed'" />
         </div>
       </div>
     </ion-item>

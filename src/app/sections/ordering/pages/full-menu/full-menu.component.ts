@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -49,7 +49,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly routingService: NavigationService,
     private orderActionSheetService: OrderActionSheetService,
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    private readonly cdref: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -260,6 +261,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.routingService.navigate([APP_ROUTES.ordering]).then(() => {
       this.orderActionSheetService.openActionSheet();
     });
+  }
+  toggleMerchantInfo(){
+    this.merchantInfoState = !this.merchantInfoState;
+    this.cdref.detectChanges();
   }
 }
 
