@@ -13,7 +13,6 @@ import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-aware-facade.service';
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
 import { ModalController } from '@ionic/angular';
-import { PIN_MODAL_ID } from '@core/service/identity/pin-authentication';
 import { NavigationExtras } from '@angular/router';
 
 @Component({
@@ -173,18 +172,12 @@ export class StartupPage {
   public async navigateToDashboard() {
     this.connectionIssueAwarePromiseExecute({
       promise: () => {
-        this.closePinModal();
         return this.navigationService.navigate([APP_ROUTES.dashboard], {
           replaceUrl: true,
           queryParams: { skipLoading: true },
         });
       },
     });
-  }
-
-  async closePinModal(): Promise<void> {
-    this.loadingService.closeSpinner();
-    this.modalController.dismiss(null, null, PIN_MODAL_ID);
   }
 
   //
