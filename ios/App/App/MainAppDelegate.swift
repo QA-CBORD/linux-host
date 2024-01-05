@@ -82,7 +82,9 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
          didReceiveRemoteNotification userInfo: [AnyHashable: Any],
          fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        print("Remote: ",  userInfo["isSilent"] as? String)
+        if let isSilent = userInfo["isSilent"] as? String {
+            print("isSilent: ", isSilent)
+        }
    
         completionHandler(.noData)
     }
