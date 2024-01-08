@@ -1,11 +1,11 @@
-<st-header [title]="notificationTitle" [isTitleShow]="true" backButtonIcon="close" backButtonTitle=""
-  [isToolbarShow]="true" [trackUrls]="true"></st-header>
+<st-header [title]="notificationTitle" [isTitleShow]="true" [isToolbarShow]="true"
+  [isBackButtonShow]="false"></st-header>
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="markNotificationAsViewed($event)">
     <st-spinner></st-spinner>
   </ion-refresher>
   <ion-list *ngFor="let group of notificationGroups; trackBy: trackByFn">
-    <ion-item-divider *ngIf="hasPeriod(group.notifications)">
+    <ion-item-divider *ngIf="notificationGroups.length">
       {{ group.date }}
     </ion-item-divider>
     <st-notification [notifications]="group.notifications"></st-notification>

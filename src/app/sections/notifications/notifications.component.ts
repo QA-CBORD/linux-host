@@ -59,10 +59,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       .subscribe(() => this.userNotificationsFacadeService.fetchNotifications());
   }
 
-  hasPeriod(notifications: Notification[]) {
-    return notifications.length > 0;
-  }
-
   trackByFn(index: number) {
     return index;
   }
