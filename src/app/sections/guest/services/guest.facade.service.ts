@@ -7,6 +7,8 @@ import { map } from 'rxjs/operators';
 import { GuestDashboardSections } from '../dashboard/model/dashboard.config';
 import { GuestDashboardSection } from '../dashboard/model/dashboard.item.model';
 import { GuestDashboardCsModel } from '../dashboard/model/guest-dashboard-cs.model';
+import { Settings } from 'src/app/app.global';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +16,7 @@ import { GuestDashboardCsModel } from '../dashboard/model/guest-dashboard-cs.mod
 export class GuestFacadeService {
   constructor(
     private readonly contentStringFacade: ContentStringsFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService,
     private readonly institutionService: InstitutionFacadeService
   ) {}
 
@@ -24,7 +27,9 @@ export class GuestFacadeService {
   configureGuestDashboard(): Observable<GuestDashboardSection[]> {
     const guestLoginSettingsObs = this.institutionService.guestSettings;
     const contentStringObs = this.loadAllContentStrings();
-    return zip(contentStringObs, from(guestLoginSettingsObs)).pipe(
+    const settings$ = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES);
+
+    return zip(contentStringObs, from(guestLoginSettingsObs), settings$).pipe(
       map(([contentString, guestSetting]) => {
         return Object.keys(GuestDashboardSections)
           .map(itemkey => {
