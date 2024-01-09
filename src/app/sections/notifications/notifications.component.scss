@@ -1,11 +1,11 @@
 @import 'tools';
 
-ion-list {
-  padding: 0%;
+ion-content {
+  --background: #{$color-background-gray};
 }
 
 ion-item-divider {
-  background-color: rgba($color-black, 0.1);
+  background-color: $color-background-gray;
   @include font-nunito-heavy(16px);
   color: $color-black;
 }
@@ -19,6 +19,10 @@ ion-img {
 }
 
 .notifications {
+  &__list {
+    padding: 0%;
+    --background: white;
+  }
   &__expiration-days {
     @include font-nunito-regular(12px);
   }
