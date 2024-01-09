@@ -1,20 +1,25 @@
-@import "tools";
-
+@import 'tools';
 
 ion-list {
-    padding: 0%;
+  padding: 0%;
 }
 
 ion-item-divider {
-    background-color: rgba($color-black, 0.1);
-    @include font-nunito-heavy(16px);
-    color: $color-black;
+  background-color: rgba($color-black, 0.1);
+  @include font-nunito-heavy(16px);
+  color: $color-black;
 }
 
 st-header {
-    @include font-nunito-heavy(35px);
+  @include font-nunito-heavy(35px);
 }
 
 ion-img {
-    margin-top: 15%;
+  margin-top: 15%;
+}
+
+.notifications {
+  &__expiration-days {
+    @include font-nunito-regular(12px);
+  }
 }

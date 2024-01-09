@@ -2,14 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotificationsComponent, A_DAY_AGO } from './notifications.component';
 import { Notification } from '@core/service/user-notification/user-notification-api.service';
-import { TranslateService } from '@ngx-translate/core';
-import {  NO_ERRORS_SCHEMA } from '@angular/core';
-import { of } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Platform } from '@ionic/angular';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
 export const notifications = [
   {
@@ -257,11 +257,6 @@ export const notifications = [
 describe('NotificationListComponent', () => {
   let component: NotificationsComponent;
   let fixture: ComponentFixture<NotificationsComponent>;
-
-  const mockTranslateService = {
-    instant: jest.fn(null),
-  };
-
   const mockUserNotificationService = {
     allNotifications$: of(notifications),
     refreshNotifications: jest.fn(),
@@ -270,17 +265,17 @@ describe('NotificationListComponent', () => {
   };
 
   const mockUserContentStringsFacadeService = {
-    fetchContentStrings$: jest.fn(),
+    fetchContentStrings$: jest.fn().mockReturnValue(of('')),
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NotificationsComponent],
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, TranslateModule],
       providers: [
         { provide: UserNotificationsFacadeService, useValue: mockUserNotificationService },
         { provide: ContentStringsFacadeService, useValue: mockUserContentStringsFacadeService },
-        { provide: TranslateService, useValue: mockTranslateService },
+        { provide: TranslateService, useClass: TranslateServiceStub },
         LoadingService,
         Platform,
       ],
@@ -291,6 +286,7 @@ describe('NotificationListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(NotificationsComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -316,6 +312,21 @@ describe('NotificationListComponent', () => {
     notifications[2].insertTime = pastWeek;
 
     component['groupNotifications'](<Notification[]>(<unknown>notifications));
+    fixture.detectChanges();
     expect(component.notificationGroups.length).toEqual(3);
   });
 });
+
+export class TranslateServiceStub {
+  onLangChange = new EventEmitter();
+  onTranslationChange = new EventEmitter();
+  onDefaultLangChange = new EventEmitter();
+
+  public get(key: any): any {
+    return of(key);
+  }
+
+  public instant(key: any): any {
+    return key;
+  }
+}

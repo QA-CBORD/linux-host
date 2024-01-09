@@ -7,9 +7,18 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { NotificationComponent } from './notification/notification.component';
 import { IconPathModule } from '@sections/accounts/shared/pipes/icon-path/icon-path.module';
 import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [NotificationsComponent, NotificationComponent],
-  imports: [CommonModule, IonicModule, NotificationsRoutingModule, StHeaderModule, IconPathModule, StSpinnerModule],
+  imports: [
+    CommonModule,
+    IonicModule,
+    NotificationsRoutingModule,
+    StHeaderModule,
+    IconPathModule,
+    StSpinnerModule,
+    TranslateModule,
+  ],
 })
 export class NotificationsModule {}

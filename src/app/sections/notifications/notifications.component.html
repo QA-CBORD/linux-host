@@ -1,5 +1,9 @@
-<st-header [title]="notificationTitle" [isTitleShow]="true" [isToolbarShow]="true"
-  [isBackButtonShow]="false"></st-header>
+<st-header
+  [title]="notificationTitle"
+  [isTitleShow]="true"
+  [isToolbarShow]="true"
+  [isBackButtonShow]="false"
+></st-header>
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="markNotificationAsViewed($event)">
     <st-spinner></st-spinner>
@@ -10,6 +14,17 @@
     </ion-item-divider>
     <st-notification [notifications]="group.notifications"></st-notification>
   </ion-list>
-  <ion-img *ngIf="loadingService.notLoading() && !notificationGroups.length" src="assets/icon/no-notifications.svg"
-    alt="Empty notifications list"></ion-img>
+  <div
+    *ngIf="notificationGroups.length"
+    class="notifications__expiration-days ion-text-center ion-padding"
+    translate
+    [translateParams]="{ expirationDays: '90' }"
+  >
+    patron-ui.notifications.expiration_policy
+  </div>
+  <ion-img
+    *ngIf="loadingService.notLoading() && !notificationGroups.length"
+    src="assets/icon/no-notifications.svg"
+    alt="Empty notifications list"
+  ></ion-img>
 </ion-content>

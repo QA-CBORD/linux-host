@@ -1093,7 +1093,8 @@
       "period_yesterday": "Yesterday",
       "period_previous": "Previous",
       "delete": "Delete",
-      "pin": "Pin"
+      "pin": "Pin",
+      "expiration_policy": "Notifications expire after {{expirationDays}} days" 
     }
   }
 }
