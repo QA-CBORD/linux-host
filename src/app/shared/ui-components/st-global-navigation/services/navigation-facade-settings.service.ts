@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { from, Observable, zip } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { from, Observable, of, zip } from 'rxjs';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   GUEST_NAVIGATION_BASE_CONFIG,
   NAVIGATION_BASE_CONFIG,
@@ -99,7 +99,10 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     ).pipe(
       take(1),
       map(([{ value: cashedSettings }, settings]) => this.updateCachedSettings(cashedSettings, settings)),
-      tap(settings => this.storage.updateStateEntity(this.key, settings))
+      tap(settings => {
+        return this.storage.updateStateEntity(this.key, settings);
+      }),
+      catchError(() => of([]))
     );
   }
 

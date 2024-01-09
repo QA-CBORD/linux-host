@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserNotificationApiService, Notification } from '@core/service/user-notification/user-notification-api.service';
-import { BehaviorSubject, Observable, Subject, first, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, first, firstValueFrom, of } from 'rxjs';
 const MAXIMUN_NOTIFICATION_COUNT = 9;
 @Injectable({
   providedIn: 'root',
@@ -26,7 +26,7 @@ export class UserNotificationsFacadeService {
   }
 
   public async fetchNotifications() {
-    const notifications = await firstValueFrom(this._userNotificationApiService.retrieveAll().pipe(first()));
+    const notifications = await firstValueFrom(this._userNotificationApiService.retrieveAll().pipe(first(), catchError(() => of([]))));
     this._unreadNotifications$.next(notifications);
     this.fetchNotificationsCount();
   }
