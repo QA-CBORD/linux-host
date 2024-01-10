@@ -264,17 +264,12 @@ describe('NotificationListComponent', () => {
     fetchNotificationsCount: jest.fn(),
   };
 
-  const mockUserContentStringsFacadeService = {
-    fetchContentStrings$: jest.fn().mockReturnValue(of('')),
-  };
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NotificationsComponent],
       imports: [HttpClientTestingModule, TranslateModule],
       providers: [
         { provide: UserNotificationsFacadeService, useValue: mockUserNotificationService },
-        { provide: ContentStringsFacadeService, useValue: mockUserContentStringsFacadeService },
         { provide: TranslateService, useClass: TranslateServiceStub },
         LoadingService,
         Platform,

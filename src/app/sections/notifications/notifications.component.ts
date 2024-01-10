@@ -1,14 +1,12 @@
 import { formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Notification } from '@core/service/user-notification/user-notification-api.service';
 import { Platform, RefresherCustomEvent } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { monthDayYear } from '@shared/constants/dateFormats.constant';
-import { Subscription, finalize, first } from 'rxjs';
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { Subscription, finalize } from 'rxjs';
 
 export const A_DAY_AGO = 24 * 60 * 60 * 1000;
 
@@ -30,14 +28,12 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     public readonly loadingService: LoadingService,
     private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
-    private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly platform: Platform,
     private cdRef: ChangeDetectorRef,
     private zone: NgZone
   ) {}
 
   ngOnInit() {
-    this.fetchContentStrings();
     this.subs.add(this.refreshPage());
     this.subs.add(this.refreshPageOnResume());
   }
@@ -108,13 +104,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   private formatDate(date: Date): string {
     return formatDate(date, monthDayYear, 'en-US', 'UTC');
-  }
-
-  private fetchContentStrings() {
-    this.contentStringsFacadeService
-      .fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.notifications)
-      .pipe(first())
-      .subscribe();
   }
 
   private refreshPage() {
