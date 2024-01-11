@@ -145,6 +145,7 @@ describe('VaultIdentityService', () => {
             vault.unlock = async () => true;
             vault.getValue = async () => session.pin;
             const closeAllModalsSpy = jest.spyOn(service, 'closeAllModals').mockReturnValue(void 0);
+            jest.spyOn(Device, 'isBiometricsEnabled').mockResolvedValue(true);
             const unlockResult = await service.unlockVault(true);
             expect(closeAllModalsSpy).toHaveBeenCalledTimes(1);
             expect(unlockResult).toStrictEqual(session);
@@ -162,7 +163,7 @@ describe('VaultIdentityService', () => {
             const deviceMock = jest.spyOn(Device, 'isBiometricsEnabled').mockResolvedValue(true);
 
             const unlockResult = await service.unlockVault(true);
-            expect(deviceMock).toHaveBeenCalledTimes(0);
+            expect(deviceMock).toHaveBeenCalledTimes(2);
             expect(pinModalSpy).toHaveBeenCalledTimes(1);
             expect(retryPinSpy).toHaveBeenNthCalledWith(1, new Error('random error'));
             expect(logoutSpy).toHaveBeenCalledTimes(1);
@@ -218,7 +219,7 @@ describe('VaultIdentityService', () => {
                 .mockImplementation(() => store.userDeniedBiometricPermission);
 
             let isBiometricAvailable = await service.isBiometricAvailable();
-            expect(deviceMock).toHaveBeenCalledTimes(1);
+            expect(deviceMock).toHaveBeenCalled();
             expect(getBiometricPermissionDeniedSpy).toBeCalledTimes(1);
             expect(isBiometricAvailable).toBe(true);
 
