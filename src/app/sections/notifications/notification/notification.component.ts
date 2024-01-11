@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
-import { monthDayYear, hourMinTime } from '@shared/constants/dateFormats.constant';
+import { hourMinTime, monthDayFullYear } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
-import { A_DAY_AGO } from '../notifications.component';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-notification',
@@ -13,8 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class NotificationComponent {
   @Input() notifications: Notification[];
-  dateFormat = monthDayYear;
-  timeFormat = hourMinTime;
 
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
@@ -29,7 +25,7 @@ export class NotificationComponent {
     [NotificationCategory.walkOut]: 'walk-out',
   };
 
-  constructor(private datePipe: DatePipe, private readonly translateService: TranslateService) {}
+  constructor(private datePipe: DatePipe) {}
 
   get notificationsFormatted() {
     return this.notifications.map(notification => {
@@ -53,20 +49,13 @@ export class NotificationComponent {
     return this.formatDate(date) === this.formatDate(today);
   }
 
-  private isYesterday(date: Date): boolean {
-    const yesterday = new Date(Date.now() - A_DAY_AGO);
-    return this.formatDate(date) === this.formatDate(yesterday);
-  }
-
   private formattedDate(insertTime: Date): string {
     return this.isToday(insertTime)
       ? this.datePipe.transform(insertTime, hourMinTime)
-      : this.isYesterday(insertTime)
-      ? this.translateService.instant('patron-ui.notifications.period_yesterday')
-      : this.datePipe.transform(insertTime, monthDayYear + ', ' + hourMinTime);
+      : this.datePipe.transform(insertTime, monthDayFullYear + ', ' + hourMinTime);
   }
 
   private formatDate(today: Date) {
-    return formatDate(today, monthDayYear, 'en-US', 'UTC');
+    return formatDate(today, monthDayFullYear, 'en-US', 'UTC');
   }
 }
