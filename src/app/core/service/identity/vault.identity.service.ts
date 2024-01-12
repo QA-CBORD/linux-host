@@ -290,7 +290,8 @@ export class VaultIdentityService {
    * @returns
    */
   async unlockVault(biometricEnabled: boolean): Promise<VaultSession> {
-    this.state.biometricUsed = biometricEnabled;
+    const isBiometricAvailable = await this.isBiometricAvailable();
+    this.state.biometricUsed = isBiometricAvailable && biometricEnabled;
     await this.closeAllModals();
     return new Promise<VaultSession>((resolve, reject) => {
       if (this.state.biometricUsed) {
