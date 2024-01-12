@@ -1,27 +1,39 @@
-<ion-item lines="full" *ngFor="let notification of notificationsFormatted; trackBy: trackById" aria-label="Notification Item" role="listitem">
-  <ion-avatar slot="start" class="avatar-wrapper">
-    <ion-img src='/assets/icon/{{getAvatar(notification.category)}}-notification.svg' class="avatar"
-      alt="avatar"></ion-img>
-  </ion-avatar>
-  <ion-grid>
-    <ion-row class="ion-align-items-center">
-      <ion-col>
-        <ion-row>
-          <ion-label> {{ notification.title }}</ion-label>
-        </ion-row>
-        <ion-row *ngIf="notification.subtitle">
-          <ion-text> {{ notification.subtitle }}</ion-text>
-        </ion-row>
-        <ion-row>
-          <ion-text> {{ notification.content }}</ion-text>
-        </ion-row>
-        <ion-row>
-          <ion-text> {{ notification.insertTime }}</ion-text>
-        </ion-row>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <div>
-    <ion-icon *ngIf="!notification.viewedDate" src="/assets/icon/status-notification.svg"></ion-icon>
-  </div>
-</ion-item>
+<ion-item-sliding *ngFor="let notification of notificationsFormatted; trackBy: trackById">
+  <ion-item-options class="custom-options" side="start">
+    <ion-item-option class="pin">Pin
+      <ion-icon slot="top" src="/assets/icon/pin-notification.svg"></ion-icon>
+    </ion-item-option>
+  </ion-item-options>
+  <ion-item lines="full" aria-label="Notification Item" role="listitem">
+    <ion-avatar slot="start" class="avatar-wrapper">
+      <ion-img src='/assets/icon/{{getAvatar(notification.category)}}-notification.svg' class="avatar"
+        alt="avatar"></ion-img>
+    </ion-avatar>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col>
+          <ion-row>
+            <ion-label> {{ notification.title }}</ion-label>
+          </ion-row>
+          <ion-row *ngIf="notification.subtitle">
+            <ion-text> {{ notification.subtitle }}</ion-text>
+          </ion-row>
+          <ion-row>
+            <ion-text> {{ notification.content }}</ion-text>
+          </ion-row>
+          <ion-row>
+            <ion-text> {{ notification.insertTime }}</ion-text>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div>
+      <ion-icon class="empty" *ngIf="!notification.viewedDate" src="/assets/icon/status-notification.svg"></ion-icon>
+    </div>
+  </ion-item>
+  <ion-item-options class="custom-options" side="end">
+      <ion-item-option color="danger">Delete
+        <ion-icon slot="top" src="/assets/icon/delete-notification.svg"></ion-icon>
+      </ion-item-option>
+  </ion-item-options>
+</ion-item-sliding>

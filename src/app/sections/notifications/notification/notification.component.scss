@@ -23,7 +23,7 @@ ion-grid {
   }
 }
 
-ion-icon {
+ion-icon.empty {
   vertical-align: middle;
   width: 1.5em;
   height: 1.5em;
@@ -33,7 +33,7 @@ ion-icon {
 .avatar {
   width: 70%;
   height: 70%;
-  
+
   &-wrapper {
     background: rgba($color-black, 0.1);
     border-radius: 50%;
@@ -42,4 +42,24 @@ ion-icon {
     align-items: center;
     margin: 0%;
   }
+}
+
+ion-item-options {
+  @include font-nunito-regular(12px);
+
+  ion-item-option.pin {
+    background-color: $color-purple-50;
+  }
+}
+
+ion-item-options.custom-options {
+  width: 30%;
+}
+
+ion-item-options.custom-options ion-item-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-basis: 25%; /* Adjust this value as needed */
+  max-width: 25%; /* Adjust this value as needed */
 }
