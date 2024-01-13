@@ -103,7 +103,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private formatDate(date: Date): string {
-    return formatDate(date, monthDayYear, 'en-US', 'UTC');
+    return formatDate(date, monthDayYear, 'en-US');
   }
 
   private refreshPage() {

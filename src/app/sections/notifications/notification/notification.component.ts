@@ -56,6 +56,6 @@ export class NotificationComponent {
   }
 
   private formatDate(today: Date) {
-    return formatDate(today, monthDayFullYear, 'en-US', 'UTC');
+    return formatDate(today, monthDayFullYear, 'en-US');
   }
 }
