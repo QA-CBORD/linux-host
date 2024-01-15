@@ -8,7 +8,6 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { StGlobalPopoverModule } from '@shared/ui-components/st-global-popover/st-global-popover.module';
 import { GlobalErrorHandler } from '@core/utils/global-error-handler';
 import { PinModule } from './shared';
-import { StGlobalNavigationModule } from '@shared/ui-components/st-global-navigation/st-global-navigation.module';
 import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
@@ -32,7 +31,6 @@ const appInitFactory =
   imports: [
     StNativeStartupPopoverModule,
     StGlobalPopoverModule,
-    StGlobalNavigationModule,
     CoreModule,
     AppRoutingModule,
     IonicModule.forRoot({

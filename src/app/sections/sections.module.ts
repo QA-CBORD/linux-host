@@ -5,7 +5,7 @@ import { ShowHideNavbarModule } from '@shared/directives/showhide-navbar/showhid
 import { SectionsPage } from './sections.page';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { StGlobalNavigationModule } from '@shared/ui-components/st-global-navigation/st-global-navigation.module';
+import { StGlobalNavigationComponent } from '@shared/ui-components/st-global-navigation/st-global-navigation.component';
 
 @NgModule({
   declarations: [SectionsPage],
@@ -16,7 +16,7 @@ import { StGlobalNavigationModule } from '@shared/ui-components/st-global-naviga
     ReactiveFormsModule,
     SectionsRoutingModule,
     ShowHideNavbarModule,
-    StGlobalNavigationModule,
+    StGlobalNavigationComponent,
   ],
 })
 export class SectionsModule {}

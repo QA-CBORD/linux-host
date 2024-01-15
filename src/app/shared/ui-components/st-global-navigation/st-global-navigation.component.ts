@@ -1,20 +1,39 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
-import { NavigationStart, Router } from '@angular/router';
+import { NavigationStart, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { IonicModule, ModalController, PopoverController } from '@ionic/angular';
 import { GlobalNavService } from './services/global-nav.service';
 import { filter } from 'rxjs/operators';
+import { MainNavItemsPipe } from './pipe/main-nav-items.pipe';
+import { PopupListComponent } from './components/popup-list/popup-list.component';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
+import { IsActiveRouteInListPipe } from './pipe/is-active-route-in-list.pipe';
 
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    IonicModule,
+    StopPropagationModule,
+    TranslateModule,
+    PopupListComponent,
+    MainNavItemsPipe,
+    IsActiveRouteInListPipe,
+  ],
+  providers: [NavigationFacadeSettingsService],
   selector: 'st-global-navigation',
   templateUrl: './st-global-navigation.component.html',
   styleUrls: ['./st-global-navigation.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   _isListShown = false;
+  activitiesCount$: Observable<string> = this.navigationSettingsService.unreadNotificationsCount$;
 
   set isListShown(value: boolean) {
     this._isListShown = value;
@@ -55,7 +74,7 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     this.isListShown = !this.isListShown;
   }
 
-  onDismissPopup(){
+  onDismissPopup() {
     this.isListShown = false;
   }
 

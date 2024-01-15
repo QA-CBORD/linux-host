@@ -5,7 +5,7 @@ import { GuestSectionPage } from './guest-sections.page';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShowHideNavbarModule } from '@shared/directives/showhide-navbar/showhide-navbar.module';
-import { StGlobalNavigationModule } from '@shared/ui-components/st-global-navigation/st-global-navigation.module';
+import { StGlobalNavigationComponent } from '@shared/ui-components/st-global-navigation/st-global-navigation.component';
 
 @NgModule({
   declarations: [GuestSectionPage],
@@ -16,7 +16,7 @@ import { StGlobalNavigationModule } from '@shared/ui-components/st-global-naviga
     ReactiveFormsModule,
     GuestSectionsRoutingModule,
     ShowHideNavbarModule,
-    StGlobalNavigationModule,
+    StGlobalNavigationComponent,
   ],
 })
 export class GuestSectionsModule {}

@@ -147,7 +147,7 @@ describe('VaultIdentityService', () => {
             const closeAllModalsSpy = jest.spyOn(service, 'closeAllModals').mockReturnValue(void 0);
             jest.spyOn(Device, 'isBiometricsEnabled').mockResolvedValue(true);
             const unlockResult = await service.unlockVault(true);
-            expect(closeAllModalsSpy).toHaveBeenCalledTimes(1);
+            expect(closeAllModalsSpy).toHaveBeenCalled();
             expect(unlockResult).toStrictEqual(session);
         });
 

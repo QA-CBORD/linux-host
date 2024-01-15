@@ -20,9 +20,7 @@
 
   <ng-container *ngTemplateOutlet="navMenu"></ng-container>
   <ng-template #navMenu>
-    <div class="global-navigation__main" 
-    id="click-trigger"
-    >
+    <div class="global-navigation__main" id="click-trigger">
       <div class="global-navigation__list">
         <ng-container
           *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
@@ -35,6 +33,7 @@
           }"
           class="global-navigation__list-item"
           (click)="toggleListAppearance()"
+          (keyup.enter)="toggleListAppearance()"
         >
           <div
             class="global-navigation__icon"
@@ -42,10 +41,19 @@
               'global-navigation__icon--close': isListShown,
               'global-navigation__icon--more': !isListShown
             }"
-          ></div>
+          >
+            <ng-container
+              *ngIf="!isListShown"
+              [ngTemplateOutlet]="activityIndicator"
+              [ngTemplateOutletContext]="{
+                indicatorValue: activitiesCount$ | async,
+                indicatorAriaLabel: 'a11y.bottom_navigation.activity_count'
+              }"
+            ></ng-container>
+          </div>
           {{ (!isListShown ? 'patron-ui.core-ui.label_more' : 'patron-ui.core-ui.label_close') | translate }}
           <ion-ripple-effect></ion-ripple-effect>
-          </div>
+        </div>
       </div>
     </div>
   </ng-template>
@@ -59,15 +67,24 @@
     [routerLinkActive]="'global-navigation__list-item--active'"
   >
     <div class="global-navigation__icon global-navigation__icon--{{ item.iconCssPostfix }}">
-      <div
-        *ngIf="item.indicatorValue$ | async as indicatorValue"
-        [attr.aria-label]="item.indicatorAriaLabel | translate : { count: indicatorValue }"
-        class="global-navigation__icon--indicator"
-      >
-        {{ indicatorValue }}
-      </div>
+      <ng-container
+        [ngTemplateOutlet]="activityIndicator"
+        [ngTemplateOutletContext]="{
+          indicatorValue: item.indicatorValue$ | async,
+          indicatorAriaLabel: item.indicatorAriaLabel
+        }"
+      ></ng-container>
     </div>
     {{ item.name }}
     <ion-ripple-effect></ion-ripple-effect>
+  </div>
+</ng-template>
+<ng-template #activityIndicator let-indicatorValue="indicatorValue" let-indicatorAriaLabel="indicatorAriaLabel">
+  <div
+    *ngIf="indicatorValue"
+    class="global-navigation__icon--indicator"
+    [attr.aria-label]="indicatorAriaLabel | translate : { count: indicatorValue }"
+  >
+    {{ indicatorValue }}
   </div>
 </ng-template>

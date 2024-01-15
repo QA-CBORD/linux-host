@@ -1,6 +1,7 @@
 {
   "a11y": {
     "bottom_navigation": {
+      "activity_count": "{{count}} activities to check",
       "notifications": "{{count}} unread notifications"
     }
   },
