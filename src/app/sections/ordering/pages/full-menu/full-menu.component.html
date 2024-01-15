@@ -12,23 +12,26 @@
   <ion-list class="full-menu__address-info-list">
     <ion-item lines="full" (click)="toggleMerchantInfo()">
       <div class="full-menu__address-container">
-        <div style="width: 92%;">
-          <div class="full-menu__address-title">{{ (merchantInfo$ | async).name }}</div>
+        <div style="width: 92%">
+          <div class="full-menu__address-title">{{ (merchantInfo$ | async)?.name }}</div>
           <ng-container *ngIf="merchantInfoState">
             <div aria-live="polite" class="full-menu__address-description" aria-labelledby="collapsed-tittle">
-              {{ (merchantInfo$ | async).description }}
+              {{ (merchantInfo$ | async)?.description }}
             </div>
           </ng-container>
           <div class="full-menu__address-info">
             <img src="./assets/icon/location-pin.svg" height="16" alt="location-pin" />
             <div *ngIf="(orderInfo$ | async)?.address" class="full-menu__address-info-content">
-              {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
+              {{ (merchantInfo$ | async)?.distanceFromUser | merchantDistance }} -
               {{ (orderInfo$ | async)?.address | addressHeaderFormat }}
             </div>
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">
-          <img src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg" [alt]="merchantInfoState ? 'expanded' : 'collapsed'" />
+          <img
+            src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg"
+            [alt]="merchantInfoState ? 'expanded' : 'collapsed'"
+          />
         </div>
       </div>
     </ion-item>
@@ -37,8 +40,11 @@
         <div class="full-menu__date-time-wrapper">
           <div class="full-menu__date-time-value">{{ orderType | async }}</div>
           <div class="full-menu__date-time-helper">{{ contentStrings.labelFor | async }}</div>
-          <div class="full-menu__date-time-value" *ngIf="(orderDetails$ | async)">
-            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes:false }}
+          <div class="full-menu__date-time-value">
+            <st-order-prep-time
+              [orderDetailOptions]="orderInfo$ | async"
+              [orderTypes]="orderTypes$ | async"
+            ></st-order-prep-time>
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">
@@ -67,5 +73,5 @@
   </ion-list>
 </ion-content>
 <ion-footer mode="ios" class="full-menu__footer" *ngIf="(menuItems$ | async) > 0">
-  <st-view-cart [menuItemsCount]="(menuItems$ | async)" (click)="redirectToCart()"></st-view-cart>
+  <st-view-cart [menuItemsCount]="menuItems$ | async" (click)="redirectToCart()"></st-view-cart>
 </ion-footer>

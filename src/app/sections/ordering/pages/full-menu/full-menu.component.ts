@@ -82,6 +82,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     return this.cartService.orderDetailsOptions$;
   }
 
+  get orderTypes$() :Observable<MerchantOrderTypesInfo> {
+    return this.merchantService.orderTypes$;
+  }
+
   get orderDetails$() {
     return zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$).pipe(
       map(([orderTypes, orderInfo]) => {
