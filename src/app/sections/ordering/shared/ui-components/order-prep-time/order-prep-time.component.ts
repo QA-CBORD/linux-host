@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModifyPrepTimeModule } from '../../pipes/modify-prep-time';
 import { OrderDetailOptions } from '@sections/ordering/services';
 import { MerchantOrderTypesInfo } from '@sections/ordering';
@@ -9,7 +9,8 @@ import { ORDER_TYPE } from '@sections/ordering/ordering.config';
   selector: 'st-order-prep-time',
   templateUrl: 'order-prep-time.component.html',
   standalone: true,
-  imports: [CommonModule, ModifyPrepTimeModule]
+  imports: [CommonModule, ModifyPrepTimeModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderPrepTime {
   @Input() orderDetailOptions: OrderDetailOptions;
