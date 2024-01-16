@@ -153,10 +153,11 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
 
   private updateReactiveProperties(settings: NavigationBottomBarElement[]) {
     return settings.map(setting => {
+      const updatedSetting = { ...setting };
       if (this.navigationBottomBarElementCountMap.has(setting.id)) {
-        setting.indicatorValue$ = this.navigationBottomBarElementCountMap.get(setting.id);
+        updatedSetting.indicatorValue$ = this.navigationBottomBarElementCountMap.get(setting.id);
       }
-      return setting;
+      return updatedSetting;
     });
   }
   private dispatchNavigationElementsIndicatorRequests() {
