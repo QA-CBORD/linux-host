@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 @Pipe({
   name: 'isActiveRouteInList',
+  standalone: true
 })
 export class IsActiveRouteInListPipe implements PipeTransform {
 

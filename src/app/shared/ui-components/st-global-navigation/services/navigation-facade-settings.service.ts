@@ -17,7 +17,7 @@ import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { TILES_ID } from '@sections/dashboard/dashboard.config';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private readonly key: string = 'NAVIGATION_SETTINGS';
   private readonly firstNavKey: string = 'NAVIGATION_STARTUP';
@@ -72,6 +72,10 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     return this.storage
       .getStateEntityByKey$<boolean>(this.permissionResponse)
       .pipe(map(data => (data ? data.value : false)));
+  }
+
+  get unreadNotificationsCount$() {
+    return this.userNotificationsFacadeService.unreadNotificationsCount$;
   }
 
   private isConfigInStorage(): boolean {
