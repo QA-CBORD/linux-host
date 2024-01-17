@@ -96,8 +96,8 @@ export class UserNotificationApiService {
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 
-  markUserNotificationLogAsPinned(userNotificationLogId: string): Observable<boolean> {
-    const postParams = { userNotificationLogId };
+  markUserNotificationLogAsPinned(userNotificationLogId: string, value?: boolean): Observable<boolean> {
+    const postParams = { userNotificationLogId, value };
     const queryConfig = new RPCQueryConfig('markUserNotificationLogAsPinned', postParams, true);
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { hourMinTime, monthDayFullYear } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
+import { IonItemOptions, IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { NotificationGroup } from '../notifications.component';
 
@@ -13,12 +13,11 @@ import { NotificationGroup } from '../notifications.component';
   styleUrls: ['./notification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
-export class NotificationComponent {
-  
+export class NotificationComponent implements OnInit {
   @Input() notificationGroups: NotificationGroup[] = [];
   @ViewChild(IonItemSliding) slidingItem: IonItemSliding;
-  
+  @ViewChild(IonItemOptions) itemOptions: IonItemOptions;
+
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
     [NotificationCategory.account]: 'account',
@@ -32,11 +31,21 @@ export class NotificationComponent {
     [NotificationCategory.walkOut]: 'walk-out',
   };
 
-  constructor(private datePipe: DatePipe, private readonly translateService: TranslateService, private readonly userNotificationsFacadeService: UserNotificationsFacadeService) {}
+  constructor(
+    private datePipe: DatePipe,
+    private readonly translateService: TranslateService,
+    private readonly userNotificationsFacadeService: UserNotificationsFacadeService
+  ) {}
 
-  notificationsFormatted(group: Notification[], slidingItem: IonItemSliding) {
-    //slidingItem.open("start")
+  ngOnInit(): void {
+    console.log("groups? ", this.notificationGroups)
+  }
+
+  notificationsFormatted(group: Notification[]) {
+    console.log("groups? ", this.notificationGroups)
     return group.map(notification => {
+
+     //console.log("group: ", notification.isPinned)
       return {
         ...notification,
         insertTime: this.formattedDate(notification.insertTime),
@@ -52,7 +61,7 @@ export class NotificationComponent {
     return user.id;
   }
 
-  trackByFn(index: number) {
+  trackByFn(index: number, value: Notification[]) {
     return index;
   }
 
@@ -64,18 +73,16 @@ export class NotificationComponent {
     return this.translateService.instant('patron-ui.notifications.pin');
   }
 
-
-  async onSwipe(slidingItem: IonItemSliding, event: ItemSlidingCustomEvent, notification: Notification) {
-    console.log('onSwipe: ', event, notification.id);
-
-    if(event.detail.side == "start") {
+  async onSwipe(event: ItemSlidingCustomEvent, slidingItem: IonItemSliding, notification: Notification) {
+    if (event.detail.side == 'start') {
       if (!notification.isPinned) {
-        await this.userNotificationsFacadeService.markAsPinned(notification.id);
-        slidingItem.disabled = true;
+        await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
+      } else {
+        await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
       }
     } else {
-       await this.userNotificationsFacadeService.markAsDismissed(notification.id);
-       slidingItem.close();
+      await this.userNotificationsFacadeService.markAsDismissed(notification.id);
+      await slidingItem.close();
     }
 
     await this.userNotificationsFacadeService.fetchNotifications();
@@ -96,7 +103,11 @@ export class NotificationComponent {
     return formatDate(today, monthDayFullYear, 'en-US');
   }
 
-  openPinned(slidingItem: IonItemSliding): any { 
-        slidingItem.open('start');
+  openPinned(slidingItem: IonItemSliding, isPinned: boolean) {
+    if (isPinned) {
+      slidingItem.open('start');
     }
+
+    return true;
+  }
 }

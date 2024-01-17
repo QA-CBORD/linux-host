@@ -60,6 +60,25 @@ ion-item-options.custom-options ion-item-option {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-basis: 25%; /* Adjust this value as needed */
-  max-width: 25%; /* Adjust this value as needed */
+  width: 30%;
+}
+
+ion-item-options {
+  ion-icon {
+    width: 1.5em;
+    height: 1.5em;
+    padding-bottom: 5%;
+  }
+}
+.notifications {
+  &__list {
+    padding: 0%;
+    --background: blue;
+  }
+}
+
+ion-item-divider {
+  background-color: $color-background-gray;
+  @include font-nunito-heavy(16px);
+  color: $color-black;
 }

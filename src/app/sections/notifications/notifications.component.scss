@@ -4,12 +4,6 @@ ion-content {
   --background: #{$color-background-gray};
 }
 
-ion-item-divider {
-  background-color: $color-background-gray;
-  @include font-nunito-heavy(16px);
-  color: $color-black;
-}
-
 st-header {
   @include font-nunito-heavy(35px);
 }

@@ -64,46 +64,56 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private groupNotifications(notifications: Notification[]) {
+    const priority: { [key: string]: number } = {
+      pinned: 0,
+      [this.received.today]: 1,
+      [this.received.yesterday]: 2,
+      [this.received.previous]: 3,
+    };
+
     const today = this.formatDate(new Date());
     const yesterday = this.formatDate(new Date(Date.now() - A_DAY_AGO));
     const groupedNotifications: { [key: string]: Notification[] } = {};
 
-    this.groupNotificationsByPeriods(notifications, today, yesterday, groupedNotifications);
+    this.groupNotificationsBySections(notifications, today, yesterday, groupedNotifications);
+
     this.zone.run(() => {
-      this.notificationGroups = Object.keys(groupedNotifications).map(date => ({
-        date,
-        notifications: groupedNotifications[date],
-      }));
+      this.notificationGroups = Object.keys(groupedNotifications)
+        .sort((a, b) => {
+          return priority[a] - priority[b];
+        })
+        .map(sectionName => ({
+          sectionName,
+          notifications: groupedNotifications[sectionName],
+        }));
       this.cdRef.detectChanges();
     });
   }
 
-  private groupNotificationsByPeriods(
+  private groupNotificationsBySections(
     notifications: Notification[],
     today: string,
     yesterday: string,
     groupedNotifications: { [key: string]: Notification[] }
   ) {
     notifications.forEach(notification => {
-      let period = this.received.today;
+      let section = 'pinned';
       const notificationDate = this.formatDate(notification.insertTime);
 
       if (notification.isPinned) {
-         period = "pinned"
+        section = 'pinned';
+      } else if (notificationDate === today) {
+        section = this.received.today;
+      } else if (notificationDate === yesterday) {
+        section = this.received.yesterday;
       } else {
-        if (notificationDate === today) {
-          period = this.received.today;
-        } else if (notificationDate === yesterday) {
-          period = this.received.yesterday;
-        } else {
-          period = this.received.previous;
-        }
+        section = this.received.previous;
       }
 
-      if (!groupedNotifications[period]) {
-        groupedNotifications[period] = [];
+      if (!groupedNotifications[section]) {
+        groupedNotifications[section] = [];
       }
-      groupedNotifications[period].push(notification);
+      groupedNotifications[section].push(notification);
     });
   }
 
@@ -132,6 +142,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 }
 
 export interface NotificationGroup {
-  date: string;
+  sectionName: string;
   notifications: Notification[];
 }
