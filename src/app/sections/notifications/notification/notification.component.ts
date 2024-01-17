@@ -1,7 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { hourMinTime, monthDayFullYear } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
+import { IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
+import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
+import { NotificationGroup } from '../notifications.component';
 
 @Component({
   selector: 'st-notification',
@@ -9,9 +13,12 @@ import { DatePipe, formatDate } from '@angular/common';
   styleUrls: ['./notification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationComponent {
-  @Input() notifications: Notification[];
 
+export class NotificationComponent {
+  
+  @Input() notificationGroups: NotificationGroup[] = [];
+  @ViewChild(IonItemSliding) slidingItem: IonItemSliding;
+  
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
     [NotificationCategory.account]: 'account',
@@ -25,10 +32,11 @@ export class NotificationComponent {
     [NotificationCategory.walkOut]: 'walk-out',
   };
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(private datePipe: DatePipe, private readonly translateService: TranslateService, private readonly userNotificationsFacadeService: UserNotificationsFacadeService) {}
 
-  get notificationsFormatted() {
-    return this.notifications.map(notification => {
+  notificationsFormatted(group: Notification[], slidingItem: IonItemSliding) {
+    //slidingItem.open("start")
+    return group.map(notification => {
       return {
         ...notification,
         insertTime: this.formattedDate(notification.insertTime),
@@ -42,6 +50,35 @@ export class NotificationComponent {
 
   trackById(user: Notification): string {
     return user.id;
+  }
+
+  trackByFn(index: number) {
+    return index;
+  }
+
+  get notificationDelete() {
+    return this.translateService.instant('patron-ui.notifications.delete');
+  }
+
+  get notificationPin() {
+    return this.translateService.instant('patron-ui.notifications.pin');
+  }
+
+
+  async onSwipe(slidingItem: IonItemSliding, event: ItemSlidingCustomEvent, notification: Notification) {
+    console.log('onSwipe: ', event, notification.id);
+
+    if(event.detail.side == "start") {
+      if (!notification.isPinned) {
+        await this.userNotificationsFacadeService.markAsPinned(notification.id);
+        slidingItem.disabled = true;
+      }
+    } else {
+       await this.userNotificationsFacadeService.markAsDismissed(notification.id);
+       slidingItem.close();
+    }
+
+    await this.userNotificationsFacadeService.fetchNotifications();
   }
 
   private isToday(date: Date): boolean {
@@ -58,4 +95,8 @@ export class NotificationComponent {
   private formatDate(today: Date) {
     return formatDate(today, monthDayFullYear, 'en-US');
   }
+
+  openPinned(slidingItem: IonItemSliding): any { 
+        slidingItem.open('start');
+    }
 }

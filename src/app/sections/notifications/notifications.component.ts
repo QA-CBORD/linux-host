@@ -87,12 +87,17 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     notifications.forEach(notification => {
       let period = this.received.today;
       const notificationDate = this.formatDate(notification.insertTime);
-      if (notificationDate === today) {
-        period = this.received.today;
-      } else if (notificationDate === yesterday) {
-        period = this.received.yesterday;
+
+      if (notification.isPinned) {
+         period = "pinned"
       } else {
-        period = this.received.previous;
+        if (notificationDate === today) {
+          period = this.received.today;
+        } else if (notificationDate === yesterday) {
+          period = this.received.yesterday;
+        } else {
+          period = this.received.previous;
+        }
       }
 
       if (!groupedNotifications[period]) {
@@ -126,7 +131,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 }
 
-interface NotificationGroup {
+export interface NotificationGroup {
   date: string;
   notifications: Notification[];
 }

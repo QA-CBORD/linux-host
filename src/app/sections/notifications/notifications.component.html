@@ -8,12 +8,7 @@
   <ion-refresher slot="fixed" (ionRefresh)="markNotificationAsViewed($event)">
     <st-spinner></st-spinner>
   </ion-refresher>
-  <ion-list class="notifications__list" *ngFor="let group of notificationGroups; trackBy: trackByFn">
-    <ion-item-divider *ngIf="notificationGroups.length">
-      {{ group.date }}
-    </ion-item-divider>
-    <st-notification [notifications]="group.notifications"></st-notification>
-  </ion-list>
+    <st-notification [notificationGroups]="notificationGroups"></st-notification>
   <div
     *ngIf="notificationGroups.length"
     class="notifications__expiration-days ion-text-center ion-padding"

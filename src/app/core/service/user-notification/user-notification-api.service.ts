@@ -28,6 +28,7 @@ export interface Notification {
   viewedDate: Date;
   dismissedDate: Date;
   insertTime: Date;
+  isPinned: boolean;
 }
 
 interface NotificationList {
@@ -56,7 +57,7 @@ export class UserNotificationApiService {
   }
 
   retrieveAll(): Observable<Notification[]> {
-    const postParams = { includeViewed: true, includeDismissed: true, includePinned: true };
+    const postParams = { includeViewed: true, includeDismissed: false, includePinned: true };
     const queryConfig = new RPCQueryConfig('retrieveAll', postParams, true);
     return this.http
       .post<MessageResponse<NotificationList>>(this.serviceUrl, queryConfig)
@@ -92,6 +93,12 @@ export class UserNotificationApiService {
 
   markAllUserNotificationLogAsViewed() {
     const queryConfig = new RPCQueryConfig('markAllUserNotificationLogAsViewed', {}, true);
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+  }
+
+  markUserNotificationLogAsPinned(userNotificationLogId: string): Observable<boolean> {
+    const postParams = { userNotificationLogId };
+    const queryConfig = new RPCQueryConfig('markUserNotificationLogAsPinned', postParams, true);
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
 }

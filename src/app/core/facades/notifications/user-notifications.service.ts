@@ -37,4 +37,12 @@ export class UserNotificationsFacadeService {
   public markAllNotificationsAsViewed() {
     return this._userNotificationApiService.markAllUserNotificationLogAsViewed().pipe(first());
   }
+
+  public async markAsPinned(id: string) {
+    return await firstValueFrom(this._userNotificationApiService.markUserNotificationLogAsPinned(id).pipe(first()));
+  }
+
+  public async markAsDismissed(id: string) {
+    return await firstValueFrom(this._userNotificationApiService.markAsDismissed(id).pipe(first()));
+  }
 }
