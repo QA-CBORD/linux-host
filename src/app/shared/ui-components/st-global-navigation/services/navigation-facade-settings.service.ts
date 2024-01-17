@@ -74,10 +74,6 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
       .pipe(map(data => (data ? data.value : false)));
   }
 
-  get unreadNotificationsCount$() {
-    return this.userNotificationsFacadeService.unreadNotificationsCount$;
-  }
-
   private isConfigInStorage(): boolean {
     return this.storage.isKeyExistInState(this.key);
   }

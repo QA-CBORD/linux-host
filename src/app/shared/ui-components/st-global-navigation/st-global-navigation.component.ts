@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
 import { NavigationStart, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { IonicModule, ModalController, PopoverController } from '@ionic/angular';
 import { GlobalNavService } from './services/global-nav.service';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { MainNavItemsPipe } from './pipe/main-nav-items.pipe';
 import { PopupListComponent } from './components/popup-list/popup-list.component';
 import { CommonModule } from '@angular/common';
@@ -33,7 +33,7 @@ import { IsActiveRouteInListPipe } from './pipe/is-active-route-in-list.pipe';
 })
 export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   _isListShown = false;
-  activitiesCount$: Observable<string> = this.navigationSettingsService.unreadNotificationsCount$;
+  activitiesCount$: Observable<string>;
 
   set isListShown(value: boolean) {
     this._isListShown = value;
@@ -68,6 +68,15 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.navElements$ = this.navigationSettingsService.settings$;
+    this.activitiesCount$ = this.navElements$.pipe(
+      switchMap(navElements => {
+        const indicatorValueNavEls = navElements.filter(navEl => !!navEl.indicatorValue$);
+        if (indicatorValueNavEls.length) {
+          return indicatorValueNavEls[0].indicatorValue$;
+        }
+        return of('');
+      })
+    );
   }
 
   toggleListAppearance() {
