@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { Observable, of, from, iif, zip } from 'rxjs';
 import { UserApiService } from '@core/service/user-api/user-api.service';
@@ -39,6 +39,7 @@ export class UserFacadeService extends ServiceStateFacade {
     private readonly pingEncoderService: BarcodeService,
     private readonly platform: Platform,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
+    private readonly zone: NgZone
   ) {
     super();
   }
@@ -185,7 +186,7 @@ export class UserFacadeService extends ServiceStateFacade {
         if (result) {
           PushNotifications.removeAllListeners();
           PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-            this.userNotificationsFacadeService.fetchNotifications();
+            this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications());
             if (Capacitor.getPlatform() === PLATFORM.android) {
               LocalNotifications.schedule({
                 notifications: [

@@ -6,12 +6,13 @@ const MAXIMUN_NOTIFICATION_COUNT = 9;
   providedIn: 'root',
 })
 export class UserNotificationsFacadeService {
-  private readonly _unreadNotificationsCount$ = new BehaviorSubject<string>('');
+  private readonly _unreadNotificationsCountSubject = new BehaviorSubject<string>('');
+  private readonly _unreadNotificationsCount$ = this._unreadNotificationsCountSubject.asObservable();
   private readonly _unreadNotifications$ = new Subject<Notification[]>();
   private readonly _unreadNotificationsSubject$ = this._unreadNotifications$.asObservable();
 
   get unreadNotificationsCount$(): Observable<string> {
-    return this._unreadNotificationsCount$.asObservable();
+    return this._unreadNotificationsCount$;
   }
 
   get allNotifications$(): Observable<Notification[]> {
@@ -22,7 +23,9 @@ export class UserNotificationsFacadeService {
 
   public async fetchNotificationsCount() {
     const count = await firstValueFrom(this._userNotificationApiService.getUnreadCount().pipe(first()));
-    this._unreadNotificationsCount$.next(count > MAXIMUN_NOTIFICATION_COUNT ? `${MAXIMUN_NOTIFICATION_COUNT}+` : String(count || ''));
+    this._unreadNotificationsCountSubject.next(
+      count > MAXIMUN_NOTIFICATION_COUNT ? `${MAXIMUN_NOTIFICATION_COUNT}+` : String(count || '')
+    );
   }
 
   public async fetchNotifications() {
