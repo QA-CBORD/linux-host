@@ -83,8 +83,19 @@ ion-item-divider {
   color: $color-black;
 }
 
-.darken {
-    &::part(native) {
-      background-color:rgba(0, 0, 0, 0.2);
-    }
+
+// ion-item::part(native) {
+//   background-color:rgba(0, 0, 0, 0.2);
+// }
+
+ion-item:active {
+  --background: rgba(0, 0, 0, 0.2);
+ }
+
+ .item-background-green{
+  --ion-item-background:#015f01d5;
+}
+
+.item-background-red{
+  --ion-item-background:#ee1d06d5;
 }
