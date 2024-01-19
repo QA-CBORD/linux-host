@@ -2,6 +2,7 @@
 
 ion-item {
   --inner-padding-end: 2.5%;
+  --color-activated: 'red';
 }
 
 ion-grid {
@@ -46,7 +47,6 @@ ion-icon.empty {
 
 ion-item-options {
   @include font-nunito-regular(12px);
-
   ion-item-option.pin {
     background-color: $color-purple-50;
   }
@@ -81,4 +81,10 @@ ion-item-divider {
   background-color: $color-background-gray;
   @include font-nunito-heavy(16px);
   color: $color-black;
+}
+
+.darken {
+    &::part(native) {
+      background-color:rgba(0, 0, 0, 0.2);
+    }
 }

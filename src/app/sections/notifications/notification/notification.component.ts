@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { hourMinTime, monthDayFullYear } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { IonItemOptions, IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
+import {  IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { NotificationGroup } from '../notifications.component';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-notification',
@@ -13,10 +14,10 @@ import { NotificationGroup } from '../notifications.component';
   styleUrls: ['./notification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationComponent implements OnInit {
+export class NotificationComponent {
   @Input() notificationGroups: NotificationGroup[] = [];
   @ViewChild(IonItemSliding) slidingItem: IonItemSliding;
-  @ViewChild(IonItemOptions) itemOptions: IonItemOptions;
+  @ViewChildren(IonItemSliding) slidingItems: QueryList<IonItemSliding>;
 
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
@@ -34,18 +35,28 @@ export class NotificationComponent implements OnInit {
   constructor(
     private datePipe: DatePipe,
     private readonly translateService: TranslateService,
-    private readonly userNotificationsFacadeService: UserNotificationsFacadeService
+    private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
+   // private readonly loadingService: LoadingService,
   ) {}
 
-  ngOnInit(): void {
-    console.log("groups? ", this.notificationGroups)
+  ngAfterViewChecked() {
+   //this.loadingService.showSpinner();
+    this.notificationGroups.forEach((group, i) => {
+      group.notifications.forEach((notification, j) => {
+        if (notification.isPinned) {
+          const item =  this.slidingItems.get(i + j);
+          item.disabled = false;
+          item.open('start');
+        }
+      });
+    });
+
+
+    //this.loadingService.closeSpinner();
   }
 
   notificationsFormatted(group: Notification[]) {
-    console.log("groups? ", this.notificationGroups)
     return group.map(notification => {
-
-     //console.log("group: ", notification.isPinned)
       return {
         ...notification,
         insertTime: this.formattedDate(notification.insertTime),
@@ -57,12 +68,12 @@ export class NotificationComponent implements OnInit {
     return this.notificationIcon[category];
   }
 
-  trackById(user: Notification): string {
+  trackById(_: number, user: Notification): string {
     return user.id;
   }
 
-  trackByFn(index: number, value: Notification[]) {
-    return index;
+  trackByFn(index, value) {
+    return value.notifications.length;
   }
 
   get notificationDelete() {
@@ -74,18 +85,24 @@ export class NotificationComponent implements OnInit {
   }
 
   async onSwipe(event: ItemSlidingCustomEvent, slidingItem: IonItemSliding, notification: Notification) {
-    if (event.detail.side == 'start') {
-      if (!notification.isPinned) {
-        await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
+    const amount = await slidingItem.getSlidingRatio();
+     if (amount !== 0) {
+      if (event.detail.side == 'start') {
+        if (!notification.isPinned) {
+          await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
+          //await slidingItem.open('start');
+        } else {
+          await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
+          //await slidingItem.close();
+        }
       } else {
-        await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
+        await this.userNotificationsFacadeService.markAsDismissed(notification.id);
+        await slidingItem.close();
       }
-    } else {
-      await this.userNotificationsFacadeService.markAsDismissed(notification.id);
-      await slidingItem.close();
-    }
-
-    await this.userNotificationsFacadeService.fetchNotifications();
+  
+      await this.userNotificationsFacadeService.fetchNotifications();
+   }
+ 
   }
 
   private isToday(date: Date): boolean {
@@ -101,13 +118,5 @@ export class NotificationComponent implements OnInit {
 
   private formatDate(today: Date) {
     return formatDate(today, monthDayFullYear, 'en-US');
-  }
-
-  openPinned(slidingItem: IonItemSliding, isPinned: boolean) {
-    if (isPinned) {
-      slidingItem.open('start');
-    }
-
-    return true;
   }
 }
