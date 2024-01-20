@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { hourMinTime, monthDayFullYear } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
@@ -17,6 +9,8 @@ import { NotificationGroup } from '../notifications.component';
 import { ToastService } from '@core/service/toast/toast.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 
+type Side = 'start' | 'end' | 'none';
+
 @Component({
   selector: 'st-notification',
   templateUrl: './notification.component.html',
@@ -24,10 +18,9 @@ import { LoadingService } from '@core/service/loading/loading.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationComponent implements OnInit {
+  private side: Side;
   @Input() notificationGroups: NotificationGroup[] = [];
-  @ViewChild(IonItemSliding) slidingItem: IonItemSliding;
-  @ViewChild(IonItem) ionItem: IonItem;
-  @ViewChildren(IonItemSliding) slidingItems: QueryList<IonItemSliding>;
+  @ViewChildren(IonItem) ionItems: QueryList<IonItem>;
 
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
@@ -49,8 +42,9 @@ export class NotificationComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly loadingService: LoadingService
   ) {}
+
   ngOnInit(): void {
-    console.log("ngOnInit")
+    //console.log("ngOnInit")
   }
 
   notificationsFormatted(group: Notification[]) {
@@ -81,38 +75,62 @@ export class NotificationComponent implements OnInit {
   get notificationPin() {
     return this.translateService.instant('patron-ui.notifications.pin');
   }
+  get notificationUnpin() {
+    return this.translateService.instant('patron-ui.notifications.unpin');
+  }
 
-  async onSwipe(
-    event: ItemSlidingCustomEvent,
-    slidingItem: IonItemSliding,
-    notification: Notification,
-    ionItem: IonItem
-  ) {
-    
-    this.loadingService.showSpinner();
-    const amount = await slidingItem.getSlidingRatio();
-    if (amount !== 0) {
-      if (event.detail.side == 'start') {
-       ionItem.color = 'tertiary';
-        if (!notification.isPinned) {
-          await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
-        } else {
-          await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
-          const message = `Notification unpinned`;
-          await this.toastService.showToast({ message, position: 'bottom',  toastButtons: [ { text: 'Undo'}, {icon: 'Close',   role: 'cancel'}], });
-        }
-      } else {
-        ionItem.color = 'danger';
-        await this.userNotificationsFacadeService.markAsDismissed(notification.id);
-        const message = `Notification deleted`;
-        await this.toastService.showToast({ message, position: 'bottom',  toastButtons: [ { text: 'Undo'}, {icon: 'Close',   role: 'cancel'}], });
+onSwipe(event: ItemSlidingCustomEvent, item: IonItem) {
+    console.log('onSwipe?: ', event);
+    this.side = event.detail.side;
+    this.setColors(item);
+  }
 
-        await slidingItem.close();
-      }
-
-      await this.userNotificationsFacadeService.fetchNotifications();
-      this.loadingService.closeSpinner();
+  private setColors(item: IonItem) {
+    console.log('warning? ', this.side);
+    if (this.side === 'start') {
+      item.color = 'tertiary';
+    } else if (this.side === 'end') {
+      item.color = 'danger';
+    } else {
+      console.log('warning');
+      item.color = null;
     }
+  }
+  
+  async onClick(notification: Notification, item: IonItem, ionSlidin: IonItemSliding) {
+
+    ionSlidin.getSlidingRatio();
+    console.log('onClick?: ');
+
+    if (this.side === 'start') {
+      if (!notification.isPinned) {
+        await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
+      } else {
+        await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
+        await this.showToast(`unpinned`);
+      }
+      await this.refreshNotifications();
+    } else if (this.side === 'end') {
+      await this.userNotificationsFacadeService.markAsDismissed(notification.id);
+      await this.showToast(`deleted`);
+      await this.refreshNotifications();
+    }
+    this.side = 'none';
+
+    // this.setColors(item);
+  }
+
+  private async refreshNotifications() {
+    await this.userNotificationsFacadeService.fetchNotifications();
+  }
+
+  private async showToast(status: string) {
+    const message = 'Notification ' + status;
+    await this.toastService.showToast({
+      message,
+      position: 'bottom',
+      toastButtons: [{ text: 'Undo' }, { icon: 'Close', role: 'cancel' }],
+    });
   }
 
   private isToday(date: Date): boolean {
@@ -129,13 +147,6 @@ export class NotificationComponent implements OnInit {
   private formatDate(today: Date) {
     return formatDate(today, monthDayFullYear, 'en-US');
   }
-
-  openPinned(slidingItem: IonItemSliding, notification: Notification) {
-    if (notification.isPinned) {
-       slidingItem.open('start');
-       return true;
-    }
-    return false;
-  }
-
 }
+
+

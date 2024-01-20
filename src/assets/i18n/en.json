@@ -1095,6 +1095,7 @@
       "period_previous": "Previous",
       "delete": "Delete",
       "pin": "Pin",
+      "unpin": "Unpin",
       "expiration_policy": "Notifications expire after {{expirationDays}} days" 
     }
   }

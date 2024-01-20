@@ -1,19 +1,19 @@
-<ion-list class="notifications__list" *ngFor="let group of notificationGroups">
-  <ion-item-divider *ngIf="notificationGroups.length && group.sectionName !=='pinned'">
+<ion-list class="notifications__list" *ngFor="let group of notificationGroups; let i = index; trackBy: trackByFn">
+  <ion-item-divider *ngIf="notificationGroups.length && group.sectionName !=='pinned'" >
     {{ group.sectionName }}
   </ion-item-divider>
-  <ion-item-sliding #slidingItem
-    *ngFor="let notification of notificationsFormatted(group.notifications); trackBy: trackById">
-    <ion-item-options (ionSwipe)="onSwipe($event,slidingItem, notification, ionItem)"  class="custom-options" side="start">
-      <ion-item-option *ngIf="openPinned(slidingItem, notification)" class="pin"> Unpin
+  <ion-item-sliding #slide (ionSwipe)="onSwipe($event, item)"
+    *ngFor="let notification of notificationsFormatted(group.notifications); let j = index;; trackBy: trackById">
+    <ion-item-options (click)="onClick(notification, item, slide)"  class="custom-options" side="start">
+      <ion-item-option *ngIf="notification.isPinned"  class="pin"> {{ notificationUnpin }}
         <ion-icon slot="top" src="/assets/icon/unpin-notification.svg"></ion-icon>
       </ion-item-option>
-      <ion-item-option *ngIf="!notification.isPinned" class="pin">
+      <ion-item-option color="tertiary" *ngIf="!notification.isPinned" class="pin">
         {{ notificationPin }}
         <ion-icon slot="top" src="/assets/icon/pin-notification.svg"></ion-icon>
       </ion-item-option>
     </ion-item-options>
-    <ion-item #ionItem lines="full" aria-label="Notification Item" role="listitem">
+    <ion-item #item lines="full" aria-label="Notification Item" role="listitem">
       <ion-avatar slot="start" class="avatar-wrapper">
         <ion-img src='/assets/icon/{{getAvatar(notification.category)}}-notification.svg' class="avatar"
           alt="avatar"></ion-img>
@@ -40,7 +40,7 @@
         <ion-icon class="empty" *ngIf="!notification.viewedDate" src="/assets/icon/status-notification.svg"></ion-icon>
       </div>
     </ion-item>
-    <ion-item-options (ionSwipe)="onSwipe($event,slidingItem, notification, ionItem)" *ngIf="group.sectionName !=='pinned'"
+    <ion-item-options (click)="onClick(notification, item, slide)"  *ngIf="group.sectionName !=='pinned'"
       class="custom-options" side="end">
       <ion-item-option color="danger"> {{ notificationDelete }}
         <ion-icon slot="top" src="/assets/icon/delete-notification.svg"></ion-icon>
