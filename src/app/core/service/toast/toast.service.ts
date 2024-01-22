@@ -47,6 +47,7 @@ export class ToastService {
     });
 
     await toast.present();
+    return toast;
   }
 
   async showError(message: string, duration = 5000, position: "top" | "bottom" | "middle" = 'top') {

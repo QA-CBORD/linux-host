@@ -2,7 +2,7 @@
 
 ion-item {
   --inner-padding-end: 2.5%;
-  --color-activated: 'red';
+  flex-shrink: 1;
 }
 
 ion-grid {
@@ -31,6 +31,11 @@ ion-icon.empty {
   margin-right: -31.25%;
 }
 
+ion-icon.pinned {
+  vertical-align: middle;
+  margin-right: -31.25%;
+}
+
 .avatar {
   width: 70%;
   height: 70%;
@@ -45,35 +50,9 @@ ion-icon.empty {
   }
 }
 
-ion-item-options {
-  @include font-nunito-regular(12px);
-  ion-item-option.pin {
-    background-color: $color-purple-50;
-  }
-}
-
-ion-item-options.custom-options {
-  width: 30%;
-}
-
-ion-item-options.custom-options ion-item-option {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30%;
-}
-
-ion-item-options {
-  ion-icon {
-    width: 1.5em;
-    height: 1.5em;
-    padding-bottom: 5%;
-  }
-}
 .notifications {
   &__list {
     padding: 0%;
-    --background: blue;
   }
 }
 
@@ -83,24 +62,31 @@ ion-item-divider {
   color: $color-black;
 }
 
-
-// ion-item::part(native) {
-//   background-color: blue;
-// }
-
-ion-item-sliding {
-  &.item-sliding-active {
-    background: 'blue';
-    color: transparent !important;
-  }
+ion-item-options {
+  width: 20%;
 }
 
+ion-item-option ion-icon {
+  width: 1em;
+  height: 1.1em;
+  padding-bottom: 10%;
+}
 
+ion-item-option ion-label {
+  @include font-nunito-heavy(12px);
+}
 
-// ion-item {
-//   --background: transparent !important;
-//  }
+.pin {
+   background-color: #{$color-purple-50};
+  width: 20%;
+}
 
-.swiped-item {
-  background-color: blue;
+.delete {
+  background-color: #{$color-red-alert};
+  width: 20%;
+}
+
+.close {
+  background-color: white;
+  color: white;
 }

@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { hourMinTime, monthDayFullYear } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { IonItem, IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
+import { IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { NotificationGroup } from '../notifications.component';
 import { ToastService } from '@core/service/toast/toast.service';
-import { LoadingService } from '@core/service/loading/loading.service';
-
-type Side = 'start' | 'end' | 'none';
 
 @Component({
   selector: 'st-notification',
@@ -17,10 +14,28 @@ type Side = 'start' | 'end' | 'none';
   styleUrls: ['./notification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationComponent implements OnInit {
-  private side: Side;
+export class NotificationComponent {
+  
   @Input() notificationGroups: NotificationGroup[] = [];
-  @ViewChildren(IonItem) ionItems: QueryList<IonItem>;
+  private notificationsSwiped: HTMLElement[] = [];
+
+  private colors = {
+    RED_COLOR: 'rgba(188, 14, 50, 0.5)',
+    PURPLE_COLOR: 'rgba(157, 84, 199, 0.5)',
+  };
+
+  private constants = {
+    PROPERTY: '--background',
+    SIDE: {
+      left: -1,
+      right: 1,
+    },
+  };
+
+  private config = {
+    ...this.colors,
+    ...this.constants,
+  };
 
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
@@ -39,33 +54,60 @@ export class NotificationComponent implements OnInit {
     private datePipe: DatePipe,
     private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
-    private readonly toastService: ToastService,
-    private readonly loadingService: LoadingService
+    private readonly toastService: ToastService
   ) {}
 
-  ngOnInit(): void {
-    //console.log("ngOnInit")
-  }
-
   notificationsFormatted(group: Notification[]) {
-    return group.map(notification => {
-      return {
-        ...notification,
-        insertTime: this.formattedDate(notification.insertTime),
-      };
-    });
+    return group.map(notification => ({
+      ...notification,
+      insertTime: this.formattedDate(notification.insertTime),
+    }));
   }
 
   getAvatar(category: NotificationCategory) {
     return this.notificationIcon[category];
   }
 
-  trackById(_: number, user: Notification) {
-    return user.id;
+  trackById(index: number) {
+    return index;
   }
 
   trackByFn(index: number) {
     return index;
+  }
+
+  async onDrag(event: ItemSlidingCustomEvent) {
+    const ratio = await event.target.getSlidingRatio();
+    if (ratio > this.config.SIDE.right) {
+      this.setElementBackground(event.target, this.config.RED_COLOR);
+    } else if (ratio < this.config.SIDE.left) {
+      this.setElementBackground(event.target, this.config.PURPLE_COLOR);
+    } else {
+      this.resetElementBackground();
+    }
+
+    if (event.target && event.target.firstChild && event.target.firstChild.nextSibling) {
+      this.notificationsSwiped.push(event.target.firstChild.nextSibling as HTMLElement);
+    }
+  }
+
+  async pin(notification: Notification, ionItem: IonItemSliding) {
+    await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
+    await this.resetList(ionItem);
+  }
+
+  async unpin(notification: Notification, ionItem: IonItemSliding) {
+    const { data } = await this.showToast(`unpin`);
+    if (data?.undo) return;
+    await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
+    await this.resetList(ionItem);
+  }
+
+  async delete(notification: Notification, ionItem: IonItemSliding) {
+    const { data } = await this.showToast(`deleted`);
+    if (data?.undo) return;
+    await this.userNotificationsFacadeService.markAsDismissed(notification.id);
+    await this.resetList(ionItem);
   }
 
   get notificationDelete() {
@@ -75,49 +117,29 @@ export class NotificationComponent implements OnInit {
   get notificationPin() {
     return this.translateService.instant('patron-ui.notifications.pin');
   }
+
   get notificationUnpin() {
     return this.translateService.instant('patron-ui.notifications.unpin');
   }
 
-onSwipe(event: ItemSlidingCustomEvent, item: IonItem) {
-    console.log('onSwipe?: ', event);
-    this.side = event.detail.side;
-    this.setColors(item);
-  }
-
-  private setColors(item: IonItem) {
-    console.log('warning? ', this.side);
-    if (this.side === 'start') {
-      item.color = 'tertiary';
-    } else if (this.side === 'end') {
-      item.color = 'danger';
-    } else {
-      console.log('warning');
-      item.color = null;
+  private setElementBackground(target: HTMLIonItemSlidingElement, color: string) {
+    if (target && target.firstChild && target.firstChild.nextSibling) {
+      const element = target.firstChild.nextSibling as HTMLElement;
+      element.style.setProperty(this.config.PROPERTY, color);
     }
   }
-  
-  async onClick(notification: Notification, item: IonItem, ionSlidin: IonItemSliding) {
 
-    ionSlidin.getSlidingRatio();
-    console.log('onClick?: ');
+  private async resetList(ionItem: IonItemSliding) {
+    await this.refreshNotifications();
+    await ionItem.closeOpened();
+    this.resetElementBackground();
+  }
 
-    if (this.side === 'start') {
-      if (!notification.isPinned) {
-        await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
-      } else {
-        await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
-        await this.showToast(`unpinned`);
-      }
-      await this.refreshNotifications();
-    } else if (this.side === 'end') {
-      await this.userNotificationsFacadeService.markAsDismissed(notification.id);
-      await this.showToast(`deleted`);
-      await this.refreshNotifications();
-    }
-    this.side = 'none';
-
-    // this.setColors(item);
+  private resetElementBackground() {
+    this.notificationsSwiped.forEach(item => {
+      item.style.setProperty(this.config.PROPERTY, 'white');
+    });
+    this.notificationsSwiped = [];
   }
 
   private async refreshNotifications() {
@@ -126,11 +148,16 @@ onSwipe(event: ItemSlidingCustomEvent, item: IonItem) {
 
   private async showToast(status: string) {
     const message = 'Notification ' + status;
-    await this.toastService.showToast({
+    const toast = await this.toastService.showToast({
       message,
       position: 'bottom',
-      toastButtons: [{ text: 'Undo' }, { icon: 'Close', role: 'cancel' }],
+      cssClass: 'toast-message-notification',
+      toastButtons: [
+        { text: 'Undo', handler: () => toast.dismiss({ undo: true }) },
+        { icon: 'Close', role: 'cancel', handler: () => toast.dismiss(), cssClass: '' },
+      ],
     });
+    return toast.onDidDismiss();
   }
 
   private isToday(date: Date): boolean {
@@ -148,5 +175,3 @@ onSwipe(event: ItemSlidingCustomEvent, item: IonItem) {
     return formatDate(today, monthDayFullYear, 'en-US');
   }
 }
-
-
