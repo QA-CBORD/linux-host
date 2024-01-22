@@ -235,7 +235,8 @@ export enum GUEST_NAVIGATION {
   ordering = 'guest/ordering',
   deposit = 'guest/deposit',
   settings = 'guest/settings',
-  registration = 'guest/registration'
+  registration = 'guest/registration',
+  notifications = 'guest/notifications'
 }
 
 

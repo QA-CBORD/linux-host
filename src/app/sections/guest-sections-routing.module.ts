@@ -43,6 +43,10 @@ const routes: Route[] = [
         path: GUEST_ROUTES.settings,
         loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule),
       },
+      {
+        path: GUEST_ROUTES.notifications,
+        loadChildren: () => import('./notifications/notifications.module').then(m => m.NotificationsModule),
+      },
     ],
   },
 ];

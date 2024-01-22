@@ -48,7 +48,7 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     indicatorAriaLabel: 'a11y.bottom_navigation.notifications',
     isEnabled: false,
     name: TILES_TITLE.notificationBell,
-    url: PATRON_NAVIGATION.notifications,
+    url: GUEST_NAVIGATION.notifications,
     supportProfiles: [APP_PROFILES.guest]
   },
 ];
