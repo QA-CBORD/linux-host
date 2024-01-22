@@ -5,11 +5,11 @@
   <ion-item-sliding #slide (ionDrag)="onDrag($event)"
     *ngFor="let notification of notificationsFormatted(group.notifications); trackBy: trackById">
     <ion-item-options side="start">
-      <ion-item-option *ngIf="notification.isPinned" class="pin" (click)="unpin(notification, slide)">
+      <ion-item-option *ngIf="notification.isPinned" class="pin" (click)="notificationAction(notification, slide, 'unpin')">
         <ion-label>{{ notificationUnpin }}</ion-label>
         <ion-icon slot="top" src="/assets/icon/unpin-notification.svg"></ion-icon>
       </ion-item-option>
-      <ion-item-option *ngIf="!notification.isPinned" class="pin" (click)="pin(notification, slide)">
+      <ion-item-option *ngIf="!notification.isPinned" class="pin" (click)="notificationAction(notification, slide, 'pin')">
         <ion-label>{{ notificationPin }}</ion-label>
         <ion-icon slot="top" src="/assets/icon/pin-notification.svg"></ion-icon>
       </ion-item-option>
@@ -42,7 +42,7 @@
       </div>
     </ion-item>
       <ion-item-options *ngIf="group.sectionName !== 'pinned'">
-        <ion-item-option class="delete" (click)="delete(notification, slide)">
+        <ion-item-option class="delete" (click)="notificationAction(notification, slide, 'delete')">
           <ion-label>{{ notificationDelete }}</ion-label>
           <ion-icon slot="top" src="/assets/icon/delete-notification.svg"></ion-icon>
         </ion-item-option>

@@ -7,6 +7,7 @@ import { IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { NotificationGroup } from '../notifications.component';
 import { ToastService } from '@core/service/toast/toast.service';
+import { NotificationBackgroundEffect } from '../services/notification-background-effect.service';
 
 @Component({
   selector: 'st-notification',
@@ -15,27 +16,7 @@ import { ToastService } from '@core/service/toast/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationComponent {
-  
   @Input() notificationGroups: NotificationGroup[] = [];
-  private notificationsSwiped: HTMLElement[] = [];
-
-  private colors = {
-    RED_COLOR: 'rgba(188, 14, 50, 0.5)',
-    PURPLE_COLOR: 'rgba(157, 84, 199, 0.5)',
-  };
-
-  private constants = {
-    PROPERTY: '--background',
-    SIDE: {
-      left: -1,
-      right: 1,
-    },
-  };
-
-  private config = {
-    ...this.colors,
-    ...this.constants,
-  };
 
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
@@ -54,7 +35,9 @@ export class NotificationComponent {
     private datePipe: DatePipe,
     private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
-    private readonly toastService: ToastService
+    private readonly notificationColoring: NotificationBackgroundEffect,
+    private readonly toastService: ToastService,
+  
   ) {}
 
   notificationsFormatted(group: Notification[]) {
@@ -77,37 +60,23 @@ export class NotificationComponent {
   }
 
   async onDrag(event: ItemSlidingCustomEvent) {
-    const ratio = await event.target.getSlidingRatio();
-    if (ratio > this.config.SIDE.right) {
-      this.setElementBackground(event.target, this.config.RED_COLOR);
-    } else if (ratio < this.config.SIDE.left) {
-      this.setElementBackground(event.target, this.config.PURPLE_COLOR);
-    } else {
-      this.resetElementBackground();
+    this.notificationColoring.setBackgroundColor(event);
+  }
+
+  async notificationAction(notification: Notification, ionItem: IonItemSliding, type: string) {
+    switch (type) {
+      case 'pin':
+        await this.pin(notification);
+        break;
+      case 'unpin':
+        await this.unpin(notification);
+        break;
+      case 'delete':
+        await this.delete(notification);
+        break;
     }
 
-    if (event.target && event.target.firstChild && event.target.firstChild.nextSibling) {
-      this.notificationsSwiped.push(event.target.firstChild.nextSibling as HTMLElement);
-    }
-  }
-
-  async pin(notification: Notification, ionItem: IonItemSliding) {
-    await this.userNotificationsFacadeService.markAsPinned(notification.id, true);
-    await this.resetList(ionItem);
-  }
-
-  async unpin(notification: Notification, ionItem: IonItemSliding) {
-    const { data } = await this.showToast(`unpin`);
-    if (data?.undo) return;
-    await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
-    await this.resetList(ionItem);
-  }
-
-  async delete(notification: Notification, ionItem: IonItemSliding) {
-    const { data } = await this.showToast(`deleted`);
-    if (data?.undo) return;
-    await this.userNotificationsFacadeService.markAsDismissed(notification.id);
-    await this.resetList(ionItem);
+    await this.refreshNotifications(ionItem);
   }
 
   get notificationDelete() {
@@ -122,42 +91,9 @@ export class NotificationComponent {
     return this.translateService.instant('patron-ui.notifications.unpin');
   }
 
-  private setElementBackground(target: HTMLIonItemSlidingElement, color: string) {
-    if (target && target.firstChild && target.firstChild.nextSibling) {
-      const element = target.firstChild.nextSibling as HTMLElement;
-      element.style.setProperty(this.config.PROPERTY, color);
-    }
-  }
-
-  private async resetList(ionItem: IonItemSliding) {
-    await this.refreshNotifications();
-    await ionItem.closeOpened();
-    this.resetElementBackground();
-  }
-
-  private resetElementBackground() {
-    this.notificationsSwiped.forEach(item => {
-      item.style.setProperty(this.config.PROPERTY, 'white');
-    });
-    this.notificationsSwiped = [];
-  }
-
-  private async refreshNotifications() {
+  private async refreshNotifications(ionItem: IonItemSliding) {
     await this.userNotificationsFacadeService.fetchNotifications();
-  }
-
-  private async showToast(status: string) {
-    const message = 'Notification ' + status;
-    const toast = await this.toastService.showToast({
-      message,
-      position: 'bottom',
-      cssClass: 'toast-message-notification',
-      toastButtons: [
-        { text: 'Undo', handler: () => toast.dismiss({ undo: true }) },
-        { icon: 'Close', role: 'cancel', handler: () => toast.dismiss(), cssClass: '' },
-      ],
-    });
-    return toast.onDidDismiss();
+    await this.notificationColoring.resetList(ionItem);
   }
 
   private isToday(date: Date): boolean {
@@ -173,5 +109,35 @@ export class NotificationComponent {
 
   private formatDate(today: Date) {
     return formatDate(today, monthDayFullYear, 'en-US');
+  }
+
+  private async showToast(status: string) {
+    const message = 'Notification ' + status;
+    const toast = await this.toastService.showToast({
+      message,
+      position: 'bottom',
+      cssClass: 'toast-message-notification',
+      toastButtons: [
+        { text: 'Undo', handler: () => toast.dismiss({ undo: true }) },
+        { icon: 'Close', role: 'cancel', handler: () => toast.dismiss() },
+      ],
+    });
+    return toast.onDidDismiss();
+  }
+
+  private async unpin(notification: Notification) {
+    const { data } = await this.showToast(`unpinned`);
+    if (data?.undo) return;
+    await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
+  }
+
+  private async pin(notification: Notification) {
+    await this.userNotificationsFacadeService.markAsPinned(notification.id, true,notification.viewedDate);
+  }
+
+  private async delete(notification: Notification) {
+    const { data } = await this.showToast(`deleted`);
+    if (data?.undo) return;
+    await this.userNotificationsFacadeService.markAsDismissed(notification.id);
   }
 }

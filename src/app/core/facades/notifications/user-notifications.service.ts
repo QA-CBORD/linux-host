@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { UserNotificationApiService, Notification } from '@core/service/user-notification/user-notification-api.service';
+import {
+  UserNotificationApiService,
+  Notification,
+} from '@core/service/user-notification/user-notification-api.service';
 import { BehaviorSubject, Observable, Subject, catchError, first, firstValueFrom, of } from 'rxjs';
 const MAXIMUN_NOTIFICATION_COUNT = 9;
 @Injectable({
@@ -29,7 +32,12 @@ export class UserNotificationsFacadeService {
   }
 
   public async fetchNotifications() {
-    const notifications = await firstValueFrom(this._userNotificationApiService.retrieveAll().pipe(first(), catchError(() => of([]))));
+    const notifications = await firstValueFrom(
+      this._userNotificationApiService.retrieveAll().pipe(
+        first(),
+        catchError(() => of([]))
+      )
+    );
     this._unreadNotifications$.next(notifications);
     this.fetchNotificationsCount();
   }
@@ -38,8 +46,11 @@ export class UserNotificationsFacadeService {
     return this._userNotificationApiService.markAllUserNotificationLogAsViewed().pipe(first());
   }
 
-  public async markAsPinned(id: string, value: boolean) {
-    return await firstValueFrom(this._userNotificationApiService.markUserNotificationLogAsPinned(id, value).pipe(first()));
+  public async markAsPinned(id: string, status: boolean, viewedDate?: Date) {
+    await firstValueFrom(this._userNotificationApiService.markUserNotificationLogAsPinned(id, status).pipe(first()));
+    if (!viewedDate) {
+      await firstValueFrom(this.markAllNotificationsAsViewed());
+    }
   }
 
   public async markAsDismissed(id: string) {
