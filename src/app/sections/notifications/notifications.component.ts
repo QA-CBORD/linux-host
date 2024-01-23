@@ -4,7 +4,6 @@ import { UserNotificationsFacadeService } from '@core/facades/notifications/user
 import { LoadingService } from '@core/service/loading/loading.service';
 import { Notification } from '@core/service/user-notification/user-notification-api.service';
 import { Platform, RefresherCustomEvent } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
 import { monthDayYear } from '@shared/constants/dateFormats.constant';
 import { Subscription, finalize } from 'rxjs';
 
@@ -19,14 +18,13 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   notificationGroups: NotificationGroup[] = [];
   private subs: Subscription = new Subscription();
   private received = {
-    today: this.translateService.instant('patron-ui.notifications.period_today'),
-    yesterday: this.translateService.instant('patron-ui.notifications.period_yesterday'),
-    previous: this.translateService.instant('patron-ui.notifications.period_previous'),
+    today: 'patron-ui.notifications.period_today',
+    yesterday: 'patron-ui.notifications.period_yesterday',
+    previous: 'patron-ui.notifications.period_previous',
   };
 
   constructor(
     public readonly loadingService: LoadingService,
-    private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
     private readonly platform: Platform,
     private cdRef: ChangeDetectorRef,
@@ -34,6 +32,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.loadingService.showSpinner();
     this.subs.add(this.refreshPage());
     this.subs.add(this.refreshPageOnResume());
   }
@@ -57,10 +56,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   trackByFn(index: number) {
     return index;
-  }
-
-  get notificationTitle() {
-    return this.translateService.instant('patron-ui.notifications.title');
   }
 
   private groupNotifications(notifications: Notification[]) {
@@ -96,23 +91,22 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     yesterday: string,
     groupedNotifications: { [key: string]: Notification[] }
   ) {
+    const sectionName: { [key: string]: string } = {
+      [today]: this.received.today,
+      [yesterday]: this.received.yesterday,
+    };
+
+    let section = '';
     notifications.forEach(notification => {
-      let section = 'pinned';
       const notificationDate = this.formatDate(notification.insertTime);
 
       if (notification.isPinned) {
         section = 'pinned';
-      } else if (notificationDate === today) {
-        section = this.received.today;
-      } else if (notificationDate === yesterday) {
-        section = this.received.yesterday;
       } else {
-        section = this.received.previous;
+        section = sectionName[notificationDate] || this.received.previous;
       }
 
-      if (!groupedNotifications[section]) {
-        groupedNotifications[section] = [];
-      }
+      groupedNotifications[section] = groupedNotifications[section] || [];
       groupedNotifications[section].push(notification);
     });
   }

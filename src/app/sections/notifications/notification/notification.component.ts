@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { Notification, NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { hourMinTime, monthDayFullYear } from '@shared/constants/dateFormats.constant';
 import { DatePipe, formatDate } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
-import { IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
+import { IonItemSliding, IonList, ItemSlidingCustomEvent } from '@ionic/angular';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { NotificationGroup } from '../notifications.component';
 import { ToastService } from '@core/service/toast/toast.service';
-import { NotificationBackgroundEffect } from '../services/notification-background-effect.service';
+import { NotificationBackgroundColorService } from '../services/notification-background-color.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-notification',
@@ -15,8 +15,9 @@ import { NotificationBackgroundEffect } from '../services/notification-backgroun
   styleUrls: ['./notification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationComponent {
+export class NotificationComponent implements OnChanges {
   @Input() notificationGroups: NotificationGroup[] = [];
+  @ViewChild(IonList) ionItem: IonList;
 
   notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
@@ -35,13 +36,16 @@ export class NotificationComponent {
     private datePipe: DatePipe,
     private readonly translateService: TranslateService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
-    private readonly notificationColoring: NotificationBackgroundEffect,
-    private readonly toastService: ToastService,
-  
+    private readonly notificationColoring: NotificationBackgroundColorService,
+    private readonly toastService: ToastService
   ) {}
 
-  notificationsFormatted(group: Notification[]) {
-    return group.map(notification => ({
+  ngOnChanges() {
+    this.ionItem?.closeSlidingItems();
+  }
+
+  notificationsFormatted(notifications: Notification[]) {
+    return notifications.map(notification => ({
       ...notification,
       insertTime: this.formattedDate(notification.insertTime),
     }));
@@ -59,36 +63,27 @@ export class NotificationComponent {
     return index;
   }
 
-  async onDrag(event: ItemSlidingCustomEvent) {
-    this.notificationColoring.setBackgroundColor(event);
-  }
-
-  async notificationAction(notification: Notification, ionItem: IonItemSliding, type: string) {
-    switch (type) {
-      case 'pin':
-        await this.pin(notification);
-        break;
-      case 'unpin':
-        await this.unpin(notification);
-        break;
-      case 'delete':
-        await this.delete(notification);
-        break;
-    }
-
+  async unpin(notification: Notification, ionItem: IonItemSliding) {
+    const { data } = await this.showToast(true);
+    if (data?.undo) return;
+    await this.userNotificationsFacadeService.markAsPinned(notification, false);
     await this.refreshNotifications(ionItem);
   }
 
-  get notificationDelete() {
-    return this.translateService.instant('patron-ui.notifications.delete');
+  async pin(notification: Notification, ionItem: IonItemSliding) {
+    await this.userNotificationsFacadeService.markAsPinned(notification, true);
+    await this.refreshNotifications(ionItem);
   }
 
-  get notificationPin() {
-    return this.translateService.instant('patron-ui.notifications.pin');
+  async delete(notification: Notification, ionItem: IonItemSliding) {
+    const { data } = await this.showToast(false);
+    if (data?.undo) return;
+    await this.userNotificationsFacadeService.markAsDismissed(notification);
+    await this.refreshNotifications(ionItem);
   }
 
-  get notificationUnpin() {
-    return this.translateService.instant('patron-ui.notifications.unpin');
+  async onDrag(event: ItemSlidingCustomEvent) {
+    this.notificationColoring.setBackgroundColor(event);
   }
 
   private async refreshNotifications(ionItem: IonItemSliding) {
@@ -111,33 +106,22 @@ export class NotificationComponent {
     return formatDate(today, monthDayFullYear, 'en-US');
   }
 
-  private async showToast(status: string) {
-    const message = 'Notification ' + status;
+  private async showToast(status: boolean) {
+    const message = status
+      ? this.translateService.instant('patron-ui.notifications.toast_message_unpinned')
+      : this.translateService.instant('patron-ui.notifications.toast_message_deleted');
     const toast = await this.toastService.showToast({
       message,
       position: 'bottom',
       cssClass: 'toast-message-notification',
       toastButtons: [
-        { text: 'Undo', handler: () => toast.dismiss({ undo: true }) },
-        { icon: 'Close', role: 'cancel', handler: () => toast.dismiss() },
+        {
+          text: this.translateService.instant('patron-ui.notifications.toast_message_undo'),
+          handler: () => toast.dismiss({ undo: true }),
+        },
+        { icon: '/assets/icon/close-x.svg', role: 'cancel', handler: () => toast.dismiss(), side: 'end' },
       ],
     });
     return toast.onDidDismiss();
-  }
-
-  private async unpin(notification: Notification) {
-    const { data } = await this.showToast(`unpinned`);
-    if (data?.undo) return;
-    await this.userNotificationsFacadeService.markAsPinned(notification.id, false);
-  }
-
-  private async pin(notification: Notification) {
-    await this.userNotificationsFacadeService.markAsPinned(notification.id, true,notification.viewedDate);
-  }
-
-  private async delete(notification: Notification) {
-    const { data } = await this.showToast(`deleted`);
-    if (data?.undo) return;
-    await this.userNotificationsFacadeService.markAsDismissed(notification.id);
   }
 }

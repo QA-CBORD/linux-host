@@ -1096,7 +1096,10 @@
       "delete": "Delete",
       "pin": "Pin",
       "unpin": "Unpin",
-      "expiration_policy": "Notifications expire after {{expirationDays}} days" 
+      "expiration_policy": "Notifications expire after {{expirationDays}} days",
+      "toast_message_unpinned": "Notification will be unpinned",
+      "toast_message_deleted": "Notification will be deleted",
+      "toast_message_undo": "Undo"
     }
   }
 }

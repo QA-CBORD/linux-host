@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotificationComponent } from './notification.component';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { notifications } from '../notifications.component.spec';
 import { IonicModule } from '@ionic/angular';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('NotificationComponent', () => {
   let component: NotificationComponent;
@@ -18,7 +18,7 @@ describe('NotificationComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [IonicModule],
+      imports: [IonicModule, HttpClientTestingModule],
       declarations: [NotificationComponent],
       providers: [
         { provide: DatePipe, useValue: mockDatePipe },
@@ -27,10 +27,6 @@ describe('NotificationComponent', () => {
     });
     fixture = TestBed.createComponent(NotificationComponent);
     component = fixture.componentInstance;
-    component.notifications = notifications.map(notification => ({
-      ...notification,
-      insertTime: new Date(notification.insertTime),
-    }));
     fixture.detectChanges();
   });
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   UserNotificationApiService,
   Notification,
+  NotificationCategory,
 } from '@core/service/user-notification/user-notification-api.service';
 import { BehaviorSubject, Observable, Subject, catchError, first, firstValueFrom, of } from 'rxjs';
 const MAXIMUN_NOTIFICATION_COUNT = 9;
@@ -30,7 +31,6 @@ export class UserNotificationsFacadeService {
       count > MAXIMUN_NOTIFICATION_COUNT ? `${MAXIMUN_NOTIFICATION_COUNT}+` : String(count || '')
     );
   }
-
   public async fetchNotifications() {
     const notifications = await firstValueFrom(
       this._userNotificationApiService.retrieveAll().pipe(
@@ -38,7 +38,10 @@ export class UserNotificationsFacadeService {
         catchError(() => of([]))
       )
     );
-    this._unreadNotifications$.next(notifications);
+    const orderNotifications = notifications.filter(
+      notification => notification.category === NotificationCategory.order
+    );
+    this._unreadNotifications$.next(orderNotifications);
     this.fetchNotificationsCount();
   }
 
@@ -46,14 +49,17 @@ export class UserNotificationsFacadeService {
     return this._userNotificationApiService.markAllUserNotificationLogAsViewed().pipe(first());
   }
 
-  public async markAsPinned(id: string, status: boolean, viewedDate?: Date) {
-    await firstValueFrom(this._userNotificationApiService.markUserNotificationLogAsPinned(id, status).pipe(first()));
-    if (!viewedDate) {
-      await firstValueFrom(this.markAllNotificationsAsViewed());
+  public async markAsPinned(notification: Notification, status: boolean) {
+    await firstValueFrom(this._userNotificationApiService.markUserNotificationLogAsPinned(notification.id, status).pipe(first()));
+    if (!notification.viewedDate) {
+      await firstValueFrom(this._userNotificationApiService.markAsViewed(notification.id));
     }
   }
 
-  public async markAsDismissed(id: string) {
-    return await firstValueFrom(this._userNotificationApiService.markAsDismissed(id).pipe(first()));
+  public async markAsDismissed(notification: Notification,) {
+    await firstValueFrom(this._userNotificationApiService.markAsDismissed(notification.id).pipe(first()));
+    if (!notification.viewedDate) {
+      await firstValueFrom(this._userNotificationApiService.markAsViewed(notification.id));
+    }
   }
 }

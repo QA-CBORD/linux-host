@@ -44,7 +44,6 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
           withLatestFrom(this.storageStateService.getStateEntityByKey$<EnvironmentType>(this.overridedEnvironmentKey)),
           mergeMap(([currentEnvironment, overridedEnvironment]) => {
             /// if no current environment is saved, default to production
-            return of(ENVIRONMENTS_MAP[EnvironmentType.feature1]);
             if (currentEnvironment === null) {
               this.setSavedEnvironmentInfo(EnvironmentType.production);
               return of(ENVIRONMENTS_MAP[EnvironmentType.production]);

@@ -1,22 +1,22 @@
-<ion-list class="notifications__list" *ngFor="let group of notificationGroups; trackBy: trackByFn">
-  <ion-item-divider *ngIf="notificationGroups.length && group.sectionName !== 'pinned'">
-    {{ group.sectionName }}
+
+<ion-list class="notifications__list" *ngFor="let group of notificationGroups; trackBy: trackByFn" role="list">
+  <ion-item-divider *ngIf="notificationGroups.length && group.sectionName !== 'pinned'" role="separator">
+    {{ group.sectionName | translate }}
   </ion-item-divider>
-  <ion-item-sliding #slide (ionDrag)="onDrag($event)"
-    *ngFor="let notification of notificationsFormatted(group.notifications); trackBy: trackById">
-    <ion-item-options side="start">
-      <ion-item-option *ngIf="notification.isPinned" class="pin" (click)="notificationAction(notification, slide, 'unpin')">
-        <ion-label>{{ notificationUnpin }}</ion-label>
-        <ion-icon slot="top" src="/assets/icon/unpin-notification.svg"></ion-icon>
+  <ion-item-sliding #slide (ionDrag)="onDrag($event)" *ngFor="let notification of notificationsFormatted(group.notifications); trackBy: trackById" role="listitem">
+    <ion-item-options class="left" side="start">
+      <ion-item-option *ngIf="notification.isPinned" class="pin" (click)="unpin(notification, slide)">
+        <ion-label>{{ 'patron-ui.notifications.unpin' | translate }}</ion-label>
+        <ion-icon slot="top" src="/assets/icon/unpin-notification.svg" alt="Unpin"></ion-icon>
       </ion-item-option>
-      <ion-item-option *ngIf="!notification.isPinned" class="pin" (click)="notificationAction(notification, slide, 'pin')">
-        <ion-label>{{ notificationPin }}</ion-label>
-        <ion-icon slot="top" src="/assets/icon/pin-notification.svg"></ion-icon>
+      <ion-item-option *ngIf="!notification.isPinned" class="pin" (click)="pin(notification, slide)">
+        <ion-label>{{ 'patron-ui.notifications.pin' | translate }}</ion-label>
+        <ion-icon slot="top" src="/assets/icon/pin-notification.svg" alt="Pin"></ion-icon>
       </ion-item-option>
     </ion-item-options>
-    <ion-item lines="full" aria-label="Notification Item" role="listitem">
+    <ion-item lines="full" aria-label="Notification Item">
       <ion-avatar slot="start" class="avatar-wrapper">
-        <ion-img [src]="'/assets/icon/' + getAvatar(notification.category) + '-notification.svg'" class="avatar" alt="avatar"></ion-img>
+        <ion-img [src]="'/assets/icon/' + getAvatar(notification.category) + '-notification.svg'" class="avatar" alt="Avatar"></ion-img>
       </ion-avatar>
       <ion-grid>
         <ion-row class="ion-align-items-center">
@@ -37,15 +37,15 @@
         </ion-row>
       </ion-grid>
       <div>
-        <ion-icon class="empty" *ngIf="!(notification.viewedDate || notification.isPinned)" src="/assets/icon/status-notification.svg"></ion-icon>
-        <ion-icon class="pinned" *ngIf="notification.isPinned" src="/assets/icon/pinned-notification.svg"></ion-icon>
+        <ion-icon class="empty" *ngIf="!(notification.viewedDate || notification.isPinned)" src="/assets/icon/status-notification.svg" alt="Empty"></ion-icon>
+        <ion-icon class="pinned" *ngIf="notification.isPinned" src="/assets/icon/pinned-notification.svg" alt="Pinned"></ion-icon>
       </div>
     </ion-item>
-      <ion-item-options *ngIf="group.sectionName !== 'pinned'">
-        <ion-item-option class="delete" (click)="notificationAction(notification, slide, 'delete')">
-          <ion-label>{{ notificationDelete }}</ion-label>
-          <ion-icon slot="top" src="/assets/icon/delete-notification.svg"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
+    <ion-item-options class="right" *ngIf="group.sectionName !== 'pinned'">
+      <ion-item-option class="delete" (click)="delete(notification, slide)">
+        <ion-label>{{ 'patron-ui.notifications.delete' | translate }}</ion-label>
+        <ion-icon slot="top" src="/assets/icon/delete-notification.svg" alt="Delete"></ion-icon>
+      </ion-item-option>
+    </ion-item-options>
   </ion-item-sliding>
 </ion-list>

@@ -64,17 +64,25 @@ ion-item-divider {
 
 ion-item-options {
   width: 25%;
-}
+  &.left {
+    background-color: #{$color-purple-50};
+  }
 
+  &.right {
+    background-color: #{$color-red-alert};
+  }
+}
 ion-item-option ion-icon {
   width: 1.2em;
   height: 1.2em;
   padding-bottom: 5%;
-  
+  stroke: $color-white;
+  stroke-width: 2%;
 }
 
 ion-item-option ion-label {
   @include font-nunito-heavy(12px);
+  text-transform: capitalize;
 }
 
 .pin {
