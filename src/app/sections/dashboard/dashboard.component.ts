@@ -120,7 +120,9 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.accessCard.ionViewWillEnter();
     this.updateTiles();
     this.checkNativeStartup();
-    this.initConvo();
+    if (this.conversationTile) {
+      this.initConvo();
+    }
   }
 
   ionViewWillLeave() {
