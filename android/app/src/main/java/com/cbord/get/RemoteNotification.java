@@ -12,6 +12,8 @@ public class RemoteNotification extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         Log.d("isSilent: ", remoteMessage.getData().get("isSilent"));
+        Log.d("title: ", remoteMessage.getData().get("title"));
+        Log.d("body: ", remoteMessage.getData().get("body"));
 
         if (!Boolean.valueOf(remoteMessage.getData().get("isSilent"))) {
             LocalNotification.showNotifications(this);

@@ -4,6 +4,7 @@
 import UIKit
 import Capacitor
 import Firebase
+import Foundation
 
 @UIApplicationMain
 class MainAppDelegate: UIResponder, UIApplicationDelegate {
@@ -79,13 +80,14 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func application(_ application: UIApplication,
-         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("title: ", userInfo["title"] as? String)
+        print("body: ", userInfo["body"] as? String)
         if let isSilent = userInfo["isSilent"] as? String {
             print("isSilent: ", isSilent)
         }
-   
+        
         completionHandler(.noData)
     }
     
