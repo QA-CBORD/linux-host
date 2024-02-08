@@ -62,7 +62,7 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
     if (this.transactionsService.activeAccountId !== this.currentAccountId) {
       this.currentAccountId = this.transactionsService.activeAccountId;
     }
-    this.lazy.disabled = false;
+    this.lazy && (this.lazy.disabled = false);
     await this.content.scrollToTop(700);
   }
 
