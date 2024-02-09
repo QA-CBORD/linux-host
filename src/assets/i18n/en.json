@@ -184,6 +184,9 @@
       "govtidmessagesmall": "e.g., Passport, Driver’s License, State ID",
       "updatephotomessage": "New photo is subject to admin approval!",
       "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval."
+    },
+    "error": {
+      "menu_option_not_available": "Menu Item not available"
     }
   },
   "get_web_gui": {
