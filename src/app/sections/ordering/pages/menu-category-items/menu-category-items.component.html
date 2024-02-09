@@ -42,11 +42,11 @@
         </ion-button>
       </ion-buttons>
       <ion-title class="menu-category__header-title">
-        {{ menuCategory.name }}
+        {{ menuCategory?.name || 'Not Available' }}
       </ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content class="menu-category" mode="ios">
+  <ion-content class="menu-category" mode="ios" *ngIf="menuCategory">
     <st-category-list
       [mealBased]="(menuInfo$ | async).mealBased"
       [menuCategoryItems]="menuCategory.menuCategoryItems"
