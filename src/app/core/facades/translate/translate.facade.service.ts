@@ -35,4 +35,8 @@ export class TranslateFacadeService {
       )
       .subscribe();
   }
+
+  instant(key: string, interpolateParams?: object): string {
+    return this.translateService.instant(key, interpolateParams);
+  }
 }

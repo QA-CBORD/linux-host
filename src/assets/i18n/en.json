@@ -186,7 +186,8 @@
       "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval."
     },
     "error": {
-      "menu_option_not_available": "Menu Item not available"
+      "menu_option_not_available": "Menu Item not available",
+      "menu_item_not_found": "Could not retrieve menu item"
     }
   },
   "get_web_gui": {

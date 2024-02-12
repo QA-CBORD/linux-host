@@ -1,16 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
-import { take, map, filter } from 'rxjs/operators';
+import { EMPTY, Observable, of } from 'rxjs';
+import { take, map, filter, switchMap } from 'rxjs/operators';
 import { CartService } from '@sections/ordering/services';
 import { MenuCategoryItemInfo } from '@sections/ordering/shared/models';
+import { ToastService } from '@core/service/toast/toast.service';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 
 @Injectable()
 export class ItemDetailResolver {
+  private readonly toastService: ToastService = inject(ToastService);
+  private readonly translateFacadeService: TranslateFacadeService = inject(TranslateFacadeService);
+
   constructor(private readonly cartService: CartService) {}
-  resolve(
-    snapshot: ActivatedRouteSnapshot
-  ): Observable<{
+  resolve(snapshot: ActivatedRouteSnapshot): Observable<{
     menuItem: MenuCategoryItemInfo;
     queryParams: QueryParamsModel;
   }> {
@@ -19,9 +22,8 @@ export class ItemDetailResolver {
     } = snapshot;
 
     return this.cartService.menuInfo$.pipe(
-      filter((menu) => menu !== null),
+      filter(menu => menu !== null),
       map(({ menuCategories }) => {
-
         const menuItems = menuCategories.map(({ menuCategoryItems }) =>
           menuCategoryItems.find(menuCategoryItem => menuCategoryItem.menuItem.id === menuItemId)
         );
@@ -31,7 +33,6 @@ export class ItemDetailResolver {
             return item;
           }
         });
-
         if (menuItem) {
           return {
             menuItem,
@@ -44,6 +45,17 @@ export class ItemDetailResolver {
             },
           };
         }
+      }),
+      switchMap(result => {
+        if (result) {
+          return of(result);
+        }
+
+        this.toastService.showToast({
+          message: this.translateFacadeService.instant('get_mobile.error.menu_item_not_found'),
+          position: 'bottom'
+        });
+        return EMPTY;
       }),
       take(1)
     );
