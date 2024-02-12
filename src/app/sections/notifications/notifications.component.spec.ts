@@ -5,9 +5,8 @@ import { Notification } from '@core/service/user-notification/user-notification-
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { Platform } from '@ionic/angular';
+import { IonItemSliding, ItemSlidingCustomEvent, Platform } from '@ionic/angular';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 
@@ -257,6 +256,15 @@ export const notifications = [
 describe('NotificationListComponent', () => {
   let component: NotificationsComponent;
   let fixture: ComponentFixture<NotificationsComponent>;
+  const mockIonItem: IonItemSliding = {} as any;
+
+  const sortingPriority = {
+    pinned: 0,
+    [component['received'].today]: 1,
+    [component['received'].yesterday]: 2,
+    [component['received'].previous]: 3,
+  };
+
   const mockUserNotificationService = {
     allNotifications$: of(notifications),
     refreshNotifications: jest.fn(),
@@ -264,6 +272,23 @@ describe('NotificationListComponent', () => {
     fetchNotificationsCount: jest.fn(),
   };
 
+  const mockUserNotificationsFacadeService = {
+    fetchNotifications: jest.fn().mockResolvedValue(true),
+    refreshNotifications: jest.fn(),
+    deleteNotification: jest.fn(),
+    markAsPinned: jest.fn(),
+    markAsDismissed: jest.fn(),
+  };
+
+  const mockToastService = {
+    showToast: jest.fn(() => ({
+      onDidDismiss: jest.fn().mockResolvedValue({ data: true }),
+    })),
+  };
+  const mockNotificationColoring = {
+    setBackgroundColor: jest.fn(),
+    resetList: jest.fn(),
+  };
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NotificationsComponent],
@@ -281,6 +306,9 @@ describe('NotificationListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(NotificationsComponent);
     component = fixture.componentInstance;
+    component['received'].today = 'Today';
+    component['received'].yesterday = 'Yesterday';
+    component['received'].previous = 'Previous';
     fixture.detectChanges();
   });
 
@@ -289,15 +317,11 @@ describe('NotificationListComponent', () => {
   });
 
   it('should group the notifications by a period', () => {
-    component['groupNotifications'](<Notification[]>(<unknown>notifications));
-    expect(component.notificationGroups.length).toEqual(1);
+    component['groupNotifications'](<Notification[]>(<unknown>notifications), sortingPriority);
+    expect(component.notificationsGroups.length).toEqual(1);
   });
 
   it('should group the notifications by periods', () => {
-    component['received'].today = 'Today';
-    component['received'].yesterday = 'Yesterday';
-    component['received'].previous = 'Previous';
-
     const today = component['formatDate'](new Date());
     const yesterday = component['formatDate'](new Date(Date.now() - A_DAY_AGO));
     const pastWeek = component['formatDate'](new Date(Date.now() - A_DAY_AGO * 7));
@@ -306,9 +330,54 @@ describe('NotificationListComponent', () => {
     notifications[1].insertTime = yesterday;
     notifications[2].insertTime = pastWeek;
 
-    component['groupNotifications'](<Notification[]>(<unknown>notifications));
+    component['groupNotifications'](<Notification[]>(<unknown>notifications), sortingPriority);
     fixture.detectChanges();
-    expect(component.notificationGroups.length).toEqual(3);
+    expect(component.notificationsGroups.length).toEqual(3);
+  });
+
+  it('should unpin a notification', async () => {
+    await component.unpin(notifications[0] as any);
+    expect(mockUserNotificationsFacadeService.markAsPinned).toHaveBeenCalled();
+    expect(mockUserNotificationsFacadeService.fetchNotifications).toHaveBeenCalled();
+  });
+
+  it('should pin a notification', async () => {
+    await component.pin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    expect(mockUserNotificationsFacadeService.markAsPinned).toHaveBeenCalled();
+    expect(mockUserNotificationsFacadeService.fetchNotifications).toHaveBeenCalled();
+  });
+
+  it('should delete a notification', async () => {
+    await component.delete({ notification: notifications[0] as any, ionItem: mockIonItem });
+    expect(mockUserNotificationsFacadeService.markAsDismissed).toHaveBeenCalled();
+    expect(mockUserNotificationsFacadeService.fetchNotifications).toHaveBeenCalled();
+  });
+
+  it('should handle drag event', async () => {
+    const mockEvent: ItemSlidingCustomEvent = {} as any;
+    await component.drag(mockEvent);
+    expect(mockNotificationColoring.setBackgroundColor).toHaveBeenCalled();
+  });
+
+  it('should show a toast with unpin status', async () => {
+    await component.unpin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    expect(mockToastService.showToast).toHaveBeenCalled();
+  });
+
+  it('should show a toast with delete status', async () => {
+    await component.unpin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    expect(mockToastService.showToast).toHaveBeenCalled();
+  });
+
+  it('should no show a toast with pin status', async () => {
+    jest.resetAllMocks();
+    await component.pin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    expect(mockToastService.showToast).not.toHaveBeenCalled();
+  });
+
+  it('should refresh notifications', async () => {
+    await component['refreshNotifications'](mockIonItem);
+    expect(mockUserNotificationsFacadeService.fetchNotifications).toHaveBeenCalled();
   });
 });
 

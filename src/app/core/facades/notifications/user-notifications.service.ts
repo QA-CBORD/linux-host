@@ -14,6 +14,7 @@ export class UserNotificationsFacadeService {
   private readonly _unreadNotificationsCount$ = this._unreadNotificationsCountSubject.asObservable();
   private readonly _unreadNotifications$ = new Subject<Notification[]>();
   private readonly _unreadNotificationsSubject$ = this._unreadNotifications$.asObservable();
+  private notificationsCached: Notification[];
 
   get unreadNotificationsCount$(): Observable<string> {
     return this._unreadNotificationsCount$;
@@ -21,6 +22,10 @@ export class UserNotificationsFacadeService {
 
   get allNotifications$(): Observable<Notification[]> {
     return this._unreadNotificationsSubject$;
+  }
+
+  dispatchNotificationsCached() {
+    this._unreadNotifications$.next(this.notificationsCached);
   }
 
   constructor(private readonly _userNotificationApiService: UserNotificationApiService) {}
@@ -42,6 +47,7 @@ export class UserNotificationsFacadeService {
       notification => notification.category === NotificationCategory.order
     );
     this._unreadNotifications$.next(orderNotifications);
+    this.notificationsCached = orderNotifications;
     this.fetchNotificationsCount();
   }
 

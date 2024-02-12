@@ -10,7 +10,7 @@ import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.mod
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-  declarations: [NotificationsComponent, NotificationComponent],
+  declarations: [NotificationsComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
     IconPathModule,
     StSpinnerModule,
     TranslateModule,
+    NotificationComponent
   ],
 })
 export class NotificationsModule {}
