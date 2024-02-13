@@ -14,7 +14,9 @@ export class UserNotificationsFacadeService {
   private readonly _unreadNotificationsCount$ = this._unreadNotificationsCountSubject.asObservable();
   private readonly _unreadNotifications$ = new Subject<Notification[]>();
   private readonly _unreadNotificationsSubject$ = this._unreadNotifications$.asObservable();
-  private notificationsCached: Notification[];
+  private notificationsStore: Notification[];
+
+  constructor(private readonly _userNotificationApiService: UserNotificationApiService) {}
 
   get unreadNotificationsCount$(): Observable<string> {
     return this._unreadNotificationsCount$;
@@ -24,11 +26,17 @@ export class UserNotificationsFacadeService {
     return this._unreadNotificationsSubject$;
   }
 
-  dispatchNotificationsCached() {
-    this._unreadNotifications$.next(this.notificationsCached);
+  get notificationsStored() {
+    return this.notificationsStore;
   }
 
-  constructor(private readonly _userNotificationApiService: UserNotificationApiService) {}
+  set notificationsStored(notification: Notification[]) {
+    this.notificationsStore = notification;
+  }
+
+  dispatchNotificationsStored() {
+    this._unreadNotifications$.next(this.notificationsStore);
+  }
 
   public async fetchNotificationsCount() {
     const count = await firstValueFrom(this._userNotificationApiService.getUnreadCount().pipe(first()));
@@ -46,8 +54,9 @@ export class UserNotificationsFacadeService {
     const orderNotifications = notifications.filter(
       notification => notification.category === NotificationCategory.order
     );
+
+    this.notificationsStore = orderNotifications;
     this._unreadNotifications$.next(orderNotifications);
-    this.notificationsCached = orderNotifications;
     this.fetchNotificationsCount();
   }
 
@@ -56,13 +65,15 @@ export class UserNotificationsFacadeService {
   }
 
   public async markAsPinned(notification: Notification, status: boolean) {
-    await firstValueFrom(this._userNotificationApiService.markUserNotificationLogAsPinned(notification.id, status).pipe(first()));
+    await firstValueFrom(
+      this._userNotificationApiService.markUserNotificationLogAsPinned(notification.id, status).pipe(first())
+    );
     if (!notification.viewedDate) {
       await firstValueFrom(this._userNotificationApiService.markAsViewed(notification.id));
     }
   }
 
-  public async markAsDismissed(notification: Notification,) {
+  public async markAsDismissed(notification: Notification) {
     await firstValueFrom(this._userNotificationApiService.markAsDismissed(notification.id).pipe(first()));
     if (!notification.viewedDate) {
       await firstValueFrom(this._userNotificationApiService.markAsViewed(notification.id));

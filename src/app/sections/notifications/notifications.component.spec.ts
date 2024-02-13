@@ -3,16 +3,18 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotificationsComponent, A_DAY_AGO } from './notifications.component';
 import { Notification } from '@core/service/user-notification/user-notification-api.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
+import { ChangeDetectorRef, EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
 import { UserNotificationsFacadeService } from '@core/facades/notifications/user-notifications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { IonItemSliding, ItemSlidingCustomEvent, Platform } from '@ionic/angular';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
+import { ToastService } from '@core/service/toast/toast.service';
+import { NotificationBackgroundColorService } from './services/notification-background-color.service';
 
 export const notifications = [
   {
-    id: '',
+    id: '7',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -24,7 +26,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:55:32.796+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -36,7 +38,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:55:25.194+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -48,7 +50,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:55:20.950+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -60,7 +62,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:50:13.421+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -72,7 +74,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:49:56.278+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -84,7 +86,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:36:56.192+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -96,7 +98,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:36:49.590+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Breakfast Express',
@@ -108,7 +110,7 @@ export const notifications = [
     insertTime: '2023-12-13T20:34:49.409+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Breakfast Express',
@@ -120,7 +122,7 @@ export const notifications = [
     insertTime: '2023-12-13T18:01:56.617+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Breakfast Express',
@@ -132,7 +134,7 @@ export const notifications = [
     insertTime: '2023-12-13T18:01:47.176+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Breakfast Express',
@@ -144,7 +146,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:57.417+0000',
   },
   {
-    id: '',
+    id: '7',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Guest Deposit Successful',
@@ -156,7 +158,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:57.308+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Low Balance',
@@ -168,7 +170,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:57.282+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Breakfast Express',
@@ -180,7 +182,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:57.034+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Reward Claimed',
@@ -192,7 +194,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:56.896+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Breakfast Express',
@@ -204,7 +206,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:56.808+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Photo upload',
@@ -216,7 +218,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:56.754+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Automatic Deposit',
@@ -228,7 +230,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:56.716+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Meal Plan',
@@ -240,7 +242,7 @@ export const notifications = [
     insertTime: '2023-12-12T18:24:56.666+0000',
   },
   {
-    id: '',
+    id: '0',
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
     userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
     title: 'Low Balance',
@@ -253,31 +255,45 @@ export const notifications = [
   },
 ];
 
+const notificationStore = [{
+  id: '7',
+  institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
+  userId: '35133e47-fe84-4980-ad40-6bd86b432a7d',
+  title: 'Meal Plan',
+  content: 'Your meal plan Meal Account has been succesful.',
+  domain: 'meal',
+  category: 3,
+  viewedDate: null,
+  dismissedDate: null,
+  insertTime: '2023-12-12T18:24:56.666+0000',
+}
+];
+
 describe('NotificationListComponent', () => {
   let component: NotificationsComponent;
   let fixture: ComponentFixture<NotificationsComponent>;
+  let sortingPriority: { [key: string]: number };
+
   const mockIonItem: IonItemSliding = {} as any;
 
-  const sortingPriority = {
-    pinned: 0,
-    [component['received'].today]: 1,
-    [component['received'].yesterday]: 2,
-    [component['received'].previous]: 3,
-  };
-
-  const mockUserNotificationService = {
+  const mockUserNotificationsFacadeService = {
     allNotifications$: of(notifications),
     refreshNotifications: jest.fn(),
     markAllNotificationsAsViewed: jest.fn().mockReturnValue(of(true)),
     fetchNotificationsCount: jest.fn(),
-  };
-
-  const mockUserNotificationsFacadeService = {
+    notificationsStored: notificationStore,
+    dispatchNotificationsStored: jest.fn(),
     fetchNotifications: jest.fn().mockResolvedValue(true),
-    refreshNotifications: jest.fn(),
     deleteNotification: jest.fn(),
     markAsPinned: jest.fn(),
     markAsDismissed: jest.fn(),
+  };
+
+
+
+  const mockNotificationColoring = {
+    setBackgroundColor: jest.fn(),
+    resetList: jest.fn()
   };
 
   const mockToastService = {
@@ -285,19 +301,19 @@ describe('NotificationListComponent', () => {
       onDidDismiss: jest.fn().mockResolvedValue({ data: true }),
     })),
   };
-  const mockNotificationColoring = {
-    setBackgroundColor: jest.fn(),
-    resetList: jest.fn(),
-  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NotificationsComponent],
       imports: [HttpClientTestingModule, TranslateModule],
       providers: [
-        { provide: UserNotificationsFacadeService, useValue: mockUserNotificationService },
+        { provide: UserNotificationsFacadeService, useValue: mockUserNotificationsFacadeService },
         { provide: TranslateService, useClass: TranslateServiceStub },
+        { provide: NotificationBackgroundColorService, useValue: mockNotificationColoring },
+        { provide: ToastService, useValue: mockToastService },
         LoadingService,
         Platform,
+        ChangeDetectorRef
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
@@ -309,6 +325,12 @@ describe('NotificationListComponent', () => {
     component['received'].today = 'Today';
     component['received'].yesterday = 'Yesterday';
     component['received'].previous = 'Previous';
+    sortingPriority = {
+      pinned: 0,
+      [component['received'].today]: 1,
+      [component['received'].yesterday]: 2,
+      [component['received'].previous]: 3,
+    };
     fixture.detectChanges();
   });
 
@@ -317,7 +339,7 @@ describe('NotificationListComponent', () => {
   });
 
   it('should group the notifications by a period', () => {
-    component['groupNotifications'](<Notification[]>(<unknown>notifications), sortingPriority);
+    component['groupNotificationsBySections'](<Notification[]>(<unknown>notifications), sortingPriority);
     expect(component.notificationsGroups.length).toEqual(1);
   });
 
@@ -330,25 +352,25 @@ describe('NotificationListComponent', () => {
     notifications[1].insertTime = yesterday;
     notifications[2].insertTime = pastWeek;
 
-    component['groupNotifications'](<Notification[]>(<unknown>notifications), sortingPriority);
+    component['groupNotificationsBySections'](<Notification[]>(<unknown>notifications), sortingPriority);
     fixture.detectChanges();
     expect(component.notificationsGroups.length).toEqual(3);
   });
 
   it('should unpin a notification', async () => {
-    await component.unpin(notifications[0] as any);
+    await component.unpin({ notification: notifications[0] as any, slidingItem: mockIonItem });
     expect(mockUserNotificationsFacadeService.markAsPinned).toHaveBeenCalled();
     expect(mockUserNotificationsFacadeService.fetchNotifications).toHaveBeenCalled();
   });
 
   it('should pin a notification', async () => {
-    await component.pin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    await component.pin({ notification: notifications[0] as any, slidingItem: mockIonItem });
     expect(mockUserNotificationsFacadeService.markAsPinned).toHaveBeenCalled();
     expect(mockUserNotificationsFacadeService.fetchNotifications).toHaveBeenCalled();
   });
 
   it('should delete a notification', async () => {
-    await component.delete({ notification: notifications[0] as any, ionItem: mockIonItem });
+    await component.delete({ notification: notifications[0] as any, slidingItem: mockIonItem });
     expect(mockUserNotificationsFacadeService.markAsDismissed).toHaveBeenCalled();
     expect(mockUserNotificationsFacadeService.fetchNotifications).toHaveBeenCalled();
   });
@@ -360,18 +382,18 @@ describe('NotificationListComponent', () => {
   });
 
   it('should show a toast with unpin status', async () => {
-    await component.unpin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    await component.unpin({ notification: notifications[0] as any, slidingItem: mockIonItem });
     expect(mockToastService.showToast).toHaveBeenCalled();
   });
 
   it('should show a toast with delete status', async () => {
-    await component.unpin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    await component.unpin({ notification: notifications[0] as any, slidingItem: mockIonItem });
     expect(mockToastService.showToast).toHaveBeenCalled();
   });
 
   it('should no show a toast with pin status', async () => {
     jest.resetAllMocks();
-    await component.pin({ notification: notifications[0] as any, ionItem: mockIonItem });
+    await component.pin({ notification: notifications[0] as any, slidingItem: mockIonItem });
     expect(mockToastService.showToast).not.toHaveBeenCalled();
   });
 

@@ -1,9 +1,9 @@
 
-<ion-list class="notifications__list" *ngFor="let group of notificationsGroups; trackBy: trackByFn" role="list">
+<ion-list class="notifications__list" *ngFor="let group of notificationsGroups; trackBy: trackSectionsByIndex" role="list">
   <ion-item-divider *ngIf="notificationsGroups.length && group.sectionName !== 'pinned'" role="separator">
     {{ group.sectionName | translate }}
   </ion-item-divider>
-  <ion-item-sliding #slide (ionDrag)="drag($event)" *ngFor="let notification of notificationsFormatted(group.notifications); trackBy: trackById" role="listitem">
+  <ion-item-sliding #slide (ionDrag)="drag($event)" *ngFor="let notification of notificationsFormatted(group.notifications); trackBy: trackNotificationsByIndex" role="listitem">
     <ion-item-options class="left" side="start">
       <ion-item-option *ngIf="notification.isPinned" class="pin" (click)="unpin(notification, slide)">
         <ion-label>{{ 'patron-ui.notifications.unpin' | translate }}</ion-label>

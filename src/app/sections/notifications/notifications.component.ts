@@ -27,7 +27,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     previous: 'patron-ui.notifications.period_previous',
   };
 
-  private sortingPriority = {
+  private sortingByPriority = {
     pinned: 0,
     [this.received.today]: 1,
     [this.received.yesterday]: 2,
@@ -41,7 +41,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
     private readonly userNotificationsFacadeService: UserNotificationsFacadeService,
     private readonly platform: Platform,
-    private cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -67,51 +67,44 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       .subscribe(() => this.userNotificationsFacadeService.fetchNotifications());
   }
 
-  trackByFn(index: number) {
-    return index;
+  async unpin(sliding: NotificationSliding) {
+    this.removeUnpinnedNotification(sliding.notification);
+    const { data } = await this.showUndoToast(
+      this.translateService.instant('patron-ui.notifications.toast_message_unpinned')
+    );
+
+    if (!data?.undo) {
+      await this.userNotificationsFacadeService.markAsPinned(sliding.notification, false);
+    }
+    await this.refreshNotifications(sliding.slidingItem);
   }
 
   async pin(sliding: NotificationSliding) {
     await this.userNotificationsFacadeService.markAsPinned(sliding.notification, true);
-    await this.refreshNotifications(sliding.ionItem);
-  }
-
-  async unpin(sliding: NotificationSliding) {
-    this.removeNotification(sliding.notification, sliding.ionItem);
-    const { data } = await this.showUndoToast(
-      this.translateService.instant('patron-ui.notifications.toast_message_unpinned')
-    );
-    if (data?.undo) {
-      this.userNotificationsFacadeService.dispatchNotificationsCached();
-    } else {
-      await this.userNotificationsFacadeService.markAsPinned(sliding.notification, false);
-      await this.refreshNotifications(sliding.ionItem);
-    }
+    await this.refreshNotifications(sliding.slidingItem);
   }
 
   async delete(sliding: NotificationSliding) {
-    this.removeNotification(sliding.notification, sliding.ionItem);
+    this.removeDeletedNotification(sliding.notification);
     const { data } = await this.showUndoToast(
       this.translateService.instant('patron-ui.notifications.toast_message_deleted')
     );
-    if (data?.undo) {
-      this.userNotificationsFacadeService.dispatchNotificationsCached();
-    } else {
+    if (!data?.undo) {
       await this.userNotificationsFacadeService.markAsDismissed(sliding.notification);
-      await this.refreshNotifications(sliding.ionItem);
     }
+    await this.refreshNotifications(sliding.slidingItem);
   }
 
   drag(event: ItemSlidingCustomEvent) {
     this.notificationColoring.setBackgroundColor(event);
   }
 
-  private groupNotifications(notifications: Notification[], priority: { [key: string]: number }) {
+  private groupNotificationsBySections(notifications: Notification[], priority: { [key: string]: number }) {
     const today = this.formatDate(new Date());
     const yesterday = this.formatDate(new Date(Date.now() - A_DAY_AGO));
     const groupedNotifications: { [key: string]: Notification[] } = {};
 
-    this.groupNotificationsBySections(notifications, today, yesterday, groupedNotifications);
+    this.groupNotificationsDict(notifications, today, yesterday, groupedNotifications);
 
     this.notificationsGroups = Object.keys(groupedNotifications)
       .sort((a, b) => {
@@ -124,7 +117,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
   }
 
-  private groupNotificationsBySections(
+  private groupNotificationsDict(
     notifications: Notification[],
     today: string,
     yesterday: string,
@@ -157,7 +150,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   private refreshPage() {
     this.fetchNotifications();
     return this.userNotificationsFacadeService.allNotifications$.subscribe(async notifications => {
-      this.groupNotifications(notifications, this.sortingPriority);
+      this.groupNotificationsBySections(notifications, this.sortingByPriority);
       await this.loadingService.closeSpinner();
     });
   }
@@ -173,23 +166,34 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.userNotificationsFacadeService.fetchNotifications();
   }
 
-  private async refreshNotifications(ionItem: IonItemSliding) {
+  private async refreshNotifications(itemSliding: IonItemSliding) {
     await this.userNotificationsFacadeService.fetchNotifications();
-    await this.notificationColoring.resetList(ionItem);
+    await this.notificationColoring.resetList(itemSliding);
   }
 
-  private async removeNotification(notification: Notification, ionItem: IonItemSliding) {
-    const notFound = -1;
-    const index = this.notificationsGroups.findIndex(group => group.notifications.some(n => n.id === notification.id));
-    if (index !== notFound) {
-      this.notificationsGroups[index].notifications = this.notificationsGroups[index].notifications.filter(
-        n => n.id !== notification.id
-      );
-      await ionItem.closeOpened();
-    }
+  private removeDeletedNotification(notification: Notification) {
+    this.updateNotificationsStored(
+      this.userNotificationsFacadeService.notificationsStored.filter(n => n.id !== notification.id)
+    );
   }
 
-  private async showUndoToast(message: string = '') {
+  private removeUnpinnedNotification(notification: Notification) {
+    this.updateNotificationsStored(
+      this.userNotificationsFacadeService.notificationsStored.map(n => {
+        if (n.id === notification.id) {
+          return { ...n, isPinned: false };
+        }
+        return n;
+      })
+    );
+  }
+
+  private updateNotificationsStored(notifications: Notification[]) {
+    this.userNotificationsFacadeService.notificationsStored = notifications;
+    this.userNotificationsFacadeService.dispatchNotificationsStored();
+  }
+
+  private async showUndoToast(message = '') {
     const toast = await this.toastService.showToast({
       message,
       position: 'bottom',

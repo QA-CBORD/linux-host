@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotificationComponent } from './notification.component';
-import { IonItemSliding, IonicModule } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NotificationCategory } from '@core/service/user-notification/user-notification-api.service';
 import { notifications } from '../notifications.component.spec';
@@ -12,7 +12,6 @@ describe('NotificationComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IonicModule, HttpClientTestingModule],
-      declarations: [NotificationComponent],
       providers: [],
     }).compileComponents();
   });
@@ -40,11 +39,5 @@ describe('NotificationComponent', () => {
   it('should get avatar for notification category', () => {
     const avatar = component.getAvatar(NotificationCategory.order);
     expect(avatar).toBe('order');
-  });
-
-  it('should check if a date is today', () => {
-    const today = new Date();
-    const result = component['isToday'](today);
-    expect(result).toBe(true);
   });
 });

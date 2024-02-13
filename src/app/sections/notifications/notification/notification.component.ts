@@ -21,7 +21,7 @@ export class NotificationComponent implements OnChanges {
   @Output() onUnpin = new EventEmitter<NotificationSliding>();
   @Output() onDelete = new EventEmitter<NotificationSliding>();
   @Output() onDrag = new EventEmitter<ItemSlidingCustomEvent>();
-  @ViewChild(IonList) private ionItem: IonList;
+  @ViewChild(IonList) private ionList: IonList;
 
   private notificationIcon: { [key: number]: string } = {
     [NotificationCategory.order]: 'order',
@@ -36,11 +36,8 @@ export class NotificationComponent implements OnChanges {
     [NotificationCategory.walkOut]: 'walk-out',
   };
 
-  constructor(
-  ) {}
-
   ngOnChanges() {
-    this.ionItem?.closeSlidingItems();
+    this.ionList?.closeSlidingItems();
   }
 
   notificationsFormatted(notifications: Notification[]) {
@@ -54,24 +51,24 @@ export class NotificationComponent implements OnChanges {
     return this.notificationIcon[category];
   }
 
-  trackById(index: number) {
+  trackSectionsByIndex(index: number) {
     return index;
   }
 
-  trackByFn(index: number) {
+  trackNotificationsByIndex(index: number) {
     return index;
   }
 
-  unpin(notification: Notification, ionItem: IonItemSliding) {
-    this.onUnpin.emit({ notification, ionItem });
+  unpin(notification: Notification, slidingItem: IonItemSliding) {
+    this.onUnpin.emit({ notification, slidingItem });
   }
 
-  pin(notification: Notification, ionItem: IonItemSliding) {
-    this.onPin.emit({ notification, ionItem });
+  pin(notification: Notification, slidingItem: IonItemSliding) {
+    this.onPin.emit({ notification, slidingItem });
   }
 
-  delete(notification: Notification, ionItem: IonItemSliding) {
-    this.onDelete.emit({ notification, ionItem });
+  delete(notification: Notification, slidingItem: IonItemSliding) {
+    this.onDelete.emit({ notification, slidingItem });
   }
 
   drag(event: ItemSlidingCustomEvent) {
@@ -79,7 +76,7 @@ export class NotificationComponent implements OnChanges {
   }
 
   private formattedDate(insertTime: Date): string {
-    const today = new Date(); 
+    const today = new Date();
     return isSameDay(insertTime, today)
       ? this.formatDate(insertTime, hourMinTime)
       : this.formatDate(insertTime, monthDayFullYear + ', ' + hourMinTime);
@@ -92,6 +89,5 @@ export class NotificationComponent implements OnChanges {
 
 export interface NotificationSliding {
   notification: Notification;
-  ionItem: IonItemSliding;
+  slidingItem: IonItemSliding;
 }
-
