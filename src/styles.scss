@@ -577,3 +577,9 @@ ion-modal.sc-modal {
     margin-right: 10px;
   }
 }
+
+
+.ion-focused,
+*:focus {
+  outline: 1px solid $color-blue-focus;
+}

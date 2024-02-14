@@ -8,9 +8,19 @@ import { CategoryListComponent } from './category-list/category-list.component';
 import { IonicModule } from '@ionic/angular';
 import { ViewCartModule } from '@sections/ordering/shared/ui-components/view-cart';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
+import { TranslateModule } from '@ngx-translate/core';
 
-const imports = [CommonModule, IonicModule, MenuCategoryItemsRoutingModule, StHeaderModule, ViewCartModule, PriceUnitsResolverModule];
-const declarations = [MenuCategoryItemsComponent, CategoryListComponent, CategoryListComponent];
+const imports = [
+  CommonModule,
+  IonicModule,
+  MenuCategoryItemsRoutingModule,
+  StHeaderModule,
+  ViewCartModule,
+  PriceUnitsResolverModule,
+  CategoryListComponent,
+  TranslateModule,
+];
+const declarations = [MenuCategoryItemsComponent];
 
 @NgModule({
   declarations,

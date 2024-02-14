@@ -17,7 +17,7 @@
   </ion-header>
   <ion-content class="menu-category" mode="ios">
     <div *ngIf="!filteredMenuCategoryItems.length" class="menu-category__search-wrapper">
-      <img class="menu-category__search-icon" src="/assets/icon/search.svg" alt="search image"/>
+      <img class="menu-category__search-icon" src="/assets/icon/search.svg" alt="search image" />
       <div class="menu-category__search-text">{{ contentStrings.labelEmptySearch | async }}</div>
     </div>
     <st-category-list
@@ -42,16 +42,21 @@
         </ion-button>
       </ion-buttons>
       <ion-title class="menu-category__header-title">
-        {{ menuCategory.name }}
+        {{ menuCategory?.name }}
       </ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content class="menu-category" mode="ios">
-    <st-category-list
-      [mealBased]="(menuInfo$ | async).mealBased"
-      [menuCategoryItems]="menuCategory.menuCategoryItems"
-      (onItemClicked)="triggerMenuItemClick($event)"
-    ></st-category-list>
+    <ng-container *ngIf="menuCategory; else emptyMenuCategory">
+      <st-category-list
+        [mealBased]="(menuInfo$ | async).mealBased"
+        [menuCategoryItems]="menuCategory.menuCategoryItems"
+        (onItemClicked)="triggerMenuItemClick($event)"
+      ></st-category-list>
+    </ng-container>
+    <ng-template #emptyMenuCategory>
+      <div class="ion-padding" translate>get_mobile.error.menu_option_not_available</div>
+    </ng-template>
   </ion-content>
 </ng-template>
 <ion-footer mode="ios" class="menu-category__footer" *ngIf="(menuItems$ | async) > 0">
