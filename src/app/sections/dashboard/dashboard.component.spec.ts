@@ -35,6 +35,7 @@ import { LockDownService } from '@shared/services';
 import { mockStorageStateService } from 'src/app/testing/core-providers';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { TranslateService } from '@ngx-translate/core';
 
 const _platform = {
   is: jest.fn(),
@@ -77,6 +78,10 @@ const _popoverController = {
   create: jest.fn().mockResolvedValue({ onDidDismiss: () => Promise.resolve(), present: () => Promise.resolve() }),
 };
 
+const _translateService = {
+  instant: jest.fn(),
+};
+
 describe('DashboardPage', () => {
   let component: DashboardPage;
   let fixture: ComponentFixture<DashboardPage>;
@@ -100,6 +105,7 @@ describe('DashboardPage', () => {
         { provide: StorageStateService, useValue: mockStorageStateService },
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
         { provide: PopoverController, useValue: _popoverController },
+        { provide: TranslateService, useValue: _translateService },
         NavigationFacadeSettingsService,
         AndroidPermissions,
         InAppBrowser,
