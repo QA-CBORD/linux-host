@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Observable, of, firstValueFrom } from 'rxjs';
+import { Observable, of, firstValueFrom, lastValueFrom } from 'rxjs';
 import { catchError, first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
@@ -11,6 +11,11 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
+import { TOAST_DURATION } from '@shared/model/generic-constants';
+import { TranslateService } from '@ngx-translate/core';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 
 @Component({
   selector: 'st-access-card',
@@ -45,7 +50,10 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     private readonly userFacadeService: UserFacadeService,
     public readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly profileService: ProfileServiceFacade,
-    private readonly barcodeFacadeService: BarcodeFacadeService
+    private readonly barcodeFacadeService: BarcodeFacadeService,
+    private readonly toastSerice: ToastService,
+    private readonly traslateService: TranslateService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService
   ) {}
 
   ngOnInit() {
@@ -53,6 +61,17 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     this.setInstitutionData();
     this.getFeaturesEnabled();
     this.getUserName();
+    this.initContentString();
+  }
+
+  async initContentString() {
+    await lastValueFrom(
+      this.contentStringsFacadeService.fetchContentString$(
+        CONTENT_STRINGS_DOMAINS.get_mobile,
+        CONTENT_STRINGS_CATEGORIES.photoUpload,
+        CONTENT_STRINGS_MESSAGES.requiredMessage
+      )
+    );
   }
 
   ngAfterViewInit(): void {
@@ -131,5 +150,18 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
 
   private async setHousingOnlyEnabled() {
     this.housingOnlyEnabled = await this.profileService.housingOnlyEnabled();
+  }
+
+  onWalletClicked() {
+    if (this.userPhoto) {
+      this.mobileCredentialFacade.onImageClick();
+      return;
+    }
+
+    this.toastSerice.showError(
+      this.traslateService.instant('get_mobile.photo_upload.required_message'),
+      TOAST_DURATION,
+      'bottom'
+    );
   }
 }
