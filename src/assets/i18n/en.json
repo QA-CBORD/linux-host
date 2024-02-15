@@ -187,7 +187,8 @@
       "required_message": "A user photo is required to add mobile credentials to your mobile wallet."
     },
     "error": {
-      "menu_option_not_available": "Menu Item not available"
+      "menu_option_not_available": "Menu Item not available",
+      "menu_item_not_found": "Could not retrieve menu item"
     }
   },
   "get_web_gui": {
@@ -1101,8 +1102,8 @@
       "pin": "Pin",
       "unpin": "Unpin",
       "expiration_policy": "Notifications expire after {{expirationDays}} days",
-      "toast_message_unpinned": "Notification will be unpinned",
-      "toast_message_deleted": "Notification will be deleted",
+      "toast_message_unpinned": "Notification unpinned",
+      "toast_message_deleted": "Notification deleted",
       "toast_message_undo": "Undo"
     }
   }

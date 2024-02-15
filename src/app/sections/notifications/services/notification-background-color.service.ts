@@ -5,7 +5,7 @@ import { IonItemSliding, ItemSlidingCustomEvent } from '@ionic/angular';
   providedIn: 'root',
 })
 export class NotificationBackgroundColorService {
-  private notificationsSwiped: HTMLElement[] = [];
+  private notificationsSliding: HTMLElement[] = [];
 
   private color = {
     RED: '#fed1cf',
@@ -33,12 +33,12 @@ export class NotificationBackgroundColorService {
     }
 
     if (this.isElementAvailable(event)) {
-      this.notificationsSwiped.push(event.target.firstChild.nextSibling as HTMLElement);
+      this.notificationsSliding.push(event.target.firstChild.nextSibling as HTMLElement);
     }
   }
 
-  async resetList(ionItem: IonItemSliding) {
-    await ionItem.closeOpened();
+  async resetList(slidingItem: IonItemSliding) {
+    await slidingItem.closeOpened();
     this.resetElementBackground();
   }
 
@@ -50,10 +50,10 @@ export class NotificationBackgroundColorService {
   }
 
   private resetElementBackground() {
-    this.notificationsSwiped.forEach(item => {
+    this.notificationsSliding.forEach(item => {
       item.style.setProperty(this.location.BACKGROUND, this.color.WHITE);
     });
-    this.notificationsSwiped = [];
+    this.notificationsSliding = [];
   }
 
   private isElementAvailable(event: ItemSlidingCustomEvent) {
