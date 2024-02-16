@@ -8,7 +8,6 @@ import { DashboardRoutingModule } from './dashboard.routing.module';
 
 import { DashboardPage } from './dashboard.component';
 
-import { AccessCardModule } from './containers/access-card';
 import { AccountsTileModule } from './containers/accounts-tile';
 import { ConversationsTileModule } from './containers/conversations-tile';
 import { ExploreTileModule } from './containers/explore-tile';
@@ -31,13 +30,14 @@ import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-mo
 import { LocationPermissionModalModule } from './components/location-disclosure/location-disclosure.module';
 import { ProminentDisclosureService } from './services/prominent-disclosure.service';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { AccessCardComponent } from './containers/access-card';
 
 const imports = [
   CommonModule,
   IonicModule,
   DashboardRoutingModule,
   StHeaderModule,
-  AccessCardModule,
+  AccessCardComponent,
   AccountsTileModule,
   ConversationsTileModule,
   ExploreTileModule,

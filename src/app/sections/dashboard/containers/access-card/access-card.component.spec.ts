@@ -35,7 +35,7 @@ describe('AccessCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AccessCardComponent],
+      imports: [HttpClientTestingModule, AccessCardComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: ModalController, useValue: {} },
@@ -48,7 +48,6 @@ describe('AccessCardComponent', () => {
         AndroidPermissions,
         AccessCardService,
       ],
-      imports: [HttpClientTestingModule],
     }).compileComponents();
   });
 

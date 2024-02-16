@@ -16,11 +16,15 @@ import { TOAST_DURATION } from '@shared/model/generic-constants';
 import { TranslateService } from '@ngx-translate/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
   styleUrls: ['./access-card.component.scss'],
+  imports: [IonicModule, CommonModule],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit, AfterViewInit {

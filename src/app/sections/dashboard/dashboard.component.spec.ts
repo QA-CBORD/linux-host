@@ -24,7 +24,6 @@ import { TileWrapperModule } from './containers/tile-wrapper/tile-wrapper.module
 import { MobileAccessTileModule } from './containers/mobile-access-tile/mobile-access-tile.module';
 import { ExploreTileModule } from './containers/explore-tile/explore-tile.module';
 import { ConversationsTileModule } from './containers/conversations-tile/conversations-tile.module';
-import { AccessCardModule } from './containers/access-card';
 import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
 import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-donations-tile.module';
 import { DashboardPage } from './dashboard.component';
@@ -36,6 +35,8 @@ import { mockStorageStateService } from 'src/app/testing/core-providers';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { TranslateService } from '@ngx-translate/core';
+import { AccessCardComponent } from './containers/access-card';
+import { AccessCardService } from './containers/access-card/services/access-card.service';
 
 const _platform = {
   is: jest.fn(),
@@ -106,6 +107,7 @@ describe('DashboardPage', () => {
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
         { provide: PopoverController, useValue: _popoverController },
         { provide: TranslateService, useValue: _translateService },
+        AccessCardService,
         NavigationFacadeSettingsService,
         AndroidPermissions,
         InAppBrowser,
@@ -114,7 +116,7 @@ describe('DashboardPage', () => {
         CommonModule,
         IonicModule,
         StHeaderModule,
-        AccessCardModule,
+        AccessCardComponent,
         ConversationsTileModule,
         ExploreTileModule,
         MobileAccessTileModule,
