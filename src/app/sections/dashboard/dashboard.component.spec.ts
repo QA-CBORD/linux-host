@@ -12,7 +12,7 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { IonicModule, Platform, PopoverController } from '@ionic/angular';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
-import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
@@ -128,7 +128,7 @@ describe('DashboardPage', () => {
         StInputFloatingLabelModule,
         ReactiveFormsModule,
         StButtonModule,
-        PhoneEmailModule,
+        PhoneEmailComponent,
         EditHomePageModalModule,
         LocationPermissionModalModule,
         HttpClientTestingModule,
