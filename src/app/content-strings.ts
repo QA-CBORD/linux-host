@@ -38,7 +38,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   error = 'error',
   error_message = 'error_message',
   settingsScreen = 'settings_screen',
-  notifications = 'notifications'
+  notifications = 'notifications',
+  updatePersonalInfo = 'update_personal_info',
 }
 
 export enum CONTENT_STRINGS_LOCALES {
