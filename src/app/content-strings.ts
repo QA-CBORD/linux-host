@@ -48,5 +48,6 @@ export enum CONTENT_STRINGS_LOCALES {
 export enum CONTENT_STRINGS_MESSAGES {
   PHOTO_UPLOAD_MESSAGE = 'turned_off_message',
   hotlineHelpTitle = 'hotlinehelptitle',
-  hotlineInfo = 'hotlineinfo'
+  hotlineInfo = 'hotlineinfo',
+  requiredMessage = 'required_message',
 }

@@ -84,7 +84,7 @@
           *ngIf="(mobileCredentialFacade.uiImageUrl$ | async) as image"
           mode="ios"
           class="card__apple-wallet-btn"
-          (click)="mobileCredentialFacade.onImageClick()"
+          (click)="onWalletClicked()"
         >
           <img src="{{ image }}" style="height: fit-content" alt="mobile access"/>
         </ion-button>

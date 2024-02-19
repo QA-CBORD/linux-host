@@ -183,7 +183,8 @@
       "govtidmessage": "A government issued ID is required to submit a new photo",
       "govtidmessagesmall": "e.g., Passport, Driver’s License, State ID",
       "updatephotomessage": "New photo is subject to admin approval!",
-      "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval."
+      "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval.",
+      "required_message": "A user photo is required to add mobile credentials to your mobile wallet."
     },
     "error": {
       "menu_option_not_available": "Menu Item not available",
