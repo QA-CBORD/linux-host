@@ -157,7 +157,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.defineOrderOptionsData(this.isOrderTypePickup);
         },
         null,
-        () => !this.loadingService.notLoading() && this.loadingService.closeSpinner()
+        () => this.loadingService.closeSpinner()
       );
 
     this.activeMerchant$ = this.merchantService.menuMerchants$.pipe(
