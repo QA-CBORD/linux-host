@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryListComponent {
-  @Input() menuCategoryItems: MenuCategoryItemInfo[];
+  @Input() menuCategoryItems: MenuCategoryItemInfo[] = [];
   @Input() mealBased: boolean;
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
