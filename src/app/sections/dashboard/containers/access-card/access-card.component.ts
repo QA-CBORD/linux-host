@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, Signal } from '@angular/core';
-import { Observable, of, firstValueFrom, lastValueFrom } from 'rxjs';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Observable, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { catchError, first, map } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
@@ -27,7 +27,8 @@ import { IonicModule } from '@ionic/angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit, AfterViewInit {
-  userLocalProfileSignal: Signal<{ userFullName: string; pronouns: string }>;
+  userLocalProfileSignal = this.accessCardService.getUserLocalProfileSignal();
+
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -55,9 +56,7 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     private readonly toastSerice: ToastService,
     private readonly traslateService: TranslateService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService
-  ) {
-    this.userLocalProfileSignal = this.accessCardService.getUserLocalProfileSignal();
-  }
+  ) {}
 
   ngOnInit() {
     this.setHousingOnlyEnabled();

@@ -2,12 +2,9 @@ import { Injectable, inject, signal } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { getUserFullName } from '@core/utils/general-helpers';
+import { UserLocalProfile } from '@shared/model/user-local-profile.model';
 import { combineLatest, first, map, tap } from 'rxjs';
 
-interface UserLocalProfile {
-  userFullName: string;
-  pronouns: string;
-}
 @Injectable({
   providedIn: 'root',
 })
