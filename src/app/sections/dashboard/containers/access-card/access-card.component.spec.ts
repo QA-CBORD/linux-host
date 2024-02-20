@@ -14,11 +14,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { of } from 'rxjs';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 describe('AccessCardComponent', () => {
   let component: AccessCardComponent;
   let fixture: ComponentFixture<AccessCardComponent>;
-  let myService: AccessCardService;
 
   const toastService = {
     showToast: jest.fn(() => ({
@@ -55,15 +55,13 @@ describe('AccessCardComponent', () => {
     fixture = TestBed.createComponent(AccessCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    myService = TestBed.inject(AccessCardService);
   });
 
   it('should create component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call fetchContentString$ method of contentStringsFacadeService with correct parameters', fakeAsync (() => {
+  it('should call fetchContentString$ method of contentStringsFacadeService with correct parameters', fakeAsync(() => {
     const fetchContentStringSpy = jest.spyOn(contentStringsFacadeService, 'fetchContentString$');
 
     fixture.detectChanges();
@@ -79,24 +77,24 @@ describe('AccessCardComponent', () => {
   }));
 
   it('should call mobileCredentialFacade.onImageClick if userPhoto is truthy', () => {
-      component.userPhoto = 'some-photo-url';
-      const spy = jest.spyOn(component.mobileCredentialFacade, 'onImageClick').mockReturnValue(undefined);
+    component.userPhoto = 'some-photo-url';
+    const spy = jest.spyOn(component.mobileCredentialFacade, 'onImageClick').mockReturnValue(undefined);
 
-      component.onWalletClicked();
+    component.onWalletClicked();
 
-      expect(spy).toHaveBeenCalled();
-    });
+    expect(spy).toHaveBeenCalled();
+  });
 
-    it('should call toastSerice.showError if userPhoto is falsy', () => {
-      component.userPhoto = null;
-      const spy = jest.spyOn(toastService, 'showError');
+  it('should call toastSerice.showError if userPhoto is falsy', () => {
+    component.userPhoto = null;
+    const spy = jest.spyOn(toastService, 'showError');
 
-      component.onWalletClicked();
+    component.onWalletClicked();
 
-      expect(spy).toHaveBeenCalledWith(
-        translateService.instant('get_mobile.photo_upload.required_message'),
-        TOAST_DURATION,
-        'bottom'
-      );
-    });
+    expect(spy).toHaveBeenCalledWith(
+      translateService.instant('get_mobile.photo_upload.required_message'),
+      TOAST_DURATION,
+      'bottom'
+    );
+  });
 });

@@ -6,7 +6,7 @@
   background: $color-dodger-blue;
   height: fit-content;
   padding-bottom: 10px;
-
+  color: white;
   &__header {
     height: 45px;
     align-items: center;
@@ -105,6 +105,11 @@
     padding: 0 10px;
   }
 
+  &__student-profile-container {
+    @include font-nunito-semibold(12px);
+    padding: 0 10px;
+  }
+
   &__student-name-wrapper {
     padding: 0;
   }
@@ -122,10 +127,6 @@
   &__student-wallet {
     color: $color-white;
     text-align: right;
-
-    &-text {
-      @include font-nunito-semibold(12px);
-    }
   }
 
   &__quick-actions-container {
