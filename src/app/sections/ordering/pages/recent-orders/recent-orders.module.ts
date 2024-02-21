@@ -15,7 +15,7 @@ import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/
 import { ItemsUnavailableComponent } from './components/items-unavailable/items-unavailable.component';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 import { OrderFiltersActionSheetModule } from '@sections/ordering/shared/ui-components/order-filters.action-sheet';
-import { StAlertBannerModule } from '@shared/ui-components/st-alert-banner/st-alert-banner.module';
+import { StAlertBannerComponent } from '@shared/ui-components/st-alert-banner/st-alert-banner.component';
 
 const imports = [
   CommonModule,
@@ -28,7 +28,7 @@ const imports = [
   ConfirmPopoverModule,
   StButtonModule,
   StSpinnerModule,
-  StAlertBannerModule,
+  StAlertBannerComponent,
   TypeMessageModule,
   OrderItemDetailsModule,
   OrderFiltersActionSheetModule

@@ -7,7 +7,7 @@ import { PhotoUploadModule } from '@sections/settings/pages/photo-upload/photo-u
 import { SettingsItemComponent } from './components/settings-item/settings-item.component';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { HTMLRendererModule } from '@shared/ui-components/html-renderer/html-renderer.module';
-import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { ReportCardModule } from '@sections/settings/pages/report-card/report-card.module';
@@ -24,7 +24,7 @@ const imports = [
   SettingsRoutingModule,
   PhotoUploadModule,
   HTMLRendererModule,
-  PhoneEmailModule,
+  PhoneEmailComponent,
   StHeaderModule,
   EditHomePageModalModule,
   ReportCardModule,

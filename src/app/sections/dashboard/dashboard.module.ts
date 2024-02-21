@@ -25,7 +25,7 @@ import { HousingTileModule } from './containers/housing-tile/housing-tile.module
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { LocationPermissionModalModule } from './components/location-disclosure/location-disclosure.module';
 import { ProminentDisclosureService } from './services/prominent-disclosure.service';
@@ -51,7 +51,7 @@ const imports = [
   StInputFloatingLabelModule,
   ReactiveFormsModule,
   StButtonModule,
-  PhoneEmailModule,
+  PhoneEmailComponent,
   EditHomePageModalModule,
   LocationPermissionModalModule,
 ];

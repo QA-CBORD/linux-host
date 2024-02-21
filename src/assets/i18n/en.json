@@ -1041,6 +1041,11 @@
       "label_recent-transactions": "RECENT TRANSACTIONS",
       "loader_infinite-scroll": "Loading more transactions..."
     },
+    "update_personal_info": {
+      "header_stale_profile": "Update Contact Information",
+      "header_update_profile": "Personal Information",
+      "update_name_message": "To update your name please contact your school"
+    },
     "us-state_full": {
       "alabama": "Alabama",
       "alaska": "Alaska",
