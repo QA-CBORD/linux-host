@@ -1,12 +1,12 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
 import { Observable, of, Subscription } from 'rxjs';
 import { UserInfo } from '@core/model/user';
 import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
-import { getUserFullName, isEmptyObject } from '@core/utils/general-helpers';
+import { getDataUrlFromPhoto, getUserFullName, isEmptyObject } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Settings } from '../../../../app.global';
@@ -16,6 +16,7 @@ import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.servi
 import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
 import { ModalController } from '@ionic/angular';
 import { ScreenBrigtnessService } from '@core/service/screen-brightness/screen-brightness.service';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
 import bwipjs from 'bwip-angular2';
 
 @Component({
@@ -24,6 +25,9 @@ import bwipjs from 'bwip-angular2';
   styleUrls: ['./scan-card.component.scss'],
 })
 export class ScanCardComponent implements OnInit, OnDestroy {
+  private readonly _userLocalProfileService = inject(UserLocalProfileService);
+  userLocalProfileSignal = this._userLocalProfileService.userLocalProfileSignal;
+
   generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
@@ -93,16 +97,9 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   private setUserPhoto() {
-    this.userFacadeService
-      .getAcceptedPhoto$()
-      .pipe(
-        skipWhile(acceptedPhoto => !acceptedPhoto || acceptedPhoto === null),
-        map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-        take(1)
-      )
-      .subscribe((url: string) => {
-        this.userPhoto = url;
-      });
+    this.userFacadeService.getAcceptedPhoto$().subscribe((url: string) => {
+      this.userPhoto = url;
+    });
   }
 
   private setInstitution() {
@@ -116,9 +113,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     this.institutionPhoto$ = this.getUserInfo().pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionFacadeService.getInstitutionPhoto$(institutionId)),
       skipWhile(d => !d || d === null),
-      map(({ data, mimeType }: InstitutionPhotoInfo) => {
-        return `data:${mimeType};base64,${data}`;
-      }),
+      map((photo: InstitutionPhotoInfo) => getDataUrlFromPhoto(photo)),
       map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
     );
   }

@@ -88,8 +88,6 @@ export class SettingsPage implements OnInit {
 
   getUserPhoto$(): Observable<string> {
     return this.userFacadeService.getAcceptedPhoto$().pipe(
-      map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-      take(1),
       catchError(() => of('../../../assets/images/no_photo.svg'))
     );
   }

@@ -92,7 +92,10 @@
     @include ellipsis;
     @include font-nunito-semibold(24px);
   }
-
+  &__pronouns {
+    color: $color-white;
+    @include font-nunito-semibold(14px);
+  }
   &__id {
     color: $color-white;
 
