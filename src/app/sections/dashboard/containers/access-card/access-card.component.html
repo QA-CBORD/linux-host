@@ -35,18 +35,12 @@
           <img class="card__campus-background" [src]="institutionBackgroundImage$ | async" alt="campus photo" />
         </ng-template>
         <div *ngIf="!housingOnlyEnabled" class="card__campus-student-avatar-wrapper">
-          <img
-            *ngIf="!isLoadingPhoto && userPhoto"
-            class="card__campus-student-avatar"
-            [src]="userPhoto"
-            alt="user photo"
-          />
-          <img
-            *ngIf="isLoadingPhoto || !userPhoto"
-            class="card__campus-empty-photo"
-            src="/assets/images/no_photo.svg"
-            alt="no photo icon"
-          />
+          <ng-container *ngIf="userPhoto$ | async as userPhoto; else defaultPhoto">
+            <img class="card__campus-student-avatar" [src]="userPhoto" alt="user photo" />
+          </ng-container>
+          <ng-template #defaultPhoto>
+            <img class="card__campus-empty-photo" src="/assets/images/no_photo.svg" alt="no photo icon" />
+          </ng-template>
         </div>
       </ion-col>
     </ion-row>

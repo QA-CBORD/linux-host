@@ -10,6 +10,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { getPhotoDataUrl } from '@core/operators/images.operators';
 
 @Injectable()
 export class AccessCardService {
@@ -24,16 +25,7 @@ export class AccessCardService {
 
   getUserLocalProfileSignal = () => this._userLocalProfileService.userLocalProfileSignal;
 
-  getUserPhoto(): Observable<string> {
-    return this.userFacadeService.getAcceptedPhoto$().pipe(
-      map(photoInfo => {
-        if (photoInfo) {
-          return `data:${photoInfo.mimeType};base64,${photoInfo.data}`;
-        }
-        return null;
-      })
-    );
-  }
+  getUserPhoto = (): Observable<string> => this.userFacadeService.getAcceptedPhoto$();
 
   getInstitutionName(): Observable<string> {
     return this.userFacadeService.getUserData$().pipe(
@@ -45,8 +37,7 @@ export class AccessCardService {
   getInstitutionImage(): Observable<string> {
     return this.userFacadeService.getUserData$().pipe(
       switchMap(({ institutionId }) => this.institutionFacadeService.getInstitutionPhoto$(institutionId)),
-      skipWhile(val => !val || val === null),
-      map(({ data, mimeType }) => `data:${mimeType};base64,${data}`)
+      getPhotoDataUrl()
     );
   }
 

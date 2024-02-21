@@ -56,21 +56,6 @@ export class CommonService {
       .toPromise();
   }
 
-  async getUserPhoto(): Promise<string> {
-    return this.userFacadeService
-      .getAcceptedPhoto$()
-      .pipe(
-        map(photoInfo => {
-          if (photoInfo) {
-            return `data:${photoInfo.mimeType};base64,${photoInfo.data}`;
-          }
-          return null;
-        }),
-        take(1)
-      )
-      .toPromise();
-  }
-
   async getInstitutionBackgroundImage(): Promise<string> {
     return Promise.resolve('/assets/images/card_background_illustration.svg');
   }

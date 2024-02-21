@@ -7,7 +7,8 @@
 <ion-content class="ion-padding">
   <st-activate-location-item
     [userPhoto]="userPhoto$ | async"
-    [userFullName]="userFullName$ | async"
+    [userPronouns]="userLocalProfileSignal().pronouns"
+    [userFullName]="userLocalProfileSignal().userFullName"
     [userInfoId]="userInfoId$ | async"
     [institutionName]="(institution$ | async).name"
     [institutionPhoto]="institutionPhoto$ | async"

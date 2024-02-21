@@ -12,6 +12,7 @@ import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '../services/camera.service';
+import { getDataUrlFromPhoto } from '@core/utils/general-helpers';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -246,8 +247,8 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   /// format the photo data for display
-  private formatPhotoData({ mimeType, data }: UserPhotoInfo): SafeResourceUrl {
-    return this.domsanitizer.bypassSecurityTrustResourceUrl(`data:${mimeType};base64,${data}`);
+  private formatPhotoData(photoData: UserPhotoInfo): SafeResourceUrl {
+    return this.domsanitizer.bypassSecurityTrustResourceUrl(getDataUrlFromPhoto(photoData));
   }
 
   get localPhotoStatus() {

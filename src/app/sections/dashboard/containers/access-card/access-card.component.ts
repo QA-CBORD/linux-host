@@ -1,7 +1,7 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable, firstValueFrom, lastValueFrom, of } from 'rxjs';
-import { catchError, first, map } from 'rxjs/operators';
+import { catchError, first, map, tap } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION, Settings, User } from 'src/app/app.global';
@@ -40,8 +40,8 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   cardStatusMessage: string;
   appleWalletMessageImage: string;
   appleWalletButtonHidden = true;
-  userPhoto?: string;
-  isLoadingPhoto = true;
+  userPhoto$: Observable<string>;
+  photoAvailable = false;
   mobileCredentialAvailable = false;
   housingOnlyEnabled: boolean;
 
@@ -90,17 +90,10 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   }
 
   private getUserData() {
-    this.accessCardService
-      .getUserPhoto()
-      .pipe(
-        first(),
-        catchError(() => of(null))
-      )
-      .subscribe(photo => {
-        this.isLoadingPhoto = false;
-        this.userPhoto = photo;
-        this.changeRef.detectChanges();
-      });
+    this.userPhoto$ = this.accessCardService.getUserPhoto().pipe(
+      tap(photo => (this.photoAvailable = !!photo)),
+      catchError(() => of(null))
+    );
   }
 
   async loadScanCardInputs() {
@@ -144,7 +137,7 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   }
 
   onWalletClicked() {
-    if (this.userPhoto) {
+    if (this.photoAvailable) {
       this.mobileCredentialFacade.onImageClick();
       return;
     }

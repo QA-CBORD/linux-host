@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController, PopoverController } from '@ionic/angular';
 
-import { map, take, skipWhile } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { MobileAccessService } from '../service';
-import { UserInfo } from '@core/model/user';
 import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model';
-import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
+import { Institution } from '@core/model/institution';
 import { MobileAccessPopoverComponent } from '@sections/mobile-access/mobile-access-popover';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
@@ -19,6 +18,8 @@ import { CommerceApiService } from '@core/service/commerce/commerce-api.service'
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { getPhotoDataUrl } from '@core/operators/images.operators';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
 
 @Component({
   selector: 'st-activate-location',
@@ -29,6 +30,9 @@ import { ToastService } from '@core/service/toast/toast.service';
 export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly toastDuration: number = 6000;
   private readonly sourceSubscription: Subscription = new Subscription();
+  private readonly _userLocalProfileService = inject(UserLocalProfileService);
+  userLocalProfileSignal = this._userLocalProfileService.userLocalProfileSignal;
+
   private locationId: string;
 
   location$: Observable<MMobileLocationInfo>;
@@ -52,16 +56,6 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly commerceApiService: CommerceApiService,
     private readonly userFacadeService: UserFacadeService
   ) {}
-
-  get userFullName$(): Observable<string> {
-    return this.userFacadeService
-      .getUserData$()
-      .pipe(
-        map(
-          ({ firstName, middleName, lastName }: UserInfo) => `${firstName || ''} ${middleName || ''} ${lastName || ''}`
-        )
-      );
-  }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
@@ -139,10 +133,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private setInstitutionPhoto() {
     this.institution$ = this.institutionFacadeService.cachedInstitutionInfo$;
     this.institutionPhoto$ = this.institutionFacadeService.cachedInstitutionPhoto$.pipe(
-      skipWhile(d => !d || d === null),
-      map(({ data, mimeType }: InstitutionPhotoInfo) => {
-        return `data:${mimeType};base64,${data}`;
-      }),
+      getPhotoDataUrl(),
       map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
     );
   }
@@ -170,11 +161,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   private setUserPhoto() {
-    this.userPhoto$ = this.userFacadeService.getAcceptedPhoto$().pipe(
-      skipWhile(userPhoto => !userPhoto || userPhoto === null),
-      map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-      take(1)
-    );
+    this.userPhoto$ = this.userFacadeService.getAcceptedPhoto$();
   }
 
   private setInstitutionColor() {
