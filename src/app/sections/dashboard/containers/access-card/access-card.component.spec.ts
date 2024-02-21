@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { of } from 'rxjs';
+import { TOAST_DURATION } from '@shared/model/generic-constants';
 
 describe('AccessCardComponent', () => {
   let component: AccessCardComponent;
@@ -73,4 +74,26 @@ describe('AccessCardComponent', () => {
       CONTENT_STRINGS_MESSAGES.requiredMessage
     );
   }));
+
+  it('should call mobileCredentialFacade.onImageClick if userPhoto is truthy', () => {
+    component.photoAvailable = true;
+    const spy = jest.spyOn(component.mobileCredentialFacade, 'onImageClick').mockReturnValue(undefined);
+
+    component.onWalletClicked();
+
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should call toastSerice.showError if userPhoto is falsy', () => {
+    component.photoAvailable = false;
+    const spy = jest.spyOn(toastService, 'showError');
+
+    component.onWalletClicked();
+
+    expect(spy).toHaveBeenCalledWith(
+      translateService.instant('get_mobile.photo_upload.required_message'),
+      TOAST_DURATION,
+      'bottom'
+    );
+  });
 });
