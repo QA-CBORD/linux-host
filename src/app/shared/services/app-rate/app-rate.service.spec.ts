@@ -33,7 +33,7 @@ describe('AppRateService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should evaluate to request rate app when user has two transactions and 21 has passed', async () => {
+  it('should evaluate to request rate app when user has rate the app after 21 days passed', async () => {
     const lastDateRated = new Date();
     lastDateRated.setDate(lastDateRated.getDate() - 21);
     platform.is.mockReturnValueOnce(false);
