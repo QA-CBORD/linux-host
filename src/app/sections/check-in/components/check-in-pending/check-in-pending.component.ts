@@ -34,6 +34,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CheckInFailureComponent } from '../check-in-failure/check-in-failure.component';
 import { PickCheckinModeComponent } from '../pick-checkin-mode/pick-checkin-mode.component';
 import { ScanCodeComponent } from '../scan-code/scan-code.component';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 
 export interface orderInfo {
   pickupTime: {
@@ -84,7 +85,8 @@ export class CheckInPendingComponent implements OnInit, AfterViewInit {
     private platform: Platform,
     private readonly cartService: CartService,
     private readonly lockDownService: LockDownService,
-    private readonly accessibilityService: AccessibilityService
+    private readonly accessibilityService: AccessibilityService,
+    private readonly appRateService: AppRateService
   ) {}
 
   ngOnInit() {
@@ -205,6 +207,7 @@ export class CheckInPendingComponent implements OnInit, AfterViewInit {
         .toPromise()
         .then(async res => {
           if (res) {
+            this.appRateService.evaluateToRequestRateApp();
             await this.showSuccessModal();
           }
         })
@@ -219,6 +222,7 @@ export class CheckInPendingComponent implements OnInit, AfterViewInit {
       .toPromise()
       .then(async res => {
         if (res) {
+          this.appRateService.evaluateToRequestRateApp();
           await this.showSuccessModal();
         }
       })

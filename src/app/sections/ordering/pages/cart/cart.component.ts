@@ -61,6 +61,7 @@ import { NonCheckingService } from './services/non-checking.service';
 import { ASAP_LABEL, EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/generic-constants';
 import { Location } from '@angular/common';
 import { DateTimeSelected } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.component';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -121,6 +122,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly lockDownService: LockDownService,
     private readonly translateService: TranslateService,
     private readonly priceUnitsResolverPipe: PriceUnitsResolverPipe,
+    private readonly appRateService: AppRateService,
     private platform: Platform,
     private location: Location
   ) {
@@ -567,6 +569,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(async order => {
+        this.appRateService.evaluateToRequestRateApp();
         this.setupCartInfo(order);
         await this.showModal(order);
       })
