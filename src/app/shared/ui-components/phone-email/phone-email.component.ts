@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, i
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { map, switchMap, take } from 'rxjs/operators';
+import { debounceTime, map, switchMap, take } from 'rxjs/operators';
 import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { Observable, lastValueFrom } from 'rxjs';
-import { EMAIL_REGEXP, INT_REGEXP } from '@core/utils/regexp-patterns';
+import { Observable, Subscription, lastValueFrom } from 'rxjs';
+import { EMAIL_REGEXP, PHONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -118,7 +118,7 @@ export class PhoneEmailComponent implements OnInit {
       [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
       [this.controlsNames.phone]: [
         '',
-        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
+        [Validators.required, Validators.pattern(PHONE_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
       ],
       [this.controlsNames.pronouns]: [this._userLocalProfileService.userLocalProfileSignal().pronouns],
     });
@@ -127,7 +127,23 @@ export class PhoneEmailComponent implements OnInit {
     this.userFullName = getUserFullName(user);
     this.checkFieldValue(this.email, this.user.email);
     this.checkFieldValue(this.phone, this.user.phone);
+
+    this.updateOnPhoneValueChanges();
     this.cdRef.detectChanges();
+  }
+
+  private updateOnPhoneValueChanges() {
+    const subscription = this.phoneEmailForm.get(this.controlsNames.phone).valueChanges.pipe(debounceTime(500)).subscribe(value => {
+      this.updateFormControlValue(value, subscription);
+    });
+  }
+
+  private updateFormControlValue(newValue: string, subscription: Subscription) {
+    subscription.unsubscribe();
+    const phoneControl = this.phoneEmailForm.get(this.controlsNames.phone);
+    phoneControl.patchValue(newValue.replace(/(^[^+\d])|((?!^)\D)/g, ''));
+    this.cdRef.detectChanges();
+    this.updateOnPhoneValueChanges();
   }
 
   get controlsNames() {
