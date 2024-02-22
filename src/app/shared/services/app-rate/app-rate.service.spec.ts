@@ -3,7 +3,7 @@ import { AppRateService } from './app-rate.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Platform } from '@ionic/angular';
 import { AppRate } from '@shared/model/app-rate.model';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 
 jest.mock('capacitor-rate-app', () => ({
   RateApp: {
@@ -50,5 +50,18 @@ describe('AppRateService', () => {
     storageStateService.getStateEntityByKey$.mockReturnValue(of({ value: {} } as StorageEntity<AppRate>));
     await service.rateApp();
     expect(storageStateService.updateStateEntity).toHaveBeenCalled();
+  });
+
+  it('should not rate app if platform is desktop', async () => {
+    platform.is.mockReturnValueOnce(true);
+    storageStateService.getStateEntityByKey$.mockReturnValue(of({ value: {} } as StorageEntity<AppRate>));
+    await service.rateApp();
+    expect(storageStateService.updateStateEntity).not.toHaveBeenCalled();
+  });
+
+  it('should get app rate state', async () => {
+    storageStateService.getStateEntityByKey$.mockReturnValue(of({ value: {} } as StorageEntity<AppRate>));
+    const appRateState = await lastValueFrom(service['getAppRateState']());
+    expect(appRateState).toEqual({ value: {} });
   });
 });
