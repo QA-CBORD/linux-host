@@ -11,7 +11,7 @@ import { ModalController, Platform, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
-import { firstValueFrom, Observable, Subject, zip } from 'rxjs';
+import { firstValueFrom, lastValueFrom, Observable, Subject, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -277,6 +277,12 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   async showUpdateProfileModal(): Promise<void> {
+    await lastValueFrom(
+      this.contentStringsFacadeService.fetchContentStrings$(
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.updatePersonalInfo
+      )
+    );
     const modal = await this.modalController.create({
       component: PhoneEmailComponent,
       componentProps: { staleProfile: true },

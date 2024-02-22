@@ -16,6 +16,7 @@ import { firstValueFrom, of } from 'rxjs';
 import { MockAppEventsService } from 'src/app/testing/mock-services';
 import { ScanCardComponent } from './scan-card.component';
 import { ScanCardRoutingModule } from './scan-card.routing';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 const _screenBrigtnessService = {
   setFullBrightness: jest.fn(() => of(true)),
@@ -36,6 +37,7 @@ const _commerceApiService = {
 };
 
 const _userFacadeService = {
+  getUserData$: jest.fn(() => ({ pipe: () => of(true) })),
   getUserInfo: jest.fn(() => of()),
   getAcceptedPhoto$: jest.fn(() => of()),
 };
@@ -46,10 +48,6 @@ const _barcodeFacadeService = {
 };
 
 const _navigationService = {};
-
-// const _router = {
-//   url: DASHBOARD_NAVIGATE.scanCard,
-// };
 
 const _appStatesFacadeService = new MockAppEventsService();
 
@@ -70,8 +68,14 @@ describe('ScanCardPage', () => {
         { provide: UserFacadeService, useValue: _userFacadeService },
         { provide: BarcodeFacadeService, useValue: _barcodeFacadeService },
         { provide: NavigationService, useValue: _navigationService },
-        // { provide: Router, useValue: _router },
-        // { provide: AppStatesFacadeService, useValue: new _AppStatesFacadeService() },
+        {
+          provide: StorageStateService,
+          useValue: {
+            getStateEntityByKey$: jest.fn().mockReturnValue(of(null)),
+            updateStateEntity: jest.fn(),
+            deleteStateEntityByKey: jest.fn(),
+          },
+        },
       ],
       imports: [
         IonicModule,
@@ -102,7 +106,9 @@ describe('ScanCardPage', () => {
     });
 
     it('should set full brigness OnAppState change', async () => {
-      await expect(firstValueFrom(_appStatesFacadeService.getStateChangeEvent$)).resolves.toEqual(_appStatesFacadeService.state);
+      await expect(firstValueFrom(_appStatesFacadeService.getStateChangeEvent$)).resolves.toEqual(
+        _appStatesFacadeService.state
+      );
     });
   });
 });

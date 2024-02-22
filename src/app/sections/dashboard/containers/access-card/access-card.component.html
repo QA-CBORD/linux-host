@@ -15,14 +15,14 @@
       <ion-col
         class="card__header-title-wrapper"
         [class.card__header-title-left]="!instutionValues.photo"
-        [size]="(instutionValues.photo)? 9 : 12"
+        [size]="instutionValues.photo ? 9 : 12"
       >
         <div *ngIf="instutionValues.name" class="card__header-title left">{{ instutionValues.name }}</div>
       </ion-col>
     </ion-row>
     <ion-row class="card__campus-container">
       <ion-col class="card__campus-wrapper">
-        <ng-container *ngIf="(institutionBackgroundImage$ | async); then campusBackground; else defaultBackground">
+        <ng-container *ngIf="institutionBackgroundImage$ | async; then campusBackground; else defaultBackground">
         </ng-container>
         <ng-template #defaultBackground>
           <img
@@ -35,35 +35,38 @@
           <img class="card__campus-background" [src]="institutionBackgroundImage$ | async" alt="campus photo" />
         </ng-template>
         <div *ngIf="!housingOnlyEnabled" class="card__campus-student-avatar-wrapper">
-          <img *ngIf="!isLoadingPhoto && userPhoto" class="card__campus-student-avatar" [src]="userPhoto" alt="user photo" />
-          <img
-            *ngIf="isLoadingPhoto || !userPhoto"
-            class="card__campus-empty-photo"
-            src="/assets/images/no_photo.svg"
-            alt="no photo icon"
-          />
+          <ng-container *ngIf="userPhoto$ | async as userPhoto; else defaultPhoto">
+            <img class="card__campus-student-avatar" [src]="userPhoto" alt="user photo" />
+          </ng-container>
+          <ng-template #defaultPhoto>
+            <img class="card__campus-empty-photo" src="/assets/images/no_photo.svg" alt="no photo icon" />
+          </ng-template>
         </div>
       </ion-col>
     </ion-row>
     <ion-row class="card__student-container">
-      <ion-col class="card__student-name-wrapper" [size]="(mobileCredentialFacade.isEnabled$ | async ) ? 6 : 'auto'">
-        <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
+      <ion-col class="card__student-name-wrapper" size="12">
+        <div class="card__student-name">{{ userLocalProfileSignal().userFullName }}</div>
       </ion-col>
-      <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async) && !housingOnlyEnabled" size="6">
+    </ion-row>
+    <ion-row class="card__student-profile-container">
+      <ion-col size="4"> {{ userLocalProfileSignal().pronouns }} </ion-col>
+      <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async) && !housingOnlyEnabled" size="8">
         <div class="card__student-wallet">
-          <img *ngIf="( mobileCredentialFacade.uiIconUrl$ | async ) as imageUrl"
+          <img
+            *ngIf="mobileCredentialFacade.uiIconUrl$ | async as imageUrl"
             mode="ios"
             (click)="mobileCredentialFacade.onUiIconClicked()"
             class="card__wallet-icon"
             src="{{ imageUrl }}"
             alt="mobile access, icon"
           />
-          <div class="card__student-wallet-text">{{ mobileCredentialFacade.uiText$ | async }}</div>
+          <div>{{ mobileCredentialFacade.uiText$ | async }}</div>
         </div>
       </ion-col>
     </ion-row>
     <ion-row class="card__quick-actions-container" *ngIf="!housingOnlyEnabled">
-      <ion-col class="card__quick-actions-wrapper" *ngIf="(getMyCardEnabled$ | async)">
+      <ion-col class="card__quick-actions-wrapper" *ngIf="getMyCardEnabled$ | async">
         <ion-button mode="ios" class="card__quick-actions-btn" (click)="onScanCardClick()">
           <div class="card__quick-actions-btn-wrapper">
             <img class="card__icon" src="/assets/icon/barcode.svg" alt="barcode" />
@@ -71,7 +74,7 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col class="card__quick-actions-wrapper" *ngIf="(isMobileAccessButtonEnabled$ | async)">
+      <ion-col class="card__quick-actions-wrapper" *ngIf="isMobileAccessButtonEnabled$ | async">
         <ion-button mode="ios" class="card__quick-actions-btn" (click)="onMobileAccessClick()">
           <div class="card__quick-actions-btn-wrapper">
             <img class="card__icon" src="/assets/icon/mobile-access.svg" alt="mobile access" />
@@ -79,14 +82,14 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="(mobileCredentialFacade.mobileCredentialAvailable$ | async)" class="card__quick-actions-wrapper">
+      <ion-col *ngIf="mobileCredentialFacade.mobileCredentialAvailable$ | async" class="card__quick-actions-wrapper">
         <ion-button
-          *ngIf="(mobileCredentialFacade.uiImageUrl$ | async) as image"
+          *ngIf="mobileCredentialFacade.uiImageUrl$ | async as image"
           mode="ios"
           class="card__apple-wallet-btn"
           (click)="onWalletClicked()"
         >
-          <img src="{{ image }}" style="height: fit-content" alt="mobile access"/>
+          <img src="{{ image }}" style="height: fit-content" alt="mobile access" />
         </ion-button>
       </ion-col>
     </ion-row>

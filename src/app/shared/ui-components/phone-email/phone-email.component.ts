@@ -1,17 +1,37 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, switchMap, take } from 'rxjs/operators';
 import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { Observable, of } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { EMAIL_REGEXP, INT_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
+import { StButtonModule, StHeaderModule, StAlertBannerComponent } from '@shared/ui-components';
+import { StInputFloatingLabelModule } from '../st-input-floating-label/st-input-floating-label.module';
+import { getUserFullName } from '@core/utils/general-helpers';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-phone-email',
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonicModule,
+    FormsModule,
+    ReactiveFormsModule,
+    StButtonModule,
+    StInputFloatingLabelModule,
+    StHeaderModule,
+    StAlertBannerComponent,
+    FocusNextModule,
+    TranslateModule,
+  ],
   templateUrl: './phone-email.component.html',
   styleUrls: ['./phone-email.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,10 +39,9 @@ import { ToastService } from '@core/service/toast/toast.service';
 export class PhoneEmailComponent implements OnInit {
   phoneEmailForm: FormGroup;
   user: UserInfo;
+  userFullName = '';
   isLoading: boolean;
   title = '';
-  private readonly titleUpdateContact: string = 'Email & Phone Number';
-  private readonly titleStaleProfile: string = 'Update Contact Information';
 
   htmlContent$: Observable<string>;
 
@@ -42,34 +61,32 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.title = this.staleProfile ? this.titleStaleProfile : this.titleUpdateContact;
+    this.title = `patron-ui.update_personal_info.${
+      this.staleProfile ? 'header_stale_profile' : 'header_update_profile'
+    }`;
     this.cdRef.detectChanges();
   }
 
   async saveChanges() {
     this.isLoading = true;
-    const user = await this.userFacadeService
+    this.userFacadeService
       .getUser$()
-      .pipe(
-        switchMap(userInfoSet => of(this.updatedUserModel(userInfoSet))),
-        take(1)
-      )
-      .toPromise();
-    this.userFacadeService.saveUser$(user).subscribe(
-      () => {
-        this.isLoading = false;
-        this.presentToast();
-        if (this.staleProfile) {
-          this.close();
-        }
-      },
-      () => {
-        this.isLoading = false;
-        this.onErrorRetrieve('Something went wrong, please try again...');
-        this.cdRef.detectChanges();
-      },
-      () => this.cdRef.detectChanges()
-    );
+      .pipe(switchMap(userInfoSet => this.userFacadeService.saveUser$(this.updatedUserModel(userInfoSet))))
+      .subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.presentToast();
+          if (this.staleProfile) {
+            this.close();
+          }
+        },
+        error: () => {
+          this.isLoading = false;
+          this.onErrorRetrieve('Something went wrong, please try again...');
+          this.cdRef.detectChanges();
+        },
+        complete: () => this.cdRef.detectChanges(),
+      });
   }
 
   async showTOS() {
@@ -97,8 +114,9 @@ export class PhoneEmailComponent implements OnInit {
         [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
       ],
     });
-    const user = await this.userFacadeService.getUser$().pipe(take(1)).toPromise();
+    const user = await lastValueFrom(this.userFacadeService.getUser$());
     this.user = { ...user };
+    this.userFullName = getUserFullName(user);
     this.checkFieldValue(this.email, this.user.email);
     this.checkFieldValue(this.phone, this.user.phone);
     this.cdRef.detectChanges();

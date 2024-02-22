@@ -10,6 +10,7 @@
     <st-alert-banner
       *ngIf="isPaymentFailed"
       color="danger"
+      iconScr="caution"
       text="There was a payment processing issue with this order. Review the order for more details."
     ></st-alert-banner>
     <p class="order-card__description">{{ orderInfo.orderItems | orderItemsSummary }}</p>

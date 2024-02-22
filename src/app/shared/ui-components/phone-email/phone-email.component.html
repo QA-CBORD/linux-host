@@ -1,5 +1,5 @@
 <st-header
-  [title]="title"
+  [title]="title | translate"
   [isTitleShow]="true"
   backButtonIcon="close"
   [backButtonTitle]="''"
@@ -10,6 +10,9 @@
 ></st-header>
 <ion-content class="container">
   <div class="form ion-padding ion-margin-top">
+    <ion-item class="ion-margin-bottom" lines="none">
+      <ion-input label="Name" [value]="userFullName" labelPlacement="stacked" readonly="true" />
+    </ion-item>
     <form [formGroup]="phoneEmailForm">
       <st-input-floating-label
         class="form__control"
@@ -37,13 +40,17 @@
       >
       </st-input-floating-label>
     </form>
+    <st-alert-banner
+      icon="information-circle-outline"
+      [text]="'patron-ui.update_personal_info.update_name_message' | translate"
+    ></st-alert-banner>
     <ion-label class="terms-label" *ngIf="staleProfile">
       By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy.
     </ion-label>
     <st-button *ngIf="staleProfile" buttonModifier="rectangle" fill="clear" tabindex="2" (click)="showTOS()">
       Terms and Conditions
     </st-button>
-    <p *ngIf="(htmlContent$ | async) as htmlContent" [innerHTML]="htmlContent"></p>
+    <p *ngIf="htmlContent$ | async as htmlContent" [innerHTML]="htmlContent"></p>
   </div>
 </ion-content>
 <ion-footer class="ion-padding footer">
