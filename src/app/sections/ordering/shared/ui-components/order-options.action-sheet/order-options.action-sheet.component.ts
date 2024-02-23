@@ -246,7 +246,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       )
       .subscribe(
         () => {
-          this.modalsService.lastActionSheetModal &&
           this.modalsService.dismiss(
             {
               address: this.orderOptionsData.address,
@@ -255,7 +254,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
               isASAP: date.isASAP,
             },
             BUTTON_TYPE.CONTINUE
-            );
+          );
         },
         err => {
           if (typeof err === 'object' && err.message) {
@@ -397,8 +396,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   private async onMerchantDateUnavailable() {
     const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
     this.toastService.showToast({ message: noDatesMessage });
-    await this.loadingService.closeSpinner();
-    this.modalsService.lastActionSheetModal && (await this.modalsService.dismiss());
+    await this.modalsService.dismiss();
   }
 }
 
