@@ -5,6 +5,7 @@ import { getUserFullName } from '@core/utils/general-helpers';
 import { UserLocalProfile } from '@shared/model/user-local-profile.model';
 import { combineLatest, first, map, tap } from 'rxjs';
 
+const initState = { userFullName: '', pronouns: '' };
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +14,7 @@ export class UserLocalProfileService {
   private readonly storageStateService = inject(StorageStateService);
   private readonly userFacadeService = inject(UserFacadeService);
 
-  private readonly _userLocalProfileSignal = signal<UserLocalProfile>({ userFullName: '', pronouns: '' });
+  private readonly _userLocalProfileSignal = signal<UserLocalProfile>(initState);
   userLocalProfileSignal = this._userLocalProfileSignal.asReadonly();
 
   constructor() {
@@ -25,7 +26,7 @@ export class UserLocalProfileService {
     this.updateStorage();
   }
 
-  private initUserLocalProfile() {
+  initUserLocalProfile() {
     combineLatest([
       this.storageStateService.getStateEntityByKey$<UserLocalProfile>(this.key).pipe(
         first(),
@@ -44,6 +45,11 @@ export class UserLocalProfileService {
         })
       )
       .subscribe();
+  }
+
+  clearState() {
+    this._userLocalProfileSignal.set(initState);
+    this.storageStateService.deleteStateEntityByKey(this.key);
   }
 
   private updateStorage() {

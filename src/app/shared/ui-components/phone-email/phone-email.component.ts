@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -15,7 +15,9 @@ import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module
 import { StButtonModule, StHeaderModule, StAlertBannerComponent } from '@shared/ui-components';
 import { StInputFloatingLabelModule } from '../st-input-floating-label/st-input-floating-label.module';
 import { getUserFullName } from '@core/utils/general-helpers';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
+import { PersonalInfoPronounsComponent } from './components/personal-info-pronouns/personal-info-pronouns.component';
 
 @Component({
   selector: 'st-phone-email',
@@ -29,6 +31,7 @@ import { TranslateModule } from '@ngx-translate/core';
     StInputFloatingLabelModule,
     StHeaderModule,
     StAlertBannerComponent,
+    PersonalInfoPronounsComponent,
     FocusNextModule,
     TranslateModule,
   ],
@@ -37,6 +40,9 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhoneEmailComponent implements OnInit {
+  private readonly _userLocalProfileService = inject(UserLocalProfileService);
+  private readonly _translateService = inject(TranslateService);
+
   phoneEmailForm: FormGroup;
   user: UserInfo;
   userFullName = '';
@@ -76,13 +82,14 @@ export class PhoneEmailComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.presentToast();
+          this._userLocalProfileService.updatePronouns(this.pronouns.value);
           if (this.staleProfile) {
             this.close();
           }
         },
         error: () => {
           this.isLoading = false;
-          this.onErrorRetrieve('Something went wrong, please try again...');
+          this.onErrorRetrieve(this._translateService.instant('get_mobile.error.general'));
           this.cdRef.detectChanges();
         },
         complete: () => this.cdRef.detectChanges(),
@@ -113,6 +120,7 @@ export class PhoneEmailComponent implements OnInit {
         '',
         [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
       ],
+      [this.controlsNames.pronouns]: [this._userLocalProfileService.userLocalProfileSignal().pronouns],
     });
     const user = await lastValueFrom(this.userFacadeService.getUser$());
     this.user = { ...user };
@@ -132,6 +140,10 @@ export class PhoneEmailComponent implements OnInit {
 
   get phone(): AbstractControl {
     return this.phoneEmailForm.get(this.controlsNames.phone);
+  }
+
+  get pronouns(): AbstractControl {
+    return this.phoneEmailForm.get(this.controlsNames.pronouns);
   }
 
   updatedUserModel(user: UserInfo): UserInfo {
@@ -193,8 +205,15 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   private async presentToast(): Promise<void> {
-    const message = `Updated successfully.`;
-    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }] });
+    await this.toastService.showSuccessToast({
+      message: this._translateService.instant('patron-ui.message.save_success'),
+      position: 'bottom',
+      toastButtons: [
+        {
+          icon: '/assets/icon/close-x.svg',
+        },
+      ],
+    });
   }
 
   private checkFieldValue(field: AbstractControl, value: string) {
@@ -208,6 +227,7 @@ export class PhoneEmailComponent implements OnInit {
 export enum PHONE_EMAIL_CONTROL_NAMES {
   phone = 'phone',
   email = 'email',
+  pronouns = 'pronouns',
 }
 
 const DEFAULT_NOTIFICATION_STATUS = 3;

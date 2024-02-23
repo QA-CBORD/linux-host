@@ -50,7 +50,7 @@
       </ion-col>
     </ion-row>
     <ion-row class="card__student-profile-container">
-      <ion-col size="4"> {{ userLocalProfileSignal().pronouns }} </ion-col>
+      <ion-col size="4"> {{ userLocalProfileSignal().pronouns | pronouns }} </ion-col>
       <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async) && !housingOnlyEnabled" size="8">
         <div class="card__student-wallet">
           <img

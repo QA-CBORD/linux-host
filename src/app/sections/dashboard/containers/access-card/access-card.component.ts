@@ -17,12 +17,13 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { PronounsPipe } from '@shared/pipes/pronouns-pipe/pronouns.pipe';
 
 @Component({
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
   styleUrls: ['./access-card.component.scss'],
-  imports: [IonicModule, CommonModule],
+  imports: [IonicModule, CommonModule, PronounsPipe],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
