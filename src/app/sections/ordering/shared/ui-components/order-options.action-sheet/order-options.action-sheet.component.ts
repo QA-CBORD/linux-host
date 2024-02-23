@@ -246,7 +246,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       )
       .subscribe(
         () => {
-          
           this.modalsService.lastActionSheetModal &&
           this.modalsService.dismiss(
             {
