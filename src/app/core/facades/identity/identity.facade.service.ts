@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { Settings } from '../../../app.global';
 import { map, take } from 'rxjs/operators';
@@ -17,6 +17,7 @@ import { UserPreferenceService } from '@shared/services/user-preferences/user-pr
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { VaultSession, VaultMigrateResult, VaultTimeoutOptions, PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
 import { PinLoginProps } from '@core/model/authentication/pin-login-props.model';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
 
 export enum LoginState {
   DONE,
@@ -31,6 +32,7 @@ export enum LoginState {
 
 @Injectable({ providedIn: 'root' })
 export class IdentityFacadeService extends ServiceStateFacade {
+  private readonly _userLocalProfileService = inject(UserLocalProfileService);
 
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -192,5 +194,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
     this.contentStringFacade.clearState();
+    this._userLocalProfileService.clearState();
   }
 }

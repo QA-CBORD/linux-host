@@ -170,3 +170,8 @@
   color:red;
   font-weight:bold;
 }
+
+@mixin field-label {
+  @include font-nunito-semibold(14px);
+  color: $color-night-rider;
+}

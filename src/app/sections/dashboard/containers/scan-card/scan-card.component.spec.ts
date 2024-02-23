@@ -17,6 +17,7 @@ import { MockAppEventsService } from 'src/app/testing/mock-services';
 import { ScanCardComponent } from './scan-card.component';
 import { ScanCardRoutingModule } from './scan-card.routing';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { PronounsPipe } from '@shared/pipes/pronouns-pipe/pronouns.pipe';
 
 const _screenBrigtnessService = {
   setFullBrightness: jest.fn(() => of(true)),
@@ -84,6 +85,7 @@ describe('ScanCardPage', () => {
         StHeaderModule,
         StActivateLocationItemModule,
         ScanCardRoutingModule,
+        PronounsPipe
       ],
     }).compileComponents();
   });

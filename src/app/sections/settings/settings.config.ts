@@ -249,7 +249,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
       {
         id: SETTINGS_ID.personalData,
         icon: 'account-profile',
-        label: 'Email & Phone Number',
+        label: 'patron-ui.update_personal_info.header_update_profile',
         type: 'button',
         setCallback: openModal,
         modalContent: {

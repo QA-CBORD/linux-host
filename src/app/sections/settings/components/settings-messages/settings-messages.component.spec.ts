@@ -10,8 +10,8 @@ describe('SettingsMessagesComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [SettingsMessagesComponent]
-    });SettingsMessagesComponent
+      imports: [SettingsMessagesComponent]
+    });
     fixture = TestBed.createComponent(SettingsMessagesComponent);
     component = fixture.componentInstance;
   });
