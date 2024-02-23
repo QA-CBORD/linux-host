@@ -16,7 +16,8 @@ describe('RequestFundsPageComponent', () => {
         userFacadeService,
         settingsFacadeService,
         nav,
-        nativeProvider;
+        nativeProvider,
+        appRateService;
 
     beforeEach(() => {
         (fb = new FormBuilder()),
@@ -43,6 +44,10 @@ describe('RequestFundsPageComponent', () => {
                 showSpinner: jest.fn(),
                 closeSpinner: jest.fn(),
             });
+
+            appRateService = {
+                evaluateToRequestRateApp: jest.fn(),
+            };
         fixture = new RequestFundsPageComponent(
             fb,
             accountService,
@@ -52,7 +57,8 @@ describe('RequestFundsPageComponent', () => {
             userFacadeService,
             settingsFacadeService,
             nav,
-            nativeProvider
+            nativeProvider,
+            appRateService
         );
     });
 
