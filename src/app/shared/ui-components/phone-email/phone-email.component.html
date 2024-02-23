@@ -39,7 +39,7 @@
         tabindex="1"
       >
       </st-input-floating-label>
-      <div class="ion-padding-top">
+      <div class="ion-padding-top" *ngIf="!staleProfile">
         <st-personal-info-pronouns [formControl]="pronouns"></st-personal-info-pronouns>
       </div>
     </form>
