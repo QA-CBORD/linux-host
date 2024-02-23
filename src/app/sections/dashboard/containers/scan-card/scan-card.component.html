@@ -11,7 +11,8 @@
 <ion-content class="ion-padding">
   <st-activate-location-item
     [institutionName]="(institution$ | async)?.name"
-    [userFullName]="userFullName$ | async"
+    [userPronouns]="userLocalProfileSignal().pronouns | pronouns"
+    [userFullName]="userLocalProfileSignal().userFullName"
     [userInfoId]="userInfoId$ | async"
     [isShowId]="isMediaSettingExists$ | async"
     [institutionPhoto]="institutionPhoto$ | async"

@@ -183,9 +183,11 @@
       "govtidmessage": "A government issued ID is required to submit a new photo",
       "govtidmessagesmall": "e.g., Passport, Driver’s License, State ID",
       "updatephotomessage": "New photo is subject to admin approval!",
-      "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval."
+      "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval.",
+      "required_message": "A user photo is required to add mobile credentials to your mobile wallet."
     },
     "error": {
+      "general": "Something went wrong, please try again...",
       "menu_option_not_available": "Menu Item not available",
       "menu_item_not_found": "Could not retrieve menu item"
     }
@@ -858,6 +860,9 @@
       "october": "Oct",
       "september": "Sep"
     },
+    "message": {
+      "save_success": "Your changes have been saved."
+    },
     "noConnectivity": {
       "connect_failed": "Unable to connect.",
       "description": "Make sure your Wi-Fi or mobile data is turned on, then try again.",
@@ -1039,6 +1044,11 @@
       "label_past-six-months": "Past 6 months",
       "label_recent-transactions": "RECENT TRANSACTIONS",
       "loader_infinite-scroll": "Loading more transactions..."
+    },
+    "update_personal_info": {
+      "header_stale_profile": "Update Contact Information",
+      "header_update_profile": "Personal Information",
+      "update_name_message": "To update your name, contact the card office."
     },
     "us-state_full": {
       "alabama": "Alabama",

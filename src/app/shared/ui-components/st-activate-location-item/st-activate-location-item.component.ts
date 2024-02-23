@@ -19,4 +19,5 @@ export class StActivateLocationItemComponent {
   @Input() starClass: string;
   @Input() institutionPhoto: SafeResourceUrl;
   @Input() institutionColor = '';
+  @Input() userPronouns: string;
 }

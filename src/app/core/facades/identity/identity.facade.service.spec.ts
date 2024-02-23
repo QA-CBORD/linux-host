@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Institution } from '@core/model/institution';
 import { UserFacadeService } from '../user/user.facade.service';
 import { MerchantFacadeService } from '../merchant/merchant-facade.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
@@ -9,8 +8,8 @@ import { VaultIdentityService } from '@core/service/identity/vault.identity.serv
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { VaultTimeoutOptions } from '@core/service/identity/model.identity';
-import { PinLoginProps } from '@core/model/authentication/pin-login-props.model';
 import { IdentityFacadeService } from './identity.facade.service';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
 
 describe('IdentityFacadeService', () => {
   let service: IdentityFacadeService;
@@ -75,8 +74,14 @@ describe('IdentityFacadeService', () => {
         {
           provide: ConnectivityAwareFacadeService,
           useFactory: connectivityAwareFacadeServiceStub
+        },
+        {
+          provide: UserLocalProfileService,
+          useValue: {
+            clearState: () => ({})
+          }
         }
-      ]
+      ],
     });
     service = TestBed.inject(IdentityFacadeService);
   });

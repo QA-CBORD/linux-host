@@ -204,26 +204,6 @@ describe(CommonService, () => {
     expect(safeUrl).toBeTruthy();
   });
 
-  it('should return a the full user`s name', async () => {
-    const user = await service.getUserName();
-    expect(user).toEqual('Example Steve Jobs');
-  });
-
-  it('should return a the user`s photo', async () => {
-    const photo = await service.getUserPhoto();
-    expect(photo).toEqual(`data:${mockInfo.mimeType};base64,${mockInfo.data}`);
-  });
-
-  it('should return a the user`s photo null', async () => {
-
-    _userFacadeService.getAcceptedPhoto$ = jest.fn().mockImplementationOnce(() => {
-      return of(null)
-    });
-    
-    const photo = await service.getUserPhoto();
-    expect(photo).toEqual(null);
-  });
-
   it('should return the institution background svg image ', async () => {
     const image = await service.getInstitutionBackgroundImage();
     expect(image).toEqual(ilustrationPath);

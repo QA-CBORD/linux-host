@@ -8,7 +8,7 @@
 >
   <ion-icon class="item__icon" [attr.alt]="setting.icon" src="../../../assets/icon/{{ setting.icon }}.svg" />
   <ion-label class="item__label"
-    ><h4>{{ settingLabel }}</h4></ion-label
+    ><h4>{{ settingLabel | translate }}</h4></ion-label
   >
   <ion-toggle *ngIf="setting.type === 'toggle'" [checked]="setting.checked"></ion-toggle>
 </ion-item>

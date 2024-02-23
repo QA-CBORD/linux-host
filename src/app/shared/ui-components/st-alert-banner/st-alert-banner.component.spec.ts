@@ -9,8 +9,7 @@ describe('StAlertBannerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [StAlertBannerComponent],
-      imports: [IonicModule]
+      imports: [StAlertBannerComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StAlertBannerComponent);
@@ -20,5 +19,11 @@ describe('StAlertBannerComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should set the iconScr correctly', () => {
+    const iconScr = 'caution';
+    component._iconScr = iconScr;
+    expect(component.iconScr).toBe(`/assets/icon/${iconScr}.svg`);
   });
 });
