@@ -6,6 +6,7 @@ describe('ModalsService', () => {
   let modalsService: any;
   let modalController: any;
   let globalNavService: any;
+  let loadingService: any;
   let modalElement: any;
   let bindModalListenersSpy;
   let eventCallbacks: Map<string, () => void>;
@@ -13,7 +14,7 @@ describe('ModalsService', () => {
   beforeEach(() => {
     modalController = Object.create(ModalControllerMock);
     globalNavService = Object.create(GlobalNavServiceMock);
-    modalsService = new ModalsService(modalController, globalNavService);
+    modalsService = new ModalsService(modalController, globalNavService,loadingService);
     bindModalListenersSpy = jest.spyOn(modalsService, 'bindModalListeners');
     eventCallbacks = new Map<string, () => void>();
 
