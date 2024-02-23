@@ -44,7 +44,7 @@ export class ModalsService {
 
   async dismiss(data?: object, role?: string, id?: string): Promise<boolean> {
     this.loadingService.closeSpinner();
-    let topModal = await this.modalController.getTop();
+    const topModal = await this.modalController.getTop();
     return topModal && this.modalController.dismiss(data, role, id);
   }
 
