@@ -10,6 +10,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Subject, skipWhile, takeUntil } from 'rxjs';
+import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 
 enum FORM_CONTROL_NAMES {
   subjective = 'subjective',
@@ -20,7 +21,7 @@ enum FORM_CONTROL_NAMES {
 @Component({
   selector: 'st-personal-info-pronouns',
   standalone: true,
-  imports: [CommonModule, IonicModule, StInputFloatingLabelModule, ReactiveFormsModule],
+  imports: [CommonModule, IonicModule, StInputFloatingLabelModule, ReactiveFormsModule, FocusNextModule],
   templateUrl: './personal-info-pronouns.component.html',
   styleUrls: ['./personal-info-pronouns.component.scss'],
   providers: [
