@@ -7,7 +7,7 @@ import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable, Subscription, lastValueFrom } from 'rxjs';
-import { EMAIL_REGEXP, PHONE_REGEXP } from '@core/utils/regexp-patterns';
+import { EMAIL_REGEXP, NON_DIGITS_REGEXP, PHONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -113,39 +113,6 @@ export class PhoneEmailComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  private async initForm() {
-    this.phoneEmailForm = this.fb.group({
-      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
-      [this.controlsNames.phone]: [
-        '',
-        [Validators.required, Validators.pattern(PHONE_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
-      ],
-      [this.controlsNames.pronouns]: [this._userLocalProfileService.userLocalProfileSignal().pronouns],
-    });
-    const user = await lastValueFrom(this.userFacadeService.getUser$());
-    this.user = { ...user };
-    this.userFullName = getUserFullName(user);
-    this.checkFieldValue(this.email, this.user.email);
-    this.checkFieldValue(this.phone, this.user.phone);
-
-    this.updateOnPhoneValueChanges();
-    this.cdRef.detectChanges();
-  }
-
-  private updateOnPhoneValueChanges() {
-    const subscription = this.phoneEmailForm.get(this.controlsNames.phone).valueChanges.pipe(debounceTime(500)).subscribe(value => {
-      this.updateFormControlValue(value, subscription);
-    });
-  }
-
-  private updateFormControlValue(newValue: string, subscription: Subscription) {
-    subscription.unsubscribe();
-    const phoneControl = this.phoneEmailForm.get(this.controlsNames.phone);
-    phoneControl.patchValue(newValue.replace(/(^[^+\d])|((?!^)\D)/g, ''));
-    this.cdRef.detectChanges();
-    this.updateOnPhoneValueChanges();
-  }
-
   get controlsNames() {
     return PHONE_EMAIL_CONTROL_NAMES;
   }
@@ -237,6 +204,41 @@ export class PhoneEmailComponent implements OnInit {
       field.setValue(value);
       field.markAsDirty();
     }
+  }
+
+  private async initForm() {
+    this.phoneEmailForm = this.fb.group({
+      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
+      [this.controlsNames.phone]: [
+        '',
+        [Validators.required, Validators.pattern(PHONE_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
+      ],
+    });
+    const user = await lastValueFrom(this.userFacadeService.getUser$());
+    this.user = { ...user };
+    this.userFullName = getUserFullName(user);
+    this.checkFieldValue(this.email, this.user.email);
+    this.checkFieldValue(this.phone, this.user.phone);
+
+    this.updateOnPhoneValueChanges();
+    this.cdRef.detectChanges();
+  }
+
+  private updateOnPhoneValueChanges() {
+    const subscription = this.phoneEmailForm
+      .get(this.controlsNames.phone)
+      .valueChanges.pipe(debounceTime(500))
+      .subscribe(value => {
+        this.updateFormControlValue(value, subscription);
+      });
+  }
+
+  private updateFormControlValue(newValue: string, subscription: Subscription) {
+    subscription.unsubscribe();
+    const phoneControl = this.phoneEmailForm.get(this.controlsNames.phone);
+    phoneControl.patchValue(newValue.replace(NON_DIGITS_REGEXP, ''));
+    this.cdRef.detectChanges();
+    this.updateOnPhoneValueChanges();
   }
 }
 

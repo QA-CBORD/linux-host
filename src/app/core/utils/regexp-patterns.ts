@@ -73,4 +73,7 @@ export const ONE_LETTER_MIN = /[a-z]|[A-Z]/;
 export const BASE64 = /^data:(.*,)?/;
 
 // Phone number pattern
-export const PHONE_REGEXP = /(?:\+|^)\d+$/;
+export const PHONE_REGEXP = /(?:\+|^)\d{10,}$/;
+
+// All non-digit characters but not '+' pattern at the beginning
+export const NON_DIGITS_REGEXP = /(^[^+\d])|((?!^)\D)/g;
