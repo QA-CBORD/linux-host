@@ -19,6 +19,12 @@ import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module
 import { Storage } from '@ionic/storage-angular';
 import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
 import { of } from 'rxjs';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
+
+const mockUserLocalProfileService = {
+  userLocalProfileSignal: () => ({ pronouns: 'pronouns' }),
+  updatePronouns: jest.fn(),
+};
 
 const mockUserFacadeService = {
   getUserData$: jest.fn().mockReturnValue(of({})),
@@ -78,6 +84,7 @@ describe('PhoneEmailComponent', () => {
         { provide: ToastService, useValue: mockToastService },
         { provide: UserFacadeService, useValue: mockUserFacadeService },
         { provide: TranslateService, useClass: TranslateServiceStub },
+        { provide: UserLocalProfileService, useValue: mockUserLocalProfileService },
       ],
     }).compileComponents();
   });
@@ -143,9 +150,7 @@ describe('PhoneEmailComponent', () => {
 });
 
 function updateFormControl(component: PhoneEmailComponent, newValue: string) {
-    const subscription = new Subscription();
     const field = component.phoneEmailForm.get('phone');
-    component['updateFormControlValue'](newValue, subscription);
+    component['updatePhoneNumber'](newValue);
     return field;
 }
-
