@@ -7,8 +7,9 @@ import { StActivateLocationItemModule } from '@shared/ui-components/st-activate-
 import { ScanCardRoutingModule } from './scan-card.routing';
 import { ScanCardResolverService } from '@sections/dashboard/containers/scan-card/scan-card-resolver.service';
 import { ScreenBrigtnessService } from '@core/service/screen-brightness/screen-brightness.service';
+import { PronounsPipe } from '@shared/pipes/pronouns-pipe/pronouns.pipe';
 
-const imports = [IonicModule, CommonModule, StHeaderModule, StActivateLocationItemModule, ScanCardRoutingModule];
+const imports = [IonicModule, CommonModule, StHeaderModule, StActivateLocationItemModule, ScanCardRoutingModule, PronounsPipe];
 const declarations = [ScanCardComponent];
 const providers = [ScanCardResolverService, ScreenBrigtnessService];
 

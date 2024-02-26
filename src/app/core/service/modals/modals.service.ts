@@ -2,21 +2,36 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ModalOptions } from '@ionic/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { LoadingService } from '../loading/loading.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ModalsService {
-  constructor(private readonly modalController: ModalController, private readonly globalNav: GlobalNavService) {}
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly globalNav: GlobalNavService,
+    private readonly loadingService: LoadingService
+  ) {}
 
   async create(opts: ModalOptions, handleNavBarState?: boolean): Promise<HTMLIonModalElement> {
-    const modal = await this.modalController.create({ handle: false, backdropDismiss: false, cssClass: 'sc-modal', ...opts });
+    const modal = await this.modalController.create({
+      handle: false,
+      backdropDismiss: false,
+      cssClass: 'sc-modal',
+      ...opts,
+    });
     this.bindModalListeners(modal, handleNavBarState);
     return modal;
   }
 
   async createAlert(opts: ModalOptions, handleNavBarState?: boolean): Promise<HTMLIonModalElement> {
-    const modal = await this.modalController.create({ handle: false, backdropDismiss: false, cssClass: 'sc-modal sc-modal-alert', ...opts });
+    const modal = await this.modalController.create({
+      handle: false,
+      backdropDismiss: false,
+      cssClass: 'sc-modal sc-modal-alert',
+      ...opts,
+    });
     this.bindModalListeners(modal, handleNavBarState);
     return modal;
   }
@@ -27,8 +42,10 @@ export class ModalsService {
     return modal;
   }
 
-  dismiss(data?: object, role?: string, id?: string): Promise<boolean> {
-    return this.modalController.dismiss(data, role, id);
+  async dismiss(data?: object, role?: string, id?: string): Promise<boolean> {
+    this.loadingService.closeSpinner();
+    const topModal = await this.modalController.getTop();
+    return topModal && this.modalController.dismiss(data, role, id);
   }
 
   private bindModalListeners(modal: HTMLIonModalElement, handleNavBarState?: boolean): void {

@@ -1,8 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 import { DataMessage, DataMessageType } from '@sections/settings/models/setting-items-config.model';
 
 @Component({
   selector: 'st-settings-messages',
+  standalone: true,
+  imports: [CommonModule, IonicModule],
   templateUrl: './settings-messages.component.html',
   styleUrls: ['./settings-messages.component.scss'],
 })

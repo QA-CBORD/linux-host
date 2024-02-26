@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
@@ -6,8 +7,14 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
   templateUrl: './sections.page.html',
   styleUrls: ['./sections.page.scss'],
 })
-export class SectionsPage {
+export class SectionsPage implements OnInit {
+  private readonly _userLocalProfileService = inject(UserLocalProfileService);
+
   constructor(private readonly globalNav: GlobalNavService) {}
+
+  ngOnInit(): void {
+    this._userLocalProfileService.initUserLocalProfile();
+  }
 
   get isBackdropShown$() {
     return this.globalNav.isBackdropShown$;

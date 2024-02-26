@@ -62,7 +62,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   selectedTimeStamp: string | Date;
   optionsModalAriaHidden = false;
-  orderOptionsModal: HTMLIonModalElement;
 
   constructor(
     private readonly modalsService: ModalsService,
@@ -88,7 +87,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.initContentStrings();
     this.cartService.resetClientOrderId();
   }
-
   get isOrderTypePickup(): boolean {
     return this.orderType === ORDER_TYPE.PICKUP;
   }
@@ -248,16 +246,15 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       )
       .subscribe(
         () => {
-          this.orderOptionsModal.isOpen &&
-            this.modalsService.dismiss(
-              {
-                address: this.orderOptionsData.address,
-                orderType: this.orderType,
-                dueTime: date.dueTime,
-                isASAP: date.isASAP,
-              },
-              BUTTON_TYPE.CONTINUE
-            );
+          this.modalsService.dismiss(
+            {
+              address: this.orderOptionsData.address,
+              orderType: this.orderType,
+              dueTime: date.dueTime,
+              isASAP: date.isASAP,
+            },
+            BUTTON_TYPE.CONTINUE
+          );
         },
         err => {
           if (typeof err === 'object' && err.message) {
@@ -355,7 +352,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         this.a11yService.readAloud(this.addressHeaderFormatPipe.transform(this.orderOptionsData.address));
       }
     });
-    this.orderOptionsModal = modal;
+
     await modal.present();
   }
 
@@ -399,8 +396,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   private async onMerchantDateUnavailable() {
     const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
     this.toastService.showToast({ message: noDatesMessage });
-    await this.loadingService.closeSpinner();
-    this.orderOptionsModal.isOpen && (await this.modalsService.dismiss());
+    await this.modalsService.dismiss();
   }
 }
 

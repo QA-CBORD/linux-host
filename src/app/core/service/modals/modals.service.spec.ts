@@ -1,11 +1,13 @@
 import { ModalControllerMock } from 'src/app/testing/mock-services/modal-controller.service';
 import { ModalsService } from './modals.service';
 import { GlobalNavServiceMock } from 'src/app/testing/mock-services/global-nav-service.mock';
+import { LoadingServiceMock } from 'src/app/testing/mock-services/loading.service';
 
 describe('ModalsService', () => {
   let modalsService: any;
   let modalController: any;
   let globalNavService: any;
+  let loadingService: any;
   let modalElement: any;
   let bindModalListenersSpy;
   let eventCallbacks: Map<string, () => void>;
@@ -13,7 +15,8 @@ describe('ModalsService', () => {
   beforeEach(() => {
     modalController = Object.create(ModalControllerMock);
     globalNavService = Object.create(GlobalNavServiceMock);
-    modalsService = new ModalsService(modalController, globalNavService);
+    loadingService = Object.create(LoadingServiceMock);
+    modalsService = new ModalsService(modalController, globalNavService,loadingService);
     bindModalListenersSpy = jest.spyOn(modalsService, 'bindModalListeners');
     eventCallbacks = new Map<string, () => void>();
 
@@ -77,28 +80,18 @@ describe('ModalsService', () => {
     expect(result).toBe(modalElement);
   });
 
-  it('should dismiss a modal', async () => {
+  it('should dimiss a modal and close the spinner', async () => {
     const data = { foo: 'bar' };
     const role = 'cancel';
     const id = 'myModal';
     modalController.dismiss.mockResolvedValue(true);
+    modalController.getTop.mockResolvedValue(true);
 
     const result = await modalsService.dismiss(data, role, id);
 
     expect(modalController.dismiss).toHaveBeenCalledWith(data, role, id);
     expect(result).toBe(true);
-  });
-
-  it('should dismiss a modal', async () => {
-    const data = { foo: 'bar' };
-    const role = 'cancel';
-    const id = 'myModal';
-    modalController.dismiss.mockResolvedValue(true);
-
-    const result = await modalsService.dismiss(data, role, id);
-
-    expect(modalController.dismiss).toHaveBeenCalledWith(data, role, id);
-    expect(result).toBe(true);
+    expect(loadingService.closeSpinner).toHaveBeenCalled();
   });
 
   it('should call notifyBackdropShown and hideNavBar on ionModalWillPresent', () => {
