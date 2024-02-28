@@ -223,9 +223,9 @@ export class PhoneEmailComponent implements OnInit, OnDestroy {
     const user = await lastValueFrom(this.userFacadeService.getUser$());
     this.user = { ...user };
     this.userFullName = getUserFullName(user);
+    this.onPhoneValueChanges();
     this.checkFieldValue(this.email, this.user.email);
     this.checkFieldValue(this.phone, this.user.phone);
-    this.onPhoneValueChanges();
     this.cdRef.detectChanges();
   }
 
