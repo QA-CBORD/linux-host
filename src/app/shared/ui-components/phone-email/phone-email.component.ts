@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { map, switchMap, take } from 'rxjs/operators';
+import { debounceTime, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { Observable, lastValueFrom } from 'rxjs';
-import { EMAIL_REGEXP, INT_REGEXP } from '@core/utils/regexp-patterns';
+import { Observable, Subject, lastValueFrom } from 'rxjs';
+import { EMAIL_REGEXP, NON_DIGITS_REGEXP, PHONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -39,9 +39,10 @@ import { PersonalInfoPronounsComponent } from './components/personal-info-pronou
   styleUrls: ['./phone-email.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PhoneEmailComponent implements OnInit {
+export class PhoneEmailComponent implements OnInit, OnDestroy {
   private readonly _userLocalProfileService = inject(UserLocalProfileService);
   private readonly _translateService = inject(TranslateService);
+  private onDestroy$ = new Subject();
 
   phoneEmailForm: FormGroup;
   user: UserInfo;
@@ -50,7 +51,6 @@ export class PhoneEmailComponent implements OnInit {
   title = '';
 
   htmlContent$: Observable<string>;
-
   @Input() staleProfile = false;
 
   constructor(
@@ -64,6 +64,11 @@ export class PhoneEmailComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next(true);
+    this.onDestroy$.complete();
   }
 
   ionViewWillEnter() {
@@ -111,23 +116,6 @@ export class PhoneEmailComponent implements OnInit {
 
   close() {
     this.modalController.dismiss();
-  }
-
-  private async initForm() {
-    this.phoneEmailForm = this.fb.group({
-      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
-      [this.controlsNames.phone]: [
-        '',
-        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
-      ],
-      [this.controlsNames.pronouns]: [this._userLocalProfileService.userLocalProfileSignal().pronouns],
-    });
-    const user = await lastValueFrom(this.userFacadeService.getUser$());
-    this.user = { ...user };
-    this.userFullName = getUserFullName(user);
-    this.checkFieldValue(this.email, this.user.email);
-    this.checkFieldValue(this.phone, this.user.phone);
-    this.cdRef.detectChanges();
   }
 
   get controlsNames() {
@@ -221,6 +209,43 @@ export class PhoneEmailComponent implements OnInit {
       field.setValue(value);
       field.markAsDirty();
     }
+  }
+
+  private async initForm() {
+    this.phoneEmailForm = this.fb.group({
+      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
+      [this.controlsNames.phone]: [
+        '',
+        [Validators.required, Validators.pattern(PHONE_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
+      ],
+      [this.controlsNames.pronouns]: [this._userLocalProfileService.userLocalProfileSignal().pronouns],
+    });
+    const user = await lastValueFrom(this.userFacadeService.getUser$());
+    this.user = { ...user };
+    this.userFullName = getUserFullName(user);
+    this.checkFieldValue(this.email, this.user.email);
+    this.checkFieldValue(this.phone, this.user.phone);
+    this.onPhoneValueChanges();
+    this.cdRef.detectChanges();
+  }
+
+  private onPhoneValueChanges() {
+    this.phoneEmailForm
+      .get(this.controlsNames.phone)
+      .valueChanges.pipe(
+        debounceTime(500),
+        map(value => value.replace(NON_DIGITS_REGEXP, '')),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe(cleanedValue => {
+        this.updatePhoneNumber(cleanedValue);
+      });
+  }
+
+  private updatePhoneNumber(cleanedValue: string) {
+    const phoneControl = this.phoneEmailForm.get(this.controlsNames.phone);
+    phoneControl.patchValue(cleanedValue, { emitEvent: false });
+    this.cdRef.detectChanges();
   }
 }
 
