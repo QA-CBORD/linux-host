@@ -18,7 +18,11 @@ export class CategoryListComponent {
   @Input() mealBased: boolean;
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-
+  speechMessage = {
+    '=0': 'No searches available',
+    '=1': '# search available',
+    other: '# searches available',
+  };
   constructor(private readonly environmentFacadeService: EnvironmentFacadeService) {}
 
   triggerMenuItemClick({ menuItem: { id } }) {
