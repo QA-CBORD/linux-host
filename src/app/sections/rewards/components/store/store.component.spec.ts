@@ -39,4 +39,10 @@ describe('StoreComponent', () => {
       expect(rewardsServiceStub.getStoreActiveRewards).toHaveBeenCalled();
     });
   });
+  it('should trackByFn works', () => {
+    const index = 1;
+    const item = { id: 1 };
+    const result = component.trackByFn(index,item);
+    expect(result).toEqual(item.id);
+  });
 });

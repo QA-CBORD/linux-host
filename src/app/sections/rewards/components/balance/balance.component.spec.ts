@@ -9,12 +9,12 @@ describe('BalanceComponent', () => {
 
   beforeEach(() => {
     const rewardsServiceStub = () => ({
-      getContentValueByName: balanceLabel => ({})
+      getContentValueByName: balanceLabel => ({}),
     });
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [BalanceComponent],
-      providers: [{ provide: RewardsService, useFactory: rewardsServiceStub }]
+      providers: [{ provide: RewardsService, useFactory: rewardsServiceStub }],
     });
     fixture = TestBed.createComponent(BalanceComponent);
     component = fixture.componentInstance;
@@ -22,5 +22,11 @@ describe('BalanceComponent', () => {
 
   it('can load instance', () => {
     expect(component).toBeTruthy();
+  });
+  it('initContentStrings makes expected calls', () => {
+    const rewardsServiceStub: RewardsService = fixture.debugElement.injector.get(RewardsService);
+    jest.spyOn(rewardsServiceStub, 'getContentValueByName');
+    component['initContentStrings']();
+    expect(rewardsServiceStub.getContentValueByName).toHaveBeenCalledTimes(2);
   });
 });
