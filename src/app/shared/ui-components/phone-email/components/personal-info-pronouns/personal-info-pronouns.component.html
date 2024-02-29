@@ -27,7 +27,7 @@
           idd="objectiveField"
           [formControlName]="controlsNames.objective"
           [isError]="objective.errors && (objective.dirty || objective.touched)"
-          [stFocusNext]="possesiveField"
+          [stFocusNext]="possessiveField"
           tabindex="0"
         >
         </st-input-floating-label>
@@ -35,12 +35,12 @@
       </ion-col>
       <ion-col size="4">
         <st-input-floating-label
-          #possesiveField
+          #possessiveField
           class="form__control"
           maxlength="6"
           [control]="possessive"
-          label="Possesive"
-          idd="possesiveField"
+          label="Possessive"
+          idd="possessiveField"
           [formControlName]="controlsNames.possessive"
           [isError]="possessive.errors && (possessive.dirty || possessive.touched)"
           tabindex="0"
