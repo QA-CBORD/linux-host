@@ -9,7 +9,7 @@ import { App } from '@capacitor/app';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { from, Observable } from 'rxjs';
 import { Platform } from '@ionic/angular';
-import { RateApp } from 'capacitor-rate-app';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 
 @Component({
   selector: 'st-entry',
@@ -26,7 +26,8 @@ export class EntryPage implements OnInit {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly loadingService: LoadingService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly appRateService: AppRateService
   ) {}
 
   ngOnInit() {
@@ -59,7 +60,7 @@ export class EntryPage implements OnInit {
   }
 
   showRateApp() {
-    if (!this.platform.is('desktop')) RateApp.requestReview();
+    this.appRateService.rateApp();
   }
 
   async changeEnv() {

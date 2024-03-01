@@ -16,6 +16,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -41,7 +42,8 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly nav: Router,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
+    private readonly appRateService: AppRateService
   ) {}
 
   get email(): AbstractControl {
@@ -99,7 +101,13 @@ export class RequestFundsPageComponent implements OnInit {
       .subscribe(
         async ({ response }) => {
           await this.loadingService.closeSpinner();
-          response ? this.showModal() : this.showToast();
+
+          if (response) {
+            this.appRateService.evaluateToRequestRateApp();
+            this.showModal();
+          } else {
+            this.showToast();
+          }
         },
         async () => {
           await this.loadingService.closeSpinner();

@@ -24,6 +24,8 @@ import { UserAccount } from '@core/model/account/account.model';
 import { AccountType } from 'src/app/app.global';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { Location } from '@angular/common';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 const mockData = {
   data: {
@@ -97,6 +99,15 @@ const _location = {
   back: jest.fn(),
 };
 
+const _appRateService = {
+  evaluateToRequestRateApp: jest.fn(),
+};
+
+const storageStateService = { 
+  getStateEntityByKey$: jest.fn(),
+  updateStateEntity: jest.fn(),
+} as any;
+
 describe('CartComponent', () => {
   let component: CartComponent;
   let fixture: ComponentFixture<CartComponent>;
@@ -125,6 +136,9 @@ describe('CartComponent', () => {
         { provide: PriceUnitsResolverPipe, useValue: _priceUnitsResolverPipe },
         { provide: Platform, useValue: _platform },
         { provide: Location, useValue: _location },
+        { provide: AppRateService, useValue: _appRateService },
+        { provide: StorageStateService, useValue: storageStateService },
+
       ],
       imports: [PriceUnitsResolverModule],
     }).compileComponents();

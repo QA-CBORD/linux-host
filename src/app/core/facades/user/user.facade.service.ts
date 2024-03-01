@@ -20,12 +20,12 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Device } from '@capacitor/device';
 import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 import { UserNotificationsFacadeService } from '../notifications/user-notifications.service';
+import { getPhotoDataUrl } from '@core/operators/images.operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserFacadeService extends ServiceStateFacade {
-
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
   private fcmTokenKey = 'fcm_token';
@@ -131,11 +131,10 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
-
-
-  getAcceptedPhoto$(): Observable<UserPhotoInfo> {
+  getAcceptedPhoto$(): Observable<string> {
     return this.userApiService.getUserPhoto(null).pipe(
       map(response => response.response),
+      getPhotoDataUrl()
     );
   }
 

@@ -1,5 +1,5 @@
 <st-header
-  [title]="title"
+  [title]="title | translate"
   [isTitleShow]="true"
   backButtonIcon="close"
   [backButtonTitle]="''"
@@ -10,40 +10,77 @@
 ></st-header>
 <ion-content class="container">
   <div class="form ion-padding ion-margin-top">
-    <form [formGroup]="phoneEmailForm">
-      <st-input-floating-label
-        class="form__control"
-        [control]="email"
-        label="Email"
-        type="email"
-        idd="email"
-        [formControlName]="controlsNames.email"
-        [isError]="email.errors && (email.dirty || email.touched)"
-        [stFocusNext]="phoneField"
-        tabindex="0"
-      >
-      </st-input-floating-label>
-      <st-input-floating-label
-        #phoneField
-        class="form__control"
-        [control]="phone"
-        label="Phone"
-        type="tel"
-        inputmode="tel"
-        idd="phone"
-        [formControlName]="controlsNames.phone"
-        [isError]="phone.errors && (phone.dirty || phone.touched)"
-        tabindex="1"
-      >
-      </st-input-floating-label>
-    </form>
-    <ion-label class="terms-label" *ngIf="staleProfile">
-      By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy.
-    </ion-label>
-    <st-button *ngIf="staleProfile" buttonModifier="rectangle" fill="clear" tabindex="2" (click)="showTOS()">
-      Terms and Conditions
-    </st-button>
-    <p *ngIf="(htmlContent$ | async) as htmlContent" [innerHTML]="htmlContent"></p>
+    <ng-container *ngIf="!staleProfile; else staleProfileTemplate">
+      <ion-item class="ion-margin-bottom" lines="none">
+        <ion-input label="Name" [value]="userFullName" labelPlacement="stacked" readonly="true"></ion-input>
+      </ion-item>
+      <form [formGroup]="phoneEmailForm">
+        <st-input-floating-label
+          class="form__control"
+          [control]="email"
+          label="Email"
+          type="email"
+          idd="email"
+          [formControlName]="controlsNames.email"
+          [isError]="email.errors && (email.dirty || email.touched)"
+          [stFocusNext]="phoneField"
+          tabindex="0"
+        ></st-input-floating-label>
+        <st-input-floating-label
+          #phoneField
+          class="form__control"
+          [control]="phone"
+          label="Phone"
+          type="tel"
+          inputmode="tel"
+          idd="phone"
+          [formControlName]="controlsNames.phone"
+          [isError]="phone.errors && (phone.dirty || phone.touched)"
+          tabindex="0"
+        ></st-input-floating-label>
+        <div class="ion-padding-top">
+          <st-personal-info-pronouns [formControl]="pronouns"></st-personal-info-pronouns>
+        </div>
+      </form>
+      <st-alert-banner
+        icon="information-circle-outline"
+        [text]="'patron-ui.update_personal_info.update_name_message' | translate"
+      ></st-alert-banner>
+    </ng-container>
+    <p *ngIf="htmlContent$ | async as htmlContent" [innerHTML]="htmlContent"></p>
+    <ng-template #staleProfileTemplate>
+      <form [formGroup]="phoneEmailForm">
+        <st-input-floating-label
+          class="form__control"
+          [control]="email"
+          label="Email"
+          type="email"
+          idd="email"
+          [formControlName]="controlsNames.email"
+          [isError]="email.errors && (email.dirty || email.touched)"
+          [stFocusNext]="phoneField"
+          tabindex="0"
+        ></st-input-floating-label>
+        <st-input-floating-label
+          #phoneField
+          class="form__control"
+          [control]="phone"
+          label="Phone"
+          type="tel"
+          inputmode="tel"
+          idd="phone"
+          [formControlName]="controlsNames.phone"
+          [isError]="phone.errors && (phone.dirty || phone.touched)"
+          tabindex="0"
+        ></st-input-floating-label>
+      </form>
+      <ion-label class="terms-label">
+        By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy.
+      </ion-label>
+      <st-button buttonModifier="rectangle" fill="clear" tabindex="0" (click)="showTOS()">
+        Terms and Conditions
+      </st-button>
+    </ng-template>
   </div>
 </ion-content>
 <ion-footer class="ion-padding footer">

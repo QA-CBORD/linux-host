@@ -1,0 +1,11 @@
+@import 'tools';
+.personal-info-pronouns {
+  &__title {
+    @include field-label();
+    padding-bottom: 10px;
+  }
+  &__pronouns {
+    @include field-label();
+    font-size: 12px;
+  }
+}

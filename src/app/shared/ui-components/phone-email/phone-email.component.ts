@@ -1,31 +1,56 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { map, switchMap, take } from 'rxjs/operators';
+import { debounceTime, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { Observable, of } from 'rxjs';
-import { EMAIL_REGEXP, INT_REGEXP } from '@core/utils/regexp-patterns';
+import { Observable, Subject, lastValueFrom } from 'rxjs';
+import { EMAIL_REGEXP, NON_DIGITS_REGEXP, PHONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
+import { StButtonModule, StHeaderModule, StAlertBannerComponent } from '@shared/ui-components';
+import { StInputFloatingLabelModule } from '../st-input-floating-label/st-input-floating-label.module';
+import { getUserFullName } from '@core/utils/general-helpers';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
+import { PersonalInfoPronounsComponent } from './components/personal-info-pronouns/personal-info-pronouns.component';
 
 @Component({
   selector: 'st-phone-email',
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonicModule,
+    FormsModule,
+    ReactiveFormsModule,
+    StButtonModule,
+    StInputFloatingLabelModule,
+    StHeaderModule,
+    StAlertBannerComponent,
+    PersonalInfoPronounsComponent,
+    FocusNextModule,
+    TranslateModule,
+  ],
   templateUrl: './phone-email.component.html',
   styleUrls: ['./phone-email.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PhoneEmailComponent implements OnInit {
+export class PhoneEmailComponent implements OnInit, OnDestroy {
+  private readonly _userLocalProfileService = inject(UserLocalProfileService);
+  private readonly _translateService = inject(TranslateService);
+  private onDestroy$ = new Subject();
+
   phoneEmailForm: FormGroup;
   user: UserInfo;
+  userFullName = '';
   isLoading: boolean;
   title = '';
-  private readonly titleUpdateContact: string = 'Email & Phone Number';
-  private readonly titleStaleProfile: string = 'Update Contact Information';
 
   htmlContent$: Observable<string>;
-
   @Input() staleProfile = false;
 
   constructor(
@@ -41,35 +66,39 @@ export class PhoneEmailComponent implements OnInit {
     this.initForm();
   }
 
+  ngOnDestroy() {
+    this.onDestroy$.next(true);
+    this.onDestroy$.complete();
+  }
+
   ionViewWillEnter() {
-    this.title = this.staleProfile ? this.titleStaleProfile : this.titleUpdateContact;
+    this.title = `patron-ui.update_personal_info.${
+      this.staleProfile ? 'header_stale_profile' : 'header_update_profile'
+    }`;
     this.cdRef.detectChanges();
   }
 
   async saveChanges() {
     this.isLoading = true;
-    const user = await this.userFacadeService
+    this.userFacadeService
       .getUser$()
-      .pipe(
-        switchMap(userInfoSet => of(this.updatedUserModel(userInfoSet))),
-        take(1)
-      )
-      .toPromise();
-    this.userFacadeService.saveUser$(user).subscribe(
-      () => {
-        this.isLoading = false;
-        this.presentToast();
-        if (this.staleProfile) {
-          this.close();
-        }
-      },
-      () => {
-        this.isLoading = false;
-        this.onErrorRetrieve('Something went wrong, please try again...');
-        this.cdRef.detectChanges();
-      },
-      () => this.cdRef.detectChanges()
-    );
+      .pipe(switchMap(userInfoSet => this.userFacadeService.saveUser$(this.updatedUserModel(userInfoSet))))
+      .subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.presentToast();
+          this._userLocalProfileService.updatePronouns(this.pronouns.value);
+          if (this.staleProfile) {
+            this.close();
+          }
+        },
+        error: () => {
+          this.isLoading = false;
+          this.onErrorRetrieve(this._translateService.instant('get_mobile.error.general'));
+          this.cdRef.detectChanges();
+        },
+        complete: () => this.cdRef.detectChanges(),
+      });
   }
 
   async showTOS() {
@@ -89,21 +118,6 @@ export class PhoneEmailComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  private async initForm() {
-    this.phoneEmailForm = this.fb.group({
-      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
-      [this.controlsNames.phone]: [
-        '',
-        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
-      ],
-    });
-    const user = await this.userFacadeService.getUser$().pipe(take(1)).toPromise();
-    this.user = { ...user };
-    this.checkFieldValue(this.email, this.user.email);
-    this.checkFieldValue(this.phone, this.user.phone);
-    this.cdRef.detectChanges();
-  }
-
   get controlsNames() {
     return PHONE_EMAIL_CONTROL_NAMES;
   }
@@ -114,6 +128,10 @@ export class PhoneEmailComponent implements OnInit {
 
   get phone(): AbstractControl {
     return this.phoneEmailForm.get(this.controlsNames.phone);
+  }
+
+  get pronouns(): AbstractControl {
+    return this.phoneEmailForm.get(this.controlsNames.pronouns);
   }
 
   updatedUserModel(user: UserInfo): UserInfo {
@@ -175,8 +193,15 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   private async presentToast(): Promise<void> {
-    const message = `Updated successfully.`;
-    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }] });
+    await this.toastService.showSuccessToast({
+      message: this._translateService.instant('patron-ui.message.save_success'),
+      position: 'bottom',
+      toastButtons: [
+        {
+          icon: '/assets/icon/close-x.svg',
+        },
+      ],
+    });
   }
 
   private checkFieldValue(field: AbstractControl, value: string) {
@@ -185,11 +210,49 @@ export class PhoneEmailComponent implements OnInit {
       field.markAsDirty();
     }
   }
+
+  private async initForm() {
+    this.phoneEmailForm = this.fb.group({
+      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
+      [this.controlsNames.phone]: [
+        '',
+        [Validators.required, Validators.pattern(PHONE_REGEXP), Validators.minLength(10), Validators.maxLength(22)],
+      ],
+      [this.controlsNames.pronouns]: [this._userLocalProfileService.userLocalProfileSignal().pronouns],
+    });
+    const user = await lastValueFrom(this.userFacadeService.getUser$());
+    this.user = { ...user };
+    this.userFullName = getUserFullName(user);
+    this.onPhoneValueChanges();
+    this.checkFieldValue(this.email, this.user.email);
+    this.checkFieldValue(this.phone, this.user.phone);
+    this.cdRef.detectChanges();
+  }
+
+  private onPhoneValueChanges() {
+    this.phoneEmailForm
+      .get(this.controlsNames.phone)
+      .valueChanges.pipe(
+        debounceTime(500),
+        map(value => value.replace(NON_DIGITS_REGEXP, '')),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe(cleanedValue => {
+        this.updatePhoneNumber(cleanedValue);
+      });
+  }
+
+  private updatePhoneNumber(cleanedValue: string) {
+    const phoneControl = this.phoneEmailForm.get(this.controlsNames.phone);
+    phoneControl.patchValue(cleanedValue, { emitEvent: false });
+    this.cdRef.detectChanges();
+  }
 }
 
 export enum PHONE_EMAIL_CONTROL_NAMES {
   phone = 'phone',
   email = 'email',
+  pronouns = 'pronouns',
 }
 
 const DEFAULT_NOTIFICATION_STATUS = 3;

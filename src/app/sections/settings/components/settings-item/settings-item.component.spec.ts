@@ -1,17 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { DataMessage, DataMessageType, SettingItemConfig } from '@sections/settings/models/setting-items-config.model';
 import { SettingsItemComponent } from './settings-item.component';
 
 describe('SettingsItemComponent', () => {
   let component: SettingsItemComponent;
   let fixture: ComponentFixture<SettingsItemComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [SettingsItemComponent]
-    });
+      imports: [SettingsItemComponent],
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(SettingsItemComponent);
     component = fixture.componentInstance;
   });

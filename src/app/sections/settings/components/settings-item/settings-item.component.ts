@@ -1,9 +1,15 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { DataMessage, DataMessageType, SettingItemConfig } from '@sections/settings/models/setting-items-config.model';
 import { Observable, of } from 'rxjs';
+import { SettingsMessagesComponent } from '../settings-messages/settings-messages.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'st-settings-item',
+  standalone: true,
+  imports: [CommonModule, IonicModule, SettingsMessagesComponent, TranslateModule],
   templateUrl: './settings-item.component.html',
   styleUrls: ['./settings-item.component.scss'],
 })

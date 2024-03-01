@@ -7,8 +7,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
-// Functional resolver
-export const settingsPageResolver: ResolveFn<[ContentStringInfo[]]> = (
+export const settingsPageResolver: ResolveFn<[ContentStringInfo[], ContentStringInfo[]]> = (
   _route: ActivatedRouteSnapshot,
   _state: RouterStateSnapshot,
   loadingService = inject(LoadingService),
@@ -19,6 +18,10 @@ export const settingsPageResolver: ResolveFn<[ContentStringInfo[]]> = (
     contentStringFacadeService.fetchContentStrings$(
       CONTENT_STRINGS_DOMAINS.patronUi,
       CONTENT_STRINGS_CATEGORIES.mobileCredential
+    ),
+    contentStringFacadeService.fetchContentStrings$(
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.updatePersonalInfo
     ),
   ]).pipe(
     finalize(() => {

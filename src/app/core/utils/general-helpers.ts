@@ -9,6 +9,7 @@ import { ACCOUNT_TYPES, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.
 import { MerchantInfo } from '@sections/ordering';
 import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
 import { formatDate, isSameDay } from './date-helper';
+import { GeneralPhoto } from '@core/model/general-photo/general-photo.model';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -281,3 +282,10 @@ export const isEmptyObject = (obj): boolean => {
 export const isAppearing = (date: string, i: number, transactions: object[], propertyName: string): boolean => {
   return i === 0 || !isSameDay(formatDate(date), formatDate(transactions[i - 1][propertyName]));
 };
+
+export function getDataUrlFromPhoto(photoInfo: GeneralPhoto): string | null {
+  if (photoInfo) {
+    return `data:${photoInfo.mimeType};base64,${photoInfo.data}`;
+  }
+  return null;
+}

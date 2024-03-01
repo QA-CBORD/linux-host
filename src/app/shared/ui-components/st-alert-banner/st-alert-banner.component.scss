@@ -18,4 +18,13 @@ ion-card {
   &__text {
     margin-left: 10px;
   }
+  &__icon {
+    height: 22.4px;
+    width: 22.4px;
+  }
+  &__icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

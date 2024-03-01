@@ -1,7 +1,13 @@
 import { CartService, MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '../../models';
+import {
+  MenuInfo,
+  MerchantAccountInfoList,
+  MerchantInfo,
+  MerchantOrderTypesInfo,
+  MerchantSettingInfo,
+} from '../../models';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, lastValueFrom, of, throwError, zip } from 'rxjs';
@@ -68,20 +74,19 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly a11yService: AccessibilityService,
     private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.orderType =
       this.activeOrderType !== null
         ? this.activeOrderType
         : this.orderTypes.pickup
-          ? ORDER_TYPE.PICKUP
-          : ORDER_TYPE.DELIVERY;
+        ? ORDER_TYPE.PICKUP
+        : ORDER_TYPE.DELIVERY;
     this.dispatchingData();
     this.initContentStrings();
     this.cartService.resetClientOrderId();
   }
-
   get isOrderTypePickup(): boolean {
     return this.orderType === ORDER_TYPE.PICKUP;
   }
@@ -95,12 +100,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   get prepTime() {
-    const time = {
-      [this.enumOrderTypes.PICKUP]: this.orderTypes.pickupPrepTime,
-      [this.enumOrderTypes.DELIVERY]: this.orderTypes.deliveryPrepTime,
-    }[this.orderType] || 0;
-    return `(${time} min)`
-
+    const time =
+      {
+        [this.enumOrderTypes.PICKUP]: this.orderTypes.pickupPrepTime,
+        [this.enumOrderTypes.DELIVERY]: this.orderTypes.deliveryPrepTime,
+      }[this.orderType] || 0;
+    return `(${time} min)`;
   }
 
   dispatchingData() {
@@ -295,12 +300,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     }
 
     return this.merchantService.getUserAccounts().pipe(
-      switchMap(
-        (accounts): Observable<boolean | never> => {
-          const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
-          return !isSomeAccMealBased ? throwError(new Error("You don't have meal based accounts")) : of(true);
-        }
-      )
+      switchMap((accounts): Observable<boolean | never> => {
+        const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
+        return !isSomeAccMealBased ? throwError(new Error("You don't have meal based accounts")) : of(true);
+      })
     );
   }
 
@@ -349,6 +352,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         this.a11yService.readAloud(this.addressHeaderFormatPipe.transform(this.orderOptionsData.address));
       }
     });
+
     await modal.present();
   }
 
@@ -383,7 +387,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     );
     this.contentStrings.noAvailableTenders = this.orderingService.getContentErrorStringByName(
       ORDERING_CONTENT_STRINGS.noAvailableTenders
-    )
+    );
   }
   private isMerchantDateUnavailable(schedule: Schedule) {
     return schedule.days.length == 0;
@@ -392,7 +396,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   private async onMerchantDateUnavailable() {
     const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
     this.toastService.showToast({ message: noDatesMessage });
-    this.modalsService.dismiss();
+    await this.modalsService.dismiss();
   }
 }
 

@@ -1,13 +1,12 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Observable, of, firstValueFrom, lastValueFrom } from 'rxjs';
-import { catchError, first, map, take } from 'rxjs/operators';
+import { Observable, firstValueFrom, lastValueFrom, of } from 'rxjs';
+import { catchError, first, map, tap } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION, Settings, User } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
@@ -18,17 +17,19 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { PronounsPipe } from '@shared/pipes/pronouns-pipe/pronouns.pipe';
 
 @Component({
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
   styleUrls: ['./access-card.component.scss'],
-  imports: [IonicModule, CommonModule],
+  imports: [IonicModule, CommonModule, PronounsPipe],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit, AfterViewInit {
-  userName$: Observable<string>;
+  userLocalProfileSignal = this.accessCardService.getUserLocalProfileSignal();
+
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -40,9 +41,8 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   cardStatusMessage: string;
   appleWalletMessageImage: string;
   appleWalletButtonHidden = true;
-  userPhoto?: string;
-  isLoadingPhoto = true;
-  userInfo: string;
+  userPhoto$: Observable<string>;
+  photoAvailable = false;
   mobileCredentialAvailable = false;
   housingOnlyEnabled: boolean;
 
@@ -51,7 +51,6 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
     private readonly changeRef: ChangeDetectorRef,
-    private readonly userFacadeService: UserFacadeService,
     public readonly mobileCredentialFacade: MobileCredentialFacade,
     private readonly profileService: ProfileServiceFacade,
     private readonly barcodeFacadeService: BarcodeFacadeService,
@@ -64,7 +63,6 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     this.setHousingOnlyEnabled();
     this.setInstitutionData();
     this.getFeaturesEnabled();
-    this.getUserName();
     this.initContentString();
   }
 
@@ -93,18 +91,10 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   }
 
   private getUserData() {
-    this.userName$ = this.accessCardService.getUserName();
-    this.accessCardService
-      .getUserPhoto()
-      .pipe(
-        first(),
-        catchError(() => of(null))
-      )
-      .subscribe(photo => {
-        this.isLoadingPhoto = false;
-        this.userPhoto = photo;
-        this.changeRef.detectChanges();
-      });
+    this.userPhoto$ = this.accessCardService.getUserPhoto().pipe(
+      tap(photo => (this.photoAvailable = !!photo)),
+      catchError(() => of(null))
+    );
   }
 
   async loadScanCardInputs() {
@@ -143,21 +133,12 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private getUserName() {
-    this.userFacadeService
-      .getUser$()
-      .pipe(take(1))
-      .subscribe(response => {
-        this.userInfo = JSON.stringify(response);
-      });
-  }
-
   private async setHousingOnlyEnabled() {
     this.housingOnlyEnabled = await this.profileService.housingOnlyEnabled();
   }
 
   onWalletClicked() {
-    if (this.userPhoto) {
+    if (this.photoAvailable) {
       this.mobileCredentialFacade.onImageClick();
       return;
     }

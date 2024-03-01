@@ -28,11 +28,11 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { Browser } from '@capacitor/browser';
 import { ToastService } from '@core/service/toast/toast.service';
-import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 
 export enum browserState {
   FINISHED = 'browserFinished',
@@ -82,9 +82,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly cdRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
-    private readonly a11yService: AccessibilityService,
     private readonly commonService: CommonService,
     private readonly orderingService: OrderingService,
+    private readonly appRateService: AppRateService
   ) { }
 
   ngOnInit() {
@@ -508,6 +508,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private async finalizeDepositModal(data): Promise<void> {
+    this.appRateService.evaluateToRequestRateApp();
     const { depositSuccessCs: contentString } = this.contentString;
     const modal = await this.modalController.create({
       component: DepositModalComponent,

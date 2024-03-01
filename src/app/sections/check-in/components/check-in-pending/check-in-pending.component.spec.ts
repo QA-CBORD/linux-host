@@ -11,6 +11,8 @@ import { LockDownService } from '@shared/services';
 import { CheckInPendingComponent } from './check-in-pending.component';
 import { of } from 'rxjs';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
 
 describe('CheckInPendingComponent', () => {
   let component: CheckInPendingComponent;
@@ -30,7 +32,9 @@ describe('CheckInPendingComponent', () => {
     platform,
     cartService,
     lockDownService,
-    accesibilityService;
+    accesibilityService,
+    appRateService,
+    storageStateService;
 
   beforeEach(() => {
     loadingService = {
@@ -84,8 +88,17 @@ describe('CheckInPendingComponent', () => {
     };
 
     accesibilityService = {
-      focusElementById: jest.fn()
+      focusElementById: jest.fn(),
     };
+
+    appRateService = {
+      evaluateToRequestRateApp: jest.fn(),
+    };
+
+    storageStateService = { 
+      getStateEntityByKey$: jest.fn(),
+      updateStateEntity: jest.fn(),
+    } as any;
 
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
@@ -105,7 +118,9 @@ describe('CheckInPendingComponent', () => {
         { provide: AlertController, useValue: alertCtrl },
         { provide: ChangeDetectorRef, useValue: cdRef },
         { provide: Platform, useValue: platform },
-        { provide: AccessibilityService, useValue: accesibilityService}
+        { provide: AccessibilityService, useValue: accesibilityService },
+        { provide: AppRateService, useValue: appRateService },
+        { provide: StorageStateService, useValue: storageStateService },
       ],
     });
     fixture = TestBed.createComponent(CheckInPendingComponent);

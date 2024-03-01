@@ -71,3 +71,9 @@ export const ONE_LETTER_MIN = /[a-z]|[A-Z]/;
 
 //Getting the base64 without the file format
 export const BASE64 = /^data:(.*,)?/;
+
+// Phone number pattern
+export const PHONE_REGEXP = /(?:\+|^)\d{10,}$/;
+
+// All non-digit characters but not '+' pattern at the beginning
+export const NON_DIGITS_REGEXP = /(^[^+\d])|((?!^)\D)/g;

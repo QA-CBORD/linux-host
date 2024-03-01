@@ -1,0 +1,53 @@
+<form [formGroup]="personalInfoPronounsForm">
+  <div class="personal-info-pronouns__title ion-padding-start">Preferred Pronouns (Optional)</div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="4">
+        <st-input-floating-label
+          class="form__control"
+          maxlength="6"
+          [control]="subjective"
+          label="Subjective"
+          idd="subjectiveField"
+          [formControlName]="controlsNames.subjective"
+          [isError]="subjective.errors && (subjective.dirty || subjective.touched)"
+          [stFocusNext]="objectiveField"
+          tabindex="0"
+        >
+        </st-input-floating-label>
+        <div class="personal-info-pronouns__pronouns">They, He, She</div>
+      </ion-col>
+      <ion-col size="4">
+        <st-input-floating-label
+          #objectiveField
+          class="form__control"
+          maxlength="6"
+          [control]="objective"
+          label="Objective"
+          idd="objectiveField"
+          [formControlName]="controlsNames.objective"
+          [isError]="objective.errors && (objective.dirty || objective.touched)"
+          [stFocusNext]="possessiveField"
+          tabindex="0"
+        >
+        </st-input-floating-label>
+        <div class="personal-info-pronouns__pronouns">Them, Him, Her</div>
+      </ion-col>
+      <ion-col size="4">
+        <st-input-floating-label
+          #possessiveField
+          class="form__control"
+          maxlength="6"
+          [control]="possessive"
+          label="Possessive"
+          idd="possessiveField"
+          [formControlName]="controlsNames.possessive"
+          [isError]="possessive.errors && (possessive.dirty || possessive.touched)"
+          tabindex="0"
+        >
+        </st-input-floating-label>
+        <div class="personal-info-pronouns__pronouns">Their, His, Her</div>
+    </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>

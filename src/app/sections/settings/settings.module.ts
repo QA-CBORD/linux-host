@@ -7,7 +7,7 @@ import { PhotoUploadModule } from '@sections/settings/pages/photo-upload/photo-u
 import { SettingsItemComponent } from './components/settings-item/settings-item.component';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { HTMLRendererModule } from '@shared/ui-components/html-renderer/html-renderer.module';
-import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { ReportCardModule } from '@sections/settings/pages/report-card/report-card.module';
@@ -15,7 +15,6 @@ import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials
 import { PasswordChangeModule } from '@shared/ui-components/change-password/password-change.module';
 import { CreditCardModule } from './creditCards/credit-card.module';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { SettingsMessagesComponent } from './components/settings-messages/settings-messages.component';
 
 
 const imports = [
@@ -24,15 +23,16 @@ const imports = [
   SettingsRoutingModule,
   PhotoUploadModule,
   HTMLRendererModule,
-  PhoneEmailModule,
+  PhoneEmailComponent,
   StHeaderModule,
   EditHomePageModalModule,
   ReportCardModule,
   MobileCredentialModule,
   PasswordChangeModule,
   CreditCardModule,
+  SettingsItemComponent,
 ];
-const declarations = [SettingsPage, SettingsItemComponent, SettingsMessagesComponent];
+const declarations = [SettingsPage];
 const providers = [SettingsFactoryService, ModalsService];
 @NgModule({
   declarations,
