@@ -12,6 +12,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -37,7 +38,8 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
-    private readonly navService: NavigationService
+    private readonly navService: NavigationService,
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ionViewWillEnter() {
@@ -78,6 +80,13 @@ export class MenuCategoryItemsComponent implements OnInit {
         return name.toLowerCase().indexOf(value) > -1 || (description && description.toLowerCase().indexOf(value) > -1);
       }
     );
+    this.excuteSearchSpeech();
+  }
+
+  excuteSearchSpeech() {
+    const { length } = this.filteredMenuCategoryItems;
+    const message = length === 1 ? `one search available` : `${length} searches available`;
+    this.a11yService.readAloud(message, 1000);
   }
 
   onCancelClicked() {
@@ -100,10 +109,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
-      .pipe(
-        first(),
-        handleServerError(ORDER_VALIDATION_ERRORS)
-      )
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(() =>
         this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {

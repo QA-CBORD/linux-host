@@ -12,6 +12,7 @@ import { MenuCategoryItemsComponent } from './menu-category-items.component';
 import { of } from 'rxjs';
 import { MenuInfo } from '@sections/ordering/components';
 import { Params } from '@angular/router';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 describe('MenuCategoryItemsComponent', () => {
   let component: MenuCategoryItemsComponent;
@@ -25,6 +26,7 @@ describe('MenuCategoryItemsComponent', () => {
   let orderingService;
   let alertController;
   let navService;
+  let a11yService
 
   beforeEach(async () => {
     cartService = {
@@ -47,6 +49,7 @@ describe('MenuCategoryItemsComponent', () => {
         { provide: OrderingService, useValue: orderingService },
         { provide: AlertController, useValue: alertController },
         { provide: NavigationService, useValue: navService },
+        {provide: AccessibilityService, useValue: a11yService}
       ],
       imports: [],
     }).compileComponents();
