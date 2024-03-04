@@ -1,16 +1,11 @@
 import { Component, inject, forwardRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
-import {
-  AbstractControl,
-  ControlValueAccessor,
-  FormBuilder,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { Subject, skipWhile, takeUntil } from 'rxjs';
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
+import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
+import { customActionSheetOptions } from '@shared/constants/picker.constant';
 
 enum FORM_CONTROL_NAMES {
   subjective = 'subjective',
@@ -21,7 +16,7 @@ enum FORM_CONTROL_NAMES {
 @Component({
   selector: 'st-personal-info-pronouns',
   standalone: true,
-  imports: [CommonModule, IonicModule, StInputFloatingLabelModule, ReactiveFormsModule, FocusNextModule],
+  imports: [CommonModule, IonicModule, StSelectFloatingLabelModule, ReactiveFormsModule, FocusNextModule],
   templateUrl: './personal-info-pronouns.component.html',
   styleUrls: ['./personal-info-pronouns.component.scss'],
   providers: [
@@ -34,31 +29,38 @@ enum FORM_CONTROL_NAMES {
 })
 export class PersonalInfoPronounsComponent implements OnInit, OnDestroy, ControlValueAccessor {
   private readonly destroy$ = new Subject<void>();
+  customActionSheetOptions = customActionSheetOptions;
 
   private readonly formBuilder = inject(FormBuilder);
   personalInfoPronounsForm = this.formBuilder.group({
-    [this.controlsNames.subjective]: [''],
-    [this.controlsNames.objective]: [''],
-    [this.controlsNames.possessive]: [''],
+    [FORM_CONTROL_NAMES.subjective]: [''],
+    [FORM_CONTROL_NAMES.objective]: [''],
+    [FORM_CONTROL_NAMES.possessive]: [''],
   });
+
+  readonly pronounsControls = [
+    {
+      label: 'Subjective',
+      controlName: FORM_CONTROL_NAMES.subjective,
+      control: this.personalInfoPronounsForm.get(FORM_CONTROL_NAMES.subjective),
+      pronounsList: ['They', 'He', 'She'],
+    },
+    {
+      label: 'Objective',
+      controlName: FORM_CONTROL_NAMES.objective,
+      control: this.personalInfoPronounsForm.get(FORM_CONTROL_NAMES.objective),
+      pronounsList: ['Them', 'Him', 'Her'],
+    },
+    {
+      label: 'Possessive',
+      controlName: FORM_CONTROL_NAMES.possessive,
+      control: this.personalInfoPronounsForm.get(FORM_CONTROL_NAMES.possessive),
+      pronounsList: ['Their', 'His', 'Her'],
+    },
+  ];
+
   private onChange: (value: string) => void;
   private onTouched: () => void;
-
-  get controlsNames() {
-    return FORM_CONTROL_NAMES;
-  }
-
-  get subjective(): AbstractControl {
-    return this.personalInfoPronounsForm.get(this.controlsNames.subjective);
-  }
-
-  get objective(): AbstractControl {
-    return this.personalInfoPronounsForm.get(this.controlsNames.objective);
-  }
-
-  get possessive(): AbstractControl {
-    return this.personalInfoPronounsForm.get(this.controlsNames.possessive);
-  }
 
   ngOnInit(): void {
     this.personalInfoPronounsForm.valueChanges
@@ -67,7 +69,7 @@ export class PersonalInfoPronounsComponent implements OnInit, OnDestroy, Control
         takeUntil(this.destroy$)
       )
       .subscribe(({ subjective, objective, possessive }) => {
-        const pronounsArray = [subjective, objective, possessive].map(pronoun => pronoun?.trim().toLowerCase());
+        const pronounsArray = [subjective, objective, possessive].map(pronoun => pronoun?.trim());
         this.onChange(pronounsArray.join(','));
       });
   }
