@@ -86,7 +86,8 @@ export class MenuCategoryItemsComponent implements OnInit {
   excuteSearchSpeech() {
     const { length } = this.filteredMenuCategoryItems;
     const message = length === 1 ? `one search available` : `${length} searches available`;
-    this.a11yService.readAloud(message, 1000);
+    const delay = 1000;
+    this.a11yService.readAloud(message, delay);
   }
 
   onCancelClicked() {
