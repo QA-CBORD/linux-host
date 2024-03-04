@@ -23,11 +23,10 @@ export class RewardsPage implements OnInit {
     private readonly platform: Platform,
     private readonly rewardsService: RewardsService,
     private readonly nativeProvider: NativeProvider
-  ) {
-    this.initComponent();
-  }
+  ) {}
 
   ngOnInit(): void {
+    this.initComponent();
     this.setContentStrings();
   }
 
@@ -36,18 +35,16 @@ export class RewardsPage implements OnInit {
   }
 
   private initComponent() {
+    //TODO: Remove platform ready implementation
     this.platform.ready().then(() => {
-      combineLatest(this.rewardsService.getUserOptInStatus(), this.rewardsService.getRewardsTabsConfig())
+      combineLatest([this.rewardsService.getUserOptInStatus(), this.rewardsService.getRewardsTabsConfig()])
         .pipe(take(1))
-        .subscribe(
-          ([optInStatus, tabsConfig]) => {
+        .subscribe({
+          next: ([optInStatus, tabsConfig]) => {
             this.optInStatus = optInStatus;
             this.tabsConfig = tabsConfig;
-          },
-          () => {
-          // TODO: Properly handle exception
           }
-        );
+        });
     });
   }
 
