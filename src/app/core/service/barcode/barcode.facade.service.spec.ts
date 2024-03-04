@@ -21,7 +21,7 @@ describe('BarcodeFacadeService', () => {
     };
 
     const barcodeServiceStub = () => ({
-      generateBarcode: (userSetting, setting, arg0) => of('654321'),
+      generateBarcode: (userSetting, setting, arg0) => of(barcodeFromCache),
     });
     const authFacadeMock = {
       generateBarcodeFromServer: jest.fn().mockReturnValue(of(barcodeFromServer)),
