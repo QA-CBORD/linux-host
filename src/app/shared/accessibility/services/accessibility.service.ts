@@ -18,21 +18,21 @@ export class AccessibilityService {
   constructor(private readonly platform: Platform) {}
   private toggle = false;
 
-  readAloud(text: string) {
+  readAloud(text: string, delay: number = READ_ALOUD_DELAY) {
     if (!this.platform.is('cordova')) return;
 
     return ScreenReader.isEnabled().then(isRunning => {
       if (isRunning.value) {
         setTimeout(() => {
           ScreenReader.speak({ value: text });
-        }, READ_ALOUD_DELAY);
+        }, delay);
       }
     });
   }
 
   get isVoiceOverEnabled$(): Promise<boolean> {
     if (Capacitor.getPlatform() === PLATFORM.web) {
-        return of(false).toPromise();
+      return of(false).toPromise();
     }
 
     return ScreenReader.isEnabled().then(isRunning => {

@@ -18,7 +18,6 @@ export class CategoryListComponent {
   @Input() mealBased: boolean;
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-
   constructor(private readonly environmentFacadeService: EnvironmentFacadeService) {}
 
   triggerMenuItemClick({ menuItem: { id } }) {

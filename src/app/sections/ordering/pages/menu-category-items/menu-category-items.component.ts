@@ -12,6 +12,8 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -37,7 +39,10 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
-    private readonly navService: NavigationService
+    private readonly navService: NavigationService,
+    private readonly a11yService: AccessibilityService,
+    private readonly translateService: TranslateService,
+
   ) {}
 
   ionViewWillEnter() {
@@ -78,6 +83,17 @@ export class MenuCategoryItemsComponent implements OnInit {
         return name.toLowerCase().indexOf(value) > -1 || (description && description.toLowerCase().indexOf(value) > -1);
       }
     );
+    this.excuteSearchSpeech();
+  }
+
+   excuteSearchSpeech() {
+    const { length } = this.filteredMenuCategoryItems;
+    const message =
+      length === 1
+        ?  this.translateService.instant('patron-ui.ordering.one_search_available')
+        : `${length} ${ this.translateService.instant('patron-ui.ordering.searches_available')} `;
+    const delay = 1000;
+    this.a11yService.readAloud(message, delay);
   }
 
   onCancelClicked() {
@@ -100,10 +116,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
-      .pipe(
-        first(),
-        handleServerError(ORDER_VALIDATION_ERRORS)
-      )
+      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(() =>
         this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
@@ -134,6 +147,12 @@ export class MenuCategoryItemsComponent implements OnInit {
     );
     this.contentStrings.labelFullMenu = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelFullMenu
+    );
+    this.contentStrings.searchesAvailable = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.searchesAvailable
+    );
+    this.contentStrings.oneSearchAvailable = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.oneSearchAvailable
     );
   }
 }

@@ -120,6 +120,8 @@ export enum ORDERING_CONTENT_STRINGS {
   pickUpOrderTimeNotAvailable = 'PickUpOrderTimeNotAvailable',
   deliveryOrderTimeNotAvailable = 'DeliveryOrderTimeNotAvailable',
   menuItemsNotAvailable = 'ItemsNotAvailable',
+  searchesAvailable = 'searches_available',
+  oneSearchAvailable = 'one_search_available',
   itemsNotAvailable = 'not_orders_items_available',
   noAvailableTenders = 'no_available_tenders'
 }
