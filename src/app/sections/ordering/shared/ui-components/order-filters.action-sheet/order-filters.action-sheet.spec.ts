@@ -13,7 +13,7 @@ import { By } from '@angular/platform-browser';
 describe('OrderOptionsActionSheet', () => {
   let component: OrderFiltersActionSheetComponent;
   let fixture: ComponentFixture<OrderFiltersActionSheetComponent>;
-  let merchanService;
+  let modalService;
 
   const periods = [
     {
@@ -35,7 +35,7 @@ describe('OrderOptionsActionSheet', () => {
   ];
 
   beforeEach(waitForAsync(() => {
-    merchanService = {
+    modalService = {
       dismiss: jest.fn(),
     };
 
@@ -43,7 +43,7 @@ describe('OrderOptionsActionSheet', () => {
       declarations: [OrderFiltersActionSheetComponent],
       imports: [...CoreTestingModules],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [{ provide: ModalsService, useValue: merchanService }],
+      providers: [{ provide: ModalsService, useValue: modalService }],
     }).compileComponents();
   }));
 
@@ -74,5 +74,38 @@ describe('OrderOptionsActionSheet', () => {
     const radioGroup = fixture.debugElement.query(By.css('.status-radio-group'));
     fixture.detectChanges();
     expect(radioGroup.children.length).toEqual(statuses.length);
+  });
+
+  it('should dismiss the modal with the selected period and status', () => {
+    const period: DateUtilObject = { name: 'newPeriod', month: 1, year: 2020 };
+    const status = 'newStatus';
+    component.selectedPeriod = period;
+    component.selectedStatus = status;
+
+    const dismissSpy = jest.spyOn(modalService, 'dismiss');
+    component.onSubmit();
+
+    expect(dismissSpy).toHaveBeenCalledWith({ period, status });
+  });
+
+  it('should dismiss the modal', () => {
+    const dismissSpy = jest.spyOn(modalService, 'dismiss');
+    component.close();
+
+    expect(dismissSpy).toHaveBeenCalled();
+  });
+
+  it('should set selectedStatus to the provided status', () => {
+    const status = 'newStatus';
+    component.statusTypeOnChange(status);
+
+    expect(component.selectedStatus).toBe(status);
+  });
+
+  it('should set selectedPeriod to the provided period', () => {
+    const period: DateUtilObject = { name: 'newPeriod', month: 1, year: 2020 };
+    component.periodTypeOnChange(period);
+
+    expect(component.selectedPeriod).toBe(period);
   });
 });
