@@ -1,8 +1,8 @@
 <form [formGroup]="personalInfoPronounsForm">
   <div class="personal-info-pronouns__title ion-padding-start">Preferred Pronouns (Optional)</div>
-  <ion-grid>
+  <ion-grid class="ion-no-padding">
     <ion-row>
-      <ion-col size="4" *ngFor="let pronounControl of pronounsControls">
+      <ion-col class="personal-info-pronouns__input-col" size="4" sizeXs="12" *ngFor="let pronounControl of pronounsControls">
         <st-select-floating-label
           [formControlName]="pronounControl.controlName"
           [control]="pronounControl.control"
@@ -13,7 +13,7 @@
           tabindex="0"
         >
           <ng-container role="options">
-            <ion-select-option value="">Select</ion-select-option>
+            <ion-select-option value=""></ion-select-option>
             <ion-select-option [value]="pronoun" *ngFor="let pronoun of pronounControl.pronounsList">{{ pronoun }} </ion-select-option>
           </ng-container>
         </st-select-floating-label>

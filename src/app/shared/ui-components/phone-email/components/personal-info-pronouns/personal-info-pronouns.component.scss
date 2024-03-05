@@ -8,4 +8,7 @@
     @include field-label();
     font-size: 12px;
   }
+  &__input-col {
+    padding-bottom: 10px;
+  }
 }
