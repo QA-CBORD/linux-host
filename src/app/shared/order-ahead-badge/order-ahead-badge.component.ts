@@ -14,6 +14,6 @@ export class OrderAheadBadgeComponent {
   isMerchantOrderAhead = false;
 
   @Input() set merchant(merchantInfo: MerchantInfo) {
-    this.isMerchantOrderAhead = parseInt(merchantInfo?.settings?.map[MerchantSettings.orderAheadEnabled].value) === 1;
+    this.isMerchantOrderAhead = parseInt(merchantInfo?.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
   }
 }
