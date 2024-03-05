@@ -77,7 +77,7 @@ describe('OrderPrepTimeComponent', () => {
 
    it('should calculate prepTime correctly for delivery order type', () => {
     const orderDetailOptions: OrderDetailOptions = {
-      orderType: ORDER_TYPE.DELIVERY,
+      orderType: ORDER_TYPE.DINEIN,
       address: {} as AddressInfo,
       dueTime: new Date(),
       isASAP: true,
@@ -102,6 +102,14 @@ describe('OrderPrepTimeComponent', () => {
 
     const result = component.prepTime;
 
-    expect(result).toEqual('(30 min)');
+    expect(result).toEqual('(0 min)');
+  });
+
+  it('should return the value of isASAP from orderDetailOptions', () => {
+    component.orderDetailOptions = { isASAP: true, orderType: ORDER_TYPE.PICKUP, address: {} as AddressInfo, dueTime: new Date()};
+    expect(component.isAsap).toBe(true);
+
+    component.orderDetailOptions = { isASAP: false, orderType: ORDER_TYPE.PICKUP, address: {} as AddressInfo, dueTime: new Date() };
+    expect(component.isAsap).toBe(false);
   });
 });

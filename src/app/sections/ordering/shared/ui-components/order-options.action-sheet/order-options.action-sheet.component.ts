@@ -400,7 +400,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 }
 
-interface OrderOptions {
+export interface OrderOptions {
   labelTime: string;
   labelAddress: string;
   address: AddressInfo;
