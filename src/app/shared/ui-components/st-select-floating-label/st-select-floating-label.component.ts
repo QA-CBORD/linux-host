@@ -42,7 +42,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Output() focus: EventEmitter<void> = new EventEmitter<void>();
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
   innerValue = '';
-  labelPlacement: 'end' | 'fixed' | 'floating' | 'stacked' | 'start' | undefined = 'floating';
+  @Input() labelPlacement: 'end' | 'fixed' | 'floating' | 'stacked' | 'start' | undefined = 'floating';
   @ViewChild('selector', { static: true }) selectRef: IonSelect;
   private onChange: (v) => void;
   private onTouched: () => void;
