@@ -64,7 +64,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       return data.id;
     }
     if (type === PopupTypes.SUCCESS) {
-      return ' ';
+      return '';
     }
 
     return '';
