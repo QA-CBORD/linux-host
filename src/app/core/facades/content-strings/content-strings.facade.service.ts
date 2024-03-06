@@ -147,15 +147,6 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     );
   }
 
-  ContentStringByInstitution$(
-    domain: CONTENT_STRINGS_DOMAINS,
-    category: CONTENT_STRINGS_CATEGORIES,
-    name: string,
-    institutionId: string
-  ): Observable<ContentStringInfo> {
-    return this.apiService.ContentStringByInstitution$({ domain, category, name }, institutionId);
-  }
-
   resolveContentString$(
     domain: CONTENT_STRINGS_DOMAINS,
     category: CONTENT_STRINGS_CATEGORIES,

@@ -7,7 +7,8 @@ export const simpleApiMethodAssert = <T>(
   method: keyof T,
   params = [],
   serviceURL = '',
-  httpMethod = 'POST'
+  httpMethod = 'POST',
+  response = []
 ) => {
   jest.spyOn(service, method.toString() as any);
   (service as any)[method](...params).subscribe(res => {
@@ -16,15 +17,15 @@ export const simpleApiMethodAssert = <T>(
   expect(service[method]).toHaveBeenCalled();
   const req = httpTestingController.expectOne(serviceURL);
   expect(req.request.method).toEqual(httpMethod);
-  req.flush([]);
+  req.flush(response);
   httpTestingController.verify();
 };
 
 export const simpleServiceApiToAssert = <T>(
   httpTestingController: HttpTestingController,
   service: T
-): ((method: keyof T, params?: any[], serviceURL?: string, httpMethod?: string) => void) => {
-  return (method: keyof T, params = [], serviceURL = '', httpMethod = 'POST') => {
-    simpleApiMethodAssert<T>(httpTestingController, service, method, params, serviceURL, httpMethod);
+): ((method: keyof T, params?: any[], serviceURL?: string, httpMethod?: string, response?: any) => void) => {
+  return (method: keyof T, params = [], serviceURL = '', httpMethod = 'POST', response = []) => {
+    simpleApiMethodAssert<T>(httpTestingController, service, method, params, serviceURL, httpMethod, response);
   };
 };

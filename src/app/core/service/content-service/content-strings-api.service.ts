@@ -34,15 +34,6 @@ export class ContentStringsApiService {
       .post<MessageResponse<ContentStringInfo>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
   }
-
-  ContentStringByInstitution$(config: ContentStringRequest, institutionId: string): Observable<ContentStringInfo> {
-    const params = { ...config, institutionId };
-    const queryConfig = new RPCQueryConfig('retrieveString', params, true, true);
-    return this.http
-      .post<MessageResponse<ContentStringInfo>>(this.serviceUrl, queryConfig)
-      .pipe(map(({ response }) => response));
-  }
-
   retrieveContentStringListByRequest(config: ContentStringRequest): Observable<ContentStringInfo[] | []> {
     config = config.locale ? config : { ...config, locale: null };
     const queryConfig = new RPCQueryConfig('retrieveStringList', config, true, true);

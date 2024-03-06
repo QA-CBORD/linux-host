@@ -6,9 +6,13 @@ import {
 import { Platform } from '@ionic/angular';
 import { ToastService } from '@core/service/toast/toast.service';
 import { RewardsApiService } from './rewards-api.service';
+import { simpleServiceApiToAssert } from 'src/app/testing/helpers/api-helpers';
 
 describe('RewardsApiService', () => {
   let service: RewardsApiService;
+  let httpTestingController: HttpTestingController;
+  const serviceUrl = '/json/rewards';
+  let serviceAssert: (method: keyof RewardsApiService, params?: any[], serviceURL?: string, httpMethod?: string) => void;
 
   beforeEach(() => {
     const platformStub = () => ({ is: name => ({}) });
@@ -22,9 +26,17 @@ describe('RewardsApiService', () => {
       ]
     });
     service = TestBed.inject(RewardsApiService);
+    httpTestingController = TestBed.inject(HttpTestingController);
+    serviceAssert = simpleServiceApiToAssert(httpTestingController, service);
   });
 
   it('can load instance', () => {
     expect(service).toBeTruthy();
   });
+
+  it('makes getUserRewardTrackInfo calls', () => {
+    serviceAssert('getUserRewardTrackInfo', [], serviceUrl);
+  });
 });
+
+
