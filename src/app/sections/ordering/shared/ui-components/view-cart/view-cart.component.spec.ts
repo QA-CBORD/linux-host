@@ -10,12 +10,12 @@ describe('ViewCartComponent', () => {
 
   beforeEach(() => {
     const orderingServiceStub = () => ({
-      getContentStringByName: buttonViewCart => ({})
+      getContentStringByName: buttonViewCart => ({}),
     });
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [ViewCartComponent],
-      providers: [{ provide: OrderingService, useFactory: orderingServiceStub }]
+      providers: [{ provide: OrderingService, useFactory: orderingServiceStub }],
     });
     fixture = TestBed.createComponent(ViewCartComponent);
     component = fixture.componentInstance;
@@ -29,14 +29,24 @@ describe('ViewCartComponent', () => {
     expect(component.menuItemsCount).toEqual(0);
   });
 
-  describe('ngOnInit', () => {
-    it('makes expected calls', () => {
-      const orderingServiceStub: OrderingService = fixture.debugElement.injector.get(
-        OrderingService
-      );
-     jest.spyOn(orderingServiceStub, 'getContentStringByName');
-      component.ngOnInit();
-      expect(orderingServiceStub.getContentStringByName).toHaveBeenCalled();
-    });
+  it('makes expected calls', () => {
+    const orderingServiceStub: OrderingService = fixture.debugElement.injector.get(OrderingService);
+    jest.spyOn(orderingServiceStub, 'getContentStringByName');
+    component.ngOnInit();
+    expect(orderingServiceStub.getContentStringByName).toHaveBeenCalled();
+  });
+
+  it('should not validate current value', () => {  
+    const simpleChangesStub: SimpleChanges = <SimpleChanges>{};
+    simpleChangesStub.menuItemsCount = <any>{};
+    simpleChangesStub.menuItemsCount.currentValue = null;
+    component.ngOnChanges(simpleChangesStub);
+  });
+
+  it('should validate currentvalue', () => {
+    const simpleChangesStub: SimpleChanges = <SimpleChanges>{};
+    simpleChangesStub.menuItemsCount = <any>{};
+    simpleChangesStub.menuItemsCount.currentValue = 10;
+    component.ngOnChanges(simpleChangesStub);
   });
 });
