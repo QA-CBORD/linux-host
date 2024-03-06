@@ -7,17 +7,17 @@
           [formControlName]="pronounControl.controlName"
           [control]="pronounControl.control"
           [interfaceOptions]="customActionSheetOptions"
+          labelPlacement="stacked"
           interface="action-sheet"
           [label]="pronounControl.label"
           [idd]="pronounControl.label.toLowerCase() + 'Field'"
           tabindex="0"
         >
           <ng-container role="options">
-            <ion-select-option value=""></ion-select-option>
+            <ion-select-option aria-label="Blank value" value=""></ion-select-option>
             <ion-select-option [value]="pronoun" *ngFor="let pronoun of pronounControl.pronounsList">{{ pronoun }} </ion-select-option>
           </ng-container>
         </st-select-floating-label>
-        <div class="personal-info-pronouns__pronouns">{{ pronounControl.pronounsList.join(', ') }}</div>
       </ion-col>
     </ion-row>
   </ion-grid>

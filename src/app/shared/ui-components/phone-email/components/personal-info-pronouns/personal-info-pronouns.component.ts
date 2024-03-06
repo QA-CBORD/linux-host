@@ -43,19 +43,19 @@ export class PersonalInfoPronounsComponent implements OnInit, OnDestroy, Control
       label: 'Subjective',
       controlName: FORM_CONTROL_NAMES.subjective,
       control: this.personalInfoPronounsForm.get(FORM_CONTROL_NAMES.subjective),
-      pronounsList: ['They', 'He', 'She'],
+      pronounsList: ['She', 'He', 'They', 'Ze'],
     },
     {
       label: 'Objective',
       controlName: FORM_CONTROL_NAMES.objective,
       control: this.personalInfoPronounsForm.get(FORM_CONTROL_NAMES.objective),
-      pronounsList: ['Them', 'Him', 'Her'],
+      pronounsList: ['Her', 'Him', 'Them', 'Hir'],
     },
     {
       label: 'Possessive',
       controlName: FORM_CONTROL_NAMES.possessive,
       control: this.personalInfoPronounsForm.get(FORM_CONTROL_NAMES.possessive),
-      pronounsList: ['Their', 'His', 'Her'],
+      pronounsList: ['Hers', 'His', 'Theirs', 'Hirs'],
     },
   ];
 
