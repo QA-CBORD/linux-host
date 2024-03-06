@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Observable, firstValueFrom, lastValueFrom, of } from 'rxjs';
+import { Observable, Subject, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
@@ -29,7 +29,8 @@ import { PronounsPipe } from '@shared/pipes/pronouns-pipe/pronouns.pipe';
 })
 export class AccessCardComponent implements OnInit, AfterViewInit {
   userLocalProfileSignal = this.accessCardService.getUserLocalProfileSignal();
-
+  private readonly _userPhotoSubject = new Subject<string>();
+  userPhoto$: Observable<string> = this._userPhotoSubject.asObservable();
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -41,7 +42,6 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   cardStatusMessage: string;
   appleWalletMessageImage: string;
   appleWalletButtonHidden = true;
-  userPhoto$: Observable<string>;
   photoAvailable = false;
   mobileCredentialAvailable = false;
   housingOnlyEnabled: boolean;
@@ -91,10 +91,16 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   }
 
   private getUserData() {
-    this.userPhoto$ = this.accessCardService.getUserPhoto().pipe(
-      tap(photo => (this.photoAvailable = !!photo)),
-      catchError(() => of(null))
-    );
+    this.accessCardService
+      .getUserPhoto()
+      .pipe(
+        tap(photo => {
+          this.photoAvailable = !!photo;
+          this._userPhotoSubject.next(photo);
+        }),
+        catchError(() => of(null))
+      )
+      .subscribe();
   }
 
   async loadScanCardInputs() {
