@@ -26,6 +26,6 @@ export class OrderPrepTime {
   }
 
   get isAsap () {
-    return this.orderDetailOptions.isASAP;
+    return this.orderDetailOptions?.isASAP;
   }
 }
