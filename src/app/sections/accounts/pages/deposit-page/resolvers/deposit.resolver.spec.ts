@@ -3,7 +3,7 @@ import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { CommonService } from '@shared/services/common.service';
 import { DepositResolver } from './deposit.resolver';
-import { first, of } from 'rxjs';
+import { first, of, throwError } from 'rxjs';
 
 const loadingServiceMock = {
   showSpinner: jest.fn(),
@@ -39,18 +39,21 @@ describe('DepositResolver', () => {
   });
 
   describe('resolve', () => {
-    it('makes expected calls', async () => {
-      const depositServiceStub: DepositService = TestBed.inject(DepositService);
-      const commonServiceStub: CommonService = TestBed.inject(CommonService);
-      jest.spyOn(loadingServiceMock, 'showSpinner');
-      jest.spyOn(depositServiceStub, 'getUserAccounts');
-      jest.spyOn(depositServiceStub, 'getUserSettings');
-      jest.spyOn(commonServiceStub, 'loadContentString');
+    it('makes expected calls', () => {
       service.resolve().pipe(first()).subscribe();
       expect(loadingServiceMock.showSpinner).toHaveBeenCalled();
-      expect(depositServiceStub.getUserAccounts).toHaveBeenCalled();
-      expect(depositServiceStub.getUserSettings).toHaveBeenCalled();
-      expect(commonServiceStub.loadContentString).toHaveBeenCalled();
+      expect(depositServiceMock.getUserAccounts).toHaveBeenCalled();
+      expect(depositServiceMock.getUserSettings).toHaveBeenCalled();
+      expect(commonServiceMock.loadContentString).toHaveBeenCalled();
+      expect(loadingServiceMock.closeSpinner).toHaveBeenCalled();
+    });
+
+    it('makes expected calls on error', () => {
+      depositServiceMock.getUserAccounts.mockReturnValue(throwError(() => new Error('Mock error message')))
+      service.resolve().pipe(first()).subscribe();
+      expect(commonServiceMock.loadContentString).toHaveBeenCalled();
+      expect(loadingServiceMock.showSpinner).toHaveBeenCalled();
+      expect(depositServiceMock.getUserAccounts).toHaveBeenCalled();
       expect(loadingServiceMock.closeSpinner).toHaveBeenCalled();
     });
   });

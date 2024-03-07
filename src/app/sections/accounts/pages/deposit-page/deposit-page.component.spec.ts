@@ -63,6 +63,7 @@ const depositService = {
   filterCreditCardDestAccounts: jest.fn().mockReturnValue([]),
   filterBillmeDestAccounts: jest.fn().mockReturnValue([]),
   sourceAccForBillmeDeposit: jest.fn().mockReturnValue(of({})),
+  deposit: jest.fn().mockReturnValue(of({})),
 };
 
 const userFacadeService = {
@@ -84,12 +85,14 @@ const modalController = {
   onDidDismiss: jest.fn().mockResolvedValue({ role: BUTTON_TYPE.RETRY }),
 };
 
-const toastService = {};
+const toastService = {
+  showError: jest.fn(),
+};
 
 const popoverCtrl = {
   create: jest.fn().mockResolvedValue({
     present: jest.fn().mockResolvedValue(true),
-    onDidDismiss: jest.fn().mockReturnValue(Promise.resolve()),
+    onDidDismiss: jest.fn().mockResolvedValue({ role: BUTTON_TYPE.OKAY }),
   }),
 };
 
@@ -432,9 +435,18 @@ describe('DepositPageComponent', () => {
   });
 
   it('should show confirmation popover when confirmationDepositPopover is called', async () => {
-    jest.spyOn(popoverCtrl, 'create');
+    const spy = jest.spyOn(popoverCtrl, 'create');
     await component.confirmationDepositPopover({});
-    expect(popoverCtrl.create).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should reset depositing when confirmationDepositPopover is called', async () => {
+    popoverCtrl.create.mockResolvedValue({
+      present: jest.fn().mockResolvedValue(true),
+      onDidDismiss: jest.fn().mockResolvedValue({ role: BUTTON_TYPE.CANCEL }),
+    });
+    await component.confirmationDepositPopover({});
+    expect(component.isDepositing).toBeFalsy();
   });
 
   it('should show popover when payment method changes with credit billme', () => {
@@ -465,7 +477,7 @@ describe('DepositPageComponent', () => {
     expect(button.nativeElement.textContent).toEqual('test');
   });
 
-  it('should show confirmation popover with Apple Pay', () => {
+  it('should not show confirmation popover with Apple Pay', () => {
     const spy = jest.spyOn(component, 'confirmationDepositPopover');
     component.sourceAccount.setValue({ accountType: AccountType.APPLEPAY });
     component.depositForm.setErrors({ invalid: true });
@@ -495,7 +507,18 @@ describe('DepositPageComponent', () => {
     expect(spyConfirmation).not.toBeCalled();
   });
 
-  it('should calculate fee on billme payment type and prompt the confirmation', async () => {
+  it('should handle Apple Pay error when it is the account type selected', async () => {
+    const error = new Error('Mock error message');
+    externalPaymentService.payWithApplePay.mockRejectedValue(error);
+    component.sourceAccount.setValue({ accountType: AccountType.APPLEPAY });
+    component.selectedAccount.setValue({});
+    component.mainFormInput.setValue('9');
+    component.mainSelect.setValue('4');
+    component.onFormSubmit();
+    expect(component.onFormSubmit).toThrowError();
+  });
+
+  it('should calculate fee on billme payment type and show the confirmation', async () => {
     const spyFee = jest.spyOn(depositService, 'calculateDepositFee');
     const spyConfirmation = jest.spyOn(component, 'confirmationDepositPopover');
     component.sourceAccount.setValue(PAYMENT_TYPE.BILLME);
@@ -548,7 +571,12 @@ describe('DepositPageComponent', () => {
   });
 
   it('should format the input amount', () => {
-    component.formatInput({ target: { value: '100.595' } });
+    component.formatInput({ target: { value: '100.598' } });
     expect(component.mainFormInput.value).toEqual('100.5');
+  });
+
+  it('should format the input amount with underscore', () => {
+    component.formatInput({ target: { value: '7895_' } });
+    expect(component.mainFormInput.value).toEqual('7895');
   });
 });
