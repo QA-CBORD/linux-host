@@ -7,13 +7,13 @@ describe('DestinationAccountDisplayPipe', () => {
   let pipe: DestinationAccountDisplayPipe;
 
   beforeEach(() => {
-    const transactionUnitsPipeStub = () => ({
-      transform: (balance, accountType) => ({})
-    });
+    const transactionUnitsPipeMock = {
+      transform: jest.fn().mockReturnValue({})
+    };
     TestBed.configureTestingModule({
       providers: [
         DestinationAccountDisplayPipe,
-        { provide: TransactionUnitsPipe, useFactory: transactionUnitsPipeStub }
+        { provide: TransactionUnitsPipe, useValue: transactionUnitsPipeMock }
       ]
     });
     pipe = TestBed.inject(DestinationAccountDisplayPipe);
@@ -43,5 +43,21 @@ describe('DestinationAccountDisplayPipe', () => {
 
     const result = pipe.transform(account, true);
     expect(result).toEqual(account.accountDisplayName);
+  });
+
+  it('should return an empty value', () => {
+    const account = null;
+    const result = pipe.transform(account, true);
+    expect(result).toBe('');
+  });
+
+  it('should return hide the balance', () => {
+    const account: UserAccount = {
+      accountDisplayName: 'Account Name',
+      balance: 1000,
+      accountType: 1,
+    } as UserAccount;
+    const result = pipe.transform(account, false);
+    expect(result).toMatch(/Account Name\s[(]\[[\w\s]+\][)]/);
   });
 });
