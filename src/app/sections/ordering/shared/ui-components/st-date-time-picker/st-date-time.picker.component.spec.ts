@@ -189,7 +189,7 @@ describe('StDateTimePicker', () => {
       menuItemsNotAvailable: of(''),
       itemsNotAvailable: of(''),
       noAvailableTenders: of(''),
-    };
+    } as OrderingComponentContentStrings;
     fixture.detectChanges();
   });
 
