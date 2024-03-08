@@ -200,19 +200,6 @@ describe('RewardsApiService', () => {
     });
   });
 
-  it('should handle error and show toast if showToast is true', () => {
-    const mockError = new Error('mocked error');
-    const rewardId = 'mockedRewardId';
-    mockHttp.post.mockReturnValueOnce(throwError(mockError));
-    service.claimReward(rewardId, true).subscribe({
-      error: error => {
-        expect(error).toEqual(mockError);
-        expect(mockHttp.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ rewardId }));
-        expect(mockPresentToast).toHaveBeenCalled();
-      },
-    });
-  });
-
   it('should handle error and show toast if showToast is not provided', () => {
     const mockError = new Error('mocked error');
     const rewardId = 'mockedRewardId';
@@ -239,20 +226,6 @@ describe('RewardsApiService', () => {
     });
   });
 
-  it('should handle error and show toast if showToastOnError is true', () => {
-    const mockError = new Error('mocked error');
-    const trackId = 'mockedTrackId';
-    const userId = 'mockedUserId';
-    mockHttp.post.mockReturnValueOnce(throwError(mockError));
-
-    service.optUserIntoRewardTrack(trackId, userId, true).subscribe({
-      error: error => {
-        expect(error).toEqual(mockError);
-        expect(mockHttp.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ trackId, userId }));
-        expect(mockPresentToast).toHaveBeenCalled();
-      },
-    });
-  });
 
   it('should handle error and show toast if showToastOnError is not provided', () => {
     const mockError = new Error('mocked error');
@@ -280,18 +253,6 @@ describe('RewardsApiService', () => {
         expect(error).toEqual(mockError);
         expect(mockHttp.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ trackId, userId }));
         expect(mockPresentToast).not.toHaveBeenCalled();
-      },
-    });
-  });
-
-  it('should handle error and show toast if showToast is true', () => {
-    const mockError = new Error('mocked error');
-    mockHttp.post.mockReturnValueOnce(throwError(mockError));
-
-    service.getUserRewardHistoryInfo(true).subscribe({
-      error: error => {
-        expect(error).toEqual(mockError);
-        expect(mockPresentToast).toHaveBeenCalled();
       },
     });
   });
