@@ -1,7 +1,8 @@
 // opt-in.guard.spec.ts
 import { UserRewardTrackInfo } from '..';
+import { CONTENT_STRINGS } from '../rewards.config';
 import { OptInGuard } from './opt-in.guard';
-import { EMPTY, Observable, Subject, map, of, throwError } from 'rxjs';
+import { EMPTY, Observable, Subject, map, of, tap, throwError } from 'rxjs';
 
 describe('OptInGuard', () => {
   let guard: OptInGuard;
@@ -51,7 +52,7 @@ describe('OptInGuard', () => {
   });
 
   it('canActivate should return true when user is opted in', () => {
-    const mockUserRewardTrackInfo = { userOptInStatus: 'yes' };
+    const mockUserRewardTrackInfo = { userOptInStatus: 1 };
     mockRewardsService.getUserRewardTrackInfo.mockReturnValueOnce(of(mockUserRewardTrackInfo));
 
     guard.canActivate().subscribe(result => {
@@ -98,5 +99,22 @@ describe('OptInGuard', () => {
 
     subject.next(null);
     subject.complete();
+  });
+  it('should call presentToast', () => {
+    const mockRewardTrackInfo = { trackID: 'track123' } as UserRewardTrackInfo;
+    jest.spyOn(guard as any, 'presentToast');
+    guard['callForOptIn'](mockRewardTrackInfo.trackID)(of(true)).pipe(
+      tap(() => expect(guard['presentToast']).toHaveBeenCalled())
+    );
+  });
+
+  it('should call getContentValueByName with correct argument and showToast with expected message', async () => {
+    const mockMessage = 'Mocked Message';
+    mockRewardsService.getContentValueByName.mockReturnValue(mockMessage);
+
+    await guard['presentToast']();
+
+    expect(mockRewardsService.getContentValueByName).toHaveBeenCalledWith(CONTENT_STRINGS.optInToast);
+    expect(mockToastService.showToast).toHaveBeenCalledWith({ message: mockMessage });
   });
 });
