@@ -226,7 +226,6 @@ describe('RewardsApiService', () => {
     });
   });
 
-
   it('should handle error and show toast if showToastOnError is not provided', () => {
     const mockError = new Error('mocked error');
     const trackId = 'mockedTrackId';
