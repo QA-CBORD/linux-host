@@ -5,7 +5,7 @@ import { UserPreferenceService } from '@shared/services/user-preferences/user-pr
 import { VaultFactory } from './vault-factory.service';
 import { VaultIdentityService } from './vault.identity.service';
 import sinon from 'sinon';
-import { PinCloseStatus, VaultMigrateResult, VAULT_DEFAULT_TIME_OUT_IN_MILLIS } from './model.identity';
+import { PinCloseStatus, VaultMigrateResult, VAULT_DEFAULT_TIME_OUT_IN_MILLIS, VaultAuthenticator } from './model.identity';
 import { ModalController } from '@ionic/angular';
 import { LoadingService } from '../loading/loading.service';
 
@@ -60,6 +60,37 @@ describe('VaultIdentityService', () => {
 
     it('should create the service', () => {
         expect(service).toBeTruthy();
+    });
+
+    describe('test model.identity.ts', () => {
+        let vaultAuthenticator: VaultAuthenticator;
+        beforeEach(() => { 
+            vaultAuthenticator = new VaultAuthenticator();
+        });
+        it('should be default', () => {
+            expect(vaultAuthenticator).toBeTruthy();
+        });
+        it('should perform success callbacks', async () => {
+            const registerPinSuppliedCb = jest.fn();
+            const registerPinModalClosedCb = jest.fn();
+            vaultAuthenticator.registerPinSuppliedCb(registerPinSuppliedCb);
+            vaultAuthenticator.registerPinModalClosedCb(registerPinModalClosedCb);
+            let res = vaultAuthenticator.authenticate('1234');
+            vaultAuthenticator.onPinSuccess();
+            await res;
+            vaultAuthenticator.onPinClosed(PinCloseStatus.LOGIN_SUCCESS);
+            expect(registerPinModalClosedCb).toHaveBeenCalledTimes(1);
+        });
+
+        it('should perform failed callbacks', async () => {
+            const registerPinSuppliedCb = jest.fn();
+            const registerPinModalClosedCb = jest.fn();
+            vaultAuthenticator.registerPinSuppliedCb(registerPinSuppliedCb);
+            vaultAuthenticator.registerPinModalClosedCb(registerPinModalClosedCb);
+            let res = vaultAuthenticator.authenticate('1234');
+            vaultAuthenticator.onPinFailed();
+            expect(res).rejects.toThrowError();
+        });
     });
 
 
