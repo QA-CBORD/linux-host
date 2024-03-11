@@ -23,7 +23,6 @@ import { WaitingListsModule } from '@sections/housing/waiting-lists/waiting-list
 import { EMPTY, of } from 'rxjs';
 import { HousingDashboardPage, SelectedHousingTab } from './housing-dashboard.component';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
-import { MockDeclaration } from 'ng-mocks';
 import { WorkOrdersComponent } from '@sections/housing/work-orders/work-orders.component';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { By } from '@angular/platform-browser';
@@ -72,7 +71,7 @@ describe('HousingDashboardPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       //TODO: Temp fix for Swiper imports, should setup JEST instead
-      declarations: [HousingDashboardPage, MockDeclaration(WorkOrdersComponent)],
+      declarations: [HousingDashboardPage, WorkOrdersComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [
         CommonModule,

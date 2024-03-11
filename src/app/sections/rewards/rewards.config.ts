@@ -23,7 +23,6 @@ export enum CONTENT_STRINGS {
   xpAwayFromRewardLabel = 'label_xp-to-unlock',
   activeRewardLabel = 'label_active-reward',
   rewardClaimedLabel = 'label_reward-claimed',
-  claimRewardLabel = 'dialog_header_claim-reward',
   noOffersLabel = 'label_no-offers-available',
   balanceLabel = 'label_balance',
   pointsLabel = 'label_points',
