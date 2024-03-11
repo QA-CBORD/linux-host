@@ -13,7 +13,7 @@ export const getTime = (date?: string) => determineDate(date).getTime();
 export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
   const localTimezone = new Date().toLocaleString(locale, { timeZone });
   const greenwichTimezone = new Date().toLocaleString(locale, { timeZone: 'GMT' });
-  let timeZoneinGMT: any = (<any> new Date(greenwichTimezone) - <any> new Date(localTimezone)) / 1000 / 60 / 60;
+  let timeZoneinGMT: number | string = (new Date(greenwichTimezone).getTime() - new Date(localTimezone).getTime()) / (1000 * 60 * 60);
   timeZoneinGMT = timeZoneinGMT * -1;
   const toString = JSON.stringify(timeZoneinGMT);
   timeZoneinGMT = `${toString[0]}${toString[1].length > 1 ? toString[1] : '0' + toString[1]}`;
