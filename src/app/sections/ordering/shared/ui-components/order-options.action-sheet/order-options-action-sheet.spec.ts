@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
-import { Day, OrderOptionsActionSheetComponent, Schedule } from './order-options.action-sheet.component';
+import { Day, OrderOptions, OrderOptionsActionSheetComponent, Schedule } from './order-options.action-sheet.component';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
@@ -19,7 +19,7 @@ import { ADDRESS_LOCATION, AddressInfo } from '@core/model/address/address-info'
 import { LoadingService } from '@core/service/loading/loading.service';
 import { of, throwError } from 'rxjs';
 import { ToastService } from '@core/service/toast/toast.service';
-import { MenuInfo, MerchantAccountInfoList, MerchantInfo } from '../../models';
+import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo } from '../../models';
 import { UserInfo } from '@core/model/user';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
@@ -601,4 +601,28 @@ describe('OrderOptionsActionSheet', () => {
     expect(document.getElementById).toHaveBeenCalledWith('time_element');
     expect(component.optionsModalAriaHidden).toBe(false);
   });
+
+  it('should define order options data correctly for pickup', () => {
+    component.orderTypes = { pickup: true, delivery: false } as MerchantOrderTypesInfo;
+    const defaultPickupAddress = {
+      accessCode: '123',
+      address1: '123 Main St',
+      address2: 'Apt 101',
+      building: 'Building A',
+      city: 'Springfield',
+    } as AddressInfo;
+    component.defaultPickupAddress = defaultPickupAddress;
+    const pickupLocations: AddressInfo[] = [
+      // Mock pickup locations
+    ];
+    component.pickupLocations = pickupLocations;
+  
+    component.defineOrderOptionsData(true); // Simulate defining order options data for pickup
+  
+    
+    expect(component.orderOptionsData).toBeDefined();
+  });
+  
+
+  
 });

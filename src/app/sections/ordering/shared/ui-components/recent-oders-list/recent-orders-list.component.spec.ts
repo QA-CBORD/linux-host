@@ -23,4 +23,11 @@ describe("RecentOrdersListComponent", () => {
   it(`propertyName has default value`, () => {
     expect(component.propertyName).toEqual(`dueTime`);
   });
+
+  it('should return id from trackOrdersById', () => {
+    const orderInfo = { id: 'testId' } as OrderInfo;
+    const result = component.trackOrdersById(0, orderInfo);
+    expect(result).toBe('testId');
+  });
+
 });

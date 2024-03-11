@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
@@ -84,7 +84,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private externalPaymentService: ExternalPaymentService,
     private readonly commonService: CommonService,
     private readonly orderingService: OrderingService,
-    private readonly appRateService: AppRateService
+    private readonly appRateService: AppRateService,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit() {
@@ -520,7 +521,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     });
     modal.onDidDismiss().then(() => {
       this.depositForm.reset();
-      this.router.navigate([PATRON_NAVIGATION.accounts]);
+      this.ngZone.run(() => {
+        this.router.navigate([PATRON_NAVIGATION.accounts]);
+      });
     });
 
     await modal.present();

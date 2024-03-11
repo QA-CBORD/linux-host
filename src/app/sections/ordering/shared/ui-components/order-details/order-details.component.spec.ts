@@ -29,8 +29,9 @@ import { TypeMessageModule } from '../../pipes/type-message/type-message.pipe.mo
 import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
 import { DateTimeSelected, TimePickerData } from '../st-date-time-picker/st-date-time-picker.component';
 import { NavigationService } from '@shared/index';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 const _modalController = {};
 const _orderingService = {
@@ -70,6 +71,11 @@ const _navigationService = {
   navigate: jest.fn(),
 };
 
+const _globalNavService = {
+  notifyBackdropShown: jest.fn(),
+  notifyBackdropHidden: jest.fn(),
+};
+
 describe('OrderDetailsComponent', () => {
   let component: OrderDetailsComponent;
   let fixture: ComponentFixture<OrderDetailsComponent>;
@@ -89,6 +95,7 @@ describe('OrderDetailsComponent', () => {
         { provide: TranslateService, useValue: _translateService },
         { provide: MerchantService, useValue: _merchantService },
         { provide: NavigationService, useValue: _navigationService },
+        { provide: GlobalNavService, useValue: _globalNavService },
       ],
       imports: [
         TypeMessageModule,
@@ -456,22 +463,40 @@ describe('OrderDetailsComponent', () => {
   });
 
   it('should return orderDetailOptions with dueTime converted to a Date if dueTime is not a Date', () => {
-    const dueTime = new Date('2022-01-01T04:00:00.000Z') ;
+    const dueTime = new Date('2022-01-01T04:00:00.000Z');
     component.orderDetailOptions = {
-      dueTime
+      dueTime,
     } as OrderDetailOptions;
 
     expect(component.timeWithoutTimezone).toEqual({ dueTime });
   });
 
   it('should return true if tipEnabled setting is found and its value is not 0', () => {
-    component.merchantSettingsList = [{ domain: 'merchant', category: 'tip', name: 'enable_tip', value: '1', contentMediaType: 1, description: 'description'}];
+    component.merchantSettingsList = [
+      {
+        domain: 'merchant',
+        category: 'tip',
+        name: 'enable_tip',
+        value: '1',
+        contentMediaType: 1,
+        description: 'description',
+      },
+    ];
 
     expect(component.isTipEnabled).toBe(true);
   });
 
   it('should return false if tipEnabled setting is not found or its value is 0', () => {
-    component.merchantSettingsList = [{ domain: 'domain', category: 'category', name: 'tipEnabled', value: '1', contentMediaType: 1, description: 'description'}];
+    component.merchantSettingsList = [
+      {
+        domain: 'domain',
+        category: 'category',
+        name: 'tipEnabled',
+        value: '1',
+        contentMediaType: 1,
+        description: 'description',
+      },
+    ];
 
     expect(component.isTipEnabled).toBe(false);
   });
@@ -482,14 +507,115 @@ describe('OrderDetailsComponent', () => {
 
     expect(result.startsWith(`${index}-`)).toBe(true);
   });
-  
+
   it('should not call onModalDismiss if paymentFormControl has no value or VoiceOver is not enabled', () => {
     component.paymentFormControl.setValue(null);
     jest.spyOn(_a11yService, 'isVoiceOverEnabled$').mockReturnValueOnce(of(false));
     const onModalDismissSpy = jest.spyOn(component, 'onModalDismiss');
-  
+
     component.openActionSheet();
-  
+
     expect(onModalDismissSpy).not.toHaveBeenCalled();
   });
+
+  it('should return the address form control', () => {
+    const mockFormControl = new FormControl();
+    component.detailsForm = new FormGroup({
+      [FORM_CONTROL_NAMES.address]: mockFormControl,
+    });
+  
+    const result = component['addressInfoFormControl'];
+  
+    expect(result).toBe(mockFormControl);
+  });
+
+  it('should return the tip form control', () => {
+    const mockFormControl = new FormControl();
+    component.detailsForm = new FormGroup({
+      [FORM_CONTROL_NAMES.tip]: mockFormControl,
+    });
+    const result = component.tipFormControl;
+    expect(result).toBe(mockFormControl);
+  });
+  
+  it('should return the cvv form control', () => {
+    const mockFormControl = new FormControl();
+    component.detailsForm = new FormGroup({
+      [FORM_CONTROL_NAMES.cvv]: mockFormControl,
+    });
+  
+    const result = component.cvvFormControl;
+  
+    expect(result).toBe(mockFormControl);
+  });
+
+  it('should clean due time errors', () => {
+    const dueTimeErrorKey = component.getDueTimeErrorKey();
+    const onDueTimeErrorCleanSpy = jest.spyOn(component.onDueTimeErrorClean, 'emit');
+  
+    component.cleanDueTimeErrors();
+  
+    expect(component.dueTimeFormControl.hasError(dueTimeErrorKey)).toBe(false);
+    expect(onDueTimeErrorCleanSpy).toHaveBeenCalled();
+    expect(component.errorCode).toBeNull();
+    expect(component.dueTimeHasErrors).toBe(false);
+  });
+  
+  it('should notify backdrop shown on select click', () => {
+    const notifyBackdropShownSpy = jest.spyOn(_globalNavService, 'notifyBackdropShown');
+    component.onSelectClick();
+    expect(notifyBackdropShownSpy).toHaveBeenCalled();
+  });
+  
+  it('should notify backdrop hidden on modal dismiss', () => {
+    const notifyBackdropHiddenSpy = jest.spyOn(_globalNavService, 'notifyBackdropHidden');
+    component.onModalDismiss();
+    expect(notifyBackdropHiddenSpy).toHaveBeenCalled();
+  });
+
+  it('should return false if dueTimeHasErrors is true and orderDetailOptions.isASAP is true', () => {
+    component.dueTimeHasErrors = true;
+    component.orderDetailOptions = { isASAP: true } as OrderDetailOptions;
+  
+    const result = component.showASAP;
+  
+    expect(result).toBe(false);
+  });
+  
+  it('should return true if dueTimeHasErrors is false or orderDetailOptions.isASAP is false', () => {
+    component.dueTimeHasErrors = false;
+    component.orderDetailOptions = { isASAP: true } as OrderDetailOptions;
+  
+    const result = component.showASAP;
+  
+    expect(result).toBe(true);
+  
+    component.dueTimeHasErrors = true;
+    component.orderDetailOptions = { isASAP: false } as OrderDetailOptions;
+  
+    const result2 = component.showASAP;
+  
+    expect(result2).toBe(true);
+  });
+
+  it('should emit onOrderItemRemovedId event with the passed id', () => {
+    const mockId = '123';
+    const onOrderItemRemovedIdSpy = jest.spyOn(component.onOrderItemRemovedId, 'emit');
+  
+    component.onRemoveOrderItem(mockId);
+  
+    expect(onOrderItemRemovedIdSpy).toHaveBeenCalledWith(mockId);
+  });
+
+  it('should call emptyCart with translated remove message', () => {
+    const mockMessage = 'mock remove message';
+    const emptyCartSpy = jest.spyOn(component, 'emptyCart');
+    jest.spyOn(_translateService, 'instant').mockReturnValue(mockMessage);
+  
+    component.onEmptyCart();
+  
+    expect(emptyCartSpy).toHaveBeenCalledWith(mockMessage);
+  });
+
+
 });
