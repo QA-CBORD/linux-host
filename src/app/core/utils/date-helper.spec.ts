@@ -112,7 +112,7 @@ describe('DateHelper', () => {
     expect(isSameDay(currentDate, nextDate, 0)).toBe(false);
   });
   it('should return formatted date string', () => {
-    const date = new Date('2024-03-11');
+    const date = new Date(2024,2,20);
     const weekContentStrings = [
       { name: 'Sunday', value: 'Sun' },
       { name: 'Monday', value: 'Mon' },
@@ -143,7 +143,7 @@ describe('DateHelper', () => {
       monthContentStrings as ContentStringInfo[]
     );
 
-    expect(result).toBe('Sun, Mar 10');
+    expect(result).toBe('Wed, Mar 20');
   });
 
   it('should format date string by replacing timezone with colon', () => {
