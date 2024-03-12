@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { MerchantSettingInfo } from '..';
 
-interface ItemFindData {
+export interface ItemFindData {
   scanCodeResult: string;
   manualEntry: string;
 }
