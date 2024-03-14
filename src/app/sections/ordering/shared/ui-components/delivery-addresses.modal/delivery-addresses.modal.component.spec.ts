@@ -1,14 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DeliveryAddressesModalComponent } from './delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { MerchantService } from '@sections/ordering/services';
-import { IonicModule, ModalController } from '@ionic/angular';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { SettingsApiService } from '@core/service/settings-api-service/settings-api.service';
-import { of } from 'rxjs';
-import { Building } from '@sections/housing/building/building.model';
-import { BuildingInfo } from '../../models';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { SettingsApiService } from '@core/service/settings-api-service/settings-api.service';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { MerchantService } from '@sections/ordering/services';
+import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { of } from 'rxjs';
+import { BuildingInfo } from '../../models';
+import { DeliveryAddressesModalComponent } from './delivery-addresses.modal.component';
 
 describe('DeliveryAddressesModalComponent', () => {
   let component: DeliveryAddressesModalComponent;

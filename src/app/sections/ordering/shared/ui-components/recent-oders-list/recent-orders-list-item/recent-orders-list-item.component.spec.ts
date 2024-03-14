@@ -3,6 +3,7 @@ import { RecentOrdersListItemComponent } from './recent-orders-list-item.compone
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { OrderInfo } from '@sections/ordering/shared/models/order-info.model';
 import { OrderItemsSummaryModule } from '@sections/ordering/shared/pipes/order-items-summary/order-items-summary.module';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('RecentOrdersListItemComponent', () => {
   let component: RecentOrdersListItemComponent;
@@ -19,9 +20,10 @@ describe('RecentOrdersListItemComponent', () => {
       imports: [OrderItemsSummaryModule],
       providers: [
         { provide: OrderingService, useValue: mockOrderingService }
-      ]
-    })
-    .compileComponents();
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+
+    }).compileComponents();
   });
 
   beforeEach(() => {

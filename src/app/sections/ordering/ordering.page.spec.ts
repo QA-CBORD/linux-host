@@ -14,6 +14,7 @@ import { TypeMessageModule } from './shared/pipes/type-message/type-message.pipe
 import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 import { MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from './components';
 import { TOAST_MESSAGES } from './ordering.config';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('OrderingPage', () => {
   let component: OrderingPage;
@@ -85,6 +86,7 @@ describe('OrderingPage', () => {
         { provide: PopoverController, useValue: mockPopoverController },
         { provide: ActivatedRoute, useValue: activatedRoute },
       ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     });
 
     fixture = TestBed.createComponent(OrderingPage);

@@ -3,6 +3,7 @@ import { OrderAddressItemComponent } from './order-address-item.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { AddressSubHeaderFormatPipeModule } from '@shared/pipes/address-subheader-format-pipe/address-subheader-format-pipe.module';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('OrderAddressItemComponent', () => {
   let component: OrderAddressItemComponent;
@@ -12,6 +13,7 @@ describe('OrderAddressItemComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [OrderAddressItemComponent],
       imports: [AddressHeaderFormatPipeModule, AddressSubHeaderFormatPipeModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
 
     fixture = TestBed.createComponent(OrderAddressItemComponent);

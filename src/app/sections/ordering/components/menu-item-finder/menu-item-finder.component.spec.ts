@@ -8,6 +8,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { AddressInfo } from '@core/model/address/address-info';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('MenuItemFinderComponent', () => {
   let component: MenuItemFinderComponent;
@@ -49,7 +50,8 @@ describe('MenuItemFinderComponent', () => {
         { provide: CommonService, useValue: mockCommonService },
         { provide: ToastService, useValue: mockToastService },
       ],
-    });
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MenuItemFinderComponent);
     component = fixture.componentInstance;
