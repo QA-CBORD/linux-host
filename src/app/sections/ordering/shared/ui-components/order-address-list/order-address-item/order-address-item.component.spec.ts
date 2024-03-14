@@ -4,6 +4,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { AddressSubHeaderFormatPipeModule } from '@shared/pipes/address-subheader-format-pipe/address-subheader-format-pipe.module';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 
 describe('OrderAddressItemComponent', () => {
   let component: OrderAddressItemComponent;
@@ -12,7 +13,7 @@ describe('OrderAddressItemComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [OrderAddressItemComponent],
-      imports: [AddressHeaderFormatPipeModule, AddressSubHeaderFormatPipeModule],
+      imports: [AddressHeaderFormatPipeModule, AddressSubHeaderFormatPipeModule, IonicModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
 
