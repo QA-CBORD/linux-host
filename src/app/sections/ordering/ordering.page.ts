@@ -82,11 +82,6 @@ export class OrderingPage implements OnInit {
       );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  locationPinHandler(event: string) {
-    // TODO location feature
-  }
-
   private openOrderOptions(merchant) {
     this.cartService.setActiveMerchant(merchant);
     this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings, merchant.timeZone);
