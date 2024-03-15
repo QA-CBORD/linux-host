@@ -5,33 +5,12 @@ export interface InputValidator {
 }
 
 export class SupportedInputValidators {
-  static nullablePhone(): InputValidator {
-    return {
-      test: value => {
-        return !value || (/^[0-9]*$/.test(value) && value.length >= 9 && value.length <= 10);
-      },
-    };
-  }
-
-  static phoneNumber(): InputValidator {
-    return {
-      test: value => {
-        return /^[0-9]*$/.test(value) && value.length >= 10 && value.length <= 11;
-      },
-    };
-  }
 
   static min(min: number): InputValidator {
     return {
       test: value => {
         return value && value.length >= min;
       },
-    };
-  }
-
-  static password(): InputValidator {
-    return {
-      test: value => value && value.length >= 8 && value.length <= 12,
     };
   }
 
@@ -47,12 +26,6 @@ export class SupportedInputValidators {
       test: value => {
         return value && value.length <= max;
       },
-    };
-  }
-
-  static requiredRange(min: number, max: number): InputValidator {
-    return {
-      test: value => value.length >= min && value.length <= max,
     };
   }
 

@@ -18,7 +18,7 @@ import { DepositModule } from './deposit.module';
 import { Storage } from '@ionic/storage';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { ACCOUNT_TYPES, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { By } from '@angular/platform-browser';
 import { AccountType } from 'src/app/app.global';
 import { DepositCsModel } from './deposit-page.content.string';
@@ -41,7 +41,7 @@ const depositService = {
     domain: 'get',
     category: 'deposit',
     contentMediaType: 3,
-    value: '[1,2]',
+    value: '[1,3]',
     description: 'Whether free-form amount entry is allowed for registered users.',
   }),
   settings$: of([
@@ -51,7 +51,7 @@ const depositService = {
       category: 'cat',
     } as SettingInfo,
     {
-      name: 'test2',
+      name: 'get.credit.payment_system_type',
       value: '3',
       category: 'cat 2',
     } as SettingInfo,
@@ -74,6 +74,7 @@ const userFacadeService = {
 
 const externalPaymentService = {
   payWithApplePay: jest.fn().mockResolvedValue({ success: true }),
+  addUSAePayCreditCard: jest.fn().mockResolvedValue({ success: true }),
 };
 
 const cdRef = {};
@@ -101,7 +102,7 @@ const appRateService = {
 };
 
 const loadingService = {
-  showSpinner: jest.fn(),
+  showSpinner: jest.fn().mockResolvedValue(true),
   closeSpinner: jest.fn(),
 };
 
@@ -124,7 +125,7 @@ const accounts = [
     userId: '8b230383-0b35-4b0a-87b3-ec6f62dedd34',
     isActive: true,
     accountDisplayName: 'GET Meals',
-    paymentSystemType: 1,
+    paymentSystemType: 3,
     accountTender: '800',
     isAccountTenderActive: true,
     accountType: 1,
@@ -384,6 +385,11 @@ const accounts = [
     balance: null,
   },
 ];
+
+jest.mock('rxjs', () => ({
+  ...jest.requireActual('rxjs'),
+  throwError: () => new Error('Mock error message'),
+}));
 describe('DepositPageComponent', () => {
   let component: DepositPageComponent;
   let fixture: ComponentFixture<DepositPageComponent>;
@@ -411,6 +417,7 @@ describe('DepositPageComponent', () => {
     fixture = TestBed.createComponent(DepositPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    jest.clearAllMocks();
   });
 
   it('can load instance', () => {
@@ -493,6 +500,11 @@ describe('DepositPageComponent', () => {
     component.mainSelect.setValue('5');
     component.onFormSubmit();
     expect(spy).not.toBeCalled();
+  });
+
+  it('should reset depositing flag', () => {
+    component['refreshDeposit']();
+    expect(component.isDepositing).toBeFalsy();
   });
 
   it('should call Apple Pay when it is the account type selected', () => {
@@ -578,5 +590,43 @@ describe('DepositPageComponent', () => {
   it('should format the input amount with underscore', () => {
     component.formatInput({ target: { value: '7895_' } });
     expect(component.mainFormInput.value).toEqual('7895');
+  });
+
+  it('should add new cards using USAePay', () => {
+    const spy = jest.spyOn(externalPaymentService, 'addUSAePayCreditCard');
+    component.sourceAccount.setValue('newCreditCard');
+    component['setFormValidators']();
+    expect(spy).toBeCalledTimes(1);
+  });
+
+  it('should throw on add new cards error using USAePay', () => {
+    const spy = jest.spyOn(loadingService, 'showSpinner');
+    externalPaymentService.addUSAePayCreditCard.mockReturnValue(of({ success: false }));
+    component.sourceAccount.setValue('newCreditCard');
+    component['setFormValidators']();
+    expect(spy).not.toBeCalled();
+  });
+
+  it('should show an validation error', () => {
+    component.fromAccountCvv.setValue('23');
+    component.sourceAccount.setValue({ accountType: ACCOUNT_TYPES.charge });
+    component['resolveCVVValidators'](PAYMENT_TYPE.CREDIT);
+    expect(component.fromAccountCvv.errors.required).toBeTruthy();
+  });
+
+  it('should add new cards using Monetra', () => {
+    const spy = jest.spyOn(externalPaymentService, 'addUSAePayCreditCard');
+    depositService.getSettingByName.mockReturnValue({
+      id: '13cba56e-d78e-4c55-9f04-d73037ebcdea',
+      name: 'allow_freeform_onetime_amounts',
+      domain: 'get',
+      category: 'deposit',
+      contentMediaType: 3,
+      value: '3',
+      description: 'Whether free-form amount entry is allowed for registered users.',
+    });
+    component.sourceAccount.setValue('newCreditCard');
+    component['setFormValidators']();
+    expect(spy).not.toBeCalled();
   });
 });
