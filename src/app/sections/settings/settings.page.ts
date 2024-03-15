@@ -52,7 +52,6 @@ export class SettingsPage implements OnInit {
       .toPromise()
       .then(isGuest => (this.isGuest = isGuest));
     this.isHousingOnly = await this.profileService.housingOnlyEnabled();
-    this.settingsFactory.getSettings().then(console.log);
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
