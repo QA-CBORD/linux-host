@@ -52,13 +52,15 @@ export class SettingsPage implements OnInit {
       .toPromise()
       .then(isGuest => (this.isGuest = isGuest));
     this.isHousingOnly = await this.profileService.housingOnlyEnabled();
+    this.settingsFactory.getSettings().then(console.log);
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
   async navigateToPhotoUpload(): Promise<void> {
     const isPhotoVisible = await firstValueFrom(this.settingsFactory.photoUploadVisible$);
+    const isPhotoUpdateEnabled = await firstValueFrom(this.settingsFactory.photoUploadEnabled$);
 
-    if (!isPhotoVisible || this.isHousingOnly) {
+    if (!isPhotoVisible || !isPhotoUpdateEnabled || this.isHousingOnly) {
       return;
     }
 
@@ -87,9 +89,7 @@ export class SettingsPage implements OnInit {
   }
 
   getUserPhoto$(): Observable<string> {
-    return this.userFacadeService.getAcceptedPhoto$().pipe(
-      catchError(() => of('../../../assets/images/no_photo.svg'))
-    );
+    return this.userFacadeService.getAcceptedPhoto$().pipe(catchError(() => of('../../../assets/images/no_photo.svg')));
   }
 
   getInstitutionName$(): Observable<string> {
