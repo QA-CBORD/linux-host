@@ -13,7 +13,6 @@ describe('amountRangeValidator', () => {
         const validator = amountRangeValidator(0, 100);
         const control = new FormControl(-50);
         const result = validator(control);
-        console.log(result);
         expect(result.minLength).toBeDefined();
     });
 

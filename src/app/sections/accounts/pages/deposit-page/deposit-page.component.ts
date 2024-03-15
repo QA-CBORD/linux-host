@@ -267,11 +267,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     let amount = mainInput || mainSelect;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {
-      Browser.addListener(browserState.FINISHED, () => {
-        this.isDepositing = false;
-        this.cdRef.detectChanges();
-        Browser.removeAllListeners();
-      });
+      Browser.addListener(browserState.FINISHED, this.refreshDeposit);
 
       this.externalPaymentService
         .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
@@ -558,5 +554,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   private getSettingByName(settings, property: string) {
     const depositSetting = this.depositService.getSettingByName(settings, property);
     return depositSetting.value;
+  }
+
+  private refreshDeposit() {
+    this.isDepositing = false;
+    this.cdRef.detectChanges();
+    Browser.removeAllListeners();
   }
 }
