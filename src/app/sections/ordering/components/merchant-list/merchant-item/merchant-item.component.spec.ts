@@ -4,6 +4,7 @@ import { MerchantInfo } from '@sections/ordering/shared/models';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('MerchantItemComponent', () => {
   let component: MerchantItemComponent;
@@ -25,8 +26,9 @@ describe('MerchantItemComponent', () => {
       providers: [
         { provide: EnvironmentFacadeService, useValue: mockEnvironmentFacadeService },
         { provide: OrderingService, useValue: mockOrderingService }
-      ]
-    });
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MerchantItemComponent);
     component = fixture.componentInstance;

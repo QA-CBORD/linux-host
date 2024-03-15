@@ -254,7 +254,7 @@ export class RewardsService {
         return this.getContentValueByName(CONTENT_STRINGS.rewardClaimedLabel);
       case LEVEL_STATUS.unlocked:
         return rewards.length > 0
-          ? this.getContentValueByName(CONTENT_STRINGS.claimRewardLabel)
+          ? this.getContentValueByName(CONTENT_STRINGS.claimTitle)
           : this.getContentValueByName(CONTENT_STRINGS.noOffersLabel);
       default:
         return '';

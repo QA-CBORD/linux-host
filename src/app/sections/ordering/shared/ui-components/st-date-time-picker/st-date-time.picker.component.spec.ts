@@ -180,7 +180,6 @@ describe('StDateTimePicker', () => {
       orderingDatesUnavailable: of(''),
       lblBtnAdd2Cart: of(''),
       titleEditAddresses: of(''),
-      reorderNotAvailableItemMessage: of(''),
       insufficientBalanceMealsPayment: of(''),
       disableOrdering: of(''),
       mediaLostException: of(''),
