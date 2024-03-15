@@ -42,7 +42,7 @@ export class MerchantItemComponent implements OnInit {
     this.merchantClick.emit(merchantInfo);
   }
 
-  triggerFavourite(event, { isFavorite = null, id }: MerchantInfo) {
+  triggerFavourite(event, { isFavorite, id }: MerchantInfo) {
     this.addToFav.emit({ isFavorite, id });
   }
 

@@ -10,7 +10,6 @@
   <st-merchant-list
     [merchantList]="merchantList$ | async | search: searchString"
     (addToFav)="favouriteHandler($event)"
-    (locationPin)="locationPinHandler($event)"
     (merchantClick)="merchantClickHandler($event)"
   ></st-merchant-list>
 </ion-content>

@@ -140,7 +140,7 @@ describe('WorkOrderStateService', () => {
         forEach: function (callbackfn: (value: FormDataEntryValue, key: string, parent: FormData) => void, thisArg?: any): void {
           throw new Error('Function not implemented.');
         }
-      }; // Provide appropriate mock values
+      } as FormData; // Provide appropriate mock values
 
       service.setWorkOrderImageBlob(formData);
 
@@ -213,7 +213,7 @@ describe('WorkOrderStateService', () => {
         forEach: function (callbackfn: (value: FormDataEntryValue, key: string, parent: FormData) => void, thisArg?: any): void {
           throw new Error('Function not implemented.');
         }
-      }; // Provide appropriate mock values
+      } as FormData; // Provide appropriate mock values
       service.setWorkOrderImageBlob(formData);
 
       service.WorkOrderImageBlob.subscribe((result) => {

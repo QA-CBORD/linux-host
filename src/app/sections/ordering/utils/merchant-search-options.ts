@@ -10,9 +10,4 @@ export class MerchantSearchOptions {
   addSearchOption(searchOption: MerchantSearchOption) {
     this.list.push(searchOption);
   }
-
-  // addSearchOptions(searchOptions: MerchantSearchOption[]) {
-
-  //   this.searchOptions = { ...this.searchOptions, searchOptions };
-  // }
 }

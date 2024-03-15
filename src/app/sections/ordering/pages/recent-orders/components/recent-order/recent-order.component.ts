@@ -419,7 +419,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   private async initConfirmModal(onSuccessCb): Promise<void> {
-    const message = await firstValueFrom(this.contentStrings.reorderNotAvailableItemMessage);
+    const message = await firstValueFrom(this.contentStrings.itemsNotAvailable);
     const modal = await this.popoverController.create({
       cssClass: 'sc-popover',
       component: StGlobalPopoverComponent,
@@ -505,8 +505,8 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.contentStrings.buttonCancelOrder = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.buttonCancelOrder
     );
-    this.contentStrings.reorderNotAvailableItemMessage = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.reorderNotAvailableItemMessage
+    this.contentStrings.itemsNotAvailable = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.itemsNotAvailable
     );
     this.lockDownService.loadStringsAndSettings();
   }

@@ -113,7 +113,6 @@ export enum ORDERING_CONTENT_STRINGS {
   orderingDatesUnavailable = 'ordering_dates_unavailable',
   lblBtnAdd2Cart = 'lbl_btn_add2_cart',
   titleEditAddresses = 'title_edit_address',
-  reorderNotAvailableItemMessage = 'not_orders_items_available',
   insufficientBalanceMealsPayment = 'insufficient_balance_meals_payment',
   disableOrdering = 'disable_ordering',
   mediaLostException = 'MediaLostException',
