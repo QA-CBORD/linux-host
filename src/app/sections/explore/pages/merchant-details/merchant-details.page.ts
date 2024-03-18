@@ -7,9 +7,10 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { MerchantInfo } from '@sections/ordering';
+import { OrderingResolver } from '@sections/ordering/resolvers';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { LockDownService } from '@shared/index';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
 @Component({
@@ -27,6 +28,7 @@ export class MerchantDetailsPage implements OnInit {
   filledStarPath = '/assets/icon/star-filled.svg';
   blankStarPath = '/assets/icon/star-outline.svg';
   private readonly orderActionSheetService = inject(OrderActionSheetService);
+  private readonly orderingResolverService = inject(OrderingResolver);
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -74,6 +76,7 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
+    await firstValueFrom(this.orderingResolverService.resolve());
     this.orderActionSheetService.openOrderOptionsByMerchantId(merchantId);
   }
 

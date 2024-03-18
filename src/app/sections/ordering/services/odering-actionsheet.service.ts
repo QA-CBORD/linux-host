@@ -9,6 +9,8 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { LOCAL_ROUTING } from '../ordering.config';
 import { ToastService } from '@core/service/toast/toast.service';
+import { TranslateService } from '@ngx-translate/core';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +22,7 @@ export class OrderActionSheetService {
   private readonly merchantService = inject(MerchantService);
   private readonly routingService = inject(NavigationService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   openActionSheet(): void {
     this.openActionSheetSubject.next();
@@ -45,7 +48,11 @@ export class OrderActionSheetService {
     );
 
     if (!merchant) {
-      this.onToastDisplayed('We were unable to find your merchant - Please try again');
+      this.onToastDisplayed(
+        this.translateService.instant(
+          `${CONTENT_STRINGS_DOMAINS.get_common}.${CONTENT_STRINGS_CATEGORIES.error}.selected_merchant_not_found`
+        )
+      );
       return;
     }
     this.openOrderOptions(merchant);
@@ -53,7 +60,12 @@ export class OrderActionSheetService {
 
   openOrderOptions(merchant: MerchantInfo) {
     if (!this.merchantService.isOpen(merchant)) {
-      this.onToastDisplayed(`${merchant.name} is currently closed, please try again during operating hours`);
+      this.onToastDisplayed(
+        this.translateService.instant(
+          `${CONTENT_STRINGS_DOMAINS.get_common}.${CONTENT_STRINGS_CATEGORIES.error}.selected_merchant_closed`,
+          { merchantName: merchant.name }
+        )
+      );
       return;
     }
     this.cartService.setActiveMerchant(merchant);

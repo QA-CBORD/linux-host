@@ -102,6 +102,7 @@
       "create_account": "Error creating account.",
       "deactivate_account": "Error deactivating account.",
       "deposit": "Error depositing funds.",
+      "disable_ordering": "Ordering is currently unavailable. Please contact your institution's admin for more information.",
       "double_post": "You may have pressed submit twice. Only the first submission was processed.",
       "email_mismatch": "The email address fields do not match, please try again",
       "guest_login_not_supported": "Guest logins are not currently supported on GET mobile, you have been redirected to the full site.",
@@ -136,7 +137,9 @@
       "system_message_get_food": "",
       "system_message_get_funds": "",
       "system_message_get_venues": "",
-      "user_connection": "User connection error."
+      "user_connection": "User connection error.",
+      "selected_merchant_not_found": "We were unable to find your merchant - Please try again",
+      "selected_merchant_closed": "{{merchantName}} is currently closed, please try again during operating hours"
     },
     "logout": {
       "message": "Your institution does not support logout; for improved security, please close your browser."

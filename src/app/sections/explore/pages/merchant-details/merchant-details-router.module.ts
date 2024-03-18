@@ -7,10 +7,7 @@ import { OrderingResolver } from '@sections/ordering/resolvers';
 const routes: Routes = [
   {
     path: '',
-    component: MerchantDetailsPage,
-    resolve: {
-      data: OrderingResolver,
-    },
+    component: MerchantDetailsPage
   },
 ];
 

@@ -8,6 +8,7 @@ import { MerchantService } from './merchant.service';
 import { of } from 'rxjs';
 import { OrderInfo, MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from '../components';
 import { ORDER_TYPE } from '../ordering.config';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('OrderActionSheetService', () => {
   let service: OrderActionSheetService;
@@ -43,8 +44,11 @@ describe('OrderActionSheetService', () => {
     create: jest.fn().mockResolvedValue({ present: () => Promise.resolve() }),
     createActionSheet: jest
       .fn()
-      .mockResolvedValue({ onDidDismiss: () => Promise.resolve({data: {}}), present: () => Promise.resolve() }),
+      .mockResolvedValue({ onDidDismiss: () => Promise.resolve({ data: {} }), present: () => Promise.resolve() }),
   };
+
+  const _translateService = { instant: jest.fn() };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -53,6 +57,7 @@ describe('OrderActionSheetService', () => {
         { provide: MerchantService, useValue: _merchantService },
         { provide: NavigationService, useValue: _routingService },
         { provide: ToastService, useValue: _toastService },
+        { provide: TranslateService, useValue: _translateService },
       ],
     });
     service = TestBed.inject(OrderActionSheetService);
@@ -89,11 +94,10 @@ describe('OrderActionSheetService', () => {
     } as MerchantInfo;
     const onToastDisplayedSpy = jest.spyOn(service as any, 'onToastDisplayed');
 
+    const errorMessage = `${merchantInfo.name} is currently closed, please try again during operating hours`;
+    _translateService.instant.mockReturnValueOnce(errorMessage);
     service.openOrderOptions(merchantInfo);
-
-    expect(onToastDisplayedSpy).toHaveBeenCalledWith(
-      `${merchantInfo.name} is currently closed, please try again during operating hours`
-    );
+    expect(onToastDisplayedSpy).toHaveBeenCalledWith(errorMessage);
   });
 
   it('should open order options if merchant is open and not in lockdown or walkout', () => {
@@ -120,9 +124,10 @@ describe('OrderActionSheetService', () => {
   it('should display toast if merchant is not found', async () => {
     const onToastDisplayedSpy = jest.spyOn(service as any, 'onToastDisplayed');
 
+    const errorMessage = 'We were unable to find your merchant - Please try again';
+    _translateService.instant.mockReturnValueOnce(errorMessage);
     await service.openOrderOptionsByMerchantId('testMerchantId');
-
-    expect(onToastDisplayedSpy).toHaveBeenCalledWith('We were unable to find your merchant - Please try again');
+    expect(onToastDisplayedSpy).toHaveBeenCalledWith(errorMessage);
   });
 
   it('should open order options if merchant is open', async () => {
