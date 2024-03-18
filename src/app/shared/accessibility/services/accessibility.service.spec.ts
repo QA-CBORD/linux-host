@@ -5,12 +5,14 @@ import { CommonModule } from '@angular/common';
 import { AccessibleSelectModule } from '../directives/accessible-select.module';
 import { ScreenReader } from '@capacitor/screen-reader';
 import { Capacitor } from '@capacitor/core';
+import { TranslateService } from '@ngx-translate/core';
+
 
 const htmlMock = [{ item: { style: { display : ''}}, namedItem: {}  }] as any;
 
 describe(AccessibilityService, () => {
   let service: AccessibilityService;
-  let _platform, _capacitor, _screenReader;
+  let _platform, _capacitor, _screenReader,_translateService;
 
   beforeEach(() => {
     _platform = {
@@ -32,6 +34,7 @@ describe(AccessibilityService, () => {
         { provide: Platform, useValue: _platform },
         { provide: ScreenReader, useValue: _screenReader },
         { provide: Capacitor, useValue: _capacitor },
+        {provide: TranslateService, useValue: _translateService }
       ],
     });
 
@@ -46,7 +49,7 @@ describe(AccessibilityService, () => {
   });
 
   it('should create the service', () => {
-    service = new AccessibilityService(_platform);
+    service = new AccessibilityService(_platform, _translateService);
     expect(service).toBeTruthy();
   });
 
