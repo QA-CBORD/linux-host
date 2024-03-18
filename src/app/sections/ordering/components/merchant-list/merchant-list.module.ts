@@ -4,14 +4,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { MerchantListComponent } from '@sections/ordering';
 import { MerchantItemComponent } from './merchant-item';
-import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
-import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
-import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
-import { OrderTypePipeModule } from '@sections/ordering/shared/pipes/order-type/order-type.module';
-import { OrderAheadBadgeComponent } from '@shared/order-ahead-badge/order-ahead-badge.component';
-import { OrderTypeDisplayComponent } from '@shared/order-type-display/order-type-display.component';
+import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
-const declarations = [MerchantListComponent, MerchantItemComponent];
+const declarations = [MerchantListComponent];
 
 @NgModule({
   declarations,
@@ -19,12 +14,8 @@ const declarations = [MerchantListComponent, MerchantItemComponent];
   imports: [
     CommonModule,
     IonicModule,
-    MerchantDistanceModule,
-    OrderOptionsActionSheetModule,
-    StopPropagationModule,
-    OrderTypePipeModule,
-    OrderAheadBadgeComponent,
-    OrderTypeDisplayComponent,
+    MerchantItemComponent,
+    OrderOptionsActionSheetComponent,
   ],
 })
 export class MerchantListModule {}

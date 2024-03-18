@@ -1,18 +1,15 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ModalsService } from '@core/service/modals/modals.service';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { APP_ROUTES } from '@sections/section.config';
+import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { LockDownService } from '@shared/index';
-import { NavigationService } from '@shared/services/navigation.service';
 import { Observable, iif } from 'rxjs';
-import { first, map, switchMap, take } from 'rxjs/operators';
-import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
-import { CartService, MerchantService } from './services';
-import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
-import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { finalize, first, switchMap, tap } from 'rxjs/operators';
+import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
+import { MerchantService } from './services';
+import { MerchantInfo } from './shared/models';
 
 @Component({
   selector: 'st-ordering.page',
@@ -22,18 +19,14 @@ import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-o
 })
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
-  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   searchString = '';
-
+  private readonly orderActionSheetService = inject(OrderActionSheetService);
+  private readonly translateService = inject(TranslateService);
   constructor(
-    private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
-    private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly orderingService: OrderingService,
-    private readonly routingService: NavigationService,
     private readonly lockDownService: LockDownService
   ) {}
 
@@ -57,88 +50,40 @@ export class OrderingPage implements OnInit {
       return;
     }
 
-    if (!this.isOpen(merchantInfo)) {
-      this.onToastDisplayed(`${merchantInfo.name} is currently closed, please try again during operating hours`);
-      return;
-    }
-
     this.openOrderOptions(merchantInfo);
   }
 
   async favouriteHandler({ isFavorite, id }): Promise<void> {
     await this.loadingService.showSpinner();
-    const addedToFav = await this.contentStrings.labelAddedToFavorites.pipe(take(1)).toPromise();
-    const removeToFav = await this.contentStrings.labelRemovedFromFavorites.pipe(take(1)).toPromise();
 
     iif(() => isFavorite, this.merchantService.removeFavoriteMerchant(id), this.merchantService.addFavoriteMerchant(id))
       .pipe(
         switchMap(() => this.merchantService.getMerchantsWithFavoriteInfo()),
-        first()
+        first(),
+        tap(() =>
+          this.onToastDisplayed(
+            this.translateService.instant(
+              `patron-ui.ordering.${
+                isFavorite
+                  ? ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites
+                  : ORDERING_CONTENT_STRINGS.labelAddedToFavorites
+              }`
+            )
+          )
+        ),
+        finalize(() => this.loadingService.closeSpinner())
       )
-      .subscribe(
-        () => this.onToastDisplayed(isFavorite ? removeToFav : addedToFav),
-        null,
-        () => this.loadingService.closeSpinner()
-      );
+      .subscribe();
   }
 
-  private openOrderOptions(merchant) {
-    this.cartService.setActiveMerchant(merchant);
-    this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings, merchant.timeZone);
-  }
-
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings, timeZone) {
-    const footerButtonName = 'continue';
-    let cssClass = 'order-options-action-sheet';
-    cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
-    this.merchantService.orderTypes = orderTypes;
-    this.cartService.removeOrderDetailsOptions();
-
-    const modal = await this.modalController.createActionSheet(
-      {
-        component: OrderOptionsActionSheetComponent,
-        cssClass,
-        componentProps: {
-          orderTypes,
-          footerButtonName,
-          merchantId,
-          storeAddress,
-          settings,
-          timeZone,
-        },
-      },
-      true
-    );
-
-    modal.onDidDismiss().then(({ data }) => {
-      if (data) {
-        this.cartService.clearActiveOrder();
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
-        this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
-      }
-    });
-    await modal.present();
+  private openOrderOptions(merchant: MerchantInfo) {
+    this.orderActionSheetService.openOrderOptions(merchant);
   }
 
   private async handleActiveMerchantInRoute(): Promise<void> {
     const merchantId = this.activatedRoute.snapshot.queryParams.merchantId;
     if (merchantId) {
-      const merchant = await this.merchantList$
-        .pipe(
-          map((merchants: MerchantInfo[]) => merchants.find(({ id }) => id === merchantId)),
-          first()
-        )
-        .toPromise();
-
-      if (!merchant) {
-        this.onToastDisplayed('We were unable to find your merchant - Please try again');
-        return;
-      }
-      if (!this.isOpen(merchant)) {
-        this.onToastDisplayed(`${merchant.name} is currently closed, please try again during operating hours`);
-        return;
-      }
-      this.openOrderOptions(merchant);
+      this.orderActionSheetService.openOrderOptionsByMerchantId(merchantId);
     }
   }
 
@@ -146,20 +91,8 @@ export class OrderingPage implements OnInit {
     await this.toastService.showToast({ message, position: 'bottom', duration: 4000 });
   }
 
-  private isOpen(merchant: MerchantInfo): boolean {
-    return merchant.openNow || parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
-  }
-
   private async initContentStrings() {
-    this.contentStrings.labelAddedToFavorites = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelAddedToFavorites
-    );
-    this.contentStrings.labelRemovedFromFavorites = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites
-    );
-    this.contentStrings.buttonBack = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
-    this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
-    this.lockDownService.loadStringsAndSettings();
+    await this.lockDownService.loadStringsAndSettings();
   }
 
   onSearchedValue(value: string) {

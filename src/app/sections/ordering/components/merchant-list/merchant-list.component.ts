@@ -14,7 +14,6 @@ export class MerchantListComponent {
     isFavorite: boolean;
     id: string;
   }>();
-  @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
@@ -26,9 +25,5 @@ export class MerchantListComponent {
 
   favouriteHandler({ isFavorite, id }) {
     this.addToFav.emit({ isFavorite, id });
-  }
-
-  locationPinHandler(id: string) {
-    this.locationPin.emit(id);
   }
 }

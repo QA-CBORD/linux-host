@@ -1,34 +1,51 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MerchantInfo } from '@sections/ordering/shared/models';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { EXPLORE_ROUTING } from '@sections/explore/explore.config';
+import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { IonicModule } from '@ionic/angular';
+import { OrderAheadBadgeComponent } from '@shared/order-ahead-badge/order-ahead-badge.component';
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { OrderTypePipeModule } from '@sections/ordering/shared/pipes/order-type/order-type.module';
+import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
+import { OrderTypeDisplayComponent } from '@shared/order-type-display/order-type-display.component';
+import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
+import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    NgClass,
+    NgIf,
+    IonicModule,
+    MerchantDistanceModule,
+    OrderAheadBadgeComponent,
+    StopPropagationModule,
+    OrderTypePipeModule,
+    OrderTypeDisplayComponent,
+    RouterModule,
+    TranslateModule
+  ],
   selector: 'st-merchant-item',
   templateUrl: './merchant-item.component.html',
   styleUrls: ['./merchant-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchantItemComponent implements OnInit {
+export class MerchantItemComponent {
   @Input() merchantInfo: MerchantInfo;
   @Output() merchantClick: EventEmitter<MerchantInfo> = new EventEmitter<MerchantInfo>();
   @Output() addToFav: EventEmitter<{ isFavorite: boolean; id: string }> = new EventEmitter<{
     isFavorite: boolean;
     id: string;
   }>();
-  @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  readonly merchantDetailsRoute = `/${PATRON_NAVIGATION.explore}/${EXPLORE_ROUTING.merchantDetails}/`;
 
-  constructor(private readonly environmentFacadeService: EnvironmentFacadeService, private readonly orderingService: OrderingService) {
-  }
-
-  ngOnInit() {
-    this.contentStrings.labelClosed = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelClosed);
-    this.contentStrings.labelOpen = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOpen);
-  }
-
+  constructor(
+    private readonly environmentFacadeService: EnvironmentFacadeService,
+  ) {}
 
   get starClass(): string {
     const empty = 'star-outline';
@@ -46,7 +63,4 @@ export class MerchantItemComponent implements OnInit {
     this.addToFav.emit({ isFavorite, id });
   }
 
-  triggerLocationPin(event, id) {
-    this.locationPin.emit(id);
-  }
 }

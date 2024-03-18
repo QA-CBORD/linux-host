@@ -16,7 +16,6 @@ import { AccessibleSelectModule } from '@shared/accessibility/directives/accessi
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { DestinationAccountDisplayModule } from './pipes/destination-account-display.module';
 import { StInputAmountModule } from './input-amount/input-amount.module';
-import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 
 const imports = [
@@ -39,7 +38,7 @@ const imports = [
   StInputAmountModule
 ];
 const declarations = [DepositPageComponent];
-const providers = [DepositResolver, DepositService, AccessibilityService, OrderingService];
+const providers = [DepositResolver, DepositService, AccessibilityService];
 
 @NgModule({
   declarations,

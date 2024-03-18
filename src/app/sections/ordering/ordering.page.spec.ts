@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { OrderingPage } from './ordering.page';
 import { MerchantService } from './services';
-import { OrderingComponentContentStrings, OrderingService } from './services/ordering.service';
+import { OrderingService } from './services/ordering.service';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { LockDownService, NavigationService } from '@shared/services';
@@ -15,6 +15,9 @@ import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 import { MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from './components';
 import { TOAST_MESSAGES } from './ordering.config';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { OrderActionSheetService } from './services/odering-actionsheet.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
 
 describe('OrderingPage', () => {
   let component: OrderingPage;
@@ -28,6 +31,7 @@ describe('OrderingPage', () => {
   let toastService;
   let mockPopoverController;
   let activatedRoute;
+  let mockOrderActionSheetService;
 
   beforeEach(() => {
     mockMerchantService = {
@@ -46,7 +50,7 @@ describe('OrderingPage', () => {
       }),
     };
 
-    mockloadingService = { closeSpinner: jest.fn(), showSpinner: jest.fn()};
+    mockloadingService = { closeSpinner: jest.fn(), showSpinner: jest.fn() };
 
     routingService = { navigate: jest.fn() };
 
@@ -72,8 +76,19 @@ describe('OrderingPage', () => {
       },
     };
 
+    mockOrderActionSheetService = {
+      openOrderOptions: jest.fn(),
+      openOrderOptionsByMerchantId: jest.fn(),
+    };
+
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, IonicStorageModule.forRoot(), TypeMessageModule, SearchPipeModule],
+      imports: [
+        HttpClientTestingModule,
+        IonicStorageModule.forRoot(),
+        TypeMessageModule,
+        SearchPipeModule,
+        TranslateModule,
+      ],
       declarations: [OrderingPage],
       providers: [
         { provide: MerchantService, useValue: mockMerchantService },
@@ -85,18 +100,18 @@ describe('OrderingPage', () => {
         { provide: ToastService, useValue: toastService },
         { provide: PopoverController, useValue: mockPopoverController },
         { provide: ActivatedRoute, useValue: activatedRoute },
+        {
+          provide: OrderActionSheetService,
+          useValue: mockOrderActionSheetService,
+        },
+        { provide: TranslateService, useClass: TranslateServiceStub },
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     });
 
     fixture = TestBed.createComponent(OrderingPage);
     component = fixture.componentInstance;
-
-    component.contentStrings = {
-      labelAddedToFavorites: of('Added to favorites'),
-      labelRemovedFromFavorites: of('Removed from favorites'),
-    } as OrderingComponentContentStrings;
-  
+    fixture.detectChanges();
   });
 
   it('should initialize merchantList$ and contentStrings when ngOnInit is called', async () => {
@@ -145,7 +160,6 @@ describe('OrderingPage', () => {
     } as MerchantInfo;
     const isLockDownOnSpy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(false);
     const showErrorSpy = jest.spyOn(toastService, 'showError');
-    const isOpenSpy = jest.spyOn(component as any, 'isOpen').mockReturnValue(true);
     const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
     const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
 
@@ -153,7 +167,6 @@ describe('OrderingPage', () => {
 
     expect(isLockDownOnSpy).toHaveBeenCalled();
     expect(showErrorSpy).not.toHaveBeenCalled();
-    expect(isOpenSpy).toHaveBeenCalledWith(mockMerchantInfo);
     expect(onToastDisplayedSpy).not.toHaveBeenCalled();
     expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
   });
@@ -195,50 +208,6 @@ describe('OrderingPage', () => {
     expect(showErrorSpy).toHaveBeenCalledWith(TOAST_MESSAGES.isWalkOut);
   });
 
-  it('should display toast if merchant is closed', async () => {
-    const merchantInfo = {
-      walkout: false,
-      name: 'Test Merchant',
-      id: 'testMerchantId',
-      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
-      settings: {
-        list: [{}],
-        map: {
-          'merchant.order.order_ahead_enabled': '1',
-        } as Map<string, MerchantSettingInfo> | Object,
-      },
-    } as MerchantInfo;
-    jest.spyOn(component as any, 'isOpen').mockReturnValue(false);
-    const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
-
-    await component.merchantClickHandler(merchantInfo);
-
-    expect(onToastDisplayedSpy).toHaveBeenCalledWith(
-      `${merchantInfo.name} is currently closed, please try again during operating hours`
-    );
-  });
-
-  it('should open order options if merchant is open and not in lockdown or walkout', async () => {
-    const merchantInfo = {
-      walkout: false,
-      name: 'Test Merchant',
-      id: 'testMerchantId',
-      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
-      settings: {
-        list: [{}],
-        map: {
-          'merchant.order.order_ahead_enabled': '1',
-        } as Map<string, MerchantSettingInfo> | Object,
-      },
-    } as MerchantInfo;
-    jest.spyOn(component as any, 'isOpen').mockReturnValue(true);
-    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
-
-    await component.merchantClickHandler(merchantInfo);
-
-    expect(openOrderOptionsSpy).toHaveBeenCalledWith(merchantInfo);
-  });
-
   it('should add or remove merchant from favorites', async () => {
     const isFavorite = true;
     const id = 'testMerchantId';
@@ -256,56 +225,9 @@ describe('OrderingPage', () => {
     expect(getMerchantsWithFavoriteInfoSpy).toHaveBeenCalled();
     expect(closeSpinnerSpy).toHaveBeenCalled();
   });
+  it('should open order options by merchant id', async () => {
+    await component['handleActiveMerchantInRoute']();
 
-  it('should display toast if merchant is not found', async () => {
-    component.merchantList$ = of([]);
-    const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
-  
-    await component['handleActiveMerchantInRoute']();
-  
-    expect(onToastDisplayedSpy).toHaveBeenCalledWith('We were unable to find your merchant - Please try again');
-  });
-  
-  it('should display toast if merchant is closed', async () => {
-    const merchantInfo = {
-      walkout: false,
-      name: 'Test Merchant',
-      id: 'testMerchantId',
-      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
-      settings: {
-        list: [{}],
-        map: {
-          'merchant.order.order_ahead_enabled': '1',
-        } as Map<string, MerchantSettingInfo> | Object,
-      },
-    } as MerchantInfo;
-    component.merchantList$ = of([merchantInfo]);
-    jest.spyOn(component as any, 'isOpen').mockReturnValue(false);
-    const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
-  
-    await component['handleActiveMerchantInRoute']();
-  
-    expect(onToastDisplayedSpy).toHaveBeenCalledWith(`${merchantInfo.name} is currently closed, please try again during operating hours`);
-  });
-  
-  it('should open order options if merchant is open', async () => {
-    const merchantInfo = {
-      walkout: false,
-      name: 'Test Merchant',
-      id: 'testMerchantId',
-      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
-      settings: {
-        list: [{}],
-        map: {
-          'merchant.order.order_ahead_enabled': '1',
-        } as Map<string, MerchantSettingInfo> | Object,
-      },
-    } as MerchantInfo;    component.merchantList$ = of([merchantInfo]);
-    jest.spyOn(component as any, 'isOpen').mockReturnValue(true);
-    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
-  
-    await component['handleActiveMerchantInRoute']();
-  
-    expect(openOrderOptionsSpy).toHaveBeenCalledWith(merchantInfo);
+    expect(mockOrderActionSheetService.openOrderOptionsByMerchantId).toHaveBeenCalledWith('testMerchantId');
   });
 });

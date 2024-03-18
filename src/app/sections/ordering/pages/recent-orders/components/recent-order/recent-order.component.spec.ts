@@ -14,6 +14,7 @@ import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { LockDownService } from '@shared/services';
 import { RecentOrderComponent } from './recent-order.component';
 import { of } from 'rxjs';
+import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 
 describe(RecentOrderComponent, () => {
   let component: RecentOrderComponent;
@@ -39,51 +40,51 @@ describe(RecentOrderComponent, () => {
     activatedRoute = {
       snapshot: {
         params: {
-          id: 'mockOrderId'
-        }
-      }
+          id: 'mockOrderId',
+        },
+      },
     };
     merchantService = {
-      getMerchant: jest.fn().mockReturnValue(of({ id: 'mockMerchantId' }))
+      getMerchant: jest.fn().mockReturnValue(of({ id: 'mockMerchantId' })),
     };
     router = {
-      navigate: jest.fn()
+      navigate: jest.fn(),
     };
     popoverController = {
-      create: jest.fn()
+      create: jest.fn(),
     };
     modalController = {
-      create: jest.fn()
+      create: jest.fn(),
     };
     cart = {
-      getCart: jest.fn()
+      getCart: jest.fn(),
     };
     loadingService = {
-      showLoading: jest.fn()
+      showLoading: jest.fn(),
     };
     toastService = {
-      showToast: jest.fn()
+      showToast: jest.fn(),
     };
     userFacadeService = {
-      getUser: jest.fn()
+      getUser: jest.fn(),
     };
     orderingService = {
-      getOrder: jest.fn()
+      getOrder: jest.fn(),
     };
     checkinService = {
-      getCheckinInstruction: jest.fn()
+      getCheckinInstruction: jest.fn(),
     };
     alertController = {
-      create: jest.fn()
+      create: jest.fn(),
     };
     institutionService = {
-      getInstitution: jest.fn()
+      getInstitution: jest.fn(),
     };
     checkinProcess = {
-      startCheckin: jest.fn()
+      startCheckin: jest.fn(),
     };
     lockDownService = {
-      isLockDownOn: jest.fn()
+      isLockDownOn: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -105,6 +106,7 @@ describe(RecentOrderComponent, () => {
         { provide: InstitutionFacadeService, useValue: institutionService },
         { provide: CheckingProcess, useValue: checkinProcess },
         { provide: LockDownService, useValue: lockDownService },
+        { provide: OrderActionSheetService, useValue: { openActionSheet$: of() } },
       ],
     });
     fixture = TestBed.createComponent(RecentOrderComponent);

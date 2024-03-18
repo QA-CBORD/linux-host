@@ -1,5 +1,5 @@
 <st-header
-  [title]="'Explore'"
+  title="Merchant Details"
   [isTitleShow]="true"
   [backButtonTitle]="'Back'"
   backButtonIcon="chevron-back"
@@ -26,19 +26,17 @@
       <st-button
         *ngIf="merchant.isAbleToOrder && guestOrderEnabled && !merchant.walkout"
         (onClick)="navigateToMerchant(merchant.id)"
-        [isDisabled]="true"
         class="explore__start-order"
         buttonModifier="rectangle"
         >start an order
       </st-button>
-      <st-button
-        (onClick)="onFavoriteTrigger(merchant)"
-        [isDisabled]="true"
-        class="explore__add-to-fav"
-        buttonModifier="rectangle"
-      >
-        <img class="explore__fav-icon" [src]="merchant.isFavorite ? filledStarPath : blankStarPath" alt="Favorite" />
-      </st-button>
+      <ion-button (onClick)="onFavoriteTrigger(merchant)" fill="clear">
+        <ion-icon
+          slot="icon-only"
+          [src]="merchant.isFavorite ? filledStarPath : blankStarPath"
+          alt="Favorite"
+        ></ion-icon>
+      </ion-button>
     </div>
     <ion-list class="explore__list">
       <ion-item

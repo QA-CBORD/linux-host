@@ -73,7 +73,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly institutionService: InstitutionFacadeService,
     private readonly checkinProcess: CheckingProcess,
     private readonly lockDownService: LockDownService,
-    private orderActionSheetService: OrderActionSheetService
+    private readonly orderActionSheetService: OrderActionSheetService
   ) { }
 
   ngOnInit(): void {

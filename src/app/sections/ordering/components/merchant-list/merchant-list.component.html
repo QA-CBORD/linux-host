@@ -2,7 +2,6 @@
   *ngFor="let merchant of merchantList; let i = index; trackBy: trackMerchantsById"
   [merchantInfo]="merchant"
   (addToFav)="favouriteHandler($event)"
-  (locationPin)="locationPinHandler($event)"
   (merchantClick)="merchantClickHandler($event)"
 >
 </st-merchant-item>

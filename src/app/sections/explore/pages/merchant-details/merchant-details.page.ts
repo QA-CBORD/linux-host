@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -7,9 +7,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { MerchantInfo } from '@sections/ordering';
-import { APP_ROUTES } from '@sections/section.config';
+import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { LockDownService } from '@shared/index';
-import { NavigationService } from '@shared/services/navigation.service';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
@@ -27,6 +26,7 @@ export class MerchantDetailsPage implements OnInit {
   guestOrderEnabled = true;
   filledStarPath = '/assets/icon/star-filled.svg';
   blankStarPath = '/assets/icon/star-outline.svg';
+  private readonly orderActionSheetService = inject(OrderActionSheetService);
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -35,7 +35,6 @@ export class MerchantDetailsPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly merchantIdsFacadeService: FavoriteMerchantsFacadeService,
     private readonly toastService: ToastService,
-    private readonly routingService: NavigationService,
     private readonly changeDetector: ChangeDetectorRef,
     private readonly authFacadeService: AuthFacadeService,
     private readonly lockDownService: LockDownService
@@ -75,7 +74,7 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
-    this.routingService.navigate([APP_ROUTES.ordering], { queryParams: { merchantId } });
+    this.orderActionSheetService.openOrderOptionsByMerchantId(merchantId);
   }
 
   async onFavoriteTrigger(merchant: MerchantInfo): Promise<void> {

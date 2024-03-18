@@ -3,8 +3,9 @@ import { MerchantItemComponent } from './merchant-item.component';
 import { MerchantInfo } from '@sections/ordering/shared/models';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, importProvidersFrom } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('MerchantItemComponent', () => {
   let component: MerchantItemComponent;
@@ -14,24 +15,25 @@ describe('MerchantItemComponent', () => {
 
   beforeEach(() => {
     mockEnvironmentFacadeService = {
-      getImageURL: jest.fn().mockReturnValue('mockImageUrl')
+      getImageURL: jest.fn().mockReturnValue('mockImageUrl'),
     };
 
     mockOrderingService = {
-      getContentStringByName: jest.fn().mockImplementation((name) => name)
+      getContentStringByName: jest.fn().mockImplementation(name => name),
     };
 
     TestBed.configureTestingModule({
-      declarations: [MerchantItemComponent],
+      imports: [MerchantItemComponent, RouterTestingModule, TranslateModule.forRoot()],
       providers: [
         { provide: EnvironmentFacadeService, useValue: mockEnvironmentFacadeService },
-        { provide: OrderingService, useValue: mockOrderingService }
+        { provide: OrderingService, useValue: mockOrderingService },
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MerchantItemComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should emit merchantClick event when triggerMerchantClick is called', () => {
@@ -55,32 +57,16 @@ describe('MerchantItemComponent', () => {
   it('should emit addToFav event when triggerFavourite is called with isFavorite null', () => {
     const favInfo = { isFavorite: null, id: '1' } as MerchantInfo;
     jest.spyOn(component.addToFav, 'emit');
-  
+
     component.triggerFavourite(null, favInfo);
-  
+
     expect(component.addToFav.emit).toHaveBeenCalledWith(favInfo);
-  });
-
-  it('should emit locationPin event when triggerLocationPin is called', () => {
-    const id = '1';
-    jest.spyOn(component.locationPin, 'emit');
-
-    component.triggerLocationPin(null, id);
-
-    expect(component.locationPin.emit).toHaveBeenCalledWith(id);
-  });
-
-  it('should set contentStrings on ngOnInit', () => {
-    component.ngOnInit();
-
-    expect(component.contentStrings.labelClosed).toBe(ORDERING_CONTENT_STRINGS.labelClosed);
-    expect(component.contentStrings.labelOpen).toBe(ORDERING_CONTENT_STRINGS.labelOpen);
   });
 
   it('should return correct starClass based on merchantInfo.isFavorite', () => {
     component.merchantInfo = { isFavorite: true } as MerchantInfo;
     expect(component.starClass).toBe('./assets/icon/star-filled.svg');
-  
+
     component.merchantInfo = { isFavorite: false } as MerchantInfo;
     expect(component.starClass).toBe('./assets/icon/star-outline.svg');
   });

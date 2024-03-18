@@ -8,14 +8,12 @@ import { SettingInfoList } from '@core/model/configuration/setting-info-list.mod
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
-import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { Settings } from '../../../app.global';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
-import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { ProminentDisclosureService } from '../services/prominent-disclosure.service';
 import { Institution } from '@core/model/institution';
 import { TileWrapperConfig } from '../models';
@@ -51,7 +49,16 @@ export class DashboardPageResolver {
   }
 
   private loadAllData(): Observable<
-    [UserInfo, Institution, SettingInfoList, boolean, TileWrapperConfig[], ContentStringInfo[], SettingInfo, ...ContentStringInfo[]]
+    [
+      UserInfo,
+      Institution,
+      SettingInfoList,
+      boolean,
+      TileWrapperConfig[],
+      ContentStringInfo[],
+      SettingInfo,
+      ...ContentStringInfo[][]
+    ]
   > {
     const strings = this.loadContentStrings();
     const user = this.userFacadeService.getUser$();
@@ -64,32 +71,19 @@ export class DashboardPageResolver {
     return zip(user, inst, settingList, mCredential$, tilesConfig, accountContentStrings, getLockDown, ...strings);
   }
 
-  private loadContentStrings(): Observable<ContentStringInfo>[] {
+  private loadContentStrings(): Observable<ContentStringInfo[]>[] {
     return [
-      this.contentStringsFacadeService.fetchContentString$(
+      this.contentStringsFacadeService.fetchContentStrings$(
         CONTENT_STRINGS_DOMAINS.patronUi,
-        CONTENT_STRINGS_CATEGORIES.mealDonation,
-        MEAL_CONTENT_STRINGS.dashboardTitle
+        CONTENT_STRINGS_CATEGORIES.mealDonation
       ),
-      this.contentStringsFacadeService.fetchContentString$(
+      this.contentStringsFacadeService.getContentStrings$(
         CONTENT_STRINGS_DOMAINS.patronUi,
-        CONTENT_STRINGS_CATEGORIES.mealDonation,
-        MEAL_CONTENT_STRINGS.buttonDonateAMeal
+        CONTENT_STRINGS_CATEGORIES.ordering
       ),
-      this.contentStringsFacadeService.fetchContentString$(
-        CONTENT_STRINGS_DOMAINS.patronUi,
-        CONTENT_STRINGS_CATEGORIES.ordering,
-        ORDERING_CONTENT_STRINGS.labelDashboard
-      ),
-      this.contentStringsFacadeService.fetchContentString$(
-        CONTENT_STRINGS_DOMAINS.patronUi,
-        CONTENT_STRINGS_CATEGORIES.ordering,
-        ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
-      ),
-      this.contentStringsFacadeService.fetchContentString$(
+      this.contentStringsFacadeService.fetchContentStrings$(
         CONTENT_STRINGS_DOMAINS.get_common,
-        CONTENT_STRINGS_CATEGORIES.error_message,
-        ORDERING_CONTENT_STRINGS.disableOrdering
+        CONTENT_STRINGS_CATEGORIES.error_message
       ),
     ];
   }

@@ -1,11 +1,13 @@
-<ion-item class="merchant" lines="none" (click)="triggerMerchantClick(merchantInfo)">
+<ion-item *ngIf="merchantInfo" class="merchant" lines="none" (click)="triggerMerchantClick(merchantInfo)">
   <ion-grid class="ion-no-padding" fixed>
     <ion-row>
       <ion-col class="ion-no-padding align-self-center">
-        <img *ngIf="merchantInfo.imageFull"
-             src="{{awsImageUrl + merchantInfo.imageFull}}"
+        <img
+          *ngIf="merchantInfo.imageFull"
+          src="{{ awsImageUrl + merchantInfo.imageFull }}"
           class="merchant__merchant-photo"
-          alt=""/>
+          alt=""
+        />
       </ion-col>
     </ion-row>
 
@@ -15,22 +17,22 @@
         <h2 class="merchant__merchant-name">{{ merchantInfo.name }}</h2>
       </ion-col>
       <ion-col class="merchant__merchant-buttons ion-no-padding">
-        <img
-          class="merchant__merchant-button"
-          src="./assets/icon/location-pin.svg"
-          alt="Saved Address"
+        <ion-button
           appClickStopPropagation
-          (click)="triggerLocationPin($event, merchantInfo.id)"
-          role='button'
-          tabindex="0"
-        />
+          [routerLink]="merchantDetailsRoute + merchantInfo?.id"
+          color="tertiary"
+          fill="clear"
+          aria-label="merchant details"
+        >
+          <ion-icon slot="icon-only" name="information-circle"></ion-icon>
+        </ion-button>
         <img
           class="merchant__merchant-button"
           [src]="starClass"
           alt="Favorite"
           appClickStopPropagation
           (click)="triggerFavourite($event, merchantInfo)"
-          role='button'
+          role="button"
           tabindex="0"
         />
       </ion-col>
@@ -39,7 +41,9 @@
     <ion-row>
       <!-- Distance Info -->
       <ion-col class="ion-no-padding">
-        <span *ngIf="merchantInfo.distanceFromUser" class="merchant__merchant-distance">{{ merchantInfo.distanceFromUser | merchantDistance }}</span>
+        <span *ngIf="merchantInfo.distanceFromUser" class="merchant__merchant-distance">{{
+          merchantInfo.distanceFromUser | merchantDistance
+        }}</span>
         <st-order-type-display class="st-margin-start" [merchant]="merchantInfo"></st-order-type-display>
       </ion-col>
     </ion-row>
@@ -50,9 +54,10 @@
           class="merchant__merchant-hours"
           [ngClass]="{
             'merchant__merchant-hours--open': merchantInfo.openNow,
-            'merchant__merchant-hours--closed': !merchantInfo.openNow}"
+            'merchant__merchant-hours--closed': !merchantInfo.openNow
+          }"
         >
-          {{ merchantInfo.openNow ? (contentStrings.labelOpen | async) : (contentStrings.labelClosed | async) }}
+          {{ 'patron-ui.ordering.' + (merchantInfo.openNow ? 'label_open' : 'label_closed') | translate }}
         </p>
         <st-order-ahead-badge [merchant]="merchantInfo"></st-order-ahead-badge>
       </ion-col>

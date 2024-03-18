@@ -7,7 +7,7 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { RecentOrdersComponent } from '@sections/ordering/pages';
 import { RecentOrderComponent } from '@sections/ordering/pages/recent-orders/components/recent-order/recent-order.component';
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
-import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
+import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ConfirmPopoverModule } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.module';
 import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
@@ -24,7 +24,7 @@ const imports = [
   StHeaderModule,
   RecentOrdersListModule,
   OrderDetailsModule,
-  OrderOptionsActionSheetModule,
+  OrderOptionsActionSheetComponent,
   ConfirmPopoverModule,
   StButtonModule,
   StSpinnerModule,

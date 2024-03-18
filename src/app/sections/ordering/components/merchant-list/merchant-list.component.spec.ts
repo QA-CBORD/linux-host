@@ -37,13 +37,4 @@ describe('MerchantListComponent', () => {
 
     expect(component.addToFav.emit).toHaveBeenCalledWith(favInfo);
   });
-
-  it('should emit locationPin event when locationPinHandler is called', () => {
-    const id = '1';
-    jest.spyOn(component.locationPin, 'emit');
-
-    component.locationPinHandler(id);
-
-    expect(component.locationPin.emit).toHaveBeenCalledWith(id);
-  });
 });
