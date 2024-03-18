@@ -3,12 +3,12 @@
   <div class="st-date-time-picker__value">
     <img width="16" src="./assets/icon/time.svg" alt="time" />
     <span class="st-date-time-picker__time-label">
-      <ng-container *ngIf="dateTimePicker &&  isDefaultState; then placeholder; else dateTime"></ng-container>
+      <ng-container *ngIf="dateTimePicker && isDefaultState; then placeholder; else dateTime"></ng-container>
     </span>
   </div>
 </div>
 
-<ng-template #placeholder>{{contentStrings.labelAsap | async}} {{prepTime}}</ng-template>
+<ng-template #placeholder>{{ 'patron-ui.ordering.label_asap' | translate }} {{ prepTime }}</ng-template>
 <ng-template #dateTime>{{ dateTimeWithTimeZone || dateTimePicker }}</ng-template>
 <ion-picker
   #timePicker

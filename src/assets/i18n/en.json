@@ -986,6 +986,9 @@
       "searches_available": "searches available",
       "one_search_available": "one search available"
     },
+    "explore": {
+      "merchant_details_title": "Merchant Details"
+    },
     "password-change": { "current_password": "Current password", "new_password": "New password" },
     "password-validation": {
       "at_least_one_letter": "at least one letter",

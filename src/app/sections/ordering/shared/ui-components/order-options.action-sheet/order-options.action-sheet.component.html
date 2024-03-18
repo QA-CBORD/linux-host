@@ -1,7 +1,7 @@
 <ion-content>
   <div class="order-options" [attr.aria-hidden]="optionsModalAriaHidden">
     <h1 id="modal-mainTitle" tabindex="0" class="order-options__title">
-      {{ contentStrings.labelOrderOptions | async }}
+      {{ 'patron-ui.ordering.label_order-options' | translate }}
     </h1>
     <ion-list mode="md" class="order-options__list">
       <div class="order-options__radio-group-container" *ngIf="orderTypes.delivery && orderTypes.pickup">
@@ -12,23 +12,31 @@
           (ionChange)="onRadioGroupChanged($event)"
         >
           <ion-item lines="none" class="order-options__radio-container">
-            <ion-label class="order-options__radio-label">{{ contentStrings.labelPickup | async }}</ion-label>
             <ion-radio
               mode="md"
               slot="start"
+              labelPlacement="end"
               [value]="enumOrderTypes.PICKUP"
               class="order-options__radio-item"
-            ></ion-radio>
+            >
+              <ion-label class="order-options__radio-label">{{
+                'patron-ui.ordering.label_pickup' | translate
+              }}</ion-label>
+            </ion-radio>
           </ion-item>
 
           <ion-item lines="none" class="order-options__radio-container">
-            <ion-label class="order-options__radio-label">{{ contentStrings.labelDelivery | async }}</ion-label>
             <ion-radio
               mode="md"
               slot="start"
+              labelPlacement="end"
               [value]="enumOrderTypes.DELIVERY"
               class="order-options__radio-item"
-            ></ion-radio>
+            >
+              <ion-label class="order-options__radio-label">{{
+                'patron-ui.ordering.label_delivery' | translate
+              }}</ion-label>
+            </ion-radio>
           </ion-item>
         </ion-radio-group>
       </div>

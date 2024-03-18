@@ -9,6 +9,7 @@ import { CoreTestingModules } from 'src/app/testing/core-modules';
 import { CoreProviders } from 'src/app/testing/core-providers';
 import { StDateTimePickerComponent } from './st-date-time-picker.component';
 import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 
 describe('StDateTimePicker', () => {
   let component: StDateTimePickerComponent;
@@ -27,8 +28,7 @@ describe('StDateTimePicker', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [StDateTimePickerComponent],
-      imports: [...CoreTestingModules, StButtonModule],
+      imports: [StDateTimePickerComponent, ...CoreTestingModules, StButtonModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         OrderingService,
@@ -38,6 +38,12 @@ describe('StDateTimePicker', () => {
           provide: AppStatesFacadeService,
           useValue: appStatesFacadeService,
         },
+        {
+          provide: TranslateFacadeService,
+          useValue: {
+            orderingInstant: jest.fn(),
+          }
+        }
       ],
     }).compileComponents();
   });
@@ -80,115 +86,6 @@ describe('StDateTimePicker', () => {
       emailBounceStatus: 'test',
       userNotificationInfoList: [],
     };
-    component.contentStrings = {
-      errorMessageTimeSlotCapacityReached: of(''),
-      errorMessageInsufficientFunds: of(''),
-      buttonAdd: of(''),
-      buttonUpdate: of(''),
-      backToOrdering: of(''),
-      buttonCancel: of(''),
-      buttonClose: of(''),
-      buttonConfirm: of(''),
-      buttonDashboardStartOrder: of(''),
-      buttonDismiss: of(''),
-      buttonDone: of(''),
-      buttonExplore: of(''),
-      buttonPlaceOrder: of(''),
-      buttonReorder: of(''),
-      buttonSave: of(''),
-      buttonBack: of('Back'),
-      buttonSetDeliveryAddress: of(''),
-      buttonSetPickupAddress: of(''),
-      buttonViewCart: of(''),
-      formErrorAddress: of(''),
-      formErrorBuilding: of(''),
-      formErrorChooseAddress: of(''),
-      formErrorCity: of(''),
-      formErrorRoom: of(''),
-      formErrorState: of(''),
-      formErrorTipInvalidFormat: of(''),
-      formErrorTipMinimum: of(''),
-      formErrorTipSubtotal: of(''),
-      labelAddNewAddress: of(''),
-      labelAddedToFavorites: of(''),
-      labelAddressLine1: of(''),
-      labelAddressLine2: of(''),
-      labelAsap: of(''),
-      labelBuildings: of(''),
-      labelCart: of(''),
-      labelCity: of(''),
-      labelClosed: of(''),
-      labelCompletedOrders: of(''),
-      labelDashboard: of(''),
-      labelDelivery: of(''),
-      labelDeliveryAddress: of(''),
-      labelDeliveryFee: of(''),
-      labelDeliveryTime: of(''),
-      labelDiscount: of(''),
-      labelEmptyFavorites: of(''),
-      labelEmptySearch: of(''),
-      labelFavorites: of(''),
-      labelFor: of(''),
-      labelFullMenu: of(''),
-      labelItemNote: of(''),
-      labelMealSuffix: of(''),
-      mealSuffixPlural: of(''),
-      labelMilesSuffix: of(''),
-      labelNickname: of(''),
-      labelOffCampus: of(''),
-      labelOnCampus: of(''),
-      labelOpen: of(''),
-      labelOptional: of(''),
-      labelOrder: of(''),
-      needCheckin: of(''),
-      labelBtnCheckin: of(''),
-      labelOrderOptions: of(''),
-      labelOrderPlacedDescription: of(''),
-      labelOrderPlacedTitle: of(''),
-      labelPaymentMethod: of(''),
-      labelPendingOrders: of(''),
-      labelPickup: of(''),
-      labelPickupAddress: of(''),
-      labelPickupFee: of(''),
-      labelPickupTime: of(''),
-      labelRecentOrders: of(''),
-      labelRemoveItem: of(''),
-      labelRemovedFromFavorites: of(''),
-      labelRoom: of(''),
-      labelSavedAddresses: of(''),
-      labelSearch: of(''),
-      labelSelectDeliveryAddress: of(''),
-      labelSelectPickupAddress: of(''),
-      labelSelectTime: of('Select Time'),
-      labelSetAsDefault: of(''),
-      labelState: of(''),
-      labelSubtotal: of(''),
-      labelTax: of(''),
-      labelTip: of(''),
-      labelTipAmount: of(''),
-      labelTotal: of(''),
-      labelOrderNotes: of(''),
-      labelTomorrow: of(''),
-      selectAccount: of(''),
-      noRecentOrders: of(''),
-      buttonCancelOrder: of(''),
-      buttonScheduleOrder: of(''),
-      orderSubmitTimeout: of(''),
-      connectionLost: of(''),
-      duplicateOrdering: of(''),
-      noConnection: of(''),
-      orderingDatesUnavailable: of(''),
-      lblBtnAdd2Cart: of(''),
-      titleEditAddresses: of(''),
-      insufficientBalanceMealsPayment: of(''),
-      disableOrdering: of(''),
-      mediaLostException: of(''),
-      pickUpOrderTimeNotAvailable: of(''),
-      deliveryOrderTimeNotAvailable: of(''),
-      menuItemsNotAvailable: of(''),
-      itemsNotAvailable: of(''),
-      noAvailableTenders: of(''),
-    } as OrderingComponentContentStrings;
     fixture.detectChanges();
   });
 
@@ -296,17 +193,19 @@ describe('StDateTimePicker', () => {
         {
           date: '2022-01-01',
           dayOfWeek: 1,
-          hourBlocks: [{
-            timestamps: ['timestamp1', 'timestamp2'],
-            hour: 12,
-            minuteBlocks: [0, 30],
-            periods: [],
-            timeZonedDate: '2022-01-01T12:00:00.000Z', 
-          }],
+          hourBlocks: [
+            {
+              timestamps: ['timestamp1', 'timestamp2'],
+              hour: 12,
+              minuteBlocks: [0, 30],
+              periods: [],
+              timeZonedDate: '2022-01-01T12:00:00.000Z',
+            },
+          ],
         },
       ],
     };
-  
+
     expect(component['getTimeStamp']('2022-01-01', 12, 30)).toBe('timestamp2');
   });
 
@@ -317,17 +216,19 @@ describe('StDateTimePicker', () => {
         {
           date: '2022-01-01',
           dayOfWeek: 1,
-          hourBlocks: [{
-            timestamps: ['timestamp1'],
-            hour: 12,
-            minuteBlocks: [],
-            periods: [],
-            timeZonedDate: '2022-01-01T12:00:00.000Z', 
-          }],
+          hourBlocks: [
+            {
+              timestamps: ['timestamp1'],
+              hour: 12,
+              minuteBlocks: [],
+              periods: [],
+              timeZonedDate: '2022-01-01T12:00:00.000Z',
+            },
+          ],
         },
       ],
     };
-  
+
     expect(component['getTimeStamp']('2022-01-01', 12, 30)).toBeUndefined();
   });
 

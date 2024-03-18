@@ -1,6 +1,6 @@
 import { CartService, MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import {
   MenuInfo,
   MerchantAccountInfoList,
@@ -10,8 +10,8 @@ import {
 } from '../../models';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { Observable, lastValueFrom, of, throwError, zip } from 'rxjs';
-import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of, throwError, zip } from 'rxjs';
+import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import {
   ACCOUNT_TYPES,
@@ -20,7 +20,6 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserInfo } from '@core/model/user/user-info.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { DateTimeSelected, StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-picker.component';
@@ -33,18 +32,20 @@ import { IonicModule } from '@ionic/angular';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { StButtonModule } from '@shared/ui-components';
 import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
-import { StDateTimePickerModule } from '../st-date-time-picker';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   standalone: true,
   imports: [
     CommonModule,
     IonicModule,
     DeliveryAddressesModalModule,
-    StDateTimePickerModule,
+    StDateTimePickerComponent,
     StButtonModule,
     AddressHeaderFormatPipeModule,
+    TranslateModule
   ],
-  providers: [AccessibilityService, AddressHeaderFormatPipe, OrderingService],
+  providers: [AccessibilityService, AddressHeaderFormatPipe],
   templateUrl: './order-options.action-sheet.component.html',
   styleUrls: ['./order-options.action-sheet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,10 +75,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   isTimeDisable: number;
   dateTimePicker: Date | string;
   orderType: number;
-  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   selectedTimeStamp: string | Date;
   optionsModalAriaHidden = false;
 
+  private readonly translateFacadeService = inject(TranslateFacadeService);
   constructor(
     private readonly modalsService: ModalsService,
     private readonly merchantService: MerchantService,
@@ -85,10 +86,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly cartService: CartService,
-    private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly a11yService: AccessibilityService,
-    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe
+    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe,
   ) {}
 
   ngOnInit() {
@@ -99,7 +99,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         ? ORDER_TYPE.PICKUP
         : ORDER_TYPE.DELIVERY;
     this.dispatchingData();
-    this.initContentStrings();
     this.cartService.resetClientOrderId();
   }
   get isOrderTypePickup(): boolean {
@@ -189,14 +188,16 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.modalWindow();
   }
 
-  async defineOrderOptionsData(isOrderTypePickup: boolean) {
+  defineOrderOptionsData(isOrderTypePickup: boolean) {
     if (!this.deliveryAddresses || !this.pickupLocations) return;
     const defineDeliveryAddress = this.deliveryAddresses.find(({ id }) => id === this.defaultDeliveryAddress);
 
-    const labelPickupTime = await this.contentStrings.labelPickupTime.pipe(first()).toPromise();
-    const labelDeliveryTime = await this.contentStrings.labelDeliveryTime.pipe(first()).toPromise();
-    const labelPickupAddress = await this.contentStrings.labelPickupAddress.pipe(first()).toPromise();
-    const labelDeliveryAddress = await this.contentStrings.labelDeliveryAddress.pipe(first()).toPromise();
+    const labelPickupTime = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelPickupTime);
+    const labelDeliveryTime = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelDeliveryTime);
+    const labelPickupAddress = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelPickupAddress);
+    const labelDeliveryAddress = this.translateFacadeService.orderingInstant(
+      ORDERING_CONTENT_STRINGS.labelDeliveryAddress
+    );
 
     this.orderOptionsData = {
       labelTime: isOrderTypePickup ? labelPickupTime : labelDeliveryTime,
@@ -231,13 +232,17 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     let date = { dueTime: this.selectedTimeStamp || this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
-    const chooseAddressError = await this.contentStrings.formErrorChooseAddress.pipe(take(1)).toPromise();
+    const chooseAddressError = this.translateFacadeService.orderingInstant(
+      ORDERING_CONTENT_STRINGS.formErrorChooseAddress
+    );
     this.cartService.orderIsAsap = date.isASAP;
     let isOutsideMerchantDeliveryArea = of(false);
     if (!this.orderOptionsData.address) {
       return this.onToastDisplayed(chooseAddressError);
     }
-    const labelDeliveryAddress = await this.contentStrings.labelDeliveryAddress.pipe(first()).toPromise();
+    const labelDeliveryAddress = this.translateFacadeService.orderingInstant(
+      ORDERING_CONTENT_STRINGS.labelDeliveryAddress
+    );
     if (this.orderOptionsData.labelAddress === labelDeliveryAddress) {
       isOutsideMerchantDeliveryArea = this.isOutsideMerchantDeliveryArea();
     }
@@ -301,7 +306,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     type: number
   ): Promise<MenuInfo | never> {
     if (!accountInfoList.accounts.length && !accountInfoList.creditAccepted) {
-      const errorMessage = await lastValueFrom(this.contentStrings.noAvailableTenders.pipe(take(1)));
+      const errorMessage = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.noAvailableTenders);
       this.toastService.showError(errorMessage, 5000, 'bottom');
       return Promise.reject();
     }
@@ -335,10 +340,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.dateTimeWithTimeZone = this.cartService.extractTimeZonedString(this.selectedTimeStamp, this.timeZone);
       this.dateTimePicker = new Date(this.selectedTimeStamp);
     }
+    this.cdRef.detectChanges();
   }
 
   private async onToastDisplayed(message: string): Promise<void> {
-    const dismiss = await this.contentStrings.buttonDismiss.pipe(take(1)).toPromise();
+    const dismiss = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.buttonDismiss);
     await this.toastService.showToast({ message, toastButtons: [{ text: dismiss.toUpperCase() }], position: 'bottom' });
   }
 
@@ -371,45 +377,14 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     await modal.present();
   }
 
-  private initContentStrings() {
-    this.contentStrings.buttonDismiss = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.buttonDismiss
-    );
-    this.contentStrings.formErrorChooseAddress = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.formErrorChooseAddress
-    );
-    this.contentStrings.labelPickupTime = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelPickupTime
-    );
-    this.contentStrings.labelDeliveryTime = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelDeliveryTime
-    );
-    this.contentStrings.labelDeliveryAddress = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelDeliveryAddress
-    );
-    this.contentStrings.labelPickupAddress = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelPickupAddress
-    );
-    this.contentStrings.labelPickup = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPickup);
-    this.contentStrings.labelDelivery = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelDelivery
-    );
-    this.contentStrings.labelOrderOptions = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelOrderOptions
-    );
-    this.contentStrings.orderingDatesUnavailable = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
-    );
-    this.contentStrings.noAvailableTenders = this.orderingService.getContentErrorStringByName(
-      ORDERING_CONTENT_STRINGS.noAvailableTenders
-    );
-  }
   private isMerchantDateUnavailable(schedule: Schedule) {
     return schedule.days.length == 0;
   }
 
   private async onMerchantDateUnavailable() {
-    const noDatesMessage = await this.contentStrings.orderingDatesUnavailable.pipe(take(1)).toPromise();
+    const noDatesMessage = this.translateFacadeService.orderingInstant(
+      ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
+    );
     this.toastService.showToast({ message: noDatesMessage });
     await this.modalsService.dismiss();
   }

@@ -11,6 +11,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { MerchantMainInfoModule } from '@shared/ui-components/merchant-main-info/merchant-main-info.module';
 import { MapsUriPipeModule } from '@shared/pipes/maps-uri/maps-uri-pipe.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 
@@ -24,7 +25,8 @@ import { MapsUriPipeModule } from '@shared/pipes/maps-uri/maps-uri-pipe.module';
     MerchantMainInfoModule,
     StButtonModule,
     AddressHeaderFormatPipeModule,
-    MapsUriPipeModule
+    MapsUriPipeModule,
+    TranslateModule
   ],
   declarations: [MerchantDetailsPage]
 })
