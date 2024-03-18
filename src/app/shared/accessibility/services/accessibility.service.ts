@@ -15,9 +15,7 @@ export enum PLATFORM {
 }
 @Injectable()
 export class AccessibilityService {
-  constructor(private readonly platform: Platform, 
-    private readonly translateService: TranslateService,
-    ) {}
+  constructor(private readonly platform: Platform, private readonly translateService: TranslateService) {}
   private toggle = false;
 
   readAloud(text: string, delay: number = READ_ALOUD_DELAY) {

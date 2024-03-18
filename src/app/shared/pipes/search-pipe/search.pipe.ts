@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 @Pipe({ name: 'search' })
