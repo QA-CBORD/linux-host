@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -11,9 +10,12 @@ import { Schedule } from '@sections/ordering/shared/ui-components/order-options.
 import { UserInfo } from '@core/model/user/user-info.model';
 import { CartService } from '@sections/ordering/services';
 import { lastValueFrom } from 'rxjs';
-import { IonPicker } from '@ionic/angular';
+import { IonPicker, IonicModule } from '@ionic/angular';
 import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
-
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+import { CommonModule } from '@angular/common';
+import { StButtonModule } from '@shared/ui-components';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface DateTimeSelected {
   dateTimePicker: Date | string;
@@ -27,6 +29,8 @@ export interface TimePickerData {
 }
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, IonicModule, StButtonModule, TranslateModule],
   selector: 'st-date-time-picker',
   templateUrl: './st-date-time-picker.component.html',
   styleUrls: ['./st-date-time-picker.component.scss'],
@@ -46,7 +50,6 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() dateTimeWithTimeZone: string;
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx = 0;
-  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   private weekArray: ContentStringInfo[];
   private monthArray: ContentStringInfo[];
   private tomorrowString = 'Tomorrow';
@@ -56,21 +59,22 @@ export class StDateTimePickerComponent implements OnInit {
   public pickerClass = 'picker-time-picker';
   @ViewChild('timePicker') timePicker: IonPicker;
 
+  private readonly translateFacadeService = inject(TranslateFacadeService);
+
   constructor(
-    private readonly orderingService: OrderingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly cartService: CartService,
     private readonly appStatesFacadeService: AppStatesFacadeService
   ) {}
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit() {
     this.initContentStrings();
     this.listenAppChanges();
   }
 
   listenAppChanges() {
     this.appStatesFacadeService.getStateChangeEvent$.subscribe(async ({ isActive }) => {
-      if (!isActive){
+      if (!isActive) {
         this.close();
       }
     });
@@ -101,8 +105,8 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   async openPicker(): Promise<void> {
-    const back = await lastValueFrom(this.contentStrings.buttonBack.pipe(take(1)));
-    const title = await lastValueFrom(this.contentStrings.labelSelectTime.pipe(take(1)));
+    const back = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.buttonBack);
+    const title = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelSelectTime);
     this.monthArray = await lastValueFrom(
       this.contentStringsFacadeService
         .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
@@ -117,7 +121,7 @@ export class StDateTimePickerComponent implements OnInit {
     this.pickerColumns = this.createColumns();
     this.pickerButtons = [
       { text: title, role: 'title', cssClass: 'picker-title' },
-      { text: '', role:'secondary', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
+      { text: '', role: 'secondary', handler: this.pickerClickHandler.bind(this), cssClass: 'picker-hidden-confirm' },
     ];
 
     if (this.useBackButton) {
@@ -128,13 +132,13 @@ export class StDateTimePickerComponent implements OnInit {
 
     this.isPickerOpen = true;
 
-    await this.updateAsapOption();
+    this.updateAsapOption();
 
     setTimeout(() => {
       const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
       pageTitle.setAttribute('aria-label', title);
-      pageTitle.setAttribute('aria-level','1');
-      pageTitle.setAttribute('role','heading');
+      pageTitle.setAttribute('aria-level', '1');
+      pageTitle.setAttribute('role', 'heading');
       const hiddenConfirmButton = document.getElementsByClassName('picker-hidden-confirm')[0] as HTMLElement;
       hiddenConfirmButton.setAttribute('aria-hidden', 'true');
       if (pageTitle) pageTitle.focus();
@@ -262,23 +266,12 @@ export class StDateTimePickerComponent implements OnInit {
     return isSameDay(today.slice(0, idxForSlice), date, Number(!isToday));
   }
 
-  private async initContentStrings() {
-    this.contentStrings.buttonConfirm = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.buttonConfirm
-    );
-    this.contentStrings.buttonBack = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
-    this.contentStrings.labelAsap = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAsap);
-    this.contentStrings.labelSelectTime = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelSelectTime
-    );
-    this.tomorrowString = await this.orderingService
-      .getContentStringByName(ORDERING_CONTENT_STRINGS.labelTomorrow)
-      .pipe(take(1))
-      .toPromise();
+  private initContentStrings() {
+    this.tomorrowString = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelTomorrow);
   }
 
-  async updateAsapOption(): Promise<void> {
-    const asapLabel = await this.contentStrings.labelAsap.pipe(take(1)).toPromise();
+  updateAsapOption() {
+    const asapLabel = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelAsap);
     this.pickerColumns.forEach(({ options }) => {
       const index = options.findIndex(({ value }) => value === 'asap');
       if (index !== -1) {
@@ -287,7 +280,7 @@ export class StDateTimePickerComponent implements OnInit {
     });
   }
 
-  close () {
+  close() {
     this.isPickerOpen = false;
     this.timePicker && this.timePicker.dismiss();
   }

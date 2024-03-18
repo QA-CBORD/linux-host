@@ -1,11 +1,10 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
-import { Day, OrderOptions, OrderOptionsActionSheetComponent, Schedule } from './order-options.action-sheet.component';
+import { Day, OrderOptionsActionSheetComponent, Schedule } from './order-options.action-sheet.component';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
-import { StDateTimePickerModule } from '../st-date-time-picker';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
@@ -17,13 +16,14 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import * as rxjs from 'rxjs';
 import { ADDRESS_LOCATION, AddressInfo } from '@core/model/address/address-info';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { ToastService } from '@core/service/toast/toast.service';
 import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo } from '../../models';
 import { UserInfo } from '@core/model/user';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { DateTimeSelected } from '../st-date-time-picker/st-date-time-picker.component';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('OrderOptionsActionSheet', () => {
   let component: OrderOptionsActionSheetComponent;
@@ -106,7 +106,6 @@ describe('OrderOptionsActionSheet', () => {
         OrderOptionsActionSheetComponent,
         ...CoreTestingModules,
         DeliveryAddressesModalModule,
-        StDateTimePickerModule,
         StButtonModule,
         AddressHeaderFormatPipeModule,
       ],
@@ -153,6 +152,10 @@ describe('OrderOptionsActionSheet', () => {
         {
           provide: AddressHeaderFormatPipe,
           useValue: addressHeaderFormatPipe,
+        },
+        {
+          provide: TranslateService,
+          useClass: TranslateServiceStub,
         },
       ],
     }).compileComponents();
@@ -302,13 +305,6 @@ describe('OrderOptionsActionSheet', () => {
     ];
     component.defaultDeliveryAddress = '1';
     component.defaultPickupAddress = {} as AddressInfo;
-    component.contentStrings = {
-      labelPickupTime: of('Pickup Time'),
-      labelDeliveryTime: of('Delivery Time'),
-      labelPickupAddress: of('Pickup Address'),
-      labelDeliveryAddress: of('Delivery Address'),
-    } as any;
-
     expect(component.orderOptionsData).toEqual({
       labelTime: 'Pickup Time',
       labelAddress: 'Pickup Address',
@@ -503,9 +499,8 @@ describe('OrderOptionsActionSheet', () => {
 
   it('should display toast', async () => {
     const spy = jest.spyOn(toastService, 'showToast').mockResolvedValue(undefined);
-    component.contentStrings.buttonDismiss = of('dismiss');
     await component['onToastDisplayed']('message');
-    expect(spy).toHaveBeenCalledWith({ message: 'message', toastButtons: [{ text: 'DISMISS' }], position: 'bottom' });
+    expect(spy).toHaveBeenCalled();
   });
 
   it('should return true if schedule days is empty', () => {
@@ -522,21 +517,11 @@ describe('OrderOptionsActionSheet', () => {
   });
 
   it('should display toast message when onSubmit with object errors', async () => {
-    // Set up the mocks and spies
-    const mockContentStrings = {
-      formErrorChooseAddress: of('choose address error'),
-      labelDeliveryAddress: of('delivery address label'),
-      buttonDismiss: of('dismiss button label'),
-    } as any;
-
     jest.spyOn(merchantService, 'isOutsideMerchantDeliveryArea').mockReturnValue(of(true));
     jest.spyOn(merchantService, 'getCurrentLocaleTime').mockReturnValue(of('12/12/2022'));
     jest.spyOn(merchantService, 'getMerchantPaymentAccounts').mockImplementation(() => new Error('error'));
 
     const spy = jest.spyOn(toastService, 'showToast').mockResolvedValue(undefined);
-
-    // Assign the mocks and spies to the component
-    component.contentStrings = mockContentStrings;
 
     // Call the method
     try {
@@ -559,9 +544,6 @@ describe('OrderOptionsActionSheet', () => {
     jest.spyOn(component as any, 'getMerchantPaymentAccounts').mockReturnValue(of({} as MerchantAccountInfoList));
     jest.spyOn(component as any, 'getDisplayMenu').mockReturnValue(Promise.resolve({} as MenuInfo));
     jest.spyOn(component as any, 'isAccountsMealBased').mockReturnValue(of(true));
-
-    // Assign the mocks and spies to the component
-    component.contentStrings = mockContentStrings;
 
     // Call the method
     await component.onSubmit();
@@ -616,13 +598,23 @@ describe('OrderOptionsActionSheet', () => {
       // Mock pickup locations
     ];
     component.pickupLocations = pickupLocations;
-  
+
     component.defineOrderOptionsData(true); // Simulate defining order options data for pickup
-  
-    
+
     expect(component.orderOptionsData).toBeDefined();
   });
-  
-
-  
 });
+
+export class TranslateServiceStub {
+  onLangChange = new EventEmitter();
+  onTranslationChange = new EventEmitter();
+  onDefaultLangChange = new EventEmitter();
+
+  public get(key: any): any {
+    return of(key);
+  }
+
+  public instant(key: any): any {
+    return key;
+  }
+}

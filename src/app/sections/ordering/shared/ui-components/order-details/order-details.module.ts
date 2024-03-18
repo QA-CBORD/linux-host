@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { OrderDetailsComponent } from '@sections/ordering';
 import { IonicModule } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
-import { StDateTimePickerModule } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.module';
+import { StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-picker.component';
 import { DeliveryAddressesModalModule } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.module';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.pipe';
@@ -30,7 +30,7 @@ const declarations = [OrderDetailsComponent, AccountTypeResolverPipe];
     CommonModule,
     IonicModule,
     ReactiveFormsModule,
-    StDateTimePickerModule,
+    StDateTimePickerComponent,
     DeliveryAddressesModalModule,
     PriceUnitsResolverModule,
     ModifyPrepTimeModule,

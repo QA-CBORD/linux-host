@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ContentStringsStateService } from '@core/states/content-strings/content-strings-state.service';
 import { tap } from 'rxjs';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 
 @Injectable({
   providedIn: 'root',
@@ -38,5 +40,12 @@ export class TranslateFacadeService {
 
   instant(key: string, interpolateParams?: object): string {
     return this.translateService.instant(key, interpolateParams);
+  }
+
+  orderingInstant(name: ORDERING_CONTENT_STRINGS, interpolateParams?: object): string {
+    return this.translateService.instant(
+      `${CONTENT_STRINGS_DOMAINS.patronUi}.${CONTENT_STRINGS_CATEGORIES.ordering}.${name}`,
+      interpolateParams
+    );
   }
 }
