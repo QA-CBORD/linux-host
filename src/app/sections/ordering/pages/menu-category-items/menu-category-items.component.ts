@@ -13,7 +13,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -40,9 +39,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
     private readonly navService: NavigationService,
-    private readonly a11yService: AccessibilityService,
-    private readonly translateService: TranslateService,
-
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ionViewWillEnter() {
@@ -83,17 +80,7 @@ export class MenuCategoryItemsComponent implements OnInit {
         return name.toLowerCase().indexOf(value) > -1 || (description && description.toLowerCase().indexOf(value) > -1);
       }
     );
-    this.excuteSearchSpeech();
-  }
-
-   excuteSearchSpeech() {
-    const { length } = this.filteredMenuCategoryItems;
-    const message =
-      length === 1
-        ?  this.translateService.instant('patron-ui.ordering.one_search_available')
-        : `${length} ${ this.translateService.instant('patron-ui.ordering.searches_available')} `;
-    const delay = 1000;
-    this.a11yService.readAloud(message, delay);
+    this.a11yService.excuteSearchSpeech(this.filteredMenuCategoryItems);
   }
 
   onCancelClicked() {

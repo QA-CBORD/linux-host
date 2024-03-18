@@ -52,7 +52,6 @@ describe('MenuCategoryItemsComponent', () => {
         { provide: AlertController, useValue: alertController },
         { provide: NavigationService, useValue: navService },
         {provide: AccessibilityService, useValue: a11yService},
-        {provide: TranslateService, useValue: translateService}
       ],
       imports: [],
     }).compileComponents();

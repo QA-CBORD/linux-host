@@ -3,7 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { of } from 'rxjs/internal/observable/of';
 import { Platform } from '@ionic/angular';
 import { ScreenReader } from '@capacitor/screen-reader';
-
+import { TranslateService } from '@ngx-translate/core';
 const READ_ALOUD_DELAY = 2000;
 const TAP_TIME_LAPSE = 300;
 const A11Y_FOCUS = 1500;
@@ -15,7 +15,9 @@ export enum PLATFORM {
 }
 @Injectable()
 export class AccessibilityService {
-  constructor(private readonly platform: Platform) {}
+  constructor(private readonly platform: Platform, 
+    private readonly translateService: TranslateService,
+    ) {}
   private toggle = false;
 
   readAloud(text: string, delay: number = READ_ALOUD_DELAY) {
@@ -86,5 +88,15 @@ export class AccessibilityService {
     setTimeout(() => {
       document.getElementById(elementId)?.focus();
     }, A11Y_FOCUS);
+  }
+
+  excuteSearchSpeech(list: any[]) {
+    const { length } = list;
+    const message =
+      length === 1
+        ? this.translateService.instant('patron-ui.ordering.one_search_available')
+        : `${length} ${this.translateService.instant('patron-ui.ordering.searches_available')} `;
+    const delay = 1000;
+    this.readAloud(message, delay);
   }
 }
