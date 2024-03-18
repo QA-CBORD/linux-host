@@ -28,8 +28,23 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { AddressHeaderFormatPipe } from '@shared/pipes/address-header-format-pipe';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
+import { StButtonModule } from '@shared/ui-components';
+import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
+import { StDateTimePickerModule } from '../st-date-time-picker';
 @Component({
-  selector: 'st-order-options.action-sheet',
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonicModule,
+    DeliveryAddressesModalModule,
+    StDateTimePickerModule,
+    StButtonModule,
+    AddressHeaderFormatPipeModule,
+  ],
+  providers: [AccessibilityService, AddressHeaderFormatPipe, OrderingService],
   templateUrl: './order-options.action-sheet.component.html',
   styleUrls: ['./order-options.action-sheet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

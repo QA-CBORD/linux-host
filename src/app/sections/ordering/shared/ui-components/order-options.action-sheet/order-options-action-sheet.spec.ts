@@ -102,8 +102,8 @@ describe('OrderOptionsActionSheet', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [OrderOptionsActionSheetComponent],
       imports: [
+        OrderOptionsActionSheetComponent,
         ...CoreTestingModules,
         DeliveryAddressesModalModule,
         StDateTimePickerModule,

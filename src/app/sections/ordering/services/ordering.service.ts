@@ -6,7 +6,9 @@ import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../co
 import { map, take } from 'rxjs/operators';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class OrderingService {
   constructor(private readonly contentStringsFacadeService: ContentStringsFacadeService) { }
 
