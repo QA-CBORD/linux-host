@@ -81,7 +81,7 @@ export class VaultIdentityService {
 
     this.vault?.onError(async (err: VaultError) => {
       switch (err.code) {
-        case 7:
+        case VaultErrorCodes.TooManyFailedAttempts:
           {
             const allData = await this.getValues();
             this.vault.clear();
