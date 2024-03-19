@@ -8,6 +8,7 @@ import {
   Device,
   DeviceSecurityType,
   Vault,
+  VaultError,
   VaultErrorCodes,
   VaultType,
 } from "@ionic-enterprise/identity-vault";
@@ -77,6 +78,49 @@ export class VaultIdentityService {
         }
       });
     });
+
+    this.vault?.onError(async (err: VaultError) => {
+      switch (err.code) {
+        case 7:
+          {
+            const allData = await this.getValues();
+            this.vault.clear();
+            this.init();
+            this.setValues(allData);
+          }
+          break;
+      }
+    });
+  }
+
+   // Assuming Identity Vault is properly initialized
+   async getValues() {
+    try {
+      const allData = {};
+
+      const keys = await this.vault.getKeys();
+      for (const key of keys) {
+        const value = await this.vault.getValue(key);
+        allData[key] = value;
+      }
+
+      return allData; // Return all retrieved data
+    } catch (error) {
+      console.error('Error retrieving data from Identity Vault:', error);
+      throw error; // Handle error appropriately
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async setValues(values: { [key: string]: any }) {
+    try {
+      for (const [key, value] of Object.entries(values)) {
+        await this.vault.setValue(key, value);
+      }
+    } catch (error) {
+      console.error('Error setting data to Identity Vault:', error);
+      throw error; // Handle error appropriately
+    }
   }
 
   async isBiometricPermissionDenied({ code }: { code: VaultErrorCodes }): Promise<boolean> {
