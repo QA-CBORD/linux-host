@@ -4,10 +4,10 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { Observable, firstValueFrom, of } from 'rxjs';
 import { PAYMENT_SYSTEM_TYPE, TIME_PERIOD } from '../accounts.config';
-import { TransactionHistory } from '../models/transaction-history.model';
 import { DateUtilObject } from '../shared/ui-components/filter/date-util';
 import { AccountService } from './accounts.service';
 import { TransactionService } from './transaction.service';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 
 describe('TransactionService', () => {
   let service: TransactionService;
@@ -52,9 +52,9 @@ describe('TransactionService', () => {
 
   it('should update the transaction history and emit new values', () => {
     const mockTransactionHistory = [
-      { transactionId: '1', actualDate: new Date('2023-01-01T10:00:00Z').toDateString() },
-      { transactionId: '2', actualDate: new Date('2023-01-03T14:30:00Z').toDateString() },
-      { transactionId: '3', actualDate: new Date('2023-01-02T08:45:00Z').toDateString() },
+      { transactionId: '1', transactionKey: '1', actualDate: new Date('2023-01-01T10:00:00Z').toDateString() },
+      { transactionId: '2', transactionKey: '2', actualDate: new Date('2023-01-03T14:30:00Z').toDateString() },
+      { transactionId: '3', transactionKey: '3', actualDate: new Date('2023-01-02T08:45:00Z').toDateString() },
     ] as TransactionHistory[];
     service['_transactions'] = mockTransactionHistory;
 

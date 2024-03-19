@@ -5,11 +5,11 @@ import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { TransactionHistory } from '../../models/transaction-history.model';
 import { CONTENT_STRINGS, TIME_PERIOD } from '../../accounts.config';
 import { TransactionService } from '../../services/transaction.service';
 import { NavigationState } from '@sections/dashboard/models/navigation-state.model';
 import { ToastService } from '@core/service/toast/toast.service';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 
 @Component({
   selector: 'st-account-details',

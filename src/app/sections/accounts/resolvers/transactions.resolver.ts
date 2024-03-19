@@ -10,8 +10,8 @@ import { AccountService } from '@sections/accounts/services/accounts.service';
 import { Observable, zip } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { UserAccount } from '@core/model/account/account.model';
-import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
 import { Settings } from '../../../app.global';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 
 @Injectable()
 export class TransactionsResolver {

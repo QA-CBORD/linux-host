@@ -4,11 +4,11 @@ import { AccountService } from '../services/accounts.service';
 import { ALL_ACCOUNTS, TIME_PERIOD } from '../accounts.config';
 import { UserAccount } from '@core/model/account/account.model';
 import { finalize, switchMap } from 'rxjs/operators';
-import { TransactionHistory } from '../models/transaction-history.model';
 import { TransactionService } from '../services/transaction.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
 import { Settings } from '../../../app.global';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 
 @Injectable()
 export class AccountsPageResolver {

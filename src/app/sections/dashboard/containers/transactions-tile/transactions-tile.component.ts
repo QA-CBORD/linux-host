@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TransactionService } from './services/transaction.service';
-import { TransactionHistory } from '@sections/dashboard/models';
 import { take, finalize } from 'rxjs/operators';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 
 @Component({
   selector: 'st-transactions-tile',
