@@ -1,11 +1,9 @@
-import { Inject, Pipe, PipeTransform, inject } from '@angular/core';
-import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+import { Pipe, PipeTransform } from '@angular/core';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 @Pipe({ name: 'search' })
 export class SearchPipe implements PipeTransform {
-  
-  constructor(private readonly a11yService:AccessibilityService) {}
+  constructor(private readonly a11yService: AccessibilityService) {}
   transform(value: { name: string }[], term: string): object[] {
     if (!value) {
       return [];

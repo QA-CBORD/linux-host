@@ -4,7 +4,6 @@ import { of } from 'rxjs/internal/observable/of';
 import { Platform } from '@ionic/angular';
 import { ScreenReader } from '@capacitor/screen-reader';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuCategoryItemInfo } from '@sections/ordering';
 const READ_ALOUD_DELAY = 2000;
 const TAP_TIME_LAPSE = 300;
 const A11Y_FOCUS = 1500;
