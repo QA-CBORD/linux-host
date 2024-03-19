@@ -5,7 +5,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 
 import { DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from 'src/app/sections/accounts/shared/ui-components/filter/date-util';
 import { Settings } from 'src/app/app.global';
-import { TransactionHistory } from '@sections/dashboard/models';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { TransactionResponse } from '@core/model/account/transaction-response.model';
@@ -19,6 +19,7 @@ import {
 import { convertGMTintoLocalTime } from '@core/utils/date-helper';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { cleanDuplicateTransactions } from '@core/utils/transactions-helper';
 
 @Injectable()
 export class TransactionService {
@@ -54,7 +55,7 @@ export class TransactionService {
 
   private set _transactions(value: TransactionHistory[]) {
     this.transactionHistory = [...this.transactionHistory, ...value];
-    this.transactionHistory = this.cleanDuplicateTransactions(this.transactionHistory);
+    this.transactionHistory = cleanDuplicateTransactions(this.transactionHistory);
     this.transactionHistory.sort((a, b) => new Date(b.actualDate).getTime() - new Date(a.actualDate).getTime());
     this._transactions$.next([...this.transactionHistory]);
   }
@@ -134,12 +135,6 @@ export class TransactionService {
       oldestDate,
       accountId: accountId === ALL_ACCOUNTS ? null : accountId,
     };
-  }
-
-  private cleanDuplicateTransactions(arr: TransactionHistory[]): TransactionHistory[] {
-    const transactionMap = new Map<string, TransactionHistory>();
-    arr.forEach(transaction => transactionMap.set(transaction.transactionId, transaction));
-    return Array.from(transactionMap.values());
   }
 
   private filterByTenderIds(tendersId: string[], transactions: TransactionHistory[]): TransactionHistory[] {

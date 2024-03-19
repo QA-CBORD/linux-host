@@ -1,5 +1,6 @@
 export interface TransactionHistory {
   readonly transactionId: string;
+  readonly transactionKey: string;
   readonly transactionSequence: number;
   readonly transactionType: number;
   readonly amount: number;

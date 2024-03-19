@@ -5,12 +5,12 @@ import { map } from 'rxjs/operators';
 
 import { AccountService } from './services/accounts.service';
 import { UserAccount } from '@core/model/account/account.model';
-import { TransactionHistory } from './models/transaction-history.model';
 import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from './accounts.config';
 import { PATRON_NAVIGATION } from '../../app.global';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { TransactionService } from './services/transaction.service';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 
 @Component({
   selector: 'st-accounts.page',

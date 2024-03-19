@@ -3,12 +3,12 @@ import { Observable } from 'rxjs';
 
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
 import { UserAccount } from '@core/model/account/account.model';
 import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from '@sections/accounts/accounts.config';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { TransactionService } from '@sections/accounts/services/transaction.service';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 
 @Component({
   selector: 'st-account-list',
