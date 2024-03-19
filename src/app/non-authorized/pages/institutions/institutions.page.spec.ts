@@ -16,6 +16,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 describe('InstitutionPage', () => {
   let component: InstitutionsPage;
@@ -43,6 +44,9 @@ describe('InstitutionPage', () => {
   let messageProxy;
   let platform;
   let nativeProvider;
+  let a11yService = {
+    excuteSearchSpeech: jest.fn(),
+  }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -62,6 +66,7 @@ describe('InstitutionPage', () => {
         { provide: MessageProxy, useValue: messageProxy },
         { provide: Platform, useValue: platform },
         { provide: NativeProvider, useValue: nativeProvider },
+        {provide: AccessibilityService, useValue: a11yService},
       ],
       imports: [SearchPipeModule],
     }).compileComponents();

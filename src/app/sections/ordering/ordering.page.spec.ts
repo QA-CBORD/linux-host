@@ -18,6 +18,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 describe('OrderingPage', () => {
   let component: OrderingPage;
@@ -32,6 +33,9 @@ describe('OrderingPage', () => {
   let mockPopoverController;
   let activatedRoute;
   let mockOrderActionSheetService;
+  let a11yService = {
+    excuteSearchSpeech: jest.fn(),
+  }
 
   beforeEach(() => {
     mockMerchantService = {
@@ -105,6 +109,7 @@ describe('OrderingPage', () => {
           useValue: mockOrderActionSheetService,
         },
         { provide: TranslateService, useClass: TranslateServiceStub },
+        { provide: AccessibilityService, useValue: a11yService },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     });

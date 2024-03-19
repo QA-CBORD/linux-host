@@ -23,6 +23,8 @@ import { By } from '@angular/platform-browser';
 import { AccountType } from 'src/app/app.global';
 import { DepositCsModel } from './deposit-page.content.string';
 import { UserAccount } from '@core/model/account/account.model';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { TranslateService } from '@ngx-translate/core';
 
 const fb = new FormBuilder();
 
@@ -115,6 +117,11 @@ const storage = {
 
 const router = {
   navigate: jest.fn().mockResolvedValue(true),
+};
+const a11yService = {
+  excuteSearchSpeech: jest.fn(),
+};
+const translateService = {
 };
 
 const accounts = [
@@ -411,6 +418,9 @@ describe('DepositPageComponent', () => {
         { provide: CommonService, useValue: commonService },
         { provide: OrderingService, useValue: orderingService },
         { provide: AppRateService, useValue: appRateService },
+        {provide: AccessibilityService, useValue: a11yService},
+        {provide: TranslateService, useValue: translateService},
+
       ],
     }).compileComponents();
 

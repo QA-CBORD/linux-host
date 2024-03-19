@@ -7,12 +7,11 @@ import { ScreenReader } from '@capacitor/screen-reader';
 import { Capacitor } from '@capacitor/core';
 import { TranslateService } from '@ngx-translate/core';
 
-
-const htmlMock = [{ item: { style: { display : ''}}, namedItem: {}  }] as any;
+const htmlMock = [{ item: { style: { display: '' } }, namedItem: {} }] as any;
 
 describe(AccessibilityService, () => {
   let service: AccessibilityService;
-  let _platform, _capacitor, _screenReader,_translateService;
+  let _platform, _capacitor, _screenReader, _translateService;
 
   beforeEach(() => {
     _platform = {
@@ -34,7 +33,7 @@ describe(AccessibilityService, () => {
         { provide: Platform, useValue: _platform },
         { provide: ScreenReader, useValue: _screenReader },
         { provide: Capacitor, useValue: _capacitor },
-        {provide: TranslateService, useValue: _translateService }
+        { provide: TranslateService, useValue: _translateService },
       ],
     });
 
@@ -80,7 +79,9 @@ describe(AccessibilityService, () => {
 
   it('should return true if voice over could not be used', () => {
     const platformMock = jest.spyOn(Capacitor, 'getPlatform').mockReturnValue(PLATFORM.ios);
-    const screenReaderMock1 = jest.spyOn(ScreenReader, 'isEnabled').mockImplementation(() => Promise.resolve({ value: true }));
+    const screenReaderMock1 = jest
+      .spyOn(ScreenReader, 'isEnabled')
+      .mockImplementation(() => Promise.resolve({ value: true }));
     expect(service.isVoiceOverEnabled$).toBeTruthy();
     expect(platformMock).toHaveBeenCalledTimes(1);
     expect(screenReaderMock1).toHaveBeenCalledTimes(2);
@@ -88,7 +89,9 @@ describe(AccessibilityService, () => {
 
   it('should return false if voice over is not enabled', () => {
     const platformMock = jest.spyOn(Capacitor, 'getPlatform').mockReturnValue(PLATFORM.ios);
-    const screenReaderMock1 = jest.spyOn(ScreenReader, 'isEnabled').mockImplementation(() => Promise.resolve({ value: false }));
+    const screenReaderMock1 = jest
+      .spyOn(ScreenReader, 'isEnabled')
+      .mockImplementation(() => Promise.resolve({ value: false }));
     expect(service.isVoiceOverEnabled$).toBeTruthy();
     expect(platformMock).toHaveBeenCalledTimes(3);
     expect(screenReaderMock1).toHaveBeenCalledTimes(3);
@@ -96,7 +99,9 @@ describe(AccessibilityService, () => {
 
   it('should return false voice is enabled', () => {
     const platformMock = jest.spyOn(Capacitor, 'getPlatform').mockReturnValue(PLATFORM.ios);
-    const screenReaderMock1 = jest.spyOn(ScreenReader, 'isEnabled').mockImplementation(() => Promise.resolve({ value: false }));
+    const screenReaderMock1 = jest
+      .spyOn(ScreenReader, 'isEnabled')
+      .mockImplementation(() => Promise.resolve({ value: false }));
     expect(service.isVoiceOverClick$).toBeTruthy();
     expect(platformMock).toHaveBeenCalledTimes(4);
     expect(screenReaderMock1).toHaveBeenCalledTimes(4);
@@ -104,7 +109,9 @@ describe(AccessibilityService, () => {
 
   it('should return true voice is enabled', () => {
     const platformMock = jest.spyOn(Capacitor, 'getPlatform').mockReturnValue(PLATFORM.ios);
-    const screenReaderMock1 = jest.spyOn(ScreenReader, 'isEnabled').mockImplementation(() => Promise.resolve({ value: true }));
+    const screenReaderMock1 = jest
+      .spyOn(ScreenReader, 'isEnabled')
+      .mockImplementation(() => Promise.resolve({ value: true }));
     expect(service.isVoiceOverClick$).toBeTruthy();
     expect(platformMock).toHaveBeenCalledTimes(5);
     expect(screenReaderMock1).toHaveBeenCalledTimes(5);
@@ -113,7 +120,9 @@ describe(AccessibilityService, () => {
   it('should hide elements by class name default', () => {
     const elementsMock = jest.spyOn(document, 'getElementsByClassName').mockReturnValue(htmlMock);
     const platformMock = jest.spyOn(Capacitor, 'getPlatform').mockReturnValue(PLATFORM.ios);
-    const screenReaderMock1 = jest.spyOn(ScreenReader, 'isEnabled').mockImplementation(() => Promise.resolve({ value: true }));
+    const screenReaderMock1 = jest
+      .spyOn(ScreenReader, 'isEnabled')
+      .mockImplementation(() => Promise.resolve({ value: true }));
     expect(service.hideElementsByClassName()).toBeTruthy();
     expect(platformMock).toHaveBeenCalledTimes(7);
     expect(screenReaderMock1).toHaveBeenCalledTimes(6);

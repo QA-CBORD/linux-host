@@ -89,7 +89,7 @@ export class AccessibilityService {
     }, A11Y_FOCUS);
   }
 
-  excuteSearchSpeech(list: MenuCategoryItemInfo[] | { name: string; }[]) {
+  excuteSearchSpeech(list: object[] = [] ) {
     const { length } = list;
     const message =
       length === 1
