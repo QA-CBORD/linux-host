@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 import { ToastService } from '@core/service/toast/toast.service';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { ALL_ACCOUNTS, TIME_PERIOD } from '@sections/accounts/accounts.config';
@@ -6,7 +7,6 @@ import { AccountService } from '@sections/accounts/services/accounts.service';
 import { TransactionService } from '@sections/accounts/services/transaction.service';
 import { DateUtilObject } from '@sections/accounts/shared/ui-components/filter/date-util';
 import { TILES_TITLE } from '@sections/dashboard/dashboard.config';
-import { TransactionHistory } from '@sections/dashboard/models';
 import { Observable, first, firstValueFrom, map } from 'rxjs';
 import { Settings } from 'src/app/app.global';
 

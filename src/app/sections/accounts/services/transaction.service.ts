@@ -5,7 +5,6 @@ import { map, switchMap, tap, take } from 'rxjs/operators';
 
 import { AccountService } from './accounts.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
-import { TransactionHistory } from '../models/transaction-history.model';
 import { TransactionResponse } from '@core/model/account/transaction-response.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
 import {
@@ -22,6 +21,8 @@ import { convertGMTintoLocalTime } from '@core/utils/date-helper';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { Settings } from '../../../app.global';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
+import { cleanDuplicateTransactions } from '@core/utils/transactions-helper';
 
 @Injectable()
 export class TransactionService {
@@ -58,7 +59,7 @@ export class TransactionService {
 
   private set _transactions(value: TransactionHistory[]) {
     this.transactionHistory = [...this.transactionHistory, ...value];
-    this.transactionHistory = this.cleanDuplicateTransactions(this.transactionHistory);
+    this.transactionHistory = cleanDuplicateTransactions(this.transactionHistory);
     this.transactionHistory.sort((a, b) => new Date(b.actualDate).getTime() - new Date(a.actualDate).getTime());
     this.infiniteFetchDateRecord.lastShownDate = this.getLatestDateInRange(value);
     this._transactions$.next([...this.transactionHistory]);
@@ -173,12 +174,6 @@ export class TransactionService {
       oldestDate,
       accountId: accountId === ALL_ACCOUNTS ? null : accountId,
     };
-  }
-
-  private cleanDuplicateTransactions(arr: TransactionHistory[]): TransactionHistory[] {
-    const transactionMap = new Map<string, TransactionHistory>();
-    arr.forEach(transaction => transactionMap.set(transaction.transactionId, transaction));
-    return Array.from(transactionMap.values());
   }
 
   private filterByTenderIds(tendersId: string[], transactions: TransactionHistory[]): TransactionHistory[] {
