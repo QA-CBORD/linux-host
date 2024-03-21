@@ -28,6 +28,7 @@
     --color-checked: #166dff;
     --color: #c4c4c4;
     margin-right: 10px;
+    @include font-nunito-semibold(16px);
   }
 
   &__radio-label {
