@@ -700,6 +700,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   onModalDismiss() {
     this.globalNavService.notifyBackdropHidden();
   }
+
+  get timeNotEditable() {
+    return !(this.isMerchantOrderAhead && this.enableTimeSelection) || this.isExistingOrder;
+  }
 }
 
 export enum FORM_CONTROL_NAMES {
