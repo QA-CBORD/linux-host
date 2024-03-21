@@ -23,6 +23,8 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { TranslateService } from '@ngx-translate/core';
+
+const DINEIN = 'DineIn';
 @Component({
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',
@@ -65,14 +67,14 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   get orderType(): Observable<string> {
     return zip(this.orderInfo$, this.contentStrings.labelPickup, this.contentStrings.labelDelivery).pipe(
-      map(([{ orderType }, pickup, delivery]) => {
-        switch (orderType) {
+      map(([orderInfo, pickup, delivery]) => {
+        switch (orderInfo?.orderType) {
           case ORDER_TYPE.PICKUP:
             return pickup;
           case ORDER_TYPE.DELIVERY:
             return delivery;
           default:
-            return 'DineIn';
+            return DINEIN;
         }
       })
     );
