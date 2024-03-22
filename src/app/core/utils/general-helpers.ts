@@ -284,7 +284,7 @@ export const isAppearing = (date: string, i: number, transactions: object[], pro
 };
 
 export function getDataUrlFromPhoto(photoInfo: GeneralPhoto): string | null {
-  if (photoInfo) {
+  if (photoInfo && photoInfo.data && photoInfo.mimeType) {
     return `data:${photoInfo.mimeType};base64,${photoInfo.data}`;
   }
   return null;

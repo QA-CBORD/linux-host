@@ -46,6 +46,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '@sections/accounts/accounts.config';
 import { MerchantInfo } from '@sections/ordering';
 import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
+import { GeneralPhoto } from '@core/model/general-photo/general-photo.model';
 
 describe('General Helpers', () => {
   let validatorFnMock;
@@ -59,7 +60,6 @@ describe('General Helpers', () => {
     9006: 'Error 9006',
     9010: 'Error 9010',
     6001: 'Error 6001',
-
   };
   const mockValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const password = control.value as string;
@@ -439,53 +439,53 @@ describe('General Helpers', () => {
       const userAccount: UserAccount = { paymentSystemType: PAYMENT_SYSTEM_TYPE.MONETRA } as UserAccount;
       expect(isCreditCardAccount(userAccount)).toBeTruthy();
     });
-  
+
     it('should return true for USAEPAY payment system type', () => {
       const userAccount: UserAccount = { paymentSystemType: PAYMENT_SYSTEM_TYPE.USAEPAY } as UserAccount;
       expect(isCreditCardAccount(userAccount)).toBeTruthy();
     });
-  
+
     it('should return false for other payment system types', () => {
       const userAccount: UserAccount = { paymentSystemType: PAYMENT_SYSTEM_TYPE.OPCS } as UserAccount;
       expect(isCreditCardAccount(userAccount)).toBeFalsy();
     });
   });
-  
+
   describe('isCashlessAccount', () => {
     it('should return true for OPCS payment system type', () => {
       const userAccount: UserAccount = { paymentSystemType: PAYMENT_SYSTEM_TYPE.OPCS } as UserAccount;
       expect(isCashlessAccount(userAccount)).toBeTruthy();
     });
-  
+
     it('should return true for CSGOLD payment system type', () => {
       const userAccount: UserAccount = { paymentSystemType: PAYMENT_SYSTEM_TYPE.CSGOLD } as UserAccount;
       expect(isCashlessAccount(userAccount)).toBeTruthy();
     });
-  
+
     it('should return false for other payment system types', () => {
       const userAccount: UserAccount = { paymentSystemType: PAYMENT_SYSTEM_TYPE.MONETRA } as UserAccount;
       expect(isCashlessAccount(userAccount)).toBeFalsy();
     });
   });
-  
+
   describe('isMealsAccount', () => {
     it('should return true for meals account type', () => {
       const userAccount: UserAccount = { accountType: ACCOUNT_TYPES.meals } as UserAccount;
       expect(isMealsAccount(userAccount)).toBeTruthy();
     });
-  
+
     it('should return false for other account types', () => {
       const userAccount: UserAccount = { accountType: ACCOUNT_TYPES.applePay } as UserAccount;
       expect(isMealsAccount(userAccount)).toBeFalsy();
     });
   });
-  
+
   describe('isAppleAccount', () => {
     it('should return true for Apple Pay account type', () => {
       const userAccount: UserAccount = { accountType: ACCOUNT_TYPES.applePay } as UserAccount;
       expect(isAppleAccount(userAccount)).toBeTruthy();
     });
-  
+
     it('should return false for other account types', () => {
       const userAccount: UserAccount = { accountType: ACCOUNT_TYPES.charge } as UserAccount;
       expect(isAppleAccount(userAccount)).toBeFalsy();
@@ -554,15 +554,26 @@ describe('General Helpers', () => {
     expect(getCashlessStatus(true)).toBe(ReportCardStatus.LOST);
   });
   it('should merge match array correctly with source array', () => {
-    const sourceArray = [{ id: '1', name: 'Item 1' }, { id: '2', name: 'Item 2' }, { id: '3', name: 'Item 3' }];
+    const sourceArray = [
+      { id: '1', name: 'Item 1' },
+      { id: '2', name: 'Item 2' },
+      { id: '3', name: 'Item 3' },
+    ];
     const matchIds = ['1', '3'];
 
     const result = mergeMatchArrayById<{ id: string; name: string }>(sourceArray, matchIds);
-    expect(result).toEqual([{ id: '1', name: 'Item 1' }, { id: '3', name: 'Item 3' }]);
+    expect(result).toEqual([
+      { id: '1', name: 'Item 1' },
+      { id: '3', name: 'Item 3' },
+    ]);
   });
 
   it('should handle empty match array correctly', () => {
-    const sourceArray = [{ id: '1', name: 'Item 1' }, { id: '2', name: 'Item 2' }, { id: '3', name: 'Item 3' }];
+    const sourceArray = [
+      { id: '1', name: 'Item 1' },
+      { id: '2', name: 'Item 2' },
+      { id: '3', name: 'Item 3' },
+    ];
     const matchIds: string[] = [];
 
     const result = mergeMatchArrayById<{ id: string; name: string }>(sourceArray, matchIds);
@@ -570,13 +581,17 @@ describe('General Helpers', () => {
   });
 
   it('should handle missing source items correctly', () => {
-    const sourceArray = [{ id: '1', name: 'Item 1' }, { id: '2', name: 'Item 2' }, { id: '3', name: 'Item 3' }];
+    const sourceArray = [
+      { id: '1', name: 'Item 1' },
+      { id: '2', name: 'Item 2' },
+      { id: '3', name: 'Item 3' },
+    ];
     const matchIds = ['1', '4'];
 
     const result = mergeMatchArrayById<{ id: string; name: string }>(sourceArray, matchIds);
     expect(result).toEqual([{ id: '1', name: 'Item 1' }]);
   });
-  
+
   it('should return true when a single control has a required field', () => {
     const control = new FormControl('', Validators.required);
     expect(hasRequiredField(control)).toBeTruthy();
@@ -666,5 +681,32 @@ describe('General Helpers', () => {
 
   it('should return null if photo info is null', () => {
     expect(getDataUrlFromPhoto(null)).toBeNull();
+  });
+
+  describe('getDataUrlFromPhoto', () => {
+    it('should return data URL when photoInfo is valid', () => {
+      const photoInfo: GeneralPhoto = {
+        data: 'testData',
+        mimeType: 'image/jpeg',
+      };
+
+      const result = getDataUrlFromPhoto(photoInfo);
+
+      expect(result).toBe('data:image/jpeg;base64,testData');
+    });
+
+    it('should return null when photoInfo is null', () => {
+      const result = getDataUrlFromPhoto(null);
+
+      expect(result).toBeNull();
+    });
+
+    it('should return null when photoInfo does not have data or mimeType', () => {
+      const photoInfo = {} as GeneralPhoto;
+
+      const result = getDataUrlFromPhoto(photoInfo);
+
+      expect(result).toBeNull();
+    });
   });
 });
