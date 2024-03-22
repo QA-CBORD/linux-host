@@ -50,7 +50,7 @@ export class OrderActionSheetService {
     if (!merchant) {
       this.onToastDisplayed(
         this.translateService.instant(
-          `${CONTENT_STRINGS_DOMAINS.get_common}.${CONTENT_STRINGS_CATEGORIES.error}.selected_merchant_not_found`
+          `${CONTENT_STRINGS_DOMAINS.get_common}.${CONTENT_STRINGS_CATEGORIES.error_message}.selected_merchant_not_found`
         )
       );
       return;
@@ -62,7 +62,7 @@ export class OrderActionSheetService {
     if (!this.merchantService.isOpen(merchant)) {
       this.onToastDisplayed(
         this.translateService.instant(
-          `${CONTENT_STRINGS_DOMAINS.get_common}.${CONTENT_STRINGS_CATEGORIES.error}.selected_merchant_closed`,
+          `${CONTENT_STRINGS_DOMAINS.get_common}.${CONTENT_STRINGS_CATEGORIES.error_message}.selected_merchant_closed`,
           { merchantName: merchant.name }
         )
       );
