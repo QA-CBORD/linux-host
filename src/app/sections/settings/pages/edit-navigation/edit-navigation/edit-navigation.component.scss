@@ -6,12 +6,16 @@ ion-content {
 .edit-navigation {
   &__list {
     background-color: transparent;
+
     &-section {
       background: white;
       &--title {
         @include font-nunito-semibold(12px);
         color: rgba(0, 0, 0, 0.6);
         text-transform: uppercase;
+      }
+      &--item {
+        @include font-nunito-regular(16px);
       }
     }
   }

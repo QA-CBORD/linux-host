@@ -5,7 +5,9 @@
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title tabindex="0" mode="ios" class="edit-home__header-title" id="modal-mainTitle">Edit Navigation</ion-title>
+    <ion-title tabindex="0" mode="ios" class="edit-home__header-title" id="modal-mainTitle" translate
+      >get_mobile.edit-navigation.title</ion-title
+    >
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -13,8 +15,9 @@
   <ion-list class="ion-margin-top edit-navigation__list">
     <div
       class="ion-padding-top ion-padding-horizontal edit-navigation__list-section edit-navigation__list-section--title"
+      translate
     >
-      Tab Bar
+      get_mobile.edit-navigation.tab_bar
     </div>
     <ion-reorder-group [disabled]="false" (ionItemReorder)="handleReorder($event)">
       @for (item of navElements | slice: 0:topNavElements; track item.id) {
@@ -22,8 +25,9 @@
       }
       <div
         class="ion-margin-top ion-padding-top ion-padding-horizontal edit-navigation__list-section edit-navigation__list-section--title"
+        translate
       >
-        More Menu
+        get_mobile.edit-navigation.more_menu
       </div>
       @for (item of navElements | slice: topNavElements; track item.id) {
       <ng-container [ngTemplateOutlet]="reorderItem" [ngTemplateOutletContext]="{ item }"> </ng-container>
@@ -33,7 +37,7 @@
   }
 </ion-content>
 <ng-template #reorderItem let-item="item">
-  <ion-item>
+  <ion-item class="edit-navigation__list-section--item">
     <ion-label>{{ item.name }} </ion-label>
     <ion-reorder slot="end">
       <ion-icon src="/assets/icon/drag_handle.svg" mode="md"></ion-icon>

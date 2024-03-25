@@ -4,6 +4,8 @@ import { EditNavigationComponent } from './edit-navigation.component';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { of } from 'rxjs';
 import { ItemReorderEventDetail } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { EventEmitter } from '@angular/core';
 
 describe('EditNavigationComponent', () => {
   let component: EditNavigationComponent;
@@ -20,6 +22,8 @@ describe('EditNavigationComponent', () => {
           provide: NavigationFacadeSettingsService,
           useValue: navigationFacadeSettingsService,
         },
+        { provide: TranslateService, useClass: TranslateServiceStub },
+
       ],
     }).compileComponents();
 
@@ -49,3 +53,17 @@ describe('EditNavigationComponent', () => {
     expect(mockEventDetail.complete).toHaveBeenCalledWith(false);
   });
 });
+
+export class TranslateServiceStub {
+  onLangChange = new EventEmitter();
+  onTranslationChange = new EventEmitter();
+  onDefaultLangChange = new EventEmitter();
+
+  public get(key: any): any {
+    return of(key);
+  }
+
+  public instant(key: any): any {
+    return key;
+  }
+}

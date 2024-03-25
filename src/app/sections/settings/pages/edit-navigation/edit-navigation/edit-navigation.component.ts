@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { IonicModule, ItemReorderEventDetail } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { StHeaderModule } from '@shared/ui-components';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { lastValueFrom } from 'rxjs';
@@ -10,7 +11,7 @@ import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'st-edit-navigation',
   standalone: true,
-  imports: [IonicModule, StHeaderModule, SlicePipe, NgTemplateOutlet],
+  imports: [IonicModule, StHeaderModule, SlicePipe, NgTemplateOutlet, TranslateModule],
   templateUrl: './edit-navigation.component.html',
   styleUrl: './edit-navigation.component.scss',
 })
