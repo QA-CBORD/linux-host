@@ -57,6 +57,10 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     return this.storage.getStateEntityByKey$<boolean>(this.firstNavKey).pipe(map(data => !!data));
   }
 
+  updateConfigState(value: NavigationBottomBarElement[]): void {
+    this.storage.updateStateEntity(this.key, value, { highPriorityKey: true });
+  }
+
   promptPermissionsOnce() {
     this.storage.updateStateEntity(this.firstNavKey, true, { highPriorityKey: true, keepOnLogout: true });
   }
@@ -92,7 +96,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     );
   }
 
-  private initSettings(): Observable<NavigationBottomBarElement[]> {
+  initSettings(): Observable<NavigationBottomBarElement[]> {
     return zip(
       this.storage.getStateEntityByKey$<NavigationBottomBarElement[]>(this.key),
       this.getAllowedSettings()
