@@ -27,11 +27,13 @@ export class CreditCardService {
   async addCreditCard(): Promise<void> {
     await this.externalPaymentService
       .addUSAePayCreditCard()
-      .then(() => this.loadingService.closeSpinner())
-      .catch(errorMessage => this.showErrorMessage(errorMessage))
-      .finally(() =>
-        this.showSuccessMessage(this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'))
-      );
+      .then(({ success, errorMessage }) => {
+        this.loadingService.closeSpinner();
+        success
+          ? this.showSuccessMessage(this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'))
+          : this.showErrorMessage(errorMessage);
+      })
+      .catch(errorMessage => this.showErrorMessage(errorMessage));
   }
 
   private showSuccessMessage(message: string, duration = 5000) {
