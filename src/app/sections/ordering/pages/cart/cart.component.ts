@@ -752,12 +752,18 @@ export class CartComponent implements OnInit, OnDestroy {
         // Update user accounts for refreshing Credit Card dropdown list
         this.cartService.merchant$
           .pipe(
+            first(),
             switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
             tap(accounts => {
               this._accountInfoList$.next(accounts);
               this.cdRef.detectChanges();
             }),
-            finalize(() => this.loadingService.closeSpinner())
+            finalize(() => {
+              this.loadingService.closeSpinner();
+              this.toastService.showSuccessToast({
+                message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
+              });
+            })
           )
           .subscribe();
       });

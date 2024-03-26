@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, PopoverController } from '@ionic/angular';
-import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   ACCOUNTS_VALIDATION_ERRORS,
   ACCOUNT_TYPES,
@@ -33,6 +33,7 @@ import { DepositCsModel } from './deposit-page.content.string';
 import { CommonService } from '@shared/services/common.service';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export enum browserState {
   FINISHED = 'browserFinished',
@@ -85,8 +86,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly commonService: CommonService,
     private readonly orderingService: OrderingService,
     private readonly appRateService: AppRateService,
-    private ngZone: NgZone
-  ) { }
+    private ngZone: NgZone,
+    private readonly translateService: TranslateService
+  ) {}
 
   ngOnInit() {
     this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -288,7 +290,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     } else {
       iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
         .pipe(
-          switchMap((sourceAcc) => {
+          switchMap(sourceAcc => {
             const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
               sourceAcc.id,
               selectedAccount.id,
@@ -302,7 +304,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           take(1)
         )
         .subscribe(
-          (info) => this.confirmationDepositPopover({ ...info }),
+          info => this.confirmationDepositPopover({ ...info }),
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');
@@ -338,6 +340,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
+            first(),
             switchMap(({ success, errorMessage }) => {
               if (!success) {
                 return throwError(errorMessage);
@@ -346,14 +349,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               this.loadingService.showSpinner();
               return this.depositService.getUserAccounts();
             }),
-            take(1)
+            finalize(() => {
+              this.loadingService.closeSpinner();
+              this.toastService.showSuccessToast({
+                message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
+              });
+            })
           )
-          .subscribe(
-            () => {
-              return;
-            },
-            () => this.loadingService.closeSpinner()
-          );
+          .subscribe();
       }
 
       if (data) {
@@ -473,8 +476,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           )
           .subscribe(
             () => this.finalizeDepositModal(data),
-            async (error) => {
-              this.onErrorRetrieve(await this.orderingService.getContentErrorStringByException(error, 'Your information could not be verified.'))
+            async error => {
+              this.onErrorRetrieve(
+                await this.orderingService.getContentErrorStringByException(
+                  error,
+                  'Your information could not be verified.'
+                )
+              );
             }
           );
       }
