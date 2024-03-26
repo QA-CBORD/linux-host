@@ -189,6 +189,11 @@
       "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval.",
       "required_message": "A user photo is required to add mobile credentials to your mobile wallet."
     },
+    "edit-navigation": {
+      "title": "Edit Navigation",
+      "tab_bar": "Tab Bar",
+      "more_menu": "More Menu"
+    },
     "error": {
       "general": "Something went wrong, please try again...",
       "menu_option_not_available": "Menu Item not available",
