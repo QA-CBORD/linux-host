@@ -131,7 +131,6 @@ export class ExternalPaymentService {
   ) {
     if (event && event.url) {
       const url = event.url;
-      
       if (url.includes('action_complete')) {
         if (url.includes('action_complete=1')) {
           resolve(<USAePayResponse>{ success: true });
@@ -190,7 +189,7 @@ export class ExternalPaymentService {
       this.accessibilityService.hideElementsByClassName();
       this.handleUSAePayResponse(event, resolve, reject, browser);
     });
-    browser.on('loaderror').subscribe((val) => {
+    browser.on('loaderror').subscribe(() => {
       reject('Your request failed. Please try again.');
       browser.close();
     });
