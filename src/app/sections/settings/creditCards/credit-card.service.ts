@@ -3,6 +3,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { TranslateService } from '@ngx-translate/core';
 import { CREDITCARD_ICONS, CREDITCARD_TYPE } from '@sections/accounts/accounts.config';
 import { AccountsService } from '@sections/dashboard/services';
 import { firstValueFrom } from 'rxjs';
@@ -19,20 +20,20 @@ export class CreditCardService {
     private readonly externalPaymentService: ExternalPaymentService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
-    private readonly accountService: AccountsService
+    private readonly accountService: AccountsService,
+    private readonly translateService: TranslateService
   ) {}
 
   async addCreditCard(): Promise<void> {
-    try {
-      const { success, errorMessage } = await this.externalPaymentService.addUSAePayCreditCard();
-      if (success) {
-        this.showSuccessMessage('Your credit card has been added successfully.');
-      } else {
-        this.showErrorMessage(errorMessage);
-      }
-    } finally {
-      this.loadingService.closeSpinner();
-    }
+    await this.externalPaymentService
+      .addUSAePayCreditCard()
+      .then(({ success, errorMessage }) => {
+        this.loadingService.closeSpinner();
+        success
+          ? this.showSuccessMessage(this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'))
+          : this.showErrorMessage(errorMessage);
+      })
+      .catch(errorMessage => this.showErrorMessage(errorMessage));
   }
 
   private showSuccessMessage(message: string, duration = 5000) {
@@ -42,15 +43,13 @@ export class CreditCardService {
   private showErrorMessage(message: string, duration = 5000) {
     this.toastService.showError(message, duration);
   }
- async showMessage(message: string, duration = 5000) {
+  async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });
   }
 
   async retrieveAccounts(): Promise<AccountsConf[]> {
     this.loadingService.showSpinner();
-    return firstValueFrom(
-      this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY])
-    )
+    return firstValueFrom(this.accountService.getUserAccounts([PaymentSystemType.MONETRA, PaymentSystemType.USAEPAY]))
       .then(accounts => accounts.map(acc => this.buildStr(acc)))
       .finally(() => this.loadingService.closeSpinner());
   }

@@ -103,9 +103,7 @@ export class ExternalPaymentService {
     const applePayBaseURL = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/applepay.php?`;
     switch (handleApplePay) {
       case ApplePay.ORDERS_WITH_APPLE_PAY: {
-        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <
-          Partial<OrderInfo>
-        >queryParams;
+        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <Partial<OrderInfo>>queryParams;
         return `${applePayBaseURL}order_total=${total || ''}&session_token=${authToken || ''}&sub_total=${
           subTotal || ''
         }&fee=${useFee || ''}&tax=${tax || '0.00'}&discount=${discount || '0.00'}&pickup_fee=${
