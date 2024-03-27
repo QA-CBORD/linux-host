@@ -17,7 +17,8 @@ describe('AutomaticDepositPageComponent', () => {
     cdRef,
     loadingService,
     externalPaymentService,
-    userFacadeService;
+    userFacadeService,
+    translateService;
 
   beforeEach(() => {
     (fb = {}),
@@ -45,7 +46,7 @@ describe('AutomaticDepositPageComponent', () => {
       (loadingService = {
         showSpinner: jest.fn(),
         closeSpinner: jest.fn(),
-      });
+      },(translateService=>{}));
     fixture = new AutomaticDepositPageComponent(
       fb,
       settingsFacadeService,
@@ -58,7 +59,8 @@ describe('AutomaticDepositPageComponent', () => {
       cdRef,
       externalPaymentService,
       userFacadeService,
-      loadingService
+      loadingService,
+      translateService
     );
   });
 
