@@ -21,9 +21,10 @@ import { GuestDepositsService } from '@sections/guest/services/guest-deposits.se
 import { GUEST_ROUTES } from '@sections/section.config';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
 import { from, Observable, of, throwError } from 'rxjs';
-import { finalize, map, switchMap, take } from 'rxjs/operators';
+import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
+import { TranslateService } from '@ngx-translate/core';
 
 export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -48,7 +49,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   guestDepositForm: FormGroup;
   recipientName: string;
   focusLine = false;
-  errorCs: { maxAmountError: string; minAmountError: string; amountPatternError: string; };
+  errorCs: { maxAmountError: string; minAmountError: string; amountPatternError: string };
 
   constructor(
     private readonly fb: FormBuilder,
@@ -61,7 +62,8 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     protected externalPaymentService: ExternalPaymentService,
     protected cdRef: ChangeDetectorRef,
     protected depositService: DepositService,
-    protected toastService: ToastService
+    protected toastService: ToastService,
+    private readonly translateService: TranslateService
   ) {
     super(depositService, externalPaymentService, cdRef, toastService);
   }
@@ -150,25 +152,23 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     } else {
       of(paymentMethod)
         .pipe(
-          switchMap(
-            (sourceAcc) => {
-              const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
-                sourceAcc.id,
-                toAccount.id,
-                amount
-              );
+          switchMap(sourceAcc => {
+            const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
+              sourceAcc.id,
+              toAccount.id,
+              amount
+            );
 
-              return calculateDepositFee.pipe(
-                map(valueFee => ({
-                  fee: valueFee,
-                  sourceAcc: sourceAcc,
-                  selectedAccount: toAccount,
-                  amount: amount,
-                  billme: false,
-                }))
-              );
-            }
-          ),
+            return calculateDepositFee.pipe(
+              map(valueFee => ({
+                fee: valueFee,
+                sourceAcc: sourceAcc,
+                selectedAccount: toAccount,
+                amount: amount,
+                billme: false,
+              }))
+            );
+          }),
           take(1)
         )
         .subscribe(
@@ -338,23 +338,23 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     }
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
+        first(),
         switchMap(({ success, errorMessage }) => {
           if (!success) {
             return throwError(errorMessage);
           }
           this.loadingService.showSpinner();
+          this.toastService.showSuccessToast({
+            message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
+          });
           return this.guestDepositsService.guestAccounts();
         }),
-        take(1)
-      )
-      .subscribe(
-        accounts => {
-          this.setSourceAccounts(accounts);
-        },
-        () => {
+        tap(this.setSourceAccounts),
+        finalize(() => {
           this.loadingService.closeSpinner();
-        }
-      );
+        })
+      )
+      .subscribe();
     this.paymentMethod.reset();
     this.paymentMethod.markAsPristine();
   }
@@ -364,6 +364,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
       maxAmountError: 'The maximum amount for a deposit is',
       minAmountError: 'The minimum amount for a deposit is',
       amountPatternError: 'Please enter a valid amount.',
-    }
+    };
   }
 }

@@ -17,7 +17,7 @@ import {
 } from '@core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController } from '@ionic/angular';
-import { first, map, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { WEEK } from '@core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
@@ -32,6 +32,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -75,7 +76,9 @@ export class AutomaticDepositPageComponent {
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly externalPaymentService: ExternalPaymentService,
-    private readonly userFacadeService: UserFacadeService
+    private readonly userFacadeService: UserFacadeService,
+    private readonly translateService: TranslateService
+
   ) {}
 
   ionViewWillEnter(): void {
@@ -321,7 +324,11 @@ export class AutomaticDepositPageComponent {
         this.autoDepositSettings.active && (await this.initForm());
         const frecuency = this.autoDepositSettings.dayOfMonth > 0 ? DEPOSIT_FREQUENCY.month : DEPOSIT_FREQUENCY.week;
         this._activeFrequency = String(frecuency);
-        this.onDepositTypeChangedHandler(this.autoDepositSettings?.active ? this.autoDepositSettings?.autoDepositType : this.autoDepositTypes.automaticDepositOff)
+        this.onDepositTypeChangedHandler(
+          this.autoDepositSettings?.active
+            ? this.autoDepositSettings?.autoDepositType
+            : this.autoDepositTypes.automaticDepositOff
+        );
       });
 
     this.sourceSubscription.add(subscription);
@@ -331,7 +338,7 @@ export class AutomaticDepositPageComponent {
     this.paymentMethodAccount = settings.fromAccountId && accounts.find(acc => acc.id === settings.fromAccountId);
     if (
       this.paymentMethodAccount &&
-      !this.creditCardSourceAccounts.some(({ id }) => id === (<UserAccount> this.paymentMethodAccount).id)
+      !this.creditCardSourceAccounts.some(({ id }) => id === (<UserAccount>this.paymentMethodAccount).id)
     ) {
       this.paymentMethodAccount = PAYMENT_TYPE.BILLME;
     }
@@ -394,9 +401,10 @@ export class AutomaticDepositPageComponent {
       );
 
       if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
-        autoDepositSettingsValues = this.activeFrequency === DEPOSIT_FREQUENCY.week
-          ? { ...autoDepositSettingsValues, dayOfMonth: 0 }
-          : { ...autoDepositSettingsValues, dayOfWeek: 0 };
+        autoDepositSettingsValues =
+          this.activeFrequency === DEPOSIT_FREQUENCY.week
+            ? { ...autoDepositSettingsValues, dayOfMonth: 0 }
+            : { ...autoDepositSettingsValues, dayOfWeek: 0 };
       }
 
       const resultSettings = {
@@ -415,13 +423,12 @@ export class AutomaticDepositPageComponent {
       );
     }
 
-    predefinedUpdateCall
-      .pipe(take(1))
-      .subscribe(
-        async res => res && this.loadingService.closeSpinner() && (await this.showModal()),
-        async () => this.loadingService.closeSpinner() && await this.showToast('Something went wrong please try again later...'),
-        () => this.loadingService.closeSpinner()
-      );
+    predefinedUpdateCall.pipe(take(1)).subscribe(
+      async res => res && this.loadingService.closeSpinner() && (await this.showModal()),
+      async () =>
+        this.loadingService.closeSpinner() && (await this.showToast('Something went wrong please try again later...')),
+      () => this.loadingService.closeSpinner()
+    );
   }
 
   // -------------------- Events handlers block end --------------------------//
@@ -531,7 +538,10 @@ export class AutomaticDepositPageComponent {
       const freeFormErrors = [
         formControlErrorDecorator(Validators.required, CONTROL_ERROR[lowBalanceAmount].requiredEnter),
         formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[lowBalanceAmount].input),
-        formControlErrorDecorator(Validators.max(max), CONTROL_ERROR[lowBalanceAmount].maximum + Number(max).toFixed(2)),
+        formControlErrorDecorator(
+          Validators.max(max),
+          CONTROL_ERROR[lowBalanceAmount].maximum + Number(max).toFixed(2)
+        ),
         formControlErrorDecorator(Validators.min(0), CONTROL_ERROR[lowBalanceAmount].minimum),
       ];
       const selectErrors = formControlErrorDecorator(
@@ -624,12 +634,24 @@ export class AutomaticDepositPageComponent {
 
   private getModalBodyMessage(): string {
     if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
-      return getLowBalanceSuccessBodyMessage(this.amountToDeposit.value, this.lowBalanceAmount.value, this.account.value.accountDisplayName);
+      return getLowBalanceSuccessBodyMessage(
+        this.amountToDeposit.value,
+        this.lowBalanceAmount.value,
+        this.account.value.accountDisplayName
+      );
     }
     if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
       return this.activeFrequency === DEPOSIT_FREQUENCY.month
-        ? getMonthlySuccessBodyMessage(this.amountToDeposit.value, this.dayOfMonth.value, this.account.value.accountDisplayName)
-        : getWeeklySuccessBodyMessage(this.amountToDeposit.value, this.dayOfWeek.value - 1, this.account.value.accountDisplayName);
+        ? getMonthlySuccessBodyMessage(
+            this.amountToDeposit.value,
+            this.dayOfMonth.value,
+            this.account.value.accountDisplayName
+          )
+        : getWeeklySuccessBodyMessage(
+            this.amountToDeposit.value,
+            this.dayOfWeek.value - 1,
+            this.account.value.accountDisplayName
+          );
     }
   }
 
@@ -646,6 +668,7 @@ export class AutomaticDepositPageComponent {
   private addUSAePayCreditCard() {
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
+        first(),
         switchMap(({ success, errorMessage }) => {
           if (!success) {
             return throwError(errorMessage);
@@ -654,19 +677,22 @@ export class AutomaticDepositPageComponent {
           // Update user accounts for refreshing Credit Card dropdown list
           return zip(this.depositService.getUserAccounts(), this.isBillMePaymentTypesEnabled$);
         }),
-        take(1)
-      )
-      .subscribe(
-        ([accounts = [], isBillMeEnabled]) => {
+        tap(([accounts = [], isBillMeEnabled]) => {
           const creditCardSourceAccounts =
             (accounts.length && this.depositService.filterAccountsByPaymentSystem(accounts)) || [];
           this.sourceAccounts = [...creditCardSourceAccounts];
           if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
           this.paymentMethod.setValue('');
           this.cdRef.detectChanges();
-        },
-        () => this.loadingService.closeSpinner()
-      );
+          this.toastService.showSuccessToast({
+            message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
+          });
+        }),
+        finalize(() => {
+          this.loadingService.closeSpinner();
+        })
+      )
+      .subscribe();
   }
 
   private async showModal(): Promise<void> {

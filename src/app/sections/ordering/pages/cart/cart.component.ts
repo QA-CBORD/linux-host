@@ -757,12 +757,12 @@ export class CartComponent implements OnInit, OnDestroy {
             tap(accounts => {
               this._accountInfoList$.next(accounts);
               this.cdRef.detectChanges();
-            }),
-            finalize(() => {
-              this.loadingService.closeSpinner();
               this.toastService.showSuccessToast({
                 message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
               });
+            }),
+            finalize(() => {
+              this.loadingService.closeSpinner();
             })
           )
           .subscribe();
