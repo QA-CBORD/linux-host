@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/angular-ivy';
 
 
 const OmitedErrorsForSentry = [
-  'Error: Invalid session',
+  'Non-Error exception captured with keys found when loading the app',
   'Non-Error exception captured with keys'
 ];
 
