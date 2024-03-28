@@ -25,6 +25,7 @@ import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/orde
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MenuItemInfo, OrderItem } from '@sections/ordering/components';
+
 const menuMerchants = [
   {
     id: '2cf2524a-0641-482c-8b66-bdfdcdd353a8',
@@ -1030,37 +1031,34 @@ describe(RecentOrderComponent, () => {
       getMerchant: jest.fn().mockReturnValue(of({ id: '2cf2524a-0641-482c-8b66-bdfdcdd353a8' })),
       recentOrders$: of(orders),
       menuMerchants$: of(menuMerchants),
-      retrievePickupLocations: jest.fn(),
+      retrievePickupLocations: jest.fn().mockReturnValue(of([])),
       retrieveUserAddressList: jest.fn(),
       cancelOrderById: jest.fn(),
-      extractAllAvailableMenuItemsFromMenu: jest.fn(),
-      extractAllAvailableMenuItemOptionsFromMenuItem: jest.fn(),
+      extractAllAvailableMenuItemsFromMenu: jest.fn().mockReturnValue([]),
+      extractAllAvailableMenuItemOptionsFromMenuItem: jest.fn().mockReturnValue([]),
     };
     router = {
       navigate: jest.fn(),
     };
     popoverController = {
       create: jest.fn(() => ({
-        onDidDismiss: jest
-          .fn()
-          .mockResolvedValue({
-            role: BUTTON_TYPE.REMOVE,
-          }),
+        onDidDismiss: jest.fn().mockResolvedValue({
+          role: BUTTON_TYPE.REMOVE,
+        }),
         present: jest.fn(),
       })),
     };
     modalController = {
       createActionSheet: jest.fn(() => ({
-        onDidDismiss: jest
-          .fn()
-          .mockResolvedValue({
-            role: BUTTON_TYPE.CONTINUE,
-            data: { dueTime: Date.now(), orderType: ORDER_TYPE.PICKUP, address: {} as any, isASAP: false },
-          }),
+        onDidDismiss: jest.fn().mockResolvedValue({
+          role: BUTTON_TYPE.CONTINUE,
+          data: { dueTime: Date.now(), orderType: ORDER_TYPE.PICKUP, address: {} as any, isASAP: false },
+        }),
         present: jest.fn(),
       })),
     };
     cart = {
+      menuInfo$: of({}),
       getCart: jest.fn(),
       onAddItems: jest.fn().mockResolvedValue(true),
       clearCart: jest.fn(),
@@ -1068,7 +1066,7 @@ describe(RecentOrderComponent, () => {
       setActiveMerchantsMenuByOrderOptions: jest.fn(),
       addOrderItems: jest.fn(),
       updateOrderNote: jest.fn(),
-      validateReOrderItems: jest.fn().mockReturnValue(of({orderRemovedItems: [], order: { orderItems: [] }})),
+      validateReOrderItems: jest.fn().mockReturnValue(of({ orderRemovedItems: [], order: { orderItems: [] } })),
     };
     loadingService = {
       showLoading: jest.fn(),
@@ -1089,11 +1087,11 @@ describe(RecentOrderComponent, () => {
     checkinService = {
       getCheckinInstruction: jest.fn(),
       navedFromCheckin: false,
+      getContentStringByName$: jest.fn().mockReturnValue(of('Check-in instructions')),
     };
     alertController = {
       create: jest.fn(() => ({
-        onDidDismiss: jest
-          .fn(),
+        onDidDismiss: jest.fn(),
         present: jest.fn(),
       })),
     };
@@ -1111,7 +1109,6 @@ describe(RecentOrderComponent, () => {
     };
 
     orderActionSheetService = { openActionSheet$: of({}) };
-
     await TestBed.configureTestingModule({
       declarations: [RecentOrderComponent],
       imports: [IonicModule, TranslateModule.forRoot(), StHeaderModule, HttpClientTestingModule, OrderDetailsModule],
@@ -1140,6 +1137,8 @@ describe(RecentOrderComponent, () => {
     fixture.whenStable().then(() => {
       fixture.detectChanges();
     });
+
+    merchantService.recentOrders$ = of(orders);
   });
 
   it('should create a recent order component', () => {
@@ -1193,11 +1192,68 @@ describe(RecentOrderComponent, () => {
     expect(spy).toBeCalled();
   });
 
-  it('should not return be undefined if no orders match the orderId', async () => {
+  it('should not active the order if not orderId matches', async () => {
+    component['setActiveOrder']('');
+    const result = await lastValueFrom(component.order$);
+    expect(result).toBeUndefined();
+  });
+
+  it('should set an instruction message if is not check-in order', async () => {
+    const mockOrder = orders;
+    mockOrder[0].checkinStatus = 2;
+    merchantService.recentOrders$ = of(mockOrder);
     component['setActiveOrder']('6b43107e-065d-459e-b75e-25348bcb4ab9');
     const result = await lastValueFrom(component.order$);
+    const message = await lastValueFrom(component.checkinInstructionMessage);
     expect(result).toBeDefined();
+    expect(message).toEqual('Check-in instructions');
   });
+
+  it('should set an instruction message if is not check-in order', async () => {
+    const mockOrder = orders;
+    mockOrder[0].checkinStatus = 1;
+    merchantService.recentOrders$ = of(mockOrder);
+    component['setActiveOrder']('6b43107e-065d-459e-b75e-25348bcb4ab9');
+    const result = await lastValueFrom(component.order$);
+    const message = await lastValueFrom(component.checkinInstructionMessage);
+    expect(result).toBeDefined();
+    expect(message).toBeNull();
+  });
+
+  it('should get the pickup address', async () => {
+    const result = await lastValueFrom(component['getPickupAddress']());
+    expect(result).toMatchObject({
+      accessCode: null,
+      address1: null,
+      address2: null,
+      building: null,
+      city: null,
+      company: null,
+      country: null,
+      crossStreet: null,
+      department: null,
+      floor: null,
+      id: 'e2780564-52ee-4fdf-8da5-1f7800ce9c72',
+      latitude: null,
+      longitude: null,
+      nickname: null,
+      notes: null,
+      objectRevision: 1,
+      onCampus: null,
+      phone: null,
+      phoneExt: null,
+      postalcode: null,
+      room: null,
+      state: null,
+    });
+  });
+ 
+
+  it('resolveMenuItemsInOrder', async () => {
+    const result = await lastValueFrom(component.resolveMenuItemsInOrder());
+    expect(result).toEqual([[], true]);
+  });
+
 
   it('should add to cart', async () => {
     const result = await lastValueFrom(component.checkAddToCart$);
@@ -1244,6 +1300,11 @@ describe(RecentOrderComponent, () => {
 
   it('should display alert controller', async () => {
     const result = component['getOrderItemOptionsInitialObjects']([], {} as MenuItemInfo);
-    expect(result).toEqual([]); 
+    expect(result).toEqual([]);
+  });
+
+  it('should display alert controller', async () => {
+    const result = component['getOrderItemInitialObject'](orders[0].orderItems[0] as any, {} as MenuItemInfo);
+    expect(result.quantity).toEqual(5);
   });
 });
