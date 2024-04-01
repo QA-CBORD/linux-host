@@ -45,6 +45,7 @@ import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/sec
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService } from '@shared/services';
+import { CartPreviewComponent } from '@sections/ordering/components/cart-preview/cart-preview.component';
 
 @Component({
   selector: 'st-dashboard',
@@ -356,5 +357,14 @@ export class DashboardPage implements OnInit, AfterViewInit {
         ).slice(0, 2);
         this.conversationTile.refresh();
       });
+  }
+
+  async openCartpreview() {
+    const modal = await this.modalService.createActionSheet({
+      component: CartPreviewComponent,
+      cssClass: 'cart-preview-action-sheet',
+    });
+
+    await modal.present();
   }
 }

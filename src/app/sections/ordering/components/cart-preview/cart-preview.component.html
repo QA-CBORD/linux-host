@@ -5,11 +5,39 @@
   [isToolbarShow]="true"
   backButtonTitle=""
   title="Cart Preview"
+  (onClose)="onClose()"
 >
 </st-header>
 <ion-content>
-  <!-- Preview here -->
+  <div class="cart-preview__merchant-name">
+    {{ merchantName }}
+  </div>
+  <ion-list class="order-ingredient-list">
+    <ion-item-sliding *ngFor="let orderItem of orderItems" class="order-ingredient-list__ingredient">
+      <ion-item class="order-ingredient-list__item" lines="none">
+        <ion-label>
+          <st-order-item-details [mealBased]="mealBased" [orderItem]="orderItem"></st-order-item-details>
+          <ng-container *ngIf="orderItem.orderItemOptions">
+            <p
+              *ngFor="let subIngredient of orderItem.orderItemOptions"
+              class="order-ingredient-list__ingredient-description"
+            >
+              {{ subIngredient.name }} ({{ subIngredient.salePrice | priceUnitsResolver : mealBased }})
+            </p>
+          </ng-container>
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
 </ion-content>
 <ion-footer>
-  <!-- Buttons hers -->
+  <div class="cart-preview__expiration" translate [translateParams]="{ expirationDays: '7' }">
+    patron-ui.cart_preview.expiration_message
+  </div>
+  <ion-button class="cart-preview__footer-button" color="light" expand="block" translate
+    >patron-ui.cart_preview.add_more_button</ion-button
+  >
+  <ion-button class="cart-preview__footer-button checkout-button" expand="block" translate
+    >patron-ui.cart_preview.go_to_checkout_button</ion-button
+  >
 </ion-footer>
