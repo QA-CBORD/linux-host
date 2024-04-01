@@ -40,8 +40,6 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   allowNotes: boolean;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   routesData: RoutesData;
-  component: { menuItemOptions: { menuItemId: string; displayRank: number; visible: false; active: true; menuGroup: import("/Users/quantumit/Desktop/Work/gcs-patron-frontend/src/app/sections/ordering/index").MenuGroupInfo; }[]; };
-
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly fb: FormBuilder,
