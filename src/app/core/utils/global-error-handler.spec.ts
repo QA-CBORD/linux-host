@@ -47,7 +47,7 @@ describe('GlobalErrorHandler', () => {
     });
 
     it('should not call Sentry.captureException when error message contains specific text', () => {
-      const err = { message: 'Non-Error exception captured with keys' };
+      const err = { message: 'Non-Error exception captured with keys found when loading the app' };
       globalErrorHandler.handleError(err);
       expect(Sentry.captureException).not.toHaveBeenCalled();
     });

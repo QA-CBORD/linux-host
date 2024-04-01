@@ -2,6 +2,12 @@ import { ErrorHandler, Injectable } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import * as Sentry from '@sentry/angular-ivy';
 
+
+const OmitedErrorsForSentry = [
+  'Error: Invalid session',
+  'Non-Error exception captured with keys found when loading the app'
+];
+
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
   constructor(private alertController: AlertController) {}
@@ -12,7 +18,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (chunkFailedMessage.test(err.message)) {
       this.presentAlertConfirm();
     }
-    if (errText && !errText.toLowerCase().includes('Non-Error exception captured with keys'.toLowerCase())) {
+    if (errText && !OmitedErrorsForSentry.includes(errText) ) {
       Sentry.captureException(err);
     }
 

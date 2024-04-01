@@ -24,7 +24,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { TranslateService } from '@ngx-translate/core';
 
-const DINEIN = 'DineIn';
+export const DINEIN = 'DineIn';
 @Component({
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',

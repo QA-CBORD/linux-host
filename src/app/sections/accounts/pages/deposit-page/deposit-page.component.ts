@@ -347,13 +347,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               }
 
               this.loadingService.showSpinner();
+              this.toastService.showSuccessToast({
+                message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
+              });
               return this.depositService.getUserAccounts();
             }),
             finalize(() => {
               this.loadingService.closeSpinner();
-              this.toastService.showSuccessToast({
-                message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
-              });
             })
           )
           .subscribe();

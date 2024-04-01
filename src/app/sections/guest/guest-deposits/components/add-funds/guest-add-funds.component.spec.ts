@@ -12,6 +12,8 @@ import { PopoverController } from '@ionic/angular';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { GuestDepositsService } from '@sections/guest/services/guest-deposits.service';
 import { GuestAddFundsComponent } from './guest-add-funds.component';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
 
 describe('GuestAddFundsComponent', () => {
   let component: GuestAddFundsComponent;
@@ -20,39 +22,39 @@ describe('GuestAddFundsComponent', () => {
   beforeEach(() => {
     const changeDetectorRefStub = () => ({
       detectChanges: () => ({}),
-      markForCheck: () => ({})
+      markForCheck: () => ({}),
     });
     const formBuilderStub = () => ({ group: object => ({}) });
     const activatedRouteStub = () => ({ data: { subscribe: () => ({}) } });
     const routerStub = () => ({ navigate: array => ({}) });
     const externalPaymentServiceStub = () => ({
-      addUSAePayCreditCard: () => ({})
+      addUSAePayCreditCard: () => ({}),
     });
     const loadingServiceStub = () => ({
       closeSpinner: () => ({}),
-      showSpinner: () => ({})
+      showSpinner: () => ({}),
     });
     const modalsServiceStub = () => ({
       create: object => ({
         onDidDismiss: () => ({ then: () => ({}) }),
-        present: () => ({})
-      })
+        present: () => ({}),
+      }),
     });
     const toastServiceStub = () => ({});
     const popoverControllerStub = () => ({
       create: object => ({
         onDidDismiss: () => ({ then: () => ({}) }),
-        present: () => ({})
-      })
+        present: () => ({}),
+      }),
     });
     const depositServiceStub = () => ({
-      calculateDepositFee: (id, id1, amount) => ({ pipe: () => ({}) })
+      calculateDepositFee: (id, id1, amount) => ({ pipe: () => ({}) }),
     });
     const guestDepositsServiceStub = () => ({
       guestDeposit: (id, id1, amount) => ({
-        pipe: () => ({ subscribe: f => f({}) })
+        pipe: () => ({ subscribe: f => f({}) }),
       }),
-      guestAccounts: () => ({})
+      guestAccounts: () => ({}),
     });
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
@@ -64,15 +66,16 @@ describe('GuestAddFundsComponent', () => {
         { provide: Router, useFactory: routerStub },
         {
           provide: ExternalPaymentService,
-          useFactory: externalPaymentServiceStub
+          useFactory: externalPaymentServiceStub,
         },
         { provide: LoadingService, useFactory: loadingServiceStub },
         { provide: ModalsService, useFactory: modalsServiceStub },
         { provide: ToastService, useFactory: toastServiceStub },
         { provide: PopoverController, useFactory: popoverControllerStub },
         { provide: DepositService, useFactory: depositServiceStub },
-        { provide: GuestDepositsService, useFactory: guestDepositsServiceStub }
-      ]
+        { provide: GuestDepositsService, useFactory: guestDepositsServiceStub },
+        { provide: TranslateService, useClass: TranslateServiceStub },
+      ],
     });
     fixture = TestBed.createComponent(GuestAddFundsComponent);
     component = fixture.componentInstance;
@@ -88,7 +91,7 @@ describe('GuestAddFundsComponent', () => {
 
   describe('ngOnInit', () => {
     it('makes expected calls', () => {
-     jest.spyOn(component, 'initForm');
+      jest.spyOn(component, 'initForm');
       component.ngOnInit();
       expect(component.initForm).toHaveBeenCalled();
     });
@@ -96,13 +99,10 @@ describe('GuestAddFundsComponent', () => {
 
   describe('initForm', () => {
     it('makes expected calls', () => {
-      const formBuilderStub: FormBuilder = fixture.debugElement.injector.get(
-        FormBuilder
-      );
-     jest.spyOn(formBuilderStub, 'group');
+      const formBuilderStub: FormBuilder = fixture.debugElement.injector.get(FormBuilder);
+      jest.spyOn(formBuilderStub, 'group');
       component.initForm();
       expect(formBuilderStub.group).toHaveBeenCalled();
     });
   });
-
 });
