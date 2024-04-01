@@ -779,7 +779,7 @@ const orders = [
     deliveryAddressId: null,
     status: 1,
     statusDetail: null,
-    notes: null,
+    notes: 'Test',
     userName: '403 ** Test403',
     patronEmail: null,
     mealBased: false,
@@ -1049,6 +1049,12 @@ describe(RecentOrderComponent, () => {
       })),
     };
     modalController = {
+      createAlert: jest.fn(() => ({
+        onDidDismiss: jest.fn().mockResolvedValue({
+          role: BUTTON_TYPE.REMOVE,
+        }),
+        present: jest.fn(),
+      })),
       createActionSheet: jest.fn(() => ({
         onDidDismiss: jest.fn().mockResolvedValue({
           role: BUTTON_TYPE.CONTINUE,
@@ -1066,7 +1072,7 @@ describe(RecentOrderComponent, () => {
       setActiveMerchantsMenuByOrderOptions: jest.fn(),
       addOrderItems: jest.fn(),
       updateOrderNote: jest.fn(),
-      validateReOrderItems: jest.fn().mockReturnValue(of({ orderRemovedItems: [], order: { orderItems: [] } })),
+      validateReOrderItems: jest.fn().mockReturnValue(of({ orderRemovedItems: [{}, {}], order: { orderItems: [] } })),
     };
     loadingService = {
       showLoading: jest.fn(),
@@ -1220,6 +1226,12 @@ describe(RecentOrderComponent, () => {
     expect(message).toBeNull();
   });
 
+  it('should show modal on reorder', async () => {
+    const spy = jest.spyOn(modalController, 'createAlert');
+     await component['reorderOrder'](orders[0] as any);
+     expect(spy).toHaveBeenCalled();
+   });
+
   it('should get the pickup address', async () => {
     const result = await lastValueFrom(component['getPickupAddress']());
     expect(result).toMatchObject({
@@ -1298,12 +1310,12 @@ describe(RecentOrderComponent, () => {
     expect(spy).toBeCalled();
   });
 
-  it('should display alert controller', async () => {
+  it('should get initial items', async () => {
     const result = component['getOrderItemOptionsInitialObjects']([], {} as MenuItemInfo);
     expect(result).toEqual([]);
   });
 
-  it('should display alert controller', async () => {
+  it('should get initial item', async () => {
     const result = component['getOrderItemInitialObject'](orders[0].orderItems[0] as any, {} as MenuItemInfo);
     expect(result.quantity).toEqual(5);
   });
