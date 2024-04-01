@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { MerchantInfo } from '@sections/ordering/shared/models';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { EXPLORE_ROUTING } from '@sections/explore/explore.config';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { IonicModule } from '@ionic/angular';
 import { OrderAheadBadgeComponent } from '@shared/order-ahead-badge/order-ahead-badge.component';
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
@@ -10,8 +9,9 @@ import { OrderTypePipeModule } from '@sections/ordering/shared/pipes/order-type/
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
 import { OrderTypeDisplayComponent } from '@shared/order-type-display/order-type-display.component';
 import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { APP_ROUTES } from '@sections/section.config';
 
 @Component({
   standalone: true,
@@ -26,7 +26,7 @@ import { TranslateModule } from '@ngx-translate/core';
     OrderTypePipeModule,
     OrderTypeDisplayComponent,
     RouterModule,
-    TranslateModule
+    TranslateModule,
   ],
   selector: 'st-merchant-item',
   templateUrl: './merchant-item.component.html',
@@ -41,11 +41,11 @@ export class MerchantItemComponent {
     id: string;
   }>();
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-  readonly merchantDetailsRoute = `/${PATRON_NAVIGATION.explore}/${EXPLORE_ROUTING.merchantDetails}/`;
+  readonly merchantDetailsRoute = `/${this._route.url?.split('/').filter(segment => segment?.trim())[0]}/${APP_ROUTES.explore}/${
+    EXPLORE_ROUTING.merchantDetails
+  }/`;
 
-  constructor(
-    private readonly environmentFacadeService: EnvironmentFacadeService,
-  ) {}
+  constructor(private readonly environmentFacadeService: EnvironmentFacadeService, private readonly _route: Router) {}
 
   get starClass(): string {
     const empty = 'star-outline';
@@ -62,5 +62,4 @@ export class MerchantItemComponent {
   triggerFavourite(event, { isFavorite, id }: MerchantInfo) {
     this.addToFav.emit({ isFavorite, id });
   }
-
 }
