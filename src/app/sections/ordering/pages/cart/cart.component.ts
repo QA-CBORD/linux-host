@@ -5,7 +5,6 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Browser } from '@capacitor/browser';
@@ -70,7 +69,6 @@ import { ASAP_LABEL, EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/ge
 import { Location } from '@angular/common';
 import { DateTimeSelected } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.component';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
-import { ModalsService } from '@core/service/modals/modals.service';
 
 interface OrderingErrorContentStringModel {
   timeout: string;

@@ -45,7 +45,6 @@ import { SecureMessagingFacadeService } from '@core/facades/secure-messaging/sec
 import { buildConversationsFromMessages } from '@core/utils/conversations-helper';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService } from '@shared/services';
-import { CartPreviewComponent } from '@sections/ordering/components/cart-preview/cart-preview.component';
 
 @Component({
   selector: 'st-dashboard',

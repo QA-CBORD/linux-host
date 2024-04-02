@@ -96,8 +96,8 @@ export class OrderingService {
         this.loadingService.closeSpinner();
         this.modalService.dismiss();
       });
-  }
-  
+    }
+
   private async presentPopup(message) {
     const alert = await this.alertController.create({
       header: message,
