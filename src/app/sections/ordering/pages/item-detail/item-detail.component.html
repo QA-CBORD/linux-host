@@ -5,12 +5,12 @@
              [backButtonTitle]="''"
              [isTitleShow]="true"
              [isToolbarShow]="true"
-             [title]="menuItem.name"></st-header>
+             [title]="menuItem?.name"></st-header>
 </ng-template>
 
 <ng-template #staticHeader>
   <ion-header class="order-detail__static-header">
-    <ion-img [src]="menuItemImg" alt="{{ menuItem.name }}" class="order-detail__appetizer-photo"></ion-img>
+    <ion-img [src]="menuItemImg" alt="{{ menuItem?.name }}" class="order-detail__appetizer-photo"></ion-img>
     <ion-button shape="round" (click)="onClose()" class="order-detail__close-button" color="light">
       <ion-icon class="order-detail__header-icon" name="close" size="large" slot="icon-only"></ion-icon>
     </ion-button>
@@ -21,16 +21,16 @@
 <ng-container *ngIf="menuItemImg; then staticHeader"></ng-container>
 
   <div class="order-detail__descriptions">
-    <div class="order-detail__descriptions-title">{{ menuItem.name }}</div>
-    <p class="order-detail__descriptions-content">{{ menuItem.description }}</p>
+    <div class="order-detail__descriptions-title">{{ menuItem?.name }}</div>
+    <p class="order-detail__descriptions-content">{{ menuItem?.description }}</p>
     <span class="order-detail__descriptions-price">{{
-      menuItem.price | priceUnitsResolver: (menuInfo$ | async).mealBased
+      menuItem?.price | priceUnitsResolver: (menuInfo$ | async).mealBased
       }}</span>
   </div>
   <form *ngIf="itemOrderForm"
         [formGroup]="itemOrderForm"
         novalidate>
-    <ng-container *ngFor="let menuGroupItem of menuItem.menuItemOptions">
+    <ng-container *ngFor="let menuGroupItem of menuItem?.menuItemOptions">
       <ng-container *ngIf="
           menuGroupItem.menuGroup?.maximum === 1 && menuGroupItem.menuGroup?.minimum === 1;
           then singleList;
@@ -57,7 +57,7 @@
                        [minimum]="menuGroupItem.menuGroup.minimum"
                        [name]="menuGroupItem.menuGroup.name"
                        [options]="menuGroupItem.menuGroup.menuGroupItems"
-                       [isExistingItemInCart]="routesData.queryParams.isItemExistsInCart"></st-multi-list>
+                       [isExistingItemInCart]="routesData?.queryParams.isItemExistsInCart"></st-multi-list>
       </ng-template>
     </ng-container>
 
@@ -76,7 +76,7 @@
                                   rows="3">
       </st-textarea-floating-label>
     </ion-list>
-    <ion-list *ngIf="menuItem.calories || menuItem.protein || menuItem.carbs"
+    <ion-list *ngIf="menuItem?.calories || menuItem?.protein || menuItem?.carbs"
               class="order-detail__nutrition-info"
               mode="ios">
       <ion-item-divider class="order-detail__divider"
@@ -84,19 +84,19 @@
         <div class="order-detail__divider-title">Nutrition Info</div>
       </ion-item-divider>
       <div class="order-detail__nutrition-info-container">
-        <div *ngIf="menuItem.calories"
+        <div *ngIf="menuItem?.calories"
              class="order-detail__nutrition-info-wrapper">
-          <div class="order-detail__nutrition-info-title">{{ menuItem.calories }}</div>
+          <div class="order-detail__nutrition-info-title">{{ menuItem?.calories }}</div>
           <div class="order-detail__nutrition-info-subtitle">Calories</div>
         </div>
-        <div *ngIf="menuItem.protein"
+        <div *ngIf="menuItem?.protein"
              class="order-detail__nutrition-info-wrapper">
-          <div class="order-detail__nutrition-info-title">{{ menuItem.protein }}g</div>
+          <div class="order-detail__nutrition-info-title">{{ menuItem?.protein }}g</div>
           <div class="order-detail__nutrition-info-subtitle">Protein</div>
         </div>
-        <div *ngIf="menuItem.carbs"
+        <div *ngIf="menuItem?.carbs"
              class="order-detail__nutrition-info-wrapper">
-          <div class="order-detail__nutrition-info-title">{{ menuItem.carbs }}</div>
+          <div class="order-detail__nutrition-info-title">{{ menuItem?.carbs }}</div>
           <div class="order-detail__nutrition-info-subtitle">Carbs</div>
         </div>
       </div>
@@ -114,8 +114,8 @@
     </ion-button>
   </div>
   <div class="item-footer__add-btn-wrapper">
-    <st-button (onClick)="onFormSubmit()" [isDisabled]="!itemOrderForm.valid">
-      {{ (!routesData.queryParams.isItemExistsInCart ? contentStrings.buttonAdd : contentStrings.buttonUpdate) | async}} 
+    <st-button (onClick)="onFormSubmit()" [isDisabled]="!itemOrderForm?.valid">
+      {{ (!routesData?.queryParams.isItemExistsInCart ? contentStrings.buttonAdd : contentStrings.buttonUpdate) | async}} 
       {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
     </st-button>
   </div>
