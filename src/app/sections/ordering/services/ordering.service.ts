@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, ORDER_ERROR_CODES, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
+import {
+  LOCAL_ROUTING,
+  ORDERING_CONTENT_STRINGS,
+  ORDER_ERROR_CODES,
+  ORDER_VALIDATION_ERRORS,
+} from '@sections/ordering/ordering.config';
 import { Observable, lastValueFrom } from 'rxjs';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { first, map, take } from 'rxjs/operators';
@@ -96,7 +101,7 @@ export class OrderingService {
         this.loadingService.closeSpinner();
         this.modalService.dismiss();
       });
-    }
+  }
 
   private async presentPopup(message) {
     const alert = await this.alertController.create({
