@@ -3,44 +3,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-// import { CartService } from '@sections/ordering/services';
-import {  OrderItem } from '@sections/ordering/shared';
+import { CartService } from '@sections/ordering/services';
+import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { OrderItem } from '@sections/ordering/shared';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 import { StHeaderModule } from '@shared/ui-components';
-
-const orderItem: OrderItem = {
-  id: '1',
-  orderId: '2',
-  menuItemId: '3',
-  parentOrderItemId: '5',
-  quantity: 4,
-  displayRank: 5,
-  salePrice: 10,
-  specialInstructions: '',
-  keyedName: 'Orange Juice',
-  status: 1,
-  name: 'Orange Juice',
-  reportingCategory: '',
-  optionType: '',
-  orderItemOptions: [{
-    id: '1',
-    orderId: '2',
-    menuItemId: '3',
-    parentOrderItemId: '5',
-    quantity: 4,
-    displayRank: 5,
-    salePrice: 10,
-    specialInstructions: '',
-    keyedName: 'Oranges',
-    status: 1,
-    name: 'Oranges',
-    reportingCategory: '',
-    optionType: '',
-    orderItemOptions: [],
-  }],
-};
+import { first, lastValueFrom } from 'rxjs';
 @Component({
   standalone: true,
   providers: [PriceUnitsResolverPipe],
@@ -56,9 +26,10 @@ const orderItem: OrderItem = {
     CommonModule,
   ],
 })
-export class CartPreviewComponent implements OnInit{
+export class CartPreviewComponent implements OnInit {
   private readonly modalService = inject(ModalsService);
-  // private readonly cartService = inject(CartService);
+  private readonly cartService = inject(CartService);
+  private readonly orderingService = inject(OrderingService);
 
   orderItems: OrderItem[] = [];
   mealBased: boolean;
@@ -68,9 +39,15 @@ export class CartPreviewComponent implements OnInit{
     this.modalService.dismiss();
   };
 
-  ngOnInit(): void {
-    this.merchantName = 'Breaskfast Express';
-    this.mealBased = false;
-    this.orderItems = [orderItem, orderItem, orderItem, orderItem, orderItem];
+  async ngOnInit(): Promise<void> {
+    const { orderItems, mealBased } = await lastValueFrom(this.cartService.orderInfo$.pipe(first()));
+    const { name } = await lastValueFrom(this.cartService.merchant$.pipe(first()));
+    this.orderItems = orderItems;
+    this.mealBased = mealBased;
+    this.merchantName = name;
   }
+
+  redirectToCart = () => {
+    this.orderingService.redirectToCart();
+  };
 }

@@ -16,11 +16,7 @@
         <st-housing-tile #housingTile *ngSwitchCase="tilesIds.housing"></st-housing-tile>
       </ng-container>
     </st-tile-wrapper>
-    <ion-fab (click)="openCartpreview()">
-      <ion-fab-button>
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+
   </ng-container>
 
   <ion-button class="dashboard__bottom-btn-wrapper" mode="ios" (click)="presentEditHomePageModal()">

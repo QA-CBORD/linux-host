@@ -358,13 +358,4 @@ export class DashboardPage implements OnInit, AfterViewInit {
         this.conversationTile.refresh();
       });
   }
-
-  async openCartpreview() {
-    const modal = await this.modalService.createActionSheet({
-      component: CartPreviewComponent,
-      cssClass: 'cart-preview-action-sheet',
-    });
-
-    await modal.present();
-  }
 }

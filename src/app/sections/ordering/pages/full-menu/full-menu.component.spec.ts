@@ -20,7 +20,7 @@ import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-form
 import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
 import { NavigationService } from '@shared/services';
 import { lastValueFrom, of, throwError } from 'rxjs';
-import { DINEIN, FullMenuComponent, IGNORE_ERRORS } from './full-menu.component';
+import { DINEIN, FullMenuComponent } from './full-menu.component';
 import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-details-options.model';
 
 describe('FullMenuComponent', () => {
@@ -58,6 +58,8 @@ describe('FullMenuComponent', () => {
   };
   const orderingService = {
     getContentStringByName: jest.fn(async labelSavedAddresses => ({})),
+    validateOrder: jest.fn(),
+    redirectToCart: jest.fn(),
   };
   const _translateService = {
     instant: jest.fn(),
@@ -287,13 +289,6 @@ describe('FullMenuComponent', () => {
     });
   });
 
-  it('should call showToast with the correct message when failedValidateOrder is called', async () => {
-    const mockMessage = 'Test message';
-    const showToastSpy = jest.spyOn(toastService, 'showToast').mockReturnValue(Promise.resolve());
-    await component['failedValidateOrder'](mockMessage);
-    expect(showToastSpy).toHaveBeenCalledWith({ message: mockMessage });
-  });
-
   it('should return merchantService.orderTypes$ when orderTypes$ is accessed', () => {
     const merchantService = TestBed.inject(MerchantService);
     expect(component.orderTypes$).toBe(merchantService.orderTypes$);
@@ -326,7 +321,7 @@ describe('FullMenuComponent', () => {
     const mockData = { dueTime: new Date(), orderType: 1, address: 'Test address', isASAP: true };
     const mockOrderItems = [{ id: 1, name: 'Test item' }];
 
-    const validateOrderSpy = jest.spyOn(component as any, 'validateOrder');
+    const validateOrderSpy = jest.spyOn(orderingService, 'validateOrder');
 
     jest.spyOn(cartService, 'setActiveMerchantsMenuByOrderOptions').mockReturnValue(Promise.resolve(mockData));
 
@@ -346,77 +341,11 @@ describe('FullMenuComponent', () => {
     expect(validateOrderSpy).toHaveBeenCalled();
   });
 
-  it('should return errorMessage when cart has some error', async () => {
-    const mockCartsErrorMessage = 'Error message';
-    const mockIsExistingOrder = true;
-
-    const presentPopupSpy = jest.spyOn(component as any, 'presentPopup');
-
-    cartService.cartsErrorMessage = mockCartsErrorMessage;
-    cartService.isExistingOrder = mockIsExistingOrder;
-
-    cartService.validateOrder = jest.fn().mockReturnValue(throwError(() => 'Error'));
-
-    try {
-      await component['redirectToCart']();
-    } catch (error) {}
-
-    expect(presentPopupSpy).toHaveBeenCalledWith(mockCartsErrorMessage);
+  it('should call validateOrder method of CartService and navigate to cart on success', () => {
+    component.redirectToCart();
+    expect(orderingService.redirectToCart).toHaveBeenCalledTimes(1);
   });
 
-  it('should call navigate when redirectToCart is called and validateOrder is successful', async () => {
-    const mockIsExistingOrder = true;
   
-    const navigateSpy = jest.spyOn(routingService, 'navigate');
   
-    cartService.cartsErrorMessage = null;
-    cartService.isExistingOrder = mockIsExistingOrder;
-  
-    component['validateOrder'] = jest.fn().mockImplementation((successCb, errorCb) => {
-      successCb();
-      return Promise.resolve();
-    });
-  
-    await component['redirectToCart']();
-  
-    expect(navigateSpy).toHaveBeenCalledWith([APP_ROUTES.ordering, LOCAL_ROUTING.cart], { queryParams: { isExistingOrder: mockIsExistingOrder } });
-  });
-
-  it('should call failedValidateOrder when redirectToCart is called and validateOrder is unsuccessful', async () => {
-    const mockError = 'mock error';
-  
-    const failedValidateOrderSpy = jest.spyOn(component as any, 'failedValidateOrder');
-  
-    cartService.cartsErrorMessage = null;
-  
-    component['validateOrder'] = jest.fn().mockImplementation((successCb, errorCb) => {
-      errorCb(mockError);
-      return Promise.resolve();
-    });
-  
-    await component['redirectToCart']();
-  
-    expect(failedValidateOrderSpy).toHaveBeenCalledWith(mockError);
-  });
-
-  it('should call presentPopup when redirectToCart is called, validateOrder is unsuccessful, and error code is in IGNORE_ERRORS', async () => {
-    const mockErrorCode = 'mock error code';
-    const mockErrorMessage = 'mock error message';
-    const mockError = [mockErrorCode, mockErrorMessage];
-  
-    IGNORE_ERRORS.push(mockErrorCode);
-  
-    const presentPopupSpy = jest.spyOn(component as any, 'presentPopup');
-  
-    cartService.cartsErrorMessage = null;
-  
-    component['validateOrder'] = jest.fn().mockImplementation((successCb, errorCb) => {
-      errorCb(mockError);
-      return Promise.resolve();
-    });
-  
-    await component['redirectToCart']();
-  
-    expect(presentPopupSpy).toHaveBeenCalledWith(mockErrorMessage);
-  });
 });
