@@ -19,7 +19,6 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { UserInfo } from '@core/model/user';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { ToastService } from '@core/service/toast/toast.service';
 import {
   cvvValidationFn,
   formControlErrorDecorator,
@@ -67,6 +66,7 @@ import {
   TimePickerData,
 } from '../st-date-time-picker/st-date-time-picker.component';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { parseBitBasedMerchantSetting } from '@core/utils/ordering-helpers';
 
 @Component({
   selector: 'st-order-details',
@@ -113,7 +113,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.orderTypes = merchant.orderTypes;
     this.isWalkoutOrder = !!merchant.walkout;
     this._merchant = merchant;
-    this.isMerchantOrderAhead = parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
+    this.isMerchantOrderAhead = parseInt(merchant.settings?.map[MerchantSettings.orderAheadEnabled].value) === 1;
+    this.isTipEnabled = parseBitBasedMerchantSetting(merchant.settings?.map[MerchantSettings.tipEnabled]);
   }
 
   @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
@@ -163,6 +164,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   isApplePayment = false;
   isWalkoutOrder = false;
   isMerchantOrderAhead = false;
+  isTipEnabled = false;
+  showOrderNotesField = false;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -199,7 +202,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly a11yService: AccessibilityService,
     private readonly cartService: CartService,
     private readonly loadingService: LoadingService,
-    private readonly toastService: ToastService,
     private readonly translateService: TranslateService,
     private readonly merchantService: MerchantService,
     private readonly alertController: AlertController,
@@ -312,13 +314,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  get isTipEnabled() {
-    return !!this.merchantSettingsList.filter(
-      ({ domain, category, name, value }) =>
-        `${domain}.${category}.${name}` === MerchantSettings.tipEnabled && !!Number(value)
-    ).length;
-  }
-
   trackByAccountId(i: number): string {
     return `${i}-${Math.random()}`;
   }
@@ -381,6 +376,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.checkForOrderIssuesOnReadOnly();
     }
     this.subscribeOnFormChanges();
+    this.showOrderNotesField =
+      !this.readonly &&
+      !parseBitBasedMerchantSetting(this._merchant?.settings?.map[MerchantSettings.orderNotesDisabled]);
   }
 
   get isPaymentMethodDisabled() {
@@ -548,9 +546,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     );
     this.contentStrings.labelDiscount = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.labelDiscount
-    );
-    this.contentStrings.labelOrderNotes = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelOrderNotes
     );
     this.contentStrings.selectAccount = this.orderingService.getContentStringByName(
       ORDERING_CONTENT_STRINGS.selectAccount
