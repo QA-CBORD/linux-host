@@ -229,7 +229,7 @@
       </div>
     </div>
 
-    <div class="order-details" *ngIf="!readonly">
+    <div class="order-details" *ngIf="showOrderNotesField">
       <st-textarea-floating-label
         [control]="detailsForm.get(controlsNames.note)"
         [isError]="false"
@@ -238,7 +238,7 @@
         [idd]="controlsNames.note"
         [maxLength]="128"
         rows="3"
-        [placeholder]="contentStrings.labelOrderNotes | async"
+        [placeholder]="'patron-ui.ordering.label_order-notes' | translate"
       >
       </st-textarea-floating-label>
     </div>

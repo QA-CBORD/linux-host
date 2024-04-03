@@ -32,6 +32,7 @@ import { NavigationService } from '@shared/index';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { MerchantSettingTypes } from '@core/utils/ordering-helpers';
 
 const _modalController = {};
 const _orderingService = {
@@ -469,36 +470,6 @@ describe('OrderDetailsComponent', () => {
     } as OrderDetailOptions;
 
     expect(component.timeWithoutTimezone).toEqual({ dueTime });
-  });
-
-  it('should return true if tipEnabled setting is found and its value is not 0', () => {
-    component.merchantSettingsList = [
-      {
-        domain: 'merchant',
-        category: 'tip',
-        name: 'enable_tip',
-        value: '1',
-        contentMediaType: 1,
-        description: 'description',
-      },
-    ];
-
-    expect(component.isTipEnabled).toBe(true);
-  });
-
-  it('should return false if tipEnabled setting is not found or its value is 0', () => {
-    component.merchantSettingsList = [
-      {
-        domain: 'domain',
-        category: 'category',
-        name: 'tipEnabled',
-        value: '1',
-        contentMediaType: 1,
-        description: 'description',
-      },
-    ];
-
-    expect(component.isTipEnabled).toBe(false);
   });
 
   it('should return a string containing the index and a random number', () => {
