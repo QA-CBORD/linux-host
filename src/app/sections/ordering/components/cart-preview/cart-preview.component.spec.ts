@@ -12,6 +12,7 @@ import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-un
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 import { StHeaderModule } from '@shared/ui-components';
 import { BehaviorSubject } from 'rxjs';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('CartPreviewComponent', () => {
   let component: CartPreviewComponent;
@@ -32,30 +33,20 @@ describe('CartPreviewComponent', () => {
       validateOrder: () => new BehaviorSubject(null),
     };
 
-    // navigationServiceStub = {
-    //   navigate: () => Promise.resolve(),
-    // };
-
-    // alertControllerStub = {
-    //   create: () => Promise.resolve(),
-    // };
-
     modalsServiceMuck = {
-      dismiss: jest.fn()
+      dismiss: jest.fn(),
     };
-
-    // loadingServiceStub = {
-    //   showSpinner: () => {},
-    //   closeSpinner: () => {},
-    // };
-
-    // toastServiceStub = {
-    //   showToast: () => Promise.resolve(),
-    // };
 
     TestBed.configureTestingModule({
       declarations: [PriceUnitsResolverPipe],
-      imports: [IonicModule, StHeaderModule, TranslateModule.forRoot(), OrderItemDetailsModule, CommonModule],
+      imports: [
+        IonicModule,
+        StHeaderModule,
+        TranslateModule.forRoot(),
+        OrderItemDetailsModule,
+        CommonModule,
+        HttpClientTestingModule,
+      ],
       providers: [
         { provide: CartService, useValue: cartServiceStub },
         { provide: NavigationService, useValue: navigationServiceStub },

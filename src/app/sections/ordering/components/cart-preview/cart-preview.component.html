@@ -13,7 +13,8 @@
     {{ merchantName }}
   </div>
   <ion-list class="order-ingredient-list">
-    <ion-item-sliding *ngFor="let orderItem of orderItems" class="order-ingredient-list__ingredient">
+    <ion-item-sliding class="order-ingredient-list__ingredient">
+      @for(orderItem of orderItems; track orderItem.id){
       <ion-item class="order-ingredient-list__item" lines="none">
         <ion-label>
           <st-order-item-details [mealBased]="mealBased" [orderItem]="orderItem"></st-order-item-details>
@@ -27,6 +28,7 @@
           </ng-container>
         </ion-label>
       </ion-item>
+      }
     </ion-item-sliding>
   </ion-list>
 </ion-content>

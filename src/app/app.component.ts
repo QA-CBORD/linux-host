@@ -16,7 +16,6 @@ export class AppComponent implements OnInit {
     private readonly platform: Platform,
     private readonly translateFacadeService: TranslateFacadeService,
     private readonly globalNav: GlobalNavService,
-    private readonly cartService: CartService
   ) {}
 
   ngOnInit(): void {
@@ -36,7 +35,5 @@ export class AppComponent implements OnInit {
       StatusBar.setBackgroundColor({ color: '#FFFFFF' });
     }
   }
-  async openCartpreview() {
-    this.cartService.openCartpreview();
-  }
+
 }
