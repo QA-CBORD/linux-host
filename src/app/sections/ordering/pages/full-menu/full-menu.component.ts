@@ -162,7 +162,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
    redirectToCart(): void {
-    this.orderingService.redirectToCart();
+    this.orderingService.redirectToCart(true);
   }
 
   async modalHandler({ dueTime, orderType, address, isASAP }) {

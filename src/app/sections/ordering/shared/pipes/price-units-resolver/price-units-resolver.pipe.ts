@@ -1,7 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { take } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
