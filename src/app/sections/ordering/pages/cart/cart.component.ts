@@ -171,7 +171,8 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cartService.closeButtonClicked();
     } else {
       this.location.back();
-      this.openCartpreview();
+      const isFromCartPreview = this.activatedRoute.snapshot.queryParamMap.get('isFromCartPreview');
+      isFromCartPreview && this.openCartpreview();
     }
   }
   async openCartpreview() {

@@ -2,22 +2,21 @@ import { TestBed } from '@angular/core/testing';
 import { CurrencyPipe } from '@angular/common';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { PriceUnitsResolverPipe } from './price-units-resolver.pipe';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('PriceUnitsResolverPipe', () => {
   let pipe: PriceUnitsResolverPipe;
-
+  let translateService = {
+    instant: jest.fn(),
+  }
   beforeEach(() => {
     const currencyPipeStub = () => ({ transform: value => ({}) });
-    const orderingServiceStub = () => ({
-      getContentStringByName: labelMealSuffix => ({
-        pipe: () => ({ toPromise: () => ({}) })
-      })
-    });
     TestBed.configureTestingModule({
       providers: [
         PriceUnitsResolverPipe,
         { provide: CurrencyPipe, useFactory: currencyPipeStub },
-        { provide: OrderingService, useFactory: orderingServiceStub }
+        {provide:TranslateService, useValue: translateService}
+
       ]
     });
     pipe = TestBed.inject(PriceUnitsResolverPipe);

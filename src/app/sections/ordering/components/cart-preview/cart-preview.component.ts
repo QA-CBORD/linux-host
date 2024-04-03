@@ -34,6 +34,7 @@ export class CartPreviewComponent implements OnInit {
   orderItems: OrderItem[] = [];
   mealBased: boolean;
   merchantName: string;
+  isCartPreiew = true;
 
   onClose = () => {
     this.modalService.dismiss();
@@ -48,6 +49,6 @@ export class CartPreviewComponent implements OnInit {
   }
 
   redirectToCart = () => {
-    this.orderingService.redirectToCart();
+    this.orderingService.redirectToCart(this.isCartPreiew);
   };
 }

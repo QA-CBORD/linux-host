@@ -59,13 +59,13 @@ export class OrderingService {
     return errorMessage || defaultMessage;
   }
 
-  async redirectToCart(): Promise<void> {
+  async redirectToCart(fromCartPreview?:boolean): Promise<void> {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
     const successCb = () =>
       this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
-        queryParams: { isExistingOrder: this.cartService.isExistingOrder },
+        queryParams: { isExistingOrder: this.cartService.isExistingOrder, isFromCartPreview: fromCartPreview },
       });
     const errorCB = (error: Array<string> | string) => {
       if (Array.isArray(error)) {

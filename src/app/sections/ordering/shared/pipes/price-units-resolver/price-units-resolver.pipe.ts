@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'priceUnitsResolver',
@@ -12,8 +12,7 @@ export class PriceUnitsResolverPipe implements PipeTransform {
   private singleMealUnit = 'meal';
   private pluralMealUnit = 'meals';
 
-  constructor(private readonly currencyPipe: CurrencyPipe,
-              private readonly orderingService: OrderingService) {
+  constructor(private readonly currencyPipe: CurrencyPipe, private readonly translateService: TranslateService) {
     this.updateMealStringUnits();
   }
 
@@ -24,11 +23,7 @@ export class PriceUnitsResolverPipe implements PipeTransform {
   }
 
   private async updateMealStringUnits() {
-    this.singleMealUnit =
-      await this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelMealSuffix)
-        .pipe(take(1)).toPromise();
-    this.pluralMealUnit =
-      await this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.mealSuffixPlural)
-        .pipe(take(1)).toPromise();
+    this.singleMealUnit = this.translateService.instant(ORDERING_CONTENT_STRINGS.labelMealSuffix);
+    this.pluralMealUnit = this.translateService.instant(ORDERING_CONTENT_STRINGS.mealSuffixPlural);
   }
 }
