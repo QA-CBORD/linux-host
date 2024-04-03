@@ -13,15 +13,14 @@ export class AccountTypeResolverPipe implements PipeTransform {
   ) {}
 
   transform(acc: Partial<UserAccount> | UserAccount, mealBased?: boolean): string {
-    // if (!acc) return '';
-    // let result = this.accountDisplayPipe.transform(acc);
-    // if (!result) {
-    //   result =
-    //     acc.balance === null || acc.balance === undefined
-    //       ? acc.accountDisplayName
-    //       : `${acc.accountDisplayName} (${this.priceUnitsResolverPipe.transform(acc.balance, mealBased)})`;
-    // }
-    // return result;
-    return ''
+    if (!acc) return '';
+    let result = this.accountDisplayPipe.transform(acc);
+    if (!result) {
+      result =
+        acc.balance === null || acc.balance === undefined
+          ? acc.accountDisplayName
+          : `${acc.accountDisplayName} (${this.priceUnitsResolverPipe.transform(acc.balance, mealBased)})`;
+    }
+    return result;
   }
 }

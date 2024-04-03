@@ -3,7 +3,6 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { Platform } from '@ionic/angular';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { CartService } from '@sections/ordering';
 
 @Component({
   selector: 'app-root',
