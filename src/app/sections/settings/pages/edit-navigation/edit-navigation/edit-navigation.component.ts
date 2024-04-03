@@ -4,6 +4,7 @@ import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bo
 import { ModalsService } from '@core/service/modals/modals.service';
 import { IonicModule, ItemReorderEventDetail } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { TOP_NAV_ELEMENTS } from '@shared/model/generic-constants';
 import { StHeaderModule } from '@shared/ui-components';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { lastValueFrom } from 'rxjs';
@@ -22,7 +23,7 @@ export class EditNavigationComponent implements OnInit {
   private readonly modalController = inject(ModalsService);
   private readonly navigationSettingsService = inject(NavigationFacadeSettingsService);
 
-  readonly topNavElements = 4;
+  readonly topNavElements = TOP_NAV_ELEMENTS;
   navElements: NavigationBottomBarElement[];
 
   async onClose() {

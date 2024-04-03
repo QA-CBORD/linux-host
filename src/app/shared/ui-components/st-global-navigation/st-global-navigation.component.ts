@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
 import { IsActiveRouteInListPipe } from './pipe/is-active-route-in-list.pipe';
+import { TOP_NAV_ELEMENTS } from '@shared/model/generic-constants';
 
 @Component({
   standalone: true,
@@ -70,7 +71,7 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     this.navElements$ = this.navigationSettingsService.settings$;
     this.activitiesCount$ = this.navElements$.pipe(
       switchMap(navElements => {
-        const indicatorValueNavEls = navElements.filter(navEl => !!navEl.indicatorValue$);
+        const indicatorValueNavEls = navElements.slice(TOP_NAV_ELEMENTS).filter(navEl => !!navEl.indicatorValue$);
         if (indicatorValueNavEls.length) {
           return indicatorValueNavEls[0].indicatorValue$;
         }

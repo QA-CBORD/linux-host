@@ -9,5 +9,5 @@ export const A11_TIMEOUTS = 1500;
 export const TOAST_DURATION = 5000;
 export const ASAP_LABEL = 'ASAP';
 export const EXECUTION_PRIORITY = 9999;
-
+export const TOP_NAV_ELEMENTS = 4;
 

@@ -42,7 +42,7 @@ import { firstValueFrom, merge, of } from 'rxjs';
 import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
 import { MobileCredentialsUnlinkService } from '@shared/ui-components/mobile-credentials/service/mobile-credentials-unlink.service';
 import { UnlinkCredentialsComponent } from './pages/unlink-credentials/unlink-credentials.component';
-// import { EditNavigationComponent } from './pages/edit-navigation/edit-navigation/edit-navigation.component';
+import { EditNavigationComponent } from './pages/edit-navigation/edit-navigation/edit-navigation.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -471,18 +471,18 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         },
         checkIsVisible: async () => true,
       },
-      // {
-      //   id: SETTINGS_ID.navigate,
-      //   icon: 'more-menu',
-      //   label: 'Edit Navigation',
-      //   type: 'button',
-      //   studentsOnly: true,
-      //   setCallback: openModal,
-      //   modalContent: {
-      //     component: EditNavigationComponent,
-      //   },
-      //   checkIsVisible: async () => true,
-      // },
+      {
+        id: SETTINGS_ID.navigate,
+        icon: 'more-menu',
+        label: 'Edit Navigation',
+        type: 'button',
+        studentsOnly: true,
+        setCallback: openModal,
+        modalContent: {
+          component: EditNavigationComponent,
+        },
+        checkIsVisible: async () => true,
+      },
     ],
   },
   {
