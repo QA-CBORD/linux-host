@@ -5,12 +5,10 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CartService } from '@sections/ordering/services';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
-import { OrderItem } from '@sections/ordering/shared';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 import { StHeaderModule } from '@shared/ui-components';
-import { first, lastValueFrom } from 'rxjs';
 @Component({
   standalone: true,
   providers: [PriceUnitsResolverPipe],
