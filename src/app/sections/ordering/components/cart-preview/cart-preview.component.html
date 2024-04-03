@@ -13,22 +13,17 @@
     {{ (merchant$ | async).name }}
   </div>
   <ion-list class="order-ingredient-list">
-    <ion-item-sliding class="order-ingredient-list__ingredient">
-      @for(orderItem of (orderInfo$ | async).orderItems; track orderItem.id){
+    <ion-item-sliding *ngIf="orderInfo$ | async as orderItems" class="order-ingredient-list__ingredient">
+      @for(orderItem of orderItems; track orderItem.id){
       <ion-item class="order-ingredient-list__item" lines="none">
         <ion-label>
-          <st-order-item-details
-            [mealBased]="(orderInfo$ | async).mealBased"
-            [orderItem]="orderItem"
-          ></st-order-item-details>
+          <st-order-item-details [mealBased]="orderItems.mealBased" [orderItem]="orderItem"></st-order-item-details>
           <ng-container *ngIf="orderItem.orderItemOptions">
             <p
               *ngFor="let subIngredient of orderItem.orderItemOptions"
               class="order-ingredient-list__ingredient-description"
             >
-              {{ subIngredient.name }} ({{
-                subIngredient.salePrice | priceUnitsResolver : (orderInfo$ | async).mealBased
-              }})
+              {{ subIngredient.name }} ({{ subIngredient.salePrice | priceUnitsResolver : orderItems.mealBased }})
             </p>
           </ng-container>
         </ion-label>
