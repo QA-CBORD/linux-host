@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   constructor(
     private readonly platform: Platform,
     private readonly translateFacadeService: TranslateFacadeService,
-    private readonly globalNav: GlobalNavService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit(): void {
@@ -34,5 +34,4 @@ export class AppComponent implements OnInit {
       StatusBar.setBackgroundColor({ color: '#FFFFFF' });
     }
   }
-
 }
