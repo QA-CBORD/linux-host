@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -26,29 +26,24 @@ import { first, lastValueFrom } from 'rxjs';
     CommonModule,
   ],
 })
-export class CartPreviewComponent implements OnInit {
+export class CartPreviewComponent {
   private readonly modalService = inject(ModalsService);
   private readonly cartService = inject(CartService);
   private readonly orderingService = inject(OrderingService);
-
-  orderItems: OrderItem[] = [];
-  mealBased: boolean;
-  merchantName: string;
-  isCartPreiew = true;
+  isCartPreiew: boolean = true;
 
   onClose = () => {
     this.modalService.dismiss();
   };
 
-  async ngOnInit(): Promise<void> {
-    const { orderItems, mealBased } = await lastValueFrom(this.cartService.orderInfo$.pipe(first()));
-    const { name } = await lastValueFrom(this.cartService.merchant$.pipe(first()));
-    this.orderItems = orderItems;
-    this.mealBased = mealBased;
-    this.merchantName = name;
-  }
-
   redirectToCart = () => {
     this.orderingService.redirectToCart(this.isCartPreiew);
   };
+
+  get orderInfo$() {
+    return this.cartService.orderInfo$;
+  }
+  get merchant$() {
+    return this.cartService.merchant$;
+  }
 }
