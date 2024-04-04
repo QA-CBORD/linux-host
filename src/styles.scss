@@ -4,7 +4,7 @@
 @import 'toast';
 @import 'icons';
 
-:root {
+:root {  
   ion-searchbar {
     &.searchbar-has-value {
       .searchbar-input-container {
@@ -565,6 +565,34 @@ ion-modal.sc-modal {
         margin: 0;
       }
     }
+  }
+}
+
+.active_cart {
+  @extend .alert_cart;
+
+  .alert-wrapper {
+    
+    .alert-head {
+      text-align: left;
+      padding-left: 15px;
+      @include font-nunito-regular(20px);
+    }
+
+    .alert-message {
+      padding-left: 15px;
+      margin-top: .5rem;
+      @include font-nunito-regular(16px);
+      
+      p {
+        margin: 0;
+      }
+    }
+  }
+
+  button.alert-button.button__option_confirm {
+    min-width: 150px !important;
+    background-color: #1562FF !important;
   }
 }
 
