@@ -447,7 +447,7 @@ export class CartService {
   }
 
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
-    return await lastValueFrom(this.userFacadeService
+    return lastValueFrom(this.userFacadeService
       .getUserData$()
       .pipe(
         map(({ institutionId, id: userId }) => {
