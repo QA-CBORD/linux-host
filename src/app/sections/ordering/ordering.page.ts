@@ -69,7 +69,7 @@ export class OrderingPage implements OnInit {
   async showActiveCartWarning(merchantInfo: MerchantInfo) {
     const alert = await this.alertController.create({
       cssClass: 'active_cart',
-      header: this.translateService.instant('patron-ui.ordering.active_cart_title'),
+      header: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_title'),
       message: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_msg'),
       buttons: [
         {
