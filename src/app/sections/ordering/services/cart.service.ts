@@ -425,8 +425,8 @@ export class CartService {
     this.cart.order.orderItems.push(orderItem);
   }
 
-  private async onStateChanged() {
-    await this.storageStateService.updateStateEntity(this.CARTIDKEY, this.cart, {
+  private onStateChanged() {
+    this.storageStateService.updateStateEntity(this.CARTIDKEY, this.cart, {
       highPriorityKey: true,
       keepOnLogout: true,
     });
