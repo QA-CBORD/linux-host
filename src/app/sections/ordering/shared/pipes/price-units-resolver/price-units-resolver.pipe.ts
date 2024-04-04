@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { TranslateService } from '@ngx-translate/core';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 @Pipe({
   name: 'priceUnitsResolver',
@@ -22,7 +23,19 @@ export class PriceUnitsResolverPipe implements PipeTransform {
   }
 
   private async updateMealStringUnits() {
-    this.singleMealUnit = this.translateService.instant(ORDERING_CONTENT_STRINGS.labelMealSuffix);
-    this.pluralMealUnit = this.translateService.instant(ORDERING_CONTENT_STRINGS.mealSuffixPlural);
+    this.singleMealUnit = this.translateService.instant(
+      [
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.ordering,
+        ORDERING_CONTENT_STRINGS.labelMealSuffix,
+      ].join('.')
+    );
+    this.pluralMealUnit = this.translateService.instant(
+      [
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.ordering,
+        ORDERING_CONTENT_STRINGS.mealSuffixPlural,
+      ].join('.')
+    );
   }
 }
