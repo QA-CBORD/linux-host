@@ -1,0 +1,26 @@
+@import 'tools';
+
+.shopping-cart-btn {
+  position: relative;
+
+  ion-fab {
+    margin-bottom: 2%;
+    --ion-color-light: #ffff;
+  }
+
+  &--indicator {
+    @include font-nunito-regular(14px);
+    background-color: $color-red-alert;
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+    position: absolute;
+    right: -1px;
+    top: 0;
+    color: $color-white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+  }
+}

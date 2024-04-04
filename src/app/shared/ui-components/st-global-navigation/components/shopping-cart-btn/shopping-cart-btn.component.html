@@ -1,0 +1,8 @@
+<div class="shopping-cart-btn">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="light" class="fab">
+      <ion-icon name="cart-outline" color="primary"></ion-icon>
+    </ion-fab-button>
+    <div class="shopping-cart-btn--indicator" color="danger" *ngIf="(itemsCount | async) !== 0">{{ itemsCount | async }}</div>
+  </ion-fab>
+</div>
