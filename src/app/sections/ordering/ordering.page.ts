@@ -5,11 +5,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { LockDownService } from '@shared/index';
-import { Observable, iif } from 'rxjs';
+import { Observable, iif, lastValueFrom } from 'rxjs';
 import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
-import { MerchantService } from './services';
+import { CartService, MerchantService } from './services';
 import { MerchantInfo } from './shared/models';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'st-ordering.page',
@@ -27,7 +28,9 @@ export class OrderingPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
+    private readonly alertController: AlertController,
+    private readonly cartService: CartService
   ) {}
 
   ngOnInit() {
@@ -50,7 +53,47 @@ export class OrderingPage implements OnInit {
       return;
     }
 
+    const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
+    const merchant = (await lastValueFrom(this.cartService.merchant$.pipe(first())));
+    const merchantHasChanged = merchant && merchant.id !== merchantInfo.id;
+
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(merchantInfo);
+      return;
+    }
+
     this.openOrderOptions(merchantInfo);
+  }
+
+  async showActiveCartWarning(merchantInfo: MerchantInfo) {
+    const alert = await this.alertController.create({
+      cssClass: 'active_cart',
+      header: this.translateService.instant('patron-ui.ordering.active_cart_title'),
+      message: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_msg'),
+      buttons: [
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_cancel'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
+        },
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_proceed'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this.cartService.clearActiveOrder();
+            this.openOrderOptions(merchantInfo);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+    return alert.onDidDismiss();
   }
 
   async favouriteHandler({ isFavorite, id }): Promise<void> {
