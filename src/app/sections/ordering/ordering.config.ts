@@ -100,7 +100,6 @@ export enum ORDERING_CONTENT_STRINGS {
   labelTip = 'label_tip',
   labelTipAmount = 'label_tip-amount',
   labelTotal = 'label_total',
-  labelOrderNotes = 'label_order-notes',
   labelTomorrow = 'label_tomorrow',
   selectAccount = 'label_select-account',
   noRecentOrders = 'label_no-recent-orders',
@@ -150,6 +149,7 @@ export enum MerchantSettings {
   disableItemNotes = 'merchant.order.disable_item_notes',
   tipEnabled = 'merchant.tip.enable_tip',
   scanBarcodeEnabled = 'merchant.menu.menu_barcode_enabled',
+  orderNotesDisabled = 'merchant.order.disable_order_notes',
   manualBarcodeEnabled = 'merchant.menu.menu_add_barcodea_enabled',
   addToCartEnabled = 'merchant.menu.menu_add_items_enabled'
 }
