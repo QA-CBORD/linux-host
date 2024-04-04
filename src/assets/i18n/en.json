@@ -1127,6 +1127,11 @@
       "toast_message_unpinned": "Notification unpinned",
       "toast_message_deleted": "Notification deleted",
       "toast_message_undo": "Undo"
+    },
+    "cart_preview":{
+      "expiration_message": "Cart will expire {{expirationDays}} days after last creation.",
+      "add_more_button": "Add More Items",
+      "go_to_checkout_button": "Go To Checkout"
     }
   }
 }

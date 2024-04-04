@@ -5,19 +5,14 @@ import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/orderi
 import { ActivatedRoute } from '@angular/router';
 import {
   LOCAL_ROUTING,
-  ORDER_ERROR_CODES,
   ORDER_TYPE,
-  ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { AlertController, IonicSafeString, PopoverController } from '@ionic/angular';
+import { AlertController, IonicSafeString } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { handleServerError } from '@core/utils/general-helpers';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { OverlayEventDetail } from '@ionic/core';
-import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
@@ -43,9 +38,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
-    private readonly loadingService: LoadingService,
-    private readonly toastService: ToastService,
-    private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
     private readonly activatedRoute: ActivatedRoute,
@@ -164,60 +156,13 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.cartService.orderItems$.pipe(first()).subscribe(items => {
       if (items.length) {
         const errorCB = () => this.modalHandler(cachedData);
-        this.validateOrder(null, errorCB, IGNORE_ERRORS);
+        this.orderingService.validateOrder(null, errorCB);
       }
     });
   }
 
-  async redirectToCart(): Promise<void> {
-    if (this.cartService.cartsErrorMessage !== null) {
-      return this.presentPopup(this.cartService.cartsErrorMessage);
-    }
-    const successCb = () =>
-      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
-        queryParams: { isExistingOrder: this.cartService.isExistingOrder },
-      });
-    const errorCB = (error: Array<string> | string) => {
-      if (Array.isArray(error)) {
-        const [code, message] = error;
-        if (IGNORE_ERRORS.includes(code)) return this.presentPopup(message);
-        error = message;
-      }
-      return this.failedValidateOrder(error);
-    };
-    await this.validateOrder(successCb, errorCB);
-  }
-
-  private async presentPopup(message) {
-    const alert = await this.alertController.create({
-      header: message,
-      buttons: [{ text: 'Ok' }],
-    });
-
-    await alert.present();
-  }
-
-  private async validateOrder(successCb, errorCB, ignoreCodes?: string[]): Promise<void> {
-    await this.loadingService.showSpinner();
-    await this.cartService
-      .validateOrder()
-      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
-      .toPromise()
-      .then(() => {
-        this.cartService.cartsErrorMessage = null;
-        return successCb && successCb();
-      })
-      .catch((error: Array<string> | string) => {
-        if (Array.isArray(error) && IGNORE_ERRORS.includes(error[0])) {
-          this.cartService.cartsErrorMessage = error[1];
-        }
-        return errorCB(error);
-      })
-      .finally(() => this.loadingService.closeSpinner());
-  }
-
-  private async failedValidateOrder(message: string): Promise<void> {
-    await this.toastService.showToast({ message });
+   redirectToCart(): void {
+    this.orderingService.redirectToCart();
   }
 
   async modalHandler({ dueTime, orderType, address, isASAP }) {
@@ -274,8 +219,4 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 }
 
-export const IGNORE_ERRORS = [
-  ORDER_ERROR_CODES.ORDER_DELIVERY_ITEM_MIN,
-  ORDER_ERROR_CODES.ORDER_ITEM_MIN,
-  ORDER_ERROR_CODES.ORDER_ITEM_MAX,
-];
+

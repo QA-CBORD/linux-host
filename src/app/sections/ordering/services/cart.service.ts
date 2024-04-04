@@ -11,6 +11,8 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
 
 @Injectable({
   providedIn: 'root',
@@ -27,12 +29,13 @@ export class CartService {
   checkNumber: number;
   currentOrderId: string;
   merchantTimeZone: string;
- constructor(
+  constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
+    private readonly modalService: ModalsService
   ) {}
 
   get merchant$(): Observable<MerchantInfo> {
@@ -77,7 +80,7 @@ export class CartService {
     return !!this._pendingOrderId;
   }
 
-  get _orderOption(): OrderDetailOptions  {
+  get _orderOption(): OrderDetailOptions {
     return this.cart.orderDetailsOptions;
   }
 
@@ -475,6 +478,15 @@ export class CartService {
     if (!code) return;
 
     return code.toUpperCase().replace(/\b0+/g, '');
+  }
+
+  async openCartpreview() {
+    const modal = await this.modalService.createActionSheet({
+      component: CartPreviewComponent,
+      cssClass: 'cart-preview-action-sheet',
+    });
+
+    await modal.present();
   }
 }
 

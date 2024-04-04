@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -164,7 +171,12 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cartService.closeButtonClicked();
     } else {
       this.location.back();
+      const isFromCartPreview = this.activatedRoute.snapshot.queryParamMap.get('isFromCartPreview');
+      isFromCartPreview && this.openCartpreview();
     }
+  }
+  async openCartpreview() {
+    this.cartService.openCartpreview();
   }
 
   ngOnInit(): void {

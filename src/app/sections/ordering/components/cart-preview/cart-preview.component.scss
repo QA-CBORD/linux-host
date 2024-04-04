@@ -1,0 +1,76 @@
+@import 'tools';
+
+.cart-preview {
+  &__footer-button {
+    margin: 15px 10px;
+    font-weight: bold;
+
+    &.checkout-button {
+      --background: #{$color-navy-blue};
+    }
+  }
+  &__expiration {
+    text-align: center;
+    color: $color-dusty-gray;
+    @include font-nunito-regular(16px);
+
+  }
+  &__merchant-name {
+    text-align: center;
+    font-weight: bold;
+    @include font-nunito-heavy(25px);
+    margin: 25px 0px;
+  }
+}
+
+.order-ingredient-list {
+  padding: 10px 0;
+  &__item {
+    border-radius: 10px;
+    padding: 0px;
+    border: 1px solid $color-light-gray;
+    margin: 3px 25px;
+    
+  }
+
+  &__ingredient-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  &__ingredient-number {
+    background: rgb(240, 243, 245);
+    border-radius: 4px;
+    height: 24px;
+    width: 24px;
+    color: rgb(81, 81, 81);
+    letter-spacing: 0;
+    text-align: center;
+    margin-right: 15px;
+
+    @include font-nunito-regular(16px);
+  }
+
+  &__ingredient-name {
+    letter-spacing: 0;
+    line-height: 20px;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__ingredient-price {
+    justify-self: flex-end;
+    margin-left: auto;
+    line-height: 18px;
+    color: $color-dusty-gray;
+
+    @include font-nunito-regular(14px);
+  }
+
+  &__ingredient-description {
+    line-height: 18px;
+    color: rgba(0, 0, 0, 0.6);
+    @include font-nunito-regular(14px);
+  }
+}

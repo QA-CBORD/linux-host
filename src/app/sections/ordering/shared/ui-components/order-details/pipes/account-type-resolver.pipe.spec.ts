@@ -8,11 +8,15 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-type';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('AccountTypeResolverPipe', () => {
   let pipe: AccountTypeResolverPipe;
   let priceUnitsResolverPipe: PriceUnitsResolverPipe;
   let accountDisplayPipe: AccountDisplayPipe;
+  let translateService = {
+    instant: jest.fn(),
+  }
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -24,7 +28,8 @@ describe('AccountTypeResolverPipe', () => {
         CurrencyPipe,
         OrderingService,
         ContentStringsFacadeService,
-        CreditCardTypePipe
+        CreditCardTypePipe,
+        {provide:TranslateService, useValue: translateService}
       ],
     });
     pipe = TestBed.inject(AccountTypeResolverPipe);

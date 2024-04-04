@@ -22,6 +22,7 @@ import { ItemDetailModalComponent } from './components/item-detail-modal/item-de
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
 import { MenuGroupInfo, MenuItemInfo, MenuItemOptionInfo, OrderItem } from '@sections/ordering/components';
+import { TranslateService } from '@ngx-translate/core';
 // Mock Pipe decorator
 let menuItem = {
   id: '12',
@@ -108,6 +109,9 @@ const popoverControllerMock = {
     present: jest.fn().mockResolvedValue(true),
   }),
 };
+let translateService = {
+  instant: jest.fn(),
+};
 
 describe('ItemDetailComponent', () => {
   let component: ItemDetailComponent;
@@ -129,6 +133,7 @@ describe('ItemDetailComponent', () => {
         { provide: PopoverController, useValue: popoverControllerMock },
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: ChangeDetectorRef, useValue: changeDetectorRefMock },
+        { provide: TranslateService, useValue: translateService },
       ],
     }).compileComponents();
 
@@ -298,7 +303,8 @@ describe('ItemDetailComponent', () => {
         expect(result).toEqual({ maxLength: { valid: false } });
       });
     });
-  });  it('should update order optionsPrice when form value changes', () => {
+  });
+  it('should update order optionsPrice when form value changes', () => {
     const formValue = {
       option1: [
         { id: '1', price: 10 },
@@ -414,17 +420,23 @@ describe('ItemDetailComponent', () => {
       price: 10,
       menuItemOptions,
     };
-    component.routesData = { menuItem, queryParams: { orderItemId: 'mockOrderItemId',isItemExistsInCart:true } } as RoutesData;
+    component.routesData = {
+      menuItem,
+      queryParams: { orderItemId: 'mockOrderItemId', isItemExistsInCart: true },
+    } as RoutesData;
     component.menuItem = menuItem;
-    component.cartOrderItemOptions = [{
-      id: '1',
-      name: 'Option 1',
-      menuGroup: { name: 'option1', minimum: 1, maximum: 1 } as MenuGroupInfo,
-    }, {
-      id: '2',
-      name: 'Option 2',
-      menuGroup: { name: 'option2', minimum: 1, maximum: 2 } as MenuGroupInfo,
-    }] as unknown as OrderItem[];
+    component.cartOrderItemOptions = [
+      {
+        id: '1',
+        name: 'Option 1',
+        menuGroup: { name: 'option1', minimum: 1, maximum: 1 } as MenuGroupInfo,
+      },
+      {
+        id: '2',
+        name: 'Option 2',
+        menuGroup: { name: 'option2', minimum: 1, maximum: 2 } as MenuGroupInfo,
+      },
+    ] as unknown as OrderItem[];
 
     component['initForm']();
 
@@ -442,13 +454,14 @@ describe('ItemDetailComponent', () => {
       menuItemOptions: [],
     };
 
-    component.routesData = { menuItem, queryParams: { orderItemId: 'mockOrderItemId',isItemExistsInCart:true } } as RoutesData;
+    component.routesData = {
+      menuItem,
+      queryParams: { orderItemId: 'mockOrderItemId', isItemExistsInCart: true },
+    } as RoutesData;
     component.menuItem = menuItem;
 
     component['initForm']();
 
     expect(component.itemOrderForm).toBeTruthy();
   });
-
-
 });

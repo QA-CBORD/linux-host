@@ -6,7 +6,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ActivatedRoute } from '@angular/router';
 import { ToastService } from '@core/service/toast/toast.service';
-import { Platform, PopoverController } from '@ionic/angular';
+import { ModalController, Platform, PopoverController } from '@ionic/angular';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
@@ -85,7 +85,7 @@ const _checkinProcess = {};
 const _nonCheckingService = {};
 const _lockDownService = {
   isLockDownOn: jest.fn(),
-  loadStringsAndSettings: jest.fn()
+  loadStringsAndSettings: jest.fn(),
 };
 const _translateService = {};
 const _priceUnitsResolverPipe = {};
@@ -103,10 +103,19 @@ const _appRateService = {
   evaluateToRequestRateApp: jest.fn(),
 };
 
-const storageStateService = { 
+const storageStateService = {
   getStateEntityByKey$: jest.fn(),
   updateStateEntity: jest.fn(),
 } as any;
+
+const _modalController = {
+  create: jest.fn().mockReturnValue({
+    present: jest.fn(),
+    onDidDismiss: jest.fn().mockReturnValue(Promise.resolve({ data: 'test' })),
+    addEventListener: jest.fn(),
+    onWillDismiss: jest.fn().mockReturnValue(Promise.resolve({ data: 'test' })),
+  }),
+};
 
 describe('CartComponent', () => {
   let component: CartComponent;
@@ -138,7 +147,7 @@ describe('CartComponent', () => {
         { provide: Location, useValue: _location },
         { provide: AppRateService, useValue: _appRateService },
         { provide: StorageStateService, useValue: storageStateService },
-
+        { provide: ModalController, useValue: _modalController },
       ],
       imports: [PriceUnitsResolverModule],
     }).compileComponents();
@@ -196,7 +205,6 @@ describe('CartComponent', () => {
     const backButtonCallback = (_platform.backButton.subscribeWithPriority as jest.Mock).mock.calls[0][1];
     backButtonCallback(); // Simulate back button press
 
-
     fixture.whenStable().then(() => {
       expect(spySusbcribe).toHaveBeenCalled();
       expect(spyLocation).not.toHaveBeenCalled();
@@ -211,7 +219,7 @@ describe('CartComponent', () => {
     const spyLocation = jest.spyOn(_location, 'back');
 
     const backButtonCallback = (_platform.backButton.subscribeWithPriority as jest.Mock).mock.calls[0][1];
-    backButtonCallback(); 
+    backButtonCallback();
 
     fixture.whenStable().then(() => {
       expect(spySubscribe).toHaveBeenCalled();
