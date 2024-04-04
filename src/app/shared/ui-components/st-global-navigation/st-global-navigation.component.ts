@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
 import { IsActiveRouteInListPipe } from './pipe/is-active-route-in-list.pipe';
 import { TOP_NAV_ELEMENTS } from '@shared/model/generic-constants';
+import { ShoppingCartBtnComponent } from './components/shopping-cart-btn/shopping-cart-btn.component';
 
 @Component({
   standalone: true,
@@ -25,6 +26,7 @@ import { TOP_NAV_ELEMENTS } from '@shared/model/generic-constants';
     PopupListComponent,
     MainNavItemsPipe,
     IsActiveRouteInListPipe,
+    ShoppingCartBtnComponent,
   ],
   providers: [NavigationFacadeSettingsService],
   selector: 'st-global-navigation',
