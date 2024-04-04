@@ -1,23 +1,26 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment, ItemsOrderInfo } from '../shared/models';
-import { AddressInfo } from '@core/model/address/address-info';
-import { getDateTimeInGMT } from '@core/utils/date-helper';
-import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { AddressInfo } from '@core/model/address/address-info';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
+import { sevenDays } from '@shared/constants/dateFormats.constant';
+import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
+import { BehaviorSubject, Observable, Subject, lastValueFrom } from 'rxjs';
+import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { ItemsOrderInfo, MenuInfo, MerchantInfo, OrderInfo, OrderItem, OrderPayment } from '../shared/models';
+import { MerchantService } from './merchant.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
+  private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
   private _catchError: string | null = null;
@@ -35,8 +38,20 @@ export class CartService {
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
-    private readonly modalService: ModalsService
-  ) {}
+    private readonly modalService: ModalsService,
+    private readonly storageStateService: StorageStateService
+  ) {
+    this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
+      if (cart && cart.value && this.isWithinLastSevenDays(cart.lastModified)) {
+        this._cart$.next(cart.value);
+      }
+    });
+  }
+
+  private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {
+    const sevenDaysAgoTimestamp = Date.now() - sevenDays;
+    return lastModiedTimestamp <= sevenDaysAgoTimestamp;
+  }
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
@@ -201,7 +216,8 @@ export class CartService {
 
   private async setInitialEmptyOrder(): Promise<void> {
     this._pendingOrderId = null;
-    await this.initEmptyOrder().then(order => (this.cart.order = order));
+    const order = await this.initEmptyOrder();
+    this.cart.order = order
     this.onStateChanged();
   }
 
@@ -409,7 +425,11 @@ export class CartService {
     this.cart.order.orderItems.push(orderItem);
   }
 
-  private onStateChanged() {
+  private async onStateChanged() {
+    await this.storageStateService.updateStateEntity(this.CARTIDKEY, this.cart, {
+      highPriorityKey: true,
+      keepOnLogout: true,
+    });
     this._cart$.next(this.cart);
   }
 
@@ -427,7 +447,7 @@ export class CartService {
   }
 
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
-    return this.userFacadeService
+    return await lastValueFrom(this.userFacadeService
       .getUserData$()
       .pipe(
         map(({ institutionId, id: userId }) => {
@@ -439,8 +459,7 @@ export class CartService {
           };
         }),
         first()
-      )
-      .toPromise();
+      ));
   }
 
   private async refreshCartDate(): Promise<void> {
