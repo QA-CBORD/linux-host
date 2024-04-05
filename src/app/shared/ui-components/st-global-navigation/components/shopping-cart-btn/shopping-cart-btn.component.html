@@ -1,5 +1,5 @@
 <div class="shopping-cart-btn" *ngIf="(itemsCount | async) !== 0">
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" (click)="openCart()">
     <ion-fab-button color="light" class="fab">
       <ion-icon name="cart-outline" color="primary"></ion-icon>
     </ion-fab-button>

@@ -18,4 +18,8 @@ export class ShoppingCartBtnComponent {
   get itemsCount(): Observable<number> {
     return this.cartService.menuItems$;
   }
+
+  openCart() {
+    this.cartService.openCartpreview();
+  }
 }

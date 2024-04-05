@@ -50,7 +50,7 @@ export class CartService {
 
   private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {
     const sevenDaysAgoTimestamp = Date.now() - sevenDays;
-    return lastModiedTimestamp <= sevenDaysAgoTimestamp;
+    return lastModiedTimestamp >= sevenDaysAgoTimestamp;
   }
 
   get merchant$(): Observable<MerchantInfo> {
