@@ -217,7 +217,7 @@ export class CartService {
   private async setInitialEmptyOrder(): Promise<void> {
     this._pendingOrderId = null;
     const order = await this.initEmptyOrder();
-    this.cart.order = order
+    this.cart.order = order;
     this.onStateChanged();
   }
 
@@ -447,19 +447,25 @@ export class CartService {
   }
 
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
-    return lastValueFrom(this.userFacadeService
-      .getUserData$()
-      .pipe(
+    const merchantId = await lastValueFrom(
+      this.merchant$.pipe(
+        map(({ id }) => id),
+        first()
+      )
+    );
+    return lastValueFrom(
+      this.userFacadeService.getUserData$().pipe(
         map(({ institutionId, id: userId }) => {
           return {
             userId,
             orderItems: [],
-            merchantId: this.cart.merchant.id,
+            merchantId,
             institutionId,
           };
         }),
         first()
-      ));
+      )
+    );
   }
 
   private async refreshCartDate(): Promise<void> {
