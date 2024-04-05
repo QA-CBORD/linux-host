@@ -40,6 +40,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   allowNotes: boolean;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   routesData: RoutesData;
+
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly fb: FormBuilder,
@@ -105,13 +106,13 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
           formGroup[name] = ['', [Validators.required]];
           return;
         }
-        formGroup[name] = [[''], [validateMinLengthOfArray(minimum), validateMaxLengthOfArray(maximum)]];
+        formGroup[name] = [[], [validateMinLengthOfArray(minimum), validateMaxLengthOfArray(maximum)]];
       });
     } else {
       this.menuItem.menuItemOptions.forEach(({ menuGroup: { minimum, maximum, menuGroupItems, name } }) => {
         if (minimum === 1 && maximum === 1) {
           let formItemValue: string | MenuItemInfo = '';
-          const selectedOption = menuGroupItems?.find(({ menuItem: { id } }) => {
+          const selectedOption = menuGroupItems.find(({ menuItem: { id } }) => {
             const selectedItem = cartSelectedItems.find(({ menuItemId }) => menuItemId === id);
 
             return selectedItem && id === selectedItem.menuItemId;
@@ -122,7 +123,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
           }
           formGroup[name] = [formItemValue, [Validators.required]];
         } else {
-          const selectedOptions = menuGroupItems?.map(({ menuItem }) => {
+          const selectedOptions = menuGroupItems.map(({ menuItem }) => {
             const selectedItem = cartSelectedItems.find(({ menuItemId }) => menuItemId === menuItem.id);
             if (selectedItem && menuItem.id === selectedItem.menuItemId) {
               return menuItem;
@@ -130,7 +131,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
           });
 
           formGroup[name] = [
-            selectedOptions?.filter(item => item),
+            selectedOptions.filter(item => item),
             [validateMinLengthOfArray(minimum), validateMaxLengthOfArray(maximum)],
           ];
         }
@@ -383,7 +384,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
 
 export const validateMinLengthOfArray = (min: number | undefined): ValidationErrors | null => {
   return (c: AbstractControl): ValidationErrors | null => {
-    if (!min || c.value?.length >= min) return null;
+    if (!min || c.value.length >= min) return null;
 
     return { minLength: { valid: false } };
   };
@@ -391,7 +392,7 @@ export const validateMinLengthOfArray = (min: number | undefined): ValidationErr
 
 export const validateMaxLengthOfArray = (max: number | undefined): ValidationErrors | null => {
   return (c: AbstractControl): ValidationErrors | null => {
-    if (!max || c.value?.length <= max) return null;
+    if (!max || c.value.length <= max) return null;
 
     return { maxLength: { valid: false } };
   };

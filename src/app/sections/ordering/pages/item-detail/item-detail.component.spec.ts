@@ -24,7 +24,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { MenuGroupInfo, MenuItemInfo, MenuItemOptionInfo, OrderItem } from '@sections/ordering/components';
 import { TranslateService } from '@ngx-translate/core';
 // Mock Pipe decorator
-let menuItem = {
+let menuItem: MenuItemInfo = {
   id: '12',
   merchantId: '',
   externalSystemRef: '',
@@ -42,7 +42,44 @@ let menuItem = {
   carbs: 0,
   protein: 0,
   imageReference: '',
-  menuItemOptions: [],
+  menuItemOptions: [
+    {
+      menuGroup: {
+        merchantId: '',
+        name: 'option1',
+        description: '',
+        minimum: 1,
+        maximum: 1,
+        externalSystemRef: '',
+        priceOverride: 0,
+        visible: false,
+        active: false,
+        menuGroupItems: [],
+      },
+      menuItemId: '1',
+      displayRank: 0,
+      visible: false,
+      active: false,
+    },
+    {
+      menuGroup: {
+        merchantId: '',
+        name: 'option2',
+        description: '',
+        minimum: 1,
+        maximum: 2,
+        externalSystemRef: '',
+        priceOverride: 0,
+        visible: false,
+        active: false,
+        menuGroupItems: [],
+      },
+      menuItemId: '2',
+      displayRank: 0,
+      visible: false,
+      active: false,
+    },
+  ],
 };
 
 const environmentFacadeServiceMock = {
@@ -408,18 +445,6 @@ describe('ItemDetailComponent', () => {
   });
 
   it('should initForm correctly', () => {
-    const menuItemOptions = [
-      { id: '1', name: 'Option 1', menuGroup: { name: 'option1', minimum: 1, maximum: 2 } },
-      { id: '2', name: 'Option 2', menuGroup: { name: 'option2', minimum: 1, maximum: 2 } },
-    ];
-
-    menuItem = {
-      ...menuItem,
-      id: '1',
-      name: 'Test Item',
-      price: 10,
-      menuItemOptions,
-    };
     component.routesData = {
       menuItem,
       queryParams: { orderItemId: 'mockOrderItemId', isItemExistsInCart: true },
