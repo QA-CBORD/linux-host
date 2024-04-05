@@ -4,7 +4,7 @@
   [isBackButtonShow]="true"
   [isToolbarShow]="true"
   backButtonTitle=""
-  title="Cart Preview"
+  [title]="'patron-ui.ordering.active_cart_title' | translate"
   (onClose)="onClose()"
 >
 </st-header>
@@ -33,13 +33,11 @@
   </ion-list>
 </ion-content>
 <ion-footer>
-  <div class="cart-preview__expiration" translate [translateParams]="{ expirationDays: '7' }">
-    patron-ui.cart_preview.expiration_message
-  </div>
-  <ion-button class="cart-preview__footer-button" color="light" expand="block" translate
-    >patron-ui.cart_preview.add_more_button</ion-button
-  >
-  <ion-button class="cart-preview__footer-button checkout-button" expand="block" translate (click)="redirectToCart()"
-    >patron-ui.cart_preview.go_to_checkout_button</ion-button
-  >
+  <div class="cart-preview__expiration" translate>patron-ui.ordering.active_cart_expire_note</div>
+  <st-button class="cart-preview__footer-button" color="light" expand="block" translate>{{
+    'patron-ui.ordering.active_cart_add_items' | translate
+  }}</st-button>
+  <st-button class="cart-preview__footer-button" expand="block" translate (click)="redirectToCart()">{{
+    'patron-ui.ordering.active_cart_go_checkout' | translate
+  }}</st-button>
 </ion-footer>

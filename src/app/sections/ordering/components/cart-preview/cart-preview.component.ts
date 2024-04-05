@@ -8,7 +8,7 @@ import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
-import { StHeaderModule } from '@shared/ui-components';
+import { StButtonModule, StHeaderModule } from '@shared/ui-components';
 @Component({
   standalone: true,
   providers: [PriceUnitsResolverPipe],
@@ -22,6 +22,7 @@ import { StHeaderModule } from '@shared/ui-components';
     OrderItemDetailsModule,
     IonicModule,
     CommonModule,
+    StButtonModule
   ],
 })
 export class CartPreviewComponent {
