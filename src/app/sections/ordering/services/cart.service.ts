@@ -11,7 +11,7 @@ import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
-import { BehaviorSubject, Observable, Subject, lastValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, lastValueFrom } from 'rxjs';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { ItemsOrderInfo, MenuInfo, MerchantInfo, OrderInfo, OrderItem, OrderPayment } from '../shared/models';
 import { MerchantService } from './merchant.service';
@@ -32,6 +32,8 @@ export class CartService {
   checkNumber: number;
   currentOrderId: string;
   merchantTimeZone: string;
+  cartSubscription: Subscription;
+
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
@@ -41,7 +43,7 @@ export class CartService {
     private readonly modalService: ModalsService,
     private readonly storageStateService: StorageStateService
   ) {
-    this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
+   this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value && this.isWithinLastSevenDays(cart.lastModified)) {
         this._cart$.next(cart.value);
       }
@@ -449,7 +451,7 @@ export class CartService {
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
     const merchantId = await lastValueFrom(
       this.merchant$.pipe(
-        map(({ id }) => id),
+        map((merchant) => merchant?.id),
         first()
       )
     );
@@ -459,7 +461,7 @@ export class CartService {
           return {
             userId,
             orderItems: [],
-            merchantId,
+            merchantId: merchantId,
             institutionId,
           };
         }),
@@ -512,6 +514,12 @@ export class CartService {
     });
 
     await modal.present();
+  }
+
+  clearState() {
+    this.clearCart();
+    this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
+    this.cartSubscription.unsubscribe();
   }
 }
 

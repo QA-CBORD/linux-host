@@ -19,6 +19,8 @@ describe('CartService', () => {
   const modalService = {};
   const storageStateService = {
     getStateEntityByKey$: jest.fn(() => of({} as CartState)),
+    deleteStateEntityByKey: jest.fn(),
+    updateStateEntity: jest.fn(),
   };
 
   beforeEach(() => {
@@ -64,5 +66,15 @@ describe('CartService', () => {
     const result = service['isWithinLastSevenDays'](timestamp);
 
     expect(result).toBe(false);
+  });
+
+  it('should call clearCart and deleteStateEntityByKey with CARTIDKEY when clearState is called', () => {
+    const clearCartSpy = jest.spyOn(service, 'clearCart');
+    const deleteStateEntityByKeySpy = jest.spyOn(storageStateService, 'deleteStateEntityByKey');
+  
+    service.clearState();
+  
+    expect(clearCartSpy).toHaveBeenCalled();
+    expect(deleteStateEntityByKeySpy).toHaveBeenCalledWith(service['CARTIDKEY']);
   });
 });
