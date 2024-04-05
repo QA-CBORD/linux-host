@@ -432,7 +432,12 @@ export class CartService {
   }
 
   private addOrderItem(orderItem: Partial<OrderItem>) {
-    this.cart.order.orderItems.push(orderItem);
+    const existingItemIndex = this.cart.order.orderItems.findIndex(({ menuItemId }) => menuItemId === orderItem.menuItemId);
+    if (existingItemIndex !== -1) {
+      this.cart.order.orderItems[existingItemIndex].quantity += orderItem.quantity;
+    } else {
+      this.cart.order.orderItems.push(orderItem);
+    }
   }
 
   private onStateChanged() {

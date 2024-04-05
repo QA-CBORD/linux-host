@@ -18,6 +18,7 @@ import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { TranslateService } from '@ngx-translate/core';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 export const DINEIN = 'DineIn';
 @Component({
@@ -44,7 +45,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly routingService: NavigationService,
     private orderActionSheetService: OrderActionSheetService,
     private readonly translateService: TranslateService,
-    private readonly cdref: ChangeDetectorRef
+    private readonly cdref: ChangeDetectorRef,
+    private readonly loadingService: LoadingService
   ) {}
 
   ngOnInit() {
@@ -209,8 +211,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   onOrdersButtonClicked() {
+    this.loadingService.showSpinner();
     this.routingService.navigate([APP_ROUTES.ordering]).then(() => {
       this.orderActionSheetService.openActionSheet();
+      this.loadingService.closeSpinner();
     });
   }
   toggleMerchantInfo(){

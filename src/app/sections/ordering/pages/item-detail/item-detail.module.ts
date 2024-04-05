@@ -14,6 +14,7 @@ import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent, ItemDetailModalComponent];
 const imports = [
@@ -28,6 +29,7 @@ const imports = [
   StHeaderModule,
   PriceUnitsResolverModule,
   StButtonModule,
+  TranslateModule
 ];
 
 @NgModule({

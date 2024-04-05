@@ -3,19 +3,28 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SimpleChanges } from '@angular/core';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { ViewCartComponent } from './view-cart.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('ViewCartComponent', () => {
   let component: ViewCartComponent;
   let fixture: ComponentFixture<ViewCartComponent>;
+  
+  const translateService = {
+    instant: jest.fn(),
+  };
 
   beforeEach(() => {
     const orderingServiceStub = () => ({
       getContentStringByName: buttonViewCart => ({}),
     });
     TestBed.configureTestingModule({
+      imports: [TranslateModule],
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [ViewCartComponent],
-      providers: [{ provide: OrderingService, useFactory: orderingServiceStub }],
+      providers: [
+        { provide: OrderingService, useFactory: orderingServiceStub },
+        { provide: TranslateService, useValue: translateService },
+      ],
     });
     fixture = TestBed.createComponent(ViewCartComponent);
     component = fixture.componentInstance;

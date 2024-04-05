@@ -34,10 +34,10 @@
 </ion-content>
 <ion-footer>
   <div class="cart-preview__expiration" translate>patron-ui.ordering.active_cart_expire_note</div>
-  <st-button class="cart-preview__footer-button" color="light" expand="block" translate>{{
+  <st-button class="cart-preview__footer-button" color="light" expand="block" translate (onClick)="addMoreItems()">{{
     'patron-ui.ordering.active_cart_add_items' | translate
   }}</st-button>
-  <st-button class="cart-preview__footer-button" expand="block" translate (click)="redirectToCart()">{{
+  <st-button class="cart-preview__footer-button" expand="block" translate (onClick)="redirectToCart()">{{
     'patron-ui.ordering.active_cart_go_checkout' | translate
   }}</st-button>
 </ion-footer>
