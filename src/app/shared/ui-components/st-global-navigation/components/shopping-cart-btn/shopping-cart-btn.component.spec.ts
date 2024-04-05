@@ -10,6 +10,7 @@ describe('ShoppingCartBtnComponent', () => {
 
   const carService = {
     menuItems$: of(1),
+    openCartpreview: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -34,5 +35,13 @@ describe('ShoppingCartBtnComponent', () => {
     const count = await lastValueFrom(component.itemsCount);
     fixture.detectChanges();
     expect(count).toEqual(1);
+  });
+
+  it('should call openCartpreview when openCart is called', () => {
+    const openCartpreviewSpy = jest.spyOn(carService, 'openCartpreview');
+  
+    component.openCart();
+  
+    expect(openCartpreviewSpy).toHaveBeenCalled();
   });
 });
