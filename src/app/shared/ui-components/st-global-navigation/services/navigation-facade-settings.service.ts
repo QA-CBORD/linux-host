@@ -42,7 +42,7 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     if (!this.isConfigInStorage()) this.storage.updateStateEntity(this.key, []);
     return this.initSettings().pipe(
       switchMap(() => this.config$),
-      map(settings => this.updateReactiveProperties([...settings])),
+      map(settings => (Array.isArray(settings) ? this.updateReactiveProperties([...settings]) : [])),
       tap(() => this.dispatchNavigationElementsIndicatorRequests())
     );
   }
