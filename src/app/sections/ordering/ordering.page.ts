@@ -55,13 +55,13 @@ export class OrderingPage implements OnInit {
 
     const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
     const merchant = (await lastValueFrom(this.cartService.merchant$.pipe(first())));
-    const merchantHasChanged = merchant && merchant.id !== merchantInfo.id;
+    // const merchantHasChanged = merchant && merchant.id !== merchantInfo.id;
 
 
-    if (hasItemsInCart && merchantHasChanged) {
-      this.showActiveCartWarning(merchantInfo);
-      return;
-    }
+    // if (hasItemsInCart && merchantHasChanged) {
+    //   this.showActiveCartWarning(merchantInfo);
+    //   return;
+    // }
 
     this.openOrderOptions(merchantInfo);
   }
