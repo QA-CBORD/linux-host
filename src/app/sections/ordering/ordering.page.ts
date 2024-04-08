@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { LockDownService } from '@shared/index';
-import { Observable, iif, lastValueFrom } from 'rxjs';
+import { Observable, iif } from 'rxjs';
 import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { CartService, MerchantService } from './services';
