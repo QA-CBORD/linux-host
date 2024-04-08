@@ -95,36 +95,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   async redirectToCart() {
-    if (this.cartService.cartsErrorMessage !== null) {
-      this.presentPopup(this.cartService.cartsErrorMessage);
-      return;
-    }
-
-    await this.loadingService.showSpinner();
-    await this.cartService
-      .validateOrder()
-      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
-      .toPromise()
-      .then(() =>
-        this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
-          queryParams: { isExistingOrder: this.isExistingOrder },
-        })
-      )
-      .catch(error => this.failedValidateOrder(error))
-      .finally(() => this.loadingService.closeSpinner());
-  }
-
-  private async presentPopup(message) {
-    const alert = await this.alertController.create({
-      header: message,
-      buttons: [{ text: 'Ok' }],
-    });
-
-    await alert.present();
-  }
-
-  private async failedValidateOrder(message: string): Promise<void> {
-    await this.toastService.showToast({ message });
+    this.orderingService.redirectToCart();
   }
 
   private initContentStrings() {

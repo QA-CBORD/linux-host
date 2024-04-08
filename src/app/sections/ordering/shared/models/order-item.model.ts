@@ -13,4 +13,5 @@ export interface OrderItem {
   reportingCategory: string;
   optionType: string;
   orderItemOptions: OrderItem[];
+  cartPreviewItems?: OrderItem[];
 }

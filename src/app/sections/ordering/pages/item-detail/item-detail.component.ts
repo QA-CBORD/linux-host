@@ -189,9 +189,16 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       this.errorState = true;
       return;
     }
-    const menuItem = this.configureMenuItem(this.menuItem.id, this.order.counter);
+    const menuItem = this.configureMenuItem(
+      this.menuItem.id,
+      this.order.counter,
+      this.menuItem.name,
+      this.menuItem.price
+    );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
+    console.log(arrayOfvalues);
+
     arrayOfvalues.forEach(value => {
       if (!value) {
         return;
@@ -204,13 +211,13 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
 
       if (value.length) {
         value.forEach(elem => {
-          menuItem.orderItemOptions.push(this.configureMenuItem(elem.id, 1) as OrderItem);
+          menuItem.orderItemOptions.push(this.configureMenuItem(elem.id, 1, elem.name, elem.price) as OrderItem);
         });
         return;
       }
 
       if (value && value.id) {
-        menuItem.orderItemOptions.push(this.configureMenuItem(value.id, 1) as OrderItem);
+        menuItem.orderItemOptions.push(this.configureMenuItem(value.id, 1, value.name, value.price) as OrderItem);
         return;
       }
     });
@@ -218,8 +225,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     await this.onSubmit(menuItem);
   }
 
-  private configureMenuItem(menuItemId: string, quantity: number): Partial<OrderItem> {
-    return { menuItemId, orderItemOptions: [], quantity };
+  private configureMenuItem(menuItemId: string, quantity: number, name: string, salePrice: number): Partial<OrderItem> {
+    return { menuItemId, orderItemOptions: [], name, quantity, salePrice };
   }
 
   private async onSubmit(menuItem): Promise<void> {
