@@ -18,7 +18,6 @@ import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/sta
 import { VaultSession, VaultMigrateResult, VaultTimeoutOptions, PinAction, PinCloseStatus } from '@core/service/identity/model.identity';
 import { PinLoginProps } from '@core/model/authentication/pin-login-props.model';
 import { UserLocalProfileService } from '@shared/services/user-local-profile/user-local-profile.service';
-import { CartService } from '@sections/ordering';
 
 export enum LoginState {
   DONE,
@@ -44,7 +43,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly routingService: NavigationService,
     private readonly userPreferenceService: UserPreferenceService,
     private readonly connectivityFacade: ConnectivityAwareFacadeService,
-    private readonly cartService: CartService
   ) {
     super();
   }
@@ -197,6 +195,5 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.settingsFacadeService.cleanCache();
     this.contentStringFacade.clearState();
     this._userLocalProfileService.clearState();
-    this.cartService.clearState();
   }
 }

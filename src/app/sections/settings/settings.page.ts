@@ -15,6 +15,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { App } from '@capacitor/app';
 import { EnvironmentData } from '@environments/environment-data';
+import { CartService } from '@sections/ordering';
 
 @Component({
   selector: 'st-settings',
@@ -38,7 +39,8 @@ export class SettingsPage implements OnInit {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFactory: SettingsFactoryService,
     private readonly route: ActivatedRoute,
-    private readonly profileService: ProfileServiceFacade
+    private readonly profileService: ProfileServiceFacade,
+    private readonly cartService: CartService,
   ) {}
 
   async ngOnInit() {
@@ -73,6 +75,7 @@ export class SettingsPage implements OnInit {
 
   logout() {
     this.sessionFacadeService.logoutUser();
+    this.cartService.clearState();
   }
 
   getAppVersion$(): Observable<string> {

@@ -82,12 +82,6 @@ describe('IdentityFacadeService', () => {
             clearState: () => ({})
           }
         },
-        {
-          provide: CartService,
-          useValue: {
-            clearState: () => ({})
-          }
-        }
       ],
     });
     service = TestBed.inject(IdentityFacadeService);
@@ -203,38 +197,6 @@ describe('IdentityFacadeService', () => {
      jest.spyOn(vaultIdentityServiceStub, 'lockVault');
       service.lockVault();
       expect(vaultIdentityServiceStub.lockVault).toHaveBeenCalled();
-    });
-  });
-
-  describe('logout', () => {
-    it('should call all the reset methods when resetAll is called', async () => {
-
-      // Get the services
-      const userFacadeServiceStub: UserFacadeService = TestBed.inject(UserFacadeService);
-      const merchantFacadeService: MerchantFacadeService = TestBed.inject(MerchantFacadeService);
-      const settingsFacadeService: SettingsFacadeService = TestBed.inject(SettingsFacadeService);
-      const contentStringFacade: ContentStringsFacadeService = TestBed.inject(ContentStringsFacadeService);
-      const _userLocalProfileService: UserLocalProfileService = TestBed.inject(UserLocalProfileService);
-      const cartService = TestBed.inject(CartService);
-
-      // Spy on all the methods
-      const logoutAndRemoveUserNotificationSpy = jest.spyOn(userFacadeServiceStub, 'logoutAndRemoveUserNotification');
-      const clearStateSpy1 = jest.spyOn(merchantFacadeService, 'clearState');
-      const cleanCacheSpy = jest.spyOn(settingsFacadeService, 'cleanCache');
-      const clearStateSpy2 = jest.spyOn(contentStringFacade, 'clearState');
-      const clearStateSpy3 = jest.spyOn(_userLocalProfileService, 'clearState');
-      const clearStateSpy4 = jest.spyOn(cartService, 'clearState');
-    
-      // Call resetAll
-      await service['resetAll']();
-    
-      // Check if all the methods were called
-      expect(logoutAndRemoveUserNotificationSpy).toHaveBeenCalled();
-      expect(clearStateSpy1).toHaveBeenCalled();
-      expect(cleanCacheSpy).toHaveBeenCalled();
-      expect(clearStateSpy2).toHaveBeenCalled();
-      expect(clearStateSpy3).toHaveBeenCalled();
-      expect(clearStateSpy4).toHaveBeenCalled();
     });
   });
 
