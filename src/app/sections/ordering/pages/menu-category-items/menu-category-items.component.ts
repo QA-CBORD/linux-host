@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
 import { Observable, zip } from 'rxjs';
-import { take, first, distinctUntilChanged, filter } from 'rxjs/operators';
+import { take, distinctUntilChanged, filter } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
-import { handleServerError } from '@core/utils/general-helpers';
 import { AlertController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
@@ -34,10 +33,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly loadingService: LoadingService,
-    private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
-    private readonly alertController: AlertController,
     private readonly navService: NavigationService,
     private readonly a11yService: AccessibilityService
   ) {}

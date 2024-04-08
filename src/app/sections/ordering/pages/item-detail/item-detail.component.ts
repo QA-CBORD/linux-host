@@ -197,8 +197,6 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
-    console.log(arrayOfvalues);
-
     arrayOfvalues.forEach(value => {
       if (!value) {
         return;
