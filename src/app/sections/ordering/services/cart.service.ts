@@ -461,7 +461,7 @@ export class CartService {
           return {
             userId,
             orderItems: [],
-            merchantId: merchantId,
+            merchantId,
             institutionId,
           };
         }),
