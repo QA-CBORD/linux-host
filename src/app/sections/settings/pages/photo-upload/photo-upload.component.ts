@@ -282,7 +282,7 @@ export class PhotoUploadComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         response => {
-          this.photoCropModalService.show(response.dataUrl, photoType).then(dataUrl => {
+          this.photoCropModalService.show(response?.dataUrl, photoType).then(dataUrl => {
             if (!dataUrl) return;
             const photoBase64 = dataUrl.split(',')[1];
             this.photoUploadService.onNewPhoto(photoType, photoBase64);
