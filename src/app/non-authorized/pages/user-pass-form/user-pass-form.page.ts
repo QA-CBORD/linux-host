@@ -147,7 +147,7 @@ export class UserPassForm implements OnInit, OnDestroy {
 
   onSignup(): void {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { navParams } = this.messageProxy.get<any>();
+    const navParams = this.messageProxy.get<any>()?.navParams;
     if (navParams) {
       this.doHostedSignup(navParams);
     } else {
