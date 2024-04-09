@@ -39,7 +39,12 @@ export class UserNotificationsFacadeService {
   }
 
   public async fetchNotificationsCount() {
-    const count = await firstValueFrom(this._userNotificationApiService.getUnreadCount().pipe(first()));
+    const count = await firstValueFrom(
+      this._userNotificationApiService.getUnreadCount().pipe(
+        first(),
+        catchError(() => of(0))
+      )
+    );
     this._unreadNotificationsCountSubject.next(
       count > MAXIMUN_NOTIFICATION_COUNT ? `${MAXIMUN_NOTIFICATION_COUNT}+` : String(count || '')
     );
@@ -61,7 +66,10 @@ export class UserNotificationsFacadeService {
   }
 
   public markAllNotificationsAsViewed() {
-    return this._userNotificationApiService.markAllUserNotificationLogAsViewed().pipe(first());
+    return this._userNotificationApiService.markAllUserNotificationLogAsViewed().pipe(
+      first(),
+      catchError(() => of(false))
+    );
   }
 
   public async markAsPinned(notification: Notification, status: boolean) {
