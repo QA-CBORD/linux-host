@@ -3,6 +3,9 @@ import { CartService } from '@sections/ordering';
 import { ShoppingCartBtnComponent } from './shopping-cart-btn.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 
 describe('ShoppingCartBtnComponent', () => {
   let component: ShoppingCartBtnComponent;
@@ -12,12 +15,24 @@ describe('ShoppingCartBtnComponent', () => {
     menuItems$: of(1),
     openCartpreview: jest.fn(),
   };
+  const loadingService = {
+    showSpinner: jest.fn(),
+    closeSpinner: jest.fn(),
+  };
+
+  const contentStringsFacadeService = {
+    fetchContentStrings$: jest.fn(() => of({})),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ShoppingCartBtnComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [{ provide: CartService, useValue: carService }],
+      providers: [
+        { provide: CartService, useValue: carService },
+        { provide: LoadingService, useValue: loadingService },
+        { provide: ContentStringsFacadeService, useValue: contentStringsFacadeService },
+      ],
     }).compileComponents();
   });
 
@@ -37,11 +52,27 @@ describe('ShoppingCartBtnComponent', () => {
     expect(count).toEqual(1);
   });
 
-  it('should call openCartpreview when openCart is called', () => {
-    const openCartpreviewSpy = jest.spyOn(carService, 'openCartpreview');
-  
-    component.openCart();
-  
-    expect(openCartpreviewSpy).toHaveBeenCalled();
+  describe('openCart', () => {
+    it('should call initContentStrings and openCartpreview', async () => {
+
+      const initContentStringsSpy = jest
+        .spyOn(component, 'initContentStrings')
+        .mockImplementation(() => Promise.resolve());
+        await component.openCart();
+        expect(initContentStringsSpy).toHaveBeenCalled();
+      expect(carService.openCartpreview).toHaveBeenCalled();
+    });
+  });
+
+  describe('initContentStrings', () => {
+    it('should call showSpinner, fetchContentStrings$, and closeSpinner', async () => {
+      await component.initContentStrings();
+      expect(loadingService.showSpinner).toHaveBeenCalled();
+      expect(contentStringsFacadeService.fetchContentStrings$).toHaveBeenCalledWith(
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.ordering
+      );
+      expect(loadingService.closeSpinner).toHaveBeenCalled();
+    });
   });
 });
