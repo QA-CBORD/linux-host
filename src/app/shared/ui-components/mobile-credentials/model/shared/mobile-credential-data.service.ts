@@ -142,7 +142,6 @@ export class MobileCredentialDataService {
         }
       }),
       catchError(error => {
-        console.error('got error from calling activePasses, clearing authblob: ', error);
         this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
         return throwError(error);
       })
