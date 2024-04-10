@@ -43,9 +43,13 @@ export class CartService {
     private readonly modalService: ModalsService,
     private readonly storageStateService: StorageStateService
   ) {
-   this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
-      if (cart && cart.value && this.isWithinLastSevenDays(cart.lastModified)) {
-        this._cart$.next(cart.value);
+    this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
+      if (cart && cart.value) {
+        if (this.isWithinLastSevenDays(cart.lastModified)) {
+          this._cart$.next(cart.value);
+        } else {
+          this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
+        }
       }
     });
   }
@@ -451,7 +455,7 @@ export class CartService {
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
     const merchantId = await lastValueFrom(
       this.merchant$.pipe(
-        map((merchant) => merchant?.id),
+        map(merchant => merchant?.id),
         first()
       )
     );
