@@ -39,6 +39,10 @@ describe('CartPreviewComponent', () => {
       dismiss: jest.fn(),
     };
 
+    navigationServiceStub = {
+      navigate: jest.fn(),
+    };
+
     TestBed.configureTestingModule({
       declarations: [PriceUnitsResolverPipe],
       imports: [
@@ -68,15 +72,31 @@ describe('CartPreviewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call modalService.dismiss() when onClose is called', () => {
+  it('should dismiss cart preview when onClose is tapped', () => {
     const modalServiceSpy = jest.spyOn(modalsServiceMock, 'dismiss');
     component.onClose();
     expect(modalServiceSpy).toHaveBeenCalled();
   });
 
-  it('should call router.navigate() when addMoreItems is called', async () => {
-    const routerSpy = jest.spyOn(component['router'] as any, 'navigate').mockResolvedValue(true);
+  it('should navigate to full menu when addMoreItems is tapped', async () => {
+    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
+    await component.addMoreItems();
+    expect(routerSpy).toHaveBeenCalledWith(["patron/ordering","full-menu"], { queryParams: { isExistingOrder: true } });
+  });
+
+  it('should dismiss cart preview after navigating to full menu', async () => {
+    const modalServiceSpy = jest.spyOn(modalsServiceMock, 'dismiss');
+    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
     await component.addMoreItems();
     expect(routerSpy).toHaveBeenCalled();
+    expect(modalServiceSpy).toHaveBeenCalled();
+  });
+
+  it('should not dismiss cart preview if it did not navigate to full menu', async () => {
+    const modalServiceSpy = jest.spyOn(modalsServiceMock, 'dismiss');
+    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(false);
+    await component.addMoreItems();
+    expect(routerSpy).toHaveBeenCalled();
+    expect(modalServiceSpy).not.toHaveBeenCalled();
   });
 });

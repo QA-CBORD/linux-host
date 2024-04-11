@@ -32,6 +32,7 @@ export enum ORDERING_CONTENT_STRINGS {
   buttonBack = 'button_back',
   buttonSetDeliveryAddress = 'button_set-delivery-address',
   buttonSetPickupAddress = 'button_set-pickup-address',
+  buttonSetPickupTime = 'button_set-pickup-time',
   buttonViewCart = 'button_view-cart',
   formErrorAddress = 'form-error_address',
   formErrorBuilding = 'form-error_building',

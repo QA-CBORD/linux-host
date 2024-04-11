@@ -900,6 +900,7 @@
       "button_schedule-order": "Schedule Order",
       "button_set-delivery-address": "Set Delivery Address",
       "button_set-pickup-address": "Set Pickup Address",
+      "button_set-pickup-time": "Set Pickup Time",
       "button_view-cart": "View Cart",
       "error_message_insufficient-funds": "Order can not be completed due to insufficient funds",
       "error_message_time-slot-capacity-reached": "Order can not be processed for the given due time, it exceeds the merchants order capacity",

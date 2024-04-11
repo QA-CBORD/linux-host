@@ -12,15 +12,18 @@
 <ng-template #dateTime>{{ dateTimeWithTimeZone || dateTimePicker }}</ng-template>
 <ion-picker
   #timePicker
-  (ionPickerColChange)="handlePickerChange($event)"
   class="order-options-action-sheet order-options-action-sheet-p-d"
   [ngClass]="pickerClass"
   [isOpen]="isPickerOpen"
   [columns]="pickerColumns"
   [buttons]="pickerButtons"
+  (ionPickerColChange)="handlePickerChange($event)"
+  (willPresent) = "onPickerWillPresent()"
   (didDismiss)="isPickerOpen = false"
 >
-  <st-button class="confirm-button"
-  [buttonModifier]="'normalcase'"
-  (onClick)="confirmPicker()">Set Pickup Time</st-button>
+<st-button 
+*ngIf="!isVoiceOverMode"
+class="confirm-button"
+[buttonModifier]="'normalcase'"
+(onClick)="confirmPicker()">{{ 'patron-ui.ordering.button_set-pickup-time' | translate }}</st-button>
 </ion-picker>
