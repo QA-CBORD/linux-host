@@ -42,9 +42,11 @@ describe('GuestDashboard', () => {
     messageProxy = {
       get: jest.fn(),
     };
-    sessionFacadeService = {};
+    sessionFacadeService = {
+      handlePushNotificationRegistration: jest.fn(),
+    };
     accessCardService = {
-      getInstitutionBackgroundImage: jest.fn()
+      getInstitutionBackgroundImage: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -57,7 +59,7 @@ describe('GuestDashboard', () => {
         { provide: SessionFacadeService, useValue: sessionFacadeService },
         { provide: StorageStateService, useValue: mockStorageStateService },
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
-        { provide: AccessCardService, useValue: accessCardService}
+        { provide: AccessCardService, useValue: accessCardService },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
