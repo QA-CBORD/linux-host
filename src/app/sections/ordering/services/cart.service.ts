@@ -47,10 +47,6 @@ export class CartService {
       if (cart && cart.value) {
         if (this.isWithinLastSevenDays(cart.lastModified)) {
           this._cart$.next(cart.value);
-          this.cart.menu = cart.value.menu;
-          this.cart.merchant = cart.value.merchant;
-          this.cart.order = cart.value.order;
-          this.cart.orderDetailsOptions = cart.value.orderDetailsOptions;
         } else {
           this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
         }
