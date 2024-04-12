@@ -75,9 +75,9 @@ describe('StDateTimePicker', () => {
   });
   
   beforeAll(() => { 
-    const pickerContainer = document.createElement('div');
-    pickerContainer.classList.add('picker-wrapper');
-    document.body.appendChild(pickerContainer);
+    const picker = document.createElement('ion-picker');
+    picker.classList.add('picker-wrapper');
+    document.body.appendChild(picker);
   });
 
   beforeEach(() => {
@@ -312,14 +312,14 @@ describe('StDateTimePicker', () => {
 
   it('should not create an accessible button with VoiceOver', async() => {
     const spy = jest.spyOn(component as any, 'accessiblePickupButton');
-    await component.onPickerWillPresent();
+    await component.onPickerWillPresent({ target: document.body } as unknown as CustomEvent);
     expect(spy).not.toBeCalled();
   });
 
   it('should create an accessible button with VoiceOver', async() => {
     accessibilityService.isVoiceOverEnabled$ = true;
     const spy = jest.spyOn(component as any, 'accessiblePickupButton');
-    await component.onPickerWillPresent();
+    await component.onPickerWillPresent({ target: document.body } as unknown as CustomEvent);
     expect(spy).toBeCalled();
   });
 

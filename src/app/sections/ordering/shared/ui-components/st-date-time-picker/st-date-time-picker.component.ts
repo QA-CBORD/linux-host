@@ -77,10 +77,10 @@ export class StDateTimePickerComponent implements OnInit {
     this.listenAppChanges();
   }
 
-  async onPickerWillPresent() {
+  async onPickerWillPresent(event: CustomEvent) {
     this.isVoiceOverMode = await this.accessibility.isVoiceOverEnabled$;
     if (this.isVoiceOverMode) {
-      this.accessiblePickupButton();
+      this.accessiblePickupButton(event);
     }
     this.cdRef.detectChanges();
   }
@@ -281,7 +281,7 @@ export class StDateTimePickerComponent implements OnInit {
     this.tomorrowString = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelTomorrow);
   }
 
-  private accessiblePickupButton() {
+  private accessiblePickupButton(event: CustomEvent) {
     if (this.pickerButtonElement) {
       return;
     }
@@ -301,8 +301,9 @@ export class StDateTimePickerComponent implements OnInit {
     this.renderer.listen(this.pickerButtonElement, 'click', () => {
       this.confirmPicker();
     });
-    const picker = document.querySelector('.picker-wrapper') as HTMLElement;
-    this.renderer.appendChild(picker, this.pickerButtonElement);
+
+    const picker = event.target as HTMLElement;
+    picker.querySelector('.picker-wrapper').appendChild(this.pickerButtonElement);
   }
 
   updateAsapOption() {

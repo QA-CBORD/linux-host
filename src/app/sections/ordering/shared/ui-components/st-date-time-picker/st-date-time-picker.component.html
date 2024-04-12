@@ -18,7 +18,7 @@
   [columns]="pickerColumns"
   [buttons]="pickerButtons"
   (ionPickerColChange)="handlePickerChange($event)"
-  (willPresent) = "onPickerWillPresent()"
+  (willPresent) ="onPickerWillPresent($event)"
   (didDismiss)="isPickerOpen = false"
 >
 <st-button 
