@@ -13,6 +13,8 @@ import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/
 import { StHeaderModule } from '@shared/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { FullMenuComponent } from '@sections/ordering/pages/full-menu/full-menu.component';
 
 describe('CartPreviewComponent', () => {
   let component: CartPreviewComponent;
@@ -20,7 +22,7 @@ describe('CartPreviewComponent', () => {
   let cartServiceStub: Partial<CartService>;
   let navigationServiceStub: Partial<NavigationService>;
   let alertControllerStub: Partial<AlertController>;
-  let modalsServiceMuck: Partial<ModalsService>;
+  let modalsServiceMock: Partial<ModalsService>;
   let loadingServiceStub: Partial<LoadingService>;
   let toastServiceStub: Partial<ToastService>;
 
@@ -33,7 +35,7 @@ describe('CartPreviewComponent', () => {
       validateOrder: () => new BehaviorSubject(null),
     };
 
-    modalsServiceMuck = {
+    modalsServiceMock = {
       dismiss: jest.fn(),
     };
 
@@ -46,12 +48,13 @@ describe('CartPreviewComponent', () => {
         OrderItemDetailsModule,
         CommonModule,
         HttpClientTestingModule,
+        RouterTestingModule.withRoutes([{ path: 'patron/ordering/full-menu', component: FullMenuComponent }]),
       ],
       providers: [
         { provide: CartService, useValue: cartServiceStub },
         { provide: NavigationService, useValue: navigationServiceStub },
         { provide: AlertController, useValue: alertControllerStub },
-        { provide: ModalsService, useValue: modalsServiceMuck },
+        { provide: ModalsService, useValue: modalsServiceMock },
         { provide: LoadingService, useValue: loadingServiceStub },
         { provide: ToastService, useValue: toastServiceStub },
       ],
@@ -66,8 +69,14 @@ describe('CartPreviewComponent', () => {
   });
 
   it('should call modalService.dismiss() when onClose is called', () => {
-    const modalServiceSpy = jest.spyOn(modalsServiceMuck, 'dismiss');
+    const modalServiceSpy = jest.spyOn(modalsServiceMock, 'dismiss');
     component.onClose();
     expect(modalServiceSpy).toHaveBeenCalled();
+  });
+
+  it('should call router.navigate() when addMoreItems is called', async () => {
+    const routerSpy = jest.spyOn(component['router'] as any, 'navigate').mockResolvedValue(true);
+    await component.addMoreItems();
+    expect(routerSpy).toHaveBeenCalled();
   });
 });

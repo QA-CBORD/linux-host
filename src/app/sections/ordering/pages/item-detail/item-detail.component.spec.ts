@@ -22,7 +22,7 @@ import { ItemDetailModalComponent } from './components/item-detail-modal/item-de
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
 import { MenuGroupInfo, MenuItemInfo, MenuItemOptionInfo, OrderItem } from '@sections/ordering/components';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 // Mock Pipe decorator
 let menuItem: MenuItemInfo = {
   id: '1',
@@ -168,7 +168,7 @@ describe('ItemDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ItemDetailComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [FormsModule, ReactiveFormsModule, PriceUnitsResolverModule],
+      imports: [FormsModule, ReactiveFormsModule, PriceUnitsResolverModule, TranslateModule],
       providers: [
         { provide: EnvironmentFacadeService, useValue: environmentFacadeServiceMock },
         { provide: FormBuilder, useValue: formBuilderMock },
