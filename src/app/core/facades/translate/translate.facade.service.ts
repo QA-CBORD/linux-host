@@ -48,4 +48,11 @@ export class TranslateFacadeService {
       interpolateParams
     );
   }
+
+  errorCommonInstant(name: ORDERING_CONTENT_STRINGS, interpolateParams?: object): string {
+    return this.translateService.instant(
+      `${CONTENT_STRINGS_DOMAINS.get_common}.${CONTENT_STRINGS_CATEGORIES.error}.${name}`,
+      interpolateParams
+    );
+  }
 }
