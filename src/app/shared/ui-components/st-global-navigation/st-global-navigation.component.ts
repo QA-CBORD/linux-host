@@ -51,6 +51,8 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   visibleAmountOfElements = 5;
   suscription: Subscription;
 
+  openCartClicked: boolean;
+
   constructor(
     private readonly navigationSettingsService: NavigationFacadeSettingsService,
     private readonly router: Router,
@@ -96,5 +98,15 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
 
   getLink(url: string) {
     return `/${url}`;
+  }
+  preventNavMenuOpen(event: any) {
+    if (this.openCartClicked) event.stopPropagation();
+  }
+  setCartClicked(event) {
+    this.openCartClicked = true;
+    this.preventNavMenuOpen(event);
+    setTimeout(() => {
+      this.openCartClicked = false;
+    }, 1000);
   }
 }
