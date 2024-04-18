@@ -85,6 +85,10 @@ export class DashboardPageResolver {
         CONTENT_STRINGS_DOMAINS.get_common,
         CONTENT_STRINGS_CATEGORIES.error_message
       ),
+      this.contentStringsFacadeService.fetchContentStrings$(
+        CONTENT_STRINGS_DOMAINS.get_common,
+        CONTENT_STRINGS_CATEGORIES.error
+      ),
     ];
   }
 }

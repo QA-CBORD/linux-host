@@ -213,7 +213,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.order$,
     ]).pipe(
       map(([isOrderAsap, buttonPlaceOrder, buttonScheduleOrder, order]) => {
-        const orderTotal = this.priceUnitsResolverPipe.transform(order.total, order.mealBased);
+        const orderTotal = order ? this.priceUnitsResolverPipe.transform(order.total, order.mealBased) : '';
         return `${isOrderAsap ? buttonPlaceOrder : buttonScheduleOrder} ${orderTotal}`;
       })
     );
@@ -723,9 +723,11 @@ export class CartComponent implements OnInit, OnDestroy {
   }
   private getAvailableAccounts$(): Observable<UserAccount[]> {
     return combineLatest([this.accountInfoList$, this.cartService.menuInfo$]).pipe(
-      map(([accInfo, { mealBased }]) => {
+      map(([accInfo, menuInfo]) => {
         if (!accInfo) return [];
-        return mealBased ? this.filterMealBasedAccounts(accInfo.accounts) : this.extractNoneMealsAccounts(accInfo);
+        return menuInfo?.mealBased
+          ? this.filterMealBasedAccounts(accInfo.accounts)
+          : this.extractNoneMealsAccounts(accInfo);
       })
     );
   }
