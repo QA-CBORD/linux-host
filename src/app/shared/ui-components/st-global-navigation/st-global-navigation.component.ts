@@ -99,14 +99,4 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   getLink(url: string) {
     return `/${url}`;
   }
-  preventNavMenuOpen(event: any) {
-    if (this.openCartClicked) event.stopPropagation();
-  }
-  setCartClicked(event) {
-    this.openCartClicked = true;
-    this.preventNavMenuOpen(event);
-    setTimeout(() => {
-      this.openCartClicked = false;
-    }, 1000);
-  }
 }
