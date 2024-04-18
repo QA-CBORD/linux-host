@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable, of, zip } from 'rxjs';
+import { Observable, lastValueFrom, of, zip } from 'rxjs';
 import { catchError, first, map, observeOn, subscribeOn, switchMap, take, timeout } from 'rxjs/operators';
 import { queue } from 'rxjs/internal/scheduler/queue';
 import { async } from 'rxjs/internal/scheduler/async';
@@ -9,6 +9,7 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 @Injectable()
 export class BaseInterceptor implements HttpInterceptor {
@@ -17,7 +18,8 @@ export class BaseInterceptor implements HttpInterceptor {
   constructor(
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService
+    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly userFacadeService: UserFacadeService,
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -50,10 +52,13 @@ export class BaseInterceptor implements HttpInterceptor {
             ? this.updatedRequest(next, rpcConfig, clone)
             : next.handle(clone);
         return request.pipe(timeout(timeOut),
-          catchError(error => {
-            error.request = req;
-            throw error;
-          }));
+        catchError(async error => {
+          const { institutionId, id: userId } = await lastValueFrom(this.userFacadeService.getUserData$());
+          error.request = req;
+          error.request.institutionId = institutionId;
+          error.request.userId = userId;
+          throw error;
+        }));
       })
     );
   }
