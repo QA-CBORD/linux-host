@@ -1,7 +1,7 @@
 <nav class="global-navigation" *ngIf="navElements$ | async as navElements" id="nav-tabs">
   <ion-popover
     [animated]="false"
-    trigger="click-trigger"
+    trigger="more-options"
     triggerAction="context-menu"
     (didDismiss)="onDismissPopup()"
     [isOpen]="isListShown && navElements.length > visibleAmountOfElements"
@@ -35,7 +35,7 @@
           class="global-navigation__list-item"
           (click)="toggleListAppearance()"
           (keyup.enter)="toggleListAppearance()"
-          id="click-trigger"
+          id="more-options"
         >
           <div
             class="global-navigation__icon"

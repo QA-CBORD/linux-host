@@ -998,7 +998,8 @@
       "active_cart_alert_change_title": "Change Active Merchant",
       "active_cart_alert_change_msg": "There are items in the cart from a different merchant. changing the merchant will empty the cart.",
       "active_cart_alert_change_cancel": "Cancel",
-      "active_cart_alert_change_proceed": "Change Merchant"
+      "active_cart_alert_change_proceed": "Change Merchant",
+      "active_cart_screen_reader": "Cart preview, button. {{cartItems}} items in the cart"
     },
     "explore": {
       "merchant_details_title": "Merchant Details"
