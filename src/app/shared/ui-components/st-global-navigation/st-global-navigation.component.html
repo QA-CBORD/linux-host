@@ -21,7 +21,7 @@
   <ng-container *ngTemplateOutlet="navMenu"></ng-container>
   <ng-template #navMenu>
     <div class="global-navigation__main" >
-      <st-shopping-cart-btn *ngIf="!isListShown"></st-shopping-cart-btn>
+      <!-- <st-shopping-cart-btn *ngIf="!isListShown"></st-shopping-cart-btn> -->
       <div class="global-navigation__list">
         <ng-container
           *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
