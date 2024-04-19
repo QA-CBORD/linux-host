@@ -51,8 +51,6 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   visibleAmountOfElements = 5;
   suscription: Subscription;
 
-  openCartClicked: boolean;
-
   constructor(
     private readonly navigationSettingsService: NavigationFacadeSettingsService,
     private readonly router: Router,
