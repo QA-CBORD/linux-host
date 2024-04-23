@@ -91,10 +91,10 @@ describe('FullMenuComponent', () => {
     cartsErrorMessage: null,
   };
   const merchantService = {
-    menuInfo$: jest.fn(() => of({} as MenuInfo)),
-    merchant$: jest.fn(() => of({} as MerchantInfo)),
-    orderDetailsOptions$: jest.fn(() => of({} as OrderDetailOptions)),
-    orderTypes$: jest.fn(() => of({} as MerchantOrderTypesInfo)),
+    menuInfo$: of({} as MenuInfo),
+    merchant$: of({} as MerchantInfo),
+    orderDetailsOptions$: of({} as OrderDetailOptions),
+    orderTypes$: of({} as MerchantOrderTypesInfo),
   };
   let loadingService = {
     showSpinner: jest.fn(),
@@ -138,6 +138,7 @@ describe('FullMenuComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FullMenuComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should exist', () => {
@@ -152,7 +153,7 @@ describe('FullMenuComponent', () => {
     expect(contentString).toHaveBeenCalledTimes(1);
   });
 
-  it('should return pickup label when orderType is PICKUP', done => {
+  it('should return pickup label when orderType is PICKUP', () => {
     const orderInfo$ = of({ orderType: ORDER_TYPE.PICKUP } as OrderDetailOptions);
     const labelPickup = of('Pickup');
     const labelDelivery = of('Delivery');
@@ -165,11 +166,10 @@ describe('FullMenuComponent', () => {
 
     component.orderType.subscribe(orderType => {
       expect(orderType).toBe('Pickup');
-      done();
     });
   });
 
-  it('should return delivery label when orderType is DELIVERY', done => {
+  it('should return delivery label when orderType is DELIVERY', () => {
     const orderInfo$ = of({ orderType: ORDER_TYPE.DELIVERY } as OrderDetailOptions);
     const labelPickup = of('Pickup');
     const labelDelivery = of('Delivery');
@@ -182,11 +182,10 @@ describe('FullMenuComponent', () => {
 
     component.orderType.subscribe(orderType => {
       expect(orderType).toBe('Delivery');
-      done();
     });
   });
 
-  it('should return DINEIN when orderType is not PICKUP or DELIVERY', done => {
+  it('should return DINEIN when orderType is not PICKUP or DELIVERY', () => {
     const orderInfo$ = of({ orderType: ORDER_TYPE.DINEIN } as OrderDetailOptions);
     const labelPickup = of('Pickup');
     const labelDelivery = of('Delivery');
@@ -199,7 +198,6 @@ describe('FullMenuComponent', () => {
 
     component.orderType.subscribe(orderType => {
       expect(orderType).toBe(DINEIN);
-      done();
     });
   });
 
@@ -236,13 +234,12 @@ describe('FullMenuComponent', () => {
     expect((component as any).cartService.clearActiveOrder).toHaveBeenCalled();
   });
 
-  it('should return the correct orderInfo$', done => {
+  it('should return the correct orderInfo$', () => {
     const orderInfo = { orderType: ORDER_TYPE.PICKUP } as OrderDetailOptions;
     jest.spyOn(component, 'orderInfo$', 'get').mockReturnValue(of(orderInfo));
 
     component.orderInfo$.subscribe(orderInfo => {
       expect(orderInfo).toBe(orderInfo);
-      done();
     });
   });
 
@@ -319,9 +316,6 @@ describe('FullMenuComponent', () => {
     // Create a mock Observable that emits the combined orderTypes and orderInfo
     const mockOrderDetails$ = of({ orderTypes: mockOrderTypes, orderInfo: mockOrderInfo });
 
-    // Spy on the orderDetails$ getter and make it return the mock Observable
-    jest.spyOn(merchantService, 'orderTypes$').mockReturnValue(of(mockOrderTypes));
-    jest.spyOn(merchantService, 'orderDetailsOptions$').mockReturnValue(of(mockOrderInfo));
     jest.spyOn(component, 'orderDetails$', 'get').mockReturnValue(mockOrderDetails$);
 
     const result = await lastValueFrom(component.orderDetails$);
@@ -368,5 +362,9 @@ describe('FullMenuComponent', () => {
       });
     });
   });
-
+  it('should toggle merchantInfoState and call detectChanges', () => {
+    expect(component.merchantInfoState).toBe(false);
+    component.toggleMerchantInfo();
+    expect(component.merchantInfoState).toBe(true);
+  });
 });
