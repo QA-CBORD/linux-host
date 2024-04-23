@@ -362,7 +362,7 @@ describe('FullMenuComponent', () => {
       });
     });
   });
-  it('should toggle merchantInfoState and call detectChanges', () => {
+  it('should toggle merchantInfoState', () => {
     expect(component.merchantInfoState).toBe(false);
     component.toggleMerchantInfo();
     expect(component.merchantInfoState).toBe(true);
