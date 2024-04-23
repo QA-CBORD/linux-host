@@ -77,12 +77,14 @@ describe('FullMenuComponent', () => {
     menuItems$: of([]),
     clearActiveOrder: jest.fn(),
     setActiveMerchantsMenuByOrderOptions: jest.fn(),
+
     orderDetailsOptions$: of({
       orderType: ORDER_TYPE.PICKUP,
       address: {} as AddressInfo,
       dueTime: new Date(),
       isASAP: true,
     } as OrderDetailOptions),
+    merchantTimeZone: 'mockTimeZone',
     isExistingOrder: true,
     orderItems$: of([{ id: 1, name: 'Test item' }]),
     validateOrder: jest.fn(),
@@ -276,6 +278,16 @@ describe('FullMenuComponent', () => {
     component.ionViewWillEnter();
     expect(spy).toHaveBeenCalled();
   });
+  it('should open openOrderOptions when ionViewWillEnter is called with openTimeSlot query param', () => {
+    const orderInfo = { orderType: ORDER_TYPE.DELIVERY, address: { id: '2' } } as OrderDetailOptions;
+    jest.spyOn(component, 'orderInfo$', 'get').mockReturnValue(of(orderInfo));
+    const spy = jest.spyOn(component, 'openOrderOptions');
+    component.merchantInfo$ = of({
+      orderTypes: { merchantTimeZone: 'Americas/New York', pickup: true, delivery: true } as MerchantOrderTypesInfo,
+    } as MerchantInfo);
+    component.ionViewWillEnter();
+    expect(spy).toHaveBeenCalled();
+  });
 
   it('should navigate to the correct route with query params when navigateToScannedItem is called', () => {
     const mockMenuItemId = '123';
@@ -346,6 +358,15 @@ describe('FullMenuComponent', () => {
     expect(orderingService.redirectToCart).toHaveBeenCalledTimes(1);
   });
 
-  
-  
+  it('should return the combined order details', () => {
+    lastValueFrom(component.orderDetails$).then(data => {
+      expect(data).toEqual({
+        orderTypes: {
+          merchantTimeZone: 'mockTimeZone',
+        },
+        orderInfo: {},
+      });
+    });
+  });
+
 });
