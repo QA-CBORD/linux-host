@@ -38,7 +38,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() idd: string;
   @Input() selectedText: string;
   @Input() fill = 'outline';
-  @Input() fontWeight?: "bold" | "";
+  @Input() fontWeight?: 'bold' | '';
   @Output() focus: EventEmitter<void> = new EventEmitter<void>();
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
   innerValue = '';
@@ -105,12 +105,11 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
     this.focus.emit();
   }
 
-  onDoubleTap() {
-    this.a11yService.isVoiceOverClick$.then(value => {
-      if (value) {
-        this.selectRef.open();
-      }
-    });
+  async onDoubleTap() {
+    const value = await this.a11yService.isVoiceOverClick$;
+    if (value) {
+      this.selectRef.open();
+    }
   }
 
   get isRequired(): boolean {
