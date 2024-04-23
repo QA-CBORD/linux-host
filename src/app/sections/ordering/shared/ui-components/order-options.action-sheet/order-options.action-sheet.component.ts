@@ -378,7 +378,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   private isMerchantDateUnavailable(schedule: Schedule) {
-    return schedule.days.length == 0;
+     return !(schedule?.days?.[0]?.hourBlocks?.[0]?.timestamps?.length);
   }
 
   private async onMerchantDateUnavailable() {
