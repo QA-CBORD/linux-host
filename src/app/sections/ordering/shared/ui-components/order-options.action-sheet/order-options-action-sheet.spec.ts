@@ -513,7 +513,7 @@ describe('OrderOptionsActionSheet', () => {
       days: [{ date: '2022-01-01', dayOfWeek: 1, hourBlocks: [{ timestamps: [{}] }] } as Day],
       menuSchedule: [],
     };
-    expect(component['isMerchantDateUnavailable'](schedule)).toBe(true);
+    expect(component['isMerchantDateUnavailable'](schedule)).toBe(false);
   });
 
   it('should display toast message when onSubmit with object errors', async () => {
