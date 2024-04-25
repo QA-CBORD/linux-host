@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PopoverController } from '@ionic/angular';
+import { IonicModule, PopoverController } from '@ionic/angular';
 import { StPopoverLayoutComponent } from './st-popover-layout.component';
 import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
 import { PopoverConfig } from '@core/model/popover/popover.model';
@@ -11,6 +11,7 @@ describe('StPopoverLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [IonicModule],
       declarations: [ StPopoverLayoutComponent ],
       providers: [
         { provide: PopoverController, useValue: mockPopoverController }
