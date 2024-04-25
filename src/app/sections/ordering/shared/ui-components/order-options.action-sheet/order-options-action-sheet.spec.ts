@@ -523,7 +523,6 @@ describe('OrderOptionsActionSheet', () => {
 
     const spy = jest.spyOn(toastService, 'showToast').mockResolvedValue(undefined);
 
-    // Call the method
     try {
       await component.onSubmit();
     } catch (error) {
