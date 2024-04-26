@@ -25,7 +25,7 @@ export class StSuccesSummaryComponent {
   @Input() tax: number;
   @Input() labelTax: string;
   @Input() discount: number;
-  @Input() paymentMethod: string;
+  @Input() paymentMethod: string = '';
   @Input() type: number;
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};

@@ -67,9 +67,6 @@ export class StHierarcheTreeDialogComponent {
     this.setCanSwipe(false);
 
     this.swiperSlides.allowTouchMove = false;
-
-    // dismiss the progress UI when the dialog UI is initialized
-    // this.loading.dismiss();
   }
 
   private buildSlides(lookUpItem, _topParentSlide): SlideItem {
@@ -186,7 +183,7 @@ export class StHierarcheTreeDialogComponent {
 
     const recurse = (_lookUps: LookUpItem[]) => {
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let i = 0; i < _lookUps.length; i++) {
+      for (let i = 0; i < _lookUps?.length; i++) {
         // Found the lookUpItem!
         if (_lookUps[i].id === selectedItemId || _lookUps[i].facilityKey === selectedItemId) {
           lookUpItemFound = _lookUps[i];

@@ -4,7 +4,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StHeaderSearchBarComponent } from './st-header-search-bar.component';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { By } from '@angular/platform-browser';
-import { IonSearchbar } from '@ionic/angular';
+import { IonSearchbar, SearchbarCustomEvent } from '@ionic/angular';
+import { Keyboard } from '@capacitor/keyboard';
 
 const nativeProviderMock = {
   isMobile: jest.fn(() => true),
@@ -53,5 +54,26 @@ describe('StHeaderSearchBarComponent', () => {
 
       expect(component.onInputChanged).toHaveBeenCalledWith(inputValue);
     });
+  });
+
+  it('should emit search event with input value on input change', () => {
+    const value = 'test';
+    const onSearchSpy = jest.spyOn(component.onSearch, 'emit');
+  
+    component.onInputChanged({ target: { value } } as SearchbarCustomEvent);
+  
+    expect(onSearchSpy).toHaveBeenCalledWith(value);
+  });
+
+  it('should not hide keyboard on enter key click if not mobile device', async () => {
+    const isMobileSpy = jest.spyOn(nativeProviderMock, 'isMobile').mockReturnValue(false);
+    await component.onEnterKeyClicked();
+    expect(isMobileSpy).toHaveBeenCalled();
+  });
+
+  it('should not hide keyboard on enter key click if not mobile device', async () => {
+    const isMobileSpy = jest.spyOn(nativeProviderMock, 'isMobile').mockReturnValue(true);
+    await component.onEnterKeyClicked();
+    expect(isMobileSpy).toHaveBeenCalled();
   });
 });

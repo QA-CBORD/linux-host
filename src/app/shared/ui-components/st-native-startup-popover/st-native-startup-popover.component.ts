@@ -27,30 +27,4 @@ export class StNativeStartupPopoverComponent implements OnInit {
       buttons,
     };
   }
-
-  // private setContentStrings() {
-  //   const errorResponseDialogHeader = this.mobileAccessService.getContentValueByName(
-  //     CONTENT_STRINGS.errorResponseDialogHeader,
-  //   );
-  //   const successResponseDialogHeader = this.mobileAccessService.getContentValueByName(
-  //     CONTENT_STRINGS.successResponseDialogHeader,
-  //   );
-  //   const scanBarcodeDialogHeader = this.mobileAccessService.getContentValueByName(
-  //     CONTENT_STRINGS.scanBarcodeDialogHeader,
-  //   );
-  //   const enterCodeDialogHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.enterCodeDialogHeader);
-  //   const closeBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.closeBtn);
-  //   const retryBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.retryBtn);
-  //   const cancelBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.cancelBtn);
-  //
-  //   this.contentString = {
-  //     errorResponseDialogHeader,
-  //     successResponseDialogHeader,
-  //     scanBarcodeDialogHeader,
-  //     enterCodeDialogHeader,
-  //     closeBtn,
-  //     retryBtn,
-  //     cancelBtn,
-  //   };
-  // }
 }

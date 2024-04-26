@@ -3,6 +3,8 @@ import { FormGroup } from '@angular/forms';
 
 import { RangeValue, RangeValueHash } from './range.model';
 
+export const ANY_PRICE = 'Any Price';
+
 @Component({
   selector: 'st-range',
   templateUrl: './range.component.html',
@@ -33,7 +35,7 @@ export class RangeComponent implements OnInit {
   private calculatePrice(value: RangeValue): string {
     value = value as RangeValueHash;
     if (value.upper === this.max) {
-      return 'Any Price';
+      return ANY_PRICE;
     }
 
     return `$${value.upper} or less`;
