@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { OrderingPage } from './ordering.page';
-import { MerchantService } from './services';
+import { CartService, MerchantService } from './services';
 import { OrderingService } from './services/ordering.service';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -13,12 +13,13 @@ import { ActivatedRoute } from '@angular/router';
 import { TypeMessageModule } from './shared/pipes/type-message/type-message.pipe.module';
 import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 import { MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from './components';
-import { TOAST_MESSAGES } from './ordering.config';
+import { LOCAL_ROUTING, TOAST_MESSAGES } from './ordering.config';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { APP_ROUTES } from '@sections/section.config';
 
 describe('OrderingPage', () => {
   let component: OrderingPage;
@@ -33,9 +34,10 @@ describe('OrderingPage', () => {
   let mockPopoverController;
   let activatedRoute;
   let mockOrderActionSheetService;
+  let mockCartService;
   let a11yService = {
     excuteSearchSpeech: jest.fn(),
-  }
+  };
 
   beforeEach(() => {
     mockMerchantService = {
@@ -85,6 +87,11 @@ describe('OrderingPage', () => {
       openOrderOptionsByMerchantId: jest.fn(),
     };
 
+    mockCartService = {
+      merchant$: of({}),
+      menuItems$: of(0),
+    };
+
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
@@ -110,6 +117,7 @@ describe('OrderingPage', () => {
         },
         { provide: TranslateService, useClass: TranslateServiceStub },
         { provide: AccessibilityService, useValue: a11yService },
+        { provide: CartService, useValue: mockCartService },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     });
@@ -174,6 +182,41 @@ describe('OrderingPage', () => {
     expect(showErrorSpy).not.toHaveBeenCalled();
     expect(onToastDisplayedSpy).not.toHaveBeenCalled();
     expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
+  });
+
+  it('should handle merchant click correctly if there are items in the cart and the merchant is the same', async () => {
+    const mockMerchantInfo = {
+      walkout: false,
+      name: 'Test Merchant',
+      id: 'testMerchantId',
+      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
+      settings: {
+        list: [{}],
+        map: {
+          'merchant.order.order_ahead_enabled': '1',
+        } as Map<string, MerchantSettingInfo> | Object,
+      },
+    } as MerchantInfo;
+
+    const isLockDownOnSpy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(false);
+
+    const showErrorSpy = jest.spyOn(toastService, 'showError');
+    const onNavigateSpy = jest.spyOn(routingService, 'navigate');
+    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
+
+    mockCartService.menuItems$ = of(2);
+    mockCartService.merchant$ = of(mockMerchantInfo);
+
+    await component.merchantClickHandler(mockMerchantInfo);
+    mockCartService.merchant$.subscribe(merchant => {
+      expect(merchant).toEqual(mockMerchantInfo);
+    });
+    expect(isLockDownOnSpy).toHaveBeenCalled();
+    expect(showErrorSpy).not.toHaveBeenCalled();
+    expect(openOrderOptionsSpy).not.toHaveBeenCalled();
+    expect(onNavigateSpy).toHaveBeenCalledWith([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+      queryParams: { isExistingOrder: true },
+    });
   });
 
   it('should update searchString when onSearchedValue is called', () => {
