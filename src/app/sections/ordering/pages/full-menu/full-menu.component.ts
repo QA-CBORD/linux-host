@@ -95,6 +95,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.menuItems$ = this.cartService.menuItems$;
     const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
     openTimeSlot && this.openOrderOptions();
+    this.cdref.detectChanges();
   }
 
   async onCategoryClicked({ id }): Promise<void> {
