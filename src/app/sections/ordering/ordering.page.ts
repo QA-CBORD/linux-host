@@ -59,10 +59,10 @@ export class OrderingPage implements OnInit {
     const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
     const merchantHasChanged = merchant && merchant.id !== merchantInfo.id;
 
-    // if (hasItemsInCart && merchantHasChanged) {
-    //   this.showActiveCartWarning(merchantInfo);
-    //   return;
-    // }
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(merchantInfo);
+      return;
+    }
 
     if (hasItemsInCart && !merchantHasChanged) {
       this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
