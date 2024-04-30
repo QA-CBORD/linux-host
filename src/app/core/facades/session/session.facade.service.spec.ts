@@ -107,9 +107,6 @@ describe('SessionFacadeService', () => {
       (<jasmine.Spy>service.addAppStateListeners);
       service.addAppStateListeners();
       expect(platformStub.ready).toHaveBeenCalled();
-      expect(
-        connectivityAwareFacadeServiceStub.isModalOpened
-      ).toHaveBeenCalled();
     });
   });
 

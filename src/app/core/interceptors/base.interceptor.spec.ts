@@ -4,6 +4,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { BaseInterceptor } from './base.interceptor';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 describe('BaseInterceptor', () => {
   let service: BaseInterceptor;
@@ -19,6 +20,9 @@ describe('BaseInterceptor', () => {
     const environmentFacadeServiceStub = () => ({
       getSavedEnvironmentInfo$: () => ({ pipe: () => ({}) })
     });
+
+    const userFacadeServiceStub = {};
+
     TestBed.configureTestingModule({
       providers: [
         BaseInterceptor,
@@ -30,7 +34,11 @@ describe('BaseInterceptor', () => {
         {
           provide: EnvironmentFacadeService,
           useFactory: environmentFacadeServiceStub
-        }
+        },
+        {
+          provide: UserFacadeService,
+          useValue: userFacadeServiceStub
+        },
       ]
     });
     service = TestBed.inject(BaseInterceptor);

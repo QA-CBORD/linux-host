@@ -1,8 +1,8 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { IonPicker } from '@ionic/angular';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { of } from 'rxjs';
 import { CoreTestingModules } from 'src/app/testing/core-modules';
@@ -10,6 +10,16 @@ import { CoreProviders } from 'src/app/testing/core-providers';
 import { StDateTimePickerComponent } from './st-date-time-picker.component';
 import { AppStatesFacadeService } from '@core/facades/appEvents/app-events.facade.service';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
+import { StorageStateService } from '@core/states/storage/storage-state.service';
+import { StorageEntity } from '@core/classes/extendable-state-manager';
+import { By } from '@angular/platform-browser';
+
+const accessibilityService = {
+  isVoiceOverEnabled$: false,
+}
 
 describe('StDateTimePicker', () => {
   let component: StDateTimePickerComponent;
@@ -26,13 +36,26 @@ describe('StDateTimePicker', () => {
     appStatesFacadeService = {
       getStateChangeEvent$: of({ isActive: false }),
     };
+     
+    const storageStateService = {
+      getStateEntityByKey$: jest.fn(() =>
+        of({
+          lastModified: 1,
+          timeToLive: 12345,
+          permanent: true,
+          value: 'hello',
+        } as StorageEntity)
+      ),
+      updateStateEntity: jest.fn(),
+    };
 
     await TestBed.configureTestingModule({
-      imports: [StDateTimePickerComponent, ...CoreTestingModules, StButtonModule],
+      imports: [StDateTimePickerComponent, ...CoreTestingModules, StButtonModule, TranslateModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         OrderingService,
         AndroidPermissions,
+        ChangeDetectorRef,
         ...CoreProviders,
         {
           provide: AppStatesFacadeService,
@@ -43,9 +66,18 @@ describe('StDateTimePicker', () => {
           useValue: {
             orderingInstant: jest.fn(),
           }
-        }
+        },
+        { provide: TranslateService, useClass: TranslateServiceStub },
+        { provide: AccessibilityService, useValue: accessibilityService },
+        { provide: StorageStateService, useValue: storageStateService }
       ],
     }).compileComponents();
+  });
+  
+  beforeAll(() => { 
+    const picker = document.createElement('ion-picker');
+    picker.classList.add('picker-wrapper');
+    document.body.appendChild(picker);
   });
 
   beforeEach(() => {
@@ -141,7 +173,7 @@ describe('StDateTimePicker', () => {
         selectedIndex: 0,
         options: [{ text: 'option1' }],
       },
-    };
+    } as CustomEvent;
 
     const createColumnsSpy = jest.spyOn(component, 'createColumns' as any).mockReturnValue('Mocked Columns');
 
@@ -158,7 +190,7 @@ describe('StDateTimePicker', () => {
         selectedIndex: 0,
         options: [{ text: 'option1' }],
       },
-    };
+    } as CustomEvent;
 
     const createColumnsSpy = jest.spyOn(component, 'createColumns' as any).mockReturnValue('Mocked Columns');
 
@@ -276,5 +308,32 @@ describe('StDateTimePicker', () => {
     };
 
     expect(component['hasTimeStamp']()).toBe(true);
+  });
+
+  it('should not create an accessible button with VoiceOver', async() => {
+    const spy = jest.spyOn(component as any, 'accessiblePickupButton');
+    await component.onPickerWillPresent({ target: document.body } as unknown as CustomEvent);
+    expect(spy).not.toBeCalled();
+  });
+
+  it('should create an accessible button with VoiceOver', async() => {
+    accessibilityService.isVoiceOverEnabled$ = true;
+    const spy = jest.spyOn(component as any, 'accessiblePickupButton');
+    await component.onPickerWillPresent({ target: document.body } as unknown as CustomEvent);
+    expect(spy).toBeCalled();
+  });
+
+  it('should remove non-accessible button with VoiceOver on', () => {
+    component.isVoiceOverMode = true;
+    fixture.detectChanges();
+    const stButton = fixture.debugElement.query(By.css('.confirm-button'));
+    expect(stButton).toBeNull();
+  });
+
+  it('should keep non-accessible button with VoiceOver off', () => {
+    component.isVoiceOverMode = false;
+    fixture.detectChanges();
+    const stButton = fixture.debugElement.query(By.css('.confirm-button'));
+    expect(stButton).toBeDefined();
   });
 });

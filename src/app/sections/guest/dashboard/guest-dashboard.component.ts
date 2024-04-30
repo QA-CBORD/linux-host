@@ -34,6 +34,7 @@ export class GuestDashboard implements OnInit, AfterViewInit {
   ngOnInit() {
     this.sections = this.messageProxy.get<GuestDashboardSection[]>() || [];
     this.loadInfo();
+    this.pushNotificationRegistration();
   }
 
   ngAfterViewInit() {
@@ -62,5 +63,8 @@ export class GuestDashboard implements OnInit, AfterViewInit {
     if (deepLinkPath && deepLinkPath.length && GUEST_DEEP_LINKS.includes(deepLinkPath.join('/'))) {
       this.router.navigate(deepLinkPath).then(() => this.sessionFacadeService.navigatedToLinkPath());
     }
+  }
+  pushNotificationRegistration() {
+    this.sessionFacadeService.handlePushNotificationRegistration();
   }
 }

@@ -28,7 +28,8 @@ describe('GuestDashboard', () => {
     const messageProxyStub = () => ({ get: () => ({}) });
     const sessionFacadeServiceStub = () => ({
       deepLinkPath: { length: {}, join: () => ({}) },
-      navigatedToLinkPath: () => ({})
+      navigatedToLinkPath: () => ({}),
+      handlePushNotificationRegistration: () => ({})
     });
     accessCardService = {
       getInstitutionBackgroundImage: jest.fn()

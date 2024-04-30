@@ -1,8 +1,14 @@
-<div class="shopping-cart-btn" *ngIf="(itemsCount | async) !== 0">
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" (click)="openCart()">
+<div
+  class="shopping-cart-btn no-focus-outline"
+  *ngIf="(itemsCount | async) !== 0"
+  id="shopping-cart"
+  tabindex="0"
+  [attr.aria-label]="'patron-ui.ordering.active_cart_screen_reader' | translate : { cartItems: (itemsCount | async) }"
+>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" (click)="openCart()" aria-hidden="true">
     <ion-fab-button color="light" class="fab">
       <ion-icon name="cart-outline" color="primary"></ion-icon>
     </ion-fab-button>
-    <div class="shopping-cart-btn--indicator" color="danger">{{ itemsCount | async }}</div>
+    <div aria-hidden="true" class="shopping-cart-btn--indicator" color="danger">{{ itemsCount | async }}</div>
   </ion-fab>
 </div>

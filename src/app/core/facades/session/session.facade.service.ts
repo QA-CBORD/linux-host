@@ -7,7 +7,6 @@ import { Platform } from '@ionic/angular';
 import { Subject, firstValueFrom } from 'rxjs';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { NativeStartupFacadeService } from '../native-startup/native-startup.facade.service';
-import { BackgroundTask } from '@capawesome/capacitor-background-task';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 
@@ -46,9 +45,6 @@ export class SessionFacadeService {
       if (isActive) {
         this.onActiveState();
       } else {
-        if (!this.connectivityFacade.isModalOpened()) {
-          this.closeTopControllers();
-        }
         this.appStatus = AppStatus.BACKGROUND;
       }
     });
@@ -66,6 +62,9 @@ export class SessionFacadeService {
 
       this.platform.pause.subscribe(() => {
         this.appStatus = AppStatus.BACKGROUND;
+        if (!this.connectivityFacade.isModalOpened()) {
+          this.closeTopControllers();
+        }
       });
     });
   }
@@ -181,15 +180,9 @@ export class SessionFacadeService {
 
   private async closeTopControllers() {
     if (!this.platform.is('cordova')) return;
-
-    const taskId = await BackgroundTask.beforeExit(async () => {
       this.nativeProvider.dismissTopControllers(
         !!this.nativeStartupFacadeService.blockNavigationStartup,
         this.nativeProvider.getKeepTopModal
       );
-      BackgroundTask.finish({
-        taskId,
-      });
-    });
   }
 }

@@ -1,7 +1,7 @@
-<nav class="global-navigation" *ngIf="navElements$ | async as navElements">
+<nav class="global-navigation" *ngIf="navElements$ | async as navElements" id="nav-tabs">
   <ion-popover
     [animated]="false"
-    trigger="click-trigger"
+    trigger="more-options"
     triggerAction="context-menu"
     (didDismiss)="onDismissPopup()"
     [isOpen]="isListShown && navElements.length > visibleAmountOfElements"
@@ -20,8 +20,8 @@
 
   <ng-container *ngTemplateOutlet="navMenu"></ng-container>
   <ng-template #navMenu>
-    <div class="global-navigation__main" id="click-trigger">
-      <!-- <st-shopping-cart-btn></st-shopping-cart-btn> -->
+    <div class="global-navigation__main" >
+      <st-shopping-cart-btn *ngIf="!isListShown"></st-shopping-cart-btn>
       <div class="global-navigation__list">
         <ng-container
           *ngTemplateOutlet="navItems; context: { $implicit: navElements | mainNavItems : visibleAmountOfElements }"
@@ -35,6 +35,7 @@
           class="global-navigation__list-item"
           (click)="toggleListAppearance()"
           (keyup.enter)="toggleListAppearance()"
+          id="more-options"
         >
           <div
             class="global-navigation__icon"

@@ -349,7 +349,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
           });
           return this.guestDepositsService.guestAccounts();
         }),
-        tap(this.setSourceAccounts),
+        tap(accounts => this.setSourceAccounts(accounts)),
         finalize(() => {
           this.loadingService.closeSpinner();
         })

@@ -510,7 +510,7 @@ describe('OrderOptionsActionSheet', () => {
 
   it('should return false if schedule days is not empty', () => {
     const schedule: Schedule = {
-      days: [{ date: '2022-01-01', dayOfWeek: 1, hourBlocks: [] } as Day],
+      days: [{ date: '2022-01-01', dayOfWeek: 1, hourBlocks: [{ timestamps: [{}] }] } as Day],
       menuSchedule: [],
     };
     expect(component['isMerchantDateUnavailable'](schedule)).toBe(false);
@@ -523,7 +523,6 @@ describe('OrderOptionsActionSheet', () => {
 
     const spy = jest.spyOn(toastService, 'showToast').mockResolvedValue(undefined);
 
-    // Call the method
     try {
       await component.onSubmit();
     } catch (error) {

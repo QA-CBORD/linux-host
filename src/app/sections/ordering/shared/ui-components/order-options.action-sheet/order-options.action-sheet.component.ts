@@ -306,7 +306,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     type: number
   ): Promise<MenuInfo | never> {
     if (!accountInfoList.accounts.length && !accountInfoList.creditAccepted) {
-      const errorMessage = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.noAvailableTenders);
+      const errorMessage = this.translateFacadeService.errorCommonInstant(ORDERING_CONTENT_STRINGS.noAvailableTenders);
       this.toastService.showError(errorMessage, 5000, 'bottom');
       return Promise.reject();
     }
@@ -378,7 +378,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   private isMerchantDateUnavailable(schedule: Schedule) {
-    return schedule.days.length == 0;
+     return !(schedule?.days?.[0]?.hourBlocks?.[0]?.timestamps?.length);
   }
 
   private async onMerchantDateUnavailable() {

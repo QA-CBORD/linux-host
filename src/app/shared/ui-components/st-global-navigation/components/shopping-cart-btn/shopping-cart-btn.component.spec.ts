@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('ShoppingCartBtnComponent', () => {
   let component: ShoppingCartBtnComponent;
@@ -26,7 +27,7 @@ describe('ShoppingCartBtnComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShoppingCartBtnComponent],
+      imports: [ShoppingCartBtnComponent, TranslateModule.forRoot()],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: CartService, useValue: carService },

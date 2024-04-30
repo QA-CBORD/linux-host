@@ -30,7 +30,7 @@
         buttonModifier="rectangle"
         >start an order
       </st-button>
-      <ion-button (onClick)="onFavoriteTrigger(merchant)" fill="clear">
+      <ion-button (click)="onFavoriteTrigger(merchant)" fill="clear">
         <ion-icon
           slot="icon-only"
           [src]="merchant.isFavorite ? filledStarPath : blankStarPath"

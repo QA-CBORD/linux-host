@@ -5,6 +5,8 @@ ion-popover {
   &::part(content){
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
+    left: calc(0px + var(--offset-x, 0));
+    --width:100vw
   }
 }
 .global-navigation {
