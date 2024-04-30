@@ -81,7 +81,7 @@ describe('CartPreviewComponent', () => {
   it('should navigate to full menu when addMoreItems is tapped', async () => {
     const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
     await component.addMoreItems();
-    expect(routerSpy).toHaveBeenCalledWith(["patron/ordering","full-menu"], { queryParams: { isExistingOrder: true } });
+    expect(routerSpy).toHaveBeenCalledWith(["ordering","full-menu"], { queryParams: { isExistingOrder: true } });
   });
 
   it('should dismiss cart preview after navigating to full menu', async () => {
