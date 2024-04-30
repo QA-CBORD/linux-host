@@ -184,6 +184,50 @@ describe('OrderingPage', () => {
     expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
   });
 
+  it('should display warning if there is items in the cart and a diferent merchant is clicked', async () => {
+    const mockMerchantInfo = {
+      walkout: false,
+      name: 'Test Merchant',
+      id: 'testMerchantId',
+      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
+      settings: {
+        list: [{}],
+        map: {
+          'merchant.order.order_ahead_enabled': '1',
+        } as Map<string, MerchantSettingInfo> | Object,
+      },
+    } as MerchantInfo;
+
+    const mockNewMerchantInfo = {
+      walkout: false,
+      name: 'Test Merchant',
+      id: 'testMerchantId1',
+      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
+      settings: {
+        list: [{}],
+        map: {
+          'merchant.order.order_ahead_enabled': '1',
+        } as Map<string, MerchantSettingInfo> | Object,
+      },
+    } as MerchantInfo;
+    const isLockDownOnSpy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(false);
+    const showErrorSpy = jest.spyOn(toastService, 'showError');
+    const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
+    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
+    const openCleaCartModalSpy = jest.spyOn(component as any, 'showActiveCartWarning');
+
+    mockCartService.menuItems$ = of(2);
+    mockCartService.merchant$ = of(mockMerchantInfo);
+
+    await component.merchantClickHandler(mockNewMerchantInfo);
+
+    expect(isLockDownOnSpy).toHaveBeenCalled();
+    expect(showErrorSpy).not.toHaveBeenCalled();
+    expect(onToastDisplayedSpy).not.toHaveBeenCalled();
+    expect(openOrderOptionsSpy).not.toHaveBeenCalled();
+    expect(openCleaCartModalSpy).toHaveBeenCalled();
+  });
+
   it('should handle merchant click correctly if there are items in the cart and the merchant is the same', async () => {
     const mockMerchantInfo = {
       walkout: false,
