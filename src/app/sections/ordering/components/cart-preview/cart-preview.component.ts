@@ -9,9 +9,9 @@ import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
+import { PATRON_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
 import { StButtonModule, StHeaderModule } from '@shared/ui-components';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
 @Component({
   standalone: true,
   providers: [PriceUnitsResolverPipe],
@@ -44,7 +44,7 @@ export class CartPreviewComponent {
   };
 
   async addMoreItems() {
-      const routed = await this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.fullMenu], {
+      const routed = await this.router.navigate([PATRON_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
         queryParams: { isExistingOrder: true },
       });
       if (routed) {
