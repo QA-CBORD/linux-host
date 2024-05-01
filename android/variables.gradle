@@ -18,4 +18,10 @@ ext {
     cordovaAndroidVersion = '10.1.1'
     coreSplashScreenVersion = '1.0.0'
     androidxWebkitVersion = '1.6.1'
+    androidxCameraCamera2Version = '1.1.0'
+    androidxCameraCoreVersion = '1.1.0'
+    androidxCameraLifecycleVersion = '1.1.0'
+    androidxCameraViewVersion = '1.1.0'
+    mlkitBarcodeScanningVersion = '17.1.0'
+    playServicesCodeScannerVersion = '16.0.0'
 }
