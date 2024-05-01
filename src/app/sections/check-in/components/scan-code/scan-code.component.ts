@@ -4,22 +4,23 @@ import { ModalController, Platform } from '@ionic/angular';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CHECKIN_ROUTES } from '@sections/check-in/check-in-config';
 import { Router } from '@angular/router';
-import { BarcodeScanner, CheckPermissionResult, SupportedFormat } from '@capacitor-community/barcode-scanner';
+import {
+  BarcodeScanner,
+  BarcodeFormat,
+  PermissionStatus, BarcodeScannedEvent
+} from '@capacitor-mlkit/barcode-scanning';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { take } from 'rxjs/operators';
 const renderingDelay = 1000;
 
-export enum Barcode {
-  QRCode = 'QR_CODE',
-}
 @Component({
   templateUrl: './scan-code.component.html',
   styleUrls: ['./scan-code.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScanCodeComponent implements OnInit {
-  @Input() formats: [SupportedFormat];
+  @Input() formats: [BarcodeFormat];
   @Input() title?: string;
   @Input() prompt?: string;
   @Input() textBtn?: string;
@@ -36,10 +37,9 @@ export class ScanCodeComponent implements OnInit {
   async ngOnInit() {
     try {
       await this.clearBackground();
-      BarcodeScanner.prepare();
       this.hardwareBackButton();
       this.nativeProvider.setKeepTopModal = true;
-      const status = await BarcodeScanner.checkPermission({ force: true });
+      const status = await BarcodeScanner.requestPermissions();
       this.handleScanner(status);
       setTimeout(() => {
         this.nativeProvider.setKeepTopModal = false;
@@ -52,25 +52,31 @@ export class ScanCodeComponent implements OnInit {
   ionViewWillLeave() {
     this.location.back();
     BarcodeScanner.stopScan();
-    BarcodeScanner.showBackground();
+    BarcodeScanner.removeAllListeners();
+    document.querySelector('body')?.classList.remove('barcode-scanner-active');
   }
 
   closeScanCode(code: string = null) {
     this.goBack(code);
   }
 
-  private async startScanning(targetedFormats: [SupportedFormat]) {
-    BarcodeScanner.hideBackground();
-    const result = await BarcodeScanner.startScan({ targetedFormats });
-    if (result.hasContent) {
-      this.closeScanCode(result.content);
-    } else {
-      this.closeScanCode();
-    }
+  private async startScanning(formats: [BarcodeFormat]) {
+    document.querySelector('body')?.classList.add('barcode-scanner-active');
+    await BarcodeScanner.addListener(
+      'barcodeScanned',
+      async (result: BarcodeScannedEvent) => {
+        if (result.barcode.rawValue) {
+          this.closeScanCode(result.barcode.rawValue);
+        } else {
+          this.closeScanCode();
+        }
+      },
+    );
+    await BarcodeScanner.startScan({ formats });
   }
 
-  private handleScanner(status: CheckPermissionResult) {
-    if (status.granted || status.neverAsked) {
+  private handleScanner(status: PermissionStatus) {
+    if (status.camera == 'granted' || status.camera == 'limited') {
       this.startScanning(this.formats);
     } else {
       this.closeScanCode();

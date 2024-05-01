@@ -6,7 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SupportedFormat } from '@capacitor-community/barcode-scanner';
+import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { AddressInfo } from '@core/model/address/address-info';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -188,7 +188,7 @@ export class CheckInPendingComponent implements OnInit, AfterViewInit {
       cssClass: 'scan-modal',
       backdropDismiss: false,
       componentProps: {
-        formats: [SupportedFormat.QR_CODE],
+        formats: [BarcodeFormat.QrCode],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         title: (<any> this.contentStrings).scan_code_title,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
