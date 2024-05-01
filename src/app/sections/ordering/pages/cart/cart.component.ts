@@ -589,6 +589,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .finally(() => {
         this.isProcessingOrder = false;
         this.loadingService.closeSpinner();
+        this.cartService.clearActiveOrder();
       });
   }
 
