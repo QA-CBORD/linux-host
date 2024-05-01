@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -584,12 +577,12 @@ export class CartComponent implements OnInit, OnDestroy {
         this.appRateService.evaluateToRequestRateApp();
         this.setupCartInfo(order);
         await this.showModal(order);
+        this.cartService.clearActiveOrder();
       })
       .catch(async (error: string | [string, string]) => this.handlerCartErrors(error))
       .finally(() => {
         this.isProcessingOrder = false;
         this.loadingService.closeSpinner();
-        this.cartService.clearActiveOrder();
       });
   }
 
