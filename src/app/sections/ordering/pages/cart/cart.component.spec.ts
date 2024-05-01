@@ -42,6 +42,7 @@ const _cartService = {
   updateOrderPhone: jest.fn(),
   submitOrder: jest.fn(() => of({} as OrderInfo)),
   closeButtonClicked: jest.fn(),
+  clearActiveOrder: jest.fn(),
 };
 
 const _merchantService = {
@@ -185,6 +186,7 @@ describe('CartComponent', () => {
     const spinnerSpy = jest.spyOn(_loadingService, 'showSpinner');
     const noteSpy = jest.spyOn(_cartService, 'updateOrderNote');
     const phoneSpy = jest.spyOn(_cartService, 'updateOrderPhone');
+    const orderSpy = jest.spyOn(_cartService, 'clearActiveOrder');
 
     await component.onSubmit();
 
@@ -194,6 +196,7 @@ describe('CartComponent', () => {
     expect(spinnerSpy).toHaveBeenCalled();
     expect(noteSpy).toHaveBeenCalled();
     expect(phoneSpy).toHaveBeenCalled();
+    expect(orderSpy).toHaveBeenCalled();
   });
 
   it('should not call location.back() when backButton is pressed and dueTimeHasErrors is true', async () => {
