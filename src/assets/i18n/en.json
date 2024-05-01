@@ -623,7 +623,8 @@
       "scan_code_title": "QR Code",
       "subtitle": "Your order is now pending. You will receive a confirmation email shortly.",
       "title": "Home",
-      "too_early": "You are here too early, please check in no earlier than 30 minutes before pickup time."
+      "too_early": "You are here too early, please check in no earlier than 30 minutes before pickup time.",
+      "no_permissions": "Permissions were not granted."
     },
     "checkin_success": {
       "done": "Done",
