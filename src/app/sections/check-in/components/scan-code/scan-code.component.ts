@@ -11,7 +11,8 @@ import {
 } from '@capacitor-mlkit/barcode-scanning';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { take } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 const renderingDelay = 1000;
 
 @Component({
@@ -31,12 +32,13 @@ export class ScanCodeComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly nativeProvider: NativeProvider,
     private platform: Platform,
-    private location: Location
-  ) {}
+    private location: Location,
+    private readonly translateService: TranslateService
+  ) { }
 
   async ngOnInit() {
     try {
-      await this.clearBackground();
+      this.setBlankBackground();
       this.hardwareBackButton();
       this.nativeProvider.setKeepTopModal = true;
       const status = await BarcodeScanner.requestPermissions();
@@ -49,23 +51,27 @@ export class ScanCodeComponent implements OnInit {
     }
   }
 
-  ionViewWillLeave() {
+  async ionViewWillLeave() {
     this.location.back();
-    BarcodeScanner.stopScan();
-    BarcodeScanner.removeAllListeners();
-    document.querySelector('body')?.classList.remove('barcode-scanner-active');
+    await BarcodeScanner.stopScan();
+    await BarcodeScanner.removeAllListeners();
+    this.showBlankBackground();
   }
 
   closeScanCode(code: string = null) {
     this.goBack(code);
   }
 
+  async manualEntry() {
+    await this.modalController.dismiss({ manualEntry: true });
+  }
+
   private async startScanning(formats: [BarcodeFormat]) {
-    document.querySelector('body')?.classList.add('barcode-scanner-active');
+    this.showBlankBackground(true);
     await BarcodeScanner.addListener(
       'barcodeScanned',
       async (result: BarcodeScannedEvent) => {
-        if (result.barcode.rawValue) {
+        if (result?.barcode?.rawValue) {
           this.closeScanCode(result.barcode.rawValue);
         } else {
           this.closeScanCode();
@@ -76,16 +82,16 @@ export class ScanCodeComponent implements OnInit {
   }
 
   private handleScanner(status: PermissionStatus) {
-    if (status.camera == 'granted' || status.camera == 'limited') {
+    if (status.camera === 'granted' || status.camera === 'limited') {
       this.startScanning(this.formats);
     } else {
       this.closeScanCode();
-      this.toastService.showToast({ message: 'Permissions were not granted.' });
+      this.toastService.showToast({ message: this.translateService.instant("patron-ui.checkin.no_permissions") });
     }
   }
 
   private hardwareBackButton() {
-    this.platform.backButton.pipe(take(1)).subscribe(() => {
+    this.platform.backButton.pipe(first()).subscribe(() => {
       this.closeScanCode();
     });
   }
@@ -94,11 +100,16 @@ export class ScanCodeComponent implements OnInit {
     await this.modalController.dismiss({ scanCodeResult: code });
   }
 
-  private async clearBackground() {
+  private async setBlankBackground() {
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
   }
 
-  async manualEntry() {
-    await this.modalController.dismiss({ manualEntry: true });
+  private showBlankBackground(translucent?: boolean) {
+    const screen = document.querySelector('body')?.classList;
+    if (translucent) {
+      screen.add('barcode-scanner-active');
+    } else {
+      screen.remove('barcode-scanner-active');
+    }
   }
 }
