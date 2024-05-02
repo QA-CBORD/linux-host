@@ -13,6 +13,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { first } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
+import { LoadingService } from '@core/service/loading/loading.service';
 const renderingDelay = 1000;
 
 @Component({
@@ -25,37 +26,40 @@ export class ScanCodeComponent implements OnInit {
   @Input() title?: string;
   @Input() prompt?: string;
   @Input() textBtn?: string;
+  private backButtonPressed?: boolean;
 
   constructor(
     private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly toastService: ToastService,
     private readonly nativeProvider: NativeProvider,
-    private platform: Platform,
-    private location: Location,
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    private readonly loadingService: LoadingService,
+    private readonly platform: Platform,
+    private readonly location: Location,
   ) { }
 
   async ngOnInit() {
+    this.showBlankBackground();
+    this.hardwareBackButton();
+    this.nativeProvider.setKeepTopModal = true;
     try {
-      this.setBlankBackground();
-      this.hardwareBackButton();
-      this.nativeProvider.setKeepTopModal = true;
       const status = await BarcodeScanner.requestPermissions();
       this.handleScanner(status);
-      setTimeout(() => {
-        this.nativeProvider.setKeepTopModal = false;
-      }, renderingDelay);
     } catch {
       this.closeScanCode();
     }
+    setTimeout(() => {
+      this.nativeProvider.setKeepTopModal = false;
+    }, renderingDelay);
   }
 
   async ionViewWillLeave() {
-    this.location.back();
-    await BarcodeScanner.stopScan();
-    await BarcodeScanner.removeAllListeners();
-    this.showBlankBackground();
+    if (!this.backButtonPressed) {
+      this.location.back();
+    }
+    await BarcodeScanner?.stopScan();
+    await BarcodeScanner?.removeAllListeners();
   }
 
   closeScanCode(code: string = null) {
@@ -67,7 +71,7 @@ export class ScanCodeComponent implements OnInit {
   }
 
   private async startScanning(formats: [BarcodeFormat]) {
-    this.showBlankBackground(true);
+    this.setBackgroundTransparency(true);
     await BarcodeScanner.addListener(
       'barcodeScanned',
       async (result: BarcodeScannedEvent) => {
@@ -92,6 +96,7 @@ export class ScanCodeComponent implements OnInit {
 
   private hardwareBackButton() {
     this.platform.backButton.pipe(first()).subscribe(() => {
+      this.backButtonPressed = true;
       this.closeScanCode();
     });
   }
@@ -100,13 +105,15 @@ export class ScanCodeComponent implements OnInit {
     await this.modalController.dismiss({ scanCodeResult: code });
   }
 
-  private async setBlankBackground() {
+  private async showBlankBackground() {
+    this.loadingService.showSpinner();
     await this.router.navigate([PATRON_NAVIGATION.ordering, CHECKIN_ROUTES.scanCodeBackground]);
+    this.loadingService.closeSpinner();
   }
 
-  private showBlankBackground(translucent?: boolean) {
+  private setBackgroundTransparency(transparent?: boolean) {
     const screen = document.querySelector('body')?.classList;
-    if (translucent) {
+    if (transparent) {
       screen.add('barcode-scanner-active');
     } else {
       screen.remove('barcode-scanner-active');
