@@ -14,7 +14,6 @@
     text-align: center;
     color: $color-dusty-gray;
     @include font-nunito-regular(16px);
-
   }
   &__merchant-name {
     text-align: center;
@@ -31,7 +30,6 @@
     padding: 0px;
     border: 1px solid $color-light-gray;
     margin: 3px 25px;
-    
   }
 
   &__ingredient-header {
@@ -73,5 +71,21 @@
     line-height: 18px;
     color: rgba(0, 0, 0, 0.6);
     @include font-nunito-regular(14px);
+  }
+}
+.total {
+  padding: 10px 40px;
+  background: $color-white;
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+
+    @include font-nunito-regular(14px);
+
+    &--bold {
+      @include font-nunito-heavy(14px);
+    }
   }
 }
