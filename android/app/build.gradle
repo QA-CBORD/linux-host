@@ -12,6 +12,10 @@ android {
     }
     buildFeatures {
         buildConfig true
+        dataBinding true
+    }
+    dataBinding {
+        enabled = true
     }
     defaultConfig {
         applicationId "com.cbord.get"
