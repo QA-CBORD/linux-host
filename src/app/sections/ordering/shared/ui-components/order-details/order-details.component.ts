@@ -113,8 +113,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.orderTypes = merchant.orderTypes;
     this.isWalkoutOrder = !!merchant.walkout;
     this._merchant = merchant;
-    this.isMerchantOrderAhead = parseInt(merchant.settings?.map[MerchantSettings.orderAheadEnabled].value) === 1;
-    this.isTipEnabled = parseBitBasedMerchantSetting(merchant.settings?.map[MerchantSettings.tipEnabled]);
+    this.isMerchantOrderAhead = parseInt(merchant.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
+    this.isTipEnabled = parseInt(merchant.settings?.map[MerchantSettings.tipEnabled]?.value) === 1;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
