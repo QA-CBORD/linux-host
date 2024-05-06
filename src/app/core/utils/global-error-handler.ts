@@ -16,9 +16,9 @@ export class GlobalErrorHandler implements ErrorHandler {
   constructor(private alertController: AlertController) {}
   handleError(err): void {
     const chunkFailedMessage = /Loading chunk [\d]+ failed/;
-    const errText = err.message;
+    const errText = err ? err.message : 'Unknown error: Error object is empty.';
 
-    if (chunkFailedMessage.test(err.message)) {
+    if (chunkFailedMessage.test(errText)) {
       this.presentAlertConfirm();
     }
     if (errText && !OmitedErrorsForSentry.includes(errText) ) {
