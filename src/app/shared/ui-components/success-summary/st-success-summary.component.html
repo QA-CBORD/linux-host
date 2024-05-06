@@ -53,7 +53,7 @@
         <span class="total__item--bold">{{ total | priceUnitsResolver: mealBased }}</span>
       </div>
 
-      <div class="total__item ion-margin-top" [class.total__item--grid]="paymentMethod.length > 20">
+      <div class="total__item ion-margin-top" [class.total__item--grid]="paymentMethod?.length > 20">
         <span class="total__item--capitalize">{{ contentStrings.labelPaymentMethod | async }}</span>
         <span class="total__item--capitalize">{{ paymentMethod }}</span>
       </div>

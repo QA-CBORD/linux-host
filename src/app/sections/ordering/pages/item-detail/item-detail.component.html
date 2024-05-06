@@ -24,7 +24,7 @@
     <div class="order-detail__descriptions-title">{{ menuItem?.name }}</div>
     <p class="order-detail__descriptions-content">{{ menuItem?.description }}</p>
     <span class="order-detail__descriptions-price">{{
-      menuItem?.price | priceUnitsResolver: (menuInfo$ | async).mealBased
+      menuItem?.price | priceUnitsResolver: (menuInfo$ | async)?.mealBased
       }}</span>
   </div>
   <form *ngIf="itemOrderForm"
