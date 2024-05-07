@@ -122,7 +122,7 @@ describe('SessionFacadeService', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should close all hanging controllers on web version', () => {
+    it('should NOT close controllers on web version', () => {
       appStatesFacadeServiceStub.getStateChangeEvent$ = of(({ isActive: false }));
       platformStub.is = jest.fn().mockReturnValue(false);
       const spy = jest.spyOn(nativeProviderStub as any, 'dismissTopControllers');
