@@ -237,7 +237,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     );
     this.cartService.orderIsAsap = date.isASAP;
     let isOutsideMerchantDeliveryArea = of(false);
-    if (!this.orderOptionsData.address) {
+    if (!this.orderOptionsData?.address) {
       return this.onToastDisplayed(chooseAddressError);
     }
     const labelDeliveryAddress = this.translateFacadeService.orderingInstant(
