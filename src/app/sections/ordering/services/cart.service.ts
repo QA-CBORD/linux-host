@@ -17,7 +17,6 @@ import { ItemsOrderInfo, MenuInfo, MerchantInfo, OrderInfo, OrderItem, OrderPaym
 import { MerchantService } from './merchant.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
-import { OrderActionSheetService } from './odering-actionsheet.service';
 
 @Injectable({
   providedIn: 'root',
@@ -46,7 +45,7 @@ export class CartService {
     private readonly modalService: ModalsService,
     private readonly storageStateService: StorageStateService,
     private readonly translateService: TranslateService,
-    private readonly alertController: AlertController 
+    private readonly alertController: AlertController
   ) {
     this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value) {
@@ -541,7 +540,7 @@ export class CartService {
     this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
     this.cartSubscription.unsubscribe();
   }
-  async showActiveCartWarning( openOrderOptions: () => void) {
+  async showActiveCartWarning(openOrderOptions: () => void) {
     const alert = await this.alertController.create({
       cssClass: 'active_cart',
       header: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_title'),
