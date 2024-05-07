@@ -25,8 +25,7 @@ export class GlobalErrorHandler implements ErrorHandler {
       Sentry.captureException(err);
     }
 
-    // eslint-disable-next-line no-console
-    console.log('Error Handled Global: ', err);
+    console.error('Error Handled Global: ', err);
   }
 
   private async presentAlertConfirm() {
