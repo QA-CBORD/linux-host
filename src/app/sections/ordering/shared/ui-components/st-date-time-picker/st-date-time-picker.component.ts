@@ -161,7 +161,7 @@ export class StDateTimePickerComponent implements OnInit {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [date, { value }] = Object.values(dateInfo) as any[];
     let dateValue, timeStamp;
-    if (value === 'asap') {
+    if (value === 'asap' || !value) {
       dateValue = 'ASAP';
     } else {
       // eslint-disable-next-line prefer-const
@@ -178,7 +178,7 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private hasTimeStamp(): boolean {
-    const timeStamps = this.schedule.days[0].hourBlocks[0].timestamps;
+    const timeStamps = this.schedule?.days[0]?.hourBlocks[0]?.timestamps;
     return timeStamps && timeStamps.length > 0;
   }
 

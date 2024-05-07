@@ -6,17 +6,16 @@ import { CartService } from '@sections/ordering/services';
   name: 'modifyPrepTime',
 })
 export class ModifyPrepTimePipe implements PipeTransform {
-
-  constructor(private cartService: CartService) {
-  }
+  constructor(private cartService: CartService) {}
 
   transform(
-    { dueTime, isASAP }: { dueTime: string | Date; isASAP?: boolean } = { dueTime: null },
+    timeData: { dueTime: string | Date; isASAP?: boolean },
     orderTypes: MerchantOrderTypesInfo,
     isShowTime = true,
     showFullDate = true
-    ): string {
-
+  ): string {
+    if (!timeData) return '';
+    const { dueTime, isASAP } = timeData;
     if (isASAP && !isShowTime) return 'ASAP';
     if (!dueTime) return '';
     return this.cartService.extractTimeZonedString(dueTime.toString(), orderTypes.merchantTimeZone, showFullDate);

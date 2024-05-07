@@ -151,7 +151,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   }
 
   isErrorMultiList({ menuGroup: { minimum, maximum, name } }): boolean {
-    const { value } = this.itemOrderForm.get(name);
+    const value = this.itemOrderForm.get(name)?.value ?? '';
 
     if (!minimum && !maximum) {
       return true;
