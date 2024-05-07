@@ -15,6 +15,9 @@ import { BehaviorSubject, Observable, Subject, Subscription, lastValueFrom } fro
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { ItemsOrderInfo, MenuInfo, MerchantInfo, OrderInfo, OrderItem, OrderPayment } from '../shared/models';
 import { MerchantService } from './merchant.service';
+import { TranslateService } from '@ngx-translate/core';
+import { AlertController } from '@ionic/angular';
+import { OrderActionSheetService } from './odering-actionsheet.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +25,7 @@ import { MerchantService } from './merchant.service';
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -41,7 +44,9 @@ export class CartService {
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
     private readonly modalService: ModalsService,
-    private readonly storageStateService: StorageStateService
+    private readonly storageStateService: StorageStateService,
+    private readonly translateService: TranslateService,
+    private readonly alertController: AlertController 
   ) {
     this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value) {
@@ -432,7 +437,9 @@ export class CartService {
   }
 
   private addOrderItem(orderItem: Partial<OrderItem>) {
-    const existingItemIndex = this.cart.order.orderItems.findIndex(({ menuItemId }) => menuItemId === orderItem.menuItemId);
+    const existingItemIndex = this.cart.order.orderItems.findIndex(
+      ({ menuItemId }) => menuItemId === orderItem.menuItemId
+    );
     if (existingItemIndex !== -1) {
       this.cart.order.orderItems[existingItemIndex].quantity += orderItem.quantity;
     } else {
@@ -533,6 +540,35 @@ export class CartService {
     this.clearCart();
     this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
     this.cartSubscription.unsubscribe();
+  }
+  async showActiveCartWarning( openOrderOptions: () => void) {
+    const alert = await this.alertController.create({
+      cssClass: 'active_cart',
+      header: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_title'),
+      message: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_msg'),
+      buttons: [
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_cancel'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
+        },
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_proceed'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: async () => {
+            this.clearActiveOrder();
+            openOrderOptions();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+    return alert.onDidDismiss();
   }
 }
 

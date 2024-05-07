@@ -58,14 +58,7 @@ describe('OrderingPage', () => {
 
     mockloadingService = { closeSpinner: jest.fn(), showSpinner: jest.fn() };
 
-    routingService = { navigate: jest.fn() };
-
-    lockDownService = {
-      isLockDownOn: jest.fn(),
-      loadStringsAndSettings: jest.fn(),
-    };
-
-    toastService = { showError: jest.fn(), showToast: jest.fn() };
+    
     mockPopoverController = {
       create: jest.fn().mockReturnValue({
         present: jest.fn(),
@@ -74,22 +67,32 @@ describe('OrderingPage', () => {
         onWillDismiss: jest.fn().mockReturnValue(Promise.resolve({ data: 'test' })),
       }),
     };
-
+    
     activatedRoute = {
       snapshot: {
         paramMap: { get: jest.fn() },
         queryParams: { merchantId: 'testMerchantId' },
       },
     };
-
+    
     mockOrderActionSheetService = {
       openOrderOptions: jest.fn(),
       openOrderOptionsByMerchantId: jest.fn(),
     };
+    
+    routingService = { navigate: jest.fn() };
+
+    lockDownService = {
+      isLockDownOn: jest.fn(),
+      loadStringsAndSettings: jest.fn(),
+    };
+
+    toastService = { showError: jest.fn(), showToast: jest.fn() };
 
     mockCartService = {
       merchant$: of({}),
       menuItems$: of(0),
+      showActiveCartWarning: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -214,7 +217,7 @@ describe('OrderingPage', () => {
     const showErrorSpy = jest.spyOn(toastService, 'showError');
     const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
     const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
-    const openCleaCartModalSpy = jest.spyOn(component as any, 'showActiveCartWarning');
+    const openCleaCartModalSpy = jest.spyOn(mockCartService as any, 'showActiveCartWarning');
 
     mockCartService.menuItems$ = of(2);
     mockCartService.merchant$ = of(mockMerchantInfo);

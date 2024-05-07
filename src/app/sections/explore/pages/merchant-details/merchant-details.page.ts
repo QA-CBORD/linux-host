@@ -6,12 +6,14 @@ import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
-import { MerchantInfo } from '@sections/ordering';
+import { CartService, MerchantInfo } from '@sections/ordering';
+import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { OrderingResolver } from '@sections/ordering/resolvers';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { LockDownService } from '@shared/index';
-import { Observable, firstValueFrom } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { APP_ROUTES } from '@sections/section.config';
+import { LockDownService, NavigationService } from '@shared/index';
+import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
+import { first, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',
@@ -29,6 +31,8 @@ export class MerchantDetailsPage implements OnInit {
   blankStarPath = '/assets/icon/star-outline.svg';
   private readonly orderActionSheetService = inject(OrderActionSheetService);
   private readonly orderingResolverService = inject(OrderingResolver);
+  private readonly cartService = inject(CartService);
+  private readonly routingService = inject(NavigationService);
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -76,6 +80,29 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
+    const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
+    const merchantHasChanged = merchant && merchant.id !== merchantId;
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(merchantId);
+      return;
+    }
+
+    if (hasItemsInCart && !merchantHasChanged) {
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+        queryParams: { isExistingOrder: true },
+      });
+      return;
+    }
+
+    this.openOrderOptions(merchantId);
+  }
+
+  async showActiveCartWarning(merchantId: string) {
+    this.cartService.showActiveCartWarning(this.openOrderOptions.bind(this, merchantId));
+  }
+  async openOrderOptions(merchantId: string) {
     await firstValueFrom(this.orderingResolverService.resolve());
     this.orderActionSheetService.openOrderOptionsByMerchantId(merchantId);
   }

@@ -9,12 +9,14 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { of } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('StSuccesSummaryComponent', () => {
   let component: StSuccesSummaryComponent;
   let fixture: ComponentFixture<StSuccesSummaryComponent>;
   let mockOrderingService;
   let mockStorageStateService;
+  let translateService;
 
   beforeEach(async () => {
     mockOrderingService = {
@@ -36,6 +38,7 @@ describe('StSuccesSummaryComponent', () => {
         { provide: ModalController, useValue: {} },
         { provide: StorageStateService, useValue: mockStorageStateService },
         { provide: OrderingService, useValue: mockOrderingService },
+        {provide: TranslateService, useValue: translateService}
       ],
     }).compileComponents();
   });

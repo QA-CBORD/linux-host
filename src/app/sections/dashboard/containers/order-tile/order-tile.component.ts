@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { MerchantInfo, MerchantService } from '@sections/ordering';
-import { take, finalize } from 'rxjs/operators';
-import { Router } from '@angular/router';
-import { PATRON_NAVIGATION } from '../../../../app.global';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
+import { CartService, MerchantInfo, MerchantService } from '@sections/ordering';
+import { take, finalize, first } from 'rxjs/operators';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { IonicSlides } from '@ionic/angular';
 import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
 import SwiperCore from 'swiper';
-import { TOAST_MESSAGES } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
-import { LockDownService } from '@shared/services';
+import { LockDownService, NavigationService } from '@shared/services';
+import { APP_ROUTES } from '@sections/section.config';
+import { lastValueFrom } from 'rxjs';
 SwiperCore.use([IonicSlides]);
 
 @Component({
@@ -29,11 +29,13 @@ export class OrderTileComponent implements OnInit {
   skeletonArray: number[] = new Array(this.amountPerSlide);
   isLoading = true;
 
+  private readonly cartService: CartService = inject(CartService);
+
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly router: Router,
+    private readonly router: NavigationService,
     private readonly toastService: ToastService,
     private readonly lockDownService: LockDownService
   ) {}
@@ -62,16 +64,39 @@ export class OrderTileComponent implements OnInit {
       });
   }
 
-  async goToMerchant({ id: merchantId, walkout }: MerchantInfo) {
+  async goToMerchant(merchantInfo: MerchantInfo) {
     if (this.lockDownService.isLockDownOn()) {
       return;
     }
 
-    if (walkout) {
+    if (merchantInfo.walkout) {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
 
-    this.router.navigate([PATRON_NAVIGATION.ordering], { queryParams: { merchantId } });
+    const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
+    const merchantHasChanged = merchant && merchant.id !== merchantInfo.id;
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(merchantInfo);
+      return;
+    }
+
+    if (hasItemsInCart && !merchantHasChanged) {
+      this.router.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+        queryParams: { isExistingOrder: true },
+      });
+      return;
+    }
+    this.navigateToOrdering(merchantInfo);
+  }
+
+  async showActiveCartWarning(merchantInfo: MerchantInfo) {
+    this.cartService.showActiveCartWarning(this.navigateToOrdering.bind(this, merchantInfo));
+  }
+
+  private navigateToOrdering(merchantInfo: MerchantInfo) {
+    this.router.navigate([APP_ROUTES.ordering], { queryParams: { merchantId: merchantInfo.id } });
   }
 }

@@ -11,7 +11,9 @@ import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sectio
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { LockDownService } from '@shared/services';
+import { LockDownService, NavigationService } from '@shared/services';
+import { APP_ROUTES } from '@sections/section.config';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -34,7 +36,8 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly orderingService: OrderingService,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -46,7 +49,7 @@ export class FavoriteMerchantsComponent implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.ordering]);
   }
 
-  async merchantClickHandler(merchantInfo: MerchantInfo): Promise<void> {
+  async merchantClickHandler(merchantInfo: MerchantInfo) {
     if (this.lockDownService.isLockDownOn()) {
       return;
     }
@@ -56,7 +59,27 @@ export class FavoriteMerchantsComponent implements OnInit {
       return;
     }
 
+    const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
+    const merchantHasChanged = merchant && merchant.id !== merchantInfo.id;
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(merchantInfo);
+      return;
+    }
+
+    if (hasItemsInCart && !merchantHasChanged) {
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+        queryParams: { isExistingOrder: true },
+      });
+      return;
+    }
+
     this.openOrderOptions(merchantInfo);
+  }
+
+  async showActiveCartWarning(merchantInfo: MerchantInfo) {
+    this.cartService.showActiveCartWarning( this.openOrderOptions.bind(this, merchantInfo));
   }
 
   async favouriteHandler({ id }): Promise<void> {
