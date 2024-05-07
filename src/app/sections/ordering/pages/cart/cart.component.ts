@@ -278,8 +278,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.cartsErrorMessage = null;
     this.cartService.orderOption = {
       dueTime: date.dueTime,
-      orderType: this.cartService._orderOption.orderType,
-      address: this.cartService._orderOption.address,
+      orderType: this.cartService._orderOption?.orderType,
+      address: this.cartService._orderOption?.address,
       isASAP: date.isASAP,
     } as OrderDetailOptions;
     await this.loadingService.showSpinner();
