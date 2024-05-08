@@ -46,6 +46,9 @@ export class SessionFacadeService {
         this.onActiveState();
       } else {
         this.appStatus = AppStatus.BACKGROUND;
+        if (!this.connectivityFacade.isModalOpened()) {
+          this.closeTopControllers();
+        }
       }
     });
     this.appStatesFacadeService.getAppUrlOpenEvent$.subscribe(data => {
@@ -62,9 +65,6 @@ export class SessionFacadeService {
 
       this.platform.pause.subscribe(() => {
         this.appStatus = AppStatus.BACKGROUND;
-        if (!this.connectivityFacade.isModalOpened()) {
-          this.closeTopControllers();
-        }
       });
     });
   }
@@ -179,7 +179,7 @@ export class SessionFacadeService {
   }
 
   private async closeTopControllers() {
-    if (!this.platform.is('cordova')) return;
+    if (this.getIsWeb()) return;
       this.nativeProvider.dismissTopControllers(
         !!this.nativeStartupFacadeService.blockNavigationStartup,
         this.nativeProvider.getKeepTopModal
