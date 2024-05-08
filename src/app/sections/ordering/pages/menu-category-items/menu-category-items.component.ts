@@ -52,7 +52,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     zip(this.cartService.menuInfo$, this.activatedRoute.params)
       .pipe(take(1))
       .subscribe(([menu, { id }]) => {
-        this.menuCategory = menu.menuCategories?.find(category => category.id === id);
+        this.menuCategory = menu?.menuCategories?.find(category => category.id === id);
       });
   }
 

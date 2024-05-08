@@ -22,4 +22,16 @@ describe('ModifyPrepTimePipe', () => {
   it('can load instance', () => {
     expect(pipe).toBeTruthy();
   });
+
+  it('should return ASAP when isASAP is true and isShowTime is false', () => {
+    const timeData = { dueTime: '2022-12-31', isASAP: true };
+    const orderTypes: MerchantOrderTypesInfo = { merchantTimeZone: 'UTC' } as MerchantOrderTypesInfo;
+    expect(pipe.transform(timeData, orderTypes, false)).toBe('ASAP');
+  });
+
+  it('should return empty string when timeData is null', () => {
+    const timeData = null;
+    const orderTypes: MerchantOrderTypesInfo = { merchantTimeZone: 'UTC' } as MerchantOrderTypesInfo;
+    expect(pipe.transform(timeData, orderTypes)).toBe('');
+  });
 });

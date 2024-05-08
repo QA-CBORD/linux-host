@@ -8,9 +8,34 @@ import { NativeStartupFacadeService } from '../native-startup/native-startup.fac
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { AppStatesFacadeService } from '../appEvents/app-events.facade.service';
 import { SessionFacadeService } from './session.facade.service';
+import { of } from 'rxjs';
 
 describe('SessionFacadeService', () => {
   let service: SessionFacadeService;
+
+  const appStatesFacadeServiceStub = {
+    getStateChangeEvent$: of(({ isActive: true })),
+    getAppUrlOpenEvent$: of({})
+  };
+
+  const connectivityAwareFacadeServiceStub = {
+    isModalOpened: jest.fn(() => false),
+  };
+
+  const platformStub = {
+    ready: jest.fn().mockResolvedValue({}),
+    resume: of({}),
+    pause: of({}),
+    is: jest.fn().mockReturnValue(true)
+  };
+
+  const nativeProviderStub = {
+    dismissTopControllers: jest.fn(),
+    getKeepTopModal: {}
+  };
+  const nativeStartupFacadeServiceStub = {
+    blockNavigationStartup: {}
+  };
 
   beforeEach(() => {
     const userFacadeServiceStub = () => ({
@@ -28,27 +53,7 @@ describe('SessionFacadeService', () => {
       lockVault: () => ({})
     });
     const institutionFacadeServiceStub = () => ({ cachedInstitutionInfo$: {} });
-    const platformStub = () => ({
-      ready: () => ({ then: () => ({}) }),
-      resume: { subscribe: f => f({}) },
-      pause: { subscribe: f => f({}) },
-      is: string => ({})
-    });
-    const nativeProviderStub = () => ({
-      dismissTopControllers: (arg, getKeepTopModal) => ({}),
-      getKeepTopModal: {}
-    });
-    const nativeStartupFacadeServiceStub = () => ({
-      blockNavigationStartup: {}
-    });
-    const connectivityAwareFacadeServiceStub = () => ({
-      isModalOpened: () => ({}),
-      execute: (object, arg) => ({})
-    });
-    const appStatesFacadeServiceStub = () => ({
-      getStateChangeEvent$: { subscribe: f => f({}) },
-      getAppUrlOpenEvent$: { subscribe: f => f({}) }
-    });
+
     TestBed.configureTestingModule({
       providers: [
         SessionFacadeService,
@@ -61,23 +66,23 @@ describe('SessionFacadeService', () => {
           provide: InstitutionFacadeService,
           useFactory: institutionFacadeServiceStub
         },
-        { provide: Platform, useFactory: platformStub },
-        { provide: NativeProvider, useFactory: nativeProviderStub },
+        { provide: Platform, useValue: platformStub },
+        { provide: NativeProvider, useValue: nativeProviderStub },
         {
           provide: NativeStartupFacadeService,
-          useFactory: nativeStartupFacadeServiceStub
+          useValue: nativeStartupFacadeServiceStub
         },
         {
           provide: ConnectivityAwareFacadeService,
-          useFactory: connectivityAwareFacadeServiceStub
+          useValue: connectivityAwareFacadeServiceStub
         },
         {
           provide: AppStatesFacadeService,
-          useFactory: appStatesFacadeServiceStub
+          useValue: appStatesFacadeServiceStub
         }
       ]
     });
-   jest.spyOn(SessionFacadeService.prototype, 'addAppStateListeners');
+    jest.spyOn(SessionFacadeService.prototype, 'addAppStateListeners');
     service = TestBed.inject(SessionFacadeService);
   });
 
@@ -94,19 +99,35 @@ describe('SessionFacadeService', () => {
   });
 
   describe('addAppStateListeners', () => {
-    it('makes expected calls', () => {
-      const platformStub: Platform = TestBed.inject(Platform);
-      const connectivityAwareFacadeServiceStub: ConnectivityAwareFacadeService = TestBed.inject(
-        ConnectivityAwareFacadeService
-      );
-     jest.spyOn(platformStub, 'ready');
-     jest.spyOn(
+    it('checks app state is ready', () => {
+      jest.spyOn(platformStub, 'ready');
+      jest.spyOn(
         connectivityAwareFacadeServiceStub,
         'isModalOpened'
       );
-      (<jasmine.Spy>service.addAppStateListeners);
       service.addAppStateListeners();
       expect(platformStub.ready).toHaveBeenCalled();
+    });
+
+    it('should not close all hanging controllers when app state is foreground', () => {
+      const spy = jest.spyOn(service as any, 'closeTopControllers');
+      service.addAppStateListeners();
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should close all hanging controllers when app state is background', () => {
+      appStatesFacadeServiceStub.getStateChangeEvent$ = of(({ isActive: false }));
+      const spy = jest.spyOn(service as any, 'closeTopControllers');
+      service.addAppStateListeners();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should NOT close controllers on web version', () => {
+      appStatesFacadeServiceStub.getStateChangeEvent$ = of(({ isActive: false }));
+      platformStub.is = jest.fn().mockReturnValue(false);
+      const spy = jest.spyOn(nativeProviderStub as any, 'dismissTopControllers');
+      service.addAppStateListeners();
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 
@@ -115,7 +136,7 @@ describe('SessionFacadeService', () => {
       const identityFacadeServiceStub: IdentityFacadeService = TestBed.inject(
         IdentityFacadeService
       );
-     jest.spyOn(identityFacadeServiceStub, 'isVaultLocked');
+      jest.spyOn(identityFacadeServiceStub, 'isVaultLocked');
       service.isVaultLocked();
       expect(identityFacadeServiceStub.isVaultLocked).toHaveBeenCalled();
     });
@@ -126,7 +147,7 @@ describe('SessionFacadeService', () => {
       const userFacadeServiceStub: UserFacadeService = TestBed.inject(
         UserFacadeService
       );
-     jest.spyOn(
+      jest.spyOn(
         userFacadeServiceStub,
         'handlePushNotificationRegistration'
       );
@@ -140,7 +161,7 @@ describe('SessionFacadeService', () => {
   describe('getIsWeb', () => {
     it('makes expected calls', () => {
       const platformStub: Platform = TestBed.inject(Platform);
-     jest.spyOn(platformStub, 'is');
+      jest.spyOn(platformStub, 'is');
       service.getIsWeb();
       expect(platformStub.is).toHaveBeenCalled();
     });
@@ -151,7 +172,7 @@ describe('SessionFacadeService', () => {
       const identityFacadeServiceStub: IdentityFacadeService = TestBed.inject(
         IdentityFacadeService
       );
-     jest.spyOn(identityFacadeServiceStub, 'lockVault');
+      jest.spyOn(identityFacadeServiceStub, 'lockVault');
       service.lockVault();
       expect(identityFacadeServiceStub.lockVault).toHaveBeenCalled();
     });

@@ -24,7 +24,7 @@
     <div class="order-detail__descriptions-title">{{ menuItem?.name }}</div>
     <p class="order-detail__descriptions-content">{{ menuItem?.description }}</p>
     <span class="order-detail__descriptions-price">{{
-      menuItem?.price | priceUnitsResolver: (menuInfo$ | async).mealBased
+      menuItem?.price | priceUnitsResolver: (menuInfo$ | async)?.mealBased
       }}</span>
   </div>
   <form *ngIf="itemOrderForm"
@@ -116,7 +116,7 @@
   <div class="item-footer__add-btn-wrapper">
     <st-button (onClick)="onFormSubmit()" [isDisabled]="!itemOrderForm?.valid">
       {{ (routesData?.queryParams.isItemExistsInCart ? 'patron-ui.ordering.label_update' : 'patron-ui.ordering.button_add') | translate }} 
-      {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
+      {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async)?.mealBased }}
     </st-button>
   </div>
 </ion-footer>

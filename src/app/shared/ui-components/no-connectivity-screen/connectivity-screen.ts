@@ -114,6 +114,10 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async retryOperations(canShowToast = true) {
+    if (!this.retryHandler) {
+      return this.onRetryFailed(canShowToast);
+    }
+
     const retrySuccess = await this.retryHandler.onRetry();
     if (retrySuccess) {
       this.closeSelf(ExecStatus.Execution_success);
