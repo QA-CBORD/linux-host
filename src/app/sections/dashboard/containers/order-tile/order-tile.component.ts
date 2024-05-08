@@ -74,26 +74,7 @@ export class OrderTileComponent implements OnInit {
       return;
     }
 
-    const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
-    const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
-    const merchantHasChanged = merchant && merchant.id !== merchantInfo.id;
-
-    if (hasItemsInCart && merchantHasChanged) {
-      this.showActiveCartWarning(merchantInfo);
-      return;
-    }
-
-    if (hasItemsInCart && !merchantHasChanged) {
-      this.router.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-        queryParams: { isExistingOrder: true },
-      });
-      return;
-    }
-    this.navigateToOrdering(merchantInfo);
-  }
-
-  async showActiveCartWarning(merchantInfo: MerchantInfo) {
-    this.cartService.showActiveCartWarning(this.navigateToOrdering.bind(this, merchantInfo));
+    this.cartService.preValidateOrderFlow(merchantInfo.id, this.navigateToOrdering.bind(this, merchantInfo));
   }
 
   private navigateToOrdering(merchantInfo: MerchantInfo) {

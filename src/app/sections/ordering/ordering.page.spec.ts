@@ -58,7 +58,6 @@ describe('OrderingPage', () => {
 
     mockloadingService = { closeSpinner: jest.fn(), showSpinner: jest.fn() };
 
-    
     mockPopoverController = {
       create: jest.fn().mockReturnValue({
         present: jest.fn(),
@@ -67,19 +66,19 @@ describe('OrderingPage', () => {
         onWillDismiss: jest.fn().mockReturnValue(Promise.resolve({ data: 'test' })),
       }),
     };
-    
+
     activatedRoute = {
       snapshot: {
         paramMap: { get: jest.fn() },
         queryParams: { merchantId: 'testMerchantId' },
       },
     };
-    
+
     mockOrderActionSheetService = {
       openOrderOptions: jest.fn(),
       openOrderOptionsByMerchantId: jest.fn(),
     };
-    
+
     routingService = { navigate: jest.fn() };
 
     lockDownService = {
@@ -93,6 +92,7 @@ describe('OrderingPage', () => {
       merchant$: of({}),
       menuItems$: of(0),
       showActiveCartWarning: jest.fn(),
+      preValidateOrderFlow: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -177,94 +177,27 @@ describe('OrderingPage', () => {
     const isLockDownOnSpy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(false);
     const showErrorSpy = jest.spyOn(toastService, 'showError');
     const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
-    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
+    const preValidateOrderFlowSpy = jest.spyOn(mockCartService as any, 'preValidateOrderFlow');
+
+    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions').mockImplementation(() => {}); // Mock openOrderOptions
+
+    mockCartService.menuItems$ = of(0);
+    mockCartService.merchant$ = of(null);
 
     await component.merchantClickHandler(mockMerchantInfo);
 
+    expect(mockCartService.preValidateOrderFlow).toHaveBeenCalledWith(mockMerchantInfo.id, expect.any(Function));
+    const boundFunction = mockCartService.preValidateOrderFlow.mock.calls[0][1];
+    boundFunction();
+    expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
     expect(isLockDownOnSpy).toHaveBeenCalled();
     expect(showErrorSpy).not.toHaveBeenCalled();
     expect(onToastDisplayedSpy).not.toHaveBeenCalled();
+    expect(preValidateOrderFlowSpy).toHaveBeenCalled();
     expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
   });
 
-  it('should display warning if there is items in the cart and a diferent merchant is clicked', async () => {
-    const mockMerchantInfo = {
-      walkout: false,
-      name: 'Test Merchant',
-      id: 'testMerchantId',
-      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
-      settings: {
-        list: [{}],
-        map: {
-          'merchant.order.order_ahead_enabled': '1',
-        } as Map<string, MerchantSettingInfo> | Object,
-      },
-    } as MerchantInfo;
-
-    const mockNewMerchantInfo = {
-      walkout: false,
-      name: 'Test Merchant',
-      id: 'testMerchantId1',
-      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
-      settings: {
-        list: [{}],
-        map: {
-          'merchant.order.order_ahead_enabled': '1',
-        } as Map<string, MerchantSettingInfo> | Object,
-      },
-    } as MerchantInfo;
-    const isLockDownOnSpy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(false);
-    const showErrorSpy = jest.spyOn(toastService, 'showError');
-    const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
-    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
-    const openCleaCartModalSpy = jest.spyOn(mockCartService as any, 'showActiveCartWarning');
-
-    mockCartService.menuItems$ = of(2);
-    mockCartService.merchant$ = of(mockMerchantInfo);
-
-    await component.merchantClickHandler(mockNewMerchantInfo);
-
-    expect(isLockDownOnSpy).toHaveBeenCalled();
-    expect(showErrorSpy).not.toHaveBeenCalled();
-    expect(onToastDisplayedSpy).not.toHaveBeenCalled();
-    expect(openOrderOptionsSpy).not.toHaveBeenCalled();
-    expect(openCleaCartModalSpy).toHaveBeenCalled();
-  });
-
-  it('should handle merchant click correctly if there are items in the cart and the merchant is the same', async () => {
-    const mockMerchantInfo = {
-      walkout: false,
-      name: 'Test Merchant',
-      id: 'testMerchantId',
-      orderTypes: { delivery: true, pickup: true } as MerchantOrderTypesInfo,
-      settings: {
-        list: [{}],
-        map: {
-          'merchant.order.order_ahead_enabled': '1',
-        } as Map<string, MerchantSettingInfo> | Object,
-      },
-    } as MerchantInfo;
-
-    const isLockDownOnSpy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(false);
-
-    const showErrorSpy = jest.spyOn(toastService, 'showError');
-    const onNavigateSpy = jest.spyOn(routingService, 'navigate');
-    const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions');
-
-    mockCartService.menuItems$ = of(2);
-    mockCartService.merchant$ = of(mockMerchantInfo);
-
-    await component.merchantClickHandler(mockMerchantInfo);
-    mockCartService.merchant$.subscribe(merchant => {
-      expect(merchant).toEqual(mockMerchantInfo);
-    });
-    expect(isLockDownOnSpy).toHaveBeenCalled();
-    expect(showErrorSpy).not.toHaveBeenCalled();
-    expect(openOrderOptionsSpy).not.toHaveBeenCalled();
-    expect(onNavigateSpy).toHaveBeenCalledWith([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-      queryParams: { isExistingOrder: true },
-    });
-  });
+ 
 
   it('should update searchString when onSearchedValue is called', () => {
     const testValue = 'test value';

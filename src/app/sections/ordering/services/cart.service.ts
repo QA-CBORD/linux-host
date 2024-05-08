@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -7,7 +7,7 @@ import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
@@ -17,6 +17,8 @@ import { ItemsOrderInfo, MenuInfo, MerchantInfo, OrderInfo, OrderItem, OrderPaym
 import { MerchantService } from './merchant.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/index';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +37,8 @@ export class CartService {
   currentOrderId: string;
   merchantTimeZone: string;
   cartSubscription: Subscription;
+
+  private readonly routingService = inject(NavigationService);
 
   constructor(
     private readonly userFacadeService: UserFacadeService,
@@ -540,6 +544,7 @@ export class CartService {
     this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
     this.cartSubscription.unsubscribe();
   }
+
   async showActiveCartWarning(openOrderOptions: () => void) {
     const alert = await this.alertController.create({
       cssClass: 'active_cart',
@@ -568,6 +573,25 @@ export class CartService {
 
     await alert.present();
     return alert.onDidDismiss();
+  }
+
+  async preValidateOrderFlow(merchantId: string, onContinue: () => void) {
+    const hasItemsInCart = (await lastValueFrom(this.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.merchant$.pipe(first()));
+    const merchantHasChanged = merchant && merchant.id !== merchantId;
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(onContinue);
+      return;
+    }
+
+    if (hasItemsInCart && !merchantHasChanged) {
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+        queryParams: { isExistingOrder: true },
+      });
+      return;
+    }
+    onContinue();
   }
 }
 

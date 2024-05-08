@@ -80,28 +80,9 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
-    const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
-    const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
-    const merchantHasChanged = merchant && merchant.id !== merchantId;
-
-    if (hasItemsInCart && merchantHasChanged) {
-      this.showActiveCartWarning(merchantId);
-      return;
-    }
-
-    if (hasItemsInCart && !merchantHasChanged) {
-      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-        queryParams: { isExistingOrder: true },
-      });
-      return;
-    }
-
-    this.openOrderOptions(merchantId);
+    this.cartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId));
   }
 
-  async showActiveCartWarning(merchantId: string) {
-    this.cartService.showActiveCartWarning(this.openOrderOptions.bind(this, merchantId));
-  }
   async openOrderOptions(merchantId: string) {
     await firstValueFrom(this.orderingResolverService.resolve());
     this.orderActionSheetService.openOrderOptionsByMerchantId(merchantId);
