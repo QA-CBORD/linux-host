@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Renderer2,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -69,7 +79,7 @@ export class StDateTimePickerComponent implements OnInit {
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly cartService: CartService,
     private readonly appStatesFacadeService: AppStatesFacadeService,
-    private renderer: Renderer2,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit() {
@@ -195,6 +205,9 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private preparePickerArr(i = 0): [string[], string[]] {
+    if (!this.schedule?.days) {
+      return [[], []];
+    }
     const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks?.reduce(
       (previous, hourBlock) => [
