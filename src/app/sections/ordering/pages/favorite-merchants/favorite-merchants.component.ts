@@ -12,8 +12,6 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService, NavigationService } from '@shared/services';
-import { APP_ROUTES } from '@sections/section.config';
-import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-favorite-merchants',

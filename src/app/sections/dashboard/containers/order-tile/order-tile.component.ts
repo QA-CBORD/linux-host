@@ -69,7 +69,7 @@ export class OrderTileComponent implements OnInit {
       return;
     }
 
-    if (merchantInfo.walkout) {
+    if (merchantInfo?.walkout) {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
