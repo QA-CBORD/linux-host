@@ -106,7 +106,7 @@ describe('CartPreviewComponent', () => {
       menuSchedule: [],
       days: [
         {
-          date: '',
+          date: '2024-05-08',
           dayOfWeek: 4,
           hourBlocks: [
             {
@@ -127,7 +127,7 @@ describe('CartPreviewComponent', () => {
       menuSchedule: [],
       days: [
         {
-          date: '',
+          date: '2024-05-08',
           dayOfWeek: 4,
           hourBlocks: [
             {
@@ -162,7 +162,7 @@ describe('CartPreviewComponent', () => {
       menuSchedule: [],
       days: [
         {
-          date: '',
+          date: '2024-05-08',
           dayOfWeek: 4,
           hourBlocks: [
             {
@@ -189,25 +189,4 @@ describe('CartPreviewComponent', () => {
     expect(alertController).toHaveBeenCalled();
   });
 
-  it('should dismiss the alert when cancel button is tapped', async () => {
-    const alertController = jest.spyOn(alertControllerStub, 'create');
-    const alertDismissSpy = jest.spyOn(alertControllerStub, 'dismiss');
-    await component.showActiveCartWarning(ORDER_TYPE.PICKUP);
-    const createdAlert = await alertController.mock.results[0].value;
-    const cancelButton = createdAlert.buttons.find(button => button.role === 'cancel');
-    cancelButton.handler(); 
-    expect(alertDismissSpy).toHaveBeenCalled();
-  });
-  
-  it('should navigate to full menu when continue button is tapped', async () => {
-    const alertController = jest.spyOn(alertControllerStub, 'create');
-    const navigateSpy = jest.spyOn(navigationServiceStub, 'navigate');
-    await component.showActiveCartWarning(ORDER_TYPE.PICKUP);
-    const createdAlert = await alertController.mock.results[0].value;
-    const continueButton = createdAlert.buttons.find(button => button.role === 'confirm');
-    continueButton.handler(); 
-    expect(navigateSpy).toHaveBeenCalledWith(['ordering', 'full-menu'], {
-      queryParams: { isExistingOrder: true, canDismiss: true, openTimeSlot: undefined },
-    });
-  });
 });

@@ -13,6 +13,7 @@ import { Schedule } from '@sections/ordering/shared/ui-components/order-options.
 import { PATRON_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
 import { StButtonModule, StHeaderModule } from '@shared/ui-components';
+import { format, parseISO } from 'date-fns';
 import { firstValueFrom } from 'rxjs';
 @Component({
   standalone: true,
@@ -88,18 +89,16 @@ export class CartPreviewComponent implements AfterViewInit {
     if (isASAP) return true;
 
     const dueTime = new Date(time);
+    const dateString = format(parseISO(time), 'yyyy-MM-dd');
     const hour = dueTime.getHours();
     const minutes = dueTime.getMinutes();
-    const dayOfWeek = dueTime.getDay() + 1;
 
-    return this.orderSchedule.days.some(date => {
-      if (
-        date.dayOfWeek === dayOfWeek &&
+
+    return this.orderSchedule.days.some(
+      date =>
+        date.date === dateString &&
         date.hourBlocks.find(dateHour => dateHour.hour === hour && dateHour.minuteBlocks.includes(minutes))
-      ) {
-        return date;
-      }
-    });
+    );
   }
 
   async addMoreItems() {
