@@ -1000,7 +1000,12 @@
       "active_cart_alert_change_msg": "There are items in the cart from a different merchant. changing the merchant will empty the cart.",
       "active_cart_alert_change_cancel": "Cancel",
       "active_cart_alert_change_proceed": "Change Merchant",
-      "active_cart_screen_reader": "Cart preview, button. {{cartItems}} items in the cart"
+      "active_cart_screen_reader": "Cart preview, button. {{cartItems}} items in the cart",
+      "active_cart_alert_time_pickup_title": "Pickup time has passed",
+      "active_cart_alert_time_delivery_title": "Delivery time has passed",
+      "active_cart_alert_time_msg": "Your previously selected time is no longer available. Select a new time to continue.",
+      "active_cart_alert_time_cancel": "Cancel",
+      "active_cart_alert_time_continue": "Continue"
     },
     "explore": {
       "merchant_details_title": "Merchant Details"

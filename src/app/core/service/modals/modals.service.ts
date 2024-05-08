@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ModalOptions } from '@ionic/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { Subject, Observable } from 'rxjs';
 import { LoadingService } from '../loading/loading.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ModalsService {
+  private canDidMissEvent = new Subject<boolean>();
+
   constructor(
     private readonly modalController: ModalController,
     private readonly globalNav: GlobalNavService,
@@ -45,6 +48,7 @@ export class ModalsService {
   async dismiss(data?: object, role?: string, id?: string): Promise<boolean> {
     this.loadingService.closeSpinner();
     const topModal = await this.modalController.getTop();
+    this.emitCanDidmiss(true);
     return topModal && this.modalController.dismiss(data, role, id);
   }
 
@@ -66,5 +70,13 @@ export class ModalsService {
         this.globalNav.showNavBar();
       }
     });
+  }
+
+  emitCanDidmiss(value: boolean) {
+    this.canDidMissEvent.next(value);
+  }
+
+  getCanDidmiss(): Observable<boolean> {
+    return this.canDidMissEvent.asObservable();
   }
 }

@@ -3,7 +3,7 @@ import { IonicModule, AlertController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { CartPreviewComponent } from './cart-preview.component';
-import { CartService } from '@sections/ordering/services';
+import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
 import { NavigationService } from '@shared/index';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -11,10 +11,12 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 import { StHeaderModule } from '@shared/ui-components';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FullMenuComponent } from '@sections/ordering/pages/full-menu/full-menu.component';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { AddressInfo } from '@core/model/address/address-info';
 
 describe('CartPreviewComponent', () => {
   let component: CartPreviewComponent;
@@ -25,6 +27,7 @@ describe('CartPreviewComponent', () => {
   let modalsServiceMock: Partial<ModalsService>;
   let loadingServiceStub: Partial<LoadingService>;
   let toastServiceStub: Partial<ToastService>;
+  let merchantServiceStub: Partial<MerchantService>;
 
   beforeEach(waitForAsync(() => {
     cartServiceStub = {
@@ -33,6 +36,11 @@ describe('CartPreviewComponent', () => {
       cartsErrorMessage: null,
       isExistingOrder: false,
       validateOrder: () => new BehaviorSubject(null),
+      orderDetailsOptions$: of({
+        address: {} as AddressInfo,
+        isASAP: true,
+        orderType: ORDER_TYPE.PICKUP,
+      } as OrderDetailOptions),
     };
 
     modalsServiceMock = {
@@ -41,6 +49,15 @@ describe('CartPreviewComponent', () => {
 
     navigationServiceStub = {
       navigate: jest.fn(),
+    };
+
+    merchantServiceStub = {
+      getMerchantOrderSchedule: jest.fn().mockReturnValue(of({})),
+    };
+
+    alertControllerStub = {
+      create: jest.fn().mockResolvedValue({ present: jest.fn(), onDidDismiss: jest.fn().mockResolvedValue(true) }),
+      dismiss: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -61,6 +78,7 @@ describe('CartPreviewComponent', () => {
         { provide: ModalsService, useValue: modalsServiceMock },
         { provide: LoadingService, useValue: loadingServiceStub },
         { provide: ToastService, useValue: toastServiceStub },
+        { provide: MerchantService, useValue: merchantServiceStub },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(CartPreviewComponent);
@@ -78,25 +96,118 @@ describe('CartPreviewComponent', () => {
     expect(modalServiceSpy).toHaveBeenCalled();
   });
 
-  it('should navigate to full menu when addMoreItems is tapped', async () => {
-    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
-    await component.addMoreItems();
-    expect(routerSpy).toHaveBeenCalledWith(["ordering","full-menu"], { queryParams: { isExistingOrder: true } });
+  it('should return true if isASAP is true', () => {
+    const result = component.isOrdeTimeValid(true, '2022-01-01T12:00:00');
+    expect(result).toBe(true);
   });
 
-  it('should dismiss cart preview after navigating to full menu', async () => {
-    const modalServiceSpy = jest.spyOn(modalsServiceMock, 'dismiss');
-    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
-    await component.addMoreItems();
-    expect(routerSpy).toHaveBeenCalled();
-    expect(modalServiceSpy).toHaveBeenCalled();
+  it('should return true if the order time is within the schedule', () => {
+    component.orderSchedule = {
+      menuSchedule: [],
+      days: [
+        {
+          date: '',
+          dayOfWeek: 4,
+          hourBlocks: [
+            {
+              timestamps: [],
+              hour: 12,
+              minuteBlocks: [0, 15, 30, 45],
+            },
+          ],
+        },
+      ],
+    };
+    const result = component.isOrdeTimeValid(false, '2024-05-08T12:00:00');
+    expect(result).toBe(true);
   });
 
-  it('should not dismiss cart preview if it did not navigate to full menu', async () => {
-    const modalServiceSpy = jest.spyOn(modalsServiceMock, 'dismiss');
-    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(false);
+  it('should return false if the order time is not within the schedule', () => {
+    component.orderSchedule = {
+      menuSchedule: [],
+      days: [
+        {
+          date: '',
+          dayOfWeek: 4,
+          hourBlocks: [
+            {
+              timestamps: [],
+              hour: 12,
+              minuteBlocks: [45],
+            },
+          ],
+        },
+      ],
+    };
+    const result = component.isOrdeTimeValid(false, '2024-05-08T12:00:00');
+    expect(result).toBe(false);
+  });
+
+  it('should navigate to full menu when addMoreItems is tapped and order is ASAP', async () => {
+    jest
+      .spyOn(cartServiceStub.orderDetailsOptions$, 'pipe')
+      .mockReturnValue(
+        of({ address: {} as AddressInfo, isASAP: true, orderType: ORDER_TYPE.PICKUP } as OrderDetailOptions)
+      );
+
+    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
     await component.addMoreItems();
-    expect(routerSpy).toHaveBeenCalled();
-    expect(modalServiceSpy).not.toHaveBeenCalled();
+    expect(routerSpy).toHaveBeenCalledWith(['ordering', 'full-menu'], {
+      queryParams: { isExistingOrder: true, canDismiss: true, openTimeSlot: undefined },
+    });
+  });
+
+  it('should navigate to full menu when addMoreItems is tapped, order is not ASAP and time has passed', async () => {
+    component.orderSchedule = {
+      menuSchedule: [],
+      days: [
+        {
+          date: '',
+          dayOfWeek: 4,
+          hourBlocks: [
+            {
+              timestamps: [],
+              hour: 12,
+              minuteBlocks: [45],
+            },
+          ],
+        },
+      ],
+    };
+    const alertController = jest.spyOn(alertControllerStub, 'create');
+    const validateTimeSpy = jest.spyOn(component, 'isOrdeTimeValid').mockReturnValue(false);
+    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
+    await component.addMoreItems();
+    expect(validateTimeSpy).toHaveBeenCalled();
+    expect(routerSpy).not.toHaveBeenCalled();
+    expect(alertController).toHaveBeenCalled();
+  });
+
+  it('should create and present an alert for PICKUP order type', async () => {
+    const alertController = jest.spyOn(alertControllerStub, 'create');
+    await component.showActiveCartWarning(ORDER_TYPE.PICKUP);
+    expect(alertController).toHaveBeenCalled();
+  });
+
+  it('should dismiss the alert when cancel button is tapped', async () => {
+    const alertController = jest.spyOn(alertControllerStub, 'create');
+    const alertDismissSpy = jest.spyOn(alertControllerStub, 'dismiss');
+    await component.showActiveCartWarning(ORDER_TYPE.PICKUP);
+    const createdAlert = await alertController.mock.results[0].value;
+    const cancelButton = createdAlert.buttons.find(button => button.role === 'cancel');
+    cancelButton.handler(); 
+    expect(alertDismissSpy).toHaveBeenCalled();
+  });
+  
+  it('should navigate to full menu when continue button is tapped', async () => {
+    const alertController = jest.spyOn(alertControllerStub, 'create');
+    const navigateSpy = jest.spyOn(navigationServiceStub, 'navigate');
+    await component.showActiveCartWarning(ORDER_TYPE.PICKUP);
+    const createdAlert = await alertController.mock.results[0].value;
+    const continueButton = createdAlert.buttons.find(button => button.role === 'confirm');
+    continueButton.handler(); 
+    expect(navigateSpy).toHaveBeenCalledWith(['ordering', 'full-menu'], {
+      queryParams: { isExistingOrder: true, canDismiss: true, openTimeSlot: undefined },
+    });
   });
 });

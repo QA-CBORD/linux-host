@@ -1,24 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
-import { Observable, Subscription, zip } from 'rxjs';
-import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { ActivatedRoute } from '@angular/router';
-import {
-  LOCAL_ROUTING,
-  ORDER_TYPE,
-  ORDERING_CONTENT_STRINGS,
-} from '@sections/ordering/ordering.config';
-import { first, map, take } from 'rxjs/operators';
-import { AlertController, IonicSafeString } from '@ionic/angular';
-import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { OverlayEventDetail } from '@ionic/core';
-import { ModalsService } from '@core/service/modals/modals.service';
-import { NavigationService } from '@shared/services/navigation.service';
-import { APP_ROUTES } from '@sections/section.config';
-import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { AlertController, IonicSafeString } from '@ionic/angular';
+import { OverlayEventDetail } from '@ionic/core';
+import { TranslateService } from '@ngx-translate/core';
+import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
+import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/services/navigation.service';
+import { Observable, Subscription, zip } from 'rxjs';
+import { first, map, take } from 'rxjs/operators';
 
 export const DINEIN = 'DineIn';
 @Component({
@@ -29,12 +25,16 @@ export const DINEIN = 'DineIn';
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
+  private  didmissSuscription: Subscription;
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState = false;
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  canDidmiss = true;
+
+
   constructor(
     private readonly cartService: CartService,
     private readonly modalController: ModalsService,
@@ -52,11 +52,15 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
+    this.didmissSuscription = this.modalController.getCanDidmiss().subscribe((canDidmiss) => {
+      this.canDidmiss = canDidmiss;
+    });
     this.initContentStrings();
   }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
+    this.didmissSuscription.unsubscribe();
   }
 
   get orderType(): Observable<string> {
@@ -78,7 +82,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     return this.cartService.orderDetailsOptions$;
   }
 
-  get orderTypes$() :Observable<MerchantOrderTypesInfo> {
+  get orderTypes$(): Observable<MerchantOrderTypesInfo> {
     return this.merchantService.orderTypes$;
   }
 
@@ -93,7 +97,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
-    const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
+    const { openTimeSlot, canDismiss } = this.activatedRoute.snapshot.queryParams;
+    this.modalController.emitCanDidmiss(canDismiss === 'false' ? false : true);
     openTimeSlot && this.openOrderOptions();
     this.cdref.detectChanges();
   }
@@ -128,8 +133,14 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
     }`;
     const { orderType, address } = await this.orderInfo$.pipe(first()).toPromise();
+
     const modal = await this.modalController.createActionSheet({
       component: OrderOptionsActionSheetComponent,
+      canDismiss: () => {
+        return new Promise<boolean>(resolve => {
+          resolve(this.canDidmiss);
+        })
+      },
       cssClass,
       componentProps: {
         orderTypes,
@@ -142,6 +153,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
         timeZone,
       },
     });
+
     modal.onDidDismiss().then(this.onDismissOrderDetails.bind(this));
     await modal.present();
   }
@@ -164,7 +176,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     });
   }
 
-   redirectToCart(): void {
+  redirectToCart(): void {
     this.orderingService.redirectToCart();
   }
 
@@ -173,7 +185,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       cssClass: 'alert_full_menu',
       header: this.translateService.instant('patron-ui.ordering.new_menu_detected_title'),
       message: new IonicSafeString(this.translateService.instant('patron-ui.ordering.new_menu_detected_message')),
-      mode:"md",
+      mode: 'md',
       buttons: [
         {
           text: this.translateService.instant('patron-ui.ordering.new_menu_detected_cancelbutton'),
@@ -218,10 +230,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       this.loadingService.closeSpinner();
     });
   }
-  toggleMerchantInfo(){
+  toggleMerchantInfo() {
     this.merchantInfoState = !this.merchantInfoState;
     this.cdref.detectChanges();
   }
 }
-
-
