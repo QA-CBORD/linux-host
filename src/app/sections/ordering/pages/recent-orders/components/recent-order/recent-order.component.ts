@@ -35,7 +35,6 @@ import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/o
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { APP_ROUTES } from '@sections/section.config';
 
 interface OrderMenuItem {
   menuItemId: string;

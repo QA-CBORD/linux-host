@@ -7,13 +7,11 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { CartService, MerchantInfo } from '@sections/ordering';
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { OrderingResolver } from '@sections/ordering/resolvers';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { APP_ROUTES } from '@sections/section.config';
 import { LockDownService, NavigationService } from '@shared/index';
-import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
-import { first, take, tap } from 'rxjs/operators';
+import { Observable, firstValueFrom } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',

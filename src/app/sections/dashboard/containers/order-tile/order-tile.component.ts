@@ -1,16 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
 import { CartService, MerchantInfo, MerchantService } from '@sections/ordering';
-import { take, finalize, first } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { IonicSlides } from '@ionic/angular';
 import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
 import SwiperCore from 'swiper';
-import { LOCAL_ROUTING, TOAST_MESSAGES } from '@sections/ordering/ordering.config';
+import {  TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { LockDownService, NavigationService } from '@shared/services';
 import { APP_ROUTES } from '@sections/section.config';
-import { lastValueFrom } from 'rxjs';
 SwiperCore.use([IonicSlides]);
 
 @Component({
