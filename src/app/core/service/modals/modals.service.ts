@@ -9,7 +9,7 @@ import { LoadingService } from '../loading/loading.service';
   providedIn: 'root',
 })
 export class ModalsService {
-  private canDidMissEvent = new Subject<boolean>();
+  private canDisMissEvent = new Subject<boolean>();
 
   constructor(
     private readonly modalController: ModalController,
@@ -48,7 +48,7 @@ export class ModalsService {
   async dismiss(data?: object, role?: string, id?: string): Promise<boolean> {
     this.loadingService.closeSpinner();
     const topModal = await this.modalController.getTop();
-    this.emitCanDidmiss(true);
+    this.emitCanDismiss(true);
     return topModal && this.modalController.dismiss(data, role, id);
   }
 
@@ -72,11 +72,11 @@ export class ModalsService {
     });
   }
 
-  emitCanDidmiss(value: boolean) {
-    this.canDidMissEvent.next(value);
+  emitCanDismiss(value: boolean) {
+    this.canDisMissEvent.next(value);
   }
 
-  getCanDidmiss(): Observable<boolean> {
-    return this.canDidMissEvent.asObservable();
+  getCanDismiss(): Observable<boolean> {
+    return this.canDisMissEvent.asObservable();
   }
 }

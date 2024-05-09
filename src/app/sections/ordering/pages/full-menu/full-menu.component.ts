@@ -25,7 +25,7 @@ export const DINEIN = 'DineIn';
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
-  private  didmissSuscription: Subscription;
+  private  dismissSuscription: Subscription;
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState = false;
@@ -52,7 +52,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
-    this.didmissSuscription = this.modalController.getCanDidmiss().subscribe((canDismiss) => {
+    this.dismissSuscription = this.modalController.getCanDismiss().subscribe((canDismiss) => {
       this.canDismiss = canDismiss;
     });
     this.initContentStrings();
@@ -60,7 +60,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
-    this.didmissSuscription.unsubscribe();
+    this.dismissSuscription.unsubscribe();
   }
 
   get orderType(): Observable<string> {
@@ -98,7 +98,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
     const { openTimeSlot, canDismiss } = this.activatedRoute.snapshot.queryParams;
-    this.modalController.emitCanDidmiss(canDismiss === 'false' ? false : true);
+    this.modalController.emitCanDismiss(canDismiss === 'false' ? false : true);
     openTimeSlot && this.openOrderOptions();
     this.cdref.detectChanges();
   }

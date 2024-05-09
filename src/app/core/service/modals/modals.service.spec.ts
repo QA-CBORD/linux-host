@@ -2,6 +2,7 @@ import { ModalControllerMock } from 'src/app/testing/mock-services/modal-control
 import { ModalsService } from './modals.service';
 import { GlobalNavServiceMock } from 'src/app/testing/mock-services/global-nav-service.mock';
 import { LoadingServiceMock } from 'src/app/testing/mock-services/loading.service';
+import { firstValueFrom, of } from 'rxjs';
 
 describe('ModalsService', () => {
   let modalsService: any;
@@ -16,7 +17,7 @@ describe('ModalsService', () => {
     modalController = Object.create(ModalControllerMock);
     globalNavService = Object.create(GlobalNavServiceMock);
     loadingService = Object.create(LoadingServiceMock);
-    modalsService = new ModalsService(modalController, globalNavService,loadingService);
+    modalsService = new ModalsService(modalController, globalNavService, loadingService);
     bindModalListenersSpy = jest.spyOn(modalsService, 'bindModalListeners');
     eventCallbacks = new Map<string, () => void>();
 
@@ -126,5 +127,25 @@ describe('ModalsService', () => {
 
     await promiseMock;
     expect(globalNavService.showNavBar).toHaveBeenCalled();
+  });
+
+  it('should emit true when emitCanDismiss is called with true', async () => {
+    const getCanDismissMock = jest.spyOn(modalsService, 'getCanDismiss');
+    getCanDismissMock.mockReturnValue(of(true));
+    
+    modalsService.emitCanDismiss(true);
+    const result = await firstValueFrom(modalsService.getCanDismiss());
+    
+    expect(result).toBe(true);
+  });
+  
+  it('should emit false when emitCanDismiss is called with false', async () => {
+    const getCanDismissMock = jest.spyOn(modalsService, 'getCanDismiss');
+    getCanDismissMock.mockReturnValue(of(false));
+    
+    modalsService.emitCanDismiss(false);
+    const result = await firstValueFrom(modalsService.getCanDismiss());
+    
+    expect(result).toBe(false);
   });
 });
