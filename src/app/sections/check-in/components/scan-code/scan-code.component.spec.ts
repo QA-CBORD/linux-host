@@ -8,6 +8,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { ScanCodeComponent } from './scan-code.component';
 import { TranslateService } from '@ngx-translate/core';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 jest.mock('@capacitor-mlkit/barcode-scanning', () => ({
   ...jest.requireActual('@capacitor-mlkit/barcode-scanning'),
@@ -63,7 +64,8 @@ describe('ScanCodeComponent', () => {
         { provide: ToastService, useFactory: toastServiceStub },
         { provide: NativeProvider, useFactory: nativeProviderStub },
         { provide: TranslateService, useValue: translateService }
-      ]
+      ],
+      imports:[HttpClientTestingModule]
     });
     fixture = TestBed.createComponent(ScanCodeComponent);
     component = fixture.componentInstance;
