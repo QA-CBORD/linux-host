@@ -14,7 +14,7 @@ import { PATRON_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
 import { StButtonModule, StHeaderModule } from '@shared/ui-components';
 import { format, parseISO } from 'date-fns';
-import { firstValueFrom } from 'rxjs';
+import { combineLatest, firstValueFrom, of, switchMap, take } from 'rxjs';
 @Component({
   standalone: true,
   providers: [PriceUnitsResolverPipe],
@@ -44,9 +44,22 @@ export class CartPreviewComponent implements AfterViewInit {
   orderSchedule: Schedule;
 
   async ngAfterViewInit(): Promise<void> {
-    const { orderType } = await firstValueFrom(this.cartService.orderDetailsOptions$);
-    const { id, timeZone } = await firstValueFrom(this.cartService.merchant$);
-    this.orderSchedule = await firstValueFrom(this.merchantService.getMerchantOrderSchedule(id, orderType, timeZone));
+    const result = await firstValueFrom(
+      combineLatest([this.cartService.orderDetailsOptions$, this.cartService.merchant$]).pipe(
+        switchMap(([orderDetailsOptions, merchant]) =>
+          orderDetailsOptions && merchant
+            ? this.merchantService.getMerchantOrderSchedule(
+                merchant.id,
+                orderDetailsOptions.orderType,
+                merchant.timeZone
+              )
+            : of(null)
+        ),
+        take(1)
+      )
+    );
+
+    this.orderSchedule = result ? result : ({} as Schedule);
   }
 
   async showActiveCartWarning(orderType: ORDER_TYPE) {
@@ -93,8 +106,7 @@ export class CartPreviewComponent implements AfterViewInit {
     const hour = dueTime.getHours();
     const minutes = dueTime.getMinutes();
 
-
-    return this.orderSchedule.days.some(
+    return this.orderSchedule?.days.some(
       date =>
         date.date === dateString &&
         date.hourBlocks.find(dateHour => dateHour.hour === hour && dateHour.minuteBlocks.includes(minutes))

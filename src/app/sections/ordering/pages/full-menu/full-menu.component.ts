@@ -32,7 +32,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-  canDidmiss = true;
+  canDismiss = true;
 
 
   constructor(
@@ -52,8 +52,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
-    this.didmissSuscription = this.modalController.getCanDidmiss().subscribe((canDidmiss) => {
-      this.canDidmiss = canDidmiss;
+    this.didmissSuscription = this.modalController.getCanDidmiss().subscribe((canDismiss) => {
+      this.canDismiss = canDismiss;
     });
     this.initContentStrings();
   }
@@ -138,7 +138,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       component: OrderOptionsActionSheetComponent,
       canDismiss: () => {
         return new Promise<boolean>(resolve => {
-          resolve(this.canDidmiss);
+          resolve(this.canDismiss);
         })
       },
       cssClass,
