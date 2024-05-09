@@ -68,7 +68,7 @@ export class MerchantFacadeService extends ServiceStateFacade {
   isCreditCardSupported(merchant: MerchantInfo) {
     const key = 'merchant.payment.supported_types';
     const setting: MerchantSettingInfo = merchant?.settings?.map[key];
-    const parsedValue = parseArrayFromString(setting.value);
+    const parsedValue = parseArrayFromString(setting?.value);
     return parsedValue.some(({ payment_system_type }) => payment_system_type == PAYMENT_SYSTEM_TYPE.USAEPAY);
   }
 
