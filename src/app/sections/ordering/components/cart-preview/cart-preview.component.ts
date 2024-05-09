@@ -98,7 +98,7 @@ export class CartPreviewComponent implements AfterViewInit {
     this.orderingService.redirectToCart(this.isCartPreiew);
   };
 
-  isOrdeTimeValid(isASAP: boolean, time: string) {
+  isOrderTimeValid(isASAP: boolean, time: string) {
     if (isASAP) return true;
 
     const dueTime = new Date(time);
@@ -115,7 +115,7 @@ export class CartPreviewComponent implements AfterViewInit {
 
   async addMoreItems() {
     const { dueTime, orderType, isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
-    const timeIsValid = this.isOrdeTimeValid(isASAP, String(dueTime));
+    const timeIsValid = this.isOrderTimeValid(isASAP, String(dueTime));
 
     if (timeIsValid) {
       this.navigateToFullMenu();

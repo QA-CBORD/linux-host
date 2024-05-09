@@ -97,7 +97,7 @@ describe('CartPreviewComponent', () => {
   });
 
   it('should return true if isASAP is true', () => {
-    const result = component.isOrdeTimeValid(true, '2022-01-01T12:00:00');
+    const result = component.isOrderTimeValid(true, '2022-01-01T12:00:00');
     expect(result).toBe(true);
   });
 
@@ -118,7 +118,7 @@ describe('CartPreviewComponent', () => {
         },
       ],
     };
-    const result = component.isOrdeTimeValid(false, '2024-05-08T12:00:00');
+    const result = component.isOrderTimeValid(false, '2024-05-08T12:00:00');
     expect(result).toBe(true);
   });
 
@@ -139,7 +139,7 @@ describe('CartPreviewComponent', () => {
         },
       ],
     };
-    const result = component.isOrdeTimeValid(false, '2024-05-08T12:00:00');
+    const result = component.isOrderTimeValid(false, '2024-05-08T12:00:00');
     expect(result).toBe(false);
   });
 
@@ -175,7 +175,7 @@ describe('CartPreviewComponent', () => {
       ],
     };
     const alertController = jest.spyOn(alertControllerStub, 'create');
-    const validateTimeSpy = jest.spyOn(component, 'isOrdeTimeValid').mockReturnValue(false);
+    const validateTimeSpy = jest.spyOn(component, 'isOrderTimeValid').mockReturnValue(false);
     const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
     await component.addMoreItems();
     expect(validateTimeSpy).toHaveBeenCalled();
