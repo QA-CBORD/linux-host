@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -20,6 +20,7 @@ import {
   ORDERING_CONTENT_STRINGS,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
+  TOAST_MESSAGES,
 } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services/cart.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
@@ -27,9 +28,9 @@ import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-deta
 import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { LockDownService } from '@shared/services';
+import { LockDownService, NavigationService } from '@shared/services';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { Observable, Subscription, firstValueFrom, iif, of, zip } from 'rxjs';
+import { Observable, Subscription, firstValueFrom, iif, lastValueFrom, of, zip } from 'rxjs';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
@@ -56,6 +57,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
   private openActionSheetSubscription: Subscription;
+  private routingService = inject(NavigationService);
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -74,7 +76,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     private readonly checkinProcess: CheckingProcess,
     private readonly lockDownService: LockDownService,
     private readonly orderActionSheetService: OrderActionSheetService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initData();
@@ -108,15 +110,30 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.checkinService.navedFromCheckin = false;
   }
 
-  async onReorderHandler(): Promise<void> {
+  async onReorderHandler() {
     if (this.lockDownService.isLockDownOn()) {
       return;
     }
+    const currentMerchant = await lastValueFrom(this.merchant$.pipe(first()));
+    const hasItemsInCart = (await lastValueFrom(this.cart.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.cart.merchant$.pipe(first()));
+    const merchantHasChanged = merchant && merchant.id !== currentMerchant.id;
 
-    const merchant = await this.merchant$.pipe(first()).toPromise();
-    // Is not possible to reorder a Just Walkout order
-    if (merchant.walkout) return;
+    if (currentMerchant.walkout) {
+      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+      return;
+    }
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(merchant);
+      return;
+    }
+
     await this.initOrderOptionsModal(merchant);
+  }
+
+  async showActiveCartWarning(merchantInfo: MerchantInfo) {
+    this.cart.showActiveCartWarning(this.initOrderOptionsModal.bind(this, merchantInfo));
   }
 
   resolveMenuItemsInOrder(): Observable<(boolean | OrderMenuItem[])[]> {
@@ -532,15 +549,15 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
           orderPayment: [orderPayment],
         },
       ]: [
-          {
-            dueTime: Date;
-            orderType: ORDER_TYPE;
-            address: AddressInfo;
-            isASAP?: boolean;
-          },
-          MerchantInfo,
-          OrderInfo
-        ]) => {
+        {
+          dueTime: Date;
+          orderType: ORDER_TYPE;
+          address: AddressInfo;
+          isASAP?: boolean;
+        },
+        MerchantInfo,
+        OrderInfo
+      ]) => {
         await this.cart.onAddItems({
           merchant,
           orderPayment,

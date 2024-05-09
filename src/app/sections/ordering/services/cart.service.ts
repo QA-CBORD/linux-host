@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -7,7 +7,7 @@ import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
@@ -15,6 +15,10 @@ import { BehaviorSubject, Observable, Subject, Subscription, lastValueFrom } fro
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { ItemsOrderInfo, MenuInfo, MerchantInfo, OrderInfo, OrderItem, OrderPayment } from '../shared/models';
 import { MerchantService } from './merchant.service';
+import { TranslateService } from '@ngx-translate/core';
+import { AlertController } from '@ionic/angular';
+import { APP_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/index';
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +38,8 @@ export class CartService {
   merchantTimeZone: string;
   cartSubscription: Subscription;
 
+  private readonly routingService = inject(NavigationService);
+
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
@@ -41,7 +47,9 @@ export class CartService {
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
     private readonly modalService: ModalsService,
-    private readonly storageStateService: StorageStateService
+    private readonly storageStateService: StorageStateService,
+    private readonly translateService: TranslateService,
+    private readonly alertController: AlertController
   ) {
     this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value) {
@@ -432,7 +440,9 @@ export class CartService {
   }
 
   private addOrderItem(orderItem: Partial<OrderItem>) {
-    const existingItemIndex = this.cart.order.orderItems.findIndex(({ menuItemId }) => menuItemId === orderItem.menuItemId);
+    const existingItemIndex = this.cart.order.orderItems.findIndex(
+      ({ menuItemId }) => menuItemId === orderItem.menuItemId
+    );
     if (existingItemIndex !== -1) {
       this.cart.order.orderItems[existingItemIndex].quantity += orderItem.quantity;
     } else {
@@ -533,6 +543,55 @@ export class CartService {
     this.clearCart();
     this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
     this.cartSubscription.unsubscribe();
+  }
+
+  async showActiveCartWarning(openOrderOptions: () => void) {
+    const alert = await this.alertController.create({
+      cssClass: 'active_cart',
+      header: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_title'),
+      message: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_msg'),
+      buttons: [
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_cancel'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
+        },
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_proceed'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: async () => {
+            this.clearActiveOrder();
+            openOrderOptions();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+    return alert.onDidDismiss();
+  }
+
+  async preValidateOrderFlow(merchantId: string, onContinue: () => void) {
+    const hasItemsInCart = (await lastValueFrom(this.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.merchant$.pipe(first()));
+    const merchantHasChanged = merchant && merchant.id !== merchantId;
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(onContinue);
+      return;
+    }
+
+    if (hasItemsInCart && !merchantHasChanged) {
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+        queryParams: { isExistingOrder: true },
+      });
+      return;
+    }
+    onContinue();
   }
 }
 

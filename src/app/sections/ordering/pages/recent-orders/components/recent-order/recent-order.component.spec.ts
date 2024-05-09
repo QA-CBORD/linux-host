@@ -1073,6 +1073,9 @@ describe(RecentOrderComponent, () => {
       addOrderItems: jest.fn(),
       updateOrderNote: jest.fn(),
       validateReOrderItems: jest.fn().mockReturnValue(of({ orderRemovedItems: [{}, {}], order: { orderItems: [] } })),
+      merchant$: of({}),
+      menuItems$: of(0),
+      showActiveCartWarning: jest.fn(),
     };
     loadingService = {
       showLoading: jest.fn(),
@@ -1081,6 +1084,7 @@ describe(RecentOrderComponent, () => {
     };
     toastService = {
       showToast: jest.fn(),
+      showError: jest.fn(),
     };
     userFacadeService = {
       getUser: jest.fn(),
@@ -1177,10 +1181,12 @@ describe(RecentOrderComponent, () => {
 
   it('should not reorder a Just Walkout order', async () => {
     const spy = jest.spyOn(component as any, 'initOrderOptionsModal');
+    const spyToast = jest.spyOn(toastService as any, 'showError');
     lockDownService.isLockDownOn = jest.fn().mockReturnValue(false);
     menuMerchants[0].walkout = true;
     await component.onReorderHandler();
     expect(spy).not.toHaveBeenCalled();
+    expect(spyToast).toHaveBeenCalled();
   });
 
   it('should not open start the check-in process', async () => {
@@ -1228,9 +1234,9 @@ describe(RecentOrderComponent, () => {
 
   it('should show modal on reorder', async () => {
     const spy = jest.spyOn(modalController, 'createAlert');
-     await component['reorderOrder'](orders[0] as any);
-     expect(spy).toHaveBeenCalled();
-   });
+    await component['reorderOrder'](orders[0] as any);
+    expect(spy).toHaveBeenCalled();
+  });
 
   it('should get the pickup address', async () => {
     const result = await lastValueFrom(component['getPickupAddress']());
@@ -1259,13 +1265,11 @@ describe(RecentOrderComponent, () => {
       state: null,
     });
   });
- 
 
   it('resolveMenuItemsInOrder', async () => {
     const result = await lastValueFrom(component.resolveMenuItemsInOrder());
     expect(result).toEqual([[], true]);
   });
-
 
   it('should add to cart', async () => {
     const result = await lastValueFrom(component.checkAddToCart$);

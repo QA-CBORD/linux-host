@@ -6,10 +6,10 @@ import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
-import { MerchantInfo } from '@sections/ordering';
+import { CartService, MerchantInfo } from '@sections/ordering';
 import { OrderingResolver } from '@sections/ordering/resolvers';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { LockDownService } from '@shared/index';
+import { LockDownService, NavigationService } from '@shared/index';
 import { Observable, firstValueFrom } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
@@ -29,6 +29,8 @@ export class MerchantDetailsPage implements OnInit {
   blankStarPath = '/assets/icon/star-outline.svg';
   private readonly orderActionSheetService = inject(OrderActionSheetService);
   private readonly orderingResolverService = inject(OrderingResolver);
+  private readonly cartService = inject(CartService);
+  private readonly routingService = inject(NavigationService);
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -76,6 +78,10 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
+    this.cartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId));
+  }
+
+  async openOrderOptions(merchantId: string) {
     await firstValueFrom(this.orderingResolverService.resolve());
     this.orderActionSheetService.openOrderOptionsByMerchantId(merchantId);
   }

@@ -3,25 +3,39 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { MerchantInfo, MerchantService } from '@sections/ordering';
-import { LockDownService } from '@shared/services';
+import {
+  CartService,
+  MerchantInfo,
+  MerchantOrderTypesInfo,
+  MerchantService,
+  MerchantSettingInfo,
+} from '@sections/ordering';
+import { LockDownService, NavigationService } from '@shared/services';
 import { of } from 'rxjs';
 import { OrderTileComponent } from './order-tile.component';
 
 const environmentFacadeService = {
-  getImageURL: jest.fn()
+  getImageURL: jest.fn(),
 };
 const merchantService = {
   getMerchantsWithFavoriteInfo: jest.fn(() => of([])),
 };
 const router = {
-  navigate: jest.fn()
+  navigate: jest.fn(),
 };
 const toastService = {
-  showError: jest.fn()
+  showError: jest.fn(),
 };
 const lockDownService = {
-  isLockDownOn: jest.fn()
+  isLockDownOn: jest.fn(),
+};
+const routingService = { navigate: jest.fn() };
+
+const mockCartService = {
+  merchant$: of({}),
+  menuItems$: of(0),
+  showActiveCartWarning: jest.fn(),
+  preValidateOrderFlow: jest.fn(),
 };
 
 describe('OrderTileComponent', () => {
@@ -39,6 +53,8 @@ describe('OrderTileComponent', () => {
         { provide: Router, useValue: router },
         { provide: ToastService, useValue: toastService },
         { provide: LockDownService, useValue: lockDownService },
+        { provide: NavigationService, useValue: routingService },
+        { provide: CartService, useValue: mockCartService },
       ],
     }).compileComponents();
   });

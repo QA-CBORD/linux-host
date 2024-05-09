@@ -153,6 +153,7 @@ const popoverControllerMock = {
 };
 let translateService = {
   instant: jest.fn(),
+  get:jest.fn()
 };
 
 describe('ItemDetailComponent', () => {

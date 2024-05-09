@@ -11,7 +11,7 @@ import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sectio
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { LockDownService } from '@shared/services';
+import { LockDownService, NavigationService } from '@shared/services';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -34,7 +34,8 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly orderingService: OrderingService,
-    private readonly lockDownService: LockDownService
+    private readonly lockDownService: LockDownService,
+    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -46,7 +47,7 @@ export class FavoriteMerchantsComponent implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.ordering]);
   }
 
-  async merchantClickHandler(merchantInfo: MerchantInfo): Promise<void> {
+  async merchantClickHandler(merchantInfo: MerchantInfo) {
     if (this.lockDownService.isLockDownOn()) {
       return;
     }
@@ -56,9 +57,8 @@ export class FavoriteMerchantsComponent implements OnInit {
       return;
     }
 
-    this.openOrderOptions(merchantInfo);
+   this.cartService.preValidateOrderFlow(merchantInfo.id, this.openOrderOptions.bind(this, merchantInfo))
   }
-
   async favouriteHandler({ id }): Promise<void> {
     await this.loadingService.showSpinner();
     const removeFavoriteMessage = await this.contentStrings.labelRemovedFromFavorites.pipe(first()).toPromise();
