@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { ModalController, Platform } from '@ionic/angular';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
@@ -7,13 +7,17 @@ import { Router } from '@angular/router';
 import {
   BarcodeScanner,
   BarcodeFormat,
-  PermissionStatus, BarcodeScannedEvent
+  PermissionStatus,
+  BarcodeScannedEvent,
 } from '@capacitor-mlkit/barcode-scanning';
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { first } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { lastValueFrom } from 'rxjs';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 const renderingDelay = 1000;
 
 @Component({
@@ -27,7 +31,7 @@ export class ScanCodeComponent implements OnInit {
   @Input() prompt?: string;
   @Input() textBtn?: string;
   private backButtonPressed?: boolean;
-
+  private readonly contentStringsFacadeService = inject(ContentStringsFacadeService);
   constructor(
     private readonly router: Router,
     private readonly modalController: ModalController,
@@ -36,12 +40,13 @@ export class ScanCodeComponent implements OnInit {
     private readonly translateService: TranslateService,
     private readonly loadingService: LoadingService,
     private readonly platform: Platform,
-    private readonly location: Location,
-  ) { }
+    private readonly location: Location
+  ) {}
 
   async ngOnInit() {
     this.showBlankBackground();
     this.hardwareBackButton();
+    this.initContentStrings();
     this.nativeProvider.setKeepTopModal = true;
     try {
       const status = await BarcodeScanner.requestPermissions();
@@ -72,16 +77,13 @@ export class ScanCodeComponent implements OnInit {
 
   private async startScanning(formats: [BarcodeFormat]) {
     this.setBackgroundTransparency(true);
-    await BarcodeScanner.addListener(
-      'barcodeScanned',
-      async (result: BarcodeScannedEvent) => {
-        if (result?.barcode?.rawValue) {
-          this.closeScanCode(result.barcode.rawValue);
-        } else {
-          this.closeScanCode();
-        }
-      },
-    );
+    await BarcodeScanner.addListener('barcodeScanned', async (result: BarcodeScannedEvent) => {
+      if (result?.barcode?.rawValue) {
+        this.closeScanCode(result.barcode.rawValue);
+      } else {
+        this.closeScanCode();
+      }
+    });
     await BarcodeScanner.startScan({ formats });
   }
 
@@ -90,7 +92,7 @@ export class ScanCodeComponent implements OnInit {
       this.startScanning(this.formats);
     } else {
       this.closeScanCode();
-      this.toastService.showToast({ message: this.translateService.instant("patron-ui.checkin.no_permissions") });
+      this.toastService.showToast({ message: this.translateService.instant('patron-ui.checkin.no_permissions') });
     }
   }
 
@@ -118,5 +120,15 @@ export class ScanCodeComponent implements OnInit {
     } else {
       screen.remove('barcode-scanner-active');
     }
+  }
+  private async initContentStrings() {
+    this.loadingService.showSpinner();
+    await lastValueFrom(
+      this.contentStringsFacadeService.fetchContentStrings$(
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.checkin
+      )
+    );
+    this.loadingService.closeSpinner();
   }
 }
