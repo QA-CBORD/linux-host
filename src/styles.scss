@@ -505,16 +505,23 @@ ion-modal.sc-modal {
 }
 
 .alert_cart {
-  @include font-nunito-heavy(16px);
+  @include font-nunito-heavy(20px);
 
   .alert-wrapper {
     border-radius: 5px;
+
+    .alert-head {
+      text-align: left;
+      padding-left: 15px;
+      @include font-nunito-heavy(20px);
+    }
+
 
     .alert-message {
       display: flex;
       justify-content: start;
       text-align: left;
-      @include font-nunito-heavy(17px);
+      @include font-nunito-heavy(16px);
       padding: 0 15px 15px 15px;
     }
 
@@ -550,38 +557,16 @@ ion-modal.sc-modal {
   }
 }
 
-.alert_full_menu {
-  @extend .alert_cart;
-  .alert-wrapper {
-    .alert-head.sc-ion-alert-md {
-      padding-left: 15px;
-      padding-bottom: 10px;
-    }
-    .alert-message {
-      @include font-nunito-regular(15px);
-      color: #000;
-      padding: 0 15px 0 15px;
-      p {
-        margin: 0;
-      }
-    }
-  }
-}
-
 .active_cart {
   @extend .alert_cart;
 
   .alert-wrapper {
     
-    .alert-head {
-      text-align: left;
-      padding-left: 15px;
-      @include font-nunito-regular(20px);
-    }
-
+  
     .alert-message {
       padding-left: 15px;
       margin-top: .5rem;
+      padding: 0 15px 5px 15px;
       @include font-nunito-regular(16px);
       
       p {
@@ -597,6 +582,10 @@ ion-modal.sc-modal {
       min-width: 100px !important;
     }
   }
+}
+
+.alert_full_menu {
+  @extend .active_cart;
 }
 
 .st-margin {

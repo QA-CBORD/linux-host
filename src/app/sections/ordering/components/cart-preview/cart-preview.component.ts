@@ -94,10 +94,6 @@ export class CartPreviewComponent implements AfterViewInit {
     this.modalService.dismiss();
   };
 
-  redirectToCart = () => {
-    this.orderingService.redirectToCart(this.isCartPreiew);
-  };
-
   isOrderTimeValid(isASAP: boolean, time: string) {
     if (isASAP) return true;
 
@@ -113,11 +109,28 @@ export class CartPreviewComponent implements AfterViewInit {
     );
   }
 
-  async addMoreItems() {
+  async getOrderTimeAvailability(): Promise<{ orderType: ORDER_TYPE; isTimeValid: boolean }> {
     const { dueTime, orderType, isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
-    const timeIsValid = this.isOrderTimeValid(isASAP, String(dueTime));
+    const isTimeValid = this.isOrderTimeValid(isASAP, String(dueTime));
 
-    if (timeIsValid) {
+    return { orderType, isTimeValid };
+  }
+
+  async redirectToCart() {
+    const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
+
+    if (isTimeValid) {
+      this.orderingService.redirectToCart(this.isCartPreiew);
+      return;
+    }
+
+    this.showActiveCartWarning(orderType);
+  }
+
+  async addMoreItems() {
+    const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
+
+    if (isTimeValid) {
       this.navigateToFullMenu();
       return;
     }

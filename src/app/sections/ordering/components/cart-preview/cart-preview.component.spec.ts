@@ -17,6 +17,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { FullMenuComponent } from '@sections/ordering/pages/full-menu/full-menu.component';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
+import { OrderingService } from '@sections/ordering/services/ordering.service';
 
 describe('CartPreviewComponent', () => {
   let component: CartPreviewComponent;
@@ -28,6 +29,7 @@ describe('CartPreviewComponent', () => {
   let loadingServiceStub: Partial<LoadingService>;
   let toastServiceStub: Partial<ToastService>;
   let merchantServiceStub: Partial<MerchantService>;
+  let orderingServiceStub: Partial<OrderingService>;
 
   beforeEach(waitForAsync(() => {
     cartServiceStub = {
@@ -60,6 +62,11 @@ describe('CartPreviewComponent', () => {
       dismiss: jest.fn(),
     };
 
+    orderingServiceStub = {
+      validateOrder: jest.fn(),
+      redirectToCart : jest.fn()
+    }
+
     TestBed.configureTestingModule({
       declarations: [PriceUnitsResolverPipe],
       imports: [
@@ -79,6 +86,7 @@ describe('CartPreviewComponent', () => {
         { provide: LoadingService, useValue: loadingServiceStub },
         { provide: ToastService, useValue: toastServiceStub },
         { provide: MerchantService, useValue: merchantServiceStub },
+        { provide: OrderingService, useValue: orderingServiceStub },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(CartPreviewComponent);
@@ -187,6 +195,29 @@ describe('CartPreviewComponent', () => {
     const alertController = jest.spyOn(alertControllerStub, 'create');
     await component.showActiveCartWarning(ORDER_TYPE.PICKUP);
     expect(alertController).toHaveBeenCalled();
+  });
+
+  it('should return order type and validity of order time', async () => {
+    const result = await component.getOrderTimeAvailability();
+    expect(result).toEqual({ orderType: ORDER_TYPE.PICKUP, isTimeValid: true });
+  });
+
+  it('should redirect to cart if order time is valid', async () => {
+    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
+    await component.redirectToCart();
+
+    expect(orderingServiceStub.redirectToCart).toHaveBeenCalledWith(true);
+    expect(warningSpy).not.toHaveBeenCalled();
+  });
+
+  it('should show active cart warning if order time is not valid', async () => {
+    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
+    component.getOrderTimeAvailability = jest.fn().mockResolvedValue({ isTimeValid: false, orderType: ORDER_TYPE.PICKUP });
+
+    await component.redirectToCart();
+
+    expect(orderingServiceStub.redirectToCart).not.toHaveBeenCalled();
+    expect(warningSpy).toHaveBeenCalledWith(ORDER_TYPE.PICKUP);
   });
 
 });
