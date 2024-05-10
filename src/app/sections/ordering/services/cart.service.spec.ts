@@ -13,6 +13,7 @@ import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@core/model/user';
 import { APP_ROUTES } from '@sections/section.config';
 import { LOCAL_ROUTING } from '../ordering.config';
+import { OrderItem } from '../shared';
 
 describe('CartService', () => {
   let service: CartService;
@@ -64,8 +65,8 @@ describe('CartService', () => {
   let routingServiceMock: any;
 
   beforeEach(() => {
-    menuItems$ = of(0); // Initialize with default values
-    merchant$ = of({ id: 'defaultMerchantId' }); // Initialize with default values
+    menuItems$ = of(0);
+    merchant$ = of({ id: 'defaultMerchantId' }); 
 
     routingServiceMock = {
       navigate: jest.fn(),
@@ -198,5 +199,68 @@ describe('CartService', () => {
     expect(jest.spyOn(service, 'showActiveCartWarning')).not.toHaveBeenCalled();
     expect(routingServiceMock.navigate).not.toHaveBeenCalled();
     expect(onContinueMock).toHaveBeenCalled();
+  });
+  it('should add a new item if no existing item is found', () => {
+    const orderItem = {
+      menuItemId: 'item1',
+      orderItemOptions: [{ id: 'option1' }],
+      quantity: 1,
+    } as Partial<OrderItem>;
+
+    service['cart'].order = { orderItems: [] }; 
+
+    service['addOrderItem'](orderItem);
+
+    expect(service['cart'].order.orderItems.length).toBe(1);
+  });
+
+  it('should update quantity if an existing item is found', () => {
+    const existingOrderItem = {
+      menuItemId: 'item1',
+      orderItemOptions: [{ id: 'option1' }],
+      quantity: 1,
+    } as Partial<OrderItem>;
+    const orderItem = {
+      menuItemId: 'item1',
+      orderItemOptions: [{ id: 'option1' }],
+      quantity: 2,
+    } as Partial<OrderItem>;
+
+    service['cart'].order = { orderItems: [existingOrderItem] };
+
+    service['addOrderItem'](orderItem);
+
+    expect(service['cart'].order.orderItems.length).toBe(1);
+    expect(service['cart'].order.orderItems[0].quantity).toBe(3);
+  });
+
+  it('should return true if order item options are the same', () => {
+    const cartItem = {
+      menuItemId: 'item1',
+      orderItemOptions: [{ id: 'option1' }],
+    } as Partial<OrderItem>;
+    const newItem = {
+      menuItemId: 'item1',
+      orderItemOptions: [{ id: 'option1' }],
+    } as Partial<OrderItem>;
+
+    const result = service['compareOrderItemsOptions'](cartItem, newItem);
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false if order item options are different', () => {
+    const cartItem = {
+      menuItemId: 'item1',
+      orderItemOptions: [{ id: 'option1' }],
+    } as Partial<OrderItem>;
+    const newItem = {
+      menuItemId: 'item1',
+      orderItemOptions: [{ id: 'option2' }],
+    } as Partial<OrderItem>;
+
+    const result = service['compareOrderItemsOptions'](cartItem, newItem);
+
+    expect(result).toBe(false);
   });
 });
