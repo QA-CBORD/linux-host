@@ -26,7 +26,7 @@ import { NavigationService } from '@shared/index';
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -440,22 +440,7 @@ export class CartService {
   }
 
   private addOrderItem(orderItem: Partial<OrderItem>) {
-    const existingItemIndex = this.cart.order.orderItems.findIndex(
-      item => item.menuItemId === orderItem.menuItemId && this.compareOrderItemsOptions(item, orderItem)
-    );
-
-    if (existingItemIndex !== -1) {
-      this.cart.order.orderItems[existingItemIndex].quantity += orderItem.quantity;
-    } else {
-      this.cart.order.orderItems.push(orderItem);
-    }
-  }
-
-  private compareOrderItemsOptions(cartItem: Partial<OrderItem>, newItem: Partial<OrderItem>) {
-    return (
-      JSON.stringify(cartItem.orderItemOptions.map(opt => opt.id).sort()) ===
-      JSON.stringify(newItem.orderItemOptions.map(opt => opt.id).sort())
-    );
+    this.cart?.order?.orderItems?.push(orderItem);
   }
 
   private onStateChanged() {
