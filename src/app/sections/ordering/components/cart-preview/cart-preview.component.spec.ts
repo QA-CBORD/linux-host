@@ -225,4 +225,27 @@ describe('CartPreviewComponent', () => {
     component.removeCart();
     expect(alertController).toHaveBeenCalled();
   });
+  it('should return order type and validity of order time', async () => {
+    const result = await component.getOrderTimeAvailability();
+    expect(result).toEqual({ orderType: ORDER_TYPE.PICKUP, isTimeValid: true });
+  });
+
+  it('should redirect to cart if order time is valid', async () => {
+    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
+    await component.redirectToCart();
+
+    expect(orderingServiceStub.redirectToCart).toHaveBeenCalledWith(true);
+    expect(warningSpy).not.toHaveBeenCalled();
+  });
+
+  it('should show active cart warning if order time is not valid', async () => {
+    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
+    component.getOrderTimeAvailability = jest.fn().mockResolvedValue({ isTimeValid: false, orderType: ORDER_TYPE.PICKUP });
+
+    await component.redirectToCart();
+
+    expect(orderingServiceStub.redirectToCart).not.toHaveBeenCalled();
+    expect(warningSpy).toHaveBeenCalledWith(ORDER_TYPE.PICKUP);
+  });
+
 });
