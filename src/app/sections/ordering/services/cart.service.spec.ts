@@ -13,6 +13,7 @@ import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@core/model/user';
 import { APP_ROUTES } from '@sections/section.config';
 import { LOCAL_ROUTING } from '../ordering.config';
+import { OrderItem } from '../shared';
 
 describe('CartService', () => {
   let service: CartService;
@@ -64,8 +65,8 @@ describe('CartService', () => {
   let routingServiceMock: any;
 
   beforeEach(() => {
-    menuItems$ = of(0); // Initialize with default values
-    merchant$ = of({ id: 'defaultMerchantId' }); // Initialize with default values
+    menuItems$ = of(0);
+    merchant$ = of({ id: 'defaultMerchantId' }); 
 
     routingServiceMock = {
       navigate: jest.fn(),
@@ -199,4 +200,5 @@ describe('CartService', () => {
     expect(routingServiceMock.navigate).not.toHaveBeenCalled();
     expect(onContinueMock).toHaveBeenCalled();
   });
+  
 });
