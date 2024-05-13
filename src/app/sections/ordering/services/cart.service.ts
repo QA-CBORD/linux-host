@@ -11,9 +11,17 @@ import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
-import { BehaviorSubject, Observable, Subject, Subscription, lastValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, lastValueFrom, of } from 'rxjs';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
-import { ItemsOrderInfo, MenuInfo, MerchantInfo, OrderInfo, OrderItem, OrderPayment } from '../shared/models';
+import {
+  ItemsOrderInfo,
+  MenuInfo,
+  MerchantInfo,
+  MerchantOrderTypesInfo,
+  OrderInfo,
+  OrderItem,
+  OrderPayment,
+} from '../shared/models';
 import { MerchantService } from './merchant.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
@@ -26,7 +34,7 @@ import { NavigationService } from '@shared/index';
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -130,6 +138,10 @@ export class CartService {
 
   get isMerchantOpenNow$(): Observable<boolean> {
     return this.merchant$.pipe(map(({ openNow }) => openNow));
+  }
+
+  get orderTypes$(): Observable<MerchantOrderTypesInfo> {
+    return of(this.cart.merchant.orderTypes);
   }
 
   get menuItems$(): Observable<number> {

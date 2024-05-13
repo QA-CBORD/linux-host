@@ -25,7 +25,7 @@ export const DINEIN = 'DineIn';
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
-  private  dismissSuscription: Subscription;
+  private dismissSuscription: Subscription;
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState = false;
@@ -33,7 +33,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   canDismiss = true;
-
 
   constructor(
     private readonly cartService: CartService,
@@ -52,7 +51,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
-    this.dismissSuscription = this.modalController.getCanDismiss().subscribe((canDismiss) => {
+    this.dismissSuscription = this.modalController.getCanDismiss().subscribe(canDismiss => {
       this.canDismiss = canDismiss;
     });
     this.initContentStrings();
@@ -85,6 +84,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   get orderTypes$(): Observable<MerchantOrderTypesInfo> {
     return this.cartService.merchant$.pipe(map((merchant) => merchant?.orderTypes));
   }
+  get cartOrderTypes$(): Observable<MerchantOrderTypesInfo> {
+    return this.cartService.orderTypes$;
+  }
 
   get orderDetails$() {
     return zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$).pipe(
@@ -97,9 +99,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
-    const { openTimeSlot, canDismiss } = this.activatedRoute.snapshot.queryParams;
+    const { openTimeSlot, canDismiss, isExistingOrder } = this.activatedRoute.snapshot.queryParams;
     this.modalController.emitCanDismiss(canDismiss === 'false' ? false : true);
     openTimeSlot && this.openOrderOptions();
+    isExistingOrder && this.validateOrder();
     this.cdref.detectChanges();
   }
 
@@ -139,7 +142,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       canDismiss: () => {
         return new Promise<boolean>(resolve => {
           resolve(this.canDismiss);
-        })
+        });
       },
       cssClass,
       componentProps: {
@@ -161,7 +164,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   private async onDismissOrderDetails({ data }: OverlayEventDetail): Promise<void> {
     if (!data) return;
 
-    const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
     await this.cartService.setActiveMerchantsMenuByOrderOptions(
       data.dueTime,
       data.orderType,
@@ -170,8 +172,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     );
     this.cartService.orderItems$.pipe(first()).subscribe(items => {
       if (items.length) {
-        const errorCB = () => this.modalHandler(cachedData);
-        this.orderingService.validateOrder(null, errorCB);
+        this.validateOrder();
       }
     });
   }
@@ -233,5 +234,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   toggleMerchantInfo() {
     this.merchantInfoState = !this.merchantInfoState;
     this.cdref.detectChanges();
+  }
+  async validateOrder() {
+    const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
+    const errorCB = () => this.modalHandler(cachedData);
+    this.orderingService.validateOrder(null, errorCB);
   }
 }

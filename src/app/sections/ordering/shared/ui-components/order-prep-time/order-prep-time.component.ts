@@ -15,17 +15,18 @@ import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 export class OrderPrepTime {
   @Input() orderDetailOptions: OrderDetailOptions;
   @Input() orderTypes: MerchantOrderTypesInfo;
+  @Input() cartOrderTypes: MerchantOrderTypesInfo;
 
   get prepTime() {
     const time =
       {
-        [ORDER_TYPE.PICKUP]: this.orderTypes.pickupPrepTime,
-        [ORDER_TYPE.DELIVERY]: this.orderTypes.deliveryPrepTime,
+        [ORDER_TYPE.PICKUP]: this.orderTypes?.pickupPrepTime || this.cartOrderTypes?.pickupPrepTime,
+        [ORDER_TYPE.DELIVERY]: this.orderTypes?.deliveryPrepTime || this.cartOrderTypes?.deliveryPrepTime,
       }[this.orderDetailOptions.orderType] || 0;
     return `(${time} min)`;
   }
 
-  get isAsap () {
+  get isAsap() {
     return this.orderDetailOptions?.isASAP;
   }
 }
