@@ -511,18 +511,17 @@ ion-modal.sc-modal {
     border-radius: 5px;
 
     .alert-head {
-      text-align: left;
-      padding-left: 15px;
-      @include font-nunito-heavy(20px);
+      .alert-title {
+        @include font-nunito-heavy(20px);
+      }
     }
-
 
     .alert-message {
       display: flex;
       justify-content: start;
       text-align: left;
-      @include font-nunito-heavy(16px);
-      padding: 0 15px 15px 15px;
+      @include font-nunito-regular(16px);
+      padding: 0 15px 5px 15px;
     }
 
     .alert-button-group {
@@ -557,15 +556,23 @@ ion-modal.sc-modal {
   }
 }
 
+.alert_full_menu {
+  @extend .alert_cart;
+}
+
 .active_cart {
   @extend .alert_cart;
 
   .alert-wrapper {
-    
-  
+    .alert-head {
+      text-align: left;
+      padding-left: 15px;
+      @include font-nunito-regular(20px);
+    }
+
     .alert-message {
       padding-left: 15px;
-      margin-top: .5rem;
+      margin-top: 0.5rem;
       padding: 0 15px 5px 15px;
       @include font-nunito-regular(16px);
 
