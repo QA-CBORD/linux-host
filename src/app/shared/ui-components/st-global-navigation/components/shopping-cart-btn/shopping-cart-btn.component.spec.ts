@@ -7,6 +7,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { TranslateModule } from '@ngx-translate/core';
+import { LockDownService } from '@shared/services';
 
 describe('ShoppingCartBtnComponent', () => {
   let component: ShoppingCartBtnComponent;
@@ -21,6 +22,7 @@ describe('ShoppingCartBtnComponent', () => {
     closeSpinner: jest.fn(),
   };
 
+  const lockDownService = { isLockDownOn: jest.fn(), loadStringsAndSettings: jest.fn().mockResolvedValue({}) };
   const contentStringsFacadeService = {
     fetchContentStrings$: jest.fn(() => of({})),
   };
@@ -32,6 +34,7 @@ describe('ShoppingCartBtnComponent', () => {
       providers: [
         { provide: CartService, useValue: carService },
         { provide: LoadingService, useValue: loadingService },
+        { provide: LockDownService, useValue: lockDownService },
         { provide: ContentStringsFacadeService, useValue: contentStringsFacadeService },
       ],
     }).compileComponents();
@@ -55,13 +58,19 @@ describe('ShoppingCartBtnComponent', () => {
 
   describe('openCart', () => {
     it('should call initContentStrings and openCartpreview', async () => {
-
       const initContentStringsSpy = jest
         .spyOn(component, 'initContentStrings')
         .mockImplementation(() => Promise.resolve());
-        await component.openCart();
-        expect(initContentStringsSpy).toHaveBeenCalled();
+      await component.openCart();
+      expect(initContentStringsSpy).toHaveBeenCalled();
       expect(carService.openCartpreview).toHaveBeenCalled();
+    });
+
+    it('should not openCartpreview on lockdown', async () => {
+      carService.openCartpreview.mockReset();
+      lockDownService.isLockDownOn.mockReturnValueOnce(true);
+      await component.openCart();
+      expect(carService.openCartpreview).not.toHaveBeenCalled();
     });
   });
 

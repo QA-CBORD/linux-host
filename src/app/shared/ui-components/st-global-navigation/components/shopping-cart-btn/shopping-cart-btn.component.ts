@@ -5,6 +5,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CartService } from '@sections/ordering';
+import { LockDownService } from '@shared/services';
 import { Observable, lastValueFrom } from 'rxjs';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 
@@ -19,6 +20,7 @@ import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/con
 export class ShoppingCartBtnComponent {
   private readonly loadingService: LoadingService = inject(LoadingService);
   private readonly contentStringsFacadeService: ContentStringsFacadeService = inject(ContentStringsFacadeService);
+  private readonly lockDownService = inject(LockDownService);
   constructor(private readonly cartService: CartService) {}
 
   get itemsCount(): Observable<number> {
@@ -27,6 +29,9 @@ export class ShoppingCartBtnComponent {
 
   async openCart() {
     await this.initContentStrings();
+    if (this.lockDownService.isLockDownOn()) {
+      return;
+    }
     this.cartService.openCartpreview();
   }
   async initContentStrings() {
@@ -37,6 +42,7 @@ export class ShoppingCartBtnComponent {
         CONTENT_STRINGS_CATEGORIES.ordering
       )
     );
+    await this.lockDownService.loadStringsAndSettings();
     this.loadingService.closeSpinner();
   }
 }
