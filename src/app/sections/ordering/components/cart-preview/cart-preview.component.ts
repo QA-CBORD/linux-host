@@ -40,7 +40,7 @@ export class CartPreviewComponent implements AfterViewInit {
   private readonly translateService = inject(TranslateService);
   private readonly merchantService = inject(MerchantService);
 
-  isCartPreiew: boolean = true;
+  isCartPreview: boolean = true;
   orderSchedule: Schedule;
 
   async ngAfterViewInit(): Promise<void> {
@@ -120,7 +120,7 @@ export class CartPreviewComponent implements AfterViewInit {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
 
     if (isTimeValid) {
-      this.orderingService.redirectToCart(this.isCartPreiew);
+      this.orderingService.redirectToCart(this.isCartPreview);
       return;
     }
 
