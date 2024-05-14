@@ -15,6 +15,7 @@ export class StHeaderComponent {
   @Input() placeholder: string;
   @Input() backButtonTitle = 'Back';
   @Input() backButtonIcon: string | null = null;
+  @Input() removeBasketIcon: string | null = null;
   @Input() isToolbarShow = false;
   @Input() isSubToolbarShow = false;
   @Input() isTitleShow = false;
@@ -28,6 +29,7 @@ export class StHeaderComponent {
   @Output() onClose = new EventEmitter<void>();
   @Output() onFilter = new EventEmitter<void>();
   @Input() isCustomBackButtonShow: boolean;
+
   constructor(
     private readonly router: Router,
     private readonly navService: NavigationService,

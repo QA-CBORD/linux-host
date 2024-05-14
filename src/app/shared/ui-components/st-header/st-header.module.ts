@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { StHeaderComponent } from './st-header.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 const declarations = [StHeaderComponent];
 
@@ -9,7 +10,8 @@ const declarations = [StHeaderComponent];
   declarations,
   imports: [
     CommonModule,
-    IonicModule
+    IonicModule,
+    TranslateModule,
   ],
   exports: declarations
 })

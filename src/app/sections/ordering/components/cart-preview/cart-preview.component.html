@@ -6,6 +6,9 @@
   backButtonTitle=""
   [title]="'patron-ui.ordering.active_cart_title' | translate"
   (onClose)="onClose()"
+  [isRemoveButtonShow]="true"
+  [removeBasketIcon]="true"
+  (onRemove)="clearCart()"
 >
 </st-header>
 <ion-content>

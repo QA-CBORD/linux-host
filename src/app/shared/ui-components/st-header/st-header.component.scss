@@ -84,3 +84,12 @@
   --color: #e22942 !important;
   @include font-nunito-semibold(16px);
 }
+
+.remove-basket {
+  ion-icon {
+    width: 1.2em;
+    height: 1.2em;
+    stroke: $color-black;
+    stroke-width: 0.5%;
+  }
+}

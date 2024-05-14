@@ -16,10 +16,16 @@
         <ion-label>{{backButtonTitle}}</ion-label>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end" *ngIf="isRemoveButtonShow">
-      <ion-button class="address-edit__header-remove-btn" mode="ios" (click)="onRemoveClicked()">
-        Remove
+    <ion-buttons *ngIf="isRemoveButtonShow" slot="end" role="button">
+      <ion-button *ngIf="removeBasketIcon; else textForm" class="remove-basket" (click)="onRemoveClicked()">
+        <ion-icon src="/assets/icon/basket.svg"
+          [attr.aria-label]="'patron-ui.ordering.active_cart_basket_icon' | translate"></ion-icon>
       </ion-button>
+      <ng-template #textForm>
+        <ion-button class="address-edit__header-remove-btn" mode="ios" (click)="onRemoveClicked()">
+          Remove
+        </ion-button>
+      </ng-template>
     </ion-buttons>
     <ion-title class="st-header__title" *ngIf="isTitleShow">{{ title }}</ion-title>
     <div class="st-header__end" *ngIf="isFilterButtonShow" >

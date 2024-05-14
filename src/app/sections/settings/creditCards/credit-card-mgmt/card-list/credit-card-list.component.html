@@ -18,7 +18,8 @@
             </div>
           </ion-label>
           <div *ngIf="removeIcon" class="icon-wrapper" (click)="onRemoveEvent(account)">
-            <ion-icon class="ionic-icon" attr.alt="trash-can" src="/assets/icon/trash.svg" name="trash.svg"> </ion-icon>
+            <ion-icon class="ionic-icon" attr.alt="basket-can" src="/assets/icon/basket.svg" name="basket.svg">
+            </ion-icon>
           </div>
         </ion-item>
       </ion-list>
@@ -43,19 +44,10 @@
     <div class="info">
       <div class="info__message">
         <div class="info__message__icons">
-          <ion-icon
-            *ngIf="!addItem"
-            attr.alt="info-circle"
-            src="/assets/icon/info-circle.svg"
-            name="info-circle.svg"
-          ></ion-icon>
-          <ion-icon
-            class="add-icon"
-            *ngIf="addItem"
-            attr.alt="add-icon"
-            src="/assets/images/housing/add-item-icon.svg"
-            (click)="onAddEvent()"
-          ></ion-icon>
+          <ion-icon *ngIf="!addItem" attr.alt="info-circle" src="/assets/icon/info-circle.svg"
+            name="info-circle.svg"></ion-icon>
+          <ion-icon class="add-icon" *ngIf="addItem" attr.alt="add-icon" src="/assets/images/housing/add-item-icon.svg"
+            (click)="onAddEvent()"></ion-icon>
         </div>
         <div class="info__message__text">
           <ion-label *ngIf="addItem" (click)="onAddEvent()">
@@ -66,12 +58,8 @@
         </div>
       </div>
       <div class="info__cards">
-        <ion-icon
-          *ngFor="let card of allowedPaymentsMethods"
-          class="info__cards__icon"
-          [src]="card.icon"
-          [name]="card.name"
-        ></ion-icon>
+        <ion-icon *ngFor="let card of allowedPaymentsMethods" class="info__cards__icon" [src]="card.icon"
+          [name]="card.name"></ion-icon>
       </div>
     </div>
   </div>
