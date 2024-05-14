@@ -15,7 +15,7 @@ export class StHeaderComponent {
   @Input() placeholder: string;
   @Input() backButtonTitle = 'Back';
   @Input() backButtonIcon: string | null = null;
-  @Input() removeBasketIcon: string | null = null;
+  @Input() removeTrashIcon: string | null = null;
   @Input() isToolbarShow = false;
   @Input() isSubToolbarShow = false;
   @Input() isTitleShow = false;
@@ -42,14 +42,6 @@ export class StHeaderComponent {
 
   onEnterKeyClicked() {
     if (this.nativeProvider.isMobile()) Keyboard.hide();
-  }
-
-  onDissmissClicked() {
-    this.onDismiss.emit();
-  }
-
-  onRemoveClicked() {
-    this.onRemove.emit();
   }
 
   async onBack() {

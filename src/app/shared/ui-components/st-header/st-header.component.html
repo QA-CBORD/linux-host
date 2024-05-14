@@ -1,34 +1,36 @@
 <ion-header class="st-header" no-border>
   <ion-toolbar mode="ios" class="st-header__nav-toolbar" *ngIf="isToolbarShow">
     <ion-buttons slot="start" *ngIf="isBackButtonShow">
-      <ion-back-button  class="st-header__back-btn st-header__back-btn__icon-{{ backButtonIcon }}" color="dark"
+      <ion-back-button class="st-header__back-btn st-header__back-btn__icon-{{ backButtonIcon }}" color="dark"
         [text]="backButtonTitle" [icon]="backButtonIcon" mode="ios" (click)="onBack()"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="start" *ngIf="isCustomBackButtonShow">
-      <ion-button  class="st-header__back-btn st-header__back-btn__icon-{{ backButtonIcon }}" color="dark"
-         mode="ios" (click)="onBack()">{{backButtonTitle}}
-      <ion-icon [name]="backButtonIcon" slot="start"></ion-icon>
+      <ion-button class="st-header__back-btn st-header__back-btn__icon-{{ backButtonIcon }}" color="dark" mode="ios"
+        (click)="onBack()">{{backButtonTitle}}
+        <ion-icon [name]="backButtonIcon" slot="start"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="start" *ngIf="isDismissButtonShow">
-      <ion-button color="dark" mode="ios" [ngClass]="{'st-header__dissmiss-btn': !backButtonTitle, 'st-header__back-btn': backButtonTitle }" (click)="onDissmissClicked()">
+      <ion-button color="dark" mode="ios"
+        [ngClass]="{'st-header__dissmiss-btn': !backButtonTitle, 'st-header__back-btn': backButtonTitle }"
+        (click)="onDismiss.emit()">
         <ion-icon [icon]="backButtonIcon" [ngClass]="{'st-header__dismiss-icon': backButtonTitle}"></ion-icon>
         <ion-label>{{backButtonTitle}}</ion-label>
       </ion-button>
     </ion-buttons>
     <ion-buttons *ngIf="isRemoveButtonShow" slot="end" role="button">
-      <ion-button *ngIf="removeBasketIcon; else textForm" class="remove-basket" (click)="onRemoveClicked()">
-        <ion-icon src="/assets/icon/basket.svg"
-          [attr.aria-label]="'patron-ui.ordering.active_cart_basket_icon' | translate"></ion-icon>
+      <ion-button *ngIf="removeTrashIcon; else textForm" class="remove-trash" (click)="onRemove.emit()">
+        <ion-icon src="/assets/icon/trash.svg"
+          [attr.aria-label]="'patron-ui.ordering.cart_preview_trash_icon' | translate"></ion-icon>
       </ion-button>
       <ng-template #textForm>
-        <ion-button class="address-edit__header-remove-btn" mode="ios" (click)="onRemoveClicked()">
+        <ion-button class="address-edit__header-remove-btn" mode="ios" (click)="onRemove.emit()">
           Remove
         </ion-button>
       </ng-template>
     </ion-buttons>
     <ion-title class="st-header__title" *ngIf="isTitleShow">{{ title }}</ion-title>
-    <div class="st-header__end" *ngIf="isFilterButtonShow" >
+    <div class="st-header__end" *ngIf="isFilterButtonShow">
       <ion-icon src="/assets/icon/filter.svg" slot="end" mode="ios" size="small" (click)="onFilter.emit()"></ion-icon>
     </div>
   </ion-toolbar>

@@ -591,6 +591,47 @@ ion-modal.sc-modal {
   }
 }
 
+.remove-active-cart {
+
+  .alert-head {
+    padding: 1%;
+  }
+
+  .alert-message {
+    padding-left: 5%;
+    margin-top: .5rem;
+    color: $color-black;
+    @include font-nunito-heavy(18px);
+    text-overflow: ellipsis;
+  }
+
+  button.alert-button.button__option_cancel {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
+    @include font-nunito-heavy(16px);
+    background: $color-whisper;
+    color: $color-black;
+    border-radius: 8px;
+    margin: 0 5% 2.5% 0;
+    max-width: 30%;
+  }
+
+  button.alert-button.button__option_confirm {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
+    @include font-nunito-heavy(16px);
+    background-color: $color-red-alert;
+    color: $color-white;
+    border-radius: 8px;
+    margin: 0 5% 2.5% 0;
+    max-width: 60%;
+  }
+}
+
 .st-margin {
   &-start {
     margin-left: 10px;

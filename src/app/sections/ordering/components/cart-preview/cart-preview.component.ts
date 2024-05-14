@@ -152,6 +152,38 @@ export class CartPreviewComponent implements AfterViewInit {
     }
   }
 
+  removeCart() {
+    this.confirmCartRemoval();
+  }
+
+  private async confirmCartRemoval() {
+    const alert = await this.alertController.create({
+      cssClass: 'remove-active-cart',
+      message: this.translateService.instant('patron-ui.ordering.cart_preview_confirm_removal_msg'),
+      mode: 'md',
+      buttons: [
+        {
+          text: this.translateService.instant('patron-ui.ordering.cart_preview_cancel_removal_btn'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
+        },
+        {
+          text: this.translateService.instant('patron-ui.ordering.cart_preview_confirm_removal_btn'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => {
+            this.cartService.clearActiveOrder();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   get orderInfo$() {
     return this.cartService.orderInfo$;
   }
