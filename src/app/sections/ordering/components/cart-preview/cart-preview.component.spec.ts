@@ -248,4 +248,9 @@ describe('CartPreviewComponent', () => {
     expect(warningSpy).toHaveBeenCalledWith(ORDER_TYPE.PICKUP);
   });
 
+  it('should confirm the cart removal before proceeding', async () => {
+    const alertController = jest.spyOn(alertControllerStub, 'create');
+    component.removeCart();
+    expect(alertController).toHaveBeenCalled();
+  });
 });
