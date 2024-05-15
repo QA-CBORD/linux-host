@@ -1,15 +1,6 @@
-<st-header
-  [isTitleShow]="true"
-  backButtonIcon="close"
-  [isBackButtonShow]="true"
-  [isToolbarShow]="true"
-  backButtonTitle=""
-  [title]="'patron-ui.ordering.active_cart_title' | translate"
-  (onClose)="onClose()"
-  [isRemoveButtonShow]="true"
-  [removeTrashIcon]="true"
-  (onRemove)="removeCart()"
->
+<st-header [isTitleShow]="true" backButtonIcon="close" [isBackButtonShow]="true" [isToolbarShow]="true"
+  backButtonTitle="" [title]="'patron-ui.ordering.active_cart_title' | translate" (onClose)="onClose()"
+  [isRemoveButtonShow]="true" [showTrashIcon]="true" (onRemove)="removeCart()">
 </st-header>
 <ion-content>
   <div class="cart-preview__merchant-name">
@@ -22,10 +13,8 @@
         <ion-label>
           <st-order-item-details [mealBased]="orderInfo.mealBased" [orderItem]="orderItem"></st-order-item-details>
           <ng-container *ngIf="orderItem.orderItemOptions">
-            <p
-              *ngFor="let subIngredient of orderItem.orderItemOptions"
-              class="order-ingredient-list__ingredient-description"
-            >
+            <p *ngFor="let subIngredient of orderItem.orderItemOptions"
+              class="order-ingredient-list__ingredient-description">
               {{ subIngredient.name }} ({{ subIngredient.salePrice | priceUnitsResolver : orderInfo.mealBased }})
             </p>
           </ng-container>
@@ -45,8 +34,8 @@
   <div class="cart-preview__expiration" translate>patron-ui.ordering.active_cart_expire_note</div>
   <st-button class="cart-preview__footer-button" color="light" expand="block" translate (onClick)="addMoreItems()">{{
     'patron-ui.ordering.active_cart_add_items' | translate
-  }}</st-button>
+    }}</st-button>
   <st-button class="cart-preview__footer-button" expand="block" translate (onClick)="redirectToCart()">{{
     'patron-ui.ordering.active_cart_go_checkout' | translate
-  }}</st-button>
+    }}</st-button>
 </ion-footer>

@@ -19,7 +19,7 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons *ngIf="isRemoveButtonShow" slot="end" role="button">
-      <ion-button *ngIf="removeTrashIcon; else textForm" class="remove-trash" (click)="onRemove.emit()">
+      <ion-button *ngIf="showTrashIcon; else textForm" class="trash-icon" (click)="onRemove.emit()">
         <ion-icon src="/assets/icon/trash.svg"
           [attr.aria-label]="'patron-ui.ordering.cart_preview_trash_icon' | translate"></ion-icon>
       </ion-button>

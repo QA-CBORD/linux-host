@@ -15,7 +15,7 @@ export class StHeaderComponent {
   @Input() placeholder: string;
   @Input() backButtonTitle = 'Back';
   @Input() backButtonIcon: string | null = null;
-  @Input() removeTrashIcon: string | null = null;
+  @Input() showTrashIcon: boolean | null = null;
   @Input() isToolbarShow = false;
   @Input() isSubToolbarShow = false;
   @Input() isTitleShow = false;
@@ -34,7 +34,7 @@ export class StHeaderComponent {
     private readonly router: Router,
     private readonly navService: NavigationService,
     private readonly nativeProvider: NativeProvider
-  ) {}
+  ) { }
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);

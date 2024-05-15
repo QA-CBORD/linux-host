@@ -176,6 +176,7 @@ export class CartPreviewComponent implements AfterViewInit {
           cssClass: 'button__option_confirm',
           handler: () => {
             this.cartService.clearActiveOrder();
+            this.onClose();
           },
         },
       ],
