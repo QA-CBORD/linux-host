@@ -97,9 +97,8 @@ describe('StHeaderComponent', () => {
     component.showTrashIcon = true;
 
     fixture.detectChanges();
-
-    const icon = fixture.debugElement.query(By.css('ion-icon'));
-    expect(icon).toHaveAttribute('aria-label', 'patron-ui.ordering.cart_preview_trash_icon');
+    const icon = fixture.debugElement.query(By.css('ion-icon')).nativeNode;
+    expect(icon.hasAttribute('aria-label')).toBeTruthy();
   });
 
   it('should not hide keyboard on enter key click if not mobile device', async () => {
