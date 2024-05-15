@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, inject } from '@angular/core';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_ERROR_CODES, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { CartService, MerchantService } from '@sections/ordering/services';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
@@ -39,9 +40,11 @@ export class CartPreviewComponent implements AfterViewInit {
   private readonly alertController = inject(AlertController);
   private readonly translateService = inject(TranslateService);
   private readonly merchantService = inject(MerchantService);
+  private readonly loadingService = inject(LoadingService);
 
   isCartPreview: boolean = true;
   orderSchedule: Schedule;
+  hasErrors: boolean = null;
 
   async ngAfterViewInit(): Promise<void> {
     const result = await firstValueFrom(
@@ -58,8 +61,19 @@ export class CartPreviewComponent implements AfterViewInit {
         take(1)
       )
     );
-
     this.orderSchedule = result ? result : ({} as Schedule);
+    this.validateOrder();
+  }
+
+  async validateOrder() {
+    try {
+      this.loadingService.showSpinner();
+      await firstValueFrom(this.cartService.validateOrder());
+      this.loadingService.closeSpinner();
+    } catch (error) {
+      this.hasErrors = String(error?.message).includes(ORDER_ERROR_CODES.INVALID_ORDER);
+      this.loadingService.closeSpinner();
+    }
   }
 
   async showActiveCartWarning(orderType: ORDER_TYPE) {
@@ -119,7 +133,7 @@ export class CartPreviewComponent implements AfterViewInit {
   async redirectToCart() {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
 
-    if (isTimeValid) {
+    if (isTimeValid && !this.hasErrors) {
       this.orderingService.redirectToCart(this.isCartPreview);
       return;
     }
@@ -130,7 +144,7 @@ export class CartPreviewComponent implements AfterViewInit {
   async addMoreItems() {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
 
-    if (isTimeValid) {
+    if (isTimeValid && !this.hasErrors) {
       this.navigateToFullMenu();
       return;
     }
@@ -150,6 +164,8 @@ export class CartPreviewComponent implements AfterViewInit {
     if (routed) {
       this.onClose();
     }
+
+    this.hasErrors = false;
   }
 
   removeCart() {

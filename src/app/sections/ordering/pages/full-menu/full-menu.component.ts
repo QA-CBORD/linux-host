@@ -83,7 +83,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   get orderTypes$(): Observable<MerchantOrderTypesInfo> {
-    return this.merchantService.orderTypes$;
+    return this.cartService.merchant$.pipe(map((merchant) => merchant.orderTypes));
   }
 
   get orderDetails$() {

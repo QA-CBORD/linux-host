@@ -11,11 +11,11 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
 import { StHeaderModule } from '@shared/ui-components';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FullMenuComponent } from '@sections/ordering/pages/full-menu/full-menu.component';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { ORDER_ERROR_CODES, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 
@@ -37,12 +37,17 @@ describe('CartPreviewComponent', () => {
       merchant$: new BehaviorSubject<any>({ name: 'Mock Merchant' }),
       cartsErrorMessage: null,
       isExistingOrder: false,
-      validateOrder: () => new BehaviorSubject(null),
+      validateOrder:  jest.fn(),
       orderDetailsOptions$: of({
         address: {} as AddressInfo,
         isASAP: true,
         orderType: ORDER_TYPE.PICKUP,
       } as OrderDetailOptions),
+    };
+
+    loadingServiceStub = {
+      closeSpinner: jest.fn(),
+      showSpinner: jest.fn()
     };
 
     modalsServiceMock = {
@@ -247,5 +252,26 @@ describe('CartPreviewComponent', () => {
     const alertController = jest.spyOn(alertControllerStub, 'create');
     component.removeCart();
     expect(alertController).toHaveBeenCalled();
+  });
+
+  it('should validate order successfully', async () => {
+    await component.validateOrder();
+
+    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
+    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
+    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
+    expect(component.hasErrors).toBeFalsy();
+  });
+
+  it('should handle error when validating order', async () => {
+    const error = { message: ORDER_ERROR_CODES.INVALID_ORDER };
+    cartServiceStub.validateOrder = jest.fn().mockReturnValue(throwError(() => new Error('9010|error')));
+
+    await component.validateOrder();
+
+    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
+    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
+    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
+    expect(component.hasErrors).toBeTruthy();
   });
 });
