@@ -13,7 +13,7 @@ import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/orderi
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { APP_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services/navigation.service';
-import { Observable, Subscription, zip } from 'rxjs';
+import { Observable, Subscription, lastValueFrom, zip } from 'rxjs';
 import { first, map, take } from 'rxjs/operators';
 
 export const DINEIN = 'DineIn';
@@ -236,7 +236,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.cdref.detectChanges();
   }
   async validateOrder() {
-    const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
+    const cachedData = await lastValueFrom(this.cartService.orderDetailsOptions$.pipe(first()));
     const errorCB = () => this.modalHandler(cachedData);
     this.orderingService.validateOrder(null, errorCB);
   }

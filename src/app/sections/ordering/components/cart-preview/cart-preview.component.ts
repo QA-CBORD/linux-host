@@ -15,7 +15,7 @@ import { PATRON_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
 import { StButtonModule, StHeaderModule } from '@shared/ui-components';
 import { format, parseISO } from 'date-fns';
-import { combineLatest, firstValueFrom, of, switchMap, take } from 'rxjs';
+import { combineLatest, first, firstValueFrom, of, switchMap, take } from 'rxjs';
 @Component({
   standalone: true,
   providers: [PriceUnitsResolverPipe],
@@ -76,34 +76,6 @@ export class CartPreviewComponent implements AfterViewInit {
     }
   }
 
-  async showActiveCartWarning(orderType: ORDER_TYPE) {
-    const alert = await this.alertController.create({
-      cssClass: 'active_cart',
-      header:
-        orderType === ORDER_TYPE.PICKUP
-          ? this.translateService.instant('patron-ui.ordering.active_cart_alert_time_pickup_title')
-          : this.translateService.instant('patron-ui.ordering.active_cart_alert_time_delivery_title'),
-      message: this.translateService.instant('patron-ui.ordering.active_cart_alert_time_msg'),
-      buttons: [
-        {
-          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_time_cancel'),
-          role: 'cancel',
-          cssClass: 'button__option_cancel',
-          handler: () => alert.dismiss(),
-        },
-        {
-          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_time_continue'),
-          role: 'confirm',
-          cssClass: 'button__option_confirm button__option_confirm_time',
-          handler: () => this.navigateToFullMenu(true, false),
-        },
-      ],
-    });
-
-    await alert.present();
-    return alert.onDidDismiss();
-  }
-
   onClose = () => {
     this.modalService.dismiss();
   };
@@ -142,14 +114,7 @@ export class CartPreviewComponent implements AfterViewInit {
   }
 
   async addMoreItems() {
-    const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
-
-    if (isTimeValid && !this.hasErrors) {
-      this.navigateToFullMenu();
-      return;
-    }
-
-    this.showActiveCartWarning(orderType);
+   this.cartService.addMoreItems(this.orderSchedule, this.hasErrors)
   }
 
   async navigateToFullMenu(openTimeSlot?: boolean, canDismiss: boolean = true) {

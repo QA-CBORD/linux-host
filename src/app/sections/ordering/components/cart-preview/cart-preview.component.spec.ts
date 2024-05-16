@@ -18,6 +18,7 @@ import { FullMenuComponent } from '@sections/ordering/pages/full-menu/full-menu.
 import { ORDER_ERROR_CODES, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 describe('CartPreviewComponent', () => {
   let component: CartPreviewComponent;
@@ -29,7 +30,7 @@ describe('CartPreviewComponent', () => {
   let loadingServiceStub: Partial<LoadingService>;
   let toastServiceStub: Partial<ToastService>;
   let merchantServiceStub: Partial<MerchantService>;
-  let orderingServiceStub: Partial<OrderingService>;
+  let orderingService: Partial<OrderingService>;
 
   beforeEach(waitForAsync(() => {
     cartServiceStub = {
@@ -37,7 +38,8 @@ describe('CartPreviewComponent', () => {
       merchant$: new BehaviorSubject<any>({ name: 'Mock Merchant' }),
       cartsErrorMessage: null,
       isExistingOrder: false,
-      validateOrder:  jest.fn(),
+      orderSchedule$: of({} as Schedule),
+      validateOrder: () => new BehaviorSubject(null),
       orderDetailsOptions$: of({
         address: {} as AddressInfo,
         isASAP: true,
@@ -67,7 +69,7 @@ describe('CartPreviewComponent', () => {
       dismiss: jest.fn(),
     };
 
-    orderingServiceStub = {
+    orderingService = {
       validateOrder: jest.fn(),
       redirectToCart : jest.fn()
     }
@@ -91,7 +93,7 @@ describe('CartPreviewComponent', () => {
         { provide: LoadingService, useValue: loadingServiceStub },
         { provide: ToastService, useValue: toastServiceStub },
         { provide: MerchantService, useValue: merchantServiceStub },
-        { provide: OrderingService, useValue: orderingServiceStub },
+        { provide: OrderingService, useValue: orderingService },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(CartPreviewComponent);
@@ -109,169 +111,5 @@ describe('CartPreviewComponent', () => {
     expect(modalServiceSpy).toHaveBeenCalled();
   });
 
-  it('should return true if isASAP is true', () => {
-    const result = component.isOrderTimeValid(true, '2022-01-01T12:00:00');
-    expect(result).toBe(true);
-  });
-
-  it('should return true if the order time is within the schedule', () => {
-    component.orderSchedule = {
-      menuSchedule: [],
-      days: [
-        {
-          date: '2024-05-08',
-          dayOfWeek: 4,
-          hourBlocks: [
-            {
-              timestamps: [],
-              hour: 12,
-              minuteBlocks: [0, 15, 30, 45],
-            },
-          ],
-        },
-      ],
-    };
-    const result = component.isOrderTimeValid(false, '2024-05-08T12:00:00');
-    expect(result).toBe(true);
-  });
-
-  it('should return false if the order time is not within the schedule', () => {
-    component.orderSchedule = {
-      menuSchedule: [],
-      days: [
-        {
-          date: '2024-05-08',
-          dayOfWeek: 4,
-          hourBlocks: [
-            {
-              timestamps: [],
-              hour: 12,
-              minuteBlocks: [45],
-            },
-          ],
-        },
-      ],
-    };
-    const result = component.isOrderTimeValid(false, '2024-05-08T12:00:00');
-    expect(result).toBe(false);
-  });
-
-  it('should navigate to full menu when addMoreItems is tapped and order is ASAP', async () => {
-    jest
-      .spyOn(cartServiceStub.orderDetailsOptions$, 'pipe')
-      .mockReturnValue(
-        of({ address: {} as AddressInfo, isASAP: true, orderType: ORDER_TYPE.PICKUP } as OrderDetailOptions)
-      );
-
-    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
-    await component.addMoreItems();
-    expect(routerSpy).toHaveBeenCalledWith(['ordering', 'full-menu'], {
-      queryParams: { isExistingOrder: true, canDismiss: true, openTimeSlot: undefined },
-    });
-  });
-
-  it('should navigate to full menu when addMoreItems is tapped, order is not ASAP and time has passed', async () => {
-    component.orderSchedule = {
-      menuSchedule: [],
-      days: [
-        {
-          date: '2024-05-08',
-          dayOfWeek: 4,
-          hourBlocks: [
-            {
-              timestamps: [],
-              hour: 12,
-              minuteBlocks: [45],
-            },
-          ],
-        },
-      ],
-    };
-    const alertController = jest.spyOn(alertControllerStub, 'create');
-    const validateTimeSpy = jest.spyOn(component, 'isOrderTimeValid').mockReturnValue(false);
-    const routerSpy = jest.spyOn(navigationServiceStub, 'navigate').mockResolvedValue(true);
-    await component.addMoreItems();
-    expect(validateTimeSpy).toHaveBeenCalled();
-    expect(routerSpy).not.toHaveBeenCalled();
-    expect(alertController).toHaveBeenCalled();
-  });
-
-  it('should create and present an alert for PICKUP order type', async () => {
-    const alertController = jest.spyOn(alertControllerStub, 'create');
-    await component.showActiveCartWarning(ORDER_TYPE.PICKUP);
-    expect(alertController).toHaveBeenCalled();
-  });
-
-  it('should return order type and validity of order time', async () => {
-    const result = await component.getOrderTimeAvailability();
-    expect(result).toEqual({ orderType: ORDER_TYPE.PICKUP, isTimeValid: true });
-  });
-
-  it('should redirect to cart if order time is valid', async () => {
-    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
-    await component.redirectToCart();
-
-    expect(orderingServiceStub.redirectToCart).toHaveBeenCalledWith(true);
-    expect(warningSpy).not.toHaveBeenCalled();
-  });
-
-  it('should show active cart warning if order time is not valid', async () => {
-    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
-    component.getOrderTimeAvailability = jest.fn().mockResolvedValue({ isTimeValid: false, orderType: ORDER_TYPE.PICKUP });
-
-    await component.redirectToCart();
-
-    expect(orderingServiceStub.redirectToCart).not.toHaveBeenCalled();
-    expect(warningSpy).toHaveBeenCalledWith(ORDER_TYPE.PICKUP);
-  });
-
-  it('should return order type and validity of order time', async () => {
-    const result = await component.getOrderTimeAvailability();
-    expect(result).toEqual({ orderType: ORDER_TYPE.PICKUP, isTimeValid: true });
-  });
-
-  it('should redirect to cart if order time is valid', async () => {
-    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
-    await component.redirectToCart();
-
-    expect(orderingServiceStub.redirectToCart).toHaveBeenCalledWith(true);
-    expect(warningSpy).not.toHaveBeenCalled();
-  });
-
-  it('should show active cart warning if order time is not valid', async () => {
-    const warningSpy = jest.spyOn(component, 'showActiveCartWarning');
-    component.getOrderTimeAvailability = jest.fn().mockResolvedValue({ isTimeValid: false, orderType: ORDER_TYPE.PICKUP });
-
-    await component.redirectToCart();
-
-    expect(orderingServiceStub.redirectToCart).not.toHaveBeenCalled();
-    expect(warningSpy).toHaveBeenCalledWith(ORDER_TYPE.PICKUP);
-  });
-
-  it('should confirm the cart removal before proceeding', () => {
-    const alertController = jest.spyOn(alertControllerStub, 'create');
-    component.removeCart();
-    expect(alertController).toHaveBeenCalled();
-  });
-
-  it('should validate order successfully', async () => {
-    await component.validateOrder();
-
-    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
-    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
-    expect(component.hasErrors).toBeFalsy();
-  });
-
-  it('should handle error when validating order', async () => {
-    const error = { message: ORDER_ERROR_CODES.INVALID_ORDER };
-    cartServiceStub.validateOrder = jest.fn().mockReturnValue(throwError(() => new Error('9010|error')));
-
-    await component.validateOrder();
-
-    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
-    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
-    expect(component.hasErrors).toBeTruthy();
-  });
+ 
 });

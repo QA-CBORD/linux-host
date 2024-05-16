@@ -327,7 +327,7 @@ describe('FullMenuComponent', () => {
     const mockData = { dueTime: new Date(), orderType: 1, address: 'Test address', isASAP: true };
     const mockOrderItems = [{ id: 1, name: 'Test item' }];
 
-    const validateOrderSpy = jest.spyOn(orderingService, 'validateOrder');
+    const validateOrderSpy = jest.spyOn(component, 'validateOrder');
 
     jest.spyOn(cartService, 'setActiveMerchantsMenuByOrderOptions').mockReturnValue(Promise.resolve(mockData));
 

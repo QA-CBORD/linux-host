@@ -4,20 +4,25 @@ import {
   LOCAL_ROUTING,
   ORDERING_CONTENT_STRINGS,
   ORDER_ERROR_CODES,
+  ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
 } from '@sections/ordering/ordering.config';
-import { Observable, lastValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { first, map, take } from 'rxjs/operators';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
-import { APP_ROUTES } from '@sections/section.config';
+import { APP_ROUTES, PATRON_ROUTES } from '@sections/section.config';
 import { ToastService } from '@core/service/toast/toast.service';
 import { CartService } from './cart.service';
 import { AlertController } from '@ionic/angular';
 import { NavigationService } from '@shared/services';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { format, parseISO } from 'date-fns';
+import { TranslateService } from '@ngx-translate/core';
+import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +35,8 @@ export class OrderingService {
     private readonly cartService: CartService,
     private readonly alertController: AlertController,
     private readonly routingService: NavigationService,
-    private readonly modalService: ModalsService
+    private readonly modalService: ModalsService,
+    private readonly translateService: TranslateService
   ) {}
 
   getContentStringByName(name: ORDERING_CONTENT_STRINGS): Observable<string> {
@@ -59,7 +65,7 @@ export class OrderingService {
     return errorMessage || defaultMessage;
   }
 
-  async redirectToCart(fromCartPreview?:boolean): Promise<void> {
+  async redirectToCart(fromCartPreview?: boolean): Promise<void> {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
@@ -85,7 +91,12 @@ export class OrderingService {
   async validateOrder(successCb, errorCB, ignoreCodes: string[] = IGNORE_ERRORS): Promise<void> {
     await this.loadingService.showSpinner();
     await lastValueFrom(
-      this.cartService.validateOrder().pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
+      this.cartService.validateOrder({
+dueTime: new Date('2024-05-15T20:35:20.734'),
+        isASAP: false,
+        orderType: ORDER_TYPE.DELIVERY,
+        address: {} as AddressInfo,
+      }).pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
     )
       .then(() => {
         this.cartService.cartsErrorMessage = null;
@@ -111,6 +122,9 @@ export class OrderingService {
 
     await alert.present();
   }
+
+ 
+  
 }
 
 export type OrderingComponentContentStrings = {

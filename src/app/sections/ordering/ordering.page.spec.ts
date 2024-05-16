@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { OrderingPage } from './ordering.page';
-import { CartService, MerchantService } from './services';
+import { CartService, MerchantService, OrderDetailOptions } from './services';
 import { OrderingService } from './services/ordering.service';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -13,13 +13,14 @@ import { ActivatedRoute } from '@angular/router';
 import { TypeMessageModule } from './shared/pipes/type-message/type-message.pipe.module';
 import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 import { MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from './components';
-import { LOCAL_ROUTING, TOAST_MESSAGES } from './ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE, TOAST_MESSAGES } from './ordering.config';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { AddressInfo } from 'net';
 
 describe('OrderingPage', () => {
   let component: OrderingPage;
@@ -37,6 +38,22 @@ describe('OrderingPage', () => {
   let mockCartService;
   let a11yService = {
     excuteSearchSpeech: jest.fn(),
+  };
+  let orderSchedule = {
+    menuSchedule: [],
+    days: [
+      {
+        date: '2024-05-08',
+        dayOfWeek: 4,
+        hourBlocks: [
+          {
+            timestamps: [],
+            hour: 12,
+            minuteBlocks: [0, 15, 30, 45],
+          },
+        ],
+      },
+    ],
   };
 
   beforeEach(() => {
@@ -93,6 +110,13 @@ describe('OrderingPage', () => {
       menuItems$: of(0),
       showActiveCartWarning: jest.fn(),
       preValidateOrderFlow: jest.fn(),
+      orderSchedule$: of({}),
+      orderDetailsOptions$: of({
+        orderType: ORDER_TYPE.PICKUP,
+        address: {} as AddressInfo,
+        dueTime: new Date(),
+        isASAP: true,
+      } as unknown as OrderDetailOptions),
     };
 
     TestBed.configureTestingModule({
@@ -183,10 +207,15 @@ describe('OrderingPage', () => {
 
     mockCartService.menuItems$ = of(0);
     mockCartService.merchant$ = of(null);
+    component.orderSchedule = orderSchedule;
 
     await component.merchantClickHandler(mockMerchantInfo);
 
-    expect(mockCartService.preValidateOrderFlow).toHaveBeenCalledWith(mockMerchantInfo.id, expect.any(Function));
+    expect(mockCartService.preValidateOrderFlow).toHaveBeenCalledWith(
+      mockMerchantInfo.id,
+      expect.any(Function),
+      orderSchedule
+    );
     const boundFunction = mockCartService.preValidateOrderFlow.mock.calls[0][1];
     boundFunction();
     expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
@@ -196,8 +225,6 @@ describe('OrderingPage', () => {
     expect(preValidateOrderFlowSpy).toHaveBeenCalled();
     expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
   });
-
- 
 
   it('should update searchString when onSearchedValue is called', () => {
     const testValue = 'test value';

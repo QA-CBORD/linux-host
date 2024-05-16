@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
@@ -6,12 +6,16 @@ import { switchMap, take, first } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
 import { CartService, MerchantService } from '../../services';
-import { OrderOptionsActionSheetComponent } from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import {
+  OrderOptionsActionSheetComponent,
+  Schedule,
+} from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService, NavigationService } from '@shared/services';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -19,10 +23,10 @@ import { LockDownService, NavigationService } from '@shared/services';
   styleUrls: ['./favorite-merchants.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FavoriteMerchantsComponent implements OnInit {
+export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
   merchantList: MerchantInfo[] = [];
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-
+  orderSchedule: Schedule;
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
@@ -35,12 +39,17 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly orderingService: OrderingService,
     private readonly lockDownService: LockDownService,
-    private readonly routingService: NavigationService
   ) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ data }) => (this.merchantList = data));
     this.initContentStrings();
+  }
+
+  async ngAfterViewInit(): Promise<void> {
+        const result = await firstValueFrom(this.cartService.orderSchedule$);
+
+    this.orderSchedule = result ? result : ({} as Schedule);
   }
 
   backToOrdering() {
@@ -57,7 +66,11 @@ export class FavoriteMerchantsComponent implements OnInit {
       return;
     }
 
-   this.cartService.preValidateOrderFlow(merchantInfo.id, this.openOrderOptions.bind(this, merchantInfo))
+    this.cartService.preValidateOrderFlow(
+      merchantInfo.id,
+      this.openOrderOptions.bind(this, merchantInfo),
+      this.orderSchedule
+    );
   }
   async favouriteHandler({ id }): Promise<void> {
     await this.loadingService.showSpinner();

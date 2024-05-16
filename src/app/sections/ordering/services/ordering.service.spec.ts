@@ -9,11 +9,12 @@ import { CartService, OrderDetailOptions } from '.';
 import { NavigationService } from '@shared/services';
 import { ToastService } from '@core/service/toast/toast.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 describe('OrderingService', () => {
   let service: OrderingService;
-
   const cartService = {
     menuItems$: of([]),
     clearActiveOrder: jest.fn(),
@@ -28,6 +29,7 @@ describe('OrderingService', () => {
     orderItems$: of([{ id: 1, name: 'Test item' }]),
     validateOrder: jest.fn(),
     cartsErrorMessage: null,
+    orderSchedule$: of({}),
   };
 
   const routingService = {
@@ -49,6 +51,14 @@ describe('OrderingService', () => {
     create: jest.fn(() => Promise.resolve(modalSpy)),
   };
 
+  const translateService = {
+    instant: jest.fn(),
+  };
+  const alertControllerStub = {
+    create: jest.fn().mockResolvedValue({ present: jest.fn(), onDidDismiss: jest.fn().mockResolvedValue(true) }),
+    dismiss: jest.fn(),
+  };
+
   beforeEach(() => {
     const contentStringsFacadeServiceStub = () => ({
       getContentString$: (patronUi, ordering, name) => ({ pipe: () => ({}) }),
@@ -65,6 +75,8 @@ describe('OrderingService', () => {
         { provide: NavigationService, useValue: routingService },
         { provide: ToastService, useValue: toastService },
         { provide: ModalController, useValue: modalControllerMock },
+        { provide: TranslateService, useValue: translateService },
+        { provide: AlertController, useValue: alertControllerStub },
       ],
     });
     service = TestBed.inject(OrderingService);

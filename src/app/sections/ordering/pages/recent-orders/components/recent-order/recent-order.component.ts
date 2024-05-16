@@ -133,7 +133,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async showActiveCartWarning(merchantInfo: MerchantInfo) {
-    this.cart.showActiveCartWarning(this.initOrderOptionsModal.bind(this, merchantInfo));
+    this.cart.showChangeMerchantWarning(this.initOrderOptionsModal.bind(this, merchantInfo));
   }
 
   resolveMenuItemsInOrder(): Observable<(boolean | OrderMenuItem[])[]> {

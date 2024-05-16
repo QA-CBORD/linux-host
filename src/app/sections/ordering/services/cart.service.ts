@@ -11,7 +11,16 @@ import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
-import { BehaviorSubject, Observable, Subject, Subscription, lastValueFrom, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  combineLatest,
+  firstValueFrom,
+  lastValueFrom,
+  of,
+} from 'rxjs';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   ItemsOrderInfo,
@@ -25,8 +34,10 @@ import {
 import { MerchantService } from './merchant.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
-import { APP_ROUTES } from '@sections/section.config';
+import { APP_ROUTES, PATRON_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/index';
+import { format, parseISO } from 'date-fns';
+import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Injectable({
   providedIn: 'root',
@@ -170,6 +181,16 @@ export class CartService {
   set orderOption(orderOptions: OrderDetailOptions) {
     this.cart.orderDetailsOptions = { ...orderOptions };
     this.onStateChanged();
+  }
+  get orderSchedule$() {
+    return combineLatest([this.orderDetailsOptions$, this.merchant$]).pipe(
+      switchMap(([orderDetailsOptions, merchant]) =>
+        orderDetailsOptions && merchant
+          ? this.merchantService.getMerchantOrderSchedule(merchant.id, orderDetailsOptions.orderType, merchant.timeZone)
+          : of(null)
+      ),
+      take(1)
+    );
   }
 
   extractTimeZonedString(dateStr: string, timeZone: string, fullDate = true): string {
@@ -535,14 +556,6 @@ export class CartService {
     return code.toUpperCase().replace(/\b0+/g, '');
   }
 
-  async openCartpreview() {
-    const modal = await this.modalService.createActionSheet({
-      component: CartPreviewComponent,
-      cssClass: 'cart-preview-action-sheet',
-    });
-
-    await modal.present();
-  }
 
   clearState() {
     this.clearCart();
@@ -550,55 +563,9 @@ export class CartService {
     this.cartSubscription.unsubscribe();
   }
 
-  async showActiveCartWarning(openOrderOptions: () => void) {
-    const alert = await this.alertController.create({
-      cssClass: 'active_cart',
-      header: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_title'),
-      message: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_msg'),
-      buttons: [
-        {
-          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_cancel'),
-          role: 'cancel',
-          cssClass: 'button__option_cancel',
-          handler: () => {
-            alert.dismiss();
-          },
-        },
-        {
-          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_proceed'),
-          role: 'confirm',
-          cssClass: 'button__option_confirm',
-          handler: async () => {
-            this.clearActiveOrder();
-            openOrderOptions();
-          },
-        },
-      ],
-    });
-
-    await alert.present();
-    return alert.onDidDismiss();
-  }
-
-  async preValidateOrderFlow(merchantId: string, onContinue: () => void) {
-    const hasItemsInCart = (await lastValueFrom(this.menuItems$.pipe(first()))) > 0;
-    const merchant = await lastValueFrom(this.merchant$.pipe(first()));
-    const merchantHasChanged = merchant && merchant.id !== merchantId;
-
-    if (hasItemsInCart && merchantHasChanged) {
-      this.showActiveCartWarning(onContinue);
-      return;
-    }
-
-    if (hasItemsInCart && !merchantHasChanged) {
-      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-        queryParams: { isExistingOrder: true },
-      });
-      return;
-    }
-    onContinue();
-  }
+  
 }
+
 
 export interface CartState {
   order: Partial<OrderInfo>;

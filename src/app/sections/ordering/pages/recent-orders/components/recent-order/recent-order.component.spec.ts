@@ -8,7 +8,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { AlertController, IonicModule, PopoverController } from '@ionic/angular';
 import { CheckingServiceFacade } from '@sections/check-in/services/check-in-facade.service';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
-import { CartService, MerchantService } from '@sections/ordering/services';
+import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering/services';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { LockDownService } from '@shared/services';
 import { RecentOrderComponent } from './recent-order.component';
@@ -25,6 +25,7 @@ import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/orde
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MenuItemInfo, OrderItem } from '@sections/ordering/components';
+import { AddressInfo } from 'net';
 
 const menuMerchants = [
   {
@@ -1076,6 +1077,13 @@ describe(RecentOrderComponent, () => {
       merchant$: of({}),
       menuItems$: of(0),
       showActiveCartWarning: jest.fn(),
+      orderSchedule$: of({}),
+      orderDetailsOptions$: of({
+        orderType: ORDER_TYPE.PICKUP,
+        address: {} as AddressInfo,
+        dueTime: new Date(),
+        isASAP: true,
+      } as unknown as OrderDetailOptions),
     };
     loadingService = {
       showLoading: jest.fn(),

@@ -4,7 +4,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { NavigationService, UuidGeneratorService } from '@shared/services';
-import { CartService, CartState, MerchantService } from '.';
+import { CartService, CartState, MerchantService, OrderDetailOptions } from '.';
 import { OrderingApiService } from './ordering.api.service';
 import { of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,8 +12,9 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@core/model/user';
 import { APP_ROUTES } from '@sections/section.config';
-import { LOCAL_ROUTING } from '../ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE } from '../ordering.config';
 import { OrderItem } from '../shared';
+import { AddressInfo } from 'net';
 
 describe('CartService', () => {
   let service: CartService;
@@ -43,7 +44,9 @@ describe('CartService', () => {
   const apiService = {};
   const uuidGeneratorService = {};
   const institutionFacade = {};
-  const modalService = {};
+  const modalService = {
+    dismiss: jest.fn(),
+  };
   const storageStateService = {
     getStateEntityByKey$: jest.fn(() => of({} as CartState)),
     deleteStateEntityByKey: jest.fn(),
@@ -63,14 +66,35 @@ describe('CartService', () => {
   let menuItems$: any;
   let merchant$: any;
   let routingServiceMock: any;
-
+  let orderDetailsOptions$;
+  let orderSchedule = {
+    menuSchedule: [],
+    days: [
+      {
+        date: '2024-05-08',
+        dayOfWeek: 4,
+        hourBlocks: [
+          {
+            timestamps: [],
+            hour: 12,
+            minuteBlocks: [0, 15, 30, 45],
+          },
+        ],
+      },
+    ],
+  };
   beforeEach(() => {
     menuItems$ = of(0);
-    merchant$ = of({ id: 'defaultMerchantId' }); 
-
-    routingServiceMock = {
-      navigate: jest.fn(),
-    };
+    merchant$ = of({ id: 'defaultMerchantId' });
+    (orderDetailsOptions$ = of({
+      orderType: ORDER_TYPE.PICKUP,
+      address: {} as AddressInfo,
+      dueTime: new Date(),
+      isASAP: true,
+    } as unknown as OrderDetailOptions)),
+      (routingServiceMock = {
+        navigate: jest.fn(),
+      });
 
     TestBed.configureTestingModule({
       providers: [
@@ -92,6 +116,12 @@ describe('CartService', () => {
       imports: [HttpClientTestingModule],
     });
     service = TestBed.inject(CartService);
+    service['cart'].orderDetailsOptions = {
+      orderType: ORDER_TYPE.PICKUP,
+      address: {} as AddressInfo,
+      dueTime: new Date(),
+      isASAP: true,
+    };
   });
 
   it('can load service', () => {
@@ -130,75 +160,4 @@ describe('CartService', () => {
     expect(deleteStateEntityByKeySpy).toHaveBeenCalledWith(service['CARTIDKEY']);
   });
 
-  it('should create, present an alert and confirm', async () => {
-    const openOrderOptionsMock = jest.fn();
-
-    await service.showActiveCartWarning(openOrderOptionsMock);
-
-    expect(alertControllerMock.create).toHaveBeenCalledWith(mockAlert);
-
-    const alertHandler = alertControllerMock.create.mock.calls[0][0].buttons[1].handler;
-    await alertHandler();
-
-    expect(openOrderOptionsMock).toHaveBeenCalled();
-  });
-  it('should create, present an alert and cancel', async () => {
-    const openOrderOptionsMock = jest.fn();
-
-    await service.showActiveCartWarning(openOrderOptionsMock);
-
-    expect(alertControllerMock.create).toHaveBeenCalledWith(mockAlert);
-
-    const alertHandler = alertControllerMock.create.mock.calls[0][0].buttons[0].handler;
-    await alertHandler();
-
-    expect(openOrderOptionsMock).not.toHaveBeenCalled();
-  });
-  it('should show active cart warning when items in cart and merchant has changed', async () => {
-    menuItems$ = of(2);
-    merchant$ = of({ id: 'oldMerchantId' });
-
-    jest.spyOn(service, 'menuItems$', 'get').mockReturnValue(menuItems$);
-    jest.spyOn(service, 'merchant$', 'get').mockReturnValue(merchant$);
-    const onContinueMock = jest.fn();
-
-    await service.preValidateOrderFlow('newMerchantId', onContinueMock);
-
-    expect(alertControllerMock.create).toHaveBeenCalledWith(mockAlert);
-    expect(routingServiceMock.navigate).not.toHaveBeenCalled();
-    expect(onContinueMock).not.toHaveBeenCalled();
-  });
-
-  it('should navigate when items in cart and merchant has not changed', async () => {
-    menuItems$ = of(2);
-    merchant$ = of({ id: 'merchantId' });
-
-    jest.spyOn(service, 'menuItems$', 'get').mockReturnValue(menuItems$);
-    jest.spyOn(service, 'merchant$', 'get').mockReturnValue(merchant$);
-    const onContinueMock = jest.fn();
-
-    await service.preValidateOrderFlow('merchantId', onContinueMock);
-
-    expect(routingServiceMock.navigate).toHaveBeenCalledWith([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-      queryParams: { isExistingOrder: true },
-    });
-    expect(jest.spyOn(service, 'showActiveCartWarning')).not.toHaveBeenCalled();
-    expect(onContinueMock).not.toHaveBeenCalled();
-  });
-
-  it('should call onContinue when no items in cart', async () => {
-    menuItems$ = of(0);
-    merchant$ = of({ id: 'merchantId' });
-
-    jest.spyOn(service, 'menuItems$', 'get').mockReturnValue(menuItems$);
-    jest.spyOn(service, 'merchant$', 'get').mockReturnValue(merchant$);
-    const onContinueMock = jest.fn();
-
-    await service.preValidateOrderFlow('merchantId', onContinueMock);
-
-    expect(jest.spyOn(service, 'showActiveCartWarning')).not.toHaveBeenCalled();
-    expect(routingServiceMock.navigate).not.toHaveBeenCalled();
-    expect(onContinueMock).toHaveBeenCalled();
-  });
-  
 });

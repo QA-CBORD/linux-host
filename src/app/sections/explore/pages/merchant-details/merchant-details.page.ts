@@ -9,9 +9,11 @@ import { ExploreService } from '@sections/explore/services/explore.service';
 import { CartService, MerchantInfo } from '@sections/ordering';
 import { OrderingResolver } from '@sections/ordering/resolvers';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
+import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LockDownService, NavigationService } from '@shared/index';
 import { Observable, firstValueFrom } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { first, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',
@@ -27,10 +29,10 @@ export class MerchantDetailsPage implements OnInit {
   guestOrderEnabled = true;
   filledStarPath = '/assets/icon/star-filled.svg';
   blankStarPath = '/assets/icon/star-outline.svg';
+  orderSchedule: Schedule;
   private readonly orderActionSheetService = inject(OrderActionSheetService);
   private readonly orderingResolverService = inject(OrderingResolver);
   private readonly cartService = inject(CartService);
-  private readonly routingService = inject(NavigationService);
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -47,6 +49,11 @@ export class MerchantDetailsPage implements OnInit {
   ngOnInit() {
     this.merchant$ = this.retrieveSeletectedMerchant(this.activatedRoute.snapshot.params.id);
     this.loadStringsAndSettings();
+  }
+  async ngAfterViewInit(): Promise<void> {
+        const result = await firstValueFrom(this.cartService.orderSchedule$);
+
+    this.orderSchedule = result ? result : ({} as Schedule);
   }
 
   async loadStringsAndSettings() {
@@ -78,7 +85,7 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
-    this.cartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId));
+    this.cartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId), this.orderSchedule);
   }
 
   async openOrderOptions(merchantId: string) {

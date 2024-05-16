@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
-import { CartService } from '../../services';
+import { CartService, OrderDetailOptions } from '../../services';
 import { MerchantService } from '../../services';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -16,6 +16,8 @@ import { Storage } from '@ionic/storage-angular';
 import { AlertController, AngularDelegate, ModalController, PopoverController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { LockDownService, NavigationService } from '@shared/index';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { AddressInfo } from 'net';
 
 describe('FavoriteMerchantsComponent', () => {
   let component: FavoriteMerchantsComponent;
@@ -26,6 +28,13 @@ describe('FavoriteMerchantsComponent', () => {
     menuItems$: of(0),
     showActiveCartWarning: jest.fn(),
     preValidateOrderFlow: jest.fn(),
+    orderSchedule$: of({}),
+    orderDetailsOptions$: of({
+      orderType: ORDER_TYPE.PICKUP,
+      address: {} as AddressInfo,
+      dueTime: new Date(),
+      isASAP: true,
+    } as unknown as OrderDetailOptions),
   };
   const lockDownService = {
     isLockDownOn: jest.fn(),

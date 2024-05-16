@@ -9,10 +9,13 @@ import {
   MerchantOrderTypesInfo,
   MerchantService,
   MerchantSettingInfo,
+  OrderDetailOptions,
 } from '@sections/ordering';
 import { LockDownService, NavigationService } from '@shared/services';
 import { of } from 'rxjs';
 import { OrderTileComponent } from './order-tile.component';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { AddressInfo } from 'net';
 
 const environmentFacadeService = {
   getImageURL: jest.fn(),
@@ -36,6 +39,13 @@ const mockCartService = {
   menuItems$: of(0),
   showActiveCartWarning: jest.fn(),
   preValidateOrderFlow: jest.fn(),
+  orderSchedule$:of({}),
+  orderDetailsOptions$: of({
+    orderType: ORDER_TYPE.PICKUP,
+    address: {} as AddressInfo,
+    dueTime: new Date(),
+    isASAP: true,
+  } as unknown as OrderDetailOptions),
 };
 
 describe('OrderTileComponent', () => {

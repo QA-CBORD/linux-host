@@ -1,15 +1,17 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { LockDownService, NavigationService } from '@shared/index';
-import { Observable, iif } from 'rxjs';
+import { Observable, firstValueFrom, iif } from 'rxjs';
 import { finalize, first, switchMap, tap } from 'rxjs/operators';
-import {  ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
+import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { CartService, MerchantService } from './services';
 import { MerchantInfo } from './shared/models';
+import { Schedule } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { OrderingService } from './services/ordering.service';
 
 @Component({
   selector: 'st-ordering.page',
@@ -17,10 +19,12 @@ import { MerchantInfo } from './shared/models';
   styleUrls: ['./ordering.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderingPage implements OnInit {
+export class OrderingPage implements OnInit, AfterViewInit {
   merchantList$: Observable<MerchantInfo[]>;
   searchString = '';
+  orderSchedule: Schedule;
   private readonly orderActionSheetService = inject(OrderActionSheetService);
+  private readonly orderingService = inject(OrderingService);
   private readonly translateService = inject(TranslateService);
   constructor(
     private readonly merchantService: MerchantService,
@@ -28,13 +32,17 @@ export class OrderingPage implements OnInit {
     private readonly toastService: ToastService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly lockDownService: LockDownService,
-    private readonly cartService: CartService,
-    private readonly routingService: NavigationService
+    private readonly cartService: CartService
   ) {}
 
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
     this.initContentStrings();
+  }
+
+  async ngAfterViewInit(): Promise<void> {
+    const result = await firstValueFrom(this.cartService.orderSchedule$);
+    this.orderSchedule = result ? result : ({} as Schedule);
   }
 
   async ionViewDidEnter() {
@@ -51,8 +59,11 @@ export class OrderingPage implements OnInit {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
-    await this.cartService.preValidateOrderFlow(merchantInfo.id, this.openOrderOptions.bind(this, merchantInfo));
-
+    await this.cartService.preValidateOrderFlow(
+      merchantInfo.id,
+      this.openOrderOptions.bind(this, merchantInfo),
+      this.orderSchedule
+    );
   }
 
   async favouriteHandler({ isFavorite, id }): Promise<void> {
