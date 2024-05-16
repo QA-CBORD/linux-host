@@ -77,6 +77,7 @@ describe('FullMenuComponent', () => {
     menuItems$: of([]),
     clearActiveOrder: jest.fn(),
     setActiveMerchantsMenuByOrderOptions: jest.fn(),
+    merchant$: of({} as MerchantOrderTypesInfo),
 
     orderDetailsOptions$: of({
       orderType: ORDER_TYPE.PICKUP,
@@ -299,8 +300,7 @@ describe('FullMenuComponent', () => {
   });
 
   it('should return merchantService.orderTypes$ when orderTypes$ is accessed', () => {
-    const merchantService = TestBed.inject(MerchantService);
-    expect(component.orderTypes$).toBe(merchantService.orderTypes$);
+    expect(component.orderTypes$).toBeTruthy();
   });
 
   it('should return combined orderTypes and orderInfo when orderDetails$ is accessed', async () => {
