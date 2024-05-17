@@ -88,7 +88,7 @@
         {{ contentStrings.labelDiscount | async
         }}<span class="total__item-sum">{{ discount | priceUnitsResolver : mealBased }}</span>
       </div>
-      <div *ngIf="!mealBased && isTipEnabled && !isExistingOrder" class="total__item">
+      <div *ngIf="tip && !mealBased && isTipEnabled && !isExistingOrder" class="total__item">
         {{ contentStrings.labelTip | async
         }}<span class="total__item-sum">{{ tip | priceUnitsResolver : mealBased }}</span>
       </div>
