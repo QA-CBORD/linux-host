@@ -39,7 +39,7 @@ describe('CartPreviewComponent', () => {
       cartsErrorMessage: null,
       isExistingOrder: false,
       orderSchedule$: of({} as Schedule),
-      validateOrder: () => new BehaviorSubject(null),
+      validateOrder: jest.fn(),
       orderDetailsOptions$: of({
         address: {} as AddressInfo,
         isASAP: true,
@@ -49,7 +49,7 @@ describe('CartPreviewComponent', () => {
 
     loadingServiceStub = {
       closeSpinner: jest.fn(),
-      showSpinner: jest.fn()
+      showSpinner: jest.fn(),
     };
 
     modalsServiceMock = {
@@ -71,8 +71,8 @@ describe('CartPreviewComponent', () => {
 
     orderingService = {
       validateOrder: jest.fn(),
-      redirectToCart : jest.fn()
-    }
+      redirectToCart: jest.fn(),
+    };
 
     TestBed.configureTestingModule({
       declarations: [PriceUnitsResolverPipe],
@@ -110,6 +110,30 @@ describe('CartPreviewComponent', () => {
     component.onClose();
     expect(modalServiceSpy).toHaveBeenCalled();
   });
+  it('should confirm the cart removal before proceeding', () => {
+    const alertController = jest.spyOn(alertControllerStub, 'create');
+    component.removeCart();
+    expect(alertController).toHaveBeenCalled();
+  });
 
- 
+  it('should validate order successfully', async () => {
+    await component.validateOrder();
+
+    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
+    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
+    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
+    expect(component.hasErrors).toBeFalsy();
+  });
+
+  it('should handle error when validating order', async () => {
+    const error = { message: ORDER_ERROR_CODES.INVALID_ORDER };
+    cartServiceStub.validateOrder = jest.fn().mockReturnValue(throwError(() => new Error('9010|error')));
+
+    await component.validateOrder();
+
+    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
+    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
+    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
+    expect(component.hasErrors).toBeTruthy();
+  });
 });

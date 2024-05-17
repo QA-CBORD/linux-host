@@ -18,6 +18,7 @@ import { of } from 'rxjs';
 import { LockDownService, NavigationService } from '@shared/index';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from 'net';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 describe('FavoriteMerchantsComponent', () => {
   let component: FavoriteMerchantsComponent;
@@ -27,7 +28,6 @@ describe('FavoriteMerchantsComponent', () => {
     merchant$: of({}),
     menuItems$: of(0),
     showActiveCartWarning: jest.fn(),
-    preValidateOrderFlow: jest.fn(),
     orderSchedule$: of({}),
     orderDetailsOptions$: of({
       orderType: ORDER_TYPE.PICKUP,
@@ -36,6 +36,10 @@ describe('FavoriteMerchantsComponent', () => {
       isASAP: true,
     } as unknown as OrderDetailOptions),
   };
+  const mockActiveCartService = {
+    preValidateOrderFlow: jest.fn(),
+
+  }
   const lockDownService = {
     isLockDownOn: jest.fn(),
     loadStringsAndSettings: jest.fn(),
@@ -92,6 +96,7 @@ describe('FavoriteMerchantsComponent', () => {
         { provide: ToastService, useValue: toastService },
         { provide: CartService, useValue: mockCartService },
         { provide: NavigationService, useValue: routingService },
+        { provide: ActiveCartService, useValue: mockActiveCartService },
         ModalController,
         Storage,
         AngularDelegate,

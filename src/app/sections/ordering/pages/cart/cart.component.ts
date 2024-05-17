@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -62,6 +62,7 @@ import { ASAP_LABEL, EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/ge
 import { Location } from '@angular/common';
 import { DateTimeSelected } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.component';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -102,6 +103,8 @@ export class CartComponent implements OnInit, OnDestroy {
   @ViewChild('content') private page: IonContent;
   platformBackButtonClickSubscription: Subscription;
   isValidatingDueTime = false;
+
+  private readonly activeCartService = inject(ActiveCartService)
 
   constructor(
     private readonly cartService: CartService,
@@ -169,7 +172,7 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
   async openCartpreview() {
-    this.cartService.openCartpreview();
+    this.activeCartService.openCartpreview();
   }
 
   ngOnInit(): void {

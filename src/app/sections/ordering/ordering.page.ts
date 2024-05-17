@@ -12,6 +12,7 @@ import { CartService, MerchantService } from './services';
 import { MerchantInfo } from './shared/models';
 import { Schedule } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { OrderingService } from './services/ordering.service';
+import { ActiveCartService } from './services/active-cart.service';
 
 @Component({
   selector: 'st-ordering.page',
@@ -24,8 +25,9 @@ export class OrderingPage implements OnInit, AfterViewInit {
   searchString = '';
   orderSchedule: Schedule;
   private readonly orderActionSheetService = inject(OrderActionSheetService);
-  private readonly orderingService = inject(OrderingService);
   private readonly translateService = inject(TranslateService);
+  private readonly activeCartService = inject(ActiveCartService);
+
   constructor(
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
@@ -59,7 +61,7 @@ export class OrderingPage implements OnInit, AfterViewInit {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
-    await this.cartService.preValidateOrderFlow(
+    await this.activeCartService.preValidateOrderFlow(
       merchantInfo.id,
       this.openOrderOptions.bind(this, merchantInfo),
       this.orderSchedule

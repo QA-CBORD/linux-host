@@ -6,7 +6,7 @@ import { AlertController, IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LOCAL_ROUTING, ORDER_ERROR_CODES, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { CartService, MerchantService } from '@sections/ordering/services';
-import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { ActiveCartParams, ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { OrderItemDetailsModule } from '@sections/ordering/shared/ui-components/order-item-details/order-item-details.module';
@@ -15,7 +15,7 @@ import { PATRON_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/services';
 import { StButtonModule, StHeaderModule } from '@shared/ui-components';
 import { format, parseISO } from 'date-fns';
-import { combineLatest, first, firstValueFrom, of, switchMap, take } from 'rxjs';
+import { combineLatest, firstValueFrom, of, switchMap, take } from 'rxjs';
 @Component({
   standalone: true,
   providers: [PriceUnitsResolverPipe],
@@ -35,16 +35,17 @@ import { combineLatest, first, firstValueFrom, of, switchMap, take } from 'rxjs'
 export class CartPreviewComponent implements AfterViewInit {
   private readonly modalService = inject(ModalsService);
   private readonly cartService = inject(CartService);
-  private readonly orderingService = inject(OrderingService);
   private readonly router = inject(NavigationService);
   private readonly alertController = inject(AlertController);
   private readonly translateService = inject(TranslateService);
   private readonly merchantService = inject(MerchantService);
   private readonly loadingService = inject(LoadingService);
+  private readonly activeCartService = inject(ActiveCartService);
 
   isCartPreview: boolean = true;
   orderSchedule: Schedule;
   hasErrors: boolean = null;
+  private activeCartParams: ActiveCartParams;
 
   async ngAfterViewInit(): Promise<void> {
     const result = await firstValueFrom(
@@ -62,6 +63,11 @@ export class CartPreviewComponent implements AfterViewInit {
       )
     );
     this.orderSchedule = result ? result : ({} as Schedule);
+    this.activeCartParams = {
+      orderSchedule: this.orderSchedule,
+      hasErrors: this.hasErrors,
+      isCartPreview: this.isCartPreview,
+    };
     this.validateOrder();
   }
 
@@ -103,18 +109,11 @@ export class CartPreviewComponent implements AfterViewInit {
   }
 
   async redirectToCart() {
-    const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
-
-    if (isTimeValid && !this.hasErrors) {
-      this.orderingService.redirectToCart(this.isCartPreview);
-      return;
-    }
-
-    this.showActiveCartWarning(orderType);
+    this.activeCartService.redirectToCart(this.activeCartParams);
   }
 
   async addMoreItems() {
-   this.cartService.addMoreItems(this.orderSchedule, this.hasErrors)
+    this.activeCartService.addMoreItems(this.activeCartParams);
   }
 
   async navigateToFullMenu(openTimeSlot?: boolean, canDismiss: boolean = true) {

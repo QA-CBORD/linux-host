@@ -1,22 +1,34 @@
 import { Injectable, inject } from '@angular/core';
-import { Schedule } from '@capacitor/local-notifications';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { format, parseISO } from 'date-fns';
 import { lastValueFrom, first, firstValueFrom } from 'rxjs';
 import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
 import { ORDER_TYPE, LOCAL_ROUTING } from '../ordering.config';
 import { AlertController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { OrderingService } from './ordering.service';
+import { CartService } from '.';
+import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { NavigationService } from '@shared/index';
+import { ModalsService } from '@core/service/modals/modals.service';
 
+export type ActiveCartParams = {
+  orderSchedule: Schedule;
+  hasErrors?: boolean;
+  isCartPreview?: boolean;
+};
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ActiveCartService {
-
   private readonly alertController = inject(AlertController);
-  //declare all services needed on this file
-  
+  private readonly translateService = inject(TranslateService);
+  private readonly orderingService = inject(OrderingService);
+  private readonly cartService = inject(CartService);
+  private readonly routingService = inject(NavigationService);
+  private readonly modalService = inject(ModalsService);
 
-  constructor() { }
+  constructor() {}
 
   async showChangeMerchantWarning(openOrderOptions: () => void) {
     const alert = await this.alertController.create({
@@ -37,7 +49,7 @@ export class ActiveCartService {
           role: 'confirm',
           cssClass: 'button__option_confirm',
           handler: async () => {
-            this.clearActiveOrder();
+            this.cartService.clearActiveOrder();
             openOrderOptions();
           },
         },
@@ -49,8 +61,8 @@ export class ActiveCartService {
   }
 
   async preValidateOrderFlow(merchantId: string, onContinue: () => void, orderSchedule: Schedule) {
-    const hasItemsInCart = (await lastValueFrom(this.menuItems$.pipe(first()))) > 0;
-    const merchant = await lastValueFrom(this.merchant$.pipe(first()));
+    const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
     const merchantHasChanged = merchant && merchant.id !== merchantId;
 
     if (hasItemsInCart && merchantHasChanged) {
@@ -59,7 +71,7 @@ export class ActiveCartService {
     }
 
     if (hasItemsInCart && !merchantHasChanged) {
-      this.addMoreItems(orderSchedule);
+      this.addMoreItems({ orderSchedule });
       return;
     }
     onContinue();
@@ -93,12 +105,11 @@ export class ActiveCartService {
   }
 
   async getOrderTimeAvailability(orderSchedule: Schedule): Promise<{ orderType: ORDER_TYPE; isTimeValid: boolean }> {
-    const { dueTime, orderType, isASAP } = await firstValueFrom(this.orderDetailsOptions$);
-    const isTimeValid = this.isOrderTimeValid(isASAP, String(dueTime),orderSchedule);
+    const { dueTime, orderType, isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
+    const isTimeValid = this.isOrderTimeValid(isASAP, String(dueTime), orderSchedule);
 
     return { orderType, isTimeValid };
   }
-
 
   isOrderTimeValid(isASAP: boolean, time: string, orderSchedule: Schedule) {
     if (isASAP) return true;
@@ -115,7 +126,7 @@ export class ActiveCartService {
     );
   }
 
-  async addMoreItems(orderSchedule:Schedule, hasErrors?:boolean) {
+  async addMoreItems({ orderSchedule, hasErrors }: ActiveCartParams) {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
 
     if (isTimeValid && !hasErrors) {
@@ -140,15 +151,15 @@ export class ActiveCartService {
     }
   }
 
-  async redirectToCart() {
-    const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
+  async redirectToCart({ orderSchedule, hasErrors, isCartPreview }: ActiveCartParams) {
+    const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
 
-    if (isTimeValid && !this.hasErrors) {
-      this.orderingService.redirectToCart(this.isCartPreview);
+    if (isTimeValid && !hasErrors) {
+      this.orderingService.redirectToCart(isCartPreview);
       return;
     }
 
-    this.showActiveCartWarning(orderType);
+    this.showTimePastWarning(orderType);
   }
 
   async openCartpreview() {

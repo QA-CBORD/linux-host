@@ -8,6 +8,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { TranslateModule } from '@ngx-translate/core';
 import { LockDownService } from '@shared/services';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 describe('ShoppingCartBtnComponent', () => {
   let component: ShoppingCartBtnComponent;
@@ -15,6 +16,8 @@ describe('ShoppingCartBtnComponent', () => {
 
   const carService = {
     menuItems$: of(1),
+  };
+  const mockActiveCartService = {
     openCartpreview: jest.fn(),
   };
   const loadingService = {
@@ -36,6 +39,7 @@ describe('ShoppingCartBtnComponent', () => {
         { provide: LoadingService, useValue: loadingService },
         { provide: LockDownService, useValue: lockDownService },
         { provide: ContentStringsFacadeService, useValue: contentStringsFacadeService },
+        { provide: ActiveCartService, useValue: mockActiveCartService },
       ],
     }).compileComponents();
   });
@@ -63,14 +67,14 @@ describe('ShoppingCartBtnComponent', () => {
         .mockImplementation(() => Promise.resolve());
       await component.openCart();
       expect(initContentStringsSpy).toHaveBeenCalled();
-      expect(carService.openCartpreview).toHaveBeenCalled();
+      expect(mockActiveCartService.openCartpreview).toHaveBeenCalled();
     });
 
     it('should not openCartpreview on lockdown', async () => {
-      carService.openCartpreview.mockReset();
+      mockActiveCartService.openCartpreview.mockReset();
       lockDownService.isLockDownOn.mockReturnValueOnce(true);
       await component.openCart();
-      expect(carService.openCartpreview).not.toHaveBeenCalled();
+      expect(mockActiveCartService.openCartpreview).not.toHaveBeenCalled();
     });
   });
 

@@ -8,12 +8,12 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { CartService, MerchantInfo } from '@sections/ordering';
 import { OrderingResolver } from '@sections/ordering/resolvers';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { LockDownService, NavigationService } from '@shared/index';
+import { LockDownService } from '@shared/index';
 import { Observable, firstValueFrom } from 'rxjs';
-import { first, take, tap } from 'rxjs/operators';
+import {  take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',
@@ -33,6 +33,7 @@ export class MerchantDetailsPage implements OnInit {
   private readonly orderActionSheetService = inject(OrderActionSheetService);
   private readonly orderingResolverService = inject(OrderingResolver);
   private readonly cartService = inject(CartService);
+  private readonly activeCartService = inject(ActiveCartService);
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -85,7 +86,7 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
-    this.cartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId), this.orderSchedule);
+    this.activeCartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId), this.orderSchedule);
   }
 
   async openOrderOptions(merchantId: string) {

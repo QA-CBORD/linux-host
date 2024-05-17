@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
@@ -16,6 +16,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService, NavigationService } from '@shared/services';
 import { firstValueFrom } from 'rxjs';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -27,6 +28,7 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
   merchantList: MerchantInfo[] = [];
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   orderSchedule: Schedule;
+  private readonly activeCartService = inject(ActiveCartService)
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
@@ -66,7 +68,7 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.cartService.preValidateOrderFlow(
+    this.activeCartService.preValidateOrderFlow(
       merchantInfo.id,
       this.openOrderOptions.bind(this, merchantInfo),
       this.orderSchedule

@@ -21,6 +21,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { firstValueFrom } from 'rxjs';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 SwiperCore.use([IonicSlides]);
 
 @Component({
@@ -41,6 +42,7 @@ export class OrderTileComponent implements OnInit, AfterViewInit {
   orderSchedule: Schedule;
 
   private readonly cartService: CartService = inject(CartService);
+  private readonly activeCartSerive = inject(ActiveCartService);
 
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -90,7 +92,7 @@ export class OrderTileComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.cartService.preValidateOrderFlow(
+    this.activeCartSerive.preValidateOrderFlow(
       merchantInfo.id,
       this.navigateToOrdering.bind(this, merchantInfo),
       this.orderSchedule

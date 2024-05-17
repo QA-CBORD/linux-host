@@ -35,6 +35,7 @@ import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/o
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 interface OrderMenuItem {
   menuItemId: string;
@@ -57,7 +58,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
   private openActionSheetSubscription: Subscription;
-  private routingService = inject(NavigationService);
+  private readonly activeCartService = inject(ActiveCartService)
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -133,7 +134,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   async showActiveCartWarning(merchantInfo: MerchantInfo) {
-    this.cart.showChangeMerchantWarning(this.initOrderOptionsModal.bind(this, merchantInfo));
+    this.activeCartService.showChangeMerchantWarning(this.initOrderOptionsModal.bind(this, merchantInfo));
   }
 
   resolveMenuItemsInOrder(): Observable<(boolean | OrderMenuItem[])[]> {

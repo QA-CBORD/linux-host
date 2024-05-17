@@ -16,6 +16,7 @@ import { of } from 'rxjs';
 import { OrderTileComponent } from './order-tile.component';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from 'net';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 const environmentFacadeService = {
   getImageURL: jest.fn(),
@@ -33,13 +34,15 @@ const lockDownService = {
   isLockDownOn: jest.fn(),
 };
 const routingService = { navigate: jest.fn() };
+const mockActiveCartService = {
+  preValidateOrderFlow: jest.fn(),
+};
 
 const mockCartService = {
   merchant$: of({}),
   menuItems$: of(0),
   showActiveCartWarning: jest.fn(),
-  preValidateOrderFlow: jest.fn(),
-  orderSchedule$:of({}),
+  orderSchedule$: of({}),
   orderDetailsOptions$: of({
     orderType: ORDER_TYPE.PICKUP,
     address: {} as AddressInfo,
@@ -65,6 +68,7 @@ describe('OrderTileComponent', () => {
         { provide: LockDownService, useValue: lockDownService },
         { provide: NavigationService, useValue: routingService },
         { provide: CartService, useValue: mockCartService },
+        { provide: ActiveCartService, useValue: mockActiveCartService },
       ],
     }).compileComponents();
   });

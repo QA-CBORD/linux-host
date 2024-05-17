@@ -91,12 +91,14 @@ export class OrderingService {
   async validateOrder(successCb, errorCB, ignoreCodes: string[] = IGNORE_ERRORS): Promise<void> {
     await this.loadingService.showSpinner();
     await lastValueFrom(
-      this.cartService.validateOrder({
-dueTime: new Date('2024-05-15T20:35:20.734'),
-        isASAP: false,
-        orderType: ORDER_TYPE.DELIVERY,
-        address: {} as AddressInfo,
-      }).pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
+      this.cartService
+        .validateOrder({
+          dueTime: new Date('2024-05-15T20:35:20.734'),
+          isASAP: false,
+          orderType: ORDER_TYPE.DELIVERY,
+          address: {} as AddressInfo,
+        })
+        .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
     )
       .then(() => {
         this.cartService.cartsErrorMessage = null;
@@ -122,9 +124,6 @@ dueTime: new Date('2024-05-15T20:35:20.734'),
 
     await alert.present();
   }
-
- 
-  
 }
 
 export type OrderingComponentContentStrings = {

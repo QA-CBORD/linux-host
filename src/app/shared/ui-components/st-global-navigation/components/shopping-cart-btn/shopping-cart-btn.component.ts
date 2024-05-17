@@ -5,6 +5,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CartService } from '@sections/ordering';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { LockDownService } from '@shared/services';
 import { Observable, lastValueFrom } from 'rxjs';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
@@ -21,6 +22,7 @@ export class ShoppingCartBtnComponent {
   private readonly loadingService: LoadingService = inject(LoadingService);
   private readonly contentStringsFacadeService: ContentStringsFacadeService = inject(ContentStringsFacadeService);
   private readonly lockDownService = inject(LockDownService);
+  private readonly activeCartService = inject(ActiveCartService);
   constructor(private readonly cartService: CartService) {}
 
   get itemsCount(): Observable<number> {
@@ -32,7 +34,7 @@ export class ShoppingCartBtnComponent {
     if (this.lockDownService.isLockDownOn()) {
       return;
     }
-    this.cartService.openCartpreview();
+    this.activeCartService.openCartpreview();
   }
   async initContentStrings() {
     this.loadingService.showSpinner();

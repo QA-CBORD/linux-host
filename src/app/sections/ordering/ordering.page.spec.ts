@@ -21,6 +21,7 @@ import { TranslateServiceStub } from '@sections/notifications/notifications.comp
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 import { APP_ROUTES } from '@sections/section.config';
 import { AddressInfo } from 'net';
+import { ActiveCartService } from './services/active-cart.service';
 
 describe('OrderingPage', () => {
   let component: OrderingPage;
@@ -36,6 +37,7 @@ describe('OrderingPage', () => {
   let activatedRoute;
   let mockOrderActionSheetService;
   let mockCartService;
+  let mockActiveCartService;
   let a11yService = {
     excuteSearchSpeech: jest.fn(),
   };
@@ -109,7 +111,6 @@ describe('OrderingPage', () => {
       merchant$: of({}),
       menuItems$: of(0),
       showActiveCartWarning: jest.fn(),
-      preValidateOrderFlow: jest.fn(),
       orderSchedule$: of({}),
       orderDetailsOptions$: of({
         orderType: ORDER_TYPE.PICKUP,
@@ -118,6 +119,10 @@ describe('OrderingPage', () => {
         isASAP: true,
       } as unknown as OrderDetailOptions),
     };
+    mockActiveCartService = {
+      preValidateOrderFlow: jest.fn(),
+
+    }
 
     TestBed.configureTestingModule({
       imports: [
@@ -145,6 +150,7 @@ describe('OrderingPage', () => {
         { provide: TranslateService, useClass: TranslateServiceStub },
         { provide: AccessibilityService, useValue: a11yService },
         { provide: CartService, useValue: mockCartService },
+        { provide: ActiveCartService, useValue: mockActiveCartService },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     });
@@ -201,7 +207,7 @@ describe('OrderingPage', () => {
     const isLockDownOnSpy = jest.spyOn(lockDownService, 'isLockDownOn').mockReturnValue(false);
     const showErrorSpy = jest.spyOn(toastService, 'showError');
     const onToastDisplayedSpy = jest.spyOn(component as any, 'onToastDisplayed');
-    const preValidateOrderFlowSpy = jest.spyOn(mockCartService as any, 'preValidateOrderFlow');
+    const preValidateOrderFlowSpy = jest.spyOn(mockActiveCartService as any, 'preValidateOrderFlow');
 
     const openOrderOptionsSpy = jest.spyOn(component as any, 'openOrderOptions').mockImplementation(() => {}); // Mock openOrderOptions
 
@@ -211,12 +217,12 @@ describe('OrderingPage', () => {
 
     await component.merchantClickHandler(mockMerchantInfo);
 
-    expect(mockCartService.preValidateOrderFlow).toHaveBeenCalledWith(
+    expect(mockActiveCartService.preValidateOrderFlow).toHaveBeenCalledWith(
       mockMerchantInfo.id,
       expect.any(Function),
       orderSchedule
     );
-    const boundFunction = mockCartService.preValidateOrderFlow.mock.calls[0][1];
+    const boundFunction = mockActiveCartService.preValidateOrderFlow.mock.calls[0][1];
     boundFunction();
     expect(openOrderOptionsSpy).toHaveBeenCalledWith(mockMerchantInfo);
     expect(isLockDownOnSpy).toHaveBeenCalled();
