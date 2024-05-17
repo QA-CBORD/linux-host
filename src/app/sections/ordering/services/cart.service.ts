@@ -9,15 +9,7 @@ import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
-import {
-  BehaviorSubject,
-  Observable,
-  Subject,
-  Subscription,
-  combineLatest,
-  lastValueFrom,
-  of,
-} from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, lastValueFrom, of } from 'rxjs';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   ItemsOrderInfo,
@@ -36,7 +28,7 @@ import { MerchantService } from './merchant.service';
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -48,14 +40,13 @@ export class CartService {
   merchantTimeZone: string;
   cartSubscription: Subscription;
 
-
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
-    private readonly storageStateService: StorageStateService,
+    private readonly storageStateService: StorageStateService
   ) {
     this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value) {
@@ -543,16 +534,12 @@ export class CartService {
     return code.toUpperCase().replace(/\b0+/g, '');
   }
 
-
   clearState() {
     this.clearCart();
     this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
     this.cartSubscription.unsubscribe();
   }
-
-  
 }
-
 
 export interface CartState {
   order: Partial<OrderInfo>;
