@@ -1,11 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
-import { ModalsService } from '@core/service/modals/modals.service';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
@@ -30,9 +29,6 @@ import {
   OrderPayment,
 } from '../shared/models';
 import { MerchantService } from './merchant.service';
-import { TranslateService } from '@ngx-translate/core';
-import { AlertController } from '@ionic/angular';
-import { NavigationService } from '@shared/index';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +36,7 @@ import { NavigationService } from '@shared/index';
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
