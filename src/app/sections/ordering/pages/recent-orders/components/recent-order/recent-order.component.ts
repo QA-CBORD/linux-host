@@ -28,7 +28,7 @@ import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-deta
 import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { LockDownService, NavigationService } from '@shared/services';
+import { LockDownService } from '@shared/services';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { Observable, Subscription, firstValueFrom, iif, lastValueFrom, of, zip } from 'rxjs';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';

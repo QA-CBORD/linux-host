@@ -4,14 +4,13 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
-import { LockDownService, NavigationService } from '@shared/index';
+import { LockDownService } from '@shared/index';
 import { Observable, firstValueFrom, iif } from 'rxjs';
 import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { CartService, MerchantService } from './services';
 import { MerchantInfo } from './shared/models';
 import { Schedule } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { OrderingService } from './services/ordering.service';
 import { ActiveCartService } from './services/active-cart.service';
 
 @Component({

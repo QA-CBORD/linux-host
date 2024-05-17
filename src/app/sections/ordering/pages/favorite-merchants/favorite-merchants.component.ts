@@ -14,7 +14,7 @@ import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sectio
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { LockDownService, NavigationService } from '@shared/services';
+import { LockDownService } from '@shared/services';
 import { firstValueFrom } from 'rxjs';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 

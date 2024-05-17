@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -13,7 +13,7 @@ import { OrderActionSheetService } from '@sections/ordering/services/odering-act
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LockDownService } from '@shared/index';
 import { Observable, firstValueFrom } from 'rxjs';
-import {  take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',
@@ -21,7 +21,7 @@ import {  take, tap } from 'rxjs/operators';
   styleUrls: ['./merchant-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchantDetailsPage implements OnInit {
+export class MerchantDetailsPage implements OnInit, AfterViewInit {
   merchant$: Observable<MerchantInfo>;
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
   isHoursHidden = true;
@@ -52,7 +52,7 @@ export class MerchantDetailsPage implements OnInit {
     this.loadStringsAndSettings();
   }
   async ngAfterViewInit(): Promise<void> {
-        const result = await firstValueFrom(this.cartService.orderSchedule$);
+    const result = await firstValueFrom(this.cartService.orderSchedule$);
 
     this.orderSchedule = result ? result : ({} as Schedule);
   }
@@ -86,7 +86,11 @@ export class MerchantDetailsPage implements OnInit {
       return;
     }
 
-    this.activeCartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId), this.orderSchedule);
+    this.activeCartService.preValidateOrderFlow(
+      merchantId,
+      this.openOrderOptions.bind(this, merchantId),
+      this.orderSchedule
+    );
   }
 
   async openOrderOptions(merchantId: string) {

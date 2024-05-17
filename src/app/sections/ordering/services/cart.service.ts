@@ -6,8 +6,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
-import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
@@ -17,7 +16,6 @@ import {
   Subject,
   Subscription,
   combineLatest,
-  firstValueFrom,
   lastValueFrom,
   of,
 } from 'rxjs';
@@ -34,10 +32,7 @@ import {
 import { MerchantService } from './merchant.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
-import { APP_ROUTES, PATRON_ROUTES } from '@sections/section.config';
 import { NavigationService } from '@shared/index';
-import { format, parseISO } from 'date-fns';
-import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Injectable({
   providedIn: 'root',
@@ -57,7 +52,6 @@ export class CartService {
   merchantTimeZone: string;
   cartSubscription: Subscription;
 
-  private readonly routingService = inject(NavigationService);
 
   constructor(
     private readonly userFacadeService: UserFacadeService,
@@ -65,10 +59,7 @@ export class CartService {
     private readonly api: OrderingApiService,
     private readonly uuidGeneratorService: UuidGeneratorService,
     private readonly institutionFacade: InstitutionFacadeService,
-    private readonly modalService: ModalsService,
     private readonly storageStateService: StorageStateService,
-    private readonly translateService: TranslateService,
-    private readonly alertController: AlertController
   ) {
     this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value) {

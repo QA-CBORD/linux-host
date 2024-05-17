@@ -8,7 +8,7 @@ import {
   inject,
 } from '@angular/core';
 import { CartService, MerchantInfo, MerchantService } from '@sections/ordering';
-import { take, finalize, first } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { IonicSlides } from '@ionic/angular';
 import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
@@ -18,7 +18,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { LockDownService, NavigationService } from '@shared/services';
 import { APP_ROUTES } from '@sections/section.config';
-import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { firstValueFrom } from 'rxjs';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
