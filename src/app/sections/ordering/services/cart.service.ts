@@ -28,7 +28,7 @@ import { MerchantService } from './merchant.service';
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -238,8 +238,6 @@ export class CartService {
   ): Promise<void> {
     this.cart.orderDetailsOptions = { orderType, dueTime, address, isASAP };
     const { id } = await this.merchant$.pipe(first()).toPromise();
-    console.log(this.cart.orderDetailsOptions);
-
     await this.getMerchantMenu(id, dueTime, orderType).then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }

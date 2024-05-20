@@ -156,8 +156,6 @@ export class ActiveCartService {
 
     if (isTimeValid && !hasErrors) {
       this.orderingService.redirectToCart(isCartPreview);
-      console.log('redirect');
-      
       return;
     }
 
