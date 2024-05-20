@@ -48,20 +48,7 @@ export class CartPreviewComponent implements AfterViewInit {
   private activeCartParams: ActiveCartParams;
 
   async ngAfterViewInit(): Promise<void> {
-    const result = await firstValueFrom(
-      combineLatest([this.cartService.orderDetailsOptions$, this.cartService.merchant$]).pipe(
-        switchMap(([orderDetailsOptions, merchant]) =>
-          orderDetailsOptions && merchant
-            ? this.merchantService.getMerchantOrderSchedule(
-                merchant.id,
-                orderDetailsOptions.orderType,
-                merchant.timeZone
-              )
-            : of(null)
-        ),
-        take(1)
-      )
-    );
+    const result = await firstValueFrom(this.cartService.orderSchedule$);
     this.orderSchedule = result ? result : ({} as Schedule);
     this.activeCartParams = {
       orderSchedule: this.orderSchedule,
@@ -86,50 +73,12 @@ export class CartPreviewComponent implements AfterViewInit {
     this.modalService.dismiss();
   };
 
-  isOrderTimeValid(isASAP: boolean, time: string) {
-    if (isASAP) return true;
-
-    const dueTime = new Date(time);
-    const dateString = format(parseISO(time), 'yyyy-MM-dd');
-    const hour = dueTime.getHours();
-    const minutes = dueTime.getMinutes();
-
-    return this.orderSchedule?.days.some(
-      date =>
-        date.date === dateString &&
-        date.hourBlocks.find(dateHour => dateHour.hour === hour && dateHour.minuteBlocks.includes(minutes))
-    );
-  }
-
-  async getOrderTimeAvailability(): Promise<{ orderType: ORDER_TYPE; isTimeValid: boolean }> {
-    const { dueTime, orderType, isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
-    const isTimeValid = this.isOrderTimeValid(isASAP, String(dueTime));
-
-    return { orderType, isTimeValid };
-  }
-
   async redirectToCart() {
     this.activeCartService.redirectToCart(this.activeCartParams);
   }
 
   async addMoreItems() {
     this.activeCartService.addMoreItems(this.activeCartParams);
-  }
-
-  async navigateToFullMenu(openTimeSlot?: boolean, canDismiss: boolean = true) {
-    const params = {
-      isExistingOrder: true,
-      openTimeSlot: openTimeSlot,
-      canDismiss: canDismiss,
-    };
-    const routed = await this.router.navigate([PATRON_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-      queryParams: { ...params },
-    });
-    if (routed) {
-      this.onClose();
-    }
-
-    this.hasErrors = false;
   }
 
   removeCart() {

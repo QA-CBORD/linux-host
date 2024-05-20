@@ -32,6 +32,7 @@ describe('FullMenuComponent', () => {
     snapshot: {
       queryParams: {
         openTimeSlot: true,
+        isExistingOrder: true,
       },
     },
   };
@@ -202,11 +203,11 @@ describe('FullMenuComponent', () => {
     });
   });
 
-  it('should call setActiveMerchantsMenuByOrderOptions on cancel button click', async () => {
+  it('should call setActiveMerchantsMenuByOrderOptions on cancel button click and is not asap', async () => {
     const dueTime = '01-01-2023';
     const orderType = ORDER_TYPE.DELIVERY;
     const address = 'Address example';
-    const isASAP = true;
+    const isASAP = false;
 
     await component.modalHandler({ dueTime, orderType, address, isASAP });
 
@@ -286,6 +287,14 @@ describe('FullMenuComponent', () => {
     component.ionViewWillEnter();
     expect(spy).toHaveBeenCalled();
   });
+  it('should validate order when ionViewWillEnter is called if is existing order', () => {
+    const spy = jest.spyOn(orderingService, 'validateOrder');
+    component.merchantInfo$ = of({
+      orderTypes: { merchantTimeZone: 'Americas/New York' } as MerchantOrderTypesInfo,
+    } as MerchantInfo);
+    component.ionViewWillEnter();
+    expect(spy).toHaveBeenCalled();
+  });
 
   it('should navigate to the correct route with query params when navigateToScannedItem is called', () => {
     const mockMenuItemId = '123';
@@ -327,7 +336,7 @@ describe('FullMenuComponent', () => {
     const mockData = { dueTime: new Date(), orderType: 1, address: 'Test address', isASAP: true };
     const mockOrderItems = [{ id: 1, name: 'Test item' }];
 
-    const validateOrderSpy = jest.spyOn(component, 'validateOrder');
+    const validateOrderSpy = jest.spyOn(orderingService, 'validateOrder');
 
     jest.spyOn(cartService, 'setActiveMerchantsMenuByOrderOptions').mockReturnValue(Promise.resolve(mockData));
 

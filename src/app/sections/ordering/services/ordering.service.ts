@@ -4,7 +4,6 @@ import {
   LOCAL_ROUTING,
   ORDERING_CONTENT_STRINGS,
   ORDER_ERROR_CODES,
-  ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
 } from '@sections/ordering/ordering.config';
 import { Observable, lastValueFrom } from 'rxjs';
@@ -19,8 +18,6 @@ import { CartService } from './cart.service';
 import { AlertController } from '@ionic/angular';
 import { NavigationService } from '@shared/services';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { TranslateService } from '@ngx-translate/core';
-import { AddressInfo } from '@core/model/address/address-info';
 
 @Injectable({
   providedIn: 'root',
@@ -33,8 +30,7 @@ export class OrderingService {
     private readonly cartService: CartService,
     private readonly alertController: AlertController,
     private readonly routingService: NavigationService,
-    private readonly modalService: ModalsService,
-    private readonly translateService: TranslateService
+    private readonly modalService: ModalsService
   ) {}
 
   getContentStringByName(name: ORDERING_CONTENT_STRINGS): Observable<string> {
@@ -63,7 +59,7 @@ export class OrderingService {
     return errorMessage || defaultMessage;
   }
 
-  async redirectToCart(fromCartPreview?: boolean): Promise<void> {
+  async redirectToCart(fromCartPreview?:boolean): Promise<void> {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
@@ -89,14 +85,7 @@ export class OrderingService {
   async validateOrder(successCb, errorCB, ignoreCodes: string[] = IGNORE_ERRORS): Promise<void> {
     await this.loadingService.showSpinner();
     await lastValueFrom(
-      this.cartService
-        .validateOrder({
-          dueTime: new Date('2024-05-15T20:35:20.734'),
-          isASAP: false,
-          orderType: ORDER_TYPE.DELIVERY,
-          address: {} as AddressInfo,
-        })
-        .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
+      this.cartService.validateOrder().pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
     )
       .then(() => {
         this.cartService.cartsErrorMessage = null;

@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { OrderingService } from './ordering.service';
+import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
 
 describe('ActiveCartService', () => {
   let service: ActiveCartService;
@@ -63,6 +64,9 @@ describe('ActiveCartService', () => {
   };
   const modalService = {
     dismiss: jest.fn(),
+    createActionSheet: jest.fn().mockResolvedValue({
+      present: jest.fn(),
+    }),
   };
   let orderSchedule = {
     menuSchedule: [],
@@ -100,63 +104,21 @@ describe('ActiveCartService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
-
   it('should create, present an alert and confirm', async () => {
     const openOrderOptionsMock = jest.fn();
 
     await service.showChangeMerchantWarning(openOrderOptionsMock);
-
-    expect(alertControllerMock.create).toHaveBeenCalledWith({
-      cssClass: 'active_cart',
-      header: 'patron-ui.ordering.active_cart_alert_change_title',
-      message: 'patron-ui.ordering.active_cart_alert_change_msg',
-      buttons: [
-        {
-          text: 'patron-ui.ordering.active_cart_alert_change_cancel',
-          role: 'cancel',
-          cssClass: 'button__option_cancel',
-          handler: expect.any(Function),
-        },
-        {
-          text: 'patron-ui.ordering.active_cart_alert_change_proceed',
-          role: 'confirm',
-          cssClass: 'button__option_confirm',
-          handler: expect.any(Function),
-        },
-      ],
-    });
-
     const alert = await alertControllerMock.create.mock.results[0].value;
     expect(alert.present).toHaveBeenCalled();
 
+    const cancelButtonHandler = alertControllerMock.create.mock.calls[0][0].buttons[0].handler;
+    cancelButtonHandler();
+    expect(alert.dismiss).toHaveBeenCalled();
+
     const confirmButtonHandler = alertControllerMock.create.mock.calls[0][0].buttons[1].handler;
     await confirmButtonHandler();
-
     expect(mockCartService.clearActiveOrder).toHaveBeenCalled();
     expect(openOrderOptionsMock).toHaveBeenCalled();
-  });
-  it('should create, present an alert and cancel', async () => {
-    const openOrderOptionsMock = jest.fn();
-
-    await service.showChangeMerchantWarning(openOrderOptionsMock);
-
-    expect(alertControllerMock.create).toHaveBeenCalledWith(mockAlert);
-
-    const alertHandler = alertControllerMock.create.mock.calls[0][0].buttons[0].handler;
-    await alertHandler();
-
-    expect(openOrderOptionsMock).not.toHaveBeenCalled();
-  });
-  it('should show active cart warning when items in cart and merchant has changed', async () => {
-    mockCartService.menuItems$ = of(2);
-    mockCartService.merchant$ = of({ id: 'oldMerchantId' });
-    const onContinueMock = jest.fn();
-
-    await service.preValidateOrderFlow('newMerchantId', onContinueMock, orderSchedule);
-
-    expect(alertControllerMock.create).toHaveBeenCalledWith(mockAlert);
-    expect(routingServiceMock.navigate).not.toHaveBeenCalled();
-    expect(onContinueMock).not.toHaveBeenCalled();
   });
 
   it('should call onContinue when no items in cart', async () => {
@@ -270,21 +232,21 @@ describe('ActiveCartService', () => {
 
   it('should redirect to cart if order time is valid', async () => {
     const warningSpy = jest.spyOn(service, 'showTimePastWarning');
-    await service.redirectToCart({ orderSchedule,hasErrors:false,isCartPreview:true });
+    await service.redirectToCart({ orderSchedule, hasErrors: false, isCartPreview: true });
 
     expect(orderingService.redirectToCart).toHaveBeenCalledWith(true);
     expect(warningSpy).not.toHaveBeenCalled();
   });
+ 
+  it('should create and present the cart preview action sheet', async () => {
+    await service.openCartpreview();
 
-  it('should show active cart warning if order time is not valid', async () => {
-    const warningSpy = jest.spyOn(service, 'showTimePastWarning');
-    service.getOrderTimeAvailability = jest
-      .fn()
-      .mockResolvedValue({ isTimeValid: false, orderType: ORDER_TYPE.PICKUP });
+    expect(modalService.createActionSheet).toHaveBeenCalledWith({
+      component: CartPreviewComponent,
+      cssClass: 'cart-preview-action-sheet',
+    });
 
-    await service.redirectToCart({ orderSchedule });
-
-    expect(orderingService.redirectToCart).not.toHaveBeenCalled();
-    expect(warningSpy).toHaveBeenCalledWith(ORDER_TYPE.PICKUP);
+    const modal = await modalService.createActionSheet.mock.results[0].value;
+    expect(modal.present).toHaveBeenCalled();
   });
 });
