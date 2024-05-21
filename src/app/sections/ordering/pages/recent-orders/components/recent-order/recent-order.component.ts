@@ -129,7 +129,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    await this.initOrderOptionsModal(merchant);
+    await this.initOrderOptionsModal(merchant ?? currentMerchant);
   }
 
   async showActiveCartWarning(merchantInfo: MerchantInfo) {
