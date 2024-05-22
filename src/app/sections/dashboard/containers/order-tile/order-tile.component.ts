@@ -18,7 +18,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { LockDownService, NavigationService } from '@shared/services';
 import { APP_ROUTES } from '@sections/section.config';
-import { firstValueFrom } from 'rxjs';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 SwiperCore.use([IonicSlides]);

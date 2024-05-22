@@ -15,7 +15,6 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { LockDownService } from '@shared/services';
-import { firstValueFrom } from 'rxjs';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 @Component({
