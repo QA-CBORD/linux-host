@@ -42,7 +42,7 @@ export class OrderingPage implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
-    const result = await firstValueFrom(this.cartService.orderSchedule$);
+    const result = await this.cartService.orderSchedule;
     this.orderSchedule = result ? result : ({} as Schedule);
   }
 

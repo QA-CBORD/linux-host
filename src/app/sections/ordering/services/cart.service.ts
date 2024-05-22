@@ -9,7 +9,7 @@ import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, lastValueFrom, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   ItemsOrderInfo,
@@ -160,16 +160,17 @@ export class CartService {
     this.cart.orderDetailsOptions = { ...orderOptions };
     this.onStateChanged();
   }
-  get orderSchedule$() {
-    return combineLatest([this.orderDetailsOptions$, this.merchant$]).pipe(
+  get orderSchedule() {
+    return firstValueFrom(combineLatest([this.orderDetailsOptions$, this.merchant$]).pipe(
       switchMap(([orderDetailsOptions, merchant]) =>
         orderDetailsOptions && merchant
           ? this.merchantService.getMerchantOrderSchedule(merchant.id, orderDetailsOptions.orderType, merchant.timeZone)
           : of(null)
       ),
       take(1)
-    );
+    ));
   }
+
 
   extractTimeZonedString(dateStr: string, timeZone: string, fullDate = true): string {
     // Formatted timezone from +0000 to +00:00 to support Safari dates

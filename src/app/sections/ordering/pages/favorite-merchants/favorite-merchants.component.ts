@@ -28,7 +28,7 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
   merchantList: MerchantInfo[] = [];
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   orderSchedule: Schedule;
-  private readonly activeCartService = inject(ActiveCartService)
+  private readonly activeCartService = inject(ActiveCartService);
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
@@ -40,7 +40,7 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
     private readonly cartService: CartService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly orderingService: OrderingService,
-    private readonly lockDownService: LockDownService,
+    private readonly lockDownService: LockDownService
   ) {}
 
   ngOnInit() {
@@ -49,8 +49,7 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
-        const result = await firstValueFrom(this.cartService.orderSchedule$);
-
+    const result = await this.cartService.orderSchedule;
     this.orderSchedule = result ? result : ({} as Schedule);
   }
 

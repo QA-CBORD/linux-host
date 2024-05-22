@@ -199,9 +199,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
           role: 'cancel',
           cssClass: 'button__option_cancel',
           handler: () => {
-            isASAP
-              ? this.onOrdersButtonClicked()
-              : this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
+            this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
           },
         },
         {
