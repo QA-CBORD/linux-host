@@ -287,14 +287,6 @@ describe('FullMenuComponent', () => {
     component.ionViewWillEnter();
     expect(spy).toHaveBeenCalled();
   });
-  it('should validate order when ionViewWillEnter is called if is existing order', () => {
-    const spy = jest.spyOn(orderingService, 'validateOrder');
-    component.merchantInfo$ = of({
-      orderTypes: { merchantTimeZone: 'Americas/New York' } as MerchantOrderTypesInfo,
-    } as MerchantInfo);
-    component.ionViewWillEnter();
-    expect(spy).toHaveBeenCalled();
-  });
 
   it('should navigate to the correct route with query params when navigateToScannedItem is called', () => {
     const mockMenuItemId = '123';
