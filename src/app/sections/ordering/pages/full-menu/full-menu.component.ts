@@ -104,14 +104,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
-    const { openTimeSlot, canDismiss, isExistingOrder } = this.activatedRoute.snapshot.queryParams;
+    const { openTimeSlot, canDismiss } = this.activatedRoute.snapshot.queryParams;
     this.modalController.emitCanDismiss(canDismiss === 'false' ? false : true);
     openTimeSlot && this.openOrderOptions();
-    if (isExistingOrder) {
-      const cachedData = await this.cachedData;
-      const errorCB = () => this.modalHandler(cachedData);
-      this.orderingService.validateOrder(null, errorCB);
-    }
     this.cdref.detectChanges();
   }
 
