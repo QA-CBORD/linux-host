@@ -11,6 +11,7 @@ import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-form
 import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
 import { MenuItemFinderModule } from '@sections/ordering/components/menu-item-finder/menu-item-finder.module';
 import { OrderPrepTime } from '../../shared/ui-components/order-prep-time/order-prep-time.component';
+import { OrderingResolver } from '@sections/ordering/resolvers';
 
 const imports = [
   CommonModule,
@@ -26,9 +27,11 @@ const imports = [
   OrderPrepTime,
 ];
 const declarations = [FullMenuComponent];
+const providers = [OrderingResolver];
 
 @NgModule({
   declarations,
   imports,
+  providers
 })
 export class FullMenuModule {}
