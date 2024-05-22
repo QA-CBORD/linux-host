@@ -130,13 +130,13 @@ export class StDateTimePickerComponent implements OnInit {
     const title = this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.labelSelectTime);
     this.monthArray = await lastValueFrom(
       this.contentStringsFacadeService
-        .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
+        .fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
         .pipe(take(1))
     );
 
     this.weekArray = await lastValueFrom(
       this.contentStringsFacadeService
-        .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated)
+        .fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated)
         .pipe(take(1))
     );
     this.pickerColumns = this.createColumns();
