@@ -5,7 +5,9 @@
              [backButtonTitle]="''"
              [isTitleShow]="true"
              [isToolbarShow]="true"
-             [title]="menuItem?.name"></st-header>
+             [title]="menuItem?.name"
+             (onClose)="goBack()"
+             ></st-header>
 </ng-template>
 
 <ng-template #staticHeader>

@@ -38,12 +38,13 @@ import { Schedule } from '../shared/ui-components/order-options.action-sheet/ord
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
   private emptyCartOnClose = new Subject();
   private emptyCartOnClose$ = this.emptyCartOnClose.asObservable();
+  private orderSnapshot: OrderInfo;
   public orderIsAsap = false;
   checkNumber: number;
   currentOrderId: string;
@@ -555,6 +556,74 @@ export class CartService {
     this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
     this.cartSubscription.unsubscribe();
   }
+<<<<<<< HEAD
+=======
+
+  async showActiveCartWarning(openOrderOptions: () => void) {
+    const alert = await this.alertController.create({
+      cssClass: 'active_cart',
+      header: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_title'),
+      message: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_msg'),
+      buttons: [
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_cancel'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
+        },
+        {
+          text: this.translateService.instant('patron-ui.ordering.active_cart_alert_change_proceed'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: async () => {
+            this.clearActiveOrder();
+            openOrderOptions();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+    return alert.onDidDismiss();
+  }
+
+  async preValidateOrderFlow(merchantId: string, onContinue: () => void) {
+    const hasItemsInCart = (await lastValueFrom(this.menuItems$.pipe(first()))) > 0;
+    const merchant = await lastValueFrom(this.merchant$.pipe(first()));
+    const merchantHasChanged = merchant && merchant.id !== merchantId;
+
+    if (hasItemsInCart && merchantHasChanged) {
+      this.showActiveCartWarning(onContinue);
+      return;
+    }
+
+    if (hasItemsInCart && !merchantHasChanged) {
+      this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
+        queryParams: { isExistingOrder: true },
+      });
+      return;
+    }
+    onContinue();
+  }
+   
+  saveOrderSnapshot() {
+    console.log('saveOrderSnapshot', this.cart?.order);
+    if (this.cart?.order)
+      this.orderSnapshot = { ...this.cart.order };
+  }
+
+  setOrderToSnapshot() {
+    console.log('setOrderToSnapshot', this.orderSnapshot);
+    if(this.orderSnapshot) {
+      this.cart.order = this.orderSnapshot;
+      this.onStateChanged();
+    } else {
+      this.removeLastOrderItem();
+    }
+  }
+>>>>>>> a903a3baf (GET-6027 - Keeping cart values)
 }
 
 export interface CartState {

@@ -4,6 +4,7 @@ import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
 import { distinctUntilChanged, filter, first, take } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
 import {
   LOCAL_ROUTING,
@@ -50,7 +51,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
     private readonly navService: NavigationService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly loca: Location
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +87,10 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  goBack() {
+    this.loca.back();
+  }
+  
   onClose(): void {
     if (this.routesData.queryParams.isScannedItem) {
       this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
@@ -177,11 +183,13 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   removeItems(): void {
     this.order.counter > 1 ? this.order.counter-- : null;
     this.calculateTotalPrice();
+    this.cdRef.detectChanges();
   }
 
   addItems(): void {
     this.order.counter++;
     this.calculateTotalPrice();
+    this.cdRef.detectChanges();
   }
 
   async onFormSubmit(): Promise<void> {
@@ -243,6 +251,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(() => {
+        this.cartService.saveOrderSnapshot();
         this.cartService.cartsErrorMessage = null;
         this.onClose();
         this.addNewItem();
@@ -254,11 +263,11 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
 
           const doActionErrorCode = {
             9017: async () => {
-              this.cartService.removeLastOrderItem();
+              this.cartService.setOrderToSnapshot();
               await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
             },
             9006: () => {
-              this.cartService.removeLastOrderItem();
+              this.cartService.setOrderToSnapshot();
               this.failedValidateOrder(text);
             },
             9005: () => {
@@ -274,13 +283,11 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
             action();
             return;
           }
-
           this.cartService.cartsErrorMessage = text;
           this.onClose();
           return;
         }
-
-        this.cartService.removeLastOrderItem();
+        this.cartService.setOrderToSnapshot();
         this.failedValidateOrder(error);
       })
       .finally(() => this.loadingService.closeSpinner());
