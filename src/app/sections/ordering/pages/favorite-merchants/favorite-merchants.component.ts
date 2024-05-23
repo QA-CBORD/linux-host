@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, O
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
-import { switchMap, take, first, map } from 'rxjs/operators';
+import { switchMap, take, first } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
 import { CartService, MerchantService } from '../../services';
