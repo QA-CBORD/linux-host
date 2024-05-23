@@ -4,7 +4,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {  ORDER_ERROR_CODES } from '@sections/ordering/ordering.config';
+import { ORDER_ERROR_CODES } from '@sections/ordering/ordering.config';
 import { CartService, MerchantService } from '@sections/ordering/services';
 import { ActiveCartParams, ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
@@ -46,8 +46,8 @@ export class CartPreviewComponent implements AfterViewInit {
   private activeCartParams: ActiveCartParams;
 
   async ngAfterViewInit(): Promise<void> {
-    const result = await this.cartService.orderSchedule;
-    this.orderSchedule = result ? result : ({} as Schedule);
+    this.orderSchedule = await this.cartService.orderSchedule;
+
     this.activeCartParams = {
       orderSchedule: this.orderSchedule,
       hasErrors: this.hasErrors,

@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, O
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
-import { switchMap, take, first } from 'rxjs/operators';
+import { switchMap, take, first, map } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
 import { CartService, MerchantService } from '../../services';
@@ -48,8 +48,7 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
-    const result = await this.cartService.orderSchedule;
-    this.orderSchedule = result ? result : ({} as Schedule);
+    this.orderSchedule = await this.cartService.orderSchedule;
   }
 
   backToOrdering() {

@@ -38,7 +38,6 @@ describe('CartPreviewComponent', () => {
       merchant$: new BehaviorSubject<any>({ name: 'Mock Merchant' }),
       cartsErrorMessage: null,
       isExistingOrder: false,
-      orderSchedule$: of({} as Schedule),
       validateOrder: jest.fn(),
       orderDetailsOptions$: of({
         address: {} as AddressInfo,

@@ -13,7 +13,7 @@ import { OrderActionSheetService } from '@sections/ordering/services/odering-act
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LockDownService } from '@shared/index';
 import { Observable, firstValueFrom } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import {  take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',
@@ -52,8 +52,7 @@ export class MerchantDetailsPage implements OnInit, AfterViewInit {
     this.loadStringsAndSettings();
   }
   async ngAfterViewInit(): Promise<void> {
-    const result = await this.cartService.orderSchedule;
-    this.orderSchedule = result ? result : ({} as Schedule);
+    this.orderSchedule = this.orderSchedule = await this.cartService.orderSchedule;
   }
 
   async loadStringsAndSettings() {

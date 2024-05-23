@@ -56,8 +56,7 @@ export class OrderTileComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
-    const result = await this.cartService.orderSchedule;
-    this.orderSchedule = result ? result : ({} as Schedule);
+    this.orderSchedule = await this.cartService.orderSchedule;
   }
 
   initMerchantSlides() {

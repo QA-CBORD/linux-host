@@ -9,7 +9,16 @@ import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { sevenDays } from '@shared/constants/dateFormats.constant';
 import { UuidGeneratorService } from '@shared/services/uuid-generator.service';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, firstValueFrom, lastValueFrom, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  combineLatest,
+  firstValueFrom,
+  lastValueFrom,
+  of,
+} from 'rxjs';
 import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   ItemsOrderInfo,
@@ -21,6 +30,7 @@ import {
   OrderPayment,
 } from '../shared/models';
 import { MerchantService } from './merchant.service';
+import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +38,7 @@ import { MerchantService } from './merchant.service';
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -161,16 +171,22 @@ export class CartService {
     this.onStateChanged();
   }
   get orderSchedule() {
-    return firstValueFrom(combineLatest([this.orderDetailsOptions$, this.merchant$]).pipe(
-      switchMap(([orderDetailsOptions, merchant]) =>
-        orderDetailsOptions && merchant
-          ? this.merchantService.getMerchantOrderSchedule(merchant.id, orderDetailsOptions.orderType, merchant.timeZone)
-          : of(null)
-      ),
-      take(1)
-    ));
+    return firstValueFrom(
+      combineLatest([this.orderDetailsOptions$, this.merchant$]).pipe(
+        switchMap(([orderDetailsOptions, merchant]) =>
+          orderDetailsOptions && merchant
+            ? this.merchantService.getMerchantOrderSchedule(
+                merchant.id,
+                orderDetailsOptions.orderType,
+                merchant.timeZone
+              )
+            : of(null)
+        ),
+        map(result => (result ? result : ({} as Schedule))),
+        take(1)
+      )
+    );
   }
-
 
   extractTimeZonedString(dateStr: string, timeZone: string, fullDate = true): string {
     // Formatted timezone from +0000 to +00:00 to support Safari dates
