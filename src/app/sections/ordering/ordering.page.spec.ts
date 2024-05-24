@@ -13,13 +13,12 @@ import { ActivatedRoute } from '@angular/router';
 import { TypeMessageModule } from './shared/pipes/type-message/type-message.pipe.module';
 import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 import { MerchantInfo, MerchantOrderTypesInfo, MerchantSettingInfo } from './components';
-import { LOCAL_ROUTING, ORDER_TYPE, TOAST_MESSAGES } from './ordering.config';
+import { ORDER_TYPE, TOAST_MESSAGES } from './ordering.config';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
-import { APP_ROUTES } from '@sections/section.config';
 import { AddressInfo } from 'net';
 import { ActiveCartService } from './services/active-cart.service';
 
@@ -118,6 +117,7 @@ describe('OrderingPage', () => {
         dueTime: new Date(),
         isASAP: true,
       } as unknown as OrderDetailOptions),
+      resetOrderSnapshot: jest.fn(),
     };
     mockActiveCartService = {
       preValidateOrderFlow: jest.fn(),
