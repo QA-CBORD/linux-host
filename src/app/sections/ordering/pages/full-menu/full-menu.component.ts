@@ -33,6 +33,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   orderTypes: MerchantOrderTypesInfo;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   canDismiss = true;
+  isExistingOrder = false;
 
   constructor(
     private readonly cartService: CartService,
@@ -104,7 +105,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
-    const { openTimeSlot, canDismiss } = this.activatedRoute.snapshot.queryParams;
+    const { openTimeSlot, canDismiss, isExistingOrder } = this.activatedRoute.snapshot.queryParams;
+    this.isExistingOrder = isExistingOrder;
     this.modalController.emitCanDismiss(canDismiss === 'false' ? false : true);
     openTimeSlot && this.openOrderOptions();
     this.cdref.detectChanges();
@@ -177,7 +179,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     );
     this.cartService.orderItems$.pipe(first()).subscribe(items => {
       if (items.length) {
-        const errorCB = () => this.modalHandler(cachedData);
+        const errorCB = () => this.modalHandler({ ...cachedData }, data.isASAP);
         this.orderingService.validateOrder(null, errorCB);
       }
     });
@@ -187,7 +189,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.orderingService.redirectToCart();
   }
 
-  async modalHandler({ dueTime, orderType, address, isASAP }) {
+  async modalHandler({ dueTime, orderType, address, isASAP }, isCurrentASAP?: boolean) {
     const alert = await this.alertController.create({
       cssClass: 'alert_full_menu',
       header: this.translateService.instant('patron-ui.ordering.new_menu_detected_title'),
@@ -199,7 +201,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
           role: 'cancel',
           cssClass: 'button__option_cancel',
           handler: () => {
-            this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
+            isCurrentASAP && this.isExistingOrder
+              ? this.onOrdersButtonClicked()
+              : this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
           },
         },
         {
