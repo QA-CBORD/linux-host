@@ -121,8 +121,8 @@ describe('OrderingPage', () => {
     };
     mockActiveCartService = {
       preValidateOrderFlow: jest.fn(),
-
-    }
+      resetOrderSnapshot: jest.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [

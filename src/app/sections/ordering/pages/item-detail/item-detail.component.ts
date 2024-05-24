@@ -2,8 +2,8 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators }
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription, zip } from 'rxjs';
-import { distinctUntilChanged, filter, first, take } from 'rxjs/operators';
+import { Observable, Subscription, zip, firstValueFrom } from 'rxjs';
+import { distinctUntilChanged, filter, take } from 'rxjs/operators';
 import { Location } from '@angular/common';
 
 import {
@@ -235,62 +235,55 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     return { menuItemId, orderItemOptions: [], name, quantity, salePrice };
   }
 
-  private async onSubmit(menuItem): Promise<void> {
+  private async onSubmit(menuItem: Partial<OrderItem> | Partial<OrderItem>[]): Promise<void> {
     const {
       queryParams: { orderItemId },
     } = this.routesData;
-    const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
+    const orderItems = await firstValueFrom(this.cartService.orderItems$);
     if (orderItems.length && orderItemId) {
-       this.cartService.removeOrderItemFromOrderById(orderItemId);
+      this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
     this.cartService.addOrderItems(menuItem);
     await this.loadingService.showSpinner();
-    await this.cartService
-      .validateOrder()
-      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
-      .toPromise()
-      .then(() => {
-        this.cartService.saveOrderSnapshot();
-        this.cartService.cartsErrorMessage = null;
-        this.onClose();
-        this.addNewItem();
-      })
-      .catch(async error => {
-        // Temporary solution:
-        if (Array.isArray(error)) {
-          const [code, text] = error;
-
-          const doActionErrorCode = {
-            9017: async () => {
-              this.cartService.setOrderToSnapshot();
-              await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
-            },
-            9006: () => {
-              this.cartService.setOrderToSnapshot();
-              this.failedValidateOrder(text);
-            },
-            9005: () => {
-              this.cartService.cartsErrorMessage = text;
-              this.navigateToMenu();
-              this.addNewItem();
-            },
-          };
-
-          const action = doActionErrorCode[+code];
-
-          if (action) {
-            action();
-            return;
-          }
-          this.cartService.cartsErrorMessage = text;
-          this.navigateToMenu();
+    try {
+      await firstValueFrom(this.cartService.validateOrder().pipe(handleServerError(ORDER_VALIDATION_ERRORS)));
+      this.cartService.saveOrderSnapshot();
+      this.cartService.cartsErrorMessage = null;
+      this.onClose();
+      this.addNewItem();
+    } catch (error) {
+      if (Array.isArray(error)) {
+        const [code, text] = error;
+        const doActionErrorCode = {
+          9017: async () => {
+            this.cartService.setOrderToSnapshot();
+            await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
+          },
+          9006: () => {
+            this.cartService.setOrderToSnapshot();
+            this.failedValidateOrder(text);
+          },
+          9005: () => {
+            this.cartService.cartsErrorMessage = text;
+            this.navigateToMenu();
+            this.addNewItem();
+          },
+        };
+        const action = doActionErrorCode[+code];
+        if (action) {
+          action();
           return;
         }
-        this.cartService.setOrderToSnapshot();
-        this.failedValidateOrder(error);
-      })
-      .finally(() => this.loadingService.closeSpinner());
+        this.cartService.cartsErrorMessage = text;
+        this.navigateToMenu();
+        return;
+      }
+      this.cartService.setOrderToSnapshot();
+      this.failedValidateOrder(error);
+    } finally {
+      this.loadingService.closeSpinner();
+    }
   }
 
   private async addNewItem() {
