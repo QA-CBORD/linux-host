@@ -261,6 +261,7 @@ export class CartService {
   }
 
   private async setInitialEmptyOrder(): Promise<void> {
+    this.resetOrderSnapshot();
     this._pendingOrderId = null;
     const order = await this.initEmptyOrder();
     this.cart.order = order;
@@ -290,6 +291,7 @@ export class CartService {
     this.cart.menu = null;
     this.cart.order = null;
     this._pendingOrderId = null;
+    this.resetOrderSnapshot();
     this.onStateChanged();
   }
 
@@ -607,23 +609,24 @@ export class CartService {
     }
     onContinue();
   }
-   
+
   saveOrderSnapshot() {
-    console.log('saveOrderSnapshot', this.cart?.order);
     if (this.cart?.order)
-      this.orderSnapshot = { ...this.cart.order };
+      this.orderSnapshot = JSON.parse(JSON.stringify(this.cart.order));
   }
 
   setOrderToSnapshot() {
-    console.log('setOrderToSnapshot', this.orderSnapshot);
-    if(this.orderSnapshot) {
+    if (this.orderSnapshot) {
       this.cart.order = this.orderSnapshot;
       this.onStateChanged();
     } else {
       this.removeLastOrderItem();
     }
   }
->>>>>>> a903a3baf (GET-6027 - Keeping cart values)
+
+  resetOrderSnapshot() {
+    this.orderSnapshot = null;
+  }
 }
 
 export interface CartState {

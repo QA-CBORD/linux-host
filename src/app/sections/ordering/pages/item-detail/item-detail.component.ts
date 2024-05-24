@@ -52,8 +52,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     private readonly popoverController: PopoverController,
     private readonly navService: NavigationService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly loca: Location
-  ) {}
+    private readonly location: Location
+  ) { }
 
   ngOnInit(): void {
     this.initContentStrings();
@@ -87,11 +87,11 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  goBack() {
-    this.loca.back();
+  onClose() {
+    this.location.back();
   }
-  
-  onClose(): void {
+
+  navigateToMenu(): void {
     if (this.routesData.queryParams.isScannedItem) {
       this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
     } else {
@@ -241,7 +241,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     } = this.routesData;
     const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
     if (orderItems.length && orderItemId) {
-      await this.cartService.removeOrderItemFromOrderById(orderItemId);
+       this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
     this.cartService.addOrderItems(menuItem);
@@ -272,7 +272,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
             },
             9005: () => {
               this.cartService.cartsErrorMessage = text;
-              this.onClose();
+              this.navigateToMenu();
               this.addNewItem();
             },
           };
@@ -284,7 +284,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
             return;
           }
           this.cartService.cartsErrorMessage = text;
-          this.onClose();
+          this.navigateToMenu();
           return;
         }
         this.cartService.setOrderToSnapshot();

@@ -4,8 +4,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
-import { LockDownService } from '@shared/index';
-import { Observable, iif } from 'rxjs';
+import { LockDownService, NavigationService } from '@shared/index';
+import { Observable, iif, firstValueFrom } from 'rxjs';
 import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { CartService, MerchantService } from './services';
@@ -33,8 +33,9 @@ export class OrderingPage implements OnInit, AfterViewInit {
     private readonly toastService: ToastService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly lockDownService: LockDownService,
-    private readonly cartService: CartService
-  ) {}
+    private readonly cartService: CartService,
+    private readonly routingService: NavigationService
+  ) { }
 
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
@@ -48,6 +49,9 @@ export class OrderingPage implements OnInit, AfterViewInit {
   async ionViewDidEnter() {
     this.handleActiveMerchantInRoute();
     await this.loadingService.closeSpinner();
+    const cartHasItems = await firstValueFrom(this.cartService.menuItems$);
+    if (!cartHasItems)
+      this.cartService.resetOrderSnapshot();
   }
 
   async merchantClickHandler(merchantInfo: MerchantInfo) {
@@ -78,8 +82,8 @@ export class OrderingPage implements OnInit, AfterViewInit {
             this.translateService.instant(
               `patron-ui.ordering.${
                 isFavorite
-                  ? ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites
-                  : ORDERING_CONTENT_STRINGS.labelAddedToFavorites
+                ? ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites
+                : ORDERING_CONTENT_STRINGS.labelAddedToFavorites
               }`
             )
           )
