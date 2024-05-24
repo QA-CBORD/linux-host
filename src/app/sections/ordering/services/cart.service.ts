@@ -563,7 +563,7 @@ export class CartService {
     if (this.cart?.order)
       this.orderSnapshot = JSON.parse(JSON.stringify(this.cart.order));
   }
- 
+
   setOrderToSnapshot() {
     if (this.orderSnapshot) {
       this.cart.order = this.orderSnapshot;
@@ -572,7 +572,7 @@ export class CartService {
       this.removeLastOrderItem();
     }
   }
- 
+
   resetOrderSnapshot() {
     this.orderSnapshot = null;
   }

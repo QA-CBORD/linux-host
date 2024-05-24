@@ -4,8 +4,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
-import { LockDownService, NavigationService } from '@shared/index';
-import { Observable, iif, firstValueFrom } from 'rxjs';
+import { LockDownService } from '@shared/index';
+import { Observable, firstValueFrom, iif } from 'rxjs';
 import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { CartService, MerchantService } from './services';
@@ -33,9 +33,8 @@ export class OrderingPage implements OnInit, AfterViewInit {
     private readonly toastService: ToastService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly lockDownService: LockDownService,
-    private readonly cartService: CartService,
-    private readonly routingService: NavigationService
-  ) { }
+    private readonly cartService: CartService
+  ) {}
 
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
@@ -82,8 +81,8 @@ export class OrderingPage implements OnInit, AfterViewInit {
             this.translateService.instant(
               `patron-ui.ordering.${
                 isFavorite
-                ? ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites
-                : ORDERING_CONTENT_STRINGS.labelAddedToFavorites
+                  ? ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites
+                  : ORDERING_CONTENT_STRINGS.labelAddedToFavorites
               }`
             )
           )
