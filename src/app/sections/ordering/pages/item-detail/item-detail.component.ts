@@ -9,6 +9,7 @@ import { Location } from '@angular/common';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
+  ORDER_ERROR_CODES,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
@@ -256,15 +257,15 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       if (Array.isArray(error)) {
         const [code, text] = error;
         const doActionErrorCode = {
-          9017: async () => {
+          [ORDER_ERROR_CODES.ORDER_CAPACITY]: async () => {
             this.cartService.setOrderToSnapshot();
             await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
           },
-          9006: () => {
+          [ORDER_ERROR_CODES.ORDER_ITEM_MAX]: () => {
             this.cartService.setOrderToSnapshot();
             this.failedValidateOrder(text);
           },
-          9005: () => {
+          [ORDER_ERROR_CODES.ORDER_ITEM_MIN]: () => {
             this.cartService.cartsErrorMessage = text;
             this.navigateToMenu();
             this.addNewItem();
