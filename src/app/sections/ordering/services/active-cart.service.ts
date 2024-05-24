@@ -72,8 +72,6 @@ export class ActiveCartService {
 
     if (hasItemsInCart && !merchantHasChanged) {
       this.addMoreItems({ orderSchedule });
-      console.log('merchant not changed');
-
       return;
     }
     onContinue();
@@ -131,7 +129,6 @@ export class ActiveCartService {
   async addMoreItems({ orderSchedule, hasErrors }: ActiveCartParams) {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
     const { isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
-    
     if (isTimeValid && !hasErrors) {
       this.navigateToFullMenu(isASAP, !isASAP);
       return;
