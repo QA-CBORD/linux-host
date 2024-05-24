@@ -130,7 +130,7 @@ export class ActiveCartService {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
 
     if (isTimeValid && !hasErrors) {
-      this.navigateToFullMenu(true,false);
+      this.navigateToFullMenu();
       return;
     }
 
