@@ -6,9 +6,9 @@ import {
   ORDER_ERROR_CODES,
   ORDER_VALIDATION_ERRORS,
 } from '@sections/ordering/ordering.config';
-import { Observable, lastValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
-import { first, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -59,7 +59,7 @@ export class OrderingService {
     return errorMessage || defaultMessage;
   }
 
-  async redirectToCart(fromCartPreview?:boolean): Promise<void> {
+  async redirectToCart(fromCartPreview?: boolean): Promise<void> {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
@@ -84,9 +84,7 @@ export class OrderingService {
 
   async validateOrder(successCb, errorCB, ignoreCodes: string[] = IGNORE_ERRORS): Promise<void> {
     await this.loadingService.showSpinner();
-    await lastValueFrom(
-      this.cartService.validateOrder().pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes))
-    )
+    await firstValueFrom(this.cartService.validateOrder().pipe(handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes)))
       .then(() => {
         this.cartService.cartsErrorMessage = null;
         return successCb && successCb();

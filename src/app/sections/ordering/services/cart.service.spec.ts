@@ -11,9 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@core/model/user';
-import { APP_ROUTES } from '@sections/section.config';
-import { LOCAL_ROUTING, ORDER_TYPE } from '../ordering.config';
-import { OrderItem } from '../shared';
+import {  ORDER_TYPE } from '../ordering.config';
 import { AddressInfo } from 'net';
 
 describe('CartService', () => {
