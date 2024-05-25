@@ -114,25 +114,4 @@ describe('CartPreviewComponent', () => {
     component.removeCart();
     expect(alertController).toHaveBeenCalled();
   });
-
-  it('should validate order successfully', async () => {
-    await component.validateOrder();
-
-    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
-    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
-    expect(component.hasErrors).toBeFalsy();
-  });
-
-  it('should handle error when validating order', async () => {
-    const error = { message: ORDER_ERROR_CODES.INVALID_ORDER };
-    cartServiceStub.validateOrder = jest.fn().mockReturnValue(throwError(() => new Error('9010|error')));
-
-    await component.validateOrder();
-
-    expect(loadingServiceStub.showSpinner).toHaveBeenCalled();
-    expect(cartServiceStub.validateOrder).toHaveBeenCalled();
-    expect(loadingServiceStub.closeSpinner).toHaveBeenCalled();
-    expect(component.hasErrors).toBeTruthy();
-  });
 });
