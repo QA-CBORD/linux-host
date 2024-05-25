@@ -221,7 +221,7 @@ describe('ActiveCartService', () => {
     const routerSpy = jest.spyOn(routingServiceMock, 'navigate').mockResolvedValue(true);
     await service.addMoreItems({ orderSchedule });
     expect(routerSpy).toHaveBeenCalledWith(['ordering', 'full-menu'], {
-      queryParams: { isExistingOrder: true, canDismiss: false, openTimeSlot: true },
+      queryParams: { isExistingOrder: true, canDismiss: true, openTimeSlot: true },
     });
   });
 
@@ -232,7 +232,7 @@ describe('ActiveCartService', () => {
 
   it('should redirect to cart if order time is valid', async () => {
     const warningSpy = jest.spyOn(service, 'showTimePastWarning');
-    await service.redirectToCart({ orderSchedule, hasErrors: false, isCartPreview: true });
+    await service.redirectToCart({ orderSchedule, isCartPreview: true });
 
     expect(orderingService.redirectToCart).toHaveBeenCalledWith(true);
     expect(warningSpy).not.toHaveBeenCalled();
