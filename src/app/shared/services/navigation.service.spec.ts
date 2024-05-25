@@ -77,4 +77,16 @@ describe(NavigationService, () => {
     Object.defineProperty(service, 'history', { value: [LOCAL_ROUTING.attachments, LOCAL_ROUTING.checkInOut] });
     expect(service.getPreviousTrackedUrl()).toEqual(LOCAL_ROUTING.attachments);
   });
+
+  it('should return default params if document.referrer is empty', () => {
+    Object.defineProperty(document, 'referrer', {value: '', configurable: true});
+    const params = service.getPreviousUrlParams();
+    expect(params).toEqual({ isExistingOrder: false, openTimeSlot: false });
+  });
+
+  it('should return params from document.referrer if it is not empty', () => {
+    Object.defineProperty(document, 'referrer', {value: 'http://localhost:8100/patron/ordering/full-menu?isExistingOrder=true&openTimeSlot=true', configurable: true});
+    const params = service.getPreviousUrlParams();
+    expect(params).toEqual({ isExistingOrder: 'true', openTimeSlot: 'true' });
+  });
 });
