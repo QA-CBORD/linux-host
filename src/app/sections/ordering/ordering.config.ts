@@ -10,7 +10,7 @@ export enum LOCAL_ROUTING {
   itemDetail = 'item-detail',
   addressEdit = 'address-edit',
   checkin = 'checkin',
-  itemManualEntry = 'item-manual-entry'
+  itemManualEntry = 'item-manual-entry',
 }
 
 export enum ORDERING_CONTENT_STRINGS {
@@ -74,8 +74,8 @@ export enum ORDERING_CONTENT_STRINGS {
   labelOpen = 'label_open',
   labelOptional = 'label_optional',
   labelOrder = 'label_order',
-  needCheckin= "need_checkin",
-  labelBtnCheckin="lbl_btn_checkin",
+  needCheckin = 'need_checkin',
+  labelBtnCheckin = 'lbl_btn_checkin',
   labelOrderOptions = 'label_order-options',
   labelOrderPlacedDescription = 'label_order-placed-description',
   labelOrderPlacedTitle = 'label_order-placed-title',
@@ -108,7 +108,7 @@ export enum ORDERING_CONTENT_STRINGS {
   buttonScheduleOrder = 'button_schedule-order',
   orderSubmitTimeout = 'ordering_timeout',
   connectionLost = 'ordering_connection_lost',
-  duplicateOrdering ='ordering_duplicate',
+  duplicateOrdering = 'ordering_duplicate',
   noConnection = 'ordering_no_connection',
   orderingDatesUnavailable = 'ordering_dates_unavailable',
   lblBtnAdd2Cart = 'lbl_btn_add2_cart',
@@ -122,11 +122,12 @@ export enum ORDERING_CONTENT_STRINGS {
   searchesAvailable = 'searches_available',
   oneSearchAvailable = 'one_search_available',
   itemsNotAvailable = 'not_orders_items_available',
-  noAvailableTenders = 'no_available_tenders'
+  noAvailableTenders = 'no_available_tenders',
 }
 export enum ORDERING_SCAN_GO_CONTENT_STRINGS {
-  manualEntryInstructions = 'manual-entry_instructions'
+  manualEntryInstructions = 'manual-entry_instructions',
 }
+
 export enum MerchantSearchOptionName {
   OPEN_NOW = 'open_now', /// 1/0 - omit to return all
   ACTIVE = 'active', /// 1/0 - default to 1
@@ -152,7 +153,7 @@ export enum MerchantSettings {
   scanBarcodeEnabled = 'merchant.menu.menu_barcode_enabled',
   orderNotesDisabled = 'merchant.order.disable_order_notes',
   manualBarcodeEnabled = 'merchant.menu.menu_add_barcodea_enabled',
-  addToCartEnabled = 'merchant.menu.menu_add_items_enabled'
+  addToCartEnabled = 'merchant.menu.menu_add_items_enabled',
 }
 
 export enum ORDER_TYPE {
@@ -177,7 +178,7 @@ export enum ACCOUNT_TYPES {
 export enum INSTITUTION_ADDRESS_RESTRICTIONS {
   both = 0,
   onCampus = 1,
-  offCampus = 2
+  offCampus = 2,
 }
 
 export const ORDER_ERROR_CODES = {
@@ -202,7 +203,7 @@ export const ORDER_ERROR_CODES = {
   DUPLICATE_ORDER: '9016', // server duplicate order attempt error code.
   CONNECTION_LOST: '0 Unknown Error', // Client's internet connection lost.
   CONNECTION_TIMEOUT: 'Timeout', // Client's connection timed out,
-  INSUFFICIENT_BALANCE: 'get_common.error.insufficient_balance_meals_payment'
+  INSUFFICIENT_BALANCE: 'get_common.error.insufficient_balance_meals_payment',
 };
 
 export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
@@ -212,17 +213,19 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9011: 'The merchant is currently closed and not accepting orders',
   9017: 'Order can not be processed for the given due time, it exceeds the merchants order capacity',
   9801: 'The attempted order contains invalid items for the available menu',
-  9005: 'Items in order couldn\'t be lower than merchant supports',
-  9006: 'Items in order  couldn\'t be more than merchant supports',
-  9002: 'Order minimum total for delivery wasn\'t met',
+  9005: "Items in order couldn't be lower than merchant supports",
+  9006: "Items in order  couldn't be more than merchant supports",
+  9002: "Order minimum total for delivery wasn't met",
   9012: 'Menu is not available at this time',
   9014: 'Tip amount is negative or greater than the order subtotal',
   9013: 'Order cannot be canceled due to it has been completed',
   6112: 'You dont have enough money',
   9997: 'Timeout error, please try again later',
-  6102: 'CONTENT_STRING:MediaLostException'
+  6102: 'CONTENT_STRING:MediaLostException',
 };
 
 export const TOAST_MESSAGES = {
-  isWalkOut: 'Ordering is not possible for Smart Shopping merchants. Go to the location to start a Smart Shopping Order'
-}
+  isWalkOut:
+    'Ordering is not possible for Smart Shopping merchants. Go to the location to start a Smart Shopping Order',
+  [ORDER_ERROR_CODES.INVALID_ORDER]: `get_common.error.${ORDERING_CONTENT_STRINGS.menuItemsNotAvailable}`,
+};
