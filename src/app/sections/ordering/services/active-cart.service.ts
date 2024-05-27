@@ -14,7 +14,6 @@ import { ModalsService } from '@core/service/modals/modals.service';
 
 export type ActiveCartParams = {
   orderSchedule: Schedule;
-  hasErrors?: boolean;
   isCartPreview?: boolean;
 };
 @Injectable({
@@ -126,11 +125,11 @@ export class ActiveCartService {
     );
   }
 
-  async addMoreItems({ orderSchedule, hasErrors }: ActiveCartParams) {
+  async addMoreItems({ orderSchedule }: ActiveCartParams) {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
     const { isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
-    if (isTimeValid && !hasErrors) {
-      this.navigateToFullMenu(isASAP, !isASAP);
+    if (isTimeValid) {
+      this.navigateToFullMenu(isASAP);
       return;
     }
 
@@ -151,10 +150,10 @@ export class ActiveCartService {
     }
   }
 
-  async redirectToCart({ orderSchedule, hasErrors, isCartPreview }: ActiveCartParams) {
+  async redirectToCart({ orderSchedule, isCartPreview }: ActiveCartParams) {
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
 
-    if (isTimeValid && !hasErrors) {
+    if (isTimeValid) {
       this.orderingService.redirectToCart(isCartPreview);
       return;
     }

@@ -2,12 +2,14 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators }
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription, zip } from 'rxjs';
-import { distinctUntilChanged, filter, first, take } from 'rxjs/operators';
+import { Observable, Subscription, zip, firstValueFrom } from 'rxjs';
+import { distinctUntilChanged, filter, take } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
 import {
   LOCAL_ROUTING,
   MerchantSettings,
+  ORDER_ERROR_CODES,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
@@ -50,8 +52,9 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
     private readonly navService: NavigationService,
-    private readonly cdRef: ChangeDetectorRef
-  ) {}
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly location: Location
+  ) { }
 
   ngOnInit(): void {
     this.initContentStrings();
@@ -85,7 +88,11 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  onClose(): void {
+  onClose() {
+    this.location.back();
+  }
+
+  navigateToMenu(): void {
     if (this.routesData.queryParams.isScannedItem) {
       this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
     } else {
@@ -177,11 +184,13 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   removeItems(): void {
     this.order.counter > 1 ? this.order.counter-- : null;
     this.calculateTotalPrice();
+    this.cdRef.detectChanges();
   }
 
   addItems(): void {
     this.order.counter++;
     this.calculateTotalPrice();
+    this.cdRef.detectChanges();
   }
 
   async onFormSubmit(): Promise<void> {
@@ -227,63 +236,55 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     return { menuItemId, orderItemOptions: [], name, quantity, salePrice };
   }
 
-  private async onSubmit(menuItem): Promise<void> {
+  private async onSubmit(menuItem: Partial<OrderItem> | Partial<OrderItem>[]): Promise<void> {
     const {
       queryParams: { orderItemId },
     } = this.routesData;
-    const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
+    const orderItems = await firstValueFrom(this.cartService.orderItems$);
     if (orderItems.length && orderItemId) {
-      await this.cartService.removeOrderItemFromOrderById(orderItemId);
+      this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
     this.cartService.addOrderItems(menuItem);
     await this.loadingService.showSpinner();
-    await this.cartService
-      .validateOrder()
-      .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
-      .toPromise()
-      .then(() => {
-        this.cartService.cartsErrorMessage = null;
-        this.onClose();
-        this.addNewItem();
-      })
-      .catch(async error => {
-        // Temporary solution:
-        if (Array.isArray(error)) {
-          const [code, text] = error;
-
-          const doActionErrorCode = {
-            9017: async () => {
-              this.cartService.removeLastOrderItem();
-              await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
-            },
-            9006: () => {
-              this.cartService.removeLastOrderItem();
-              this.failedValidateOrder(text);
-            },
-            9005: () => {
-              this.cartService.cartsErrorMessage = text;
-              this.onClose();
-              this.addNewItem();
-            },
-          };
-
-          const action = doActionErrorCode[+code];
-
-          if (action) {
-            action();
-            return;
-          }
-
-          this.cartService.cartsErrorMessage = text;
-          this.onClose();
+    try {
+      await firstValueFrom(this.cartService.validateOrder().pipe(handleServerError(ORDER_VALIDATION_ERRORS)));
+      this.cartService.saveOrderSnapshot();
+      this.cartService.cartsErrorMessage = null;
+      this.onClose();
+      this.addNewItem();
+    } catch (error) {
+      if (Array.isArray(error)) {
+        const [code, text] = error;
+        const doActionErrorCode = {
+          [ORDER_ERROR_CODES.ORDER_CAPACITY]: async () => {
+            this.cartService.setOrderToSnapshot();
+            await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
+          },
+          [ORDER_ERROR_CODES.ORDER_ITEM_MAX]: () => {
+            this.cartService.setOrderToSnapshot();
+            this.failedValidateOrder(text);
+          },
+          [ORDER_ERROR_CODES.ORDER_ITEM_MIN]: () => {
+            this.cartService.cartsErrorMessage = text;
+            this.navigateToMenu();
+            this.addNewItem();
+          },
+        };
+        const action = doActionErrorCode[+code];
+        if (action) {
+          action();
           return;
         }
-
-        this.cartService.removeLastOrderItem();
-        this.failedValidateOrder(error);
-      })
-      .finally(() => this.loadingService.closeSpinner());
+        this.cartService.cartsErrorMessage = text;
+        this.navigateToMenu();
+        return;
+      }
+      this.cartService.setOrderToSnapshot();
+      this.failedValidateOrder(error);
+    } finally {
+      this.loadingService.closeSpinner();
+    }
   }
 
   private async addNewItem() {

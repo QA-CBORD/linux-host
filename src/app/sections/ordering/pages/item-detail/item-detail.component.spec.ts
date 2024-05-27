@@ -143,6 +143,9 @@ const cartServiceMock = {
   menuItems$: of(5),
   orderInfo$: of({ checkNumber: 123 }),
   removeLastOrderItem: jest.fn(),
+  saveOrderToSnapshot: jest.fn(),
+  setOrderToSnapshot: jest.fn(),
+  resetSnapshot: jest.fn(),
 };
 
 const popoverControllerMock = {
@@ -153,7 +156,7 @@ const popoverControllerMock = {
 };
 let translateService = {
   instant: jest.fn(),
-  get:jest.fn()
+  get: jest.fn()
 };
 
 describe('ItemDetailComponent', () => {
@@ -228,7 +231,7 @@ describe('ItemDetailComponent', () => {
       menuItem,
       queryParams: { isScannedItem: true } as any,
     };
-    component.onClose();
+    component.navigateToMenu();
     expect(navigationServiceMock.navigate).toHaveBeenCalledWith([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
   });
 
@@ -238,7 +241,7 @@ describe('ItemDetailComponent', () => {
       menuItem,
       queryParams: { isScannedItem: false, categoryId } as any,
     };
-    component.onClose();
+    component.navigateToMenu();
     expect(navigationServiceMock.navigate).toHaveBeenCalledWith([
       APP_ROUTES.ordering,
       LOCAL_ROUTING.menuCategoryItems,
@@ -526,7 +529,7 @@ describe('ItemDetailComponent', () => {
       queryParams: { orderItemId: 'mockOrderItemId', isItemExistsInCart: true },
     } as RoutesData;
     component.menuItem = menuItem;
-    component.cartSelectedItem = { id: '1', name: 'Test Item', price: 10,specialInstructions: 'instruction 1' } as unknown as OrderItem;
+    component.cartSelectedItem = { id: '1', name: 'Test Item', price: 10, specialInstructions: 'instruction 1' } as unknown as OrderItem;
     component.cartOrderItemOptions = [
       {
         id: '1',
@@ -537,9 +540,9 @@ describe('ItemDetailComponent', () => {
       {
         id: '2',
         name: 'Option 2',
-        
+
         menuGroup: { name: 'option2', minimum: 1, maximum: 2 } as MenuGroupInfo,
-        
+
       },
     ] as unknown as OrderItem[];
 
@@ -617,7 +620,7 @@ describe('ItemDetailComponent', () => {
 
     await component['onSubmit'](menuItem);
 
-    expect(cartServiceMock.removeLastOrderItem).toHaveBeenCalled();
+    expect(cartServiceMock.setOrderToSnapshot).toHaveBeenCalled();
     expect(loadingServiceMock.closeSpinner).toHaveBeenCalled();
   });
 
@@ -728,7 +731,7 @@ describe('ItemDetailComponent', () => {
 
     await component['onSubmit'](menuItem);
 
-    expect(cartServiceMock.removeLastOrderItem).toHaveBeenCalled();
+    expect(cartServiceMock.setOrderToSnapshot).toHaveBeenCalled();
     expect(loadingServiceMock.closeSpinner).toHaveBeenCalled();
   });
 });

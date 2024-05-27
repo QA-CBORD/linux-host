@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { OrderActionSheetService } from './services/odering-actionsheet.service';
 import { LockDownService } from '@shared/index';
-import { Observable, iif } from 'rxjs';
+import { Observable, firstValueFrom, iif } from 'rxjs';
 import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { CartService, MerchantService } from './services';
@@ -48,6 +48,9 @@ export class OrderingPage implements OnInit, AfterViewInit {
   async ionViewDidEnter() {
     this.handleActiveMerchantInRoute();
     await this.loadingService.closeSpinner();
+    const cartHasItems = await firstValueFrom(this.cartService.menuItems$);
+    if (!cartHasItems)
+      this.cartService.resetOrderSnapshot();
   }
 
   async merchantClickHandler(merchantInfo: MerchantInfo) {

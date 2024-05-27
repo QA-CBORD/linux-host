@@ -44,6 +44,7 @@ export class CartService {
   private _pendingOrderId: string = null;
   private emptyCartOnClose = new Subject();
   private emptyCartOnClose$ = this.emptyCartOnClose.asObservable();
+  private orderSnapshot: OrderInfo;
   public orderIsAsap = false;
   checkNumber: number;
   currentOrderId: string;
@@ -260,6 +261,7 @@ export class CartService {
   }
 
   private async setInitialEmptyOrder(): Promise<void> {
+    this.resetOrderSnapshot();
     this._pendingOrderId = null;
     const order = await this.initEmptyOrder();
     this.cart.order = order;
@@ -289,6 +291,7 @@ export class CartService {
     this.cart.menu = null;
     this.cart.order = null;
     this._pendingOrderId = null;
+    this.resetOrderSnapshot();
     this.onStateChanged();
   }
 
@@ -554,6 +557,24 @@ export class CartService {
     this.clearCart();
     this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
     this.cartSubscription.unsubscribe();
+  }
+
+  saveOrderSnapshot() {
+    if (this.cart?.order)
+      this.orderSnapshot = JSON.parse(JSON.stringify(this.cart.order));
+  }
+
+  setOrderToSnapshot() {
+    if (this.orderSnapshot) {
+      this.cart.order = this.orderSnapshot;
+      this.onStateChanged();
+    } else {
+      this.removeLastOrderItem();
+    }
+  }
+
+  resetOrderSnapshot() {
+    this.orderSnapshot = null;
   }
 }
 

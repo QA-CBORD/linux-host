@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Location } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -35,12 +44,16 @@ import {
   ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
 } from '@sections/ordering/ordering.config';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
+import { DateTimeSelected } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.component';
 import { APP_ROUTES } from '@sections/section.config';
 import { LockDownService } from '@shared/index';
+import { ASAP_LABEL, EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/generic-constants';
+import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 import { ConnectionService } from '@shared/services/connection-service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
@@ -58,11 +71,6 @@ import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operato
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
-import { ASAP_LABEL, EXECUTION_PRIORITY, TOAST_DURATION } from '@shared/model/generic-constants';
-import { Location } from '@angular/common';
-import { DateTimeSelected } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.component';
-import { AppRateService } from '@shared/services/app-rate/app-rate.service';
-import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -104,7 +112,7 @@ export class CartComponent implements OnInit, OnDestroy {
   platformBackButtonClickSubscription: Subscription;
   isValidatingDueTime = false;
 
-  private readonly activeCartService = inject(ActiveCartService)
+  private readonly activeCartService = inject(ActiveCartService);
 
   constructor(
     private readonly cartService: CartService,
@@ -166,11 +174,16 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.canShowRemoveItemsAlert()) {
       this.cartService.closeButtonClicked();
     } else {
-      this.location.back();
+      const { isExistingOrder, openTimeSlot } = this.routingService.getPreviousUrlParams() as {
+        isExistingOrder: boolean;
+        openTimeSlot: boolean;
+      };
+      this.navigateToFullMenu(isExistingOrder, openTimeSlot, true);
       const isFromCartPreview = this.activatedRoute.snapshot.queryParamMap.get('isFromCartPreview');
       isFromCartPreview && this.openCartpreview();
     }
   }
+
   async openCartpreview() {
     this.activeCartService.openCartpreview();
   }
@@ -503,9 +516,19 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cdRef.reattach();
   }
 
-  private async navigateToFullMenu(): Promise<void> {
+  private async navigateToFullMenu(
+    isExistingOrder: boolean = false,
+    openTimeSlot: boolean = true,
+    canDismiss: boolean = true
+  ): Promise<void> {
+    const params = {
+      isExistingOrder: isExistingOrder,
+      openTimeSlot: openTimeSlot,
+      canDismiss: canDismiss,
+    };
+
     await this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
-      queryParams: { openTimeSlot: true },
+      queryParams: { ...params },
     });
   }
 
