@@ -4,6 +4,7 @@ import { CartComponent } from '@sections/ordering/pages/cart/cart.component';
 import { CartResolver } from '@sections/ordering/resolvers/cart.resolver';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingSuccessComponent } from './components/non-checking-success/non-checking-success.component';
+import { OrderingResolver } from '@sections/ordering/resolvers';
 
 const routes: Routes = [
   {
@@ -16,6 +17,7 @@ const routes: Routes = [
     component: CartComponent,
     resolve: {
       data: CartResolver,
+      ordering: OrderingResolver,
     },
   },
   {
@@ -27,6 +29,6 @@ const routes: Routes = [
 const imports = [RouterModule.forChild(routes)];
 
 @NgModule({
-  imports
+  imports,
 })
 export class CartRoutingModule {}

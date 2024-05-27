@@ -12,6 +12,7 @@ import { TypeMessageModule } from '@sections/ordering/shared/pipes/type-message/
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { StSuccesSummaryModule } from '@shared/ui-components/success-summary/st-success-summary.module';
+import { OrderingResolver } from '@sections/ordering/resolvers';
 
 @NgModule({
   declarations: [CartComponent, NonCheckingSuccessComponent],
@@ -27,6 +28,7 @@ import { StSuccesSummaryModule } from '@shared/ui-components/success-summary/st-
     AddressHeaderFormatPipeModule,
     ModifyPrepTimeModule,
     StSuccesSummaryModule
-  ]
+  ],
+  providers:[OrderingResolver]
 })
 export class CartModule { }

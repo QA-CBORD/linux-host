@@ -82,7 +82,7 @@ export class OrderingService {
     await this.toastService.showToast({ message });
   }
 
-  async validateOrder(successCb, errorCB, ignoreCodes: string[] = IGNORE_ERRORS): Promise<void> {
+  async validateOrder(successCb, errorCB, ignoreCodes?: string[]): Promise<void> {
     await this.loadingService.showSpinner();
     await firstValueFrom(this.cartService.validateOrder().pipe(handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes)))
       .then(() => {
