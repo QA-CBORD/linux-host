@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import {
   LOCAL_ROUTING,
   ORDERING_CONTENT_STRINGS,
   ORDER_ERROR_CODES,
   ORDER_VALIDATION_ERRORS,
+  TOAST_MESSAGES,
 } from '@sections/ordering/ordering.config';
 import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
@@ -18,11 +19,13 @@ import { CartService } from './cart.service';
 import { AlertController } from '@ionic/angular';
 import { NavigationService } from '@shared/services';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrderingService {
+  private readonly translateService = inject(TranslateFacadeService);
   constructor(
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly loadingService: LoadingService,
@@ -93,6 +96,7 @@ export class OrderingService {
         if (Array.isArray(error) && IGNORE_ERRORS.includes(error[0])) {
           this.cartService.cartsErrorMessage = error[1];
         }
+        if (TOAST_MESSAGES[error[0]]) error = this.translateService.instant(TOAST_MESSAGES[error[0]]);
         return errorCB(error);
       })
       .finally(() => {
