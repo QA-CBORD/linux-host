@@ -78,12 +78,11 @@ export const handleServerError = <T>(
     source.pipe(
       catchError(({ message = '' }) => {
         message = message.split('|');
-
         if (message.length <= 1) return throwError(message[0]);
         const [code, text] = message;
 
         if (ignoreCodes && ignoreCodes.includes(code)) {
-          return of();
+          return of({} as T);
         }
 
         // Temprorary solution for these codes:

@@ -221,7 +221,7 @@ describe('ActiveCartService', () => {
     const routerSpy = jest.spyOn(routingServiceMock, 'navigate').mockResolvedValue(true);
     await service.addMoreItems({ orderSchedule });
     expect(routerSpy).toHaveBeenCalledWith(['ordering', 'full-menu'], {
-      queryParams: { isExistingOrder: true, canDismiss: true, openTimeSlot: undefined },
+      queryParams: { isExistingOrder: true, canDismiss: false, openTimeSlot: true },
     });
   });
 
