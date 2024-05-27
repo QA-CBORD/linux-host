@@ -76,6 +76,22 @@ export class NavigationService {
   private isUrlAllowed(path: string): boolean {
     return !this.notAllowedPaths.some(rx => rx.test(path)) && !this.isPreviousUrl(path);
   }
+
+  getPreviousUrlParams() {
+    if (!document.referrer) {
+      return { isExistingOrder: false, openTimeSlot: false };
+    }
+
+    const urlObj = new URL(document.referrer);
+    const params = new URLSearchParams(urlObj.search);
+    const paramsObj = {};
+
+    for (const [key, value] of params.entries()) {
+      paramsObj[key] = value;
+    }
+
+    return paramsObj;
+  }
 }
 
 export interface NavParams {
