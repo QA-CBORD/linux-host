@@ -270,9 +270,9 @@ export class CartService {
 
   // ----------------------------------------- REMOVING DATA BLOCK ---------------------------------------//
 
-  removeOrderItemFromOrderById(id: string): Partial<OrderInfo | void> {
+  removeOrderItemFromOrderById(id: string, idFieldToCompare: keyof OrderItem = 'id'): Partial<OrderInfo | void> {
     if (!this.cart.order || !this.cart.order.orderItems.length) return;
-    const itemIndex = this.cart.order.orderItems.findIndex(({ id: oId }: OrderItem) => oId === id);
+    const itemIndex = this.cart.order.orderItems.findIndex(({ [idFieldToCompare]: oId }: OrderItem) => oId === id);
     if (itemIndex !== -1) {
       const [removedItem] = this.cart.order.orderItems.splice(itemIndex, 1);
       this.onStateChanged();
@@ -372,16 +372,15 @@ export class CartService {
             })
           );
       }),
-      tap(updatedOrder => {
-        this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
-        if (this.orderIsAsap || !this.cart.order.dueTime) {
-          this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };
-        }
-      })
+      tap(order => this.updateOrderFromValidateResponse(order))
     );
   }
 
   validateReOrderItems(): Observable<ItemsOrderInfo> {
+    return this.validateCartItems().pipe(tap(({ order }) => this.updateOrderFromValidateResponse(order)));
+  }
+
+  validateCartItems(validateOrderResult = true): Observable<ItemsOrderInfo> {
     const { orderType: type, dueTime, address: addr } = this.cart.orderDetailsOptions;
     let address = {};
 
@@ -399,13 +398,7 @@ export class CartService {
           dueTime: this.getDate(dueTime, locale, timeZone),
         };
 
-        return this.merchantService.validateOrderItems(this.cart.order);
-      }),
-      tap(({ order: updatedOrder }) => {
-        this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
-        if (this.orderIsAsap || !this.cart.order.dueTime) {
-          this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };
-        }
+        return this.merchantService.validateOrderItems(this.cart.order, validateOrderResult);
       })
     );
   }
@@ -425,6 +418,19 @@ export class CartService {
     if (this.orderIsAsap) this.cart.order.dueTime = undefined;
     const order = { ...this.cart.order, clientOrderID };
     return this.api.submitOrder(order, accId, cvv);
+  }
+
+  removeCartItemsFromItemValidateResponse(validateOrder: ItemsOrderInfo) {
+    validateOrder.orderRemovedItems.forEach(removedItem => {
+      this.removeOrderItemFromOrderById(removedItem.menuItemId, 'menuItemId');
+    });
+  }
+
+  updateOrderFromValidateResponse(updatedOrder: OrderInfo) {
+    this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime };
+    if (this.orderIsAsap || !this.cart.order.dueTime) {
+      this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };
+    }
   }
 
   updateOrderAddress(address: AddressInfo) {

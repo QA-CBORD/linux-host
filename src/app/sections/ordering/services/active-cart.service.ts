@@ -11,6 +11,9 @@ import { CartService } from '.';
 import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { NavigationService } from '@shared/index';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { ItemsUnavailableComponent } from '@sections/ordering/shared/ui-components/items-unavailable/items-unavailable.component';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 export type ActiveCartParams = {
   orderSchedule: Schedule;
@@ -26,6 +29,7 @@ export class ActiveCartService {
   private readonly cartService = inject(CartService);
   private readonly routingService = inject(NavigationService);
   private readonly modalService = inject(ModalsService);
+  private readonly loadingService = inject(LoadingService);
 
   constructor() {}
 
@@ -134,6 +138,31 @@ export class ActiveCartService {
     }
 
     this.showTimePastWarning(orderType);
+  }
+
+  async validateCartItemsAndNavigate(activeCartParams: ActiveCartParams, navigateMethod: () => Promise<void>) {
+    this.loadingService.showSpinner();
+    const validatedCartItems = await firstValueFrom(this.cartService.validateCartItems(false));
+    this.loadingService.closeSpinner();
+
+    if (!validatedCartItems.orderRemovedItems?.length) return await navigateMethod();
+
+    const unavailableItemsAlert = await this.modalService.createAlert({
+      component: ItemsUnavailableComponent,
+      componentProps: {
+        orderRemovedItems: validatedCartItems.orderRemovedItems,
+        mealBased: validatedCartItems.order?.mealBased,
+      },
+    });
+    unavailableItemsAlert.onDidDismiss().then(async ({ role }) => {
+      if (BUTTON_TYPE.CONTINUE === role) {
+        this.cartService.removeCartItemsFromItemValidateResponse(validatedCartItems);
+        if (validatedCartItems.order?.orderItems?.length) return await navigateMethod();
+        return await this.addMoreItems(activeCartParams);
+      }
+    });
+
+    return unavailableItemsAlert.present();
   }
 
   async navigateToFullMenu(openTimeSlot?: boolean, canDismiss: boolean = true) {

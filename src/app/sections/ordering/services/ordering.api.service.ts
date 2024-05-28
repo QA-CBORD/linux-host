@@ -90,8 +90,8 @@ export class OrderingApiService {
       .pipe(map(({ response }: MessageResponse<OrderInfo>) => response));
   }
 
-  validateOrderItems(orderInfo: OrderInfo): Observable<ItemsOrderInfo> {
-    const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo), validateOrderResult: true };
+  validateOrderItems(orderInfo: OrderInfo, validateOrderResult = true): Observable<ItemsOrderInfo> {
+    const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo), validateOrderResult };
     const queryConfig = new RPCQueryConfig('validateOrderItems', postParams, true);
 
     return this.http

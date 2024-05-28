@@ -9,8 +9,7 @@ describe('ItemsUnavailableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IonicModule],
-      declarations: [ItemsUnavailableComponent],
+      imports: [IonicModule, ItemsUnavailableComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ItemsUnavailableComponent);

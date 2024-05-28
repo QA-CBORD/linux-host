@@ -187,8 +187,8 @@ export class MerchantService {
     return this.orderingApiService.validateOrder(order);
   }
 
-  validateOrderItems(order: OrderInfo): Observable<ItemsOrderInfo> {
-    return this.orderingApiService.validateOrderItems(order);
+  validateOrderItems(order: OrderInfo, validateOrderResult = true): Observable<ItemsOrderInfo> {
+    return this.orderingApiService.validateOrderItems(order, validateOrderResult);
   }
 
   validatePendingOrder(order: ExistingOrderInfo, accountId: string): Observable<OrderInfo> {

@@ -57,11 +57,15 @@ export class CartPreviewComponent implements AfterViewInit {
   };
 
   async redirectToCart() {
-    this.activeCartService.redirectToCart(this.activeCartParams);
+    this.activeCartService.validateCartItemsAndNavigate(this.activeCartParams, () =>
+      this.activeCartService.redirectToCart(this.activeCartParams)
+    );
   }
 
   async addMoreItems() {
-    this.activeCartService.addMoreItems(this.activeCartParams);
+    this.activeCartService.validateCartItemsAndNavigate(this.activeCartParams, () =>
+      this.activeCartService.addMoreItems(this.activeCartParams)
+    );
   }
 
   removeCart() {

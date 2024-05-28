@@ -33,7 +33,7 @@ import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { Observable, Subscription, firstValueFrom, iif, lastValueFrom, of, zip } from 'rxjs';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
-import { ItemsUnavailableComponent } from '../items-unavailable/items-unavailable.component';
+import { ItemsUnavailableComponent } from '@sections/ordering/shared/ui-components/items-unavailable/items-unavailable.component';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
@@ -58,7 +58,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   checkinInstructionMessage: Observable<string>;
   addToCartEnabled: boolean;
   private openActionSheetSubscription: Subscription;
-  private readonly activeCartService = inject(ActiveCartService)
+  private readonly activeCartService = inject(ActiveCartService);
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,

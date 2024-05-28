@@ -4,7 +4,6 @@ import { DeviceSecurityType, VaultErrorCodes, VaultType, Device } from '@ionic-e
 import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
 import { VaultFactory } from './vault-factory.service';
 import { VaultIdentityService } from './vault.identity.service';
-import sinon from 'sinon';
 import {
   PinCloseStatus,
   VaultMigrateResult,
@@ -156,7 +155,6 @@ describe('VaultIdentityService', () => {
   });
 
   describe('Vault login, unlock and logout', () => {
-    afterEach(() => sinon.restore());
 
     it('should configure vault with biometrics', async () => {
       const spy = jest.spyOn(service, 'patchVaultConfig');
@@ -218,8 +216,6 @@ describe('VaultIdentityService', () => {
 
     it('should logout user when pin retry fails', async () => {
       const session = { pin: '1111', biometricUsed: true };
-      sinon.stub(service, 'closeAllModals').resolves();
-      sinon.stub(vault, 'unlock').rejects({ message: 'biometric auth failed' });
       const retryPinUnlockStub = jest.spyOn(service, 'retryPinUnlock');
       const pinModalSpy = jest
         .spyOn(service.pinAuthenticator, 'tryUnlock0')
