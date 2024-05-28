@@ -13,7 +13,7 @@
 
 <ion-content class="browser-hidden" #content>
   <st-order-details
-    [readonly]="false"
+    [readonly]="readonly"
     [isExistingOrder]="isExistingOrder"
     [orderInfo]="order$ | async"
     [merchant]="merchant$ | async"
