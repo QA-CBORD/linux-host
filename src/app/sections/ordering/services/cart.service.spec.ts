@@ -6,13 +6,14 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { NavigationService, UuidGeneratorService } from '@shared/services';
 import { CartService, CartState, MerchantService, OrderDetailOptions } from '.';
 import { OrderingApiService } from './ordering.api.service';
-import { of } from 'rxjs';
+import { first, firstValueFrom, of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@core/model/user';
-import {  ORDER_TYPE } from '../ordering.config';
+import { ORDER_TYPE } from '../ordering.config';
 import { AddressInfo } from 'net';
+import { OrderInfo } from '../shared';
 
 describe('CartService', () => {
   let service: CartService;
@@ -158,4 +159,22 @@ describe('CartService', () => {
     expect(deleteStateEntityByKeySpy).toHaveBeenCalledWith(service['CARTIDKEY']);
   });
 
+  describe('removeOrderItemFromOrderById', () => {
+    it('should remove the item from the order and return it', async () => {
+      const itemId = 'item1';
+
+      service.orderIsAsap = true;
+      service.updateOrderFromValidateResponse({ orderItems: [] } as OrderInfo);
+
+      service.addOrderItems([{ id: itemId, name: 'Test Item', quantity: 10 }]);
+      expect(firstValueFrom(service.orderItems$.pipe(first()))).resolves.toHaveLength(2);
+
+      const removedItem = await service.removeOrderItemFromOrderById(itemId);
+      // Expect that the item was removed from the order
+      expect(firstValueFrom(service.orderItems$.pipe(first()))).resolves.toHaveLength(0);
+
+      // Expect that the removed item is returned
+      expect(removedItem).toEqual({ id: 'item1', name: 'Test Item', quantity: 10 });
+    });
+  });
 });
