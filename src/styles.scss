@@ -584,6 +584,7 @@ ion-modal.sc-modal {
 
   button.alert-button.button__option_confirm {
     min-width: 150px !important;
+    max-width: 100% !important;
     background-color: #1562ff !important;
     &_time {
       min-width: 100px !important;
