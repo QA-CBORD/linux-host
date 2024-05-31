@@ -78,7 +78,7 @@ export class OrderingService {
       }
       return this.failedValidateOrder(error);
     };
-    await this.validateOrder(successCb, errorCB);
+    await this.validateOrder(successCb, errorCB, fromCartPreview ? IGNORE_ERRORS_FOR_ACTIVE_CART : null);
   }
 
   private async failedValidateOrder(message: string): Promise<void> {
@@ -124,3 +124,5 @@ export const IGNORE_ERRORS = [
   ORDER_ERROR_CODES.ORDER_ITEM_MIN,
   ORDER_ERROR_CODES.ORDER_ITEM_MAX,
 ];
+
+const IGNORE_ERRORS_FOR_ACTIVE_CART = [ORDER_ERROR_CODES.ORDER_CAPACITY];
