@@ -32,8 +32,7 @@ export class ServerError implements HttpInterceptor {
               throw new Error(res.body.exception);
             }
 
-            console.error('handleServerException res: ', res);
-            console.error('handleServerException req: ', req);
+            console.error('handleServerException: ', req, res);
             this.handleServerException(req.body.method, res.body.exception);
           }
         },

@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -111,7 +110,7 @@ export class CartComponent implements OnInit, OnDestroy {
   @ViewChild('content') private page: IonContent;
   platformBackButtonClickSubscription: Subscription;
   isValidatingDueTime = false;
-
+  readonly = false;
   private readonly activeCartService = inject(ActiveCartService);
 
   constructor(
@@ -134,8 +133,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly translateService: TranslateService,
     private readonly priceUnitsResolverPipe: PriceUnitsResolverPipe,
     private readonly appRateService: AppRateService,
-    private platform: Platform,
-    private location: Location
+    private platform: Platform
   ) {
     // Resolved data type: CartResolvedData
     this._accountInfoList$ = new BehaviorSubject<MerchantAccountInfoList>(
@@ -335,7 +333,9 @@ export class CartComponent implements OnInit, OnDestroy {
               ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
               : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
-              : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
+                : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
+
+          this.readonly = true;
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);

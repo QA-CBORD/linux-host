@@ -157,12 +157,12 @@ export class StDateTimePickerComponent implements OnInit {
 
     setTimeout(() => {
       const pageTitle = document.getElementsByClassName('picker-title')[0] as HTMLElement;
-      pageTitle.setAttribute('aria-label', title);
-      pageTitle.setAttribute('aria-level', '1');
-      pageTitle.setAttribute('role', 'heading');
-      if (pageTitle) pageTitle.focus();
+      pageTitle?.setAttribute('aria-label', title);
+      pageTitle?.setAttribute('aria-level', '1');
+      pageTitle?.setAttribute('role', 'heading');
+      if (pageTitle) pageTitle?.focus();
       const hiddenConfirmButton = document.getElementsByClassName('picker-hidden-confirm')[0] as HTMLElement;
-      hiddenConfirmButton.setAttribute('aria-hidden', 'true');
+      hiddenConfirmButton?.setAttribute('aria-hidden', 'true');
     }, TIMEOUTS.A11yFocus);
   }
 
