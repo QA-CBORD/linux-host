@@ -14,6 +14,7 @@ import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-awar
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
 import { AlertController, ModalController } from '@ionic/angular';
 import { NavigationExtras } from '@angular/router';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-startup',
@@ -21,10 +22,9 @@ import { NavigationExtras } from '@angular/router';
   styleUrls: ['./startup.page.scss'],
 })
 export class StartupPage {
-
   showLoading = false;
 
-  private alertController = inject(AlertController);
+  private readonly nativeProvider = inject(NativeProvider);
 
   constructor(
     private readonly elementRef: ElementRef,
@@ -41,10 +41,10 @@ export class StartupPage {
 
   /// check login on enter
   ionViewDidEnter() {
-    this.dismissPrevOpenedAlert();
+    this.nativeProvider.dismissTopControllers();
     this.loadingService.showSpinner();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { skipAuthFlow, ...rest } = <any> this.location.getState();
+    const { skipAuthFlow, ...rest } = <any>this.location.getState();
     if (!skipAuthFlow) {
       this.startAuthFlow(rest);
     }
@@ -110,7 +110,7 @@ export class StartupPage {
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { biometricEnabled } = <any> this.location.getState();
+          const { biometricEnabled } = <any>this.location.getState();
           return this.unlockVault(biometricEnabled);
         }
 
@@ -198,10 +198,5 @@ export class StartupPage {
   ionViewDidLeave() {
     this.loadingService.closeSpinner();
     this.elementRef.nativeElement.remove();
-  }
-
-  async dismissPrevOpenedAlert() {
-    const topAlert = await this.alertController.getTop();
-    topAlert && this.alertController.dismiss();
   }
 }
