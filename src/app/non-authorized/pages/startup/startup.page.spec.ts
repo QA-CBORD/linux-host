@@ -7,7 +7,7 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { VaultMigrateResult } from '@core/service/identity/model.identity';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { NavigationService } from '@shared/services/navigation.service';
 import { ExecStatus } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
@@ -26,41 +26,44 @@ describe('Application Startup Flow', () => {
     authFacadeService,
     navigationService,
     connectivityFacade,
-    modalControllerService;
+    modalControllerService,
+    allertController;
   beforeEach(async () => {
-
     elementRef = {};
     environmentFacadeService = {
-      initialization: jest.fn()
+      initialization: jest.fn(),
     };
     location = {
-      getState: jest.fn()
+      getState: jest.fn(),
     };
     loadingService = {
       showSpinner: jest.fn(),
-      closeSpinner: jest.fn()
+      closeSpinner: jest.fn(),
     };
     sessionFacadeService = {
-      determineAppLoginState: jest.fn()
+      determineAppLoginState: jest.fn(),
     };
     identityFacadeService = {
       migrateIfLegacyVault: jest.fn(),
       clearAll: jest.fn(),
       isVaultLocked: jest.fn(),
-      unlockVault: jest.fn()
+      unlockVault: jest.fn(),
     };
     authFacadeService = {
-      getAuthSessionToken$: jest.fn()
+      getAuthSessionToken$: jest.fn(),
     };
     navigationService = {
-      navigateAnonymous: jest.fn()
+      navigateAnonymous: jest.fn(),
     };
     connectivityFacade = {
-      execute: jest.fn()
+      execute: jest.fn(),
     };
 
     modalControllerService = {
-      dismiss: jest.fn()
+      dismiss: jest.fn(),
+    };
+    allertController = {
+      getTop: jest.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -76,7 +79,8 @@ describe('Application Startup Flow', () => {
         { provide: AuthFacadeService, useValue: authFacadeService },
         { provide: NavigationService, useValue: navigationService },
         { provide: ConnectivityAwareFacadeService, useValue: connectivityFacade },
-        { provide: ModalController, useValue: modalControllerService }
+        { provide: ModalController, useValue: modalControllerService },
+        { provide: AlertController, useValue: allertController },
       ],
     }).compileComponents();
   });
@@ -91,9 +95,7 @@ describe('Application Startup Flow', () => {
     expect(component).toBeTruthy();
   });
 
-
   describe('StartupPage.ionViewDidEnter', () => {
-
     it('should call "unlockVault" when skipLoginFlow is true', async () => {
       jest.spyOn(location, 'getState').mockReturnValue({ skipLoginFlow: true, biometricEnabled: false });
       const spy1 = jest.spyOn(component, 'unlockVault').mockResolvedValue();
@@ -112,12 +114,19 @@ describe('Application Startup Flow', () => {
       expect(spy1).not.toBeCalled();
       expect(spy2).toBeCalled();
     });
-
+    it('should call dismissPrevOpenedAlert when ionViewDidEnter is called', () => {
+      jest.spyOn(location, 'getState').mockReturnValue({ skipLoginFlow: true, biometricEnabled: false });
+      jest.spyOn(component, 'unlockVault').mockResolvedValue();
+      jest.spyOn(component, 'checkLoginFlow').mockResolvedValue(true);
+      jest.spyOn(component, 'dismissPrevOpenedAlert');
+      component.ionViewDidEnter();
+      expect(component.dismissPrevOpenedAlert).toHaveBeenCalled();
+    });
   });
 
   describe('StartupPage.checkLoginFlow', () => {
     let initEnvSpy, execSpy, clearAllSpy;
-    const results = { data: "1122334455", execStatus: ExecStatus.Execution_success };
+    const results = { data: '1122334455', execStatus: ExecStatus.Execution_success };
     beforeEach(() => {
       jest.spyOn(navigationService, 'navigateAnonymous').mockResolvedValue(true);
       initEnvSpy = jest.spyOn(environmentFacadeService, 'initialization').mockResolvedValue(true);
@@ -127,7 +136,9 @@ describe('Application Startup Flow', () => {
 
     it('should logout user when authencation fails during vault migration', async () => {
       jest.spyOn(component, 'unlockVaultIfSetup').mockResolvedValue({ pin: null });
-      const migrateVaultSpy = jest.spyOn(identityFacadeService, 'migrateIfLegacyVault').mockReturnValue(VaultMigrateResult.MIGRATION_FAILED);
+      const migrateVaultSpy = jest
+        .spyOn(identityFacadeService, 'migrateIfLegacyVault')
+        .mockReturnValue(VaultMigrateResult.MIGRATION_FAILED);
       const logoutSpy = jest.spyOn(navigationService, 'navigateAnonymous').mockResolvedValue(true);
       await component.checkLoginFlow();
       expect(clearAllSpy).toHaveBeenCalled();
@@ -140,8 +151,10 @@ describe('Application Startup Flow', () => {
     });
 
     it('should not call "unlockVault" when vault migration succeeds', async () => {
-      jest.spyOn(component, 'unlockVaultIfSetup').mockResolvedValue({pin: null })
-      const migrateVaultSpy = jest.spyOn(identityFacadeService, 'migrateIfLegacyVault').mockReturnValue(VaultMigrateResult.MIGRATION_SUCCESS);
+      jest.spyOn(component, 'unlockVaultIfSetup').mockResolvedValue({ pin: null });
+      const migrateVaultSpy = jest
+        .spyOn(identityFacadeService, 'migrateIfLegacyVault')
+        .mockReturnValue(VaultMigrateResult.MIGRATION_SUCCESS);
       const unlockVaultSpy = jest.spyOn(component, 'unlockVault').mockResolvedValue(null);
       await component.checkLoginFlow();
       expect(unlockVaultSpy).not.toHaveBeenCalled();
@@ -150,7 +163,9 @@ describe('Application Startup Flow', () => {
     });
 
     it('should call "handleAppLoginState" when user was not logged in', async () => {
-      jest.spyOn(identityFacadeService, 'migrateIfLegacyVault').mockReturnValue(VaultMigrateResult.MIGRATION_NOT_NEEDED);
+      jest
+        .spyOn(identityFacadeService, 'migrateIfLegacyVault')
+        .mockReturnValue(VaultMigrateResult.MIGRATION_NOT_NEEDED);
       jest.spyOn(sessionFacadeService, 'determineAppLoginState').mockResolvedValue(LoginState.SELECT_INSTITUTION);
       const unlockVaultSpy = jest.spyOn(component, 'unlockVaultIfSetup').mockResolvedValue({ pin: null });
       const handleStateSpy = jest.spyOn(component, 'handleAppLoginState');
@@ -161,9 +176,7 @@ describe('Application Startup Flow', () => {
       expect(go2EntryPageSpy).toHaveBeenCalledWith(ANONYMOUS_ROUTES.entry, { replaceUrl: true });
       expect(unlockVaultSpy).toHaveBeenCalled();
     });
-
   });
-
 
   describe('StartupPage.unlockVault', () => {
     const session = { pin: '1111', biometricUsed: true };
@@ -225,6 +238,4 @@ describe('Application Startup Flow', () => {
       expect(authenticatePinSpy).toHaveBeenCalled();
     });
   });
-
 });
-

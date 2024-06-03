@@ -201,7 +201,6 @@ export class StartupPage {
   }
 
   async dismissPrevOpenedAlert() {
-    this.loadingService.closeSpinner();
     const topAlert = await this.alertController.getTop();
     topAlert && this.alertController.dismiss();
   }
