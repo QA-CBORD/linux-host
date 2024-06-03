@@ -509,15 +509,11 @@ ion-modal.sc-modal {
 
   .alert-wrapper {
     border-radius: 5px;
-    min-width: 300px;
-    max-width: 320px;
 
     .alert-head {
       .alert-title {
         @include font-nunito-heavy(20px);
       }
-        padding-bottom: 0px;
-        padding-inline-start: 15px;
     }
 
     .alert-message {
@@ -526,14 +522,13 @@ ion-modal.sc-modal {
       text-align: left;
       @include font-nunito-regular(16px);
       padding: 0 15px 5px 15px;
-      color: black;
     }
 
     .alert-button-group {
       display: grid;
       grid-template-columns: auto auto;
       justify-content: end;
-      padding: 0px 15px 15px;
+      padding: 15px;
     }
 
     button.alert-button.button__option_cancel {
@@ -563,6 +558,24 @@ ion-modal.sc-modal {
 
 .alert_full_menu {
   @extend .alert_cart;
+
+  .alert-wrapper {
+    min-width: 290px;
+
+    .alert-head {
+      padding-bottom: 0px;
+      padding-inline-start: 15px;
+    }
+
+    .alert-message {
+      padding: 0 15px 5px 15px;
+      color: black;
+    }
+
+    .alert-button-group {
+      padding: 0px 15px 15px;
+    }
+  }
 }
 
 .active_cart {
