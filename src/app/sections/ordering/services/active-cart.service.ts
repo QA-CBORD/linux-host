@@ -53,6 +53,7 @@ export class ActiveCartService {
           cssClass: 'button__option_confirm',
           handler: async () => {
             this.cartService.clearActiveOrder();
+            this.cartService.clearCart();
             openOrderOptions();
           },
         },
