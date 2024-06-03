@@ -12,7 +12,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-aware-facade.service';
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
-import { AlertController, ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { NavigationExtras } from '@angular/router';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
@@ -44,7 +44,7 @@ export class StartupPage {
     this.nativeProvider.dismissTopControllers();
     this.loadingService.showSpinner();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { skipAuthFlow, ...rest } = <any>this.location.getState();
+    const { skipAuthFlow, ...rest } = <any> this.location.getState();
     if (!skipAuthFlow) {
       this.startAuthFlow(rest);
     }
@@ -110,7 +110,7 @@ export class StartupPage {
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { biometricEnabled } = <any>this.location.getState();
+          const { biometricEnabled } = <any> this.location.getState();
           return this.unlockVault(biometricEnabled);
         }
 
