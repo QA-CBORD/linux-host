@@ -14,18 +14,18 @@ import { ConnectivityAwareFacadeService, ExecOptions } from './connectivity-awar
 import { VaultMigrateResult, VaultSession } from '@core/service/identity/model.identity';
 import { AlertController, ModalController } from '@ionic/angular';
 import { NavigationExtras } from '@angular/router';
- 
+
 @Component({
   selector: 'st-startup',
   templateUrl: './startup.page.html',
   styleUrls: ['./startup.page.scss'],
 })
 export class StartupPage {
-  /// startup page used as a backdrop for login, it ensures global navbar is hidden by url route checking
- 
+
   showLoading = false;
+
   private alertController = inject(AlertController);
- 
+
   constructor(
     private readonly elementRef: ElementRef,
     private readonly environmentFacadeService: EnvironmentFacadeService,
@@ -38,18 +38,18 @@ export class StartupPage {
     private readonly connectivityAwareFacadeService: ConnectivityAwareFacadeService,
     private readonly modalController: ModalController
   ) {}
- 
+
   /// check login on enter
   ionViewDidEnter() {
     this.dismissPrevOpenedAlert();
     this.loadingService.showSpinner();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { skipAuthFlow, ...rest } = <any>this.location.getState();
+    const { skipAuthFlow, ...rest } = <any> this.location.getState();
     if (!skipAuthFlow) {
       this.startAuthFlow(rest);
     }
   }
- 
+
   startAuthFlow({ skipLoginFlow, biometricEnabled }) {
     if (skipLoginFlow) {
       this.unlockVault(biometricEnabled);
@@ -57,7 +57,7 @@ export class StartupPage {
       this.checkLoginFlow();
     }
   }
- 
+
   async checkLoginFlow() {
     // step 1: determine and initialize current environment.
     await this.environmentFacadeService.initialization();
@@ -76,11 +76,11 @@ export class StartupPage {
       },
       !hasPin
     );
- 
+
     if (hasPin) {
       return this.handleVaultLoginSuccess(session);
     }
- 
+
     // step 3: check if vault needs to migrate data.
     if (this.vaultMigrationFailed(await this.identityFacadeService.migrateIfLegacyVault())) {
       return this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
@@ -90,16 +90,16 @@ export class StartupPage {
     // step 5: interpret appLoginState and proceed accordingly.
     this.handleAppLoginState(appLoginState);
   }
- 
+
   handleVaultUnlockFailure(): void {
     this.navigateAnonymous(ANONYMOUS_ROUTES.entry);
   }
- 
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async connectionIssueAwarePromiseExecute(options: ExecOptions<any>, isVaultLocked = false) {
     return this.connectivityAwareFacadeService.execute({ shouldNavigate: true, ...options }, isVaultLocked);
   }
- 
+
   authenticatePin(pin: string) {
     this.connectionIssueAwarePromiseExecute({
       promise: () => firstValueFrom(this.authFacadeService.authenticatePin$(pin)),
@@ -110,10 +110,10 @@ export class StartupPage {
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { biometricEnabled } = <any>this.location.getState();
+          const { biometricEnabled } = <any> this.location.getState();
           return this.unlockVault(biometricEnabled);
         }
- 
+
         return this.navigateToDashboard();
       })
       .catch(error => {
@@ -122,12 +122,12 @@ export class StartupPage {
         }
       });
   }
- 
+
   async handleVaultLoginSuccess(session: VaultSession): Promise<void> {
     this.authenticatePin(session.pin);
     this.showLoading = true;
   }
- 
+
   /**
    * This only returns true if the user failed to authenticate (enters wrong pin, or fails biometric auth), while doing vault data migration;
    * @param migrationResult
@@ -136,7 +136,7 @@ export class StartupPage {
   private vaultMigrationFailed(migrationResult: VaultMigrateResult) {
     return VaultMigrateResult.MIGRATION_FAILED === migrationResult;
   }
- 
+
   async navigateAnonymous(where: ANONYMOUS_ROUTES, data?: NavigationExtras, clearAll = true) {
     try {
       return await this.navigationService.navigateAnonymous(where, { ...data });
@@ -144,10 +144,10 @@ export class StartupPage {
       clearAll && this.identityFacadeService.clearAll();
     }
   }
- 
+
   async handleAppLoginState(state: LoginState): Promise<void> {
     const routeConfig = { replaceUrl: true };
- 
+
     switch (state) {
       case LoginState.SELECT_INSTITUTION:
         await this.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
@@ -170,7 +170,7 @@ export class StartupPage {
         await this.navigateAnonymous(ANONYMOUS_ROUTES.entry, routeConfig);
     }
   }
- 
+
   public async navigateToDashboard() {
     this.connectionIssueAwarePromiseExecute({
       promise: () => {
@@ -181,7 +181,7 @@ export class StartupPage {
       },
     });
   }
- 
+
   //
   async unlockVault(biometricEnabled: boolean): Promise<void> {
     return await this.identityFacadeService
@@ -189,17 +189,17 @@ export class StartupPage {
       .then(session => this.handleVaultLoginSuccess(session))
       .catch(() => this.handleVaultUnlockFailure());
   }
- 
+
   unlockVaultIfSetup(): Promise<VaultSession> {
     return this.identityFacadeService.unlockVaultIfLocked();
   }
- 
+
   /// destroy after login complete
   ionViewDidLeave() {
     this.loadingService.closeSpinner();
     this.elementRef.nativeElement.remove();
   }
- 
+
   async dismissPrevOpenedAlert() {
     this.loadingService.closeSpinner();
     const topAlert = await this.alertController.getTop();
