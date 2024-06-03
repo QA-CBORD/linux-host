@@ -558,6 +558,24 @@ ion-modal.sc-modal {
 
 .alert_full_menu {
   @extend .alert_cart;
+
+  .alert-wrapper {
+    min-width: 290px;
+
+    .alert-head {
+      padding-bottom: 0px;
+      padding-inline-start: 15px;
+    }
+
+    .alert-message {
+      padding: 0 15px 5px 15px;
+      color: black;
+    }
+
+    .alert-button-group {
+      padding: 0px 15px 15px;
+    }
+  }
 }
 
 .active_cart {
@@ -593,14 +611,13 @@ ion-modal.sc-modal {
 }
 
 .remove-active-cart {
-
   .alert-head {
     padding: 1%;
   }
 
   .alert-message {
     padding-left: 5%;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
     color: $color-black;
     @include font-nunito-heavy(18px);
     text-overflow: ellipsis;
