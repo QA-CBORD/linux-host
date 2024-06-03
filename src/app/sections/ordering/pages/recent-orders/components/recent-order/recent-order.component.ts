@@ -30,7 +30,7 @@ import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-c
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { LockDownService } from '@shared/services';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { Observable, Subscription, firstValueFrom, iif, lastValueFrom, of, zip } from 'rxjs';
+import { Observable, Subscription, firstValueFrom, iif, of, zip } from 'rxjs';
 import { filter, first, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
 import { ItemsUnavailableComponent } from '@sections/ordering/shared/ui-components/items-unavailable/items-unavailable.component';
@@ -115,22 +115,21 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     if (this.lockDownService.isLockDownOn()) {
       return;
     }
-    const currentMerchant = await lastValueFrom(this.merchant$.pipe(first()));
-    const hasItemsInCart = (await lastValueFrom(this.cart.menuItems$.pipe(first()))) > 0;
-    const merchant = await lastValueFrom(this.cart.merchant$.pipe(first()));
+    const currentMerchant = await firstValueFrom(this.merchant$);
+    const hasItemsInCart = (await firstValueFrom(this.cart.menuItems$)) > 0;
+    const merchant = await firstValueFrom(this.cart.merchant$);
     const merchantHasChanged = merchant && merchant.id !== currentMerchant.id;
 
     if (currentMerchant.walkout) {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
-
     if (hasItemsInCart && merchantHasChanged) {
-      this.showActiveCartWarning(merchant);
+      this.showActiveCartWarning(currentMerchant);
       return;
     }
 
-    await this.initOrderOptionsModal(merchant ?? currentMerchant);
+    await this.initOrderOptionsModal(currentMerchant);
   }
 
   async showActiveCartWarning(merchantInfo: MerchantInfo) {
