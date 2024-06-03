@@ -49,7 +49,7 @@
 
     <ion-list class="order-ingredient-list">
       <ion-item-sliding
-        [disabled]="readonly"
+        [disabled]="readonly || itemReadOnly"
         *ngFor="let orderItem of orderItems"
         class="order-ingredient-list__ingredient"
       >

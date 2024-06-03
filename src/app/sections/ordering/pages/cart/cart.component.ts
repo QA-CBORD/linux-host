@@ -110,7 +110,8 @@ export class CartComponent implements OnInit, OnDestroy {
   @ViewChild('content') private page: IonContent;
   platformBackButtonClickSubscription: Subscription;
   isValidatingDueTime = false;
-  readonly = false;
+  itemReadOnly = false;
+  orderReadOnly = false;
   private readonly activeCartService = inject(ActiveCartService);
 
   constructor(
@@ -323,6 +324,7 @@ export class CartComponent implements OnInit, OnDestroy {
           this.cleanDueTimeErrors();
         }
 
+        this.itemReadOnly = false;
         this.cdRef.detectChanges();
       })
       .catch(error => {
@@ -335,7 +337,7 @@ export class CartComponent implements OnInit, OnDestroy {
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
                 : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
 
-          this.readonly = true;
+          this.itemReadOnly = true;
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
@@ -511,6 +513,7 @@ export class CartComponent implements OnInit, OnDestroy {
     const onError = async message => {
       await this.onValidateErrorToast(typeof message === 'object' ? message[1] : message);
       this.cartService.addOrderItems(removedItem);
+      this.cdRef.reattach();
     };
     await this.validateOrder(onError);
     this.cdRef.reattach();
