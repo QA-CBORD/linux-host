@@ -13,7 +13,8 @@
 
 <ion-content class="browser-hidden" #content>
   <st-order-details
-    [readonly]="readonly"
+    [readonly]="orderReadOnly"
+    [itemReadOnly]="itemReadOnly"
     [isExistingOrder]="isExistingOrder"
     [orderInfo]="order$ | async"
     [merchant]="merchant$ | async"
@@ -43,7 +44,7 @@
         [voiceOverText]="buttonAriaLabel | async"
         [disabled]="(!cartFormState?.valid && !isExistingOrder) || isProcessingOrder"
         [isDisabled]="(!cartFormState?.valid && !isExistingOrder) || isProcessingOrder"
-        >
+      >
         {{ getButtonText() | async }}
       </st-button>
     </ng-container>

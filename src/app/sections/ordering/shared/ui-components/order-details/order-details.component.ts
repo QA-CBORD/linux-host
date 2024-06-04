@@ -119,6 +119,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
   @Input() readonly = true;
+  @Input() itemReadOnly = false;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
   @Input() accounts: UserAccount[] = [];

@@ -58,6 +58,7 @@ describe('ActiveCartService', () => {
       dueTime: new Date(),
       isASAP: true,
     } as unknown as OrderDetailOptions),
+    clearCart: jest.fn(),
   };
   const orderingService = {
     redirectToCart: jest.fn(),

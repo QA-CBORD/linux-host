@@ -4,7 +4,7 @@
 </st-header>
 <ion-content>
   <div class="cart-preview__merchant-name">
-    {{ (merchant$ | async).name }}
+    {{ (merchant$ | async)?.name }}
   </div>
   <ion-list class="order-ingredient-list">
     <div *ngIf="orderInfo$ | async as orderInfo" class="order-ingredient-list__ingredient">
