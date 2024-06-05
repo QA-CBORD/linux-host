@@ -40,22 +40,6 @@ describe('OrderingPage', () => {
   let a11yService = {
     excuteSearchSpeech: jest.fn(),
   };
-  let orderSchedule = {
-    menuSchedule: [],
-    days: [
-      {
-        date: '2024-05-08',
-        dayOfWeek: 4,
-        hourBlocks: [
-          {
-            timestamps: [],
-            hour: 12,
-            minuteBlocks: [0, 15, 30, 45],
-          },
-        ],
-      },
-    ],
-  };
 
   beforeEach(() => {
     mockMerchantService = {
@@ -213,14 +197,12 @@ describe('OrderingPage', () => {
 
     mockCartService.menuItems$ = of(0);
     mockCartService.merchant$ = of(null);
-    component.orderSchedule = orderSchedule;
 
     await component.merchantClickHandler(mockMerchantInfo);
 
     expect(mockActiveCartService.preValidateOrderFlow).toHaveBeenCalledWith(
       mockMerchantInfo.id,
-      expect.any(Function),
-      orderSchedule
+      expect.any(Function)
     );
     const boundFunction = mockActiveCartService.preValidateOrderFlow.mock.calls[0][1];
     boundFunction();

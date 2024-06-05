@@ -6,17 +6,15 @@ import { ToastService } from '@core/service/toast/toast.service';
 import {
   CartService,
   MerchantInfo,
-  MerchantOrderTypesInfo,
   MerchantService,
-  MerchantSettingInfo,
-  OrderDetailOptions,
+  OrderDetailOptions
 } from '@sections/ordering';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { LockDownService, NavigationService } from '@shared/services';
+import { AddressInfo } from 'net';
 import { of } from 'rxjs';
 import { OrderTileComponent } from './order-tile.component';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { AddressInfo } from 'net';
-import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 const environmentFacadeService = {
   getImageURL: jest.fn(),
@@ -42,7 +40,6 @@ const mockCartService = {
   merchant$: of({}),
   menuItems$: of(0),
   showActiveCartWarning: jest.fn(),
-  orderSchedule$: of({}),
   orderDetailsOptions$: of({
     orderType: ORDER_TYPE.PICKUP,
     address: {} as AddressInfo,
