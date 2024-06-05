@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -10,10 +10,9 @@ import { CartService, MerchantInfo } from '@sections/ordering';
 import { OrderingResolver } from '@sections/ordering/resolvers';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LockDownService } from '@shared/index';
 import { Observable, firstValueFrom } from 'rxjs';
-import {  take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-details',
@@ -21,7 +20,7 @@ import {  take, tap } from 'rxjs/operators';
   styleUrls: ['./merchant-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchantDetailsPage implements OnInit, AfterViewInit {
+export class MerchantDetailsPage implements OnInit {
   merchant$: Observable<MerchantInfo>;
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
   isHoursHidden = true;
@@ -29,7 +28,6 @@ export class MerchantDetailsPage implements OnInit, AfterViewInit {
   guestOrderEnabled = true;
   filledStarPath = '/assets/icon/star-filled.svg';
   blankStarPath = '/assets/icon/star-outline.svg';
-  orderSchedule: Schedule;
   private readonly orderActionSheetService = inject(OrderActionSheetService);
   private readonly orderingResolverService = inject(OrderingResolver);
   private readonly cartService = inject(CartService);
@@ -50,9 +48,6 @@ export class MerchantDetailsPage implements OnInit, AfterViewInit {
   ngOnInit() {
     this.merchant$ = this.retrieveSeletectedMerchant(this.activatedRoute.snapshot.params.id);
     this.loadStringsAndSettings();
-  }
-  async ngAfterViewInit(): Promise<void> {
-    this.orderSchedule = this.orderSchedule = await this.cartService.orderSchedule;
   }
 
   async loadStringsAndSettings() {
@@ -84,11 +79,7 @@ export class MerchantDetailsPage implements OnInit, AfterViewInit {
       return;
     }
 
-    this.activeCartService.preValidateOrderFlow(
-      merchantId,
-      this.openOrderOptions.bind(this, merchantId),
-      this.orderSchedule
-    );
+    this.activeCartService.preValidateOrderFlow(merchantId, this.openOrderOptions.bind(this, merchantId));
   }
 
   async openOrderOptions(merchantId: string) {

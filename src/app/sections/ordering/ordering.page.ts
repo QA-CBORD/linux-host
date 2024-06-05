@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,7 +10,6 @@ import { finalize, first, switchMap, tap } from 'rxjs/operators';
 import { ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from './ordering.config';
 import { CartService, MerchantService } from './services';
 import { MerchantInfo } from './shared/models';
-import { Schedule } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActiveCartService } from './services/active-cart.service';
 
 @Component({
@@ -19,10 +18,9 @@ import { ActiveCartService } from './services/active-cart.service';
   styleUrls: ['./ordering.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderingPage implements OnInit, AfterViewInit {
+export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
   searchString = '';
-  orderSchedule: Schedule;
   private readonly orderActionSheetService = inject(OrderActionSheetService);
   private readonly translateService = inject(TranslateService);
   private readonly activeCartService = inject(ActiveCartService);
@@ -39,10 +37,6 @@ export class OrderingPage implements OnInit, AfterViewInit {
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
     this.initContentStrings();
-  }
-
-  async ngAfterViewInit(): Promise<void> {
-    this.orderSchedule = await this.cartService.orderSchedule;
   }
 
   async ionViewDidEnter() {
@@ -64,8 +58,7 @@ export class OrderingPage implements OnInit, AfterViewInit {
     }
     await this.activeCartService.preValidateOrderFlow(
       merchantInfo.id,
-      this.openOrderOptions.bind(this, merchantInfo),
-      this.orderSchedule
+      this.openOrderOptions.bind(this, merchantInfo)
     );
   }
 

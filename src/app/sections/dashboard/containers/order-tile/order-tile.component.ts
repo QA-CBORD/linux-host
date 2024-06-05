@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -7,19 +6,18 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { CartService, MerchantInfo, MerchantService } from '@sections/ordering';
-import { take, finalize } from 'rxjs/operators';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { IonicSlides } from '@ionic/angular';
 import { DASHBOARD_SLIDE_CONFIG } from '@sections/dashboard/dashboard.config';
-import SwiperCore from 'swiper';
-import { TOAST_MESSAGES } from '@sections/ordering/ordering.config';
-import { ToastService } from '@core/service/toast/toast.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
-import { LockDownService, NavigationService } from '@shared/services';
-import { APP_ROUTES } from '@sections/section.config';
-import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { CartService, MerchantInfo, MerchantService } from '@sections/ordering';
+import { TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
+import { APP_ROUTES } from '@sections/section.config';
+import { LockDownService, NavigationService } from '@shared/services';
+import { finalize, take } from 'rxjs/operators';
+import SwiperCore from 'swiper';
 SwiperCore.use([IonicSlides]);
 
 @Component({
@@ -28,7 +26,7 @@ SwiperCore.use([IonicSlides]);
   styleUrls: ['./order-tile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderTileComponent implements OnInit, AfterViewInit {
+export class OrderTileComponent implements OnInit {
   @Input() wrapperConfig: TileWrapperConfig;
   slideOpts = { ...DASHBOARD_SLIDE_CONFIG, slidesPerView: 2.01 };
 
@@ -37,7 +35,6 @@ export class OrderTileComponent implements OnInit, AfterViewInit {
   slides: MerchantInfo[][] = [];
   skeletonArray: number[] = new Array(this.amountPerSlide);
   isLoading = true;
-  orderSchedule: Schedule;
 
   private readonly cartService: CartService = inject(CartService);
   private readonly activeCartSerive = inject(ActiveCartService);
@@ -53,10 +50,6 @@ export class OrderTileComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.initMerchantSlides();
-  }
-
-  async ngAfterViewInit(): Promise<void> {
-    this.orderSchedule = await this.cartService.orderSchedule;
   }
 
   initMerchantSlides() {
@@ -91,8 +84,7 @@ export class OrderTileComponent implements OnInit, AfterViewInit {
 
     this.activeCartSerive.preValidateOrderFlow(
       merchantInfo.id,
-      this.navigateToOrdering.bind(this, merchantInfo),
-      this.orderSchedule
+      this.navigateToOrdering.bind(this, merchantInfo)
     );
   }
 
