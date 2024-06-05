@@ -1,22 +1,22 @@
 import { Injectable, inject } from '@angular/core';
-import { PATRON_ROUTES } from '@sections/section.config';
-import { format, parseISO } from 'date-fns';
-import { lastValueFrom, first, firstValueFrom } from 'rxjs';
-import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
-import { ORDER_TYPE, LOCAL_ROUTING } from '../ordering.config';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { OrderingService } from './ordering.service';
-import { CartService } from '.';
-import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { NavigationService } from '@shared/index';
-import { ModalsService } from '@core/service/modals/modals.service';
 import { ItemsUnavailableComponent } from '@sections/ordering/shared/ui-components/items-unavailable/items-unavailable.component';
-import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { LoadingService } from '@core/service/loading/loading.service';
+import { PATRON_ROUTES } from '@sections/section.config';
+import { NavigationService } from '@shared/index';
+import { parseISO } from 'date-fns';
+import { first, firstValueFrom, lastValueFrom } from 'rxjs';
+import { CartService } from '.';
+import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
+import { LOCAL_ROUTING, ORDER_TYPE } from '../ordering.config';
+import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { OrderingService } from './ordering.service';
 
 export type ActiveCartParams = {
-  orderSchedule: Schedule;
+  orderSchedule?: Schedule;
   isCartPreview?: boolean;
 };
 @Injectable({
@@ -64,7 +64,7 @@ export class ActiveCartService {
     return alert.onDidDismiss();
   }
 
-  async preValidateOrderFlow(merchantId: string, onContinue: () => void, orderSchedule: Schedule) {
+  async preValidateOrderFlow(merchantId: string, onContinue: () => void) {
     const hasItemsInCart = (await lastValueFrom(this.cartService.menuItems$.pipe(first()))) > 0;
     const merchant = await lastValueFrom(this.cartService.merchant$.pipe(first()));
     const merchantHasChanged = merchant && merchant.id !== merchantId;
@@ -75,7 +75,7 @@ export class ActiveCartService {
     }
 
     if (hasItemsInCart && !merchantHasChanged) {
-      this.addMoreItems({ orderSchedule });
+      this.addMoreItems();
       return;
     }
     onContinue();
@@ -108,30 +108,24 @@ export class ActiveCartService {
     return alert.onDidDismiss();
   }
 
-  async getOrderTimeAvailability(orderSchedule: Schedule): Promise<{ orderType: ORDER_TYPE; isTimeValid: boolean }> {
+  async getOrderTimeAvailability(): Promise<{ orderType: ORDER_TYPE; isTimeValid: boolean }> {
     const { dueTime, orderType, isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
-    const isTimeValid = this.isOrderTimeValid(isASAP, String(dueTime), orderSchedule);
+    const isTimeValid = this.isOrderTimeValid(isASAP, String(dueTime));
 
     return { orderType, isTimeValid };
   }
 
-  isOrderTimeValid(isASAP: boolean, time: string, orderSchedule: Schedule) {
+  isOrderTimeValid(isASAP: boolean, time: string) {
     if (isASAP) return true;
 
-    const dueTime = new Date(time);
-    const dateString = format(parseISO(time), 'yyyy-MM-dd');
-    const hour = dueTime.getHours();
-    const minutes = dueTime.getMinutes();
+    const targetDateTime = parseISO(time);
+    const localTime = new Date();
 
-    return orderSchedule?.days.some(
-      date =>
-        date.date === dateString &&
-        date.hourBlocks.find(dateHour => dateHour.hour === hour && dateHour.minuteBlocks.includes(minutes))
-    );
+    return targetDateTime.getTime() > localTime.getTime();
   }
 
-  async addMoreItems({ orderSchedule }: ActiveCartParams) {
-    const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
+  async addMoreItems() {
+    const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
     const { isASAP } = await firstValueFrom(this.cartService.orderDetailsOptions$);
     if (isTimeValid) {
       this.navigateToFullMenu(isASAP);
@@ -141,7 +135,7 @@ export class ActiveCartService {
     this.showTimePastWarning(orderType);
   }
 
-  async validateCartItemsAndNavigate(activeCartParams: ActiveCartParams, navigateMethod: () => Promise<void>) {
+  async validateCartItemsAndNavigate(navigateMethod: () => Promise<void>) {
     this.loadingService.showSpinner();
     const validatedCartItems = await firstValueFrom(this.cartService.validateCartItems(false));
     this.loadingService.closeSpinner();
@@ -159,7 +153,7 @@ export class ActiveCartService {
       if (BUTTON_TYPE.CONTINUE === role) {
         this.cartService.removeCartItemsFromItemValidateResponse(validatedCartItems);
         if (validatedCartItems.order?.orderItems?.length) return await navigateMethod();
-        return await this.addMoreItems(activeCartParams);
+        return await this.addMoreItems();
       }
     });
 
@@ -180,8 +174,8 @@ export class ActiveCartService {
     }
   }
 
-  async redirectToCart({ orderSchedule, isCartPreview }: ActiveCartParams) {
-    const { isTimeValid, orderType } = await this.getOrderTimeAvailability(orderSchedule);
+  async redirectToCart({ isCartPreview }: ActiveCartParams) {
+    const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
 
     if (isTimeValid) {
       this.orderingService.redirectToCart(isCartPreview);
