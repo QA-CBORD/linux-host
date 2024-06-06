@@ -8,7 +8,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
-import { IGNORE_ERRORS, OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import {
+  IGNORE_ERRORS,
+  IGNORE_ERRORS_FOR_ACTIVE_CART,
+  OrderingComponentContentStrings,
+  OrderingService,
+} from '@sections/ordering/services/ordering.service';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { APP_ROUTES } from '@sections/section.config';
@@ -180,7 +185,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.cartService.orderItems$.pipe(first()).subscribe(items => {
       if (items.length) {
         const errorCB = () => this.modalHandler({ ...cachedData }, data.isASAP);
-        this.orderingService.validateOrder(null, errorCB, IGNORE_ERRORS);
+        this.orderingService.validateOrder(null, errorCB, [...IGNORE_ERRORS, ...IGNORE_ERRORS_FOR_ACTIVE_CART]);
       }
     });
   }
