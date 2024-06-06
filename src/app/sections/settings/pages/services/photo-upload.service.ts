@@ -137,7 +137,7 @@ export class PhotoUploadService {
   }
 
   private setPhotoInfo(photoInfo: UserPhotoInfo) {
-    switch (photoInfo.type) {
+    switch (photoInfo?.type) {
       case PhotoType.PROFILE:
         if (photoInfo.status === PhotoStatus.ACCEPTED) {
           this._profileImage = photoInfo;

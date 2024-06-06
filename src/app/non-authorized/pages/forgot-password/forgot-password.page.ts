@@ -70,7 +70,7 @@ export class ForgotPasswordPage implements OnInit {
         if (result) {
           this.resetSent = true;
           setTimeout(() => {
-            document.getElementById('confirmation-container__info').focus();
+            document.getElementById('confirmation-container__info')?.focus();
           }, TIMEOUTS.A11yFocus);
         } else {
           return this.toastService.showToast({
