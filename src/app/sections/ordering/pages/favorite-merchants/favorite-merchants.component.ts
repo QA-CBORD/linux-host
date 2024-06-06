@@ -1,21 +1,20 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { FavoriteMerchantsService } from './services/favorite-merchants.service';
-import { switchMap, take, first } from 'rxjs/operators';
-import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
-import { CartService, MerchantService } from '../../services';
-import {
-  OrderOptionsActionSheetComponent,
-  Schedule,
-} from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sections/ordering/ordering.config';
-import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { ToastService } from '@core/service/toast/toast.service';
 import { ModalsService } from '@core/service/modals/modals.service';
-import { LockDownService } from '@shared/services';
+import { ToastService } from '@core/service/toast/toast.service';
+import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, TOAST_MESSAGES } from '@sections/ordering/ordering.config';
 import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { LockDownService } from '@shared/services';
+import { first, switchMap, take } from 'rxjs/operators';
+import { PATRON_NAVIGATION } from 'src/app/app.global';
+import { CartService, MerchantService } from '../../services';
+import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
+import {
+  OrderOptionsActionSheetComponent
+} from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { FavoriteMerchantsService } from './services/favorite-merchants.service';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -23,10 +22,9 @@ import { ActiveCartService } from '@sections/ordering/services/active-cart.servi
   styleUrls: ['./favorite-merchants.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
+export class FavoriteMerchantsComponent implements OnInit {
   merchantList: MerchantInfo[] = [];
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
-  orderSchedule: Schedule;
   private readonly activeCartService = inject(ActiveCartService);
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -47,9 +45,6 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
     this.initContentStrings();
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    this.orderSchedule = await this.cartService.orderSchedule;
-  }
 
   backToOrdering() {
     this.router.navigate([PATRON_NAVIGATION.ordering]);
@@ -68,7 +63,6 @@ export class FavoriteMerchantsComponent implements OnInit, AfterViewInit {
     this.activeCartService.preValidateOrderFlow(
       merchantInfo.id,
       this.openOrderOptions.bind(this, merchantInfo),
-      this.orderSchedule
     );
   }
   async favouriteHandler({ id }): Promise<void> {
