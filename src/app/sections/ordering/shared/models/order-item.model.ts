@@ -14,4 +14,5 @@ export interface OrderItem {
   optionType: string;
   orderItemOptions: OrderItem[];
   cartPreviewItems?: OrderItem[];
+  selectedIndex?: number;
 }

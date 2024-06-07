@@ -192,8 +192,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.merchant$ = this.cartService.merchant$.pipe(
       tap(
         merchant =>
-          (this.merchantTimeZoneDisplayingMessage =
-            merchant?.timeZone && "The time zone reflects the merchant's location")
+        (this.merchantTimeZoneDisplayingMessage =
+          merchant?.timeZone && "The time zone reflects the merchant's location")
       )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
@@ -273,13 +273,14 @@ export class CartComponent implements OnInit, OnDestroy {
     );
   }
 
-  onOrderItemClicked({ menuItemId, id }) {
+  onOrderItemClicked({ menuItemId, id, selectedIndex }) {
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.itemDetail], {
       queryParams: {
         menuItemId: menuItemId,
         orderItemId: id,
         isItemExistsInCart: true,
         isExistingOrder: this.isExistingOrder,
+        selectedIndex
       },
     });
   }
@@ -334,7 +335,7 @@ export class CartComponent implements OnInit, OnDestroy {
             this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER
               ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
               : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
-              ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+                ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
                 : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
 
           this.itemReadOnly = true;

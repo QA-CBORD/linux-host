@@ -238,14 +238,10 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
 
   private async onSubmit(menuItem: Partial<OrderItem> | Partial<OrderItem>[]): Promise<void> {
     const {
-      queryParams: { orderItemId },
+      queryParams: { isItemExistsInCart, selectedIndex },
     } = this.routesData;
-    const orderItems = await firstValueFrom(this.cartService.orderItems$);
-    if (orderItems.length && orderItemId) {
-      this.cartService.removeOrderItemFromOrderById(orderItemId);
-    }
 
-    this.cartService.addOrderItems(menuItem);
+    this.cartService.addOrderItems(menuItem, isItemExistsInCart, selectedIndex);
     await this.loadingService.showSpinner();
     try {
       await firstValueFrom(this.cartService.validateOrder().pipe(handleServerError(ORDER_VALIDATION_ERRORS)));
@@ -411,5 +407,6 @@ export interface RoutesData {
     orderItemId: string;
     isItemExistsInCart: boolean;
     isScannedItem: boolean;
+    selectedIndex?: number;
   };
 }

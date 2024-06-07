@@ -208,7 +208,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly alertController: AlertController,
     private readonly routingService: NavigationService,
     private readonly globalNavService: GlobalNavService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initForm();
@@ -319,10 +319,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return `${i}-${Math.random()}`;
   }
 
-  goToItemDetails(orderItem) {
+  goToItemDetails(orderItem: OrderItem, index: number) {
     if (this.dueTimeHasErrors) {
       return;
     }
+
+    orderItem.selectedIndex = index;
     this.onOrderItemClicked.emit(orderItem);
   }
 

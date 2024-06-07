@@ -38,7 +38,7 @@ import { Schedule } from '../shared/ui-components/order-options.action-sheet/ord
 export class CartService {
   private readonly CARTIDKEY = 'cart';
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
-  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState> this.cart);
+  private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
   private _catchError: string | null = null;
   private _clientOrderId: string = null;
   private _pendingOrderId: string = null;
@@ -177,10 +177,10 @@ export class CartService {
         switchMap(([orderDetailsOptions, merchant]) =>
           orderDetailsOptions && merchant
             ? this.merchantService.getMerchantOrderSchedule(
-                merchant.id,
-                orderDetailsOptions.orderType,
-                merchant.timeZone
-              )
+              merchant.id,
+              orderDetailsOptions.orderType,
+              merchant.timeZone
+            )
             : of(null)
         ),
         map(result => (result ? result : ({} as Schedule))),
@@ -302,11 +302,18 @@ export class CartService {
   }
   // ----------------------------------------- UPDATERS BLOCK -----------------------------------------//
 
-  addOrderItems(orderItems: Partial<OrderItem> | Partial<OrderItem>[]) {
+  addOrderItems(orderItems: Partial<OrderItem> | Partial<OrderItem>[], isItemExistsInCart?: boolean, selectedIndex?: number) {
     if (!this.cart.order) return;
     if (orderItems instanceof Array) orderItems.forEach(this.addOrderItem.bind(this));
+    else if (isItemExistsInCart) this.updateOrderItem(orderItems, selectedIndex);
     else this.addOrderItem(orderItems);
     this.onStateChanged();
+  }
+
+  updateOrderItem(orderItems: Partial<OrderItem>, selectedIndex: number) {
+    if (this.cart.order.orderItems[selectedIndex]?.quantity) {
+      this.cart.order.orderItems[selectedIndex].quantity = orderItems.quantity;
+    }
   }
 
   getAddress(type: ORDER_TYPE, addr) {

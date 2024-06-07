@@ -50,10 +50,10 @@
     <ion-list class="order-ingredient-list">
       <ion-item-sliding
         [disabled]="readonly || itemReadOnly"
-        *ngFor="let orderItem of orderItems"
+        *ngFor="let orderItem of orderItems; let i = index"
         class="order-ingredient-list__ingredient"
       >
-        <ion-item class="order-ingredient-list__item" lines="none" (click)="goToItemDetails(orderItem)">
+        <ion-item class="order-ingredient-list__item" lines="none" (click)="goToItemDetails(orderItem, i)">
           <ion-label>
             <st-order-item-details [mealBased]="mealBased" [orderItem]="orderItem"></st-order-item-details>
             <ng-container *ngIf="orderItem.orderItemOptions">

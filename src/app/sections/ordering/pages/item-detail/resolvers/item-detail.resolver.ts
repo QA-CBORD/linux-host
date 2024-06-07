@@ -12,13 +12,13 @@ export class ItemDetailResolver {
   private readonly toastService: ToastService = inject(ToastService);
   private readonly translateFacadeService: TranslateFacadeService = inject(TranslateFacadeService);
 
-  constructor(private readonly cartService: CartService) {}
+  constructor(private readonly cartService: CartService) { }
   resolve(snapshot: ActivatedRouteSnapshot): Observable<{
     menuItem: MenuCategoryItemInfo;
     queryParams: QueryParamsModel;
   }> {
     const {
-      queryParams: { menuItemId, orderItemId, isItemExistsInCart = false, isScannedItem = false },
+      queryParams: { menuItemId, orderItemId, isItemExistsInCart = false, isScannedItem = false, selectedIndex },
     } = snapshot;
 
     return this.cartService.menuInfo$.pipe(
@@ -42,6 +42,7 @@ export class ItemDetailResolver {
               orderItemId,
               isItemExistsInCart,
               isScannedItem,
+              selectedIndex
             },
           };
         }
