@@ -293,6 +293,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   private async reorderOrder(orderItems) {
     const order = await firstValueFrom(this.order$.pipe(take(1)));
     await this.loadingService.showSpinner();
+    this.cart.saveOrderSnapshot(order);
     this.cart.addOrderItems(orderItems);
     this.cart.updateOrderNote(order.notes);
     await firstValueFrom(this.cart.validateReOrderItems().pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS)))

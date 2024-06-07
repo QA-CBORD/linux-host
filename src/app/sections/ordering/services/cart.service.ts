@@ -310,12 +310,6 @@ export class CartService {
     this.onStateChanged();
   }
 
-  updateOrderItem(orderItems: Partial<OrderItem>, selectedIndex: number) {
-    if (this.cart.order.orderItems[selectedIndex]?.quantity) {
-      this.cart.order.orderItems[selectedIndex].quantity = orderItems.quantity;
-    }
-  }
-
   getAddress(type: ORDER_TYPE, addr) {
     return type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
   }
@@ -572,9 +566,10 @@ export class CartService {
     this.cartSubscription.unsubscribe();
   }
 
-  saveOrderSnapshot() {
-    if (this.cart?.order)
-      this.orderSnapshot = JSON.parse(JSON.stringify(this.cart.order));
+  saveOrderSnapshot(order: OrderInfo = this.cart.order) {
+    if (order) {
+      this.orderSnapshot = JSON.parse(JSON.stringify(order));
+    }
   }
 
   setOrderToSnapshot() {
@@ -588,6 +583,14 @@ export class CartService {
 
   resetOrderSnapshot() {
     this.orderSnapshot = null;
+  }
+
+  private updateOrderItem(orderItems: Partial<OrderItem>, selectedIndex: number) {
+    console.log("updateOrderItem: ", orderItems.quantity, selectedIndex)
+    if (this.cart.order.orderItems[selectedIndex]?.quantity) {
+      console.log("updateOrderItem?: ", this.cart.order.orderItems[selectedIndex]?.quantity)
+      this.cart.order.orderItems[selectedIndex].quantity = orderItems.quantity;
+    }
   }
 }
 
