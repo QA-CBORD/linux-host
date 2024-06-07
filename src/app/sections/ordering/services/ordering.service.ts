@@ -66,10 +66,12 @@ export class OrderingService {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
-    const successCb = () =>
+    const successCb = () => {
       this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
         queryParams: { isExistingOrder: this.cartService.isExistingOrder, isFromCartPreview: fromCartPreview },
       });
+      if (fromCartPreview) this.modalService.dismiss();
+    };
     const errorCB = (error: Array<string> | string) => {
       if (Array.isArray(error)) {
         const [code, message] = error;
@@ -101,7 +103,6 @@ export class OrderingService {
       })
       .finally(() => {
         this.loadingService.closeSpinner();
-        this.modalService.dismiss();
       });
   }
 

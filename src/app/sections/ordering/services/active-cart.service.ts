@@ -12,11 +12,9 @@ import { first, firstValueFrom, lastValueFrom } from 'rxjs';
 import { CartService } from '.';
 import { CartPreviewComponent } from '../components/cart-preview/cart-preview.component';
 import { LOCAL_ROUTING, ORDER_TYPE } from '../ordering.config';
-import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { OrderingService } from './ordering.service';
 
 export type ActiveCartParams = {
-  orderSchedule?: Schedule;
   isCartPreview?: boolean;
 };
 @Injectable({
