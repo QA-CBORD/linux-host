@@ -7,7 +7,6 @@ import { PopupTypes, CONTENT_STRINGS } from '@sections/rewards/rewards.config';
 import { buttons } from '@core/utils/buttons.config';
 import { PopupButton } from '@core/model/button/popup-button.model';
 
-
 @Component({
   selector: 'st-rewards-popover',
   templateUrl: './rewards-popover.component.html',
@@ -48,7 +47,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       title: this.getTitle(this.type),
       type: this.type,
       buttons: this.configureButtons(this.type),
-      message: this.getMessage(this.data),
+      message: this.data ? this.getMessage(this.data) : { title: '', description: '' },
       code: this.getCode(this.type, this.data),
     };
   }
@@ -124,7 +123,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         includetext: false,
       },
       () => {
-          // TODO: Properly handle exception
+        // TODO: Properly handle exception
       }
     );
   }

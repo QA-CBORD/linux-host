@@ -103,17 +103,17 @@ export class ExternalLoginPage {
 
     this.browser = this.appBrowser.create(url, target, options);
 
-    const browserEventSub = this.browser.on('loadstart').subscribe(event => {
+    const browserEventSub = this.browser.on('loadstart')?.subscribe(event => {
       if (event) {
         this.getAuthSessionFromUrl(event.url);
       }
     });
 
-    const browserEventShow = this.browser.on('loadstop').subscribe(() => {
+    const browserEventShow = this.browser.on('loadstop')?.subscribe(() => {
       this.browser.show();
     });
 
-    const browserEventBack = this.browser.on('exit').subscribe(event => {
+    const browserEventBack = this.browser.on('exit')?.subscribe(event => {
       if (event) {
         this.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
       }
