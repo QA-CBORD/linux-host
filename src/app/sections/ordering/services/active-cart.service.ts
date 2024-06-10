@@ -160,7 +160,7 @@ export class ActiveCartService {
 
   async navigateToFullMenu(openTimeSlot?: boolean, canDismiss: boolean = true) {
     const params = {
-      isExistingOrder: true,
+      isExistingOrder: false,
       openTimeSlot: openTimeSlot,
       canDismiss: canDismiss,
     };
