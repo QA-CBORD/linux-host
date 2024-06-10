@@ -1078,6 +1078,7 @@ describe(RecentOrderComponent, () => {
       menuItems$: of(0),
       showActiveCartWarning: jest.fn(),
       orderSchedule$: of({}),
+      saveOrderSnapshot: jest.fn(),
       orderDetailsOptions$: of({
         orderType: ORDER_TYPE.PICKUP,
         address: {} as AddressInfo,

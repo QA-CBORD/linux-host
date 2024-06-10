@@ -203,7 +203,7 @@ describe('OrderDetailsComponent', () => {
     jest.spyOn(component.onOrderItemClicked, 'emit');
 
     const orderItem = {} as OrderItem;
-    component.goToItemDetails(orderItem);
+    component.goToItemDetails(orderItem, 0);
 
     expect(component.onOrderItemClicked.emit).toHaveBeenCalledWith(orderItem);
   });
@@ -213,7 +213,7 @@ describe('OrderDetailsComponent', () => {
     component.dueTimeHasErrors = true;
 
     const orderItem = {} as OrderItem;
-    component.goToItemDetails(orderItem);
+    component.goToItemDetails(orderItem, 0);
 
     expect(component.onOrderItemClicked.emit).not.toHaveBeenCalled();
   });
