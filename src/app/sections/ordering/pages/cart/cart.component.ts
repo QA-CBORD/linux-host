@@ -193,7 +193,7 @@ export class CartComponent implements OnInit, OnDestroy {
       tap(
         merchant =>
         (this.merchantTimeZoneDisplayingMessage =
-          merchant?.timeZone && "The time zone reflects the merchant's location")
+          merchant?.timeZone && this.translateService.instant('patron-ui.ordering.label_merchant-timezone'))
       )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
