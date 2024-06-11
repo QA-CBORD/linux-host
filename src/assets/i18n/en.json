@@ -966,6 +966,7 @@
       "label_select-delivery-address": "Select Delivery Address",
       "label_select-pickup-address": "Select Pickup Address",
       "label_select-time": "Select Time",
+      "label_merchant-timezone": "The time zone reflects the merchant's location",
       "label_set-as-default": "Set as Default",
       "label_state": "State",
       "label_subtotal": "Subtotal",

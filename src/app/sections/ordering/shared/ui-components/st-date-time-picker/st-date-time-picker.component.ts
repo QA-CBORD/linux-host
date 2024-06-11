@@ -283,8 +283,11 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private isTodayOrTomorrow(date, isToday) {
-    const { locale, timeZone } = this.userData;
-    const today = new Date().toLocaleString(locale, { timeZone });
+    let today = new Date().toLocaleString();
+    if (this.userData) {
+      const { locale, timeZone } = this.userData;
+      today = new Date().toLocaleString(locale, { timeZone });
+    }
     const idxForSlice = today.indexOf(',');
 
     return isSameDay(today.slice(0, idxForSlice), date, Number(!isToday));

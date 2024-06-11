@@ -141,7 +141,7 @@ export class CartService {
   }
 
   get orderTypes$(): Observable<MerchantOrderTypesInfo> {
-    return of(this.cart.merchant.orderTypes);
+    return of(this.cart.merchant?.orderTypes);
   }
 
   get menuItems$(): Observable<number> {

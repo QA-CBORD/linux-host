@@ -133,7 +133,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   isExternalLogin(institutionInfo: Institution): boolean {
-    if (!institutionInfo.authenticationInfo || !institutionInfo.authenticationInfo.authenticationType) return false;
+    if (!institutionInfo.authenticationInfo || !institutionInfo.authenticationInfo?.authenticationType) return false;
     const authType: string = institutionInfo.authenticationInfo.authenticationType;
     return (
       authType === AuthenticationType.CAS ||

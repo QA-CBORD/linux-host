@@ -109,7 +109,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   @Input() set merchant(merchant: MerchantInfo) {
-    this.merchantSettingsList = merchant.settings.list;
+    this.merchantSettingsList = merchant?.settings?.list ?? [];
     this.orderTypes = merchant.orderTypes;
     this.isWalkoutOrder = !!merchant.walkout;
     this._merchant = merchant;
