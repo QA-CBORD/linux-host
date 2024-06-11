@@ -177,10 +177,10 @@ export class CartService {
         switchMap(([orderDetailsOptions, merchant]) =>
           orderDetailsOptions && merchant
             ? this.merchantService.getMerchantOrderSchedule(
-              merchant.id,
-              orderDetailsOptions.orderType,
-              merchant.timeZone
-            )
+                merchant.id,
+                orderDetailsOptions.orderType,
+                merchant.timeZone
+              )
             : of(null)
         ),
         map(result => (result ? result : ({} as Schedule))),
@@ -302,7 +302,11 @@ export class CartService {
   }
   // ----------------------------------------- UPDATERS BLOCK -----------------------------------------//
 
-  addOrderItems(orderItems: Partial<OrderItem> | Partial<OrderItem>[], isItemExistsInCart?: boolean, selectedIndex?: number) {
+  addOrderItems(
+    orderItems: Partial<OrderItem> | Partial<OrderItem>[],
+    isItemExistsInCart?: boolean,
+    selectedIndex?: number
+  ) {
     if (!this.cart.order) return;
     if (orderItems instanceof Array) orderItems.forEach(this.addOrderItem.bind(this));
     else if (isItemExistsInCart) this.updateOrderItem(orderItems, selectedIndex);
@@ -320,11 +324,11 @@ export class CartService {
 
   validateOrder(orderDetailsOptions?: OrderDetailOptions): Observable<OrderInfo> {
     const options = orderDetailsOptions || (this.cart.orderDetailsOptions as OrderDetailOptions);
-    const { orderType: type, dueTime, address: addr } = options;
+
     let address = {};
 
-    if (addr) {
-      address = this.getAddress(type, addr);
+    if (options?.address) {
+      address = this.getAddress(options?.orderType, options?.address);
     }
 
     return this.userFacadeService.getUserData$().pipe(
@@ -333,8 +337,8 @@ export class CartService {
         this.cart.order = {
           ...this.cart.order,
           ...address,
-          type,
-          dueTime: this.getDate(dueTime, locale, timeZone),
+          type: options.orderType,
+          dueTime: this.getDate(options?.dueTime, locale, timeZone),
         };
 
         if (!this._pendingOrderId) {
