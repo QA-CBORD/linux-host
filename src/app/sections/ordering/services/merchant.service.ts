@@ -430,6 +430,6 @@ export class MerchantService {
   }
 
   isOpen(merchant: MerchantInfo): boolean {
-    return merchant.openNow || parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
+    return merchant?.openNow || parseInt(merchant?.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
   }
 }
