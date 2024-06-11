@@ -337,7 +337,7 @@ export class CartService {
         this.cart.order = {
           ...this.cart.order,
           ...address,
-          type: options.orderType,
+          type: options?.orderType,
           dueTime: this.getDate(options?.dueTime, locale, timeZone),
         };
 
