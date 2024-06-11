@@ -151,7 +151,6 @@ export class CartComponent implements OnInit, OnDestroy {
         this.onCloseButton();
       }
     );
-    
   }
 
   ionViewWillLeave() {
