@@ -151,6 +151,7 @@ export class CartComponent implements OnInit, OnDestroy {
         this.onCloseButton();
       }
     );
+    
   }
 
   ionViewWillLeave() {
@@ -207,6 +208,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
     this.subscribe2NetworkChanges();
+    this.cdRef.detectChanges()
+
   }
 
   subscribe2NetworkChanges() {

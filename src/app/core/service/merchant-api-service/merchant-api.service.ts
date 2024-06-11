@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MerchantInfo, MerchantSearchOptions } from '@sections/ordering';
+import { MerchantInfo, MerchantSearchOptions, MerchantSettingInfo } from '@sections/ordering';
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { MerchantSearchOptionName } from '@sections/ordering/ordering.config';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { MerchantSearchOptionName, MerchantSettings } from '@sections/ordering/ordering.config';
 import { MessageListResponse, MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { Position } from '@capacitor/geolocation';
@@ -15,9 +15,7 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 export class MerchantApiService {
   private readonly serviceUrlMerchant: string = '/json/merchant';
 
-  constructor(
-    private readonly http: HttpClient, private readonly coords: CoordsService,
-    ) {}
+  constructor(private readonly http: HttpClient, private readonly coords: CoordsService) {}
 
   getMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
     return this.coords.getCoords().pipe(
@@ -75,4 +73,13 @@ export class MerchantApiService {
       .post(this.serviceUrlMerchant, queryConfig)
       .pipe(map(({ response: { list } }: MessageResponse<MessageListResponse<MerchantInfo>>) => list));
   }
+  getMerchantSettings(merchantId: string) {
+    const postParams: ServiceParameters = { merchantId, domain: null, category: null, name: null };
+    const queryConfig = new RPCQueryConfig('getMerchantSettings', postParams, true);
+    return this.http
+      .post<MessageResponse<MerchantSettingType>>(this.serviceUrlMerchant, queryConfig)
+      .pipe(map(({ response }) => response));
+  }
 }
+
+export type MerchantSettingType = { list: MerchantSettingInfo[]; map: Map<string, MerchantSettingInfo> | Object };

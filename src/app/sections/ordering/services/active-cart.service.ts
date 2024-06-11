@@ -173,6 +173,7 @@ export class ActiveCartService {
   }
 
   async redirectToCart({ isCartPreview }: ActiveCartParams) {
+    this.cartService.updateMerchantSettings();
     const { isTimeValid, orderType } = await this.getOrderTimeAvailability();
 
     if (isTimeValid) {

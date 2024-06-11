@@ -40,6 +40,7 @@ describe('ActiveCartService', () => {
       isASAP: true,
     } as unknown as OrderDetailOptions),
     clearCart: jest.fn(),
+    updateMerchantSettings:jest.fn()
   };
   const orderingService = {
     redirectToCart: jest.fn(),

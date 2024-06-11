@@ -63,6 +63,7 @@ export class OrderingService {
   }
 
   async redirectToCart(fromCartPreview?: boolean): Promise<void> {
+    this.cartService.updateMerchantSettings()
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }

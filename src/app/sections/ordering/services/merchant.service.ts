@@ -41,6 +41,7 @@ import {
   ORDERS_PERIOD_LABEL,
 } from '../shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { DateUtilObject, getTimeRange } from '@sections/accounts/shared/ui-components/filter/date-util';
+import { MerchantApiService, MerchantSettingType } from '@core/service/merchant-api-service/merchant-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -65,7 +66,8 @@ export class MerchantService {
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly auth: AuthFacadeService,
-    private readonly institutionService: InstitutionFacadeService
+    private readonly institutionService: InstitutionFacadeService,
+    private readonly merchantApiService: MerchantApiService
   ) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
@@ -431,5 +433,9 @@ export class MerchantService {
 
   isOpen(merchant: MerchantInfo): boolean {
     return merchant?.openNow || parseInt(merchant?.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
+  }
+
+  getMerchantSettingsById(merchantId: string):Observable<MerchantSettingType> {
+    return this.merchantApiService.getMerchantSettings(merchantId);
   }
 }

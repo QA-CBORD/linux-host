@@ -60,6 +60,9 @@ export class MerchantFacadeService extends ServiceStateFacade {
   fetchFavoriteMerchants() {
     return this.apiService.getFavoriteMerchants();
   }
+  fetchMechantSettingdById(merchantId: string) {
+    return this.apiService.getMerchantSettings(merchantId);
+  }
 
   private filterMerchantList(merchantList: MerchantInfo[]): MerchantInfo[] {
     return merchantList.filter(merchant => this.isCreditCardSupported(merchant));

@@ -30,6 +30,7 @@ describe('OrderingService', () => {
     validateOrder: jest.fn(),
     cartsErrorMessage: null,
     orderSchedule$: of({}),
+    updateMerchantSettings:jest.fn()
   };
 
   const routingService = {
