@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MerchantInfo, MerchantSearchOptions, MerchantSettingInfo } from '@sections/ordering';
 import { Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { MerchantSearchOptionName, MerchantSettings } from '@sections/ordering/ordering.config';
+import { map, switchMap } from 'rxjs/operators';
+import { MerchantSearchOptionName, } from '@sections/ordering/ordering.config';
 import { MessageListResponse, MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
 import { CoordsService } from '@core/service/coords/coords.service';
 import { Position } from '@capacitor/geolocation';
@@ -82,4 +82,4 @@ export class MerchantApiService {
   }
 }
 
-export type MerchantSettingType = { list: MerchantSettingInfo[]; map: Map<string, MerchantSettingInfo> | Object };
+export type MerchantSettingType = { list: MerchantSettingInfo[]; map: Map<string, MerchantSettingInfo> | object };
