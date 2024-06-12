@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { AddressInfo } from '@core/model/address/address-info';
-import { MerchantOrderTypesInfo, OrderDetailOptions } from '@sections/ordering';
+import { CartService, MerchantOrderTypesInfo, OrderDetailOptions } from '@sections/ordering';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
@@ -10,7 +10,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
   styleUrls: ['./st-success-summary.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StSuccesSummaryComponent {
+export class StSuccesSummaryComponent implements OnDestroy{
   @Input() labelOrderPlacedTitle: string;
   @Input() labelOrderPlacedDescription: string;
   @Input() mealBased: boolean;
@@ -30,7 +30,7 @@ export class StSuccesSummaryComponent {
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
-  constructor(private readonly orderingService: OrderingService) {
+  constructor(private readonly orderingService: OrderingService, private readonly cart: CartService) {
     this.contentStrings.buttonDone = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonDone);
     this.contentStrings.labelTotal = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTotal);
     this.contentStrings.labelTip = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTip);
@@ -52,5 +52,9 @@ export class StSuccesSummaryComponent {
     );
     this.contentStrings.labelOrder = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
     this.contentStrings.labelPickup = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPickup);
+  }
+
+  ngOnDestroy(): void {
+    this.cart.clearCart();
   }
 }

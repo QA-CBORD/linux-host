@@ -124,9 +124,13 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
       return;
     }
-    if (hasItemsInCart && merchantHasChanged) {
-      this.showActiveCartWarning(currentMerchant);
-      return;
+
+    if (merchantHasChanged) {
+      if (hasItemsInCart) {
+        this.showActiveCartWarning(currentMerchant);
+        return;
+      }
+      this.cart.updateOrderAddress(currentMerchant?.storeAddress);
     }
 
     await this.initOrderOptionsModal(currentMerchant);
@@ -185,7 +189,6 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       map(orders => orders.find(({ id }) => id === orderId)),
       tap(order => {
         if (!order) return of(null);
-
         const { checkinStatus, status } = order;
         const map = new Map<string, OrderItem>();
         let count = 0;
@@ -290,7 +293,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     this.reorderOrder(orderItems);
   }
 
-  private async reorderOrder(orderItems) {
+  private async reorderOrder(orderItems: Partial<OrderItem> | Partial<OrderItem>[]) {
     const order = await firstValueFrom(this.order$.pipe(take(1)));
     await this.loadingService.showSpinner();
     this.cart.saveOrderSnapshot(order);

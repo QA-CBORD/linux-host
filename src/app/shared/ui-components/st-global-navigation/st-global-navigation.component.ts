@@ -61,8 +61,8 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     this.suscription = this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe(async () => {
       try {
         this.isListShown = false;
-        await this.popoverController.dismiss();
-        await this.modalController.dismiss();
+        await this.popoverController?.dismiss();
+        await this.modalController?.dismiss();
       } catch (error) {
         // TODO: Properly handle exception
       }
