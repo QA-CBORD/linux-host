@@ -10,6 +10,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { ModalController, PopoverController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { CartService } from '@sections/ordering';
 
 describe('StSuccesSummaryComponent', () => {
   let component: StSuccesSummaryComponent;
@@ -17,6 +18,7 @@ describe('StSuccesSummaryComponent', () => {
   let mockOrderingService;
   let mockStorageStateService;
   let translateService;
+  let cart;
 
   beforeEach(async () => {
     mockOrderingService = {
@@ -30,6 +32,10 @@ describe('StSuccesSummaryComponent', () => {
       clearStorage: jest.fn(),
     };
 
+    cart = {
+      clearCart: jest.fn(),
+    };
+
     await TestBed.configureTestingModule({
       declarations: [StSuccesSummaryComponent],
       imports: [TypeMessageModule, ModifyPrepTimeModule, AddressHeaderFormatPipeModule, HttpClientTestingModule],
@@ -38,7 +44,8 @@ describe('StSuccesSummaryComponent', () => {
         { provide: ModalController, useValue: {} },
         { provide: StorageStateService, useValue: mockStorageStateService },
         { provide: OrderingService, useValue: mockOrderingService },
-        {provide: TranslateService, useValue: translateService}
+        { provide: TranslateService, useValue: translateService },
+        { provide: CartService, useValue: cart },
       ],
     }).compileComponents();
   });
@@ -69,5 +76,12 @@ describe('StSuccesSummaryComponent', () => {
     ]).forEach(contentString => {
       expect(mockOrderingService.getContentStringByName).toHaveBeenCalledWith(contentString);
     });
+  });
+
+
+  it('should clear the cart after a successful order completes', () => {
+    const spy = jest.spyOn(cart, 'clearCart');
+    fixture.destroy();
+    expect(spy).toBeCalled();
   });
 });

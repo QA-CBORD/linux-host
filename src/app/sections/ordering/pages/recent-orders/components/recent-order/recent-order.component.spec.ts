@@ -24,7 +24,8 @@ import { Storage } from '@ionic/storage-angular';
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { MenuItemInfo, OrderItem } from '@sections/ordering/components';
+import { MenuItemInfo } from '@sections/ordering/components';
+import { MerchantInfo } from '@sections/ordering';
 import { AddressInfo } from 'net';
 
 const menuMerchants = [
@@ -1073,6 +1074,7 @@ describe(RecentOrderComponent, () => {
       setActiveMerchantsMenuByOrderOptions: jest.fn(),
       addOrderItems: jest.fn(),
       updateOrderNote: jest.fn(),
+      updateOrderAddress: jest.fn(),
       validateReOrderItems: jest.fn().mockReturnValue(of({ orderRemovedItems: [{}, {}], order: { orderItems: [] } })),
       merchant$: of({}),
       menuItems$: of(0),
@@ -1186,6 +1188,45 @@ describe(RecentOrderComponent, () => {
     lockDownService.isLockDownOn = jest.fn().mockReturnValue(false);
     await component.onReorderHandler();
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('should update the order address when merchant changes', async () => {
+    const spy = jest.spyOn(cart, 'updateOrderAddress');
+    lockDownService.isLockDownOn = jest.fn().mockReturnValue(false);
+    cart.merchant$ = of(<MerchantInfo>{ id: '1418856-0641-482c-8b66-bdfdcdd353a8' });
+    component.merchant$ = of(<MerchantInfo>{ id: '2cf2524a-0641-482c-8b66-bdfdcdd353a8' });
+    await component.onReorderHandler();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should warn the user that proceeding to change a merchant will wipe out the active cart', async () => {
+    const spy = jest.spyOn(component, 'showActiveCartWarning');
+    lockDownService.isLockDownOn = jest.fn().mockReturnValue(false);
+    cart.merchant$ = of(<MerchantInfo>{ id: '1418856-0641-482c-8b66-bdfdcdd353a8' });
+    component.merchant$ = of(<MerchantInfo>{ id: '2cf2524a-0641-482c-8b66-bdfdcdd353a8' });
+    cart.menuItems$ = of(3);
+    await component.onReorderHandler();
+    expect(spy).toHaveBeenCalled();
+  });
+  
+  it('should NOT warn the user that proceeding to change a merchant will wipe out the active cart if there is no active cart', async () => {
+    const spy = jest.spyOn(component, 'showActiveCartWarning');
+    lockDownService.isLockDownOn = jest.fn().mockReturnValue(false);
+    cart.merchant$ = of(<MerchantInfo>{ id: '1418856-0641-482c-8b66-bdfdcdd353a8' });
+    component.merchant$ = of(<MerchantInfo>{ id: '2cf2524a-0641-482c-8b66-bdfdcdd353a8' });
+    cart.menuItems$ = of(0);
+    await component.onReorderHandler();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should NOT warn the user that proceeding to change a merchant will wipe out the active cart if merchant has not changed', async () => {
+    const spy = jest.spyOn(component, 'showActiveCartWarning');
+    lockDownService.isLockDownOn = jest.fn().mockReturnValue(false);
+    cart.merchant$ = of(<MerchantInfo>{ id: '1418856-0641-482c-8b66-bdfdcdd353a8' });
+    component.merchant$ = cart.merchant$ 
+    cart.menuItems$ = of(3);
+    await component.onReorderHandler();
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('should not reorder a Just Walkout order', async () => {
