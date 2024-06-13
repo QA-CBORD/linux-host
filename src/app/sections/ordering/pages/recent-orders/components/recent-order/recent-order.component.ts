@@ -125,14 +125,13 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (merchantHasChanged) {
-      if (hasItemsInCart) {
-        this.showActiveCartWarning(currentMerchant);
-        return;
-      }
-      this.cart.updateOrderAddress(currentMerchant?.storeAddress);
-    }
+    this.cart.updateOrderAddress(currentMerchant?.storeAddress);
 
+    if (merchantHasChanged && hasItemsInCart) {
+      this.showActiveCartWarning(currentMerchant);
+      return;
+    }
+     
     await this.initOrderOptionsModal(currentMerchant);
   }
 
