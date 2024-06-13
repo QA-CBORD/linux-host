@@ -1190,7 +1190,7 @@ describe(RecentOrderComponent, () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should update the order address when merchant changes', async () => {
+  it('should update the order address to the current merchant address', async () => {
     const spy = jest.spyOn(cart, 'updateOrderAddress');
     lockDownService.isLockDownOn = jest.fn().mockReturnValue(false);
     cart.merchant$ = of(<MerchantInfo>{ id: '1418856-0641-482c-8b66-bdfdcdd353a8' });
