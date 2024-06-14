@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, inject } from '@angular/core';
 import { AddressInfo } from '@core/model/address/address-info';
 import { CartService, MerchantOrderTypesInfo, OrderDetailOptions } from '@sections/ordering';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
@@ -30,7 +30,9 @@ export class StSuccesSummaryComponent implements OnDestroy{
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
-  constructor(private readonly orderingService: OrderingService, private readonly cart: CartService) {
+  private readonly cartService = inject(CartService);
+
+  constructor(private readonly orderingService: OrderingService) {
     this.contentStrings.buttonDone = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonDone);
     this.contentStrings.labelTotal = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTotal);
     this.contentStrings.labelTip = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTip);
@@ -55,6 +57,6 @@ export class StSuccesSummaryComponent implements OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.cart.clearCart();
+    this.cartService.clearCart();
   }
 }
