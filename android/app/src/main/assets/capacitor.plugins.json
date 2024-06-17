@@ -1,5 +1,9 @@
 [
 	{
+		"pkg": "@capacitor-community/in-app-review",
+		"classpath": "com.getcapacitor.community.inappreview.InAppReviewPlugin"
+	},
+	{
 		"pkg": "@capacitor-community/screen-brightness",
 		"classpath": "com.elylucas.capscreenbrightness.ScreenBrightnessPlugin"
 	},
@@ -70,9 +74,5 @@
 	{
 		"pkg": "@sentry/capacitor",
 		"classpath": "io.sentry.capacitor.SentryCapacitor"
-	},
-	{
-		"pkg": "capacitor-rate-app",
-		"classpath": "com.capacitor.rateApp.CapacitorRateAppPlugin"
 	}
 ]

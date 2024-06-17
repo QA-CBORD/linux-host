@@ -23,5 +23,31 @@
 				"alert"
 			]
 		}
-	}
+	},
+	"packageClassList": [
+		"InAppReviewPlugin",
+		"InAppReviewPlugin",
+		"ScreenBrightnessPlugin",
+		"ScreenBrightnessPlugin",
+		"BarcodeScannerPlugin",
+		"BarcodeScannerPlugin",
+		"AppPlugin",
+		"CAPBrowserPlugin",
+		"CAPCameraPlugin",
+		"DevicePlugin",
+		"FilesystemPlugin",
+		"GeolocationPlugin",
+		"HapticsPlugin",
+		"KeyboardPlugin",
+		"LocalNotificationsPlugin",
+		"CAPNetworkPlugin",
+		"PreferencesPlugin",
+		"PushNotificationsPlugin",
+		"ScreenReaderPlugin",
+		"SplashScreenPlugin",
+		"StatusBarPlugin",
+		"SentryCapacitor",
+		"SentryCapacitor",
+		"CDVPlugin"
+	]
 }

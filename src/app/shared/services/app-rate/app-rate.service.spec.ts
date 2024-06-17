@@ -5,7 +5,7 @@ import { Platform } from '@ionic/angular';
 import { AppRate } from '@shared/model/app-rate.model';
 import { lastValueFrom, of } from 'rxjs';
 
-jest.mock('capacitor-rate-app', () => ({
+jest.mock('@capacitor-community/in-app-review', () => ({
   RateApp: {
     requestReview: jest.fn(),
   },

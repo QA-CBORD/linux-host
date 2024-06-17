@@ -3,7 +3,7 @@ import { StorageEntity } from '@core/classes/extendable-state-manager';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Platform } from '@ionic/angular';
 import { AppRate } from '@shared/model/app-rate.model';
-import { RateApp } from 'capacitor-rate-app';
+import { InAppReview } from '@capacitor-community/in-app-review';
 import { Observable, lastValueFrom, map, take } from 'rxjs';
 
 @Injectable({
@@ -45,7 +45,7 @@ export class AppRateService {
       wasRated: true,
     } as AppRate);
 
-    RateApp.requestReview();
+    InAppReview?.requestReview();
   }
 
   private getAppRateState(): Observable<StorageEntity<AppRate | null>> {

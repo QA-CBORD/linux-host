@@ -47,8 +47,6 @@
 	<string>GET requires access to your camera to setup Profile Image</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>GET requires FACE ID access for authentication</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow GET to use your location</string>
 	<key>NSLocationUsageDescription</key>
 	<string>GET requires access to your locations to suggest nearby merchants</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
