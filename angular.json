@@ -85,7 +85,9 @@
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/styles"
+                "src/styles",
+                "./node_modules/@ionic/angular/css",
+                "./node_modules/breakpoint-sass"
               ]
             },
             "scripts": [],
