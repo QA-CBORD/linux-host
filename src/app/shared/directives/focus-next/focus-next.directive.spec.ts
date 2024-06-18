@@ -6,25 +6,26 @@ import { FocusNextDirective } from './focus-next.directive';
 @Component({
   template: `
     <div>Without Directive</div>
-    <div stFocusNext>Default</div>
-  `
+    <div [stFocusNext]="second">Default</div>
+    <div #second>Second</div>
+  `,
 })
 class TestComponent {}
 
 describe('FocusNextDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
-  let elementsWithDirective: Array<DebugElement>;
+  let elementsWithDirective: DebugElement;
   let bareElement: DebugElement;
+  let directiveInstance: FocusNextDirective; 
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [FocusNextDirective, TestComponent]
+      declarations: [FocusNextDirective, TestComponent],
     });
     fixture = TestBed.createComponent(TestComponent);
     fixture.detectChanges();
-    elementsWithDirective = fixture.debugElement.queryAll(
-      By.directive(FocusNextDirective)
-    );
+    elementsWithDirective = fixture.debugElement.query(By.directive(FocusNextDirective));
+    directiveInstance = elementsWithDirective.injector.get(FocusNextDirective);
     bareElement = fixture.debugElement.query(By.css(':not([stFocusNext])'));
   });
 
@@ -32,7 +33,21 @@ describe('FocusNextDirective', () => {
     expect(bareElement).toBeTruthy();
   });
 
-  it('should have 1 element(s) with directive', () => {
-    expect(elementsWithDirective.length).toBe(1);
+  //fix Cannot use spyOn on a primitive value; null given on this test
+  it('should focus on next element when enter key is pressed', () => {
+    const directiveElement = elementsWithDirective.nativeElement;
+    const nextElement = directiveElement.nextElementSibling;
+    const focusSpy = jest.spyOn(nextElement, 'focus');
+    directiveElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    setTimeout(() => {
+      expect(focusSpy).toHaveBeenCalled();
+    }, 101);
+  });
+  it('should call focus on nextField after a timeout', () => {
+    jest.useFakeTimers();
+    const focusSpy = jest.spyOn(directiveInstance.nextField, 'focus');
+    directiveInstance.onInputChange();
+    jest.runAllTimers();
+    expect(focusSpy).toHaveBeenCalled();
   });
 });

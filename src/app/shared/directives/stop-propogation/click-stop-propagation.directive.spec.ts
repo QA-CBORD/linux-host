@@ -7,7 +7,7 @@ import { ClickStopPropagationDirective } from './click-stop-propagation.directiv
   template: `
     <div>Without Directive</div>
     <div appClickStopPropagation>Default</div>
-  `
+  `,
 })
 class TestComponent {}
 
@@ -18,16 +18,12 @@ describe('ClickStopPropagationDirective', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ClickStopPropagationDirective, TestComponent]
+      declarations: [ClickStopPropagationDirective, TestComponent],
     });
     fixture = TestBed.createComponent(TestComponent);
     fixture.detectChanges();
-    elementsWithDirective = fixture.debugElement.queryAll(
-      By.directive(ClickStopPropagationDirective)
-    );
-    bareElement = fixture.debugElement.query(
-      By.css(':not([appClickStopPropagation])')
-    );
+    elementsWithDirective = fixture.debugElement.queryAll(By.directive(ClickStopPropagationDirective));
+    bareElement = fixture.debugElement.query(By.css(':not([appClickStopPropagation])'));
   });
 
   it('should have bare element', () => {
@@ -36,5 +32,13 @@ describe('ClickStopPropagationDirective', () => {
 
   it('should have 1 element(s) with directive', () => {
     expect(elementsWithDirective.length).toBe(1);
+  });
+  
+  it('should stop propagation when clicked', () => {
+    const directiveElement = elementsWithDirective[0].nativeElement;
+    const event = new MouseEvent('click', {});
+    const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+    directiveElement.dispatchEvent(event);
+    expect(stopPropagationSpy).toHaveBeenCalled();
   });
 });
