@@ -21,7 +21,7 @@
       <div class="menu-category__search-text">{{ contentStrings.labelEmptySearch | async }}</div>
     </div>
     <st-category-list
-      [mealBased]="(menuInfo$ | async).mealBased"
+      [mealBased]="(menuInfo$ | async)?.mealBased"
       [menuCategoryItems]="filteredMenuCategoryItems"
       (onItemClicked)="triggerMenuItemClick($event)"
     ></st-category-list>
@@ -49,7 +49,7 @@
   <ion-content class="menu-category" mode="ios">
     <ng-container *ngIf="menuCategory; else emptyMenuCategory">
       <st-category-list
-        [mealBased]="(menuInfo$ | async).mealBased"
+        [mealBased]="(menuInfo$ | async)?.mealBased"
         [menuCategoryItems]="menuCategory.menuCategoryItems"
         (onItemClicked)="triggerMenuItemClick($event)"
       ></st-category-list>

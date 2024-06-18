@@ -44,7 +44,7 @@
         <st-single-list [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
                         [formControlName]="menuGroupItem.menuGroup.name"
                         [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name)?.value ? false : errorState"
-                        [mealBased]="(menuInfo$ | async).mealBased"
+                        [mealBased]="(menuInfo$ | async)?.mealBased"
                         [name]="menuGroupItem.menuGroup.name"
                         [options]="menuGroupItem.menuGroup.menuGroupItems">
         </st-single-list>
@@ -55,7 +55,7 @@
                        [formControlName]="menuGroupItem.menuGroup.name"
                        [isError]="isErrorMultiList(menuGroupItem) ? false: errorState"
                        [maximum]="menuGroupItem.menuGroup.maximum"
-                       [mealBased]="(menuInfo$ | async).mealBased"
+                       [mealBased]="(menuInfo$ | async)?.mealBased"
                        [minimum]="menuGroupItem.menuGroup.minimum"
                        [name]="menuGroupItem.menuGroup.name"
                        [options]="menuGroupItem.menuGroup.menuGroupItems"

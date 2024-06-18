@@ -83,7 +83,6 @@
     "jest-preset-angular": "^13.1.4",
     "memo-decorator": "^1.0.2",
     "ngx-image-cropper": "^7.1.2",
-    "puppeteer": "^19.3.0",
     "rxjs": "~7.5.6",
     "swiper": "^8.4.4",
     "tslib": "^2.0.0",

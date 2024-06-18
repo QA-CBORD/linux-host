@@ -67,6 +67,10 @@ export class ExternalLoginPage {
   loadLoginContent() {
     const instSub = this.institutionFacadeService.cachedInstitutionInfo$.pipe(first()).subscribe(
       institutionInfo => {
+        if (!institutionInfo) {
+          this.showModal('Oops!', 'There was an issue loading the login page - please try again');
+          return;
+        }
         this.institutionId = institutionInfo.id;
         this.nativeHeaderBg$ = this.getNativeHeaderBg(this.institutionId);
         this.initializeInAppBrowser(institutionInfo);
@@ -75,7 +79,7 @@ export class ExternalLoginPage {
         this.showModal('Oops!', 'There was an issue loading the login page - please try again');
       },
       () => {
-          // TODO: Properly handle exception
+        // TODO: Properly handle exception
       }
     );
     this.subscriptions.add(instSub);
@@ -183,10 +187,7 @@ export class ExternalLoginPage {
   }
 
   private async getNativeHeaderBg(id): Promise<string> {
-    const sessionId = await this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(first())
-      .toPromise();
+    const sessionId = await this.authFacadeService.getAuthSessionToken$().pipe(first()).toPromise();
     return this.settingsFacadeService
       .getSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
       .pipe(

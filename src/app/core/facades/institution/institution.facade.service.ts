@@ -119,7 +119,11 @@ export class InstitutionFacadeService extends ServiceStateFacade {
       );
   }
 
-  getInstitutionDataByShortName$(institutionShortName: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
+  getInstitutionDataByShortName$(
+    institutionShortName: string,
+    sessionId?: string,
+    useSessionId?: boolean
+  ): Observable<Institution> {
     return this.institutionApiService
       .getInstitutionDataByShortName(institutionShortName, sessionId, useSessionId)
       .pipe(
@@ -160,7 +164,7 @@ export class InstitutionFacadeService extends ServiceStateFacade {
 
   getlastChangedTerms$(): Observable<Date> {
     return this.cachedInstitutionInfo$.pipe(
-      map(({ lastChangedTerms }) => lastChangedTerms),
+      map(cachedInstitutionInfo => cachedInstitutionInfo?.lastChangedTerms),
       take(1)
     );
   }

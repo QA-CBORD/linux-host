@@ -1,6 +1,6 @@
 <ion-content class="biometric" scrollY="false">
   <div class="biometric__content">
-    <div class="biometric__header">
+    <div class="biometric__header" *ngIf="biometricConfig">
       <div class="biometric__image-wrapper">
         <img
           src="/assets/icon/{{biometricConfig.type === 'fingerprint'? 'fingerprint' : 'faceid'}}.svg"
