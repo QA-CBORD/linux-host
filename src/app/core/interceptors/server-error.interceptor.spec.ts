@@ -68,7 +68,7 @@ describe('ServerError', () => {
     }
   });
 
-  it('should return internal server error', async () => {
+  it('should NOT return the invalid session error', async () => {
     const unknownExceptionFormat = new HttpResponse({ status: 500, statusText: 'Internal Server Error', body: { exception: '4001|Invalid session', method: "test" } });
     const httpHandler: HttpHandler = {
       handle: (req: HttpRequest<any>) => {
