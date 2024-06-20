@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -11,9 +11,13 @@ import { Observable, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { NUM_DSCRPTN_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
+import { SentryLoggingHandlerService } from '@core/utils/sentry-logging-handler.service';
 
 @Injectable()
 export class ServerError implements HttpInterceptor {
+
+  private readonly sentryLoggingService = inject(SentryLoggingHandlerService);
+
   constructor(private readonly toastService: ToastService) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,11 +31,11 @@ export class ServerError implements HttpInterceptor {
             res.body instanceof Object &&
             'exception' in res.body &&
             res.body.exception !== null
-          ) {
-            if (shouldDelegateErrorToCaller(req.body.method)) {
+          ) { 
+            
+            if (this.shouldDelegateErrorToCaller(req.body.method)) {
               throw new Error(res.body.exception);
             }
-
             console.error('handleServerException: ', req, res);
             this.handleServerException(req.body.method, res.body.exception);
           }
@@ -48,35 +52,39 @@ export class ServerError implements HttpInterceptor {
     await this.toastService.showToast({ message });
   }
 
-  private isKnownError(errorString): boolean {
+  private hasKnownErrorFormat(errorString: string): boolean {
     return errorString.search(NUM_DSCRPTN_REGEXP) !== -1;
   }
 
-  private handleServerException(method: string, exceptionString = ''): never {
-    if (this.isKnownError(exceptionString)) {
+  private handleServerException(method: string, exceptionString = '') {
+    if (this.hasKnownErrorFormat(exceptionString)) {
       const errorMessageParts = exceptionString.split('|');
-      throw this.determineErrorByCodeAndThrow([errorMessageParts[0], errorMessageParts[1]], method);
+      const newError = this.determineErrorByCode([errorMessageParts[0], errorMessageParts[1]], method);
+     if (!this.sentryLoggingService.isOmittableError(errorMessageParts[1] ?? newError?.message)) {
+        throw newError;
+      }
+
     } else {
       throw new Error('Unexpected error occurred.');
     }
   }
 
-  private determineErrorByCodeAndThrow([code, message = '']: [string, string], method: string): never {
+  private determineErrorByCode([code, message = '']: [string, string], method: string): Error {
     const newError = new Error(`${code}|${message}`);
     if (Number(code) in GENERAL_ERRORS) {
       newError.message = GENERAL_ERRORS[code][method] || GENERAL_ERRORS[code].default;
     }
-    throw newError;
+    return newError;
   }
+
+   shouldDelegateErrorToCaller = (method): boolean => {
+    return this.registeredMethods[method];
+  };
+  
+   registeredMethods = {
+    register: true,
+  };
 }
-
-const shouldDelegateErrorToCaller = (method): boolean => {
-  return registeredMethods[method];
-};
-
-const registeredMethods = {
-  register: true,
-};
 
 const GENERAL_ERRORS = {
   9004: {
