@@ -1,10 +1,10 @@
-import { TestBed } from '@angular/core/testing';
 import { HttpHandler, HttpResponse } from '@angular/common/http';
 import { HttpRequest } from '@angular/common/http';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ServerError } from './server-error.interceptor';
 import { firstValueFrom, of } from 'rxjs';
 import { SentryLoggingHandlerService } from '@core/utils/sentry-logging-handler.service';
+import { TestBed } from '@angular/core/testing';
 
 jest.mock('@sentry/angular-ivy', () => ({
   captureException: jest.fn(),

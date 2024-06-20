@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
 import * as Sentry from '@sentry/angular-ivy';
 import { EnvironmentData } from '@environments/environment-data';
+import { Injectable } from '@angular/core';
+import { environment } from '@environments/environment';
 
 const OmitedErrorsForSentry = [
   'Error: Invalid session',
@@ -21,9 +22,11 @@ export class SentryLoggingHandlerService {
     Sentry.captureException(error);
   }
 
-  initSdk(prodDsn: boolean = true): void {
+  initProdMode(prodDsn: boolean = true): void {
     if (prodDsn) {
-      this.init("https://bff607c85207d1045f7e872594a3eb7d@o4505981022568448.ingest.sentry.io/4506004113457152");
+      if (environment.production) {
+        this.init("https://bff607c85207d1045f7e872594a3eb7d@o4505981022568448.ingest.sentry.io/4506004113457152");
+      }
     } else {
       this.init("https://147d65f03f51061ffccf73dcc0aea126@o4507153434411008.ingest.us.sentry.io/4507154456772608");
     }

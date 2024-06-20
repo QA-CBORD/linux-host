@@ -1,4 +1,3 @@
-import { Injectable, inject } from '@angular/core';
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -12,6 +11,7 @@ import { tap } from 'rxjs/operators';
 import { NUM_DSCRPTN_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
 import { SentryLoggingHandlerService } from '@core/utils/sentry-logging-handler.service';
+import { Injectable, inject } from '@angular/core';
 
 @Injectable()
 export class ServerError implements HttpInterceptor {
@@ -31,8 +31,8 @@ export class ServerError implements HttpInterceptor {
             res.body instanceof Object &&
             'exception' in res.body &&
             res.body.exception !== null
-          ) { 
-            
+          ) {
+
             if (this.shouldDelegateErrorToCaller(req.body.method)) {
               throw new Error(res.body.exception);
             }
@@ -80,8 +80,8 @@ export class ServerError implements HttpInterceptor {
    shouldDelegateErrorToCaller = (method): boolean => {
     return this.registeredMethods[method];
   };
-  
-   registeredMethods = {
+
+  registeredMethods = {
     register: true,
   };
 }

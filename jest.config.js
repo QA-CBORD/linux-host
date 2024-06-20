@@ -22,7 +22,8 @@ module.exports = {
     "^@core(.*)$": "<rootDir>/src/app/core/$1",
     "^@sections(.*)$": "<rootDir>/src/app/sections/$1",
     "^@shared(.*)$": "<rootDir>/src/app/shared/$1",
-    "^@environment(.*)$": "<rootDir>/src/environments/environment-data.ts",
+    "^@environments/environment-data": "<rootDir>/src/environments/environment-data.ts",
+    "^@environments/environment": "<rootDir>/src/environments/environment.ts",
     "^src(.*)$": "<rootDir>/src/$1"
   }
 };

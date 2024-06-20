@@ -1,10 +1,10 @@
-import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { SentryLoggingHandlerService } from './sentry-logging-handler.service';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-  
+
   private sentryLoggingService = inject(SentryLoggingHandlerService);
 
   constructor(private alertController: AlertController) {}
@@ -16,8 +16,8 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (chunkFailedMessage.test(errText)) {
       this.presentAlertConfirm();
     }
-    
-    if (errText && !this.sentryLoggingService.isOmittableError(errText) ) {
+
+    if (errText && !this.sentryLoggingService.isOmittableError(errText)) {
       this.sentryLoggingService.logError(err);
     }
 
