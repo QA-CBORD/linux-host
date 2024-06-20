@@ -96,7 +96,7 @@ export class MerchantService {
         }
         orders.forEach(order => {
           const merchant = merchantsMap[order.merchantId];
-          order.isWalkoutOrder = merchant.walkout;
+          order.isWalkoutOrder = merchant?.walkout;
         });
         return orders;
       })
