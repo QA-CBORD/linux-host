@@ -3,7 +3,7 @@ import { EnvironmentData } from '@environments/environment-data';
 import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 
-const OmitedErrorsForSentry = [
+const OmittedErrorsForSentry = [
   'Error: Invalid session',
   'Invalid session',
   'Invalid user session',
@@ -33,13 +33,13 @@ export class SentryLoggingHandlerService {
   }
 
   isOmittableError(errorMsg: string): boolean {
-    return OmitedErrorsForSentry.some(err =>
+    return OmittedErrorsForSentry.some(err =>
       errorMsg && (err.includes(errorMsg) || errorMsg.includes(err))
     );
   }
 
   private init(dsn: string) {
-    const ignoreErrorsPatterns = OmitedErrorsForSentry.map(error => new RegExp(`.*${error}.*`, 'i'));
+    const ignoreErrorsPatterns = OmittedErrorsForSentry.map(error => new RegExp(`.*${error}.*`, 'i'));
     Sentry.init({
       dsn,
       release: 'get-mobile@' + EnvironmentData.version.versionNumber,
