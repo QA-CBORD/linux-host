@@ -17,7 +17,7 @@ export class GlobalErrorHandler implements ErrorHandler {
       this.presentAlertConfirm();
     }
 
-    if (errText && !this.sentryLoggingService.isOmittableError(errText)) {
+    if (!this.sentryLoggingService.isOmittableError(errText)) {
       this.sentryLoggingService.logError(err);
     }
 
