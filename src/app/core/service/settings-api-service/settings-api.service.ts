@@ -20,7 +20,7 @@ export class SettingsApiService {
   constructor(private readonly http: HttpClient) {}
 
   getUserSetting(settingName: User.Settings): Observable<UserSettingInfo> {
-    const queryConfig = new RPCQueryConfig('retrieveSetting', { settingName }, true);
+    const queryConfig = new RPCQueryConfig('retrieveSetting', { settingName, forceOverwrite: true }, true);
     return this.http
       .post<MessageResponse<UserSettingInfo>>(this.userSettingsUrl, queryConfig)
       .pipe(map(({ response }) => response));

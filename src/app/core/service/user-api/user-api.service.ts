@@ -19,7 +19,7 @@ export class UserApiService {
   constructor(private readonly http: HttpClient) {}
 
   getUser(): Observable<UserInfo> {
-    const queryConfig = new RPCQueryConfig('retrieve', {}, true);
+    const queryConfig = new RPCQueryConfig('retrieve', { forceOverwrite: true }, true);
 
     return this.http
       .post<MessageResponse<UserInfo>>(this.serviceUrl, queryConfig)
@@ -111,7 +111,7 @@ export class UserApiService {
   }
 
   saveNotification$(userId: string, notification: UserNotificationInfo): Observable<string> {
-    const params = { userId, notification };
+    const params = { userId, notification, forceOverwrite: true };
     const queryConfig = new RPCQueryConfig('saveNotification', params, true, false);
     return this.http.post<string>(this.serviceUrl, queryConfig);
   }
