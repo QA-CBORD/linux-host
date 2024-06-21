@@ -21,7 +21,7 @@ export class GlobalErrorHandler implements ErrorHandler {
       this.sentryLoggingService.logError(err);
     }
 
-    console.error('Error Handled Global: ', err);
+    console.error('handleGlobalException: ', err);
   }
 
   private async presentAlertConfirm() {

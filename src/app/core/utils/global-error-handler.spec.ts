@@ -56,7 +56,7 @@ describe('GlobalErrorHandler', () => {
       const err = { message: 'Some error message' };
       const consoleSpy = jest.spyOn(console, 'error');
       globalErrorHandler.handleError(err);
-      expect(consoleSpy).toHaveBeenCalledWith('Error Handled Global: ', err);
+      expect(consoleSpy).toHaveBeenCalledWith('handleGlobalException: ', err);
     });
   });
 });

@@ -39,9 +39,11 @@ export class SentryLoggingHandlerService {
   }
 
   private init(dsn: string) {
+    const ignoreErrorsPatterns = OmitedErrorsForSentry.map(error => new RegExp(error, 'i'));
     Sentry.init({
       dsn,
       release: 'get-mobile@' + EnvironmentData.version.versionNumber,
+      ignoreErrors: ignoreErrorsPatterns
     });
   }
 }

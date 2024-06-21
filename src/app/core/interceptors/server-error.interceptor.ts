@@ -60,10 +60,7 @@ export class ServerError implements HttpInterceptor {
     if (this.hasKnownErrorFormat(exceptionString)) {
       const errorMessageParts = exceptionString.split('|');
       const newError = this.determineErrorByCode([errorMessageParts[0], errorMessageParts[1]], method);
-     if (!this.sentryLoggingService.isOmittableError(errorMessageParts[1] ?? newError?.message)) {
-        throw newError;
-      }
-
+      throw newError;
     } else {
       throw new Error('Unexpected error occurred.');
     }
