@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, zip } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, zip } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
@@ -74,7 +74,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
       }),
       switchMap(deviceInfo => {
         if (!deviceInfo) {
-          return null;
+          return of(null);
         }
 
         return zip(

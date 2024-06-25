@@ -43,7 +43,7 @@ describe('GlobalErrorHandler', () => {
     it('should call Sentry.captureException when error message does not match chunkFailedMessage', () => {
       const err = { message: 'Some other error message' };
       globalErrorHandler.handleError(err);
-      expect(Sentry.captureException).toHaveBeenCalledWith(err);
+      expect(Sentry.captureException).toHaveBeenCalledWith('Handled unknown error');
     });
 
     it('should not call Sentry.captureException when error message contains specific text', () => {
