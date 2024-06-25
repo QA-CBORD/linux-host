@@ -132,7 +132,7 @@ export class RecentOrdersComponent implements OnInit {
       },
       true
     );
-    
+
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
         this.selectedFilters = data;
