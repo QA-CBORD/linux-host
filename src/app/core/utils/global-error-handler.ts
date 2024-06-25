@@ -1,20 +1,14 @@
-import { ErrorHandler, Injectable } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import * as Sentry from '@sentry/angular-ivy';
-
-
-const OmitedErrorsForSentry = [
-  'Error: Invalid session',
-  'Invalid session',
-  'Invalid user session',
-  'Non-Error exception captured with keys found when loading the app',
-  '9017,Order can not be processed for the given due time, it exceeds the merchants order capacity',
-  'There was an issue with the transaction'
-];
+import { SentryLoggingHandlerService } from './sentry-logging-handler.service';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
+
+  private sentryLoggingService = inject(SentryLoggingHandlerService);
+
   constructor(private alertController: AlertController) {}
+
   handleError(err): void {
     const chunkFailedMessage = /Loading chunk [\d]+ failed/;
     const errText = err ? err.message : 'Unknown error: Error object is empty.';
@@ -22,11 +16,12 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (chunkFailedMessage.test(errText)) {
       this.presentAlertConfirm();
     }
-    if (errText && !OmitedErrorsForSentry.includes(errText) ) {
-      Sentry.captureException(err);
+
+    if (!this.sentryLoggingService.isOmittableError(errText)) {
+      this.sentryLoggingService.logError(err);
     }
 
-    console.error('Error Handled Global: ', err);
+    console.error('handleGlobalException: ', err);
   }
 
   private async presentAlertConfirm() {

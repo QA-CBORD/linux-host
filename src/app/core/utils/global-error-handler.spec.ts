@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing';
 import { AlertController } from '@ionic/angular';
 import * as Sentry from '@sentry/angular-ivy';
 import { GlobalErrorHandler } from './global-error-handler';
+import { TestBed } from '@angular/core/testing';
 
 jest.mock('@sentry/angular-ivy', () => ({
   captureException: jest.fn(),
@@ -56,7 +56,7 @@ describe('GlobalErrorHandler', () => {
       const err = { message: 'Some error message' };
       const consoleSpy = jest.spyOn(console, 'error');
       globalErrorHandler.handleError(err);
-      expect(consoleSpy).toHaveBeenCalledWith('Error Handled Global: ', err);
+      expect(consoleSpy).toHaveBeenCalledWith('handleGlobalException: ', err);
     });
   });
 });
