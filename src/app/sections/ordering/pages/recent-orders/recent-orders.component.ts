@@ -28,6 +28,7 @@ const renderingDelay = 1000;
 export class RecentOrdersComponent implements OnInit {
   filteredOrders$: Observable<OrderInfo[]>;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  private selectedFilters: { period: DateUtilObject; status: string } = null;
 
   constructor(
     private readonly router: Router,
@@ -53,7 +54,7 @@ export class RecentOrdersComponent implements OnInit {
 
   refreshRecentOrders({ target }) {
     this.merchantService
-      .getRecentOrdersPeriod()
+      .getRecentOrdersPeriod(this.filterDetail?.period, this.selectedFilters?.status)
       .pipe(
         take(1),
         finalize(() => target.complete())
@@ -131,13 +132,19 @@ export class RecentOrdersComponent implements OnInit {
       },
       true
     );
-
+    
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
+        this.selectedFilters = data;
         this.filterChange(data);
       }
     });
+
     await modal.present();
+  }
+
+  get filterDetail() {
+    return this.selectedFilters;
   }
 
   get statuses(): string[] {

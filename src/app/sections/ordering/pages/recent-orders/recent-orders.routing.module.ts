@@ -18,7 +18,6 @@ const routes: Routes = [
 ];
 
 const imports = [RouterModule.forChild(routes)];
-const exports = [RouterModule];
 
-@NgModule({ imports, exports })
+@NgModule({ imports, exports: [RouterModule] })
 export class RecentOrdersRoutingModule {}
