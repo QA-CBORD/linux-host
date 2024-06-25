@@ -73,7 +73,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       });
       await popover.present();
       const { data } = await popover.onDidDismiss();
-      const shouldUninstall = data.action == usageString.uninstall;
+      const shouldUninstall = data?.action == usageString.uninstall;
       if (shouldUninstall) {
         this.showConfirmUninstallDialog();
       }
