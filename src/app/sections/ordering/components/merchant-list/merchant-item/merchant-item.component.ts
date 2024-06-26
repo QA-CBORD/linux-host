@@ -41,9 +41,9 @@ export class MerchantItemComponent {
     id: string;
   }>();
   awsImageUrl: string = this.environmentFacadeService.getImageURL();
-  readonly merchantDetailsRoute = `/${this._route.url?.split('/').filter(segment => segment?.trim())[0]}/${APP_ROUTES.explore}/${
-    EXPLORE_ROUTING.merchantDetails
-  }/`;
+  readonly merchantDetailsRoute = `/${this._route.url?.split('/').filter(segment => segment?.trim())[0]}/${
+    APP_ROUTES.explore
+  }/${EXPLORE_ROUTING.merchantDetails}/`;
 
   constructor(private readonly environmentFacadeService: EnvironmentFacadeService, private readonly _route: Router) {}
 
@@ -61,5 +61,12 @@ export class MerchantItemComponent {
 
   triggerFavourite(event, { isFavorite, id }: MerchantInfo) {
     this.addToFav.emit({ isFavorite, id });
+  }
+
+  get favoriteAriaLabel(): string {
+    const { isFavorite, name } = this.merchantInfo;
+    return isFavorite
+      ? `Selected Favorite Button, Remove ${name} as favorite merchant, actions available`
+      : `Selected Favorite Button, Add ${name} as favorite merchant, actions available`;
   }
 }

@@ -103,4 +103,10 @@ export class MerchantDetailsPage implements OnInit {
   private async onToastDisplayed(message: string): Promise<void> {
     await this.toastService.showToast({ message, position: 'bottom' });
   }
+
+  getAltText({ isFavorite, name }: MerchantInfo): string {
+    return isFavorite
+      ? `Selected Favorite Button, Remove ${name} as favorite merchant, actions available`
+      : `Selected Favorite Button, Add ${name} as favorite merchant, actions available`;
+  }
 }
