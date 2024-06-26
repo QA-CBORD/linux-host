@@ -209,7 +209,7 @@ export class StDateTimePickerComponent implements OnInit {
       return [[], []];
     }
     const arr1 = this.schedule.days.map(({ date }) => date);
-    const arr2 = this.schedule.days[i].hourBlocks?.reduce(
+    const arr2 = (this.schedule.days[i]?.hourBlocks ?? []).reduce(
       (previous, hourBlock) => [
         ...previous,
         ...hourBlock.minuteBlocks.map((minuteBlock, index) => hourBlock.periods[index]),
