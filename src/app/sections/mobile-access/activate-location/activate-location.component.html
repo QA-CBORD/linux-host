@@ -15,13 +15,16 @@
     [institutionColor]="institutionColor$ | async"
   >
     <p class="user-data__location">
-      <ion-icon [ngClass]="starClass | async" [attr.aria-label]="starAriaLabel | async" role="option" (click)="favouriteHandler()"></ion-icon>
+      <ion-icon
+        [ngClass]="starClass | async"
+        [attr.aria-label]="starAriaLabel | async | translate : { locationName: (location$ | async)?.name }"
+        role="option"
+        (click)="favouriteHandler()"
+      ></ion-icon>
       {{ (location$ | async)?.locationId }} - {{ (location$ | async)?.name }}
-    </p> 
+    </p>
     <div class="user-data__activate-btn-wrapper">
-      <st-button 
-        (onClick)="activateLocation()"
-        buttonModifier="submit-button">
+      <st-button (onClick)="activateLocation()" buttonModifier="submit-button">
         {{ contentString.activate }}
       </st-button>
     </div>

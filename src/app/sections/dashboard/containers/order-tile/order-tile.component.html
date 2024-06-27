@@ -21,7 +21,11 @@
             alt="merchant image"
           />
           <div class="order__favorite-wrapper">
-            <img class="order__favorite-icon" src="/assets/icon/star-filled.svg" alt="Selected favorite icon, image" />
+            <img
+              class="order__favorite-icon"
+              src="/assets/icon/star-filled.svg"
+              [attr.aria-label]="'patron-ui.favorites_actions.home_page' | translate"
+            />
           </div>
           <div class="order__card-title-wrapper">
             <div class="order__card-title">{{ merchant.name }}</div>

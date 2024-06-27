@@ -30,7 +30,7 @@
         <img
           class="merchant__merchant-button"
           [src]="starClass"
-          [attr.aria-label]="favoriteAriaLabel"
+          [attr.aria-label]="favoriteAriaLabel | translate : { merchantName: merchantInfo.name }"
           appClickStopPropagation
           (click)="triggerFavourite($event, merchantInfo)"
           role="button"

@@ -26,10 +26,7 @@
 	},
 	"packageClassList": [
 		"InAppReviewPlugin",
-		"InAppReviewPlugin",
 		"ScreenBrightnessPlugin",
-		"ScreenBrightnessPlugin",
-		"BarcodeScannerPlugin",
 		"BarcodeScannerPlugin",
 		"AppPlugin",
 		"CAPBrowserPlugin",
@@ -46,7 +43,6 @@
 		"ScreenReaderPlugin",
 		"SplashScreenPlugin",
 		"StatusBarPlugin",
-		"SentryCapacitor",
 		"SentryCapacitor",
 		"CDVPlugin"
 	]

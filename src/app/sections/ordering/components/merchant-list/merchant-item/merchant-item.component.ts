@@ -64,9 +64,9 @@ export class MerchantItemComponent {
   }
 
   get favoriteAriaLabel(): string {
-    const { isFavorite, name } = this.merchantInfo;
+    const { isFavorite } = this.merchantInfo;
     return isFavorite
-      ? `Selected Favorite Button, Remove ${name} as favorite merchant, actions available`
-      : `Selected Favorite Button, Add ${name} as favorite merchant, actions available`;
+      ? `patron-ui.favorites_actions.merchant_remove_from_favorites`
+      : `patron-ui.favorites_actions.merchant_add_to_favorites`;
   }
 }

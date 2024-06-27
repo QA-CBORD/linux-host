@@ -104,9 +104,9 @@ export class MerchantDetailsPage implements OnInit {
     await this.toastService.showToast({ message, position: 'bottom' });
   }
 
-  getAltText({ isFavorite, name }: MerchantInfo): string {
+  getAltText({ isFavorite }: MerchantInfo): string {
     return isFavorite
-      ? `Selected Favorite Button, Remove ${name} as favorite merchant, actions available`
-      : `Selected Favorite Button, Add ${name} as favorite merchant, actions available`;
+      ? `patron-ui.favorites_actions.merchant_remove_from_favorites`
+      : `patron-ui.favorites_actions.merchant_add_to_favorites`;
   }
 }

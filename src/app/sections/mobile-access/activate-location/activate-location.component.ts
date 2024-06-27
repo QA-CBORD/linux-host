@@ -69,10 +69,10 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   get starAriaLabel(): Observable<string> {
     return this.location$.pipe(
-      map(({ isFavourite, name }: MMobileLocationInfo) =>
+      map(({ isFavourite }: MMobileLocationInfo) =>
         isFavourite
-          ? `Selected Favorite Button, Remove ${name} as favorite location, actions available`
-          : `Selected Favorite Button, Add ${name} as favorite location, actions available`
+        ? `patron-ui.favorites_actions.location_remove_from_favorites`
+        : `patron-ui.favorites_actions.location_add_to_favorites`
       )
     );
   }

@@ -1153,6 +1153,14 @@
       "expiration_message": "Cart will expire {{expirationDays}} days after last creation.",
       "add_more_button": "Add More Items",
       "go_to_checkout_button": "Go To Checkout"
+    },
+    "favorites_actions":{
+      "merchant_add_to_favorites": "Selected Favorite Button, Add {{merchantName}} as favorite merchant, actions available",
+      "merchant_remove_from_favorites": "Selected Favorite Button, Remove {{merchantName}} as favorite merchant, actions available",
+      "location_add_to_favorites": "Selected Favorite Button, Add {{locationName}} as favorite location, actions available",
+      "location_remove_from_favorites": "Selected Favorite Button, Remove {{locationName}} as favorite location, actions available",
+      "home_page":"Selected favorite icon, image"
+    
     }
   }
 }

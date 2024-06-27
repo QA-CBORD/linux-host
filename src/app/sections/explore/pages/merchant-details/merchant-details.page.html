@@ -34,7 +34,7 @@
         <ion-icon
           slot="icon-only"
           [src]="merchant.isFavorite ? filledStarPath : blankStarPath"
-          [attr.aria-label]="getAltText(merchant)"
+          [attr.aria-label]="getAltText(merchant) | translate : { merchantName: merchant.name }"
         ></ion-icon>
       </ion-button>
     </div>

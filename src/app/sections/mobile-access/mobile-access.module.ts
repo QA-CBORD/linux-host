@@ -20,6 +20,7 @@ import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/s
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
+import { TranslateModule } from '@ngx-translate/core';
 
 const imports = [
   CommonModule,
@@ -34,7 +35,7 @@ const imports = [
   StHeaderModule,
   StSpinnerModule,
   StActivateLocationItemModule,
-  StButtonModule
+  StButtonModule, TranslateModule
 ];
 
 const declarations = [
