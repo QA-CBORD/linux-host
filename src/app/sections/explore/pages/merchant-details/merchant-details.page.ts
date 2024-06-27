@@ -103,4 +103,10 @@ export class MerchantDetailsPage implements OnInit {
   private async onToastDisplayed(message: string): Promise<void> {
     await this.toastService.showToast({ message, position: 'bottom' });
   }
+
+  getAltText({ isFavorite }: MerchantInfo): string {
+    return isFavorite
+      ? `patron-ui.favorites_actions.merchant_remove_from_favorites`
+      : `patron-ui.favorites_actions.merchant_add_to_favorites`;
+  }
 }

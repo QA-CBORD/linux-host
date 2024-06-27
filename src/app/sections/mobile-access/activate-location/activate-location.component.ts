@@ -68,7 +68,13 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   get starAriaLabel(): Observable<string> {
-    return this.location$.pipe(map(({ isFavourite }: MMobileLocationInfo) => isFavourite ? `Favourite checked` : 'Favourite unchecked'));
+    return this.location$.pipe(
+      map(({ isFavourite }: MMobileLocationInfo) =>
+        isFavourite
+        ? `patron-ui.favorites_actions.location_remove_from_favorites`
+        : `patron-ui.favorites_actions.location_add_to_favorites`
+      )
+    );
   }
 
   ngOnInit() {
@@ -83,23 +89,21 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   async activateLocation() {
     await this.loading.showSpinner({ message: this.contentString.activateLocationLoader });
-    const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).pipe(
-      take(1),
-    ).subscribe(
-      res => this.loading.closeSpinner().then(() => this.modalHandler(res)),
-      () => {
-        this.loading.closeSpinner().then(() => this.presentToast(this.contentString.errorResponseActivateLocation));
-      }
-    );
+    const subscription = this.mobileAccessService
+      .activateMobileLocation(this.locationId)
+      .pipe(take(1))
+      .subscribe(
+        res => this.loading.closeSpinner().then(() => this.modalHandler(res)),
+        () => {
+          this.loading.closeSpinner().then(() => this.presentToast(this.contentString.errorResponseActivateLocation));
+        }
+      );
 
     this.sourceSubscription.add(subscription);
   }
 
   favouriteHandler() {
-    this.mobileAccessService
-      .updateFavouritesList(this.locationId)
-      .pipe(take(1))
-      .subscribe();
+    this.mobileAccessService.updateFavouritesList(this.locationId).pipe(take(1)).subscribe();
   }
 
   async modalHandler(res: MActivateMobileLocationResult) {
