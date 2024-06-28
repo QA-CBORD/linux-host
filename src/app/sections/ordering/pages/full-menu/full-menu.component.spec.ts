@@ -364,8 +364,8 @@ describe('FullMenuComponent', () => {
     });
   });
   it('should toggle merchantInfoState', () => {
-    expect(component.merchantInfoState).toBe(false);
-    component.toggleMerchantInfo();
     expect(component.merchantInfoState).toBe(true);
+    component.toggleMerchantInfo();
+    expect(component.merchantInfoState).toBe(false);
   });
 });
