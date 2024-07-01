@@ -20,6 +20,8 @@ export class SentryLoggingHandlerService {
 
   logError(error: Error): void {
     const extractedError = extractError(error) || 'Handled unknown error';
+    // eslint-disable-next-line no-console
+    console.log('Error logged to Sentry:', error);
     Sentry.captureException(extractedError);
   }
 
