@@ -18,7 +18,7 @@ public class Plugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "getAppleWalletInfo", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "addToAppleWallet", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "addToAppleWallet", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "setEnvironment", returnType: CAPPluginReturnPromise)
     ]
     
     override public func load() {
