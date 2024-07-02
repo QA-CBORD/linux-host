@@ -13,7 +13,7 @@ import SafariServices
 @objc(Plugin)
 public class Plugin: CAPPlugin, CAPBridgedPlugin {
       
-    public let identifier = "Plugin"
+    public let identifier = String(describing: Plugin.self)
     public let jsName = "IOSDevice"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "getAppleWalletInfo", returnType: CAPPluginReturnPromise),

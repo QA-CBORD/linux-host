@@ -8,7 +8,7 @@
 import UIKit
 import Capacitor
 
-class MyViewController: CAPBridgeViewController {
+class GETMainViewController: CAPBridgeViewController {
  
     override func capacitorDidLoad() {
        bridge?.registerPluginInstance(Plugin())
