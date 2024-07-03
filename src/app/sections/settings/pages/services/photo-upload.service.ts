@@ -13,6 +13,9 @@ import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/dele
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraSource } from '@capacitor/camera';
+import { ToastService } from '@core/service/toast/toast.service';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+import { TOAST_DURATION } from '@shared/model/generic-constants';
 
 export enum PhotoStatus {
   PENDING,
@@ -52,6 +55,8 @@ export class PhotoUploadService {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly modalController: ModalController,
+    private readonly toastService: ToastService,
+    private readonly translateService: TranslateFacadeService,
     private readonly actionSheetCtrl: ActionSheetController
   ) {}
 
@@ -151,6 +156,11 @@ export class PhotoUploadService {
       case PhotoType.GOVT_ID_BACK:
         this._govtIdBack = photoInfo;
         break;
+      default:
+        this.toastService.showError(
+          this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
+          TOAST_DURATION
+        );
     }
   }
 

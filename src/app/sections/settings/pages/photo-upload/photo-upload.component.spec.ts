@@ -11,8 +11,9 @@ import { of } from 'rxjs';
 import { CameraService } from '../services/camera.service';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { PhotoType, PhotoUploadService } from '../services/photo-upload.service';
-import { PhotoUploadComponent } from './photo-upload.component';
+import { LocalPhotoData, PhotoUploadComponent } from './photo-upload.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TOAST_DURATION } from '@shared/model/generic-constants';
 
 describe('PhotoUploadComponent', () => {
   let component: PhotoUploadComponent;
@@ -26,6 +27,7 @@ describe('PhotoUploadComponent', () => {
   const identityFacadeServiceStub = {};
   const toastService = {
     showToast: jest.fn(),
+    showError: jest.fn(),
   };
 
   const photoUploadService = {
@@ -132,6 +134,43 @@ describe('PhotoUploadComponent', () => {
     const spy = jest.spyOn(photoUploadService, 'clearLocalGovernmentIdPhotos');
     component.ionViewWillEnter();
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  describe('onPhotoTypeSelection', () => {
+    it('should return false if localPhotoData is null', () => {
+      component.localPhotoData = null;
+      expect(component.validateLocalPhotosData()).toBe(false);
+    });
+
+    it('should return false if any photo data is missing', () => {
+      // Only setting one of the required properties
+      component.localPhotoData = { profilePending: { data: 'someData' } } as LocalPhotoData;
+      expect(component.validateLocalPhotosData()).toBe(false);
+      expect(toastService.showError).toHaveBeenCalled();
+    });
+
+    it('should return true if all photo data is present and valid', () => {
+      component.localPhotoData = {
+        profilePending: { data: 'data1' },
+        govIdFront: { data: 'data2' },
+        govIdBack: { data: 'data3' },
+      } as LocalPhotoData;
+      expect(component.validateLocalPhotosData()).toBe(true);
+    });
+
+    it('should show an error toast for the first invalid photo submission found', () => {
+      component.localPhotoData = {
+        profilePending: { data: 'data1' },
+        govIdFront: null, // Missing data
+        govIdBack: { data: 'data3' },
+      } as LocalPhotoData;
+      component.validateLocalPhotosData();
+      // Assuming PhotoTypeTranslateMap[1] corresponds to the translation key for govIdFront's error
+      expect(toastService.showError).toHaveBeenCalledWith(
+        'get_mobile.photo_upload.invalid_photo_submission.govt_id_front',
+        TOAST_DURATION
+      );
+    });
   });
 });
 

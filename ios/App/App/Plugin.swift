@@ -11,8 +11,16 @@ import PassKit
 import SafariServices
 
 @objc(Plugin)
-class Plugin: CAPPlugin {
-
+public class Plugin: CAPPlugin, CAPBridgedPlugin {
+      
+    public let identifier = String(describing: Plugin.self)
+    public let jsName = "IOSDevice"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "getAppleWalletInfo", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "addToAppleWallet", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setEnvironment", returnType: CAPPluginReturnPromise)
+    ]
+    
     override public func load() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.notifyApplePayResponse(_:)), name: .handleApplePayResponse, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.notifyAppleWallet), name: .handleAppleWalletRefresh, object: nil)
