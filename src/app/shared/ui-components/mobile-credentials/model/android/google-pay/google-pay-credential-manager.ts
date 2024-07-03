@@ -32,10 +32,10 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   private initializePlugin() {
     if (this.platform.is('hybrid')) {
       this.GooglePayPlugin = GooglePayPlugin;
-    } 
+    }
   }
-  
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUiImageClicked(event?: any): void {
     const showTermsAndConditions = async () => {
       const terms = (await this.contentStringAsync()).termString$;
@@ -156,7 +156,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     }
     const estimatedTimeInMillis = 900000;
     this.mCredential = newCredential;
-    const { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
+    const { digitizationReference } = <GooglePayCredentialBundle> this.mCredential.getCredentialBundle();
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, estimatedTimeInMillis });
     this.GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();
