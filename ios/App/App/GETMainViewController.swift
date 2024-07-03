@@ -1,5 +1,5 @@
 //
-//  MyViewController.swift
+//  GETMainViewController.swift
 //  App
 //
 //  Created by Alan Nunez on 7/2/24.
