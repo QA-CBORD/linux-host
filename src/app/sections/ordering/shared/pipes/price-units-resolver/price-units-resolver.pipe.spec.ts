@@ -8,16 +8,15 @@ describe('PriceUnitsResolverPipe', () => {
   let pipe: PriceUnitsResolverPipe;
   let translateService = {
     instant: jest.fn(),
-  }
+  };
   beforeEach(() => {
     const currencyPipeStub = () => ({ transform: value => ({}) });
     TestBed.configureTestingModule({
       providers: [
         PriceUnitsResolverPipe,
         { provide: CurrencyPipe, useFactory: currencyPipeStub },
-        {provide:TranslateService, useValue: translateService}
-
-      ]
+        { provide: TranslateService, useValue: translateService },
+      ],
     });
     pipe = TestBed.inject(PriceUnitsResolverPipe);
   });
@@ -26,4 +25,10 @@ describe('PriceUnitsResolverPipe', () => {
     expect(pipe).toBeTruthy();
   });
 
+  it('transform method should return empty string if ignoreZeros is true and value is 0', () => {
+    const value = 0;
+    const ignoreZeros = true;
+    const result = pipe.transform(value, false, ignoreZeros);
+    expect(result).toBe('');
+  });
 });
