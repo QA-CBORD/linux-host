@@ -64,7 +64,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   private async watchOnResume(): Promise<void> {
-    if (this.isAndroid) {
+    if (!this.isAndroid) {
       return;
     }
 
