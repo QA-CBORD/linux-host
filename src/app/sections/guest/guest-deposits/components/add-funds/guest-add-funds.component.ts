@@ -8,7 +8,7 @@ import { ModalsService } from '@core/service/modals/modals.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { handleServerError } from '@core/utils/general-helpers';
-import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
+import { CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { PopoverController } from '@ionic/angular';
 import { ACCOUNTS_VALIDATION_ERRORS, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { amountRangeValidator } from '@sections/accounts/pages/deposit-page/amount-range.validator';
@@ -25,6 +25,7 @@ import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 import { TranslateService } from '@ngx-translate/core';
+import { formatAmountValue } from '@core/utils/format-helper';
 
 export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -146,7 +147,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     if (this.isReadyToSubmit()) return;
     this.isDepositing = true;
     const { paymentMethod, toAccount, mainInput, amountToDeposit } = this.guestDepositForm.value;
-    const amount = this.formatAmountValue(mainInput, amountToDeposit);
+    const amount = formatAmountValue(mainInput, amountToDeposit);
     if (this.isApplePayEnabled(paymentMethod)) {
       this.handleApplePay(toAccount, amount);
     } else {
@@ -324,12 +325,6 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     this.applePayEnabled = response.data.applePayEnabled;
     this.setDestinationAccounts(response.data.destinationAccounts);
     this.setSourceAccounts(response.data.sourceAccounts);
-  }
-
-  private formatAmountValue(mainInput: string, amountToDeposit: string) {
-    let amount = mainInput || amountToDeposit;
-    amount = amount.toString().replace(COMMA_REGEXP, '');
-    return amount;
   }
 
   private addCreditCard() {
