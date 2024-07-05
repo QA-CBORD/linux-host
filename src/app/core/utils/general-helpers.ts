@@ -12,7 +12,7 @@ import { formatDate, isSameDay } from './date-helper';
 import { GeneralPhoto } from '@core/model/general-photo/general-photo.model';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
-  if (value && !value.length) return [];
+  if (!value) return [];
   const result = JSON.parse(value);
 
   return Array.isArray(result) ? result : [];

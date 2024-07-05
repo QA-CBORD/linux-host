@@ -129,6 +129,13 @@ describe('General Helpers', () => {
     const result = parseArrayFromString('[1,2,3]');
     expect(result).toEqual([1, 2, 3]);
   });
+  it('should return empty array on falsy value', () => {
+    let result = parseArrayFromString('');
+    expect(result).toEqual([]);
+
+    result = parseArrayFromString(undefined);
+    expect(result).toEqual([]);
+  });
   it('should return null if validation function returns null', () => {
     validatorFnMock.mockReturnValue(null);
 

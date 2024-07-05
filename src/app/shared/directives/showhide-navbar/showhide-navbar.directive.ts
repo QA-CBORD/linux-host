@@ -22,6 +22,7 @@ export class ShowHideNavbarDirective {
     'deposit',
     'addfunds',
     'scanCode',
+    'scan-card',
     'applications',
     'rooms-search',
     'check-in-out',
