@@ -193,7 +193,11 @@
         "govt_id_front": "There was an issue submitting your government id photo (front) - please try again",
         "profile": "There was an issue submitting your profile photo - please try again"
       },
-      "invalid_photo_set": "Invalid photo format. Please upload a valid photo."
+      "invalid_photo_set": "Invalid photo format. Please upload a valid photo.",
+      "user_photo_current": "user photo, current",
+      "user_photo_pending": "user photo, pending",
+      "no_user_photo": "no user photo",
+      "no_user_photo_pending": "no user photo, pending"
     },
     "edit-navigation": {
       "title": "Edit Navigation",
@@ -204,6 +208,10 @@
       "general": "Something went wrong, please try again...",
       "menu_option_not_available": "Menu Item not available",
       "menu_item_not_found": "Could not retrieve menu item"
+    },
+    "settings": {
+      "no_user_photo": "no user photo",
+      "user_photo": "user photo"
     }
   },
   "get_web_gui": {
@@ -505,9 +513,7 @@
       "rejected_photos": "View Rejected ID Photos",
       "upload": "Upload",
       "upload_id_photo": "Upload ID Photo",
-      "view_rejected_photos": "View Rejected Photos",
-      "user_photo_current": "user photo, current",
-      "user_photo_pending": "user photo, pending",
+      "view_rejected_photos": "View Rejected Photos"
     },
     "portal": { "login": "Continue", "select_institution": "Select your institution", "title": "Portal" },
     "post_login": {
@@ -594,10 +600,6 @@
       "save_button": "Continue",
       "user_agreement": "By clicking Continue you agree you have read the GET <a href=\"./terms.php\" target=\"_blank\">Terms of Use</a> and <a href=\"./terms.php\" target=\"_blank\">Privacy Policy</a>",
       "user_profile": "Profile"
-    },
-    "settings_screen": {
-      "no_user_photo": "no user photo",
-      "user_photo": "user photo"
     }
   },
   "patron-ui": {

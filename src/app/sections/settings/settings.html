@@ -25,9 +25,9 @@
     <ng-container *ngIf="first && !isGuest && !isHousingOnly">
       <ion-item (click)="navigateToPhotoUpload()">
         <ion-avatar slot="start" class="patron-img">
-          <img *ngIf="userPhoto$ | async as photo; else tempPhoto" [src]="photo" [alt]="'get_mobile.settings_screen.user_photo' | translate" role="img" />
+          <img *ngIf="userPhoto$ | async as photo; else tempPhoto" [src]="photo" [alt]="'get_mobile.settings.user_photo' | translate" role="img" />
           <ng-template #tempPhoto>
-            <img class="card__campus-empty-photo" src="../../../assets/images/no_photo.svg" [alt]="'get_mobile.settings_screen.no_user_photo' | translate" role="img" />
+            <img class="card__campus-empty-photo" src="../../../assets/images/no_photo.svg" [alt]="'get_mobile.settings.no_user_photo' | translate" role="img" />
           </ng-template>
         </ion-avatar>
         <ion-label class="item__label">

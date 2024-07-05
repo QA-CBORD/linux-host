@@ -139,12 +139,12 @@
           Current Photo
         </div>
         <div *ngIf="(profileImage$ | async) as profileImageUrl; else defaultProfileImage">
-          <img [src]="profileImageUrl" [alt]="'get_web_gui.photo_upload_screen.user_photo_current' | translate" width="132" height="178" class="round-corners" />
+          <img [src]="profileImageUrl" [alt]="'get_mobile.photo_upload.user_photo_current' | translate" width="132" height="178" class="round-corners" />
         </div>
         <ng-template #defaultProfileImage>
           <img
             src="/assets/images/profile-image-default.svg"
-            alt="no user photo"
+            [alt]="'get_mobile.photo_upload.no_user_photo' | translate"
             class="profile-default-image round-corners"
           />
         </ng-template>
@@ -166,7 +166,7 @@
         <div *ngIf="(profileImagePending$ | async) as profileImagePendingUrl; else defaultPendingProfileImage">
           <img
             [src]="profileImagePendingUrl"
-            [alt]="'get_web_gui.photo_upload_screen.user_photo_pending' | translate"
+            [alt]="'get_mobile.photo_upload.user_photo_pending' | translate"
             width="132"
             height="178"
             class="round-corners"
@@ -191,7 +191,7 @@
         <ng-template #defaultPendingProfileImage>
           <img
             src="/assets/images/profile-image-default.svg"
-            alt="no user photo, pending"
+            [alt]="'get_mobile.photo_upload.no_user_photo_pending' | translate"
             class="profile-default-image round-corners"
           />
           <ion-button class="upload-btn" (click)="presentPhotoTypeSelection(photoType.PROFILE)">UPLOAD</ion-button>
