@@ -8,32 +8,30 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { registerPlugin } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { Device } from '@capacitor/device';
+import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 
-const GooglePayPlugin = registerPlugin<any>('GooglePayPlugin');
+let GooglePayPlugin: any;
+if (Capacitor.getPlatform() === PLATFORM.web) {
+  GooglePayPlugin = registerPlugin<any>('GooglePayPlugin');
+}
 
 @Injectable({ providedIn: 'root' })
 export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
-  private GooglePayPlugin: any;
 
   constructor(
     private readonly modalCtrl: ModalController,
     protected readonly loadingService: LoadingService,
     private readonly credentialServ: GooglePayCredentialDataService,
     private identityFacadeService: IdentityFacadeService,
-    protected readonly alertCtrl: AlertController,
-    private readonly platform: Platform
+    protected readonly alertCtrl: AlertController
   ) {
     super(loadingService, credentialServ, alertCtrl);
-    this.initializePlugin();
   }
 
-  private initializePlugin() {
-    if (this.platform.is('hybrid')) {
-      this.GooglePayPlugin = GooglePayPlugin;
-    }
-  }
+
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUiImageClicked(event?: any): void {
@@ -65,11 +63,11 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   private async watchOnResume(): Promise<void> {
-    if (!this.GooglePayPlugin) {
+    if (!GooglePayPlugin) {
       return;
     }
 
-    const appResumedEventListener = this.GooglePayPlugin.addListener('appResumed', async () => {
+    const appResumedEventListener = GooglePayPlugin.addListener('appResumed', async () => {
       appResumedEventListener.remove();
       let counter = 0;
       let timeOut = 3000;
@@ -96,8 +94,8 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   credentialEnabled$(): Observable<boolean> {
     return of(this.mCredential.isEnabled()).pipe(
       map(googleCredentialEnabled => {
-        if (googleCredentialEnabled && this.GooglePayPlugin) {
-          this.GooglePayPlugin.getGoogleClient();
+        if (googleCredentialEnabled && GooglePayPlugin) {
+          GooglePayPlugin.getGoogleClient();
         }
         return googleCredentialEnabled;
       })
@@ -141,12 +139,12 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   private async onTermsAndConditionsAccepted(): Promise<void> {
     this.showLoading();
-    if (!this.GooglePayPlugin) {
+    if (!GooglePayPlugin) {
       this.showInstallationErrorAlert();
       return;
     }
 
-    const { googlePayNonce } = await this.GooglePayPlugin.getGooglePayNonce();
+    const { googlePayNonce } = await GooglePayPlugin.getGooglePayNonce();
     const { referenceIdentifier } = this.mCredential.getCredentialState();
     const newCredential = await this.getGoogleCredentialBundle(googlePayNonce, referenceIdentifier);
     this.loadingService.closeSpinner();
@@ -156,9 +154,9 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     }
     const estimatedTimeInMillis = 900000;
     this.mCredential = newCredential;
-    const { digitizationReference } = <GooglePayCredentialBundle> this.mCredential.getCredentialBundle();
+    const { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, estimatedTimeInMillis });
-    this.GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
+    GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();
     });
     setTimeout(() => this.watchOnResume(), 2000);
