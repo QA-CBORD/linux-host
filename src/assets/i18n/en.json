@@ -187,7 +187,17 @@
       "govtidmessagesmall": "e.g., Passport, Driver’s License, State ID",
       "updatephotomessage": "New photo is subject to admin approval!",
       "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval.",
-      "required_message": "A user photo is required to add mobile credentials to your mobile wallet."
+      "required_message": "A user photo is required to add mobile credentials to your mobile wallet.",
+      "invalid_photo_submission": {
+        "govt_id_back": "There was an issue submitting your government id photo (back) - please try again",
+        "govt_id_front": "There was an issue submitting your government id photo (front) - please try again",
+        "profile": "There was an issue submitting your profile photo - please try again"
+      },
+      "invalid_photo_set": "Invalid photo format. Please upload a valid photo.",
+      "user_photo_current": "user photo, current",
+      "user_photo_pending": "user photo, pending",
+      "no_user_photo": "no user photo",
+      "no_user_photo_pending": "no user photo, pending"
     },
     "edit-navigation": {
       "title": "Edit Navigation",
@@ -198,6 +208,10 @@
       "general": "Something went wrong, please try again...",
       "menu_option_not_available": "Menu Item not available",
       "menu_item_not_found": "Could not retrieve menu item"
+    },
+    "settings": {
+      "no_user_photo": "no user photo",
+      "user_photo": "user photo"
     }
   },
   "get_web_gui": {
@@ -1149,18 +1163,17 @@
       "toast_message_deleted": "Notification deleted",
       "toast_message_undo": "Undo"
     },
-    "cart_preview":{
+    "cart_preview": {
       "expiration_message": "Cart will expire {{expirationDays}} days after last creation.",
       "add_more_button": "Add More Items",
       "go_to_checkout_button": "Go To Checkout"
     },
-    "favorites_actions":{
+    "favorites_actions": {
       "merchant_add_to_favorites": "Selected Favorite Button, Add {{merchantName}} as favorite merchant, actions available",
       "merchant_remove_from_favorites": "Selected Favorite Button, Remove {{merchantName}} as favorite merchant, actions available",
       "location_add_to_favorites": "Selected Favorite Button, Add {{locationName}} as favorite location, actions available",
       "location_remove_from_favorites": "Selected Favorite Button, Remove {{locationName}} as favorite location, actions available",
-      "home_page":"Selected favorite icon, image"
-    
+      "home_page": "Selected favorite icon, image"
     }
   }
 }

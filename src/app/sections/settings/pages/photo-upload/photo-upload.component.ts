@@ -13,6 +13,8 @@ import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { CameraService } from '../services/camera.service';
 import { getDataUrlFromPhoto } from '@core/utils/general-helpers';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
+import { TOAST_DURATION } from '@shared/model/generic-constants';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -41,6 +43,12 @@ export interface Dimensions {
   height: number;
   width: number;
 }
+
+const PhotoTypeTranslateMap = {
+  [PhotoType.PROFILE]: 'profile',
+  [PhotoType.GOVT_ID_FRONT]: 'govt_id_front',
+  [PhotoType.GOVT_ID_BACK]: 'govt_id_back',
+};
 
 @Component({
   selector: 'st-photo-upload',
@@ -75,7 +83,8 @@ export class PhotoUploadComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly cd: ChangeDetectorRef,
     private readonly photoCropModalService: PhotoCropModalService,
-    private readonly cameraService: CameraService,
+    private readonly translateService: TranslateFacadeService,
+    private readonly cameraService: CameraService
   ) {}
 
   ngOnInit() {
@@ -309,23 +318,16 @@ export class PhotoUploadComponent implements OnInit {
 
   //will submit all photos that have been uploaded
   async submitPhotos() {
+    if (!this.validateLocalPhotosData()) return;
+
     await this.loadingService.showSpinner();
     const newPhotos: Observable<boolean>[] = [];
-
-    if (this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW) {
-      newPhotos.push(
-        this.createPhotoSubmissionObservable(
-          PhotoType.PROFILE,
-          'There was an issue submitting your profile photo - please try again'
-        )
-      );
-    }
 
     if (this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.NEW) {
       newPhotos.push(
         this.createPhotoSubmissionObservable(
           PhotoType.GOVT_ID_FRONT,
-          'There was an issue submitting your government id photo (front) - please try again'
+          this.translateService.instant('get_mobile.photo_upload.invalid_photo_submission.govt_id_front')
         )
       );
     }
@@ -334,7 +336,16 @@ export class PhotoUploadComponent implements OnInit {
       newPhotos.push(
         this.createPhotoSubmissionObservable(
           PhotoType.GOVT_ID_BACK,
-          'There was an issue submitting your government id photo (back) - please try again'
+          this.translateService.instant('get_mobile.photo_upload.invalid_photo_submission.govt_id_back')
+        )
+      );
+    }
+
+    if (this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW) {
+      newPhotos.push(
+        this.createPhotoSubmissionObservable(
+          PhotoType.PROFILE,
+          this.translateService.instant('get_mobile.photo_upload.invalid_photo_submission.profile')
         )
       );
     }
@@ -423,5 +434,30 @@ export class PhotoUploadComponent implements OnInit {
 
   private coverBorderFit(orientation: Orientation): boolean {
     return orientation !== Orientation.PORTRAIT;
+  }
+
+  validateLocalPhotosData(): boolean {
+    if (!this.localPhotoData) return false;
+
+    // Positions based on PhotoType enum values
+    const photosData = [!!this.localPhotoData.profilePending?.data];
+    if (this.localPhotoData.govtIdRequired) {
+      photosData.push(...[this.localPhotoData.govIdFront, this.localPhotoData.govIdBack].map(photo => !!photo?.data));
+    } else {
+      photosData.push(true, true);
+    }
+
+    for (let photoDataIndex = 0; photoDataIndex < photosData.length; photoDataIndex++) {
+      if (!photosData[photoDataIndex]) {
+        this.toastService.showError(
+          this.translateService.instant(
+            `get_mobile.photo_upload.invalid_photo_submission.${PhotoTypeTranslateMap[photoDataIndex]}`
+          ),
+          TOAST_DURATION
+        );
+        return false;
+      }
+    }
+    return true;
   }
 }

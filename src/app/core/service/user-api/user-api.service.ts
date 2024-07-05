@@ -111,7 +111,7 @@ export class UserApiService {
   }
 
   saveNotification$(userId: string, notification: UserNotificationInfo): Observable<string> {
-    const params = { userId, notification, forceOverwrite: true };
+    const params = { userId, notification };
     const queryConfig = new RPCQueryConfig('saveNotification', params, true, false);
     return this.http.post<string>(this.serviceUrl, queryConfig);
   }

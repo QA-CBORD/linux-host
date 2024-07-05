@@ -10,7 +10,7 @@
       <div class="category-list__menu-item-wrapper">
         <div class="category-list__menu-item-title">{{ menuItem.menuItem.name }}</div>
         <div class="category-list__menu-item-description">{{ menuItem.menuItem.description }}</div>
-        <div class="category-list__menu-item-price">{{ menuItem.menuItem.price | priceUnitsResolver : mealBased }}</div>
+        <div class="category-list__menu-item-price">{{ menuItem.menuItem.price | priceUnitsResolver : mealBased : ignoreZeros}}</div>
       </div>
       <img
         *ngIf="menuItem.menuItem.imageReference"
