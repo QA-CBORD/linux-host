@@ -15,6 +15,7 @@ import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials
 import { PasswordChangeModule } from '@shared/ui-components/change-password/password-change.module';
 import { CreditCardModule } from './creditCards/credit-card.module';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 const imports = [
@@ -31,6 +32,7 @@ const imports = [
   PasswordChangeModule,
   CreditCardModule,
   SettingsItemComponent,
+  TranslateModule,
 ];
 const declarations = [SettingsPage];
 const providers = [SettingsFactoryService, ModalsService];
