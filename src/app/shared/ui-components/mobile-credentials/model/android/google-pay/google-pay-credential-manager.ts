@@ -5,12 +5,11 @@ import { AndroidCredential, GooglePayCredentialBundle } from '../android-credent
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { AlertController, ModalController, Platform } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { Device } from '@capacitor/device';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 
 let GooglePayPlugin: any;
