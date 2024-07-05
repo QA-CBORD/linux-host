@@ -505,7 +505,9 @@
       "rejected_photos": "View Rejected ID Photos",
       "upload": "Upload",
       "upload_id_photo": "Upload ID Photo",
-      "view_rejected_photos": "View Rejected Photos"
+      "view_rejected_photos": "View Rejected Photos",
+      "user_photo_current": "user photo, current",
+      "user_photo_pending": "user photo, pending",
     },
     "portal": { "login": "Continue", "select_institution": "Select your institution", "title": "Portal" },
     "post_login": {
@@ -592,6 +594,10 @@
       "save_button": "Continue",
       "user_agreement": "By clicking Continue you agree you have read the GET <a href=\"./terms.php\" target=\"_blank\">Terms of Use</a> and <a href=\"./terms.php\" target=\"_blank\">Privacy Policy</a>",
       "user_profile": "Profile"
+    },
+    "settings_screen": {
+      "no_user_photo": "no user photo",
+      "user_photo": "user photo"
     }
   },
   "patron-ui": {
