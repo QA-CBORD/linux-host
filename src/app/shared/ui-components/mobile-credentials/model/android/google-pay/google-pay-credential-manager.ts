@@ -11,16 +11,14 @@ import { AbstractAndroidCredentialManager } from '../abstract-android-credential
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-
+const isAndroid = Capacitor.getPlatform() === PLATFORM.android;
 let GooglePayPlugin: any;
-if (Capacitor.getPlatform() === PLATFORM.android) {
+if (isAndroid) {
   GooglePayPlugin = registerPlugin<any>('GooglePayPlugin');
 }
 
 @Injectable({ providedIn: 'root' })
 export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
-
-  private readonly isAndroid = Capacitor.getPlatform() === PLATFORM.android;
 
   constructor(
     private readonly modalCtrl: ModalController,
@@ -64,7 +62,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   private async watchOnResume(): Promise<void> {
-    if (!this.isAndroid) {
+    if (!isAndroid) {
       return;
     }
 
@@ -140,7 +138,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   private async onTermsAndConditionsAccepted(): Promise<void> {
     this.showLoading();
-    if (!this.isAndroid) {
+    if (!isAndroid) {
       this.showInstallationErrorAlert();
       return;
     }
