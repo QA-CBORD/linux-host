@@ -16,9 +16,11 @@ export class PriceUnitsResolverPipe implements PipeTransform {
     this.updateMealStringUnits();
   }
 
-  transform(value: number, mealBased = false): string {
+  transform(value: number, mealBased = false, ignoreZeros = false): string {
     return mealBased
       ? `${value} ${value === 1 ? this.singleMealUnit : this.pluralMealUnit}`
+      : ignoreZeros && value === 0
+      ? ''
       : this.currencyPipe.transform(value);
   }
 

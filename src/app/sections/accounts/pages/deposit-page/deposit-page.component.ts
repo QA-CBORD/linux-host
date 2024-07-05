@@ -22,7 +22,7 @@ import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import { COMMA_REGEXP, CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
+import { CURRENCY_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
@@ -34,6 +34,7 @@ import { CommonService } from '@shared/services/common.service';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 import { TranslateService } from '@ngx-translate/core';
+import { formatAmountValue } from '@core/utils/format-helper';
 
 export enum browserState {
   FINISHED = 'browserFinished',
@@ -266,8 +267,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       selectedAccount,
       this.billmeMappingArr
     );
-    let amount = mainInput || mainSelect;
-    amount = amount.toString().replace(COMMA_REGEXP, '');
+    const amount = formatAmountValue(mainInput, mainSelect);
     if (isApplePay) {
       Browser.addListener(browserState.FINISHED, this.refreshDeposit);
 

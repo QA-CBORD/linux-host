@@ -440,11 +440,12 @@ export class PhotoUploadComponent implements OnInit {
     if (!this.localPhotoData) return false;
 
     // Positions based on PhotoType enum values
-    const photosData = [
-      this.localPhotoData.profilePending,
-      this.localPhotoData.govIdFront,
-      this.localPhotoData.govIdBack,
-    ].map(photo => !!photo?.data);
+    const photosData = [!!this.localPhotoData.profilePending?.data];
+    if (this.localPhotoData.govtIdRequired) {
+      photosData.push(...[this.localPhotoData.govIdFront, this.localPhotoData.govIdBack].map(photo => !!photo?.data));
+    } else {
+      photosData.push(true, true);
+    }
 
     for (let photoDataIndex = 0; photoDataIndex < photosData.length; photoDataIndex++) {
       if (!photosData[photoDataIndex]) {

@@ -144,13 +144,14 @@ describe('PhotoUploadComponent', () => {
 
     it('should return false if any photo data is missing', () => {
       // Only setting one of the required properties
-      component.localPhotoData = { profilePending: { data: 'someData' } } as LocalPhotoData;
+      component.localPhotoData = { govtIdRequired: true, profilePending: { data: 'someData' } } as LocalPhotoData;
       expect(component.validateLocalPhotosData()).toBe(false);
       expect(toastService.showError).toHaveBeenCalled();
     });
 
     it('should return true if all photo data is present and valid', () => {
       component.localPhotoData = {
+        govtIdRequired: true,
         profilePending: { data: 'data1' },
         govIdFront: { data: 'data2' },
         govIdBack: { data: 'data3' },
@@ -160,6 +161,7 @@ describe('PhotoUploadComponent', () => {
 
     it('should show an error toast for the first invalid photo submission found', () => {
       component.localPhotoData = {
+        govtIdRequired: true,
         profilePending: { data: 'data1' },
         govIdFront: null, // Missing data
         govIdBack: { data: 'data3' },

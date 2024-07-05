@@ -42,6 +42,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   allowNotes: boolean;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   routesData: RoutesData;
+  ignoreZeros = true;
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly fb: FormBuilder,
