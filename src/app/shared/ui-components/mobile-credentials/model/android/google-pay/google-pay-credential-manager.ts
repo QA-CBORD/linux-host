@@ -30,8 +30,6 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     super(loadingService, credentialServ, alertCtrl);
   }
 
-
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUiImageClicked(event?: any): void {
     const showTermsAndConditions = async () => {
