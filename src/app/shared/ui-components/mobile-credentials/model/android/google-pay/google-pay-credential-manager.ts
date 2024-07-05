@@ -13,7 +13,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
 
 let GooglePayPlugin: any;
-if (Capacitor.getPlatform() === PLATFORM.web) {
+if (Capacitor.getPlatform() === PLATFORM.android) {
   GooglePayPlugin = registerPlugin<any>('GooglePayPlugin');
 }
 
@@ -62,7 +62,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   private async watchOnResume(): Promise<void> {
-    if (!GooglePayPlugin) {
+    if (Capacitor.getPlatform() === PLATFORM.android) {
       return;
     }
 
@@ -138,7 +138,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   private async onTermsAndConditionsAccepted(): Promise<void> {
     this.showLoading();
-    if (!GooglePayPlugin) {
+    if (Capacitor.getPlatform() !== PLATFORM.android) {
       this.showInstallationErrorAlert();
       return;
     }
@@ -153,7 +153,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     }
     const estimatedTimeInMillis = 900000;
     this.mCredential = newCredential;
-    const { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
+    const { digitizationReference } = <GooglePayCredentialBundle> this.mCredential.getCredentialBundle();
     this.identityFacadeService.updateVaultTimeout({ extendTimeout: true, estimatedTimeInMillis });
     GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();
