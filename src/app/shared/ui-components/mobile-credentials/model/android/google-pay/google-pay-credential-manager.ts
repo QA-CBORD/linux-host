@@ -20,6 +20,8 @@ if (Capacitor.getPlatform() === PLATFORM.android) {
 @Injectable({ providedIn: 'root' })
 export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
 
+  private readonly isAndroid = Capacitor.getPlatform() === PLATFORM.android;
+
   constructor(
     private readonly modalCtrl: ModalController,
     protected readonly loadingService: LoadingService,
@@ -62,7 +64,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   private async watchOnResume(): Promise<void> {
-    if (Capacitor.getPlatform() === PLATFORM.android) {
+    if (this.isAndroid) {
       return;
     }
 
@@ -93,7 +95,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   credentialEnabled$(): Observable<boolean> {
     return of(this.mCredential.isEnabled()).pipe(
       map(googleCredentialEnabled => {
-        if (googleCredentialEnabled && GooglePayPlugin) {
+        if (googleCredentialEnabled) {
           GooglePayPlugin.getGoogleClient();
         }
         return googleCredentialEnabled;
@@ -138,7 +140,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   private async onTermsAndConditionsAccepted(): Promise<void> {
     this.showLoading();
-    if (Capacitor.getPlatform() !== PLATFORM.android) {
+    if (!this.isAndroid) {
       this.showInstallationErrorAlert();
       return;
     }
