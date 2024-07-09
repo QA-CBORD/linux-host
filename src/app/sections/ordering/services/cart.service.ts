@@ -386,7 +386,7 @@ export class CartService {
   }
 
   validateCartItems(validateOrderResult = true): Observable<ItemsOrderInfo> {
-    const { orderType: type, dueTime, address: addr } = this.cart.orderDetailsOptions;
+    const { orderType: type, dueTime, address: addr } = this.cart.orderDetailsOptions || {};
     let address = {};
 
     if (addr) {
