@@ -9,11 +9,9 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { MerchantDetailsRouterModule } from '@sections/explore/pages/merchant-details/merchant-details-router.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
-import { MerchantMainInfoModule } from '@shared/ui-components/merchant-main-info/merchant-main-info.module';
+import { MerchantMainInfoComponent } from '@shared/ui-components/merchant-main-info/merchant-main-info.component';
 import { MapsUriPipeModule } from '@shared/pipes/maps-uri/maps-uri-pipe.module';
 import { TranslateModule } from '@ngx-translate/core';
-
-
 
 @NgModule({
   imports: [
@@ -22,12 +20,12 @@ import { TranslateModule } from '@ngx-translate/core';
     IonicModule,
     StHeaderModule,
     MerchantDetailsRouterModule,
-    MerchantMainInfoModule,
+    MerchantMainInfoComponent,
     StButtonModule,
     AddressHeaderFormatPipeModule,
     MapsUriPipeModule,
-    TranslateModule
+    TranslateModule,
   ],
-  declarations: [MerchantDetailsPage]
+  declarations: [MerchantDetailsPage],
 })
 export class MerchantDetailsPageModule {}
