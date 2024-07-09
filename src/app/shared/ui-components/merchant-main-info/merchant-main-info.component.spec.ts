@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MerchantMainInfoComponent } from './merchant-main-info.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('MerchantMainInfoComponent', () => {
   let component: MerchantMainInfoComponent;
@@ -9,7 +10,8 @@ describe('MerchantMainInfoComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [MerchantMainInfoComponent]
+      imports: [MerchantMainInfoComponent, TranslateModule],
+      providers: [{ provide: TranslateService, useValue: {} }],
     });
     fixture = TestBed.createComponent(MerchantMainInfoComponent);
     component = fixture.componentInstance;
