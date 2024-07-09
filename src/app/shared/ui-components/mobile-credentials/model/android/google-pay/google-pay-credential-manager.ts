@@ -5,29 +5,28 @@ import { AndroidCredential, GooglePayCredentialBundle } from '../android-credent
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { Capacitor, registerPlugin } from '@capacitor/core';
+import { registerPlugin } from '@capacitor/core';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
-const isAndroid = Capacitor.getPlatform() === PLATFORM.android;
-let GooglePayPlugin: any;
-if (isAndroid) {
-  GooglePayPlugin = registerPlugin<any>('GooglePayPlugin');
-}
 
+let GooglePayPlugin: any;
 @Injectable({ providedIn: 'root' })
 export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
-
   constructor(
     private readonly modalCtrl: ModalController,
     protected readonly loadingService: LoadingService,
     private readonly credentialServ: GooglePayCredentialDataService,
     private identityFacadeService: IdentityFacadeService,
-    protected readonly alertCtrl: AlertController
+    protected readonly alertCtrl: AlertController,
+    private readonly platform: Platform
   ) {
     super(loadingService, credentialServ, alertCtrl);
+
+    if (this.platform.is('android')) {
+      GooglePayPlugin = registerPlugin<any>('GooglePayPlugin');
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,7 +59,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   private async watchOnResume(): Promise<void> {
-    if (!isAndroid) {
+    if (!this.platform.is('android')) {
       return;
     }
 
@@ -136,7 +135,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   private async onTermsAndConditionsAccepted(): Promise<void> {
     this.showLoading();
-    if (!isAndroid) {
+    if (!this.platform.is('android')) {
       this.showInstallationErrorAlert();
       return;
     }
