@@ -7,7 +7,7 @@ import { MerchantListComponent } from '@sections/explore/components/merchant-lis
 import { MerchantCardComponent } from '@sections/explore/components/merchant-list/merchant-card/merchant-card.component';
 import { IonicModule } from '@ionic/angular';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
-import { MerchantMainInfoModule } from '@shared/ui-components/merchant-main-info/merchant-main-info.module';
+import { MerchantMainInfoComponent } from '@shared/ui-components/merchant-main-info/merchant-main-info.component';
 import { MerchantDetailsResolverService } from '@sections/explore/resolvers/merchant-details-resolver.service';
 import { SearchPipeModule } from '@shared/pipes/search-pipe/search.pipe.module';
 import { StHeaderSearchBarModule } from '@shared/ui-components/st-header-search-bar/st-header-search-bar.module';
@@ -23,7 +23,7 @@ import { StHeaderSearchBarModule } from '@shared/ui-components/st-header-search-
     ExploreRoutingModule,
     IonicModule,
     StHeaderModule,
-    MerchantMainInfoModule,
+    MerchantMainInfoComponent,
     SearchPipeModule,
     StHeaderSearchBarModule
   ],

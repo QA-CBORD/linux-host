@@ -22,9 +22,9 @@
           'info-block__access-state--closed': !merchant.openNow
         }"
       >
-        {{ merchant.openNow ? 'Open' : 'Closed' }}
+        {{ 'patron-ui.ordering.' + (merchant.openNow ? 'label_open' : 'label_closed') | translate }}
       </p>
-      <st-order-ahead-badge [merchant]="merchant"></st-order-ahead-badge>
+      <st-order-ahead-badge [merchant]="merchant" [isAbleToOrder]="merchant.isAbleToOrder"></st-order-ahead-badge>
     </ion-col>
   </ion-row>
 </ion-grid>
