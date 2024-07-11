@@ -136,6 +136,12 @@ describe('General Helpers', () => {
     result = parseArrayFromString(undefined);
     expect(result).toEqual([]);
   });
+
+  it('should return empty array on invalid JSON', () => {
+    let result = parseArrayFromString(',');
+    expect(result).toEqual([]);
+  });
+
   it('should return null if validation function returns null', () => {
     validatorFnMock.mockReturnValue(null);
 
