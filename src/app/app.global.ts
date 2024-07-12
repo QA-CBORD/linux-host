@@ -120,6 +120,7 @@ export namespace Settings {
     LOCK_DOWN_ORDERING = 'get.ordering.disable_ordering',
     CREDENTIALS_UNLINK_ENABLED = 'get.mobile_credentials.enable_unlink',
     CREDENTIALS_UNLINK_API_KEY = 'get.mobile_credentials.unlink_key',
+    MERCHAT_PAYMENT_REMOVETAXCHECKOUT = 'merchant.payment.removeTaxCheckout'
   }
 }
 
@@ -131,7 +132,7 @@ export enum AccountType {
   MEALS = 1,
   CHARGE = 2,
   DECLINING_BALANCE = 3,
-  APPLEPAY = 4,
+  APPLEPAY = 4
 }
 
 export enum PaymentType {

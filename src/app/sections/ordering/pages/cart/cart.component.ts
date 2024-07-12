@@ -20,7 +20,7 @@ import { buttons as Buttons } from '@core/utils/buttons.config';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { IonContent, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { browserState } from '@sections/accounts/pages/deposit-page/deposit-page.component';
 import { OrderCheckinStatus } from '@sections/check-in/OrderCheckinStatus';
 import { CheckingProcess } from '@sections/check-in/services/check-in-process-builder';
@@ -112,6 +112,8 @@ export class CartComponent implements OnInit, OnDestroy {
   isValidatingDueTime = false;
   itemReadOnly = false;
   orderReadOnly = false;
+  disableTaxCheckout = false;
+  previousTax = 0;
   private readonly activeCartService = inject(ActiveCartService);
 
   constructor(
@@ -192,8 +194,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.merchant$ = this.cartService.merchant$.pipe(
       tap(
         merchant =>
-        (this.merchantTimeZoneDisplayingMessage =
-          merchant?.timeZone && this.translateService.instant('patron-ui.ordering.label_merchant-timezone'))
+          (this.merchantTimeZoneDisplayingMessage =
+            merchant?.timeZone && this.translateService.instant('patron-ui.ordering.label_merchant-timezone'))
       )
     );
     this.orderTypes$ = this.merchantService.orderTypes$.pipe(
@@ -206,9 +208,9 @@ export class CartComponent implements OnInit, OnDestroy {
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
+    this.defineemoveTaxCheckout();
     this.subscribe2NetworkChanges();
-    this.cdRef.detectChanges()
-
+    this.cdRef.detectChanges();
   }
 
   subscribe2NetworkChanges() {
@@ -282,7 +284,7 @@ export class CartComponent implements OnInit, OnDestroy {
         orderItemId: id,
         isItemExistsInCart: true,
         isExistingOrder: this.isExistingOrder,
-        selectedIndex
+        selectedIndex,
       },
     });
   }
@@ -337,8 +339,8 @@ export class CartComponent implements OnInit, OnDestroy {
             this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER
               ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
               : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
-                ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
-                : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
+              ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+              : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
 
           this.itemReadOnly = true;
           this.cartService.cartsErrorMessage = error[1];
@@ -379,6 +381,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.validateOrder(errMessage);
       this.cdRef.detectChanges();
     }
+
     if (typeof selectedValue === 'string' && selectedValue === 'addCC') {
       const paymentSystem = await this.definePaymentSystemType();
 
@@ -390,6 +393,27 @@ export class CartComponent implements OnInit, OnDestroy {
 
       this.addUSAePayCreditCard();
     }
+
+    if (this.isRollUp()) {
+      this.updateTaxBasedOnSelection();
+    }
+  }
+x
+  async updateTaxBasedOnSelection() {
+    if (this.disableTaxCheckout) {
+      const tax = await firstValueFrom(this.order$.pipe(map(order => order.tax)));
+      this.previousTax = tax;
+      this.updateTaxAndTotals(0);
+    } else if (this.previousTax) {
+      this.updateTaxAndTotals(this.previousTax);
+    }
+
+    this.cdRef.detectChanges();
+    this.cdRef.detach();
+  }
+
+  updateTaxAndTotals(amount: number) {
+    this.cartService.setTax(amount);
   }
 
   async onSubmit() {
@@ -551,6 +575,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private isApplePay(): boolean {
     return this.cartFormState.data?.paymentMethod?.accountType === AccountType.APPLEPAY;
+  }
+
+  private isRollUp(): boolean {
+    return this.cartFormState.data?.paymentMethod?.id === PAYMENT_TYPE.ROLLUP;
   }
 
   private async getAccountIdFromApplePay(): Promise<string> {
@@ -817,6 +845,15 @@ export class CartComponent implements OnInit, OnDestroy {
         first()
       )
       .toPromise();
+  }
+
+  private async defineemoveTaxCheckout() {
+    const isRemoveTaxCheckoutEnabled = await firstValueFrom(
+      this.merchant$.pipe(
+        map(merchant => parseInt(merchant.settings.map[MerchantSettings.removeTaxCheckout]?.value) === 1)
+      )
+    );
+    this.disableTaxCheckout = isRemoveTaxCheckoutEnabled;
   }
 
   private async validateOrder(onError): Promise<void> {

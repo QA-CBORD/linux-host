@@ -17,25 +17,6 @@ import { OrderInfo } from '../shared';
 
 describe('CartService', () => {
   let service: CartService;
-  const mockAlert = {
-    cssClass: 'active_cart',
-    header: 'patron-ui.ordering.active_cart_alert_change_title',
-    message: 'patron-ui.ordering.active_cart_alert_change_msg',
-    buttons: [
-      {
-        text: 'patron-ui.ordering.active_cart_alert_change_cancel',
-        role: 'cancel',
-        cssClass: 'button__option_cancel',
-        handler: expect.any(Function),
-      },
-      {
-        text: 'patron-ui.ordering.active_cart_alert_change_proceed',
-        role: 'confirm',
-        cssClass: 'button__option_confirm',
-        handler: expect.any(Function),
-      },
-    ],
-  };
   const userFacadeService = {
     getUserData$: jest.fn(() => of({} as UserInfo)),
   };
@@ -66,22 +47,6 @@ describe('CartService', () => {
   let merchant$: any;
   let routingServiceMock: any;
   let orderDetailsOptions$;
-  let orderSchedule = {
-    menuSchedule: [],
-    days: [
-      {
-        date: '2024-05-08',
-        dayOfWeek: 4,
-        hourBlocks: [
-          {
-            timestamps: [],
-            hour: 12,
-            minuteBlocks: [0, 15, 30, 45],
-          },
-        ],
-      },
-    ],
-  };
   beforeEach(() => {
     menuItems$ = of(0);
     merchant$ = of({ id: 'defaultMerchantId' });
@@ -120,6 +85,12 @@ describe('CartService', () => {
       address: {} as AddressInfo,
       dueTime: new Date(),
       isASAP: true,
+    };
+
+    service['cart'].order = {
+      subTotal: 100,
+      tax: 0,
+      total: 100,
     };
   });
 
@@ -175,6 +146,21 @@ describe('CartService', () => {
 
       // Expect that the removed item is returned
       expect(removedItem).toEqual({ id: 'item1', name: 'Test Item', quantity: 10 });
+    });
+  });
+
+  describe('calculateTotals', () => {
+    it('should set tax and total', () => {
+      const totalBefore = service['cart'].order.total;
+
+      const taxAmount = 20;
+      service.setTax(taxAmount);
+
+      const tax = service['cart'].order.tax;
+      const total = service['cart'].order.total;
+      
+      expect(tax).toBe(taxAmount);
+      expect(total).toBe(totalBefore + taxAmount);
     });
   });
 });

@@ -460,6 +460,12 @@ export class CartService {
     this.onStateChanged();
   }
 
+  setTax(amount: number) {
+    this.cart.order.tax = amount;
+    this.cart.order.total = this.calculateTotal();
+    this.onStateChanged();
+  }
+
   addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
     this.cart.order.orderPayment = [peymentInfo];
   }
@@ -494,6 +500,7 @@ export class CartService {
 
   private calculateTotal(): number {
     const { subTotal, tax, useFee, deliveryFee, pickupFee, tip, discount } = this.cart.order;
+
     return (
       (subTotal || 0) +
       (tax || 0) +
