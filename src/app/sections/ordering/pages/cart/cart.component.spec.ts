@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { of } from 'rxjs';
 import { BuildingInfo, MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from '@sections/ordering/components';
-import { ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { FORM_CONTROL_NAMES, OrderDetailsFormData } from '@sections/ordering/shared';
 import { UserAccount } from '@core/model/account/account.model';
@@ -49,6 +49,14 @@ const _merchantService = {
   orderTypes$: of({} as MerchantOrderTypesInfo),
   retrieveBuildings: jest.fn(),
   isOutsideMerchantDeliveryArea: jest.fn(),
+  getMerchant: jest.fn(() => of({
+    id: '1',
+    settings: {
+      map: {
+        [MerchantSettings.removeTaxCheckout]: { value: '1' }
+      }
+    }
+  })),
 };
 const _loadingService = {
   showSpinner: jest.fn(),

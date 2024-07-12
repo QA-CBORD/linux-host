@@ -850,7 +850,7 @@ x
   private async defineemoveTaxCheckout() {
     const isRemoveTaxCheckoutEnabled = await firstValueFrom(
       this.merchant$.pipe(
-        map(merchant => parseInt(merchant.settings.map[MerchantSettings.removeTaxCheckout]?.value) === 1)
+        map(merchant => parseInt(merchant?.settings?.map[MerchantSettings.removeTaxCheckout]?.value) === 1)
       )
     );
     this.disableTaxCheckout = isRemoveTaxCheckoutEnabled;
