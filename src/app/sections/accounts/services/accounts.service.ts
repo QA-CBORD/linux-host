@@ -7,19 +7,16 @@ import { CommerceApiService } from '@core/service/commerce/commerce-api.service'
 import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
-import {
-  ContentStringsParamsAccounts,
-  GenericContentStringsParams,
-} from '../accounts.config';
+import { ContentStringsParamsAccounts, GenericContentStringsParams } from '../accounts.config';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
-import { isCashlessAccount } from '@core/utils/general-helpers';
+import { isCashlessAccount, parseArrayFromString } from '@core/utils/general-helpers';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
 import { MEAL_CONTENT_STRINGS } from '../pages/meal-donations/meal-donation.config';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccountService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
@@ -30,9 +27,8 @@ export class AccountService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService,
-  ) {
-  }
+    private readonly settingsFacadeService: SettingsFacadeService
+  ) {}
 
   get accounts$(): Observable<UserAccount[]> {
     return this._accounts$.asObservable();
@@ -61,7 +57,7 @@ export class AccountService {
   getUserAccounts(): Observable<UserAccount[]> {
     return this.commerceApiService.getUserAccounts().pipe(
       map(accounts => this.filterAccountsByPaymentSystem(accounts)),
-      tap(accounts => (this._accounts = accounts)),
+      tap(accounts => (this._accounts = accounts))
     );
   }
 
@@ -72,7 +68,8 @@ export class AccountService {
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STRINGS_DOMAINS.patronUi,
         CONTENT_STRINGS_CATEGORIES.mealDonation,
-        MEAL_CONTENT_STRINGS.dashboardTitle),
+        MEAL_CONTENT_STRINGS.dashboardTitle
+      )
     ).pipe(
       map(([res, res0, res1]) => {
         const finalArray = [...res, ...res0];
@@ -80,7 +77,7 @@ export class AccountService {
         this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
         return finalArray;
       }),
-      take(1),
+      take(1)
     );
   }
 
@@ -95,19 +92,14 @@ export class AccountService {
   }
 
   getContentValueByName(name: string): string {
-    return this.contentString && this.contentString[name] || '';
+    return (this.contentString && this.contentString[name]) || '';
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
     return settings.find(({ name: n }) => n === name);
   }
 
-  transformStringToArray(value: string): Array<unknown> {
-    if (!value || !value.length) return [];
-    const result = JSON.parse(value);
-
-    return Array.isArray(result) ? result : [];
-  }
+  transformStringToArray = parseArrayFromString;
 
   getAccountsFilteredByDisplayTenders(): Observable<UserAccount[]> {
     return this.settings$.pipe(
@@ -116,8 +108,8 @@ export class AccountService {
         return this.transformStringToArray(settingInfo?.value);
       }),
       switchMap((tendersId: Array<string>) =>
-        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts))),
-      ),
+        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+      )
     );
   }
 
@@ -128,8 +120,8 @@ export class AccountService {
         return this.transformStringToArray(settingInfo?.value);
       }),
       switchMap((tendersId: Array<string>) =>
-        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts))),
-      ),
+        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+      )
     );
   }
 

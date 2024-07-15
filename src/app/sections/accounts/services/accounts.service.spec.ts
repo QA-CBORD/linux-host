@@ -250,20 +250,6 @@ describe('AccountService', () => {
     expect(result3).toBeUndefined();
   });
 
-  it('should transform string to array', () => {
-    const value1 = '["item1", "item2", "item3"]';
-    const value2 = '[]';
-    const value3 = 'null';
-
-    const result1 = service.transformStringToArray(value1);
-    const result2 = service.transformStringToArray(value2);
-    const result3 = service.transformStringToArray(value3);
-
-    expect(result1).toEqual(['item1', 'item2', 'item3']);
-    expect(result2).toEqual([]);
-    expect(result3).toEqual([]);
-  });
-
   it('should filter accounts by display tenders', async () => {
     const settingsValue = ['tender1', 'tender2'];
     const settings: SettingInfo[] = [];

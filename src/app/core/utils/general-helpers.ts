@@ -13,9 +13,12 @@ import { GeneralPhoto } from '@core/model/general-photo/general-photo.model';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (!value) return [];
-  const result = JSON.parse(value);
-
-  return Array.isArray(result) ? result : [];
+  try {
+    const result = JSON.parse(value);
+    return Array.isArray(result) ? result : [];
+  } catch (error) {
+    return [];
+  }
 }
 
 export const formControlErrorDecorator = (

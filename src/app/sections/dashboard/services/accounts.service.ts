@@ -11,6 +11,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { CreditPaymentMethods } from '@core/model/account/credit-payment-methods.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { parseArrayFromString } from '@core/utils/general-helpers';
 
 @Injectable()
 export class AccountsService {
@@ -31,11 +32,7 @@ export class AccountsService {
     return firstValueFrom(this.commerceApiService.removeAccount({ accountId }));
   }
 
-  transformStringToArray(value: string): Array<unknown> {
-    if (!value || !value.length) return [];
-    const result = JSON.parse(value);
-    return Array.isArray(result) ? result : [];
-  }
+  transformStringToArray = parseArrayFromString;
 
   getAccountsFilteredByDisplayTenders(): Observable<UserAccount[]> {
     return this.settingsFacadeService.getSetting(Settings.Setting.DISPLAY_TENDERS).pipe(
