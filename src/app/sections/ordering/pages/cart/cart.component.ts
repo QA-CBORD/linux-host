@@ -208,7 +208,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
-    this.defineemoveTaxCheckout();
+    this.definemoveTaxCheckout();
     this.subscribe2NetworkChanges();
     this.cdRef.detectChanges();
   }
@@ -847,7 +847,7 @@ x
       .toPromise();
   }
 
-  private async defineemoveTaxCheckout() {
+  private async definemoveTaxCheckout() {
     const isRemoveTaxCheckoutEnabled = await firstValueFrom(
       this.merchant$.pipe(
         map(merchant => parseInt(merchant?.settings?.map[MerchantSettings.removeTaxCheckout]?.value) === 1)
