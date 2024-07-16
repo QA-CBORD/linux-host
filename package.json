@@ -62,7 +62,7 @@
     "@capacitor/screen-reader": "^6.0.0",
     "@capacitor/splash-screen": "^6.0.0",
     "@capacitor/status-bar": "^6.0.0",
-    "@ionic-enterprise/identity-vault": "5.10.1",
+    "@ionic-enterprise/identity-vault": "^5.14.2",
     "@ionic/angular": "^7.1.0",
     "@ionic/storage-angular": "^4.0.0",
     "@ngx-translate/core": "^14.0.0",
