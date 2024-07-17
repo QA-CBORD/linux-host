@@ -208,7 +208,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly alertController: AlertController,
     private readonly routingService: NavigationService,
     private readonly globalNavService: GlobalNavService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initForm();
@@ -236,7 +236,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private initAccountSelected() {
-    const payment = this.orderPayment[0] || { accountId: '', accountName: '' };
+    const payment = this.orderPayment?.length ? this.orderPayment[0] : { accountId: '', accountName: '' };
     let accountId = payment.accountId || '';
     this.isApplePayment = accountId.startsWith('E');
     if (!this.isApplePayment) {
