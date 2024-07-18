@@ -9,7 +9,7 @@ import { UserTrackLevelInfo } from '@sections/rewards';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StProgressBarComponent {
-  @Input() currentPointsSpent: number = null;
+  @Input() currentPointsSpent: number = 0;
   @Input() currentLevelInfo: UserTrackLevelInfo = {} as UserTrackLevelInfo;
   @Input() nextLevelPoints: number = null;
 
