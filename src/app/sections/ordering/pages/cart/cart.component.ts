@@ -375,6 +375,8 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   async onOrderPaymentInfoChanged(selectedValue: Partial<OrderPayment> | string) {
+    this.updateTaxBasedOnSelection();
+
     if (selectedValue instanceof Object) {
       const errMessage = 'something went wrong';
       this.cartService.addPaymentInfoToOrder(selectedValue as Partial<OrderPayment>);
@@ -393,14 +395,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
       this.addUSAePayCreditCard();
     }
-
-    if (this.isRollUp()) {
-      this.updateTaxBasedOnSelection();
-    }
   }
-x
+
   async updateTaxBasedOnSelection() {
-    if (this.disableTaxCheckout) {
+    if (this.isRollUp() && this.disableTaxCheckout) {
       const tax = await firstValueFrom(this.order$.pipe(map(order => order.tax)));
       this.previousTax = tax;
       this.updateTaxAndTotals(0);
