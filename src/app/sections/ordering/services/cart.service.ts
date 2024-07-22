@@ -466,13 +466,13 @@ export class CartService {
     this.onStateChanged();
   }
 
-  addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
-    if (peymentInfo === null) {
+  addPaymentInfoToOrder(paymentInfo: Partial<OrderPayment>) {
+    if (paymentInfo === null) {
       this.cart.order.orderPayment = null;
       return;
     }
 
-    this.cart.order.orderPayment = [peymentInfo];
+    this.cart.order.orderPayment = [paymentInfo];
   }
 
   updateOrderPhone(phone: string) {
