@@ -467,6 +467,11 @@ export class CartService {
   }
 
   addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
+    if (peymentInfo === null) {
+      this.cart.order.orderPayment = null;
+      return;
+    }
+
     this.cart.order.orderPayment = [peymentInfo];
   }
 

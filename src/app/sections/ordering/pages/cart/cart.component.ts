@@ -113,7 +113,7 @@ export class CartComponent implements OnInit, OnDestroy {
   itemReadOnly = false;
   orderReadOnly = false;
   disableTaxCheckout = false;
-  previousTax = 0;
+
   private readonly activeCartService = inject(ActiveCartService);
 
   constructor(
@@ -208,8 +208,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
-    this.definemoveTaxCheckout();
     this.subscribe2NetworkChanges();
+    this.definemoveTaxCheckout();
     this.cdRef.detectChanges();
   }
 
@@ -375,11 +375,17 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   async onOrderPaymentInfoChanged(selectedValue: Partial<OrderPayment> | string) {
-    this.updateTaxBasedOnSelection();
-
     if (selectedValue instanceof Object) {
       const errMessage = 'something went wrong';
-      this.cartService.addPaymentInfoToOrder(selectedValue as Partial<OrderPayment>);
+
+      if (this.isApplePay()) {
+        this.cartService.addPaymentInfoToOrder(null);
+      } else if (this.disableTaxCheckout && PAYMENT_TYPE.ROLLUP === selectedValue.accountId) {
+        this.cartService.addPaymentInfoToOrder({});
+      } else {
+        this.cartService.addPaymentInfoToOrder(selectedValue as Partial<OrderPayment>);
+      }
+
       this.validateOrder(errMessage);
       this.cdRef.detectChanges();
     }
@@ -395,23 +401,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
       this.addUSAePayCreditCard();
     }
-  }
-
-  async updateTaxBasedOnSelection() {
-    if (this.isRollUp() && this.disableTaxCheckout) {
-      const tax = await firstValueFrom(this.order$.pipe(map(order => order.tax)));
-      this.previousTax = tax;
-      this.updateTaxAndTotals(0);
-    } else if (this.previousTax) {
-      this.updateTaxAndTotals(this.previousTax);
-    }
-
-    this.cdRef.detectChanges();
-    this.cdRef.detach();
-  }
-
-  updateTaxAndTotals(amount: number) {
-    this.cartService.setTax(amount);
   }
 
   async onSubmit() {
@@ -573,10 +562,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private isApplePay(): boolean {
     return this.cartFormState.data?.paymentMethod?.accountType === AccountType.APPLEPAY;
-  }
-
-  private isRollUp(): boolean {
-    return this.cartFormState.data?.paymentMethod?.id === PAYMENT_TYPE.ROLLUP;
   }
 
   private async getAccountIdFromApplePay(): Promise<string> {
@@ -835,6 +820,15 @@ export class CartComponent implements OnInit, OnDestroy {
       });
   }
 
+  private async definemoveTaxCheckout() {
+    const isRemoveTaxCheckoutEnabled = await firstValueFrom(
+      this.merchant$.pipe(
+        map(merchant => parseInt(merchant?.settings?.map[MerchantSettings.removeTaxCheckout]?.value) === 1)
+      )
+    );
+    this.disableTaxCheckout = isRemoveTaxCheckoutEnabled;
+  }
+
   private definePaymentSystemType(): Promise<number> {
     return this.settingsFacadeService
       .getSetting(Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE)
@@ -843,15 +837,6 @@ export class CartComponent implements OnInit, OnDestroy {
         first()
       )
       .toPromise();
-  }
-
-  private async definemoveTaxCheckout() {
-    const isRemoveTaxCheckoutEnabled = await firstValueFrom(
-      this.merchant$.pipe(
-        map(merchant => parseInt(merchant?.settings?.map[MerchantSettings.removeTaxCheckout]?.value) === 1)
-      )
-    );
-    this.disableTaxCheckout = isRemoveTaxCheckoutEnabled;
   }
 
   private async validateOrder(onError): Promise<void> {
