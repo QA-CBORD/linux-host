@@ -53,7 +53,8 @@ export class EditHomePageModalComponent implements OnInit {
   }
 
   private readPositionAloud(to: number, item: string) {
-    const message = this.translateService.instant('patron-ui.edit-home_page.dragging').replace('${item}', item) + ` ${to + 1}`;
+    const message = this.translateService.instant('patron-ui.edit-home_page.dragging', { item })
+      + ` ${to + 1}`;
     this.accessibilityService.readAloud(message);
   }
 }
