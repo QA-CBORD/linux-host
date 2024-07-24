@@ -23,7 +23,6 @@ import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
 import { MenuGroupInfo, MenuItemInfo, MenuItemOptionInfo, OrderItem } from '@sections/ordering/components';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
 // Mock Pipe decorator
 let menuItem: MenuItemInfo = {
   id: '1',
@@ -185,7 +184,7 @@ describe('ItemDetailComponent', () => {
         { provide: PopoverController, useValue: popoverControllerMock },
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: ChangeDetectorRef, useValue: changeDetectorRefMock },
-        { provide: TranslateService, useClase: TranslateServiceStub },
+        { provide: TranslateService, useValue: translateService },
       ],
     }).compileComponents();
 
