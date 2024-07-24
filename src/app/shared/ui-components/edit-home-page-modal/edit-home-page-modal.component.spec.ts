@@ -12,6 +12,7 @@ let accessibility = {
   readAloud: jest.fn()
 };
 
+const settings = [{ title: "test1", isEnable: true }, { title: "test2", isEnable: true }];
 
 describe('EditHomePageModalComponent', () => {
   let component: EditHomePageModalComponent;
@@ -20,7 +21,7 @@ describe('EditHomePageModalComponent', () => {
   beforeEach(async () => {
     const modalControllerStub = () => ({ dismiss: () => ({}) });
     const tileConfigFacadeServiceStub = () => ({
-      tileSettings$: of([{ title: "test1", isEnable: true }, { title: "test2", isEnable: true }]),
+      tileSettings$: of(settings),
       updateConfigState: config => ({})
     });
 
@@ -83,7 +84,7 @@ describe('EditHomePageModalComponent', () => {
 
     it('should have move item to position 2', async () => {
       const event = { detail: { from: 0, to: 1, complete: () => true } };
-      component['translateService'].instant = jest.fn().mockReturnValue("Moved ${item} to position");
+      component['translateService'].instant = jest.fn().mockReturnValue(`Moved ${settings[1].title} to position`);
       const spy = jest.spyOn(accessibility, 'readAloud');
       await component.doReorder(event);
       expect(spy).toHaveBeenCalledWith("Moved test1 to position 2");
