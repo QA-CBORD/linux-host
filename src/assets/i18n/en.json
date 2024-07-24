@@ -1180,7 +1180,7 @@
       "title": "Edit Home Page",
       "subtitle": "Home Page",
       "instructions": "Drag and drop the icons to rearrange the order of the home page.",
-      "dragging": "Moved ${item} to position"
+      "dragging": "Moved {{item}} to position"
     }
   }
 }
