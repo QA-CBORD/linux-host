@@ -10,7 +10,7 @@
           class="addresses__radio"
           [disabled]="addressRestriction.offCampus"
         >
-          <ion-label class="addresses__radio-label">{{ contentStrings.labelOffCampus | async }}</ion-label>
+          {{ contentStrings.labelOffCampus | async }}
         </ion-radio>
       </ion-item>
 
@@ -23,7 +23,7 @@
           class="addresses__radio"
           [disabled]="addressRestriction.onCampus"
         >
-          <ion-label class="addresses__radio-label">{{ contentStrings.labelOnCampus | async }}</ion-label>
+          {{ contentStrings.labelOnCampus | async }}
         </ion-radio>
       </ion-item>
     </ion-radio-group>
@@ -164,7 +164,7 @@
     </ng-container>
     <ion-item lines="none">
       <ion-checkbox mode="md" class="addresses__checkbox" slot="start" labelPlacement="end" [formControl]="default">
-        <ion-label>{{ contentStrings.labelSetAsDefault | async }}</ion-label>
+        {{ contentStrings.labelSetAsDefault | async }}
       </ion-checkbox>
     </ion-item>
   </form>

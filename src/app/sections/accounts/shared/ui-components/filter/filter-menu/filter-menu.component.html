@@ -25,9 +25,7 @@
     <ion-radio-group [value]="activeTimeRange.name">
       <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="onTimeChosen(period)">
         <ion-radio class="filter-menu__radio-btn" slot="start" labelPlacement="end" [value]="period.name" mode="md">
-          <ion-label>
-            {{ period | timeRange : contentString }}
-          </ion-label>
+          {{ period | timeRange : contentString }}
         </ion-radio>
       </ion-item>
     </ion-radio-group>
@@ -48,16 +46,12 @@
           value="all_accounts"
           mode="md"
         >
-          <ion-label>
-            {{ 'patron-ui.transactions.' + csNames.allAccountsLabel | translate }}
-          </ion-label>
+          {{ 'patron-ui.transactions.' + csNames.allAccountsLabel | translate }}
         </ion-radio>
       </ion-item>
       <ion-item *ngFor="let account of accounts | async" lines="none" (click)="onAccountChosen(account.id)">
         <ion-radio class="filter-menu__radio-btn" slot="start" labelPlacement="end" [value]="account.id" mode="md">
-          <ion-label>
-            {{ account.accountDisplayName }}
-          </ion-label>
+          {{ account.accountDisplayName }}
         </ion-radio>
       </ion-item>
     </ion-radio-group>

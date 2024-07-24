@@ -43,11 +43,10 @@
   &__radio {
     --color-checked: #166dff;
     --color: #c4c4c4;
-    
-    margin-right: 10px;
-  }
 
-  &__radio-label {
-    @include font-nunito-semibold(16px);
+    margin-right: 10px;
+    &::part(label) {
+      @include font-nunito-semibold(16px);
+    }
   }
 }
