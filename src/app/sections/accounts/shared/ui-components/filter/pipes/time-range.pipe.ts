@@ -4,6 +4,7 @@ import { CONTENT_STRINGS, TIME_PERIOD } from '@sections/accounts/accounts.config
 
 @Pipe({
   name: 'timeRange',
+  standalone: true,
 })
 export class TimeRangePipe implements PipeTransform {
 

@@ -613,6 +613,11 @@
       "label_deposit-billme_review-instructions": "",
       "label_deposit-credit_review-instructions": "",
       "label_more": "More",
+      "label_automatic-deposits": "Automatic Deposits",
+      "label_low-balance": "Low Balance",
+      "label_time-based": "Time-based",
+      "label_deposit-once_per_week": "Once per week",
+      "label_deposit-once_per_month": "Once per month",
       "meal-plan-suffix": "Meal",
       "meal-plan-suffix-plural": "Meals"
     },

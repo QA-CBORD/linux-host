@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { DateUtilObject } from '../date-util';
 import { TransactionService } from '../../../../services/transaction.service';
 import { FilterMenuComponent } from './filter-menu.component';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('FilterMenuComponent', () => {
   let component: FilterMenuComponent;
@@ -16,10 +16,11 @@ describe('FilterMenuComponent', () => {
     });
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [FilterMenuComponent],
+      imports: [FilterMenuComponent],
       providers: [
         { provide: ModalController, useFactory: modalControllerStub },
-        { provide: TransactionService, useFactory: transactionServiceStub }
+        { provide: TransactionService, useFactory: transactionServiceStub },
+        { provide: TranslateService, useValue: {} },
       ]
     });
     fixture = TestBed.createComponent(FilterMenuComponent);

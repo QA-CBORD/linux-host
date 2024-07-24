@@ -2,25 +2,29 @@
   <form *ngIf="addEditAddressesForm" [formGroup]="addEditAddressesForm">
     <ion-radio-group class="addresses__control" [formControl]="campus" (ionChange)="onCampusChanged($event)">
       <ion-item lines="none" *ngIf="!addressRestriction.offCampus">
-        <ion-label class="addresses__radio-label">{{ contentStrings.labelOffCampus | async }}</ion-label>
         <ion-radio
           mode="md"
           slot="start"
+          labelPlacement="end"
           value="offcampus"
           class="addresses__radio"
           [disabled]="addressRestriction.offCampus"
-        ></ion-radio>
+        >
+          <ion-label class="addresses__radio-label">{{ contentStrings.labelOffCampus | async }}</ion-label>
+        </ion-radio>
       </ion-item>
 
       <ion-item lines="none" *ngIf="!addressRestriction.onCampus">
-        <ion-label class="addresses__radio-label">{{ contentStrings.labelOnCampus | async }}</ion-label>
         <ion-radio
           mode="md"
           slot="start"
+          labelPlacement="end"
           value="oncampus"
           class="addresses__radio"
           [disabled]="addressRestriction.onCampus"
-        ></ion-radio>
+        >
+          <ion-label class="addresses__radio-label">{{ contentStrings.labelOnCampus | async }}</ion-label>
+        </ion-radio>
       </ion-item>
     </ion-radio-group>
     <ng-container *ngIf="addEditAddressesForm.value.campus === 'oncampus' && buildings">
@@ -131,7 +135,7 @@
         #stateSelects
       >
         <ng-container role="options">
-          <ion-select-option *ngFor="let state of (arrOfStates$ | async)" [value]="state">
+          <ion-select-option *ngFor="let state of arrOfStates$ | async" [value]="state">
             {{ state }}
           </ion-select-option>
         </ng-container>
@@ -152,15 +156,16 @@
           idd="nickname"
           maxlength="50"
           [isError]="nickname.errors && (nickname.dirty || nickname.touched)"
-        tabindex="0"
+          tabindex="0"
         >
         </st-input-floating-label>
         <ng-container [ngTemplateOutlet]="optionalPlaceholder"></ng-container>
       </div>
     </ng-container>
     <ion-item lines="none">
-      <ion-label>{{ contentStrings.labelSetAsDefault | async }}</ion-label>
-      <ion-checkbox mode="md" class="addresses__checkbox" slot="start" [formControl]="default"></ion-checkbox>
+      <ion-checkbox mode="md" class="addresses__checkbox" slot="start" labelPlacement="end" [formControl]="default">
+        <ion-label>{{ contentStrings.labelSetAsDefault | async }}</ion-label>
+      </ion-checkbox>
     </ion-item>
   </form>
 </div>

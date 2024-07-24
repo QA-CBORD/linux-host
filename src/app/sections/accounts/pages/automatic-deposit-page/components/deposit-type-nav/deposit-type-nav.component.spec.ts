@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, EventEmitter, Input, NO_ERRORS_SCHEMA, Output } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { DepositTypeNavComponent } from './deposit-type-nav.component';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
-
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 const _settingsFacadeService = () => ({
-  getSetting: jest.fn(() => of({} as SettingInfo))
+  getSetting: jest.fn(() => of({} as SettingInfo)),
 });
 
 describe('DepositTypeNavComponent', () => {
@@ -16,16 +16,16 @@ describe('DepositTypeNavComponent', () => {
   let fixture: ComponentFixture<DepositTypeNavComponent>;
 
   beforeEach(() => {
-    
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [DepositTypeNavComponent],
+      imports: [DepositTypeNavComponent, TranslateModule],
       providers: [
         {
           provide: SettingsFacadeService,
-          useFactory: _settingsFacadeService
-        }
-      ]
+          useFactory: _settingsFacadeService,
+        },
+        { provide: TranslateService, useValue: {} },
+      ],
     });
     fixture = TestBed.createComponent(DepositTypeNavComponent);
     component = fixture.componentInstance;
@@ -37,11 +37,11 @@ describe('DepositTypeNavComponent', () => {
 
   it('should set availableTypes on ngOnInit', () => {
     component.ngOnInit();
-    
-    component.isTimeBasedAvailable.subscribe((available) => {
+
+    component.isTimeBasedAvailable.subscribe(available => {
       expect(available).toBe(true);
     });
-    component.isLowBalanceAvailable.subscribe((available) => {
+    component.isLowBalanceAvailable.subscribe(available => {
       expect(available).toBe(true);
     });
   });
@@ -59,7 +59,7 @@ describe('DepositTypeNavComponent', () => {
     const mockSettingsFacadeService = TestBed.inject(SettingsFacadeService);
     jest.spyOn(mockSettingsFacadeService, 'getSetting').mockReturnValue(of({ value: '1' }));
     component.ngOnInit();
-    component.isLowBalanceAvailable.subscribe((available) => {
+    component.isLowBalanceAvailable.subscribe(available => {
       expect(available).toBe(true);
     });
   });
@@ -68,7 +68,7 @@ describe('DepositTypeNavComponent', () => {
     const mockSettingsFacadeService = TestBed.inject(SettingsFacadeService);
     jest.spyOn(mockSettingsFacadeService, 'getSetting').mockReturnValue(of({ value: '0' }));
     component.ngOnInit();
-    component.isLowBalanceAvailable.subscribe((available) => {
+    component.isLowBalanceAvailable.subscribe(available => {
       expect(available).toBe(false);
     });
   });
@@ -77,7 +77,7 @@ describe('DepositTypeNavComponent', () => {
     const mockSettingsFacadeService = TestBed.inject(SettingsFacadeService);
     jest.spyOn(mockSettingsFacadeService, 'getSetting').mockReturnValue(of(null));
     component.ngOnInit();
-    component.isLowBalanceAvailable.subscribe((available) => {
+    component.isLowBalanceAvailable.subscribe(available => {
       expect(available).toBe(false);
     });
   });
@@ -86,7 +86,7 @@ describe('DepositTypeNavComponent', () => {
     const mockSettingsFacadeService = TestBed.inject(SettingsFacadeService);
     jest.spyOn(mockSettingsFacadeService, 'getSetting').mockReturnValue(of({ value: '1' }));
     component.ngOnInit();
-    component.isTimeBasedAvailable.subscribe((available) => {
+    component.isTimeBasedAvailable.subscribe(available => {
       expect(available).toBe(true);
     });
   });
@@ -95,7 +95,7 @@ describe('DepositTypeNavComponent', () => {
     const mockSettingsFacadeService = TestBed.inject(SettingsFacadeService);
     jest.spyOn(mockSettingsFacadeService, 'getSetting').mockReturnValue(of({ value: '0' }));
     component.ngOnInit();
-    component.isTimeBasedAvailable.subscribe((available) => {
+    component.isTimeBasedAvailable.subscribe(available => {
       expect(available).toBe(false);
     });
   });
@@ -104,7 +104,7 @@ describe('DepositTypeNavComponent', () => {
     const mockSettingsFacadeService = TestBed.inject(SettingsFacadeService);
     jest.spyOn(mockSettingsFacadeService, 'getSetting').mockReturnValue(of(null));
     component.ngOnInit();
-    component.isTimeBasedAvailable.subscribe((available) => {
+    component.isTimeBasedAvailable.subscribe(available => {
       expect(available).toBe(false);
     });
   });

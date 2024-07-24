@@ -4,6 +4,7 @@ import { DepositFrequencyComponent } from './deposit-frequency.component';
 import { UserAutoDepositSettingInfo } from '../../models/auto-deposit-settings';
 import { DEPOSIT_FREQUENCY } from '../../auto-deposit.config';
 import { RadioGroupCustomEvent } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('DepositFrequencyComponent', () => {
   let component: DepositFrequencyComponent;
@@ -12,7 +13,8 @@ describe('DepositFrequencyComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [DepositFrequencyComponent],
+      imports: [DepositFrequencyComponent],
+      providers: [{ provide: TranslateService, useValue: {} }],
     });
     fixture = TestBed.createComponent(DepositFrequencyComponent);
     component = fixture.componentInstance;

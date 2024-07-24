@@ -1,17 +1,17 @@
 <ion-list>
-    <ion-radio-group [value]="selectedFrequency" (ionChange)="onFrequencyChange($event)">
-        <ion-label class="frequency__header-title">Deposit Frequency</ion-label>
+  <ion-radio-group [value]="selectedFrequency" (ionChange)="onFrequencyChange($event)">
+    <ion-label class="frequency__header-title">Deposit Frequency</ion-label>
 
-        <ion-item lines="none" class="frequency__radio">
-            <ion-label>Once per week</ion-label>
-            <ion-radio mode="md" slot="start"
-                       [value]="frequency.week"></ion-radio>
-        </ion-item>
+    <ion-item lines="none" class="frequency__radio">
+      <ion-radio mode="md" slot="start" labelPlacement="end" [value]="frequency.week">
+        {{ 'patron-ui.accounts.label_deposit-once_per_week' | translate }}</ion-radio
+      >
+    </ion-item>
 
-        <ion-item lines="none" class="frequency__radio">
-            <ion-label>Once per month</ion-label>
-            <ion-radio mode="md" slot="start"
-                       [value]="frequency.month"></ion-radio>
-        </ion-item>
-    </ion-radio-group>
+    <ion-item lines="none" class="frequency__radio">
+      <ion-radio mode="md" slot="start" labelPlacement="end" [value]="frequency.month">
+        {{ 'patron-ui.accounts.label_deposit-once_per_month' | translate }}
+      </ion-radio>
+    </ion-item>
+  </ion-radio-group>
 </ion-list>

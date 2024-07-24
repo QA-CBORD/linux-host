@@ -23,6 +23,7 @@ import { Settings } from '../../../app.global';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { TransactionHistory } from '@core/model/transactions/transaction-history.model';
 import { cleanDuplicateTransactions } from '@core/utils/transactions-helper';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 @Injectable()
 export class TransactionService {
@@ -42,8 +43,8 @@ export class TransactionService {
     private readonly accountsService: AccountService,
     private readonly commerceApiService: CommerceApiService,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
-    private readonly userFacadeService: UserFacadeService,
-  ) { }
+    private readonly userFacadeService: UserFacadeService
+  ) {}
 
   get transactions$(): Observable<TransactionHistory[]> {
     return this._transactions$.asObservable();
@@ -130,7 +131,8 @@ export class TransactionService {
       ),
       switchMap(transactions => zip(of(transactions), this.userFacadeService.getUserData$())),
       map(([transactions, { timeZone, locale }]) =>
-        transactions.map(item => ({ ...item, actualDate: convertGMTintoLocalTime(item.actualDate, locale, timeZone) }))),
+        transactions.map(item => ({ ...item, actualDate: convertGMTintoLocalTime(item.actualDate, locale, timeZone) }))
+      ),
       tap(transactions => (this._transactions = transactions))
     );
   }
@@ -184,10 +186,14 @@ export class TransactionService {
   }
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
-    return combineLatest(
+    return combineLatest([
       this.contentStringFacadeService.retrieveContentStringListByRequest(ContentStringsParamsTransactions),
-      this.contentStringFacadeService.retrieveContentStringListByRequest(GenericContentStringsParams)
-    ).pipe(
+      this.contentStringFacadeService.retrieveContentStringListByRequest(GenericContentStringsParams),
+      this.contentStringFacadeService.fetchContentStrings$(
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.transactions
+      ),
+    ]).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];
         this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});

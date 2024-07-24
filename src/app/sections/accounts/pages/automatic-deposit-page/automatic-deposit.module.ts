@@ -23,13 +23,13 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 
 const declarations = [
   AutomaticDepositPageComponent,
-  DepositTypeNavComponent,
-  DepositFrequencyComponent,
   PopoverComponent,
   ConfirmUnsavedChangesPopoverComponent,
 ];
 const imports = [
   CommonModule,
+  DepositTypeNavComponent,
+  DepositFrequencyComponent,
   ReactiveFormsModule,
   StInputFloatingLabelModule,
   StSelectFloatingLabelModule,

@@ -11,9 +11,11 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
   imports: [
     IonicModule,
     CommonModule,
+    FilterMenuComponent,
+    TimeRangePipe,
     StHeaderModule,
   ],
-  declarations: [FilterComponent, FilterMenuComponent, AccountNamePipe, TimeRangePipe],
+  declarations: [FilterComponent, AccountNamePipe],
   exports: [FilterComponent]
 })
 export class FilterModule { }

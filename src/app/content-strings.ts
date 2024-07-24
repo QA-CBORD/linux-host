@@ -40,6 +40,7 @@ export enum CONTENT_STRINGS_CATEGORIES {
   settingsScreen = 'settings_screen',
   notifications = 'notifications',
   updatePersonalInfo = 'update_personal_info',
+  transactions = 'transactions',
 }
 
 export enum CONTENT_STRINGS_LOCALES {

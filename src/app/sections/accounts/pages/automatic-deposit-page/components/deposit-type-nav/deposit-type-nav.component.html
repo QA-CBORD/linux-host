@@ -1,36 +1,45 @@
-<ion-radio-group [value]="activeType"  (ionChange)="onTypeChange($event)">
+<ion-radio-group [value]="activeType" (ionChange)="onTypeChange($event)">
   <ion-item class="deposits__radio-item" lines="none">
     <ion-label class="deposits__radio-label-wrapper">
-      <div class="deposits__radio-label-title">Automatic Deposit</div>
+      <div class="deposits__radio-label-title">{{ 'patron-ui.accounts.label_automatic-deposits' | translate }}</div>
       <div class="deposits__radio-label-sub-title">Turn off automatic deposits</div>
     </ion-label>
-    <ion-radio class="deposits__radio"
-            slot="start"
-               [value]="autoDepositTypes.automaticDepositOff"
-               mode="md"></ion-radio>
+    <ion-radio
+      [ariaLabel]="'patron-ui.accounts.label_automatic-deposits' | translate"
+      class="deposits__radio"
+      slot="start"
+      [value]="autoDepositTypes.automaticDepositOff"
+      mode="md"
+    ></ion-radio>
   </ion-item>
 
   <ion-item class="deposits__radio-item" lines="none" *ngIf="isLowBalanceAvailable | async">
     <ion-label class="deposits__radio-label-wrapper">
-      <div class="deposits__radio-label-title">Low Balance</div>
+      <div class="deposits__radio-label-title">{{ 'patron-ui.accounts.label_low-balance' | translate }}</div>
       <div class="deposits__radio-label-sub-title">
         Automatically refill your balance when it drops below a threshold value
       </div>
     </ion-label>
-    <ion-radio class="deposits__radio"
-            slot="start"
-               [value]="autoDepositTypes.lowBalance"
-               mode="md"></ion-radio>
+    <ion-radio
+      class="deposits__radio"
+      [ariaLabel]="'patron-ui.accounts.label_low-balance' | translate"
+      slot="start"
+      [value]="autoDepositTypes.lowBalance"
+      mode="md"
+    ></ion-radio>
   </ion-item>
 
   <ion-item class="deposits__radio-item" lines="none" *ngIf="isTimeBasedAvailable | async">
     <ion-label class="deposits__radio-label-wrapper">
-      <div class="deposits__radio-label-title">Time-based</div>
+      <div class="deposits__radio-label-title">{{ 'patron-ui.accounts.label_time-based' | translate }}</div>
       <div class="deposits__radio-label-sub-title">Schedule a deposit on a weekly or monthly basis</div>
     </ion-label>
-    <ion-radio class="deposits__radio"
-            slot="start"
-               [value]="autoDepositTypes.timeBased"
-               mode="md"></ion-radio>
+    <ion-radio
+      [ariaLabel]="'patron-ui.accounts.label_time-based' | translate"
+      class="deposits__radio"
+      slot="start"
+      [value]="autoDepositTypes.timeBased"
+      mode="md"
+    ></ion-radio>
   </ion-item>
 </ion-radio-group>

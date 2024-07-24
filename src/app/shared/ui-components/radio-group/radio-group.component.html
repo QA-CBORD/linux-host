@@ -1,7 +1,14 @@
 <ion-radio-group (ionChange)="handleChange($event)" [value]="value">
   <ion-item *ngFor="let item of options; trackBy: trackByLabel" class="ion-no-padding" lines="none">
-    <ion-label class="form-label">{{ item.label }}</ion-label>
-
-    <ion-radio class="radio-control" mode="md" slot="start" [value]="item.value" [disabled]="isDisabled"></ion-radio>
+    <ion-radio
+      labelPlacement="end"
+      class="radio-control"
+      mode="md"
+      slot="start"
+      [value]="item.value"
+      [disabled]="isDisabled"
+    >
+      <ion-label class="form-label">{{ item.label }}</ion-label>
+    </ion-radio>
   </ion-item>
 </ion-radio-group>

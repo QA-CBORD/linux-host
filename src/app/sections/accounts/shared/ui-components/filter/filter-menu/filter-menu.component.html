@@ -1,69 +1,63 @@
 <header class="filter-menu">
   <h1 class="filter-menu__header">
-    {{ contentString[csNames.filterLabel] }}
+    {{ 'patron-ui.transactions.' + csNames.filterLabel | translate }}
   </h1>
   <ion-buttons slot="start">
     <ion-back-button
-            (click)="onClose()"
-            class="close-btn"
-            color="dark"
-            text=""
-            icon="close" mode="ios"></ion-back-button>
-    <ion-button slot="end" class="filter-menu__done-btn"
-                (click)="onFilterDone()">{{ contentString[csNames.doneBtn] }}</ion-button>
+      (click)="onClose()"
+      class="close-btn"
+      color="dark"
+      text=""
+      icon="close"
+      mode="ios"
+    ></ion-back-button>
+    <ion-button slot="end" class="filter-menu__done-btn" (click)="onFilterDone()" mode="md">{{
+      'patron-ui.core-ui.' + csNames.doneBtn | translate
+    }}</ion-button>
   </ion-buttons>
 </header>
 <ion-content>
   <ion-item-divider class="filter-menu__divider">
-    {{ contentString[csNames.filterDateLabel] }}
+    {{ 'patron-ui.transactions.' + csNames.filterDateLabel | translate }}
   </ion-item-divider>
 
   <ion-list class="filter-menu__item-list">
     <ion-radio-group [value]="activeTimeRange.name">
       <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="onTimeChosen(period)">
-        <ion-label>
-          {{period | timeRange: contentString}}
-        </ion-label>
-        <ion-radio
-                class="filter-menu__radio-btn"
-                slot="start"
-                [value]="period.name"
-                mode="md"
-        >
+        <ion-radio class="filter-menu__radio-btn" slot="start" labelPlacement="end" [value]="period.name" mode="md">
+          <ion-label>
+            {{ period | timeRange : contentString }}
+          </ion-label>
         </ion-radio>
       </ion-item>
     </ion-radio-group>
   </ion-list>
 
   <ion-item-divider class="filter-menu__divider">
-    {{ contentString[csNames.filterAccountLabel] }}
+    {{ 'patron-ui.transactions.' + csNames.filterAccountLabel | translate }}
   </ion-item-divider>
 
   <ion-list class="filter-menu__item-list">
     <ion-radio-group [value]="activeAccountId">
       <ion-item lines="none">
-        <ion-label>
-          {{ contentString[csNames.allAccountsLabel] }}
-        </ion-label>
         <ion-radio
-                class="filter-menu__radio-btn"
-                slot="start"
-                (ionFocus)="onAllAccountChosen()"
-                value="all_accounts"
-                mode="md"
+          class="filter-menu__radio-btn"
+          slot="start"
+          labelPlacement="end"
+          (ionFocus)="onAllAccountChosen()"
+          value="all_accounts"
+          mode="md"
         >
+          <ion-label>
+            {{ 'patron-ui.transactions.' + csNames.allAccountsLabel | translate }}
+          </ion-label>
         </ion-radio>
       </ion-item>
-      <ion-item *ngFor="let account of (accounts | async)" lines="none" (click)="onAccountChosen(account.id)">
-        <ion-label>
-          {{ account.accountDisplayName }}
-        </ion-label>
-        <ion-radio
-                class="filter-menu__radio-btn"
-                slot="start"
-                [value]="account.id"
-                mode="md"
-        >
+      <ion-item *ngFor="let account of accounts | async" lines="none" (click)="onAccountChosen(account.id)">
+        <ion-radio class="filter-menu__radio-btn" slot="start" labelPlacement="end" [value]="account.id" mode="md">
+          <ion-label>
+            {{ account.accountDisplayName }}
+          </ion-label>
         </ion-radio>
       </ion-item>
     </ion-radio-group>

@@ -7,9 +7,41 @@ import { DateUtilObject, getUniquePeriodName } from '../date-util';
 import { ALL_ACCOUNTS, CONTENT_STRINGS, TIME_PERIOD } from '../../../../accounts.config';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { TransactionService } from '../../../../services/transaction.service';
+import {
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonItem,
+  IonItemDivider,
+  IonLabel,
+  IonList,
+  IonRadio,
+  IonRadioGroup,
+} from '@ionic/angular/standalone';
+import { TimeRangePipe } from '../pipes/time-range.pipe';
+import { AsyncPipe, NgForOf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-filter-menu',
+  standalone: true,
+  imports: [
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonRadio,
+    IonRadioGroup,
+    IonLabel,
+    IonBackButton,
+    IonItemDivider,
+    IonList,
+    IonItem,
+    NgForOf,
+    AsyncPipe,
+    TranslateModule,
+    TimeRangePipe,
+  ],
   templateUrl: './filter-menu.component.html',
   styleUrls: ['./filter-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

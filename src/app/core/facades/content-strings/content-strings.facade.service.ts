@@ -188,7 +188,9 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
   removeContentString(domain: CONTENT_STRINGS_DOMAINS, category: CONTENT_STRINGS_CATEGORIES, name: string) {
     this.stateService.removeContentString(domain, category, name);
   }
-
+  /**
+   * @deprecated Fetch content strings instead
+   */
   retrieveContentStringListByRequest(config: ContentStringRequest): Observable<ContentStringInfo[] | []> {
     return this.apiService.retrieveContentStringListByRequest(config);
   }

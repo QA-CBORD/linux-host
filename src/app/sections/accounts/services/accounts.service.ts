@@ -62,15 +62,15 @@ export class AccountService {
   }
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
-    return combineLatest(
+    return combineLatest([
       this.contentStringsFacadeService.retrieveContentStringListByRequest(ContentStringsParamsAccounts),
       this.contentStringsFacadeService.retrieveContentStringListByRequest(GenericContentStringsParams),
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STRINGS_DOMAINS.patronUi,
         CONTENT_STRINGS_CATEGORIES.mealDonation,
         MEAL_CONTENT_STRINGS.dashboardTitle
-      )
-    ).pipe(
+      ),
+    ]).pipe(
       map(([res, res0, res1]) => {
         const finalArray = [...res, ...res0];
         finalArray.push(res1);
