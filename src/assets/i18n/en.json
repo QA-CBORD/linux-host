@@ -1175,6 +1175,12 @@
       "location_add_to_favorites": "Selected Favorite Button, Add {{locationName}} as favorite location, actions available",
       "location_remove_from_favorites": "Selected Favorite Button, Remove {{locationName}} as favorite location, actions available",
       "home_page": "Selected favorite icon, image"
+    },
+    "edit-home_page": {
+      "title": "Edit Home Page",
+      "subtitle": "Home Page",
+      "instructions": "Drag and drop the icons to rearrange the order of the home page.",
+      "dragging": "Moved ${item} to position"
     }
   }
 }
