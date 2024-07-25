@@ -5,31 +5,31 @@
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title tabindex="0" mode="ios" class="edit-home__header-title" id="modal-mainTitle">Edit Home Page</ion-title>
+    <ion-title tabindex="0" mode="ios" class="edit-home__header-title" id="modal-mainTitle">{{ 'patron-ui.edit-home_page.title' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="edit-home__content-container">
   <div class="edit-home__description-wrapper">
     <p class="edit-home__description">
-      Hold and drag cards to reorder your Home Page.
+      {{ 'patron-ui.edit-home_page.instructions' | translate }}
       <br/>
       <!-- Toggle cards On or Off to Show or Hide them. -->
     </p>
   </div>
 
-  <ion-list class="edit-home__reorder-list">
+  <ion-list class="edit-home__reorder-list" role="list">
     <ion-list-header class="edit-home__reorder-header">
       <img class="edit-home__reorder-header-icon" src="/assets/icon/dashboard.svg" alt="edit home page"/>
-      <div class="edit-home__reorder-header-title">Home Page</div>
+      <div class="edit-home__reorder-header-title">{{ 'patron-ui.edit-home_page.subtitle' | translate }}</div>
     </ion-list-header>
     <ion-reorder-group (ionItemReorder)="doReorder($event)" [disabled]="false" mode="md">
-      <ion-item *ngFor="let tileConfig of homeConfigList$ | async" class="edit-home__reorder-item">
+      <ion-item *ngFor="let tileConfig of homeConfigList$ | async" class="edit-home__reorder-item" role="listitem" [attr.aria-label]="tileConfig.title">
         <ion-label class="edit-home__reorder-label">
           {{ tileConfig.title }}
         </ion-label>
         <ion-reorder>
-          <ion-icon class="edit-home__reorder-icon" name="reorder-three" mode="md"></ion-icon>
+          <ion-icon class="edit-home__reorder-icon" name="reorder-three" mode="md" [attr.aria-label]="tileConfig.title"></ion-icon>
         </ion-reorder>
       </ion-item>
     </ion-reorder-group>

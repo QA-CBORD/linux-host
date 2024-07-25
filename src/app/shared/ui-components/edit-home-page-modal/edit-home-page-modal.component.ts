@@ -1,9 +1,12 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ModalController, IonReorderGroup } from '@ionic/angular';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { lastValueFrom, Observable } from 'rxjs';
 import { first, take } from 'rxjs/operators';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { TranslateService } from '@ngx-translate/core';
+
 @Component({
   selector: 'st-edit-home-page-modal',
   templateUrl: './edit-home-page-modal.component.html',
@@ -15,8 +18,11 @@ export class EditHomePageModalComponent implements OnInit {
   @ViewChild(IonReorderGroup, { static: true }) reorderGroup: IonReorderGroup;
 
   constructor(private readonly modalController: ModalController,
-              private readonly tileConfigFacadeService: TileConfigFacadeService) {
+    private readonly tileConfigFacadeService: TileConfigFacadeService) {
   }
+
+  private accessibilityService = inject(AccessibilityService);
+  private translateService = inject(TranslateService);
 
   ngOnInit() {
     this.homeConfigList$ = this.tileConfigFacadeService.tileSettings$;
@@ -35,6 +41,7 @@ export class EditHomePageModalComponent implements OnInit {
     this.tileConfigFacadeService.updateConfigState(config);
     // Prevent Ionic from reordering any DOM nodes inside of the reorder group as we already did on splice.
     detail.complete(false);
+    this.readPositionAloud(to, movedElement.title);
   }
 
   async onClickedClose() {
@@ -43,6 +50,12 @@ export class EditHomePageModalComponent implements OnInit {
 
   async onClickedDone() {
     await this.modalController.dismiss();
+  }
+
+  private readPositionAloud(to: number, item: string) {
+    const message = this.translateService.instant('patron-ui.edit-home_page.dragging', { item })
+      + ` ${to + 1}`;
+    this.accessibilityService.readAloud(message);
   }
 }
 
