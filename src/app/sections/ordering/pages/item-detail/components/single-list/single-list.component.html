@@ -1,10 +1,7 @@
-<ion-list lines="none"
-          class="single-list__list-size">
-  <ion-item-divider class="single-list__divider"
-                    mode="ios">
-    <div class="single-list__divider-title">Select a {{name}}</div>
-    <div class="single-list__divider-subtitle"
-         [ngClass]="{'single-list__divider-subtitle--error': isError}">
+<ion-list lines="none" class="single-list__list-size">
+  <ion-item-divider class="single-list__divider" mode="ios">
+    <div class="single-list__divider-title">Select a {{ name }}</div>
+    <div class="single-list__divider-subtitle" [ngClass]="{ 'single-list__divider-subtitle--error': isError }">
       <ng-container *ngIf="isError">Error - </ng-container>
       Required
     </div>
@@ -12,17 +9,20 @@
 
   <ion-radio-group lines="none" [value]="innerValue" (ionChange)="itemChosen($event)">
     <ng-container *ngFor="let option of options">
-      <ion-item lines="none"
-                class="single-list__item-size">
-        <ion-label>
-          <div class="single-list__size-title">{{ option.menuItem.name }}</div>
-          <div *ngIf="option.menuItem.price"
-               class="single-list__size-price">+{{ option.menuItem?.price | priceUnitsResolver: mealBased}}</div>
-        </ion-label>
-        <ion-radio class="single-list__radio-size"
-                   slot="start"
-                   [value]="option.menuItem"
-                   mode="md">
+      <ion-item lines="none" class="single-list__item-size">
+        <ion-radio
+          class="single-list__radio-size"
+          slot="start"
+          [value]="option.menuItem"
+          mode="md"
+          labelPlacement="end"
+        >
+          <ion-label>
+            <div class="single-list__size-title">{{ option.menuItem.name }}</div>
+            <div *ngIf="option.menuItem.price" class="single-list__size-price">
+              +{{ option.menuItem?.price | priceUnitsResolver : mealBased }}
+            </div>
+          </ion-label>
         </ion-radio>
       </ion-item>
     </ng-container>

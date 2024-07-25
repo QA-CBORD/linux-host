@@ -1,34 +1,32 @@
-<ion-list class="multi-list__list-toppings"
-          (ionBlur)="onBlur()">
-  <ion-item-divider class="multi-list__divider"
-                    mode="ios">
-    <div class="multi-list__divider-title">{{name}}</div>
-    <div class="multi-list__divider-subtitle"
-         [ngClass]="{'multi-list__divider-subtitle--error': isError}">
-      <ng-container *ngIf="isError">Error -
-      </ng-container>
-      <ng-container *ngIf="!minimum && maximum">Select up to {{maximum}}</ng-container>
-      <ng-container *ngIf="minimum && !maximum">Select at least {{minimum}}</ng-container>
-      <ng-container *ngIf="minimum && maximum && minimum === maximum">Select {{maximum}}</ng-container>
-      <ng-container *ngIf="minimum < maximum">Select {{minimum}} to {{maximum}}</ng-container>
-      
+<ion-list class="multi-list__list-toppings" (ionBlur)="onBlur()">
+  <ion-item-divider class="multi-list__divider" mode="ios">
+    <div class="multi-list__divider-title">{{ name }}</div>
+    <div class="multi-list__divider-subtitle" [ngClass]="{ 'multi-list__divider-subtitle--error': isError }">
+      <ng-container *ngIf="isError">Error - </ng-container>
+      <ng-container *ngIf="!minimum && maximum">Select up to {{ maximum }}</ng-container>
+      <ng-container *ngIf="minimum && !maximum">Select at least {{ minimum }}</ng-container>
+      <ng-container *ngIf="minimum && maximum && minimum === maximum">Select {{ maximum }}</ng-container>
+      <ng-container *ngIf="minimum < maximum">Select {{ minimum }} to {{ maximum }}</ng-container>
     </div>
   </ion-item-divider>
   <ion-item-group>
     <ng-container *ngFor="let option of modifiedOptions; let i = index">
-      <ion-item lines="none"
-                class="multi-list__toppings-items">
-        <ion-checkbox (ionChange)="onItemsChecked($event)"
-                      class="multi-list__toppings-item-checkbox"
-                      [value]="option.menuItem"
-                      [checked]="option.checked"
-                      mode="md">
+      <ion-item lines="none" class="multi-list__toppings-items">
+        <ion-checkbox
+          (ionChange)="onItemsChecked($event)"
+          class="multi-list__toppings-item-checkbox"
+          [value]="option.menuItem"
+          [checked]="option.checked"
+          labelPlacement="end"
+          mode="md"
+        >
+          <ion-label class="multi-list__toppings-label">
+            <div class="multi-list__topping-title">{{ option.menuItem?.name }}</div>
+            <div *ngIf="option.menuItem.price" class="multi-list__topping-price">
+              +{{ option.menuItem?.price | priceUnitsResolver : mealBased }}
+            </div>
+          </ion-label>
         </ion-checkbox>
-        <ion-label class="multi-list__toppings-label">
-          <div class="multi-list__topping-title">{{ option.menuItem?.name }}</div>
-          <div *ngIf="option.menuItem.price"
-               class="multi-list__topping-price">+{{ option.menuItem?.price | priceUnitsResolver: mealBased }}</div>
-        </ion-label>
       </ion-item>
     </ng-container>
   </ion-item-group>
