@@ -16,12 +16,16 @@ const OmittedErrorsForSentry = [
   providedIn: 'root',
 })
 export class SentryLoggingHandlerService {
-  constructor() {}
+
 
   logError(error: Error): void {
-    const extractedError = extractError(error) || 'Handled unknown error';
-    // eslint-disable-next-line no-console
-    console.log('Error logged to Sentry:', error);
+    const handleUnknowErrorMessage = 'Handled unknown error';
+    const extractedError = extractError(error) || handleUnknowErrorMessage;
+    if (extractedError === handleUnknowErrorMessage) {
+      // eslint-disable-next-line no-console
+      console.log(handleUnknowErrorMessage, error);
+    }
+
     Sentry.captureException(extractedError);
   }
 
@@ -47,4 +51,5 @@ export class SentryLoggingHandlerService {
       ignoreErrors: ignoreErrorsPatterns,
     });
   }
+
 }

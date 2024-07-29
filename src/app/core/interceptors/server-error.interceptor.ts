@@ -15,7 +15,6 @@ import { Injectable, inject } from '@angular/core';
 
 @Injectable()
 export class ServerError implements HttpInterceptor {
-
   private readonly sentryLoggingService = inject(SentryLoggingHandlerService);
 
   constructor(private readonly toastService: ToastService) {}
@@ -32,11 +31,11 @@ export class ServerError implements HttpInterceptor {
             'exception' in res.body &&
             res.body.exception !== null
           ) {
-
             if (this.shouldDelegateErrorToCaller(req.body.method)) {
               throw new Error(res.body.exception);
             }
             console.error('handleServerException: ', req, res);
+            console.error('handleServerException Body: ', req.body);
             this.handleServerException(req.body.method, res.body.exception);
           }
         },
@@ -62,6 +61,7 @@ export class ServerError implements HttpInterceptor {
       const newError = this.determineErrorByCode([errorMessageParts[0], errorMessageParts[1]], method);
       throw newError;
     } else {
+      console.error(exceptionString);
       throw new Error('Unexpected error occurred.');
     }
   }
@@ -74,7 +74,7 @@ export class ServerError implements HttpInterceptor {
     return newError;
   }
 
-   shouldDelegateErrorToCaller = (method): boolean => {
+  shouldDelegateErrorToCaller = (method): boolean => {
     return this.registeredMethods[method];
   };
 
