@@ -141,7 +141,7 @@ export class PhotoUploadService {
     return this.userFacadeService.getPhotoById(photoId).pipe(tap(photoInfo => this.setPhotoInfo(photoInfo)));
   }
 
-  private setPhotoInfo(photoInfo: UserPhotoInfo) {
+  private setPhotoInfo(photoInfo: UserPhotoInfo, displayAlert = false) {
     switch (photoInfo?.type) {
       case PhotoType.PROFILE:
         if (photoInfo.status === PhotoStatus.ACCEPTED) {
@@ -157,10 +157,11 @@ export class PhotoUploadService {
         this._govtIdBack = photoInfo;
         break;
       default:
-        this.toastService.showError(
-          this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
-          TOAST_DURATION
-        );
+        displayAlert &&
+          this.toastService.showError(
+            this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
+            TOAST_DURATION
+          );
     }
   }
 
@@ -198,7 +199,7 @@ export class PhotoUploadService {
       version: null,
       type: photoType,
     };
-    this.setPhotoInfo(newPhotoInfo);
+    this.setPhotoInfo(newPhotoInfo, true);
   }
 
   clearLocalGovernmentIdPhotos() {

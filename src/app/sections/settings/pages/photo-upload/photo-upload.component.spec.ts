@@ -106,6 +106,12 @@ describe('PhotoUploadComponent', () => {
 
   it('should call camera service', () => {
     const spy = jest.spyOn(cameraService, 'getPhoto');
+    component.onGetPhoto(null, null);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should call camera service', () => {
+    const spy = jest.spyOn(cameraService, 'getPhoto');
     component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Camera);
     component.onGetPhoto(PhotoType.GOVT_ID_FRONT, CameraSource.Photos);
     component.onGetPhoto(PhotoType.GOVT_ID_BACK, CameraSource.Camera);
