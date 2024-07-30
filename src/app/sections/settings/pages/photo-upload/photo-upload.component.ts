@@ -275,6 +275,8 @@ export class PhotoUploadComponent implements OnInit {
 
   /// handle request to take new photo
   async onGetPhoto(photoType: PhotoType, cameraSource: CameraSource) {
+    if (!cameraSource) return;
+
     const uploadSettings = this.photoUploadService.photoUploadSettings;
     from(
       this.cameraService.getPhoto({
