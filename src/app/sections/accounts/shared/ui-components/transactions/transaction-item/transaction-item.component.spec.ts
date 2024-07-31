@@ -45,6 +45,6 @@ describe('TransactionItemComponent', () => {
         component.transaction = transaction;
         fixture.detectChanges();
         const element = fixture.nativeElement;
-        expect(element.textContent).toContain(transaction.amount);
+        expect(element.textContent).toContain(`$${transaction.amount}`);
     });
 });
