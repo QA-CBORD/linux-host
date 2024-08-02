@@ -37,12 +37,12 @@ describe(UserPreferenceService, () => {
   });
 
   it('should return cache is disabled when strongCheck is true', async () => {
-    const isEnabled = await service.cachedBiometricsEnabledUserPreference(true);
+    const isEnabled = await service.cachedBiometricsEnabledUserPreference();
     expect(isEnabled).toEqual(false);
   });
 
   it('should return cache is disabled when strongCheck is false', async () => {
-    const isEnabled = await service.cachedBiometricsEnabledUserPreference(false);
+    const isEnabled = await service.cachedBiometricsEnabledUserPreference();
     expect(isEnabled).toEqual(false);
   });
 
@@ -71,5 +71,40 @@ describe(UserPreferenceService, () => {
 
     expect(spy1).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(2);
+  });
+
+  describe('isEnabledByKey', () => {
+    it('should return true if storedData is truthy', async () => {
+      const key = 'get_biometricsEnabledUserPreference';
+      const useStrongCheck = false;
+      const storedData = { value: 'true' };
+
+      _storageStateService.getStateEntityByKey$ = jest.fn().mockReturnValue(of(storedData));
+      const result = await service['isEnabledByKey'](key, useStrongCheck);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false if storedData is falsy and useStrongCheck is true', async () => {
+      const key = 'get_biometricsEnabledUserPreference';
+      const useStrongCheck = true;
+      const storedData = null;
+
+      _storageStateService.getStateEntityByKey$ = jest.fn().mockReturnValue(of(storedData));
+      const result = await service['isEnabledByKey'](key, useStrongCheck);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true if storedData is falsy and useStrongCheck is false', async () => {
+      const key = 'get_biometricsEnabledUserPreference';
+      const useStrongCheck = false;
+      const storedData = null;
+
+      _storageStateService.getStateEntityByKey$ = jest.fn().mockReturnValue(of(storedData));
+      const result = await service['isEnabledByKey'](key, useStrongCheck);
+
+      expect(result).toBe(true);
+    });
   });
 });
