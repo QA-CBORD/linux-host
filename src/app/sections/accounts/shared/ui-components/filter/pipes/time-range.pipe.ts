@@ -9,7 +9,7 @@ import { CONTENT_STRINGS, TIME_PERIOD } from '@sections/accounts/accounts.config
 export class TimeRangePipe implements PipeTransform {
 
   transform(value: DateUtilObject, contentString: { [key: string]: string }): string {
-    return this.localGetUniquePeriodName(value, contentString);
+    return value ? this.localGetUniquePeriodName(value, contentString): '';
   }
 
   private localGetUniquePeriodName(date: DateUtilObject, contentString: { [key: string]: string }): string {
