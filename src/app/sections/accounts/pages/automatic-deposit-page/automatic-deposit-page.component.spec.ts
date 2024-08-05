@@ -1,16 +1,18 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ChangeDetectorRef, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UserAccount } from '@core/model/account/account.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { USAePayResponse } from '@core/provider/native-provider/native.provider';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { WEEK } from '@core/utils/date-helper';
-import { PopoverController } from '@ionic/angular';
+import { IonicModule, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { PAYMENT_SYSTEM_TYPE, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { firstValueFrom, of, throwError } from 'rxjs';
@@ -22,8 +24,6 @@ import {
 } from './auto-deposit.config';
 import { AUTOMATIC_DEPOSIT_CONTROL_NAMES, AutomaticDepositPageComponent } from './automatic-deposit-page.component';
 import { AutoDepositService } from './service/auto-deposit.service';
-import { UserAccount } from '@core/model/account/account.model';
-import { ToastService } from '@core/service/toast/toast.service';
 
 describe('AutomaticDepositPageComponent', () => {
   let component: AutomaticDepositPageComponent;
@@ -66,6 +66,7 @@ describe('AutomaticDepositPageComponent', () => {
       filterBillmeDestAccounts: jest.fn(),
       filterBillmeSourceAccounts: jest.fn(),
       sourceAccForBillmeDeposit: jest.fn(),
+      getUserAccounts: jest.fn(),
     };
     autoDepositService = {
       updateAutoDepositSettings: jest.fn(),
@@ -102,7 +103,7 @@ describe('AutomaticDepositPageComponent', () => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [AutomaticDepositPageComponent],
-      imports: [HttpClientModule],
+      imports: [HttpClientModule, IonicModule],
       providers: [
         { provide: SettingsFacadeService, useValue: settingsFacadeService },
         { provide: LoadingService, useValue: loadingService },
@@ -953,4 +954,36 @@ describe('AutomaticDepositPageComponent', () => {
     expect(settingsFacadeService.getSetting).toHaveBeenCalledWith(Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE);
   });
 
+  it('should set event.returnValue if settings are changed or form is touched', () => {
+    // Mock the event
+    const mockEvent = { returnValue: '' } as BeforeUnloadEvent;
+
+    // Set component properties to trigger conditions
+    component.autoDepositSettings = { active: true, autoDepositType: 1 } as any;
+    component.activeAutoDepositType = 1;
+    component.automaticDepositForm = new FormBuilder().group({ field: ['value'] });
+    component.automaticDepositForm.markAsTouched();
+
+    // Trigger the host listener
+    component['saveSettings'](mockEvent);
+
+    // Check that returnValue was set
+    expect(mockEvent.returnValue).toBe('');
+  });
+
+  it('should not set event.returnValue if settings are not changed and form is not touched', () => {
+    // Mock the event
+    const mockEvent = { returnValue: '' } as BeforeUnloadEvent;
+
+    // Set component properties to not trigger conditions
+    component.autoDepositSettings = { active: false, autoDepositType: AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance } as any;
+    component.activeAutoDepositType = AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance;
+    component.automaticDepositForm = new FormBuilder().group({ field: ['value'] });
+
+    // Trigger the host listener
+    component['saveSettings'](mockEvent);
+
+    // Check that returnValue was not set
+    expect(mockEvent.returnValue).toBe('');
+  });
 });
