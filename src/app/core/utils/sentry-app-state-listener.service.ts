@@ -25,9 +25,6 @@ export class SentryAppStateListenerService {
       'cashlessPaymentSystemType',
     ]);
     setLogContextFromObservable(this.cartService.merchant$, 'Cart Merchant', ['id', 'name', 'timeZone']);
-    setLogContextFromObservable(this.environmentFacadeService.getSavedEnvironmentInfo$(), 'Environment', [
-      'environment',
-    ]);
   }
 
   private setUserInfo() {
