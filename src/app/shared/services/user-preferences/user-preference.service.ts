@@ -16,8 +16,8 @@ export class UserPreferenceService {
     ) { }
 
 
-    async cachedBiometricsEnabledUserPreference(useStrongCheck = false): Promise<boolean> {
-        const biometricEnabled = await this.isEnabledByKey(this.biometricsEnabledUserPreference, useStrongCheck);
+    async cachedBiometricsEnabledUserPreference(): Promise<boolean> {
+        const biometricEnabled = await this.isEnabledByKey(this.biometricsEnabledUserPreference, true);
         return biometricEnabled && !await this.getBiometricPermissionDenied();
     }
 
