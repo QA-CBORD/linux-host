@@ -81,7 +81,7 @@ export class MenuReceivingFundsComponent implements OnInit {
       };
     }).reduce((prev, current) => {
 
-      const elemIndex =  prev.findIndex((item) => item && item.displayName === current.displayName);
+      const elemIndex =  prev.findIndex((item) => item && item?.displayName === current?.displayName);
       if (elemIndex !== -1) {
         prev[elemIndex] = { ...prev[elemIndex], isShow: current.isShow ? current.isShow : prev[elemIndex].isShow };
         return prev;

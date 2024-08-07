@@ -1,61 +1,104 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { Platform } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { UserAccount } from '@core/model/account/account.model';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { IonicModule, Platform } from '@ionic/angular';
+import { of } from 'rxjs';
+import { AccountListComponent } from './account-list.component';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { TransactionService } from '@sections/accounts/services/transaction.service';
-import { ALL_ACCOUNTS } from '@sections/accounts/accounts.config';
-import { AccountListComponent } from './account-list.component';
+import { CONTENT_STRINGS } from '@sections/accounts/accounts.config';
+import { Router, RouterModule } from '@angular/router';
+import { UserAccount } from '@core/model/account/account.model';
 
 describe('AccountListComponent', () => {
   let component: AccountListComponent;
   let fixture: ComponentFixture<AccountListComponent>;
 
-  beforeEach(() => {
-    const platformStub = () => ({ width: () => ({}) });
-    const routerStub = () => ({ navigate: array => ({}) });
-    const accountServiceStub = () => ({
-      getContentStrings: accountStringNames => ({})
-    });
-    const transactionServiceStub = () => ({
-      getContentStrings: transactionStringNames => ({})
-    });
-    TestBed.configureTestingModule({
-      schemas: [NO_ERRORS_SCHEMA],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [AccountListComponent],
+      imports: [IonicModule, RouterModule.forRoot(
+        [{ path: 'patron/accounts/account-details/1', component: AccountListComponent }]
+      )],
       providers: [
-        { provide: Platform, useFactory: platformStub },
-        { provide: Router, useFactory: routerStub },
-        { provide: AccountService, useFactory: accountServiceStub },
-        { provide: TransactionService, useFactory: transactionServiceStub }
-      ]
-    });
-    fixture = TestBed.createComponent(AccountListComponent);
-    component = fixture.componentInstance;
+        {
+          provide: Platform,
+          useValue: {
+            is: jest.fn(),
+            width: jest.fn().mockReturnValue(700)
+          }
+        },
+        {
+          provide: AccountService,
+          useValue: {
+            getAccounts: jest.fn(() => of([])),
+            getContentStrings: jest.fn().mockReturnValue({ [CONTENT_STRINGS.allAccountsLabel]: 'test' }),
+          },
+        },
+        {
+          provide: TransactionService,
+          useValue: {
+            getTransactions: jest.fn(() => of([])),
+            getContentStrings: jest.fn().mockReturnValue({ [CONTENT_STRINGS.allAccountsLabel]: 'test' }),
+          },
+        }
+        ,
+        {
+          provide: Router,
+          useValue: {
+            navigate: jest.fn()
+          },
+        }
+      ],
+    }).compileComponents();
   });
 
-  it('can load instance', () => {
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AccountListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it(`accountsShowed has default value`, () => {
-    expect(component.accountsShowed).toEqual([]);
+  it('should define resolutions on initialization', () => {
+    jest.spyOn(component as any, 'defineResolution');
+    component.ngOnInit();
+    expect(component['defineResolution']).toBeCalled();
   });
 
-  it(`accountsHidden has default value`, () => {
+  it('should show hidden accounts', () => {
+    component.showHiddenAccounts();
     expect(component.accountsHidden).toEqual([]);
   });
 
-  it(`tabletResolution has default value`, () => {
-    expect(component.tabletResolution).toEqual(false);
+  it('should emit the account info on account clicked', waitForAsync(() => {
+    const emitSpy = jest.spyOn(component.onAccountInfoEmit, 'emit');
+    component.tabletResolution = true;
+    component.onAccountClicked('1', 'John Doe');
+    expect(emitSpy).toHaveBeenCalled();
+  }));
+
+  it('should define the tablet resolution depending on width', waitForAsync(() => {
+    component['defineResolution']();
+    expect(component.tabletResolution).toBeFalsy();
+  }));
+
+  it('should set the content strings', () => {
+    component['setContentStrings']();
+    component.trackByAccountId(1, { id: '1' } as UserAccount);
+    expect(component.contentString).toEqual({ 'label_all-accounts': 'test' });
   });
 
-  it(`allAccounts has default value`, () => {
-    expect(component.allAccounts).toEqual(ALL_ACCOUNTS);
+  it('should not set the account if it is less than amount to show', () => {
+    component.accounts = [{ id: '1' } as UserAccount];
+    expect(component.accountsShowed).toEqual([{ "id": "1" }]);
+    expect(component.accountsHidden).not.toEqual([{ "id": "1" }]);
   });
 
-  it(`activeAccount has default value`, () => {
-    expect(component.activeAccount).toEqual(ALL_ACCOUNTS);
+  it('should set the hidden account if it is more than amount to show', () => {
+    component.accounts = new Array(8).fill({ "id": "1" } as UserAccount);
+    console.log(component.accountsHidden)
+    expect(component.accountsHidden).toEqual([{ id: '1' }]);
   });
 });
