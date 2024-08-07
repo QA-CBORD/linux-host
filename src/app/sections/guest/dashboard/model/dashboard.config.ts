@@ -1,30 +1,36 @@
-import { GUEST_NAVIGATION } from 'src/app/app.global';
+import { GUEST_NAVIGATION, Settings } from 'src/app/app.global';
 import { GuestDashboardSection } from './dashboard.item.model';
-import { GuestSetting } from '../../model/guest-settings';
+import { getSettingName } from '@core/utils/settings-helper';
 
 const imageBaseUrl = 'assets/icon';
 
-export const GuestDashboardSections: { [key: string]: GuestDashboardSection } = {
-  deposit: {
-    title: 'Guest Deposit',
+export const SECTIONS_ID = {
+  accounts: getSettingName(Settings.Setting.GUEST_DEPOSIT_ENABLED),
+  order: getSettingName(Settings.Setting.FOOD_ENABLED),
+  explore: getSettingName(Settings.Setting.PLACES_ENABLED),
+};
+
+export const GuestDashboardSections: GuestDashboardSection[] = [
+  {
+    id: SECTIONS_ID.accounts,
+    title: 'patron-ui.guest-dashboard.deposit',
     imageUrl: `${imageBaseUrl}/get_deposit.svg`,
     willNavigate: true,
     stackNavigation: true,
     url: GUEST_NAVIGATION.deposit,
-    visibilityOn: (setting: GuestSetting) => setting.canDeposit
   },
-  order: {
-    title: 'Start an order',
+  {
+    id: SECTIONS_ID.order,
+    title: 'patron-ui.guest-dashboard.order',
     imageUrl: `${imageBaseUrl}/get_order.svg`,
     willNavigate: true,
     url: GUEST_NAVIGATION.ordering,
-    visibilityOn: (setting: GuestSetting) => setting.canOrder
   },
-  explore: {
-    title: 'Explore',
+  {
+    id: SECTIONS_ID.explore,
+    title: 'patron-ui.guest-dashboard.explore',
     imageUrl: `${imageBaseUrl}/get_explore.svg`,
     willNavigate: true,
     url: GUEST_NAVIGATION.explore,
-    visibilityOn: (setting: GuestSetting) => setting.canExplore
   },
-};
+];

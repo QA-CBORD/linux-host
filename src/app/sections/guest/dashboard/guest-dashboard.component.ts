@@ -2,12 +2,11 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { GuestDashboardSection } from './model/dashboard.item.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
-import { Router } from '@angular/router';
-import { MessageProxy } from '@shared/services/injectable-message.proxy';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { GUEST_DEEP_LINKS } from 'src/app/app.global';
 import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'st-guest-dashboard',
@@ -16,6 +15,7 @@ import { Observable } from 'rxjs';
 })
 export class GuestDashboard implements OnInit, AfterViewInit {
   sections: GuestDashboardSection[] = [];
+  sections$: Observable<GuestDashboardSection[]>;
   institutionName$: Promise<string>;
   institutionPhoto$: Promise<SafeResourceUrl>;
   userName$: Promise<string>;
@@ -26,13 +26,13 @@ export class GuestDashboard implements OnInit, AfterViewInit {
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
-    private readonly messageProxy: MessageProxy,
+    private readonly activatedRoute: ActivatedRoute,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly accessCardService: AccessCardService
   ) {}
 
   ngOnInit() {
-    this.sections = this.messageProxy.get<GuestDashboardSection[]>() || [];
+    this.sections$ = this.activatedRoute.data.pipe(map(data => data.data));
     this.loadInfo();
     this.pushNotificationRegistration();
   }

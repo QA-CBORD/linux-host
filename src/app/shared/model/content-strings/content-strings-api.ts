@@ -1,4 +1,3 @@
-import { GuestDashboardCsModel } from '@sections/guest/dashboard/model/guest-dashboard-cs.model';
 import { PasswordChangeCsModel } from '@shared/ui-components/change-password/password-change-content-strings.model';
 import { AndroidCredentialCsModel } from '@shared/ui-components/mobile-credentials/model/android/android-credential-content-strings.model';
 import { ForgotPasswordCsModel } from 'src/app/non-authorized/pages/forgot-password/models/forgot-password-content-strings.model';
@@ -22,7 +21,6 @@ export enum ContentStringCategory {
   registration = 'registration',
   changePassword = 'changePassword',
   mobileCredential = 'mobileCredential',
-  guestDashboard = 'guestDashboard',
   deposit = 'deposit',
   guestDeposit = 'guestDeposit',
   passwordValidation = 'passwordValidation',
@@ -84,13 +82,6 @@ export const ContentStringApi: ContentStringCategoryType = {
     category: CATEGORIES.mobileCredential,
     build: (config: ContentStringBuilderConfig): AndroidCredentialCsModel => {
       return new AndroidCredentialCsModel(NullableContent.build(config));
-    },
-  },
-
-  [ContentStringCategory.guestDashboard]: {
-    category: CATEGORIES.guestDashboard,
-    build: (config: ContentStringBuilderConfig): GuestDashboardCsModel => {
-      return new GuestDashboardCsModel(NullableContent.build(config));
     },
   },
 

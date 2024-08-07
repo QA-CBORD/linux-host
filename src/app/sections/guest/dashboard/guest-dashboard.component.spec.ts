@@ -2,16 +2,22 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
-import { Router } from '@angular/router';
-import { MessageProxy } from '@shared/services/injectable-message.proxy';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { GuestDashboard } from './guest-dashboard.component';
 import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
+import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 
 describe('GuestDashboard', () => {
   let component: GuestDashboard;
   let fixture: ComponentFixture<GuestDashboard>;
   let accessCardService;
+  let navigationFacadeSettingsService = {
+    initSettings: jest.fn().mockReturnValue(of([])),
+    updateConfigState: jest.fn(),
+  };
 
   beforeEach(() => {
     const domSanitizerStub = () => ({});
@@ -20,20 +26,20 @@ describe('GuestDashboard', () => {
       getInstitutionBackgroundImage: () => ({}),
       getUserName: () => ({}),
       getInstitutionName: () => ({}),
-      getInstitutionBgColor: () => ({})
+      getInstitutionBgColor: () => ({}),
     });
     const routerStub = () => ({
-      navigate: (array, object) => ({ then: () => ({}) })
+      navigate: (array, object) => ({ then: () => ({}) }),
     });
     const messageProxyStub = () => ({ get: () => ({}) });
     const sessionFacadeServiceStub = () => ({
       deepLinkPath: { length: {}, join: () => ({}) },
       navigatedToLinkPath: () => ({}),
-      handlePushNotificationRegistration: () => ({})
+      handlePushNotificationRegistration: () => ({}),
     });
     accessCardService = {
-      getInstitutionBackgroundImage: jest.fn()
-    }
+      getInstitutionBackgroundImage: jest.fn(),
+    };
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [GuestDashboard],
@@ -41,13 +47,19 @@ describe('GuestDashboard', () => {
         { provide: DomSanitizer, useFactory: domSanitizerStub },
         { provide: CommonService, useFactory: commonServiceStub },
         { provide: Router, useFactory: routerStub },
-        { provide: MessageProxy, useFactory: messageProxyStub },
         { provide: SessionFacadeService, useFactory: sessionFacadeServiceStub },
-        { provide: AccessCardService, useValue: accessCardService}
-      ]
+        { provide: AccessCardService, useValue: accessCardService },
+        { provide: TranslateService, useValue: {} },
+        { provide: ActivatedRoute, useValue: { data: of({ data: [] }) } },
+        {
+          provide: NavigationFacadeSettingsService,
+          useValue: navigationFacadeSettingsService,
+        },
+      ],
     });
     fixture = TestBed.createComponent(GuestDashboard);
     component = fixture.componentInstance;
+    fixture.detectChanges
   });
 
   it('can load instance', () => {
@@ -64,30 +76,17 @@ describe('GuestDashboard', () => {
     expect(loadImageSpy).toHaveBeenCalledTimes(1);
   });
 
-  describe('ngOnInit', () => {
-    it('makes expected calls', () => {
-      const messageProxyStub: MessageProxy = fixture.debugElement.injector.get(
-        MessageProxy
-      );
-     jest.spyOn(messageProxyStub, 'get');
-      component.ngOnInit();
-      expect(messageProxyStub.get).toHaveBeenCalled();
-    });
-  });
-
   describe('onClick', () => {
     it('clicks on a section', () => {
-      const routerStub: Router = fixture.debugElement.injector.get(
-        Router
-      );
-     jest.spyOn(routerStub, 'navigate');
+      const routerStub: Router = fixture.debugElement.injector.get(Router);
+      jest.spyOn(routerStub, 'navigate');
 
       component.onclick({
-        title:'title',
-        imageUrl:'',
-        url:'/private/url',
-        willNavigate:true,
-        visibilityOn: (settings ) => true
+        id: 'title',
+        title: 'title',
+        imageUrl: '',
+        url: '/private/url',
+        willNavigate: true,
       });
       expect(routerStub.navigate).toHaveBeenCalled();
     });
