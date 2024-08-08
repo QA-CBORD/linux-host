@@ -28,7 +28,7 @@ export class SentryAppStateListenerService {
   }
 
   private setUserInfo() {
-    this.userFacadeService.getUserState$().subscribe(user => {
+    this.userFacadeService.getUserInfo$().subscribe(user => {
       if (user) {
         const { id } = user;
         Sentry.setUser({ id });
