@@ -1,10 +1,9 @@
 import { Type } from '@angular/core';
-import { GuestSetting } from '../../model/guest-settings';
 
 export interface GuestDashboardSection {
+  id: string;
   title: string;
   imageUrl: string;
-  visibilityOn: (settings: GuestSetting) => boolean;
   willNavigate: boolean;
   stackNavigation?: boolean;
   url?: string;

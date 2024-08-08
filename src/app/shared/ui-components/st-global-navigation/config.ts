@@ -20,7 +20,6 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     isEnabled: false,
     name: TILES_TITLE.order,
     url: GUEST_NAVIGATION.ordering,
-    visibilityOn: (setting: GuestSetting) => setting.canOrder,
     supportProfiles: [APP_PROFILES.guest]
   },
   {

@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { CommonService } from '@shared/services/common.service';
 import { MessageProxy } from '@shared/services/injectable-message.proxy';
@@ -55,11 +55,11 @@ describe('GuestDashboard', () => {
         { provide: CommonService, useValue: commonService },
         { provide: DomSanitizer, useValue: domSanitizer },
         { provide: Router, useValue: router },
-        { provide: MessageProxy, useValue: messageProxy },
         { provide: SessionFacadeService, useValue: sessionFacadeService },
         { provide: StorageStateService, useValue: mockStorageStateService },
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
         { provide: AccessCardService, useValue: accessCardService },
+        { provide: ActivatedRoute, useValue: { data: of({ data: [] }) } },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

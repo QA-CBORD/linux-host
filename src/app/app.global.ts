@@ -49,6 +49,7 @@ export namespace Settings {
     DEPOSITS = 'get.deposit',
     MEAL_PLAN = 'get.meal_plan',
     PHOTO_UPLOAD = 'get.photo_upload',
+    MOBILE_CREDENTIALS = 'get.mobile_credentials',
   }
 
   export enum Setting {
@@ -120,7 +121,7 @@ export namespace Settings {
     LOCK_DOWN_ORDERING = 'get.ordering.disable_ordering',
     CREDENTIALS_UNLINK_ENABLED = 'get.mobile_credentials.enable_unlink',
     CREDENTIALS_UNLINK_API_KEY = 'get.mobile_credentials.unlink_key',
-    MERCHAT_PAYMENT_REMOVETAXCHECKOUT = 'merchant.payment.removeTaxCheckout'
+    MERCHAT_PAYMENT_REMOVETAXCHECKOUT = 'merchant.payment.removeTaxCheckout',
   }
 }
 
@@ -132,7 +133,7 @@ export enum AccountType {
   MEALS = 1,
   CHARGE = 2,
   DECLINING_BALANCE = 3,
-  APPLEPAY = 4
+  APPLEPAY = 4,
 }
 
 export enum PaymentType {
@@ -196,8 +197,8 @@ export namespace User {
 
   export enum NotificationType {
     EMAIL = 1,
-    PHONE ,
-    PUSH_NOTIFICATION = 8
+    PHONE,
+    PUSH_NOTIFICATION = 8,
   }
 
   export enum Settings {
@@ -206,14 +207,14 @@ export namespace User {
     MOBILE_ACCESS_FAVORITES = 'mobileaccess_favorites',
     DEFAULT_ADDRESS = 'defaultaddress',
     MOBILE_CREDENTIAL_ID = 'mobileCredentialID',
-    GUEST_DEPOSIT_RECIPIENTS= 'get.deposit.guest.recipients',
+    GUEST_DEPOSIT_RECIPIENTS = 'get.deposit.guest.recipients',
   }
 }
 
 export enum ROLES {
   guest = 'guest',
   patron = 'patron',
-  anonymous = 'anonymous'
+  anonymous = 'anonymous',
 }
 
 export enum PATRON_NAVIGATION {
@@ -227,7 +228,7 @@ export enum PATRON_NAVIGATION {
   explore = 'patron/explore',
   biometric = 'patron/biometric',
   settings = 'patron/settings',
-  notifications = 'patron/notifications'
+  notifications = 'patron/notifications',
 }
 
 export enum GUEST_NAVIGATION {
@@ -237,9 +238,8 @@ export enum GUEST_NAVIGATION {
   deposit = 'guest/deposit',
   settings = 'guest/settings',
   registration = 'guest/registration',
-  notifications = 'guest/notifications'
+  notifications = 'guest/notifications',
 }
-
 
 export enum LoginType {
   FACEID = 'FACEID',
@@ -263,17 +263,17 @@ export const GUEST_DEEP_LINKS: string[] = [
 
 export enum statusBarForm {
   NEW = 'New',
-  SUBMITTED = 'Submitted'
+  SUBMITTED = 'Submitted',
 }
 
 export enum StateTimeDuration {
-  TTL = 600000
+  TTL = 600000,
 }
 
 export enum QuestionTypes {
-  DATE_SIGNED = 'date-signed'
+  DATE_SIGNED = 'date-signed',
 }
 
 export enum FilterOptions {
-  FACILITY_ASSIGMENT_LIMIT = "Facility Assignment_Limit"
+  FACILITY_ASSIGMENT_LIMIT = 'Facility Assignment_Limit',
 }

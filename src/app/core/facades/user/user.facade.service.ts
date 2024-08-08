@@ -6,7 +6,7 @@ import { UserInfo } from '@core/model/user/user-info.model';
 import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { map, switchMap, tap, take, catchError, finalize, first } from 'rxjs/operators';
+import { map, switchMap, tap, take, catchError, finalize, first, skipWhile } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings, StateTimeDuration, User } from 'src/app/app.global';
@@ -292,7 +292,15 @@ export class UserFacadeService extends ServiceStateFacade {
 
   getUserInfo(): Observable<UserInfo> {
     return this.storageStateService.getStateEntityByKey$<UserInfo>(this.userKey).pipe(
-      switchMap(data => data && of(data.value) || this.getUser$()),
+      switchMap(data => (data && of(data.value)) || this.getUser$()),
+      take(1)
+    );
+  }
+
+  getUserInfo$(): Observable<UserInfo> {
+    return this.storageStateService.getStateEntityByKey$<UserInfo>(this.userKey).pipe(
+      skipWhile(data => !data || data === null),
+      map(data => data.value),
       take(1)
     );
   }

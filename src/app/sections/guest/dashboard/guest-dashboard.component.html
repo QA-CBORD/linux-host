@@ -22,14 +22,14 @@
           <ion-col
             class="card__header-title-wrapper"
             [class.card__header-title-left]="!instutionValues.photo"
-            [size]="(instutionValues.photo)? 9 : 12"
+            [size]="instutionValues.photo ? 9 : 12"
           >
             <div *ngIf="instutionValues.name" class="card__header-title left">{{ instutionValues.name }}</div>
           </ion-col>
         </ion-row>
         <ion-row class="card__campus-container">
           <ion-col class="card__campus-wrapper">
-            <ng-container *ngIf="(institutionBackgroundImage$ | async); then campusBackground; else defaultBackground">
+            <ng-container *ngIf="institutionBackgroundImage$ | async; then campusBackground; else defaultBackground">
             </ng-container>
             <ng-template #defaultBackground>
               <img
@@ -45,24 +45,30 @@
         </ion-row>
         <ion-row class="card__user-container">
           <ion-col class="card__user-name-wrapper">
-            <div *ngIf="(userName$ | async)" class="card__user-name">{{ userName$ | async }}</div>
+            <div *ngIf="userName$ | async" class="card__user-name">{{ userName$ | async }}</div>
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
+    @if(sections$ | async; as sections){
     <div class="body">
+      @if(sections.length){
       <div class="body__card">
-        <div *ngFor="let section of sections" class="item">
+        @for (section of sections; track $index) {
+        <div class="item">
           <st-button fill="clear" color="#000000" buttonModifier="rectangular" (click)="onclick(section)">
             <span class="icon">
               <img [src]="section.imageUrl" alt="" />
             </span>
             <span class="ion-text-capitalize section-text">
-              {{ section.title }}
+              {{ section.title | translate }}
             </span>
           </st-button>
         </div>
+        }
       </div>
+      }
     </div>
+    }
   </div>
 </ion-content>
