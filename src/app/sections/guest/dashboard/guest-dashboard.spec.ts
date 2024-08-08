@@ -55,7 +55,6 @@ describe('GuestDashboard', () => {
         { provide: CommonService, useValue: commonService },
         { provide: DomSanitizer, useValue: domSanitizer },
         { provide: Router, useValue: router },
-        { provide: MessageProxy, useValue: messageProxy },
         { provide: SessionFacadeService, useValue: sessionFacadeService },
         { provide: StorageStateService, useValue: mockStorageStateService },
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },

@@ -9,6 +9,7 @@ import { AccessCardService } from '@sections/dashboard/containers/access-card/se
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
+import { CommonModule } from '@angular/common';
 
 describe('GuestDashboard', () => {
   let component: GuestDashboard;
@@ -18,20 +19,20 @@ describe('GuestDashboard', () => {
     initSettings: jest.fn().mockReturnValue(of([])),
     updateConfigState: jest.fn(),
   };
+  let commonService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const domSanitizerStub = () => ({});
-    const commonServiceStub = () => ({
-      getInstitutionPhoto: (arg, sanitizer) => ({}),
-      getInstitutionBackgroundImage: () => ({}),
-      getUserName: () => ({}),
-      getInstitutionName: () => ({}),
-      getInstitutionBgColor: () => ({}),
-    });
+    commonService = {
+      getInstitutionPhoto: jest.fn(),
+      getInstitutionBackgroundImage: jest.fn(),
+      getUserName: jest.fn(),
+      getInstitutionName: jest.fn(),
+      getInstitutionBgColor: jest.fn(),
+    };
     const routerStub = () => ({
       navigate: (array, object) => ({ then: () => ({}) }),
     });
-    const messageProxyStub = () => ({ get: () => ({}) });
     const sessionFacadeServiceStub = () => ({
       deepLinkPath: { length: {}, join: () => ({}) },
       navigatedToLinkPath: () => ({}),
@@ -40,12 +41,13 @@ describe('GuestDashboard', () => {
     accessCardService = {
       getInstitutionBackgroundImage: jest.fn(),
     };
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
+      imports: [CommonModule],
       declarations: [GuestDashboard],
       providers: [
         { provide: DomSanitizer, useFactory: domSanitizerStub },
-        { provide: CommonService, useFactory: commonServiceStub },
+        { provide: CommonService, useValue: commonService },
         { provide: Router, useFactory: routerStub },
         { provide: SessionFacadeService, useFactory: sessionFacadeServiceStub },
         { provide: AccessCardService, useValue: accessCardService },
@@ -56,39 +58,16 @@ describe('GuestDashboard', () => {
           useValue: navigationFacadeSettingsService,
         },
       ],
-    });
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(GuestDashboard);
     component = fixture.componentInstance;
-    fixture.detectChanges
+    fixture.detectChanges();
   });
 
   it('can load instance', () => {
     expect(component).toBeTruthy();
-  });
-
-  it(`sections has default value`, () => {
-    expect(component.sections).toEqual([]);
-  });
-
-  it(`should call loadInfo and  get institution's image on component Init `, () => {
-    const loadImageSpy = jest.spyOn(accessCardService, 'getInstitutionBackgroundImage').mockResolvedValue('/test');
-    component.ngOnInit();
-    expect(loadImageSpy).toHaveBeenCalledTimes(1);
-  });
-
-  describe('onClick', () => {
-    it('clicks on a section', () => {
-      const routerStub: Router = fixture.debugElement.injector.get(Router);
-      jest.spyOn(routerStub, 'navigate');
-
-      component.onclick({
-        id: 'title',
-        title: 'title',
-        imageUrl: '',
-        url: '/private/url',
-        willNavigate: true,
-      });
-      expect(routerStub.navigate).toHaveBeenCalled();
-    });
   });
 });

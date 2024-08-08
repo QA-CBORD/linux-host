@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
-import { GuestDashboardResolver } from './services/guest-dashboard.resolver';
+import { guestDashboardResolver } from './services/guest-dashboard.resolver';
 import { ProminentDisclosureService } from '@sections/dashboard/services/prominent-disclosure.service';
 import { LocationPermissionModalModule } from '@sections/dashboard/components/location-disclosure/location-disclosure.module';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,12 +23,10 @@ import { TranslateModule } from '@ngx-translate/core';
       {
         path: '',
         component: GuestDashboard,
-        resolve: {
-          data: GuestDashboardResolver,
-        }
+        resolve: { sections: guestDashboardResolver },
       },
     ]),
   ],
-  providers:[GuestDashboardResolver, ProminentDisclosureService],
+  providers: [ProminentDisclosureService],
 })
 export class GuestDashboardModule {}

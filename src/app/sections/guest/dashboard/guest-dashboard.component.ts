@@ -14,7 +14,6 @@ import { map, Observable } from 'rxjs';
   styleUrls: ['./guest-dashboard.component.scss'],
 })
 export class GuestDashboard implements OnInit, AfterViewInit {
-  sections: GuestDashboardSection[] = [];
   sections$: Observable<GuestDashboardSection[]>;
   institutionName$: Promise<string>;
   institutionPhoto$: Promise<SafeResourceUrl>;
@@ -32,7 +31,7 @@ export class GuestDashboard implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.sections$ = this.activatedRoute.data.pipe(map(data => data.data));
+    this.sections$ = this.activatedRoute.data.pipe(map(data => data.sections));
     this.loadInfo();
     this.pushNotificationRegistration();
   }
