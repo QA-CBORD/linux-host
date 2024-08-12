@@ -14,6 +14,8 @@ import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-
 import { IsActiveRouteInListPipe } from './pipe/is-active-route-in-list.pipe';
 import { TOP_NAV_ELEMENTS } from '@shared/model/generic-constants';
 import { ShoppingCartBtnComponent } from './components/shopping-cart-btn/shopping-cart-btn.component';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { Settings } from 'src/app/app.global';
 
 @Component({
   standalone: true,
@@ -56,7 +58,8 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly popoverController: PopoverController,
     private readonly modalController: ModalController,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly settingsFacadeService: SettingsFacadeService,
   ) {
     this.suscription = this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe(async () => {
       try {
@@ -70,8 +73,8 @@ export class StGlobalNavigationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.navElements$ = this.navigationSettingsService.settings$;
-    this.activitiesCount$ = this.navElements$.pipe(
+    this.navElements$ = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES).pipe(switchMap(() => this.navigationSettingsService.settings$));
+    this.activitiesCount$ = this.navigationSettingsService.settings$.pipe(
       switchMap(navElements => {
         const indicatorValueNavEls = navElements.slice(TOP_NAV_ELEMENTS).filter(navEl => !!navEl.indicatorValue$);
         if (indicatorValueNavEls.length) {
