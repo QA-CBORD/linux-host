@@ -103,9 +103,11 @@ export class SessionFacadeService {
         const isBiometricsEnabled = await this.identityFacadeService.isBiometricAvailable();
         const isBiometricsEnabledForUserPreference = await this.identityFacadeService
           .cachedBiometricsEnabledUserPreference$;
-        if (isBiometricsEnabled && isBiometricsEnabledForUserPreference) {
+        const loadBiometrics = isBiometricsEnabled && isBiometricsEnabledForUserPreference;
+        const biometricsEnabledAtPhoneSettings = await this.identityFacadeService.biometricsEnabledAtPhoneSettings$;
+        if (loadBiometrics) {
           return LoginState.BIOMETRIC_SET;
-        } else {
+        } else if (!loadBiometrics && !biometricsEnabledAtPhoneSettings) {
           return LoginState.PIN_SET;
         }
       }
@@ -180,9 +182,9 @@ export class SessionFacadeService {
 
   private async closeTopControllers() {
     if (this.getIsWeb()) return;
-      this.nativeProvider.dismissTopControllers(
-        !!this.nativeStartupFacadeService.blockNavigationStartup,
-        this.nativeProvider.getKeepTopModal
-      );
+    this.nativeProvider.dismissTopControllers(
+      !!this.nativeStartupFacadeService.blockNavigationStartup,
+      this.nativeProvider.getKeepTopModal
+    );
   }
 }

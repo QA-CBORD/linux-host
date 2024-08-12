@@ -51,6 +51,7 @@ export class StartupPage {
   }
 
   startAuthFlow({ skipLoginFlow, biometricEnabled }) {
+    //Try case without setTIemout
     if (skipLoginFlow) {
       this.unlockVault(biometricEnabled);
     } else {

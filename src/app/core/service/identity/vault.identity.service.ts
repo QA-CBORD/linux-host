@@ -280,7 +280,7 @@ export class VaultIdentityService {
   async unlockVaultIfLocked(): Promise<VaultSession> {
     if (await this.hasStoredSession()) {
       return this.unlockVault(
-        await this.userPreferenceService.cachedBiometricsEnabledUserPreference()
+        await this.userPreferenceService.cachedBiometricsEnabledUserPreference(true)
       );
     }
     return { pin: null };
