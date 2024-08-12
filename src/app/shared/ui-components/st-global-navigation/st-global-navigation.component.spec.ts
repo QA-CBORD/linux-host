@@ -28,7 +28,6 @@ const navigationFacadeSettingsServiceStub = {};
 describe('StGlobalNavigationComponent', () => {
     let component: StGlobalNavigationComponent;
     let fixture: ComponentFixture<StGlobalNavigationComponent>;
-    let navigationSettingsService: NavigationFacadeSettingsService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -46,7 +45,6 @@ describe('StGlobalNavigationComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(StGlobalNavigationComponent);
         component = fixture.componentInstance;
-        navigationSettingsService = TestBed.inject(NavigationFacadeSettingsService);
         fixture.detectChanges();
     });
 
