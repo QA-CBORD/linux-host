@@ -172,6 +172,9 @@ export class IdentityFacadeService extends ServiceStateFacade {
   get cachedBiometricsEnabledUserPreference$(): Promise<boolean> {
     return this.userPreferenceService.cachedBiometricsEnabledUserPreference();
   }
+  get biometricsEnabledAtPhoneSettings$(): Promise<boolean> {
+    return this.userPreferenceService.cachedBiometricsEnabledUserPreference(true);
+  }
 
   private set _pinEnabledUserPreference(value: boolean) {
     this.userPreferenceService.setPinEnabledUserPreference(value);

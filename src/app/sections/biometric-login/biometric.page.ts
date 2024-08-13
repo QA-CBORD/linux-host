@@ -23,8 +23,9 @@ export class BiometricPage implements OnInit {
     if (action === 'turnon') {
       biometricsEnabled = true;
     } else if (action === 'later' || action === 'disable') {
-      this.identityFacadeService._biometricsEnabledUserPreference = false;
+      biometricsEnabled = false;
     }
+    this.identityFacadeService._biometricsEnabledUserPreference = biometricsEnabled;
     this.openPinModal(biometricsEnabled);
   }
 

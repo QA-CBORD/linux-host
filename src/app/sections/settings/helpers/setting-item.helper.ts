@@ -24,7 +24,7 @@ export function getCardStatusValidation(services: SettingsServices): Observable<
 export async function setBiometricStatus(services: SettingsServices): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const setting: SettingItemConfig = this;
-  setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
+  setting.checked = await services.identity.biometricsEnabledAtPhoneSettings$;
 }
 
 export function setReportCardLabel(services: SettingsServices) {
