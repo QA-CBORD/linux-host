@@ -44,7 +44,7 @@ export class StartupPage {
     this.nativeProvider.dismissTopControllers();
     this.loadingService.showSpinner();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { skipAuthFlow, ...rest } = <any>this.location.getState();
+    const { skipAuthFlow, ...rest } = <any> this.location.getState();
     if (!skipAuthFlow) {
       this.startAuthFlow(rest);
     }
@@ -110,7 +110,7 @@ export class StartupPage {
         // This may ocurr on no conectivity screen sent to background.
         if (await this.identityFacadeService.isVaultLocked()) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { biometricEnabled } = <any>this.location.getState();
+          const { biometricEnabled } = <any> this.location.getState();
           return this.unlockVault(biometricEnabled);
         }
 
