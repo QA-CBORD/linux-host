@@ -24,9 +24,6 @@
 			]
 		}
 	},
-	"server": {
-		"androidScheme": "http"
-	},
 	"packageClassList": [
 		"InAppReviewPlugin",
 		"ScreenBrightnessPlugin",
