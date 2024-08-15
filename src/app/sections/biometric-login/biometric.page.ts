@@ -29,7 +29,7 @@ export class BiometricPage implements OnInit {
     this.openPinModal(biometricsEnabled);
   }
 
-  private async openPinModal(isBiometric: boolean): Promise<void> {
+  private async openPinModal(isBiometric: boolean): Promise<void> {  
     try {
       // Displaying loading spinner while waiting for login response
       this.loading = true;
