@@ -80,7 +80,7 @@ export class VaultIdentityService {
     this.vault?.onError(async (err: VaultError) => {
       switch (err.code) {
         case VaultErrorCodes.TooManyFailedAttempts:
-          {   
+          {
             const allData = await this.getValues();
             this.vault.clear();
             this.init();
@@ -144,7 +144,7 @@ export class VaultIdentityService {
     const { biometricUsed, pin, migrationResult } = await VaultFactory.newVaultMigrationInstance(
       this
     ).doVaultMigration();
-    
+
     if (migrationResult == VaultMigrateResult.MIGRATION_SUCCESS) this.onVaultMigratedSuccess({ pin, biometricUsed });
     return migrationResult;
   }
