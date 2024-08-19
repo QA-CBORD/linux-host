@@ -58,10 +58,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() storeAddress: AddressInfo;
   @Input() settings: MerchantSettingInfo[];
   @Input() activeDeliveryAddressId: string;
-  @Input() set activeOrderType(activeOrderType: ORDER_TYPE) {
-    this.orderType =
-      activeOrderType !== null ? activeOrderType : this.orderTypes?.pickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
-  }
+  @Input() activeOrderType: ORDER_TYPE = null;
   @Input() showNavBarOnDestroy = true;
   @Input() timeZone: string;
   @ViewChild(StDateTimePickerComponent, { static: true }) child: StDateTimePickerComponent;
@@ -96,6 +93,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.orderType =
+      this.activeOrderType !== null
+        ? this.activeOrderType
+        : this.orderTypes.pickup
+        ? ORDER_TYPE.PICKUP
+        : ORDER_TYPE.DELIVERY;
     this.dispatchingData();
     this.cartService.resetClientOrderId();
   }
