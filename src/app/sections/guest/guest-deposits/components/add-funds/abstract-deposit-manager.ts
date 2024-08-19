@@ -107,7 +107,7 @@ export abstract class AbstractDepositManager {
   }
 
   async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({ message, duration: 5000 });
+    await this.toastService.showError(message);
   }
 
   get minMaxOfAmounts() {
