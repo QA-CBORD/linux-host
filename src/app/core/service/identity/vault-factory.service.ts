@@ -77,7 +77,7 @@ class VaultMigration {
   }
 
   async doVaultMigration(): Promise<{ pin?: string; migrationResult: VaultMigrateResult; biometricUsed: boolean }> {
-    if (await this.vaultService.userPreferenceService.cachedBiometricsEnabledUserPreference()) {
+    if (await this.vaultService.userPreferenceService.cachedBiometricsEnabledUserPreference(true)) {
       return this.migrateBiometricLogin();
     } else {
       return this.migratePinLogin();

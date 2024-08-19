@@ -1,7 +1,7 @@
-import { Inject, Injectable, Injector, NgZone } from "@angular/core";
-import { App } from "@capacitor/app";
-import { PluginListenerHandle } from "@capacitor/core";
-import { PinLoginProps } from "@core/model/authentication/pin-login-props.model";
+import { Inject, Injectable, Injector, NgZone } from '@angular/core';
+import { App } from '@capacitor/app';
+import { PluginListenerHandle } from '@capacitor/core';
+import { PinLoginProps } from '@core/model/authentication/pin-login-props.model';
 import {
   BiometricPermissionState,
   BrowserVault,
@@ -11,13 +11,13 @@ import {
   VaultError,
   VaultErrorCodes,
   VaultType,
-} from "@ionic-enterprise/identity-vault";
-import { ModalController } from "@ionic/angular";
-import { NavigationService } from "@shared/services/navigation.service";
-import { UserPreferenceService } from "@shared/services/user-preferences/user-preference.service";
-import { ROLES } from "src/app/app.global";
-import { ANONYMOUS_ROUTES } from "src/app/non-authorized/non-authorized.config";
-import { LoadingService } from "../loading/loading.service";
+} from '@ionic-enterprise/identity-vault';
+import { ModalController } from '@ionic/angular';
+import { NavigationService } from '@shared/services/navigation.service';
+import { UserPreferenceService } from '@shared/services/user-preferences/user-preference.service';
+import { ROLES } from 'src/app/app.global';
+import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
+import { LoadingService } from '../loading/loading.service';
 import {
   TIME_OUT_WITH_EXTRA,
   VaultMigrateResult,
@@ -26,14 +26,14 @@ import {
   VAULT_DEFAULT_TIME_OUT_IN_MILLIS,
   PinAction,
   PinCloseStatus,
-} from "./model.identity";
-import { PinAuthenticator } from "./pin-authentication";
-import { VaultFactory } from "./vault-factory.service";
+} from './model.identity';
+import { PinAuthenticator } from './pin-authentication';
+import { VaultFactory } from './vault-factory.service';
 
-const key = "sessionPin";
-const APP_STATE_CHANGE = "appStateChange";
+const key = 'sessionPin';
+const APP_STATE_CHANGE = 'appStateChange';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class VaultIdentityService {
   public state: VaultSession = { biometricUsed: false, pin: null };
   private vault: Vault | BrowserVault;
@@ -62,11 +62,9 @@ export class VaultIdentityService {
     this.pinAuthenticator = new PinAuthenticator(this.modalController);
     this.vault = vault || VaultFactory.newVaultInstance();
     await Device.setHideScreenOnBackground(false, false);
-    this.vault.onPasscodeRequested((isPasscodeSetRequest) => {
+    this.vault.onPasscodeRequested(isPasscodeSetRequest => {
       if (isPasscodeSetRequest) return this.state.pin;
-      return this.pinAuthenticator
-        .onPasscodeRequested()
-        .then((code) => this.vault.setCustomPasscode(code) && code);
+      return this.pinAuthenticator.onPasscodeRequested().then(code => this.vault.setCustomPasscode(code) && code);
     });
 
     this.vault.onLock(({ timeout }) => {
@@ -93,8 +91,8 @@ export class VaultIdentityService {
     });
   }
 
-   // Assuming Identity Vault is properly initialized
-   async getValues() {
+  // Assuming Identity Vault is properly initialized
+  async getValues() {
     try {
       const allData = {};
 
@@ -143,10 +141,11 @@ export class VaultIdentityService {
    */
   async migrateIfLegacyVault(): Promise<VaultMigrateResult> {
     this.loadingService.closeSpinner();
-    const { biometricUsed, pin, migrationResult } =
-      await VaultFactory.newVaultMigrationInstance(this).doVaultMigration();
-    if (migrationResult == VaultMigrateResult.MIGRATION_SUCCESS)
-      this.onVaultMigratedSuccess({ pin, biometricUsed });
+    const { biometricUsed, pin, migrationResult } = await VaultFactory.newVaultMigrationInstance(
+      this
+    ).doVaultMigration();
+
+    if (migrationResult == VaultMigrateResult.MIGRATION_SUCCESS) this.onVaultMigratedSuccess({ pin, biometricUsed });
     return migrationResult;
   }
 
@@ -188,8 +187,8 @@ export class VaultIdentityService {
   }
 
   async isVaultLocked(): Promise<boolean> {
-      const hasStoredSession = await this.hasStoredSession();
-      const isVaultLocked = await this.vault.isLocked();
+    const hasStoredSession = await this.hasStoredSession();
+    const isVaultLocked = await this.vault.isLocked();
 
     return hasStoredSession && isVaultLocked;
   }
@@ -197,13 +196,9 @@ export class VaultIdentityService {
   async presentPinModal(
     pinAction: PinAction,
     pinModalProps?: PinLoginProps
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
-    return this.pinAuthenticator.presentPinModal(
-      pinAction,
-      null,
-      pinModalProps
-    );
+    return this.pinAuthenticator.presentPinModal(pinAction, null, pinModalProps);
   }
 
   private setUserPin(pin: string) {
@@ -229,8 +224,8 @@ export class VaultIdentityService {
   }
 
   async isBiometricAvailable(): Promise<boolean> {
-      const isEnabled = await Device.isBiometricsEnabled();
-      const isAllowed = await this.isBiometricAllowed();
+    const isEnabled = await Device.isBiometricsEnabled();
+    const isAllowed = await this.isBiometricAllowed();
 
     return isEnabled && isAllowed;
   }
@@ -279,9 +274,7 @@ export class VaultIdentityService {
    */
   async unlockVaultIfLocked(): Promise<VaultSession> {
     if (await this.hasStoredSession()) {
-      return this.unlockVault(
-        await this.userPreferenceService.cachedBiometricsEnabledUserPreference(true)
-      );
+      return this.unlockVault(await this.userPreferenceService.cachedBiometricsEnabledUserPreference(true));
     }
     return { pin: null };
   }
@@ -289,10 +282,8 @@ export class VaultIdentityService {
   private async unlockVaultPin(resolve, reject) {
     this.pinAuthenticator
       .try(() => this.vault.unlock())
-      .then(async () =>
-        resolve({ pin: await this.getPin(), biometricUsed: false })
-      )
-      .catch((e) => reject(e));
+      .then(async () => resolve({ pin: await this.getPin(), biometricUsed: false }))
+      .catch(e => reject(e));
   }
 
   onVaultUnlockSuccess(pin: string) {
@@ -308,8 +299,8 @@ export class VaultIdentityService {
       resolve({ pin, biometricUsed: true });
     } catch (error) {
       this.retryPinUnlock(error)
-        .then((session) => resolve(session))
-        .catch((e) => reject(e));
+        .then(session => resolve(session))
+        .catch(e => reject(e));
     }
   }
 
@@ -358,14 +349,8 @@ export class VaultIdentityService {
     return this.showSplashScreen({ skipLoginFlow: true, biometricEnabled });
   }
 
-  async showSplashScreen(state: {
-    skipLoginFlow: boolean;
-    biometricEnabled: boolean;
-  }): Promise<boolean> {
-    return this.routingService.navigate(
-      [ROLES.anonymous, ANONYMOUS_ROUTES.startup],
-      { replaceUrl: true, state }
-    );
+  async showSplashScreen(state: { skipLoginFlow: boolean; biometricEnabled: boolean }): Promise<boolean> {
+    return this.routingService.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.startup], { replaceUrl: true, state });
   }
 
   async closeAllModals(): Promise<void> {
@@ -401,31 +386,22 @@ export class VaultIdentityService {
         clearTimeout(this.setTimeoutId);
       });
     }
-    const estimatedTimeInMillis =
-      e.estimatedTimeInMillis || TIME_OUT_WITH_EXTRA;
+    const estimatedTimeInMillis = e.estimatedTimeInMillis || TIME_OUT_WITH_EXTRA;
     this.setNewVaultTimeoutValue(estimatedTimeInMillis);
     if (e.keepTimeoutExtendedOnResume) {
       clearTimeout(this.setTimeoutId);
-      this.setTimeoutId = setTimeout(
-        () => this.setNewVaultTimeoutValue(),
-        estimatedTimeInMillis
-      );
+      this.setTimeoutId = setTimeout(() => this.setNewVaultTimeoutValue(), estimatedTimeInMillis);
     } else {
-      this.pluginListenerHandle = await App.addListener(
-        APP_STATE_CHANGE,
-        ({ isActive }) => {
-          if (isActive) {
-            setTimeout(() => this.setNewVaultTimeoutValue(), 1000);
-            this.pluginListenerHandle?.remove();
-          }
+      this.pluginListenerHandle = await App.addListener(APP_STATE_CHANGE, ({ isActive }) => {
+        if (isActive) {
+          setTimeout(() => this.setNewVaultTimeoutValue(), 1000);
+          this.pluginListenerHandle?.remove();
         }
-      );
+      });
     }
   }
 
-  async setNewVaultTimeoutValue(
-    estimatedTime: number = VAULT_DEFAULT_TIME_OUT_IN_MILLIS
-  ): Promise<boolean> {
+  async setNewVaultTimeoutValue(estimatedTime: number = VAULT_DEFAULT_TIME_OUT_IN_MILLIS): Promise<boolean> {
     const isVaultCurrentlyNotLocked = !(await this.isVaultLocked());
     if (isVaultCurrentlyNotLocked) {
       this.patchVaultConfig({ lockAfterBackgrounded: estimatedTime });

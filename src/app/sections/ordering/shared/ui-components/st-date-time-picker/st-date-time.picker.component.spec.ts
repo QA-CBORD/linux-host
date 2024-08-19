@@ -16,10 +16,11 @@ import { TranslateServiceStub } from '@sections/notifications/notifications.comp
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { StorageEntity } from '@core/classes/extendable-state-manager';
 import { By } from '@angular/platform-browser';
+import { Schedule } from '../order-options.action-sheet/order-options.action-sheet.component';
 
 const accessibilityService = {
   isVoiceOverEnabled$: false,
-}
+};
 
 describe('StDateTimePicker', () => {
   let component: StDateTimePickerComponent;
@@ -36,7 +37,7 @@ describe('StDateTimePicker', () => {
     appStatesFacadeService = {
       getStateChangeEvent$: of({ isActive: false }),
     };
-     
+
     const storageStateService = {
       getStateEntityByKey$: jest.fn(() =>
         of({
@@ -65,16 +66,16 @@ describe('StDateTimePicker', () => {
           provide: TranslateFacadeService,
           useValue: {
             orderingInstant: jest.fn(),
-          }
+          },
         },
         { provide: TranslateService, useClass: TranslateServiceStub },
         { provide: AccessibilityService, useValue: accessibilityService },
-        { provide: StorageStateService, useValue: storageStateService }
+        { provide: StorageStateService, useValue: storageStateService },
       ],
     }).compileComponents();
   });
-  
-  beforeAll(() => { 
+
+  beforeAll(() => {
     const picker = document.createElement('ion-picker');
     picker.classList.add('picker-wrapper');
     document.body.appendChild(picker);
@@ -93,7 +94,7 @@ describe('StDateTimePicker', () => {
         },
       ],
       days: [{ date: '2022-12-31', dayOfWeek: 1, hourBlocks: [] }],
-    };
+    } as Schedule;
     component.userData = {
       locale: 'en-US',
       timeZone: 'America/New_York',
@@ -236,7 +237,7 @@ describe('StDateTimePicker', () => {
           ],
         },
       ],
-    };
+    } as Schedule;
 
     expect(component['getTimeStamp']('2022-01-01', 12, 30)).toBe('timestamp2');
   });
@@ -259,7 +260,7 @@ describe('StDateTimePicker', () => {
           ],
         },
       ],
-    };
+    } as Schedule;
 
     expect(component['getTimeStamp']('2022-01-01', 12, 30)).toBeUndefined();
   });
@@ -282,7 +283,7 @@ describe('StDateTimePicker', () => {
           ],
         },
       ],
-    };
+    } as Schedule;
 
     expect(component['hasTimeStamp']()).toBe(false);
   });
@@ -305,18 +306,18 @@ describe('StDateTimePicker', () => {
           dayOfWeek: 1,
         },
       ],
-    };
+    } as Schedule;
 
     expect(component['hasTimeStamp']()).toBe(true);
   });
 
-  it('should not create an accessible button with VoiceOver', async() => {
+  it('should not create an accessible button with VoiceOver', async () => {
     const spy = jest.spyOn(component as any, 'accessiblePickupButton');
     await component.onPickerWillPresent({ target: document.body } as unknown as CustomEvent);
     expect(spy).not.toBeCalled();
   });
 
-  it('should create an accessible button with VoiceOver', async() => {
+  it('should create an accessible button with VoiceOver', async () => {
     accessibilityService.isVoiceOverEnabled$ = true;
     const spy = jest.spyOn(component as any, 'accessiblePickupButton');
     await component.onPickerWillPresent({ target: document.body } as unknown as CustomEvent);

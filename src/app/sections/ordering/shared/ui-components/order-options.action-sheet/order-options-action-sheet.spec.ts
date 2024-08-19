@@ -447,7 +447,7 @@ describe('OrderOptionsActionSheet', () => {
           ],
         },
       ],
-    };
+    } as Schedule;
     component.timeZone = 'UTC';
     jest.spyOn(cartService, 'extractTimeZonedString').mockReturnValue('2022-01-01T00:00:00Z');
     jest.spyOn(component as any, 'isMerchantDateUnavailable').mockReturnValue(false);
@@ -484,7 +484,7 @@ describe('OrderOptionsActionSheet', () => {
           ],
         },
       ],
-    };
+    } as Schedule;
     component.timeZone = 'UTC';
     jest.spyOn(cartService, 'extractTimeZonedString').mockReturnValue('2022-01-01T00:00:00Z');
     jest.spyOn(component as any, 'isMerchantDateUnavailable').mockReturnValue(true);
@@ -504,7 +504,7 @@ describe('OrderOptionsActionSheet', () => {
   });
 
   it('should return true if schedule days is empty', () => {
-    const schedule: Schedule = { days: [], menuSchedule: [] };
+    const schedule: Schedule = { days: [], menuSchedule: [] } as Schedule;
     expect(component['isMerchantDateUnavailable'](schedule)).toBe(true);
   });
 
@@ -512,7 +512,7 @@ describe('OrderOptionsActionSheet', () => {
     const schedule: Schedule = {
       days: [{ date: '2022-01-01', dayOfWeek: 1, hourBlocks: [{ timestamps: [{}] }] } as Day],
       menuSchedule: [],
-    };
+    } as Schedule;
     expect(component['isMerchantDateUnavailable'](schedule)).toBe(false);
   });
 

@@ -10,9 +10,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 export class BiometricPage implements OnInit {
   loading = false;
   biometricConfig: { type: string; name: string } = null;
-  constructor(
-    private readonly identityFacadeService: IdentityFacadeService,
-    private readonly router: Router) {}
+  constructor(private readonly identityFacadeService: IdentityFacadeService, private readonly router: Router) {}
 
   ngOnInit() {
     this.biometricConfig = this.router.getCurrentNavigation().extras.state.biometricConfig;
