@@ -34,6 +34,7 @@ import { StButtonModule } from '@shared/ui-components';
 import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { TOAST_DURATION } from '@shared/model/generic-constants';
 @Component({
   standalone: true,
   imports: [
@@ -43,7 +44,7 @@ import { TranslateModule } from '@ngx-translate/core';
     StDateTimePickerComponent,
     StButtonModule,
     AddressHeaderFormatPipeModule,
-    TranslateModule
+    TranslateModule,
   ],
   providers: [AccessibilityService, AddressHeaderFormatPipe],
   templateUrl: './order-options.action-sheet.component.html',
@@ -88,7 +89,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly userFacadeService: UserFacadeService,
     private readonly a11yService: AccessibilityService,
-    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe,
+    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe
   ) {}
 
   ngOnInit() {
@@ -120,6 +121,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         [this.enumOrderTypes.DELIVERY]: this.orderTypes.deliveryPrepTime,
       }[this.orderType] || 0;
     return `(${time} min)`;
+  }
+
+  get merchantSchedule() {
+    return {
+      [this.enumOrderTypes.PICKUP]: this.schedulePickup,
+      [this.enumOrderTypes.DELIVERY]: this.scheduleDelivery,
+    }[this.orderType];
   }
 
   dispatchingData() {
@@ -232,13 +240,26 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     let date = { dueTime: this.selectedTimeStamp || this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
-    const chooseAddressError = this.translateFacadeService.orderingInstant(
-      ORDERING_CONTENT_STRINGS.formErrorChooseAddress
-    );
+
     this.cartService.orderIsAsap = date.isASAP;
     let isOutsideMerchantDeliveryArea = of(false);
     if (!this.orderOptionsData?.address) {
-      return this.onToastDisplayed(chooseAddressError);
+      return this.onToastDisplayed(
+        this.translateFacadeService.orderingInstant(ORDERING_CONTENT_STRINGS.formErrorChooseAddress)
+      );
+    }
+
+    if (this.isTimeDisable && date.isASAP && !this.merchantSchedule.asapAvailable) {
+      const ordertypeMessage = {
+        [ORDER_TYPE.PICKUP]: ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable,
+        [ORDER_TYPE.DELIVERY]: ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable,
+      }[this.orderType];
+
+      return await this.toastService.showError(
+        this.translateFacadeService.errorCommonInstant(ordertypeMessage),
+        TOAST_DURATION,
+        'bottom'
+      );
     }
     const labelDeliveryAddress = this.translateFacadeService.orderingInstant(
       ORDERING_CONTENT_STRINGS.labelDeliveryAddress
@@ -332,7 +353,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     if (openNow) {
       this.dateTimePicker = 'ASAP';
     } else {
-      const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
+      const schedule = this.merchantSchedule;
       if (this.isMerchantDateUnavailable(schedule)) {
         return this.onMerchantDateUnavailable();
       }
@@ -378,7 +399,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   private isMerchantDateUnavailable(schedule: Schedule) {
-     return !(schedule?.days?.[0]?.hourBlocks?.[0]?.timestamps?.length);
+    return !schedule?.days?.[0]?.hourBlocks?.[0]?.timestamps?.length;
   }
 
   private async onMerchantDateUnavailable() {
@@ -420,4 +441,5 @@ export interface MenuScheduleEntity {
 export interface Schedule {
   days: Day[];
   menuSchedule: MenuScheduleEntity[];
+  asapAvailable: boolean;
 }

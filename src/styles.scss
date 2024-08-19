@@ -663,3 +663,7 @@ ion-modal.sc-modal {
 *:focus {
   outline: 1px solid $color-blue-focus;
 }
+ ion-radio:focus {
+    outline: none;
+}
+
