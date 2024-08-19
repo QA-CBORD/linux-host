@@ -63,6 +63,6 @@ export class HousingTransactionsOnlyComponent implements OnInit {
   }
 
   private async onErrorRetrieveTransactions(message: string): Promise<void> {
-    await this.toastService.showToast({ message });
+    await this.toastService.showError(message);
   }
 }

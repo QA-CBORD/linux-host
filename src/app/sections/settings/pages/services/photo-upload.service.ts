@@ -160,7 +160,7 @@ export class PhotoUploadService {
         displayAlert &&
           this.toastService.showError(
             this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
-            TOAST_DURATION
+            { duration: TOAST_DURATION },
           );
     }
   }

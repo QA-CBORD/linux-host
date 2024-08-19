@@ -97,7 +97,7 @@ export class PhotoCropModalComponent {
   }
 
   async loadImageFailed() {
-    await this.toastService.showToast({ message: 'There was an issue loading your photo. Please try again' });
+    await this.toastService.showError('There was an issue loading your photo. Please try again');
   }
 
   async showModal() {

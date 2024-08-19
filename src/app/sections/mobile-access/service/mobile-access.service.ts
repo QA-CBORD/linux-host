@@ -257,6 +257,6 @@ export class MobileAccessService {
   }
 
   private async errorSavingFavourites(message: string): Promise<void> {
-    await this.toastService.showToast({ message, duration: this.toastDuration } );
+    await this.toastService.showError(message, { duration: this.toastDuration });
   }
 }

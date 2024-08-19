@@ -50,14 +50,14 @@ export class ToastService {
     return toast;
   }
 
-  async showError(message: string, duration = 5000, position: "top" | "bottom" | "middle" = 'top') {
+  async showError(message: string, options: Partial<ToastConfig> = {}) { 
     const myToast = await this.toastController.create({
       message,
-      duration,
+      duration: options.duration || 5000,
       cssClass: 'toast-message-error',
       mode: 'ios',
-      position,
-      buttons: [
+      position: options.position || 'top',
+      buttons: options?.toastButtons?.length > 0 ? options.toastButtons : [
         {
           icon: '/assets/icon/error.svg',
           side: 'start',
@@ -68,6 +68,11 @@ export class ToastService {
           handler: () => myToast.dismiss(),
         }
       ],
+    });
+    myToast.onDidDismiss().then(() => {
+      if (options.onDismiss) {
+        options.onDismiss();
+      }
     });
     myToast.setAttribute('role', 'alert');
     await myToast.present();

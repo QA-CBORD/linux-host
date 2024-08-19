@@ -37,8 +37,10 @@ export class UnlinkCredentialsComponent {
 
     this.toastService.showError(
       this.translateService.instant('patron-ui.mobile-credential.unlink_credentials_error'),
-      4000,
-      'bottom'
+      {
+        duration: 4000,
+        position: 'bottom',
+      }
     );
   };
 }

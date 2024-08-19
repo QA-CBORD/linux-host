@@ -346,7 +346,7 @@ export class CartComponent implements OnInit, OnDestroy {
           this.cartService.cartsErrorMessage = error[1];
           this.dueTimeHasErrors = true;
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
-          this.toastService.showError(message, TOAST_DURATION, 'bottom');
+          this.toastService.showError(message, { duration: TOAST_DURATION, position: 'bottom' });
           this.isValidatingDueTime = false;
           this.cdRef.detectChanges();
         }
@@ -651,7 +651,7 @@ export class CartComponent implements OnInit, OnDestroy {
               : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable,
         }[key] as keyof DueTimeErrorMessages;
         const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
-        this.toastService.showError(errorMessage, TOAST_DURATION, 'bottom');
+        this.toastService.showError(errorMessage, { duration: TOAST_DURATION, position: 'bottom' });
         this.dueTimeHasErrors = true;
         this.errorCode = key;
         this.page.scrollToTop();

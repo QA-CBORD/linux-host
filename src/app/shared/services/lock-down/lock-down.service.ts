@@ -37,7 +37,7 @@ export class LockDownService {
 
   isLockDownOn(): boolean {
     if (this.lockDownFlag) {
-      this.toastService.showError(this.lockDownMessage || this.defaultMessage , 5000, 'bottom');
+      this.toastService.showError(this.lockDownMessage || this.defaultMessage , { position: 'bottom' });
       return true;
     }
 

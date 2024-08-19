@@ -92,7 +92,7 @@ export class ScanCodeComponent implements OnInit {
       this.startScanning(this.formats);
     } else {
       this.closeScanCode();
-      this.toastService.showToast({ message: this.translateService.instant('patron-ui.checkin.no_permissions') });
+      this.toastService.showError(this.translateService.instant('patron-ui.checkin.no_permissions'));
     }
   }
 

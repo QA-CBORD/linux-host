@@ -77,20 +77,22 @@ export class ReportCardComponent implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({
+    await this.toastService.showError(
       message,
-      toastButtons: [
-        {
-          text: 'Retry',
-          handler: () => {
-            this.toggleStatus();
+       {
+        toastButtons: [
+          {
+            text: 'Retry',
+            handler: () => {
+              this.toggleStatus();
+            },
           },
-        },
-        {
-          text: 'Dismiss',
-        },
-      ],
-    });
+          {
+            text: 'Dismiss',
+          },
+        ]
+       }
+    );
   }
   close() {
     this.modalController.dismiss();

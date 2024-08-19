@@ -328,7 +328,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ): Promise<MenuInfo | never> {
     if (!accountInfoList.accounts.length && !accountInfoList.creditAccepted) {
       const errorMessage = this.translateFacadeService.errorCommonInstant(ORDERING_CONTENT_STRINGS.noAvailableTenders);
-      this.toastService.showError(errorMessage, 5000, 'bottom');
+      this.toastService.showError(errorMessage, { duration: 5000, position: 'bottom' });
       return Promise.reject();
     }
 
