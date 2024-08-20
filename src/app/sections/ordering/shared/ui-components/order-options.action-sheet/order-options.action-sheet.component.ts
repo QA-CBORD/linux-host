@@ -407,7 +407,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const noDatesMessage = this.translateFacadeService.orderingInstant(
       ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
     );
-    this.toastService.showToast({ message: noDatesMessage });
+    this.toastService.showError({ message: noDatesMessage });
     await this.modalsService.dismiss();
   }
 }
