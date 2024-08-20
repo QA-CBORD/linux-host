@@ -256,10 +256,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       }[this.orderType];
 
       return await this.toastService.showError(
-        this.translateFacadeService.errorCommonInstant(ordertypeMessage),
-        TOAST_DURATION,
-        'bottom'
-      );
+        {
+          message: this.translateFacadeService.errorCommonInstant(ordertypeMessage),
+          duration: TOAST_DURATION,
+          position: 'bottom'
+        });
     }
     const labelDeliveryAddress = this.translateFacadeService.orderingInstant(
       ORDERING_CONTENT_STRINGS.labelDeliveryAddress
