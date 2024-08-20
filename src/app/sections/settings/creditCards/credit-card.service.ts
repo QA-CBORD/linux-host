@@ -41,7 +41,7 @@ export class CreditCardService {
   }
 
   private showErrorMessage(message: string, duration = 5000) {
-    this.toastService.showError(message, { duration });
+    this.toastService.showError({ message, duration });
   }
   async showMessage(message: string, duration = 5000) {
     await this.toastService.showToast({ message, duration });

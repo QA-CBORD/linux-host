@@ -177,8 +177,8 @@ export class PhoneEmailComponent implements OnInit, OnDestroy {
 
   private async onErrorRetrieve(message: string) {
     await this.toastService.showError(
-      message,
       {
+        message,
         toastButtons:[
           {
             text: 'Retry',

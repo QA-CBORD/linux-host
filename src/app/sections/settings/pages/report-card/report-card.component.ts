@@ -78,8 +78,7 @@ export class ReportCardComponent implements OnInit {
 
   private async onErrorRetrieve(message: string) {
     await this.toastService.showError(
-      message,
-       {
+      { message,
         toastButtons: [
           {
             text: 'Retry',

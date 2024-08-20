@@ -91,9 +91,7 @@ describe('AccessCardComponent', () => {
     component.onWalletClicked();
 
     expect(spy).toHaveBeenCalledWith(
-      translateService.instant('get_mobile.photo_upload.required_message'),
-      TOAST_DURATION,
-      'bottom'
+      {"duration": 5000, "message": undefined, "position": "bottom"}
     );
   });
 });

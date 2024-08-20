@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -44,11 +44,10 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly nav: Router,
     private readonly nativeProvider: NativeProvider,
-    private readonly appRateService: AppRateService
-  ) {}
-  
-  private readonly translateFacadeService: TranslateFacadeService = inject(TranslateFacadeService);
-  
+    private readonly appRateService: AppRateService,
+    private readonly translateFacadeService: TranslateFacadeService
+  ) { }
+
   get email(): AbstractControl {
     return this.requestFundsForm.get(this.controlsNames.email);
   }
@@ -153,7 +152,7 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   private async showToast(): Promise<void> {
-    await this.toastService.showError(this.translateFacadeService.instant('get_mobile.error.general'));
+    await this.toastService.showError({ message: this.translateFacadeService.instant('get_mobile.error.general') });
   }
 
   private async showModal(): Promise<void> {

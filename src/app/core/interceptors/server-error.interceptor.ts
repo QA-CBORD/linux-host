@@ -48,7 +48,7 @@ export class ServerError implements HttpInterceptor {
   }
 
   private async presentToast(message: string): Promise<void> {
-    await this.toastService.showError(message);
+    await this.toastService.showError({ message });
   }
 
   private hasKnownErrorFormat(errorString: string): boolean {

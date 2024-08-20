@@ -71,7 +71,7 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
   }
 
   private async onErrorRetrieveTransactions(message: string): Promise<void> {
-    await this.toastService.showError(message);
+    await this.toastService.showError({ message });
   }
 
   get csNames() {

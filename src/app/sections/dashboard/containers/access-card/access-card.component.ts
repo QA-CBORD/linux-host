@@ -150,8 +150,8 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     }
 
     this.toastSerice.showError(
-      this.traslateService.instant('get_mobile.photo_upload.required_message'),
-      { duration: TOAST_DURATION,
+      { message: this.traslateService.instant('get_mobile.photo_upload.required_message'),
+      duration: TOAST_DURATION,
       position: 'bottom' }
     );
   }

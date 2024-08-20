@@ -101,6 +101,6 @@ export class CreditCardMgmtComponent implements OnInit {
   }
 
   private showErrorMessage(message: string, duration = 5000) {
-    this.toastService.showError(message, { duration });
+    this.toastService.showError({ message, duration });
   }
 }

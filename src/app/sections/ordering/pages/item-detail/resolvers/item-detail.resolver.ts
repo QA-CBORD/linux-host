@@ -53,8 +53,8 @@ export class ItemDetailResolver {
         }
 
         this.toastService.showError(
-          this.translateFacadeService.instant('get_mobile.error.menu_item_not_found'),
-         { position: 'bottom' }
+          { message: this.translateFacadeService.instant('get_mobile.error.menu_item_not_found'),
+          position: 'bottom' }
         );
         return EMPTY;
       }),

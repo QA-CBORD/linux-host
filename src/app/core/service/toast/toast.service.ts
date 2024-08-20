@@ -17,7 +17,7 @@ export interface ToastConfig {
 export class ToastService {
   private readonly defaultDuration: number = 3000;
 
-  constructor(private readonly toastController: ToastController) {}
+  constructor(private readonly toastController: ToastController) { }
 
   async showToast(toastConfig: ToastConfig) {
     let config: ToastConfig = {
@@ -50,14 +50,14 @@ export class ToastService {
     return toast;
   }
 
-  async showError(message: string, options: Partial<ToastConfig> = {}) { 
+  async showError(options: ToastConfig) {
     const myToast = await this.toastController.create({
-      message,
-      duration: options.duration || 5000,
+      message: options.message,
+      duration: options.duration ?? 5000,
       cssClass: 'toast-message-error',
       mode: 'ios',
-      position: options.position || 'top',
-      buttons: options?.toastButtons?.length > 0 ? options.toastButtons : [
+      position: options.position ?? 'top',
+      buttons: options.toastButtons ?? [
         {
           icon: '/assets/icon/error.svg',
           side: 'start',

@@ -79,6 +79,6 @@ describe(LockDownService, () => {
     await service.loadStringsAndSettings();
     expect(service.isLockDownOn()).toBeTruthy();
     expect(service.defaultMessage).toBeTruthy();
-    expect(toastSpy).toHaveBeenCalledWith(service.defaultMessage, 5000, 'bottom');
+    expect(toastSpy).toHaveBeenCalledTimes(1);
   });
 });

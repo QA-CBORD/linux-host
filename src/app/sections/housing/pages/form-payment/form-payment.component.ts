@@ -117,7 +117,7 @@ export class FormPaymentComponent implements OnInit {
   }
 
   private async showErrorMessage(err: string) {
-    this.toastService.showError(err);
+    this.toastService.showError({ message: err });
     this.loadingService.closeSpinner();
   }
 

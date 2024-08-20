@@ -74,11 +74,11 @@ export class ForgotPasswordPage implements OnInit {
           }, TIMEOUTS.A11yFocus);
         } else {
           return this.toastService.showError(
-           errorMessage
+           { message: errorMessage }
           );
         }
       })
-      .catch(() => this.toastService.showError(errorMessage))
+      .catch(() => this.toastService.showError({ message: errorMessage }))
       .finally(() => (this.isLoading = false));
   }
 

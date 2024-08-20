@@ -84,7 +84,7 @@ export class IdentifyRecipientComponent implements OnInit {
   getNextField(index: number) {
     return this.newRecipientFieldsRef.toArray()[index];
   }
-  
+
   async continue() {
     const errorMessage = this.contentString.addNewRecipientFailureMessage;
     if (this.selectedRecipient === this.someoneElseRecipient) {
@@ -111,10 +111,10 @@ export class IdentifyRecipientComponent implements OnInit {
             this.resetForm(this.newRecipientFields.controls);
             this.navigateToAddFunds(newRecepient);
           } else {
-            this.toastService.showError(errorMessage);
+            this.toastService.showError({ message: errorMessage });
           }
         })
-        .catch(() => this.toastService.showError(errorMessage))
+        .catch(() => this.toastService.showError({ message: errorMessage }))
         .finally(() => {
           this.isLoading = false;
           this.loadingService.closeSpinner();

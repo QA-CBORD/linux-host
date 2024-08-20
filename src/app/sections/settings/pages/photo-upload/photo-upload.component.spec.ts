@@ -175,8 +175,7 @@ describe('PhotoUploadComponent', () => {
       component.validateLocalPhotosData();
       // Assuming PhotoTypeTranslateMap[1] corresponds to the translation key for govIdFront's error
       expect(toastService.showError).toHaveBeenCalledWith(
-        'get_mobile.photo_upload.invalid_photo_submission.govt_id_front',
-        TOAST_DURATION
+        {"duration": 5000, "message": "get_mobile.photo_upload.invalid_photo_submission.govt_id_front"}
       );
     });
   });
