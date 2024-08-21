@@ -8,6 +8,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { PhotoUploadService } from '../services/photo-upload.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { PhotoCropModalComponent } from './photo-crop-modal.component';
+import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 
 describe('PhotoCropModalComponent', () => {
   let component: PhotoCropModalComponent;
@@ -26,7 +28,7 @@ describe('PhotoCropModalComponent', () => {
       photoUploadSettings: { saveHeight: {}, saveWidth: {} },
       orientation: {}
     });
-    const toastServiceStub = () => ({ showToast: object => ({}) });
+    const toastServiceStub = { showToast: jest.fn(), showError: jest.fn() };
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [PhotoCropModalComponent],
@@ -35,7 +37,8 @@ describe('PhotoCropModalComponent', () => {
         { provide: PopoverController, useFactory: popoverControllerStub },
         { provide: LoadingService, useFactory: loadingServiceStub },
         { provide: PhotoUploadService, useFactory: photoUploadServiceStub },
-        { provide: ToastService, useFactory: toastServiceStub }
+        { provide: ToastService, useValue: toastServiceStub },
+        { provide: TranslateFacadeService, useClass: TranslateServiceStub }
       ]
     });
     fixture = TestBed.createComponent(PhotoCropModalComponent);
@@ -74,9 +77,9 @@ describe('PhotoCropModalComponent', () => {
       const toastServiceStub: ToastService = fixture.debugElement.injector.get(
         ToastService
       );
-     jest.spyOn(toastServiceStub, 'showToast');
+     jest.spyOn(toastServiceStub, 'showError');
       component.loadImageFailed();
-      expect(toastServiceStub.showToast).toHaveBeenCalled();
+      expect(toastServiceStub.showError).toHaveBeenCalled();
     });
   });
 

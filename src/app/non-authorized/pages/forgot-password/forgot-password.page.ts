@@ -73,12 +73,12 @@ export class ForgotPasswordPage implements OnInit {
             document.getElementById('confirmation-container__info')?.focus();
           }, TIMEOUTS.A11yFocus);
         } else {
-          return this.toastService.showToast({
-            message: errorMessage,
-          });
+          return this.toastService.showError(
+           { message: errorMessage }
+          );
         }
       })
-      .catch(() => this.toastService.showToast({ message: errorMessage }))
+      .catch(() => this.toastService.showError({ message: errorMessage }))
       .finally(() => (this.isLoading = false));
   }
 

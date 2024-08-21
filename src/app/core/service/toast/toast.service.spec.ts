@@ -30,7 +30,7 @@ describe('ToastService', () => {
   });
 
   it('should create error toast', async () => {
-    await service.showError('test');
+    await service.showError({ message: 'test' });
     expect(toastControllerStub.create).toHaveBeenCalled();
   });
 });

@@ -232,7 +232,7 @@ export class MealDonationsComponent implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({ message });
+    await this.toastService.showError({ message });
   }
 
   private deleteForm() {

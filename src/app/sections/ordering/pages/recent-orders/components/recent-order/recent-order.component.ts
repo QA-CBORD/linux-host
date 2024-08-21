@@ -121,7 +121,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     const merchantHasChanged = merchant && merchant.id !== currentMerchant.id;
 
     if (currentMerchant.walkout) {
-      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+      await this.toastService.showError({ message: TOAST_MESSAGES.isWalkOut });
       return;
     }
 
@@ -346,7 +346,7 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
   }
 
   private async onValidateErrorToast(message: string, onDismiss: () => void) {
-    await this.toastService.showToast({ message, toastButtons: [{ text: 'Close' }], onDismiss: onDismiss });
+    await this.toastService.showError({ message, toastButtons: [{ text: 'Close' }], onDismiss: onDismiss });
   }
 
   private setActiveAddress() {

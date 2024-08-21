@@ -13,6 +13,7 @@ describe('RewardsApiService', () => {
   let service: RewardsApiService;
   const mockToastService = {
     showToast: jest.fn(() => Promise.resolve()),
+    showError: jest.fn().mockResolvedValue({}),
   };
   const mockPlatform = {
     is: jest.fn().mockReturnValue(false),
@@ -123,7 +124,7 @@ describe('RewardsApiService', () => {
   it('should present toast at bottom if is nativeEnv', async () => {
     await service['presentToast']();
     jest.spyOn(mockPlatform, 'is').mockReturnValue(true);
-    expect(mockToastService.showToast).toHaveBeenCalledWith({
+    expect(mockToastService.showError).toHaveBeenCalledWith({
       message: 'Something went wrong - please try again',
       toastButtons: [{ text: 'Dismiss' }],
       position: 'top',
@@ -133,7 +134,7 @@ describe('RewardsApiService', () => {
   it('should present toast at bottom if is not nativeEnv', async () => {
     await service['presentToast']();
     jest.spyOn(mockPlatform, 'is').mockReturnValue(false);
-    expect(mockToastService.showToast).toHaveBeenCalledWith({
+    expect(mockToastService.showError).toHaveBeenCalledWith({
       message: 'Something went wrong - please try again',
       toastButtons: [{ text: 'Dismiss' }],
       position: 'bottom',

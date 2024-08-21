@@ -404,10 +404,9 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private async photoDataFetchErrorToast() {
-    await this.toastService.showToast({
-      message: 'There was an issue retrieving your photo information - please try again',
-      duration: 5000,
-      toastButtons: [
+    await this.toastService.showError(
+      { message: 'There was an issue retrieving your photo information - please try again',
+        toastButtons: [
         {
           side: 'end',
           text: 'Retry',
@@ -415,9 +414,10 @@ export class PhotoUploadComponent implements OnInit {
             this.clearLocalStateData();
             this.getPhotoData();
           },
-        },
-      ],
-    });
+          },
+        ]
+      },
+    );
   }
 
   navigateBack() {
@@ -452,10 +452,10 @@ export class PhotoUploadComponent implements OnInit {
     for (let photoDataIndex = 0; photoDataIndex < photosData.length; photoDataIndex++) {
       if (!photosData[photoDataIndex]) {
         this.toastService.showError(
-          this.translateService.instant(
+          { message: this.translateService.instant(
             `get_mobile.photo_upload.invalid_photo_submission.${PhotoTypeTranslateMap[photoDataIndex]}`
           ),
-          TOAST_DURATION
+          duration: TOAST_DURATION }
         );
         return false;
       }

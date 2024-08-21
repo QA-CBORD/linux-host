@@ -53,7 +53,7 @@ export class OrderingPage implements OnInit {
     }
 
     if (merchantInfo.walkout) {
-      await this.toastService.showError(TOAST_MESSAGES.isWalkOut);
+      await this.toastService.showError({ message: TOAST_MESSAGES.isWalkOut });
       return;
     }
     await this.activeCartService.preValidateOrderFlow(

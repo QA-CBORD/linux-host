@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ImageCroppedEvent, Dimensions } from 'ngx-image-cropper';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 
 enum Default {
   HEIGHT = 170,
@@ -54,6 +55,7 @@ export class PhotoCropModalComponent {
     private readonly toastService: ToastService,
   ) {}
 
+ private readonly translateFacadeService: TranslateFacadeService = inject(TranslateFacadeService);
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
@@ -97,7 +99,7 @@ export class PhotoCropModalComponent {
   }
 
   async loadImageFailed() {
-    await this.toastService.showToast({ message: 'There was an issue loading your photo. Please try again' });
+    await this.toastService.showError({ message: this.translateFacadeService.instant('get_web_gui.photo_upload_screen.photo_crop_error') });
   }
 
   async showModal() {

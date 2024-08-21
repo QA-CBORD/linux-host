@@ -111,10 +111,10 @@ export class IdentifyRecipientComponent implements OnInit {
             this.resetForm(this.newRecipientFields.controls);
             this.navigateToAddFunds(newRecepient);
           } else {
-            this.toastService.showToast({ message: errorMessage });
+            this.toastService.showError({ message: errorMessage });
           }
         })
-        .catch(() => this.toastService.showToast({ message: errorMessage }))
+        .catch(() => this.toastService.showError({ message: errorMessage }))
         .finally(() => {
           this.isLoading = false;
           this.loadingService.closeSpinner();

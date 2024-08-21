@@ -176,20 +176,22 @@ export class PhoneEmailComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({
-      message,
-      toastButtons: [
-        {
-          text: 'Retry',
-          handler: () => {
-            this.saveChanges();
+    await this.toastService.showError(
+      {
+        message,
+        toastButtons:[
+          {
+            text: 'Retry',
+            handler: () => {
+              this.saveChanges();
+            },
           },
-        },
-        {
-          text: 'Dismiss',
-        },
-      ],
-    });
+          {
+            text: 'Dismiss',
+          },
+        ]
+      }
+    );
   }
 
   private async presentToast(): Promise<void> {
