@@ -126,7 +126,7 @@ export class PhotoUploadService {
   /// get photo data by status Accepted and Pending and fetch array of photos
   private fetchUserPhotosInList(photoList: UserPhotoList): Observable<UserPhotoInfo[]> {
     const validPhotos = photoList.list.filter(({ status }) =>
-      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING].includes(status)
+      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING, PhotoStatus.REJECTED].includes(status)
     );
     if (!validPhotos.length) {
       return of([]);
@@ -159,8 +159,8 @@ export class PhotoUploadService {
       default:
         displayAlert &&
           this.toastService.showError(
-            this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
-            TOAST_DURATION
+            { message: this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
+            duration: TOAST_DURATION },
           );
     }
   }

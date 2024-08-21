@@ -86,6 +86,7 @@ describe('OrderOptionsActionSheet', () => {
 
     toastService = {
       showToast: jest.fn(),
+      showError: jest.fn().mockResolvedValue({}),
     };
 
     modalsService = {
@@ -429,8 +430,8 @@ describe('OrderOptionsActionSheet', () => {
     component.activeMerchant$ = of({ openNow: false } as MerchantInfo);
 
     // Set up the necessary properties for the else branch
-    component.activeOrderType = ORDER_TYPE.PICKUP;
-    component.schedulePickup = {
+    component.activeOrderType = ORDER_TYPE.DELIVERY;
+    component.scheduleDelivery = { 
       menuSchedule: [],
       days: [
         {

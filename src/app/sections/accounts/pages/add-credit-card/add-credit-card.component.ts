@@ -131,7 +131,7 @@ export class AddCreditCardComponent implements OnInit, OnDestroy {
   }
 
   private async failedCriationAccount(message: string) {
-    await this.toastService.showToast({ message });
+    await this.toastService.showError({ message });
   }
 
   private cardTypeControlSubscribtion() {

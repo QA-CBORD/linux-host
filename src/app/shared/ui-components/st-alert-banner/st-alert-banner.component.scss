@@ -3,28 +3,28 @@
 
 ion-card {
   --ion-color-danger: #ffedeb;
+  --ion-color-success: #{$color-success-95};
   color: black;
   @include font-nunito-regular(14px);
   border-radius: 8px;
   box-shadow: none;
   margin: 8px 0;
+  padding: 5px;
 }
 
 .alert-banner {
   &__content {
     display: flex;
-    align-items: center;
   }
   &__text {
-    margin-left: 10px;
+    margin-left: 15px;
+    width: 90%;
   }
   &__icon {
     height: 22.4px;
     width: 22.4px;
-  }
-  &__icon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    &-color-success {
+      color: $color-success-40;
+    } 
   }
 }

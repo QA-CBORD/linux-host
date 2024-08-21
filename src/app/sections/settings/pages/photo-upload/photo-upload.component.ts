@@ -22,6 +22,7 @@ export enum LocalPhotoStatus {
   ACCEPTED,
   NEW,
   SUBMITTED,
+  REJECTED,
 }
 
 export interface LocalPhotoUploadStatus {
@@ -221,14 +222,13 @@ export class PhotoUploadComponent implements OnInit {
       status = LocalPhotoStatus.NEW;
     } else {
       /// photo has been fetched, use its status
-      switch (photoInfo.status) {
-        case PhotoStatus.PENDING:
-          status = LocalPhotoStatus.PENDING;
-          break;
-        case PhotoStatus.ACCEPTED:
-          status = LocalPhotoStatus.ACCEPTED;
-          break;
-      }
+      const photoStatusMap = {
+        [PhotoStatus.PENDING]: LocalPhotoStatus.PENDING,
+        [PhotoStatus.ACCEPTED]: LocalPhotoStatus.ACCEPTED,
+        [PhotoStatus.REJECTED]: LocalPhotoStatus.REJECTED,
+      };
+
+      status = photoStatusMap[photoInfo.status];
     }
 
     switch (photoType) {
@@ -404,10 +404,9 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private async photoDataFetchErrorToast() {
-    await this.toastService.showToast({
-      message: 'There was an issue retrieving your photo information - please try again',
-      duration: 5000,
-      toastButtons: [
+    await this.toastService.showError(
+      { message: 'There was an issue retrieving your photo information - please try again',
+        toastButtons: [
         {
           side: 'end',
           text: 'Retry',
@@ -415,9 +414,10 @@ export class PhotoUploadComponent implements OnInit {
             this.clearLocalStateData();
             this.getPhotoData();
           },
-        },
-      ],
-    });
+          },
+        ]
+      },
+    );
   }
 
   navigateBack() {
@@ -452,10 +452,10 @@ export class PhotoUploadComponent implements OnInit {
     for (let photoDataIndex = 0; photoDataIndex < photosData.length; photoDataIndex++) {
       if (!photosData[photoDataIndex]) {
         this.toastService.showError(
-          this.translateService.instant(
+          { message: this.translateService.instant(
             `get_mobile.photo_upload.invalid_photo_submission.${PhotoTypeTranslateMap[photoDataIndex]}`
           ),
-          TOAST_DURATION
+          duration: TOAST_DURATION }
         );
         return false;
       }

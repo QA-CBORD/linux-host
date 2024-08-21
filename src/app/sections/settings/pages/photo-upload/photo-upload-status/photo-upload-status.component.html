@@ -1,0 +1,18 @@
+@switch (photoStatus) { @case (photoStatusValues.PENDING) {
+<st-alert-banner
+  icon="checkmark-circle-outline"
+  color="success"
+  [text]="'get_mobile.photo_upload.photosubmittedmessage' | translate"
+></st-alert-banner>
+} @case (photoStatusValues.REJECTED) {
+<st-alert-banner
+  color="danger"
+  iconScr="caution"
+  [text]="('get_mobile.photo_upload.photosrejectedmessage' | translate) + statusReasonText"
+></st-alert-banner>
+} @default {
+<st-alert-banner
+  icon="information-circle-outline"
+  [text]="'get_mobile.photo_upload.updatephotomessage' | translate"
+></st-alert-banner>
+} }

@@ -17,6 +17,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { ToastService } from '@core/service/toast/toast.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
+import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -43,8 +44,9 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly nav: Router,
     private readonly nativeProvider: NativeProvider,
-    private readonly appRateService: AppRateService
-  ) {}
+    private readonly appRateService: AppRateService,
+    private readonly translateFacadeService: TranslateFacadeService
+  ) { }
 
   get email(): AbstractControl {
     return this.requestFundsForm.get(this.controlsNames.email);
@@ -150,7 +152,7 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   private async showToast(): Promise<void> {
-    await this.toastService.showToast({ message: 'Something went wrong...' });
+    await this.toastService.showError({ message: this.translateFacadeService.instant('get_mobile.error.general') });
   }
 
   private async showModal(): Promise<void> {

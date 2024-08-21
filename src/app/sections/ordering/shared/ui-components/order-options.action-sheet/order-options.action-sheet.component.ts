@@ -256,10 +256,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       }[this.orderType];
 
       return await this.toastService.showError(
-        this.translateFacadeService.errorCommonInstant(ordertypeMessage),
-        TOAST_DURATION,
-        'bottom'
-      );
+        {
+          message: this.translateFacadeService.errorCommonInstant(ordertypeMessage),
+          duration: TOAST_DURATION,
+          position: 'bottom'
+        });
     }
     const labelDeliveryAddress = this.translateFacadeService.orderingInstant(
       ORDERING_CONTENT_STRINGS.labelDeliveryAddress
@@ -328,7 +329,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ): Promise<MenuInfo | never> {
     if (!accountInfoList.accounts.length && !accountInfoList.creditAccepted) {
       const errorMessage = this.translateFacadeService.errorCommonInstant(ORDERING_CONTENT_STRINGS.noAvailableTenders);
-      this.toastService.showError(errorMessage, 5000, 'bottom');
+      this.toastService.showError({ message: errorMessage, duration: 5000, position: 'bottom' });
       return Promise.reject();
     }
 
@@ -406,7 +407,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const noDatesMessage = this.translateFacadeService.orderingInstant(
       ORDERING_CONTENT_STRINGS.orderingDatesUnavailable
     );
-    this.toastService.showToast({ message: noDatesMessage });
+    this.toastService.showError({ message: noDatesMessage });
     await this.modalsService.dismiss();
   }
 }

@@ -248,7 +248,7 @@ describe('OrderingPage', () => {
 
     await component.merchantClickHandler(merchantInfo);
 
-    expect(showErrorSpy).toHaveBeenCalledWith(TOAST_MESSAGES.isWalkOut);
+    expect(showErrorSpy).toHaveBeenCalledWith({ message: TOAST_MESSAGES.isWalkOut });
   });
 
   it('should add or remove merchant from favorites', async () => {

@@ -77,6 +77,6 @@ describe('UnlinkCredentialsComponent', () => {
     await component.unlink();
 
     expect(mockMobileCredentialsUnlinkService.unlinkCredentials).toHaveBeenCalled();
-    expect(mockToastService.showError).toHaveBeenCalledWith('Some translated error message', 4000, 'bottom');
+    expect(mockToastService.showError).toHaveBeenCalledWith({ duration: 4000, message: "Some translated error message", position: "bottom" });
   });
 });

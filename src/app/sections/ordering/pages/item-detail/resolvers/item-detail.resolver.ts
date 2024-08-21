@@ -52,10 +52,10 @@ export class ItemDetailResolver {
           return of(result);
         }
 
-        this.toastService.showToast({
-          message: this.translateFacadeService.instant('get_mobile.error.menu_item_not_found'),
-          position: 'bottom'
-        });
+        this.toastService.showError(
+          { message: this.translateFacadeService.instant('get_mobile.error.menu_item_not_found'),
+          position: 'bottom' }
+        );
         return EMPTY;
       }),
       take(1)

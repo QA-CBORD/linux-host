@@ -176,7 +176,7 @@ export class ExternalPaymentService {
   }
 
   private async onUSAePayCallBackRetrieve(message: string) {
-    await this.toastService.showError(message);
+    await this.toastService.showError({ message });
   }
 
   private browserListeners(

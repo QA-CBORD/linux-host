@@ -97,7 +97,7 @@ export class GuestDepositsService {
   }
 
   private async onErrorRetrieve(message) {
-    await this.toastService.showToast({ message, duration: 5000 });
+    await this.toastService.showError({ message });
   }
 
   private handleGuestUser(isGuest: boolean) {

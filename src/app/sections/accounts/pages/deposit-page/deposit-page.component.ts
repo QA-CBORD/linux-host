@@ -534,7 +534,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showError(message);
+    await this.toastService.showError({ message });
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {

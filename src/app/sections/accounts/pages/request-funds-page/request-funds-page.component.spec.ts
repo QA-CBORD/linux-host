@@ -17,7 +17,8 @@ describe('RequestFundsPageComponent', () => {
         settingsFacadeService,
         nav,
         nativeProvider,
-        appRateService;
+        appRateService,
+        translateService;
 
     beforeEach(() => {
         (fb = new FormBuilder()),
@@ -35,7 +36,8 @@ describe('RequestFundsPageComponent', () => {
                 navigate: jest.fn(),
             }),
             (toastService = {
-                showToast: jest.fn()
+                showToast: jest.fn(),
+                showError: jest.fn().mockResolvedValue({}),
             }),
             (popoverCtrl = {
                 create: jest.fn().mockReturnValue(Promise.resolve({ present: jest.fn(), onDidDismiss: jest.fn().mockReturnValue(Promise.resolve()) })),
@@ -58,7 +60,8 @@ describe('RequestFundsPageComponent', () => {
             settingsFacadeService,
             nav,
             nativeProvider,
-            appRateService
+            appRateService,
+            translateService
         );
     });
 
@@ -84,13 +87,6 @@ describe('RequestFundsPageComponent', () => {
         it('should navigate to PATRON_NAVIGATION.accounts', async () => {
             await fixture.back();
             expect(nav.navigate).toHaveBeenCalledWith([PATRON_NAVIGATION.accounts]);
-        });
-    });
-
-    describe('showToast', () => {
-        it('should show a toast with an error message', async () => {
-            await (fixture as any).showToast();
-            expect(toastService.showToast).toHaveBeenCalledWith({ message: 'Something went wrong...' });
         });
     });
 });

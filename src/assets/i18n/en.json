@@ -187,6 +187,7 @@
       "govtidmessagesmall": "e.g., Passport, Driver’s License, State ID",
       "updatephotomessage": "New photo is subject to admin approval!",
       "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval.",
+      "photosrejectedmessage": "Your photo has been rejected.",
       "required_message": "A user photo is required to add mobile credentials to your mobile wallet.",
       "invalid_photo_submission": {
         "govt_id_back": "There was an issue submitting your government id photo (back) - please try again",
@@ -513,7 +514,8 @@
       "rejected_photos": "View Rejected ID Photos",
       "upload": "Upload",
       "upload_id_photo": "Upload ID Photo",
-      "view_rejected_photos": "View Rejected Photos"
+      "view_rejected_photos": "View Rejected Photos",
+      "photo_crop_error": "There was an issue cropping the photo, please try again."
     },
     "portal": { "login": "Continue", "select_institution": "Select your institution", "title": "Portal" },
     "post_login": {
