@@ -22,6 +22,7 @@ export enum LocalPhotoStatus {
   ACCEPTED,
   NEW,
   SUBMITTED,
+  REJECTED,
 }
 
 export interface LocalPhotoUploadStatus {
@@ -221,14 +222,13 @@ export class PhotoUploadComponent implements OnInit {
       status = LocalPhotoStatus.NEW;
     } else {
       /// photo has been fetched, use its status
-      switch (photoInfo.status) {
-        case PhotoStatus.PENDING:
-          status = LocalPhotoStatus.PENDING;
-          break;
-        case PhotoStatus.ACCEPTED:
-          status = LocalPhotoStatus.ACCEPTED;
-          break;
-      }
+      const photoStatusMap = {
+        [PhotoStatus.PENDING]: LocalPhotoStatus.PENDING,
+        [PhotoStatus.ACCEPTED]: LocalPhotoStatus.ACCEPTED,
+        [PhotoStatus.REJECTED]: LocalPhotoStatus.REJECTED,
+      };
+
+      status = photoStatusMap[photoInfo.status];
     }
 
     switch (photoType) {

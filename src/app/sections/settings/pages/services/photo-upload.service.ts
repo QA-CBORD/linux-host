@@ -126,7 +126,7 @@ export class PhotoUploadService {
   /// get photo data by status Accepted and Pending and fetch array of photos
   private fetchUserPhotosInList(photoList: UserPhotoList): Observable<UserPhotoInfo[]> {
     const validPhotos = photoList.list.filter(({ status }) =>
-      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING].includes(status)
+      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING, PhotoStatus.REJECTED].includes(status)
     );
     if (!validPhotos.length) {
       return of([]);

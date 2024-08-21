@@ -7,12 +7,14 @@ import { PhotoUploadRoutingModule } from '@sections/settings/pages/photo-upload/
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
 import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { PhotoUploadStatusComponent } from "./photo-upload-status/photo-upload-status.component";
 
 const imports = [
   CommonModule,
   StHeaderModule,
   IonicModule,
   PhotoUploadRoutingModule,
+  PhotoUploadStatusComponent,
   ImageCropModalModule,
   TranslateModule,
 ];

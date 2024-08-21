@@ -187,6 +187,7 @@
       "govtidmessagesmall": "e.g., Passport, Driver’s License, State ID",
       "updatephotomessage": "New photo is subject to admin approval!",
       "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval.",
+      "photosrejectedmessage": "Your photo has been rejected.",
       "required_message": "A user photo is required to add mobile credentials to your mobile wallet.",
       "invalid_photo_submission": {
         "govt_id_back": "There was an issue submitting your government id photo (back) - please try again",

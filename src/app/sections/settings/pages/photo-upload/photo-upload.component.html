@@ -107,30 +107,10 @@
   <ion-card class="selfie-photo-container">
     <!-- MESSAGE FOR PROFILE PHOTOS -->
     <ion-card-header>
-      <div
-        *ngIf="this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING; else profileImagePending"
-        class="header-message-container-selfie"
-      >
-        <div class="icon-cont">
-          <ion-icon name="information-circle-outline" class="icon"></ion-icon>
-        </div>
-        <div class="header-message">
-          <div class="key-message" [innerHTML]="'get_mobile.photo_upload.updatephotomessage' | translate"></div>
-        </div>
-      </div>
-      <ng-template #profileImagePending>
-        <div class="header-message-container-selfie-submitted">
-          <div class="icon-cont">
-            <ion-icon name="checkmark-circle" class="icon"></ion-icon>
-          </div>
-          <div class="header-message">
-            <div
-              class="key-message-submitted"
-              [innerHTML]="'get_mobile.photo_upload.photosubmittedmessage' | translate"
-            ></div>
-          </div>
-        </div>
-      </ng-template>
+      <st-photo-upload-status
+        [photoStatus]="localPhotoUploadStatus.profilePending"
+        [statusReason]="localPhotoData.profilePending?.statusReason"
+      ></st-photo-upload-status>
     </ion-card-header>
     <!-- CONTAINER FOR PROFILE PHOTOS -->
     <ion-card-content class="photo-upload-cont">
