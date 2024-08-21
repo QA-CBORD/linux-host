@@ -1,12 +1,9 @@
 @switch (photoStatus) { @case (photoStatusValues.PENDING) {
-<div class="header-message-container-selfie-submitted">
-  <div class="icon-cont">
-    <ion-icon name="checkmark-circle" class="icon"></ion-icon>
-  </div>
-  <div class="header-message">
-    <div class="key-message-submitted" [innerHTML]="'get_mobile.photo_upload.photosubmittedmessage' | translate"></div>
-  </div>
-</div>
+<st-alert-banner
+  icon="checkmark-circle-outline"
+  color="success"
+  [text]="'get_mobile.photo_upload.photosubmittedmessage' | translate"
+></st-alert-banner>
 } @case (photoStatusValues.REJECTED) {
 <st-alert-banner
   color="danger"
@@ -14,12 +11,8 @@
   [text]="('get_mobile.photo_upload.photosrejectedmessage' | translate) + statusReasonText"
 ></st-alert-banner>
 } @default {
-<div class="header-message-container-selfie">
-  <div class="icon-cont">
-    <ion-icon name="information-circle-outline" class="icon"></ion-icon>
-  </div>
-  <div class="header-message">
-    <div class="key-message" [innerHTML]="'get_mobile.photo_upload.updatephotomessage' | translate"></div>
-  </div>
-</div>
+<st-alert-banner
+  icon="information-circle-outline"
+  [text]="'get_mobile.photo_upload.updatephotomessage' | translate"
+></st-alert-banner>
 } }

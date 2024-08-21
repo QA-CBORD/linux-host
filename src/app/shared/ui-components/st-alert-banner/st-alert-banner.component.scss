@@ -3,6 +3,7 @@
 
 ion-card {
   --ion-color-danger: #ffedeb;
+  --ion-color-success: #{$color-success-95};
   color: black;
   @include font-nunito-regular(14px);
   border-radius: 8px;
@@ -22,5 +23,8 @@ ion-card {
   &__icon {
     height: 22.4px;
     width: 22.4px;
+    &-color-success {
+      color: $color-success-40;
+    } 
   }
 }
