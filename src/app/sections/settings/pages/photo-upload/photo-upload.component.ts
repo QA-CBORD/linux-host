@@ -15,6 +15,13 @@ import { CameraService } from '../services/camera.service';
 import { getDataUrlFromPhoto } from '@core/utils/general-helpers';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 import { TOAST_DURATION } from '@shared/model/generic-constants';
+import { StHeaderModule } from '@shared/ui-components';
+import { PhotoUploadStatusComponent } from './photo-upload-status/photo-upload-status.component';
+import { PhotoUploadImageContainerComponent } from './photo-upload-image-container/photo-upload-image-container.component';
+import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
+import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from "@ionic/angular/standalone";
 
 export enum LocalPhotoStatus {
   NONE,
@@ -53,6 +60,15 @@ const PhotoTypeTranslateMap = {
 
 @Component({
   selector: 'st-photo-upload',
+  standalone: true,
+  imports: [IonButton, IonCardContent, IonIcon, IonCardHeader, IonCard, IonContent, 
+    StHeaderModule,
+    PhotoUploadStatusComponent,
+    PhotoUploadImageContainerComponent,
+    DeleteModalComponent,
+    ImageCropModalModule,
+    TranslateModule,
+  ],
   templateUrl: './photo-upload.component.html',
   styleUrls: ['./photo-upload.component.scss'],
 })
@@ -404,9 +420,9 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private async photoDataFetchErrorToast() {
-    await this.toastService.showError(
-      { message: 'There was an issue retrieving your photo information - please try again',
-        toastButtons: [
+    await this.toastService.showError({
+      message: 'There was an issue retrieving your photo information - please try again',
+      toastButtons: [
         {
           side: 'end',
           text: 'Retry',
@@ -414,10 +430,9 @@ export class PhotoUploadComponent implements OnInit {
             this.clearLocalStateData();
             this.getPhotoData();
           },
-          },
-        ]
-      },
-    );
+        },
+      ],
+    });
   }
 
   navigateBack() {
@@ -451,12 +466,12 @@ export class PhotoUploadComponent implements OnInit {
 
     for (let photoDataIndex = 0; photoDataIndex < photosData.length; photoDataIndex++) {
       if (!photosData[photoDataIndex]) {
-        this.toastService.showError(
-          { message: this.translateService.instant(
+        this.toastService.showError({
+          message: this.translateService.instant(
             `get_mobile.photo_upload.invalid_photo_submission.${PhotoTypeTranslateMap[photoDataIndex]}`
           ),
-          duration: TOAST_DURATION }
-        );
+          duration: TOAST_DURATION,
+        });
         return false;
       }
     }

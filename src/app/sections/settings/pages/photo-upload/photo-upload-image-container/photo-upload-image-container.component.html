@@ -1,0 +1,22 @@
+<div [className]="'stored-img-cont round-corners stored-img-cont--status-' + photoStatusText">
+  <div class="stored-img-cont__photo-label">{{ photoLabel }}</div>
+  @if(photoUrl$ | async; as photoUrl) {
+  <img
+    [src]="photoUrl"
+    [alt]="photoAlt | translate"
+    [width]="photoDimensions.width"
+    [height]="photoDimensions.height"
+    class="round-corners"
+    [ngStyle]="{ 'object-fit': fitCover ? 'cover' : 'fill' }"
+  />
+  } @else {
+  <!-- DEFAULT IMAGE -->
+  <img [src]="defaultPhotoSrc" [alt]="defaultPhotoAlt | translate" class="profile-default-image round-corners" />
+  <ion-button class="upload-btn" (click)="presentPhotoTypeSelection(photoType)">UPLOAD</ion-button>
+
+  } @if(displayReuploadButton){
+  <ion-button class="upload-btn" (click)="presentPhotoTypeSelection(photoType)">REUPLOAD</ion-button>
+  } @if(displayDeleteButton){
+  <ion-button color="danger" class="reupload-btn" (click)="deletePhoto()">DELETE</ion-button>
+  }
+</div>
