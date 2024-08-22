@@ -6,14 +6,15 @@ import { CameraSource } from '@capacitor/camera';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, NavController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { CameraService } from '../services/camera.service';
 import { PhotoCropModalService } from '../services/photo-crop.service';
-import { PhotoType, PhotoUploadService } from '../services/photo-upload.service';
+import { PhotoUploadService } from '../services/photo-upload.service';
 import { LocalPhotoData, PhotoUploadComponent } from './photo-upload.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TOAST_DURATION } from '@shared/model/generic-constants';
+import { PhotoType } from './models/photo-upload.enums';
+import { NavigationService } from '@shared/index';
 
 describe('PhotoUploadComponent', () => {
   let component: PhotoUploadComponent;
@@ -76,9 +77,7 @@ describe('PhotoUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PhotoUploadComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [TranslateModule.forRoot()],
+      imports: [TranslateModule.forRoot(), PhotoUploadComponent],
       providers: [
         { provide: Router, useValue: router },
         { provide: DomSanitizer, useValue: domSanitizer },
@@ -90,6 +89,28 @@ describe('PhotoUploadComponent', () => {
         { provide: ChangeDetectorRef, useValue: cd },
         { provide: PhotoCropModalService, useValue: photoCropModalService },
         { provide: CameraService, useValue: cameraService },
+        {
+          provide: NavigationService,
+          useValue: {
+            getPreviousTrackedUrl: jest.fn(),
+          },
+        },
+        {
+          provide: NavController,
+          useValue: {
+            navigateForward: jest.fn(),
+          },
+        },
+        {
+          provide: TranslateService,
+          useValue: {
+            get: jest.fn().mockReturnValue(of('some message')),
+            instant: (key: string) => key,
+            onLangChange: of(),
+            onTranslationChange: of(),
+            onDefaultLangChange: of(),
+          },
+        },
       ],
     }).compileComponents();
   });
@@ -174,9 +195,10 @@ describe('PhotoUploadComponent', () => {
       } as LocalPhotoData;
       component.validateLocalPhotosData();
       // Assuming PhotoTypeTranslateMap[1] corresponds to the translation key for govIdFront's error
-      expect(toastService.showError).toHaveBeenCalledWith(
-        {"duration": 5000, "message": "get_mobile.photo_upload.invalid_photo_submission.govt_id_front"}
-      );
+      expect(toastService.showError).toHaveBeenCalledWith({
+        duration: 5000,
+        message: 'get_mobile.photo_upload.invalid_photo_submission.govt_id_front',
+      });
     });
   });
 });

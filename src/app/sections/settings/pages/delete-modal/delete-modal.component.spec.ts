@@ -12,10 +12,11 @@ describe('DeleteModalComponent', () => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       imports: [DeleteModalComponent],
-      providers: [{ provide: ModalController, useFactory: modalControllerStub }]
+      providers: [{ provide: ModalController, useFactory: modalControllerStub }],
     });
     fixture = TestBed.createComponent(DeleteModalComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('can load instance', () => {
@@ -24,7 +25,7 @@ describe('DeleteModalComponent', () => {
 
   describe('deletePhoto', () => {
     it('makes expected calls', () => {
-     jest.spyOn(component, 'dismissModal');
+      jest.spyOn(component, 'dismissModal');
       component.deletePhoto();
       expect(component.dismissModal).toHaveBeenCalled();
     });

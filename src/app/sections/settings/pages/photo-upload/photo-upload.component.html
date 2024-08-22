@@ -9,7 +9,8 @@
 </st-header>
 <ion-content class="container">
   <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
-  <ion-card *ngIf="localPhotoData.govtIdRequired" class="id-photo-upload-container">
+  @if(localPhotoData.govtIdRequired) {
+  <ion-card class="id-photo-upload-container">
     <!-- HEADER MESSAGE FOR ID UPLOADS -->
     <ion-card-header>
       <div class="header-message-container-id">
@@ -26,33 +27,23 @@
     <ion-card-content class="photo-upload-cont">
       <!--      FRONT OF ID -->
       <st-photo-upload-image-container
+        [photoType]="photoType.GOVT_ID_FRONT"
         [photoStatus]="localPhotoUploadStatus.govIdFront"
         [photoUrl$]="govIdFront$"
-        [fitCover]="true"
-        [photoType]="photoType.GOVT_ID_FRONT"
-        photoLabel="Front of ID"
-        photoAlt="Government Id Front"
         [photoDimensions]="frontId"
-        defaultPhotoSrc="/assets/images/govt-id-front.svg"
-        defaultPhotoAlt="Government Id Front"
-        (presentPhotoTypeSelection)="presentPhotoTypeSelection($event)"
+        (photoTypeSelected)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
       ></st-photo-upload-image-container>
       <!--    BACK OF ID  -->
       <st-photo-upload-image-container
+        [photoType]="photoType.GOVT_ID_BACK"
         [photoStatus]="localPhotoUploadStatus.govIdBack"
         [photoUrl$]="govIdBack$"
         [photoDimensions]="backId"
-        [fitCover]="true"
-        photoLabel="Back of ID"
-        photoAlt="Government Id Back"
-        [photoType]="photoType.GOVT_ID_BACK"
-        defaultPhotoSrc="/assets/images/govt-id-back.svg"
-        defaultPhotoAlt="Government Id Back"
-        (presentPhotoTypeSelection)="presentPhotoTypeSelection($event)"
+        (photoTypeSelected)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
       ></st-photo-upload-image-container>
     </ion-card-content>
   </ion-card>
-
+  }
   <!-- CARD FOR PROFILE PHOTOS -->
   <ion-card class="ion-no-margin">
     <!-- MESSAGE FOR PROFILE PHOTOS -->
@@ -65,26 +56,14 @@
     <!-- CONTAINER FOR PROFILE PHOTOS -->
     <ion-card-content class="photo-upload-cont">
       <st-photo-upload-image-container
+        [photoType]="photoType.CURRENT"
         [photoUrl$]="profileImage$"
-        [photoDimensions]="{ width: 132, height: 178 }"
-        [fitCover]="true"
-        [photoType]="photoType.PROFILE"
-        photoLabel="Current Photo"
-        photoAlt="get_mobile.photo_upload.user_photo_current"
-        defaultPhotoSrc="/assets/images/profile-image-default.svg"
-        defaultPhotoAlt="get_mobile.photo_upload.no_user_photo_pending"
       ></st-photo-upload-image-container>
       <st-photo-upload-image-container
+        [photoType]="photoType.PROFILE"
         [photoStatus]="localPhotoUploadStatus.profilePending"
         [photoUrl$]="profileImagePending$"
-        [photoDimensions]="{ width: 132, height: 178 }"
-        [fitCover]="true"
-        [photoType]="photoType.PROFILE"
-        photoLabel="New Photo"
-        photoAlt="get_mobile.photo_upload.user_photo_pending"
-        defaultPhotoSrc="/assets/images/profile-image-default.svg"
-        defaultPhotoAlt="get_mobile.photo_upload.no_user_photo_pending"
-        (presentPhotoTypeSelection)="presentPhotoTypeSelection($event)"
+        (photoTypeSelected)="presentPhotoTypeSelection(photoType.PROFILE)"
         (photoDeleted)="deletePendingProfileImage()"
       ></st-photo-upload-image-container>
     </ion-card-content>

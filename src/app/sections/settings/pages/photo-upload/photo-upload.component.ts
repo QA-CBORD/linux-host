@@ -5,7 +5,7 @@ import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
 import { catchError, finalize, first, switchMap, take, tap } from 'rxjs/operators';
 import { UserPhotoInfo } from '@core/model/user';
-import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-upload.service';
+import { PhotoUploadService } from '../services/photo-upload.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { PhotoCropModalService } from '../services/photo-crop.service';
@@ -21,7 +21,8 @@ import { PhotoUploadImageContainerComponent } from './photo-upload-image-contain
 import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
 import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from "@ionic/angular/standalone";
+import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from '@ionic/angular/standalone';
+import { PhotoStatus, PhotoType } from './models/photo-upload.enums';
 
 export enum LocalPhotoStatus {
   NONE,
@@ -61,7 +62,13 @@ const PhotoTypeTranslateMap = {
 @Component({
   selector: 'st-photo-upload',
   standalone: true,
-  imports: [IonButton, IonCardContent, IonIcon, IonCardHeader, IonCard, IonContent, 
+  imports: [
+    IonButton,
+    IonCardContent,
+    IonIcon,
+    IonCardHeader,
+    IonCard,
+    IonContent,
     StHeaderModule,
     PhotoUploadStatusComponent,
     PhotoUploadImageContainerComponent,

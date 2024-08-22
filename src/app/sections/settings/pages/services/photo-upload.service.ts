@@ -10,27 +10,14 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
-import { ActionSheetController, ModalController } from '@ionic/angular';
+import { ActionSheetController } from '@ionic/angular';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraSource } from '@capacitor/camera';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 import { TOAST_DURATION } from '@shared/model/generic-constants';
-
-export enum PhotoStatus {
-  PENDING,
-  ACCEPTED,
-  REJECTED,
-  REPLACED,
-  DELETED,
-}
-
-export enum PhotoType {
-  PROFILE_PENDING = -1,
-  PROFILE = 0,
-  GOVT_ID_FRONT = 1,
-  GOVT_ID_BACK = 2,
-}
+import { PhotoStatus, PhotoType } from '../photo-upload/models/photo-upload.enums';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 @Injectable({ providedIn: 'root' })
 export class PhotoUploadService {
@@ -54,7 +41,7 @@ export class PhotoUploadService {
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly toastService: ToastService,
     private readonly translateService: TranslateFacadeService,
     private readonly actionSheetCtrl: ActionSheetController

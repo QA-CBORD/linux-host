@@ -4,6 +4,7 @@ import { UserAccount } from '../../../../../../core/model/account/account.model'
 import { TransactionUnitsPipeModule } from '@shared/pipes/transaction-units';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { IonicModule } from '@ionic/angular';
 
 describe('AccountComponent', () => {
   let component: AccountComponent;
@@ -12,7 +13,7 @@ describe('AccountComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [AccountComponent],
-      imports: [TransactionUnitsPipeModule, HttpClientTestingModule],
+      imports: [IonicModule, TransactionUnitsPipeModule, HttpClientTestingModule],
       providers: [AccountService],
     }).compileComponents();
   });
