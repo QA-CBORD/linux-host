@@ -11,7 +11,7 @@ describe('DeleteModalComponent', () => {
     const modalControllerStub = () => ({ dismiss: data => ({}) });
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [DeleteModalComponent],
+      imports: [DeleteModalComponent],
       providers: [{ provide: ModalController, useFactory: modalControllerStub }]
     });
     fixture = TestBed.createComponent(DeleteModalComponent);

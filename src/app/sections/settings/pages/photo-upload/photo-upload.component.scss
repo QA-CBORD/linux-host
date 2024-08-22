@@ -94,7 +94,6 @@
   flex: none;
   order: 0;
   align-self: center;
-  margin: 16px 0px;
 }
 
 .upload-btn {
@@ -105,27 +104,6 @@
 ion-button.button-disabled {
   color: rgba(0, 0, 0, 0.38);
   background-color: #e2e2e2;
-}
-
-.reupload-btn {
-  color: black;
-  width: 132px;
-  height: 48px;
-}
-
-.selfie-photo-container {
-  margin-left: 0px;
-  margin-right: 0px;
-}
-
-.selfie-placeholder-img {
-  width: 74.06px;
-  height: 90.4px;
-}
-
-.uploaded-user-photo {
-  width: 132px;
-  height: 178px;
 }
 
 .action-btn-container {
@@ -145,12 +123,4 @@ ion-button.button-disabled {
 
 .round-corners {
   border-radius: 8px;
-}
-
-.border-dashed {
-  border: 3px dashed #e2e2e2;
-}
-
-.border-solid {
-  border: 3px solid #e2e2e2;
 }

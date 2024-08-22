@@ -1,16 +1,11 @@
-
-<ion-card class="delete-photo-card"> 
+<ion-card class="delete-photo-card">
   <ion-card-header class="header">
-    <div>
-      Delete Pending Photo?
-    </div>
+    <div>Delete Pending Photo?</div>
     <ion-icon (click)="dismissModal(false)" class="icon" name="close-outline"></ion-icon>
   </ion-card-header>
 
   <ion-card-content>
-    <div>
-      If you delete your pending photo, you must reupload a government ID the next time you submit a new photo.
-    </div>
+    <div>If you delete your pending photo, you must reupload a government ID the next time you submit a new photo.</div>
     <div class="actions">
       <ion-button color="danger" expand="block" (click)="deletePhoto()">DELETE PENDING PHOTO</ion-button>
       <ion-button color="light" expand="block" (click)="dismissModal(false)">CANCEL</ion-button>

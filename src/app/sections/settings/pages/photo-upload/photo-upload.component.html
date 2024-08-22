@@ -25,86 +25,36 @@
     <!-- CONTAINER FOR ID PHOTOS -->
     <ion-card-content class="photo-upload-cont">
       <!--      FRONT OF ID -->
-      <div
-        class="stored-img-cont round-corners"
-        [ngClass]="{
-          'border-solid':
-            this.localPhotoUploadStatus.govIdFront === localPhotoStatus.NEW ||
-            this.localPhotoUploadStatus.govIdFront === localPhotoStatus.ACCEPTED,
-          'border-dashed':
-            this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.NEW &&
-            this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.ACCEPTED
-        }"
-      >
-        <div>
-          Front of ID
-        </div>
-        <div *ngIf="(govIdFront$ | async) as govidFrontUrl; else defaultGovIdFront">
-          <img
-            [src]="govidFrontUrl"
-            alt="Government Id Front"
-            width="{{ this.frontId.width }}"
-            height="{{ this.frontId.height }}"
-            class="round-corners"
-            [ngStyle]="{ 'object-fit': fitCover ? 'cover' : 'fill' }"
-          />
-          <ion-button
-            color="light"
-            class="reupload-btn round-corners"
-            (click)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
-            >REUPLOAD</ion-button
-          >
-        </div>
-        <ng-template #defaultGovIdFront>
-          <img src="/assets/images/govt-id-front.svg" alt="Government Id Front" class="card-img round-corners" />
-          <ion-button class="upload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
-            >UPLOAD</ion-button
-          >
-        </ng-template>
-      </div>
+      <st-photo-upload-image-container
+        [photoStatus]="localPhotoUploadStatus.govIdFront"
+        [photoUrl$]="govIdFront$"
+        [fitCover]="true"
+        [photoType]="photoType.GOVT_ID_FRONT"
+        photoLabel="Front of ID"
+        photoAlt="Government Id Front"
+        [photoDimensions]="frontId"
+        defaultPhotoSrc="/assets/images/govt-id-front.svg"
+        defaultPhotoAlt="Government Id Front"
+        (presentPhotoTypeSelection)="presentPhotoTypeSelection($event)"
+      ></st-photo-upload-image-container>
       <!--    BACK OF ID  -->
-      <div
-        class="stored-img-cont round-corners"
-        [ngClass]="{
-          'border-solid':
-            this.localPhotoUploadStatus.govIdBack === localPhotoStatus.NEW ||
-            this.localPhotoUploadStatus.govIdBack === localPhotoStatus.ACCEPTED,
-          'border-dashed':
-            this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.NEW &&
-            this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.ACCEPTED
-        }"
-      >
-        <div>
-          Back of ID
-        </div>
-        <div *ngIf="(govIdBack$ | async) as govIdBackUrl; else defaultGovIdBack">
-          <img
-            [src]="govIdBackUrl"
-            alt="Government Id Front"
-            width="{{ this.backId.width }}"
-            height="{{ this.backId.height }}"
-            class="round-corners"
-            [ngStyle]="{ 'object-fit': fitCover ? 'cover' : 'fill' }"
-          />
-          <ion-button
-            color="light"
-            class="reupload-btn round-corners"
-            (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
-            >REUPLOAD</ion-button
-          >
-        </div>
-        <ng-template #defaultGovIdBack>
-          <img src="/assets/images/govt-id-back.svg" alt="Government Id Back" class="card-img round-corners" />
-          <ion-button class="upload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
-            >UPLOAD</ion-button
-          >
-        </ng-template>
-      </div>
+      <st-photo-upload-image-container
+        [photoStatus]="localPhotoUploadStatus.govIdBack"
+        [photoUrl$]="govIdBack$"
+        [photoDimensions]="backId"
+        [fitCover]="true"
+        photoLabel="Back of ID"
+        photoAlt="Government Id Back"
+        [photoType]="photoType.GOVT_ID_BACK"
+        defaultPhotoSrc="/assets/images/govt-id-back.svg"
+        defaultPhotoAlt="Government Id Back"
+        (presentPhotoTypeSelection)="presentPhotoTypeSelection($event)"
+      ></st-photo-upload-image-container>
     </ion-card-content>
   </ion-card>
 
   <!-- CARD FOR PROFILE PHOTOS -->
-  <ion-card class="selfie-photo-container">
+  <ion-card class="ion-no-margin">
     <!-- MESSAGE FOR PROFILE PHOTOS -->
     <ion-card-header>
       <st-photo-upload-status
@@ -114,70 +64,29 @@
     </ion-card-header>
     <!-- CONTAINER FOR PROFILE PHOTOS -->
     <ion-card-content class="photo-upload-cont">
-      <div class="stored-img-cont round-corners grey-background">
-        <div>
-          Current Photo
-        </div>
-        <div *ngIf="(profileImage$ | async) as profileImageUrl; else defaultProfileImage">
-          <img [src]="profileImageUrl" [alt]="'get_mobile.photo_upload.user_photo_current' | translate" width="132" height="178" class="round-corners" />
-        </div>
-        <ng-template #defaultProfileImage>
-          <img
-            src="/assets/images/profile-image-default.svg"
-            [alt]="'get_mobile.photo_upload.no_user_photo' | translate"
-            class="profile-default-image round-corners"
-          />
-        </ng-template>
-      </div>
-      <div
-        class="stored-img-cont round-corners"
-        [ngClass]="{
-          'border-solid':
-            this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW ||
-            this.localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING,
-          'border-dashed':
-            this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW &&
-            this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING
-        }"
-      >
-        <div>
-          New Photo
-        </div>
-        <div *ngIf="(profileImagePending$ | async) as profileImagePendingUrl; else defaultPendingProfileImage">
-          <img
-            [src]="profileImagePendingUrl"
-            [alt]="'get_mobile.photo_upload.user_photo_pending' | translate"
-            width="132"
-            height="178"
-            class="round-corners"
-          />
-          <ion-button
-            *ngIf="
-              localPhotoUploadStatus.profilePending === localPhotoStatus.NEW ||
-              localPhotoUploadStatus.profilePending === localPhotoStatus.REJECTED ||
-              localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING
-            "
-            class="upload-btn"
-            (click)="presentPhotoTypeSelection(photoType.PROFILE)"
-            >REUPLOAD</ion-button
-          >
-          <ion-button
-            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING"
-            color="danger"
-            class="reupload-btn"
-            (click)="deletePendingProfileImage()"
-            >DELETE</ion-button
-          >
-        </div>
-        <ng-template #defaultPendingProfileImage>
-          <img
-            src="/assets/images/profile-image-default.svg"
-            [alt]="'get_mobile.photo_upload.no_user_photo_pending' | translate"
-            class="profile-default-image round-corners"
-          />
-          <ion-button class="upload-btn" (click)="presentPhotoTypeSelection(photoType.PROFILE)">UPLOAD</ion-button>
-        </ng-template>
-      </div>
+      <st-photo-upload-image-container
+        [photoUrl$]="profileImage$"
+        [photoDimensions]="{ width: 132, height: 178 }"
+        [fitCover]="true"
+        [photoType]="photoType.PROFILE"
+        photoLabel="Current Photo"
+        photoAlt="get_mobile.photo_upload.user_photo_current"
+        defaultPhotoSrc="/assets/images/profile-image-default.svg"
+        defaultPhotoAlt="get_mobile.photo_upload.no_user_photo_pending"
+      ></st-photo-upload-image-container>
+      <st-photo-upload-image-container
+        [photoStatus]="localPhotoUploadStatus.profilePending"
+        [photoUrl$]="profileImagePending$"
+        [photoDimensions]="{ width: 132, height: 178 }"
+        [fitCover]="true"
+        [photoType]="photoType.PROFILE"
+        photoLabel="New Photo"
+        photoAlt="get_mobile.photo_upload.user_photo_pending"
+        defaultPhotoSrc="/assets/images/profile-image-default.svg"
+        defaultPhotoAlt="get_mobile.photo_upload.no_user_photo_pending"
+        (presentPhotoTypeSelection)="presentPhotoTypeSelection($event)"
+        (photoDeleted)="deletePendingProfileImage()"
+      ></st-photo-upload-image-container>
     </ion-card-content>
   </ion-card>
 
