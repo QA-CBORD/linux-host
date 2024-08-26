@@ -621,7 +621,8 @@
       "label_deposit-once_per_week": "Once per week",
       "label_deposit-once_per_month": "Once per month",
       "meal-plan-suffix": "Meal",
-      "meal-plan-suffix-plural": "Meals"
+      "meal-plan-suffix-plural": "Meals",
+      "patron-plan-name": "Current Plan:"
     },
     "checkin": {
       "checkin_method_text": "Check in either by using your location services or by scanning the QR code.",

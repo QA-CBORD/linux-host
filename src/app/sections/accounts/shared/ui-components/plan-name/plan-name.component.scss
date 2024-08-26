@@ -1,0 +1,30 @@
+@import 'tools';
+
+.patron-plan-column {
+  margin: 16px 0px 10px 14px;
+  display: flex;
+  flex-direction: column;
+
+  &__label {
+    @include font-nunito-semibold(14px);
+  }
+  &__name {
+    @include font-nunito-heavy(18px);
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+}
+.patron-plan-row {
+  margin: 16px 0px 10px 14px;
+  display: flex;
+  justify-content: center;
+
+  &__label {
+    margin-top: 3px;
+    @include font-nunito-semibold(16px);
+  }
+  &__name {
+    @include font-nunito-heavy(20px);
+    margin-left: 10px;
+  }
+}
