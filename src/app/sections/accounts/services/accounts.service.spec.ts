@@ -21,7 +21,7 @@ describe('AccountService', () => {
         AccountService,
         {
           provide: CommerceApiService,
-          useValue: { getUserAccounts: jest.fn() },
+          useValue: { getUserAccounts: jest.fn(),retrieveAccounts: jest.fn().mockReturnValue(of()) },
         },
         {
           provide: ContentStringsFacadeService,
@@ -45,18 +45,22 @@ describe('AccountService', () => {
   });
 
   describe('getUserAccounts', () => {
-    it('should call commerceApiService.getUserAccounts and set the accounts', () => {
+    it('should retrieve accounts, filter them, and update properties',async () => {
       const accounts = [
         { id: '1', accountDisplayName: 'Account 1', paymentSystemType: 1 },
         { id: '2', accountDisplayName: 'Account 2', paymentSystemType: 2 },
       ] as UserAccount[];
-      const getUserAccountsSpy = jest.spyOn(commerceApiService, 'getUserAccounts').mockReturnValue(of(accounts));
-      const setAccountsSpy = jest.spyOn(service['_accounts$'], 'next');
-
+      const planName = 'Test Plan';
+      const retrieveAccountsResponse = { planName, accounts };
+  
+      jest.spyOn(commerceApiService, 'retrieveAccounts').mockReturnValue(of(retrieveAccountsResponse));
+  
+      jest.spyOn(service as any, 'filterAccountsByPaymentSystem').mockReturnValue(accounts);
+  
       service.getUserAccounts().subscribe();
-
-      expect(getUserAccountsSpy).toHaveBeenCalled();
-      expect(setAccountsSpy).toHaveBeenCalledWith(accounts);
+  
+      expect(await firstValueFrom(service['_planName$'])).toBe(planName);
+      expect(await firstValueFrom(service['_accounts$'])).toEqual(accounts);
     });
   });
 
