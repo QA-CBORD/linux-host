@@ -14,6 +14,7 @@ import { TransactionsModule } from './shared/ui-components/transactions/transact
 import { MenuReceivingFundsModule } from './shared/ui-components/menu-receiving-funds/menu-receiving-funds.module';
 import { AccountListModule } from './shared/ui-components/account-list/account-list.module';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
+import { PlanNameComponent } from './shared/ui-components/plan-name/plan-name.component';
 
 const imports = [
   IonicModule,
@@ -24,6 +25,7 @@ const imports = [
   AccountListModule,
   TransactionUnitsPipeModule,
   TransactionsModule,
+  PlanNameComponent
 ];
 const declarations = [AccountsPage];
 const providers = [

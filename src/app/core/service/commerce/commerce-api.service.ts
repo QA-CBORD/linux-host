@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { map } from 'rxjs/operators';
 import { AccountResponse } from '../../model/account/account-response.model';
-import { UserAccount } from '../../model/account/account.model';
+import { AccountList, UserAccount } from '../../model/account/account.model';
 import { QueryTransactionHistoryCriteria } from '../../model/account/transaction-query.model';
 import { TransactionResponse } from '../../model/account/transaction-response.model';
 import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
@@ -19,12 +19,16 @@ export class CommerceApiService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getUserAccounts(): Observable<UserAccount[]> {
+  retrieveAccounts(): Observable<AccountList> {
     const queryConfig = new RPCQueryConfig('retrieveAccounts', {}, true);
 
     return this.http
       .post(this.serviceUrl, queryConfig)
-      .pipe(map(({ response }: MessageResponse<AccountResponse>) => response.accounts));
+      .pipe(map(({ response }: MessageResponse<AccountResponse>) => response));
+  }
+
+  getUserAccounts(): Observable<UserAccount[]> {
+    return this.retrieveAccounts().pipe(map(({ accounts }) => accounts));
   }
 
   removeAccount(accInfo): Observable<boolean> {
@@ -121,7 +125,9 @@ export class CommerceApiService {
   retrieveDepositAccountsByUser(userId: string): Observable<UserAccount[]> {
     const params = { userId };
     const queryConfig = new RPCQueryConfig('retrieveDepositAccountsByUser', params, true, false);
-    return this.http.post<MessageResponse<{ accounts: UserAccount[] }>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response.accounts));
+    return this.http
+      .post<MessageResponse<{ accounts: UserAccount[] }>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response.accounts));
   }
 
   depositForUser(userId: string, fromAccountId: string, toAccountId: string, amount: number): Observable<string> {
@@ -136,7 +142,11 @@ export class CommerceApiService {
     return this.http.post<string>(this.serviceUrl, queryConfig);
   }
 
-  getAllowedPaymentsMethods(sessionId: string, paymentSystemId?: number, userId?: string): Observable<CreditPaymentMethods[]>  {
+  getAllowedPaymentsMethods(
+    sessionId: string,
+    paymentSystemId?: number,
+    userId?: string
+  ): Observable<CreditPaymentMethods[]> {
     const params = { sessionId, paymentSystemId: paymentSystemId || '', userId };
     const queryConfig = new RPCQueryConfig('retrieveCreditPaymentMethodsByPaymentSystem', params, true, false);
     return this.http
