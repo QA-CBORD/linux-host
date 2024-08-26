@@ -17,22 +17,28 @@
 </div>
 
 <ion-content class="account-details__content" #content>
-  <ng-container *ngIf="(transactions$ | async).length else emptyPageInfo">
+  <ng-container *ngIf="(transactions$ | async).length; else emptyPageInfo">
     <st-transactions [transactions]="transactions$ | async" [dividers]="true"></st-transactions>
     <ion-infinite-scroll #infiniteScroll threshold="10px" (ionInfinite)="getNextTransactionPackage()">
       <ion-infinite-scroll-content loadingSpinner="bubbles" [loadingText]="contentString[csNames.infiniteScrollLoader]">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </ng-container>
-
 </ion-content>
 
 <ng-template #subHeader>
   <h1 class="account-details__header-title">{{ contentString[csNames.headerTitle] }}</h1>
+  <div>
+    <st-plan-name flexDirection="row"></st-plan-name>
+  </div>
   <st-filter (onFilterChanged)="onFilterChanged()"></st-filter>
 </ng-template>
 
 <ng-template #emptyPageInfo>
-  <img class="account-details__empty-block-img" src="/assets/images/transactions_empty_state.svg" alt="gift box with rest guy">
-  <p class="account-details__empty-block-message">No transactions to display. <br/>Carry on.</p>
+  <img
+    class="account-details__empty-block-img"
+    src="/assets/images/transactions_empty_state.svg"
+    alt="gift box with rest guy"
+  />
+  <p class="account-details__empty-block-message">No transactions to display. <br />Carry on.</p>
 </ng-template>

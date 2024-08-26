@@ -23,17 +23,19 @@ export class AccountsPage implements OnInit {
   transactions$: Observable<TransactionHistory[]>;
   accountInfo: { name: string; balance: number; accountType: number };
   contentString: { [key: string]: string };
+  planName$: Observable<string>;
 
   constructor(
     private readonly accountsService: AccountService,
     private readonly platform: Platform,
     private readonly router: Router,
-    private readonly transactionsService: TransactionService,
+    private readonly transactionsService: TransactionService
   ) {}
 
   ngOnInit() {
     this.setContentStrings();
     this.accounts$ = this.accountsService.getAccountsFilteredByDisplayTenders();
+    this.planName$ = this.accountsService.planName$;
     this.transactions$ = this.transactionsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
 
     this.defineInitRoute();

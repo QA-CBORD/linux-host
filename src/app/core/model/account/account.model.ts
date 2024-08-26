@@ -1,3 +1,8 @@
+export type AccountList = {
+  planName: string;
+  accounts: UserAccount[];
+};
+
 export interface UserAccount {
   readonly accountDisplayName: string;
   readonly accountTender: string;
