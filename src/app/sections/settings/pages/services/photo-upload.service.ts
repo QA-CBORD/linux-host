@@ -128,10 +128,25 @@ export class PhotoUploadService {
     const validPhotos = photoList.list.filter(({ status }) =>
       [PhotoStatus.ACCEPTED, PhotoStatus.PENDING, PhotoStatus.REJECTED].includes(status)
     );
+
     if (!validPhotos.length) {
       return of([]);
     }
-    return of(validPhotos).pipe(
+
+    // Group photos by type and sort by version in ascending order
+    const groupedPhotos = validPhotos.reduce((acc, photo) => {
+      if (!acc[photo.type]) {
+        acc[photo.type] = [];
+      }
+      acc[photo.type].push(photo);
+      return acc;
+    }, {});
+
+    const sortedPhotos = Object.values(groupedPhotos).map(
+      (photos: UserPhotoInfo[]) => photos.sort((a, b) => a.version - b.version)[0]
+    );
+
+    return of(sortedPhotos).pipe(
       switchMap(photoList => zip(...photoList.map(({ id }) => this.handleUserPhotoById(id))))
     );
   }
@@ -158,10 +173,10 @@ export class PhotoUploadService {
         break;
       default:
         displayAlert &&
-          this.toastService.showError(
-            { message: this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
-            duration: TOAST_DURATION },
-          );
+          this.toastService.showError({
+            message: this.translateService.instant('get_mobile.photo_upload.invalid_photo_set'),
+            duration: TOAST_DURATION,
+          });
     }
   }
 
