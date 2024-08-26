@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccountService } from '@sections/accounts/services/accounts.service';
 
