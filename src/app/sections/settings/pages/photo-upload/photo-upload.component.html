@@ -154,6 +154,7 @@
           <ion-button
             *ngIf="
               localPhotoUploadStatus.profilePending === localPhotoStatus.NEW ||
+              localPhotoUploadStatus.profilePending === localPhotoStatus.REJECTED ||
               localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING
             "
             class="upload-btn"
