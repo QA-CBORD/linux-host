@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { IonCard, IonButton, IonCardContent, IonIcon, IonCardHeader } from '@ionic/angular/standalone';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-delete-modal',
   standalone: true,
-  imports: [IonCardHeader, IonIcon, IonCardContent, IonButton, IonCard],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonCardHeader, IonIcon, IonCardContent, IonButton, IonCard, TranslateModule],
   templateUrl: './delete-modal.component.html',
   styleUrls: ['./delete-modal.component.scss'],
 })

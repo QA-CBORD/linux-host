@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { DeleteModalComponent } from './delete-modal.component';
+import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 describe('DeleteModalComponent', () => {
   let component: DeleteModalComponent;
@@ -12,7 +14,19 @@ describe('DeleteModalComponent', () => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       imports: [DeleteModalComponent],
-      providers: [{ provide: ModalController, useFactory: modalControllerStub }],
+      providers: [
+        { provide: ModalController, useFactory: modalControllerStub },
+        {
+          provide: TranslateService,
+          useValue: {
+            get: jest.fn().mockReturnValue(of('some message')),
+            instant: (key: string) => key,
+            onLangChange: of(),
+            onTranslationChange: of(),
+            onDefaultLangChange: of(),
+          },
+        },
+      ],
     });
     fixture = TestBed.createComponent(DeleteModalComponent);
     component = fixture.componentInstance;

@@ -10,7 +10,7 @@
   @if(photoUrl$ | async; as photoUrl) {
   <img
     [src]="photoUrl"
-    [alt]="photoTypeConfig.altText| translate"
+    [alt]="photoTypeConfig.altText | translate"
     [width]="photoDimensions.width"
     [height]="photoDimensions.height"
     class="round-corners ion-margin-vertical"
@@ -20,14 +20,14 @@
   <!-- DEFAULT IMAGE -->
   <img
     [src]="photoTypeConfig.defaultPhotoSrc"
-    [alt]="photoTypeConfig.altText| translate"
+    [alt]="photoTypeConfig.altText | translate"
     [class]="'default-image round-corners ion-margin-vertical'"
   />
   @if(displayUploadButton){
-  <ion-button class="upload-btn" (click)="presentPhotoTypeSelection()">UPLOAD</ion-button>
+  <ion-button expand="block" (click)="presentPhotoTypeSelection()">UPLOAD</ion-button>
   } } @if(displayReuploadButton){
-  <ion-button class="upload-btn" (click)="presentPhotoTypeSelection()">REUPLOAD</ion-button>
+  <ion-button expand="block" color="light" (click)="presentPhotoTypeSelection()">REUPLOAD</ion-button>
   } @if(displayDeleteButton){
-  <ion-button color="danger" class="reupload-btn" (click)="deletePhoto()">DELETE</ion-button>
+  <ion-button expand="block" color="light" (click)="deletePhoto()">DELETE</ion-button>
   }
 </div>
