@@ -194,6 +194,11 @@
         "govt_id_front": "There was an issue submitting your government id photo (front) - please try again",
         "profile": "There was an issue submitting your profile photo - please try again"
       },
+      "delete-photo": {
+        "header": "Delete Pending Photo?",
+        "message": "If you delete your pending photo, you must reupload a government ID the next time you submit a new photo.",
+        "delete_button": "Delete Photo"
+      },
       "invalid_photo_set": "Invalid photo format. Please upload a valid photo.",
       "user_photo_current": "user photo, current",
       "user_photo_pending": "user photo, pending",

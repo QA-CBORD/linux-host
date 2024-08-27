@@ -26,7 +26,7 @@ export class PhotoUploadImageContainerComponent {
     this.displayReuploadButton = [LocalPhotoStatus.REJECTED, LocalPhotoStatus.PENDING, LocalPhotoStatus.NEW].includes(
       localPhotoStatus
     );
-    this.displayDeleteButton = localPhotoStatus === LocalPhotoStatus.PENDING;
+    this.displayDeleteButton = [LocalPhotoStatus.REJECTED, LocalPhotoStatus.PENDING].includes(localPhotoStatus);
     this.photoStatusText = LocalPhotoStatus[localPhotoStatus];
     this.isRejected = localPhotoStatus === LocalPhotoStatus.REJECTED;
   }
