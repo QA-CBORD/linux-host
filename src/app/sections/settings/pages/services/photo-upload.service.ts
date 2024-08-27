@@ -133,17 +133,18 @@ export class PhotoUploadService {
       return of([]);
     }
 
-    // Group photos by type and sort by version in ascending order
+    // Group photos by status and sort by date in ascending order
     const groupedPhotos = validPhotos.reduce((acc, photo) => {
-      if (!acc[photo.type]) {
-        acc[photo.type] = [];
+      if (!acc[photo.status]) {
+        acc[photo.status] = [];
       }
-      acc[photo.type].push(photo);
+      acc[photo.status].push(photo);
       return acc;
     }, {});
 
     const sortedPhotos = Object.values(groupedPhotos).map(
-      (photos: UserPhotoInfo[]) => photos.sort((a, b) => a.version - b.version)[0]
+      (photos: UserPhotoInfo[]) =>
+        photos.sort((a, b) => new Date(b.insertTime).getTime() - new Date(a.insertTime).getTime())[0]
     );
 
     return of(sortedPhotos).pipe(
