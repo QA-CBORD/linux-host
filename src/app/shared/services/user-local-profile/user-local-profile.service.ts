@@ -3,7 +3,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserLocalProfile } from '@shared/model/user-local-profile.model';
-import { combineLatest, first, map, tap } from 'rxjs';
+import { combineLatest, first, map, take, tap } from 'rxjs';
 
 const initState = { userFullName: '', pronouns: '' };
 @Injectable({
@@ -25,6 +25,17 @@ export class UserLocalProfileService {
     this._userLocalProfileSignal.update(profile => ({ ...profile, pronouns }));
     this.updateStorage();
   }
+  updateUserName() {
+    console.log('updateUserName');
+    
+    this.userFacadeService.getUser$().pipe(
+      first(),
+      map(userInfo =>
+        this._userLocalProfileSignal.update(profile => ({ ...profile, userFullName: getUserFullName(userInfo) }))
+      ),
+      tap(() => this.updateStorage()),
+    ).subscribe();
+  }
 
   initUserLocalProfile() {
     combineLatest([
@@ -39,6 +50,7 @@ export class UserLocalProfileService {
           if (storageEntity) {
             this._userLocalProfileSignal.set(storageEntity);
           }
+          console.log('userFullName', userFullName);
 
           this._userLocalProfileSignal.update(profile => ({ ...profile, userFullName }));
           this.updateStorage();
