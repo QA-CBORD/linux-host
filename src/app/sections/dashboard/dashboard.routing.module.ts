@@ -4,6 +4,7 @@ import { DashboardPage } from './dashboard.component';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
 import { DASHBOARD_NAVIGATE } from './dashboard.config';
 import { SwipeBackGuard } from '@sections/dashboard/resolvers/swipe-back.guard';
+import { userFullnameResolverResolver } from '@shared/services/user-local-profile/resolvers/user-fullname-resolver.resolver';
 
 const routes: Route[] = [
   {
@@ -11,6 +12,7 @@ const routes: Route[] = [
     component: DashboardPage,
     resolve: {
       data: DashboardPageResolver,
+      user:userFullnameResolverResolver
     },
     canDeactivate: [SwipeBackGuard]
   },
