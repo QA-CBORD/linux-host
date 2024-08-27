@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserPhotoUploadSettings } from '@core/model/user/user-photo-upload-settings.model';
-import { BehaviorSubject, Observable, of, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, zip } from 'rxjs';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
 import { Settings } from '../../../../app.global';
 import SettingList = Settings.SettingList;
@@ -10,27 +10,15 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
-import { ActionSheetController, ModalController } from '@ionic/angular';
+import { ActionSheetController } from '@ionic/angular';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 import { CameraSource } from '@capacitor/camera';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TranslateFacadeService } from '@core/facades/translate/translate.facade.service';
 import { TOAST_DURATION } from '@shared/model/generic-constants';
-
-export enum PhotoStatus {
-  PENDING,
-  ACCEPTED,
-  REJECTED,
-  REPLACED,
-  DELETED,
-}
-
-export enum PhotoType {
-  PROFILE_PENDING = -1,
-  PROFILE = 0,
-  GOVT_ID_FRONT = 1,
-  GOVT_ID_BACK = 2,
-}
+import { PhotoStatus, PhotoType } from '../photo-upload/models/photo-upload.enums';
+import { ModalsService } from '@core/service/modals/modals.service';
+import { mapUserPhotosInList } from '../photo-upload/utils/photo-upload.utils';
 
 @Injectable({ providedIn: 'root' })
 export class PhotoUploadService {
@@ -54,7 +42,7 @@ export class PhotoUploadService {
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly toastService: ToastService,
     private readonly translateService: TranslateFacadeService,
     private readonly actionSheetCtrl: ActionSheetController
@@ -118,37 +106,15 @@ export class PhotoUploadService {
         if (photoInfoList && !photoInfoList.empty) {
           return this.fetchUserPhotosInList(photoInfoList);
         }
-        return of([]);
+        return [];
       })
     );
   }
 
-  /// get photo data by status Accepted and Pending and fetch array of photos
+  /// get photo data by status and fetch array of photos
   private fetchUserPhotosInList(photoList: UserPhotoList): Observable<UserPhotoInfo[]> {
-    const validPhotos = photoList.list.filter(({ status }) =>
-      [PhotoStatus.ACCEPTED, PhotoStatus.PENDING, PhotoStatus.REJECTED].includes(status)
-    );
-
-    if (!validPhotos.length) {
-      return of([]);
-    }
-
-    // Group photos by status and sort by date in ascending order
-    const groupedPhotos = validPhotos.reduce((acc, photo) => {
-      if (!acc[photo.status]) {
-        acc[photo.status] = [];
-      }
-      acc[photo.status].push(photo);
-      return acc;
-    }, {});
-
-    const sortedPhotos = Object.values(groupedPhotos).map(
-      (photos: UserPhotoInfo[]) =>
-        photos.sort((a, b) => new Date(b.insertTime).getTime() - new Date(a.insertTime).getTime())[0]
-    );
-
-    return of(sortedPhotos).pipe(
-      switchMap(photoList => zip(...photoList.map(({ id }) => this.handleUserPhotoById(id))))
+    return of(mapUserPhotosInList(photoList)).pipe(
+      switchMap(photoList => combineLatest(photoList.map(({ id }) => this.handleUserPhotoById(id))))
     );
   }
 
@@ -245,7 +211,7 @@ export class PhotoUploadService {
   }
 
   async presentDeletePhotoModal(photoId: string) {
-    const modal = await this.modalController.create({
+    const modal = await this.modalController.createAlert({
       component: DeleteModalComponent,
     });
     modal.onDidDismiss().then(data => {
