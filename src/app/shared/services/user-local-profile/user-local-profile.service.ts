@@ -27,14 +27,17 @@ export class UserLocalProfileService {
   }
   updateUserName() {
     console.log('updateUserName');
-    
-    this.userFacadeService.getUser$().pipe(
-      first(),
-      map(userInfo =>
-        this._userLocalProfileSignal.update(profile => ({ ...profile, userFullName: getUserFullName(userInfo) }))
-      ),
-      tap(() => this.updateStorage()),
-    ).subscribe();
+
+    this.userFacadeService
+      .getUser$()
+      .pipe(
+        first(),
+        map(userInfo =>
+          this._userLocalProfileSignal.update(profile => ({ ...profile, userFullName: getUserFullName(userInfo) }))
+        ),
+        tap(() => this.updateStorage())
+      )
+      .subscribe();
   }
 
   initUserLocalProfile() {
