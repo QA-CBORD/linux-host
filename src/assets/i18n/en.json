@@ -195,10 +195,15 @@
         "profile": "There was an issue submitting your profile photo - please try again"
       },
       "delete-photo": {
-        "header": "Delete Pending Photo?",
-        "message": "If you delete your pending photo, you must reupload a government ID the next time you submit a new photo.",
+        "header": "Delete Photo?",
+        "message": "If you delete your photo, you must reupload a government ID the next time you submit a new photo.",
         "delete_button": "Delete Photo"
       },
+      "reupload": "Reupload",
+      "upload": "Reupload",
+      "delete": "Delete",
+      "submit_photo_button": "Submit Photo For Review",
+      "submit_photos_button": "Submit Photos For Review",
       "invalid_photo_set": "Invalid photo format. Please upload a valid photo.",
       "user_photo_current": "user photo, current",
       "user_photo_pending": "user photo, pending",
