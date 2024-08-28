@@ -49,4 +49,8 @@ describe('UserLocalProfileService', () => {
     service.updatePronouns(pronouns);
     expect(service.userLocalProfileSignal().pronouns).toBe(pronouns);
   });
+  it('should update user name', () => {
+    service.updateUserName();
+    expect(service.userLocalProfileSignal().userFullName).toBe(userFullName);
+  });
 });
