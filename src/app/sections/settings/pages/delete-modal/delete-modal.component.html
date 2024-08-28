@@ -5,7 +5,9 @@
   </ion-card-header>
 
   <ion-card-content>
-    <div translate>get_mobile.photo_upload.delete-photo.message</div>
+    <div translate>
+      {{ 'get_mobile.photo_upload.delete-photo.' + (govtIdRequired ? 'govid_message' : 'message') | translate }}
+    </div>
     <div class="actions">
       <ion-button color="danger" expand="block" (click)="deletePhoto()" translate>
         get_mobile.photo_upload.delete-photo.delete_button</ion-button

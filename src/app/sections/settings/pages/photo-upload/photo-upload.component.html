@@ -72,7 +72,7 @@
   <!-- BUTTON THAT SUBMITS ALL PHOTOS  -->
   <div class="action-btn-container">
     <ion-button color="primary" [disabled]="submitButtonDisabled" class="submit-btn" (click)="submitPhotos()">{{
-      ('get_mobile.photo_upload.' + (localPhotoData.govtIdRequired ? 'submit_photos_button' : 'submit_photo_button'))
+      'get_mobile.photo_upload.' + (localPhotoData.govtIdRequired ? 'submit_photos_button' : 'submit_photo_button')
         | translate
     }}</ion-button>
   </div>
