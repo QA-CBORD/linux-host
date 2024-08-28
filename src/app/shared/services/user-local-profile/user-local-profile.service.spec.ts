@@ -3,12 +3,14 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { UserLocalProfileService } from './user-local-profile.service';
 import { of } from 'rxjs';
+import { UserInfo } from '@core/model/user';
 
 describe('UserLocalProfileService', () => {
   let service: UserLocalProfileService;
   let storageStateService: StorageStateService;
   let userFacadeService: UserFacadeService;
   const userFullName = 'John Doe';
+  const updatedUserFullName = 'John Doe';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -27,6 +29,7 @@ describe('UserLocalProfileService', () => {
           provide: UserFacadeService,
           useValue: {
             getUserData$: jest.fn().mockReturnValue({ pipe: () => of(userFullName) }),
+            getUser$: jest.fn().mockReturnValue(of(updatedUserFullName)),
           },
         },
       ],
@@ -49,8 +52,20 @@ describe('UserLocalProfileService', () => {
     service.updatePronouns(pronouns);
     expect(service.userLocalProfileSignal().pronouns).toBe(pronouns);
   });
-  it('should update user name', () => {
+  it('should retrieve user, update profile, and call updateStorage', () => {
+    const userInfo = { firstName: 'Test', lastName: 'User' };
+
+    const userFacadeService = TestBed.inject(UserFacadeService);
+    jest.spyOn(userFacadeService, 'getUser$').mockReturnValue(of(userInfo as UserInfo));
+
+    const service = TestBed.inject(UserLocalProfileService);
+    const updateSpy = jest.spyOn(service['_userLocalProfileSignal'], 'update');
+    const updateStorageSpy = jest.spyOn(service as any, 'updateStorage');
+
     service.updateUserName();
-    expect(service.userLocalProfileSignal().userFullName).toBe(userFullName);
+
+    expect(updateSpy).toHaveBeenCalledWith(expect.any(Function));
+    expect(updateStorageSpy).toHaveBeenCalled();
+    expect(service.userLocalProfileSignal().userFullName).toBe(`${userInfo.firstName}  ${userInfo.lastName}`);
   });
 });
