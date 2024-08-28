@@ -196,7 +196,8 @@
       },
       "delete-photo": {
         "header": "Delete Photo?",
-        "message": "If you delete your photo, you must reupload a government ID the next time you submit a new photo.",
+        "message": "If you delete your photo, you must reupload a new photo.",
+        "govid_message": "If you delete your photo, you must reupload a government ID the next time you submit a new photo.",
         "delete_button": "Delete Photo"
       },
       "reupload": "Reupload",

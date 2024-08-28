@@ -213,6 +213,7 @@ export class PhotoUploadService {
   async presentDeletePhotoModal(photoId: string) {
     const modal = await this.modalController.createAlert({
       component: DeleteModalComponent,
+      componentProps: { govtIdRequired: this._govtIdRequired$.value },
     });
     modal.onDidDismiss().then(data => {
       if (data.data === true) {
