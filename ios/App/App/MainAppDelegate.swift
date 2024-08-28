@@ -82,12 +82,18 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("title: ", userInfo["title"] as? String)
-        print("body: ", userInfo["body"] as? String)
-        if let isSilent = userInfo["isSilent"] as? String {
-            print("isSilent: ", isSilent)
+        
+        print("remoteMessage = ", userInfo)
+        
+        guard  let category = userInfo["category"] as? String else {
+            return
         }
         
+        guard let configuration = ConfigurationFactory.createConfiguration(from: userInfo) else {
+            return
+        }
+        
+        NotificationCenter.default.post(name: .handleSilentPhotoUploadUpdate, object: nil, userInfo: configuration)
         completionHandler(.noData)
     }
     
@@ -97,3 +103,26 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+class ConfigurationFactory {
+    static func createConfiguration(from userInfo: [AnyHashable: Any]) -> [String: String]? {
+        guard let category = userInfo["category"] as? String else {
+            return nil
+        }
+        
+        switch category {
+        case EventType.PHOTO_UPLOAD_UPDATE.rawValue:
+            guard let title = userInfo["title"] as? String,
+                  let status = userInfo["status"] as? String,
+                  let userId = userInfo["userId"] as? String else {
+                return nil
+            }
+            return [
+                "title": title,
+                "status": status,
+                "userId": userId
+            ]
+        default:
+            return nil
+        }
+    }
+}

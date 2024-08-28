@@ -1,18 +1,18 @@
-package com.cbord.get;
+package com.cbord.get.notification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Build;
 
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-public class LocalNotification {
-    private  final static String CHANNEL_ID = "Location_Channel_ID";
-    private  final static String CHANNEL_NAME = "Location Channel";
-    private  final static String CHANNEL_DESCRIPTION = "Notifications related to location updates";
 
+import com.cbord.get.R;
+
+public class LocalNotification {
+    private  final static String CHANNEL_ID = "GET_Channel_ID";
+    private  final static String CHANNEL_NAME = "GET_Channel";
+    private  final static String CHANNEL_DESCRIPTION = "GET Local notification";
 
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -24,11 +24,12 @@ public class LocalNotification {
         }
 
     }
-    public static void showNotifications(Context context) {
+
+    public static void showNotifications(Context context, String title, String message) {
         var notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_round)
-                .setContentTitle("New Update Available")
-                .setContentText("Please update to the latest version for improved performance")
+                .setContentTitle(title)
+                .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         var notifyId = 1;
