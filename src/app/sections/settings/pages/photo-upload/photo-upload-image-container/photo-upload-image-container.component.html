@@ -24,10 +24,14 @@
     [class]="'default-image round-corners ion-margin-vertical'"
   />
   @if(displayUploadButton){
-  <ion-button expand="block" (click)="presentPhotoTypeSelection()">Upload</ion-button>
+  <ion-button expand="block" (click)="presentPhotoTypeSelection()" translate>get_mobile.photo_upload.upload</ion-button>
   } } @if(displayReuploadButton){
-  <ion-button expand="block" color="light" (click)="presentPhotoTypeSelection()">Reupload</ion-button>
+  <ion-button expand="block" color="light" (click)="presentPhotoTypeSelection()" translate
+    >get_mobile.photo_upload.reupload</ion-button
+  >
   } @if(displayDeleteButton){
-  <ion-button expand="block" color="light" (click)="deletePhoto()">Delete</ion-button>
+  <ion-button expand="block" color="light" (click)="deletePhoto()" translate
+    >get_mobile.photo_upload.delete</ion-button
+  >
   }
 </div>
