@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { PhotoCropModalComponent } from '../photo-crop-modal/photo-crop-modal.component';
-import { PhotoType } from './photo-upload.service';
+import { PhotoType } from '../photo-upload/models/photo-upload.enums';
 
 @Injectable()
 export class PhotoCropModalService {

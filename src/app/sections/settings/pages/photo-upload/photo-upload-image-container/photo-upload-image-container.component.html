@@ -1,0 +1,37 @@
+<div
+  [className]="
+    'stored-img-cont round-corners stored-img-cont--status-' +
+    photoStatusText +
+    ' stored-img-cont--type-' +
+    photoTypeText
+  "
+>
+  <div class="stored-img-cont__photo-label">{{ photoLabelDisplay }}</div>
+  @if(photoUrl$ | async; as photoUrl) {
+  <img
+    [src]="photoUrl"
+    [alt]="photoTypeConfig.altText | translate"
+    [width]="photoDimensions.width"
+    [height]="photoDimensions.height"
+    class="round-corners ion-margin-vertical"
+    [ngStyle]="{ 'object-fit': fitCover ? 'cover' : 'fill' }"
+  />
+  } @else {
+  <!-- DEFAULT IMAGE -->
+  <img
+    [src]="photoTypeConfig.defaultPhotoSrc"
+    [alt]="photoTypeConfig.altText | translate"
+    [class]="'default-image round-corners ion-margin-vertical'"
+  />
+  @if(displayUploadButton){
+  <ion-button expand="block" (click)="presentPhotoTypeSelection()" translate>get_mobile.photo_upload.upload</ion-button>
+  } } @if(displayReuploadButton){
+  <ion-button expand="block" color="light" (click)="presentPhotoTypeSelection()" translate
+    >get_mobile.photo_upload.reupload</ion-button
+  >
+  } @if(displayDeleteButton){
+  <ion-button expand="block" color="light" (click)="deletePhoto()" translate
+    >get_mobile.photo_upload.delete</ion-button
+  >
+  }
+</div>

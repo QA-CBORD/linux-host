@@ -6,7 +6,7 @@
   flex-direction: column;
 
   &__label {
-    @include font-nunito-semibold(14px);
+    @include font-nunito-semibold(15px);
   }
   &__name {
     @include font-nunito-heavy(18px);
@@ -26,5 +26,9 @@
   &__name {
     @include font-nunito-heavy(20px);
     margin-left: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 70vw;
   }
 }
