@@ -106,7 +106,7 @@ export class PhotoUploadService {
         if (photoInfoList && !photoInfoList.empty) {
           return this.fetchUserPhotosInList(photoInfoList);
         }
-        return [];
+        return of([]);
       })
     );
   }
