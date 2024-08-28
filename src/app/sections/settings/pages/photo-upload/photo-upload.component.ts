@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
@@ -23,6 +23,10 @@ import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from '@ionic/angular/standalone';
 import { PhotoStatus, PhotoType } from './models/photo-upload.enums';
+import { Capacitor, registerPlugin } from '@capacitor/core';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
+const IOSDevice = registerPlugin<any>('IOSDevice');
+const AndroidPlugin = registerPlugin<any>('AndroidPlugin');
 
 export enum LocalPhotoStatus {
   NONE,
@@ -31,6 +35,10 @@ export enum LocalPhotoStatus {
   NEW,
   SUBMITTED,
   REJECTED,
+}
+
+enum PhotoEvents {
+  PHOTO_UPLOAD_UPDATE = 'PHOTO_UPLOAD_UPDATE',
 }
 
 export interface LocalPhotoUploadStatus {
@@ -109,13 +117,21 @@ export class PhotoUploadComponent implements OnInit {
     private readonly photoCropModalService: PhotoCropModalService,
     private readonly translateService: TranslateFacadeService,
     private readonly cameraService: CameraService
-  ) {}
+  ) { }
+
+  private readonly nativeProvider: NativeProvider = inject(NativeProvider);
 
   ngOnInit() {
     this.clearLocalStateData();
     this.photoUploadService.clearLocalPendingPhoto();
     this.getPhotoData();
     this.setupPhotoSubscriptions();
+    this.updatePhotoUploadStatus();
+  }
+
+  ngOnDestroy() {
+    IOSDevice.removeAllListeners();
+    AndroidPlugin.removeAllListeners();
   }
 
   ionViewWillEnter() {
@@ -483,5 +499,20 @@ export class PhotoUploadComponent implements OnInit {
       }
     }
     return true;
+  }
+
+
+  private updatePhotoUploadStatus() {
+    if (this.nativeProvider.isIos()) {
+      IOSDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
+        console.log('PHOTO_UPLOAD_UPDATE iOS');
+        this.getPhotoData();
+      });
+    } else if (this.nativeProvider.isAndroid()) {
+      AndroidPlugin.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
+        console.log('PHOTO_UPLOAD_UPDATE Android');
+        this.getPhotoData();
+      });
+    }
   }
 }

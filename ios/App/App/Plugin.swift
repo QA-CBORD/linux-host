@@ -20,10 +20,11 @@ public class Plugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "addToAppleWallet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setEnvironment", returnType: CAPPluginReturnPromise)
     ]
-    
+   
     override public func load() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.notifyApplePayResponse(_:)), name: .handleApplePayResponse, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.notifyAppleWallet), name: .handleAppleWalletRefresh, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.notifyAppleWallet), name: .handleAppleWalletRefresh, object: nil)   
+        NotificationCenter.default.addObserver(self, selector: #selector(self.notifyPhotoUploadUpdate(_:)), name: .handleSilentPhotoUploadUpdate, object: nil)
     }
 
     deinit {
