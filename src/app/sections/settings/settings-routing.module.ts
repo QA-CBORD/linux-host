@@ -4,6 +4,7 @@ import { SettingsPage } from '@sections/settings/settings.page';
 import { LOCAL_ROUTING, SETTINGS_NAVIGATE } from '@sections/settings/settings.config';
 import { settingsPageResolver } from './resolvers/settings-page.resolver';
 import { settingsListResolver } from './resolvers/settings-list.resolver';
+import { photoUploadResolver } from './resolvers/photo-upload.resolver';
 
 const routes: Route[] = [
   {
@@ -13,7 +14,8 @@ const routes: Route[] = [
   },
   {
     path: LOCAL_ROUTING.photoUpload,
-    loadChildren: () => import('./pages/photo-upload/photo-upload.module').then(m => m.PhotoUploadModule),
+    resolve: { data: photoUploadResolver },
+    loadComponent: () => import('./pages/photo-upload/photo-upload.component').then(m => m.PhotoUploadComponent),
   },
   {
     path: SETTINGS_NAVIGATE.address,
