@@ -12,18 +12,17 @@ const routes: Route[] = [
     component: DashboardPage,
     resolve: {
       data: DashboardPageResolver,
-      user:userFullnameResolverResolver
+      user: userFullnameResolverResolver,
     },
-    canDeactivate: [SwipeBackGuard]
+    canDeactivate: [SwipeBackGuard],
   },
   {
     path: DASHBOARD_NAVIGATE.scanCard,
     loadChildren: () => import('./containers/scan-card/scan-card.module').then(m => m.ScanCardModule),
-  }
-
+  },
 ];
 
 const imports = [RouterModule.forChild(routes)];
 
-@NgModule({ imports, exports : [RouterModule] })
+@NgModule({ imports, exports: [RouterModule] })
 export class DashboardRoutingModule {}

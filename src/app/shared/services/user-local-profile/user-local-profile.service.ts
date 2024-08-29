@@ -26,7 +26,7 @@ export class UserLocalProfileService {
     this.updateStorage();
   }
   updateUserName() {
-    this.userFacadeService
+   return this.userFacadeService
       .getUser$()
       .pipe(
         first(),
@@ -35,7 +35,6 @@ export class UserLocalProfileService {
         ),
         tap(() => this.updateStorage())
       )
-      .subscribe();
   }
 
   initUserLocalProfile() {

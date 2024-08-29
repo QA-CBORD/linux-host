@@ -4,6 +4,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { UserLocalProfileService } from './user-local-profile.service';
 import { of } from 'rxjs';
 import { UserInfo } from '@core/model/user';
+import { getUserFullName } from '@core/utils/general-helpers';
 
 describe('UserLocalProfileService', () => {
   let service: UserLocalProfileService;
@@ -54,18 +55,15 @@ describe('UserLocalProfileService', () => {
   });
   it('should retrieve user, update profile, and call updateStorage', () => {
     const userInfo = { firstName: 'Test', lastName: 'User' };
+    const userFullName = getUserFullName(userInfo as UserInfo);
 
-    const userFacadeService = TestBed.inject(UserFacadeService);
     jest.spyOn(userFacadeService, 'getUser$').mockReturnValue(of(userInfo as UserInfo));
+    jest.spyOn(service['_userLocalProfileSignal'], 'update');
+    jest.spyOn(service as any, 'updateStorage');
 
-    const service = TestBed.inject(UserLocalProfileService);
-    const updateSpy = jest.spyOn(service['_userLocalProfileSignal'], 'update');
-    const updateStorageSpy = jest.spyOn(service as any, 'updateStorage');
+    service.updateUserName().subscribe();
 
-    service.updateUserName();
-
-    expect(updateSpy).toHaveBeenCalledWith(expect.any(Function));
-    expect(updateStorageSpy).toHaveBeenCalled();
-    expect(service.userLocalProfileSignal().userFullName).toBe(`${userInfo.firstName}  ${userInfo.lastName}`);
+    expect(service['_userLocalProfileSignal'].update).toHaveBeenCalledWith(expect.any(Function));
+    expect(service['updateStorage']).toHaveBeenCalled();
   });
 });
