@@ -363,7 +363,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
           this.toastService.showError({ message, duration: TOAST_DURATION, position: 'bottom' });
-
           this.dueTimeFeedback = {
             ...this.dueTimeFeedback,
             type: 'error',
@@ -395,6 +394,7 @@ export class CartComponent implements OnInit, OnDestroy {
         code: errorCodeKey,
         type: 'info',
         message: message,
+        isFetching: false,
       } as DueTimeFeedback;
 
       await this.onOrderTimeChange({ dateTimePicker: ASAP_LABEL, timeStamp: undefined }, true);
@@ -655,6 +655,9 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.updateOrderNote(this.cartFormState.data[FORM_CONTROL_NAMES.note]);
     this.cartService.updateOrderPhone(this.cartFormState.data[FORM_CONTROL_NAMES.phone]);
     const isAutoAsapSelection = this.isMerchantAutoASAP && this.isLastSubmitedOrderError;
+    this.dueTimeFeedback = {} as DueTimeFeedback;
+    this.cdRef.detectChanges();
+
     /// if Apple Pay Order
 
     if (this.isApplePay()) {
@@ -679,6 +682,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .toPromise()
       .then(async order => {
         this.dueTimeFeedback = {} as DueTimeFeedback;
+        this.cdRef.detectChanges();
         this.isLastSubmitedOrderError = false;
         this.appRateService.evaluateToRequestRateApp();
         this.setupCartInfo(order);
@@ -699,6 +703,11 @@ export class CartComponent implements OnInit, OnDestroy {
 
       if (errorCodeKey === ORDER_ERROR_CODES.ORDER_CAPACITY && this.isMerchantAutoASAP) {
         this.isLastSubmitedOrderError = true;
+        this.dueTimeFeedback = {
+          ...this.dueTimeFeedback,
+          isFetching: true,
+        } as DueTimeFeedback;
+        this.cdRef.detectChanges();
         this.updateOrderTimeToASAPAndNotify(errorCodeKey, this.cartService._orderOption.orderType);
         return;
       }
@@ -1003,6 +1012,8 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   cleanDueTimeErrors() {
-    this.dueTimeFeedback = {} as DueTimeFeedback;
+    if (this.dueTimeFeedback.type == 'error') {
+      this.dueTimeFeedback = {} as DueTimeFeedback;
+    }
   }
 }

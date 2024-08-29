@@ -35,7 +35,7 @@ export class AppRateService {
   }
 
   async rateApp(appRate: AppRate = {} as AppRate) {
-    if (this.platform.is('desktop')) {
+    if (!this.platform.is('capacitor')) {
       return;
     }
 
