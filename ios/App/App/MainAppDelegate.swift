@@ -85,10 +85,6 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
         
         print("remoteMessage = ", userInfo)
         
-        guard  let category = userInfo["category"] as? String else {
-            return
-        }
-        
         guard let configuration = ConfigurationFactory.createConfiguration(from: userInfo) else {
             return
         }
@@ -105,6 +101,9 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
 
 class ConfigurationFactory {
     static func createConfiguration(from userInfo: [AnyHashable: Any]) -> [String: String]? {
+        
+        print("createConfiguration ", userInfo)
+        
         guard let category = userInfo["category"] as? String else {
             return nil
         }

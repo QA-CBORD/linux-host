@@ -23,10 +23,18 @@ import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from '@ionic/angular/standalone';
 import { PhotoStatus, PhotoType } from './models/photo-upload.enums';
-import { Capacitor, registerPlugin } from '@capacitor/core';
+import { registerPlugin } from '@capacitor/core';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+
 const IOSDevice = registerPlugin<any>('IOSDevice');
-const AndroidPlugin = registerPlugin<any>('AndroidPlugin');
+const AndroidDevice = registerPlugin<any>('AndroidPlugin');
+
+interface PhotoUploadInfo {
+  userId: string;
+  title: string;
+  status: string;
+}
 
 export enum LocalPhotoStatus {
   NONE,
@@ -118,7 +126,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly translateService: TranslateFacadeService,
     private readonly cameraService: CameraService
   ) { }
-
+  private readonly userFacadeService: UserFacadeService = inject(UserFacadeService);
   private readonly nativeProvider: NativeProvider = inject(NativeProvider);
 
   ngOnInit() {
@@ -131,7 +139,7 @@ export class PhotoUploadComponent implements OnInit {
 
   ngOnDestroy() {
     IOSDevice.removeAllListeners();
-    AndroidPlugin.removeAllListeners();
+    AndroidDevice.removeAllListeners();
   }
 
   ionViewWillEnter() {
@@ -141,6 +149,10 @@ export class PhotoUploadComponent implements OnInit {
       this.photoUploadService.clearLocalProfilePhoto();
       this.getPhotoData();
     }
+  }
+
+  async ionViewDidEnter() {
+    await AndroidDevice.emitEvent();
   }
 
   private clearLocalStateData() {
@@ -502,17 +514,30 @@ export class PhotoUploadComponent implements OnInit {
   }
 
 
-  private updatePhotoUploadStatus() {
+  private async updatePhotoUploadStatus() {
     if (this.nativeProvider.isIos()) {
-      IOSDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
+      await IOSDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, (info: PhotoUploadInfo) => {
         console.log('PHOTO_UPLOAD_UPDATE iOS');
-        this.getPhotoData();
+        this.updatePhotoUpload(info);
+
       });
     } else if (this.nativeProvider.isAndroid()) {
-      AndroidPlugin.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
+      console.log('PHOTO_UPLOAD_UPDATE Android?');
+      await AndroidDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, (info: PhotoUploadInfo) => {
         console.log('PHOTO_UPLOAD_UPDATE Android');
-        this.getPhotoData();
+        this.updatePhotoUpload(info);
       });
     }
   }
+
+  private updatePhotoUpload(info: PhotoUploadInfo) {
+    this.userFacadeService
+      .getUserData$()
+      .subscribe((response) => {
+        console.log('response.id: ', response.id);
+        if (response.id === info.userId) {
+          this.getPhotoData();
+        }
+      });
+   }
 }

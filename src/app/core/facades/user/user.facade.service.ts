@@ -195,8 +195,6 @@ export class UserFacadeService extends ServiceStateFacade {
             }
           });
           PushNotifications.addListener('registration', (token: Token) => {
-            // console.log('Platform: ' + Capacitor.getPlatform());
-            // console.log('Push registration success, token: ' + token.value);
             this.saveNotification$(token.value).subscribe();
           });
           PushNotifications.register();
