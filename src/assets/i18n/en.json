@@ -602,6 +602,12 @@
       "save_button": "Continue",
       "user_agreement": "By clicking Continue you agree you have read the GET <a href=\"./terms.php\" target=\"_blank\">Terms of Use</a> and <a href=\"./terms.php\" target=\"_blank\">Privacy Policy</a>",
       "user_profile": "Profile"
+    },
+    "merchant_screen": {
+      "inline_next_timeslot_pickup": "Your pickup time has been updated to the next available time slot",
+      "inline_next_timeslot_delivery": "Your delivery time has been updated to the next available time slot",
+      "toast_next_timeslot_pickup": "Your pickup time has been updated to the next available time slot",
+      "toast_next_timeslot_delivery": "Your delivery time has been updated to the next available time slot"
     }
   },
   "patron-ui": {

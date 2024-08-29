@@ -154,7 +154,8 @@ export enum MerchantSettings {
   orderNotesDisabled = 'merchant.order.disable_order_notes',
   manualBarcodeEnabled = 'merchant.menu.menu_add_barcodea_enabled',
   addToCartEnabled = 'merchant.menu.menu_add_items_enabled',
-  removeTaxCheckout = 'merchant.payment.removeTaxCheckout'
+  removeTaxCheckout = 'merchant.payment.removeTaxCheckout',
+  enableAutoASAPSelection = 'merchant.order.enableAutoASAPSelection'
 }
 
 export enum ORDER_TYPE {

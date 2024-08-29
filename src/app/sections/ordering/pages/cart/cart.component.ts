@@ -27,6 +27,7 @@ import { CheckingProcess } from '@sections/check-in/services/check-in-process-bu
 import {
   AddressModalSettings,
   DueTimeErrorMessages,
+  DueTimeFeedback,
   FORM_CONTROL_NAMES,
   MerchantAccountInfoList,
   MerchantService,
@@ -105,14 +106,15 @@ export class CartComponent implements OnInit, OnDestroy {
   isOnline = true;
   networkSubcription: Subscription;
   orderSubmitErrorMessage: OrderingErrorContentStringModel;
-  dueTimeHasErrors = false;
-  errorCode = null;
+  dueTimeFeedback: DueTimeFeedback = {} as DueTimeFeedback;
   @ViewChild('content') private page: IonContent;
   platformBackButtonClickSubscription: Subscription;
-  isValidatingDueTime = false;
   itemReadOnly = false;
   orderReadOnly = false;
   disableTaxCheckout = false;
+  isMerchantOrderAhead = false;
+  isMerchantAutoASAP = false;
+  isLastSubmitedOrderError = false;
 
   private readonly activeCartService = inject(ActiveCartService);
 
@@ -167,8 +169,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
   }
 
-  onErrorsDetected(val: boolean) {
-    this.dueTimeHasErrors = val;
+  onErrorsDetected(_: boolean) {
+    this.dueTimeFeedback.type = 'error';
   }
 
   onCloseButton() {
@@ -289,11 +291,16 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
-  async onOrderTimeChange({ dateTimePicker, timeStamp }: DateTimeSelected) {
+  async onOrderTimeChange({ dateTimePicker, timeStamp }: DateTimeSelected, isAutoAsapSelection?: boolean) {
     let date = { dueTime: timeStamp || dateTimePicker, isASAP: dateTimePicker === ASAP_LABEL };
     date = date.isASAP ? { ...date, dueTime: undefined } : { ...date };
 
-    this.isValidatingDueTime = true;
+    this.dueTimeFeedback = {
+      ...this.dueTimeFeedback,
+      isFetching: true,
+    } as DueTimeFeedback;
+    this.cdRef.detectChanges();
+
     this.cartService.orderIsAsap = date.isASAP;
     this.cartService.cartsErrorMessage = null;
     this.cartService.orderOption = {
@@ -311,12 +318,15 @@ export class CartComponent implements OnInit, OnDestroy {
       for example paymentMethods validations should not fire dueTImeError toast messages.
      */
     await this.cartService
-      .validateOrder(this.cartService.orderOption)
+      .validateOrder(this.cartService.orderOption, isAutoAsapSelection)
       .pipe(first(), handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(validatedOrder => {
         this.cartService.cartsErrorMessage = null;
-        this.isValidatingDueTime = false;
+        this.dueTimeFeedback = {
+          ...this.dueTimeFeedback,
+          isFetching: false,
+        } as DueTimeFeedback;
 
         if (this.cartService._orderOption.isASAP) {
           this.cartService.orderOption = {
@@ -325,18 +335,24 @@ export class CartComponent implements OnInit, OnDestroy {
           };
         }
 
-        if (this.dueTimeHasErrors) {
-          this.cleanDueTimeErrors();
-        }
-
+        this.cleanDueTimeErrors();
         this.itemReadOnly = false;
         this.cdRef.detectChanges();
       })
       .catch(error => {
         if (Array.isArray(error)) {
-          this.errorCode = error[0];
+          this.dueTimeFeedback = {
+            ...this.dueTimeFeedback,
+            code: error[0],
+          } as DueTimeFeedback;
+
+          if (this.dueTimeFeedback.code === ORDER_ERROR_CODES.ORDER_CAPACITY && !this.cartService._orderOption.isASAP) {
+            this.updateOrderTimeToASAPAndNotify(this.dueTimeFeedback.code, this.cartService._orderOption.orderType);
+            return;
+          }
+
           const errorKey =
-            this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER
+            this.dueTimeFeedback.code === ORDER_ERROR_CODES.INVALID_ORDER
               ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
               : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
@@ -344,16 +360,55 @@ export class CartComponent implements OnInit, OnDestroy {
 
           this.itemReadOnly = true;
           this.cartService.cartsErrorMessage = error[1];
-          this.dueTimeHasErrors = true;
+
           const message = this.translateService.instant(`get_common.error.${errorKey}`);
           this.toastService.showError({ message, duration: TOAST_DURATION, position: 'bottom' });
-          this.isValidatingDueTime = false;
+
+          this.dueTimeFeedback = {
+            ...this.dueTimeFeedback,
+            type: 'error',
+            isFetching: false,
+          } as DueTimeFeedback;
           this.cdRef.detectChanges();
         }
       })
       .finally(() => {
         this.loadingService.closeSpinner();
       });
+  }
+
+  async updateOrderTimeToASAPAndNotify(errorCodeKey: string, orderType: number) {
+    try {
+      const messageKey = {
+        [ORDER_TYPE.DELIVERY]: 'inline_next_timeslot_delivery',
+        [ORDER_TYPE.PICKUP]: 'inline_next_timeslot_pickup',
+      }[orderType] as keyof DueTimeErrorMessages;
+
+      const messageToastKey = {
+        [ORDER_TYPE.DELIVERY]: 'toast_next_timeslot_delivery',
+        [ORDER_TYPE.PICKUP]: 'toast_next_timeslot_pickup',
+      }[orderType] as keyof DueTimeErrorMessages;
+
+      const message = this.translateService.instant(`get_web_gui.merchant_screen.${messageKey}`);
+      const toastMessage = this.translateService.instant(`get_web_gui.merchant_screen.${messageToastKey}`);
+      this.dueTimeFeedback = {
+        code: errorCodeKey,
+        type: 'info',
+        message: message,
+      } as DueTimeFeedback;
+
+      await this.onOrderTimeChange({ dateTimePicker: ASAP_LABEL, timeStamp: undefined }, true);
+      this.toastService.showInfo({
+        message: toastMessage,
+        duration: TOAST_DURATION,
+        position: 'bottom',
+        positionAnchor: 'toast-anchor',
+      });
+
+      this.cdRef.detectChanges();
+    } catch (error) {
+      // do nothing in the mean time.
+    }
   }
 
   onCartStateFormChanged(state) {
@@ -599,6 +654,7 @@ export class CartComponent implements OnInit, OnDestroy {
     let accountId = this.cartFormState.data[FORM_CONTROL_NAMES.paymentMethod]?.id;
     this.cartService.updateOrderNote(this.cartFormState.data[FORM_CONTROL_NAMES.note]);
     this.cartService.updateOrderPhone(this.cartFormState.data[FORM_CONTROL_NAMES.phone]);
+    const isAutoAsapSelection = this.isMerchantAutoASAP && this.isLastSubmitedOrderError;
     /// if Apple Pay Order
 
     if (this.isApplePay()) {
@@ -613,10 +669,17 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     this.cartService
-      .submitOrder(accountId, this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null, this.cartService.clientOrderId)
+      .submitOrder(
+        accountId,
+        this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null,
+        this.cartService.clientOrderId,
+        isAutoAsapSelection
+      )
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(async order => {
+        this.dueTimeFeedback = {} as DueTimeFeedback;
+        this.isLastSubmitedOrderError = false;
         this.appRateService.evaluateToRequestRateApp();
         this.setupCartInfo(order);
         await this.showModal(order);
@@ -632,16 +695,15 @@ export class CartComponent implements OnInit, OnDestroy {
   private async handlerCartErrors(error: string | [string, string]): Promise<void> {
     if (Array.isArray(error)) {
       this.cartService.changeClientOrderId;
+      const errorCodeKey = error && error[0];
 
-      this.dueTimeHasErrors = false;
-      const isMerchantOrderAhead = await firstValueFrom(
-        this.merchant$.pipe(
-          map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
-        )
-      );
+      if (errorCodeKey === ORDER_ERROR_CODES.ORDER_CAPACITY && this.isMerchantAutoASAP) {
+        this.isLastSubmitedOrderError = true;
+        this.updateOrderTimeToASAPAndNotify(errorCodeKey, this.cartService._orderOption.orderType);
+        return;
+      }
 
-      if (isMerchantOrderAhead && error) {
-        const key = error && error[0];
+      if (this.isMerchantOrderAhead && errorCodeKey) {
         const options = await firstValueFrom(this.orderDetailOptions$);
         const errorKey = {
           [ORDER_ERROR_CODES.INVALID_ORDER]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
@@ -649,11 +711,14 @@ export class CartComponent implements OnInit, OnDestroy {
             options.orderType === ORDER_TYPE.PICKUP
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
               : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable,
-        }[key] as keyof DueTimeErrorMessages;
+        }[errorCodeKey] as keyof DueTimeErrorMessages;
         const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
         this.toastService.showError({ message: errorMessage, duration: TOAST_DURATION, position: 'bottom' });
-        this.dueTimeHasErrors = true;
-        this.errorCode = key;
+        this.dueTimeFeedback = {
+          type: 'error',
+          code: errorCodeKey,
+          message: errorMessage,
+        } as DueTimeFeedback;
         this.page.scrollToTop();
         this.cdRef.detectChanges();
         return;
@@ -866,6 +931,17 @@ export class CartComponent implements OnInit, OnDestroy {
     );
     this.loadOrderingErrorStrings();
     this.lockDownService.loadStringsAndSettings();
+    this.isMerchantOrderAhead = await firstValueFrom(
+      this.merchant$.pipe(
+        map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
+      )
+    );
+
+    this.isMerchantAutoASAP = await firstValueFrom(
+      this.merchant$.pipe(
+        map(merchant => merchant.settings.map[MerchantSettings.enableAutoASAPSelection].value === 'true')
+      )
+    );
   }
 
   private async loadOrderingErrorStrings(): Promise<void> {
@@ -923,11 +999,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private canShowRemoveItemsAlert() {
-    return this.dueTimeHasErrors && this.errorCode !== ORDER_ERROR_CODES.ORDER_CAPACITY;
+    return this.dueTimeFeedback.type == 'error' && this.dueTimeFeedback.code !== ORDER_ERROR_CODES.ORDER_CAPACITY;
   }
 
   cleanDueTimeErrors() {
-    this.errorCode = null;
-    this.dueTimeHasErrors = false;
+    this.dueTimeFeedback = {} as DueTimeFeedback;
   }
 }
