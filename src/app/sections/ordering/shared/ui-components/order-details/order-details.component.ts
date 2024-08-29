@@ -106,9 +106,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.orderTypes = merchant?.orderTypes;
     this.isWalkoutOrder = !!merchant?.walkout;
     this._merchant = merchant;
-    this.isMerchantOrderAhead = parseInt(merchant.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
-    this.isTipEnabled = parseInt(merchant.settings?.map[MerchantSettings.tipEnabled]?.value) === 1;
-    this.isMerchantAutoASAP = merchant.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value === 'true';
+    this.isMerchantOrderAhead = parseInt(merchant?.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
+    this.isTipEnabled = parseInt(merchant?.settings?.map[MerchantSettings.tipEnabled]?.value) === 1;
+    this.isMerchantAutoASAP = merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value === 'true';
   }
 
   @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
@@ -276,13 +276,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   markDueTieWithErrors(): void {
-    if (this.duetimeFeedback.type  === 'error') {
+    if (this.duetimeFeedback.type === 'error') {
       const dueTimeErrorKey = this.getDueTimeErrorKey();
       this.dueTimeFormControl.setValue('');
       this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: true });
       this.dueTimeFormControl.markAsTouched();
-    } else {
-      this.duetimeFeedback = {} as DueTimeFeedback;
     }
   }
 
@@ -381,7 +379,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get showASAP(): boolean {
-    return  this.duetimeFeedback.type === 'error' && this.orderDetailOptions.isASAP ? false : true;
+    return this.duetimeFeedback.type === 'error' && this.orderDetailOptions.isASAP ? false : true;
   }
 
   get prepTime() {

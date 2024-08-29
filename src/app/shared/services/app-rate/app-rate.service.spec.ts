@@ -46,14 +46,14 @@ describe('AppRateService', () => {
   });
 
   it('should rate app', async () => {
-    platform.is.mockReturnValueOnce(false);
+    platform.is.mockReturnValueOnce(true);
     storageStateService.getStateEntityByKey$.mockReturnValue(of({ value: {} } as StorageEntity<AppRate>));
     await service.rateApp();
     expect(storageStateService.updateStateEntity).toHaveBeenCalled();
   });
 
   it('should not rate app if platform is desktop', async () => {
-    platform.is.mockReturnValueOnce(true);
+    platform.is.mockReturnValueOnce(false);
     storageStateService.getStateEntityByKey$.mockReturnValue(of({ value: {} } as StorageEntity<AppRate>));
     await service.rateApp();
     expect(storageStateService.updateStateEntity).not.toHaveBeenCalled();
