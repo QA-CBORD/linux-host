@@ -5,20 +5,25 @@
         orderDetailOptions.orderType | typeMessage : 'dueTime' : isWalkoutOrder
       }}</ion-label>
 
-      <p *ngIf="timeNotEditable; else timeEditable" class="order-details__value">
-        {{ orderDetailOptions | modifyPrepTime : orderTypes }}
-      </p>
+      <ng-container *ngIf="timeNotEditable; else timeEditable">
+        <ng-container *ngTemplateOutlet="timeWittNoEdit"></ng-container>
+      </ng-container>
 
-      <ion-label style="color: #6e6e6e" *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage">
-        <small>{{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}</small>
+      <ion-label
+        class="order-details__value--message"
+        *ngIf="checkinInstructionMessage || merchantTimeZoneDisplayingMessage"
+      >
+        {{ checkinInstructionMessage || merchantTimeZoneDisplayingMessage }}
       </ion-label>
 
-      <st-control-errors
-        *ngIf="dueTimeHasErrors"
-        class="control-hint--no-indent"
-        [control]="dueTimeFormControl"
-        [errorMessages]="dueTimeErrorMessages"
-      ></st-control-errors>
+      <div
+        *ngIf="!duetimeFeedback.isFetching"
+        class="control-hint"
+        [class.control-hint--info]="duetimeFeedback.type ==='info'"
+        [class.control-hint--error]="duetimeFeedback.type ==='error'"
+      >
+        {{ duetimeFeedback.message }}
+      </div>
     </div>
 
     <div class="order-details" *ngIf="orderDetailOptions.address">
@@ -244,24 +249,34 @@
     </div>
   </form>
 
-  <div class="order-details__buttons">
+  <div class="order-details__buttons" id="toast-anchor">
     <ng-content></ng-content>
   </div>
 </div>
 
 <ng-template #timeEditable>
   <div (click)="changeOrderTime()" (keypress)="changeOrderTime()" class="address-container">
-    <div class="order-details__value">
+    <div class="address-container">
       <!-- We need to show an skeleton in case we are validating time and takes too loong -->
-      <ion-skeleton-text *ngIf="isValidatingDueTime" animated style="width: 100%"></ion-skeleton-text>
+      <ion-skeleton-text *ngIf="duetimeFeedback.isFetching" animated style="width: 100%"></ion-skeleton-text>
       <!-- In case is ASAP and we have due time errors we need to show ASAP label with prep time, otherwhise is dueTime only -->
-      <p *ngIf="!isValidatingDueTime">
+      <p *ngIf="!duetimeFeedback.isFetching" class="order-details__value">
         {{ orderDetailOptions | modifyPrepTime : orderTypes : showASAP }}
         <span *ngIf="!showASAP">{{ prepTime }}</span>
       </p>
+      <div class="order-details__value--editable" [class.error]="duetimeFeedback.type === 'error'"></div>
     </div>
-    <div class="order-details__value--editable" [class.error]="dueTimeHasErrors"></div>
   </div>
+</ng-template>
+
+<ng-template #timeWittNoEdit>
+  <p
+    [class.order-details__value]="duetimeFeedback.type !== 'info' && !duetimeFeedback.isFetching"
+    [class.order-details__value--info]="duetimeFeedback.type === 'info' && !duetimeFeedback.isFetching"
+  >
+    {{ orderDetailOptions | modifyPrepTime : orderTypes }}
+  </p>
+  <ion-skeleton-text *ngIf="duetimeFeedback.isFetching" animated style="width: 100%"></ion-skeleton-text>
 </ng-template>
 
 <st-date-time-picker

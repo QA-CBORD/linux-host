@@ -33,4 +33,9 @@ describe('ToastService', () => {
     await service.showError({ message: 'test' });
     expect(toastControllerStub.create).toHaveBeenCalled();
   });
+
+  it('should create info toast', async () => {
+    await service.showInfo({ message: 'test' });
+    expect(toastControllerStub.create).toHaveBeenCalled();
+  });
 });

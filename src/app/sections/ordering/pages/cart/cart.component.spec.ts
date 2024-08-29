@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { of } from 'rxjs';
 import { BuildingInfo, MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from '@sections/ordering/components';
-import { MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { MerchantSettings, ORDER_TYPE, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { FORM_CONTROL_NAMES, OrderDetailsFormData } from '@sections/ordering/shared';
 import { UserAccount } from '@core/model/account/account.model';
@@ -27,6 +27,7 @@ import { Location } from '@angular/common';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { ASAP_LABEL, TOAST_DURATION } from '@shared/model/generic-constants';
 
 const mockData = {
   data: {
@@ -37,7 +38,14 @@ const mockData = {
 const _cartService = {
   validateOrder: jest.fn(),
   orderInfo$: of({ type: ORDER_TYPE.PICKUP } as OrderInfo),
-  merchant$: of({ id: '1' } as MerchantInfo),
+  merchant$: of({
+    settings: {
+      map: {
+        [MerchantSettings.orderAheadEnabled]: { value: '1' },
+        [MerchantSettings.enableAutoASAPSelection]: { value: 'true' },
+      },
+    },
+  } as any),
   orderDetailsOptions$: of({} as OrderDetailOptions),
   updateOrderNote: jest.fn(),
   updateOrderPhone: jest.fn(),
@@ -51,14 +59,16 @@ const _merchantService = {
   orderTypes$: of({} as MerchantOrderTypesInfo),
   retrieveBuildings: jest.fn(),
   isOutsideMerchantDeliveryArea: jest.fn(),
-  getMerchant: jest.fn(() => of({
-    id: '1',
-    settings: {
-      map: {
-        [MerchantSettings.removeTaxCheckout]: { value: '1' }
-      }
-    }
-  })),
+  getMerchant: jest.fn(() =>
+    of({
+      id: '1',
+      settings: {
+        map: {
+          [MerchantSettings.removeTaxCheckout]: { value: '1' },
+        },
+      },
+    })
+  ),
 };
 const _loadingService = {
   showSpinner: jest.fn(),
@@ -73,6 +83,7 @@ const _activatedRoute = {
 
 const _toastService = {
   showError: jest.fn(),
+  showInfo: jest.fn(),
 };
 const _popoverController = {
   create: jest.fn().mockReturnValue(Promise.resolve({ onDidDismiss: () => Promise.resolve() })),
@@ -98,7 +109,9 @@ const _lockDownService = {
   isLockDownOn: jest.fn(),
   loadStringsAndSettings: jest.fn(),
 };
-const _translateService = {};
+const _translateService = {
+  instant: jest.fn(),
+};
 const _priceUnitsResolverPipe = {};
 
 const _platform = {
@@ -208,7 +221,7 @@ describe('CartComponent', () => {
   });
 
   it('should not call location.back() when backButton is pressed and dueTimeHasErrors is true', async () => {
-    component.dueTimeHasErrors = true;
+    component.dueTimeFeedback.type = 'error';
 
     await component.ionViewDidEnter();
     const spyLocation = jest.spyOn(_location, 'back');
@@ -223,7 +236,7 @@ describe('CartComponent', () => {
   });
 
   it('should call location.back() when backButton is pressed and dueTimeHasErrors is false', async () => {
-    component.dueTimeHasErrors = false;
+    component.dueTimeFeedback.type = 'error';
     component.ionViewDidEnter();
 
     const spySubscribe = jest.spyOn(_platform.backButton, 'subscribeWithPriority');
@@ -235,6 +248,49 @@ describe('CartComponent', () => {
     fixture.whenStable().then(() => {
       expect(spySubscribe).toHaveBeenCalled();
       expect(spyLocation).toHaveBeenCalled();
+    });
+  });
+
+  it('should initialize content strings and settings correctly', async () => {
+    jest.spyOn(component as any, 'loadOrderingErrorStrings').mockImplementation(() => {});
+
+    await component['initContentStrings']();
+
+    expect(_orderingService.getContentStringByName).toHaveBeenCalledWith(ORDERING_CONTENT_STRINGS.buttonPlaceOrder);
+    expect(_orderingService.getContentStringByName).toHaveBeenCalledWith(ORDERING_CONTENT_STRINGS.labelCart);
+    expect(_orderingService.getContentStringByName).toHaveBeenCalledWith(ORDERING_CONTENT_STRINGS.buttonScheduleOrder);
+    expect(_orderingService.getContentErrorStringByName).toHaveBeenCalledWith(
+      ORDERING_CONTENT_STRINGS.insufficientBalanceMealsPayment
+    );
+
+    expect(component['loadOrderingErrorStrings']).toHaveBeenCalled();
+    expect(_lockDownService.loadStringsAndSettings).toHaveBeenCalled();
+
+    expect(component.isMerchantOrderAhead).toBe(true);
+    expect(component.isMerchantAutoASAP).toBe(true);
+  });
+
+  it('should update order time to ASAP and notify', async () => {
+    const toastMessage = 'Delivery toast message';
+    component.onOrderTimeChange = jest.fn();
+    _translateService.instant = jest.fn().mockImplementation((key) => toastMessage);
+    component.dueTimeFeedback.type = 'error';
+    const errorCodeKey = 'someErrorCode';
+    const orderType = ORDER_TYPE.DELIVERY;
+    const messageKey = 'inline_next_timeslot_delivery';
+    const messageToastKey = 'toast_next_timeslot_delivery';
+
+    await component.updateOrderTimeToASAPAndNotify(errorCodeKey, orderType);
+
+    expect(_translateService.instant).toHaveBeenCalledWith(`get_web_gui.merchant_screen.${messageKey}`);
+    expect(_translateService.instant).toHaveBeenCalledWith(`get_web_gui.merchant_screen.${messageToastKey}`);
+    expect(component.dueTimeFeedback.type).toEqual('info');
+    expect(component.onOrderTimeChange).toHaveBeenCalledWith({ dateTimePicker: ASAP_LABEL, timeStamp: undefined }, true);
+    expect(_toastService.showInfo).toHaveBeenCalledWith({
+      message: toastMessage,
+      duration: TOAST_DURATION,
+      position: 'bottom',
+      positionAnchor: 'toast-anchor',
     });
   });
 });

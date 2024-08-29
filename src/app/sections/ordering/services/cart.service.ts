@@ -322,7 +322,7 @@ export class CartService {
     return dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
   }
 
-  validateOrder(orderDetailsOptions?: OrderDetailOptions): Observable<OrderInfo> {
+  validateOrder(orderDetailsOptions?: OrderDetailOptions, isAutoAsapSelection?: boolean): Observable<OrderInfo> {
     const options = orderDetailsOptions || (this.cart.orderDetailsOptions as OrderDetailOptions);
 
     let address = {};
@@ -339,6 +339,7 @@ export class CartService {
           ...address,
           type: options?.orderType,
           dueTime: this.getDate(options?.dueTime, locale, timeZone),
+          isAutoAsapSelection,
         };
 
         if (!this._pendingOrderId) {
@@ -408,7 +409,7 @@ export class CartService {
     );
   }
 
-  submitOrder(accId: string, cvv: string, clientOrderID: string): Observable<OrderInfo> {
+  submitOrder(accId: string, cvv: string, clientOrderID: string, isAutoAsapSelection?: boolean): Observable<OrderInfo> {
     if (this._pendingOrderId) {
       return this.merchantService.addItemsToOrder(
         {
@@ -421,7 +422,7 @@ export class CartService {
       );
     }
     if (this.orderIsAsap) this.cart.order.dueTime = undefined;
-    const order = { ...this.cart.order, clientOrderID };
+    const order = { ...this.cart.order, clientOrderID, isAutoAsapSelection };
     return this.api.submitOrder(order, accId, cvv);
   }
 
