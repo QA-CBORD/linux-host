@@ -108,7 +108,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this._merchant = merchant;
     this.isMerchantOrderAhead = parseInt(merchant?.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
     this.isTipEnabled = parseInt(merchant?.settings?.map[MerchantSettings.tipEnabled]?.value) === 1;
-    this.isMerchantAutoASAP = merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value === 'true';
+    this.isMerchantAutoASAP = Boolean(JSON.parse(merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value));
   }
 
   @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
