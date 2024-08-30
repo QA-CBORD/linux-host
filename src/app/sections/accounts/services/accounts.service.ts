@@ -20,6 +20,7 @@ import { MEAL_CONTENT_STRINGS } from '../pages/meal-donations/meal-donation.conf
 })
 export class AccountService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
+  private readonly _planName$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
   private contentString;
@@ -32,6 +33,12 @@ export class AccountService {
 
   get accounts$(): Observable<UserAccount[]> {
     return this._accounts$.asObservable();
+  }
+  get planName$(): Observable<string> {
+    return this._planName$.asObservable();
+  }
+  private set _planName(value: string) {
+    this._planName$.next(value);
   }
 
   get settings$(): Observable<SettingInfo[]> {
@@ -55,8 +62,9 @@ export class AccountService {
   }
 
   getUserAccounts(): Observable<UserAccount[]> {
-    return this.commerceApiService.getUserAccounts().pipe(
-      map(accounts => this.filterAccountsByPaymentSystem(accounts)),
+    return this.commerceApiService.retrieveAccounts().pipe(
+      tap(({ planName }) => (this._planName = planName)),
+      map(({ accounts }) => this.filterAccountsByPaymentSystem(accounts)),
       tap(accounts => (this._accounts = accounts))
     );
   }

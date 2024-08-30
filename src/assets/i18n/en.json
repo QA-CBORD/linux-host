@@ -194,6 +194,17 @@
         "govt_id_front": "There was an issue submitting your government id photo (front) - please try again",
         "profile": "There was an issue submitting your profile photo - please try again"
       },
+      "delete-photo": {
+        "header": "Delete Photo?",
+        "message": "If you delete your photo, you must reupload a new photo.",
+        "govid_message": "If you delete your photo, you must reupload a government ID the next time you submit a new photo.",
+        "delete_button": "Delete Photo"
+      },
+      "reupload": "Reupload",
+      "upload": "Upload",
+      "delete": "Delete",
+      "submit_photo_button": "Submit Photo For Review",
+      "submit_photos_button": "Submit Photos For Review",
       "invalid_photo_set": "Invalid photo format. Please upload a valid photo.",
       "user_photo_current": "user photo, current",
       "user_photo_pending": "user photo, pending",
@@ -627,7 +638,8 @@
       "label_deposit-once_per_week": "Once per week",
       "label_deposit-once_per_month": "Once per month",
       "meal-plan-suffix": "Meal",
-      "meal-plan-suffix-plural": "Meals"
+      "meal-plan-suffix-plural": "Meals",
+      "patron-plan-name": "Current Plan:"
     },
     "checkin": {
       "checkin_method_text": "Check in either by using your location services or by scanning the QR code.",

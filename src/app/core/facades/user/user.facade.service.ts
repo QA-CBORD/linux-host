@@ -4,7 +4,6 @@ import { Observable, of, from, iif, zip } from 'rxjs';
 import { UserApiService } from '@core/service/user-api/user-api.service';
 import { UserInfo } from '@core/model/user/user-info.model';
 import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
-import { MessageResponse } from '@core/model/service/message-response.model';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { map, switchMap, tap, take, catchError, finalize, first, skipWhile } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -118,10 +117,6 @@ export class UserFacadeService extends ServiceStateFacade {
       map(({ response }) => response),
       take(1)
     );
-  }
-
-  getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
-    return this.userApiService.getPhotoListByUserId(userId);
   }
 
   getPhotoById(photoId: string): Observable<UserPhotoInfo> {

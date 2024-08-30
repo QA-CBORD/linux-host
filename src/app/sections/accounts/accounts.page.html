@@ -1,18 +1,18 @@
 <st-header
-        [title]="contentString[csNames.headerTitle]"
-        [isTitleShow]="true"
-        [isToolbarShow]="true"
-        [isBackButtonShow]="false"
-        class="shadow-header"
+  [title]="contentString[csNames.headerTitle]"
+  [isTitleShow]="true"
+  [isToolbarShow]="true"
+  [isBackButtonShow]="false"
+  class="shadow-header"
 ></st-header>
 <ion-content class="accounts-pane">
-
   <div class="accounts-content-wrapper">
     <div class="accounts-content">
       <section class="accounts-content__main-page accounts-page">
         <st-menu-receiving-funds class="accounts-page__menu"></st-menu-receiving-funds>
         <hr class="accounts-page__divider" />
         <section class="accounts-page__main-wrapper">
+          <st-plan-name flexDirection="column"></st-plan-name>
           <st-account-list [accounts]="accounts$ | async" (onAccountInfoEmit)="onAccountInfo($event)"></st-account-list>
 
           <h2 class="accounts-page__transactions-title">{{ contentString[csNames.recentTransactionsLabel] }}</h2>
