@@ -948,7 +948,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
     this.isMerchantAutoASAP = await firstValueFrom(
       this.merchant$.pipe(
-        map(merchant => merchant.settings.map[MerchantSettings.enableAutoASAPSelection].value === 'true')
+        map(merchant => Boolean(JSON.parse(merchant.settings.map[MerchantSettings.enableAutoASAPSelection].value)))
       )
     );
   }
