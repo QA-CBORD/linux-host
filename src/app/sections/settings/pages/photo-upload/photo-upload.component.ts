@@ -30,7 +30,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 const IOSDevice = registerPlugin<any>('IOSDevice');
 const AndroidDevice = registerPlugin<any>('AndroidDevice');
 
-interface PhotoUploadInfo {
+export interface PhotoUploadInfo {
   userId: string;
   title: string;
   status: string;
@@ -45,7 +45,7 @@ export enum LocalPhotoStatus {
   REJECTED,
 }
 
-enum PhotoEvents {
+export enum PhotoEvents {
   PHOTO_UPLOAD_UPDATE = 'PHOTO_UPLOAD_UPDATE',
 }
 
@@ -126,6 +126,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly translateService: TranslateFacadeService,
     private readonly cameraService: CameraService
   ) { }
+  
   private readonly userFacadeService: UserFacadeService = inject(UserFacadeService);
   private readonly nativeProvider: NativeProvider = inject(NativeProvider);
 
@@ -138,8 +139,11 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    IOSDevice.removeAllListeners();
-    AndroidDevice.removeAllListeners();
+    if (this.nativeProvider.isIos()) {
+      IOSDevice.removeAllListeners();
+    } else if (this.nativeProvider.isAndroid()) {
+      AndroidDevice.removeAllListeners();
+    }
   }
 
   ionViewWillEnter() {
@@ -150,7 +154,7 @@ export class PhotoUploadComponent implements OnInit {
       this.getPhotoData();
     }
   }
-
+  
   private clearLocalStateData() {
     this.localPhotoData = {
       govtIdRequired: false,

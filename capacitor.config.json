@@ -22,7 +22,10 @@
         "sound",
         "alert"
       ]
-    }
+    },
+    "LocalNotifications": {
+      "smallIcon": "res://drawable/ic_launcher_round"
+   }
   },
   "server": {
     "androidScheme": "http"

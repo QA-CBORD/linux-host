@@ -9,7 +9,7 @@ import { map, switchMap, tap, take, catchError, finalize, first, skipWhile } fro
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings, StateTimeDuration, User } from 'src/app/app.global';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 import { PLATFORM } from '@shared/accessibility/services/accessibility.service';
@@ -21,6 +21,7 @@ import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/pus
 import { UserNotificationsFacadeService } from '../notifications/user-notifications.service';
 import { getPhotoDataUrl } from '@core/operators/images.operators';
 
+const ExtendedPushNotification = registerPlugin<any>('ExtendedPushNotification');
 @Injectable({
   providedIn: 'root',
 })
@@ -179,19 +180,23 @@ export class UserFacadeService extends ServiceStateFacade {
       .subscribe(result => {
         if (result) {
           PushNotifications.removeAllListeners();
-          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+          ExtendedPushNotification.removeAllListeners();
+          
+          ExtendedPushNotification.addListener('PUSH_NOTIFICATION_RECEIVED', async (notification: PushNotificationSchema) => {
+            console.log('Push notification received', notification);
             this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications());
             if (Capacitor.getPlatform() === PLATFORM.android) {
-              LocalNotifications.schedule({
+            const result = await LocalNotifications.schedule({
                 notifications: [
                   {
-                    title: notification.title,
-                    body: notification.body,
-                    id: Date.now(),
-                    smallIcon: '@drawable/ic_launcher_round',
+                    title: notification?.title,
+                    body: notification?.body,
+                    id: Math.floor(Math.random() * 1000),
                   },
                 ],
               });
+
+              console.log('Local notification scheduled', result);
             }
           });
           PushNotifications.addListener('registration', (token: Token) => {
