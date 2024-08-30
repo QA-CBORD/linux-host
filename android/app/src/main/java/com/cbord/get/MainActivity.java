@@ -2,11 +2,12 @@ package com.cbord.get;
 
 import android.os.Bundle;
 
-import com.cbord.get.mcredential.MobileCredentialStatusPlugin;
-import com.cbord.get.plugin.AndroidPermissionsPlugin;
-import com.cbord.get.plugin.AndroidPlugin;
-import com.cbord.get.plugin.GooglePayPlugin;
-import com.cbord.get.plugin.HIDPlugin;
+import com.cbord.get.mcredentials.MobileCredentialStatusPlugin;
+import com.cbord.get.plugins.AndroidPermissionsPlugin;
+import com.cbord.get.plugins.AndroidPlugin;
+import com.cbord.get.plugins.ExtendedPushNotificationPlugin;
+import com.cbord.get.plugins.GooglePayPlugin;
+import com.cbord.get.plugins.HIDPlugin;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -18,6 +19,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(MobileCredentialStatusPlugin.class);
         registerPlugin(AndroidPermissionsPlugin.class);
         registerPlugin(AndroidPlugin.class);
+        registerPlugin(ExtendedPushNotificationPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

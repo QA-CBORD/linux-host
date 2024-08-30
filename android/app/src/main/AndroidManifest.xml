@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
     <application
-        android:name=".mcredential.MobileKeysApiConfig"
+        android:name=".mcredentials.MobileKeysApiConfig"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,7 +18,7 @@
         
         <meta-data android:name="com.google.mlkit.vision.DEPENDENCIES" android:value="barcode_ui"/>
                 <service
-            android:name=".notification.RemoteNotification"
+            android:name=".notifications.RemoteNotification"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

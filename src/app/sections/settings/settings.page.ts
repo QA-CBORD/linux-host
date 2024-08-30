@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
@@ -16,6 +16,12 @@ import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { App } from '@capacitor/app';
 import { EnvironmentData } from '@environments/environment-data';
 import { CartService } from '@sections/ordering';
+import { registerPlugin } from '@capacitor/core';
+import { PhotoEvents } from './pages/photo-upload/photo-upload.component';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
+
+const AndroidDevice = registerPlugin<any>('AndroidDevice');
+const IOSDevice = registerPlugin<any>('IOSDevice');
 
 @Component({
   selector: 'st-settings',
@@ -42,7 +48,9 @@ export class SettingsPage implements OnInit {
     private readonly profileService: ProfileServiceFacade,
     private readonly cartService: CartService,
   ) {}
-
+  
+  private readonly nativeProvider: NativeProvider = inject(NativeProvider);
+  
   async ngOnInit() {
     this.settingSections$ = this.settingsFactory.getSettings();
     this.userName$ = this.getUserName$();
@@ -54,8 +62,28 @@ export class SettingsPage implements OnInit {
       .toPromise()
       .then(isGuest => (this.isGuest = isGuest));
     this.isHousingOnly = await this.profileService.housingOnlyEnabled();
+
+    if (this.nativeProvider.isAndroid()) {
+      AndroidDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
+        this.userPhoto$ = this.getUserPhoto$();
+      });
+    }
+
+    else if (this.nativeProvider.isIos()) {
+      IOSDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
+        this.userPhoto$ = this.getUserPhoto$();
+      });
+    }
   }
 
+  ngOnDestroy() {
+    if (this.nativeProvider.isAndroid()) {
+      AndroidDevice.removeAllListeners();
+    } else if (this.nativeProvider.isIos()) {
+      IOSDevice.removeAllListeners();
+    }
+  }
+ 
   //couldnt get photo upload route to work correctly, still trying to fix
   async navigateToPhotoUpload(): Promise<void> {
     const isPhotoVisible = await firstValueFrom(this.settingsFactory.photoUploadVisible$);
