@@ -3,12 +3,15 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { UserLocalProfileService } from './user-local-profile.service';
 import { of } from 'rxjs';
+import { UserInfo } from '@core/model/user';
+import { getUserFullName } from '@core/utils/general-helpers';
 
 describe('UserLocalProfileService', () => {
   let service: UserLocalProfileService;
   let storageStateService: StorageStateService;
   let userFacadeService: UserFacadeService;
   const userFullName = 'John Doe';
+  const updatedUserFullName = 'John Doe';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -27,6 +30,7 @@ describe('UserLocalProfileService', () => {
           provide: UserFacadeService,
           useValue: {
             getUserData$: jest.fn().mockReturnValue({ pipe: () => of(userFullName) }),
+            getUser$: jest.fn().mockReturnValue(of(updatedUserFullName)),
           },
         },
       ],
@@ -48,5 +52,18 @@ describe('UserLocalProfileService', () => {
     const pronouns = 'he/him';
     service.updatePronouns(pronouns);
     expect(service.userLocalProfileSignal().pronouns).toBe(pronouns);
+  });
+  it('should retrieve user, update profile, and call updateStorage', () => {
+    const userInfo = { firstName: 'Test', lastName: 'User' };
+    const userFullName = getUserFullName(userInfo as UserInfo);
+
+    jest.spyOn(userFacadeService, 'getUser$').mockReturnValue(of(userInfo as UserInfo));
+    jest.spyOn(service['_userLocalProfileSignal'], 'update');
+    jest.spyOn(service as any, 'updateStorage');
+
+    service.updateUserName().subscribe();
+
+    expect(service['_userLocalProfileSignal'].update).toHaveBeenCalledWith(expect.any(Function));
+    expect(service['updateStorage']).toHaveBeenCalled();
   });
 });
