@@ -1,4 +1,4 @@
-package com.cbord.get.plugin;
+package com.cbord.get;
 
 public enum EventType {
     PHOTO_UPLOAD_UPDATE;

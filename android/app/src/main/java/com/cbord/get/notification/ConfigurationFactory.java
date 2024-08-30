@@ -1,6 +1,6 @@
 package com.cbord.get.notification;
 
-import com.cbord.get.plugin.EventType;
+import com.cbord.get.EventType;
 import com.getcapacitor.JSObject;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -8,7 +8,6 @@ public class ConfigurationFactory {
 
     public static JSObject createConfiguration(RemoteMessage userInfo) {
         String category = (String) userInfo.getData().get("category");
-
         if (category == null) {
             return null;
         }

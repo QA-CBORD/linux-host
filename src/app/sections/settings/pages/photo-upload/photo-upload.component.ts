@@ -28,7 +28,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 const IOSDevice = registerPlugin<any>('IOSDevice');
-const AndroidDevice = registerPlugin<any>('AndroidPlugin');
+const AndroidDevice = registerPlugin<any>('AndroidDevice');
 
 interface PhotoUploadInfo {
   userId: string;
@@ -149,10 +149,6 @@ export class PhotoUploadComponent implements OnInit {
       this.photoUploadService.clearLocalProfilePhoto();
       this.getPhotoData();
     }
-  }
-
-  async ionViewDidEnter() {
-    await AndroidDevice.emitEvent();
   }
 
   private clearLocalStateData() {
@@ -517,14 +513,11 @@ export class PhotoUploadComponent implements OnInit {
   private async updatePhotoUploadStatus() {
     if (this.nativeProvider.isIos()) {
       await IOSDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, (info: PhotoUploadInfo) => {
-        console.log('PHOTO_UPLOAD_UPDATE iOS');
         this.updatePhotoUpload(info);
 
       });
     } else if (this.nativeProvider.isAndroid()) {
-      console.log('PHOTO_UPLOAD_UPDATE Android?');
       await AndroidDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, (info: PhotoUploadInfo) => {
-        console.log('PHOTO_UPLOAD_UPDATE Android');
         this.updatePhotoUpload(info);
       });
     }
@@ -534,10 +527,13 @@ export class PhotoUploadComponent implements OnInit {
     this.userFacadeService
       .getUserData$()
       .subscribe((response) => {
-        console.log('response.id: ', response.id);
-        if (response.id === info.userId) {
+        if (response?.id === info?.userId) {
+          if (info.status === 'ACCEPTED') {
+            this.photoUploadService.clearLocalGovernmentIdPhotos();
+            this.photoUploadService.clearLocalProfilePhoto();
+          }
           this.getPhotoData();
         }
       });
-   }
+  }
 }
