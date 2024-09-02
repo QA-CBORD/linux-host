@@ -94,6 +94,19 @@
     }
   }
 
+  @mixin info-icon {
+    content: '';
+    display: block;
+    mask-position: 50% 50%;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-image: url('/assets/icon/info-circle.svg');
+    width: 2em;
+    height: 2em;
+    opacity: 1;
+    background-color: $color-black;
+  }
+
   @mixin caution-icon {
     display: block;
     content: '';
@@ -127,8 +140,27 @@
   &__value {
     padding-left: 0;
     color: $color-black;
+    margin: 12px 0 5px 0;
 
     @include font-nunito-semibold(16px);
+
+    &--message {
+      color: $color-dim-gray;
+      @include font-nunito-semibold(14px);
+    }
+
+    &--info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      margin: 12px 0 5px 0;
+      @include font-nunito-heavy(16px);
+
+      &:after {
+        @include info-icon;
+      }
+    }
 
     &--editable {
       display: flex;
@@ -283,7 +315,7 @@
 }
 
 .banner {
-  padding: 1rem .5rem;
+  padding: 1rem 0.5rem;
 
   &__content {
     display: grid;

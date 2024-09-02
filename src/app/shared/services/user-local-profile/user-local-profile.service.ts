@@ -25,6 +25,17 @@ export class UserLocalProfileService {
     this._userLocalProfileSignal.update(profile => ({ ...profile, pronouns }));
     this.updateStorage();
   }
+  updateUserName() {
+   return this.userFacadeService
+      .getUser$()
+      .pipe(
+        first(),
+        map(userInfo =>
+          this._userLocalProfileSignal.update(profile => ({ ...profile, userFullName: getUserFullName(userInfo) }))
+        ),
+        tap(() => this.updateStorage())
+      )
+  }
 
   initUserLocalProfile() {
     combineLatest([
@@ -39,7 +50,6 @@ export class UserLocalProfileService {
           if (storageEntity) {
             this._userLocalProfileSignal.set(storageEntity);
           }
-
           this._userLocalProfileSignal.update(profile => ({ ...profile, userFullName }));
           this.updateStorage();
         })

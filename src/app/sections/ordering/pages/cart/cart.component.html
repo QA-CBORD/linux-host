@@ -6,8 +6,8 @@
   [isToolbarShow]="true"
   class="browser-hidden"
   (onClose)="onCloseButton()"
-  [isBackButtonShow]="!dueTimeHasErrors"
-  [isCustomBackButtonShow]="dueTimeHasErrors"
+  [isBackButtonShow]="dueTimeFeedback.type !== 'error'"
+  [isCustomBackButtonShow]="dueTimeFeedback.type === 'error'"
 >
 </st-header>
 
@@ -25,10 +25,8 @@
     [merchantTimeZoneDisplayingMessage]="merchantTimeZoneDisplayingMessage"
     [applePayEnabled]="applePayEnabled$ | async"
     [addressModalConfig]="addressModalSettings$ | async"
-    [dueTimeHasErrors]="dueTimeHasErrors"
-    [errorCode]="errorCode"
     [enableTimeSelection]="true"
-    [isValidatingDueTime]="isValidatingDueTime"
+    [duetimeFeedback]="dueTimeFeedback"
     (onDueTimeErrorClean)="cleanDueTimeErrors()"
     (onFormChange)="onCartStateFormChanged($event)"
     (onOrderItemRemovedId)="removeOrderItem($event)"
