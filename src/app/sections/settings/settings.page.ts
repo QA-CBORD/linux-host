@@ -16,12 +16,8 @@ import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { App } from '@capacitor/app';
 import { EnvironmentData } from '@environments/environment-data';
 import { CartService } from '@sections/ordering';
-import { registerPlugin } from '@capacitor/core';
-import { PhotoEvents } from './pages/photo-upload/photo-upload.component';
-import { NativeProvider } from '@core/provider/native-provider/native.provider';
-
-const AndroidDevice = registerPlugin<any>('AndroidDevice');
-const IOSDevice = registerPlugin<any>('IOSDevice');
+import { SilentEvents } from './pages/photo-upload/photo-upload.component';
+import { SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
 
 @Component({
   selector: 'st-settings',
@@ -49,7 +45,7 @@ export class SettingsPage implements OnInit {
     private readonly cartService: CartService,
   ) {}
   
-  private readonly nativeProvider: NativeProvider = inject(NativeProvider);
+  private readonly silentNotificationService = inject(SilentNotificationService);
   
   async ngOnInit() {
     this.settingSections$ = this.settingsFactory.getSettings();
@@ -63,25 +59,18 @@ export class SettingsPage implements OnInit {
       .then(isGuest => (this.isGuest = isGuest));
     this.isHousingOnly = await this.profileService.housingOnlyEnabled();
 
-    if (this.nativeProvider.isAndroid()) {
-      AndroidDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
-        this.userPhoto$ = this.getUserPhoto$();
-      });
-    }
-
-    else if (this.nativeProvider.isIos()) {
-      IOSDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, () => {
-        this.userPhoto$ = this.getUserPhoto$();
-      });
-    }
+    this.silentNotificationService.addListener(SilentEvents.PHOTO_UPLOAD_UPDATE, () => {
+      console.log('Photo upload event received at access card');
+      this.userPhoto$ = this.getUserPhoto$();
+    });
+  }
+ 
+  ionViewWillEnter() {
+    this.updatePhotoUploadStatus();
   }
 
-  ngOnDestroy() {
-    if (this.nativeProvider.isAndroid()) {
-      AndroidDevice.removeAllListeners();
-    } else if (this.nativeProvider.isIos()) {
-      IOSDevice.removeAllListeners();
-    }
+  ionViewWillLeave() {
+   // this.silentNotificationService.removeAllListeners();
   }
  
   //couldnt get photo upload route to work correctly, still trying to fix
@@ -127,5 +116,11 @@ export class SettingsPage implements OnInit {
       switchMap(({ institutionId }) => this.institutionFacadeService.getInstitutionInfo$(institutionId)),
       map(({ name }) => name)
     );
+  }
+
+  private updatePhotoUploadStatus() {
+    this.silentNotificationService.addListener(SilentEvents.PHOTO_UPLOAD_UPDATE, () => {
+      this.userPhoto$ = this.getUserPhoto$();
+    });
   }
 }
