@@ -23,12 +23,9 @@ import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from '@ionic/angular/standalone';
 import { PhotoStatus, PhotoType } from './models/photo-upload.enums';
-import { registerPlugin } from '@capacitor/core';
-import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
 
-const IOSDevice = registerPlugin<any>('IOSDevice');
-const AndroidDevice = registerPlugin<any>('AndroidDevice');
 
 export interface PhotoUploadInfo {
   userId: string;
@@ -45,7 +42,7 @@ export enum LocalPhotoStatus {
   REJECTED,
 }
 
-export enum PhotoEvents {
+export enum SilentEvents {
   PHOTO_UPLOAD_UPDATE = 'PHOTO_UPLOAD_UPDATE',
 }
 
@@ -126,33 +123,28 @@ export class PhotoUploadComponent implements OnInit {
     private readonly translateService: TranslateFacadeService,
     private readonly cameraService: CameraService
   ) { }
-  
-  private readonly userFacadeService: UserFacadeService = inject(UserFacadeService);
-  private readonly nativeProvider: NativeProvider = inject(NativeProvider);
+
+  private readonly userFacadeService = inject(UserFacadeService);
+  private readonly silentNotificationService = inject(SilentNotificationService);
 
   ngOnInit() {
     this.clearLocalStateData();
     this.photoUploadService.clearLocalPendingPhoto();
     this.getPhotoData();
     this.setupPhotoSubscriptions();
-    this.updatePhotoUploadStatus();
   }
 
-  ngOnDestroy() {
-    if (this.nativeProvider.isIos()) {
-      IOSDevice.removeAllListeners();
-    } else if (this.nativeProvider.isAndroid()) {
-      AndroidDevice.removeAllListeners();
-    }
+  ionViewWillLeave() {
+     this.silentNotificationService.removeAllListeners();
   }
 
   ionViewWillEnter() {
     if (this.localPhotoUploadStatus.profile === LocalPhotoStatus.ACCEPTED) {
       this.localPhotoUploadStatus.profile = LocalPhotoStatus.NONE;
-      this.photoUploadService.clearLocalGovernmentIdPhotos();
-      this.photoUploadService.clearLocalProfilePhoto();
-      this.getPhotoData();
+      this.refreshPhotos();
     }
+
+    this.updatePhotoUploadStatus();
   }
   
   private clearLocalStateData() {
@@ -514,30 +506,25 @@ export class PhotoUploadComponent implements OnInit {
   }
 
 
-  private async updatePhotoUploadStatus() {
-    if (this.nativeProvider.isIos()) {
-      await IOSDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, (info: PhotoUploadInfo) => {
-        this.updatePhotoUpload(info);
-
-      });
-    } else if (this.nativeProvider.isAndroid()) {
-      await AndroidDevice.addListener(PhotoEvents.PHOTO_UPLOAD_UPDATE, (info: PhotoUploadInfo) => {
-        this.updatePhotoUpload(info);
-      });
-    }
+  private updatePhotoUploadStatus() {
+    this.silentNotificationService.addListener(SilentEvents.PHOTO_UPLOAD_UPDATE, (event: PhotoUploadInfo) => {
+      this.updatePhotoUpload(event);
+    });
   }
 
-  private updatePhotoUpload(info: PhotoUploadInfo) {
+  private updatePhotoUpload(event: PhotoUploadInfo) {
     this.userFacadeService
       .getUserData$()
       .subscribe((response) => {
-        if (response?.id === info?.userId) {
-          if (info.status === 'ACCEPTED') {
-            this.photoUploadService.clearLocalGovernmentIdPhotos();
-            this.photoUploadService.clearLocalProfilePhoto();
-          }
-          this.getPhotoData();
+        if (response?.id === event?.userId) {
+          this.refreshPhotos();
         }
       });
+  }
+
+  private refreshPhotos() {
+    this.photoUploadService.clearLocalGovernmentIdPhotos();
+    this.photoUploadService.clearLocalProfilePhoto();
+    this.getPhotoData();
   }
 }

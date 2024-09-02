@@ -15,7 +15,7 @@ public class RemoteNotification extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         JSObject silentResponse = ResponseBuilder.buildSilent(remoteMessage);
        if (silentResponse != null) {
-           AndroidPlugin.notifyPhotoListeners(silentResponse);
+           AndroidPlugin.notifySilentListeners(silentResponse);
        } else {
            JSObject remoteMessageData = ResponseBuilder.build(remoteMessage);
            ExtendedPushNotificationPlugin.notifyAPushListeners(remoteMessageData);

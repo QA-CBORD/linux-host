@@ -22,6 +22,7 @@ import { UserNotificationsFacadeService } from '../notifications/user-notificati
 import { getPhotoDataUrl } from '@core/operators/images.operators';
 
 const ExtendedPushNotification = registerPlugin<any>('ExtendedPushNotification');
+
 @Injectable({
   providedIn: 'root',
 })
@@ -183,7 +184,6 @@ export class UserFacadeService extends ServiceStateFacade {
           ExtendedPushNotification.removeAllListeners();
           
           ExtendedPushNotification.addListener('PUSH_NOTIFICATION_RECEIVED', async (notification: PushNotificationSchema) => {
-            console.log('Push notification received', notification);
             this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications());
             if (Capacitor.getPlatform() === PLATFORM.android) {
             const result = await LocalNotifications.schedule({
@@ -195,8 +195,6 @@ export class UserFacadeService extends ServiceStateFacade {
                   },
                 ],
               });
-
-              console.log('Local notification scheduled', result);
             }
           });
           PushNotifications.addListener('registration', (token: Token) => {
