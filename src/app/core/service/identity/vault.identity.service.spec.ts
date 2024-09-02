@@ -39,6 +39,7 @@ describe('VaultIdentityService', () => {
       cachedBiometricsEnabledUserPreference: jest.fn(async () => true),
       setBiometricPermissionDenied: jest.fn(),
       getBiometricPermissionDenied: jest.fn(),
+      setBiometricsEnabledUserPreference: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -225,6 +226,27 @@ describe('VaultIdentityService', () => {
       expect(retryPinUnlockStub).toHaveBeenNthCalledWith(1, { message: 'biometric auth failed' });
       expect(pinModalSpy).toHaveBeenCalledTimes(1);
       expect(results).toStrictEqual({ code: PinCloseStatus.MAX_FAILURE });
+    });
+
+    it('should unlock vault if session is stored and biometrics are enabled', async () => {
+      jest.spyOn(service, 'hasStoredSession').mockReturnValue(Promise.resolve(true));
+      jest.spyOn(userPreferenceService, 'cachedBiometricsEnabledUserPreference').mockReturnValue(true);
+      jest.spyOn(userPreferenceService, 'setBiometricsEnabledUserPreference');
+      jest.spyOn(service, 'unlockVault').mockReturnValue(Promise.resolve({ pin: '1234' }));
+
+      const result = await service.unlockVaultIfLocked();
+
+      expect(userPreferenceService.setBiometricsEnabledUserPreference).toHaveBeenCalledWith(true);
+      expect(service.unlockVault).toHaveBeenCalledWith(true);
+      expect(result).toEqual({ pin: '1234' });
+    });
+
+    it('should return null pin if no session is stored', async () => {
+      jest.spyOn(service, 'hasStoredSession').mockReturnValue(Promise.resolve(false));
+
+      const result = await service.unlockVaultIfLocked();
+
+      expect(result).toEqual({ pin: null });
     });
   });
 
