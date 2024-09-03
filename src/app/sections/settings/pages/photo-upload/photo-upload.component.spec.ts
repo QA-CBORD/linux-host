@@ -167,7 +167,7 @@ describe('PhotoUploadComponent', () => {
     expect(spy).toHaveBeenCalledTimes(4);
   });
 
-  it('should have cleared the photo info', async () => {
+  it('should have cleared the photo info', () => {
     const spy = jest.spyOn(photoUploadService, 'clearLocalGovernmentIdPhotos');
     component.ionViewWillEnter();
     expect(spy).toHaveBeenCalledTimes(1);
