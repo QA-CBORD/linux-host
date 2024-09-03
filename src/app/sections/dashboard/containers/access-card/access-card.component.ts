@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable, Subject, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
@@ -18,8 +18,6 @@ import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_ME
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { PronounsPipe } from '@shared/pipes/pronouns-pipe/pronouns.pipe';
-import { SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
-import { SilentEvents } from '@sections/settings/pages/photo-upload/photo-upload.component';
 
 @Component({
   selector: 'st-access-card',
@@ -61,18 +59,12 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     private readonly contentStringsFacadeService: ContentStringsFacadeService
   ) {}
 
-  private readonly silentNotificationService = inject(SilentNotificationService);
-  
   ngOnInit() {
     this.setHousingOnlyEnabled();
     this.setInstitutionData();
     this.getFeaturesEnabled();
     this.initContentString();
   }
-  
-   ionViewWillLeave() {
-      //this.silentNotificationService.removeAllListeners();
-   }
 
   async initContentString() {
     await lastValueFrom(
@@ -96,7 +88,6 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   ionViewWillEnter() {
     this.mobileCredentialFacade.refreshCredentials();
     this.getUserData();
-    this.updatePhotoUploadStatus();
   }
 
   private getUserData() {
@@ -163,11 +154,5 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
       duration: TOAST_DURATION,
       position: 'bottom' }
     );
-  }
-
-  private updatePhotoUploadStatus() {
-    this.silentNotificationService.addListener(SilentEvents.PHOTO_UPLOAD_UPDATE, () => {
-     this.getUserData();
-    });
   }
 }

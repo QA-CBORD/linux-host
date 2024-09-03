@@ -20,8 +20,10 @@ import { Device } from '@capacitor/device';
 import { Token, PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
 import { UserNotificationsFacadeService } from '../notifications/user-notifications.service';
 import { getPhotoDataUrl } from '@core/operators/images.operators';
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ExtendedPushNotification = registerPlugin<any>('ExtendedPushNotification');
+
+const pushNotificationEvent = 'PUSH_NOTIFICATION_RECEIVED';
 
 @Injectable({
   providedIn: 'root',
@@ -182,11 +184,11 @@ export class UserFacadeService extends ServiceStateFacade {
         if (result) {
           PushNotifications.removeAllListeners();
           ExtendedPushNotification.removeAllListeners();
-          
-          ExtendedPushNotification.addListener('PUSH_NOTIFICATION_RECEIVED', async (notification: PushNotificationSchema) => {
+
+          ExtendedPushNotification.addListener(pushNotificationEvent, async (notification: PushNotificationSchema) => {
             this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications());
             if (Capacitor.getPlatform() === PLATFORM.android) {
-            const result = await LocalNotifications.schedule({
+              await LocalNotifications.schedule({
                 notifications: [
                   {
                     title: notification?.title,

@@ -83,13 +83,11 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
                      didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        print("remoteMessage = ", userInfo)
-        
-        guard let configuration = ConfigurationFactory.createConfiguration(from: userInfo) else {
+        guard let response = ResponseBuilder.build(from: userInfo) else {
             return
         }
         
-        NotificationCenter.default.post(name: .handleSilentPhotoUploadUpdate, object: nil, userInfo: configuration)
+        NotificationCenter.default.post(name: .handleSilentPushNotification, object: nil, userInfo: response)
         completionHandler(.noData)
     }
     
@@ -99,29 +97,18 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
-class ConfigurationFactory {
-    static func createConfiguration(from userInfo: [AnyHashable: Any]) -> [String: String]? {
-        
-        print("createConfiguration ", userInfo)
+class ResponseBuilder {
+    static func build(from userInfo: [AnyHashable: Any]) -> [String: String]? {
         
         guard let category = userInfo["category"] as? String else {
             return nil
         }
         
-        switch category {
-        case EventType.PHOTO_UPLOAD_UPDATE.rawValue:
-            guard let title = userInfo["title"] as? String,
-                  let status = userInfo["status"] as? String,
-                  let userId = userInfo["userId"] as? String else {
-                return nil
-            }
-            return [
-                "title": title,
-                "status": status,
-                "userId": userId
-            ]
-        default:
-            return nil
-        }
+        return [
+            "title": userInfo["title"] as? String ?? "",
+            "status": userInfo["status"] as? String ?? "",
+            "userId": userInfo["userId"] as? String ?? "",
+            "category": category
+        ]
     }
 }

@@ -146,7 +146,7 @@ export class PhotoUploadComponent implements OnInit {
 
     this.updatePhotoUploadStatus();
   }
-  
+
   private clearLocalStateData() {
     this.localPhotoData = {
       govtIdRequired: false,
