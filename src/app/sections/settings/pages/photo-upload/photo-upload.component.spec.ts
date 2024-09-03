@@ -15,6 +15,8 @@ import { LocalPhotoData, PhotoUploadComponent } from './photo-upload.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PhotoType } from './models/photo-upload.enums';
 import { NavigationService } from '@shared/index';
+import { HttpClientModule } from '@angular/common/http';
+import { Storage } from '@ionic/storage-angular';
 
 describe('PhotoUploadComponent', () => {
   let component: PhotoUploadComponent;
@@ -75,9 +77,16 @@ describe('PhotoUploadComponent', () => {
     translate: jest.fn().mockReturnValue(of('')),
   };
 
+  const storage = {
+    clear: jest.fn(),
+    ready: jest.fn(),
+    get: jest.fn(),
+    set: jest.fn(),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), PhotoUploadComponent],
+      imports: [TranslateModule.forRoot(), PhotoUploadComponent, HttpClientModule],
       providers: [
         { provide: Router, useValue: router },
         { provide: DomSanitizer, useValue: domSanitizer },
@@ -111,6 +120,7 @@ describe('PhotoUploadComponent', () => {
             onDefaultLangChange: of(),
           },
         },
+        { provide: Storage, value: storage },
       ],
     }).compileComponents();
   });
