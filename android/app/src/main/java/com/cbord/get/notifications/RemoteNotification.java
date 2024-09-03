@@ -11,6 +11,11 @@ import com.google.firebase.messaging.RemoteMessage;
 public class RemoteNotification extends FirebaseMessagingService {
 
     @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
+    }
+
+    @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         JSObject silentResponse = ResponseBuilder.buildSilent(remoteMessage);
