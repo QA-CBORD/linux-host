@@ -1,4 +1,4 @@
-package com.cbord.get;
+package com.cbord.get.plugins;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PermissionState;

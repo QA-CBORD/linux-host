@@ -10,4 +10,5 @@ import UIKit
 extension Notification.Name {
     static let handleApplePayResponse = Notification.Name("handleApplePayResponse")
     static let handleAppleWalletRefresh = Notification.Name("handleAppleWalletRefresh")
+    static let handleSilentPushNotification = Notification.Name("handleSilentPushNotification")
 }

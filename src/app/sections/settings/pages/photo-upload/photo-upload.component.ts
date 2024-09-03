@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
@@ -23,6 +23,13 @@ import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from '@ionic/angular/standalone';
 import { PhotoStatus, PhotoType } from './models/photo-upload.enums';
+import { SilentEventCategory, SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
+
+export interface PhotoUploadInfo {
+  userId: string;
+  title: string;
+  status: string;
+}
 
 export enum LocalPhotoStatus {
   NONE,
@@ -109,7 +116,9 @@ export class PhotoUploadComponent implements OnInit {
     private readonly photoCropModalService: PhotoCropModalService,
     private readonly translateService: TranslateFacadeService,
     private readonly cameraService: CameraService
-  ) {}
+  ) { }
+
+  private readonly silentNotificationService = inject(SilentNotificationService);
 
   ngOnInit() {
     this.clearLocalStateData();
@@ -118,13 +127,17 @@ export class PhotoUploadComponent implements OnInit {
     this.setupPhotoSubscriptions();
   }
 
+  ionViewWillLeave() {
+    this.silentNotificationService.removeLastListener();
+  }
+
   ionViewWillEnter() {
     if (this.localPhotoUploadStatus.profile === LocalPhotoStatus.ACCEPTED) {
       this.localPhotoUploadStatus.profile = LocalPhotoStatus.NONE;
-      this.photoUploadService.clearLocalGovernmentIdPhotos();
-      this.photoUploadService.clearLocalProfilePhoto();
-      this.getPhotoData();
+      this.refreshPhotos();
     }
+
+    this.onPhotoUploadEvent();
   }
 
   private clearLocalStateData() {
@@ -483,5 +496,23 @@ export class PhotoUploadComponent implements OnInit {
       }
     }
     return true;
+  }
+
+  private onPhotoUploadEvent() {
+    this.silentNotificationService.addListener(SilentEventCategory.PHOTO_UPLOAD_UPDATE, (event: PhotoUploadInfo) => {
+      this.updatePhotoUpload(event);
+    });
+  }
+
+  private updatePhotoUpload(event: PhotoUploadInfo) {
+    const isCurrentUser = this.silentNotificationService.isSentToCurrentUser(event?.userId);
+    if (!isCurrentUser) return;
+    this.refreshPhotos();
+  }
+
+  private refreshPhotos() {
+    this.photoUploadService.clearLocalGovernmentIdPhotos();
+    this.photoUploadService.clearLocalProfilePhoto();
+    this.getPhotoData();
   }
 }

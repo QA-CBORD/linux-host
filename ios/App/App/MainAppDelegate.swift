@@ -4,6 +4,7 @@
 import UIKit
 import Capacitor
 import Firebase
+import Foundation
 
 @UIApplicationMain
 class MainAppDelegate: UIResponder, UIApplicationDelegate {
@@ -77,9 +78,37 @@ class MainAppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        guard let response = ResponseBuilder.build(from: userInfo) else {
+            return
+        }
+        
+        NotificationCenter.default.post(name: .handleSilentPushNotification, object: nil, userInfo: response)
+        completionHandler(.noData)
+    }
+    
      func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
          NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
      }
 
 }
 
+class ResponseBuilder {
+    static func build(from userInfo: [AnyHashable: Any]) -> [String: String]? {
+        
+        guard let category = userInfo["category"] as? String else {
+            return nil
+        }
+        
+        return [
+            "title": userInfo["title"] as? String ?? "",
+            "status": userInfo["status"] as? String ?? "",
+            "userId": userInfo["userId"] as? String ?? "",
+            "category": category
+        ]
+    }
+}

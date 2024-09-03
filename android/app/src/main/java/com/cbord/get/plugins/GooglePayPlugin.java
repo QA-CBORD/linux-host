@@ -1,4 +1,4 @@
-package com.cbord.get;
+package com.cbord.get.plugins;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;

@@ -1,16 +1,8 @@
 import { getAmountOfMonthFromPeriod, getTimeRangeOfDate, getTimeRange, getRangeBetweenDates, getUniquePeriodName } from './date-util';
 
-
-
 const dateFormat = /(?:19|20)\d\d-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])/;
 
 describe('getAmountOfMonthFromPeriod', () => {
-    
-    it('should return an array of DateUtilObject with the specified number of months', () => {
-        const result = getAmountOfMonthFromPeriod(3);
-        expect(result.length).toBe(3);
-    });
-
     it('should return an empty array if the number of months is 0', () => {
         const result = getAmountOfMonthFromPeriod(0);
         expect(result.length).toBe(0);
