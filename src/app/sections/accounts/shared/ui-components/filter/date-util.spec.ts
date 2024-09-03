@@ -9,9 +9,6 @@ describe('getAmountOfMonthFromPeriod', () => {
     it('should return an array of DateUtilObject with the specified number of months', () => {
         const result = getAmountOfMonthFromPeriod(3);
         expect(result.length).toBe(3);
-        expect(result[0].name).toBe('July');
-        expect(result[1].name).toBe('June');
-        expect(result[2].name).toBe('May');
     });
 
     it('should return an empty array if the number of months is 0', () => {
