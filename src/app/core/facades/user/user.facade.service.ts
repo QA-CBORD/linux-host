@@ -188,15 +188,19 @@ export class UserFacadeService extends ServiceStateFacade {
           ExtendedPushNotification.addListener(pushNotificationEvent, async (notification: PushNotificationSchema) => {
             this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications());
             if (Capacitor.getPlatform() === PLATFORM.android) {
-              await LocalNotifications.schedule({
-                notifications: [
-                  {
-                    title: notification?.title,
-                    body: notification?.body,
-                    id: Math.floor(Math.random() * 1000),
-                  },
-                ],
-              });
+              try {
+                await LocalNotifications.schedule({
+                  notifications: [
+                    {
+                      title: notification?.title,
+                      body: notification?.body,
+                      id: Math.floor(Math.random() * 1000),
+                    },
+                  ],
+                });
+              } catch (e) {
+                console.error('Failed to schedule local notification', e);
+              }
             }
           });
           PushNotifications.addListener('registration', (token: Token) => {

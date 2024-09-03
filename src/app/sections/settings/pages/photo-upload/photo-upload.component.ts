@@ -23,8 +23,7 @@ import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton } from '@ionic/angular/standalone';
 import { PhotoStatus, PhotoType } from './models/photo-upload.enums';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
+import { SilentEventCategory, SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
 
 
 export interface PhotoUploadInfo {
@@ -40,10 +39,6 @@ export enum LocalPhotoStatus {
   NEW,
   SUBMITTED,
   REJECTED,
-}
-
-export enum SilentEvents {
-  PHOTO_UPLOAD_UPDATE = 'PHOTO_UPLOAD_UPDATE',
 }
 
 export interface LocalPhotoUploadStatus {
@@ -124,7 +119,6 @@ export class PhotoUploadComponent implements OnInit {
     private readonly cameraService: CameraService
   ) { }
 
-  private readonly userFacadeService = inject(UserFacadeService);
   private readonly silentNotificationService = inject(SilentNotificationService);
 
   ngOnInit() {
@@ -135,7 +129,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   ionViewWillLeave() {
-     this.silentNotificationService.removeAllListeners();
+    this.silentNotificationService.removeLastListener();
   }
 
   ionViewWillEnter() {
@@ -144,7 +138,7 @@ export class PhotoUploadComponent implements OnInit {
       this.refreshPhotos();
     }
 
-    this.updatePhotoUploadStatus();
+    this.onPhotoUploadEvent();
   }
 
   private clearLocalStateData() {
@@ -505,21 +499,16 @@ export class PhotoUploadComponent implements OnInit {
     return true;
   }
 
-
-  private updatePhotoUploadStatus() {
-    this.silentNotificationService.addListener(SilentEvents.PHOTO_UPLOAD_UPDATE, (event: PhotoUploadInfo) => {
+  private onPhotoUploadEvent() {
+    this.silentNotificationService.addListener(SilentEventCategory.PHOTO_UPLOAD_UPDATE, (event: PhotoUploadInfo) => {
       this.updatePhotoUpload(event);
     });
   }
 
   private updatePhotoUpload(event: PhotoUploadInfo) {
-    this.userFacadeService
-      .getUserData$()
-      .subscribe((response) => {
-        if (response?.id === event?.userId) {
-          this.refreshPhotos();
-        }
-      });
+    const isCurrentUser = this.silentNotificationService.isSentToCurrentUser(event?.userId);
+    if (!isCurrentUser) return;
+    this.refreshPhotos();
   }
 
   private refreshPhotos() {

@@ -25,7 +25,7 @@ extension Plugin {
     
     @objc func notifySilentListeners(_ notification: Notification) {
         guard let json = notification.userInfo as? [String: Any] else { return }
-        guard let category = json["category"] as? String, !hasListeners(category) else { return }
+        guard let category = json["category"] as? String, hasListeners(category) else { return }
         self.notifyListeners(category, data: json, retainUntilConsumed: true)
     }
 }
