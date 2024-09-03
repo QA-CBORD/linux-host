@@ -25,7 +25,6 @@ import { IonContent, IonCard, IonCardHeader, IonIcon, IonCardContent, IonButton 
 import { PhotoStatus, PhotoType } from './models/photo-upload.enums';
 import { SilentEventCategory, SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
 
-
 export interface PhotoUploadInfo {
   userId: string;
   title: string;
