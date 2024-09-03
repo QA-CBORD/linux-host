@@ -68,6 +68,13 @@ import {
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { parseBitBasedMerchantSetting } from '@core/utils/ordering-helpers';
 
+export interface DueTimeFeedback {
+  message: string;
+  code: string;
+  isFetching: boolean;
+  type: 'info' | 'error';
+}
+
 @Component({
   selector: 'st-order-details',
   templateUrl: './order-details.component.html',
@@ -75,46 +82,33 @@ import { parseBitBasedMerchantSetting } from '@core/utils/ordering-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() set orderInfo({
-    amountDue,
-    tax,
-    deliveryFee,
-    discount,
-    mealBased,
-    notes,
-    orderItems,
-    orderPayment,
-    pickupFee,
-    subTotal,
-    tip,
-    total,
-    transactionId,
-  }: OrderInfo) {
-    this.amountDue = amountDue;
-    this.tax = tax;
-    this.transactionId = transactionId;
-    this.deliveryFee = deliveryFee;
-    this.discount = discount;
-    this.mealBased = mealBased;
-    this.pickupFee = pickupFee;
-    this.orderItems = orderItems;
-    this.subTotal = subTotal;
-    this.tip = tip;
-    this.total = total;
-    this.orderPayment = orderPayment;
+  @Input() set orderInfo(order: OrderInfo) {
+    this.amountDue = order?.amountDue;
+    this.tax = order?.tax;
+    this.transactionId = order?.transactionId;
+    this.deliveryFee = order?.deliveryFee;
+    this.discount = order?.discount;
+    this.mealBased = order?.mealBased;
+    this.pickupFee = order?.pickupFee;
+    this.orderItems = order?.orderItems;
+    this.subTotal = order?.subTotal;
+    this.tip = order?.tip;
+    this.total = order?.total;
+    this.orderPayment = order?.orderPayment;
     this.orderPaymentName = this.orderPayment?.[0]?.accountName || '';
     if (!this.readonly) {
-      this.notes = notes;
+      this.notes = order?.notes;
     }
   }
 
   @Input() set merchant(merchant: MerchantInfo) {
     this.merchantSettingsList = merchant?.settings?.list ?? [];
-    this.orderTypes = merchant.orderTypes;
-    this.isWalkoutOrder = !!merchant.walkout;
+    this.orderTypes = merchant?.orderTypes;
+    this.isWalkoutOrder = !!merchant?.walkout;
     this._merchant = merchant;
-    this.isMerchantOrderAhead = parseInt(merchant.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
-    this.isTipEnabled = parseInt(merchant.settings?.map[MerchantSettings.tipEnabled]?.value) === 1;
+    this.isMerchantOrderAhead = parseInt(merchant?.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
+    this.isTipEnabled = parseInt(merchant?.settings?.map[MerchantSettings.tipEnabled]?.value) === 1;
+    this.isMerchantAutoASAP = merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value ? Boolean(JSON.parse(merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value)) : false;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
@@ -138,9 +132,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() checkinInstructionMessage: string;
   @Input() isExistingOrder: boolean;
   @Input() enableTimeSelection: boolean;
-  @Input() dueTimeHasErrors: boolean;
-  @Input() errorCode: string;
-  @Input() isValidatingDueTime: boolean;
+  @Input() duetimeFeedback: DueTimeFeedback = {} as DueTimeFeedback;
   @Output() onDueTimeErrorClean: EventEmitter<void> = new EventEmitter<void>();
   @Output() onOrderTimeChange: EventEmitter<DateTimeSelected> = new EventEmitter<DateTimeSelected>();
 
@@ -165,6 +157,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   isApplePayment = false;
   isWalkoutOrder = false;
   isMerchantOrderAhead = false;
+  isMerchantAutoASAP = false;
   isTipEnabled = false;
   showOrderNotesField = false;
 
@@ -257,12 +250,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setAccessoryBarVisible(false);
   }
 
-  ngOnChanges({ orderDetailOptions, dueTimeHasErrors }: SimpleChanges): void {
+  ngOnChanges({ orderDetailOptions, duetimeFeedback }: SimpleChanges): void {
     if (orderDetailOptions && orderDetailOptions.currentValue === null) {
       this.orderDetailOptions = {} as OrderDetailOptions;
     }
 
-    if (dueTimeHasErrors && dueTimeHasErrors.currentValue !== null) {
+    if (duetimeFeedback && duetimeFeedback.currentValue !== null) {
       this.markDueTieWithErrors();
     }
   }
@@ -274,23 +267,20 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
           ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
           : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable,
-    }[this.errorCode] as keyof DueTimeErrorMessages;
+    }[this.duetimeFeedback.code] as keyof DueTimeErrorMessages;
     return error;
   }
 
   get hasInvalidItems() {
-    return this.dueTimeHasErrors && this.errorCode === ORDER_ERROR_CODES.INVALID_ORDER;
+    return this.duetimeFeedback.type == 'error' && this.duetimeFeedback.code === ORDER_ERROR_CODES.INVALID_ORDER;
   }
 
   markDueTieWithErrors(): void {
-    if (this.dueTimeHasErrors) {
+    if (this.duetimeFeedback.type === 'error') {
       const dueTimeErrorKey = this.getDueTimeErrorKey();
       this.dueTimeFormControl.setValue('');
       this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: true });
       this.dueTimeFormControl.markAsTouched();
-    } else {
-      this.errorCode = null;
-      this.dueTimeHasErrors = false;
     }
   }
 
@@ -320,7 +310,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   goToItemDetails(orderItem: OrderItem, index: number) {
-    if (this.dueTimeHasErrors) {
+    if (this.duetimeFeedback.type === 'error') {
       return;
     }
 
@@ -389,7 +379,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get showASAP(): boolean {
-    return this.dueTimeHasErrors && this.orderDetailOptions.isASAP ? false : true;
+    return this.duetimeFeedback.type === 'error' && this.orderDetailOptions.isASAP ? false : true;
   }
 
   get prepTime() {
@@ -663,6 +653,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
               this.orderDetailOptions.address,
               this.orderDetailOptions.isASAP
             );
+            this.cleanDueTimeErrors();
             this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu]);
           },
         },
@@ -687,8 +678,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     const dueTimeErrorKey = this.getDueTimeErrorKey();
     this.dueTimeFormControl.setErrors({ [dueTimeErrorKey]: false });
     this.onDueTimeErrorClean.emit();
-    this.errorCode = null;
-    this.dueTimeHasErrors = false;
+    this.duetimeFeedback = {} as DueTimeFeedback;
   }
 
   onSelectClick() {

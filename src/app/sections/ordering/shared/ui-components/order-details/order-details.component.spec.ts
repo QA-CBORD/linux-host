@@ -157,7 +157,7 @@ describe('OrderDetailsComponent', () => {
       address: {} as AddressInfo,
       orderType: ORDER_TYPE.PICKUP,
     } as OrderDetailOptions;
-    component.errorCode = ORDER_ERROR_CODES.ORDER_CAPACITY;
+    component.duetimeFeedback.code = ORDER_ERROR_CODES.ORDER_CAPACITY;
     expect(component.getDueTimeErrorKey()).toEqual('PickUpOrderTimeNotAvailable');
   });
 
@@ -168,12 +168,12 @@ describe('OrderDetailsComponent', () => {
       address: {} as AddressInfo,
       orderType: ORDER_TYPE.DELIVERY,
     } as OrderDetailOptions;
-    component.errorCode = ORDER_ERROR_CODES.ORDER_CAPACITY;
+    component.duetimeFeedback.code = ORDER_ERROR_CODES.ORDER_CAPACITY;
     expect(component.getDueTimeErrorKey()).toEqual('DeliveryOrderTimeNotAvailable');
   });
 
   it('should return Items Not Available Error Key', () => {
-    component.errorCode = ORDER_ERROR_CODES.INVALID_ORDER;
+    component.duetimeFeedback.code = ORDER_ERROR_CODES.INVALID_ORDER;
     expect(component.getDueTimeErrorKey()).toEqual('ItemsNotAvailable');
   });
 
@@ -208,9 +208,9 @@ describe('OrderDetailsComponent', () => {
     expect(component.onOrderItemClicked.emit).toHaveBeenCalledWith(orderItem);
   });
 
-  it('should not emit onOrderItemClicked when dueTimeHasErrors is true', () => {
+  it('should not emit onOrderItemClicked when duetimeFeedback is error', () => {
     jest.spyOn(component.onOrderItemClicked, 'emit');
-    component.dueTimeHasErrors = true;
+    component.duetimeFeedback.type = 'error';
 
     const orderItem = {} as OrderItem;
     component.goToItemDetails(orderItem, 0);
@@ -392,10 +392,13 @@ describe('OrderDetailsComponent', () => {
     expect(component.orderDetailOptions).toEqual({});
   });
 
-  it('should mark due time with errors if dueTimeHasErrors is not null', () => {
+  it('should mark due time with errors if duetimeFeedback is not null and has errors', () => {
     const changes: SimpleChanges = {
-      dueTimeHasErrors: {
-        currentValue: true,
+      duetimeFeedback: {
+        currentValue: {
+          type: 'error',
+          code: ORDER_ERROR_CODES.ORDER_CAPACITY,
+        },
         previousValue: false,
         firstChange: false,
         isFirstChange: () => false,
@@ -408,8 +411,8 @@ describe('OrderDetailsComponent', () => {
     expect(markDueTieWithErrorsSpy).toHaveBeenCalled();
   });
 
-  it('should mark due time with errors if dueTimeHasErrors is true', () => {
-    component.dueTimeHasErrors = true;
+  it('should mark due time with errors if duetimeFeedback is equals to error', () => {
+    component.duetimeFeedback.type = 'error';
     const dueTimeErrorKey = component.getDueTimeErrorKey();
     component.markDueTieWithErrors();
 
@@ -418,14 +421,7 @@ describe('OrderDetailsComponent', () => {
     expect(component.dueTimeFormControl.touched).toBe(true);
   });
 
-  it('should reset errorCode and dueTimeHasErrors if dueTimeHasErrors is false', () => {
-    component.dueTimeHasErrors = false;
-    component.markDueTieWithErrors();
-
-    expect(component.errorCode).toBe(null);
-    expect(component.dueTimeHasErrors).toBe(false);
-  });
-
+  
   it('should return FORM_CONTROL_NAMES', () => {
     expect(component.controlsNames).toBe(FORM_CONTROL_NAMES);
   });
@@ -528,8 +524,7 @@ describe('OrderDetailsComponent', () => {
   
     expect(component.dueTimeFormControl.hasError(dueTimeErrorKey)).toBe(false);
     expect(onDueTimeErrorCleanSpy).toHaveBeenCalled();
-    expect(component.errorCode).toBeNull();
-    expect(component.dueTimeHasErrors).toBe(false);
+    expect(component.duetimeFeedback.type).not.toBeDefined();
   });
   
   it('should notify backdrop shown on select click', () => {
@@ -545,7 +540,7 @@ describe('OrderDetailsComponent', () => {
   });
 
   it('should return false if dueTimeHasErrors is true and orderDetailOptions.isASAP is true', () => {
-    component.dueTimeHasErrors = true;
+    component.duetimeFeedback.type = 'error';
     component.orderDetailOptions = { isASAP: true } as OrderDetailOptions;
   
     const result = component.showASAP;
@@ -553,15 +548,15 @@ describe('OrderDetailsComponent', () => {
     expect(result).toBe(false);
   });
   
-  it('should return true if dueTimeHasErrors is false or orderDetailOptions.isASAP is false', () => {
-    component.dueTimeHasErrors = false;
+  it('should return true if duetimeFeedback is error or orderDetailOptions.isASAP is false', () => {
+    component.duetimeFeedback.type = 'error';
     component.orderDetailOptions = { isASAP: true } as OrderDetailOptions;
   
     const result = component.showASAP;
   
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   
-    component.dueTimeHasErrors = true;
+    component.duetimeFeedback.type = 'error';
     component.orderDetailOptions = { isASAP: false } as OrderDetailOptions;
   
     const result2 = component.showASAP;

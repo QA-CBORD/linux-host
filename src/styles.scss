@@ -357,7 +357,14 @@
 }
 
 .control-hint--error {
+  margin: 12px 0 0 0;
   color: $color-alizarin;
+}
+
+.control-hint--info {
+  @include font-nunito-heavy(12px);
+  margin: 12px 0 0 0;
+  color: $color-black;
 }
 
 .bg-transparent {

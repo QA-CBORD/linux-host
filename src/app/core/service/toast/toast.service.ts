@@ -9,6 +9,7 @@ export interface ToastConfig {
   onDismiss?: () => void;
   icon?: string;
   cssClass?: string;
+  positionAnchor?: string;
 }
 
 @Injectable({
@@ -37,6 +38,7 @@ export class ToastService {
       position: config.position,
       icon: config.icon,
       cssClass: config.cssClass,
+      positionAnchor: config.positionAnchor,
     });
     toast.setAttribute('role', 'alert');
 
@@ -57,6 +59,7 @@ export class ToastService {
       cssClass: 'toast-message-error',
       mode: 'ios',
       position: options.position ?? 'top',
+      positionAnchor: options.positionAnchor,
       buttons: options.toastButtons ?? [
         {
           icon: '/assets/icon/error.svg',
@@ -80,5 +83,30 @@ export class ToastService {
 
   async showSuccessToast(toastConfig: ToastConfig) {
     this.showToast({ ...toastConfig, icon: 'checkmark-circle', cssClass: 'toast-message-success' });
+  }
+
+  async showInfo(options: ToastConfig) {
+    const myToast = await this.toastController.create({
+      message: options.message,
+      duration: options.duration ?? 5000,
+      cssClass: 'toast-message-notification',
+      mode: 'ios',
+      position: options.position ?? 'top',
+      positionAnchor: options.positionAnchor,
+      buttons: options.toastButtons ?? [
+        {
+          side: 'end',
+          icon: "/assets/icon/close-x.svg",
+          handler: () => myToast.dismiss(),
+        }
+      ],
+    });
+    myToast.onDidDismiss().then(() => {
+      if (options.onDismiss) {
+        options.onDismiss();
+      }
+    });
+    myToast.setAttribute('role', 'alert');
+    await myToast.present();
   }
 }

@@ -45,4 +45,5 @@ export interface OrderInfo {
   orderNotifications: OrderNotification[];
   allItems?:OrderItem[]
   isWalkoutOrder: boolean;
+  isAutoAsapSelection?: boolean;
 }
