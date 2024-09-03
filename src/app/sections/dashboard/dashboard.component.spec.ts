@@ -37,6 +37,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { TranslateService } from '@ngx-translate/core';
 import { AccessCardComponent } from './containers/access-card';
 import { AccessCardService } from './containers/access-card/services/access-card.service';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 const _platform = {
   is: jest.fn(),
@@ -90,6 +91,12 @@ describe('DashboardPage', () => {
   let environmentFacadeService = {
     getStateEntityByKey$: jest.fn().mockReturnValue(of(null)),
   };
+
+  const nativeProvider = {
+    isIos: jest.fn().mockReturnValue(false),
+    isAndroid: jest.fn().mockReturnValue(false),
+  };
+  
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       //TODO: Temp fix for Swiper imports, should setup JEST instead
@@ -108,6 +115,7 @@ describe('DashboardPage', () => {
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
         { provide: PopoverController, useValue: _popoverController },
         { provide: TranslateService, useValue: _translateService },
+        { provide: NativeProvider, useValue: nativeProvider },
         AccessCardService,
         NavigationFacadeSettingsService,
         AndroidPermissions,

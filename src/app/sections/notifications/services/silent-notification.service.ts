@@ -1,32 +1,47 @@
 import { inject, Injectable } from '@angular/core';
 import { registerPlugin } from '@capacitor/core';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { PhotoUploadInfo } from '@sections/settings/pages/photo-upload/photo-upload.component';
+import { firstValueFrom } from 'rxjs';
 
-const IOSDevice = registerPlugin<any>('IOSDevice');
-const AndroidDevice = registerPlugin<any>('AndroidDevice');
+export enum SilentEventCategory {
+  PHOTO_UPLOAD_UPDATE = 'PHOTO_UPLOAD_UPDATE',
+}
 
+export enum SilentEventStatus {
+  ACCEPTED = 'ACCEPTED',
+}
 @Injectable({
   providedIn: 'root'
 })
 export class SilentNotificationService {
   constructor() { }
 
+  private readonly userFacadeService = inject(UserFacadeService);
   private readonly nativeProvider: NativeProvider = inject(NativeProvider);
+  private listener: { remove: () => void } = { remove: () => { } };
 
-  addListener(eventName: string, listenerFunc: (event?: PhotoUploadInfo) => void) { 
+  async addListener(eventName: string, callback: (event?: PhotoUploadInfo) => void) {
     if (this.nativeProvider.isIos()) {
-      IOSDevice.addListener(eventName, listenerFunc);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const IOSDevice = registerPlugin<any>('IOSDevice');
+      const eventListener = await IOSDevice.addListener(eventName, callback);
+      this.listener = eventListener;
     } else if (this.nativeProvider.isAndroid()) {
-      AndroidDevice.addListener(eventName, listenerFunc);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const AndroidDevice = registerPlugin<any>('AndroidDevice');
+      const eventListener = await AndroidDevice.addListener(eventName, callback);
+      this.listener = eventListener;
     }
   }
 
-  removeAllListeners() {
-    if (this.nativeProvider.isIos()) {
-      IOSDevice.removeAllListeners();
-    } else if (this.nativeProvider.isAndroid()) {
-      AndroidDevice.removeListener();
-    }
+  removeLastListener() {
+    this.listener?.remove();
+  }
+
+  async isSentToCurrentUser(sentId: string): Promise<boolean> {
+    const user = await firstValueFrom(this.userFacadeService.getUserData$());
+    return user.id === sentId;
   }
 }

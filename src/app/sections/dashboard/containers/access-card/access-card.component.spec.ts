@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_MESSAGES } from 'src/app/content-strings';
 import { of } from 'rxjs';
-import { TOAST_DURATION } from '@shared/model/generic-constants';
+import { SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
 
 describe('AccessCardComponent', () => {
   let component: AccessCardComponent;
@@ -31,6 +31,8 @@ describe('AccessCardComponent', () => {
   };
 
   const contentStringsFacadeService = { fetchContentString$: jest.fn(() => of('hello world')) };
+  
+  const silentNotificationService = {};
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -43,6 +45,7 @@ describe('AccessCardComponent', () => {
         { provide: ToastService, useValue: toastService },
         { provide: TranslateService, useValue: translateService },
         { provide: ContentStringsFacadeService, useValue: contentStringsFacadeService },
+        { provide: SilentNotificationService, useValue: silentNotificationService },
         MobileCredentialFacade,
         AndroidPermissions,
         AccessCardService,

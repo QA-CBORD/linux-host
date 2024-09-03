@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Observable, Subject, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
@@ -18,6 +18,9 @@ import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_ME
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { PronounsPipe } from '@shared/pipes/pronouns-pipe/pronouns.pipe';
+import { SilentEventCategory, SilentEventStatus, SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
+import { PhotoUploadInfo } from '@sections/settings/pages/photo-upload/photo-upload.component';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-access-card',
@@ -57,13 +60,20 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
     private readonly toastSerice: ToastService,
     private readonly traslateService: TranslateService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService
-  ) {}
+  ) { }
+
+  private readonly loadingService = inject(LoadingService);
+  private readonly silentNotificationService = inject(SilentNotificationService);
 
   ngOnInit() {
     this.setHousingOnlyEnabled();
     this.setInstitutionData();
     this.getFeaturesEnabled();
     this.initContentString();
+  }
+
+  ionViewWillLeave() {
+    this.silentNotificationService.removeLastListener();
   }
 
   async initContentString() {
@@ -88,6 +98,7 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
   ionViewWillEnter() {
     this.mobileCredentialFacade.refreshCredentials();
     this.getUserData();
+    this.updateProfilePhoto();
   }
 
   private getUserData() {
@@ -97,6 +108,7 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
         tap(photo => {
           this.photoAvailable = !!photo;
           this._userPhotoSubject.next(photo);
+          this.changeRef.detectChanges();
         }),
         catchError(() => of(null))
       )
@@ -154,5 +166,18 @@ export class AccessCardComponent implements OnInit, AfterViewInit {
       duration: TOAST_DURATION,
       position: 'bottom' }
     );
+  }
+
+  private updateProfilePhoto() {
+    this.silentNotificationService.addListener(SilentEventCategory.PHOTO_UPLOAD_UPDATE, (event: PhotoUploadInfo) => {
+
+      const isCurrentUser = this.silentNotificationService.isSentToCurrentUser(event?.userId);
+      const isEventStatusAccepted = event?.status === SilentEventStatus.ACCEPTED;
+      if (!isCurrentUser || !isEventStatusAccepted) return;
+
+      this.loadingService.showSpinner();
+      this.getUserData();
+      this.loadingService.closeSpinner();
+    });
   }
 }
