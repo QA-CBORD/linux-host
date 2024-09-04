@@ -95,6 +95,7 @@ describe('DashboardPage', () => {
   const nativeProvider = {
     isIos: jest.fn().mockReturnValue(false),
     isAndroid: jest.fn().mockReturnValue(false),
+    isMobile: jest.fn().mockReturnValue(true),
   };
   
   beforeEach(async () => {
