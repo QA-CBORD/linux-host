@@ -63,10 +63,10 @@ export class SettingsPage implements OnInit {
       .toPromise()
       .then(isGuest => (this.isGuest = isGuest));
     this.isHousingOnly = await this.profileService.housingOnlyEnabled();
-    this.updateProfilePhoto();
   }
 
   ionViewWillEnter() {
+    this.updateProfilePhoto();
     this.onPhotoUploadEvent();
   }
 
