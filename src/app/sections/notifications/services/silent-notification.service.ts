@@ -13,16 +13,20 @@ export enum SilentEventStatus {
   ACCEPTED = 'ACCEPTED',
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SilentNotificationService {
-  constructor() { }
+  constructor() {}
 
   private readonly userFacadeService = inject(UserFacadeService);
   private readonly nativeProvider: NativeProvider = inject(NativeProvider);
-  private listener: { remove: () => void } = { remove: () => { } };
+  private listener: { remove: () => void } = { remove: () => {} };
 
   async addListener(eventName: string, callback: (event?: PhotoUploadInfo) => void) {
+    if (!this.nativeProvider.isMobile()) {
+      return;
+    }
+
     if (this.nativeProvider.isIos()) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const IOSDevice = registerPlugin<any>('IOSDevice');
