@@ -123,6 +123,14 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
+  getPendingOrRejectedPhoto(): Observable<UserPhotoInfo> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }: UserInfo) => this.userApiService.retrievePendingOrRejectedUserPhoto(id)),
+      map(({ response }) => response),
+      first()
+    );
+  }
+
   getPhotoById(photoId: string): Observable<UserPhotoInfo> {
     return this.userApiService.getUserPhoto(photoId).pipe(
       map(({ response }) => response),

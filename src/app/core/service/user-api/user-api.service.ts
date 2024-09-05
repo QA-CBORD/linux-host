@@ -148,4 +148,10 @@ export class UserApiService {
     });
     return this.http.post<MessageResponse<string>>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
+
+  retrievePendingOrRejectedUserPhoto(userId: string) {
+    const params = { userId };
+    const queryConfig = new RPCQueryConfig('retrievePendingOrRejectedUserPhoto', params, true);
+    return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
+  }
 }

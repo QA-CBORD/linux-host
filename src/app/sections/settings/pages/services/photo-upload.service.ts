@@ -7,7 +7,7 @@ import { Settings } from '../../../../app.global';
 import SettingList = Settings.SettingList;
 import Setting = Settings.Setting;
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { first, switchMap, take, tap } from 'rxjs/operators';
+import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
 import { ActionSheetController } from '@ionic/angular';
@@ -97,14 +97,15 @@ export class PhotoUploadService {
     return zip(
       this.settingsFacadeService.fetchSettingList(SettingList.PHOTO_UPLOAD),
       this.settingsFacadeService.getSetting(Setting.GOVT_PHOTO_ID_REQUIRED),
-      this.userFacadeService.getPhotoList()
+      this.userFacadeService.getPhotoList(),
+      this.userFacadeService.getPendingOrRejectedPhoto()
     ).pipe(
-      switchMap(([photoUploadSettings, govtIdRequired, photoInfoList]) => {
+      switchMap(([photoUploadSettings, govtIdRequired, photoInfoList, photoPendingInfo]) => {
         /// populate upload settings if they exist
         this.governmentIdRequired = Boolean(JSON.parse(govtIdRequired.value));
         this.populatePhotoUploadSettings(photoUploadSettings);
-        if (photoInfoList && !photoInfoList.empty) {
-          return this.fetchUserPhotosInList(photoInfoList);
+       if (photoInfoList && !photoInfoList.empty) {
+          return this.fetchUserPhotosInList(photoInfoList, photoPendingInfo);
         }
         return of([]);
       })
@@ -112,15 +113,20 @@ export class PhotoUploadService {
   }
 
   /// get photo data by status and fetch array of photos
-  private fetchUserPhotosInList(photoList: UserPhotoList): Observable<UserPhotoInfo[]> {
+  private fetchUserPhotosInList(photoList: UserPhotoList, pendingPhoto?: UserPhotoInfo): Observable<UserPhotoInfo[]> {
     return of(mapUserPhotosInList(photoList)).pipe(
-      switchMap(photoList => combineLatest(photoList.map(({ id }) => this.handleUserPhotoById(id))))
+      switchMap(photoList => combineLatest(photoList.map(({ id }) => this.handleUserPhotoById(id, pendingPhoto))))
     );
   }
 
   /// fetch photo by id and set the data here if it exists
-  handleUserPhotoById(photoId: string): Observable<UserPhotoInfo> {
-    return this.userFacadeService.getPhotoById(photoId).pipe(tap(photoInfo => this.setPhotoInfo(photoInfo)));
+  handleUserPhotoById(photoId: string, pendingPhoto?: UserPhotoInfo): Observable<UserPhotoInfo> {
+    return this.userFacadeService.getPhotoById(photoId).pipe(
+      map(photoInfo => {
+        return photoInfo.status === PhotoStatus.ACCEPTED || !pendingPhoto ? photoInfo : pendingPhoto;
+      }),
+      tap(photoInfo => this.setPhotoInfo(photoInfo))
+    );
   }
 
   private setPhotoInfo(photoInfo: UserPhotoInfo, displayAlert = false) {
