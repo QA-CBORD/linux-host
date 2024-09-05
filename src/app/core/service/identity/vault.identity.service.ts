@@ -274,7 +274,7 @@ export class VaultIdentityService {
    */
   async unlockVaultIfLocked(): Promise<VaultSession> {
     if (await this.hasStoredSession()) {
-      if (this.userPreferenceService.cachedBiometricsEnabledUserPreference()) {
+      if (await this.userPreferenceService.cachedBiometricsEnabledUserPreference()) {
         this.userPreferenceService.setBiometricsEnabledUserPreference(true); // Remove this 3 lines when developing for 4.32. wont be necessary anymore
       }
       return this.unlockVault(await this.userPreferenceService.cachedBiometricsEnabledUserPreference(true));
