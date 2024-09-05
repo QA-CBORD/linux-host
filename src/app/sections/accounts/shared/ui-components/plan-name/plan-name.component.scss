@@ -6,29 +6,30 @@
   flex-direction: column;
 
   &__label {
-    @include font-nunito-semibold(15px);
+    color: $color-wood-gray;
+    @include font-nunito-semibold(16px);
   }
   &__name {
-    @include font-nunito-heavy(18px);
-    margin-top: 10px;
+    @include font-nunito-heavy(20px);
+    @include ellipsis;
+    margin-top: 8px;
     margin-bottom: 0;
   }
 }
 .patron-plan-row {
   margin: 16px 0px 10px 14px;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: baseline;
+  gap: .4rem;
 
   &__label {
+    text-align: right;
     margin-top: 3px;
-    @include font-nunito-semibold(16px);
+    @include font-nunito-heavy(16px);
   }
   &__name {
-    @include font-nunito-heavy(20px);
-    margin-left: 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 70vw;
+    @include font-nunito-heavy(16px);
+    @include ellipsis;
   }
 }
