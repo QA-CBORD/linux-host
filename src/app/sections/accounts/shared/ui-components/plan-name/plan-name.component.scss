@@ -11,20 +11,20 @@
   }
   &__name {
     @include font-nunito-heavy(20px);
-    @include ellipsis;
     margin-top: 8px;
     margin-bottom: 0;
   }
 }
 .patron-plan-row {
   margin: 16px 0px 10px 14px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: row;
   align-items: baseline;
-  gap: .4rem;
+  justify-content: center;
+  gap: .2rem;
 
   &__label {
-    text-align: right;
+    flex: 0 0 100px;
     margin-top: 3px;
     @include font-nunito-heavy(16px);
   }
@@ -32,4 +32,9 @@
     @include font-nunito-heavy(16px);
     @include ellipsis;
   }
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid $color-border-gray;
 }
