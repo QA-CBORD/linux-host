@@ -529,7 +529,10 @@ export class CartComponent implements OnInit, OnDestroy {
       dueTime,
       type,
       orderType: orderTypes,
-      orderDetailOptions,
+      orderDetailOptions: {
+        ...orderDetailOptions,
+        dueTime: new Date(dueTime),
+      },
     });
     this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart, CART_ROUTES.success]);
   }
