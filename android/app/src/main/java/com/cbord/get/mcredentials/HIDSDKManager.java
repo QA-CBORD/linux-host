@@ -87,7 +87,7 @@ public class HIDSDKManager  {
             mobileKeys.unregisterEndpoint(new HIDTransactionProgressObserver(transactionResult -> {
                 transactionCompleteListener.onCompleted(transactionResult);
                 if(transactionResult == TRANSACTION_SUCCESS){
-                    origoMobileKeysApi.handleKeyRovokeEvent();
+                    origoMobileKeysApi.handleKeyRevokeEvent();
                 }
             }));
         }else{
