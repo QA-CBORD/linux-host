@@ -39,8 +39,8 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
         try {
 
             OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder()
-                    .setApplicationId(BuildConfig.AAMK_APP_ID)
-                    .setApplicationDescription(BuildConfig.AAMK_APP_ID_DESCRIPTION)
+                    .setApplicationId(BuildConfig.ORIGO_APP_ID)
+                    .setApplicationDescription(BuildConfig.ORIGO_APP_ID_DESCRIPTION)
                     .setNfcParameters(new OrigoNfcConfiguration.Builder()
                             .unsafeSetAttemptNfcWithScreenOff(true)
                             .build())
