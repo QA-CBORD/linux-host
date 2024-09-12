@@ -67,9 +67,9 @@ export class OrderingService {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
     }
-    const successCb = () => {
+    const successCb = (isAutoAsapSelection: boolean) => {
       this.routingService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.cart], {
-        queryParams: { isExistingOrder: this.cartService.isExistingOrder, isFromCartPreview: fromCartPreview },
+        queryParams: { isExistingOrder: this.cartService.isExistingOrder, isFromCartPreview: fromCartPreview, isAutoAsapSelection: isAutoAsapSelection },
       });
       if (fromCartPreview) this.modalService.dismiss();
     };
@@ -90,10 +90,10 @@ export class OrderingService {
 
   async validateOrder(successCb, errorCB, ignoreCodes?: string[]): Promise<void> {
     await this.loadingService.showSpinner();
-    await firstValueFrom(this.cartService.validateOrder().pipe(handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes)))
-      .then(() => {
+    await firstValueFrom(this.cartService.validateOrder(null, this.cartService._orderOption.isASAP).pipe(handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes)))
+      .then((order) => {
         this.cartService.cartsErrorMessage = null;
-        return successCb && successCb();
+        return successCb && successCb(order.isAutoAsapSelection);
       })
       .catch((error: Array<string> | string) => {
         if (Array.isArray(error) && IGNORE_ERRORS.includes(error[0])) {
