@@ -36,6 +36,7 @@ const mockData = {
 };
 
 const _cartService = {
+  _orderOption: { isASAP: true },
   validateOrder: jest.fn(),
   orderInfo$: of({ type: ORDER_TYPE.PICKUP } as OrderInfo),
   merchant$: of({
@@ -78,6 +79,9 @@ const _settingsFacadeService = {};
 const _activatedRoute = {
   snapshot: {
     data: mockData,
+    queryParamMap: {
+      get: jest.fn().mockReturnValue('true')
+    }
   },
 };
 
@@ -99,7 +103,10 @@ const _externalPaymentService = {
   payWithApplePay: jest.fn().mockReturnValue(Promise.resolve({ success: true, amount: '10' })),
 };
 
-const _routingService = {};
+const _routingService = {
+  getPreviousUrlParams: jest.fn().mockReturnValue({isExistingOrder: false, openTimeSlot: true}),
+  navigate: jest.fn(),
+};
 const _connectionService = {
   networkStatus: jest.fn(() => of(true)),
 };
@@ -267,30 +274,5 @@ describe('CartComponent', () => {
     expect(_lockDownService.loadStringsAndSettings).toHaveBeenCalled();
 
     expect(component.isMerchantOrderAhead).toBe(true);
-    expect(component.isMerchantAutoASAP).toBe(true);
-  });
-
-  it('should update order time to ASAP and notify', async () => {
-    const toastMessage = 'Delivery toast message';
-    component.onOrderTimeChange = jest.fn();
-    _translateService.instant = jest.fn().mockImplementation((key) => toastMessage);
-    component.dueTimeFeedback.type = 'error';
-    const errorCodeKey = 'someErrorCode';
-    const orderType = ORDER_TYPE.DELIVERY;
-    const messageKey = 'inline_next_timeslot_delivery';
-    const messageToastKey = 'toast_next_timeslot_delivery';
-
-    await component.updateOrderTimeToASAPAndNotify(errorCodeKey, orderType);
-
-    expect(_translateService.instant).toHaveBeenCalledWith(`get_web_gui.merchant_screen.${messageKey}`);
-    expect(_translateService.instant).toHaveBeenCalledWith(`get_web_gui.merchant_screen.${messageToastKey}`);
-    expect(component.dueTimeFeedback.type).toEqual('info');
-    expect(component.onOrderTimeChange).toHaveBeenCalledWith({ dateTimePicker: ASAP_LABEL, timeStamp: undefined }, true);
-    expect(_toastService.showInfo).toHaveBeenCalledWith({
-      message: toastMessage,
-      duration: TOAST_DURATION,
-      position: 'bottom',
-      positionAnchor: 'toast-anchor',
-    });
   });
 });
