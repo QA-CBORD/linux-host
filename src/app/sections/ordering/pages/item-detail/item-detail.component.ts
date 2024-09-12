@@ -245,7 +245,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     this.cartService.addOrderItems(menuItem, isItemExistsInCart, selectedIndex);
     await this.loadingService.showSpinner();
     try {
-      await firstValueFrom(this.cartService.validateOrder().pipe(handleServerError(ORDER_VALIDATION_ERRORS)));
+      await firstValueFrom(this.cartService.validateOrder(null, this.cartService._orderOption.isASAP).pipe(handleServerError(ORDER_VALIDATION_ERRORS)));
       this.cartService.saveOrderSnapshot();
       this.cartService.cartsErrorMessage = null;
       this.onClose();
