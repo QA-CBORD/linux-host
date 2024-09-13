@@ -228,6 +228,7 @@ public class HIDSDKManager {
         @Override
         public void onRedeemSetupFailed(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
             LOGGER.error("onRedeemSetupFailed: " + origoEndpointSetupErrorResponse.getStatus());
+            transactionCompleteListener.onCompleted(e.getErrorCode().toString());
         }
 
         @Override
