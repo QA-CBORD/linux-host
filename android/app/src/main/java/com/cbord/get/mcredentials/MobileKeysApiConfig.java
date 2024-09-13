@@ -96,11 +96,9 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
         }
     }
 
-
     public OrigoMobileKeysApi getMobileKeysApi() {
         return mobileKeysFactory;
     }
-
 
     @Override
     public void onCreate() {

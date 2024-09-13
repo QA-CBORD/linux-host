@@ -38,29 +38,28 @@ public class HIDSDKManager {
 
     private Logger LOGGER = OrigoLogger.getLoggerFactory().getLogger(HIDSDKManager.class.getSimpleName());
 
-    private HIDSDKManager(Application application) throws IllegalStateException{
+    private HIDSDKManager(Application application) throws IllegalStateException {
         initializeMobileKeysApi(application);
     }
 
-    private HIDSDKManager(Application application, TransactionCompleteCallback cb) throws IllegalStateException{
+    private HIDSDKManager(Application application, TransactionCompleteCallback cb) throws IllegalStateException {
         initializeMobileKeysApi(application, cb);
     }
 
-    synchronized public static HIDSDKManager getInstance(Application application) throws IllegalStateException{
-        if(instance == null)
+    synchronized public static HIDSDKManager getInstance(Application application) throws IllegalStateException {
+        if (instance == null)
             instance = new HIDSDKManager(application);
         return instance;
     }
 
-    synchronized public static HIDSDKManager getInstance(Application application, TransactionCompleteCallback cb) throws IllegalStateException{
-        if(instance == null)
-        {
+    synchronized public static HIDSDKManager getInstance(Application application, TransactionCompleteCallback cb) throws IllegalStateException {
+        if (instance == null) {
             instance = new HIDSDKManager(application, cb);
         }
         return instance;
     }
 
-    public String getEndpointLastServerSync(){
+    public String getEndpointLastServerSync() {
         try {
             return this.mobileKeys.getEndpointInfo().getLastServerSyncDate().toString();
         } catch (Exception e) {
@@ -69,19 +68,17 @@ public class HIDSDKManager {
         return null;
     }
 
-    private void initializeMobileKeysApi(final Application application) throws IllegalStateException{
-       initializeMobileKeysApi(application, null);
+    private void initializeMobileKeysApi(final Application application) throws IllegalStateException {
+        initializeMobileKeysApi(application, null);
     }
 
-    private void initializeMobileKeysApi(final Application application, TransactionCompleteCallback transactionCompleteCallback) throws IllegalStateException{
-        // LOGGER.debug("initializeMobileKeysApi");
+    private void initializeMobileKeysApi(final Application application, TransactionCompleteCallback transactionCompleteCallback) throws IllegalStateException {
         this.applicationContext = application.getApplicationContext();
         mobileKeysApiConfig = ((MobileKeysApiConfig) application);
         mobileKeysApiConfig.initializeMobileKeysApi(transactionResult -> {
-            if(transactionCompleteCallback != null)
+            if (transactionCompleteCallback != null)
                 transactionCompleteCallback.onCompleted(transactionResult);
-            if(TRANSACTION_SUCCESS.equals(transactionResult)){
-                System.out.println("initializeMobileKeysApi");
+            if (TRANSACTION_SUCCESS.equals(transactionResult)) {
                 origoMobileKeysApi = mobileKeysApiConfig.getMobileKeysApi();
                 mobileKeys = OrigoMobileKeysApi.getInstance().getMobileKeys();
             }
@@ -89,15 +86,14 @@ public class HIDSDKManager {
     }
 
     public void deleteEndpoint(TransactionCompleteCallback transactionCompleteListener) {
-        if(isEndpointSetup())
-        {
+        if (isEndpointSetup()) {
             mobileKeys.unregisterEndpoint(new HIDTransactionProgressObserver(transactionResult -> {
                 transactionCompleteListener.onCompleted(transactionResult);
-                if(transactionResult == TRANSACTION_SUCCESS){
+                if (transactionResult == TRANSACTION_SUCCESS) {
                     origoMobileKeysApi.handleKeyRevokeEvent();
                 }
             }));
-        }else{
+        } else {
             transactionCompleteListener.onCompleted(NO_KEY_INSTALLED);
         }
     }
@@ -113,7 +109,7 @@ public class HIDSDKManager {
         try {
             mKey = mobileKeys.listMobileKeys().get(0);
         } catch (OrigoMobileKeysException ex) {
-            LOGGER.error("listMobileKeys: " + ex.getCauseMessage());
+            LOGGER.error("Error on listMobileKeys: " + ex.getCauseMessage());
         } catch (Exception e) {
         }
         return mKey;
@@ -121,11 +117,15 @@ public class HIDSDKManager {
 
 
     public void refreshEndpoint(TransactionCompleteCallback callback) {
-        mobileKeys.endpointUpdate(new HIDTransactionProgressObserver(callback));
+        try {
+            mobileKeys.endpointUpdate(new HIDTransactionProgressObserver(callback));
+        } catch (Error error) {
+            LOGGER.error("Error on refreshingEndpoint: " + error);
+        }
     }
 
 
-    public void doHidCredentialFirstInstall(boolean forceInstall, final String invitationCode, TransactionCompleteCallback txCb){
+    public void doHidCredentialFirstInstall(boolean forceInstall, final String invitationCode, TransactionCompleteCallback txCb) {
 
         if (invitationCode == null) {
             txCb.onCompleted(TRANSACTION_FAILED_INVALID_KEY);
@@ -133,35 +133,30 @@ public class HIDSDKManager {
         }
 
         try {
-            if(isEndpointActive()){
-                if(forceInstall){
+            if (isEndpointActive()) {
+                if (forceInstall) {
                     deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDEndpointSetupCallback(txCb), invitationCode));
-                } else{
+                } else {
                     txCb.onCompleted(MOBILE_KEY_ALREADY_INSTALLED);
                 }
-            } else{
-                if(isEndpointSetup()){
+            } else {
+                if (isEndpointSetup()) {
                     deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDEndpointSetupCallback(txCb), invitationCode));
-                }
-                else {
+                } else {
                     mobileKeys.endpointSetup(new HIDEndpointSetupCallback(txCb), invitationCode);
                 }
             }
-        }catch (Exception any){
-            System.err.println("error: " + any.getMessage());
+        } catch (Exception any) {
             txCb.onCompleted(TRANSACTION_FAILED);
         }
     }
 
     public boolean isEndpointSetup() {
         boolean isEndpointSetup = false;
-        try
-        {
+        try {
             isEndpointSetup = mobileKeys.isEndpointSetupComplete();
-        }
-        catch (OrigoMobileKeysException e)
-        {
-            LOGGER.error("isEndpointSetup failed: " + e.getMessage(), e);
+        } catch (OrigoMobileKeysException e) {
+            LOGGER.error("Error on isEndpointSetup: " + e.getMessage(), e);
         }
         return isEndpointSetup;
     }
@@ -183,32 +178,32 @@ public class HIDSDKManager {
      * Start Hce scanning or request permission
      */
     public void startScanning(TransactionCompleteCallback transactionCompleteCallback) {
-           try{
-               OrigoReaderConnectionController controller = origoMobileKeysApi.getOrigiReaderConnectionController();
-               controller.enableHce();
-               transactionCompleteCallback.onCompleted(TRANSACTION_SUCCESS);
-           } catch (Exception exception) {
-               LOGGER.error("startScanning failed: " + exception.getMessage());
-               transactionCompleteCallback.onCompleted(TRANSACTION_FAILED);
-           }
+        try {
+            OrigoReaderConnectionController controller = origoMobileKeysApi.getOrigiReaderConnectionController();
+            controller.enableHce();
+            transactionCompleteCallback.onCompleted(TRANSACTION_SUCCESS);
+        } catch (Exception exception) {
+            LOGGER.error("Error on startScanning: " + exception.getMessage());
+            transactionCompleteCallback.onCompleted(TRANSACTION_FAILED);
+        }
     }
 
-    private class HIDTransactionProgressObserver implements OrigoMobileKeysProgressCallback{
+    private class HIDTransactionProgressObserver implements OrigoMobileKeysProgressCallback {
 
         private final TransactionCompleteCallback transactionCompleteListener;
 
-        public HIDTransactionProgressObserver(TransactionCompleteCallback callback){
+        public HIDTransactionProgressObserver(TransactionCompleteCallback callback) {
             this.transactionCompleteListener = callback;
         }
 
         @Override
         public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {
-            // I'm not worried about this event
+            LOGGER.debug("handleMobileKeysTransactionProgress: " + origoProgressEvent);
         }
 
         @Override
         public void handleMobileKeysTransactionCompleted() {
-                transactionCompleteListener.onCompleted(TRANSACTION_SUCCESS);
+            transactionCompleteListener.onCompleted(TRANSACTION_SUCCESS);
         }
 
         @Override
@@ -221,42 +216,39 @@ public class HIDSDKManager {
 
         private final TransactionCompleteCallback transactionCompleteListener;
 
-        public HIDEndpointSetupCallback(TransactionCompleteCallback callback){
+        public HIDEndpointSetupCallback(TransactionCompleteCallback callback) {
             this.transactionCompleteListener = callback;
         }
 
         @Override
         public void onWalletSetupReady() {
-            System.out.println("onWalletSetupReady: ");
             mobileKeys.setupGoogleWallet(this);
         }
 
         @Override
         public void onRedeemSetupFailed(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
-            System.out.println("onRedeemSetupFailed: " + origoEndpointSetupErrorResponse.getStatus());
+            LOGGER.error("onRedeemSetupFailed: " + origoEndpointSetupErrorResponse.getStatus());
         }
 
         @Override
         public void handleMobileKeysTransactionCompleted() {
-            System.out.println("handleMobileKeysTransactionCompleted: ");
             transactionCompleteListener.onCompleted(TRANSACTION_SUCCESS);
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-            System.out.println("handleMobileKeysTransactionFailed: " + e.getCauseMessage());
             LOGGER.error("handleMobileKeysTransactionFailed: " + e.getCauseMessage());
             transactionCompleteListener.onCompleted(e.getErrorCode().toString());
         }
 
         @Override
         public void onWalletProvisionSuccess(@NonNull OrigoProvisionResponse origoProvisionResponse) {
-
+            LOGGER.debug("Success on onWalletProvisionSuccess: " + origoProvisionResponse.getCardStatus());
         }
 
         @Override
         public void onWalletProvisionFailed(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
-
+            LOGGER.error("Success on onWalletProvisionFailed: " + origoEndpointSetupErrorResponse.getStatus());
         }
     }
 

@@ -40,7 +40,7 @@ public class HIDPlugin extends Plugin {
 
     @PluginMethod()
     public void setupEndpoint(PluginCall call){
-        String invitationCode = "RMA4-MJHH-4QVZ-UVIL"; // call.getString(INVITATION_CODE);
+        String invitationCode = call.getString(INVITATION_CODE);
         boolean forceInstall = call.getBoolean(FORCE_INSTALL);
         hidsdkManager.doHidCredentialFirstInstall(forceInstall, invitationCode, (transactionResult) -> {
             call.resolve(toJson(transactionResult));
@@ -92,5 +92,4 @@ public class HIDPlugin extends Plugin {
         jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
         return jsonObject;
     }
-
 }
