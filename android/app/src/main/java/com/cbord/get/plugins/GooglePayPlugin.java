@@ -9,6 +9,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tapandpay.TapAndPay;
 import com.google.android.gms.tapandpay.TapAndPayClient;
 import com.google.android.gms.tasks.Task;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -32,7 +33,7 @@ public class GooglePayPlugin extends Plugin {
 
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
-        tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
+        tapAndPayClient = TapAndPay.getClient(getActivity().getApplicationContext());
         call.resolve(HIDToJson("success"));
     }
 
