@@ -8,7 +8,7 @@ export const MOBILE_CREDENTIAL_CONFIGS = {
       WHEN_REVOKED: '',
       WHEN_PROCESSING: ''
     },
-    uiImageUrl: '/assets/icon/mobile_credential_btn.png',
+    uiImageUrl: '/assets/icon/mobile_credential_google_pay.png',
     uiHelpIcon: '/assets/icon/mobile_credentila_quest_mark.png',
   },
   ALLEGION: {
