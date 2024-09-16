@@ -20,15 +20,15 @@ android {
     signingConfigs {
         defaultConfig {
             storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
-            storePassword provision_app_storePassword
-            keyAlias provision_app_keyAlias
-            keyPassword provision_app_keyPassword
+            storePassword System.getenv('KEYSTORE_PASSWORD')
+            keyAlias System.getenv('KEY_ALIAS')
+            keyPassword System.getenv('KEY_PASSWORD')
         }
         debug {
             storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
-            storePassword provision_app_storePassword
-            keyAlias provision_app_keyAlias
-            keyPassword provision_app_keyPassword
+            storePassword System.getenv('KEYSTORE_PASSWORD')
+            keyAlias System.getenv('KEY_ALIAS')
+            keyPassword System.getenv('KEY_PASSWORD')
         }
     }
     dataBinding {
@@ -55,6 +55,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+}
+
+ext {
+    myProperty = System.getenv('CATALINA') ?: 'defaultValue'
+}
+
+task printProperty {
+    doLast {
+        println "CATALINA is: $myProperty"
     }
 }
 
