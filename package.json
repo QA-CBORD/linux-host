@@ -13,7 +13,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "build-prod": "npm run test && ng build --configuration production",
-    "build-appflow": "ng build --configuration production && ./sign-keystore.sh",
+    "build-appflow": "ng build --configuration production",
     "build:appflow-sentry": "npm run build-appflow -- --source-map && npm run sentry:sourcemaps",
     "lint": "ng lint app --quiet",
     "e2e": "ng e2e",
