@@ -44,7 +44,6 @@ pipelines:
             - cd scripts
             - chmod +x UpdateRelease.sh
             - ./UpdateRelease.sh $WEBHOOK_URL
-            
     update-from-develop:
       - step:
           name: Update from develop
