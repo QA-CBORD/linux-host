@@ -44,16 +44,6 @@ pipelines:
             - cd scripts
             - chmod +x UpdateRelease.sh
             - ./UpdateRelease.sh $WEBHOOK_URL
-    sign-keystore:
-      - step:
-          name: Sign Keystore
-          image: atlassian/default-image:3
-          script:
-            - apt-get update && apt-get install -y sed
-            - apt-get update && apt-get install -y libplist-utils
-            - cd scripts
-            - chmod +x SignKeystore.sh
-            - ./SignKeystore.sh
             
     update-from-develop:
       - step:
