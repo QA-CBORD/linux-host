@@ -58,16 +58,6 @@ android {
     }
 }
 
-ext {
-    myProperty = System.getenv('CATALINA') ?: 'defaultValue'
-}
-
-task printProperty {
-    doLast {
-        println "CATALINA is: $myProperty"
-    }
-}
-
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
