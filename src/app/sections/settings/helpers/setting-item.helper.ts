@@ -70,6 +70,7 @@ export function handlePinAccess(services: SettingsServices) {
         navigateBackOnClose: true,
         showDismiss: true,
         pinAction: biometricsEnabled ? PinAction.CHANGE_PIN_BIOMETRIC : PinAction.CHANGE_PIN_ONLY,
+      // eslint-disable-next-line no-console
       }).catch(error => console.info('pinLoginSetup response:', error));
   };
 }
