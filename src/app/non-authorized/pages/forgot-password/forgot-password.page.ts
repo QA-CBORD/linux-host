@@ -98,6 +98,6 @@ export enum FORGOT_PWD_CONTROL_NAMES {
   email = 'email',
 }
 
-const TIMEOUTS = {
+export const TIMEOUTS = {
   A11yFocus: 1500,
 };

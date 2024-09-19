@@ -23,11 +23,6 @@ export class RegistrationSuccessComponent implements OnInit {
     await this.modalCtrl.dismiss();
   }
 
-  async resend(): Promise<void> {
-    // resend email here.
-    //this.modalCtrl.dismiss();
-  }
-
   onDecline(): void{
     this.dismiss();
   }
