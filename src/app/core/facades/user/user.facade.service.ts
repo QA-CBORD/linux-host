@@ -189,28 +189,13 @@ export class UserFacadeService extends ServiceStateFacade {
         first()
       )
       .subscribe(result => {
-        if (result) {
+       if (result) {
           PushNotifications.removeAllListeners();
-          ExtendedPushNotification.removeAllListeners();
-
-          ExtendedPushNotification.addListener(pushNotificationEvent, async (notification: PushNotificationSchema) => {
-            this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications());
-            if (Capacitor.getPlatform() === PLATFORM.android) {
-              try {
-                await LocalNotifications.schedule({
-                  notifications: [
-                    {
-                      title: notification?.title,
-                      body: notification?.body,
-                      id: Math.floor(Math.random() * 1000),
-                    },
-                  ],
-                });
-              } catch (e) {
-                console.error('Failed to schedule local notification', e);
-              }
-            }
-          });
+          if (Capacitor.getPlatform() === PLATFORM.android) {
+            this.handleAndroidNotificationEvents();
+          } else if (Capacitor.getPlatform() === PLATFORM.ios){
+            this.handleiOSNotificationEvents();
+          }
           PushNotifications.addListener('registration', (token: Token) => {
             this.saveNotification$(token.value).subscribe();
           });
@@ -315,5 +300,31 @@ export class UserFacadeService extends ServiceStateFacade {
       map(data => data.value),
       take(1)
     );
+  }
+
+  private handleiOSNotificationEvents() {
+    PushNotifications.addListener('pushNotificationReceived', () => this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications()));
+  }
+
+  private handleAndroidNotificationEvents() {
+    ExtendedPushNotification.removeAllListeners();
+
+    ExtendedPushNotification.addListener(pushNotificationEvent, async (notification: PushNotificationSchema) => {
+      this.zone.run(() => this.userNotificationsFacadeService.fetchNotifications());
+
+      try {
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              title: notification?.title,
+              body: notification?.body,
+              id: Math.floor(Math.random() * 1000),
+            },
+          ],
+        });
+      } catch (e) {
+        console.error('Failed to schedule local notification', e);
+      }
+    });
   }
 }

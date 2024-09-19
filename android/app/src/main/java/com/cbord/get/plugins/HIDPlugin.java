@@ -92,5 +92,4 @@ public class HIDPlugin extends Plugin {
         jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
         return jsonObject;
     }
-
 }
