@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalsService } from '@core/service/modals/modals.service';
@@ -7,6 +7,7 @@ import { OverlayEventDetail } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 import { OrderActionSheetService } from '@sections/ordering/services/odering-actionsheet.service';
 import {
   IGNORE_ERRORS,
@@ -39,6 +40,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   canDismiss = true;
   isExistingOrder = false;
+
+  private activeCartService = inject(ActiveCartService);
 
   constructor(
     private readonly cartService: CartService,
@@ -191,7 +194,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   redirectToCart(): void {
-    this.orderingService.redirectToCart();
+    this.activeCartService.validateCartItemsAndNavigate(() => this.orderingService.redirectToCart());
   }
 
   async modalHandler({ dueTime, orderType, address, isASAP }, isCurrentASAP?: boolean) {
