@@ -113,7 +113,6 @@ export class CartComponent implements OnInit, OnDestroy {
   orderReadOnly = false;
   disableTaxCheckout = false;
   isMerchantOrderAhead = false;
-  isMerchantAutoASAP = false;
   isLastSubmitedOrderError = false;
 
   private readonly activeCartService = inject(ActiveCartService);
@@ -155,6 +154,11 @@ export class CartComponent implements OnInit, OnDestroy {
         this.onCloseButton();
       }
     );
+    const isAutoAsapSelection = this.activatedRoute.snapshot.queryParamMap.get('isAutoAsapSelection');
+
+    if (isAutoAsapSelection) {
+      this.showAutoAsapSelectionMessages();
+    }
   }
 
   ionViewWillLeave() {
@@ -346,11 +350,6 @@ export class CartComponent implements OnInit, OnDestroy {
             code: error[0],
           } as DueTimeFeedback;
 
-          if (this.dueTimeFeedback.code === ORDER_ERROR_CODES.ORDER_CAPACITY && !this.cartService._orderOption.isASAP) {
-            this.updateOrderTimeToASAPAndNotify(this.dueTimeFeedback.code, this.cartService._orderOption.orderType);
-            return;
-          }
-
           const errorKey =
             this.dueTimeFeedback.code === ORDER_ERROR_CODES.INVALID_ORDER
               ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
@@ -376,39 +375,34 @@ export class CartComponent implements OnInit, OnDestroy {
       });
   }
 
-  async updateOrderTimeToASAPAndNotify(errorCodeKey: string, orderType: number) {
-    try {
-      const messageKey = {
-        [ORDER_TYPE.DELIVERY]: 'inline_next_timeslot_delivery',
-        [ORDER_TYPE.PICKUP]: 'inline_next_timeslot_pickup',
-      }[orderType] as keyof DueTimeErrorMessages;
+  async showAutoAsapSelectionMessages() {
+    const orderType = this.cartService._orderOption.orderType;
+    const messageKey = {
+      [ORDER_TYPE.DELIVERY]: 'inline_next_timeslot_delivery',
+      [ORDER_TYPE.PICKUP]: 'inline_next_timeslot_pickup',
+    }[orderType] as keyof DueTimeErrorMessages;
 
-      const messageToastKey = {
-        [ORDER_TYPE.DELIVERY]: 'toast_next_timeslot_delivery',
-        [ORDER_TYPE.PICKUP]: 'toast_next_timeslot_pickup',
-      }[orderType] as keyof DueTimeErrorMessages;
+    const messageToastKey = {
+      [ORDER_TYPE.DELIVERY]: 'toast_next_timeslot_delivery',
+      [ORDER_TYPE.PICKUP]: 'toast_next_timeslot_pickup',
+    }[orderType] as keyof DueTimeErrorMessages;
 
-      const message = this.translateService.instant(`get_web_gui.merchant_screen.${messageKey}`);
-      const toastMessage = this.translateService.instant(`get_web_gui.merchant_screen.${messageToastKey}`);
-      this.dueTimeFeedback = {
-        code: errorCodeKey,
-        type: 'info',
-        message: message,
-        isFetching: false,
-      } as DueTimeFeedback;
+    const message = this.translateService.instant(`get_web_gui.merchant_screen.${messageKey}`);
+    const toastMessage = this.translateService.instant(`get_web_gui.merchant_screen.${messageToastKey}`);
+    this.dueTimeFeedback = {
+      type: 'info',
+      message: message,
+      isFetching: false,
+    } as DueTimeFeedback;
 
-      await this.onOrderTimeChange({ dateTimePicker: ASAP_LABEL, timeStamp: undefined }, true);
-      this.toastService.showInfo({
-        message: toastMessage,
-        duration: TOAST_DURATION,
-        position: 'bottom',
-        positionAnchor: 'toast-anchor',
-      });
+    this.toastService.showInfo({
+      message: toastMessage,
+      duration: TOAST_DURATION,
+      position: 'bottom',
+      positionAnchor: 'toast-anchor',
+    });
 
-      this.cdRef.detectChanges();
-    } catch (error) {
-      // do nothing in the mean time.
-    }
+    this.cdRef.detectChanges();
   }
 
   onCartStateFormChanged(state) {
@@ -657,7 +651,6 @@ export class CartComponent implements OnInit, OnDestroy {
     let accountId = this.cartFormState.data[FORM_CONTROL_NAMES.paymentMethod]?.id;
     this.cartService.updateOrderNote(this.cartFormState.data[FORM_CONTROL_NAMES.note]);
     this.cartService.updateOrderPhone(this.cartFormState.data[FORM_CONTROL_NAMES.phone]);
-    const isAutoAsapSelection = this.isMerchantAutoASAP && this.isLastSubmitedOrderError;
     this.dueTimeFeedback = {} as DueTimeFeedback;
     this.cdRef.detectChanges();
 
@@ -679,7 +672,7 @@ export class CartComponent implements OnInit, OnDestroy {
         accountId,
         this.cartFormState.data[FORM_CONTROL_NAMES.cvv] || null,
         this.cartService.clientOrderId,
-        isAutoAsapSelection
+        this.cartService._orderOption.isASAP
       )
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
@@ -703,17 +696,6 @@ export class CartComponent implements OnInit, OnDestroy {
     if (Array.isArray(error)) {
       this.cartService.changeClientOrderId;
       const errorCodeKey = error && error[0];
-
-      if (errorCodeKey === ORDER_ERROR_CODES.ORDER_CAPACITY && this.isMerchantAutoASAP) {
-        this.isLastSubmitedOrderError = true;
-        this.dueTimeFeedback = {
-          ...this.dueTimeFeedback,
-          isFetching: true,
-        } as DueTimeFeedback;
-        this.cdRef.detectChanges();
-        this.updateOrderTimeToASAPAndNotify(errorCodeKey, this.cartService._orderOption.orderType);
-        return;
-      }
 
       if (this.isMerchantOrderAhead && errorCodeKey) {
         const options = await firstValueFrom(this.orderDetailOptions$);
@@ -919,7 +901,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private async validateOrder(onError): Promise<void> {
     await this.loadingService.showSpinner();
     await this.cartService
-      .validateOrder()
+      .validateOrder(null, this.cartService._orderOption.isASAP)
       .pipe(first(), handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .catch(onError)
@@ -946,12 +928,6 @@ export class CartComponent implements OnInit, OnDestroy {
     this.isMerchantOrderAhead = await firstValueFrom(
       this.merchant$.pipe(
         map(merchant => parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1)
-      )
-    );
-
-    this.isMerchantAutoASAP = await firstValueFrom(
-      this.merchant$.pipe(
-        map(merchant => Boolean(JSON.parse(merchant.settings.map[MerchantSettings.enableAutoASAPSelection].value)))
       )
     );
   }
