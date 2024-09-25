@@ -2,10 +2,13 @@ package com.cbord.get.mcredentials;
 
 import android.app.Application;
 import com.cbord.get.BuildConfig;
+import com.hid.origo.OrigoKeysApiFactory;
 import com.hid.origo.api.OrigoApiConfiguration;
+import com.hid.origo.api.OrigoMobileKeys;
 import com.hid.origo.api.OrigoMobileKeysApi;
 import com.hid.origo.api.OrigoMobileKeysCallback;
 import com.hid.origo.api.OrigoMobileKeysException;
+import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.OrigoReaderConnectionInfoType;
 import com.hid.origo.api.ble.OrigoOpeningResult;
 import com.hid.origo.api.ble.OrigoOpeningStatus;
@@ -26,11 +29,9 @@ import org.slf4j.Logger;
  * Application class handling the initialization of the Mobile Keys API
  */
 
-public class MobileKeysApiConfig extends Application implements OrigoReaderConnectionListener, OrigoHceConnectionListener {
+public class MobileKeysApiConfig extends Application implements OrigoReaderConnectionListener, OrigoHceConnectionListener, OrigoKeysApiFactory {
 
-    private OrigoMobileKeysApi mobileKeysApi;
-    private static final int LOCK_SERVICE_CODE = 2;
-    private static final String APPLICATION_ID = "com.cbord.get";
+    private OrigoMobileKeysApi mobileKeysFactory;
     private static final String INITIALIZATION_SUCCESS = "success";
     private boolean mobileKeysApiInitialized = false;
     private Logger LOGGER = OrigoLogger.getLoggerFactory().getLogger(MobileKeysApiConfig.class.getSimpleName());
@@ -39,8 +40,8 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
         try {
 
             OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder()
-                    .setApplicationId(BuildConfig.AAMK_APP_ID)
-                    .setApplicationDescription(BuildConfig.AAMK_APP_ID_DESCRIPTION)
+                    .setApplicationId(BuildConfig.ORIGO_APP_ID)
+                    .setApplicationDescription(BuildConfig.ORIGO_APP_ID_DESCRIPTION)
                     .setNfcParameters(new OrigoNfcConfiguration.Builder()
                             .unsafeSetAttemptNfcWithScreenOff(true)
                             .build())
@@ -48,14 +49,14 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
 
             OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
                     new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this)
-                    }, LOCK_SERVICE_CODE)
+                    }, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
                     .setAllowBackgroundScanning(false)
                     .build();
 
-            mobileKeysApi = OrigoMobileKeysApi.getInstance();
+            mobileKeysFactory = OrigoMobileKeysApi.getInstance();
 
-            if (Boolean.FALSE.equals(mobileKeysApi.isInitialized()))
-                mobileKeysApi.initialize(this, origoApiConfiguration, origoScanConfiguration, APPLICATION_ID);
+            if (Boolean.FALSE.equals(mobileKeysFactory.isInitialized()))
+                mobileKeysFactory.initialize(this, origoApiConfiguration, origoScanConfiguration, BuildConfig.ORIGO_APP_ID);
             mobileKeysApiInitialized = true;
             callback.onCompleted(INITIALIZATION_SUCCESS);
         } catch (Exception ex) {
@@ -76,7 +77,7 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
         } else {
             configureOrigoMobileKeysApi(transactionResult -> {
                 if (INITIALIZATION_SUCCESS.equals(transactionResult)) {
-                    mobileKeysApi.getMobileKeys().applicationStartup(new OrigoMobileKeysCallback() {
+                    mobileKeysFactory.getMobileKeys().applicationStartup(new OrigoMobileKeysCallback() {
                         public void handleMobileKeysTransactionCompleted() {
                             LOGGER.debug("handleMobileKeysTransactionCompleted");
                             callback.onCompleted(INITIALIZATION_SUCCESS);
@@ -95,11 +96,9 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
         }
     }
 
-
     public OrigoMobileKeysApi getMobileKeysApi() {
-        return mobileKeysApi;
+        return mobileKeysFactory;
     }
-
 
     @Override
     public void onCreate() {
@@ -110,12 +109,12 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
 
     @Override
     public void onReaderConnectionOpened(OrigoReader origoReader, OrigoOpeningType origoOpeningType) {
-        // LOGGER.debug("onReaderConnectionOpened: " + origoReader, origoOpeningType);
+         LOGGER.debug("onReaderConnectionOpened: " + origoReader, origoOpeningType);
     }
 
     @Override
     public void onReaderConnectionClosed(OrigoReader origoReader, OrigoOpeningResult origoOpeningResult) {
-        // LOGGER.debug("onReaderConnectionClosed: " + origoReader, origoOpeningResult);
+         LOGGER.debug("onReaderConnectionClosed: " + origoReader, origoOpeningResult);
     }
 
     @Override
@@ -125,16 +124,31 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
 
     @Override
     public void onHceSessionOpened() {
-       // LOGGER.debug("onHceSessionOpened");
+        LOGGER.debug("onHceSessionOpened");
     }
 
     @Override
     public void onHceSessionClosed(int i) {
-       // LOGGER.debug("onHceSessionClosed");
+        LOGGER.debug("onHceSessionClosed");
     }
 
     @Override
     public void onHceSessionInfo(OrigoReaderConnectionInfoType origoReaderConnectionInfoType) {
-       // LOGGER.debug("onHceSessionInfo: " + origoReaderConnectionInfoType);
+        LOGGER.debug("onHceSessionInfo: " + origoReaderConnectionInfoType);
+    }
+
+    @Override
+    public OrigoMobileKeys getMobileKeys() {
+        return mobileKeysFactory.getMobileKeys();
+    }
+
+    @Override
+    public OrigoReaderConnectionController getReaderConnectionController() {
+        return mobileKeysFactory.getOrigiReaderConnectionController();
+    }
+
+    @Override
+    public OrigoScanConfiguration getOrigoScanConfiguration() {
+        return getReaderConnectionController().getScanConfiguration();
     }
 }

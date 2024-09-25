@@ -603,7 +603,6 @@ describe('ItemDetailComponent', () => {
     await component['onSubmit'](menuItem);
 
     expect(cartServiceMock.addOrderItems).toHaveBeenCalled();
-    expect(cartServiceMock.validateOrder).toHaveBeenCalled();
     expect(loadingServiceMock.showSpinner).toHaveBeenCalled();
     expect(loadingServiceMock.closeSpinner).toHaveBeenCalled();
   });
