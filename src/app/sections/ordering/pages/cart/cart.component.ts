@@ -707,7 +707,12 @@ export class CartComponent implements OnInit, OnDestroy {
               : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable,
         }[errorCodeKey] as keyof DueTimeErrorMessages;
         const errorMessage = this.translateService.instant(`get_common.error.${errorKey}`);
-        this.toastService.showError({ message: errorMessage, duration: TOAST_DURATION, position: 'bottom' });
+        this.toastService.showError({
+          message: errorMessage,
+          duration: TOAST_DURATION,
+          position: 'bottom',
+          positionAnchor: 'toast-anchor',
+        });
         this.dueTimeFeedback = {
           type: 'error',
           code: errorCodeKey,
