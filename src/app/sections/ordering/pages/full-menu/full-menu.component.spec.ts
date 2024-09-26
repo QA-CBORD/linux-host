@@ -22,6 +22,7 @@ import { NavigationService } from '@shared/services';
 import { lastValueFrom, of, throwError } from 'rxjs';
 import { DINEIN, FullMenuComponent } from './full-menu.component';
 import { OrderDetailsOptions } from '@sections/ordering/shared/models/order-details-options.model';
+import { ActiveCartService } from '@sections/ordering/services/active-cart.service';
 
 describe('FullMenuComponent', () => {
   let component: FullMenuComponent;
@@ -112,6 +113,7 @@ describe('FullMenuComponent', () => {
   let orderActionSheetService = {
     openActionSheet: jest.fn(),
   };
+  const mockActiveCartService = { validateCartItemsAndNavigate: jest.fn() };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -132,6 +134,7 @@ describe('FullMenuComponent', () => {
         { provide: NavigationService, useValue: routingService },
         { provide: ChangeDetectorRef, useValue: cdref },
         { provide: ActivatedRoute, useValue: activatedRoute },
+        { provide: ActiveCartService, useValue: mockActiveCartService },
       ],
       imports: [HttpClientTestingModule, RouterTestingModule, MerchantDistanceModule, AddressHeaderFormatPipeModule],
     }).compileComponents();
@@ -348,9 +351,30 @@ describe('FullMenuComponent', () => {
     expect(validateOrderSpy).toHaveBeenCalled();
   });
 
-  it('should call validateOrder method of CartService and navigate to cart on success', () => {
-    component.redirectToCart();
-    expect(orderingService.redirectToCart).toHaveBeenCalledTimes(1);
+  it('should call validateCartItemsAndNavigate with redirectToCart when no items are removed', async () => {
+    const validatedCartItems = { orderRemovedItems: [] };
+    mockActiveCartService.validateCartItemsAndNavigate.mockImplementation((navigateMethod) => {
+      navigateMethod();
+      return of(validatedCartItems);
+    });
+
+    await component.redirectToCart();
+
+    expect(mockActiveCartService.validateCartItemsAndNavigate).toHaveBeenCalled();
+    expect(orderingService.redirectToCart).toHaveBeenCalled();
+  });
+
+  it('should call validateCartItemsAndNavigate with redirectToCart when BUTTON_TYPE.CONTINUE is clicked and orderItems exist', async () => {
+    const validatedCartItems = { orderRemovedItems: ['item1'], order: { orderItems: ['item2'] } };
+    mockActiveCartService.validateCartItemsAndNavigate.mockImplementation((navigateMethod) => {
+      navigateMethod();
+      return of(validatedCartItems);
+    });
+
+    await component.redirectToCart();
+
+    expect(mockActiveCartService.validateCartItemsAndNavigate).toHaveBeenCalled();
+    expect(orderingService.redirectToCart).toHaveBeenCalled();
   });
 
   it('should return the combined order details', () => {
