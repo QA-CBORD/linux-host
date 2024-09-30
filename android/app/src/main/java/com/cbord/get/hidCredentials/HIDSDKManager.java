@@ -1,4 +1,4 @@
-package com.cbord.get.mcredentials;
+package com.cbord.get.hidCredentials;
 
 import android.Manifest;
 import android.app.Application;
@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import com.hid.origo.api.OrigoMobileKey;
 import com.hid.origo.api.OrigoMobileKeys;
@@ -18,6 +19,7 @@ import com.hid.origo.logger.OrigoLogger;
 import com.hid.origo.provisioning.data.response.OrigoEndpointSetupErrorResponse;
 import com.hid.origo.provisioning.data.response.OrigoProvisionResponse;
 import com.hid.origo.wallet.listener.OrigoEndPointSetupCallback;
+import com.hid.origo.wallet.listener.OrigoWalletHealthCallback;
 import com.hid.origo.wallet.listener.OrigoWalletSetupCallback;
 
 import org.slf4j.Logger;
@@ -212,7 +214,7 @@ public class HIDSDKManager {
         }
     }
 
-    private class HIDEndpointSetupCallback implements OrigoEndPointSetupCallback, OrigoWalletSetupCallback {
+    private class HIDEndpointSetupCallback implements OrigoEndPointSetupCallback, OrigoWalletSetupCallback, OrigoWalletHealthCallback {
 
         private final TransactionCompleteCallback transactionCompleteListener;
 
@@ -222,13 +224,13 @@ public class HIDSDKManager {
 
         @Override
         public void onWalletSetupReady() {
-            mobileKeys.setupGoogleWallet(this);
+            mobileKeys.walletHealthCheck(this);
         }
 
         @Override
         public void onRedeemSetupFailed(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
-            LOGGER.error("onRedeemSetupFailed: " + origoEndpointSetupErrorResponse.getStatus());
             transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.toString());
+            System.out.println("onRedeemSetupFailed: ");
         }
 
         @Override
@@ -238,18 +240,26 @@ public class HIDSDKManager {
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-            LOGGER.error("handleMobileKeysTransactionFailed: " + e.getCauseMessage());
             transactionCompleteListener.onCompleted(e.getErrorCode().toString());
         }
 
         @Override
         public void onWalletProvisionSuccess(@NonNull OrigoProvisionResponse origoProvisionResponse) {
-            LOGGER.debug("Success on onWalletProvisionSuccess: " + origoProvisionResponse.getCardStatus());
+            transactionCompleteListener.onCompleted(TRANSACTION_SUCCESS);
+            System.out.println("onWalletProvisionSuccess: " + origoProvisionResponse.getCardStatus());
         }
 
         @Override
         public void onWalletProvisionFailed(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
-            LOGGER.error("Success on onWalletProvisionFailed: " + origoEndpointSetupErrorResponse.getStatus());
+            transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.getStatus());
+            System.out.println("onWalletProvisionFailed: " + origoEndpointSetupErrorResponse.getStatus());
+        }
+
+        @Override
+        public void c(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse, @Nullable String s) {
+            System.out.println("status: "+ origoEndpointSetupErrorResponse);
+            System.out.println("s: " + s);
+            mobileKeys.setupGoogleWallet(this);
         }
     }
 

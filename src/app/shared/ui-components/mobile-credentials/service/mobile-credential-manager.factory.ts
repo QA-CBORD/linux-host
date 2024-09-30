@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { iif, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
+import { HIDSeosCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialProviders } from '../model/shared/credential-utils';
 import { MobileCredential } from '../model/shared/mobile-credential';
@@ -10,6 +10,7 @@ import { GooglePayCredentialManager } from '../model/android/google-pay/google-p
 import { IOSCredentialManager } from './ios-credential-manager';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { Platform } from '@ionic/angular';
+import { HIDWalletCredentialManager } from '../model/android/hid/hid-wallet-credential-manager';
 
 export enum CredentialManagerType {
   IosCredential = 'IOS_CREDENTIAL',
@@ -38,7 +39,9 @@ export class MobileCredentialManagerFactory {
     return srvc.activePasses$().pipe(
       map((mobileCredential: MobileCredential) => {
         if (mobileCredential.providedBy(CredentialProviders.HID)) {
-          credentialManager = this.createHidCredentialManagerFor(<HIDCredential>mobileCredential);
+          credentialManager = this.createHidSeosCredentialManagerFor(<HIDCredential>mobileCredential);
+        } else if (mobileCredential.providedBy(CredentialProviders.HID_WALLET)) {
+          credentialManager = this.createHidWalletCredentialManagerFor(<HIDCredential>mobileCredential); 
         } else if (mobileCredential.providedBy(CredentialProviders.GOOGLE)) {
           credentialManager = this.createGoogleCredentialManagerFor(<GoogleCredential>mobileCredential); // google/nxp credential manager not implemented yet
         }
@@ -54,8 +57,14 @@ export class MobileCredentialManagerFactory {
     );
   }
 
-  private createHidCredentialManagerFor(mCredential: HIDCredential): HIDCredentialManager {
-    const credentialManager = this.injector.get(HIDCredentialManager);
+  private createHidSeosCredentialManagerFor(mCredential: HIDCredential): HIDSeosCredentialManager {
+    const credentialManager = this.injector.get(HIDSeosCredentialManager);
+    credentialManager.setCredential(mCredential);
+    return credentialManager;
+  }
+
+  private createHidWalletCredentialManagerFor(mCredential: HIDCredential): HIDWalletCredentialManager {
+    const credentialManager = this.injector.get(HIDWalletCredentialManager);
     credentialManager.setCredential(mCredential);
     return credentialManager;
   }

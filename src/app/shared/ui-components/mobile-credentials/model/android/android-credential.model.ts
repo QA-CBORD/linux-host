@@ -45,16 +45,23 @@ export interface AndroidCredentialState extends MobileCredentialState {
 export class CredentialStateResolver {
 
   static fromActivePasses(activePasses: ActivePasses): MobileCredentialState {
-    if (CredentialStateResolver.hasHidCredential(activePasses)) {
+    if (CredentialStateResolver.hasHidSeosCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
         activePasses.credStatus.android_hid,
         activePasses.passes.android_hid,
         CredentialProviders.HID,
         activePasses.referenceIdentifier
       );
+    } else if (CredentialStateResolver.hasHidWalletCredential(activePasses)) {
+      return new AndroidCredentialStateEntity(
+        activePasses.credStatus.android_hid_wallet,
+        activePasses.passes.android_hid_wallet,
+        CredentialProviders.HID_WALLET,
+        activePasses.referenceIdentifier
+      );
     } else if (CredentialStateResolver.hasGoogleCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
-        activePasses.credStatus.android_nxp,
+        activePasses.credStatus.android_nxp, 
         activePasses.passes.android_nxp,
         CredentialProviders.GOOGLE,
         activePasses.referenceIdentifier
@@ -75,8 +82,12 @@ export class CredentialStateResolver {
     return activePasses.credStatus.android_nxp != MobileCredentialStatuses.DISABLED;
   }
 
-  private static hasHidCredential(activePasses: ActivePasses): boolean {
+  private static hasHidSeosCredential(activePasses: ActivePasses): boolean {
     return activePasses.credStatus.android_hid != MobileCredentialStatuses.DISABLED;
+  }
+
+  private static hasHidWalletCredential(activePasses: ActivePasses): boolean {
+    return activePasses.credStatus.android_hid_wallet != MobileCredentialStatuses.DISABLED;
   }
 }
 

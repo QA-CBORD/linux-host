@@ -136,7 +136,16 @@ export class MobileCredentialDataService {
     return this.authorizationBlob$().pipe(
       switchMap(authorizationBlob => this.getPasses({ authorizationBlob })),
       tap(({ passes, credStatus }) => {
-        if (!passes.android_hid && !passes.android_nxp && !credStatus.android_hid && !credStatus.android_nxp) {
+
+        const hasMobileCredentialEnabled =
+          passes.android_hid ||
+          passes.android_nxp ||
+          passes.android_hid_wallet ||
+          credStatus.android_hid ||
+          credStatus.android_nxp ||
+          credStatus.android_hid_wallet;
+
+        if (!hasMobileCredentialEnabled) {
           // no point in keeping auth_blob in state when mobile credential not enabled.
           this.storageStateService.deleteStateEntityByKey(this.authBlob_key);
         }

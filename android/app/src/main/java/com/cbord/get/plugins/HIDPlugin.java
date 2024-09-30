@@ -2,7 +2,7 @@ package com.cbord.get.plugins;
 
 import android.app.Application;
 
-import com.cbord.get.mcredentials.HIDSDKManager;
+import com.cbord.get.hidCredentials.HIDSDKManager;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;

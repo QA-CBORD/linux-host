@@ -22,7 +22,7 @@ interface ExecutionParameters {
 }
 
 @Injectable({ providedIn: 'root' })
-export class HIDCredentialManager extends AbstractAndroidCredentialManager {
+export class HIDSeosCredentialManager extends AbstractAndroidCredentialManager {
   private hidSdkErrorMessage: HID_SDK_ERR = null;
 
   constructor(

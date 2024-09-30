@@ -2,7 +2,7 @@ package com.cbord.get;
 
 import android.os.Bundle;
 
-import com.cbord.get.mcredentials.MobileCredentialStatusPlugin;
+import com.cbord.get.hidCredentials.MobileCredentialStatusPlugin;
 import com.cbord.get.plugins.AndroidPermissionsPlugin;
 import com.cbord.get.plugins.AndroidPlugin;
 import com.cbord.get.plugins.ExtendedPushNotificationPlugin;

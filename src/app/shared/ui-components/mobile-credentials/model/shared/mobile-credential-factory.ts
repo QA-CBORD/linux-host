@@ -11,7 +11,7 @@ import { MobileCredential } from './mobile-credential';
 export class MobileCredentialFactory {
   static fromActivePasses(data: ActivePasses): MobileCredential {
     const credentialState = CredentialStateResolver.fromActivePasses(data);
-    if (credentialState.providedBy(CredentialProviders.HID)) {
+    if (credentialState.providedBy(CredentialProviders.HID) || credentialState.providedBy(CredentialProviders.HID_WALLET)) {
       return new HIDCredential(credentialState as AndroidCredentialState);
     } else if (credentialState.providedBy(CredentialProviders.GOOGLE)) {
       return new GoogleCredential(credentialState as AndroidCredentialState);
