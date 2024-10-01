@@ -15,6 +15,7 @@ import { ConnectionService } from '@shared/services/connection-service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { PinAction, PinCloseStatus, VaultAuthenticator } from '@core/service/identity/model.identity';
 import { NavigationService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-pin',
@@ -56,7 +57,8 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly connectivityFacade: ConnectivityAwareFacadeService,
     private readonly nav: NavigationService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    private readonly translateService: TranslateService
   ) {}
 
   @Input() pinAction: PinAction;
@@ -346,15 +348,22 @@ export class PinPage implements OnInit, OnDestroy {
 
   async preventCloseAlert() {
     const alert = await this.alertController.create({
-      header: 'Warning!',
-      message: 'Dismissing this screen will log you out and you will need to log in again.\n Do you wish to continue?',
+      cssClass: 'pin_alert',
+      header: this.translateService.instant('get_mobile.pin_alert.title'),
+      message: this.translateService.instant('get_mobile.pin_alert.message'),
       buttons: [
         {
-          text: 'Cancel',
-          handler: () => alert.dismiss(),
+          text: this.translateService.instant('get_mobile.pin_alert.cancel'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
         },
         {
-          text: 'Continue',
+          text: this.translateService.instant('get_mobile.pin_alert.continue'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
           handler: () => this.cancelPinFlow(),
         },
       ],
