@@ -187,7 +187,29 @@
       "govtidmessagesmall": "e.g., Passport, Driver’s License, State ID",
       "updatephotomessage": "New photo is subject to admin approval!",
       "photosubmittedmessage": "Your photo has been submitted and is now pending admin approval.",
-      "required_message": "A user photo is required to add mobile credentials to your mobile wallet."
+      "photosrejectedmessage": "Your photo has been rejected.",
+      "required_message": "A user photo is required to add mobile credentials to your mobile wallet.",
+      "invalid_photo_submission": {
+        "govt_id_back": "There was an issue submitting your government id photo (back) - please try again",
+        "govt_id_front": "There was an issue submitting your government id photo (front) - please try again",
+        "profile": "There was an issue submitting your profile photo - please try again"
+      },
+      "delete-photo": {
+        "header": "Delete Photo?",
+        "message": "If you delete your photo, you must reupload a new photo.",
+        "govid_message": "If you delete your photo, you must reupload a government ID the next time you submit a new photo.",
+        "delete_button": "Delete Photo"
+      },
+      "reupload": "Reupload",
+      "upload": "Upload",
+      "delete": "Delete",
+      "submit_photo_button": "Submit Photo For Review",
+      "submit_photos_button": "Submit Photos For Review",
+      "invalid_photo_set": "Invalid photo format. Please upload a valid photo.",
+      "user_photo_current": "user photo, current",
+      "user_photo_pending": "user photo, pending",
+      "no_user_photo": "no user photo",
+      "no_user_photo_pending": "no user photo, pending"
     },
     "edit-navigation": {
       "title": "Edit Navigation",
@@ -509,7 +531,8 @@
       "rejected_photos": "View Rejected ID Photos",
       "upload": "Upload",
       "upload_id_photo": "Upload ID Photo",
-      "view_rejected_photos": "View Rejected Photos"
+      "view_rejected_photos": "View Rejected Photos",
+      "photo_crop_error": "There was an issue cropping the photo, please try again."
     },
     "portal": { "login": "Continue", "select_institution": "Select your institution", "title": "Portal" },
     "post_login": {
@@ -596,6 +619,12 @@
       "save_button": "Continue",
       "user_agreement": "By clicking Continue you agree you have read the GET <a href=\"./terms.php\" target=\"_blank\">Terms of Use</a> and <a href=\"./terms.php\" target=\"_blank\">Privacy Policy</a>",
       "user_profile": "Profile"
+    },
+    "merchant_screen": {
+      "inline_next_timeslot_pickup": "Your pickup time has been updated to the next available time slot",
+      "inline_next_timeslot_delivery": "Your delivery time has been updated to the next available time slot",
+      "toast_next_timeslot_pickup": "Your pickup time has been updated to the next available time slot",
+      "toast_next_timeslot_delivery": "Your delivery time has been updated to the next available time slot"
     }
   },
   "patron-ui": {
@@ -609,8 +638,14 @@
       "label_deposit-billme_review-instructions": "",
       "label_deposit-credit_review-instructions": "",
       "label_more": "More",
+      "label_automatic-deposits": "Automatic Deposits",
+      "label_low-balance": "Low Balance",
+      "label_time-based": "Time-based",
+      "label_deposit-once_per_week": "Once per week",
+      "label_deposit-once_per_month": "Once per month",
       "meal-plan-suffix": "Meal",
-      "meal-plan-suffix-plural": "Meals"
+      "meal-plan-suffix-plural": "Meals",
+      "patron-plan-name": "Current Plan:"
     },
     "checkin": {
       "checkin_method_text": "Check in either by using your location services or by scanning the QR code.",
@@ -1000,6 +1035,7 @@
       "ordering_duplicate": "This order has already been checked out, please review your order history",
       "ordering_no_connection": "You don't seem to have a connection, Please check your internet connection",
       "ordering_timeout": "The server took too long to respond, however your order may have been submitted, please review your recent order history",
+      "order_ahead_here": "Order Ahead Here",
       "title_edit_address": "Edit Address",
       "searches_available": "searches available",
       "one_search_available": "one search available",
@@ -1159,10 +1195,23 @@
       "toast_message_deleted": "Notification deleted",
       "toast_message_undo": "Undo"
     },
-    "cart_preview":{
+    "cart_preview": {
       "expiration_message": "Cart will expire {{expirationDays}} days after last creation.",
       "add_more_button": "Add More Items",
       "go_to_checkout_button": "Go To Checkout"
+    },
+    "favorites_actions": {
+      "merchant_add_to_favorites": "Selected Favorite Button, Add {{merchantName}} as favorite merchant, actions available",
+      "merchant_remove_from_favorites": "Selected Favorite Button, Remove {{merchantName}} as favorite merchant, actions available",
+      "location_add_to_favorites": "Selected Favorite Button, Add {{locationName}} as favorite location, actions available",
+      "location_remove_from_favorites": "Selected Favorite Button, Remove {{locationName}} as favorite location, actions available",
+      "home_page": "Selected favorite icon, image"
+    },
+    "edit-home_page": {
+      "title": "Edit Home Page",
+      "subtitle": "Home Page",
+      "instructions": "Drag and drop the icons to rearrange the order of the home page.",
+      "dragging": "Moved {{item}} to position"
     }
   }
 }
