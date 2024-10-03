@@ -224,6 +224,12 @@
     "settings": {
       "no_user_photo": "no user photo",
       "user_photo": "user photo"
+    },
+    "pin_alert": {
+      "title": "Dismiss and Log out?",
+      "message": "Dismissing this screen will log you out and you will need to log in again.\n Do you wish to continue?",
+      "cancel": "Cancel",
+      "continue": "Log out"
     }
   },
   "get_web_gui": {
