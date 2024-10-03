@@ -518,7 +518,7 @@ export class HIDSeosCredentialManager extends AbstractAndroidCredentialManager {
     }
     return operationResult;
   }
-
+  
   private async handleRetry(options: ExecutionParameters): Promise<boolean> {
     let retryCount = options.retryCount;
     const shouldCheckErrorTypes = options.checkErrors;

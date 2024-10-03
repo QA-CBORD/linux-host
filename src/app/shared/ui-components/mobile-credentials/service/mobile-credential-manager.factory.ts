@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { iif, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { HIDSeosCredentialManager } from '../model/android/hid/hid-credential-manager';
+import { HIDSeosCredentialManager } from '../model/android/hid/hid-seos-credential-manager';
 import { MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialProviders } from '../model/shared/credential-utils';
 import { MobileCredential } from '../model/shared/mobile-credential';
