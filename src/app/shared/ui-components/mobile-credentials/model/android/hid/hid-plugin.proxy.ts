@@ -63,8 +63,13 @@ export enum HID_SDK_ERR {
   TRANSACTION_FAILED = 'failed',
   LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED',
   TRANSACTION_FAILED_INVALID_KEY= 'invalid key',
-  ADD_CARD_TO_WALLET_FAILED = 'ADD_CARD_TO_WALLET_FAILED',
 }
+
+export enum HID_WALLET_SDK_ERR {
+  ADD_CARD_TO_WALLET_FAILED = 'ADD_CARD_TO_WALLET_FAILED',
+  INVALID_ISSUANCE_TOKEN = 'INVALID_ISSUANCE_TOKEN',
+}
+
 
 class TaskExecutor {
   private intervalId: any;
@@ -107,16 +112,19 @@ export class HIDPlugginProxy {
     return initializationStatus == HID_SDK_ERR.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
   }
 
-  async endpointStatus(): Promise<EndpointStatuses> {
-    if (await this.isEndpointSetup$()) {
-      if (await this.isEndpointActive()) {
-        return EndpointStatuses.PROVISIONED_ACTIVE;
-      } else {
-        return EndpointStatuses.PROVISIONED_INACTIVE;
-      }
-    } else {
+  async endpointStatus(isGoogleWallet = false): Promise<EndpointStatuses> {
+    const isSetup = await this.isEndpointSetup$();
+    if (!isSetup) {
       return EndpointStatuses.NOT_SETUP;
     }
+
+    if (isGoogleWallet) {
+      const hasCards = await this.hasWalletCards();
+      return hasCards ? EndpointStatuses.PROVISIONED_ACTIVE : EndpointStatuses.NOT_SETUP;
+    }
+
+    const isActive = await this.isEndpointActive();
+    return isActive ? EndpointStatuses.PROVISIONED_ACTIVE : EndpointStatuses.PROVISIONED_INACTIVE;
   }
 
   async setupEndpoint(params): Promise<boolean> {
@@ -141,6 +149,10 @@ export class HIDPlugginProxy {
     } else {
       return false;
     }
+  }
+
+  async hasWalletCards(): Promise<boolean> {
+    return await this.executeCall<boolean>(HIDPlugin.hasWalletCards);
   }
 
   private async executeCall<T>(pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<T> {

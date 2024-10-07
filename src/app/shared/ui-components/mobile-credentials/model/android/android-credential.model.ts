@@ -157,6 +157,10 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     return this.credStatus == MobileCredentialStatuses.AVAILABLE;
   }
 
+  isCreated(): boolean {
+    return this.credStatus == MobileCredentialStatuses.CREATED;
+  }
+
   setUiString$(cs: CredentialStatusCs): void {
     this.contentString$ = cs;
     this.updateStatusMsg();

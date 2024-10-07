@@ -83,6 +83,11 @@ public class HIDPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void hasWalletCards(PluginCall call){
+        call.resolve(toJson(hidsdkManager.hasWalletCards()));
+    }
+
+    @PluginMethod
     public void isEndpointActive(PluginCall call){
         call.resolve(toJson(hidsdkManager.isEndpointActive()));
     }
