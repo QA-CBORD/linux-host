@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { SessionFacadeService } from '../session/session.facade.service';
-import { CartService } from '@sections/ordering';
+import { CartService } from '@sections/ordering/services';
 
 @Injectable({
   providedIn: 'root',
