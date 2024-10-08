@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingItemConfig, SettingsSectionConfig } from './models/setting-items-config.model';
@@ -15,10 +14,14 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ProfileServiceFacade } from '@shared/services/app.profile.services';
 import { App } from '@capacitor/app';
 import { EnvironmentData } from '@environments/environment-data';
-import { CartService } from '@sections/ordering';
 import { PhotoUploadInfo } from './pages/photo-upload/photo-upload.component';
-import { SilentEventCategory, SilentEventStatus, SilentNotificationService } from '@sections/notifications/services/silent-notification.service';
+import {
+  SilentEventCategory,
+  SilentEventStatus,
+  SilentNotificationService,
+} from '@sections/notifications/services/silent-notification.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { LogoutService } from '@core/facades/logout/logout.service';
 
 @Component({
   selector: 'st-settings',
@@ -39,19 +42,18 @@ export class SettingsPage implements OnInit {
 
   constructor(
     private router: Router,
-    private readonly sessionFacadeService: SessionFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFactory: SettingsFactoryService,
     private readonly route: ActivatedRoute,
-    private readonly profileService: ProfileServiceFacade,
-    private readonly cartService: CartService,
-  ) { }
+    private readonly profileService: ProfileServiceFacade
+  ) {}
 
   private readonly loadingService = inject(LoadingService);
   private readonly silentNotificationService = inject(SilentNotificationService);
   private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly logoutService = inject(LogoutService);
 
   async ngOnInit() {
     this.settingSections$ = this.settingsFactory.getSettings();
@@ -92,8 +94,7 @@ export class SettingsPage implements OnInit {
   }
 
   logout() {
-    this.sessionFacadeService.logoutUser();
-    this.cartService.clearState();
+    this.logoutService.logout();
   }
 
   getAppVersion$(): Observable<string> {
@@ -121,7 +122,6 @@ export class SettingsPage implements OnInit {
 
   private onPhotoUploadEvent() {
     this.silentNotificationService.addListener(SilentEventCategory.PHOTO_UPLOAD_UPDATE, (event: PhotoUploadInfo) => {
-
       const isCurrentUser = this.silentNotificationService.isSentToCurrentUser(event?.userId);
       const isEventStatusAccepted = event?.status === SilentEventStatus.ACCEPTED;
       if (!isCurrentUser || !isEventStatusAccepted) return;
