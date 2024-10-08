@@ -920,7 +920,7 @@
     "noConnectivity": {
       "connect_failed": "Unable to connect.",
       "description": "Make sure your Wi-Fi or mobile data is turned on, then try again.",
-      "description_server_error": "We are working on fixing the problem. Try again or come back later.",
+      "description_server_error": "Try again to resolve the issue. Contact your institution if you continue to have problems.",
       "retry": "Retry",
       "scan_card_btn": "Scan Card",
       "scan_card_desc": "You may still scan your card when you are offline.",

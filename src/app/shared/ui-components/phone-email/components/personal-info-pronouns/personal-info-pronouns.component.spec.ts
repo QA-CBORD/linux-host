@@ -11,14 +11,14 @@ describe('PersonalInfoPronounsComponent', () => {
     getIsWeb: jest.fn(() => true),
   };
   let translateService;
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [PersonalInfoPronounsComponent],
       providers: [
         { provide: SessionFacadeService, useValue: _sessionService },
         { provide: TranslateService, useValue: translateService },
       ],
-    });
+    }).compileComponents();
     fixture = TestBed.createComponent(PersonalInfoPronounsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
