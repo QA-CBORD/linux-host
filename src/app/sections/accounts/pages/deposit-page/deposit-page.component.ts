@@ -62,6 +62,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
+  newCrediCardAdded: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentString: DepositCsModel = {} as any;
   applePayEnabled$: Observable<boolean>;
@@ -341,7 +342,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         return from(this.externalPaymentService.addUSAePayCreditCard())
           .pipe(
             first(),
-            switchMap(({ success, errorMessage }) => {
+            switchMap(({ success, errorMessage, cardNo }) => {
               if (!success) {
                 return throwError(errorMessage);
               }
@@ -350,6 +351,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               this.toastService.showSuccessToast({
                 message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
               });
+
+              this.newCrediCardAdded = cardNo;
               return this.depositService.getUserAccounts();
             }),
             finalize(() => {
@@ -421,6 +424,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 depositTenders as string[],
                 accounts
               );
+              if (this.newCrediCardAdded) {
+                this.sourceAccount.setValue(
+                  this.creditCardSourceAccounts.find(acc => acc.lastFour === this.newCrediCardAdded)
+                );
+                this.newCrediCardAdded = null;
+              }
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
               this.cdRef.markForCheck();
             })
