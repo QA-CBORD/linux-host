@@ -144,9 +144,6 @@ export class ExternalPaymentService {
 
     if (url.includes('action_complete=1') && url.includes('card_no')) {
       const cardNo = urlParams.get('card_no');
-      console.log('cardNo', cardNo);
-      console.log('url', url);
-      
       resolve(<USAePayResponse>{ success: true, cardNo });
     } else if (url.includes('error=')) {
       const errorMessage = urlParams.get('error');
