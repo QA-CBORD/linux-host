@@ -128,7 +128,7 @@ export const ConnectivityScreentDefaultStrings = {
   scan_card_desc: 'You may still scan your card when you are offline.',
   scan_card_btn: 'Scan Card',
   try_again_btn: 'Try Again',
-  description_server_error: 'We are working on fixing the problem. Try again or come back later.',
+  description_server_error: 'Try again to resolve the issue. Contact your institution if you continue to have problems.',
   title_server_error: 'Something went wrong',
   connect_failed: 'Unable to connect.',
   scan_card_desc_server_error: '',
