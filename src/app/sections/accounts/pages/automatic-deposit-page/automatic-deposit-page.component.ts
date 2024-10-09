@@ -63,6 +63,7 @@ export class AutomaticDepositPageComponent {
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
+  newCrediCardAdded: string;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -78,7 +79,6 @@ export class AutomaticDepositPageComponent {
     private readonly externalPaymentService: ExternalPaymentService,
     private readonly userFacadeService: UserFacadeService,
     private readonly translateService: TranslateService
-
   ) {}
 
   ionViewWillEnter(): void {
@@ -669,10 +669,11 @@ export class AutomaticDepositPageComponent {
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
         first(),
-        switchMap(({ success, errorMessage }) => {
+        switchMap(({ success, errorMessage, cardNo }) => {
           if (!success) {
             return throwError(errorMessage);
           }
+          this.newCrediCardAdded = cardNo;
           this.loadingService.showSpinner();
           // Update user accounts for refreshing Credit Card dropdown list
           return zip(this.depositService.getUserAccounts(), this.isBillMePaymentTypesEnabled$);
@@ -682,13 +683,14 @@ export class AutomaticDepositPageComponent {
             (accounts.length && this.depositService.filterAccountsByPaymentSystem(accounts)) || [];
           this.sourceAccounts = [...creditCardSourceAccounts];
           if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
-          this.paymentMethod.setValue('');
-          this.cdRef.detectChanges();
+          const paymentMethod = accounts.find(acc => acc.lastFour === this.newCrediCardAdded);
+          this.paymentMethod.setValue(paymentMethod);
           this.toastService.showSuccessToast({
             message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
           });
         }),
         finalize(() => {
+          this.cdRef.detectChanges();
           this.loadingService.closeSpinner();
         })
       )

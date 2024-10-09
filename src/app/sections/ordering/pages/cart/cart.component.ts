@@ -116,6 +116,7 @@ export class CartComponent implements OnInit, OnDestroy {
   isLastSubmitedOrderError = false;
 
   private readonly activeCartService = inject(ActiveCartService);
+  defaultPaymentMethod: UserAccount;
 
   constructor(
     private readonly cartService: CartService,
@@ -858,7 +859,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private addUSAePayCreditCard() {
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(first())
-      .subscribe(({ success, errorMessage }) => {
+      .subscribe(({ success, errorMessage, cardNo }) => {
         if (!success) {
           return this.onValidateErrorToast(errorMessage);
         }
@@ -871,6 +872,9 @@ export class CartComponent implements OnInit, OnDestroy {
             switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
             tap(accounts => {
               this._accountInfoList$.next(accounts);
+
+              const { accounts: paymentMethods } = accounts;
+              this.defaultPaymentMethod = paymentMethods.find((account: UserAccount) => account.lastFour === cardNo);
               this.cdRef.detectChanges();
               this.toastService.showSuccessToast({
                 message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),

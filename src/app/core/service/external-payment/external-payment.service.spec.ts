@@ -69,4 +69,18 @@ describe('ExternalPaymentService', () => {
     const result = await service.payWithApplePay({} as any, {} as any);
     expect(result).toBeTruthy();
   });
+
+  it('should resolve with success response when url includes action_complete=1 and card_no', () => {
+    const resolve = jest.fn();
+    const reject = jest.fn();
+    const close = jest.fn();
+    const event = { url: 'http://example.com?action_complete=1&card_no=1234' };
+    const browser = { close };
+
+    service['handleUSAePayResponse'](event, resolve, reject, browser);
+
+    expect(resolve).toHaveBeenCalledWith({ success: true, cardNo: '1234' });
+    expect(close).toHaveBeenCalled();
+  });
+
 });
