@@ -12,9 +12,9 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@core/model/user';
 import { ORDER_TYPE } from '../ordering.config';
-import { AddressInfo } from 'net';
-import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo, OrderInfo, OrderItem } from '../shared';
+import { ItemsOrderInfo, MenuInfo, MerchantInfo, MerchantOrderTypesInfo, OrderInfo, OrderItem, OrderPayment } from '../shared';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
+import { AddressInfo } from '@core/model/address/address-info';
 
 jest.mock('@core/utils/date-helper', () => ({
   getDateTimeInGMT: jest.fn(),
@@ -42,6 +42,7 @@ describe('CartService', () => {
         total: 100,
         orderPayment: [],
         orderItems: [],
+        dueTime: '2024-10-09T10:00:00Z',
       } as Partial<OrderInfo>,
       orderDetailsOptions: {
         orderType: ORDER_TYPE.PICKUP,
@@ -55,12 +56,15 @@ describe('CartService', () => {
 
   const userFacadeService = {
     getUserData$: jest.fn(() => of({} as UserInfo)),
+    validateCartItems: jest.fn().mockReturnValue(of({ dueTime: ''} as OrderInfo)),
   };
   const merchantService = {
     getMerchantOrderSchedule: jest.fn(),
     getMerchantMenu: jest.fn().mockReturnValue(of({} as MenuInfo)),
     getDisplayMenu: jest.fn().mockReturnValue(of({} as MenuInfo)),
     validateOrder: jest.fn().mockReturnValue(of({} as OrderInfo)),
+    getMerchantSettingsById: jest.fn().mockReturnValue(of({} as MerchantInfo)),
+    validateOrderItems: jest.fn().mockReturnValue(of({} as OrderInfo)),
   };
   const apiService = {};
   const uuidGeneratorService = {
@@ -347,7 +351,7 @@ describe('CartService', () => {
       const itemId = 'item1';
 
       service.orderIsAsap = true;
-      service.updateOrderFromValidateResponse({ orderItems: [] } as OrderInfo);
+      service.updateOrderFromValidateResponse({ orderItems: [], dueTime: '' } as OrderInfo);
 
       service.addOrderItems([{ id: itemId, name: 'Test Item', quantity: 10 }]);
       expect(firstValueFrom(service.orderItems$.pipe(first()))).resolves.toHaveLength(2);
@@ -669,6 +673,258 @@ describe('CartService', () => {
     userFacadeService.getUserData$.mockReturnValue(of(mockUserData));
     merchantService.validateOrder.mockReturnValue(of(mockOrderInfo));
 
-    service.validateOrder(mockOrderDetailsOptions)
+    service.validateOrder(mockOrderDetailsOptions);
+  });
+
+  it('should update orderDetailsOptions with the new address and call onStateChanged', () => {
+    const mockAddress = { id: 'newAddressId', street: '123 New St', city: 'New City' };
+    const initialOrderDetailsOptions = {
+      orderType: ORDER_TYPE.DELIVERY,
+      address: { id: 'oldAddressId', street: '456 Old St', city: 'Old City' },
+    };
+
+    // Set initial orderDetailsOptions
+    service['cart'].orderDetailsOptions = initialOrderDetailsOptions;
+
+    const onStateChangedSpy = jest.spyOn(service as any, 'onStateChanged');
+
+    // Call the method
+    service.updateOrderAddress(mockAddress as any);
+
+    // Verify that orderDetailsOptions are updated correctly
+    expect(service['cart'].orderDetailsOptions).toEqual({
+      ...initialOrderDetailsOptions,
+      address: mockAddress,
+    });
+
+    // Verify that onStateChanged was called
+    expect(onStateChangedSpy).toHaveBeenCalled();
+  });
+
+  it('should not call onStateChanged if orderDetailsOptions is null', () => {
+    service['cart'].orderDetailsOptions = null; // Set orderDetailsOptions to null
+    const onStateChangedSpy = jest.spyOn(service as any, 'onStateChanged');
+
+    // Call the method
+    service.updateOrderAddress({ id: 'newAddressId' } as AddressInfo); // Address can be any valid object
+
+    // Verify that orderDetailsOptions remain null
+    expect(service['cart'].orderDetailsOptions).toBeNull();
+
+    // Verify that onStateChanged was not called
+    expect(onStateChangedSpy).not.toHaveBeenCalled();
+  });
+
+  it('should update the order note in the cart', () => {
+    const newNote = 'This is a new order note.';
+
+    // Call the method
+    service.updateOrderNote(newNote);
+
+    // Verify that the order note is updated correctly
+    expect(service['cart'].order.notes).toBe(newNote);
+  });
+
+  it('should update the order note to an empty string', () => {
+    const emptyNote = '';
+
+    // Call the method
+    service.updateOrderNote(emptyNote);
+
+    // Verify that the order note is updated to an empty string
+    expect(service['cart'].order.notes).toBe(emptyNote);
+  });
+
+  it('should remove the last order item from the cart', () => {
+    service['cart'].order.orderItems = [
+      { id: 'item1', quantity: 1 },
+      { id: 'item2', quantity: 1 },
+    ];
+    // Call the method
+    service.removeLastOrderItem();
+
+    // Verify that the last order item is removed
+    expect(service['cart'].order.orderItems).toEqual([{ id: 'item1', quantity: 1 }]);
+  });
+
+  it('should call onStateChanged', () => {
+    const onStateChangedSpy = jest.spyOn(service as any, 'onStateChanged');
+
+    // Call the method
+    service.removeLastOrderItem();
+
+    // Verify that onStateChanged was called
+    expect(onStateChangedSpy).toHaveBeenCalled();
+  });
+
+  it('should do nothing if there are no order items', () => {
+    service['cart'].order.orderItems = []; // Set order items to an empty array
+
+    // Call the method
+    service.removeLastOrderItem();
+
+    // Verify that order items remain empty
+    expect(service['cart'].order.orderItems.length).toBe(0);
+  });
+
+  it('should set the order tip and update the total', () => {
+    const newTip = 5;
+
+    service.setOrderTip(newTip);
+
+    expect(service['cart'].order.tip).toBe(newTip);
+    expect(service['cart'].order.total).toBe(125);
+  });
+
+  it('should call onStateChanged', () => {
+    const onStateChangedSpy = jest.spyOn(service as any, 'onStateChanged');
+
+    service.setOrderTip(10);
+
+    expect(onStateChangedSpy).toHaveBeenCalled();
+  });
+
+  it('should add payment info to the order', () => {
+    const mockPaymentInfo: Partial<OrderPayment> = {
+      accountId: 'account123',
+      accountName: 'Account Name',
+      amount: 100,
+    };
+
+    service.addPaymentInfoToOrder(mockPaymentInfo);
+
+    expect(service['cart'].order.orderPayment).toEqual([mockPaymentInfo]);
+  });
+
+  it('should set orderPayment to null if paymentInfo is null', () => {
+    service.addPaymentInfoToOrder(null);
+
+    expect(service['cart'].order.orderPayment).toBeNull();
+  });
+
+  it('should update the order phone number', () => {
+    const mockPhone = '123-456-7890';
+
+    service.updateOrderPhone(mockPhone);
+
+    expect(service['cart'].order.userPhone).toBe(mockPhone);
+  });
+
+  it('should call setInitialEmptyOrder', async () => {
+    const setInitialEmptyOrderSpy = jest.spyOn(service as any, 'setInitialEmptyOrder');
+
+    await service.clearActiveOrder();
+
+    expect(setInitialEmptyOrderSpy).toHaveBeenCalled();
+  });
+
+  it('should save the order snapshot', () => {
+    const mockOrder = {
+      id: 'order123',
+      orderItems: [],
+      subTotal: 100,
+      tax: 0,
+      total: 100,
+      orderPayment: [],
+      notes: '',
+      userPhone: '',
+      dueTime: '',
+    } as OrderInfo;
+
+    service.saveOrderSnapshot(mockOrder);
+
+    expect(service['orderSnapshot']).toEqual(mockOrder);
+  });
+
+  it('should not update orderSnapshot if order is not provided', () => {
+    const initialSnapshot = service['orderSnapshot'];
+
+    service.saveOrderSnapshot();
+
+    expect(service['orderSnapshot']).not.toBe(initialSnapshot);
+  });
+
+  it('should set cart.order to orderSnapshot and call onStateChanged', () => {
+    const mockOrder = {} as OrderInfo;
+    service['orderSnapshot'] = mockOrder;
+    const onStateChangedSpy = jest.spyOn(service as any, 'onStateChanged');
+
+    service.setOrderToSnapshot();
+
+    expect(service['cart'].order).toEqual(mockOrder);
+
+    expect(onStateChangedSpy).toHaveBeenCalled();
+  });
+
+  it('should remove the last order item if orderSnapshot is null', () => {
+    const removeLastOrderItemSpy = jest.spyOn(service as any, 'removeLastOrderItem');
+    service['orderSnapshot'] = null;
+
+    service.setOrderToSnapshot();
+
+    expect(removeLastOrderItemSpy).toHaveBeenCalled();
+  });
+
+  it('should refresh the cart date', async () => {
+    await service['refreshCartDate']();
+
+    expect(service['cart'].order).toBeDefined();
+    expect(service['cart'].orderDetailsOptions).toBeDefined();
+    expect(service['cart'].menu).toBeDefined();
+  });
+
+  it('should emit emptyCartOnClose when closeButtonClicked is called', () => {
+    const spy = jest.spyOn(service['emptyCartOnClose'], 'next');
+
+    service.closeButtonClicked();
+
+    expect(spy).toHaveBeenCalledWith({});
+  });
+
+  it('should return emptyOnClose$', () => {
+    expect(service.emptyOnClose$).toEqual(service['emptyCartOnClose$']);
+  });
+
+  it('should remove leading zeros and convert to uppercase', () => {
+    const result = service['removeLeadingZerosAndUpperCase']('000123abc');
+    expect(result).toBe('123ABC');
+  });
+
+  it('should return undefined for null or undefined code', () => {
+    expect(service['removeLeadingZerosAndUpperCase'](null)).toBeUndefined();
+    expect(service['removeLeadingZerosAndUpperCase'](undefined)).toBeUndefined();
+  });
+
+  it('should validate cart items and update order from response', async () => {
+    const mockOrder = { id: 'orderId' };
+    const mockResponse = { order: mockOrder };
+
+    userFacadeService.validateCartItems.mockReturnValue(of(mockResponse));
+    const updateOrderSpy = jest.spyOn(service, 'updateOrderFromValidateResponse');
+
+    const result = await lastValueFrom(service.validateReOrderItems().pipe(first()));
+    expect(result).toBeDefined();
+  });
+
+  it('should remove items from the order based on validateOrder response', () => {
+    const removedItems = [{ menuItemId: 'item1' }, { menuItemId: 'item2' }];
+    const validateOrder = { orderRemovedItems: removedItems } as ItemsOrderInfo;
+
+    service['cart'].order.orderItems = [
+      { menuItemId: 'item1', quantity: 1 },
+      { menuItemId: 'item2', quantity: 2 },
+      { menuItemId: 'item3', quantity: 3 }
+    ];
+
+    const removeOrderItemSpy = jest.spyOn(service, 'removeOrderItemFromOrderById');
+
+    service.removeCartItemsFromItemValidateResponse(validateOrder);
+
+    expect(removeOrderItemSpy).toHaveBeenCalledTimes(2);
+    removedItems.forEach(item => {
+      expect(removeOrderItemSpy).toHaveBeenCalledWith(item.menuItemId, 'menuItemId');
+    });
+    expect(service['cart'].order.orderItems.length).toBe(1);
+    expect(service['cart'].order.orderItems[0].menuItemId).toBe('item3');
   });
 });
