@@ -35,6 +35,7 @@ import { MenuItemInfo } from '@sections/ordering/shared/models';
     TranslateModule,
   ],
   template: `
+    @if (nutritionData.length) {
     <ion-item-divider class="order-detail__divider" mode="ios">
       <ion-label translate>patron-ui.ordering.nutritional_info.title</ion-label>
     </ion-item-divider>
@@ -60,6 +61,7 @@ import { MenuItemInfo } from '@sections/ordering/shared/models';
         </div>
       </ion-accordion>
     </ion-accordion-group>
+    }
   `,
   styleUrl: './nutrition-info.component.scss',
 })
