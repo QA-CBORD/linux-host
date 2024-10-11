@@ -78,31 +78,7 @@
                                   rows="3">
       </st-textarea-floating-label>
     </ion-list>
-    <ion-list *ngIf="menuItem?.calories || menuItem?.protein || menuItem?.carbs"
-              class="order-detail__nutrition-info"
-              mode="ios">
-      <ion-item-divider class="order-detail__divider"
-                        mode="ios">
-        <div class="order-detail__divider-title">Nutrition Info</div>
-      </ion-item-divider>
-      <div class="order-detail__nutrition-info-container">
-        <div *ngIf="menuItem?.calories"
-             class="order-detail__nutrition-info-wrapper">
-          <div class="order-detail__nutrition-info-title">{{ menuItem?.calories }}</div>
-          <div class="order-detail__nutrition-info-subtitle">Calories</div>
-        </div>
-        <div *ngIf="menuItem?.protein"
-             class="order-detail__nutrition-info-wrapper">
-          <div class="order-detail__nutrition-info-title">{{ menuItem?.protein }}g</div>
-          <div class="order-detail__nutrition-info-subtitle">Protein</div>
-        </div>
-        <div *ngIf="menuItem?.carbs"
-             class="order-detail__nutrition-info-wrapper">
-          <div class="order-detail__nutrition-info-title">{{ menuItem?.carbs }}</div>
-          <div class="order-detail__nutrition-info-subtitle">Carbs</div>
-        </div>
-      </div>
-    </ion-list>
+    <st-nutrition-info [menuItem]="menuItem"></st-nutrition-info>
   </form>
 </ion-content>
 <ion-footer class="item-footer" mode="ios">
