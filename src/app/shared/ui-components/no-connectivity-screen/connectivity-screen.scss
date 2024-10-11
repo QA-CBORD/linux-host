@@ -3,6 +3,7 @@
 
 #logout_btn {
   @include font-nunito-semibold(14px);
+  --margin-top: $notch-top;
 }
 .ionic-content {
   .root {

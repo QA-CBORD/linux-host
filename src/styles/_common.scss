@@ -19,6 +19,7 @@
 @mixin font-nunito-heavy($font-size) {
   @include font-size($font-size);
   @include font-family($font-nunito-heavy);
+  font-weight: 700;
 }
 
 @mixin link-color($color) {

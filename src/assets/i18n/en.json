@@ -1056,7 +1056,12 @@
       "cart_preview_trash_icon": "Remove all items icon",
       "cart_preview_confirm_removal_msg": "Are you sure you want to remove all items from your cart?",
       "cart_preview_confirm_removal_btn": "Remove all items",
-      "cart_preview_cancel_removal_btn": "Cancel"
+      "cart_preview_cancel_removal_btn": "Cancel",
+      "nutritional_info": {
+        "title": "Nutritional Information",
+        "section_title": "Nutrition Facts and Allergens",
+        "disclaimer": "2,000 Calories a day is used for general nutrition advice, but calorie needs may vary. Additional nutritional information available upon request. Customization of your order may impact the accuracy and/or completeness of the available nutritional information."
+      }
     },
     "explore": {
       "merchant_details_title": "Merchant Details"
