@@ -255,7 +255,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
         const [code, text] = error;
         const doActionErrorCode = {
           [ORDER_ERROR_CODES.ORDER_CAPACITY]: async () => {
-            this.cartService.setOrderToSnapshot();
+            this.cartService.saveOrderSnapshot();
+            this.addNewItem();
             await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
           },
           [ORDER_ERROR_CODES.ORDER_ITEM_MAX]: () => {
