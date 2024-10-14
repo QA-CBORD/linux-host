@@ -37,13 +37,11 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   }
 
   async contentStringAsync(updateUi?: boolean): Promise<AndroidCredentialCsModel> {
-    console.log('contentStringAsync');
     const contentStrings = await this.credentialSrvc.getContents();
     if (updateUi) {
       this.customLoadingOptions.message = contentStrings.isLogingMessage || this.defaultIsLoadingMessage;
       this.mCredential.setUicString$(contentStrings.credStatuString$);
     }
-    console.log('contentStrings, ', contentStrings);
     return contentStrings;
   }
 
@@ -74,11 +72,8 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   }
 
   protected async showInstallationErrorAlert(errorDetail: string = null): Promise<void> {
-    console.log('showInstallationErrorAlert');
     const str = await this.contentStringAsync();
-    console.log('str', str);
     const string$ = str.installErorDialogString$;
-    console.log('string$', string$);
     const header = string$.title;
     const message = string$.mContent;
     const buttons = [{ text: string$.ok, role: 'cancel' }];

@@ -5,7 +5,6 @@ import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 import { CredentialStatusCs } from './android-credential-content-strings.model';
 
-
 export interface CredentialBundle {
   id?: string;
 }
@@ -14,9 +13,8 @@ export interface HidCredentialBundle extends CredentialBundle {
   invitationCode: string;
   invitationId: string;
   issuer: string;
-  issuerToken: string
+  issuerToken: string;
 }
-
 
 export interface GooglePayCredentialBundle extends CredentialBundle {
   digitizationReference: string;
@@ -43,7 +41,6 @@ export interface AndroidCredentialState extends MobileCredentialState {
 }
 
 export class CredentialStateResolver {
-
   static fromActivePasses(activePasses: ActivePasses): MobileCredentialState {
     if (CredentialStateResolver.hasHidSeosCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
@@ -61,7 +58,7 @@ export class CredentialStateResolver {
       );
     } else if (CredentialStateResolver.hasGoogleCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
-        activePasses.credStatus.android_nxp, 
+        activePasses.credStatus.android_nxp,
         activePasses.passes.android_nxp,
         CredentialProviders.GOOGLE,
         activePasses.referenceIdentifier
@@ -275,7 +272,7 @@ export class Persistable {
     public status?: number,
     public referenceIdentifier?: string,
     public userId?: string
-  ) { }
+  ) {}
 }
 
 export class HIDCredential extends AndroidCredential<HID> {
@@ -305,7 +302,7 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
 }
 
 export class EndpointState {
-  constructor(public status: EndpointStatuses, public id?: string, public userId?: string) { }
+  constructor(public status: EndpointStatuses, public id?: string, public userId?: string) {}
 
   setStatus(status: EndpointStatuses): void {
     this.status = status;
