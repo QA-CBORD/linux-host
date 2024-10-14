@@ -28,6 +28,7 @@ export abstract class MobileCredential implements MobileCredentialState {
   isProvisioned(): boolean {
     return this.credentialState.isProvisioned();
   }
+
   isEnabled(): boolean {
     return this.credentialState.isEnabled();
   }
@@ -38,7 +39,6 @@ export abstract class MobileCredential implements MobileCredentialState {
   isCreated(): boolean {
     return this.credentialState.isCreated();
   }
-  
   getIssuer(): string {
     return this.credentialState.getIssuer();
   }

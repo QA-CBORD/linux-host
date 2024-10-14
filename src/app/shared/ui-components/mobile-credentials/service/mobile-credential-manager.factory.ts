@@ -1,7 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { iif, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { HIDSeosCredentialManager } from '../model/android/hid/hid-seos-credential-manager';
 import { MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialProviders } from '../model/shared/credential-utils';
 import { MobileCredential } from '../model/shared/mobile-credential';
@@ -11,6 +10,7 @@ import { IOSCredentialManager } from './ios-credential-manager';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { Platform } from '@ionic/angular';
 import { HIDWalletCredentialManager } from '../model/android/hid/hid-wallet-credential-manager';
+import { HIDSeosCredentialManager } from '../model/android/hid/hid-seos-credential-manager';
 
 export enum CredentialManagerType {
   IosCredential = 'IOS_CREDENTIAL',
@@ -41,7 +41,7 @@ export class MobileCredentialManagerFactory {
         if (mobileCredential.providedBy(CredentialProviders.HID)) {
           credentialManager = this.createHidSeosCredentialManagerFor(<HIDCredential>mobileCredential);
         } else if (mobileCredential.providedBy(CredentialProviders.HID_WALLET)) {
-          credentialManager = this.createHidWalletCredentialManagerFor(<HIDCredential>mobileCredential); 
+          credentialManager = this.createHidWalletCredentialManagerFor(<HIDCredential>mobileCredential);
         } else if (mobileCredential.providedBy(CredentialProviders.GOOGLE)) {
           credentialManager = this.createGoogleCredentialManagerFor(<GoogleCredential>mobileCredential); // google/nxp credential manager not implemented yet
         }

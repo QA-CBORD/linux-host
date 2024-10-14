@@ -6,11 +6,11 @@ import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mob
 import { CredentialStatusCs } from './android-credential-content-strings.model';
 
 
-export interface CredentialBundle{
- id?: string;
+export interface CredentialBundle {
+  id?: string;
 }
 
-export interface HidCredentialBundle extends CredentialBundle{
+export interface HidCredentialBundle extends CredentialBundle {
   invitationCode: string;
   invitationId: string;
   issuer: string;
@@ -18,7 +18,7 @@ export interface HidCredentialBundle extends CredentialBundle{
 }
 
 
-export interface GooglePayCredentialBundle extends CredentialBundle{
+export interface GooglePayCredentialBundle extends CredentialBundle {
   digitizationReference: string;
   virtualCardUid: string;
 }
@@ -275,7 +275,7 @@ export class Persistable {
     public status?: number,
     public referenceIdentifier?: string,
     public userId?: string
-  ) {}
+  ) { }
 }
 
 export class HIDCredential extends AndroidCredential<HID> {
@@ -305,7 +305,7 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
 }
 
 export class EndpointState {
-  constructor(public status: EndpointStatuses, public id?: string, public userId?: string) {}
+  constructor(public status: EndpointStatuses, public id?: string, public userId?: string) { }
 
   setStatus(status: EndpointStatuses): void {
     this.status = status;

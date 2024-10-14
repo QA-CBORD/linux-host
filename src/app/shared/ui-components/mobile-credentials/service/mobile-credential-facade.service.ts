@@ -15,8 +15,8 @@ import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { registerPlugin } from '@capacitor/core';
-import { HIDSeosCredentialManager } from '../model/android/hid/hid-seos-credential-manager';
 import { HIDWalletCredentialManager } from '../model/android/hid/hid-wallet-credential-manager';
+import { HIDSeosCredentialManager } from '../model/android/hid/hid-seos-credential-manager';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const  MobileCredentialStatusPlugin  = registerPlugin<any>('MobileCredentialStatusPlugin');
 
