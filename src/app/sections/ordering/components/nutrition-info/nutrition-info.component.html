@@ -9,7 +9,9 @@
     </ion-item>
     <div slot="content">
       @if (allergens) {
-      <div class="nutrition-info__allergens ion-padding">Contains: {{ allergens }}</div>
+      <div class="nutrition-info__allergens ion-padding" translate [translateParams]="{ allergens }">
+        patron-ui.ordering.nutritional_info.contains_allergens
+      </div>
       } @if(nutritionData.length) {
       <ion-card>
         <ion-card-content class="ion-no-padding">

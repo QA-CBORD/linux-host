@@ -1060,6 +1060,7 @@
       "nutritional_info": {
         "title": "Nutritional Information",
         "section_title": "Nutrition Facts and Allergens",
+        "contains_allergens": "Contains: {{allergens}}",
         "disclaimer": "2,000 Calories a day is used for general nutrition advice, but calorie needs may vary. Additional nutritional information available upon request. Customization of your order may impact the accuracy and/or completeness of the available nutritional information."
       }
     },
