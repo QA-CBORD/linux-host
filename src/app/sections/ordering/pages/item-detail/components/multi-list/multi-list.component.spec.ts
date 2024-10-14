@@ -69,6 +69,7 @@ describe('MultiListComponent', () => {
         protein: 0,
         imageReference: '',
         menuItemOptions: [],
+        displayCalories: '',
       },
     };
 
@@ -99,6 +100,7 @@ describe('MultiListComponent', () => {
         protein: 0,
         imageReference: '',
         menuItemOptions: [],
+        displayCalories: '',
       },
     };
     component.options = [item1, item2];

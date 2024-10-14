@@ -42,6 +42,7 @@ let menuItem: MenuItemInfo = {
   carbs: 0,
   protein: 0,
   imageReference: '',
+  displayCalories: '',
   menuItemOptions: [
     {
       menuGroup: {

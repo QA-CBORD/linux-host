@@ -120,6 +120,12 @@
 
     @include font-nunito-heavy(12px);
   }
+  
+  &__calories {
+    @include font-nunito-regular(14px);
+    color: var(--ion-color-medium);
+    margin-left: 12px;
+  }
 }
 
 .item-footer {

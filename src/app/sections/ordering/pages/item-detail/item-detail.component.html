@@ -28,6 +28,7 @@
     <span class="order-detail__descriptions-price">{{
       menuItem?.price | priceUnitsResolver: (menuInfo$ | async)?.mealBased : ignoreZeros
       }}</span>
+      <span class="order-detail__calories">{{menuItem?.displayCalories}} cal</span>
   </div>
   <form *ngIf="itemOrderForm"
         [formGroup]="itemOrderForm"
