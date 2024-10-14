@@ -53,8 +53,6 @@ export class MenuCategoryItemsComponent implements OnInit {
       .pipe(take(1))
       .subscribe(([menu, { id }]) => {
         this.menuCategory = menu?.menuCategories?.find(category => category.id === id);
-        console.log(this.menuCategory, 'menuCategory');
-        
       });
   }
 
