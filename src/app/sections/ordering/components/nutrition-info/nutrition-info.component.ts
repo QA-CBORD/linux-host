@@ -34,52 +34,48 @@ import { MenuItemInfo } from '@sections/ordering/shared/models';
     IonItemDivider,
     TranslateModule,
   ],
-  template: `
-    @if (nutritionData.length) {
-    <ion-item-divider class="order-detail__divider" mode="ios">
-      <ion-label translate>patron-ui.ordering.nutritional_info.title</ion-label>
-    </ion-item-divider>
-    <ion-accordion-group>
-      <ion-accordion value="nutritionInfo">
-        <ion-item slot="header" class="nutrition-info__header">
-          <ion-label translate>patron-ui.ordering.nutritional_info.section_title</ion-label>
-        </ion-item>
-        <div slot="content">
-          <ion-card>
-            <ion-card-content class="ion-no-padding">
-              <ion-list>
-                @for (item of nutritionData; track item.name) {
-                <ion-item [class.nutrition-info__subItem]="item.subItem" [class.nutrition-info__item]="!item.subItem">
-                  <ion-label>{{ item.name }}</ion-label>
-                  <ion-note color="dark" slot="end">{{ item.value }}</ion-note>
-                </ion-item>
-                }
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-          <div class="nutrition-info__disclaimer" translate>patron-ui.ordering.nutritional_info.disclaimer</div>
-        </div>
-      </ion-accordion>
-    </ion-accordion-group>
-    }
-  `,
+  templateUrl: './nutrition-info.component.html',
   styleUrl: './nutrition-info.component.scss',
 })
 export class NutritionInfoComponent {
   nutritionData: { name: string; value: string; subItem?: boolean }[] = [];
+  allergens = '';
+  hasNutritionInfo = false;
+
   @Input() set menuItem(menuItem: MenuItemInfo) {
     this.nutritionData = [];
+    this.allergens = '';
+    this.hasNutritionInfo = false;
     if (!menuItem) {
       return;
     }
-    if (menuItem.calories) {
-      this.nutritionData.push({ name: 'Calories', value: `${menuItem.calories}` });
-    }
-    if (menuItem.carbs) {
-      this.nutritionData.push({ name: 'Total Carbohydrates', value: `${menuItem.carbs}g` });
-    }
-    if (menuItem.protein) {
-      this.nutritionData.push({ name: 'Protein', value: `${menuItem.protein}g` });
-    }
+    this.buildNutritionData(menuItem);
+    this.allergens = menuItem.allergens?.join(', ').trim() ?? '';
+    this.hasNutritionInfo = !!this.allergens || this.nutritionData.length > 0;
+  }
+
+  private buildNutritionData(menuItem: MenuItemInfo) {
+    type NutritionField = {
+      key: keyof MenuItemInfo;
+      label: string;
+      unit: string;
+    };
+
+    const nutritionFields: NutritionField[] = [
+      { key: 'protein', label: 'Protein', unit: 'g' },
+      { key: 'calories', label: 'Calories', unit: '' },
+      { key: 'carbs', label: 'Total Carbohydrates', unit: 'g' },
+      { key: 'cholesterol', label: 'Cholesterol', unit: 'mg' },
+      { key: 'sodium', label: 'Sodium', unit: 'mg' },
+      { key: 'sugar', label: 'Sugar', unit: 'g' },
+      { key: 'dietaryFiber', label: 'Dietary Fiber', unit: 'g' },
+    ];
+
+    this.nutritionData = nutritionFields
+      .filter(field => menuItem[field.key])
+      .map(field => ({
+        name: field.label,
+        value: `${menuItem[field.key]}${field.unit}`,
+      }));
   }
 }

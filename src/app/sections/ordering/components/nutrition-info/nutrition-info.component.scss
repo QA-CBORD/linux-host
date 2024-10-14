@@ -16,6 +16,9 @@ ion-item-divider {
       @include font-nunito-regular(16px);
     }
   }
+  &__allergens {
+    @include font-nunito-heavy(18px);
+  }
   &__item {
     --padding-start: 10px;
     --padding-end: 10px;

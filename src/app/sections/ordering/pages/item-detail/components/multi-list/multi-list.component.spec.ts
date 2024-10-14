@@ -69,8 +69,9 @@ describe('MultiListComponent', () => {
         protein: 0,
         imageReference: '',
         menuItemOptions: [],
+        displayCalories: '',
       },
-    };
+    } as any;
 
     const item2 = {
       menuGroupId: '2',
@@ -99,9 +100,10 @@ describe('MultiListComponent', () => {
         protein: 0,
         imageReference: '',
         menuItemOptions: [],
+        displayCalories: '',
       },
-    };
-    component.options = [item1, item2];
+    } as any;
+    component.options = [item1, item2] as MenuGroupItemInfo[];
     component.innerValue = ['item1']; // Mocking innerValue
     component.isExistingItemInCart = true;
 
