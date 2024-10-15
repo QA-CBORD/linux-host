@@ -17,20 +17,20 @@ android {
         buildConfig true
         dataBinding true
     }
-    signingConfigs {
-        defaultConfig {
-            storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
-            storePassword System.getenv('KEYSTORE_PASSWORD')
-            keyAlias System.getenv('KEY_ALIAS')
-            keyPassword System.getenv('KEY_PASSWORD')
-        }
-        debug {
-            storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
-            storePassword System.getenv('KEYSTORE_PASSWORD')
-            keyAlias System.getenv('KEY_ALIAS')
-            keyPassword System.getenv('KEY_PASSWORD')
-        }
-    }
+//    signingConfigs {
+//        defaultConfig {
+//            storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
+//            storePassword System.getenv('KEYSTORE_PASSWORD')
+//            keyAlias System.getenv('KEY_ALIAS')
+//            keyPassword System.getenv('KEY_PASSWORD')
+//        }
+//        debug {
+//            storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
+//            storePassword System.getenv('KEYSTORE_PASSWORD')
+//            keyAlias System.getenv('KEY_ALIAS')
+//            keyPassword System.getenv('KEY_PASSWORD')
+//        }
+//    }
     dataBinding {
         enabled = true
     }
@@ -48,7 +48,7 @@ android {
         buildConfigField "String", "ORIGO_APP_ID_DESCRIPTION", ORIGO_APP_ID_DESCRIPTION
         buildConfigField "int", "ORIGO_LOCK_SERVICE_CODE", ORIGO_LOCK_SERVICE_CODE
         buildConfigField "String", "ORIGO_EMAIL_LOGS_MAIL", ORIGO_EMAIL_LOGS_MAIL
-        signingConfig signingConfigs.defaultConfig
+//        signingConfig signingConfigs.defaultConfig
     }
     buildTypes {
         release {
