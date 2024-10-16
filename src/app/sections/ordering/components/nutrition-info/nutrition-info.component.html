@@ -18,7 +18,7 @@
             @for (item of nutritionData; track item.name) {
             <ion-item [class.nutrition-info__subItem]="item.subItem" [class.nutrition-info__item]="!item.subItem">
               <ion-label>{{ item.name }}</ion-label>
-              <ion-note color="dark" slot="end">{{ item.value }}</ion-note>
+              <ion-label color="dark" slot="end">{{ item.value }}</ion-label>
             </ion-item>
             }
           </ion-list>
