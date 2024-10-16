@@ -73,7 +73,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
 
   protected async showInstallationErrorAlert(errorDetail: string = null): Promise<void> {
     const str = await this.contentStringAsync();
-    const string$ = str.installErorDialogString$;
+    const string$ = str.installErrorDialogString$;
     const header = string$.title;
     const message = string$.mContent;
     const buttons = [{ text: string$.ok, role: 'cancel' }];
