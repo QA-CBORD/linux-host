@@ -2,7 +2,7 @@
 @import 'fonts';
 
 #logout_btn {
-  @include font-nunito-semibold(14px);
+  @include font-nunito-heavy(14px);
   margin-top: $notch-top;
 }
 .ionic-content {

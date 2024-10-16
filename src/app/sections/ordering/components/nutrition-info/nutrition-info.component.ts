@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import {
   IonItem,
@@ -32,6 +33,7 @@ import { MenuItemInfo } from '@sections/ordering/shared/models';
     IonAccordion,
     IonAccordionGroup,
     IonItemDivider,
+    NgTemplateOutlet,
     TranslateModule,
   ],
   templateUrl: './nutrition-info.component.html',
