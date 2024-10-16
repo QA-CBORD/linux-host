@@ -2,6 +2,7 @@
 <ion-item-divider class="order-detail__divider" mode="ios">
   <ion-label translate>patron-ui.ordering.nutritional_info.title</ion-label>
 </ion-item-divider>
+@if(nutritionData.length) {
 <ion-accordion-group>
   <ion-accordion value="nutritionInfo">
     <ion-item slot="header" class="nutrition-info__header">
@@ -9,10 +10,8 @@
     </ion-item>
     <div slot="content">
       @if (allergens) {
-      <div class="nutrition-info__allergens ion-padding" translate [translateParams]="{ allergens }">
-        patron-ui.ordering.nutritional_info.contains_allergens
-      </div>
-      } @if(nutritionData.length) {
+      <ng-container *ngTemplateOutlet="allergenBlock"></ng-container>
+      }
       <ion-card>
         <ion-card-content class="ion-no-padding">
           <ion-list>
@@ -26,8 +25,15 @@
         </ion-card-content>
       </ion-card>
       <div class="nutrition-info__disclaimer" translate>patron-ui.ordering.nutritional_info.disclaimer</div>
-      }
     </div>
   </ion-accordion>
 </ion-accordion-group>
-}
+} @else if (allergens) {
+<ng-container *ngTemplateOutlet="allergenBlock"></ng-container>
+}}
+<!-- Define the reusable allergens block as an ng-template -->
+<ng-template #allergenBlock>
+  <div class="nutrition-info__allergens ion-padding" translate [translateParams]="{ allergens }">
+    patron-ui.ordering.nutritional_info.contains_allergens
+  </div>
+</ng-template>
