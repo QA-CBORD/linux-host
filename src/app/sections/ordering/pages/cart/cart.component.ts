@@ -882,6 +882,7 @@ export class CartComponent implements OnInit, OnDestroy {
             }),
             finalize(() => {
               this.loadingService.closeSpinner();
+              this.defaultPaymentMethod = null;
             })
           )
           .subscribe();
