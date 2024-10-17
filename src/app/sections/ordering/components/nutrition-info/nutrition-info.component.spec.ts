@@ -28,62 +28,70 @@ describe('NutritionInfoComponent', () => {
     expect(component.allergens).toBe('');
     expect(component.hasNutritionInfo).toBe(false);
   });
-  it('should set menuItem and build nutrition data correctly', () => {
-    const menuItem: MenuItemInfo = {
-      calories: 200,
-      carbs: 30,
-      protein: 10,
-      allergens: ['Peanuts', 'Soy'],
-    } as MenuItemInfo;
+  it('should not update properties when menuItem is null or undefined', () => {
+    component.menuItem = null;
+    expect(component.nutritionData).toEqual([]);
+    expect(component.allergens).toBe('');
+    expect(component.hasNutritionInfo).toBe(false);
 
-    component.menuItem = menuItem;
-
-    expect(component.nutritionData).toEqual([
-      { name: 'Protein', value: '10g' },
-      { name: 'Calories', value: '200' },
-      { name: 'Total Carbohydrates', value: '30g' },
-    ]);
-    expect(component.allergens).toBe('Peanuts, Soy');
-    expect(component.hasNutritionInfo).toBe(true);
-  });
-
-  it('should handle menuItem with no allergens and no nutrition data', () => {
-    const menuItem: MenuItemInfo = {} as MenuItemInfo;
-
-    component.menuItem = menuItem;
-
+    component.menuItem = undefined;
     expect(component.nutritionData).toEqual([]);
     expect(component.allergens).toBe('');
     expect(component.hasNutritionInfo).toBe(false);
   });
 
-  it('should handle menuItem with only allergens', () => {
-    const menuItem: MenuItemInfo = {
-      allergens: ['Peanuts', 'Soy'],
-    } as MenuItemInfo;
+  it('should update nutritionData and set hasNutritionInfo to true when menuItem has nutrition info', () => {
+    const mockMenuItem = {
+      nutritionInfo: [
+        { name: 'Calories', value: '200' },
+        { name: 'Total Fat', value: '10g' },
+      ],
+      allergens: [],
+    } as any as MenuItemInfo;
 
-    component.menuItem = menuItem;
+    component.menuItem = mockMenuItem;
+
+    expect(component.nutritionData).toEqual(mockMenuItem.nutritionInfo);
+    expect(component.allergens).toBe('');
+    expect(component.hasNutritionInfo).toBe(true);
+  });
+
+  it('should update allergens and set hasNutritionInfo to true when menuItem has allergens', () => {
+    const mockMenuItem = {
+      nutritionInfo: [],
+      allergens: ['Peanuts', 'Soy'],
+    } as any as MenuItemInfo;
+
+    component.menuItem = mockMenuItem;
 
     expect(component.nutritionData).toEqual([]);
     expect(component.allergens).toBe('Peanuts, Soy');
     expect(component.hasNutritionInfo).toBe(true);
   });
 
-  it('should handle menuItem with only nutrition data', () => {
-    const menuItem: MenuItemInfo = {
-      calories: 200,
-      carbs: 30,
-      protein: 10,
-    } as MenuItemInfo;
+  it('should update both nutritionData and allergens correctly when menuItem has both', () => {
+    const mockMenuItem = {
+      nutritionInfo: [{ name: 'Calories', value: '150' }],
+      allergens: ['Milk', 'Eggs'],
+    } as any as MenuItemInfo;
 
-    component.menuItem = menuItem;
+    component.menuItem = mockMenuItem;
 
-    expect(component.nutritionData).toEqual([
-      { name: 'Protein', value: '10g' },
-      { name: 'Calories', value: '200' },
-      { name: 'Total Carbohydrates', value: '30g' },
-    ]);
-    expect(component.allergens).toBe('');
+    expect(component.nutritionData).toEqual(mockMenuItem.nutritionInfo);
+    expect(component.allergens).toBe('Milk, Eggs');
     expect(component.hasNutritionInfo).toBe(true);
+  });
+
+  it('should set hasNutritionInfo to false when both nutritionData and allergens are empty', () => {
+    const mockMenuItem = {
+      nutritionInfo: [],
+      allergens: [],
+    } as any as MenuItemInfo;
+
+    component.menuItem = mockMenuItem;
+
+    expect(component.nutritionData).toEqual([]);
+    expect(component.allergens).toBe('');
+    expect(component.hasNutritionInfo).toBe(false);
   });
 });
