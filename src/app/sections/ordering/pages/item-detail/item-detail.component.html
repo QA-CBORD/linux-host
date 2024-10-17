@@ -1,13 +1,14 @@
 <ng-container *ngIf="!menuItemImg; then header"></ng-container>
 
 <ng-template #header>
-  <st-header backButtonIcon="close"
-             [backButtonTitle]="''"
-             [isTitleShow]="true"
-             [isToolbarShow]="true"
-             [title]="menuItem?.name"
-             (onClose)="onClose()"
-             ></st-header>
+  <st-header
+    backButtonIcon="close"
+    [backButtonTitle]="''"
+    [isTitleShow]="true"
+    [isToolbarShow]="true"
+    [title]="menuItem?.name"
+    (onClose)="onClose()"
+  ></st-header>
 </ng-template>
 
 <ng-template #staticHeader>
@@ -20,63 +21,68 @@
 </ng-template>
 
 <ion-content class="order-detail">
-<ng-container *ngIf="menuItemImg; then staticHeader"></ng-container>
+  <ng-container *ngIf="menuItemImg; then staticHeader"></ng-container>
 
   <div class="order-detail__descriptions">
     <div class="order-detail__descriptions-title">{{ menuItem?.name }}</div>
     <p class="order-detail__descriptions-content">{{ menuItem?.description }}</p>
     <span class="order-detail__descriptions-price">{{
-      menuItem?.price | priceUnitsResolver: (menuInfo$ | async)?.mealBased : ignoreZeros
-      }}</span>
-      <span class="order-detail__calories">{{menuItem?.displayCalories}} cal</span>
+      menuItem?.price | priceUnitsResolver : (menuInfo$ | async)?.mealBased : ignoreZeros
+    }}</span>
+    <span class="order-detail__calories">{{ caloriesDisplay(menuItem?.displayCalories) }}</span>
   </div>
-  <form *ngIf="itemOrderForm"
-        [formGroup]="itemOrderForm"
-        novalidate>
+  <form *ngIf="itemOrderForm" [formGroup]="itemOrderForm" novalidate>
     <ng-container *ngFor="let menuGroupItem of menuItem?.menuItemOptions">
-      <ng-container *ngIf="
+      <ng-container
+        *ngIf="
           menuGroupItem.menuGroup?.maximum === 1 && menuGroupItem.menuGroup?.minimum === 1;
           then singleList;
           else multiList
-        ">
+        "
+      >
       </ng-container>
 
       <ng-template #singleList>
-        <st-single-list [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
-                        [formControlName]="menuGroupItem.menuGroup.name"
-                        [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name)?.value ? false : errorState"
-                        [mealBased]="(menuInfo$ | async)?.mealBased"
-                        [name]="menuGroupItem.menuGroup.name"
-                        [options]="menuGroupItem.menuGroup.menuGroupItems">
+        <st-single-list
+          [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
+          [formControlName]="menuGroupItem.menuGroup.name"
+          [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name)?.value ? false : errorState"
+          [mealBased]="(menuInfo$ | async)?.mealBased"
+          [name]="menuGroupItem.menuGroup.name"
+          [options]="menuGroupItem.menuGroup.menuGroupItems"
+        >
         </st-single-list>
       </ng-template>
 
       <ng-template #multiList>
-        <st-multi-list [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
-                       [formControlName]="menuGroupItem.menuGroup.name"
-                       [isError]="isErrorMultiList(menuGroupItem) ? false: errorState"
-                       [maximum]="menuGroupItem.menuGroup.maximum"
-                       [mealBased]="(menuInfo$ | async)?.mealBased"
-                       [minimum]="menuGroupItem.menuGroup.minimum"
-                       [name]="menuGroupItem.menuGroup.name"
-                       [options]="menuGroupItem.menuGroup.menuGroupItems"
-                       [isExistingItemInCart]="routesData?.queryParams.isItemExistsInCart"></st-multi-list>
+        <st-multi-list
+          [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
+          [formControlName]="menuGroupItem.menuGroup.name"
+          [isError]="isErrorMultiList(menuGroupItem) ? false : errorState"
+          [maximum]="menuGroupItem.menuGroup.maximum"
+          [mealBased]="(menuInfo$ | async)?.mealBased"
+          [minimum]="menuGroupItem.menuGroup.minimum"
+          [name]="menuGroupItem.menuGroup.name"
+          [options]="menuGroupItem.menuGroup.menuGroupItems"
+          [isExistingItemInCart]="routesData?.queryParams.isItemExistsInCart"
+        ></st-multi-list>
       </ng-template>
     </ng-container>
 
     <ion-list class="order-detail__special-instructions" *ngIf="allowNotes">
-      <ion-item-divider class="order-detail__divider"
-                        mode="ios">
+      <ion-item-divider class="order-detail__divider" mode="ios">
         <div class="order-detail__divider-title">Notes</div>
       </ion-item-divider>
-      <st-textarea-floating-label [control]="itemOrderForm.get('message')"
-                                  [isError]="itemOrderForm.get('message').invalid && itemOrderForm.get('message').touched"
-                                  class="order-detail__order-message"
-                                  formControlName="message"
-                                  idd="message"
-                                  [maxLength]="128"
-                                  [label]="contentStrings.labelItemNote | async"
-                                  rows="3">
+      <st-textarea-floating-label
+        [control]="itemOrderForm.get('message')"
+        [isError]="itemOrderForm.get('message').invalid && itemOrderForm.get('message').touched"
+        class="order-detail__order-message"
+        formControlName="message"
+        idd="message"
+        [maxLength]="128"
+        [label]="contentStrings.labelItemNote | async"
+        rows="3"
+      >
       </st-textarea-floating-label>
     </ion-list>
     <st-nutrition-info [menuItem]="menuItem"></st-nutrition-info>
@@ -94,8 +100,13 @@
   </div>
   <div class="item-footer__add-btn-wrapper">
     <st-button (onClick)="onFormSubmit()" [isDisabled]="!itemOrderForm?.valid">
-      {{ (routesData?.queryParams.isItemExistsInCart ? 'patron-ui.ordering.label_update' : 'patron-ui.ordering.button_add') | translate }} 
-      {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async)?.mealBased }}
+      {{
+        (routesData?.queryParams.isItemExistsInCart
+          ? 'patron-ui.ordering.label_update'
+          : 'patron-ui.ordering.button_add'
+        ) | translate
+      }}
+      {{ order.totalPrice | priceUnitsResolver : (menuInfo$ | async)?.mealBased }}
     </st-button>
   </div>
 </ion-footer>
