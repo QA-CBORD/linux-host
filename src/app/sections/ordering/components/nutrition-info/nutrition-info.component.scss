@@ -1,0 +1,46 @@
+@import 'tools';
+@import 'fonts';
+
+ion-item-divider {
+  background-color: $color-white-smoke;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  ion-label {
+    @include font-nunito-regular(16px);
+  }
+}
+
+.nutrition-info {
+  &__header {
+    ion-label {
+      @include font-nunito-regular(16px);
+    }
+  }
+  &__allergens {
+    @include font-nunito-heavy(18px);
+  }
+  &__item {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    ion-label,
+    ion-note {
+      @include font-nunito-heavy(16px);
+      padding: 0 10px;
+    }
+  }
+  &__subItem {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    ion-label,
+    ion-note {
+      @include font-nunito-regular(16px);
+      padding: 0 10px;
+      padding-left: 20px;
+    }
+  }
+  &__disclaimer {
+    @include font-nunito-regular(12px);
+    min-height: 90px;
+    padding: 10px 20px;
+  }
+}

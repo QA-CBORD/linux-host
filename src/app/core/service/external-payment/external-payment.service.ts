@@ -103,7 +103,9 @@ export class ExternalPaymentService {
     const applePayBaseURL = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/applepay.php?`;
     switch (handleApplePay) {
       case ApplePay.ORDERS_WITH_APPLE_PAY: {
-        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <Partial<OrderInfo>>queryParams;
+        const { total, subTotal, useFee, tax, discount, pickupFee, deliveryFee, tip, merchantId } = <
+          Partial<OrderInfo>
+        >queryParams;
         return `${applePayBaseURL}order_total=${total || ''}&session_token=${authToken || ''}&sub_total=${
           subTotal || ''
         }&fee=${useFee || ''}&tax=${tax || '0.00'}&discount=${discount || '0.00'}&pickup_fee=${
@@ -129,19 +131,27 @@ export class ExternalPaymentService {
     reject: (reason?: any) => void,
     browser
   ) {
-    if (event && event.url) {
-      const url = event.url;
-      if (url.includes('action_complete')) {
-        if (url.includes('action_complete=1')) {
-          resolve(<USAePayResponse>{ success: true });
-        } else if (url.includes('error=')) {
-          const errorMessage = new URLSearchParams(url).get('error');
-          this.onUSAePayCallBackRetrieve(errorMessage);
-          reject(errorMessage);
-        }
-        browser.close();
-      }
+    if (!event || !event.url) {
+      return;
     }
+
+    const url = event.url;
+    const urlParams = new URLSearchParams(url);
+
+    if (!url.includes('action_complete')) {
+      return;
+    }
+
+    if (url.includes('action_complete=1') && url.includes('card_no')) {
+      const cardNo = urlParams.get('card_no');
+      resolve(<USAePayResponse>{ success: true, cardNo });
+    } else if (url.includes('error=')) {
+      const errorMessage = urlParams.get('error');
+      this.onUSAePayCallBackRetrieve(errorMessage);
+      reject(errorMessage);
+    }
+
+    browser.close();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

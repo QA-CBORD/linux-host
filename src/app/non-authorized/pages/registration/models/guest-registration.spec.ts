@@ -6,7 +6,7 @@ import { ContentStringModel } from '@shared/model/content-strings/content-string
 import { LookupFieldType } from '@core/model/institution/institution-lookup-field.model';
 
 export const registrationServiceMock = {
-  institition$: () => of({ id: '1' } as Institution),
+  institution$: () => of({ id: '1' } as Institution),
   callBackend: () => of({}),
   getStringModel$: () =>
     of({
@@ -46,7 +46,7 @@ describe('GuestRegistration', () => {
   });
 
   it('should get the institution id', () => {
-    const registerSpy = jest.spyOn(registrationServiceMock, 'institition$');
+    const registerSpy = jest.spyOn(registrationServiceMock, 'institution$');
     const data = {};
     guestRegistration.register(data).pipe(first()).subscribe();
     expect(registerSpy).toHaveBeenCalled();

@@ -70,7 +70,7 @@ export class PatronRegistration extends UserRegistrationBase implements UserRegi
       delete data[field.lookupFieldId];
     });
 
-    return this.backendService.institition$().pipe(
+    return this.backendService.institution$().pipe(
       switchMap(({ id: institutionId }) => {
         return this.backendService.callBackend(RegistrationApiMethods.register, {
           registrationInfo: {

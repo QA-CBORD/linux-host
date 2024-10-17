@@ -27,13 +27,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 let menuItem: MenuItemInfo = {
   id: '1',
   merchantId: '',
-  externalSystemRef: '',
   name: '',
   description: '',
-  minimumPrice: 0,
   price: 0,
-  externalSystemFields: '',
-  taxMask: 0,
   visible: false,
   active: false,
   deleted: false,
@@ -42,6 +38,7 @@ let menuItem: MenuItemInfo = {
   carbs: 0,
   protein: 0,
   imageReference: '',
+  displayCalories: '',
   menuItemOptions: [
     {
       menuGroup: {
@@ -84,7 +81,7 @@ let menuItem: MenuItemInfo = {
       active: false,
     },
   ],
-};
+} as MenuItemInfo;
 
 const environmentFacadeServiceMock = {
   getImageURL: jest.fn(() => 'mockedImageURL'),

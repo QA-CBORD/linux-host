@@ -12,10 +12,14 @@ describe('RegistrationSuccessComponent', () => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [RegistrationSuccessComponent],
-      providers: [{ provide: ModalController, useFactory: modalControllerStub }]
+      providers: [{ provide: ModalController, useFactory: modalControllerStub }],
     });
     fixture = TestBed.createComponent(RegistrationSuccessComponent);
     component = fixture.componentInstance;
+    component.pageContent = {
+      title: 'Test Title',
+      message: 'Test Message',
+    };
   });
 
   it('can load instance', () => {
@@ -24,10 +28,8 @@ describe('RegistrationSuccessComponent', () => {
 
   describe('dismiss', () => {
     it('makes expected calls', () => {
-      const modalControllerStub: ModalController = fixture.debugElement.injector.get(
-        ModalController
-      );
-     jest.spyOn(modalControllerStub, 'dismiss');
+      const modalControllerStub: ModalController = fixture.debugElement.injector.get(ModalController);
+      jest.spyOn(modalControllerStub, 'dismiss');
       component.dismiss();
       expect(modalControllerStub.dismiss).toHaveBeenCalled();
     });
@@ -35,9 +37,21 @@ describe('RegistrationSuccessComponent', () => {
 
   describe('onDecline', () => {
     it('makes expected calls', () => {
-     jest.spyOn(component, 'dismiss');
+      jest.spyOn(component, 'dismiss');
       component.onDecline();
       expect(component.dismiss).toHaveBeenCalled();
+    });
+  });
+
+  it('should initialize title$ and message$ with pageContent values', () => {
+    component.ngOnInit();
+
+    component.title$.subscribe(value => {
+      expect(value).toBe('Test Title');
+    });
+
+    component.message$.subscribe(value => {
+      expect(value).toBe('Test Message');
     });
   });
 });

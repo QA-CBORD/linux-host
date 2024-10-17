@@ -14,6 +14,7 @@ import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ConnectivityAwareFacadeService } from './connectivity-aware-facade.service';
 import { StartupPage } from './startup.page';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { of } from 'rxjs';
 
 describe('Application Startup Flow', () => {
   let component: StartupPage;
@@ -54,6 +55,7 @@ describe('Application Startup Flow', () => {
     };
     authFacadeService = {
       getAuthSessionToken$: jest.fn(),
+      isGuestUser: jest.fn().mockReturnValue(of(false)),
     };
     navigationService = {
       navigateAnonymous: jest.fn(),
@@ -245,4 +247,50 @@ describe('Application Startup Flow', () => {
       expect(authenticatePinSpy).toHaveBeenCalled();
     });
   });
+  it('should close spinner and remove element on view leave', () => {
+    const closeSpinner = jest.fn();
+    const remove = jest.fn();
+
+    loadingService.closeSpinner = closeSpinner;
+    component['elementRef'].nativeElement.remove = remove;
+
+    component.ionViewDidLeave();
+
+    expect(closeSpinner).toHaveBeenCalled();
+    expect(remove).toHaveBeenCalled();
+  });
+  it('should unlock vault if setup', async () => {
+    const unlockVaultIfLocked = jest.fn().mockResolvedValue({});
+
+    identityFacadeService.unlockVaultIfLocked = unlockVaultIfLocked;
+
+    await component.unlockVaultIfSetup();
+
+    expect(unlockVaultIfLocked).toHaveBeenCalled();
+  });
+  it('should handle app login state', async () => {
+    const navigateAnonymous = jest.fn();
+    const navigateToDashboard = jest.fn();
+
+    component.navigateAnonymous = navigateAnonymous;
+    component.navigateToDashboard = navigateToDashboard;
+
+    const routeConfig = { replaceUrl: true };
+
+    await component.handleAppLoginState(LoginState.SELECT_INSTITUTION);
+    expect(navigateAnonymous).toHaveBeenCalledWith(ANONYMOUS_ROUTES.entry, routeConfig);
+
+    await component.handleAppLoginState(LoginState.HOSTED);
+    expect(navigateAnonymous).toHaveBeenCalledWith(ANONYMOUS_ROUTES.login, routeConfig, false);
+
+    await component.handleAppLoginState(LoginState.EXTERNAL);
+    expect(navigateAnonymous).toHaveBeenCalledWith(ANONYMOUS_ROUTES.external, routeConfig, false);
+
+    await component.handleAppLoginState(LoginState.DONE);
+    expect(navigateToDashboard).toHaveBeenCalled();
+
+    await component.handleAppLoginState('unknown' as any);
+    expect(navigateAnonymous).toHaveBeenCalledWith(ANONYMOUS_ROUTES.entry, routeConfig);
+  });
+  
 });

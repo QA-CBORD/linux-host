@@ -233,7 +233,7 @@
         {{ phone.errors?.errorMsg }}
       </div>
     </div>
-
+    <div id="toast-anchor"></div> <!-- Toast anchor for the toast messages: DO NOT DELETE. -->
     <div class="order-details" *ngIf="showOrderNotesField">
       <st-textarea-floating-label
         [control]="detailsForm.get(controlsNames.note)"
@@ -249,7 +249,7 @@
     </div>
   </form>
 
-  <div class="order-details__buttons" id="toast-anchor">
+  <div class="order-details__buttons">
     <ng-content></ng-content>
   </div>
 </div>

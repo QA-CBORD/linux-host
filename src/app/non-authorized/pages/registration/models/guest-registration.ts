@@ -38,7 +38,7 @@ export class GuestRegistration extends UserRegistrationBase implements UserRegis
         },
       ],
     };
-    return this.backendService.institition$().pipe(
+    return this.backendService.institution$().pipe(
       switchMap(({ id: institutionId }) => {
         return this.backendService.callBackend(RegistrationApiMethods.register, {
           registrationInfo: {

@@ -14,8 +14,7 @@
     display: flex;
     justify-content: space-between;
     height: 96px;
-    box-shadow: 0 0 4px 0 #0000000a,
-    0 2px 14px 0 #0000001f;
+    box-shadow: 0 0 4px 0 #0000000a, 0 2px 14px 0 #0000001f;
     border-radius: 8px;
     margin: 8px 0;
     --padding-end: 0;
@@ -32,7 +31,6 @@
   }
 
   &__menu-item-title {
-
     @include font-nunito-heavy(14px);
   }
 
@@ -56,5 +54,11 @@
     height: 88px;
     width: 88px;
     object-fit: cover;
+  }
+
+  &__calories {
+    @include font-nunito-regular(14px);
+    color: var(--ion-color-medium);
+    margin-left: 12px;
   }
 }

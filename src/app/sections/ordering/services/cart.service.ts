@@ -435,7 +435,7 @@ export class CartService {
   updateOrderFromValidateResponse(updatedOrder: OrderInfo) {
     this._order = { ...updatedOrder, dueTime: this.cart.order?.dueTime };
     if (this.orderIsAsap || !this.cart.order.dueTime) {
-      this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder.dueTime };
+      this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: updatedOrder?.dueTime };
     }
   }
 
