@@ -22,4 +22,13 @@ export interface MenuItemInfo {
   barcode?: string;
   displayCalories: string;
   allergens?: string[];
+  nutritionInfo: NutritionInfoList;
 }
+
+export interface NutritionInfo {
+  label: string;
+  name: string;
+  displayValue: string;
+}
+
+export type NutritionInfoList = NutritionInfo[];

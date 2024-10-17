@@ -16,9 +16,9 @@
         <ion-card-content class="ion-no-padding">
           <ion-list>
             @for (item of nutritionData; track item.name) {
-            <ion-item [class.nutrition-info__subItem]="item.subItem" [class.nutrition-info__item]="!item.subItem">
-              <ion-label>{{ item.name }}</ion-label>
-              <ion-label color="dark" slot="end">{{ item.value }}</ion-label>
+            <ion-item class="nutrition-info__item">
+              <ion-label>{{ item.label }}</ion-label>
+              <ion-label color="dark" slot="end">{{ item.displayValue }}</ion-label>
             </ion-item>
             }
           </ion-list>
