@@ -75,7 +75,7 @@ export class CartService {
   }
 
   caloriesDisplay(calories?: string): string {
-    return calories && calories !== '0' ? `(${calories} cal)` : '';
+    return calories && calories !== '0' ? `${calories} cal` : '';
   }
 
   private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {
