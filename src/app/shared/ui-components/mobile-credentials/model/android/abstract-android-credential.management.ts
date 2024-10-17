@@ -98,8 +98,8 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   }
 
   protected async nfcIsOn(): Promise<boolean> {
-    const response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
-    return response.deviceState.nfcOn;
+    const { deviceState } = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
+    return deviceState?.nfcOn;
   }
 
   protected showLoading(): void {

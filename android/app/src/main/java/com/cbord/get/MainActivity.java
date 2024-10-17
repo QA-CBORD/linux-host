@@ -9,8 +9,14 @@ import com.cbord.get.plugins.ExtendedPushNotificationPlugin;
 import com.cbord.get.plugins.GooglePayPlugin;
 import com.cbord.get.plugins.HIDPlugin;
 import com.getcapacitor.BridgeActivity;
+import com.hid.origo.api.OrigoMobileKeysApi;
+import com.hid.origo.api.OrigoMobileKeysListener;
+import com.hid.origo.provisioning.data.response.OrigoProvisionResponse;
+import com.hid.origo.wallet.listener.OrigoWalletCardStatusListener;
 
-public class MainActivity extends BridgeActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends BridgeActivity implements OrigoMobileKeysListener, OrigoWalletCardStatusListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,6 +26,18 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(AndroidPermissionsPlugin.class);
         registerPlugin(AndroidPlugin.class);
         registerPlugin(ExtendedPushNotificationPlugin.class);
+        OrigoMobileKeysApi.getInstance().getMobileKeys().addListener(this);
+        OrigoMobileKeysApi.getInstance().getMobileKeys().addWalletCardStatusListener(this);
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onMobileKeysChanged(int i) {
+        System.out.println("onMobileKeysChanged - Main");
+    }
+
+    @Override
+    public void onWalletCardStatusChanged(ArrayList<OrigoProvisionResponse> arrayList) {
+        System.out.println("onWalletCardStatusChanged - Main");
     }
 }

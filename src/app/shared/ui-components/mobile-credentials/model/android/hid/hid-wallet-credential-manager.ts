@@ -17,6 +17,29 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
     duration: 5000,
     backdropDismiss: true,
   };
+
+  private errorMessages: { [key in HID_WALLET_SDK_ERR]: string } = {
+    [HID_WALLET_SDK_ERR.WALLET_ACCOUNT_NOT_AVAILABLE]: 'The wallet account is not available.',
+    [HID_WALLET_SDK_ERR.ADD_CARD_TO_WALLET_FAILED]: 'Failed to add card to wallet.',
+    [HID_WALLET_SDK_ERR.UNKNOWN_ERROR]: 'An unknown error occurred.',
+    [HID_WALLET_SDK_ERR.INVALID_APPLICATION_ID]: 'Invalid application ID.',
+    [HID_WALLET_SDK_ERR.INTERNAL_SERVER_ERROR]: 'Internal server error.',
+    [HID_WALLET_SDK_ERR.NETWORK_ERROR]: 'Network error occurred.',
+    [HID_WALLET_SDK_ERR.OS_NOT_COMPATIBLE]: 'Operating system is not compatible.',
+    [HID_WALLET_SDK_ERR.DEVICE_NOT_COMPATIBLE]: 'Device is not compatible.',
+    [HID_WALLET_SDK_ERR.TAP_AND_PAY_UNAVAILABLE]: 'Tap and pay is unavailable.',
+    [HID_WALLET_SDK_ERR.TAP_AND_PAY_NO_ACTIVE_WALLET]: 'No active wallet for tap and pay.',
+    [HID_WALLET_SDK_ERR.MULTIPLE_WALLET_NOT_SUPPORTED]: 'Multiple wallets are not supported.',
+    [HID_WALLET_SDK_ERR.WALLET_READY_TO_USE]: 'Wallet is ready to use.',
+    [HID_WALLET_SDK_ERR.PLAY_SERVICE_NOT_SUPPORTED]: 'Play services are not supported.',
+    [HID_WALLET_SDK_ERR.MULTIPLE_IDP_NOT_SUPPORTED_TEMPORARILY]: 'Multiple IDPs are temporarily not supported.',
+    [HID_WALLET_SDK_ERR.INVALID_INVITATION_CODE]: 'Invalid invitation code.',
+    [HID_WALLET_SDK_ERR.ISSUANCE_TOKEN_EXPIRED]: 'Issuance token has expired.',
+    [HID_WALLET_SDK_ERR.UNSUPPORTED_REQUEST]: 'Unsupported request.',
+    [HID_WALLET_SDK_ERR.INVALID_ISSUANCE_TOKEN]: 'Invalid issuance token.',
+    [HID_WALLET_SDK_ERR.ORIGO_ENVIRONMENT_MISMATCH_ERROR]: 'Environment mismatch error.',
+  };
+
   hidSdkErrorMessage: string;
   constructor(
     protected readonly modalCtrl: ModalController,
@@ -33,7 +56,7 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
   onUiIconClicked = () => Promise.reject();
 
   refresh = () => Promise.reject();
-  
+
   async onWillLogout(): Promise<void> {
     await super.onWillLogout();
   }
@@ -81,16 +104,11 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
   private async validateAndInstall(): Promise<void> {
     this.showLoading();
     const credential = await this.fetchFromServer$(true, true);
-    this.loadingService.closeSpinner();
     if (credential == null) {
       this.showInstallationErrorAlert();
       return;
     }
-    const deviceEndpointActive =                                           // Local state necessary?
-      (await this.getDeviceEndpointState(true)).isProvisioned() ||
-      (await this.getLocalCachedEndpointState(true)).isProvisioned() ||
-      (await this.getLocalCachedEndpointState(true)).isProcessing() ||
-      (await this.getLocalCachedEndpointState(true)).isRevoked();
+    const deviceEndpointActive = (await this.getDeviceEndpointState(true)).isProvisioned();
 
     if (deviceEndpointActive) {
       await this.showCredentialAlreadyInstalledAlert(credential);
@@ -136,7 +154,6 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
     if (state.deletionPermissionGranted()) {
       await actualOnAcceptHandler();
     } else {
-      await this.loadingService.closeSpinner();
       const alert = await this.createAlertDialog(header, message, [
         { text: string$.cancel, role: 'cancel' },
         {
@@ -178,9 +195,7 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
         })
       )
     );
-  };
-
-
+  }
 
   private async showCredentialAlreadyInstalledAlert(credential: AndroidCredential<any>): Promise<void> {
     // notify user he needs to uninstall from previous device first.
@@ -188,7 +203,6 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
     const header = string$.title;
     const message = string$.mContent;
     const state = await this.getLocalCachedEndpointState();
-    await this.loadingService.closeSpinner();
     if (state.deletionPermissionGranted()) {
       await this.onProvisioningAcceptedHandler(credential);
     } else {
@@ -207,21 +221,19 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
   }
 
   private async onProvisioningAcceptedHandler(credential: AndroidCredential<any>): Promise<void> {
-    await this.credentialService.updateCachedCredential$(EndpointStatuses.DELETE_CONFIRMED)
+    await this.credentialService.updateCachedCredential$(EndpointStatuses.DELETE_CONFIRMED);
     await this.deleteCredentialFromServer$();
     await this.credentialService.getEndpointStateFromLocalCache(true);
     await this.deleteCredentialFromDevice$();
-    console.log('onProvisioningAcceptedHandler ', credential.isAvailable(),credential.isProvisioned() );
     if (credential.isAvailable()) {
       await this.showTermsAndConditions();
     } else if (credential.isProvisioned()) {
-      await this.showCredentialAlreadyProvisionedAlert(this.handleDelete);
+      await this.showCredentialAlreadyProvisionedAlert(this.handleDeleteCredential);
     }
-  };
-  
-  private async handleDelete()  {
-    const deleteSuccessfull = await this.deleteCredentialFromServer$();
+  }
 
+  private async handleDeleteCredential() {
+    const deleteSuccessfull = await this.deleteCredentialFromServer$();
     if (deleteSuccessfull) {
       if (await this.checkCredentialAvailability()) {
         await this.showTermsAndConditions();
@@ -241,22 +253,18 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
         this.installCredentialOnDevice();
       })
       .catch(() => {
-        this.loadingService.closeSpinner();
         this.showInstallationErrorAlert();
       })
       .finally(async () => await this.loadingService.closeSpinner());
   }
 
   private async installCredentialOnDevice(): Promise<void> {
-    console.log('installCredentialOnDevice');
     const credentialDeviceInstallSuccess = await this.doNativeInstall$();
-    console.log('installCredentialOnDevice ', credentialDeviceInstallSuccess);
     if (credentialDeviceInstallSuccess) {
       this.mCredential.setStatus(MobileCredentialStatuses.PROVISIONED); // You want to show to user that it processing, HID normally takes a while to be active.
       const credentialServerUpdateSuccess = await this.updateCredentialOnServer$();
-      console.log('credentialServerUpdateSuccess ', credentialServerUpdateSuccess);
       if (credentialServerUpdateSuccess) {
-        delete (<HidCredentialBundle> this.mCredential.credentialBundle).invitationCode;
+        delete (<HidCredentialBundle>this.mCredential.credentialBundle).invitationCode;
         this.onCredentialStateChanged();
       } else {
         this.showInstallationErrorAlert();
@@ -265,14 +273,12 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
     } else {
       if (this.hidSdkErrorMessage === HID_WALLET_SDK_ERR.INVALID_ISSUANCE_TOKEN) {
         delete this.mCredential.credentialBundle;
-        await this.showInstallationErrorAlert();
       } else if (this.hidSdkErrorMessage === HID_WALLET_SDK_ERR.ADD_CARD_TO_WALLET_FAILED) {
         await this.deleteCredentialFromServer$();
-        await this.showInstallationErrorAlert("Add to card failed");
       }
+      await this.showInstallationErrorAlert(this.errorMessages[this.hidSdkErrorMessage] || HID_WALLET_SDK_ERR.UNKNOWN_ERROR);
       this.hidSdkErrorMessage = null;
     }
-    this.loadingService.closeSpinner();
   }
 
   private deleteCredentialFromDevice$ = async (): Promise<boolean> => {
