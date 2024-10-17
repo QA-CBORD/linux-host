@@ -143,6 +143,7 @@ const cartServiceMock = {
   saveOrderToSnapshot: jest.fn(),
   setOrderToSnapshot: jest.fn(),
   resetSnapshot: jest.fn(),
+  caloriesDisplay: jest.fn(),
 };
 
 const popoverControllerMock = {
