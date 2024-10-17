@@ -264,7 +264,7 @@ export class HIDWalletCredentialManager extends HIDCredentialManager {
       this.mCredential.setStatus(MobileCredentialStatuses.PROVISIONED); // You want to show to user that it processing, HID normally takes a while to be active.
       const credentialServerUpdateSuccess = await this.updateCredentialOnServer$();
       if (credentialServerUpdateSuccess) {
-        delete (<HidCredentialBundle>this.mCredential.credentialBundle).invitationCode;
+        delete (<HidCredentialBundle> this.mCredential.credentialBundle).invitationCode;
         this.onCredentialStateChanged();
       } else {
         this.showInstallationErrorAlert();
