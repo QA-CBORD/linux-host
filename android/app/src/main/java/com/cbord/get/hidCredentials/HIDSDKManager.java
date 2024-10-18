@@ -226,7 +226,7 @@ public class HIDSDKManager {
         }
     }
 
-    private class HIDEndpointSetupCallback implements OrigoEndPointSetupCallback, OrigoWalletSetupCallback, OrigoWalletHealthCallback, OrigoWalletCardStatusListener, OrigoMobileKeysListener, CreatePassRequestListener {
+    private class HIDEndpointSetupCallback implements OrigoEndPointSetupCallback, OrigoWalletSetupCallback, OrigoWalletCardStatusListener, OrigoMobileKeysListener, CreatePassRequestListener {
 
         private final TransactionCompleteCallback transactionCompleteListener;
 
@@ -238,7 +238,14 @@ public class HIDSDKManager {
 
         @Override
         public void onWalletSetupReady() {
-            mobileKeys.walletHealthCheck(this);
+                mobileKeys.walletHealthCheck((err, s) -> {
+                System.out.println("status: "+ err.getStatus());
+                if (err.getStatus().equals(OrigoProvisioning.SetupStatus.WALLET_READY_TO_USE)) {
+                    mobileKeys.setupGoogleWallet(this);
+                } else {
+                    transactionCompleteListener.onCompleted(err.getStatus());
+                }
+            });
         }
 
         @Override
@@ -270,18 +277,6 @@ public class HIDSDKManager {
             System.out.println("onWalletProvisionFailed: " + origoEndpointSetupErrorResponse.getStatus());
             transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.getStatus());
        }
-
-        @Override
-        public void c(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse, @Nullable String s) {
-
-            System.out.println("status: "+ origoEndpointSetupErrorResponse.getStatus());
-            if (origoEndpointSetupErrorResponse.getStatus().equals(OrigoProvisioning.SetupStatus.WALLET_READY_TO_USE)) {
-                mobileKeys.setupGoogleWallet(this);
-                System.out.println("setupGoogleWallet: " + s);
-            } else {
-                transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.getStatus());
-            }
-        }
 
         @Override
         public void onWalletCardStatusChanged(ArrayList<OrigoProvisionResponse> arrayList) {
