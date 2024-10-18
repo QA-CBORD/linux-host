@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController } from '@ionic/angular';
-import { Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { catchError, finalize, first, map } from 'rxjs/operators';
 import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
 import { MobileCredential } from '../shared/mobile-credential';
@@ -9,7 +9,8 @@ import { CredentialStateChangeListener, MobileCredentialManager } from '../share
 import { AndroidCredential } from './android-credential.model';
 import { registerPlugin } from '@capacitor/core';
 import { AndroidCredentialCsModel, NfcDialogCs } from './android-credential-content-strings.model';
-const  MobileCredentialStatusPlugin  = registerPlugin<any>('MobileCredentialStatusPlugin');
+import { HIDPlugginProxy } from './hid/hid-plugin.proxy';
+const MobileCredentialStatusPlugin = registerPlugin<any>('MobileCredentialStatusPlugin');
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
   protected defaultIsLoadingMessage = 'Processing ... Please wait';
@@ -23,8 +24,8 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   constructor(
     protected readonly loadingService: LoadingService,
     protected readonly credentialSrvc: AndroidCredentialDataService,
-    protected readonly alertCtrl: AlertController
-  ) {}
+    protected readonly alertCtrl: AlertController,
+  ) { }
 
   onUiIconClicked(): void {
     throw new Error('Method not implemented.');
@@ -71,8 +72,8 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   }
 
   protected async showInstallationErrorAlert(errorDetail: string = null): Promise<void> {
-    const string$ = (await this.contentStringAsync()).installErorDialogString$;
-
+    const str = await this.contentStringAsync();
+    const string$ = str.installErrorDialogString$;
     const header = string$.title;
     const message = string$.mContent;
     const buttons = [{ text: string$.ok, role: 'cancel' }];
@@ -97,8 +98,8 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   }
 
   protected async nfcIsOn(): Promise<boolean> {
-    const response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
-    return response.deviceState.nfcOn;
+    const { deviceState } = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
+    return deviceState?.nfcOn;
   }
 
   protected showLoading(): void {
@@ -116,7 +117,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     if (shouldShowLoadingIndicator) {
       this.showLoading();
     }
-    return await this.credentialSrvc
+    return await firstValueFrom(this.credentialSrvc
       .activePasses$()
       .pipe(
         first(),
@@ -130,8 +131,11 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
             this.loadingService.closeSpinner();
           }
         })
-      )
-      .toPromise();
+      ))
+  }
+
+  protected hidSdkManager(): HIDPlugginProxy {
+    return HIDPlugginProxy.getInstance();
   }
 
   getCredential(): MobileCredential {

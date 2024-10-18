@@ -23,7 +23,7 @@ public class GooglePayPlugin extends Plugin {
 
     private TapAndPayClient tapAndPayClient;
     private final int REQUEST_CREATE_WALLET = 4;
-    private static final String HID_SDK_TRANSACTION_RESULT = "transactionStatus";
+    private static final String TRANSACTION_RESULT = "transactionStatus";
     private final int TAP_AND_PAY_NO_ACTIVE_WALLET = 15002;
     private final String APP_RESUME_EVENT = "appResumed";
     private final String DIGITIZATION_REFERENCE_URI = "uri";
@@ -34,7 +34,7 @@ public class GooglePayPlugin extends Plugin {
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPay.getClient(getActivity().getApplicationContext());
-        call.resolve(HIDToJson("success"));
+        call.resolve(resultToJson("success"));
     }
 
     @PluginMethod()
@@ -65,7 +65,6 @@ public class GooglePayPlugin extends Plugin {
            call.reject(EXCEPTION_MESSAGE);
        }
     }
-
 
     @Override
     protected void handleOnResume() {
@@ -98,9 +97,9 @@ public class GooglePayPlugin extends Plugin {
         return error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET;
     }
 
-    private JSObject HIDToJson(Object transactionResult){
+    private JSObject resultToJson(Object transactionResult){
         JSObject jsonObject = new JSObject();
-        jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
+        jsonObject.put(TRANSACTION_RESULT, transactionResult);
         return jsonObject;
     }
 }

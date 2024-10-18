@@ -123,7 +123,7 @@
   
   &__calories {
     @include font-nunito-regular(14px);
-    color: var(--ion-color-medium);
+    color: $color-matterhorn;
     margin-left: 12px;
   }
 }

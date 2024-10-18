@@ -7,6 +7,7 @@ export interface MobileCredentialState {
   getStatusMsg(): string;
   isProvisioned(): boolean;
   isEnabled(): boolean;
+  isCreated?(): boolean;
   isAvailable(): boolean;
   getIssuer(): string;
   getConfig(): MobileCredentialConfig;
@@ -18,6 +19,7 @@ export interface MobileCredentialState {
 
 export enum MobileCredentialStatuses{
   AVAILABLE = 1,
+  CREATED = 3,
   PROVISIONED = 20,
   DISABLED = 0,
   REVOKED = 5, // only know by this app, only HID gets to that state so far.

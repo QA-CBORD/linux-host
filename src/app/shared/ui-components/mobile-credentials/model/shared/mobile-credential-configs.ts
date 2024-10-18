@@ -8,8 +8,19 @@ export const MOBILE_CREDENTIAL_CONFIGS = {
       WHEN_REVOKED: '',
       WHEN_PROCESSING: ''
     },
-    uiImageUrl: '/assets/icon/mobile_credential_google_pay.png',
+    uiImageUrl: '/assets/icon/mobile_credential_btn.png',
     uiHelpIcon: '/assets/icon/mobile_credentila_quest_mark.png',
+  },
+  HID_WALLET: {
+    UI_MSG: {
+      WHEN_AVAILABLE: '',
+      WHEN_PROVISIONED: '',
+      WHEN_SUSPENDED: '',
+      WHEN_REVOKED: '',
+      WHEN_PROCESSING: ''
+    },
+    uiImageUrl: '/assets/icon/mobile_credential_google_pay.png',
+    uiHelpIcon: '',
   },
   ALLEGION: {
     UI_MSG: {

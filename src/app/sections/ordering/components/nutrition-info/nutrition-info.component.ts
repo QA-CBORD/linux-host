@@ -14,7 +14,7 @@ import {
   IonItemDivider,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
-import { MenuItemInfo } from '@sections/ordering/shared/models';
+import { MenuItemInfo, NutritionInfoList } from '@sections/ordering/shared/models';
 
 @Component({
   selector: 'st-nutrition-info',
@@ -40,7 +40,7 @@ import { MenuItemInfo } from '@sections/ordering/shared/models';
   styleUrl: './nutrition-info.component.scss',
 })
 export class NutritionInfoComponent {
-  nutritionData: { name: string; value: string; subItem?: boolean }[] = [];
+  nutritionData: NutritionInfoList = [];
   allergens = '';
   hasNutritionInfo = false;
 
@@ -51,33 +51,8 @@ export class NutritionInfoComponent {
     if (!menuItem) {
       return;
     }
-    this.buildNutritionData(menuItem);
+    this.nutritionData = menuItem.nutritionInfo;
     this.allergens = menuItem.allergens?.join(', ').trim() ?? '';
     this.hasNutritionInfo = !!this.allergens || this.nutritionData.length > 0;
-  }
-
-  private buildNutritionData(menuItem: MenuItemInfo) {
-    type NutritionField = {
-      key: keyof MenuItemInfo;
-      label: string;
-      unit: string;
-    };
-
-    const nutritionFields: NutritionField[] = [
-      { key: 'protein', label: 'Protein', unit: 'g' },
-      { key: 'calories', label: 'Calories', unit: '' },
-      { key: 'carbs', label: 'Total Carbohydrates', unit: 'g' },
-      { key: 'cholesterol', label: 'Cholesterol', unit: 'mg' },
-      { key: 'sodium', label: 'Sodium', unit: 'mg' },
-      { key: 'sugar', label: 'Sugar', unit: 'g' },
-      { key: 'dietaryFiber', label: 'Dietary Fiber', unit: 'g' },
-    ];
-
-    this.nutritionData = nutritionFields
-      .filter(field => menuItem[field.key])
-      .map(field => ({
-        name: field.label,
-        value: `${menuItem[field.key]}${field.unit}`,
-      }));
   }
 }

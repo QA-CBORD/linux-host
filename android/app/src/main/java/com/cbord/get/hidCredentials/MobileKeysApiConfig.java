@@ -1,4 +1,4 @@
-package com.cbord.get.mcredentials;
+package com.cbord.get.hidCredentials;
 
 import android.app.Application;
 import com.cbord.get.BuildConfig;
