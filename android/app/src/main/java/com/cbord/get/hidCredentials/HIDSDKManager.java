@@ -1,26 +1,36 @@
-package com.cbord.get.mcredentials;
+package com.cbord.get.hidCredentials;
 
 import android.Manifest;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import com.hid.origo.api.OrigoMobileKey;
 import com.hid.origo.api.OrigoMobileKeys;
 import com.hid.origo.api.OrigoMobileKeysApi;
 import com.hid.origo.api.OrigoMobileKeysException;
+import com.hid.origo.api.OrigoMobileKeysListener;
 import com.hid.origo.api.OrigoMobileKeysProgressCallback;
 import com.hid.origo.api.OrigoProgressEvent;
 import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.logger.OrigoLogger;
+import com.hid.origo.provisioning.OrigoProvisioning;
 import com.hid.origo.provisioning.data.response.OrigoEndpointSetupErrorResponse;
 import com.hid.origo.provisioning.data.response.OrigoProvisionResponse;
+import com.hid.origo.sso.listener.CreatePassRequestListener;
+import com.hid.origo.sso.response.CreatePassResponse;
 import com.hid.origo.wallet.listener.OrigoEndPointSetupCallback;
+import com.hid.origo.wallet.listener.OrigoWalletCardStatusListener;
+import com.hid.origo.wallet.listener.OrigoWalletHealthCallback;
 import com.hid.origo.wallet.listener.OrigoWalletSetupCallback;
 
 import org.slf4j.Logger;
+
+import java.util.ArrayList;
 
 
 public class HIDSDKManager {
@@ -96,6 +106,10 @@ public class HIDSDKManager {
         } else {
             transactionCompleteListener.onCompleted(NO_KEY_INSTALLED);
         }
+    }
+
+    public boolean hasWalletCards() {
+        return mobileKeys == null ? false : mobileKeys.listActiveGoogleWalletCards().size() > 0;
     }
 
     public boolean isEndpointActive() {
@@ -212,46 +226,82 @@ public class HIDSDKManager {
         }
     }
 
-    private class HIDEndpointSetupCallback implements OrigoEndPointSetupCallback, OrigoWalletSetupCallback {
+    private class HIDEndpointSetupCallback implements OrigoEndPointSetupCallback, OrigoWalletSetupCallback, OrigoWalletHealthCallback, OrigoWalletCardStatusListener, OrigoMobileKeysListener, CreatePassRequestListener {
 
         private final TransactionCompleteCallback transactionCompleteListener;
 
         public HIDEndpointSetupCallback(TransactionCompleteCallback callback) {
             this.transactionCompleteListener = callback;
+            mobileKeys.addListener(this);
+            mobileKeys.addWalletCardStatusListener(this);
         }
 
         @Override
         public void onWalletSetupReady() {
-            mobileKeys.setupGoogleWallet(this);
+            mobileKeys.walletHealthCheck(this);
         }
 
         @Override
         public void onRedeemSetupFailed(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
-            LOGGER.error("onRedeemSetupFailed: " + origoEndpointSetupErrorResponse.getStatus());
-            transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.toString());
+            transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.getStatus());
+            System.out.println("onRedeemSetupFailed: " + origoEndpointSetupErrorResponse.getStatus());
         }
 
         @Override
         public void handleMobileKeysTransactionCompleted() {
             transactionCompleteListener.onCompleted(TRANSACTION_SUCCESS);
+            System.out.println("handleMobileKeysTransactionCompleted: ");
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-            LOGGER.error("handleMobileKeysTransactionFailed: " + e.getCauseMessage());
             transactionCompleteListener.onCompleted(e.getErrorCode().toString());
+            System.out.println("handleMobileKeysTransactionFailed: " + e);
         }
 
         @Override
-        public void onWalletProvisionSuccess(@NonNull OrigoProvisionResponse origoProvisionResponse) {
-            LOGGER.debug("Success on onWalletProvisionSuccess: " + origoProvisionResponse.getCardStatus());
+        public void onWalletProvisionSuccess(OrigoProvisionResponse provisionData) {
+            System.out.println("onWalletProvisionSuccess: " + provisionData.getCardStatus());
+            transactionCompleteListener.onCompleted(TRANSACTION_SUCCESS);
         }
 
         @Override
-        public void onWalletProvisionFailed(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
-            LOGGER.error("Success on onWalletProvisionFailed: " + origoEndpointSetupErrorResponse.getStatus());
+        public void onWalletProvisionFailed(OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse) {
+            System.out.println("onWalletProvisionFailed: " + origoEndpointSetupErrorResponse.getStatus());
+            transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.getStatus());
+       }
+
+        @Override
+        public void c(@NonNull OrigoEndpointSetupErrorResponse origoEndpointSetupErrorResponse, @Nullable String s) {
+
+            System.out.println("status: "+ origoEndpointSetupErrorResponse.getStatus());
+            if (origoEndpointSetupErrorResponse.getStatus().equals(OrigoProvisioning.SetupStatus.WALLET_READY_TO_USE)) {
+                mobileKeys.setupGoogleWallet(this);
+                System.out.println("setupGoogleWallet: " + s);
+            } else {
+                transactionCompleteListener.onCompleted(origoEndpointSetupErrorResponse.getStatus());
+            }
+        }
+
+        @Override
+        public void onWalletCardStatusChanged(ArrayList<OrigoProvisionResponse> arrayList) {
+            System.out.println("onWalletCardStatusChanged: ");
+        }
+
+        @Override
+        public void onMobileKeysChanged(int i) {
+            System.out.println("onMobileKeysChanged: ");
+        }
+
+        @Override
+        public void onCreatePassSuccess(@NonNull String s) {
+            System.out.println("onCreatePassSuccess: ");
+        }
+
+        @Override
+        public void onCreatePassFailed(@NonNull CreatePassResponse createPassResponse) {
+            System.out.println("onCreatePassFailed: ");
         }
     }
-
 }
 

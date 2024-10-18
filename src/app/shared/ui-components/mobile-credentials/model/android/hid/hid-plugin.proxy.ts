@@ -62,8 +62,31 @@ export enum HID_SDK_ERR {
   TRANSACTION_SUCCESS = 'success',
   TRANSACTION_FAILED = 'failed',
   LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED',
-  TRANSACTION_FAILED_INVALID_KEY= 'invalid key'
+  TRANSACTION_FAILED_INVALID_KEY= 'invalid key',
 }
+
+export enum HID_WALLET_SDK_ERR {
+  WALLET_ACCOUNT_NOT_AVAILABLE = "WALLET_ACCOUNT_NOT_AVAILABLE",
+  ADD_CARD_TO_WALLET_FAILED = "ADD_CARD_TO_WALLET_FAILED",
+  UNKNOWN_ERROR = "UNKNOWN_ERROR",
+  INVALID_APPLICATION_ID = "INVALID_APPLICATION_ID",
+  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+  NETWORK_ERROR = "NETWORK_ERROR",
+  OS_NOT_COMPATIBLE = "OS_NOT_COMPATIBLE",
+  DEVICE_NOT_COMPATIBLE = "DEVICE_NOT_COMPATIBLE",
+  TAP_AND_PAY_UNAVAILABLE = "TAP_AND_PAY_UNAVAILABLE",
+  TAP_AND_PAY_NO_ACTIVE_WALLET = "TAP_AND_PAY_NO_ACTIVE_WALLET",
+  MULTIPLE_WALLET_NOT_SUPPORTED = "MULTIPLE_WALLET_NOT_SUPPORTED",
+  WALLET_READY_TO_USE = "WALLET_READY_TO_USE",
+  PLAY_SERVICE_NOT_SUPPORTED = "PLAY_SERVICE_NOT_SUPPORTED",
+  MULTIPLE_IDP_NOT_SUPPORTED_TEMPORARILY = "MULTIPLE_IDP_NOT_SUPPORTED_TEMPORARILY",
+  INVALID_INVITATION_CODE = "INVALID_INVITATION_CODE",
+  ISSUANCE_TOKEN_EXPIRED = "ISSUANCE_TOKEN_EXPIRED",
+  UNSUPPORTED_REQUEST = "UNSUPPORTED_REQUEST",
+  INVALID_ISSUANCE_TOKEN = "INVALID_ISSUANCE_TOKEN",
+  ORIGO_ENVIRONMENT_MISMATCH_ERROR = "ORIGO_ENVIRONMENT_MISMATCH_ERROR"
+}
+
 
 class TaskExecutor {
   private intervalId: any;
@@ -106,16 +129,19 @@ export class HIDPlugginProxy {
     return initializationStatus == HID_SDK_ERR.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
   }
 
-  async endpointStatus(): Promise<EndpointStatuses> {
-    if (await this.isEndpointSetup$()) {
-      if (await this.isEndpointActive()) {
-        return EndpointStatuses.PROVISIONED_ACTIVE;
-      } else {
-        return EndpointStatuses.PROVISIONED_INACTIVE;
-      }
-    } else {
+  async endpointStatus(isGoogleWallet = false): Promise<EndpointStatuses> {
+    const isSetup = await this.isEndpointSetup$();
+    if (!isSetup) {
       return EndpointStatuses.NOT_SETUP;
     }
+
+    if (isGoogleWallet) {
+      const hasCards = await this.hasWalletCards();
+      return hasCards ? EndpointStatuses.PROVISIONED_ACTIVE : EndpointStatuses.NOT_SETUP;
+    }
+
+    const isActive = await this.isEndpointActive();
+    return isActive ? EndpointStatuses.PROVISIONED_ACTIVE : EndpointStatuses.PROVISIONED_INACTIVE;
   }
 
   async setupEndpoint(params): Promise<boolean> {
@@ -142,9 +168,18 @@ export class HIDPlugginProxy {
     }
   }
 
+  async hasWalletCards(): Promise<boolean> {
+    return await this.executeCall<boolean>(HIDPlugin.hasWalletCards);
+  }
+
   private async executeCall<T>(pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<T> {
-    const transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
-    return transactionResponse.transactionStatus;
+    try {
+      const transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
+      return transactionResponse.transactionStatus;
+    } catch (error) {
+      console.error("Error calling HID plugin", error);
+      return Promise.reject(HID_SDK_ERR.TRANSACTION_FAILED);
+    }
   }
 
   async refreshEndpoint(): Promise<boolean> {

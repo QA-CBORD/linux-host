@@ -193,7 +193,7 @@ export class AndroidCredentialCsModel extends ContentStringModel {
     return this.alreadyInstallDialog;
   }
 
-  get installErorDialogString$(): InstallErrorDialog {
+  get installErrorDialogString$(): InstallErrorDialog {
     return this.installErrorAlert;
   }
 

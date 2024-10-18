@@ -12,10 +12,11 @@ import {
   MobileCredentialManager,
 } from '../model/shared/mobile-credential-manager';
 import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
-import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { registerPlugin } from '@capacitor/core';
+import { HIDWalletCredentialManager } from '../model/android/hid/hid-wallet-credential-manager';
+import { HIDSeosCredentialManager } from '../model/android/hid/hid-seos-credential-manager';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const  MobileCredentialStatusPlugin  = registerPlugin<any>('MobileCredentialStatusPlugin');
 
@@ -113,7 +114,8 @@ export class MobileCredentialFacade {
   showCredentialMetadata(): Observable<boolean> {
     return of(
       this.mobileCredentialManager &&
-        (this.mobileCredentialManager instanceof HIDCredentialManager ||
+        (this.mobileCredentialManager instanceof HIDSeosCredentialManager ||
+          this.mobileCredentialManager instanceof HIDWalletCredentialManager ||
           this.mobileCredentialManager instanceof GooglePayCredentialManager)
     );
   }

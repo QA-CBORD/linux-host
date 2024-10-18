@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
-import { HIDCredentialManager } from '@shared/ui-components/mobile-credentials/model/android/hid/hid-credential-manager';
+import { HIDSeosCredentialManager } from '@shared/ui-components/mobile-credentials/model/android/hid/hid-seos-credential-manager';
+import { HIDWalletCredentialManager } from '@shared/ui-components/mobile-credentials/model/android/hid/hid-wallet-credential-manager';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 
 @Component({
@@ -24,7 +25,7 @@ export class MobileCredentialMetadata implements OnInit {
   ngOnInit(): void {
     (async () => {
       this.deviceState = await this.mobileCredentialFacade.deviceState$;
-      this.isHid = this.mobileCredentialFacade.credentialController instanceof HIDCredentialManager;
+      this.isHid = this.mobileCredentialFacade.credentialController instanceof HIDSeosCredentialManager || this.mobileCredentialFacade.credentialController instanceof HIDWalletCredentialManager;
     })();
   }
 
