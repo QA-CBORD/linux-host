@@ -1,23 +1,24 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { NUM_DSCRPTN_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
-import { SentryLoggingHandlerService } from '@core/utils/sentry-logging-handler.service';
 import { Injectable, inject } from '@angular/core';
+import { ConnectionService } from '@shared/index';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Injectable()
 export class ServerError implements HttpInterceptor {
-  private readonly sentryLoggingService = inject(SentryLoggingHandlerService);
-
+  private readonly loadingService: LoadingService = inject(LoadingService);
+  private readonly conectionService = inject(ConnectionService);
   constructor(private readonly toastService: ToastService) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
-      tap(
+      tap({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: HttpEvent<any>) => {
+        next: (res: HttpEvent<any>) => {
           if (
             res instanceof HttpResponse &&
             res.body instanceof Object &&
@@ -32,12 +33,26 @@ export class ServerError implements HttpInterceptor {
             this.handleServerException(req.body.method, res.body.exception);
           }
         },
-        async ({ message, status }: HttpErrorResponse) => {
+        error: async ({ message, status }: HttpErrorResponse) => {
           if (status === 404) await this.presentToast('Page was not found');
-          return throwError(message);
+          return throwError(() => new Error(message));
+        },
+      }),
+      catchError(({ message, status }: HttpErrorResponse) => {
+        if (this.conectionService.isConnectionIssues({ message, status })) {
+          this.loadingService.closeSpinner();
+          this.connectionToast();
+          return throwError(() => new Error(`Due to connection issues, ${message}`));
         }
-      )
+        return throwError(() => new Error(message));
+      })
     );
+  }
+
+  private async connectionToast(): Promise<void> {
+    await this.toastService.showToast({
+      message: 'Please check your internet connection and try again.',
+    });
   }
 
   private async presentToast(message: string): Promise<void> {
