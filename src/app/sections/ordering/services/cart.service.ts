@@ -23,6 +23,7 @@ import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from '
 import {
   ItemsOrderInfo,
   MenuInfo,
+  MenuItemInfo,
   MerchantInfo,
   MerchantOrderTypesInfo,
   OrderInfo,
@@ -74,8 +75,9 @@ export class CartService {
     });
   }
 
-  caloriesDisplay(calories?: string): string {
-    return calories && calories !== '0' ? `${calories} cal` : '';
+  caloriesDisplay(menuItem?: MenuItemInfo): string {
+    const {displayValue} = menuItem.nutritionInfo.find(({ name }) => name === 'calories') || {};
+    return displayValue && displayValue !== '0' ? `${displayValue} cal` : '';
   }
 
   private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {

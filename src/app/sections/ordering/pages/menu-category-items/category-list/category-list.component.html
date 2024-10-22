@@ -12,7 +12,7 @@
         <div class="category-list__menu-item-description">{{ menuItem.menuItem.description }}</div>
         <div class="category-list__menu-item-price" role="contentinfo">
           {{ menuItem.menuItem.price | priceUnitsResolver : mealBased : ignoreZeros }}
-          <span class="category-list__calories">{{ displaCalories(menuItem.menuItem.displayCalories) }}</span>
+          <span class="category-list__calories">{{ getCaloriesDisplay(menuItem.menuItem) }}</span>
         </div>
       </div>
       <img

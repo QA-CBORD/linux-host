@@ -29,7 +29,7 @@
     <span class="order-detail__descriptions-price">{{
       menuItem?.price | priceUnitsResolver : (menuInfo$ | async)?.mealBased : ignoreZeros
     }}</span>
-    <span class="order-detail__calories">{{ caloriesDisplay(menuItem?.displayCalories) }}</span>
+    <span class="order-detail__calories">{{ caloriesDisplay(menuItem) }}</span>
   </div>
   <form *ngIf="itemOrderForm" [formGroup]="itemOrderForm" novalidate>
     <ng-container *ngFor="let menuGroupItem of menuItem?.menuItemOptions">
