@@ -14,7 +14,6 @@ import { StActivateLocationItemModule } from '@shared/ui-components/st-activate-
 import { LocationsResolverGuard } from './resolvers/locations.resolver.guard';
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
 import { MetersToMilesPipeModule } from '@shared/pipes/meters-to-miles-pipe/meters-to-miles-pipe.module';
-import { TruncatePipeModule } from '@shared/pipes/truncate-pipe/truncate-pipe.module';
 import { StCountdownModule } from '@shared/ui-components/st-countdown/st-countdown.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
@@ -29,13 +28,13 @@ const imports = [
   MobileAccessRoutingModule,
   StopPropagationModule,
   MetersToMilesPipeModule,
-  TruncatePipeModule,
   StCountdownModule,
   StPopoverLayoutModule,
   StHeaderModule,
   StSpinnerModule,
   StActivateLocationItemModule,
-  StButtonModule, TranslateModule
+  StButtonModule,
+  TranslateModule,
 ];
 
 const declarations = [
