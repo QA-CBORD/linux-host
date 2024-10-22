@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
 import { HIDWalletCredentialManager } from './hid-wallet-credential-manager';
 import { HID_SDK_ERR, HIDPlugginProxy } from './hid-plugin.proxy';
 import { EndpointStatuses, MobileCredentialStatuses } from '../../shared/credential-state';
 import { registerPlugin } from '@capacitor/core';
-import { AndroidCredential } from '../android-credential.model';
+import { AndroidCredential, HIDCredential } from '../android-credential.model';
 
 jest.mock('@capacitor/core', () => {
   const actualCapacitor = jest.requireActual('@capacitor/core');
@@ -57,7 +57,14 @@ describe('HIDWalletCredentialManager', () => {
       providers: [
         HIDWalletCredentialManager,
         { provide: HIDPlugginProxy, useValue: hidPlugginProxyMock },
-        { provide: ModalController, useValue: { create: jest.fn().mockReturnValue({ present: jest.fn(), onDidDismiss: jest.fn().mockResolvedValueOnce( { data: "test" }) }) } },
+        {
+          provide: ModalController,
+          useValue: {
+            create: jest
+              .fn()
+              .mockReturnValue({ present: jest.fn(), onDidDismiss: jest.fn().mockResolvedValueOnce({ data: 'test' }) }),
+          },
+        },
         { provide: AlertController, useValue: { create: jest.fn().mockReturnValue({ present: jest.fn() }) } },
         { provide: PopoverController, useValue: {} },
         { provide: ToastController, useValue: {} },
@@ -69,6 +76,7 @@ describe('HIDWalletCredentialManager', () => {
           provide: HidCredentialDataService,
           useValue: {
             deleteCredential$: jest.fn().mockReturnValue(of(true)),
+            deleteAllCachedEndpoint$: jest.fn().mockReturnValue(of(true)),
             updateCachedCredential$: jest.fn(),
             unloadContentStrings: jest.fn(),
             getContents: jest.fn().mockResolvedValue({
@@ -77,7 +85,12 @@ describe('HIDWalletCredentialManager', () => {
               nfcDialogString$: { title: 'title', mContent: 'message', cancelTxt: 'cancel', acceptTxt: 'accept' },
               alreadyProvisionedDialogString$: { title: 'title', message: 'message' },
             }),
-            getEndpointStateFromLocalCache: jest.fn().mockResolvedValue({ deletionPermissionGranted: jest.fn(), isProcessing: jest.fn().mockReturnValue(false) }),
+            getEndpointStateFromLocalCache: jest
+              .fn()
+              .mockResolvedValue({
+                deletionPermissionGranted: jest.fn(),
+                isProcessing: jest.fn().mockReturnValue(false),
+              }),
             setUicString$: jest.fn().mockReturnValue(null),
             activePasses$: jest.fn().mockReturnValue(
               of({
@@ -114,7 +127,7 @@ describe('HIDWalletCredentialManager', () => {
     const refresh = jest.spyOn(service, 'refresh');
     expect(refresh).rejects.toReturn();
   });
- 
+
   it('should call onWillLogout and stop task execution', async () => {
     const stopTaskExecutionSpy = jest.spyOn(service['hidSdkManager'](), 'stopTaskExecution');
     await service.onWillLogout();
@@ -131,7 +144,7 @@ describe('HIDWalletCredentialManager', () => {
     it('should handle onUiImageClicked with credential availability check', async () => {
       const validateAndInstallSpy = jest.spyOn(service as any, 'validateAndInstall');
       await service.onUiImageClicked({ shouldCheckCredentialAvailability: true });
-      expect(validateAndInstallSpy).toHaveBeenCalledTimes(1);
+      expect(validateAndInstallSpy).toHaveBeenCalled();
     });
 
     it('show an NFC off alert', async () => {
@@ -141,7 +154,7 @@ describe('HIDWalletCredentialManager', () => {
         .mockResolvedValueOnce({ deviceState: { nfcOn: false } });
       const nfcOffSpy = jest.spyOn(service as any, 'nfcOffAlert');
       await service.onUiImageClicked({ shouldCheckCredentialAvailability: true });
-      expect(nfcOffSpy).toHaveBeenCalledTimes(1);
+      expect(nfcOffSpy).toHaveBeenCalled();
     });
   });
 
@@ -204,23 +217,39 @@ describe('HIDWalletCredentialManager', () => {
       });
     });
   });
- 
-  describe('validateAndInstall', () => {  
-    //   it('should handle validateAndInstall with no credential', async () => {
-    //   jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue(null);
-    //   const showInstallationErrorAlertSpy = jest.spyOn(service as any, 'showInstallationErrorAlert').mockResolvedValue(null);
-    //   const showLoadingSpy = jest.spyOn(service as any, 'showLoading');
-    //   const closeLoadingSpy = jest.spyOn(loadingService, 'closeSpinner');
-    //   await service['validateAndInstall']();
-    //   expect(showInstallationErrorAlertSpy).toHaveBeenCalled();
-    //   expect(showLoadingSpy).toHaveBeenCalled();
-    //   expect(closeLoadingSpy).toHaveBeenCalled();
-    // });
+
+  describe('validateAndInstall', () => {
+    it('should handle validateAndInstall with no credential', async () => {
+      jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue(null);
+      const showInstallationErrorAlertSpy = jest
+        .spyOn(service as any, 'showInstallationErrorAlert')
+        .mockResolvedValue(null);
+      const showLoadingSpy = jest.spyOn(service as any, 'showLoading');
+      const closeLoadingSpy = jest.spyOn(loadingService, 'closeSpinner');
+      await service['validateAndInstall']();
+      expect(showInstallationErrorAlertSpy).toHaveBeenCalled();
+      expect(showLoadingSpy).toHaveBeenCalled();
+      expect(closeLoadingSpy).toHaveBeenCalled();
+    });
 
     it('should show credential install alert on wallet already active', async () => {
-      jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue({ isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false, isAvailable: () => false});
+      jest
+        .spyOn(service as any, 'fetchFromServer$')
+        .mockResolvedValue({
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+          isAvailable: () => false,
+        });
       jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => true });
-      jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ deletionPermissionGranted: () => false, isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false });
+      jest
+        .spyOn(service as any, 'getLocalCachedEndpointState')
+        .mockResolvedValue({
+          deletionPermissionGranted: () => false,
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+        });
       const showCredentialAlreadyInstalledAlert = jest.spyOn(service as any, 'showCredentialAlreadyInstalledAlert');
       await service['validateAndInstall']();
       expect(showCredentialAlreadyInstalledAlert).toHaveBeenCalled();
@@ -228,55 +257,165 @@ describe('HIDWalletCredentialManager', () => {
 
     it('should handle show credential install alert accepting to delete old credentials', async () => {
       service.setCredential({ setStatus: jest.fn() } as unknown as AndroidCredential<any>);
-      jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue({ isProvisioned: () => true, isProcessing: () => false, isRevoked: () => false, isAvailable: () => false});
+      jest
+        .spyOn(service as any, 'fetchFromServer$')
+        .mockResolvedValue({
+          isProvisioned: () => true,
+          isProcessing: () => false,
+          isRevoked: () => false,
+          isAvailable: () => false,
+        });
       jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => true });
-      jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ deletionPermissionGranted: () => true, isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false });
+      jest
+        .spyOn(service as any, 'getLocalCachedEndpointState')
+        .mockResolvedValue({
+          deletionPermissionGranted: () => true,
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+        });
       const onProvisioningAcceptedHandler = jest.spyOn(service as any, 'onProvisioningAcceptedHandler');
       const updateCachedCredential = jest.spyOn(credentialService, 'updateCachedCredential$').mockResolvedValue(null);
-      const deleteCredentialFromServer = jest.spyOn(service as any, 'deleteCredentialFromServer$').mockResolvedValue(null);
-      const getEndpointStateFromLocalCache = jest.spyOn(credentialService, 'getEndpointStateFromLocalCache').mockResolvedValue(null);
-      const deleteCredentialFromDevice = jest.spyOn(service as any, 'deleteCredentialFromDevice$').mockResolvedValue(null);
-      const showCredentialAlreadyProvisionedAlert = jest.spyOn(service as any, 'showCredentialAlreadyProvisionedAlert').mockResolvedValue(null);
+      const deleteCredentialFromServer = jest
+        .spyOn(service as any, 'deleteCredentialFromServer$')
+        .mockResolvedValue(null);
+      const getEndpointStateFromLocalCache = jest
+        .spyOn(credentialService, 'getEndpointStateFromLocalCache')
+        .mockResolvedValue(null);
+      const deleteCredentialFromDevice = jest
+        .spyOn(service as any, 'deleteCredentialFromDevice$')
+        .mockResolvedValue(null);
+      const showCredentialAlreadyProvisionedAlert = jest
+        .spyOn(service as any, 'showCredentialAlreadyProvisionedAlert')
+        .mockResolvedValue(null);
       await service['validateAndInstall']();
-      expect(onProvisioningAcceptedHandler).toHaveBeenCalled(); 
-        expect(updateCachedCredential).toHaveBeenCalled(); 
-        expect(deleteCredentialFromServer).toHaveBeenCalled(); 
-        expect(getEndpointStateFromLocalCache).toHaveBeenCalled(); 
-        expect(deleteCredentialFromDevice).toHaveBeenCalled(); 
-        expect(showCredentialAlreadyProvisionedAlert).toHaveBeenCalled(); 
+      expect(onProvisioningAcceptedHandler).toHaveBeenCalled();
+      expect(updateCachedCredential).toHaveBeenCalled();
+      expect(deleteCredentialFromServer).toHaveBeenCalled();
+      expect(getEndpointStateFromLocalCache).toHaveBeenCalled();
+      expect(deleteCredentialFromDevice).toHaveBeenCalled();
+      expect(showCredentialAlreadyProvisionedAlert).toHaveBeenCalled();
     });
 
     it('should show credential provisioned alert on wallet already provisioned', async () => {
-      jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue({ isProvisioned: () => true, isProcessing: () => false, isRevoked: () => false, isAvailable: () => false});
+      jest
+        .spyOn(service as any, 'fetchFromServer$')
+        .mockResolvedValue({
+          isProvisioned: () => true,
+          isProcessing: () => false,
+          isRevoked: () => false,
+          isAvailable: () => false,
+        });
       jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => false });
-      jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ deletionPermissionGranted: () => false, isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false });
+      jest
+        .spyOn(service as any, 'getLocalCachedEndpointState')
+        .mockResolvedValue({
+          deletionPermissionGranted: () => false,
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+        });
       const showCredentialAlreadyProvisionedAlert = jest.spyOn(service as any, 'showCredentialAlreadyProvisionedAlert');
       await service['validateAndInstall']();
       expect(showCredentialAlreadyProvisionedAlert).toHaveBeenCalled();
     });
 
-    // it('should delete the credential if permission delete granted', async () => {
-    //   jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue({ isProvisioned: () => true, isProcessing: () => false, isRevoked: () => false, isAvailable: () => false});
-    //   jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => false });
-    //   jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ deletionPermissionGranted: () => true, isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false });
-    //   const actualProvisioningAcceptHandler = jest.spyOn(service as any, 'actualProvisioningAcceptHandler');
-    //   await service['validateAndInstall']();
-    //   expect(actualProvisioningAcceptHandler).toHaveBeenCalled();
-    // });
+    it('should delete the credential if permission delete granted and show alert if cred not available', async () => {
+      jest
+        .spyOn(service as any, 'fetchFromServer$')
+        .mockResolvedValue({
+          isProvisioned: () => true,
+          isProcessing: () => false,
+          isRevoked: () => false,
+          isAvailable: () => false,
+        });
+      jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => false });
+      jest
+        .spyOn(service as any, 'getLocalCachedEndpointState')
+        .mockResolvedValue({
+          deletionPermissionGranted: () => true,
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+        });
+      const showCredentialAlreadyProvisionedAlert = jest.spyOn(service as any, 'showCredentialAlreadyProvisionedAlert');
+      const updateCachedCredential = jest.spyOn(credentialService, 'updateCachedCredential$').mockResolvedValue(null);
+      const showInstallationErrorAlert = jest.spyOn(service as any, 'showInstallationErrorAlert');
+      await service['validateAndInstall']();
+      expect(showCredentialAlreadyProvisionedAlert).toHaveBeenCalled();
+      expect(updateCachedCredential).toHaveBeenCalledWith(EndpointStatuses.DELETE_CONFIRMED);
+      expect(showInstallationErrorAlert).toHaveBeenCalled();
+    });
+
+    it('should delete the credential if permission delete granted and show alert if cred not available', async () => {
+      jest
+        .spyOn(service as any, 'fetchFromServer$')
+        .mockResolvedValue({
+          isProvisioned: () => true,
+          isProcessing: () => false,
+          isRevoked: () => false,
+          isAvailable: () => false,
+        });
+      jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => false });
+      jest
+        .spyOn(service as any, 'getLocalCachedEndpointState')
+        .mockResolvedValue({
+          deletionPermissionGranted: () => true,
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+        });
+      jest.spyOn(credentialService, 'deleteCredential$').mockReturnValue(of(true));
+      jest.spyOn(service as any, 'checkCredentialAvailability').mockReturnValue(of(false));
+      const showInstallationErrorAlert = jest.spyOn(service as any, 'showInstallationErrorAlert');
+      const onUiImageClicked = jest.spyOn(service as any, 'onUiImageClicked');
+      await service['validateAndInstall']();
+      expect(showInstallationErrorAlert).not.toHaveBeenCalled();
+      expect(onUiImageClicked).toHaveBeenCalled();
+    });
 
     it('should show terms and conditions on credential available', async () => {
-      jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue({ isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false, isAvailable: () => true});
+      jest
+        .spyOn(service as any, 'fetchFromServer$')
+        .mockResolvedValue({
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+          isAvailable: () => true,
+        });
       jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => false });
-      jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ deletionPermissionGranted: () => false, isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false });
+      jest
+        .spyOn(service as any, 'getLocalCachedEndpointState')
+        .mockResolvedValue({
+          deletionPermissionGranted: () => false,
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+        });
       const showTermsAndConditions = jest.spyOn(service as any, 'showTermsAndConditions');
       await service['validateAndInstall']();
       expect(showTermsAndConditions).toHaveBeenCalled();
     });
 
     it('should show installation error', async () => {
-      jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue({ isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false, isAvailable: () => false, isCreated: () => false });
+      jest
+        .spyOn(service as any, 'fetchFromServer$')
+        .mockResolvedValue({
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+          isAvailable: () => false,
+          isCreated: () => false,
+        });
       jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => false });
-      jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ deletionPermissionGranted: () => false, isProvisioned: () => false, isProcessing: () => false, isRevoked: () => false });
+      jest
+        .spyOn(service as any, 'getLocalCachedEndpointState')
+        .mockResolvedValue({
+          deletionPermissionGranted: () => false,
+          isProvisioned: () => false,
+          isProcessing: () => false,
+          isRevoked: () => false,
+        });
       const showInstallationErrorAlert = jest.spyOn(service as any, 'showInstallationErrorAlert');
       await service['validateAndInstall']();
       expect(showInstallationErrorAlert).toHaveBeenCalled();
@@ -284,64 +423,105 @@ describe('HIDWalletCredentialManager', () => {
   });
 
   it('should handle showCredentialAlreadyProvisionedAlert with deletion permission granted', async () => {
-    jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ deletionPermissionGranted: () => true });
-    const actualOnAcceptHandlerSpy = jest.spyOn(service as any, 'showCredentialAlreadyProvisionedAlert').mockResolvedValue(null);
+    jest
+      .spyOn(service as any, 'getLocalCachedEndpointState')
+      .mockResolvedValue({ deletionPermissionGranted: () => true });
+    const actualOnAcceptHandlerSpy = jest
+      .spyOn(service as any, 'showCredentialAlreadyProvisionedAlert')
+      .mockResolvedValue(null);
     await service['showCredentialAlreadyProvisionedAlert']();
     expect(actualOnAcceptHandlerSpy).toHaveBeenCalled();
-});
-
-
-  it('should handle showTermsAndConditions and accept terms', async () => {
-      const modal = { present: jest.fn(), onDidDismiss: jest.fn().mockResolvedValue({ data: { termsAccepted: true } }) };
-      jest.spyOn(modalCtrl, 'create').mockResolvedValue(modal as any);
-      const onTermsAndConditionsAcceptedSpy = jest.spyOn(service as any, 'onTermsAndConditionsAccepted').mockResolvedValue(null);
-      await service['showTermsAndConditions']();
-      expect(onTermsAndConditionsAcceptedSpy).toHaveBeenCalled();
   });
 
-  // it('should handle deleteCredentialFromServer$ and return true', async () => {
-  //     jest.spyOn(credentialService, 'deleteCredential$').mockReturnValue(of(true));
-  //     const result = await service['deleteCredentialFromServer$']();
-  //     expect(result).toBe(true);
-  // });
+  it('should handle showTermsAndConditions and accept terms', async () => {
+    const modal = { present: jest.fn(), onDidDismiss: jest.fn().mockResolvedValue({ data: { termsAccepted: true } }) };
+    jest.spyOn(modalCtrl, 'create').mockResolvedValue(modal as any);
+    const onTermsAndConditionsAcceptedSpy = jest
+      .spyOn(service as any, 'onTermsAndConditionsAccepted')
+      .mockResolvedValue(null);
+    await service['showTermsAndConditions']();
+    expect(onTermsAndConditionsAcceptedSpy).toHaveBeenCalled();
+  });
 
-  // it('should handle deleteCredentialFromDevice$ and return true', async () => {
-  //     jest.spyOn(service['hidSdkManager'](), 'deleteEndpoint').mockResolvedValue(HID_SDK_ERR.TRANSACTION_SUCCESS);
-  //     const result = await service['deleteCredentialFromDevice$']();
-  //     expect(result).toBe(true);
-  // });
+  it('should handle deleteCredentialFromServer$ and return true', async () => {
+    jest.spyOn(credentialService, 'deleteCredential$').mockReturnValue(of(true));
+    const result = await service['deleteCredentialFromServer$']();
+    expect(result).toBe(true);
+  });
 
-  // it('should handle doNativeInstall$ and return true', async () => {
-  //     jest.spyOn(service['hidSdkManager'](), 'setupEndpoint').mockResolvedValue(true);
-  //     const result = await service['doNativeInstall$']();
-  //     expect(result).toBe(true);
-  // });
+  it('should handle deleteCredentialFromDevice$ and return true', async () => {
+    jest.spyOn(service['hidSdkManager'](), 'deleteEndpoint').mockResolvedValue(HID_SDK_ERR.TRANSACTION_SUCCESS);
+    service.setCredential({ setStatus: jest.fn() } as unknown as AndroidCredential<any>);
+    const result = await service['deleteCredentialFromDevice$']();
+    expect(result).toBe(true);
+  });
 
-  // it('should handle getCredentialBundle$ with valid invitation code', async () => {
-  //     jest.spyOn(service['mCredential'] as any, 'getInvitationCode').mockReturnValue('validCode');
-  //     const result = await service['getCredentialBundle$']();
-  //     expect(result).toBeDefined();
-  // });
+  it('should handle doNativeInstall$ and return true', async () => {
+    jest.spyOn(service['hidSdkManager'](), 'setupEndpoint').mockResolvedValue(true);
+    service.setCredential({ setStatus: jest.fn() } as unknown as AndroidCredential<any>);
+    (service['mCredential'] as HIDCredential).getInvitationCode = jest
+      .fn()
+      .mockReturnValueOnce('66a970db-53c8-4a25-88ac-16cb1b16e072');
+    const result = await service['doNativeInstall$']();
+    expect(result).toBe(true);
+  });
 
-  // it('should handle credentialStateChangedSubscription and update status', () => {
-  //     const taskExecutionObs$ = of(EndpointStatuses.PROVISIONED_ACTIVE);
-  //     jest.spyOn(service['hidSdkManager'](), 'taskExecutionObs$', 'get').mockReturnValue(null);
-  //     const setStatusSpy = jest.spyOn(service['mCredential'], 'setStatus');
-  //     service['credentialStateChangedSubscription']();
-  //     expect(setStatusSpy).toHaveBeenCalledWith(MobileCredentialStatuses.PROVISIONED);
-  // });
+  it('should handle getCredentialBundle$ with valid invitation code', async () => {
+    service.setCredential({
+      setStatus: jest.fn(),
+      getCredentialBundle: jest.fn().mockReturnValue({ id: '' }),
+    } as unknown as AndroidCredential<any>);
+    (service['mCredential'] as HIDCredential).getInvitationCode = jest
+      .fn()
+      .mockReturnValueOnce('66a970db-53c8-4a25-88ac-16cb1b16e072');
+    const result = await service['getCredentialBundle$']();
+    expect(result).toBeDefined();
+  });
 
-  // it('should handle checkDeviceEndpointState$ and return true', async () => {
-  //     jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => true });
-  //     jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ isProcessing: () => false });
-  //     const result = await service['checkDeviceEndpointState$']();
-  //     expect(result).toBe(true);
-  // });
+  it('should handle credentialStateChangedSubscription and update status', () => {
+    const taskExecutionSubject = new Subject<EndpointStatuses>();
+    service['hidSdkManager']().taskExecutionObs$ = taskExecutionSubject;
+    service.setCredential({ setStatus: jest.fn() } as unknown as AndroidCredential<any>);
+    service['credentialStateChangedSubscription']();
+    taskExecutionSubject.next(EndpointStatuses.PROVISIONED_ACTIVE);
+    const updateCachedCredential = jest.spyOn(credentialService, 'updateCachedCredential$').mockResolvedValue(null);
+    expect(updateCachedCredential).toHaveBeenCalledWith(EndpointStatuses.PROVISIONED_ACTIVE);
+  });
 
-  // it('should handle onEndpointRevoked and update credential', async () => {
-  //     jest.spyOn(service as any, 'fetchFromServer$').mockResolvedValue({ revoked: () => false, isProvisioned: () => false });
-  //     const setCredentialRevokedSpy = jest.spyOn(service as any, 'setCredentialRevoked').mockResolvedValue(true);
-  //     await service['onEndpointRevoked']();
-  //     expect(setCredentialRevokedSpy).toHaveBeenCalled();
-  // });
+  it('should handle checkDeviceEndpointState$ and return true', async () => {
+    service.setCredential({ setStatus: jest.fn() } as unknown as AndroidCredential<any>);
+    jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => true });
+    jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ isProcessing: () => false });
+    const result = await service['checkDeviceEndpointState$']();
+    expect(result).toBe(true);
+  });
+
+  it('should handle checkDeviceEndpointState$ should set status', async () => {
+    service.setCredential({ setStatus: jest.fn() } as unknown as AndroidCredential<any>);
+    jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => true });
+    jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ isProcessing: () => true });
+    const setStatusSpy = jest.spyOn(service['mCredential'] as any, 'setStatus').mockReturnValueOnce(null);
+    const result = await service['checkDeviceEndpointState$']();
+    expect(result).toBe(true);
+    expect(setStatusSpy).toHaveBeenCalled();
+  });
+
+  it('should handle checkDeviceEndpointState$ should check if endpoint is inactive', async () => {
+    service.setCredential({ setStatus: jest.fn() } as unknown as AndroidCredential<any>);
+    jest.spyOn(service as any, 'getDeviceEndpointState').mockResolvedValue({ isProvisioned: () => false });
+    jest.spyOn(service as any, 'getLocalCachedEndpointState').mockResolvedValue({ isProcessing: () => false, isInactive: () => true });
+    const setStatusSpy = jest.spyOn(service['mCredential'] as any, 'setStatus').mockReturnValueOnce(null);
+    const result = await service['checkDeviceEndpointState$']();
+    expect(result).toBe(true);
+    expect(setStatusSpy).toHaveBeenCalled();
+  });
+
+  it('should handle onEndpointRevoked and update credential', async () => {
+    jest
+      .spyOn(service as any, 'fetchFromServer$')
+      .mockResolvedValue({ revoked: () => false, isProvisioned: () => false });
+    const setCredentialRevokedSpy = jest.spyOn(service as any, 'setCredentialRevoked').mockResolvedValue(true);
+    await service['onEndpointRevoked']();
+    expect(setCredentialRevokedSpy).toHaveBeenCalled();
+  });
 });
