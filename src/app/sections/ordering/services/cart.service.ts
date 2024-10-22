@@ -76,7 +76,7 @@ export class CartService {
   }
 
   caloriesDisplay(menuItem?: MenuItemInfo): string {
-    const {displayValue} = menuItem.nutritionInfo.find(({ name }) => name === 'calories') || {};
+    const { displayValue } = menuItem.nutritionInfo.find(({ name }) => name === 'calories') || {};
     return displayValue && displayValue !== '0' ? `${displayValue} cal` : '';
   }
 
