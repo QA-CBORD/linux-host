@@ -10,6 +10,7 @@ export class PronounsPipe implements PipeTransform {
     value = value
       .split(',')
       .filter(Boolean)
+      .map(word => word.trim().toLowerCase())
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(',');
     value = value.replace(/,/g, '/');
