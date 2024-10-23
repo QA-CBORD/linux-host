@@ -75,11 +75,6 @@ export class CartService {
     });
   }
 
-  caloriesDisplay(menuItem?: MenuItemInfo): string {
-    const { displayValue } = menuItem.nutritionInfo.find(({ name }) => name === 'calories') || {};
-    return displayValue && displayValue !== '0' ? `${displayValue} cal` : '';
-  }
-
   private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {
     const sevenDaysAgoTimestamp = Date.now() - sevenDays;
     return lastModiedTimestamp >= sevenDaysAgoTimestamp;
