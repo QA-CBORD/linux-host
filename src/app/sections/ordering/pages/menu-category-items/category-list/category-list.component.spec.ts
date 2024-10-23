@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CategoryListComponent } from './category-list.component';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { CartService } from '@sections/ordering/services';
+import { CaloriesDisplayPipe } from '@shared/pipes/calories-display-pipe/calories-display.pipe';
 
 describe('CategoryListComponent', () => {
   let component: CategoryListComponent;
@@ -20,7 +21,7 @@ describe('CategoryListComponent', () => {
         { provide: EnvironmentFacadeService, useValue: environmentFacadeService },
         { provide: CartService, useValue: cartService },
       ],
-      imports: [CategoryListComponent],
+      imports: [CategoryListComponent,CaloriesDisplayPipe],
     }).compileComponents();
   });
 

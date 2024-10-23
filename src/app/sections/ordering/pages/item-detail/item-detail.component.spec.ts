@@ -23,6 +23,7 @@ import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { APP_ROUTES } from '@sections/section.config';
 import { MenuGroupInfo, MenuItemInfo, MenuItemOptionInfo, OrderItem } from '@sections/ordering/components';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CaloriesDisplayPipe } from '@shared/pipes/calories-display-pipe/calories-display.pipe';
 // Mock Pipe decorator
 let menuItem: MenuItemInfo = {
   id: '1',
@@ -143,7 +144,6 @@ const cartServiceMock = {
   saveOrderToSnapshot: jest.fn(),
   setOrderToSnapshot: jest.fn(),
   resetSnapshot: jest.fn(),
-  caloriesDisplay: jest.fn(),
 };
 
 const popoverControllerMock = {
@@ -154,7 +154,10 @@ const popoverControllerMock = {
 };
 let translateService = {
   instant: jest.fn(),
-  get: jest.fn()
+  get: jest.fn().mockReturnValue(of('')),
+  onLangChange: of({}),
+  onTranslationChange: of({}),
+  onDefaultLangChange: of({})
 };
 
 describe('ItemDetailComponent', () => {
@@ -170,7 +173,7 @@ describe('ItemDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ItemDetailComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [FormsModule, ReactiveFormsModule, PriceUnitsResolverModule, TranslateModule],
+      imports: [FormsModule, ReactiveFormsModule, PriceUnitsResolverModule, TranslateModule, CaloriesDisplayPipe],
       providers: [
         { provide: EnvironmentFacadeService, useValue: environmentFacadeServiceMock },
         { provide: FormBuilder, useValue: formBuilderMock },
@@ -527,7 +530,12 @@ describe('ItemDetailComponent', () => {
       queryParams: { orderItemId: 'mockOrderItemId', isItemExistsInCart: true },
     } as RoutesData;
     component.menuItem = menuItem;
-    component.cartSelectedItem = { id: '1', name: 'Test Item', price: 10, specialInstructions: 'instruction 1' } as unknown as OrderItem;
+    component.cartSelectedItem = {
+      id: '1',
+      name: 'Test Item',
+      price: 10,
+      specialInstructions: 'instruction 1',
+    } as unknown as OrderItem;
     component.cartOrderItemOptions = [
       {
         id: '1',
@@ -540,7 +548,6 @@ describe('ItemDetailComponent', () => {
         name: 'Option 2',
 
         menuGroup: { name: 'option2', minimum: 1, maximum: 2 } as MenuGroupInfo,
-
       },
     ] as unknown as OrderItem[];
 
