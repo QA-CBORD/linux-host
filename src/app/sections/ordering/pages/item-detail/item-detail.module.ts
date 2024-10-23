@@ -16,6 +16,7 @@ import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/c
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { NutritionInfoComponent } from '@sections/ordering/components/nutrition-info/nutrition-info.component';
+import { CaloriesDisplayPipe } from '@shared/pipes/calories-display-pipe/calories-display.pipe';
 
 const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent, ItemDetailModalComponent];
 const imports = [
@@ -31,7 +32,8 @@ const imports = [
   PriceUnitsResolverModule,
   StButtonModule,
   NutritionInfoComponent,
-  TranslateModule
+  TranslateModule,
+  CaloriesDisplayPipe
 ];
 
 @NgModule({
