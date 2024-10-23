@@ -23,7 +23,6 @@ import { distinctUntilChanged, filter, first, map, switchMap, take, tap } from '
 import {
   ItemsOrderInfo,
   MenuInfo,
-  MenuItemInfo,
   MerchantInfo,
   MerchantOrderTypesInfo,
   OrderInfo,
