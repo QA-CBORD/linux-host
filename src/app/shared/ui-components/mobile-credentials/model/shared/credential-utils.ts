@@ -1,6 +1,6 @@
 export interface ActivePasses {
-  passes: { android_hid: number; android_nxp: number, iPhone: number, iWatch: number, android_hid_wallet: number };
-  credStatus: { android_hid: number; android_nxp: number, iPhone: number, iWatch: number, android_hid_wallet: number  };
+  passes: { android_hid: number; android_nxp: number, iPhone: number, iWatch: number, android_hid_wallet?: number };
+  credStatus: { android_hid: number; android_nxp: number, iPhone: number, iWatch: number, android_hid_wallet?: number  };
   referenceIdentifier: string;
 }
 
