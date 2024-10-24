@@ -63,7 +63,7 @@ export class CartService {
     this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value) {
         if (this.isWithinLastSevenDays(cart.lastModified)) {
-         this.updateCartState(cart);
+          this.updateCartState(cart);
         } else {
           this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
         }
@@ -77,7 +77,9 @@ export class CartService {
     this.cart.merchant = cart.value.merchant;
     this.cart.order = cart.value.order;
     this.cart.orderDetailsOptions = cart.value.orderDetailsOptions;
-    this.cart.order.subTotal = this.sumUpOrderItems(cart.value.order.orderItems);
+    if (cart.value.order?.orderItems) {
+      this.cart.order.subTotal = this.sumUpOrderItems(cart.value.order.orderItems);
+    }
   }
 
   private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {
