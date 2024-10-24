@@ -8,6 +8,6 @@ import { MenuItemInfo } from '@sections/ordering';
 export class CaloriesDisplayPipe implements PipeTransform {
   transform(menuItem: MenuItemInfo): string {
     const { displayValue } = menuItem.nutritionInfo.find(({ name }) => name === 'calories') || {};
-    return displayValue && displayValue !== '0' ? `${displayValue} cal` : '';
+    return displayValue ? `${displayValue} cal` : '';
   }
 }
