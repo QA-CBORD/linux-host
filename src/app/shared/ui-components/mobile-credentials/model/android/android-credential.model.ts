@@ -49,13 +49,6 @@ export class CredentialStateResolver {
         CredentialProviders.HID,
         activePasses.referenceIdentifier
       );
-    } else if (CredentialStateResolver.hasHidWalletCredential(activePasses)) {
-      return new AndroidCredentialStateEntity(
-        activePasses.credStatus.android_hid_wallet,
-        activePasses.passes.android_hid_wallet,
-        CredentialProviders.HID_WALLET,
-        activePasses.referenceIdentifier
-      );
     } else if (CredentialStateResolver.hasGoogleCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
         activePasses.credStatus.android_nxp,
@@ -65,6 +58,13 @@ export class CredentialStateResolver {
       );
     } else if (CredentialStateResolver.hasAppleWallet(activePasses)) {
       return new AppleWalletState(activePasses);
+    } else if (CredentialStateResolver.hasHidWalletCredential(activePasses)) {
+      return new AndroidCredentialStateEntity(
+        activePasses.credStatus.android_hid_wallet,
+        activePasses.passes.android_hid_wallet,
+        CredentialProviders.HID_WALLET,
+        activePasses.referenceIdentifier
+      );
     }
   }
 
