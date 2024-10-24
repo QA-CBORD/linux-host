@@ -291,3 +291,10 @@ export function getDataUrlFromPhoto(photoInfo: GeneralPhoto): string | null {
   }
   return null;
 }
+
+export function fromEntries<T = string>(entries: [string, T][]): { [name: string]: T } {
+  return entries.reduce((acc, [key, value]) => {
+    acc[key] = value;
+    return acc;
+  }, {} as { [name: string]: T });
+}

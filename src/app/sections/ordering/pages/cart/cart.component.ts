@@ -17,7 +17,13 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
-import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
+import {
+  handleServerError,
+  isCashlessAccount,
+  isCreditCardAccount,
+  isMealsAccount,
+  fromEntries,
+} from '@core/utils/general-helpers';
 import { IonContent, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
@@ -71,6 +77,7 @@ import { filter, finalize, first, map, switchMap, take, tap } from 'rxjs/operato
 import { AccountType, Settings } from '../../../../app.global';
 import { CART_ROUTES } from './cart-config';
 import { NonCheckingService } from './services/non-checking.service';
+import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 
 interface OrderingErrorContentStringModel {
   timeout: string;
@@ -909,10 +916,14 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private async validateOrder(onError): Promise<void> {
+    const filteredErrors: ServerErrorsInfo = fromEntries(
+      Object.entries(ORDER_VALIDATION_ERRORS).filter(([key]) => key !== '9017')
+    ) as ServerErrorsInfo;
+
     await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder(null, this.cartService._orderOption.isASAP)
-      .pipe(first(), handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS))
+      .pipe(first(), handleServerError<OrderInfo>(filteredErrors))
       .toPromise()
       .catch(onError)
       .finally(this.loadingService.closeSpinner.bind(this.loadingService));

@@ -15,6 +15,7 @@ import { ORDER_TYPE } from '../ordering.config';
 import { ItemsOrderInfo, MenuInfo, MerchantInfo, MerchantOrderTypesInfo, OrderInfo, OrderItem, OrderPayment } from '../shared';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { AddressInfo } from '@core/model/address/address-info';
+import { StorageEntity } from '@core/classes/extendable-state-manager';
 
 jest.mock('@core/utils/date-helper', () => ({
   getDateTimeInGMT: jest.fn(),
@@ -22,6 +23,8 @@ jest.mock('@core/utils/date-helper', () => ({
 
 describe('CartService', () => {
   let service: CartService;
+  let cartEntity: StorageEntity<CartState>;
+
 
   const mockCart = {
     value: {
@@ -133,6 +136,7 @@ describe('CartService', () => {
     service['cart'].order = mockCart.value.order;
 
     (service as any)._cart$ = new BehaviorSubject(mockCart.value);
+    cartEntity = mockCart as unknown as StorageEntity<CartState>;
   });
 
   beforeEach(() => {
@@ -926,5 +930,62 @@ describe('CartService', () => {
     });
     expect(service['cart'].order.orderItems.length).toBe(1);
     expect(service['cart'].order.orderItems[0].menuItemId).toBe('item3');
+  });
+
+  describe('sumUpOrderItems', () => {
+    it('should sum up the total price of order items', () => {
+      const orderItems = [
+        { quantity: 2, salePrice: 10 },
+        { quantity: 1, salePrice: 20 },
+        { quantity: 3, salePrice: 5 }
+      ] as OrderItem[];
+
+      const result = service['sumUpOrderItems'](orderItems);
+
+      expect(result).toBe(55);
+    });
+
+    it('should return 0 for an empty array', () => {
+      const orderItems: OrderItem[] = [];
+
+      const result = service['sumUpOrderItems'](orderItems);
+
+      expect(result).toBe(0);
+    });
+
+    it('should handle items with zero quantity', () => {
+      const orderItems = [
+        { quantity: 0, salePrice: 10 },
+        { quantity: 1, salePrice: 20 }
+      ] as OrderItem[];
+
+      const result = service['sumUpOrderItems'](orderItems);
+
+      expect(result).toBe(20);
+    });
+
+    it('should handle items with zero sale price', () => {
+      const orderItems = [
+        { quantity: 2, salePrice: 0 },
+        { quantity: 1, salePrice: 20 }
+      ] as OrderItem[];
+
+      const result = service['sumUpOrderItems'](orderItems);
+
+      expect(result).toBe(20);
+    });
+  });
+
+  it('should update the _cart$ subject', () => {
+    service['updateCartState'](cartEntity);
+    expect(service['_cart$'].value).toEqual(mockCart.value);
+  });
+
+  it('should update the cart properties', () => {
+    service['updateCartState'](cartEntity);
+    expect(service['cart'].menu).toEqual(cartEntity.value.menu);
+    expect(service['cart'].merchant).toEqual(cartEntity.value.merchant);
+    expect(service['cart'].order).toEqual(cartEntity.value.order);
+    expect(service['cart'].orderDetailsOptions).toEqual(cartEntity.value.orderDetailsOptions);
   });
 });
