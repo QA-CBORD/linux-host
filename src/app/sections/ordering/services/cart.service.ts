@@ -77,7 +77,7 @@ export class CartService {
     this.cart.merchant = cart.value.merchant;
     this.cart.order = cart.value.order;
     this.cart.orderDetailsOptions = cart.value.orderDetailsOptions;
-    this.cart.order.subTotal = this.sumUpOrderItems(this.cart.order.orderItems);
+    this.cart.order.subTotal = this.sumUpOrderItems(cart.value.order.orderItems);
   }
 
   private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {
