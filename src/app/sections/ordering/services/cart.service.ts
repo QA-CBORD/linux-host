@@ -101,9 +101,6 @@ export class CartService {
   }
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
-    if (this.cart.order) {
-      this.cart.order.total = this.calculateTotal();
-    }
     return this._cart$.asObservable().pipe(map(({ order }) => order));
   }
 
