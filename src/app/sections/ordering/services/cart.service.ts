@@ -31,6 +31,7 @@ import {
 } from '../shared/models';
 import { MerchantService } from './merchant.service';
 import { Schedule } from '../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { StorageEntity } from '@core/classes/extendable-state-manager';
 
 @Injectable({
   providedIn: 'root',
@@ -62,11 +63,7 @@ export class CartService {
     this.cartSubscription = this.storageStateService.getStateEntityByKey$<CartState>(this.CARTIDKEY).subscribe(cart => {
       if (cart && cart.value) {
         if (this.isWithinLastSevenDays(cart.lastModified)) {
-          this._cart$.next(cart.value);
-          this.cart.menu = cart.value.menu;
-          this.cart.merchant = cart.value.merchant;
-          this.cart.order = cart.value.order;
-          this.cart.orderDetailsOptions = cart.value.orderDetailsOptions;
+          this.updateCartState(cart);
         } else {
           this.storageStateService.deleteStateEntityByKey(this.CARTIDKEY);
         }
@@ -74,8 +71,15 @@ export class CartService {
     });
   }
 
-  caloriesDisplay(calories?: string): string {
-    return calories && calories !== '0' ? `${calories} cal` : '';
+  private updateCartState(cart: StorageEntity<CartState>) {
+    this._cart$.next(cart.value);
+    this.cart.menu = cart.value.menu;
+    this.cart.merchant = cart.value.merchant;
+    this.cart.order = cart.value.order;
+    this.cart.orderDetailsOptions = cart.value.orderDetailsOptions;
+    if (cart.value.order?.orderItems) {
+      this.cart.order.subTotal = this.sumUpOrderItems(cart.value.order.orderItems);
+    }
   }
 
   private isWithinLastSevenDays(lastModiedTimestamp: number): boolean {
@@ -508,7 +512,17 @@ export class CartService {
     this._cart$.next(this.cart);
   }
 
+  private sumUpOrderItems(orderItems: OrderItem[]): number {
+    return orderItems.reduce((total, { quantity, salePrice }) => total + quantity * salePrice, 0);
+  }
+
   private calculateTotal(): number {
+    if (!this.cart?.order) return;
+
+    if (this.cart.order?.total === 0) {
+      this.cart.order.subTotal = this.sumUpOrderItems(this.cart.order.orderItems);
+    }
+
     const { subTotal, tax, useFee, deliveryFee, pickupFee, tip, discount } = this.cart.order;
 
     return (

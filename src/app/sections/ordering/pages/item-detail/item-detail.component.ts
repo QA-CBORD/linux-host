@@ -83,10 +83,6 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     this.sourceSubscription.unsubscribe();
   }
 
-  caloriesDisplay(calories?: string): string {
-    return this.cartService.caloriesDisplay(calories);
-  }
-
   navigateToFullMenu(): void {
     this.navService.navigate([APP_ROUTES.ordering, LOCAL_ROUTING.fullMenu], {
       queryParams: { openTimeSlot: true },
