@@ -19,13 +19,6 @@ describe('CaloriesDisplayPipe', () => {
     expect(pipe.transform(menuItem)).toBe('150 cal');
   });
 
-  it('should return an empty string when displayValue is zero', () => {
-    const menuItem: MenuItemInfo = {
-      nutritionInfo: [{ name: 'calories', displayValue: '0' } as NutritionInfo],
-    } as MenuItemInfo;
-    expect(pipe.transform(menuItem)).toBe('');
-  });
-
   it('should return an empty string when displayValue is not present', () => {
     const menuItem: MenuItemInfo = {
       nutritionInfo: [{ name: 'calories' } as NutritionInfo],

@@ -14,6 +14,7 @@ import {
   cvvValidationFn,
   exploreMerchantSorting,
   formControlErrorDecorator,
+  fromEntries,
   getCashlessStatus,
   getDataUrlFromPhoto,
   getUserFullName,
@@ -720,6 +721,63 @@ describe('General Helpers', () => {
       const result = getDataUrlFromPhoto(photoInfo);
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe('fromEntries', () => {
+    it('should convert an array of entries to an object', () => {
+      const entries: [string, string][] = [
+        ['key1', 'value1'],
+        ['key2', 'value2'],
+        ['key3', 'value3'],
+      ];
+
+      const result = fromEntries(entries);
+
+      expect(result).toEqual({
+        key1: 'value1',
+        key2: 'value2',
+        key3: 'value3',
+      });
+    });
+
+    it('should return an empty object for an empty array', () => {
+      const entries: [string, string][] = [];
+
+      const result = fromEntries(entries);
+
+      expect(result).toEqual({});
+    });
+
+    it('should handle different types of values', () => {
+      const entries: [string, any][] = [
+        ['key1', 'value1'],
+        ['key2', 42],
+        ['key3', true],
+        ['key4', { nested: 'object' }],
+      ];
+
+      const result = fromEntries(entries);
+
+      expect(result).toEqual({
+        key1: 'value1',
+        key2: 42,
+        key3: true,
+        key4: { nested: 'object' },
+      });
+    });
+
+    it('should use the last value for duplicate keys', () => {
+      const entries: [string, string][] = [
+        ['key1', 'value1'],
+        ['key1', 'value2'],
+      ];
+
+      const result = fromEntries(entries);
+
+      expect(result).toEqual({
+        key1: 'value2',
+      });
     });
   });
 });
