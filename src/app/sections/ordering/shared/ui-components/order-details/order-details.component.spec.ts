@@ -179,7 +179,7 @@ describe('OrderDetailsComponent', () => {
   });
 
   it('should return Items Not Available Error Key', () => {
-    component.duetimeFeedback.code = ORDER_ERROR_CODES.INVALID_ORDER;
+    component.duetimeFeedback.code = ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME;
     expect(component.getDueTimeErrorKey()).toEqual('ItemsNotAvailable');
   });
 
