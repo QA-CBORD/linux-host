@@ -44,7 +44,7 @@ export class PinPage implements OnInit, OnDestroy {
   private readonly currentPinText: string = 'Enter current PIN';
   private readonly newPinText: string = 'Enter your new PIN';
   private readonly confirmNewPinText: string = 'Confirm your new PIN';
-  private readonly noConnectionText: string = 'No internet connection dectect, please try again later';
+  private readonly noConnectionText: string = 'No internet connection detected, please try again later';
 
   constructor(
     private modalController: ModalController,
