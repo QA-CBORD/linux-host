@@ -85,10 +85,13 @@ export class ConnectionService {
   }
 
   isConnectionIssues({ message, status }, isError?: boolean): boolean {
-    const emptyResponse = status && Number(status) === STATUS_CODE_SUCCESS && STATUS_MESSAGE_SUCCESS.test(message) && isError;
-    return CONNECTION_TIME_OUT_MESSAGE.test(message) || 
-           CONNECTION_ISSUES_MESSAGE.test(message) || 
-           (status !== null && Number(status) === NO_INTERNET_STATUS_CODE) || 
-           emptyResponse;
+    const emptyResponse =
+      status && Number(status) === STATUS_CODE_SUCCESS && STATUS_MESSAGE_SUCCESS.test(message) && isError;
+    return (
+      CONNECTION_TIME_OUT_MESSAGE.test(message) ||
+      CONNECTION_ISSUES_MESSAGE.test(message) ||
+      (status !== null && Number(status) === NO_INTERNET_STATUS_CODE) ||
+      emptyResponse
+    );
   }
 }
