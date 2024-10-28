@@ -44,6 +44,7 @@ export class PinPage implements OnInit, OnDestroy {
   private readonly currentPinText: string = 'Enter current PIN';
   private readonly newPinText: string = 'Enter your new PIN';
   private readonly confirmNewPinText: string = 'Confirm your new PIN';
+  private readonly noConnectionText: string = 'No internet connection dectect, please try again later';
 
   constructor(
     private modalController: ModalController,
@@ -264,7 +265,7 @@ export class PinPage implements OnInit, OnDestroy {
       this.authenticator
         .authenticate(pin)
         .then(() => this.closePage(pin, PinCloseStatus.LOGIN_SUCCESS))
-        .catch(() => {
+        .catch(async ({ message, status }) => {
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
@@ -272,6 +273,8 @@ export class PinPage implements OnInit, OnDestroy {
               this.authenticator.onPinClosed(PinCloseStatus.MAX_FAILURE);
               this.closePage(null, PinCloseStatus.MAX_FAILURE);
             }, 3000);
+          } else if (this.connectionService.isConnectionIssues({ message, status })) {
+            await this.handleConnectionIssues();
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }

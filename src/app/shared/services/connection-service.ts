@@ -5,6 +5,7 @@ import { map, debounceTime, switchMap, catchError, timeout } from 'rxjs/operator
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import {
+  CONNECTION_ISSUES_MESSAGE,
   CONNECTION_TIME_OUT_MESSAGE,
   NO_INTERNET_STATUS_CODE,
   STATUS_CODE_SUCCESS,
@@ -85,6 +86,9 @@ export class ConnectionService {
 
   isConnectionIssues({ message, status }, isError?: boolean): boolean {
     const emptyResponse = status && Number(status) === STATUS_CODE_SUCCESS && STATUS_MESSAGE_SUCCESS.test(message) && isError;
-    return CONNECTION_TIME_OUT_MESSAGE.test(message) || (status !== null && Number(status) === NO_INTERNET_STATUS_CODE) || emptyResponse;
+    return CONNECTION_TIME_OUT_MESSAGE.test(message) || 
+           CONNECTION_ISSUES_MESSAGE.test(message) || 
+           (status !== null && Number(status) === NO_INTERNET_STATUS_CODE) || 
+           emptyResponse;
   }
 }
