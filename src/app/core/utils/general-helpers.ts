@@ -97,7 +97,7 @@ export const handleServerError = <T>(
           return throwError(() => `${code}|${text}`);
         }
 
-        if ([9010, 9017].includes(+code)) {
+        if ([9010, 9017, 9024].includes(+code)) {
           message[1] = serverError[code] ? serverError[code] : text;
           return throwError(() => message);
         }

@@ -272,6 +272,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   getDueTimeErrorKey() {
     const error = {
       [ORDER_ERROR_CODES.INVALID_ORDER]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
+      [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
       [ORDER_ERROR_CODES.ORDER_CAPACITY]:
         this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
           ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
@@ -281,7 +282,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get hasInvalidItems() {
-    return this.duetimeFeedback.type == 'error' && this.duetimeFeedback.code === ORDER_ERROR_CODES.INVALID_ORDER;
+    return this.duetimeFeedback.type == 'error' && [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME].includes(this.duetimeFeedback.code);
   }
 
   markDueTieWithErrors(): void {
