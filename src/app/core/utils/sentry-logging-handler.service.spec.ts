@@ -36,7 +36,7 @@ describe('SentryLoggingHandlerService', () => {
   });
 
   it('should NOT omit other known errors', () => {
-    expect(service.isOmittableError(ORDER_VALIDATION_ERRORS[ORDER_ERROR_CODES.INVALID_ORDER])).toBeFalsy();
+    expect(service.isOmittableError(ORDER_VALIDATION_ERRORS[ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME])).toBeFalsy();
   });
 
   it('should init the SDK with Sentry', () => {

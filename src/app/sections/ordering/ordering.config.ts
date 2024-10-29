@@ -233,5 +233,5 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
 export const TOAST_MESSAGES = {
   isWalkOut:
     'Ordering is not possible for Smart Shopping merchants. Go to the location to start a Smart Shopping Order',
-  [ORDER_ERROR_CODES.INVALID_ORDER]: `get_common.error.${ORDERING_CONTENT_STRINGS.menuItemsNotAvailable}`,
+  [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME]: `get_common.error.${ORDERING_CONTENT_STRINGS.menuItemsNotAvailable}`,
 };

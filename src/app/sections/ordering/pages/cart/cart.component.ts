@@ -357,7 +357,7 @@ export class CartComponent implements OnInit, OnDestroy {
           } as DueTimeFeedback;
 
           const errorKey =
-            this.dueTimeFeedback.code === ORDER_ERROR_CODES.INVALID_ORDER
+             [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME, ORDER_ERROR_CODES.INVALID_ORDER].includes(this.dueTimeFeedback.code)
               ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
               : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
@@ -706,7 +706,7 @@ export class CartComponent implements OnInit, OnDestroy {
       if (this.isMerchantOrderAhead && errorCodeKey) {
         const options = await firstValueFrom(this.orderDetailOptions$);
         const errorKey = {
-          [ORDER_ERROR_CODES.INVALID_ORDER]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
+          [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
           [ORDER_ERROR_CODES.ORDER_CAPACITY]:
             options.orderType === ORDER_TYPE.PICKUP
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
