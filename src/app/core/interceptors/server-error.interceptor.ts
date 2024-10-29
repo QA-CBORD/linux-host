@@ -6,18 +6,19 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, from, throwError } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NUM_DSCRPTN_REGEXP } from '@core/utils/regexp-patterns';
 import { ToastService } from '@core/service/toast/toast.service';
 import { Injectable, inject } from '@angular/core';
 import { ConnectionService } from '@shared/index';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { Network } from '@capacitor/network';
 
 @Injectable()
 export class ServerError implements HttpInterceptor {
   private readonly loadingService: LoadingService = inject(LoadingService);
-  private readonly conectionService = inject(ConnectionService);
+  private readonly connectionService = inject(ConnectionService);
   constructor(private readonly toastService: ToastService) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,12 +47,16 @@ export class ServerError implements HttpInterceptor {
         },
       }),
       catchError(({ message, status }: HttpErrorResponse) => {
-        if (this.conectionService.isConnectionIssues({ message, status })) {
-          this.loadingService.closeSpinner();
-          this.connectionToast();
-          return throwError(() => new Error(`Due to connection issues, ${message}`));
-        }
-        return throwError(() => new Error(message));
+        return from(Network.getStatus()).pipe(
+          switchMap(nwtStatus => {
+            if (this.connectionService.isConnectionIssues({ message, status }) && !nwtStatus?.connected) {
+              this.loadingService.closeSpinner();
+              this.connectionToast();
+              return throwError(() => new Error(`Due to connection issues, ${message}`));
+            }
+            return throwError(() => new Error(message));
+          })
+        );
       })
     );
   }
