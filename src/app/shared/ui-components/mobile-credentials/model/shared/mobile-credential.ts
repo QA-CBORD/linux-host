@@ -28,11 +28,16 @@ export abstract class MobileCredential implements MobileCredentialState {
   isProvisioned(): boolean {
     return this.credentialState.isProvisioned();
   }
+
   isEnabled(): boolean {
     return this.credentialState.isEnabled();
   }
   isAvailable(): boolean {
     return this.credentialState.isAvailable();
+  }
+
+  isCreated(): boolean {
+    return this.credentialState.isCreated();
   }
   getIssuer(): string {
     return this.credentialState.getIssuer();

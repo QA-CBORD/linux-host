@@ -224,6 +224,12 @@
     "settings": {
       "no_user_photo": "no user photo",
       "user_photo": "user photo"
+    },
+    "pin_alert": {
+      "title": "Dismiss and Log out?",
+      "message": "Dismissing this screen will log you out and you will need to log in again.\n Do you wish to continue?",
+      "cancel": "Cancel",
+      "continue": "Log out"
     }
   },
   "get_web_gui": {
@@ -914,7 +920,7 @@
     "noConnectivity": {
       "connect_failed": "Unable to connect.",
       "description": "Make sure your Wi-Fi or mobile data is turned on, then try again.",
-      "description_server_error": "We are working on fixing the problem. Try again or come back later.",
+      "description_server_error": "Try again to resolve the issue. Contact your institution if you continue to have problems.",
       "retry": "Retry",
       "scan_card_btn": "Scan Card",
       "scan_card_desc": "You may still scan your card when you are offline.",
@@ -1050,7 +1056,13 @@
       "cart_preview_trash_icon": "Remove all items icon",
       "cart_preview_confirm_removal_msg": "Are you sure you want to remove all items from your cart?",
       "cart_preview_confirm_removal_btn": "Remove all items",
-      "cart_preview_cancel_removal_btn": "Cancel"
+      "cart_preview_cancel_removal_btn": "Cancel",
+      "nutritional_info": {
+        "title": "Nutritional Information",
+        "section_title": "Nutrition Facts and Allergens",
+        "contains_allergens": "Contains: {{allergens}}",
+        "disclaimer": "2,000 Calories a day is used for general nutrition advice, but calorie needs may vary. Additional nutritional information available upon request. Customization of your order may impact the accuracy and/or completeness of the available nutritional information."
+      }
     },
     "explore": {
       "merchant_details_title": "Merchant Details"

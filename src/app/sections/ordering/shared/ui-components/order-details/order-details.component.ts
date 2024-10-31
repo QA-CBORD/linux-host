@@ -108,11 +108,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this._merchant = merchant;
     this.isMerchantOrderAhead = parseInt(merchant?.settings?.map[MerchantSettings.orderAheadEnabled]?.value) === 1;
     this.isTipEnabled = parseInt(merchant?.settings?.map[MerchantSettings.tipEnabled]?.value) === 1;
-    this.isMerchantAutoASAP = merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value ? Boolean(JSON.parse(merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value)) : false;
+    this.isMerchantAutoASAP = merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value
+      ? Boolean(JSON.parse(merchant?.settings?.map[MerchantSettings.enableAutoASAPSelection]?.value))
+      : false;
   }
 
   @Input() orderDetailOptions: OrderDetailOptions = {} as OrderDetailOptions;
   @Input() readonly = true;
+  @Input() defaultPaymentMethod: UserAccount;
   @Input() itemReadOnly = false;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
@@ -258,11 +261,18 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (duetimeFeedback && duetimeFeedback.currentValue !== null) {
       this.markDueTieWithErrors();
     }
+
+    if (this.defaultPaymentMethod && this.paymentFormControl.value !== this.defaultPaymentMethod) {
+      this.detailsForm.patchValue({
+        [FORM_CONTROL_NAMES.paymentMethod]: this.defaultPaymentMethod,
+      });
+    }
   }
 
   getDueTimeErrorKey() {
     const error = {
       [ORDER_ERROR_CODES.INVALID_ORDER]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
+      [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
       [ORDER_ERROR_CODES.ORDER_CAPACITY]:
         this.orderDetailOptions.orderType === ORDER_TYPE.PICKUP
           ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
@@ -272,7 +282,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get hasInvalidItems() {
-    return this.duetimeFeedback.type == 'error' && this.duetimeFeedback.code === ORDER_ERROR_CODES.INVALID_ORDER;
+    return this.duetimeFeedback.type == 'error' && [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME].includes(this.duetimeFeedback.code);
   }
 
   markDueTieWithErrors(): void {

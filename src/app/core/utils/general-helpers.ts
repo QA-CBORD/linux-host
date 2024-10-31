@@ -97,7 +97,7 @@ export const handleServerError = <T>(
           return throwError(() => `${code}|${text}`);
         }
 
-        if ([9010, 9017].includes(+code)) {
+        if ([9010, 9017, 9024].includes(+code)) {
           message[1] = serverError[code] ? serverError[code] : text;
           return throwError(() => message);
         }
@@ -290,4 +290,11 @@ export function getDataUrlFromPhoto(photoInfo: GeneralPhoto): string | null {
     return `data:${photoInfo.mimeType};base64,${photoInfo.data}`;
   }
   return null;
+}
+
+export function fromEntries<T = string>(entries: [string, T][]): { [name: string]: T } {
+  return entries.reduce((acc, [key, value]) => {
+    acc[key] = value;
+    return acc;
+  }, {} as { [name: string]: T });
 }

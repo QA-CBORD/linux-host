@@ -51,6 +51,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   recipientName: string;
   focusLine = false;
   errorCs: { maxAmountError: string; minAmountError: string; amountPatternError: string };
+  newAddedCard: string;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -334,24 +335,34 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
         first(),
-        switchMap(({ success, errorMessage }) => {
+        switchMap(({ success, errorMessage, cardNo }) => {
           if (!success) {
+            this.loadingService.closeSpinner();
             return throwError(errorMessage);
           }
+
           this.loadingService.showSpinner();
+          this.newAddedCard = cardNo;
           this.toastService.showSuccessToast({
             message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
           });
+
           return this.guestDepositsService.guestAccounts();
         }),
-        tap(accounts => this.setSourceAccounts(accounts)),
+        map(accounts => ({
+          accounts,
+          newAddedAcc: accounts.find(acc => acc.lastFour === this.newAddedCard),
+        })),
+        tap(({ accounts, newAddedAcc }) => {
+          this.setSourceAccounts(accounts);
+          this.paymentMethod.setValue(newAddedAcc);
+        }),
         finalize(() => {
+          this.cdRef.detectChanges();
           this.loadingService.closeSpinner();
         })
       )
       .subscribe();
-    this.paymentMethod.reset();
-    this.paymentMethod.markAsPristine();
   }
 
   private setContentString() {

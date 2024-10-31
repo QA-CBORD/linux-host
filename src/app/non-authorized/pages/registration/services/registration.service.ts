@@ -80,13 +80,13 @@ export class RegistrationService {
   }
 
 
-  institition$(): Observable<Institution> {
+  institution$(): Observable<Institution> {
     return this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
   }
 
   private paramsObs$(): Observable<[string, Institution]> {
     const sessionId$ = this.authFacadeService.getAuthSessionToken$().pipe(take(1));
-    const institutionId$ = this.institition$();
+    const institutionId$ = this.institution$();
     return zip(sessionId$, institutionId$);
   }
 }

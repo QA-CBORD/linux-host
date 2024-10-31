@@ -57,7 +57,7 @@ describe('PatronRegistration', () => {
   });
 
   it('should get the institution id', () => {
-    const registerSpy = jest.spyOn(registrationServiceMock, 'institition$');
+    const registerSpy = jest.spyOn(registrationServiceMock, 'institution$');
     const data = {};
     patronRegistration.register(data).pipe(first()).subscribe();
     expect(registerSpy).toHaveBeenCalled();

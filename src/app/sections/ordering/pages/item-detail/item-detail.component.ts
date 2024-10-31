@@ -55,7 +55,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     private readonly navService: NavigationService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly location: Location
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initContentStrings();
@@ -245,7 +245,11 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     this.cartService.addOrderItems(menuItem, isItemExistsInCart, selectedIndex);
     await this.loadingService.showSpinner();
     try {
-      await firstValueFrom(this.cartService.validateOrder(null, this.cartService._orderOption.isASAP).pipe(handleServerError(ORDER_VALIDATION_ERRORS)));
+      await firstValueFrom(
+        this.cartService
+          .validateOrder(null, this.cartService._orderOption.isASAP)
+          .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
+      );
       this.cartService.saveOrderSnapshot();
       this.cartService.cartsErrorMessage = null;
       this.onClose();
@@ -255,7 +259,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
         const [code, text] = error;
         const doActionErrorCode = {
           [ORDER_ERROR_CODES.ORDER_CAPACITY]: async () => {
-            this.cartService.setOrderToSnapshot();
+            this.cartService.saveOrderSnapshot();
+            this.addNewItem();
             await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
           },
           [ORDER_ERROR_CODES.ORDER_ITEM_MAX]: () => {

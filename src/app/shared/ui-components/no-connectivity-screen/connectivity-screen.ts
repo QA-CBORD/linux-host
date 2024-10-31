@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BarcodeFacadeService } from '@core/service/barcode/barcode.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -9,21 +9,25 @@ import { CommonService } from '@shared/services/common.service';
 import { ConnectionService } from '@shared/services/connection-service';
 import { firstValueFrom, map, Subscription } from 'rxjs';
 import { Settings, User } from 'src/app/app.global';
-import { ConnectivityPageConfig, connectivityPageConfigurations, ConnectivityScreenCsModel } from './model/no-connectivity.cs.model';
+import {
+  ConnectivityPageConfig,
+  connectivityPageConfigurations,
+  ConnectivityScreenCsModel,
+} from './model/no-connectivity.cs.model';
 import { ConnectivityPageInfo, ExecStatus, RetryHandler } from './model/connectivity-page.model';
 import { ScanCardComponent } from '@sections/dashboard/containers/scan-card';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { NavigationService } from '@shared/services/navigation.service';
 import { ConnectivityErrorType } from './model/connectivity-error.enum';
+import { LogoutService } from '@core/facades/logout/logout.service';
 
-const EXECUTION_PRIORITY = 9999
+const EXECUTION_PRIORITY = 9999;
 @Component({
   selector: 'st-connectivity-screen',
   templateUrl: './connectivity-screen.html',
   styleUrls: ['./connectivity-screen.scss'],
 })
 export class ConnectivityScreen implements OnInit, OnDestroy {
-
   refreshSubscription: Subscription;
   retrySubscription: Subscription;
   routeSubscription: Subscription;
@@ -53,11 +57,17 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly modalController: ModalController,
     private readonly routingService: NavigationService
-  ) { }
+  ) {}
+  private readonly logoutService = inject(LogoutService);
 
   ionViewDidEnter() {
     this.isCurrentView = true;
-    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(EXECUTION_PRIORITY, () => {/**ignored on purpose */})
+    this.platformBackButtonClickSubscription = this.platform.backButton.subscribeWithPriority(
+      EXECUTION_PRIORITY,
+      () => {
+        /**ignored on purpose */
+      }
+    );
   }
 
   ionViewWillLeave() {
@@ -82,7 +92,9 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     this.canScanCard = await (async () => {
       const isVaultUnlocked = !this.isVaultLocked;
       const isServerError = this.errorType === ConnectivityErrorType.SERVER_CONNECTION;
-      const cashlessKeyInCache = !!(await firstValueFrom(this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)));
+      const cashlessKeyInCache = !!(await firstValueFrom(
+        this.barcodeFacadeService.getInStorage(User.Settings.CASHLESS_KEY)
+      ));
       const offlineBarcodeEnabled = await firstValueFrom(
         this.barcodeFacadeService
           .getInStorage<boolean>(Settings.Setting.OFFLINE_BARCODE_ENABLED)
@@ -146,14 +158,12 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     this.closeToastIfOpened();
   }
 
-
-
   addSubscription() {
-    this.refreshSubscription = this.connectionService.modalRefreshHandle
-      .subscribe((refresh) => refresh && this.onRetryFailed(true));
+    this.refreshSubscription = this.connectionService.modalRefreshHandle.subscribe(
+      refresh => refresh && this.onRetryFailed(true)
+    );
 
-    this.retrySubscription = this.connectionService.retrySubject
-      .subscribe((handler) => (this.retryHandler = handler));
+    this.retrySubscription = this.connectionService.retrySubject.subscribe(handler => (this.retryHandler = handler));
   }
 
   private async showRetryToast(): Promise<boolean> {
@@ -168,20 +178,20 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
           icon: '/assets/icon/Union.svg',
           cssClass: 'toast-message',
           side: 'start',
-          handler: () => myToast.dismiss(false)
+          handler: () => myToast.dismiss(false),
         },
         {
           text: string$.retry,
-          handler: () => myToast.dismiss(true)
+          handler: () => myToast.dismiss(true),
         },
         {
-          text: "|",
+          text: '|',
           handler: () => true,
         },
         {
-          icon: "/assets/icon/remove_x_icon.svg",
+          icon: '/assets/icon/remove_x_icon.svg',
           handler: () => myToast.dismiss(),
-        }
+        },
       ],
     });
     myToast.setAttribute('role', 'alert');
@@ -225,7 +235,6 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
     return await pinModal.onDidDismiss();
   }
 
-
   async closeSelf(status: ExecStatus) {
     try {
       await this.modalController.dismiss(null, status);
@@ -242,19 +251,29 @@ export class ConnectivityScreen implements OnInit, OnDestroy {
   }
 
   async institutionColor() {
-    const defaultInstitutionColor = "";
-    const deviceOffline = (await this.connectionService.deviceOffline());
+    const defaultInstitutionColor = '';
+    const deviceOffline = await this.connectionService.deviceOffline();
     if (deviceOffline) return defaultInstitutionColor;
     return firstValueFrom(this.accessCardService.getInstitutionColor())
-      .then((v) => {
+      .then(v => {
         const valueAsJson = JSON.parse(v);
-        return `#${(valueAsJson && valueAsJson['native-header-bg'] || defaultInstitutionColor)}`;
-      }).catch(() => defaultInstitutionColor);
+        return `#${(valueAsJson && valueAsJson['native-header-bg']) || defaultInstitutionColor}`;
+      })
+      .catch(() => defaultInstitutionColor);
   }
 
   async closeToastIfOpened() {
-    await this.toastService.dismiss()
-      .catch(() => { /** ignored error, do not remove error block though */ });
+    await this.toastService.dismiss().catch(() => {
+      /** ignored error, do not remove error block though */
+    });
   }
 
+  async logout() {
+    this.logoutService.logout();
+    try {
+      await this.modalController.dismiss(null);
+    } catch (err) {
+      this.retryHandler.onClose();
+    }
+  }
 }

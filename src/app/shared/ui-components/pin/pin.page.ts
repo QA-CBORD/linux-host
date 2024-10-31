@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -14,6 +14,8 @@ import { DEVICE_MARKED_LOST } from '@shared/model/generic-constants';
 import { ConnectionService } from '@shared/services/connection-service';
 import { ConnectivityAwareFacadeService } from 'src/app/non-authorized/pages/startup/connectivity-aware-facade.service';
 import { PinAction, PinCloseStatus, VaultAuthenticator } from '@core/service/identity/model.identity';
+import { NavigationService } from '@shared/services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'st-pin',
@@ -54,7 +56,10 @@ export class PinPage implements OnInit, OnDestroy {
     private readonly a11yService: AccessibilityService,
     private readonly loadingService: LoadingService,
     private readonly connectionService: ConnectionService,
-    private readonly connectivityFacade: ConnectivityAwareFacadeService
+    private readonly connectivityFacade: ConnectivityAwareFacadeService,
+    private readonly nav: NavigationService,
+    private readonly alertController: AlertController,
+    private readonly translateService: TranslateService
   ) {}
 
   @Input() pinAction: PinAction;
@@ -183,8 +188,7 @@ export class PinPage implements OnInit, OnDestroy {
   }
 
   dismissModal() {
-    this.authenticator?.onPinClosed(PinCloseStatus.CANCELED);
-    this.closePage(null, PinCloseStatus.CANCELED);
+    this.nav.getUrl().includes('startup') ? this.preventCloseAlert() : this.modalController.dismiss();
   }
 
   delete() {
@@ -343,5 +347,36 @@ export class PinPage implements OnInit, OnDestroy {
 
   get showReset() {
     return this.pinNumber.length < 4 && this.pinNumberCopy.length === 4;
+  }
+
+  async preventCloseAlert() {
+    const alert = await this.alertController.create({
+      cssClass: 'pin_alert',
+      header: this.translateService.instant('get_mobile.pin_alert.title'),
+      message: this.translateService.instant('get_mobile.pin_alert.message'),
+      buttons: [
+        {
+          text: this.translateService.instant('get_mobile.pin_alert.cancel'),
+          role: 'cancel',
+          cssClass: 'button__option_cancel',
+          handler: () => {
+            alert.dismiss();
+          },
+        },
+        {
+          text: this.translateService.instant('get_mobile.pin_alert.continue'),
+          role: 'confirm',
+          cssClass: 'button__option_confirm',
+          handler: () => this.cancelPinFlow(),
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  cancelPinFlow() {
+    this.authenticator?.onPinClosed(PinCloseStatus.CANCELED);
+    this.closePage(null, PinCloseStatus.CANCELED);
   }
 }

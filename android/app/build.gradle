@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'com.google.devtools.ksp'
+
 apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
 
@@ -14,6 +17,20 @@ android {
         buildConfig true
         dataBinding true
     }
+    signingConfigs {
+        defaultConfig {
+            storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
+            storePassword System.getenv('KEYSTORE_PASSWORD')
+            keyAlias System.getenv('KEY_ALIAS')
+            keyPassword System.getenv('KEY_PASSWORD')
+        }
+        debug {
+            storeFile file("$rootProject.projectDir/tapandpay_sdk/keystore")
+            storePassword System.getenv('KEYSTORE_PASSWORD')
+            keyAlias System.getenv('KEY_ALIAS')
+            keyPassword System.getenv('KEY_PASSWORD')
+        }
+    }
     dataBinding {
         enabled = true
     }
@@ -26,11 +43,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
-        // Mobile keys build configurations @see gradle.properties
-        buildConfigField "String", "AAMK_APP_ID", AAMK_APP_ID
-        buildConfigField "String", "AAMK_APP_ID_DESCRIPTION", AAMK_APP_ID_DESCRIPTION
-        buildConfigField "int", "AAMK_LOCK_SERVICE_CODE", AAMK_LOCK_SERVICE_CODE
-        buildConfigField "String", "AAMK_EMAIL_LOGS_MAIL", AAMK_EMAIL_LOGS_MAIL
+        //Origo Mobile keys build configurations @see gradle.properties
+        buildConfigField "String", "ORIGO_APP_ID", ORIGO_APP_ID
+        buildConfigField "String", "ORIGO_APP_ID_DESCRIPTION", ORIGO_APP_ID_DESCRIPTION
+        buildConfigField "int", "ORIGO_LOCK_SERVICE_CODE", ORIGO_LOCK_SERVICE_CODE
+        buildConfigField "String", "ORIGO_EMAIL_LOGS_MAIL", ORIGO_EMAIL_LOGS_MAIL
+        signingConfig signingConfigs.defaultConfig
     }
     buildTypes {
         release {
@@ -44,14 +62,11 @@ repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
     }
-    mavenCentral()
-    google()
 }
 
 dependencies {
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation project(':capacitor-android')
     testImplementation "junit:junit:$junitVersion"
@@ -63,38 +78,55 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
 
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     // Origo and mobile keys SDK
     // uncomment to build app without origo sdk as a submodule
-    releaseImplementation name: 'origo-sdk-release', version: '1.9.1', ext: 'aar'
-    debugImplementation name: 'origo-sdk-debug', version: '1.9.1', ext: 'aar'
-    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '8.0.6', ext: 'aar'
-    releaseImplementation name: 'mobilekeys-android-sdk-release', version: '8.0.6', ext: 'aar'
+    releaseImplementation name: 'origo-sdk-release', version: '3.2.0', ext: 'aar'
+    debugImplementation name: 'origo-sdk-debug', version: '3.2.0', ext: 'aar'
 
     // Origo transitive dependencies
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.mixpanel.android:mixpanel-android:5.8.5'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
-    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation 'com.mixpanel.android:mixpanel-android:7.3.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+    implementation 'com.google.android.gms:play-services-tapandpay:18.3.2'
+    implementation 'androidx.browser:browser:1.8.0'
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.gms:play-services-location:21.1.0'
+    //Roomdatabase
+    implementation 'androidx.room:room-runtime:2.6.1'
+    ksp 'androidx.room:room-compiler:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+    //polestar dependencies
+    implementation 'eu.polestar:naosdk:4.11.15'
+
+    //  Rx dependencies
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava’s latest version for bug fixes and new features.
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
 
     // For Dagger2 - Dependency Injection design pattern
-    implementation "com.google.dagger:dagger:2.24"
-    kapt "com.google.dagger:dagger-compiler:2.8"
+    implementation "com.google.dagger:dagger:2.50"
+    ksp "com.google.dagger:dagger-compiler:2.50"
     compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation 'javax.inject:javax.inject:1'
 
     // Import the Google Pay Push Provisioning SDK from the app/libs directory
-    implementation(name: 'play-services-tapandpay', ext: 'aar', version: '17.0.0')
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.google.android.gms:play-services-wallet:18.1.1'

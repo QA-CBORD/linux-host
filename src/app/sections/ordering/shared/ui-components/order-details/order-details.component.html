@@ -274,7 +274,7 @@
     [class.order-details__value]="duetimeFeedback.type !== 'info' && !duetimeFeedback.isFetching"
     [class.order-details__value--info]="duetimeFeedback.type === 'info' && !duetimeFeedback.isFetching"
   >
-    {{ orderDetailOptions | modifyPrepTime : orderTypes }}
+    {{ orderDetailOptions | modifyPrepTime : orderTypes : !showASAP }}
   </p>
   <ion-skeleton-text *ngIf="duetimeFeedback.isFetching" animated style="width: 100%"></ion-skeleton-text>
 </ng-template>

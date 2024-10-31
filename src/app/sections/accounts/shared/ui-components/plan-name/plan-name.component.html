@@ -1,6 +1,9 @@
-<hr />
-<div *ngIf="planName$ | async as planName" [class]="'patron-plan-' + flexDirection">
-  <div [class]="'patron-plan-'+ flexDirection+ '__label'">{{ 'patron-ui.accounts.patron-plan-name' | translate }}</div>
-  <div [class]="'patron-plan-'+ flexDirection+ '__name'">{{ planName }}</div>
+<div *ngIf="planName$ | async as planName">
+  <div [class]="'patron-plan-' + flexDirection">
+    <div [class]="'patron-plan-' + flexDirection + '__label'">
+      {{ 'patron-ui.accounts.patron-plan-name' | translate }}
+    </div>
+    <div [class]="'patron-plan-' + flexDirection + '__name'">{{ planName }}</div>
+  </div>
+  <hr />
 </div>
-<hr />

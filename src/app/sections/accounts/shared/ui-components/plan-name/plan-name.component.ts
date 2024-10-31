@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccountService } from '@sections/accounts/services/accounts.service';
+import { IonItem } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'st-plan-name',
   standalone: true,
-  imports: [TranslateModule, CommonModule],
+  imports: [IonItem, TranslateModule, CommonModule],
 
   templateUrl: './plan-name.component.html',
   styleUrl: './plan-name.component.scss',

@@ -17,7 +17,12 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
-import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
+import {
+  handleServerError,
+  isCashlessAccount,
+  isCreditCardAccount,
+  isMealsAccount
+} from '@core/utils/general-helpers';
 import { IonContent, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
@@ -116,6 +121,7 @@ export class CartComponent implements OnInit, OnDestroy {
   isLastSubmitedOrderError = false;
 
   private readonly activeCartService = inject(ActiveCartService);
+  defaultPaymentMethod: UserAccount;
 
   constructor(
     private readonly cartService: CartService,
@@ -351,7 +357,7 @@ export class CartComponent implements OnInit, OnDestroy {
           } as DueTimeFeedback;
 
           const errorKey =
-            this.dueTimeFeedback.code === ORDER_ERROR_CODES.INVALID_ORDER
+             [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME, ORDER_ERROR_CODES.INVALID_ORDER].includes(this.dueTimeFeedback.code)
               ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
               : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
@@ -700,7 +706,7 @@ export class CartComponent implements OnInit, OnDestroy {
       if (this.isMerchantOrderAhead && errorCodeKey) {
         const options = await firstValueFrom(this.orderDetailOptions$);
         const errorKey = {
-          [ORDER_ERROR_CODES.INVALID_ORDER]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
+          [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME]: ORDERING_CONTENT_STRINGS.menuItemsNotAvailable,
           [ORDER_ERROR_CODES.ORDER_CAPACITY]:
             options.orderType === ORDER_TYPE.PICKUP
               ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
@@ -858,7 +864,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private addUSAePayCreditCard() {
     from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(first())
-      .subscribe(({ success, errorMessage }) => {
+      .subscribe(({ success, errorMessage, cardNo }) => {
         if (!success) {
           return this.onValidateErrorToast(errorMessage);
         }
@@ -871,6 +877,9 @@ export class CartComponent implements OnInit, OnDestroy {
             switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
             tap(accounts => {
               this._accountInfoList$.next(accounts);
+
+              const { accounts: paymentMethods } = accounts;
+              this.defaultPaymentMethod = paymentMethods.find((account: UserAccount) => account.lastFour === cardNo);
               this.cdRef.detectChanges();
               this.toastService.showSuccessToast({
                 message: this.translateService.instant('patron-ui.creditCardMgmt.added_success_msg'),
@@ -878,6 +887,7 @@ export class CartComponent implements OnInit, OnDestroy {
             }),
             finalize(() => {
               this.loadingService.closeSpinner();
+              this.defaultPaymentMethod = null;
             })
           )
           .subscribe();

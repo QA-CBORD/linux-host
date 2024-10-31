@@ -5,20 +5,18 @@ import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 import { CredentialStatusCs } from './android-credential-content-strings.model';
 
-
-export interface CredentialBundle{
- id?: string;
+export interface CredentialBundle {
+  id?: string;
 }
 
-export interface HidCredentialBundle extends CredentialBundle{
+export interface HidCredentialBundle extends CredentialBundle {
   invitationCode: string;
   invitationId: string;
   issuer: string;
-  issuerToken: string
+  issuerToken: string;
 }
 
-
-export interface GooglePayCredentialBundle extends CredentialBundle{
+export interface GooglePayCredentialBundle extends CredentialBundle {
   digitizationReference: string;
   virtualCardUid: string;
 }
@@ -43,9 +41,8 @@ export interface AndroidCredentialState extends MobileCredentialState {
 }
 
 export class CredentialStateResolver {
-
   static fromActivePasses(activePasses: ActivePasses): MobileCredentialState {
-    if (CredentialStateResolver.hasHidCredential(activePasses)) {
+    if (CredentialStateResolver.hasHidSeosCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
         activePasses.credStatus.android_hid,
         activePasses.passes.android_hid,
@@ -61,6 +58,13 @@ export class CredentialStateResolver {
       );
     } else if (CredentialStateResolver.hasAppleWallet(activePasses)) {
       return new AppleWalletState(activePasses);
+    } else if (CredentialStateResolver.hasHidWalletCredential(activePasses)) {
+      return new AndroidCredentialStateEntity(
+        activePasses.credStatus.android_hid_wallet,
+        activePasses.passes.android_hid_wallet,
+        CredentialProviders.HID_WALLET,
+        activePasses.referenceIdentifier
+      );
     }
   }
 
@@ -75,8 +79,12 @@ export class CredentialStateResolver {
     return activePasses.credStatus.android_nxp != MobileCredentialStatuses.DISABLED;
   }
 
-  private static hasHidCredential(activePasses: ActivePasses): boolean {
+  private static hasHidSeosCredential(activePasses: ActivePasses): boolean {
     return activePasses.credStatus.android_hid != MobileCredentialStatuses.DISABLED;
+  }
+
+  private static hasHidWalletCredential(activePasses: ActivePasses): boolean {
+    return activePasses.credStatus.android_hid_wallet != MobileCredentialStatuses.DISABLED;
   }
 }
 
@@ -144,6 +152,10 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
 
   isAvailable(): boolean {
     return this.credStatus == MobileCredentialStatuses.AVAILABLE;
+  }
+
+  isCreated(): boolean {
+    return this.credStatus == MobileCredentialStatuses.CREATED;
   }
 
   setUiString$(cs: CredentialStatusCs): void {

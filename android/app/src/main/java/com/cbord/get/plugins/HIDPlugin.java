@@ -2,7 +2,7 @@ package com.cbord.get.plugins;
 
 import android.app.Application;
 
-import com.cbord.get.mcredentials.HIDSDKManager;
+import com.cbord.get.hidCredentials.HIDSDKManager;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -41,7 +41,7 @@ public class HIDPlugin extends Plugin {
     @PluginMethod()
     public void setupEndpoint(PluginCall call){
         String invitationCode = call.getString(INVITATION_CODE);
-        boolean forceInstall = call.getBoolean(FORCE_INSTALL);
+        boolean forceInstall = Boolean.TRUE.equals(call.getBoolean(FORCE_INSTALL));
         hidsdkManager.doHidCredentialFirstInstall(forceInstall, invitationCode, (transactionResult) -> {
             call.resolve(toJson(transactionResult));
         });
@@ -83,6 +83,11 @@ public class HIDPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void hasWalletCards(PluginCall call){
+        call.resolve(toJson(hidsdkManager.hasWalletCards()));
+    }
+
+    @PluginMethod
     public void isEndpointActive(PluginCall call){
         call.resolve(toJson(hidsdkManager.isEndpointActive()));
     }
@@ -92,5 +97,4 @@ public class HIDPlugin extends Plugin {
         jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
         return jsonObject;
     }
-
 }

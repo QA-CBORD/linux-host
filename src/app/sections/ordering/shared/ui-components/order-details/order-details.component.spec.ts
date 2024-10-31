@@ -33,6 +33,7 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { BrowserModule } from '@angular/platform-browser';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { MerchantSettingTypes } from '@core/utils/ordering-helpers';
+import { UserAccount } from '@core/model/account/account.model';
 
 const _modalController = {};
 const _orderingService = {
@@ -76,6 +77,7 @@ const _globalNavService = {
   notifyBackdropShown: jest.fn(),
   notifyBackdropHidden: jest.fn(),
 };
+const newCard = { id: '123', paymentSystemType: 1 } as UserAccount
 
 describe('OrderDetailsComponent', () => {
   let component: OrderDetailsComponent;
@@ -127,6 +129,10 @@ describe('OrderDetailsComponent', () => {
       merchantTimeZone: 'Americas/New York',
     } as MerchantOrderTypesInfo;
     component.orderPayment = [{ accountId: '', accountName: '' }] as OrderPayment[];
+    component.detailsForm = new FormGroup({
+      [FORM_CONTROL_NAMES.paymentMethod]: new FormControl('', Validators.required),
+    });
+    component.defaultPaymentMethod = newCard;
     component._merchant = { id: '1', timeZone: 'Americas/New York' } as MerchantInfo;
     fixture.detectChanges();
   });
@@ -173,7 +179,7 @@ describe('OrderDetailsComponent', () => {
   });
 
   it('should return Items Not Available Error Key', () => {
-    component.duetimeFeedback.code = ORDER_ERROR_CODES.INVALID_ORDER;
+    component.duetimeFeedback.code = ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME;
     expect(component.getDueTimeErrorKey()).toEqual('ItemsNotAvailable');
   });
 
@@ -421,7 +427,6 @@ describe('OrderDetailsComponent', () => {
     expect(component.dueTimeFormControl.touched).toBe(true);
   });
 
-  
   it('should return FORM_CONTROL_NAMES', () => {
     expect(component.controlsNames).toBe(FORM_CONTROL_NAMES);
   });
@@ -490,9 +495,9 @@ describe('OrderDetailsComponent', () => {
     component.detailsForm = new FormGroup({
       [FORM_CONTROL_NAMES.address]: mockFormControl,
     });
-  
+
     const result = component['addressInfoFormControl'];
-  
+
     expect(result).toBe(mockFormControl);
   });
 
@@ -504,35 +509,35 @@ describe('OrderDetailsComponent', () => {
     const result = component.tipFormControl;
     expect(result).toBe(mockFormControl);
   });
-  
+
   it('should return the cvv form control', () => {
     const mockFormControl = new FormControl();
     component.detailsForm = new FormGroup({
       [FORM_CONTROL_NAMES.cvv]: mockFormControl,
     });
-  
+
     const result = component.cvvFormControl;
-  
+
     expect(result).toBe(mockFormControl);
   });
 
   it('should clean due time errors', () => {
     const dueTimeErrorKey = component.getDueTimeErrorKey();
     const onDueTimeErrorCleanSpy = jest.spyOn(component.onDueTimeErrorClean, 'emit');
-  
+
     component.cleanDueTimeErrors();
-  
+
     expect(component.dueTimeFormControl.hasError(dueTimeErrorKey)).toBe(false);
     expect(onDueTimeErrorCleanSpy).toHaveBeenCalled();
     expect(component.duetimeFeedback.type).not.toBeDefined();
   });
-  
+
   it('should notify backdrop shown on select click', () => {
     const notifyBackdropShownSpy = jest.spyOn(_globalNavService, 'notifyBackdropShown');
     component.onSelectClick();
     expect(notifyBackdropShownSpy).toHaveBeenCalled();
   });
-  
+
   it('should notify backdrop hidden on modal dismiss', () => {
     const notifyBackdropHiddenSpy = jest.spyOn(_globalNavService, 'notifyBackdropHidden');
     component.onModalDismiss();
@@ -542,34 +547,34 @@ describe('OrderDetailsComponent', () => {
   it('should return false if dueTimeHasErrors is true and orderDetailOptions.isASAP is true', () => {
     component.duetimeFeedback.type = 'error';
     component.orderDetailOptions = { isASAP: true } as OrderDetailOptions;
-  
+
     const result = component.showASAP;
-  
+
     expect(result).toBe(false);
   });
-  
+
   it('should return true if duetimeFeedback is error or orderDetailOptions.isASAP is false', () => {
     component.duetimeFeedback.type = 'error';
     component.orderDetailOptions = { isASAP: true } as OrderDetailOptions;
-  
+
     const result = component.showASAP;
-  
+
     expect(result).toBe(false);
-  
+
     component.duetimeFeedback.type = 'error';
     component.orderDetailOptions = { isASAP: false } as OrderDetailOptions;
-  
+
     const result2 = component.showASAP;
-  
+
     expect(result2).toBe(true);
   });
 
   it('should emit onOrderItemRemovedId event with the passed id', () => {
     const mockId = '123';
     const onOrderItemRemovedIdSpy = jest.spyOn(component.onOrderItemRemovedId, 'emit');
-  
+
     component.onRemoveOrderItem(mockId);
-  
+
     expect(onOrderItemRemovedIdSpy).toHaveBeenCalledWith(mockId);
   });
 
@@ -577,11 +582,17 @@ describe('OrderDetailsComponent', () => {
     const mockMessage = 'mock remove message';
     const emptyCartSpy = jest.spyOn(component, 'emptyCart');
     jest.spyOn(_translateService, 'instant').mockReturnValue(mockMessage);
-  
+
     component.onEmptyCart();
-  
+
     expect(emptyCartSpy).toHaveBeenCalledWith(mockMessage);
   });
+  it('should update paymentMethod if defaultPaymentMethod is different', () => {
+    const detailsFormSpy = jest.spyOn(component.detailsForm, 'patchValue');
 
+    component.ngOnChanges({});
 
+    expect(detailsFormSpy).toHaveBeenCalledWith({ paymentMethod: newCard });
+  });
+  
 });
