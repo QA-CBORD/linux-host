@@ -523,9 +523,14 @@ export class CartService {
       this.cart.order.subTotal = this.sumUpOrderItems(this.cart.order.orderItems);
     }
 
-    const { subTotal, tax, useFee, deliveryFee, pickupFee, tip, discount } = this.cart.order;
+    const { subTotal, tax, useFee, deliveryFee, pickupFee, tip, discount, orderItems } = this.cart.order;
+
+    const optionsPrice = orderItems?.reduce((total, { orderItemOptions }) => {
+      return total + (orderItemOptions?.reduce((total, { salePrice, quantity }) => total + quantity * salePrice, 0) || 0);
+    }, 0) as OrderItem[];
 
     return (
+      (optionsPrice || 0) +
       (subTotal || 0) +
       (tax || 0) +
       (useFee || 0) +
