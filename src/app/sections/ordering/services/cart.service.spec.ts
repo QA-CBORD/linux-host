@@ -12,7 +12,15 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@core/model/user';
 import { ORDER_TYPE } from '../ordering.config';
-import { ItemsOrderInfo, MenuInfo, MerchantInfo, MerchantOrderTypesInfo, OrderInfo, OrderItem, OrderPayment } from '../shared';
+import {
+  ItemsOrderInfo,
+  MenuInfo,
+  MerchantInfo,
+  MerchantOrderTypesInfo,
+  OrderInfo,
+  OrderItem,
+  OrderPayment,
+} from '../shared';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { AddressInfo } from '@core/model/address/address-info';
 import { StorageEntity } from '@core/classes/extendable-state-manager';
@@ -24,7 +32,6 @@ jest.mock('@core/utils/date-helper', () => ({
 describe('CartService', () => {
   let service: CartService;
   let cartEntity: StorageEntity<CartState>;
-
 
   const mockCart = {
     value: {
@@ -59,7 +66,7 @@ describe('CartService', () => {
 
   const userFacadeService = {
     getUserData$: jest.fn(() => of({} as UserInfo)),
-    validateCartItems: jest.fn().mockReturnValue(of({ dueTime: ''} as OrderInfo)),
+    validateCartItems: jest.fn().mockReturnValue(of({ dueTime: '' } as OrderInfo)),
   };
   const merchantService = {
     getMerchantOrderSchedule: jest.fn(),
@@ -917,7 +924,7 @@ describe('CartService', () => {
     service['cart'].order.orderItems = [
       { menuItemId: 'item1', quantity: 1 },
       { menuItemId: 'item2', quantity: 2 },
-      { menuItemId: 'item3', quantity: 3 }
+      { menuItemId: 'item3', quantity: 3 },
     ];
 
     const removeOrderItemSpy = jest.spyOn(service, 'removeOrderItemFromOrderById');
@@ -937,7 +944,7 @@ describe('CartService', () => {
       const orderItems = [
         { quantity: 2, salePrice: 10 },
         { quantity: 1, salePrice: 20 },
-        { quantity: 3, salePrice: 5 }
+        { quantity: 3, salePrice: 5 },
       ] as OrderItem[];
 
       const result = service['sumUpOrderItems'](orderItems);
@@ -956,7 +963,7 @@ describe('CartService', () => {
     it('should handle items with zero quantity', () => {
       const orderItems = [
         { quantity: 0, salePrice: 10 },
-        { quantity: 1, salePrice: 20 }
+        { quantity: 1, salePrice: 20 },
       ] as OrderItem[];
 
       const result = service['sumUpOrderItems'](orderItems);
@@ -967,7 +974,7 @@ describe('CartService', () => {
     it('should handle items with zero sale price', () => {
       const orderItems = [
         { quantity: 2, salePrice: 0 },
-        { quantity: 1, salePrice: 20 }
+        { quantity: 1, salePrice: 20 },
       ] as OrderItem[];
 
       const result = service['sumUpOrderItems'](orderItems);
@@ -987,5 +994,48 @@ describe('CartService', () => {
     expect(service['cart'].merchant).toEqual(cartEntity.value.merchant);
     expect(service['cart'].order).toEqual(cartEntity.value.order);
     expect(service['cart'].orderDetailsOptions).toEqual(cartEntity.value.orderDetailsOptions);
+  });
+
+  describe('calculateTotal', () => {
+
+    it('should return 0 if order is not defined', () => {
+      service['cart'].order = null;
+
+      const result = service['calculateTotal']();
+      expect(result).toBe(undefined);
+    });
+
+    it('should calculate should calculate total with order item options', () => {
+      const orderItemOptions = [
+        { salePrice: 5, quantity: 1 },
+        { salePrice: 2, quantity: 1 },
+      ];
+      const orderItems = [
+        { quantity: 1, salePrice: 10, orderItemOptions: orderItemOptions },
+        { quantity: 1, salePrice: 20, orderItemOptions: [] },
+      ] as OrderItem[];
+
+      service['cart'].order.orderItems = [...orderItems];
+
+      jest.spyOn(service as any, 'sumUpOrderItems').mockReturnValue(30);
+
+      const result = service['calculateTotal']();
+      expect(result).toBe(37);
+    });
+
+    it('should calculate total without order item options', () => {
+      const orderItems = [
+        { quantity: 1, salePrice: 10 },
+        { quantity: 1, salePrice: 20 },
+      ] as OrderItem[];
+
+      service['cart'].order.orderItems = [...orderItems];
+
+      jest.spyOn(service as any, 'sumUpOrderItems').mockReturnValue(30);
+
+      const result = service['calculateTotal']();
+      expect(result).toBe(30);
+    });
+   
   });
 });
