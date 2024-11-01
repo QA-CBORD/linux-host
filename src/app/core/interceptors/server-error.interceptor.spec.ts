@@ -6,7 +6,7 @@ import { firstValueFrom, of } from 'rxjs';
 import { SentryLoggingHandlerService } from '@core/utils/sentry-logging-handler.service';
 import { TestBed } from '@angular/core/testing';
 
-jest.mock('@sentry/angular-ivy', () => ({
+jest.mock('@sentry/angular', () => ({
   captureException: jest.fn(),
 }));
 

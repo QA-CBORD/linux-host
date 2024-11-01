@@ -13,7 +13,7 @@ import { SuccessfulPaymentModal } from './successful-payment-modal/successful-pa
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StCreditCardListModule } from '@sections/settings/creditCards/credit-card-mgmt/card-list/credit-card-list.module';
 import { StInputAmountModule } from '@sections/accounts/pages/deposit-page/input-amount/input-amount.module';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { ConfirmPaymentPopover } from './confirm-payment-popover/confirm-payment-popover.component';
 import { FormPaymentRoutingModule } from './form-payment-routing.module';
 import { CreditCardService } from '@sections/settings/creditCards/credit-card.service';
@@ -22,7 +22,6 @@ const imports = [
   CommonModule,
   ReactiveFormsModule,
   IonicModule,
-  HttpClientModule,
   StPopoverLayoutModule,
   TransactionUnitsPipeModule,
   CreditCardTypePipeModule,
@@ -31,13 +30,13 @@ const imports = [
   ConfirmDepositPopoverModule,
   DepositModalModule,
   StButtonModule,
-  FormPaymentRoutingModule
+  FormPaymentRoutingModule,
 ];
 const declarations = [FormPaymentComponent, ConfirmPaymentPopover, SuccessfulPaymentModal];
 
 @NgModule({
   imports,
   declarations,
-  providers: [AccountService, CreditCardService],
+  providers: [AccountService, CreditCardService, provideHttpClient()],
 })
 export class FormPaymentModule {}
