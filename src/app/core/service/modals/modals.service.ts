@@ -25,6 +25,9 @@ export class ModalsService {
       ...opts,
     });
     this.bindModalListeners(modal, handleNavBarState);
+    // Sentry telemetry
+    // eslint-disable-next-line no-console
+    console.log('Building modal', modal);
     return modal;
   }
 
