@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Observable, of, Subject, firstValueFrom, BehaviorSubject } from 'rxjs';
 import { map, debounceTime, switchMap, catchError, timeout } from 'rxjs/operators';
@@ -15,6 +15,7 @@ import {
 import { RetryHandler } from '@shared/ui-components/no-connectivity-screen/model/connectivity-page.model';
 import { Network } from '@capacitor/network';
 import { ConnectivityErrorType } from '@shared/ui-components/no-connectivity-screen/model/connectivity-error.enum';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,7 @@ export class ConnectionService {
   retrySubject: Subject<RetryHandler> = new Subject();
   private readonly networkStatusChangeSubject = new BehaviorSubject<boolean>(true);
   private networkStatusChange$ = this.networkStatusChangeSubject.asObservable();
+  private readonly toastService = inject(ToastService);
 
   get online$() {
     return this.networkStatusChange$;
@@ -93,5 +95,11 @@ export class ConnectionService {
       (status !== null && Number(status) === NO_INTERNET_STATUS_CODE) ||
       emptyResponse
     );
+  }
+
+   async connectionToast(): Promise<void> {
+    await this.toastService.showToast({
+      message: 'Please check your internet connection and try again.',
+    });
   }
 }

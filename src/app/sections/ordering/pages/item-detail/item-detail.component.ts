@@ -1,5 +1,5 @@
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, zip, firstValueFrom } from 'rxjs';
@@ -22,6 +22,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { ToastService } from '@core/service/toast/toast.service';
 import { NavigationService } from '@shared/services/navigation.service';
 import { APP_ROUTES } from '@sections/section.config';
+import { ConnectionService } from '@shared/index';
 
 @Component({
   selector: 'st-item-detail',
@@ -43,6 +44,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   routesData: RoutesData;
   ignoreZeros = true;
+
+  private readonly connectionService: ConnectionService = inject(ConnectionService);
   constructor(
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly fb: FormBuilder,
@@ -300,6 +303,10 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   }
 
   private async failedValidateOrder(message: string) {
+    if (this.connectionService.isConnectionIssues({ message, status: null })) {
+      await this.connectionService.connectionToast();
+      return;
+    }
     await this.toastService.showToast({ message, icon: 'warning', cssClass: 'toast-message-warning' });
   }
 

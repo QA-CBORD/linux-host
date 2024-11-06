@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserAccount } from '@core/model/account/account.model';
@@ -26,6 +26,7 @@ import { ROLES } from 'src/app/app.global';
 import { AbstractDepositManager, CREDITCARD_STATUS } from './abstract-deposit-manager';
 import { TranslateService } from '@ngx-translate/core';
 import { formatAmountValue } from '@core/utils/format-helper';
+import { ConnectionService } from '@shared/index';
 
 export enum GUEST_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
@@ -52,6 +53,7 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
   focusLine = false;
   errorCs: { maxAmountError: string; minAmountError: string; amountPatternError: string };
   newAddedCard: string;
+  private connectionService = inject(ConnectionService);
 
   constructor(
     private readonly fb: FormBuilder,
@@ -177,9 +179,11 @@ export class GuestAddFundsComponent extends AbstractDepositManager implements On
           info => {
             this.confirmationDepositPopover({ ...info });
           },
-          () => {
+          error => {
             this.loadingService.closeSpinner();
-            this.onErrorRetrieve('Something went wrong, please try again...');
+            if (!this.connectionService.isConnectionIssues({ message: error.message, status: null })) {
+              this.onErrorRetrieve('Something went wrong, please try again...');
+            }
             this.isDepositing = false;
           }
         );
