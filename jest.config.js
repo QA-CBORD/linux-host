@@ -18,7 +18,6 @@ module.exports = {
     "<rootDir>/src/test.ts",
   ],
   "moduleNameMapper": {
-    "@sentry/angular-ivy": "<rootDir>/node_modules/@sentry/angular-ivy/bundles/sentry-angular-ivy.umd.js",
     "^@core(.*)$": "<rootDir>/src/app/core/$1",
     "^@sections(.*)$": "<rootDir>/src/app/sections/$1",
     "^@shared(.*)$": "<rootDir>/src/app/shared/$1",
