@@ -5,6 +5,16 @@ definitions:
     docker:
       memory: 3072
   steps:
+    - step: &build-and-test
+        name: Build and test
+        image: atlassian/default-image:3
+        caches:
+          - node
+        script:
+          - npm install
+          - npm run lint
+          - npm run test:ci
+          - npm run build-appflow
     - step: &build-step
         name: SonarQube analysis
         image: node:18.1.0
@@ -22,7 +32,7 @@ clone:
 pipelines:
   branches:
     release-*: # or the name of your main branch
-      - step: *build-step
+      - step: *build-and-test
   pull-requests:
     '**':
       - step:
