@@ -332,11 +332,7 @@ export class VaultIdentityService {
     this.state.biometricUsed = isBiometricAvailable && biometricEnabled;
     await this.closeAllModals();
     return new Promise<VaultSession>((resolve, reject) => {
-      if (this.state.biometricUsed) {
-        this.unlockVaultBiometric(resolve, reject);
-      } else {
-        this.unlockVaultPin(resolve, reject);
-      }
+      this.unlockVaultBiometric(resolve, reject);
     });
   }
 
