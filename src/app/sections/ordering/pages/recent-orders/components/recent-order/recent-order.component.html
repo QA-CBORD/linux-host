@@ -1,5 +1,5 @@
 <st-header
-  [title]="(contentStrings.labelOrder | async) + ' #' + (order$ | async).checkNumber"
+  [title]="(contentStrings.labelOrder | async) + ' #' + (order$ | async)?.checkNumber"
   [isTitleShow]="true"
   [backButtonTitle]="'Back'"
   backButtonIcon="chevron-back"
