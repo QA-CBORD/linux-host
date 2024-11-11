@@ -22,7 +22,6 @@ import { OrderingApiService } from './ordering.api.service';
 import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName, MerchantSettings, PAYMENT_SYSTEM_TYPE } from '../ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { UserSettingInfo } from '@core/model/user';
@@ -337,10 +336,6 @@ export class MerchantService {
 
   isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {
     return this.orderingApiService.isOutsideMerchantDeliveryArea(merchantId, latitude, longitude);
-  }
-
-  getSettingByConfig(config): Observable<SettingInfo> {
-    return this.orderingApiService.getSettingByConfig(config);
   }
 
   getDisplayMenu(merchantId: string, dateTime: string, orderType: number): Observable<MenuInfo> {

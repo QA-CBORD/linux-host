@@ -15,7 +15,7 @@ import { VaultIdentityService } from '@core/service/identity/vault.identity.serv
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { HttpClient } from '@angular/common/http';
 
 export function createTranslateLoader(http: HttpClient) {

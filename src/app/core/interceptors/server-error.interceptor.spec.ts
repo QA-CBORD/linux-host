@@ -9,7 +9,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { ConnectionService } from '@shared/index';
 import { LoadingService } from '@core/service/loading/loading.service';
 
-jest.mock('@sentry/angular-ivy', () => ({
+jest.mock('@sentry/angular', () => ({
   captureException: jest.fn(),
 }));
 

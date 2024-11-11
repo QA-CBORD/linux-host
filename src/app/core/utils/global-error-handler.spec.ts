@@ -1,9 +1,9 @@
 import { AlertController } from '@ionic/angular';
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { GlobalErrorHandler } from './global-error-handler';
 import { TestBed } from '@angular/core/testing';
 
-jest.mock('@sentry/angular-ivy', () => ({
+jest.mock('@sentry/angular', () => ({
   captureException: jest.fn(),
 }));
 

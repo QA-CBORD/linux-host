@@ -51,7 +51,7 @@ export class NutritionInfoComponent {
     if (!menuItem) {
       return;
     }
-    this.nutritionData = menuItem.nutritionInfo;
+    this.nutritionData = menuItem.nutritionInfo ?? [];
     this.allergens = menuItem.allergens?.join(', ').trim() ?? '';
     this.hasNutritionInfo = !!this.allergens || this.nutritionData.length > 0;
   }
