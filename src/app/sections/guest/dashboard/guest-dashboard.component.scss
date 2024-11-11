@@ -26,11 +26,12 @@
         justify-content: center;
         align-items: center;
         padding: 0;
+        height: 45px;
       }
 
       &-logo {
-        height: 35px;
-        width: 35px;
+        height: 100%;
+        width: 100%;
       }
 
       &-title-wrapper {
@@ -42,12 +43,8 @@
 
         @include font-nunito-regular(20px);
         @include ellipsis;
-        max-width: 90vw;
-
-        &-left {
-          margin-left: 10px;
-          max-width: 80vw;
-        }
+        max-width: 100vw;
+        text-align: center;
       }
     }
 
