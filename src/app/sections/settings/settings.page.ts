@@ -68,6 +68,7 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    if (this.isGuest) return;
     this.updateProfilePhoto();
     this.onPhotoUploadEvent();
   }

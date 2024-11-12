@@ -4,7 +4,7 @@ import { ContentStringsStateService } from '@core/states/content-strings/content
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { combineLatest, iif, Observable, of, zip } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { catchError, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from '../../../content-strings';
 import { ContentStringApi, ContentStringCategory } from '@shared/model/content-strings/content-strings-api';
 import { ContentStringModel } from '@shared/model/content-strings/content-string-models';
@@ -16,7 +16,7 @@ import { ContentStringRequest } from '@core/model/content/content-string-request
 export class ContentStringsFacadeService extends ServiceStateFacade {
   constructor(
     private readonly stateService: ContentStringsStateService,
-    private readonly apiService: ContentStringsApiService,
+    private readonly apiService: ContentStringsApiService
   ) {
     super();
   }
@@ -54,7 +54,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     name: string
   ): Observable<string> {
     return this.getContentString$(domain, category, name).pipe(
-      skipWhile(value => !value),
+      filter(Boolean),
       map(({ value }) => value)
     );
   }
@@ -166,7 +166,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     name: string
   ): Observable<string> {
     return this.resolveContentString$(domain, category, name).pipe(
-      skipWhile(value => !value),
+      filter(Boolean),
       map(({ value }) => value)
     );
   }

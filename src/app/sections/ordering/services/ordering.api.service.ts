@@ -12,7 +12,6 @@ import {
 } from 'src/app/core/model/service/message-response.model';
 import { BuildingInfo, ItemsOrderInfo, MenuInfo, MerchantAccountInfoList, MerchantInfo, OrderInfo } from '../shared';
 import { AddressInfo } from '@core/model/address/address-info';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MerchantSearchOptions } from '@sections/ordering';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -227,14 +226,6 @@ export class OrderingApiService {
     );
   }
 
-  getSettingByConfig(config): Observable<SettingInfo> {
-    const queryConfig = new RPCQueryConfig('retrieveSetting', config, true, true);
-
-    return this.http
-      .post('/json/configuration', queryConfig)
-      .pipe(map(({ response }: MessageResponse<SettingInfo>) => response));
-  }
-
   getDisplayMenu(
     merchantId: string,
     dateTime: string,
@@ -254,7 +245,9 @@ export class OrderingApiService {
     const postParams: ServiceParameters = { address };
     const queryConfig = new RPCQueryConfig('addressToGeocode', postParams, true);
 
-    return this.http.post(this.serviceUrlUser, queryConfig).pipe(map(({ response }: MessageResponse<AddressInfo>) => response));
+    return this.http
+      .post(this.serviceUrlUser, queryConfig)
+      .pipe(map(({ response }: MessageResponse<AddressInfo>) => response));
   }
 
   submitOrder(orderInfo: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {

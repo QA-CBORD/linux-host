@@ -51,7 +51,7 @@ export class ServerError implements HttpInterceptor {
           switchMap(nwtStatus => {
             if (this.connectionService.isConnectionIssues({ message, status }) && !nwtStatus?.connected) {
               this.loadingService.closeSpinner();
-              this.connectionToast();
+              this.connectionService.connectionToast();
               return throwError(() => new Error(`Due to connection issues, ${message}`));
             }
             return throwError(() => new Error(message));
@@ -59,12 +59,6 @@ export class ServerError implements HttpInterceptor {
         );
       })
     );
-  }
-
-  private async connectionToast(): Promise<void> {
-    await this.toastService.showToast({
-      message: 'Please check your internet connection and try again.',
-    });
   }
 
   private async presentToast(message: string): Promise<void> {

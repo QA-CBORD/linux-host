@@ -24,6 +24,7 @@ import { APP_ROUTES } from '@sections/section.config';
 import { MenuGroupInfo, MenuItemInfo, MenuItemOptionInfo, OrderItem } from '@sections/ordering/components';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CaloriesDisplayPipe } from '@shared/pipes/calories-display-pipe/calories-display.pipe';
+import { ConnectionService } from '@shared/index';
 // Mock Pipe decorator
 let menuItem: MenuItemInfo = {
   id: '1',
@@ -157,7 +158,12 @@ let translateService = {
   get: jest.fn().mockReturnValue(of('')),
   onLangChange: of({}),
   onTranslationChange: of({}),
-  onDefaultLangChange: of({})
+  onDefaultLangChange: of({}),
+};
+
+const connectionService = {
+  isConnectionIssues: jest.fn(),
+  connectionToast: jest.fn(),
 };
 
 describe('ItemDetailComponent', () => {
@@ -186,6 +192,7 @@ describe('ItemDetailComponent', () => {
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: ChangeDetectorRef, useValue: changeDetectorRefMock },
         { provide: TranslateService, useValue: translateService },
+        {provide: ConnectionService, useValue:connectionService}
       ],
     }).compileComponents();
 

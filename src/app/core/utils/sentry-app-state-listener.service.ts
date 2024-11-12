@@ -3,7 +3,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { CartService } from '@sections/ordering';
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { Observable, filter, tap } from 'rxjs';
 
 @Injectable({

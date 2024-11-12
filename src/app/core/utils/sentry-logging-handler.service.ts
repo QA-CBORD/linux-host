@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { EnvironmentData } from '@environments/environment-data';
 import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
@@ -16,8 +16,6 @@ const OmittedErrorsForSentry = [
   providedIn: 'root',
 })
 export class SentryLoggingHandlerService {
-
-
   logError(error: Error): void {
     const handleUnknowErrorMessage = 'Handled unknown error';
     const extractedError = extractError(error) || handleUnknowErrorMessage;
@@ -51,5 +49,4 @@ export class SentryLoggingHandlerService {
       ignoreErrors: ignoreErrorsPatterns,
     });
   }
-
 }

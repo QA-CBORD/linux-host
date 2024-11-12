@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  ChangeDetectorRef,
+  NgZone,
+  inject,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
@@ -35,6 +43,7 @@ import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 import { TranslateService } from '@ngx-translate/core';
 import { formatAmountValue } from '@core/utils/format-helper';
+import { ConnectionService } from '@shared/index';
 
 export enum browserState {
   FINISHED = 'browserFinished',
@@ -48,6 +57,7 @@ export enum browserState {
 export class DepositPageComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   private activePaymentType: PAYMENT_TYPE;
+  private readonly connectionService = inject(ConnectionService);
   focusLine = false;
   depositSettings: SettingInfo[];
   depositForm: FormGroup;
@@ -282,8 +292,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             this.finalizeDepositModal(result);
           }
         })
-        .catch(async () => {
-          this.onErrorRetrieve('Something went wrong, please try again...');
+        .catch(async error => {
+          if (!this.connectionService.isConnectionIssues({ message: error.message, status: null })) {
+            this.onErrorRetrieve('Something went wrong, please try again...');
+          }
         })
         .finally(() => {
           this.isDepositing = false;
@@ -306,9 +318,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           info => this.confirmationDepositPopover({ ...info }),
-          () => {
+          error => {
             this.loadingService.closeSpinner();
-            this.onErrorRetrieve('Something went wrong, please try again...');
+            if (!this.connectionService.isConnectionIssues({ message: error.message, status: null })) {
+              this.onErrorRetrieve('Something went wrong, please try again...');
+            }
             this.isDepositing = false;
           }
         );
@@ -486,12 +500,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           .subscribe(
             () => this.finalizeDepositModal(data),
             async error => {
-              this.onErrorRetrieve(
-                await this.orderingService.getContentErrorStringByException(
-                  error,
-                  'Your information could not be verified.'
-                )
-              );
+              if (!this.connectionService.isConnectionIssues({ message: error, status: null })) {
+                this.onErrorRetrieve(
+                  await this.orderingService.getContentErrorStringByException(
+                    error,
+                    'Your information could not be verified.'
+                  )
+                );
+              }
             }
           );
       }

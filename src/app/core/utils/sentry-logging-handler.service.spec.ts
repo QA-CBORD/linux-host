@@ -1,10 +1,10 @@
 import { SentryLoggingHandlerService } from './sentry-logging-handler.service';
 import { ORDER_ERROR_CODES, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '@environments/environment';
 
-jest.mock('@sentry/angular-ivy', () => ({
+jest.mock('@sentry/angular', () => ({
   captureException: jest.fn(),
   init: jest.fn(),
 }));

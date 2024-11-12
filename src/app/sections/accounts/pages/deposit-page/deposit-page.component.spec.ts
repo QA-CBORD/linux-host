@@ -10,7 +10,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
-import { CommonService } from '@shared/index';
+import { CommonService, ConnectionService } from '@shared/index';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { AppRateService } from '@shared/services/app-rate/app-rate.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -34,6 +34,9 @@ const commonService = {
   getString: jest.fn(() => {
     return 'test';
   }),
+};
+const connectionService = {
+  isConnectionIssues: jest.fn(),
 };
 
 const depositService = {
@@ -121,8 +124,7 @@ const router = {
 const a11yService = {
   excuteSearchSpeech: jest.fn(),
 };
-const translateService = {
-};
+const translateService = {};
 
 const accounts = [
   {
@@ -418,9 +420,9 @@ describe('DepositPageComponent', () => {
         { provide: CommonService, useValue: commonService },
         { provide: OrderingService, useValue: orderingService },
         { provide: AppRateService, useValue: appRateService },
-        {provide: AccessibilityService, useValue: a11yService},
-        {provide: TranslateService, useValue: translateService},
-
+        { provide: AccessibilityService, useValue: a11yService },
+        { provide: TranslateService, useValue: translateService },
+        { provide: ConnectionService, useValue: connectionService },
       ],
     }).compileComponents();
 

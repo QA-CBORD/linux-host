@@ -14,6 +14,7 @@ import { GuestDepositsService } from '@sections/guest/services/guest-deposits.se
 import { GuestAddFundsComponent } from './guest-add-funds.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateServiceStub } from '@sections/notifications/notifications.component.spec';
+import { ConnectionService } from '@shared/index';
 
 describe('GuestAddFundsComponent', () => {
   let component: GuestAddFundsComponent;
@@ -56,6 +57,10 @@ describe('GuestAddFundsComponent', () => {
       }),
       guestAccounts: () => ({}),
     });
+
+    const connectionService = {
+      isConnectionIssues: jest.fn(),
+    }
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [GuestAddFundsComponent],
@@ -75,6 +80,7 @@ describe('GuestAddFundsComponent', () => {
         { provide: DepositService, useFactory: depositServiceStub },
         { provide: GuestDepositsService, useFactory: guestDepositsServiceStub },
         { provide: TranslateService, useClass: TranslateServiceStub },
+        { provide: ConnectionService, useValue: connectionService },
       ],
     });
     fixture = TestBed.createComponent(GuestAddFundsComponent);
