@@ -1,20 +1,25 @@
 name: Run App Workflow
-
-on:
+'on':
   push:
-    workflow_dispatch:
     branches:
       - feature/GET-6645-setup-github-actions-to-run-app
   pull_request:
     branches:
       - feature/GET-6645-setup-github-actions-to-run-app
-  env:
+  workflow_dispatch: null
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+    
+env:
   ANDROID_ARCH: x86_64
   ANDROID_TARGET: google_apis
-  API_LEVEL: 30
+  API_LEVEL: 33
   ANDROID_BUILD_TOOLS_VERSION: 33.0.2
-  ANDROID_SDK_PACKAGES: system-images;android-30;google_apis;x86_64 platforms;android-30 build-tools;33.0.2 platform-tools emulator
-  EMULATOR_TIMEOUT: 350
+  ANDROID_SDK_PACKAGES: system-images;android-33;google_apis;x86_64 platforms;android-33 build-tools;33.0.2 platform-tools emulator
+  EMULATOR_TIMEOUT: 700
   EMULATOR_NAME: nexus
 
 jobs:
@@ -30,3 +35,25 @@ jobs:
         run: |
             echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
       
+      - name: Install Sdk
+        run: |
+           yes Y | sdkmanager --licenses
+           sdkmanager --install ${ANDROID_SDK_PACKAGES}
+  
+      - name: Build emulator
+        run: |
+            echo "no" | avdmanager --verbose create avd --force -n $EMULATOR_NAME --abi "${ANDROID_TARGET}/${ANDROID_ARCH}" -k "system-images;android-${API_LEVEL};${ANDROID_TARGET};${ANDROID_ARCH}"
+        
+      - name: Launch emulator
+        run: |
+          chmod +x ./start_emu_headless.sh
+          EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
+          
+      - name: Install appium
+        run: |
+          npm i -g appium@next --unsafe-perm=true --allow-root
+          appium driver install uiautomator2 
+      
+      - name: Install dependencies
+        run: | 
+          yarn i
