@@ -4,21 +4,21 @@
       class="card__header"
       *ngIf="{ photo: institutionPhoto$ | async, name: institutionName$ | async } as instutionValues"
     >
-      <ion-col class="card__header-logo-wrapper" size="2" *ngIf="instutionValues.photo">
+      @if(instutionValues.photo){
+
+      <ion-col class="card__header-logo-wrapper" size="12" *ngIf="instutionValues.photo">
         <img
           *ngIf="instutionValues.photo"
           class="card__header-logo"
           [src]="instutionValues.photo"
-          alt="institution logo"
+          [alt]="instutionValues.name + ' institution logo'"
         />
       </ion-col>
-      <ion-col
-        class="card__header-title-wrapper"
-        [class.card__header-title-left]="!instutionValues.photo"
-        [size]="instutionValues.photo ? 9 : 12"
-      >
-        <div *ngIf="instutionValues.name" class="card__header-title left">{{ instutionValues.name }}</div>
+      }@else{
+      <ion-col class="card__header-title-wrapper" [class.card__header-title-left]="!instutionValues.photo" size="12">
+        <div *ngIf="instutionValues.name" class="card__header-title">{{ instutionValues.name }}</div>
       </ion-col>
+      }
     </ion-row>
     <ion-row class="card__campus-container">
       <ion-col class="card__campus-wrapper">

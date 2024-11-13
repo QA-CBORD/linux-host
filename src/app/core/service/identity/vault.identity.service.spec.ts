@@ -231,12 +231,10 @@ describe('VaultIdentityService', () => {
     it('should unlock vault if session is stored and biometrics are enabled', async () => {
       jest.spyOn(service, 'hasStoredSession').mockReturnValue(Promise.resolve(true));
       jest.spyOn(userPreferenceService, 'cachedBiometricsEnabledUserPreference').mockReturnValue(true);
-      jest.spyOn(userPreferenceService, 'setBiometricsEnabledUserPreference');
       jest.spyOn(service, 'unlockVault').mockReturnValue(Promise.resolve({ pin: '1234' }));
 
       const result = await service.unlockVaultIfLocked();
 
-      expect(userPreferenceService.setBiometricsEnabledUserPreference).toHaveBeenCalledWith(true);
       expect(service.unlockVault).toHaveBeenCalledWith(true);
       expect(result).toEqual({ pin: '1234' });
     });

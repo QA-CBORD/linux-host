@@ -1,9 +1,12 @@
 <ion-card [ngStyle]="{ 'background-color': institutionColor ? institutionColor : '' }" class="user-data">
   <ion-card-header class="user-data__header">
-    <div *ngIf="institutionPhoto" class="user-data__header-logo-wrapper">
-      <img class="user-data__header-logo" [src]="institutionPhoto" alt="institution logo" />
+    @if(institutionPhoto){
+    <div class="user-data__header-logo-wrapper">
+      <img class="user-data__header-logo" [src]="institutionPhoto" [alt]="institutionName + ' institution logo'" />
     </div>
+    }@else {
     <ion-card-title class="user-data__university">{{ institutionName }}</ion-card-title>
+    }
   </ion-card-header>
   <ion-card-content class="user-data__content">
     <img

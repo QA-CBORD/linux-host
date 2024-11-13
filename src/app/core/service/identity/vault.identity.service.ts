@@ -274,14 +274,14 @@ export class VaultIdentityService {
    */
   async unlockVaultIfLocked(): Promise<VaultSession> {
     if (await this.hasStoredSession()) {
-      if (await this.userPreferenceService.cachedBiometricsEnabledUserPreference()) {
-        this.userPreferenceService.setBiometricsEnabledUserPreference(true); // Remove this 3 lines when developing for 4.32. wont be necessary anymore
-      }
       return this.unlockVault(await this.userPreferenceService.cachedBiometricsEnabledUserPreference(true));
     }
     return { pin: null };
   }
 
+  /**
+   * This method will become useless once we have the ability to detect if workawound works or not.
+   *  **/
   private async unlockVaultPin(resolve, reject) {
     this.pinAuthenticator
       .try(() => this.vault.unlock())
@@ -292,6 +292,7 @@ export class VaultIdentityService {
   onVaultUnlockSuccess(pin: string) {
     this.setIsLocked(false);
     this.setUserPin(pin);
+    this.pinAuthenticator.onPinEvaluated(true);
   }
 
   private async unlockVaultBiometric(resolve, reject) {
@@ -299,7 +300,7 @@ export class VaultIdentityService {
       await this.vault.unlock();
       const pin = await this.vault.getValue(key);
       this.onVaultUnlockSuccess(pin);
-      resolve({ pin, biometricUsed: true });
+      resolve({ pin, biometricUsed: this.state.biometricUsed });
     } catch (error) {
       this.retryPinUnlock(error)
         .then(session => resolve(session))
@@ -332,11 +333,7 @@ export class VaultIdentityService {
     this.state.biometricUsed = isBiometricAvailable && biometricEnabled;
     await this.closeAllModals();
     return new Promise<VaultSession>((resolve, reject) => {
-      if (this.state.biometricUsed) {
-        this.unlockVaultBiometric(resolve, reject);
-      } else {
-        this.unlockVaultPin(resolve, reject);
-      }
+      this.unlockVaultBiometric(resolve, reject);
     });
   }
 
