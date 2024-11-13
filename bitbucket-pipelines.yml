@@ -62,3 +62,17 @@ pipelines:
             - cd scripts
             - chmod +x UpdateFromDevelop.sh
             - ./UpdateFromDevelop.sh
+                release-sync:
+      - step:
+          name: "Sync Release Branch to GitHub"
+          script:
+            - echo "Starting sync of Bitbucket release branch to GitHub..."
+            - git remote add origin git@github.com:Alan-R-Nunez/release.git
+            - git branch -M main
+            - git push -u origin main
+            # Configure Git to use GitHub credentials
+            # - git config --global user.name "bitbucket-pipeline"
+            # - git config --global user.email "you@example.com"  # Use any valid email
+            # - git remote add github "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/your-github-username/your-github-repo.git"
+            # - git fetch github  # Fetch latest state from GitHub
+            # - git push -u github release:release --force  # Push Bitbucket 'release' branch to GitHub 'release' branch
