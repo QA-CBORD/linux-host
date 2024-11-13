@@ -56,12 +56,12 @@ export class UserNotificationsFacadeService {
         catchError(() => of([]))
       )
     );
-    const orderNotifications = notifications.filter(
-      notification => notification.category === NotificationCategory.order
+    const allowedNotifications = notifications.filter(
+      ({ category }) => [NotificationCategory.order, NotificationCategory.photoUpload].includes(category)
     );
 
-    this.notificationsStore = orderNotifications;
-    this._unreadNotifications$.next(orderNotifications);
+    this.notificationsStore = allowedNotifications;
+    this._unreadNotifications$.next(allowedNotifications);
     this.fetchNotificationsCount();
   }
 
