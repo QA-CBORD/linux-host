@@ -1,10 +1,9 @@
 name: Run App Workflow
-
-on:
+'on':
   push:
-    workflow_dispatch:
     branches:
       - feature/GET-6645-setup-github-actions-to-run-app
   pull_request:
     branches:
       - feature/GET-6645-setup-github-actions-to-run-app
+  workflow_dispatch: null
