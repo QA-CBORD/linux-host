@@ -17,12 +17,7 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { buttons as Buttons } from '@core/utils/buttons.config';
-import {
-  handleServerError,
-  isCashlessAccount,
-  isCreditCardAccount,
-  isMealsAccount
-} from '@core/utils/general-helpers';
+import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { IonContent, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING, PAYMENT_TYPE } from '@sections/accounts/accounts.config';
@@ -356,12 +351,13 @@ export class CartComponent implements OnInit, OnDestroy {
             code: error[0],
           } as DueTimeFeedback;
 
-          const errorKey =
-             [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME, ORDER_ERROR_CODES.INVALID_ORDER].includes(this.dueTimeFeedback.code)
-              ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
-              : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
-              ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
-              : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
+          const errorKey = [ORDER_ERROR_CODES.INVALID_ITEMS_FOR_DUE_TIME, ORDER_ERROR_CODES.INVALID_ORDER].includes(
+            this.dueTimeFeedback.code
+          )
+            ? ORDERING_CONTENT_STRINGS.menuItemsNotAvailable
+            : this.cartService._orderOption.orderType === ORDER_TYPE.PICKUP
+            ? ORDERING_CONTENT_STRINGS.pickUpOrderTimeNotAvailable
+            : ORDERING_CONTENT_STRINGS.deliveryOrderTimeNotAvailable;
 
           this.itemReadOnly = true;
           this.cartService.cartsErrorMessage = error[1];
@@ -690,11 +686,14 @@ export class CartComponent implements OnInit, OnDestroy {
         this.setupCartInfo(order);
         await this.showModal(order);
         this.cartService.clearActiveOrder();
+        await this.loadingService.closeSpinner();
       })
-      .catch(async (error: string | [string, string]) => this.handlerCartErrors(error))
+      .catch(async (error: string | [string, string]) => {
+        await this.loadingService.closeSpinner();
+        return this.handlerCartErrors(error);
+      })
       .finally(() => {
         this.isProcessingOrder = false;
-        this.loadingService.closeSpinner();
       });
   }
 
