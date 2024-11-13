@@ -62,7 +62,7 @@ pipelines:
             - cd scripts
             - chmod +x UpdateFromDevelop.sh
             - ./UpdateFromDevelop.sh
-                release-sync:
+    release-sync:
       - step:
           name: "Sync Release Branch to GitHub"
           script:
