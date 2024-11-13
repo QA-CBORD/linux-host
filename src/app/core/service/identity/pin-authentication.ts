@@ -61,7 +61,7 @@ export class PinAuthenticator {
         return code == VaultErrorCodes.AuthFailed;
     }
 
-    private async onPinEvaluated(isRightPing: boolean): Promise<void> {
+    async onPinEvaluated(isRightPing: boolean): Promise<void> {
         if (isRightPing) {
             this.authenticator.onPinSuccess();
         } else {
