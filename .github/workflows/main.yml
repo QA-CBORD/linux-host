@@ -67,7 +67,7 @@ jobs:
 
       - name: Build 
         run: | 
-          # yarn build-appflow
+          yarn build-appflow
           yarn cap sync android
 
       - name: Update SDK dir
