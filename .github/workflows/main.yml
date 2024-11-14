@@ -78,9 +78,8 @@ jobs:
 
       - name: Build .apk
         run: | 
-          brew install gradle
-          # cd android 
-          # gradle wrapper
+          cd android 
+          gradle wrapper
           # which gradlew
 
 
