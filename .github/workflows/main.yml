@@ -72,6 +72,7 @@ jobs:
 
       - name: Update SDK dir
         run: |
+          gradle gradlew
           ./gradlew --version
           # gradle wrapper 
           # cd android
