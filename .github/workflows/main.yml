@@ -81,6 +81,7 @@ jobs:
 
       - name: Build .apk
         run: | 
+          gradle gradlew
           ./gradlew build --stacktrace --info
           ./gradlew assembleDebug
 
