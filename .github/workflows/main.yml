@@ -72,7 +72,7 @@ jobs:
 
       - name: Update SDK dir
         run: |
-          gradle gradlew
+          gradle wrapper 
           cd android
           # ls -la
           # echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
