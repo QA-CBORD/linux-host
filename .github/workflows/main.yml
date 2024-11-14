@@ -80,6 +80,9 @@ jobs:
         run: | 
           pwd
           ls -la
+          brew install gradle
+          cd android 
+          gradle wrapper
           which gradlew
 
 
