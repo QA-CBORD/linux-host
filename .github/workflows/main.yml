@@ -56,28 +56,29 @@ jobs:
     #       echo $ANDROID_HOME
     #       $ANDROID_HOME/emulator/emulator -avd -list-avds
 
-      - name: Install appium
-        run: |
-          yarn global add appium
-          appium driver install uiautomator2@2.0.1 
+      # - name: Install appium
+      #   run: |
+      #     yarn global add appium@2.12.1
+      #     appium driver install uiautomator2@2.0.1 
       
-      - name: Install dependencies
-        run: | 
-          yarn install
+      # - name: Install dependencies
+      #   run: | 
+      #     yarn install
 
-      - name: Build 
-        run: | 
-          yarn build-appflow
-          yarn cap sync android
+      # - name: Build 
+      #   run: | 
+      #     yarn build-appflow
+      #     yarn cap sync android
 
-      - name: Update SDK dir
-        run: | 
-          cd android
-          echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
-          sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
+      # - name: Update SDK dir
+      #   run: | 
+      #     cd android
+      #     echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
+      #     sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
 
       - name: Build .apk
-        run: ./gradlew assembleDebug
+        run: which gradlew
+
 
 
           
