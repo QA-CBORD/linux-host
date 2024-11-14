@@ -72,12 +72,11 @@ jobs:
 
       - name: Update SDK dir
         run: |
-          pwd
-          ls -la
+          gradle gradlew
           cd android
-          ls -la
-          echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
-          sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
+          # ls -la
+          # echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
+          # sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
 
       - name: Build .apk
         run: | 
