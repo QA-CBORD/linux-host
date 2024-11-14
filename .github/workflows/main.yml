@@ -83,6 +83,7 @@ jobs:
 
       - name: Gradle
         run: | 
+          cd android
           gradle --version
           gradle assembleDebug
           # ./gradlew --version
