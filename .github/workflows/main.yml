@@ -85,8 +85,8 @@ jobs:
         run: | 
           gradle --version
           gradle wrapper
-          ./gradlew --version
-          ./gradlew wrapper --gradle-version=8.3.2
+          # ./gradlew --version
+          # ./gradlew wrapper --gradle-version=8.3.2
 
 
 
