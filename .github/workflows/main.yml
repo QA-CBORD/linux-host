@@ -61,9 +61,9 @@ jobs:
       #     yarn global add appium@2.12.1
       #     appium driver install uiautomator2@2.0.1 
       
-      # - name: Install dependencies
-      #   run: | 
-      #     yarn install
+      - name: Install dependencies
+        run: | 
+          yarn install
 
       - name: Build 
         run: | 
