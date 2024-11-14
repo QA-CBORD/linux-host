@@ -58,12 +58,11 @@ jobs:
 
       - name: Install appium
         run: |
-          yarn global add appium@next --unsafe-perm=true --allow-root
+          yarn global add appium@1.22.3
           appium driver install uiautomator2@2.0.1 
       
       - name: Install dependencies
         run: | 
-          yarn global add appium
           yarn install
 
       - name: Build 
@@ -75,7 +74,7 @@ jobs:
         run: | 
           cd android
           echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
-          sed -i 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
+          sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
 
       - name: Build .apk
         run: ./gradlew assembleDebug
