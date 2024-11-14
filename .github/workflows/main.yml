@@ -78,12 +78,10 @@ jobs:
 
       - name: Build .apk
         run: | 
-          pwd
-          ls -la
           brew install gradle
-          cd android 
-          gradle wrapper
-          which gradlew
+          # cd android 
+          # gradle wrapper
+          # which gradlew
 
 
 
