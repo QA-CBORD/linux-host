@@ -48,12 +48,28 @@ jobs:
         run: |
           chmod +x ./start_emu_headless.sh
           EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
-          
+
+      - name: Check Android device
+        run: | 
+          pwd
+          adb devices
+          echo $ANDROID_HOME
+          $ANDROID_HOME/emulator/emulator -avd -list-avds
+
       - name: Install appium
         run: |
           npm i -g appium@next --unsafe-perm=true --allow-root
-          appium driver install uiautomator2 
+          appium driver install uiautomator2@2.0.1 
       
       - name: Install dependencies
         run: | 
+          yarn global add appium@1.22.3
           yarn install
+
+      - name: Build 
+        run: | 
+          yarn build-appflow
+          yarn cap sync android
+
+
+          
