@@ -74,15 +74,14 @@ jobs:
         run: |
           pwd
           ls -la
-          gradle wrapper
           cd android
           ls -la
+          ./gradlew build --stacktrace --info
           echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
           sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
 
       - name: Build .apk
         run: | 
-          ./gradlew build --stacktrace --info
           ./gradlew assembleDebug
 
 
