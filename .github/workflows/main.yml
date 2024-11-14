@@ -72,8 +72,9 @@ jobs:
 
       - name: Update SDK dir
         run: |
-          gradle wrapper 
-          cd android
+          ./gradlew --version
+          # gradle wrapper 
+          # cd android
           # ls -la
           # echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
           # sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
