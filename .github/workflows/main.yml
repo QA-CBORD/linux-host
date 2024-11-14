@@ -84,6 +84,7 @@ jobs:
       - name: Gradle
         run: | 
           gradle --version
+          gradle assembleDebug
           # ./gradlew --version
           # ./gradlew wrapper --gradle-version=8.3.2
 
