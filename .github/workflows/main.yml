@@ -78,7 +78,7 @@ jobs:
 
       - name: Launch App
         run: | 
-          adb shell am start -n com.cbord.get/.MainActivity]
+          adb shell am start -n com.cbord.get/.MainActivity
 
       - name: Run UI Tests
         run: |
