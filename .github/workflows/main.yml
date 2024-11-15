@@ -27,7 +27,7 @@ env:
 
 jobs:
   webriverIo-emulator:
-    timeout-minutes: 20
+    timeout-minutes: 45
     
     runs-on: macos-13
     
