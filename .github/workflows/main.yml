@@ -52,11 +52,11 @@ jobs:
 
       - name: Build emulator
         run: |
-          echo "no" | avdmanager create avd --name $EMULATOR_NAME --abi google_apis/x86_64 -k "system-images;android-${API_LEVEL};google_apis;x86_64"
+          echo "no" | avdmanager create avd --name nexus --abi google_apis/x86_64 -k "system-images;android-${API_LEVEL};google_apis;x86_64"
         
       - name: Launch emulator
         run: |
-          $ANDROID_HOME/emulator/emulator -avd $EMULATOR_NAME -no-window -no-boot-anim -gpu swiftshader_indirect &
+          $ANDROID_HOME/emulator/emulator -avd nexus -no-window -no-boot-anim -gpu swiftshader_indirect &
           adb wait-for-device
 
 
