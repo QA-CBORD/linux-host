@@ -79,7 +79,12 @@ jobs:
 
       - name: Run UI Tests
         run: |
-          ../run-automation.sh loginHostedStudent -i
+          pwd
+          ls -la
+          cd ..
+          ./run-automation.sh loginHostedStudent -i
+          pwd
+          ls -la
 
 
 
