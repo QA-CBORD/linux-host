@@ -79,6 +79,9 @@ jobs:
 
       - name: Run UI Tests
         run: |
+          ls -la
+          cd android
+          ls -la
           find . -name run-automation.sh
           pwd
           ./run-automation.sh loginHostedStudent -i
