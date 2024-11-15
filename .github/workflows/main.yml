@@ -51,31 +51,17 @@ jobs:
       #   run: |
       #     chmod +x ./start_emu_headless.sh
       #     EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
-
-      # # - name: Check Android device*
-      # #   run: | 
-      # #     pwd
-      # #     adb devices
-      # #     echo $ANDROID_HOME
-      # #     $ANDROID_HOME/emulator/emulator -avd -list-avds
       
-      # - name: Install dependencies
-      #   run: | 
-      #     yarn install
-      #     yarn global add appium@2.12.1
-      #     appium driver install uiautomator2@2.0.1 
-
+      - name: Install dependencies
+        run: | 
+          yarn install
+          yarn global add appium@2.12.1
+          appium driver install uiautomator2@2.0.1 
 
       # - name: Build project
       #   run: | 
       #     yarn build-appflow
       #     yarn cap sync android
-
-      # # - name: Update SDK dir*
-      # #   run: |
-      # #     cd android
-      # #     echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
-      # #     sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
 
       # - name: Generate .apk
       #   run: | 
@@ -96,12 +82,10 @@ jobs:
       #     chmod +rwx ../run-automation.sh 
       #     ../run-automation.sh loginHostedStudent -i
 
-      - name: Run Tests
+      - name: Run Automation
         run: |
           cd android
-          pwd
-          ls -la
-          find . -name run-automation.sh
+          ../run-automation.sh loginHostedStudent -i
 
 
 
