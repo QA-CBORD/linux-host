@@ -89,6 +89,7 @@ jobs:
           pwd
           find . -name run-automation.sh
           ls -la
+          chmod +rwx ./run-automation.sh
           ./run-automation.sh loginHostedStudent -i
 
 
