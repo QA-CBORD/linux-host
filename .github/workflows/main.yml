@@ -52,21 +52,21 @@ jobs:
       #     chmod +x ./start_emu_headless.sh
       #     EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
       
-      - name: Install dependencies
-        run: | 
-          yarn install
-          yarn global add appium@2.12.1
-          appium driver install uiautomator2@2.0.1 
+      # - name: Install dependencies
+      #   run: | 
+      #     yarn install
+      #     yarn global add appium@2.12.1
+      #     appium driver install uiautomator2@2.0.1 
 
-      - name: Build project
-        run: | 
-          yarn build-appflow
-          yarn cap sync android
+      # - name: Build project
+      #   run: | 
+      #     yarn build-appflow
+      #     yarn cap sync android
 
-      - name: Generate .apk
-        run: | 
-          cd android
-          gradle assembleDebug
+      # - name: Generate .apk
+      #   run: | 
+      #     cd android
+      #     gradle assembleDebug
 
       # - name: Deploy .apk on emulator
       #   run: | 
@@ -83,6 +83,7 @@ jobs:
       - name: Run UI Tests
         run: |
           pwd
+          cd android
           cd ..
           cd release
           pwd
