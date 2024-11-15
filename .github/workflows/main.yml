@@ -68,8 +68,11 @@ jobs:
           cd android
           gradle assembleDebug
 
-      - name: Deploy .apk
+      - name: Deploy .apk on emulator
         run: | 
+          adb wait-for-device
+          adb shell getprop init.svc.bootanim | grep -m 1 stopped
+
           chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
           adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
 
