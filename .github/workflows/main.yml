@@ -82,7 +82,7 @@ jobs:
           cd ..
           ls -la
           find . -name run-automation.sh
-          ./run-automation.sh loginHostedStudent -i
+          ./release/run-automation.sh loginHostedStudent -i
 
 
 
