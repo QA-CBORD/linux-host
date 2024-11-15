@@ -66,12 +66,14 @@ jobs:
       
       - name: Install dependencies
         run: | 
-          yarn install
+          echo $KEYSTORE_PASSWORD
+          echo $KEY_ALIAS
+          echo $KEY_PASSWORD
 
-      - name: Build 
-        run: | 
-          yarn build-appflow
-          yarn cap sync android
+      # - name: Build 
+      #   run: | 
+      #     yarn build-appflow
+      #     yarn cap sync android
 
       # - name: Update SDK dir
       #   run: |
@@ -79,12 +81,12 @@ jobs:
       #     echo "sdk.dir=$ANDROID_HOME" | tee local.properties > /dev/null
       #     sed -i '' 's/android\.enableJetifier=true/android.enableJetifier=false/' gradle.properties
 
-      - name: Build .apk
-        run: | 
-          cd android
-          pwd
-          gradle --version
-          gradle assembleDebug
+      # - name: Build .apk
+      #   run: | 
+      #     cd android
+      #     pwd
+      #     gradle --version
+      #     gradle assembleDebug
 
 
 
