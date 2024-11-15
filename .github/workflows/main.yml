@@ -34,23 +34,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         
-      # - name: Add avdmanager and sdkmanager to system PATH
-      #   run: |
-      #       echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
+      - name: Add avdmanager and sdkmanager to system PATH
+        run: |
+            echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
       
-      # - name: Install Sdk
-      #   run: |
-      #      yes Y | sdkmanager --licenses
-      #      sdkmanager --install ${ANDROID_SDK_PACKAGES}
+      - name: Install Sdk
+        run: |
+           yes Y | sdkmanager --licenses
+           sdkmanager --install ${ANDROID_SDK_PACKAGES}
   
-      # - name: Build emulator
-      #   run: |
-      #       echo "no" | avdmanager --verbose create avd --force -n $EMULATOR_NAME --abi "${ANDROID_TARGET}/${ANDROID_ARCH}" -k "system-images;android-${API_LEVEL};${ANDROID_TARGET};${ANDROID_ARCH}"
+      - name: Build emulator
+        run: |
+            echo "no" | avdmanager --verbose create avd --force -n $EMULATOR_NAME --abi "${ANDROID_TARGET}/${ANDROID_ARCH}" -k "system-images;android-${API_LEVEL};${ANDROID_TARGET};${ANDROID_ARCH}"
         
-      # - name: Launch emulator
-      #   run: |
-      #     chmod +x ./start_emu_headless.sh
-      #     EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
+      - name: Launch emulator
+        run: |
+          chmod +x ./start_emu_headless.sh
+          EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
       
       - name: Install dependencies
         run: | 
@@ -58,33 +58,27 @@ jobs:
           yarn global add appium@2.12.1
           appium driver install uiautomator2@2.0.1 
 
-      # - name: Build project
-      #   run: | 
-      #     yarn build-appflow
-      #     yarn cap sync android
+      - name: Build project
+        run: | 
+          yarn build-appflow
+          yarn cap sync android
 
-      # - name: Generate .apk
-      #   run: | 
-      #     cd android
-      #     gradle assembleDebug --warning-mode all
-
-      # - name: Deploy .apk
-      #   run: | 
-      #     chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
-      #     adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
-
-      # - name: Launch App
-      #   run: | 
-      #     adb shell am start -n com.cbord.get/.MainActivity
-
-      # - name: Run Tests
-      #   run: |
-      #     chmod +rwx ../run-automation.sh 
-      #     ../run-automation.sh loginHostedStudent -i
-
-      - name: Run Automation
-        run: |
+      - name: Generate .apk
+        run: | 
           cd android
+          gradle assembleDebug --warning-mode all
+
+      - name: Deploy .apk
+        run: | 
+          chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
+          adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Launch App
+        run: | 
+          adb shell am start -n com.cbord.get/.MainActivity
+
+      - name: Run UI Tests
+        run: |
           ../run-automation.sh loginHostedStudent -i
 
 
