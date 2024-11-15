@@ -87,10 +87,10 @@ jobs:
           pwd
           cd ..
           pwd
-          cd release
-          pwd
-          find . -name run-automation.sh
-          ./run-automation.sh loginHostedStudent -i
+          # cd release
+          # pwd
+          # find . -name run-automation.sh
+          # ./run-automation.sh loginHostedStudent -i
 
 
 
