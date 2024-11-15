@@ -80,7 +80,7 @@ jobs:
       - name: Run UI Tests
         run: |
           ls -la
-          cd android
+          cd ..
           ls -la
           find . -name run-automation.sh
           pwd
