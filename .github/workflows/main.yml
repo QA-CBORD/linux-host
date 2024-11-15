@@ -85,9 +85,8 @@ jobs:
       - name: Deploy .apk
         run: | 
           find . -name "*.apk"
-          ls -R app/build/outputs/
-          # chmod +rwx app/build/outputs/apk/debug/app-debug.apk
-          adb install -r app/build/outputs/apk/debug/app-debug.apk
+          chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
+          adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
 
       # - name: Launch App
       #   run: | 
