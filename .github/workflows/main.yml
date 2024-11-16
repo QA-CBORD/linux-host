@@ -52,29 +52,29 @@ jobs:
           chmod +x ./start_emu_headless.sh
           EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
       
-      # - name: Install dependencies
-      #   run: | 
-      #     yarn install
-      #     yarn global add appium@2.12.1
-      #     appium driver install uiautomator2@2.0.1 
-      # - name: Build project
-      #   run: | 
-      #     yarn build-appflow
-      #     yarn cap sync android
-      # - name: Generate .apk
-      #   run: | 
-      #     cd android
-      #     gradle assembleDebug
-      # - name: Deploy .apk on emulator
-      #   run: | 
-      #     adb wait-for-device
-      #     adb shell getprop init.svc.bootanim | grep -m 1 stopped
-      #     chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
-      #     adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
-      # - name: Launch App
-      #   run: | 
-      #     adb shell am start -n com.cbord.get/.MainActivity
-      # - name: Run UI Tests
-      #   run: |
-      #     chmod +rwx ./run-automation.sh
-      #     ./run-automation.sh loginHostedStudent -i
+      - name: Install dependencies
+        run: | 
+          yarn install
+          yarn global add appium@2.12.1
+          appium driver install uiautomator2@2.0.1 
+      - name: Build project
+        run: | 
+          yarn build-appflow
+          yarn cap sync android
+      - name: Generate .apk
+        run: | 
+          cd android
+          gradle assembleDebug
+      - name: Deploy .apk on emulator
+        run: | 
+          adb wait-for-device
+          adb shell getprop init.svc.bootanim | grep -m 1 stopped
+          chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
+          adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Launch App
+        run: | 
+          adb shell am start -n com.cbord.get/.MainActivity
+      - name: Run UI Tests
+        run: |
+          chmod +rwx ./run-automation.sh
+          ./run-automation.sh loginHostedStudent -i
