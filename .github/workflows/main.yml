@@ -59,7 +59,10 @@ jobs:
           EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
       
       - name: Install dependencies
-        run: | 
+        run: |  
+          yarn add nvm
+          nvm install 20.18.0
+          nvm use 20.18.0
           yarn install
           yarn global add appium@2.12.1
           appium driver install uiautomator2@2.0.1 
