@@ -81,10 +81,11 @@ jobs:
           find . -name "app-debug.apk"
           chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
           adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
-
+          
       - name: Launch App
         run: | 
-          adb shell am start -n com.cbord.get/.MainActivity
+          adb shell am start -W -n com.cbord.get/.MainActivity
+          adb shell pidof com.cbord.get
 
       - name: Run UI Tests
         run: |
