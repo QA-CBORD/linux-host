@@ -61,6 +61,7 @@ jobs:
       - name: Install dependencies
         run: |  
           java --version
+          sudo update-alternatives --config java
       #     yarn add node@20.18.0
       #     yarn install
       #     yarn global add appium@2.12.1
