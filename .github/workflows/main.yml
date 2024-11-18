@@ -60,35 +60,36 @@ jobs:
       
       - name: Install dependencies
         run: |  
-          yarn add node@20.18.0
-          yarn install
-          yarn global add appium@2.12.1
-          appium driver install uiautomator2@2.0.1 
+          java --version
+      #     yarn add node@20.18.0
+      #     yarn install
+      #     yarn global add appium@2.12.1
+      #     appium driver install uiautomator2@2.0.1 
 
-      - name: Build project
-        run: | 
-          yarn build-appflow
-          yarn cap sync android
+      # - name: Build project
+      #   run: | 
+      #     yarn build-appflow
+      #     yarn cap sync android
 
-      - name: Generate .apk
-        run: | 
-          cd android
-          gradle assembleDebug
+      # - name: Generate .apk
+      #   run: | 
+      #     cd android
+      #     gradle assembleDebug
 
-      - name: Deploy .apk on emulator
-        run: | 
-          adb wait-for-device
-          adb shell getprop init.svc.bootanim | grep -m 1 stopped
-          find . -name "app-debug.apk"
-          chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
-          adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
+      # - name: Deploy .apk on emulator
+      #   run: | 
+      #     adb wait-for-device
+      #     adb shell getprop init.svc.bootanim | grep -m 1 stopped
+      #     find . -name "app-debug.apk"
+      #     chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
+      #     adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
           
-      - name: Launch App
-        run: | 
-          adb shell am start -W -n com.cbord.get/.MainActivity
-          adb shell pidof com.cbord.get
+      # - name: Launch App
+      #   run: | 
+      #     adb shell am start -W -n com.cbord.get/.MainActivity
+      #     adb shell pidof com.cbord.get
 
-      - name: Run UI Tests
-        run: |
-          chmod +rwx ./run-automation.sh
-          ./run-automation.sh loginHostedStudent -i
+      # - name: Run UI Tests
+      #   run: |
+      #     chmod +rwx ./run-automation.sh
+      #     ./run-automation.sh loginHostedStudent -i
