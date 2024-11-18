@@ -21,6 +21,8 @@ config.services = (config.services ? config.services : []).concat([
       // This will use the globally installed version of Appium
       command: 'appium',
       args: {
+        address: '0.0.0.0',  
+        port: 4723,
         // This is needed to tell Appium that we can execute local ADB commands
         // and to automatically download the latest version of ChromeDriver
         relaxedSecurity: true,
