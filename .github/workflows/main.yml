@@ -41,9 +41,9 @@ jobs:
       #     sudo udevadm control --reload-rules
       #     sudo udevadm trigger --name-match=kvm
         
-      # - name: Add avdmanager and sdkmanager to system PATH
-      #   run: |
-      #       echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
+      - name: Add avdmanager and sdkmanager to system PATH
+        run: |
+            echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}:$JAVA_HOME/bin" >> $GITHUB_PATH
       
       # - name: Install Sdk
       #   run: |
