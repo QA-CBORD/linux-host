@@ -18,7 +18,7 @@ if [ -z "$1" ]
 
   npm run ionic-e2e:build:android
   for suite in $suites; do
-     echo -e "\nRunning suite: $suite\n"
+     echo -e "\n*** Running suite: $suite ***"
      SUITE=$suite npm run ionic-e2e:run:android
   done
 else
