@@ -52,7 +52,7 @@ function launch_emulator () {
 }
 
 function check_emulator_status () {
-  printf "${G}==> ${BL}Checking emulator booting up status 🧐${NC}\n"
+  printf "${G}==> ${BL}Checking emulator booting up status${NC}\n"
   start_time=$(date +%s)
   spinner=( "⠹" "⠺" "⠼" "⠶" "⠦" "⠧" "⠇" "⠏" )
   i=0
@@ -68,7 +68,7 @@ function check_emulator_status () {
       adb shell input keyevent 82
       break
     elif [ "$result" == "" ]; then
-      printf "${YE}==> Emulator is partially Booted! 😕 ${spinner[$i]} ${NC}\r"
+      printf "${YE}==> Emulator is partially Booted!${spinner[$i]} ${NC}\r"
     else
       printf "${RED}==> $result, please wait ${spinner[$i]} ${NC}\r"
       i=$(( (i+1) % 8 ))
@@ -77,7 +77,7 @@ function check_emulator_status () {
     current_time=$(date +%s)
     elapsed_time=$((current_time - start_time))
     if [ $elapsed_time -gt $timeout ]; then
-      printf "${RED}==> Timeout after ${timeout} seconds elapsed 🕛.. ${NC}\n"
+      printf "${RED}==> Timeout after ${timeout} seconds elapsed ... ${NC}\n"
       break
     fi
     sleep 4
