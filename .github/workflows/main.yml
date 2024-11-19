@@ -93,6 +93,7 @@ jobs:
         run: |
           appium --log-level info --log-timestamp --port 4723 --relaxed-security --allow-insecure=adb_shell --allow-insecure=shell
           netstat -an | grep 4723
+          curl http://127.0.0.1:4723/wd/hub/status
           chmod +rwx ./run-automation.sh
           ./run-automation.sh loginHostedStudent -i
  

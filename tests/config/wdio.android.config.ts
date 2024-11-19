@@ -10,6 +10,9 @@ import config from './wdio.shared.appium.config';
 config.capabilities = [
   {
     // The defaults you need to have in your config
+    hostname: '127.0.0.1',
+    port: 4723,
+    path: '/',
     platformName: 'Android',
     maxInstances: 1,
     // For W3C the appium capabilities need to have an extension prefix
