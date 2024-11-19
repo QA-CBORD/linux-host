@@ -37,7 +37,6 @@ jobs:
 
       - name: Enable KVM group perms
         run: |
-          lsof -i :4723
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
@@ -62,7 +61,7 @@ jobs:
       
       - name: Install dependencies
         run: |  
-          yarn add node@20.18.0
+          yarn add node@20.0.0
           yarn install
           yarn global add appium@2.12.1
           appium driver install uiautomator2@2.0.1 
@@ -81,7 +80,6 @@ jobs:
         run: | 
           adb wait-for-device
           adb shell getprop init.svc.bootanim | grep -m 1 stopped
-          find . -name "app-debug.apk"
           chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
           adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
           
@@ -89,8 +87,11 @@ jobs:
         run: | 
           adb shell am start -W -n com.cbord.get/.MainActivity
           adb shell pidof com.cbord.get
+          adb devices
 
       - name: Run UI Tests
         run: |
           chmod +rwx ./run-automation.sh
           ./run-automation.sh loginHostedStudent -i
+          netstat -an | grep 4723
+          
