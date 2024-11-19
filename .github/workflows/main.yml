@@ -92,7 +92,7 @@ jobs:
 
       - name: Run UI Tests
         run: |
-          appium --address 127.0.0.1 --port 4723 --relaxed-security --allow-insecure=adb_shell --allow-insecure=shell
+          # appium --address 127.0.0.1 --port 4723
           netstat -an | grep 4723
           curl http://127.0.0.1:4723/wd/hub/status
           chmod +rwx ./run-automation.sh
