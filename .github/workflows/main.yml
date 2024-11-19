@@ -60,7 +60,8 @@ jobs:
       #     EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
       
       - name: Install dependencies
-        run: |  
+        run: |
+          rm package-lock.json
           yarn add node@20.0.0
           yarn install
           yarn global add appium@2.12.1
