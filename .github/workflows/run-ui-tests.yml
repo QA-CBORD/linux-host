@@ -60,8 +60,8 @@ jobs:
       - name: Launch emulator
         run: |
           node -v
-          chmod +x ./scripts/start-emu-headless.sh
-          EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./scripts/start-emu-headless.sh
+          chmod +x /scripts/start-emu-headless.sh
+          EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME /scripts/start-emu-headless.sh
           
       # - name: Setup dependencies
       #   run: |
