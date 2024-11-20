@@ -68,7 +68,7 @@ function check_emulator_status () {
       adb shell input keyevent 82
       break
     elif [ "$result" == "" ]; then
-      printf "${YE}==> Emulator is partially Booted!${spinner[$i]} ${NC}\r"
+      printf "${YE}==> Emulator is partially Booted! ${spinner[$i]} ${NC}\r"
     else
       printf "${RED}==> $result, please wait ${spinner[$i]} ${NC}\r"
       i=$(( (i+1) % 8 ))
