@@ -96,7 +96,7 @@ jobs:
 
       - name: Run All UI Tests
         run: |
-          chmod +rwx ./run-automation.sh
+          chmod +x ./run-automation.sh
           ./run-automation.sh
  
           
