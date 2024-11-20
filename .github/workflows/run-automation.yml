@@ -31,7 +31,7 @@ env:
 
 jobs:
   webriverIo-emulator:
-    timeout-minutes: 200
+    timeout-minutes: 400
     
     runs-on: ubuntu-22.04
     
