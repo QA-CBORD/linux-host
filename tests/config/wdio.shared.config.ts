@@ -340,7 +340,7 @@ export const config: WebdriverIO.Config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: process.env.VERBOSE === 'true' ? 'debug' : 'error',
+  logLevel: 'error',
   // Set specific log levels per logger
   // loggers:
   // - webdriver, webdriverio
@@ -403,14 +403,21 @@ export const config: WebdriverIO.Config = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: ['spec'],
+  reporters: ['spec', ['allure', {
+    outputDir: 'report/allure-results',
+    disableWebdriverStepsReporting: true,
+    disableWebdriverScreenshotsReporting: false,
+    disableMochaHooks: true
+}]],
   // Options to be passed to Jasmine.
   mochaOpts: {
     // Jasmine default timeout
     /**
      * NOTE: This has been increased for more stable Appium Native app
      * tests because they can take a bit longer.
-     */
+     */   
+    ui: 'bdd',
+    retries: 1,
     timeout: 1200000,
   },
 
