@@ -29,6 +29,6 @@ if [ -z "$1" ]
      SUITE=$suite npm run ionic-e2e:run:android
   done
 else
-    echo -e "\n\n| *** Running suite: $suite *** |"
+    echo -e "\n\n| *** Running suite: $1 *** |"
     npm run ionic-e2e:build:android && SUITE=$1 npm run ionic-e2e:run:android
 fi
