@@ -69,7 +69,7 @@ jobs:
           # yarn add pnpm
           yarn add node@$NODE_VERSION
           yarn install
-          yarn add global appium@$APPIUM_VERSION
+          yarn global add appium@$APPIUM_VERSION
           appium driver install uiautomator2@$UIAUTOMATOR2_VERSION
 
       - name: Build project
