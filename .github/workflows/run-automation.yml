@@ -66,7 +66,6 @@ jobs:
       - name: Setup dependencies
         run: |
           rm package-lock.json
-          # yarn add pnpm
           yarn add node@$NODE_VERSION
           yarn install
           yarn global add appium@$APPIUM_VERSION
@@ -74,8 +73,8 @@ jobs:
 
       - name: Build project
         run: | 
-          pnpm build-appflow
-          pnpm cap sync android
+          yarn build-appflow
+          yarn cap sync android
 
       # - name: Generate .apk
       #   run: | 
