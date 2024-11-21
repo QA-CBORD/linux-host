@@ -11,9 +11,16 @@ if [ -z "$1" ]
     exit 1
   fi
 
-  # Extract suite names
-  echo "Extracting suite names from $INPUT_FILE..."
-  suites=$(grep -oP '(?!specs|capabilities|services|reporters)\b\w*?(?=[:]\s\[)' "$INPUT_FILE") 
+  # Determine the appropriate grep command based on OS
+  if [[ "$OSTYPE" == *darwin* ]] || [[ "$OSTYPE" == *macos* ]]; then
+    GREP_COMMAND="ggrep -oP"
+  else
+    GREP_COMMAND="grep -oP"
+  fi
+  
+  # Extract suite names using the determined grep command
+  suites=$($GREP_COMMAND '(?!specs|capabilities|services|reporters)\b\w*?(?=[:]\s\[)' "$INPUT_FILE")
+  
   echo "$suites" 
 
   npm run ionic-e2e:build:android
