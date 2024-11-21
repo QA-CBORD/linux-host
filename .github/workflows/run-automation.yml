@@ -38,30 +38,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # - name: Enable KVM group perms on Linux runner
-      #   run: |
-      #     echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-      #     sudo udevadm control --reload-rules
-      #     sudo udevadm trigger --name-match=kvm
+      - name: Enable KVM group perms on Linux runner
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
         
-      # - name: Add avdmanager and sdkmanager to system PATH
-      #   run: |
-      #       echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}:$JAVA_HOME/bin" >> $GITHUB_PATH
+      - name: Add avdmanager and sdkmanager to system PATH
+        run: |
+            echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}:$JAVA_HOME/bin" >> $GITHUB_PATH
       
-      # - name: Install Sdk
-      #   run: |
-      #      yes Y | sdkmanager --licenses
-      #      sdkmanager --install ${ANDROID_SDK_PACKAGES}
+      - name: Install Sdk
+        run: |
+           yes Y | sdkmanager --licenses
+           sdkmanager --install ${ANDROID_SDK_PACKAGES}
   
-      # - name: Build emulator
-      #   run: |
-      #       echo "no" | avdmanager --verbose create avd --force -n $EMULATOR_NAME --abi "${ANDROID_TARGET}/${ANDROID_ARCH}" -k "system-images;android-${API_LEVEL};${ANDROID_TARGET};${ANDROID_ARCH}"
+      - name: Build emulator
+        run: |
+            echo "no" | avdmanager --verbose create avd --force -n $EMULATOR_NAME --abi "${ANDROID_TARGET}/${ANDROID_ARCH}" -k "system-images;android-${API_LEVEL};${ANDROID_TARGET};${ANDROID_ARCH}"
         
-      # - name: Launch emulator
-      #   run: |
-      #     node -v
-      #     chmod +x ./scripts/start-emulator.sh
-      #     EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./scripts/start-emulator.sh
+      - name: Launch emulator
+        run: |
+          node -v
+          chmod +x ./scripts/start-emulator.sh
+          EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./scripts/start-emulator.sh
           
       - name: Setup dependencies
         run: |
@@ -76,27 +76,27 @@ jobs:
           yarn build-appflow
           yarn cap sync android
 
-      # - name: Generate .apk
-      #   run: | 
-      #     cd android
-      #     gradle assembleDebug
+      - name: Generate .apk
+        run: | 
+          cd android
+          gradle assembleDebug
 
-      # - name: Deploy .apk on emulator
-      #   run: | 
-      #     adb wait-for-device
-      #     adb shell getprop init.svc.bootanim | grep -m 1 stopped
-      #     chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
-      #     adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Deploy .apk on emulator
+        run: | 
+          adb wait-for-device
+          adb shell getprop init.svc.bootanim | grep -m 1 stopped
+          chmod +rwx ./android/app/build/outputs/apk/debug/app-debug.apk
+          adb install -r ./android/app/build/outputs/apk/debug/app-debug.apk
           
-      # - name: Launch App
-      #   run: | 
-      #     adb shell am start -W -n com.cbord.get/.MainActivity
-      #     adb shell pidof com.cbord.get
-      #     adb devices
+      - name: Launch App
+        run: | 
+          adb shell am start -W -n com.cbord.get/.MainActivity
+          adb shell pidof com.cbord.get
+          adb devices
 
-      # - name: Run All UI Tests
-      #   run: |
-      #     chmod +x ./run-automation.sh
-      #     ./run-automation.sh
+      - name: Run All UI Tests
+        run: |
+          chmod +x ./run-automation.sh
+          ./run-automation.sh
  
           
