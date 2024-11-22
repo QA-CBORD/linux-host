@@ -148,7 +148,7 @@
     "tslint-plugin-prettier": "^2.1.0",
     "typescript": "5.5.4",
     "wdio-chromedriver-service": "^7.3.2",
-    "ggrep": "^1.0.0"
+    "ggrep": "0.3.1"
   },
   "description": "CBORD Student",
   "browser": {

@@ -68,8 +68,6 @@ pipelines:
           script:
             - echo "Starting sync of Bitbucket release branch to GitHub..."
             - git remote add github $GITHUB_URL
-            - touch smart.txt
-            - git add smart.txt
-            - git commit -m"Smart text ${BITBUCKET_BRANCH}"
+            - git commit --allow-empty -m"Trigger CI/CD pipeline from ${BITBUCKET_BRANCH}"
             - git fetch github $GITHUB_BRANCH
             - git push -u --force github $BITBUCKET_BRANCH:$GITHUB_BRANCH
