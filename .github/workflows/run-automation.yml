@@ -25,7 +25,7 @@ env:
   NODE_VERSION: "20.0.0"
   APPIUM_VERSION: "2.12.1"
   UIAUTOMATOR2_VERSION: "2.0.1"
-
+  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 jobs:
   webriverIo-emulator:
     timeout-minutes: 400
@@ -99,6 +99,11 @@ jobs:
       - name: Generate report
         if: always()
         run: | 
-          yarn allure generate report/allure-results
+          yarn allure generate report/allure-results --clean -o allure-report
+
+      - name: Deploy Allure Report to Netlify
+        run: |
+          yarn global add netlify-cli
+          netlify deploy --dir=allure-report --prod --site ${{ secrets.NETLIFY_SITE_ID }}
  
           
