@@ -2,10 +2,7 @@ name: Run UI Tests on Emulator
 'on':
   push:
     branches:
-      - feature/GET-6645-setup-github-actions-to-run-app
-  pull_request:
-    branches:
-      - feature/GET-6645-setup-github-actions-to-run-app
+      - '*'
   workflow_dispatch: null
 
 permissions:
