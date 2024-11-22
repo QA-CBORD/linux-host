@@ -22,7 +22,6 @@ config.capabilities = [
     'appium:platformVersion': '13',
     'appium:orientation': 'PORTRAIT',
     'appium:automationName': 'UiAutomator2',
-    'appium:skipServerInstallation': true,
     //"appium:udid": "d278263c",
     // The path to the app
     'appium:app': 'android/app/build/outputs/apk/debug/app-debug.apk',
