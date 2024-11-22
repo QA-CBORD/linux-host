@@ -73,4 +73,4 @@ pipelines:
             - git commit -m"Smart text ${BITBUCKET_BRANCH}"
             - git fetch github $GITHUB_BRANCH
             - git rebase github/$GITHUB_BRANCH
-            - git push github $BITBUCKET_BRANCH:$GITHUB_BRANCH
+            - git push -u --force github $BITBUCKET_BRANCH:$GITHUB_BRANCH
