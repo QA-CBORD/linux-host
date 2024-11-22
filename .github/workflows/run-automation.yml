@@ -94,11 +94,6 @@ jobs:
       - name: Run All UI Tests
         run: |
           chmod +x ./run-automation.sh
-          ./run-automation.sh loginHostedStudent
-
-      - name: Generate report
-        if: always()
-        run: | 
-          yarn allure generate report/allure-results    
+          ./run-automation.sh
  
           
