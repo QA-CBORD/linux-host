@@ -99,7 +99,6 @@ jobs:
       - name: Generate report
         if: always()
         run: | 
-          yarn allure generate report/allure-results    
-          ./run-automation.sh
+          yarn allure generate report/allure-results
  
           
