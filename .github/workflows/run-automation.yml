@@ -98,5 +98,10 @@ jobs:
         run: |
           chmod +x ./run-automation.sh
           ./run-automation.sh
+
+      - name: Generate report
+        if: always()
+        run: | 
+          yarn allure generate report/allure-results    
  
           

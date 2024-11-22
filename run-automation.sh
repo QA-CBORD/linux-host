@@ -3,7 +3,7 @@
 if [ -z "$1" ]
   then
     # File containing the WebdriverIO configuration
-    INPUT_FILE="./tests/config/wdio.shared.config.ts"
+    INPUT_FILE=$(find . -type f -name "wdio.shared.config.ts" 2>/dev/null | head -n 1)
 
   # Check if the input file exists
   if [[ ! -f "$INPUT_FILE" ]]; then
@@ -19,7 +19,7 @@ if [ -z "$1" ]
   fi
   
   # Extract suite names using the determined grep command
-  suites=$($GREP_COMMAND '(?!specs|capabilities|services|reporters)\b\w*?(?=[:]\s\[)' "$INPUT_FILE")
+  suites=$($GREP_COMMAND '(?!specs|capabilities|services|reporters)\b\w*?(?=[:]\s?\[)' "$INPUT_FILE")
   
   echo "$suites" 
 
