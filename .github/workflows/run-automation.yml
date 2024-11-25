@@ -95,7 +95,7 @@ jobs:
       - name: Run All UI Tests
         run: |
           chmod +x ./run-automation.sh
-          ./run-automation.sh loginHostedStudent
+          ./run-automation.sh
 
       - name: Generate report
         if: always()
