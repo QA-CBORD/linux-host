@@ -21,9 +21,9 @@ if [ -z "$1" ]
   # Extract suite names using the determined grep command
   suites=$($GREP_COMMAND '(?!specs|capabilities|services|reporters)\b\w*?(?=[:]\s?\[)' "$INPUT_FILE")
   
-  
-  # suites="loginHostedStudent loginHostedGuest loginSSOGuest reportCardAsLost reportCardAsFound"
-  suites="loginHostedStudent loginHostedGuest loginSSOGuest"
+  #  echo "$suites"
+  # # suites="loginHostedStudent loginHostedGuest loginSSOGuest reportCardAsLost reportCardAsFound"
+  # suites="loginHostedStudent loginHostedGuest loginSSOGuest forgotPasswordStudent forgotPasswordGuest forgotPasswordSSOGuest registrationHostedGuest registrationBlockDueIncorrectFields"
    
   echo "$suites"
   npm run ionic-e2e:build:android
