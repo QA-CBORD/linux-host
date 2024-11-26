@@ -25,6 +25,7 @@ env:
   NODE_VERSION: "20.0.0"
   APPIUM_VERSION: "2.12.1"
   UIAUTOMATOR2_VERSION: "2.0.1"
+  CHROME_DRIVER_VERSION: "109.0.5414.123"
   NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
   NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 jobs:
@@ -68,6 +69,8 @@ jobs:
           yarn install
           yarn global add appium@$APPIUM_VERSION
           appium driver install uiautomator2@$UIAUTOMATOR2_VERSION
+          appium driver install chromedriver
+          appium driver update chromedriver --chromedriver-version=$CHROME_DRIVER_VERSION
 
       - name: Build project
         run: | 
